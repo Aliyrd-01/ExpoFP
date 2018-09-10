@@ -1,4 +1,4 @@
-# test7
+# EFP-APP
 
 ## Project setup
 ```
