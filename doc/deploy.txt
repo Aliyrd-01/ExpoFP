@@ -1,0 +1,96 @@
+what we want
+
+- deploy dev/live for each expo
+    may want to have in-consmetics-2018.expofp.com/dev in-consmetics-2018.expofp.com/history/2018-01-12
+    may want to have fp.expofp.com/in-cosmetics-2018
+
+- work on may expos at the same time
+- have master branch for ongoing dev
+- deploy master to any chosen expo
+- we may want to require custom branch for custom expo
+    - so let's have separate branches for each expos 
+
+
+what differs for different expos
+- host
+- title
+- homepage url
+- logo
+- fp.svg
+- deployment base path (bucket/path)
+- data.js
+- exhibitors data
+- reporting url
+
+
+OK,
+let's assume each expo has directory inside
+expos
+    /in-cosmetics-2018
+        logo.png
+        settings.js - settings that do not come from data.js
+        fp.svg
+
+branch in-cosmetics-2018 and in-cosmetics-2018-dev
+
+deploy.js commands
+    deploy - will either deploy dev or live
+    history will create history/2018-01-02 from current live version deployed (replace URL of data.js to new)
+
+
+deployed to
+    efp-data/expos/in-cosmetics-2018/
+        client - contains data.js, data-2018-12-31.js exhibitor files
+        fp.svg.js
+        icons.js
+        index.html
+        assets - logo, other.
+        bundles...
+
+        dev - same, uses live data.js and exhibitor files
+        history - uses data-2018-12-31.js but original files (later)
+
+
+
+steps:
+    1. create new account for efp (ask ruslan)
+    2. create new git repo (efp-app) in github and copy files there
+    3. create branch for in-cosmetics-2018
+    3a. make app use branch files when running locally
+    4. copy files to s3 
+    5. ask timur to put files to new location
+    6. create deploy.js script that will build and upload files to 
+
+
+
+
+
+
+
+
+
+
+so, when in master branch - commit should lead to deply to current expos dev versions
+when in live branch - commit should lead to deploy to current expos to live (asking one by one)
+
+history branch should be updated daily only if data.js changed somehow
+
+so, there should be deploy.js script (that uses proper credentials to upload to specific s3 location all selected expos, check history)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

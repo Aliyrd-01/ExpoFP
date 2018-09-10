@@ -1,0 +1,8 @@
+{
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "prettier.tabWidth": 4,
+    "prettier.printWidth": 130,
+    "vetur.format.defaultFormatter.html": "prettier",
+    "typescript.tsdk": "node_modules\\typescript\\lib"
+}

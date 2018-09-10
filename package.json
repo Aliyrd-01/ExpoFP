@@ -1,0 +1,30 @@
+{
+  "name": "esm-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "deploy": "yarn build && s3-deploy \"./dist/**/!(*.map)\" --cwd \"./dist\" --bucket esm-data/expos/in-cosmetics-2018 --private",
+    "svg": "node ./scripts/svg-to-js.js"
+  },
+  "dependencies": {
+    "color": "^3.0.0",
+    "history": "^4.7.2",
+    "vue": "^2.5.17",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/color": "^3.0.0",
+    "@types/d3": "^5.0.0",
+    "@types/history": "^4.7.0",
+    "@vue/cli-plugin-typescript": "^3.0.0",
+    "@vue/cli-service": "^3.0.0",
+    "fs-jetpack": "^2.1.0",
+    "node-sass": "^4.9.0",
+    "s3-deploy": "^1.1.1",
+    "sass-loader": "^7.0.1",
+    "typescript": "^3.0.0",
+    "vue-template-compiler": "^2.5.17"
+  }
+}

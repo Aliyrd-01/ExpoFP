@@ -1,0 +1,6 @@
+import './extend-global'
+import './Rect'
+import './Line'
+import './Circle'
+import './vue'
+import './d3'
