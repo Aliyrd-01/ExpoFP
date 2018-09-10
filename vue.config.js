@@ -1,6 +1,8 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 const expo = require('./scripts/expo')
+const expoDefine = require(`./expos/${expo}/define`)
 
 module.exports = {
     devServer: {
@@ -11,12 +13,13 @@ module.exports = {
             new CopyWebpackPlugin(
                 [
                     {
-                        from: path.join(__dirname, `expos/${expo}/fp.js`),
+                        from: path.join(__dirname, `expos/${expo}/{settings.js,fp.js,*.png}`),
                         to: path.join(__dirname, 'dist'),
-                        ignore: ['.DS_Store']
+                        context: path.join(__dirname, `expos/${expo}`)
                     }
                 ]
             ),
+            new webpack.DefinePlugin(expoDefine)
         ]
     }
 }

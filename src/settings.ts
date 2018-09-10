@@ -1,8 +1,7 @@
+import deepmerge from 'deepmerge';
 
 
-const settings = {
-    title: 'in-cosmetics North America 2018',
-    homeUrl: 'http://northamerica.in-cosmetics.com/',
+const defaultSettings = {
     //fontSizeDetails: 12,
     debug: localStorage.getItem('debug'),//; document.body.clientWidth > 1000,
     colors: {
@@ -22,6 +21,10 @@ const settings = {
     }
 }
 
+const settings = deepmerge(defaultSettings, __settings);
 export default settings;
 extendGlobal({ __settings: settings })
 
+declare global {
+    const __settings: typeof defaultSettings;
+}

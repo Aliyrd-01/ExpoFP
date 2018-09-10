@@ -42,7 +42,7 @@ function setTitle() {
     else if (store.state.searchText) title = '`' + store.state.searchText + '`';
 
     if (title.length) title += ' – ';
-    title += settings.title + ' – Expo Floor Plan by ExpoFP';
+    title += EFP_TITLE + ' – Expo Floor Plan by ExpoFP';
 
     document.title = title;
 }

@@ -25,5 +25,5 @@ const base = jetpack.cwd(__dirname + "/..");
         iconData[path.parse(file).name] = svg;
     }
     const js = "var __icons = " + JSON.stringify(iconData) + ";";
-    base.write('pulbic/icons.js', js)
+    base.write('public/icons.js', js)
 }

@@ -2,12 +2,12 @@
     <div :class="{container:1, visible: visible}">
         <div class="bg" @click="close"></div>
         <div class="menu">
-            <a class="title" href="https://northamerica.in-cosmetics.com/" target="_blank">
-                <img src="https://northamerica.in-cosmetics.com/RXUK/RXUK_In-CosmeticsNorthAmerica/images/seo/Logo/INCNA18_360x180_Logo.png" />
+            <a class="title" :href="EFP_HOME_URL" target="_blank">
+                <img :src="EFP_LOGO_URL" />
             </a>
             <div class="menu-scrollable">
                 <div class="block">
-                    <a :href='homeUrl' target="_blank">Expo Home</a>
+                    <a :href='EFP_HOME_URL' target="_blank">Expo Home</a>
                     <a :href='"?" + encodeURIComponent("My Bookmarks")' @click.prevent='selectText("My Bookmarks")'>My Bookmarks</a>
                 </div>
                 <div class="block">
@@ -32,9 +32,12 @@ export default {
         visible() {
             return this.$store.state.menu;
         },
-        homeUrl() {
-            return s.homeUrl;
-        }
+        // homeUrl() {
+        //     return EFP_HOME_URL;
+        // },
+        // logoUrl() {
+        //     return EFP)
+        // }
     },
     methods: {
         close() {
