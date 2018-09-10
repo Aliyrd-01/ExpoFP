@@ -1,19 +1,22 @@
 const jetpack = require('fs-jetpack');
 const path = require('path');
+const expo = require('./expo')
 
 console.log('svg-to-js...')
 
-const src = jetpack.cwd(__dirname);
-const dest = jetpack.cwd(__dirname + '/../public/');
+const base = jetpack.cwd(__dirname + "/..");
 
+//const publicDest = jetpack.cwd(__dirname + '/../public/');
+
+// fp.svg
 {
-    const svg = src.read('fp.svg')
+    const svg = base.read(`expos/${expo}/fp.svg`)
     const js = "var __fp = " + JSON.stringify(svg) + ";";
-    dest.write('fp.js', js)
+    base.write(`expos/${expo}/fp.js`, js)
 }
 
 {
-    const iconsSrc = src.cwd("icons");
+    const iconsSrc = base.cwd("scripts/icons");
     const iconData = {};
     for (const file of iconsSrc.list()) {
         if (!file.toLowerCase().endsWith(".svg")) continue;
@@ -22,5 +25,5 @@ const dest = jetpack.cwd(__dirname + '/../public/');
         iconData[path.parse(file).name] = svg;
     }
     const js = "var __icons = " + JSON.stringify(iconData) + ";";
-    dest.write('icons.js', js)
+    base.write('pulbic/icons.js', js)
 }
