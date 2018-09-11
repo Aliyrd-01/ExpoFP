@@ -27,11 +27,15 @@ import s from "@/settings";
 
 export default {
     name: "Menu",
+    data: () => ({
+        EFP_HOME_URL,
+        EFP_LOGO_URL
+    }),
     computed: {
         ...mapGetters(["categoriesArray"]),
         visible() {
             return this.$store.state.menu;
-        },
+        }
         // homeUrl() {
         //     return EFP_HOME_URL;
         // },
