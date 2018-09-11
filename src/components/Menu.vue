@@ -36,12 +36,6 @@ export default {
         visible() {
             return this.$store.state.menu;
         }
-        // homeUrl() {
-        //     return EFP_HOME_URL;
-        // },
-        // logoUrl() {
-        //     return EFP)
-        // }
     },
     methods: {
         close() {
