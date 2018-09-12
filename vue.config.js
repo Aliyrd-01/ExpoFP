@@ -6,7 +6,7 @@ const expoDefine = require(`./expos/${expo}/define`)
 
 // TODO: complete
 
-const EFP_DATA_URL_BASE = JSON.stringify(`https://${expo}.expofp.com`)
+const EFP_DATA_URL_BASE = JSON.stringify(process.env.NODE_ENV === "production" ? '/data' : `https://${expo}.expofp.com`)
 
 module.exports = {
     baseUrl: live ? '/' : '/dev/',
