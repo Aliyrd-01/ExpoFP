@@ -1,14 +1,15 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const { expo } = require('./scripts/expo')
+const { expo, live } = require('./scripts/expo')
 const expoDefine = require(`./expos/${expo}/define`)
 
 // TODO: complete
 
-const EFP_DATA_URL = `https://${expo}.expofp.com/data/data.js`
+const EFP_DATA_URL_BASE = JSON.stringify(`https://${expo}.expofp.com`)
 
 module.exports = {
+    baseUrl: live ? '/' : '/dev/',
     devServer: {
         contentBase: [path.join(__dirname, 'public'), path.join(__dirname, `expos/${expo}`)]
     },
@@ -23,7 +24,7 @@ module.exports = {
                     }
                 ]
             ),
-            new webpack.DefinePlugin(expoDefine)
+            new webpack.DefinePlugin({ EFP_DATA_URL_BASE, ...expoDefine })
         ]
     }
 }

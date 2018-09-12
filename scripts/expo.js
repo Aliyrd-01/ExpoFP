@@ -5,5 +5,5 @@ if (branch === 'master') throw new Error(`Unknown expo. Won't run on ${branch} b
 
 module.exports = {
     expo: branch.replace(/-live$/, ''),
-    dev: !branch.endsWith('-live')
+    live: branch.endsWith('-live')
 };
