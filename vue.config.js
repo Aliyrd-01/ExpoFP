@@ -1,8 +1,12 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const expo = require('./scripts/expo')
+const { expo } = require('./scripts/expo')
 const expoDefine = require(`./expos/${expo}/define`)
+
+// TODO: complete
+
+const EFP_DATA_URL = `https://${expo}.expofp.com/data/data.js`
 
 module.exports = {
     devServer: {
