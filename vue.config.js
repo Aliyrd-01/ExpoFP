@@ -4,13 +4,11 @@ const webpack = require('webpack');
 const expo = require('./scripts/expo')
 const expoDefine = require(`./expos/${expo}/define`)
 
-// TODO: complete
-const live = process.env.EFP_TARGET === "live";
 
-const EFP_DATA_URL_BASE = JSON.stringify(process.env.NODE_ENV === "production" ? '/data' : `https://${expo}.expofp.com`)
+const EFP_DATA_URL_BASE = JSON.stringify(`https://${expo}.expofp.com/data`);//JSON.stringify(process.env.NODE_ENV === "production" ? '/data' : `https://${expo}.expofp.com`)
+const EFP_EXPO = JSON.stringify(expo);
 
 module.exports = {
-    baseUrl: live ? '/' : '/dev/',
     devServer: {
         contentBase: [path.join(__dirname, 'public'), path.join(__dirname, `expos/${expo}`)]
     },
@@ -25,7 +23,7 @@ module.exports = {
                     }
                 ]
             ),
-            new webpack.DefinePlugin({ EFP_DATA_URL_BASE, ...expoDefine })
+            new webpack.DefinePlugin({ EFP_DATA_URL_BASE, EFP_EXPO, ...expoDefine })
         ]
     }
 }
