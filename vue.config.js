@@ -1,10 +1,11 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
-const { expo, live } = require('./scripts/expo')
+const expo = require('./scripts/expo')
 const expoDefine = require(`./expos/${expo}/define`)
 
 // TODO: complete
+const live = process.env.EFP_TARGET === "live";
 
 const EFP_DATA_URL_BASE = JSON.stringify(process.env.NODE_ENV === "production" ? '/data' : `https://${expo}.expofp.com`)
 

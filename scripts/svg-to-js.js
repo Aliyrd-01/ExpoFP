@@ -1,6 +1,6 @@
 const jetpack = require('fs-jetpack');
 const path = require('path');
-const { expo } = require('./expo')
+const expo = require('./expo')
 
 console.log('svg-to-js...')
 

@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "deploy": "node ./scripts/deploy.js",
+    "deploy-live": "cross-env EFP_TARGET=live node ./scripts/deploy.js",
     "svg": "node ./scripts/svg-to-js.js"
   },
   "dependencies": {
@@ -22,10 +23,12 @@
     "@types/history": "^4.7.0",
     "@vue/cli-plugin-typescript": "^3.0.0",
     "@vue/cli-service": "^3.0.0",
+    "cross-env": "^5.2.0",
     "execa": "^1.0.0",
     "fs-jetpack": "^2.1.0",
     "git-branch": "^2.0.1",
     "node-sass": "^4.9.0",
+    "prompt-confirm": "^2.0.4",
     "s3-deploy": "^1.1.1",
     "sass-loader": "^7.0.1",
     "typescript": "^3.0.0",
