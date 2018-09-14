@@ -5,6 +5,7 @@
                 This is a demo of
                 <a href='https://expofp.com/'>ExpoFP</a>
                 floor plan. This is not an official in-cosmetics expo plan.
+                <a href='' @click.prevent='demoDismiss()'>Dismiss</a>
             </section>
         </div>
         <Overlay/>
@@ -28,8 +29,16 @@ export default Vue.extend({
         Debug,
         Menu
     },
+    data: () => ({ demoDismissed: false }),
     computed: {
-        demo: () => EFP_EXPO === "demo"
+        demo() {
+            return EFP_EXPO === "demo" && !this.demoDismissed;
+        }
+    },
+    methods: {
+        demoDismiss() {
+            this.demoDismissed = true;
+        }
     }
 });
 </script>
@@ -77,7 +86,7 @@ a:visited {
     width: 100%;
     display: flex;
     justify-content: center;
-    background: #eee;
+    background: #ddd;
 
     > section {
         font-size: 0.8rem;
@@ -86,6 +95,19 @@ a:visited {
         > a {
             font-weight: 500;
             color: #1378d5;
+            &:last-child{
+                display: inline-block;
+                background: #aaa;
+                color: #fff;
+                padding: 0 0.2rem;
+                text-decoration: none;
+                border-radius: 2px;
+                font-weight: 500;
+                font-size: 0.8rem;
+                &:hover{
+                    background: #1378d5;
+                }
+            }
         }
     }
 }
