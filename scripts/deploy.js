@@ -9,7 +9,7 @@ const live = process.env.EFP_TARGET === "live";
 
     let answer = true;
     if (live) {
-        const prompt = new Confirm({ message: 'Are you sure want to deploy to live?', default: false });
+        const prompt = new Confirm({ message: `Are you sure want to deploy to live ${expo.toUpperCase()}?`, default: false });
         answer = await prompt.run();
     }
 

@@ -1,13 +1,6 @@
 <template>
     <div id="root">
-        <div class="demo" v-if="demo">
-            <section>
-                This is a demo of
-                <a href='https://expofp.com/'>ExpoFP</a>
-                floor plan. This is not an official in-cosmetics expo plan.
-                <a href='' @click.prevent='demoDismiss()'>Dismiss</a>
-            </section>
-        </div>
+        <Demo/>
         <Overlay/>
         <Map/>
         <Debug/>
@@ -20,6 +13,7 @@ import Menu from "./Menu.vue";
 import Overlay from "./Overlay.vue";
 import Map from "./Map/Map.vue";
 import Debug from "./Debug.vue";
+import Demo from "./Demo.vue";
 
 export default Vue.extend({
     // name: 'app',
@@ -27,19 +21,10 @@ export default Vue.extend({
         Overlay,
         Map,
         Debug,
-        Menu
+        Menu,
+        Demo
     },
-    data: () => ({ demoDismissed: false }),
-    computed: {
-        demo() {
-            return EFP_EXPO === "demo" && !this.demoDismissed;
-        }
-    },
-    methods: {
-        demoDismiss() {
-            this.demoDismissed = true;
-        }
-    }
+    
 });
 </script>
 
@@ -81,34 +66,5 @@ a:visited {
     color: #13a1de;
     text-decoration: underline;
 }
-.demo {
-    position: fixed;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    background: #ddd;
 
-    > section {
-        font-size: 0.8rem;
-        user-select: none;
-        padding: 0.2rem 0.5rem;
-        > a {
-            font-weight: 500;
-            color: #1378d5;
-            &:last-child{
-                display: inline-block;
-                background: #aaa;
-                color: #fff;
-                padding: 0 0.2rem;
-                text-decoration: none;
-                border-radius: 2px;
-                font-weight: 500;
-                font-size: 0.8rem;
-                &:hover{
-                    background: #1378d5;
-                }
-            }
-        }
-    }
-}
 </style>
