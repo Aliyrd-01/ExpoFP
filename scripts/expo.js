@@ -9,8 +9,3 @@ if (branch === 'master') {
 }
 
 module.exports = branch;
-
-// {
-//     expo: branch.replace(/-live$/, ''),
-//     live: branch.endsWith('-live')
-// };

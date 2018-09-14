@@ -1,5 +1,12 @@
 <template>
     <div id="root">
+        <div class="demo" v-if="demo">
+            <section>
+                This is a demo of
+                <a href='https://expofp.com/'>ExpoFP</a>
+                floor plan. This is not an official in-cosmetics expo plan.
+            </section>
+        </div>
         <Overlay/>
         <Map/>
         <Debug/>
@@ -20,6 +27,9 @@ export default Vue.extend({
         Map,
         Debug,
         Menu
+    },
+    computed: {
+        demo: () => EFP_EXPO === "demo"
     }
 });
 </script>
@@ -54,11 +64,29 @@ body {
     // font-size: 15px;
 }
 a {
-    color:#13a1de;
+    color: #13a1de;
     text-decoration: none;
 }
-a:hover, a:visited{
+a:hover,
+a:visited {
     color: #13a1de;
     text-decoration: underline;
+}
+.demo {
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: #eee;
+
+    > section {
+        font-size: 0.8rem;
+        user-select: none;
+        padding: 0.2rem 0.5rem;
+        > a {
+            font-weight: 500;
+            color: #1378d5;
+        }
+    }
 }
 </style>
