@@ -20,7 +20,7 @@ const live = process.env.EFP_TARGET === "live";
     console.log('Deploying dist to ' + expo);
 
     const path = `efp-data/expos/${expo}/${!live ? 'dev' : 'live'}`;
-    const invalidate = `${path}/index.html`;
+    const invalidate = `/index.html`;
 
     const distId = live ? cloudfront.live : cloudfront.dev;
 
