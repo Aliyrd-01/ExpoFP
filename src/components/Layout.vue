@@ -1,5 +1,6 @@
 <template>
     <div id="root">
+        <img src='expofp-overlay.png' class='logo-overlay'>
         <Demo/>
         <Overlay/>
         <Map/>
@@ -23,8 +24,7 @@ export default Vue.extend({
         Debug,
         Menu,
         Demo
-    },
-    
+    }
 });
 </script>
 
@@ -67,4 +67,17 @@ a:visited {
     text-decoration: underline;
 }
 
+.logo-overlay {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    width: 5rem;
+    pointer-events: none;
+    @media screen and (max-width: 500px) {
+        top: 0.5rem;
+        right: 0.5rem;
+        bottom: unset;
+        width: 3rem;
+    }
+}
 </style>
