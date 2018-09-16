@@ -3,8 +3,8 @@
         <div class="lines">
             {{exhibitor.name}}
         </div>
-        <div ref="bookmark" class="bookmark" tabindex="0" @click.prevent.stop="bookmark">
-            <i class="fa-bookmark" :class="{fal: !bookmarked, fas: bookmarked}"></i>
+        <div ref="bookmark" class="bookmark" tabindex="0" @click.prevent.stop="bookmark" title="Toggle bookmark">
+            <i class="bk"></i>
         </div>
         <div class="booth">
             <div v-for="booth in booths" :key="booth.id">
@@ -72,17 +72,36 @@ export default {
     text-align: right;
     font-weight: 700;
     font-size: 0.9rem;
-     color: #555;
+    color: #555;
 }
 .bookmark {
     align-self: stretch;
     padding: 0 0.5rem 0 1rem;
     outline: none;
 }
-.fa-bookmark {
-    color: #bbb;
+// .fa-bookmark {
+//     color: #bbb;
+// }
+// .bookmarked .bookmark > .fa-bookmark {
+//     color: #e54839;
+// }
+.bk {
+    display: block;
+    position: relative;
+    top: -1px;
+    height: 1.1rem;
+    width: 0.8rem;
+    padding: 0px;
+    -webkit-transform: rotate(0deg) skew(0deg);
+    transform: rotate(0deg) skew(0deg);
+    border-left: 0.4rem solid #ddd;
+    border-right: 0.4rem solid #ddd;
+    border-bottom: 0.4rem solid transparent;
+    // transition: height 0.2s;
 }
-.bookmarked .bookmark > .fa-bookmark {
-    color: #e54839;
+.bookmarked .bk {
+    border-left-color: #e54839;
+    border-right-color: #e54839;
+    height: 1.3rem;
 }
 </style>
