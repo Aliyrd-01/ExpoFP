@@ -1,13 +1,13 @@
 <template>
-  <div class="overlay-content">
-     <OverlayBar/>
-     <div class='overlay-scrollable'>
-          <List v-if="detailsType === null"/>
-          <Booth v-if="detailsType === 'booth'"/>
-          <Exhibitor v-if="detailsType === 'exhibitor'"/>
-      </div>
-  </div>
- 
+    <div class="overlay-content">
+        <OverlayBar/>
+        <div class='overlay-scrollable' ref='scrollable'>
+            <List v-if="detailsType === null" />
+            <Booth v-if="detailsType === 'booth'" />
+            <Exhibitor v-if="detailsType === 'exhibitor'" />
+        </div>
+    </div>
+
 </template>
 
 <script lang="ts">
@@ -15,6 +15,7 @@ import OverlayBar from "./OverlayBar.vue";
 import List from "./List.vue";
 import Exhibitor from "./Exhibitor.vue";
 import Booth from "./Booth.vue";
+import PerfectScrollbar from "perfect-scrollbar";
 
 export default {
     // name: "OverlayContent",
@@ -23,6 +24,10 @@ export default {
         List,
         Booth,
         Exhibitor
+    },
+    mounted() {
+        const ps = new PerfectScrollbar(this.$refs.scrollable);
+        window.addEventListener("resize", () => ps.update());
     },
     computed: {
         detailsType() {
@@ -44,11 +49,12 @@ export default {
     flex-grow: 1;
     height: 1px;
     overflow-y: hidden;
+    position: relative;
 }
 </style>
 <style>
 .full .overlay-scrollable {
-    overflow-y: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
 }
 </style>

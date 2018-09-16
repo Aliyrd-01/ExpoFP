@@ -13,6 +13,7 @@
     "color": "^3.0.0",
     "deepmerge": "^2.1.1",
     "history": "^4.7.2",
+    "perfect-scrollbar": "^1.4.0",
     "vue": "^2.5.17",
     "vuex": "^3.0.1"
   },

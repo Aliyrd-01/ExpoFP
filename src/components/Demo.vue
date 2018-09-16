@@ -38,7 +38,9 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
-    background: #fff;
+    background: #000;
+    top: 0;
+    color: #fff;
 
     > section {
         font-size: 0.8rem;
@@ -46,12 +48,12 @@ export default {
         padding: 0.2rem 0.5rem;
         > a {
             font-weight: 500;
-            color: #1378d5;
+            color: #69b7ff;
         }
         .dismiss {
             float: right;
             display: block;
-            background: #aaa;
+            background: #1378d5;
             color: #fff;
             padding: 0.1rem 0.2rem;
             text-decoration: none;
@@ -59,7 +61,7 @@ export default {
             font-weight: 500;
             font-size: 0.8rem;
             &:hover {
-                background: #1378d5;
+                background: #69b7ff;
             }
             margin-left: 0.5rem;
         }
