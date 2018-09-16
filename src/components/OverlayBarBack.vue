@@ -25,10 +25,10 @@ export default {
             return this.mode === "back";
         },
         icon1Class() {
-            return `icon1 fal ${!this.showBack ? "fa-long-arrow-left" : "fa-bars"}`;
+            return `icon1 far ${!this.showBack ? "fa-chevron-left" : "fa-bars"}`;
         },
         icon2Class() {
-            return `icon2 fal ${this.showBack ? "fa-long-arrow-left" : "fa-bars"}`;
+            return `icon2 far ${this.showBack ? "fa-chevron-left" : "fa-bars"}`;
         }
     },
     watch: {
@@ -68,7 +68,7 @@ export default {
 .back.end > .icon1 {
     opacity: 0;
 }
-.anim.back.end > .icon1.fa-long-arrow-left {
+.anim.back.end > .icon1.fa-chevron-left {
     transform: rotate(180deg);
 }
 

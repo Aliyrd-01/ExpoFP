@@ -4,7 +4,7 @@
         <input type="search" ref="input" v-if="!detailsTitle" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
         <input type="search" ref="inputReplica" v-if="!detailsTitle && hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
         <div class='title' v-if="detailsTitle">{{detailsTitle}}</div>
-        <a class="fal fa-times" href='/' v-if="showClose" @click.prevent="handleCloseClick"></a>
+        <a class="far fa-times" href='/' v-if="showClose" @click.prevent="handleCloseClick"></a>
     </div>
 
 </template>
@@ -108,7 +108,7 @@ export default {
     background: #fff;
 }
 
-.bar >>> .fal {
+.bar >>> .far {
     height: var(--size);
     min-width: var(--iconWidth);
     line-height: var(--size);
