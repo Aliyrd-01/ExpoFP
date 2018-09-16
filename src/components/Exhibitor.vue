@@ -1,6 +1,6 @@
 <template>
     <div class="details" :class={bookmarked}>
-        <a :class="{icon:1, fal: !bookmarked, fas: bookmarked, 'fa-star':1}" href='' @click.prevent="bookmark">
+        <a :class="{icon:1, fal: !bookmarked, fas: bookmarked, 'fa-bookmark':1}" href='' @click.prevent="bookmark">
 
         </a>
         <div class="booth">Booth
@@ -80,7 +80,7 @@ a.icon {
     margin: 0 1rem;
 }
 .bookmarked a.icon {
-    color: #f3b501;
+    color: #e54839;
 }
 .booth {
     margin: 1rem;

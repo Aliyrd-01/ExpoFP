@@ -3,8 +3,8 @@
         <div class="lines">
             {{exhibitor.name}}
         </div>
-        <div class="bookmark">
-            b
+        <div ref="bookmark" class="bookmark" tabindex="0" @click.prevent.stop="bookmark">
+            <i class="fa-bookmark" :class="{fal: !bookmarked, fas: bookmarked}"></i>
         </div>
         <div class="booth">
             <div v-for="booth in booths" :key="booth.id">
@@ -23,6 +23,7 @@ export default {
             this.$store.dispatch("clickExhibitor", this.exhibitor.id);
         },
         bookmark() {
+            this.$refs.bookmark.blur();
             this.$store.commit("setBookmarked", { id: this.exhibitor.id, yes: !this.bookmarked });
         },
         mouseover() {
@@ -45,7 +46,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .row {
     display: flex;
     align-items: center;
@@ -58,7 +59,7 @@ export default {
     background-color: #f1f1f1;
 }
 .lines {
-    padding: 0 1rem;
+    padding: 0 0.1rem 0 1rem;
     flex-grow: 1;
 
     white-space: nowrap;
@@ -66,10 +67,22 @@ export default {
     text-overflow: ellipsis;
 }
 .booth {
-    padding: 0 1rem;
-    min-width: 4.5rem;
+    padding: 0 1rem 0 0;
+    min-width: 3.5rem;
     text-align: right;
     font-weight: 700;
     font-size: 0.9rem;
+     color: #555;
+}
+.bookmark {
+    align-self: stretch;
+    padding: 0 0.5rem 0 1rem;
+    outline: none;
+}
+.fa-bookmark {
+    color: #bbb;
+}
+.bookmarked .bookmark > .fa-bookmark {
+    color: #e54839;
 }
 </style>

@@ -48,7 +48,7 @@ export default {
 </style>
 <style>
 .full .overlay-scrollable {
-    overflow-y: scroll;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
 </style>

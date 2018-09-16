@@ -125,7 +125,9 @@ input {
     height: var(--size);
     -webkit-appearance: none;
     flex-grow: 1;
+    
 }
+input::placeholder { color: #bbb; }
 
 input.fixed {
     opacity: 0;
