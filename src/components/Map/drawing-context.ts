@@ -45,7 +45,7 @@ class DrawingContext {
     get dimmed() { return !!store.getters.highlightedBoothIds; }
     dimColor(color: string, dimIfOnly: boolean = undefined): string {
         if (dimIfOnly === undefined) dimIfOnly = this.dimmed;
-        if (dimIfOnly) return Color(color).mix(Color('black'), settings.colors.dim).toString();
+        if (dimIfOnly) return Color(color).mix(Color(settings.colors.base), settings.colors.dim).toString();
         return color;
     }
 

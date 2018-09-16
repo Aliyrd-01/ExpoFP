@@ -53,7 +53,7 @@ export function drawSingleBooth(b: Booth) {
     ctx.fillStyle = color;
 
     ctx.fillRect(0, 0, b.rect.w, b.rect.h)
-    if (s.bookmarked) drawBookmark(b);
+    if (s.bookmarked) drawBookmark(b, s.dimmed);
     ctx.restore();
 }
 
@@ -73,17 +73,17 @@ function getBoothStateBits(b: Booth) {
     return [hover, dimmed, selected, error, empty, bookmarked]
 }
 
-function drawBookmark(b: Booth) {
+function drawBookmark(b: Booth, dimmed:boolean) {
     const ctx = c.spriteContext;
-    let w = c.getUnscaled(10);
-    w = Math.min(w, b.rect.w / 5)
+    let w = c.getUnscaled(12);
+    w = Math.min(w, b.rect.w / 3.5)
     const h = w * 1.4;
     ctx.save();
     ctx.translate(b.rect.w - 1.5 * w, 0);
 
-    ctx.fillStyle = "#e64839";
-    ctx.strokeStyle = settings.colors.fg;
-    ctx.lineWidth = c.getUnscaled(1);
+    ctx.fillStyle = c.dimColor("#e64839", dimmed);
+    ctx.strokeStyle = c.dimColor(settings.colors.fg, dimmed);
+    ctx.lineWidth = c.getStrokeWidth() / 1.5;
     // ctx.fillRect(b.rect.w - 1.5 * w, 0, w, h);
     ctx.beginPath();
     ctx.moveTo(0, 0);
