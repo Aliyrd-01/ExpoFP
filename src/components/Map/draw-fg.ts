@@ -20,7 +20,7 @@ export default function drawFg() {//visibleOnly:boolean = false
 
 
     ctx.strokeStyle = c.dimColor(settings.colors.fg);
-    ctx.lineWidth = c.getUnscaled(c.detailLevel > 5000 ? 1.5 : 1);
+    ctx.lineWidth = c.getUnscaled(c.detailLevel > 8000 ? 2 : (c.detailLevel > 4000 ? 1.5 : 1.25));
     const wallLinesFiltered = getSpriteIntersectingObjects(wallLines);// wallLines.filter(b => b.intersects(c.svgViewBox)) : wallLines;
     for (const line of wallLinesFiltered) {
         ctx.beginPath();
