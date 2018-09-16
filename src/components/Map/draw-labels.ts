@@ -26,7 +26,7 @@ export default function drawLabels() {
 export function drawSingleLabel(b: Booth) {
     const ctx = c.spriteContext
     const s = getBoothState(b);
-    const color = c.dimColor('#fff', c.dimmed && s.dimmed && !s.selected);
+    const color = c.dimColor('#fff', c.dimmed && s.dimmed);// && !s.selected
     ctx.save();
     try {
         if (c.detailLevel < 5000) {
