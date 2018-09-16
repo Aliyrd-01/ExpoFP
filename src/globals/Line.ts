@@ -32,7 +32,7 @@ namespace local {
         }
 
         intersects(r: Rect|Line): boolean {
-            const swap = this.y1 > this.y2;
+            const swap = this.x1 > this.x2 || this.x1 === this.x2 && this.y2 < this.y1;
             const x1 = swap ? this.x2 : this.x1;
             const x2 = swap ? this.x1 : this.x2;
             const y1 = swap ? this.y2 : this.y1;

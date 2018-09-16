@@ -35,10 +35,11 @@ export function drawSingleLabel(b: Booth) {
             const h = b.rect.h - 2 * padding;
             if (w > 0 && h > 0) {
                 const rect = Rect.fromXywh(b.rect.x1 + padding, b.rect.y1 + padding, w, h);
+                const weight = 500;
                 ctx.translate(b.rect.cx, b.rect.cy);
-                const fontSize = getMaxFontSize(rect, b.name);
+                const fontSize = getMaxFontSize(rect, b.name, weight);
                 if (fontSize) {
-                    const font = getFont(fontSize);
+                    const font = getFont(fontSize, weight);
 
                     ctx.font = font;
                     ctx.fillStyle = color;
@@ -67,7 +68,7 @@ export function drawSingleLabel(b: Booth) {
         const detailsFontSize = c.detailLevel > 22000 ? 14 : 12;
         const fontSize = c.getUnscaled(detailsFontSize);
         let occupiedHeight = fontSize;
-        ctx.font = getFont(fontSize);
+        ctx.font = getFont(fontSize, 400);
         ctx.fillStyle = color;
         ctx.textBaseline = 'hanging';
         ctx.textAlign = 'left';
@@ -101,18 +102,18 @@ export function drawSingleLabel(b: Booth) {
     }
 }
 
-function doesTextFitWithCurrentScale(rect: Rect, text: string, fontSize: number) {
-    const font = getFont(fontSize);
+function doesTextFitWithCurrentScale(rect: Rect, text: string, fontSize: number, fontWeight: number) {
+    const font = getFont(fontSize, fontWeight);
     c.spriteContext.font = font;
     const size = c.spriteContext.measureText(text);
     return size.width <= rect.w && fontSize < rect.h;
 }
 
-function getMaxFontSize(rect: Rect, text: string) {
+function getMaxFontSize(rect: Rect, text: string, fontWeight: number) {
     let fontSize = maxFontSize;
     while (fontSize > minFontSize) {
         const scaledFontSize = c.getUnscaled(fontSize);
-        const fits = doesTextFitWithCurrentScale(rect, text, scaledFontSize);
+        const fits = doesTextFitWithCurrentScale(rect, text, scaledFontSize, fontWeight);
         if (fits) return scaledFontSize;
         fontSize -= 1;
     }

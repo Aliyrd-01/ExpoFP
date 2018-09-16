@@ -5,18 +5,18 @@ const defaultSettings = {
     //fontSizeDetails: 12,
     debug: localStorage.getItem('debug'),//; document.body.clientWidth > 1000,
     colors: {
-        base: '#ccc',
-        bg: '#fff',
+        base: '#ebebeb',
+        bg: '#d6d6d6',
         fg: '#fff',
         columns: 'rgba(0,0,0,0.1)',
         icons: 'rgba(0,0,0,0.4)',
         dim: 0.35,
         booths: {
-            default: '#40B5E6',
-            defaultHover: '#2075A6',
+            default: '#41b6e7',
+            defaultHover: '#2ca2d3',
             selected: '#FB3E59',
-            empty: '#B3B9BC',
-            emptyHover: '#878c8f',
+            empty: '#b3b3b3',
+            emptyHover: '#9a9a9a',
         }
     }
 }
