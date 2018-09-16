@@ -20,7 +20,7 @@ export default {
     },
     data: () => ({
         positionTop: 0,
-        placeHolder: "Search company, booth, category"
+        placeHolder: "Search company, booth or category"
     }),
     computed: {
         ...mapState(["searchText", "searchFocused", "overlaySize"]),
@@ -105,7 +105,7 @@ export default {
     display: flex;
     align-items: center;
     --size: 3.5rem;
-
+    background: #fff;
 }
 
 .bar >>> .fal {
@@ -115,7 +115,7 @@ export default {
     text-align: center;
     font-size: 1.3rem;
     text-decoration: none;
-    color: #555;
+    color: #999999;
 }
 
 input {

@@ -18,7 +18,7 @@ export default {
     computed: {
         ...mapState(["overlaySize", "screenSize"]),
         ...mapGetters(["overlayPosition"]),
-        noMove(){
+        negateMove() {
             return this.overlayPosition === "left";
         },
         effectiveSize() {
@@ -38,7 +38,6 @@ export default {
 
     methods: {
         handleTouchStart(e) {
-            if (this.noMove) return;
             console.log("TouchStart", e);
             if (this.startedTouch) return;
 
@@ -48,7 +47,6 @@ export default {
         },
 
         handleTouchMove(e:TouchEvent) {
-            if (this.noMove) return;
             if (!this.startedTouch) return;
             const rt = Array.from(e.changedTouches).filter(x => x.identifier === this.startedTouch.identifier)[0];
             if (!rt) return;
@@ -58,12 +56,11 @@ export default {
         },
 
         handleTouchEnd(e:TouchEvent) {
-            if (this.noMove) return;
             if (!this.startedTouch) return;
             const rt = Array.from(e.changedTouches).filter(x => x.identifier === this.startedTouch.identifier)[0];
             if (!rt) return;
             let diff = this.startedTouch.clientY - rt.clientY;
-            // if (this.negateMove) diff = -diff;
+            if (this.negateMove) diff = -diff;
             const current = getHeight(this.$el, this.overlayPosition, this.effectiveSize);
             const medium = getHeight(this.$el, this.overlayPosition, "medium");
             let newSize = this.effectiveSize;
@@ -99,25 +96,19 @@ export default {
         position() {
             const el = this.$el;
             const position = this.overlayPosition;
-            if (position === "left"){
-                el.style.width = "24rem";
-                el.style.top = 0;
-                el.style.left = 0;
-                el.style.bottom = 0;
+            el.style.width = position === "bottom" ? "100%" : "22rem";
+            el.style.left = position === "bottom" ? "0" : rtp(paddingRems) + "px";
+            if (position === "left") {
+                el.style.bottom = undefined;
+                el.style.top = rtp(paddingRems) + "px";
+                el.style.borderBottomLeftRadius = el.style.borderBottomRightRadius = null;
+            } else {
+                el.style.bottom = "0";
+                el.style.borderBottomLeftRadius = el.style.borderBottomRightRadius = "0";
+                el.style.top = undefined;
             }
-            // el.style.width = position === "bottom" ? "100%" : "22rem";
-            // el.style.left = position === "bottom" ? "0" : rtp(paddingRems) + "px";
-            // if (position === "left") {
-            //     el.style.bottom = undefined;
-            //     el.style.top = rtp(paddingRems) + "px";
-            //     el.style.borderBottomLeftRadius = el.style.borderBottomRightRadius = null;
-            // } else {
-            //     el.style.bottom = "0";
-            //     el.style.borderBottomLeftRadius = el.style.borderBottomRightRadius = "0";
-            //     el.style.top = undefined;
-            // }
 
-            // this.setHeight();
+            this.setHeight();
         },
 
         setHeight() {
@@ -128,7 +119,7 @@ export default {
 
             let transition = true;
             if (this.touchDiff !== undefined) {
-                newHeight += this.touchDiff;// this.negateMove ? -this.touchDiff : 
+                newHeight += this.negateMove ? -this.touchDiff : this.touchDiff;
                 const maxHeight = getHeight(this.$el, position, "full");
                 if (newHeight > maxHeight) {
                     newHeight = maxHeight;
@@ -205,9 +196,9 @@ function getHeight(el, position, size) {
 
 <style scoped>
 .overlay {
-    position: fixed;
-    background: #fafafa; /*#f9f4f0*/
-    /* border-radius: 0.7rem; */
+    position: absolute;
+    background: #fff; /*#f9f4f0*/
+    border-radius: 0.7rem;
     overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
     --iconWidth: 3rem;

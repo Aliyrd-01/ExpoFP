@@ -46,6 +46,7 @@ body {
     padding: 0;
     height: 100%;
     width: 100%;
+    font-size: 15px;
 }
 #root {
     position: fixed;
@@ -79,5 +80,24 @@ a:visited {
         bottom: unset;
         width: 3rem;
     }
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    opacity:0.1;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.4); 
+    // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 </style>
