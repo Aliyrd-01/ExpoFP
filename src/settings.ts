@@ -10,7 +10,7 @@ const defaultSettings = {
         fg: '#fff',
         columns: 'rgba(0,0,0,0.1)',
         icons: 'rgba(0,0,0,0.4)',
-        dim: 0.6,
+        dim: 0.5,
         booths: {
             default: '#41b6e7',
             defaultHover: '#2ca2d3',

@@ -43,11 +43,14 @@ export function drawSingleBooth(b: Booth) {
     const s = getBoothState(b)
     let color: string;
     if (s.error) color = '#f33'
-    // else if (s.bookmarked) color = '#f3b501';
     else if (s.selected) color = settings.colors.booths.selected;
     else if (s.hover) color = !s.empty ? settings.colors.booths.defaultHover : settings.colors.booths.emptyHover;
     else if (s.empty) color = settings.colors.booths.empty;
     else color = settings.colors.booths.default;
+
+    if (s.dimmed) {
+        color = s.hover ? settings.colors.booths.emptyHover : settings.colors.booths.empty;
+    }
 
     color = c.dimColor(color, s.dimmed);
     ctx.fillStyle = color;
@@ -73,7 +76,7 @@ function getBoothStateBits(b: Booth) {
     return [hover, dimmed, selected, error, empty, bookmarked]
 }
 
-function drawBookmark(b: Booth, dimmed:boolean) {
+function drawBookmark(b: Booth, dimmed: boolean) {
     const ctx = c.spriteContext;
     let w = c.getUnscaled(12);
     w = Math.min(w, b.rect.w / 3.5)
