@@ -43,7 +43,7 @@ export function drawSingleBooth(b: Booth) {
     const s = getBoothState(b)
     let color: string;
     if (s.error) color = '#f33'
-    else if (s.bookmarked) color = '#f3b501';
+    // else if (s.bookmarked) color = '#f3b501';
     else if (s.selected) color = settings.colors.booths.selected;
     else if (s.hover) color = !s.empty ? settings.colors.booths.defaultHover : settings.colors.booths.emptyHover;
     else if (s.empty) color = settings.colors.booths.empty;
@@ -53,6 +53,7 @@ export function drawSingleBooth(b: Booth) {
     ctx.fillStyle = color;
 
     ctx.fillRect(0, 0, b.rect.w, b.rect.h)
+    if (s.bookmarked) drawBookmark(b);
     ctx.restore();
 }
 
@@ -70,4 +71,28 @@ export function getBoothState(b: Booth) {
 function getBoothStateBits(b: Booth) {
     let { hover, dimmed, selected, error, empty, bookmarked } = getBoothState(b);
     return [hover, dimmed, selected, error, empty, bookmarked]
+}
+
+function drawBookmark(b: Booth) {
+    const ctx = c.spriteContext;
+    let w = c.getUnscaled(10);
+    w = Math.min(w, b.rect.w / 5)
+    const h = w * 1.4;
+    ctx.save();
+    ctx.translate(b.rect.w - 1.5 * w, 0);
+
+    ctx.fillStyle = "#e64839";
+    ctx.strokeStyle = settings.colors.fg;
+    ctx.lineWidth = c.getUnscaled(1);
+    // ctx.fillRect(b.rect.w - 1.5 * w, 0, w, h);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, h);
+    ctx.lineTo(w / 2, h - w / 2);
+    ctx.lineTo(w, h);
+    ctx.lineTo(w, 0);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
 }

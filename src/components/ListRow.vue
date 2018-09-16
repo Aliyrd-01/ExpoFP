@@ -90,7 +90,7 @@ export default {
     position: relative;
     top: -1px;
     height: 1.1rem;
-    width: 0.8rem;
+    width: 0.7rem;
     padding: 0px;
     -webkit-transform: rotate(0deg) skew(0deg);
     transform: rotate(0deg) skew(0deg);

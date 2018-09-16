@@ -31,6 +31,7 @@ class DrawingContext {
     // cummulative scale SVG to canvas
     get svgScale() { return this.deviceScale * this.zoomScale * this.fpScale; }
     getUnscaled(size: number) { return size / this.zoomScale / this.fpScale; }
+    getStrokeWidth() { return this.getUnscaled(this.detailLevel > 8000 ? 2 : (this.detailLevel > 4000 ? 1.5 : 1.25))}
 
     get fpCx() { return Math.floor(this.deviceScale * (this.zoomBx + this.zoomScale * this.fpCxUnzoomed)); }
     get fpCy() { return Math.floor(this.deviceScale * (this.zoomBy + this.zoomScale * this.fpCyUnzoomed)); }

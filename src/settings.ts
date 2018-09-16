@@ -14,7 +14,7 @@ const defaultSettings = {
         booths: {
             default: '#41b6e7',
             defaultHover: '#2ca2d3',
-            selected: '#FB3E59',
+            selected: '#f3b501',
             empty: '#b3b3b3',
             emptyHover: '#9a9a9a',
         }
