@@ -38,7 +38,7 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
-    background: #eee;
+    background: #fff;
 
     > section {
         font-size: 0.8rem;
