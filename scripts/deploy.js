@@ -24,9 +24,9 @@ const live = process.env.EFP_TARGET === "live";
 
     const distId = live ? cloudfront.live : cloudfront.dev;
 
-    const args = ['./dist/**/!(*.map)', '--cwd', './dist', '--bucket', path, '--private', '--profile', 'efp-data', '--distId', distId];
-    if (live){
-        args.push('--invalidate', invalidate);
+    const args = ['./dist/**/!(*.map)', '--cwd', './dist', '--bucket', path, '--private', '--profile', 'efp-data'];
+    if (live) {
+        args.push('--distId', distId, '--invalidate', invalidate);
     }
 
     const deploy = await execa('s3-deploy', args, { stdio: 'inherit' });
