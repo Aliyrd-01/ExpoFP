@@ -1,6 +1,7 @@
 import c from './drawing-context'
 import { getSpriteIntersectingObjects } from './caching';
 import settings from '@/settings';
+import Color from 'color';
 
 const booths = store.getters.boothsArray as Booth[];
 let cachedChecksums: Map<Booth[], string>;
@@ -10,7 +11,7 @@ let cachedBoothsStateKey: string;
 export function getBoothsStateChecksum() {
     // return getSpriteIntersectingObjects(booths).reduce((s, c) => s + getBoothState(c), "");
     const key = `${store.getters.hoveredBooths.join()}|` +
-        `${store.getters.selectedExhibitor ? store.getters.selectedExhibitor.id : ''}|` +
+        //`${store.getters.selectedExhibitor ? store.getters.selectedExhibitor.id : ''}|` +
         `${store.getters.bookmarkedArray.join()}|` +
         `${store.getters.highlightedBoothIds ? store.getters.highlightedBoothIds.join() : 'x'}`;
 
@@ -43,13 +44,17 @@ export function drawSingleBooth(b: Booth) {
     const s = getBoothState(b)
     let color: string;
     if (s.error) color = '#f33'
-    else if (s.selected) color = settings.colors.booths.selected;
-    else if (s.hover) color = !s.empty ? settings.colors.booths.defaultHover : settings.colors.booths.emptyHover;
+    // else if (s.selected) color = settings.colors.booths.selected;
+    // else if (s.hover) color = !s.empty ? settings.colors.booths.defaultHover : settings.colors.booths.emptyHover;
     else if (s.empty) color = settings.colors.booths.empty;
     else color = settings.colors.booths.default;
 
     if (s.dimmed) {
-        color = s.hover ? settings.colors.booths.emptyHover : settings.colors.booths.empty;
+        color = settings.colors.booths.empty; // Color(color).desaturate(0.5).toString();
+    }
+
+    if (s.hover || !s.dimmed && s.otherHaveDim){
+        color = Color(color).darken(0.3).toString();
     }
 
     color = c.dimColor(color, s.dimmed);
@@ -63,17 +68,18 @@ export function drawSingleBooth(b: Booth) {
 export function getBoothState(b: Booth) {
     const hover = store.getters.hoveredBooths.indexOf(b.id) !== -1;
     const highlighted = !!store.getters.highlightedBoothIdsObj[b.id];
+    const otherHaveDim = store.getters.highlightedBoothIds && store.getters.highlightedBoothIds.length === 1; 
     const dimmed = store.getters.highlightedBoothIds && !highlighted;
-    const selected = store.getters.selectedExhibitor && b.exhibitors.find(e => e === store.getters.selectedExhibitor.id);
+    // const selected = store.getters.selectedExhibitor && b.exhibitors.find(e => e === store.getters.selectedExhibitor.id);
     const empty = b.exhibitors.length === 0;
     const error = !!b.error;
     const bookmarked = b.exhibitors.find(e => store.state.bookmarked[e])
-    return { hover, dimmed, selected, error, empty, bookmarked }
+    return { hover, dimmed, otherHaveDim, error, empty, bookmarked }
 }
 
 function getBoothStateBits(b: Booth) {
-    let { hover, dimmed, selected, error, empty, bookmarked } = getBoothState(b);
-    return [hover, dimmed, selected, error, empty, bookmarked]
+    let { hover, dimmed, otherHaveDim, error, empty, bookmarked } = getBoothState(b);
+    return [hover, dimmed, otherHaveDim, error, empty, bookmarked]
 }
 
 function drawBookmark(b: Booth, dimmed: boolean) {

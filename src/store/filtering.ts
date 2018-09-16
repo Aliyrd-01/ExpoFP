@@ -9,7 +9,7 @@ export default {
                 const b = getters.boothNameMap.get(text);
                 return b.exhibitors.map(id => rootState.exhibitors[id]);
             }
-            if (text === "my bookmarks"){
+            if (text === "my bookmarks") {
                 return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
             }
             if (getters.exhibitorsByCategoryNameMap.has(text)) {
@@ -26,17 +26,17 @@ export default {
             return arr;
         },
         highlightedBoothIds(state, getters, rootState) {
-            // if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
-            // if (getters.selectedBooth) return getters.selectedBooth.id;
+            if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
+            if (getters.selectedBooth) return [getters.selectedBooth.id];
             if (rootState.searchText.trim()) return getters.filteredBoothsIds;
             return null;
         },
         highlightedBoothIdsObj(state, getters, rootState) {
-            return getters.highlightedBoothIds ? 
+            return getters.highlightedBoothIds ?
                 getters.highlightedBoothIds.reduce((c: number, id) => (c[id] = true) && c, {} as { [id: number]: boolean })
                 : {};
         },
-        hoveredBooths(state, getters, rootState){
+        hoveredBooths(state, getters, rootState) {
             if (rootState.hoveredBooth) return [rootState.hoveredBooth];
             if (rootState.hoveredExhibitor) return rootState.exhibitors[rootState.hoveredExhibitor].booths;
             return [];

@@ -13,10 +13,10 @@ const defaultSettings = {
         dim: 0.5,
         booths: {
             default: '#41b6e7',
-            defaultHover: '#2ca2d3',
-            selected: '#f3b501',
+            // defaultHover: '#2ca2d3',
+            // selected: '#f3b501',
             empty: '#b3b3b3',
-            emptyHover: '#9a9a9a',
+            // emptyHover: '#9a9a9a',
         }
     }
 }
