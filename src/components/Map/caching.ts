@@ -5,7 +5,7 @@ interface Intersecting { intersects(r: Rect): boolean; }
 interface WithRect { rect: Rect; }
 type IntersetingOrRectContainer = Intersecting | WithRect;
 const cache = new Map<IntersetingOrRectContainer[], Map<string, IntersetingOrRectContainer[]>>();
-export function getSpriteIntersectingObjects<T extends IntersetingOrRectContainer>(primitives: T[]): T[] {
+export function getCurrentSpriteIntersectingObjects<T extends IntersetingOrRectContainer>(primitives: T[]): T[] {
     let subCache = cache.get(primitives);
     if (!subCache) {
         subCache = new Map<string, T[]>();

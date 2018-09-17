@@ -11,7 +11,7 @@ const parts = c.deviceScale >= 1.5 ? 3 : 2;
 const dirtySprites:string[] = [];
 
 export function drawSprites() {
-    console.log('drawSprites', performance.now())
+    console.log('drawSprites');
     const fpXCStep = Math.round(c.fpCWidth / parts);
     const fpYCStep = Math.round(c.fpCHeight / parts);
     const exactXRatio = c.svgWidth / c.fpCWidth;

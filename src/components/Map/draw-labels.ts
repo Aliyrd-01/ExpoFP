@@ -3,7 +3,7 @@ import c from './drawing-context'
 // import { isShallowEqual } from '@/utils';
 import { getFont } from './utils';
 //import settings from '@/settings';
-import { getSpriteIntersectingObjects } from './caching';
+import { getCurrentSpriteIntersectingObjects } from './caching';
 import { getBoothState } from '@/components/Map/draw-booths';
 import settings from '@/settings';
 
@@ -17,7 +17,7 @@ export default function drawLabels() {
     if (c.detailLevel < 100) return;
 
     // console.log('drawing labels: ', visibleBooths.length)
-    for (var b of getSpriteIntersectingObjects(booths)) {
+    for (var b of getCurrentSpriteIntersectingObjects(booths)) {
         drawSingleLabel(b)
     }
 }
@@ -93,7 +93,6 @@ export function drawSingleLabel(b: Booth) {
                 }
             }
             ctx.fillText(trimmedText, 0, occupiedHeight - 2 * fontSize);
-
         }
     }
     finally {

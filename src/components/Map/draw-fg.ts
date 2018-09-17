@@ -1,6 +1,6 @@
 import c from './drawing-context'
 import svg from '@/tools/svg'
-import { getSpriteIntersectingObjects } from './caching';
+import { getCurrentSpriteIntersectingObjects } from './caching';
 import settings from '@/settings';
 
 //const fgRects = (d3.select(svg).select('#FG').selectAll('rect').nodes() as SVGRectElement[]).map(r => Rect.fromSvgRectElement(r));
@@ -21,7 +21,7 @@ export default function drawFg() {//visibleOnly:boolean = false
 
     ctx.strokeStyle = c.dimColor(settings.colors.fg);
     ctx.lineWidth = c.getStrokeWidth();
-    const wallLinesFiltered = getSpriteIntersectingObjects(wallLines);// wallLines.filter(b => b.intersects(c.svgViewBox)) : wallLines;
+    const wallLinesFiltered = getCurrentSpriteIntersectingObjects(wallLines);// wallLines.filter(b => b.intersects(c.svgViewBox)) : wallLines;
     for (const line of wallLinesFiltered) {
         ctx.beginPath();
         ctx.moveTo(line.x1, line.y1);

@@ -1,7 +1,7 @@
 import c from './drawing-context'
 import svg, { svgHeight, svgWidth } from '@/tools/svg'
 import iconsData, { IconData } from '@/tools/icons'
-import { getSpriteIntersectingObjects } from './caching';
+import { getCurrentSpriteIntersectingObjects } from './caching';
 import settings from '@/settings';
 
 const icons = (d3.select(svg).select('#Icons').selectAll('rect').nodes() as SVGRectElement[]).map(r => ({
@@ -28,7 +28,7 @@ export default function drawIcons() {
             rect
         };
     })
-    const filtered = getSpriteIntersectingObjects(rects);
+    const filtered = getCurrentSpriteIntersectingObjects(rects);
     // ctx["imageSmoothingQuality"] = "high";
     for (const col of filtered) {
         const r = col.rect;

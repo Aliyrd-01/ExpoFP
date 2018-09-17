@@ -1,5 +1,5 @@
 import c from './drawing-context'
-import { getSpriteIntersectingObjects } from './caching';
+import { getCurrentSpriteIntersectingObjects } from './caching';
 import settings from '@/settings';
 import Color from 'color';
 
@@ -19,9 +19,9 @@ export function getBoothsStateChecksum() {
         cachedChecksums = new Map<Booth[], string>();
         cachedBoothsStateKey = key;
     }
-    const bb = getSpriteIntersectingObjects(booths);
+    const bb = getCurrentSpriteIntersectingObjects(booths);
     if (!cachedChecksums.has(bb)) {
-        const c1 = getSpriteIntersectingObjects(bb).reduce((s, c) => s + getBoothStateBits(c).join(), "");
+        const c1 = getCurrentSpriteIntersectingObjects(bb).reduce((s, c) => s + getBoothStateBits(c).join(), "");
         cachedChecksums.set(bb, c1);
     }
 
@@ -31,7 +31,7 @@ export function getBoothsStateChecksum() {
 }
 
 export function drawBooths() {
-    for (var b of getSpriteIntersectingObjects(booths)) {
+    for (var b of getCurrentSpriteIntersectingObjects(booths)) {
         drawSingleBooth(b);
     }
 }
@@ -50,11 +50,11 @@ export function drawSingleBooth(b: Booth) {
     else color = settings.colors.booths.default;
 
     if (s.dimmed) {
-        color = settings.colors.booths.empty; // Color(color).desaturate(0.5).toString();
+     //   color = settings.colors.booths.empty; // Color(color).desaturate(0.5).toString();
     }
 
     if (s.hover || !s.dimmed && s.otherHaveDim){
-        color = Color(color).darken(0.3).toString();
+        color = Color(color).darken(0.2).toString();
     }
 
     color = c.dimColor(color, s.dimmed);
