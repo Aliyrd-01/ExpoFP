@@ -87,7 +87,11 @@ const store1 = new Vuex.Store({
             commit('setDetails', null);
             commit('setSearchText', text);
         },
-        clickBooth({ state, dispatch }, id) {
+        clickBooth({ state, dispatch, commit }, id) {
+            if (!id){
+                commit('setDetails', null);
+                return;
+            }
             const booth = state.booths[id];
             if (booth.exhibitors.length === 1) {
                 dispatch('selectExhibitor', booth.exhibitors[0]);

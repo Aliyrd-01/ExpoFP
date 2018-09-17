@@ -54,7 +54,6 @@ export function drawSingleLabel(b: Booth) {
             ctx.arc(0, 0, 4, 0, 2 * Math.PI);
             ctx.fill();
             return;
-
         }
 
         const paddingY = c.getUnscaled(8);
