@@ -29,7 +29,7 @@ namespace local {
         }
 
         static fromCxcywh(cx: number, cy: number, w: number, h: number) {
-            return this.fromX1y1x2y2(cx - w/2, cy - h/2, cx + w/2, cy + h/2);
+            return this.fromX1y1x2y2(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
         }
 
         static fromXywhRect(rect: { x: number, y: number, w: number, h: number }) {
@@ -62,6 +62,11 @@ namespace local {
             }
             else
                 return Rect.fromX1y1x2y2(0, 0, 0, 0);
+        }
+
+        withPadding(x: number, y: number = x) {
+            if (this.w < x * 2 || this.h < y * 2) return null;
+            return Rect.fromCxcywh(this.cx, this.cy, this.w - x * 2, this.h - y * 2);
         }
 
         getArea() {

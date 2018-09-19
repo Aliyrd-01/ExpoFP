@@ -31,7 +31,7 @@ class DrawingContext {
     // cummulative scale SVG to canvas
     get svgScale() { return this.deviceScale * this.zoomScale * this.fpScale; }
     getUnscaled(size: number) { return size / this.zoomScale / this.fpScale; }
-    getStrokeWidth() { return this.getUnscaled(this.detailLevel > 8000 ? 2 : (this.detailLevel > 4000 ? 1.5 : 1.25))}
+    getStrokeWidth() { return this.getUnscaled(this.detailLevel > 8000 ? 2 : (this.detailLevel > 4000 ? 1.5 : 1.25)) }
 
     get fpCx() { return Math.floor(this.deviceScale * (this.zoomBx + this.zoomScale * this.fpCxUnzoomed)); }
     get fpCy() { return Math.floor(this.deviceScale * (this.zoomBy + this.zoomScale * this.fpCyUnzoomed)); }
@@ -62,6 +62,17 @@ class DrawingContext {
     //
     spriteContext: CanvasRenderingContext2D;
     spriteSRect: Rect;
+    spriteScaleX: number;
+    spriteScaleY: number;
+
+    sXToSprite(x: number): number { return this.spriteScaleX * (x - this.spriteSRect.x1); }
+    sYToSprite(y: number): number { return this.spriteScaleY * (y - this.spriteSRect.y1); }
+    sWToSprite(w: number): number { return this.spriteScaleX * w; }
+    sHToSprite(h: number): number { return this.spriteScaleY * h; }
+    sRectToSprite(rect: Rect): Rect {
+        return Rect.fromXywh(this.sXToSprite(rect.x1), this.sYToSprite(rect.y1), this.sWToSprite(rect.w), this.sHToSprite(rect.h));
+    }
+
     // sprite
 
     //

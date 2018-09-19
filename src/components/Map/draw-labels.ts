@@ -25,18 +25,33 @@ export default function drawLabels() {
 
 export function drawSingleLabel(b: Booth) {
     const ctx = c.spriteContext
+    // ctx.save();
+    // ctx.translate(c.sXToSprite(b.rect.x1), c.sYToSprite(b.rect.y1));
+    // ctx.font = getFont(12, 400);;
+    // ctx.fillStyle = "red";
+    // ctx.textBaseline = 'left';
+    // ctx.textAlign = 'center';
+    // ctx.fillText('Hunan Health-Guard Bio-Tech Inc.', 0, 0);
+
+    // ctx.restore();
+
+    // return;
     const s = getBoothState(b);
     const color = c.dimColor('#fff', c.dimmed && s.dimmed);// && !s.selected
     ctx.save();
     try {
         if (c.detailLevel < 5000) {
-            const padding = c.getUnscaled(5);
+            const padding = 5 * c.deviceScale;// c.getUnscaled(5);
+            const rect = c.sRectToSprite(b.rect).withPadding(padding);
+            if (!rect) return;
+
+
             const w = b.rect.w - 2 * padding;
             const h = b.rect.h - 2 * padding;
             if (w > 0 && h > 0) {
-                const rect = Rect.fromXywh(b.rect.x1 + padding, b.rect.y1 + padding, w, h);
+                // const rect = Rect.fromXywh(c.sXToSprite(b.rect.x1 + padding, b.rect.y1 + padding, w, h);
                 const weight = 500;
-                ctx.translate(b.rect.cx, b.rect.cy);
+                ctx.translate(rect.cx, rect.cy);
                 const fontSize = getMaxFontSize(rect, b.name, weight);
                 if (fontSize) {
                     const font = getFont(fontSize, weight);
@@ -51,11 +66,12 @@ export function drawSingleLabel(b: Booth) {
             }
             ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.arc(0, 0, 4, 0, 2 * Math.PI);
+            ctx.arc(0, 0, 2 * c.deviceScale, 0, 2 * Math.PI);
             ctx.fill();
             return;
         }
 
+        return;
         const paddingY = c.getUnscaled(8);
         const paddingX = c.getUnscaled(5);
         const w = b.rect.w - 2 * paddingX;
@@ -110,7 +126,7 @@ function doesTextFitWithCurrentScale(rect: Rect, text: string, fontSize: number,
 function getMaxFontSize(rect: Rect, text: string, fontWeight: number) {
     let fontSize = maxFontSize;
     while (fontSize > minFontSize) {
-        const scaledFontSize = c.getUnscaled(fontSize);
+        const scaledFontSize = fontSize * c.deviceScale;// c.getUnscaled(fontSize);
         const fits = doesTextFitWithCurrentScale(rect, text, scaledFontSize, fontWeight);
         if (fits) return scaledFontSize;
         fontSize -= 1;

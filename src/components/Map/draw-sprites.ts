@@ -5,10 +5,11 @@ import drawBg from './draw-bg';
 import drawLabels from './draw-labels';
 import drawColumns from './draw-columns';
 import drawIcons from './draw-icons';
+import { getFont } from '@/components/Map/utils';
 
 // TODO: dynamic parts
 const parts = c.deviceScale >= 1.5 ? 3 : 2;
-const dirtySprites:string[] = [];
+const dirtySprites: string[] = [];
 
 export function drawSprites() {
     console.log('drawSprites');
@@ -33,7 +34,7 @@ export function drawSprites() {
             if (fpFRectVisible.intersects(fRect)) {
                 const id = `${xPart}x${yPart}`;
                 const dirty = drawSprite(id, fRect, sRect);
-                if (dirty){
+                if (dirty) {
                     dirtySprites.push(id);
                 }
             }
@@ -43,8 +44,8 @@ export function drawSprites() {
 
 const wait = 100;
 
-window.setInterval(()=>{
-    if (dirtySprites.length){
+window.setInterval(() => {
+    if (dirtySprites.length) {
         c.requireRedraw();
     }
 }, 100);
@@ -52,31 +53,47 @@ window.setInterval(()=>{
 
 function createSpriteCanvas(fRect: Rect, sRect: Rect) {
     c.spriteSRect = sRect;
+    c.spriteScaleX = fRect.w / sRect.w;
+    c.spriteScaleY = fRect.h / sRect.h;
 
     const canvas = document.createElement('canvas');
-    if (fRect.w * fRect.h > 16777216){
+    if (fRect.w * fRect.h > 16777216) {
         return canvas;
     }
     console.log('Creating canvas2:', fRect.w, fRect.h)
     canvas.width = fRect.w;
     canvas.height = fRect.h;
     c.spriteContext = canvas.getContext('2d');
-    c.spriteContext.scale(fRect.w / sRect.w, fRect.h / sRect.h);
+    // c.spriteContext.font = getFont(12, 400);
+    // c.spriteContext.fillStyle = "red";
+    // c.spriteContext.textBaseline = 'hanging';
+    // c.spriteContext.textAlign = 'left';
+    // c.spriteContext.fillText('Hunan Health-Guard Bio-Tech Inc.', 11.2, 12.3)
+
+    c.spriteContext.save();
+    
+    c.spriteContext.scale(c.spriteScaleX, c.spriteScaleY);
     c.spriteContext.translate(-sRect.x1, -sRect.y1);
 
     drawBg();
     drawBooths();
     drawColumns();
+
+    c.spriteContext.restore();
+    
     drawLabels();
+
+    c.spriteContext.scale(c.spriteScaleX, c.spriteScaleY);
+    c.spriteContext.translate(-sRect.x1, -sRect.y1);
+
     drawFg();
     drawIcons();
-    
 
     return canvas;
 }
 
 
-function drawSprite(id: string, fRect: Rect, sRect: Rect):boolean {
+function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
     const sprite = getSpriteToDraw(id, fRect, sRect);
     const ctx = c.context;
 
@@ -106,7 +123,7 @@ const lastCanvasById = new Map<string, HTMLCanvasElement>();
 const lastRequestedPositionKeyById = new Map<string, { positionKey: string, time: number }>();
 // const isSpriteDirty = new Map<string, boolean>();
 
-function getSpriteToDraw(id: string, fRect: Rect, sRect: Rect):{canvas:HTMLCanvasElement, dirty: boolean} {
+function getSpriteToDraw(id: string, fRect: Rect, sRect: Rect): { canvas: HTMLCanvasElement, dirty: boolean } {
     c.spriteSRect = sRect;
     const state = getBoothsStateChecksum();
     const positionKey = `${fRect.toString()}|${sRect.toString()}`
@@ -141,7 +158,7 @@ function getSpriteToDraw(id: string, fRect: Rect, sRect: Rect):{canvas:HTMLCanva
         lastCanvasById.set(id, canvas);
     }
 
-    return {canvas, dirty};
+    return { canvas, dirty };
 
     function createCanvasNow() {
         const canvas = createSpriteCanvas(fRect, sRect);
