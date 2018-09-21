@@ -157,5 +157,6 @@ input.fixed {
     color: #333;
     font-weight: 500;
     margin-left: 1rem;
+    font-size: 1.1em;
 }
 </style>

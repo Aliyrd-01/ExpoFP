@@ -1,6 +1,6 @@
 <template>
     <div class="overlay-content">
-        <OverlayBar :scrolled='scrolled'/>
+        <OverlayBar :scrolled='scrolled' />
         <div class='overlay-scrollable' ref='scrollable'>
             <List v-if="detailsType === null" />
             <Booth v-if="detailsType === 'booth'" />
@@ -33,14 +33,17 @@ export default {
         const ps = new PerfectScrollbar(sel);
         window.addEventListener("resize", () => ps.update());
         sel.addEventListener("ps-scroll-y", e => {
-            
             this.scrolled = sel.scrollTop > 0;
-            console.log('scrolled', sel.scrollTop, this.scrolled)
+            console.log("scrolled", sel.scrollTop, this.scrolled);
         });
-        
 
         const observer = new MutationObserver(() => ps.update());
         observer.observe(sel, { childList: true, subtree: true });
+    },
+    watch: {
+        detailsType() {
+            this.$refs.scrollable.scrollTop = 0;
+        }
     },
     computed: {
         detailsType() {

@@ -69,6 +69,11 @@ export default {
             return this.$store.state.bookmarked[this.exhibitor.id];
         }
     },
+    watch:{
+        exhibitor(){
+            this.$el.parentElement.scrollTop = 0;
+        }
+    },
     methods: {
         handleCategoryClick(name) {
             this.$store.dispatch("selectText", name);
