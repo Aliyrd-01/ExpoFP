@@ -1,5 +1,5 @@
 <template>
-    <div class="demo" :class='{hidden}' v-if="demo">
+    <div class="demo" :class='{hidden, bottom}' v-if="demo">
         <section>
             <a href='' @click.prevent='dismiss()' class='dismiss'>Dismiss</a>
             This is a demo of
@@ -16,6 +16,9 @@ export default {
     computed: {
         demo() {
             return EFP_EXPO === "demo";
+        },
+        bottom() {
+            return this.$store.getters.overlayPosition === "left";
         }
     },
     mounted() {
@@ -38,7 +41,7 @@ export default {
     width: 100%;
     display: flex;
     justify-content: center;
-    background: #000;
+    background: #ab40a0;
     top: 0;
     color: #fff;
 
@@ -72,6 +75,13 @@ export default {
     &.hidden {
         transform: translate(0, -100%);
         opacity: 0;
+    }
+    &.bottom {
+        top: unset;
+        bottom: 0;
+        &.hidden {
+            transform: translate(0, 100%);
+        }
     }
 }
 </style>
