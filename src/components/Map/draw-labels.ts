@@ -45,7 +45,6 @@ export function drawSingleLabel(b: Booth) {
             const rect = c.sRectToSprite(b.rect).withPadding(padding);
             if (!rect) return;
 
-
             const w = b.rect.w - 2 * padding;
             const h = b.rect.h - 2 * padding;
             if (w > 0 && h > 0) {
@@ -71,17 +70,15 @@ export function drawSingleLabel(b: Booth) {
             return;
         }
 
-        return;
-        const paddingY = c.getUnscaled(8);
-        const paddingX = c.getUnscaled(5);
-        const w = b.rect.w - 2 * paddingX;
-        const h = b.rect.h - 2 * paddingY;
-        if (w <= 0 || h <= 0) return;
-        const rect = Rect.fromXywh(b.rect.x1 + paddingX, b.rect.y1 + paddingY, w, h);
+        const paddingY = 8 * c.deviceScale;
+        const paddingX = 5 * c.deviceScale;
+        const rect = c.sRectToSprite(b.rect).withPadding(paddingX, paddingY);
+        if (!rect) return;
+
         const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
         lines.unshift(b.name);
-        const detailsFontSize = c.detailLevel > 22000 ? 14 : 12;
-        const fontSize = c.getUnscaled(detailsFontSize);
+        const fontSize = (c.detailLevel > 22000 ? 14 : 12) * c.deviceScale;
+        // const fontSize = c.getUnscaled(detailsFontSize);
         let occupiedHeight = fontSize;
         ctx.font = getFont(fontSize, 400);
         ctx.fillStyle = color;

@@ -22,7 +22,7 @@ export default {
         }
     },
     mounted() {
-        if (this.demo) {
+        if (this.demo && !sessionStorage.getItem('demo-dismissed')) {
             window.setTimeout(() => {
                 this.hidden = false;
             }, 2000);
@@ -31,6 +31,7 @@ export default {
     methods: {
         dismiss() {
             this.hidden = true;
+            sessionStorage.setItem('demo-dismissed', '1');
         }
     }
 };
