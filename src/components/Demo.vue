@@ -4,7 +4,7 @@
             <a href='' @click.prevent='dismiss()' class='dismiss'>Dismiss</a>
             This is a demo of
             <a href='https://expofp.com/'>ExpoFP</a>
-            floor plan. This is not an official in-cosmetics expo plan.
+            floor plan. This is not the official in-cosmetics expo plan.
 
         </section>
     </div>

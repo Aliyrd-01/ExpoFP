@@ -1,9 +1,9 @@
 <template>
-    <div class="bar">
-        <OverlayBarBack :mode='showBack ? "back": "menu"' :enable-animation="true" @click="handleLeftIconClick" />
-        <input type="search" ref="input" v-if="!detailsTitle" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
-        <input type="search" ref="inputReplica" v-if="!detailsTitle && hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
-        <div class='title' v-if="detailsTitle">{{detailsTitle}}</div>
+    <div class="bar" :class='{"show-title": showTitle}'>
+        <OverlayBarBack :mode='showBack ? "back": "menu"' :enable-animation="true" @click="handleLeftIconClick" v-if="!showTitle" />
+        <input type="search" ref="input" v-if="!showTitle" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
+        <input type="search" ref="inputReplica" v-if="!showTitle && hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
+        <div class='title' v-if="showTitle">{{detailsTitle}}</div>
         <a class="far fa-times" href='/' v-if="showClose" @click.prevent="handleCloseClick"></a>
     </div>
 
@@ -27,8 +27,11 @@ export default {
         ...mapGetters(["selectedBooth", "selectedExhibitor", "overlayPosition"]),
         detailsTitle() {
             if (this.selectedExhibitor) return this.selectedExhibitor.name;
-            if (this.selectedBooth) return this.selectedBooth.name;
+            if (this.selectedBooth) return "Booth " + this.selectedBooth.name;
             return null;
+        },
+        showTitle(){
+            return !!this.detailsTitle;
         },
         showClose() {
             return !!(this.searchText || this.detailsTitle);
@@ -107,6 +110,9 @@ export default {
     --size: 3.5rem;
     background: #fff;
 }
+.bar.show-title{
+    border-bottom: none;
+}
 
 .bar >>> .far {
     height: var(--size);
@@ -139,7 +145,8 @@ input.fixed {
 .title {
     flex-grow: 1;
     line-height: 1.5rem;
-    color: #4688c5;
+    color: #333;
     font-weight: 500;
+    margin-left: 1rem;
 }
 </style>

@@ -34,8 +34,8 @@ export default Vue.extend({
     --color: #34a1e6;
     --color-light: #44aef1;
     --color-dark: #337caa;
-    --link-color: #007aff;
-    --link-color-hover: #ff0028;
+    --link-color: #13a1de;
+    --link-color-hover: #13a1de;
 }
 * {
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
@@ -59,12 +59,12 @@ body {
     // font-size: 15px;
 }
 a {
-    color: #13a1de;
+    color: var(--link-color);
     text-decoration: none;
 }
 a:hover,
 a:visited {
-    color: #13a1de;
+    color: var(--link-color-hover);
     text-decoration: underline;
 }
 

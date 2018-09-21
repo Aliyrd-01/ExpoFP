@@ -28,6 +28,9 @@ export default {
     mounted() {
         const ps = new PerfectScrollbar(this.$refs.scrollable);
         window.addEventListener("resize", () => ps.update());
+
+        const observer = new MutationObserver(() => ps.update());
+        observer.observe(this.$refs.scrollable, { childList: true, subtree: true });
     },
     computed: {
         detailsType() {
