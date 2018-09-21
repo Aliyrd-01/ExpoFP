@@ -1,5 +1,5 @@
 <template>
-    <div class="bar" :class='{"show-title": showTitle}'>
+    <div class="bar" :class='{scrolled}'>
         <OverlayBarBack :mode='showBack ? "back": "menu"' :enable-animation="true" @click="handleLeftIconClick" v-if="!showTitle" />
         <input type="search" ref="input" v-if="!showTitle" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
         <input type="search" ref="inputReplica" v-if="!showTitle && hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
@@ -15,6 +15,7 @@ import { mapState, mapGetters } from "vuex";
 
 export default {
     name: "OverlayBar",
+    props: ["scrolled"],
     components: {
         OverlayBarBack
     },
@@ -30,7 +31,7 @@ export default {
             if (this.selectedBooth) return "Booth " + this.selectedBooth.name;
             return null;
         },
-        showTitle(){
+        showTitle() {
             return !!this.detailsTitle;
         },
         showClose() {
@@ -93,7 +94,7 @@ export default {
         handleFocus() {
             this.$store.commit("setSearchFocused", true);
         },
-        handleReplicaFocus(){
+        handleReplicaFocus() {
             this.$refs.input.focus();
         }
     }
@@ -104,15 +105,22 @@ export default {
 
 <style scoped>
 .bar {
-    border-bottom: solid 1px #eee;
+   
     display: flex;
     align-items: center;
     --size: 3.5rem;
-    background: #fff;
+    background-color: #fff;
+    z-index: 1;
+    transition: box-shadow 300ms;
+    /* transition: background-color 500ms; */
 }
-.bar.show-title{
+.bar.scrolled{
+     border-bottom: solid 1px #ddd;
+     box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+/* .bar.show-title {
     border-bottom: none;
-}
+} */
 
 .bar >>> .far {
     height: var(--size);
@@ -131,9 +139,10 @@ input {
     height: var(--size);
     -webkit-appearance: none;
     flex-grow: 1;
-    
 }
-input::placeholder { color: #bbb; }
+input::placeholder {
+    color: #bbb;
+}
 
 input.fixed {
     opacity: 0;

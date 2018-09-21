@@ -50,7 +50,7 @@ export default {
 .row {
     display: flex;
     align-items: center;
-    border-bottom: solid 1px #ebebeb;
+    border-top: solid 1px #ebebeb;
     min-height: 3.5rem;
     text-decoration: none;
     color: #333;

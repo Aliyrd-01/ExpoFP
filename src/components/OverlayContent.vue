@@ -1,6 +1,6 @@
 <template>
     <div class="overlay-content">
-        <OverlayBar/>
+        <OverlayBar :scrolled='scrolled'/>
         <div class='overlay-scrollable' ref='scrollable'>
             <List v-if="detailsType === null" />
             <Booth v-if="detailsType === 'booth'" />
@@ -19,6 +19,9 @@ import PerfectScrollbar from "perfect-scrollbar";
 
 export default {
     // name: "OverlayContent",
+    data: () => ({
+        scrolled: false
+    }),
     components: {
         OverlayBar,
         List,
@@ -26,11 +29,18 @@ export default {
         Exhibitor
     },
     mounted() {
-        const ps = new PerfectScrollbar(this.$refs.scrollable);
+        const sel = this.$refs.scrollable;
+        const ps = new PerfectScrollbar(sel);
         window.addEventListener("resize", () => ps.update());
+        sel.addEventListener("ps-scroll-y", e => {
+            
+            this.scrolled = sel.scrollTop > 0;
+            console.log('scrolled', sel.scrollTop, this.scrolled)
+        });
+        
 
         const observer = new MutationObserver(() => ps.update());
-        observer.observe(this.$refs.scrollable, { childList: true, subtree: true });
+        observer.observe(sel, { childList: true, subtree: true });
     },
     computed: {
         detailsType() {
