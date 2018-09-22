@@ -22,7 +22,7 @@ export default {
         }
     },
     mounted() {
-        if (this.demo && !sessionStorage.getItem('demo-dismissed')) {
+        if (this.demo && !sessionStorage.getItem("demo-dismissed")) {
             window.setTimeout(() => {
                 this.hidden = false;
             }, 2000);
@@ -31,7 +31,7 @@ export default {
     methods: {
         dismiss() {
             this.hidden = true;
-            sessionStorage.setItem('demo-dismissed', '1');
+            sessionStorage.setItem("demo-dismissed", "1");
         }
     }
 };
@@ -43,6 +43,7 @@ export default {
     display: flex;
     justify-content: center;
     background: #ab40a0;
+    background: linear-gradient(90deg, #e5175c, #5c17e5);
     top: 0;
     color: #fff;
 

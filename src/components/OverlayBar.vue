@@ -115,7 +115,7 @@ export default {
     /* transition: background-color 500ms; */
 }
 .bar.scrolled{
-     border-bottom: solid 1px #ddd;
+     /* border-bottom: solid 1px #ddd; */
      box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 /* .bar.show-title {

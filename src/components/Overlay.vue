@@ -206,7 +206,7 @@ function getHeight(el, position, size) {
 <style scoped>
 .overlay {
     position: fixed;
-    background: #fafafa; /*#f9f4f0*/
+    background: #fff; /*#f9f4f0*/
     /* border-radius: 0.7rem; */
     overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
