@@ -25,7 +25,7 @@ export default {
     }),
     computed: {
         ...mapState(["searchText", "searchFocused", "overlaySize"]),
-        ...mapGetters(["selectedBooth", "selectedExhibitor", "overlayPosition"]),
+        ...mapGetters(["overlayPosition"]),
         // detailsTitle() {
         //     if (this.selectedExhibitor) return this.selectedExhibitor.name;
         //     if (this.selectedBooth) return "Booth " + this.selectedBooth.name;
@@ -100,8 +100,6 @@ export default {
     }
 };
 </script>
-
-<style
 
 <style scoped>
 .bar {
