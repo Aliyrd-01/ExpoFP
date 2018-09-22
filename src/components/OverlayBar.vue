@@ -3,7 +3,7 @@
         <OverlayBarBack :mode='showBack ? "back": "menu"' :enable-animation="true" @click="handleLeftIconClick" v-if="!showTitle" />
         <input type="search" ref="input" v-if="!showTitle" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
         <input type="search" ref="inputReplica" v-if="!showTitle && hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
-        <div class='title' v-if="showTitle"><slot/></div>
+        <div class='slot' v-if="showTitle"><slot/></div>
         <a class="far fa-times" href='/' v-if="showClose" @click.prevent="handleCloseClick"></a>
     </div>
 
@@ -66,7 +66,7 @@ export default {
             this.$store.commit("setSearchText", e.target.value);
         },
         handleLeftIconClick() {
-            if (this.detailsTitle) {
+            if (this.showTitle) {
                 this.$store.dispatch("selectNone");
             } else if (this.showBack) {
                 this.$store.dispatch("selectText", "");
@@ -80,7 +80,7 @@ export default {
             }
         },
         handleCloseClick() {
-            if (this.detailsTitle) {
+            if (this.showTitle) {
                 // go back
                 this.$store.dispatch("selectNone");
             } else {
@@ -116,7 +116,7 @@ export default {
      /* border-bottom: solid 1px #ddd; */
      box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
-/* .bar.show-title {
+/* .bar.show-slot {
     border-bottom: none;
 } */
 
@@ -149,12 +149,12 @@ input.fixed {
     top: -100px;
 }
 
-.title {
+.slot {
     flex-grow: 1;
-    line-height: 1.5rem;
+    /* line-height: 1.5rem;
     color: #333;
     font-weight: 500;
     margin-left: 1rem;
-    font-size: 1.1em;
+    font-size: 1.1em; */
 }
 </style>

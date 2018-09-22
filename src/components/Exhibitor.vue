@@ -1,7 +1,7 @@
 <template>
     <OverlayScrollable v-if="show">
         <template slot="bar">
-            {{exhibitor.name}}
+            <div class="bar">{{exhibitor.name}}</div>
         </template>
         <div class="details" :class={bookmarked}>
             <a :class="{icon:1, fal: !bookmarked, fas: bookmarked, 'fa-bookmark':1}" href='' @click.prevent="bookmark">
@@ -42,13 +42,27 @@
                 </div>
             </div>
             <div class="social">
-                <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook"><i class='fab fa-facebook'></i></a>
-                <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram"><i class='fab fa-instagram'></i></a>
-                <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin"><i class='fab fa-linkedin'></i></a>
-                <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter"><i class='fab fa-twitter'></i></a>
-                <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus"><i class='fab fa-google-plus'></i></a>
-                <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing"><i class='fab fa-xing'></i></a>
-                <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube"><i class='fab fa-youtube'></i></a>
+                <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook">
+                    <i class='fab fa-facebook'></i>
+                </a>
+                <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram">
+                    <i class='fab fa-instagram'></i>
+                </a>
+                <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin">
+                    <i class='fab fa-linkedin'></i>
+                </a>
+                <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter">
+                    <i class='fab fa-twitter'></i>
+                </a>
+                <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus">
+                    <i class='fab fa-google-plus'></i>
+                </a>
+                <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing">
+                    <i class='fab fa-xing'></i>
+                </a>
+                <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube">
+                    <i class='fab fa-youtube'></i>
+                </a>
             </div>
         </div>
     </OverlayScrollable>
@@ -61,7 +75,9 @@ import OverlayScrollable from "./OverlayScrollable.vue";
 export default {
     components: { OverlayScrollable },
     computed: {
-        show(){ return this.$store.state.details && this.$store.state.details.type === "exhibitor"; },
+        show() {
+            return this.$store.state.details && this.$store.state.details.type === "exhibitor";
+        },
         exhibitor() {
             return this.$store.getters.selectedExhibitor;
         },
@@ -78,8 +94,8 @@ export default {
             return this.$store.state.bookmarked[this.exhibitor.id];
         }
     },
-    watch:{
-        exhibitor(){
+    watch: {
+        exhibitor() {
             this.$el.parentElement.scrollTop = 0;
         }
     },
@@ -111,7 +127,6 @@ a.icon {
 }
 .booth {
     margin: 0 1rem 0.2rem;
-    font-weight: 500;
     color: #777;
 }
 .categories {
@@ -167,7 +182,7 @@ a.icon {
 .social {
     border-top: solid 1px #eee;
     margin: 1rem;
-    
+
     display: flex;
     padding-top: 1rem;
     > a {
@@ -175,9 +190,16 @@ a.icon {
         text-decoration: none;
         color: #777;
         margin: 0 1rem 0.5rem 0;
-        &:hover{
+        &:hover {
             color: var(--link-color-hover);
         }
     }
+}
+.bar {
+    line-height: 1.5rem;
+    color: #333;
+    font-weight: 500;
+    margin-left: 1rem;
+    font-size: 1.1em;
 }
 </style>

@@ -1,10 +1,9 @@
 <template>
-  <OverlayScrollable v-if="show">
-       <template slot="bar">
-            Booth {{booth.name}}
+    <OverlayScrollable v-if="show">
+        <template slot="bar">
+            <div class="bar">Booth {{booth.name}}</div>
         </template>
         <div class="booth">
-            <!-- <div class="title">Booth {{booth.name}}</div> -->
             <div class="info" v-if='booth.size'>Size: {{booth.size}}</div>
             <div class="info" v-if='booth.price'>Price: {{booth.price}}</div>
             <div class="buy">
@@ -24,11 +23,13 @@ export default {
         booth() {
             return this.$store.getters.selectedBooth;
         },
-          show(){ return this.$store.state.details && this.$store.state.details.type === "booth"; },
+        show() {
+            return this.$store.state.details && this.$store.state.details.type === "booth";
+        }
     },
     methods: {
-        buy(){
-            alert('This functionality is disabled in the demo version');
+        buy() {
+            alert("This functionality is disabled in the demo version");
         }
     }
 };
@@ -56,8 +57,15 @@ button {
     &:hover {
         background: #2f99c7;
     }
-    &:active{
+    &:active {
         background: #2285af;
     }
+}
+.bar {
+    line-height: 1.5rem;
+    color: #333;
+    font-weight: 500;
+    margin-left: 1rem;
+    font-size: 1.1em;
 }
 </style>
