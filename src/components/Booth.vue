@@ -1,24 +1,30 @@
 <template>
-    <div class="booth">
-        <!-- <div class="title">Booth {{booth.name}}</div> -->
-        <div class="info" v-if='booth.size'>Size: {{booth.size}}</div>
-        <div class="info" v-if='booth.price'>Price: {{booth.price}}</div>
-        <div class="buy">
-            <button @click="buy">Buy</button>
+  <OverlayScrollable v-if="show">
+       <template slot="bar">
+            Booth {{booth.name}}
+        </template>
+        <div class="booth">
+            <!-- <div class="title">Booth {{booth.name}}</div> -->
+            <div class="info" v-if='booth.size'>Size: {{booth.size}}</div>
+            <div class="info" v-if='booth.price'>Price: {{booth.price}}</div>
+            <div class="buy">
+                <button @click="buy">Buy</button>
+            </div>
         </div>
-    </div>
-
+    </OverlayScrollable>
 </template>
 
 <script lang="ts">
 // import { mapState, mapGetters } from "vuex";
+import OverlayScrollable from "./OverlayScrollable.vue";
 
 export default {
-    data: () => ({}),
+    components: { OverlayScrollable },
     computed: {
         booth() {
             return this.$store.getters.selectedBooth;
-        }
+        },
+          show(){ return this.$store.state.details && this.$store.state.details.type === "booth"; },
     },
     methods: {
         buy(){

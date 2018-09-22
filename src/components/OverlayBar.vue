@@ -3,7 +3,7 @@
         <OverlayBarBack :mode='showBack ? "back": "menu"' :enable-animation="true" @click="handleLeftIconClick" v-if="!showTitle" />
         <input type="search" ref="input" v-if="!showTitle" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
         <input type="search" ref="inputReplica" v-if="!showTitle && hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
-        <div class='title' v-if="showTitle">{{detailsTitle}}</div>
+        <div class='title' v-if="showTitle"><slot/></div>
         <a class="far fa-times" href='/' v-if="showClose" @click.prevent="handleCloseClick"></a>
     </div>
 
@@ -26,19 +26,19 @@ export default {
     computed: {
         ...mapState(["searchText", "searchFocused", "overlaySize"]),
         ...mapGetters(["selectedBooth", "selectedExhibitor", "overlayPosition"]),
-        detailsTitle() {
-            if (this.selectedExhibitor) return this.selectedExhibitor.name;
-            if (this.selectedBooth) return "Booth " + this.selectedBooth.name;
-            return null;
-        },
+        // detailsTitle() {
+        //     if (this.selectedExhibitor) return this.selectedExhibitor.name;
+        //     if (this.selectedBooth) return "Booth " + this.selectedBooth.name;
+        //     return null;
+        // },
         showTitle() {
-            return !!this.detailsTitle;
+            return !!this.$slots.default;
         },
         showClose() {
-            return !!(this.searchText || this.detailsTitle);
+            return !!(this.searchText || this.showTitle);
         },
         showBack() {
-            return this.showClose || (this.overlayPosition !== "left" && this.overlaySize === "full");
+            return this.showClose && !this.showTitle;//|| (this.overlayPosition !== "left" && this.overlaySize === "full");
         },
         hideRealInput() {
             return this.positionTop > 50;

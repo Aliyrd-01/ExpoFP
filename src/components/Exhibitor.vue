@@ -1,58 +1,67 @@
 <template>
-    <div class="details" :class={bookmarked}>
-        <a :class="{icon:1, fal: !bookmarked, fas: bookmarked, 'fa-bookmark':1}" href='' @click.prevent="bookmark">
+    <OverlayScrollable v-if="show">
+        <template slot="bar">
+            {{exhibitor.name}}
+        </template>
+        <div class="details" :class={bookmarked}>
+            <a :class="{icon:1, fal: !bookmarked, fas: bookmarked, 'fa-bookmark':1}" href='' @click.prevent="bookmark">
 
-        </a>
-        <div class="booth">Booth
-            <span v-for="booth in booths" :key="booth.id">
-                {{booth.name}}
-            </span>
-        </div>
-        <div class="categories">
-            <a :href='"?" + encodeURIComponent(c.name)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c.name)">{{c.name}}</a>
-        </div>
-        <div class="description" v-if="exhibitor.description || exhibitor.logo">
-            <div class='logo-container'>
-                <img :src="exhibitor.logo" class="logo" :key='exhibitor.id'>
+            </a>
+            <div class="booth">Booth
+                <span v-for="booth in booths" :key="booth.id">
+                    {{booth.name}}
+                </span>
             </div>
-            {{exhibitor.description}}
-        </div>
-        <div class="meta">
-            <div v-if="exhibitor.address || exhibitor.address2">
-                <i class="fas fa-map-marker"></i>
-                <div>
-                    {{exhibitor.address}}<br/>{{exhibitor.address2}}
+            <div class="categories">
+                <a :href='"?" + encodeURIComponent(c.name)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c.name)">{{c.name}}</a>
+            </div>
+            <div class="description" v-if="exhibitor.description || exhibitor.logo">
+                <div class='logo-container'>
+                    <img :src="exhibitor.logo" class="logo" :key='exhibitor.id'>
+                </div>
+                {{exhibitor.description}}
+            </div>
+            <div class="meta">
+                <div v-if="exhibitor.address || exhibitor.address2">
+                    <i class="fas fa-map-marker"></i>
+                    <div>
+                        {{exhibitor.address}}<br/>{{exhibitor.address2}}
+                    </div>
+                </div>
+                <div v-if="exhibitor.phone1">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        {{exhibitor.phone1}}
+                    </div>
+                </div>
+                <div v-if="exhibitor.website">
+                    <i class="fas fa-browser"></i>
+                    <div>
+                        <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
+                    </div>
                 </div>
             </div>
-            <div v-if="exhibitor.phone1">
-                <i class="fas fa-phone"></i>
-                <div>
-                    {{exhibitor.phone1}}
-                </div>
-            </div>
-            <div v-if="exhibitor.website">
-                <i class="fas fa-browser"></i>
-                <div>
-                    <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
-                </div>
+            <div class="social">
+                <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook"><i class='fab fa-facebook'></i></a>
+                <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram"><i class='fab fa-instagram'></i></a>
+                <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin"><i class='fab fa-linkedin'></i></a>
+                <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter"><i class='fab fa-twitter'></i></a>
+                <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus"><i class='fab fa-google-plus'></i></a>
+                <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing"><i class='fab fa-xing'></i></a>
+                <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube"><i class='fab fa-youtube'></i></a>
             </div>
         </div>
-        <div class="social">
-             <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook"><i class='fab fa-facebook'></i></a>
-             <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram"><i class='fab fa-instagram'></i></a>
-             <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin"><i class='fab fa-linkedin'></i></a>
-             <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter"><i class='fab fa-twitter'></i></a>
-             <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus"><i class='fab fa-google-plus'></i></a>
-             <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing"><i class='fab fa-xing'></i></a>
-             <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube"><i class='fab fa-youtube'></i></a>
-        </div>
-    </div>
+    </OverlayScrollable>
 
 </template>
 
 <script lant="ts">
+import OverlayScrollable from "./OverlayScrollable.vue";
+
 export default {
+    components: { OverlayScrollable },
     computed: {
+        show(){ return this.$store.state.details && this.$store.state.details.type === "exhibitor"; },
         exhibitor() {
             return this.$store.getters.selectedExhibitor;
         },
@@ -121,6 +130,8 @@ a.icon {
     border: solid 1px #ddd;
     border-radius: 5px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
 }
 .logo {
     max-width: 100%;

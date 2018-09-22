@@ -1,5 +1,5 @@
 <template>
-    <div class="overlay-content">
+    <div class="overlay-inner">
         <OverlayBar :scrolled='scrolled' />
         <div class='overlay-scrollable' ref='scrollable'>
             <List v-if="detailsType === null" />
@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style scoped>
-.overlay-content {
+.overlay-inner {
     height: 100%;
     display: flex;
     flex-direction: column;

@@ -1,20 +1,20 @@
 <template>
     <div :class='overlaySize + " overlay"'>
-        <OverlayContent/>
+        <Search/>
+        <Exhibitor/>
+        <Booth/>
     </div>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import OverlayContent from "./OverlayContent.vue";
+import Search from "./Search.vue";
+import Exhibitor from "./Exhibitor.vue";
+import Booth from "./Booth.vue";
 
 export default {
     name: "Overlay",
-
-    components: {
-        OverlayContent
-    },
-
+    components: { Search, Exhibitor, Booth },
     computed: {
         ...mapState(["overlaySize", "screenSize"]),
         ...mapGetters(["overlayPosition"]),
