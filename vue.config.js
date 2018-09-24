@@ -24,6 +24,36 @@ module.exports = {
                 ]
             ),
             new webpack.DefinePlugin({ EFP_DATA_URL_BASE, EFP_EXPO, ...expoDefine })
-        ]
+        ],
+        resolve: {
+            alias: {
+                'styles': path.resolve(__dirname, './src/styles/')
+            }
+        }
+    },
+    css: {
+        loaderOptions: {
+            sass: {
+                data: '@import "~styles/vars.scss"; @import "~styles/mixins.scss";'
+            }
+        }
     }
+    // pluginOptions: {
+    //     'style-resources-loader': {
+    //         preProcessor: 'scss',
+    //         patterns: path.resolve(__dirname, 'src/styles/vars.scss'),
+    //         injector: (source, resources) => {
+    //             // const combineAll = type => resources
+    //             //     .filter(({ file }) => file.includes(type))
+    //             //     .map(({ content }) => content)
+    //             //     .join('');
+
+    //             return '@import "../styles/vars.scss"; @import "../styles/mixins.scss";' + source;
+    //         }
+    //         // patterns: [
+    //         //     path.resolve(__dirname, 'src/styles/vars.scss'),
+    //         //     path.resolve(__dirname, 'src/styles/mixins.scss')
+    //         // ]
+    //     }
+    // }
 }

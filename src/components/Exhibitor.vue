@@ -1,12 +1,15 @@
 <template>
-    <OverlayScrollable v-if="show">
+    <OverlayScrollable v-if="show" :class={bookmarked}>
         <template slot="bar">
-            <div class="bar">{{exhibitor.name}}</div>
+            <div class="bar">
+                {{exhibitor.name}}
+                <a href='' @click.prevent="bookmark" class="bar-bk">
+                    <i class="bk"></i>
+                </a>
+            </div>
         </template>
-        <div class="details" :class={bookmarked}>
-            <a :class="{icon:1, fal: !bookmarked, fas: bookmarked, 'fa-bookmark':1}" href='' @click.prevent="bookmark">
+        <div class="details">
 
-            </a>
             <div class="booth">Booth
                 <span v-for="booth in booths" :key="booth.id">
                     {{booth.name}}
@@ -111,20 +114,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+
+
 .details {
 }
-a.icon {
-    text-decoration: none;
-    color: #ccc;
-    font-size: 1.1rem;
-    display: block;
-    float: right;
-    margin: 0 1rem;
-    padding-right: 1px;
-}
-.bookmarked a.icon {
-    color: #e54839;
-}
+
 .booth {
     margin: 0 1rem 0.2rem;
     color: #777;
@@ -196,10 +191,25 @@ a.icon {
     }
 }
 .bar {
+    min-height: 3.5rem;
+    position: relative;
     line-height: 1.5rem;
     color: #333;
     font-weight: 500;
     margin-left: 1rem;
     font-size: 1.1em;
+    flex-grow: 1;
+}
+
+.bar-bk {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 0 1rem 1rem 1rem;
+    /* align-self: stretch; */
+}
+
+.bk {
+    @include bookmark;
 }
 </style>

@@ -47,6 +47,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 .row {
     display: flex;
     align-items: center;
@@ -86,22 +87,7 @@ export default {
 //     color: #e54839;
 // }
 .bk {
-    display: block;
-    position: relative;
-    top: -1px;
-    height: 1.1rem;
-    width: 0.7rem;
-    padding: 0px;
-    -webkit-transform: rotate(0deg) skew(0deg);
-    transform: rotate(0deg) skew(0deg);
-    border-left: 0.4rem solid #ddd;
-    border-right: 0.4rem solid #ddd;
-    border-bottom: 0.4rem solid transparent;
-    // transition: height 0.2s;
+    @include bookmark;
 }
-.bookmarked .bk {
-    border-left-color: #e54839;
-    border-right-color: #e54839;
-    height: 1.3rem;
-}
+
 </style>
