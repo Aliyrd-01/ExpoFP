@@ -1,6 +1,6 @@
 <template>
     <div class="overlay-content">
-        <OverlayBar :scrolled='scrolled' >
+        <OverlayBar :scrolled='scrolled' @close='handleClose'>
                <slot name="bar"/>
         </OverlayBar>
         <div class='overlay-scrollable' ref='scrollable'>
@@ -33,6 +33,11 @@ export default {
 
         const observer = new MutationObserver(() => ps.update());
         observer.observe(sel, { childList: true, subtree: true });
+    },
+    methods:{
+        handleClose(){
+            this.$emit('close');
+        }
     }
 };
 </script>

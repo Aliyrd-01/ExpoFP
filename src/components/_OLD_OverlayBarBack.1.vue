@@ -42,8 +42,7 @@ export default {
     },
     methods: {
         handleClick() {
-            if (this.showBack) this.$emit("click");
-            else this.$store.commit("setMenu", true);
+            this.$emit("click");
         }
     }
 };
@@ -55,7 +54,7 @@ export default {
     min-width: var(--iconWidth);
     position: relative;
     display: flex;
-}
+} 
 
 .icon1,
 .icon2 {
