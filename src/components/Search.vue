@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" @close='handleClose'>
+    <OverlayScrollable v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode'>
         <template slot="bar">
             <div class="bar">
                 <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
@@ -25,7 +25,6 @@ export default {
     mounted() {
         // console.log('mounted', this.$el)
         this.input = this.$el.querySelector("input[type=search]");
-        debugger
     },
     computed: {
         ...mapState(["searchText", "searchFocused", "overlaySize"]),
@@ -35,6 +34,9 @@ export default {
         },
         hideRealInput() {
             return this.positionTop > 50;
+        },
+        backMode(){
+            return this.searchText ? 'back' : 'menu';
         }
     },
     methods: {
@@ -53,6 +55,9 @@ export default {
         handleClose() {
             this.$store.dispatch("selectText", "");
             this.input.focus();
+        },
+        handleBack(){
+             this.$store.dispatch("selectText", "");
         }
     }
 };

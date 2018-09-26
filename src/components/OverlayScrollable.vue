@@ -1,10 +1,10 @@
 <template>
     <div class="overlay-content">
-        <OverlayBar :scrolled='scrolled' @close='handleClose'>
-               <slot name="bar"/>
+        <OverlayBar :scrolled='scrolled' @close='handleClose' :back-mode='backMode' @back="$emit('back')">
+            <slot name="bar" />
         </OverlayBar>
         <div class='overlay-scrollable' ref='scrollable'>
-            <slot/>
+            <slot />
         </div>
     </div>
 
@@ -16,11 +16,12 @@ import PerfectScrollbar from "perfect-scrollbar";
 
 export default {
     // name: "OverlayContent",
+    props: ["backMode"],
     data: () => ({
         scrolled: false
     }),
     components: {
-        OverlayBar,
+        OverlayBar
     },
     mounted() {
         const sel = this.$refs.scrollable;
@@ -34,10 +35,10 @@ export default {
         const observer = new MutationObserver(() => ps.update());
         observer.observe(sel, { childList: true, subtree: true });
     },
-    methods:{
-        handleClose(){
-            this.$emit('close');
-        }
+    methods: {
+        handleClose() {
+            this.$emit("close");
+        },
     }
 };
 </script>

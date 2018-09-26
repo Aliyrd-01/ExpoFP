@@ -1,5 +1,5 @@
 <template>
-    <div :class="divClass">
+    <div :class="divClass" v-if='backMode !== "none"'>
         <i :class="icon1Class"></i>
         <a :class="icon2Class" href='/' @click.prevent='handleClick'></a>
     </div>
@@ -12,7 +12,7 @@ export default {
     name: "OverlayBarBack",
     props: {
         enableAnimation: Boolean, // false for mobile
-        mode: String //back/menu
+        backMode: String //back/menu/none
     },
     data: () => {
         return { animationEnded: true };
@@ -22,7 +22,7 @@ export default {
             return `back ${this.enableAnimation ? "anim" : ""} ${this.animationEnded ? "end" : "start"}`;
         },
         showBack() {
-            return this.mode === "back";
+            return this.backMode === "back";
         },
         icon1Class() {
             return `icon1 far ${!this.showBack ? "fa-chevron-left" : "fa-bars"}`;
@@ -42,7 +42,7 @@ export default {
     },
     methods: {
         handleClick() {
-            if (this.showBack) this.$emit("click");
+            if (this.showBack) this.$emit("back");
             else this.$store.commit("setMenu", true);
         }
     }

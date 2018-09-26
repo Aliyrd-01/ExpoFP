@@ -1,9 +1,10 @@
 <template>
     <div class="bar" :class='{scrolled}'>
-        <!-- <a class="far fa-bars" href='' @click.prevent='handleMenuClick'></a> -->
-        <OverlayBarBack :mode='showBack ? "back": "menu"' :enable-animation="true" @back-click="handleBackClick" />
-        <div class='slot'><slot/></div>
-        <a class="far fa-times" href='/'  @click.prevent='handleCloseClick'></a>
+        <OverlayBarBack :back-mode='backMode || "menu"' :enable-animation="true" @back='$emit("back")' />
+        <div class='slot'>
+            <slot />
+        </div>
+        <a class="far fa-times" href='/' @click.prevent='$emit("close")'></a>
     </div>
 
 </template>
@@ -14,7 +15,7 @@ import { mapState, mapGetters } from "vuex";
 
 export default {
     name: "OverlayBar",
-    props: ["scrolled"],
+    props: ["scrolled", "backMode"],
     components: {
         OverlayBarBack
     },
@@ -39,7 +40,7 @@ export default {
         showBack() {
             return false;
             // return this.showClose && !this.showTitle;//|| (this.overlayPosition !== "left" && this.overlaySize === "full");
-        },
+        }
         // hideRealInput() {
         //     return this.positionTop > 50;
         // }
@@ -65,13 +66,13 @@ export default {
         // setSearchText(e) {
         //     this.$store.commit("setSearchText", e.target.value);
         // },
-        handleBackClick() {
-             //this.$store.commit("setMenu", true);
-        },
-        handleCloseClick() {
-            this.$emit("close");
-           
-        },
+        // handleBack() {
+        //     //  this.$store.commit("setMenu", true);
+        //     this.$emit("close");
+        // },
+        // handleCloseClick() {
+        //     this.$emit("close");
+        // }
         // handleBlur() {
         //     this.$store.commit("setSearchFocused", false);
         // },
@@ -87,7 +88,6 @@ export default {
 
 <style scoped>
 .bar {
-   
     display: flex;
     align-items: center;
     --size: 3.5rem;
@@ -96,9 +96,9 @@ export default {
     transition: box-shadow 300ms;
     /* transition: background-color 500ms; */
 }
-.bar.scrolled{
-     /* border-bottom: solid 1px #ddd; */
-     box-shadow: 0 0 20px rgba(0,0,0,0.2);
+.bar.scrolled {
+    /* border-bottom: solid 1px #ddd; */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 /* .bar.show-slot {
     border-bottom: none;
