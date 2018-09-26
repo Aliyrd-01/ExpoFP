@@ -3,6 +3,7 @@
         <template slot="bar">
             <div class="bar">
                 {{selectedCategory.name}}&nbsp;<span>({{categoryExhibitors.length}})</span>
+                <div class='note'>Category</div>
             </div>
         </template>
         <ExhibitorsList />
@@ -17,9 +18,10 @@ import OverlayScrollable from "./OverlayScrollable.vue";
 export default {
     components: { ExhibitorsList, OverlayScrollable },
     computed: {
+         ...mapState(["details"]),
         ...mapGetters(["selectedCategory", "categoryExhibitors"]),
         show() {
-            return this.selectedCategory;
+            return !this.details && this.selectedCategory;
         }
     },
     methods: {
@@ -34,10 +36,18 @@ export default {
 .bar {
     margin-left: 1rem;
     font-size: 1.1em;
+    /* line-height: 1em; */
     font-weight: 500;
     color: #333;
-    > span{
+    > span {
         color: #aaa;
     }
+    padding: 0.5rem 0;
+}
+.note {
+    font-size: 0.7rem;
+    color: #aaa;
+    display: block;
+    font-weight: normal;
 }
 </style>

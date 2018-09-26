@@ -1,5 +1,5 @@
 <template>
-    <div class="bar" :class='{scrolled}'>
+    <div class="bar-container" :class='{scrolled}'>
         <OverlayBarBack :back-mode='backMode || "menu"' :enable-animation="true" @back='$emit("back")' />
         <div class='slot'>
             <slot />
@@ -19,7 +19,7 @@ export default {
 </script>
 
 <style scoped>
-.bar {
+.bar-container {
     display: flex;
     align-items: center;
     --size: 3.5rem;
@@ -27,11 +27,11 @@ export default {
     z-index: 1;
     transition: box-shadow 300ms;
 }
-.bar.scrolled {
+.bar-container.scrolled {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
-.bar >>> .far {
+.bar-container >>> .far {
     height: var(--size);
     min-width: var(--iconWidth);
     line-height: var(--size);

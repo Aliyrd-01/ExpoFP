@@ -196,6 +196,8 @@ export default {
     margin-left: 1rem;
     font-size: 1.1em;
     flex-grow: 1;
+    display: flex; 
+    align-items: center;
 }
 
 .bar-bk {
