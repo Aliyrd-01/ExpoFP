@@ -1,10 +1,10 @@
 <template>
-    <div class="overlay-content">
-        <OverlayBar :scrolled='scrolled' @close='handleClose' :back-mode='backMode' @back="$emit('back')">
-            <slot name="bar" />
-        </OverlayBar>
+    <div class="overlay-inner">
+        <OverlayBar :scrolled='scrolled' />
         <div class='overlay-scrollable' ref='scrollable'>
-            <slot />
+            <List v-if="detailsType === null" />
+            <Booth v-if="detailsType === 'booth'" />
+            <Exhibitor v-if="detailsType === 'exhibitor'" />
         </div>
     </div>
 
@@ -12,15 +12,21 @@
 
 <script lang="ts">
 import OverlayBar from "./OverlayBar.vue";
+import List from "./List.vue";
+import Exhibitor from "./Exhibitor.vue";
+import Booth from "./Booth.vue";
 import PerfectScrollbar from "perfect-scrollbar";
 
 export default {
-    props: ["backMode"],
+    // name: "OverlayContent",
     data: () => ({
         scrolled: false
     }),
     components: {
-        OverlayBar
+        OverlayBar,
+        List,
+        Booth,
+        Exhibitor
     },
     mounted() {
         const sel = this.$refs.scrollable;
@@ -34,16 +40,23 @@ export default {
         const observer = new MutationObserver(() => ps.update());
         observer.observe(sel, { childList: true, subtree: true });
     },
-    methods: {
-        handleClose() {
-            this.$emit("close");
-        },
+    watch: {
+        detailsType() {
+            this.$refs.scrollable.scrollTop = 0;
+        }
+    },
+    computed: {
+        detailsType() {
+            const d = this.$store.state.details;
+            if (!d) return null;
+            return d.type;
+        }
     }
 };
 </script>
 
 <style scoped>
-.overlay-content {
+.overlay-inner {
     height: 100%;
     display: flex;
     flex-direction: column;

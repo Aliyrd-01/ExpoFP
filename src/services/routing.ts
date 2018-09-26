@@ -21,12 +21,14 @@ function dispatchFromUrl() {
     const state = store.state;
     disableStateToUrl = true;
     const booth = store.getters.boothsArray.find((x: Booth) => x.slug === slug);
-    if (booth) {
+    if (slug === "bookmarks") {
+        store.dispatch('selectBookmarks');
+    } else if (booth) {
         store.dispatch('selectBooth', booth.id);
     } else {
         const exhibitor = store.getters.exhibitorsArray.find((x: Exhibitor) => x.slug === slug);
         if (exhibitor) store.dispatch('selectExhibitor', exhibitor.id);
-        else store.dispatch('selectText', slug);
+        else store.dispatch('selectSearch', slug);
 
     }
 
@@ -56,7 +58,10 @@ function stateToUrl() {
     if (disableStateToUrl) return;
     const exhibitor = store.getters.selectedExhibitor
     const booth = store.getters.selectedBooth
-    const queryRaw = exhibitor ? exhibitor.slug : booth ? booth.slug : store.state.searchText;
+    let queryRaw = exhibitor ? exhibitor.slug : booth ? booth.slug : null;
+    if (!queryRaw){
+        if (store.state.list.type === "search") queryRaw = store.state.list.text;
+    }
     const newQuery = queryRaw ? '?' + encodeURIComponent(queryRaw) : '';
 
     if (history.location.search === newQuery) return;

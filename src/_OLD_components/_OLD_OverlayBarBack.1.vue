@@ -1,5 +1,5 @@
 <template>
-    <div :class="divClass" v-if='backMode !== "none"'>
+    <div :class="divClass">
         <i :class="icon1Class"></i>
         <a :class="icon2Class" href='/' @click.prevent='handleClick'></a>
     </div>
@@ -9,9 +9,10 @@
 import { mapState, mapGetters } from "vuex";
 
 export default {
+    name: "OverlayBarBack",
     props: {
         enableAnimation: Boolean, // false for mobile
-        backMode: String //back/menu/none
+        mode: String //back/menu
     },
     data: () => {
         return { animationEnded: true };
@@ -21,7 +22,7 @@ export default {
             return `back ${this.enableAnimation ? "anim" : ""} ${this.animationEnded ? "end" : "start"}`;
         },
         showBack() {
-            return this.backMode === "back";
+            return this.mode === "back";
         },
         icon1Class() {
             return `icon1 far ${!this.showBack ? "fa-chevron-left" : "fa-bars"}`;
@@ -41,8 +42,7 @@ export default {
     },
     methods: {
         handleClick() {
-            if (this.showBack) this.$emit("back");
-            else this.$store.commit("setMenu", true);
+            this.$emit("click");
         }
     }
 };
@@ -54,7 +54,7 @@ export default {
     min-width: var(--iconWidth);
     position: relative;
     display: flex;
-}
+} 
 
 .icon1,
 .icon2 {

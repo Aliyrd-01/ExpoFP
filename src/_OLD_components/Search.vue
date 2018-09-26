@@ -2,21 +2,21 @@
     <OverlayScrollable v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode'>
         <template slot="bar">
             <div class="bar">
-                <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="setSearchText" @blur="setSearchText" />
+                <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
                 <input type="search" v-if="hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
             </div>
         </template>
-        <ExhibitorsList />
+        <ExhibitorRow v-for="item in filteredExhibitors" :key="item.id" :exhibitor='item' />
     </OverlayScrollable>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import ExhibitorsList from "./ExhibitorsList.vue";
+import ExhibitorRow from "./ExhibitorRow.vue";
 import OverlayScrollable from "./OverlayScrollable.vue";
 
 export default {
-    components: { ExhibitorsList, OverlayScrollable },
+    components: { ExhibitorRow, OverlayScrollable },
     data: () => ({
         positionTop: 0,
         placeHolder: "Search company, booth or category"
@@ -34,33 +34,32 @@ export default {
         hideRealInput() {
             return this.positionTop > 50;
         },
-        backMode() {
-            return this.searchText ? "back" : "menu";
+        backMode(){
+            return this.searchText ? 'back' : 'menu';
         }
     },
     methods: {
-        setSearchText() {
-            this.$store.commit("setList", {
-                type: "search",
-                text: this.getInput().value,
-                focused: document.activeElement === this.getInput()
-            });
+        setSearchText(e) {
+            this.$store.commit("setSearchText", e.target.value);
         },
-       
+        handleBlur() {
+            this.$store.commit("setSearchFocused", false);
+        },
+        handleFocus() {
+            this.$store.commit("setSearchFocused", true);
+        },
         handleReplicaFocus() {
-            this.getInput().focus();
+            this.focusInput();
         },
         handleClose() {
-            this.getInput().value = "";
-            // this.$store.dispatch("selectText", "");
-            this.getInput().focus();
+            this.$store.dispatch("selectText", "");
+            this.focusInput();
         },
-        handleBack() {
-            this.getInput().value = "";
-            //this.$store.dispatch("selectText", "");
+        handleBack(){
+             this.$store.dispatch("selectText", "");
         },
-        getInput() {
-            return this.$el.querySelector("input[type=search]");
+        focusInput(){
+            this.$el.querySelector("input[type=search]").focus();
         }
     }
 };

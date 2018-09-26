@@ -19,8 +19,9 @@ const store1 = new Vuex.Store({
         filtering
     },
     state: {
-        searchText: '',
-        searchFocused: false,
+        list: null as { type: "search", text: string, focused: boolean } | { type: "bookmarks" },
+        // searchText: '',
+        // searchFocused: false,
         details: null as { type: "booth" | "exhibitor"; id: number; },
         overlaySize: "medium" as OverlaySize,
         moveToExhibitor: null as number,
@@ -45,11 +46,14 @@ const store1 = new Vuex.Store({
         selectedBooth: (state) => state.details && state.details.type === "booth" ? state.booths[state.details.id] : null,
     },
     mutations: {
-        setSearchText(state, text) {
-            state.searchText = text;
-        },
-        setSearchFocused(state, val) {
-            state.searchFocused = val;
+        // setSearchText(state, text) {
+        //     state.searchText = text;
+        // },
+        // setSearchFocused(state, val) {
+        //     state.searchFocused = val;
+        // },
+        setList(state, val) {
+            state.list = val;
         },
         setScreenSize(state, size) {
             state.screenSize = size;
@@ -69,7 +73,7 @@ const store1 = new Vuex.Store({
         setHoveredExhibitor(state, item) {
             state.hoveredExhibitor = item || null;
         },
-        setMenu(state, shown){
+        setMenu(state, shown) {
             state.menu = shown;
         }
     },
@@ -83,12 +87,16 @@ const store1 = new Vuex.Store({
         selectNone({ commit }) {
             commit('setDetails', null);
         },
-        selectText({ commit }, text) {
+        selectBookmarks({ commit }) {
             commit('setDetails', null);
-            commit('setSearchText', text);
+            commit('setList', { type: "bookmarks" });
+        },
+        selectSearch({ commit }, text) {
+            commit('setDetails', null);
+            commit('setList', { type: "search", text });
         },
         clickBooth({ state, dispatch, commit }, id) {
-            if (!id){
+            if (!id) {
                 commit('setDetails', null);
                 return;
             }
