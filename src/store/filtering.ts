@@ -8,10 +8,15 @@ export default {
             if (!text) return exhibitorsArray;
             return exhibitorsArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         },
+        categoryExhibitors(state, getters, rootState) {
+            if (rootState.list.type !== "category") return [];
+            return getters.exhibitorsByCategoryId.get(rootState.list.id) || [];
+        },
         listExhibitors(state, getters, rootState) {
             switch (rootState.list.type) {
                 case "search": return getters.searchedExhibitors;
                 case "bookmarks": return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
+                case "category": return getters.categoryExhibitors;
             }
             throw new Error("Unknown list.type");
         },
@@ -62,12 +67,12 @@ export default {
             const boothKeyArray = getters.boothsArray.map(b => [b.name.toLowerCase(), b]);
             return new Map(boothKeyArray);
         },
-        exhibitorsByCategoryNameMap(state, getters) {
-            // const array = getters.categoriesArray.map(c => [
-            //     c.name.toLowerCase(),
-            //     getters.exhibitorsArray.filter(e => e.categories.indexOf(c.id) !== -1)
-            // ]);
-            // return new Map(array);
+        exhibitorsByCategoryId(state, getters) {
+            const array = getters.categoriesArray.map(c => [
+                c.id,
+                getters.exhibitorsArray.filter(e => e.categories.indexOf(c.id) !== -1)
+            ]);
+            return new Map(array);
         }
     }
 }

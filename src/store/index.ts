@@ -19,7 +19,7 @@ const store1 = new Vuex.Store({
         filtering
     },
     state: {
-        list: null as { type: "search", text: string, focused: boolean } | { type: "bookmarks" },
+        list: null as { type: "search", text: string, focused: boolean } | { type: "bookmarks" } | { type: "category", id: number },
         // searchText: '',
         // searchFocused: false,
         details: null as { type: "booth" | "exhibitor"; id: number; },
@@ -44,6 +44,7 @@ const store1 = new Vuex.Store({
         },
         selectedExhibitor: state => state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
         selectedBooth: (state) => state.details && state.details.type === "booth" ? state.booths[state.details.id] : null,
+        selectedCategory: (state) => state.list.type === "category" ? state.categories[state.list.id] : null,
     },
     mutations: {
         // setSearchText(state, text) {
@@ -90,6 +91,10 @@ const store1 = new Vuex.Store({
         selectBookmarks({ commit }) {
             commit('setDetails', null);
             commit('setList', { type: "bookmarks" });
+        },
+        selectCategory({ commit }, id) {
+            commit('setDetails', null);
+            commit('setList', { type: "category", id });
         },
         selectSearch({ commit }, text) {
             commit('setDetails', null);

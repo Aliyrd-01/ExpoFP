@@ -1,16 +1,16 @@
 
 
-// this is injected as $store into each Vue Component
+// // this is injected as $store into each Vue Component
 
-class MyStore{
-    state:{
-        a: 1
-    }
+// class MyStore{
+//     state:{
+//         a: 1
+//     }
 
-    a:1 // -> transformed to property by Vue.set()
-    b:2
+//     a:1 // -> transformed to property by Vue.set()
+//     b:2
 
-    get a1(){
-        return this.b;
-    }
-}
+//     get a1(){
+//         return this.b;
+//     }
+// }

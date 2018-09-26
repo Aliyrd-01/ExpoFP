@@ -28,8 +28,11 @@ function dispatchFromUrl() {
     } else {
         const exhibitor = store.getters.exhibitorsArray.find((x: Exhibitor) => x.slug === slug);
         if (exhibitor) store.dispatch('selectExhibitor', exhibitor.id);
-        else store.dispatch('selectSearch', slug);
-
+        else {
+            const category = store.getters.categoriesArray.find((x: Category) => x.slug === slug);
+            if (category) store.dispatch('selectCategory', category.id);
+            else store.dispatch('selectSearch', slug);
+        }
     }
 
     disableStateToUrl = false;
@@ -60,14 +63,19 @@ function stateToUrl() {
     const exhibitor = store.getters.selectedExhibitor;
     const booth = store.getters.selectedBooth;
 
-    if (store.state.list.type === "bookmarks") {
-        queryRaw = "bookmarks";
+    if (exhibitor) {
+        queryRaw = exhibitor.slug;
+    } else if (booth) {
+        queryRaw = booth.slug;
     } else {
-        queryRaw = exhibitor ? exhibitor.slug : booth ? booth.slug : null;
-        if (!queryRaw) {
-            if (store.state.list.type === "search") queryRaw = store.state.list.text;
+        switch (store.state.list.type) {
+            case "bookmarks": queryRaw = "bookmarks"; break;
+            case "category": queryRaw = store.getters.selectedCategory.slug; break;
+            case "search": queryRaw = store.state.list.text; break;
+            default: throw new Error('Unkown list.type');
         }
     }
+
     const newQuery = queryRaw ? '?' + encodeURIComponent(queryRaw) : '';
 
     if (history.location.search === newQuery) return;

@@ -8,11 +8,11 @@
             <div class="menu-scrollable">
                 <div class="block">
                     <a :href='EFP_HOME_URL' target="_blank">Expo Home</a>
-                    <a href='?bookmarks' @click.prevent='close();$store.dispatch("selectBookmarks")'>My Bookmarks</a>
+                    <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")'>My Bookmarks</a>
                 </div>
                 <div class="block">
                     <div class="name">Categories</div>
-                    <a :href='"?" + encodeURIComponent(c.name)' v-for="c in categoriesArray" :key="c.id" @click.prevent="selectText(c.name)">{{c.name}} ({{numOfExhibitors(c.id)}})</a>
+                    <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>{{c.name}} ({{numOfExhibitors(c.id)}})</a>
                 </div>
             </div>
         </div>

@@ -1,9 +1,10 @@
 <template>
     <div :class='overlaySize + " overlay"'>
-        <Search/>
-        <Bookmarks/>
-        <Exhibitor/>
-        <Booth/>
+        <Search />
+        <Bookmarks />
+        <Category />
+        <Exhibitor />
+        <Booth />
     </div>
 </template>
 
@@ -11,15 +12,16 @@
 import { mapGetters, mapState } from "vuex";
 import Search from "./Search.vue";
 import Bookmarks from "./Bookmarks.vue";
+import Category from "./Category.vue";
 import Exhibitor from "./Exhibitor.vue";
 import Booth from "./Booth.vue";
 
 export default {
-    components: { Search, Bookmarks, Exhibitor, Booth },
+    components: { Search, Bookmarks, Category, Exhibitor, Booth },
     computed: {
         ...mapState(["overlaySize", "screenSize"]),
         ...mapGetters(["overlayPosition"]),
-        noMove(){
+        noMove() {
             return this.overlayPosition === "left";
         },
         effectiveSize() {
@@ -48,7 +50,7 @@ export default {
             this.startedTouch = e.touches[0];
         },
 
-        handleTouchMove(e:TouchEvent) {
+        handleTouchMove(e: TouchEvent) {
             if (this.noMove) return;
             if (!this.startedTouch) return;
             const rt = Array.from(e.changedTouches).filter(x => x.identifier === this.startedTouch.identifier)[0];
@@ -58,7 +60,7 @@ export default {
             this.setHeight();
         },
 
-        handleTouchEnd(e:TouchEvent) {
+        handleTouchEnd(e: TouchEvent) {
             if (this.noMove) return;
             if (!this.startedTouch) return;
             const rt = Array.from(e.changedTouches).filter(x => x.identifier === this.startedTouch.identifier)[0];
@@ -100,7 +102,7 @@ export default {
         position() {
             const el = this.$el;
             const position = this.overlayPosition;
-            if (position === "left"){
+            if (position === "left") {
                 el.style.width = "24rem";
                 el.style.top = 0;
                 el.style.left = 0;
@@ -129,7 +131,7 @@ export default {
 
             let transition = true;
             if (this.touchDiff !== undefined) {
-                newHeight += this.touchDiff;// this.negateMove ? -this.touchDiff : 
+                newHeight += this.touchDiff; // this.negateMove ? -this.touchDiff :
                 const maxHeight = getHeight(this.$el, position, "full");
                 if (newHeight > maxHeight) {
                     newHeight = maxHeight;
@@ -142,8 +144,7 @@ export default {
             const $el = d3.select(this.$el);
             $el.interrupt();
             if (transition) {
-                $el
-                    .transition()
+                $el.transition()
                     .ease(d3.easePolyOut)
                     .duration(500)
                     .style("height", newHeight + "px");
