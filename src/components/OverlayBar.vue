@@ -4,7 +4,7 @@
         <div class='slot'>
             <slot />
         </div>
-        <a class="far fa-times" href='/' @click.prevent='$emit("close")'></a>
+        <a class="far fa-times" href='/' @click.prevent='$emit("close")' v-if='!hideClose'></a>
     </div>
 
 </template>
@@ -13,7 +13,7 @@
 import OverlayBarBack from "./OverlayBarBack.vue";
 
 export default {
-    props: ["scrolled", "backMode"],
+    props: ["scrolled", "backMode", "hideClose"],
     components: { OverlayBarBack }
 };
 </script>

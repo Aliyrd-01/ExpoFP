@@ -1,6 +1,7 @@
 <template>
     <div :class='overlaySize + " overlay"'>
         <Search/>
+        <Bookmarks/>
         <Exhibitor/>
         <Booth/>
     </div>
@@ -9,11 +10,12 @@
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import Search from "./Search.vue";
+import Bookmarks from "./Bookmarks.vue";
 import Exhibitor from "./Exhibitor.vue";
 import Booth from "./Booth.vue";
 
 export default {
-    components: { Search, Exhibitor, Booth },
+    components: { Search, Bookmarks, Exhibitor, Booth },
     computed: {
         ...mapState(["overlaySize", "screenSize"]),
         ...mapGetters(["overlayPosition"]),

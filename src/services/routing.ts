@@ -56,11 +56,17 @@ store.subscribe(() => {
 
 function stateToUrl() {
     if (disableStateToUrl) return;
-    const exhibitor = store.getters.selectedExhibitor
-    const booth = store.getters.selectedBooth
-    let queryRaw = exhibitor ? exhibitor.slug : booth ? booth.slug : null;
-    if (!queryRaw){
-        if (store.state.list.type === "search") queryRaw = store.state.list.text;
+    let queryRaw = '';
+    const exhibitor = store.getters.selectedExhibitor;
+    const booth = store.getters.selectedBooth;
+
+    if (store.state.list.type === "bookmarks") {
+        queryRaw = "bookmarks";
+    } else {
+        queryRaw = exhibitor ? exhibitor.slug : booth ? booth.slug : null;
+        if (!queryRaw) {
+            if (store.state.list.type === "search") queryRaw = store.state.list.text;
+        }
     }
     const newQuery = queryRaw ? '?' + encodeURIComponent(queryRaw) : '';
 

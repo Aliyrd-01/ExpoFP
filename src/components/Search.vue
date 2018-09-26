@@ -1,9 +1,9 @@
 <template>
-    <OverlayScrollable v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode'>
+    <OverlayScrollable v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode' :hide-close='!text'>
         <template slot="bar">
             <div class="bar">
-                <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="setSearchText" @blur="setSearchText" />
-                <input type="search" v-if="hideRealInput" :placeholder="placeHolder" :value="searchText" @focus.prevent="handleReplicaFocus" />
+                <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="text" @input="setText" @focus="setText" @blur="setText" />
+                <input type="search" v-if="hideRealInput" :placeholder="placeHolder" :value="text" @focus.prevent="handleReplicaFocus" />
             </div>
         </template>
         <ExhibitorsList />
@@ -21,43 +21,38 @@ export default {
         positionTop: 0,
         placeHolder: "Search company, booth or category"
     }),
-    mounted() {
-        // console.log('mounted', this.$el)
-        // this.input = this.$el.querySelector("input[type=search]");
-    },
     computed: {
-        ...mapState(["searchText", "searchFocused", "overlaySize"]),
-        ...mapGetters(["filteredExhibitors"]),
+        ...mapState(["list", "details"]),
+        text() {
+            return this.list.text;
+        },
         show() {
-            return !this.$store.state.details;
+            return !this.details && this.list.type === "search";
         },
         hideRealInput() {
             return this.positionTop > 50;
         },
         backMode() {
-            return this.searchText ? "back" : "menu";
+            return this.text ? "back" : "menu";
         }
     },
     methods: {
-        setSearchText() {
+        setText() {
             this.$store.commit("setList", {
                 type: "search",
                 text: this.getInput().value,
                 focused: document.activeElement === this.getInput()
             });
         },
-       
         handleReplicaFocus() {
             this.getInput().focus();
         },
         handleClose() {
             this.getInput().value = "";
-            // this.$store.dispatch("selectText", "");
             this.getInput().focus();
         },
         handleBack() {
             this.getInput().value = "";
-            //this.$store.dispatch("selectText", "");
         },
         getInput() {
             return this.$el.querySelector("input[type=search]");

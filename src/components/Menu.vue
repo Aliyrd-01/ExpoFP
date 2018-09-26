@@ -8,7 +8,7 @@
             <div class="menu-scrollable">
                 <div class="block">
                     <a :href='EFP_HOME_URL' target="_blank">Expo Home</a>
-                    <a :href='"?" + encodeURIComponent("My Bookmarks")' @click.prevent='selectText("My Bookmarks")'>My Bookmarks</a>
+                    <a href='?bookmarks' @click.prevent='close();$store.dispatch("selectBookmarks")'>My Bookmarks</a>
                 </div>
                 <div class="block">
                     <div class="name">Categories</div>

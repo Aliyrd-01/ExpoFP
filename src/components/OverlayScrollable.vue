@@ -1,6 +1,6 @@
 <template>
     <div class="overlay-content">
-        <OverlayBar :scrolled='scrolled' @close='handleClose' :back-mode='backMode' @back="$emit('back')">
+        <OverlayBar :scrolled='scrolled' @close='handleClose' :hide-close='hideClose' :back-mode='backMode' @back="$emit('back')">
             <slot name="bar" />
         </OverlayBar>
         <div class='overlay-scrollable' ref='scrollable'>
@@ -15,7 +15,7 @@ import OverlayBar from "./OverlayBar.vue";
 import PerfectScrollbar from "perfect-scrollbar";
 
 export default {
-    props: ["backMode"],
+    props: ["backMode", 'hideClose'],
     data: () => ({
         scrolled: false
     }),

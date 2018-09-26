@@ -93,7 +93,7 @@ const store1 = new Vuex.Store({
         },
         selectSearch({ commit }, text) {
             commit('setDetails', null);
-            commit('setList', { type: "search", text });
+            commit('setList', { type: "search", text: text || '' });
         },
         clickBooth({ state, dispatch, commit }, id) {
             if (!id) {
