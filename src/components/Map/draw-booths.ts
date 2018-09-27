@@ -78,8 +78,8 @@ export function getBoothState(b: Booth) {
 }
 
 function getBoothStateBits(b: Booth) {
-    let { hover, selected, dimmedFp, error, empty, bookmarked } = getBoothState(b);
-    return [hover, selected, dimmedFp, error, empty, bookmarked]
+    let { hover, selected, dimmed, dimmedFp, error, empty, bookmarked } = getBoothState(b);
+    return [hover, selected, dimmed, dimmedFp, error, empty, bookmarked]
 }
 
 function drawBookmark(b: Booth, dimmed: boolean) {
