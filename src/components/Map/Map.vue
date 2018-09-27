@@ -19,10 +19,9 @@ export default {
             "overlayPosition",
             "exhibitorsArray",
             "boothsArray",
-            "selectedExhibitor",
-            "selectedBooth",
-            "highlightedBoothIdsObj",
-            "hoveredBooths"
+            "listBoothsIds",
+            "selectedBoothIds",
+            "hoveredBoothIds"
         ]),
         occupied() {
             let occupied = null;
@@ -105,11 +104,10 @@ export default {
                 .duration(200)
                 .call(this.zoom.transform, destZoom);
         },
-        hoveredBooths: () => requireRedraw(),
-        selectedExhibitor: () => requireRedraw(),
-        selectedBooth: () => requireRedraw(),
+        hoveredBoothIds: () => requireRedraw(),
+        selectedBoothIds: () => requireRedraw(),
         bookmarked: () => requireRedraw(),
-        highlightedBoothIdsObj: () => requireRedraw(),
+        listBoothsIds: () => requireRedraw(),
         visibleRect: v => setVisibleRect(v)
     },
     methods: {

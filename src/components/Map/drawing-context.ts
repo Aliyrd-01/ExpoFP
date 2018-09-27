@@ -42,7 +42,7 @@ class DrawingContext {
     get fpCRectVisible() { return Rect.fromXywh(0, 0, this.cWidth, this.cHeight).getIntersection(this.fpCRect) };
     get fpFRectVisible() { return this.fpCRectVisible.clone().translate(-this.fpCx, -this.fpCy); };
 
-    get dimmed() { return !!store.getters.highlightedBoothIds; }
+    get dimmed() { return store.getters.dimmed; }
     dimColor(color: string, dimIfOnly: boolean = undefined): string {
         if (dimIfOnly === undefined) dimIfOnly = this.dimmed;
         if (dimIfOnly) return Color(color).mix(Color(settings.colors.base), settings.colors.dim).toString();
@@ -52,12 +52,8 @@ class DrawingContext {
     //
     requireRedraw: () => void;
 
-    // 
-    // hoverCanvas: HTMLCanvasElement;
-    // hoverContext: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
-    // hover: boolean;
 
     //
     spriteContext: CanvasRenderingContext2D;
@@ -72,14 +68,6 @@ class DrawingContext {
     sRectToSprite(rect: Rect): Rect {
         return Rect.fromXywh(this.sXToSprite(rect.x1), this.sYToSprite(rect.y1), this.sWToSprite(rect.w), this.sHToSprite(rect.h));
     }
-
-    // sprite
-
-    //
-    // get canvas() { return this.hover ? this.hoverCanvas : this.visibleCanvas; }
-    // get context() { return this.hover ? this.hoverContext : this.visibleContext; }
-
-
 
     // detail level
     fpAvgBoothArea: number;

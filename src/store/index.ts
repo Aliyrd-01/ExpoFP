@@ -19,7 +19,7 @@ const store1 = new Vuex.Store({
         filtering
     },
     state: {
-        list: null as { type: "search", text: string, focused: boolean } | { type: "bookmarks" } | { type: "category", id: number },
+        list: { type: "search", text: '' } as { type: "search", text: string, focused: boolean } | { type: "bookmarks" } | { type: "category", id: number },
         // searchText: '',
         // searchFocused: false,
         details: null as { type: "booth" | "exhibitor"; id: number; },
@@ -109,7 +109,7 @@ const store1 = new Vuex.Store({
             if (booth.exhibitors.length === 1) {
                 dispatch('selectExhibitor', booth.exhibitors[0]);
             } else if (booth.exhibitors.length > 1) {
-                dispatch('selectText', booth.name);
+                dispatch('selectSearch', booth.name);
             } else {
                 dispatch('selectBooth', id);
             }

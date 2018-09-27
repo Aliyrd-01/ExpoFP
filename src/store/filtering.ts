@@ -1,6 +1,9 @@
 
 export default {
     getters: {
+        dimmed(state, getters, rootState) {
+            return getters.listExhibitors.length !== getters.exhibitorsArray.length;
+        },
         searchedExhibitors(state, getters, rootState) {
             if (rootState.list.type !== "search") return [];
             const exhibitorsArray = getters.exhibitorsArray;
@@ -46,27 +49,38 @@ export default {
             }
             return arr;
         },
-        highlightedBoothIds(state, getters, rootState) {
-            // if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
-            // if (getters.selectedBooth) return [getters.selectedBooth.id];
-            // if (rootState.searchText.trim()) return getters.filteredBoothsIds;
-            return null;
+        listBoothsIdsSet(state, getters, rootState) {
+            return new Set(getters.listBoothsIds);
         },
-        highlightedBoothIdsObj(state, getters, rootState) {
-            return {};
-            // return getters.highlightedBoothIds ?
-            //     getters.highlightedBoothIds.reduce((c: number, id) => (c[id] = true) && c, {} as { [id: number]: boolean })
-            //     : {};
+        // highlightedBoothIds(state, getters, rootState) {
+        //     // if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
+        //     // if (getters.selectedBooth) return [getters.selectedBooth.id];
+        //     // if (rootState.searchText.trim()) return getters.filteredBoothsIds;
+        //     return null;
+        // },
+        // highlightedBoothIdsObj(state, getters, rootState) {
+        //     return {};
+        //     // return getters.highlightedBoothIds ?
+        //     //     getters.highlightedBoothIds.reduce((c: number, id) => (c[id] = true) && c, {} as { [id: number]: boolean })
+        //     //     : {};
+        // },
+        selectedBoothIds(state, getters, rootState) {
+            if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
+            if (getters.selectedBooth) return [getters.selectedBooth.id];
+            return [];
         },
-        hoveredBooths(state, getters, rootState) {
+        selectedBoothIdsSet(state, getters, rootState) {
+            return new Set(getters.selectedBoothIds);
+        },
+        hoveredBoothIds(state, getters, rootState) {
             if (rootState.hoveredBooth) return [rootState.hoveredBooth];
             if (rootState.hoveredExhibitor) return rootState.exhibitors[rootState.hoveredExhibitor].booths;
             return [];
         },
-        boothNameMap(state, getters) {
-            const boothKeyArray = getters.boothsArray.map(b => [b.name.toLowerCase(), b]);
-            return new Map(boothKeyArray);
-        },
+        // boothNameMap(state, getters) {
+        //     const boothKeyArray = getters.boothsArray.map(b => [b.name.toLowerCase(), b]);
+        //     return new Map(boothKeyArray);
+        // },
         exhibitorsByCategoryId(state, getters) {
             const array = getters.categoriesArray.map(c => [
                 c.id,
