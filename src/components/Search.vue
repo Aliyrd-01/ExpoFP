@@ -68,7 +68,7 @@ input {
     outline: none;
     height: var(--size);
     -webkit-appearance: none;
-    flex-grow: 1;
+    width: 100%;
 }
 input::placeholder {
     color: #bbb;
