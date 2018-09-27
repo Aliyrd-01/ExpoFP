@@ -3,25 +3,31 @@
         <template slot="bar">
             <div class="bar">Booth {{booth.name}}</div>
         </template>
-        <div class="booth">
+        <div class="booth" v-if="!boothExhibitors.length">
             <div class="info" v-if='booth.size'>Size: {{booth.size}}</div>
             <div class="info" v-if='booth.price'>Price: {{booth.price}}</div>
             <div class="buy">
                 <button @click="buy">Buy</button>
             </div>
         </div>
+        <ExhibitorRow v-for="item in boothExhibitors" :key="item.id" :exhibitor='item' />
     </OverlayScrollable>
 </template>
 
 <script lang="ts">
-// import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import OverlayScrollable from "./OverlayScrollable.vue";
+import ExhibitorRow from "./ExhibitorRow.vue";
 
 export default {
-    components: { OverlayScrollable },
+    components: { OverlayScrollable, ExhibitorRow },
     computed: {
+        ...mapState(["exhibitors"]),
         booth() {
             return this.$store.getters.selectedBooth;
+        },
+        boothExhibitors() {
+            return this.booth.exhibitors.map(x => this.exhibitors[x]);
         },
         show() {
             return this.$store.state.details && this.$store.state.details.type === "booth";
