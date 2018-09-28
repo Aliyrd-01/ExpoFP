@@ -1,39 +1,37 @@
 <template>
-    <div :class="{container:1, visible: visible}">
-        <div class="bg" @click="close"></div>
-        <div class="menu">
-            <a class="title" :href="EFP_HOME_URL" target="_blank">
-                <img :src="EFP_LOGO_URL" />
-            </a>
-            <div class="menu-scrollable">
-                <div class="block">
-                    <a :href='EFP_HOME_URL' target="_blank">Expo Home</a>
-                    <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")'>My Bookmarks</a>
-                </div>
-                <div class="block">
-                    <div class="name">Categories</div>
-                    <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>{{c.name}} ({{numOfExhibitors(c.id)}})</a>
-                </div>
+    <OverlayScrollable v-if="menu" @close='close' @back='close' back-mode='none'>
+        <template slot="bar">
+            <div class="bar">
+                <a class="title" :href="EFP_HOME_URL" target="_blank">
+                    <img :src="EFP_LOGO_URL" />
+                </a>
             </div>
+        </template>
+        <div class="block">
+            <a :href='EFP_HOME_URL' target="_blank">Expo Home</a>
+            <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")'>My Bookmarks</a>
         </div>
-    </div>
-
+        <div class="block">
+            <div class="name">Categories</div>
+            <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>{{c.name}} ({{numOfExhibitors(c.id)}})</a>
+        </div>
+    </OverlayScrollable>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import s from "@/settings";
-//import ListRow from "./ListRow";
+import OverlayScrollable from "./OverlayScrollable.vue";
 
 export default {
-    name: "Menu",
+    components: { OverlayScrollable },
     data: () => ({
         EFP_HOME_URL,
         EFP_LOGO_URL
     }),
     computed: {
+        ...mapState(["menu"]),
         ...mapGetters(["categoriesArray"]),
-        visible() {
+        show() {
             return this.$store.state.menu;
         }
     },
@@ -53,53 +51,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container {
-    z-index: 10;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 200ms;
-    margin-left: -100%;
-    &.visible {
-        margin-left: 0;
-        opacity: 1;
-        > .menu {
-            margin-left: 0;
-        }
-    }
-
-    .menu-scrollable {
-        overflow-y: auto;
-    }
-
-    > .bg {
-        background: rgba(0, 0, 0, 0.5);
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-    }
-
-    > .menu {
-        width: 20rem;
-        max-width: 80vw;
-        background: #fff;
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        margin-left: -100%;
-        transition: margin-left 300ms ease;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        display: flex;
-        flex-direction: column;
-    }
-}
-
 .title {
     display: block;
     padding: 2rem 1rem;
@@ -107,8 +58,18 @@ export default {
     font-weight: 100;
     background: #eee;
     text-align: center;
+    margin-right: -3rem;
     img {
         width: 160px;
+    }
+}
+.bar {
+    /* margin-left: 1rem; */
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #333;
+    > span {
+        color: #aaa;
     }
 }
 .block {

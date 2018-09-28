@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import Menu from "./Menu2.vue";
+import Menu from "./Menu.vue";
 import Search from "./Search.vue";
 import Bookmarks from "./Bookmarks.vue";
 import Category from "./Category.vue";
