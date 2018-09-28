@@ -73,13 +73,15 @@
 </template>
 
 <script lant="ts">
+import { mapGetters, mapState } from "vuex";
 import OverlayScrollable from "./OverlayScrollable.vue";
 
 export default {
     components: { OverlayScrollable },
     computed: {
+          ...mapState([ "menu", "details"]),
         show() {
-            return this.$store.state.details && this.$store.state.details.type === "exhibitor";
+            return !this.menu &&this.details && this.details.type === "exhibitor";
         },
         exhibitor() {
             return this.$store.getters.selectedExhibitor;

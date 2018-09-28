@@ -39,6 +39,7 @@ export default {
     font-size: 1.3rem;
     text-decoration: none;
     color: #999999;
+    align-self: flex-start;
 }
 
 .slot {

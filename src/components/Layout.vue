@@ -5,7 +5,7 @@
         <Map/>
         <Demo/>
         <Debug/>
-        <Menu/>
+        <!-- <Menu/> -->
     </div>
 </template>
 

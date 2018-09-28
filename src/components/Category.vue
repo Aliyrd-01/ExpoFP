@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" @close='handleCloseAndBack' @back='handleCloseAndBack' back-mode='none'>
+    <OverlayScrollable v-if="show" @close='handleCloseAndBack' @back='handleCloseAndBack' back-mode='menu'>
         <template slot="bar">
             <div class="bar">
                 {{selectedCategory.name}}&nbsp;<span>({{categoryExhibitors.length}})</span>
@@ -18,10 +18,10 @@ import OverlayScrollable from "./OverlayScrollable.vue";
 export default {
     components: { ExhibitorsList, OverlayScrollable },
     computed: {
-         ...mapState(["details"]),
+         ...mapState(["details", "menu"]),
         ...mapGetters(["selectedCategory", "categoryExhibitors"]),
         show() {
-            return !this.details && this.selectedCategory;
+            return !this.details && !this.menu && this.selectedCategory;
         }
     },
     methods: {
@@ -34,7 +34,7 @@ export default {
 
 <style scoped lang="scss">
 .bar {
-    margin-left: 1rem;
+    /* margin-left: 1rem; */
     font-size: 1.1em;
     /* line-height: 1em; */
     font-weight: 500;

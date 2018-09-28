@@ -22,7 +22,7 @@ import ExhibitorRow from "./ExhibitorRow.vue";
 export default {
     components: { OverlayScrollable, ExhibitorRow },
     computed: {
-        ...mapState(["exhibitors"]),
+        ...mapState(["exhibitors", "menu", "details"]),
         booth() {
             return this.$store.getters.selectedBooth;
         },
@@ -30,7 +30,7 @@ export default {
             return this.booth.exhibitors.map(x => this.exhibitors[x]);
         },
         show() {
-            return this.$store.state.details && this.$store.state.details.type === "booth";
+            return !this.menu && this.details && this.details.type === "booth";
         }
     },
     methods: {

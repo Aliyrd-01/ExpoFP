@@ -22,12 +22,12 @@ export default {
         placeHolder: "Search company, booth or category"
     }),
     computed: {
-        ...mapState(["list", "details"]),
+        ...mapState(["list", "details", "menu"]),
         text() {
             return this.list.text;
         },
         show() {
-            return !this.details && this.list.type === "search";
+            return !this.details &&!this.menu && this.list.type === "search";
         },
         hideRealInput() {
             return this.positionTop > 50;
