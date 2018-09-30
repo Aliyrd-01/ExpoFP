@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" @close='close' @back='close' back-mode='none' :class='{shown}'>
+    <OverlayScrollable v-if="show" @close='close' @back='close' back-mode='none' class="overlaymenu" :class='{shown}'>
         <template slot="bar">
             <div class="bar">
                 <a class="title" :href="EFP_HOME_URL" target="_blank">
@@ -65,6 +65,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.overlaymenu{
+    background: #f1f1f1;
+}
 .title {
     display: block;
     padding: 2rem 1rem;
@@ -83,9 +86,7 @@ export default {
     }
 }
 
-.content {
-    background: #f1f1f1;
-}
+
 .menu-item {
     padding: 0.5rem 1rem;
     min-height: 3rem;
