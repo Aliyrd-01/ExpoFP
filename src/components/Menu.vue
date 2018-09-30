@@ -20,6 +20,11 @@
 import { mapGetters, mapState } from "vuex";
 import OverlayScrollable from "./OverlayScrollable.vue";
 
+window.setTimeout(function() {
+    const img = new Image();
+    img.src = EFP_LOGO_URL;
+}, 1000);
+
 export default {
     components: { OverlayScrollable },
     data: () => ({
