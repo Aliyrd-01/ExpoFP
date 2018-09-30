@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="menu" @close='close' @back='close' back-mode='none'>
+    <OverlayScrollable v-if="show" @close='close' @back='close' back-mode='none' :class='{shown}'>
         <template slot="bar">
             <div class="bar">
                 <a class="title" :href="EFP_HOME_URL" target="_blank">
@@ -7,13 +7,11 @@
                 </a>
             </div>
         </template>
-        <div class="block">
-            <a :href='EFP_HOME_URL' target="_blank">Expo Home</a>
-            <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")'>My Bookmarks</a>
-        </div>
-        <div class="block">
-            <div class="name">Categories</div>
-            <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>{{c.name}} ({{numOfExhibitors(c.id)}})</a>
+        <div class="content">
+            <a :href='EFP_HOME_URL' target="_blank" class="menu-item"><i class="fas fa-home"></i> Expo Home&nbsp;<i class="fas fa-external-link"></i></a>
+            <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")' class="menu-item"><i class="fas fa-bookmark"></i> My Bookmarks</a>
+            <div class="menu-item">Categories</div>
+            <a class="cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>{{c.name}} ({{numOfExhibitors(c.id)}})</a>
         </div>
     </OverlayScrollable>
 </template>
@@ -26,15 +24,26 @@ export default {
     components: { OverlayScrollable },
     data: () => ({
         EFP_HOME_URL,
-        EFP_LOGO_URL
+        EFP_LOGO_URL,
+        shown: false
     }),
     computed: {
         ...mapState(["menu"]),
         ...mapGetters(["categoriesArray"]),
         show() {
-            return this.$store.state.menu;
+            return this.menu;
         }
     },
+    watch: {
+        show(s) {
+            if (s) {
+                Vue.nextTick(() => {
+                    this.shown = true;
+                });
+            } else this.shown = false;
+        }
+    },
+
     methods: {
         close() {
             this.$store.commit("setMenu", false);
@@ -56,23 +65,63 @@ export default {
     padding: 2rem 1rem;
     font-size: 2rem;
     font-weight: 100;
-    background: #eee;
+    background: #fff;
     text-align: center;
     margin-right: -3rem;
     img {
         width: 160px;
+        opacity: 0;
+        transition: opacity 500ms;
+    }
+    .shown & img {
+        opacity: 1;
     }
 }
-.bar {
-    /* margin-left: 1rem; */
-    font-size: 1.1em;
-    font-weight: 500;
-    color: #333;
-    > span {
+
+.content {
+    background: #f1f1f1;
+}
+.menu-item {
+    padding: 0.5rem 1rem;
+    min-height: 3rem;
+    display: block;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    color: #555;
+    text-decoration: none;
+
+    > i:nth-child(2) {
+        font-size: 0.7em;
         color: #aaa;
     }
+
+    > i:first-child {
+        color: #999;
+        min-width: 1.6rem;
+        text-align: center;
+        padding-right: 0.5rem;
+    }
 }
-.block {
+div.menu-item {
+    border-top: solid 1px #ddd;
+    padding-bottom: 0;
+}
+.content a:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+.cat {
+    display: block;
+    padding: 0.5rem 1rem;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+    font-size: 0.9rem;
+    /* font-weight: 200; */
+}
+/* .block {
     border-top: solid 1px #eee;
     padding: 0.5rem 0;
     > .name {
@@ -89,5 +138,5 @@ export default {
             background: #eee;
         }
     }
-}
+} */
 </style>
