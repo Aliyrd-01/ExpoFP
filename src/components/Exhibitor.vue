@@ -1,5 +1,5 @@
 <template>
-    <OverlayContent v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")' >
+    <OverlayContent v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
             <div class="bar">
                 {{exhibitor.name}}
@@ -9,7 +9,6 @@
             </div>
         </template>
         <div class="details">
-
             <div class="booth">Booth
                 <span v-for="booth in booths" :key="booth.id">
                     {{booth.name}}
@@ -22,52 +21,52 @@
                 <div class='logo-container'>
                     <img :src="exhibitor.logo" class="logo" :key='exhibitor.id'>
                 </div>
-                    {{exhibitor.description}}
-                </div>
-                <div class="meta">
-                    <div v-if="exhibitor.address || exhibitor.address2">
-                        <i class="fas fa-map-marker"></i>
-                        <div>
-                            {{exhibitor.address}}<br/>{{exhibitor.address2}}
-                    </div>
-                        </div>
-                        <div v-if="exhibitor.phone1">
-                            <i class="fas fa-phone"></i>
-                            <div>
-                                {{exhibitor.phone1}}
-                            </div>
-                        </div>
-                        <div v-if="exhibitor.website">
-                            <i class="fas fa-browser"></i>
-                            <div>
-                                <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="social">
-                        <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook">
-                            <i class='fab fa-facebook'></i>
-                        </a>
-                        <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram">
-                            <i class='fab fa-instagram'></i>
-                        </a>
-                        <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin">
-                            <i class='fab fa-linkedin'></i>
-                        </a>
-                        <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter">
-                            <i class='fab fa-twitter'></i>
-                        </a>
-                        <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus">
-                            <i class='fab fa-google-plus'></i>
-                        </a>
-                        <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing">
-                            <i class='fab fa-xing'></i>
-                        </a>
-                        <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube">
-                            <i class='fab fa-youtube'></i>
-                        </a>
+                {{exhibitor.description}}
+            </div>
+            <div class="meta">
+                <div v-if="exhibitor.address || exhibitor.address2">
+                    <i class="fas fa-map-marker"></i>
+                    <div>
+                        {{exhibitor.address}}<br />{{exhibitor.address2}}
                     </div>
                 </div>
+                <div v-if="exhibitor.phone1">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        {{exhibitor.phone1}}
+                    </div>
+                </div>
+                <div v-if="exhibitor.website">
+                    <i class="fas fa-browser"></i>
+                    <div>
+                        <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="social">
+                <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook">
+                    <i class='fab fa-facebook'></i>
+                </a>
+                <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram">
+                    <i class='fab fa-instagram'></i>
+                </a>
+                <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin">
+                    <i class='fab fa-linkedin'></i>
+                </a>
+                <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter">
+                    <i class='fab fa-twitter'></i>
+                </a>
+                <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus">
+                    <i class='fab fa-google-plus'></i>
+                </a>
+                <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing">
+                    <i class='fab fa-xing'></i>
+                </a>
+                <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube">
+                    <i class='fab fa-youtube'></i>
+                </a>
+            </div>
+        </div>
     </OverlayContent>
 
 </template>
@@ -79,9 +78,9 @@ import OverlayContent from "./OverlayContent.vue";
 export default {
     components: { OverlayContent },
     computed: {
-          ...mapState([ "menu", "details"]),
+        ...mapState(["menu", "details"]),
         show() {
-            return !this.menu &&this.details && this.details.type === "exhibitor";
+            return !this.menu && this.details && this.details.type === "exhibitor";
         },
         exhibitor() {
             return this.$store.getters.selectedExhibitor;
@@ -153,6 +152,7 @@ export default {
     color: #444;
     padding-bottom: 1rem;
     border-bottom: solid 1px #eee;
+    @include clearfix;
 }
 .meta {
     > div {
@@ -198,7 +198,7 @@ export default {
     margin-left: 1rem;
     font-size: 1.1em;
     flex-grow: 1;
-    display: flex; 
+    display: flex;
     align-items: center;
 }
 
