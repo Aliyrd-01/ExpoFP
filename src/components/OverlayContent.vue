@@ -36,6 +36,7 @@ export default {
             update = () => ps.update;
             sel.addEventListener("ps-scroll-y", setScrolled);
         } else {
+            update = setScrolled;
             sel.addEventListener('scroll', setScrolled);
         }
 

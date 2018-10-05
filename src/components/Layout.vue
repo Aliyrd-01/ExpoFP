@@ -67,6 +67,7 @@ body {
 a {
     color: var(--link-color);
     text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
 }
 a:hover,
 a:visited {

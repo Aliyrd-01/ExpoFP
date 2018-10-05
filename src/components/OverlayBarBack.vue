@@ -54,9 +54,9 @@ export default {
 
 <style scoped lang="scss">
 .overlay-bar-back {
-    width: 3rem;
+    min-width: 3rem;
     height: $overlay-height;
-
+    align-self: flex-start;
     position: relative;
     display: flex;
 

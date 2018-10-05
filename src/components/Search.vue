@@ -86,6 +86,7 @@ export default {
             outline: none;
             height: $overlay-height;
             -webkit-appearance: none;
+            -webkit-tap-highlight-color: transparent;
             width: 100%;
         }
         input::placeholder {

@@ -33,6 +33,7 @@ export default {
 
     &__close {
         @include overlay-bar-icon;
+        align-self: flex-start;
     }
 }
 .overlay-bar.scrolled {
