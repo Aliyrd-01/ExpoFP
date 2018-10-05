@@ -1,5 +1,5 @@
 <template>
-    <div :class='overlaySize + " overlay"'>
+    <div :class='overlaySize' class="overlay">
         <Menu />
         <Search />
         <Bookmarks />
@@ -207,7 +207,7 @@ function getHeight(el, position, size) {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .overlay {
     position: fixed;
     background: #fff;

@@ -51,11 +51,11 @@ export default {
         height: 1px;
         overflow-y: hidden;
         position: relative;
-    }
-}
 
-.full .overlay-content__scrollable {
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
+        .full & {
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
 }
 </style>
