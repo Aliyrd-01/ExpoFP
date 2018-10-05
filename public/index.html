@@ -1,24 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="build-date" content="<%- new Date() %>" />
-    <title><%- EFP_TITLE %></title>
+    <title>
+        <%- EFP_TITLE %>
+    </title>
     <link href="/vendor/fa/css/fontawesome-all.min.css" rel="stylesheet">
     <link href="/vendor/sanitize-css/sanitize.css" rel="stylesheet">
     <link href="/vendor/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
     <link rel="icon" href="/favicon.png">
-  </head>
-  <body>
-    <div id="app"><div style='font-family: serif; font-size: 3rem; line-height: 1em; margin-top: 40vh; text-align: center; color: #1F0B6D'>...</div></div>
+    <% if (typeof(GTAG) !== "undefined" && GTAG) { %>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%- GTAG %>"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', '<%- GTAG %>');
+    </script>
+    <% } %>
+</head>
+
+<body>
+    <div id="app">
+        <div style='font-family: serif; font-size: 3rem; line-height: 1em; margin-top: 40vh; text-align: center; color: #1F0B6D'>...</div>
+    </div>
     <script src='/vendor/d3/d3.min.js'></script>
     <script src='<%- EFP_DATA_URL_BASE %>/data.js'></script>
     <script src='/fp.js'></script>
     <script src='/icons.js'></script>
     <script src='/settings.js'></script>
     <!-- built files will be auto injected -->
-  </body>
+</body>
+
 </html>
