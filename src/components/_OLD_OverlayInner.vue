@@ -1,7 +1,7 @@
 <template>
     <div class="overlay-inner">
         <OverlayBar :scrolled='scrolled' />
-        <div class='overlay-scrollable' ref='scrollable'>
+        <div class='overlay-content__scrollable' ref='scrollable'>
             <List v-if="detailsType === null" />
             <Booth v-if="detailsType === 'booth'" />
             <Exhibitor v-if="detailsType === 'exhibitor'" />
@@ -61,7 +61,7 @@ export default {
     display: flex;
     flex-direction: column;
 }
-.overlay-scrollable {
+.overlay-content__scrollable {
     flex-grow: 1;
     height: 1px;
     overflow-y: hidden;
@@ -69,7 +69,7 @@ export default {
 }
 </style>
 <style>
-.full .overlay-scrollable {
+.full .overlay-content__scrollable {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
 }

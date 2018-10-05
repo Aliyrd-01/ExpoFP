@@ -3,11 +3,10 @@
         <OverlayBar :scrolled='scrolled' @close='handleClose' :hide-close='hideClose' :back-mode='backMode' @back="$emit('back')">
             <slot name="bar" />
         </OverlayBar>
-        <div class='overlay-scrollable' ref='scrollable'>
+        <div class='overlay-content__scrollable' ref='scrollable'>
             <slot />
         </div>
     </div>
-
 </template>
 
 <script lang="ts">
@@ -15,7 +14,7 @@ import OverlayBar from "./OverlayBar.vue";
 import PerfectScrollbar from "perfect-scrollbar";
 
 export default {
-    props: ["backMode", 'hideClose'],
+    props: ["backMode", "hideClose"],
     data: () => ({
         scrolled: false
     }),
@@ -37,26 +36,25 @@ export default {
     methods: {
         handleClose() {
             this.$emit("close");
-        },
+        }
     }
 };
 </script>
 
-<style scoped>
+<style lang="scss">
 .overlay-content {
     height: 100%;
     display: flex;
     flex-direction: column;
+    &__scrollable {
+        flex-grow: 1;
+        height: 1px;
+        overflow-y: hidden;
+        position: relative;
+    }
 }
-.overlay-scrollable {
-    flex-grow: 1;
-    height: 1px;
-    overflow-y: hidden;
-    position: relative;
-}
-</style>
-<style>
-.full .overlay-scrollable {
+
+.full .overlay-content__scrollable {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
 }

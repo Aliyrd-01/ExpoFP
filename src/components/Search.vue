@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode' :hide-close='!text'>
+    <OverlayContent v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode' :hide-close='!text'>
         <template slot="bar">
             <div class="bar">
                 <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="text" @input="setText" @focus="setText" @blur="setText" />
@@ -7,16 +7,16 @@
             </div>
         </template>
         <ExhibitorsList />
-    </OverlayScrollable>
+    </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import ExhibitorsList from "./ExhibitorsList.vue";
-import OverlayScrollable from "./OverlayScrollable.vue";
+import OverlayContent from "./OverlayContent.vue";
 
 export default {
-    components: { ExhibitorsList, OverlayScrollable },
+    components: { ExhibitorsList, OverlayContent },
     data: () => ({
         positionTop: 0,
         placeHolder: "Search company, booth or category"
@@ -66,7 +66,7 @@ input {
     border: none;
     border-radius: 0.5rem;
     outline: none;
-    height: var(--size);
+    height: $overlay-height;
     -webkit-appearance: none;
     width: 100%;
 }

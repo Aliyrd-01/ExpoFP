@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" @close='handleCloseAndBack' @back='handleCloseAndBack' back-mode='menu'>
+    <OverlayContent v-if="show" @close='handleCloseAndBack' @back='handleCloseAndBack' back-mode='menu'>
         <template slot="bar">
             <div class="bar">
                 {{selectedCategory.name}}&nbsp;<span>({{categoryExhibitors.length}})</span>
@@ -7,16 +7,16 @@
             </div>
         </template>
         <ExhibitorsList />
-    </OverlayScrollable>
+    </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import ExhibitorsList from "./ExhibitorsList.vue";
-import OverlayScrollable from "./OverlayScrollable.vue";
+import OverlayContent from "./OverlayContent.vue";
 
 export default {
-    components: { ExhibitorsList, OverlayScrollable },
+    components: { ExhibitorsList, OverlayContent },
     computed: {
          ...mapState(["details", "menu"]),
         ...mapGetters(["selectedCategory", "categoryExhibitors"]),

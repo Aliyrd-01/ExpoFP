@@ -1,7 +1,7 @@
 <template>
-    <div :class="divClass" v-if='backMode !== "none"'>
-        <i :class="icon1Class"></i>
-        <a :class="icon2Class" href='/' @click.prevent='handleClick'></a>
+    <div class='overlay-bar-back' :class="divClass" v-if='backMode !== "none"'>
+        <i class='overlay-bar-back__icon1 far' :class="icon1Class"></i>
+        <a class='overlay-bar-back__icon2 far' :class="icon2Class" href='/' @click.prevent='handleClick'></a>
     </div>
 </template>
 
@@ -18,16 +18,20 @@ export default {
     },
     computed: {
         divClass() {
-            return `back ${this.enableAnimation ? "anim" : ""} ${this.animationEnded ? "end" : "start"}`;
+            return {
+                anim: this.enableAnimation,
+                end: this.animationEnded,
+                start: !this.animationEnded
+            };
         },
         showBack() {
             return this.backMode === "back";
         },
         icon1Class() {
-            return `icon1 far ${!this.showBack ? "fa-chevron-left" : "fa-bars"}`;
+            return `${!this.showBack ? "fa-chevron-left" : "fa-bars"}`;
         },
         icon2Class() {
-            return `icon2 far ${this.showBack ? "fa-chevron-left" : "fa-bars"}`;
+            return `${this.showBack ? "fa-chevron-left" : "fa-bars"}`;
         }
     },
     watch: {
@@ -49,43 +53,38 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.back {
-    /* height: var(--size);
-    min-width: var(--iconWidth); */
-      @include overlay-bar-icon;
+.overlay-bar-back {
+    width: 3rem;
+    height: $overlay-height;
+
     position: relative;
     display: flex;
-}
 
-.icon1,
-.icon2 {
-    position: absolute;
-}
+    &__icon1,
+    &__icon2 {
+        position: absolute;
+        @include overlay-bar-icon;
+    }
 
-.anim.back.end > .icon1 {
-    transition: all 0.3s;
-    transform: rotate(-180deg);
-}
-.back.end > .icon1 {
-    opacity: 0;
-}
-.anim.back.end > .icon1.fa-chevron-left {
-    transform: rotate(180deg);
-}
+    &.anim.end > &__icon1 {
+        transition: all 0.3s;
+        transform: rotate(-180deg);
+    }
+    &.end > &__icon1,
+    &.start > &__icon2 {
+        opacity: 0;
+    }
 
-.anim.back.start > .icon2 {
-    transform: rotate(180deg);
-}
+    &.anim.end > &__icon1.fa-chevron-left,
+    &.anim.start > &__icon2.fa-chevron-left {
+        transform: rotate(180deg);
+    }
 
-.back.start > .icon2 {
-    opacity: 0;
-}
-
-.back.start > .icon2.fa-bars {
-    transform: rotate(-180deg);
-}
-
-.anim.back.end > .icon2 {
-    transition: all 0.3s;
+    &.start > &__icon2.fa-bars {
+        transform: rotate(-180deg);
+    }
+    &.anim.end > &__icon2 {
+        transition: all 0.3s;
+    }
 }
 </style>

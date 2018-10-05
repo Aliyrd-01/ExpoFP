@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show">
+    <OverlayContent v-if="show">
         <template slot="bar">
             <div class="bar">
                 <input type="search" ref="input" v-if="!showTitle" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="searchText" @input="setSearchText" @focus="handleFocus" @blur="handleBlur" />
@@ -7,17 +7,17 @@
             </div>
         </template>
         <ExhibitorRow v-for="item in filteredExhibitors" :key="item.id" :exhibitor='item' />
-    </OverlayScrollable>
+    </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import ExhibitorRow from "./ExhibitorRow.vue";
-import OverlayScrollable from "./OverlayScrollable.vue";
+import OverlayContent from "./OverlayContent.vue";
 
 export default {
     name: "List",
-    components: { ExhibitorRow, OverlayScrollable },
+    components: { ExhibitorRow, OverlayContent },
     mounted() {
         // console.log('mounted', this.$el)
     },

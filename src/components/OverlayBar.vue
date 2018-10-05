@@ -20,17 +20,6 @@ export default {
 
 <style lang="scss">
 
-@mixin overlay-bar-icon {
-    height: 3.5rem;
-    min-width: 3rem;
-    line-height: 3.5rem;
-    text-align: center;
-    font-size: 1.3rem;
-    text-decoration: none !important;
-    color: #999999 !important;
-    align-self: flex-start;
-}
-
 .overlay-bar {
     display: flex;
     align-items: center;

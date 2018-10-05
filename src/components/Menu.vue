@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" @close='close' @back='close' back-mode='none' class="overlaymenu" :class='{shown}'>
+    <OverlayContent v-if="show" @close='close' @back='close' back-mode='none' class="overlaymenu" :class='{shown}'>
         <template slot="bar">
             <div class="bar">
                 <a class="title" :href="EFP_HOME_URL" target="_blank">
@@ -13,12 +13,12 @@
             <div class="menu-item">Categories</div>
             <a class="cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>{{c.name}} ({{numOfExhibitors(c.id)}})</a>
         </div>
-    </OverlayScrollable>
+    </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import OverlayScrollable from "./OverlayScrollable.vue";
+import OverlayContent from "./OverlayContent.vue";
 
 window.setTimeout(function() {
     const img = new Image();
@@ -26,7 +26,7 @@ window.setTimeout(function() {
 }, 1000);
 
 export default {
-    components: { OverlayScrollable },
+    components: { OverlayContent },
     data: () => ({
         EFP_HOME_URL,
         EFP_LOGO_URL,

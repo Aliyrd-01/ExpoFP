@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")' >
+    <OverlayContent v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")' >
         <template slot="bar">
             <div class="bar">
                 {{exhibitor.name}}
@@ -68,16 +68,16 @@
                         </a>
                     </div>
                 </div>
-    </OverlayScrollable>
+    </OverlayContent>
 
 </template>
 
 <script lant="ts">
 import { mapGetters, mapState } from "vuex";
-import OverlayScrollable from "./OverlayScrollable.vue";
+import OverlayContent from "./OverlayContent.vue";
 
 export default {
-    components: { OverlayScrollable },
+    components: { OverlayContent },
     computed: {
           ...mapState([ "menu", "details"]),
         show() {

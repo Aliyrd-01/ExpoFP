@@ -47,7 +47,7 @@ export default {
             console.log("TouchStart", e);
             if (this.startedTouch) return;
 
-            const scrollable = e.target.closest(".overlay-scrollable");
+            const scrollable = e.target.closest(".overlay-content__scrollable");
             if (scrollable && scrollable.scrollTop > 0) return;
             this.startedTouch = e.touches[0];
         },
@@ -210,10 +210,8 @@ function getHeight(el, position, size) {
 <style scoped>
 .overlay {
     position: fixed;
-    background: #fff; /*#f9f4f0*/
-    /* border-radius: 0.7rem; */
+    background: #fff;
     overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-    --iconWidth: 3rem;
 }
 </style>

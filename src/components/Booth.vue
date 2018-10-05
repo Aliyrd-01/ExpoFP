@@ -1,5 +1,5 @@
 <template>
-    <OverlayScrollable v-if="show" back-mode=none @close='$store.dispatch("selectNone")'>
+    <OverlayContent v-if="show" back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
             <div class="bar">Booth {{booth.name}}</div>
         </template>
@@ -11,16 +11,16 @@
             </div>
         </div>
         <ExhibitorRow v-for="item in boothExhibitors" :key="item.id" :exhibitor='item' />
-    </OverlayScrollable>
+    </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapState, mapGetters } from "vuex";
-import OverlayScrollable from "./OverlayScrollable.vue";
+import OverlayContent from "./OverlayContent.vue";
 import ExhibitorRow from "./ExhibitorRow.vue";
 
 export default {
-    components: { OverlayScrollable, ExhibitorRow },
+    components: { OverlayContent, ExhibitorRow },
     computed: {
         ...mapState(["exhibitors", "menu", "details"]),
         booth() {
