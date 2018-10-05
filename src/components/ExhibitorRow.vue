@@ -52,8 +52,8 @@ export default {
     align-items: center;
     border-top: solid 1px #ebebeb;
     min-height: 3.5rem;
-    text-decoration: none;
-    color: #333;
+    text-decoration: none !important;
+    color: #333 !important;
 
     @media (hover: hover) {
         &:hover {
