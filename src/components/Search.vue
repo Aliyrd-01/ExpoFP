@@ -1,5 +1,5 @@
 <template>
-    <OverlayContent v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode' :hide-close='!text'>
+    <OverlayContent v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode' :hide-close='!showClose'>
         <template slot="bar">
             <div class="search__bar">
                 <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="text" @input="setText" @focus="handleFocus" @blur="handleBlur" />
@@ -23,11 +23,18 @@ export default {
     }),
     computed: {
         ...mapState(["list", "details", "menu", "overlaySize"]),
+        ...mapGetters(["overlayPosition"]),
         text() {
             return this.list.text;
         },
         show() {
             return !this.details && !this.menu && this.list.type === "search";
+        },
+        bottomFull() {
+            return this.overlaySize === "full" && this.overlayPosition === "bottom";
+        },
+        showClose() {
+            return !!(this.text || this.bottomFull);
         },
         backMode() {
             return this.text ? "back" : "menu";
@@ -35,11 +42,9 @@ export default {
     },
     mounted() {
         const setPosition = () => {
+            if (!this.$el.tagName) return;
             const newVal = this.$el.getBoundingClientRect().top > 50;
             this.hideRealInput = newVal || this.overlaySize !== "full";
-            // if (this.hideRealInput && document.activeElement === this.getInput()) {
-            //     // this.getInput().blur();
-            // }
         };
         setPosition();
         window.setInterval(setPosition, 50);
@@ -63,9 +68,14 @@ export default {
             this.getInput().focus();
         },
         handleClose() {
-            this.getInput().value = "";
-            this.getInput().focus();
-            this.setText();
+            if (this.bottomFull) {
+                this.handleBack();
+                store.commit("setOverlaySize", "medium");
+            } else {
+                this.getInput().value = "";
+                this.getInput().focus();
+                this.setText();
+            }
         },
         handleBack() {
             this.getInput().value = "";
