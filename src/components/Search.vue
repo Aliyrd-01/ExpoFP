@@ -18,19 +18,16 @@ import OverlayContent from "./OverlayContent.vue";
 export default {
     components: { ExhibitorsList, OverlayContent },
     data: () => ({
-        positionTop: 0,
+        hideRealInput: true,
         placeHolder: "Search company, booth or category"
     }),
     computed: {
-        ...mapState(["list", "details", "menu"]),
+        ...mapState(["list", "details", "menu", "overlaySize"]),
         text() {
             return this.list.text;
         },
         show() {
             return !this.details && !this.menu && this.list.type === "search";
-        },
-        hideRealInput() {
-            return this.positionTop > 50;
         },
         backMode() {
             return this.text ? "back" : "menu";
@@ -38,11 +35,21 @@ export default {
     },
     mounted() {
         const setPosition = () => {
-            const newPos = this.$el.getBoundingClientRect().top;
-            if (newPos !== this.positionTop) this.positionTop = newPos;
+            const newVal = this.$el.getBoundingClientRect().top > 50;
+            this.hideRealInput = newVal || this.overlaySize !== "full";
+            // if (this.hideRealInput && document.activeElement === this.getInput()) {
+            //     // this.getInput().blur();
+            // }
         };
         setPosition();
         window.setInterval(setPosition, 50);
+    },
+    watch: {
+        overlaySize: function(s) {
+            if (s !== "full" && document.activeElement === this.getInput()) {
+                this.getInput().blur();
+            }
+        }
     },
     methods: {
         setText() {
