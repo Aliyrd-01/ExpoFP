@@ -1,5 +1,5 @@
 <template>
-    <a class="row" :class="{bookmarked}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.id}`" @click.prevent="select">
+    <a class="exhibitor-row" :class="{bookmarked}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.id}`" @click.prevent="select">
         <div class="lines">
             {{exhibitor.name}}
         </div>
@@ -47,8 +47,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-.row {
+.exhibitor-row {
     display: flex;
     align-items: center;
     border-top: solid 1px #ebebeb;
@@ -56,8 +55,10 @@ export default {
     text-decoration: none;
     color: #333;
 }
-.row:hover {
-    background-color: #f1f1f1;
+@media (hover: hover) {
+    .exhibitor-row:hover {
+        background-color: #f1f1f1;
+    }
 }
 .lines {
     padding: 0 0.1rem 0 1rem;
@@ -89,5 +90,4 @@ export default {
 .bk {
     @include bookmark;
 }
-
 </style>

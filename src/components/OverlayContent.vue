@@ -12,9 +12,10 @@
 <script lang="ts">
 import OverlayBar from "./OverlayBar.vue";
 import PerfectScrollbar from "perfect-scrollbar";
+import isScrollUgly from "@/utils/is-scroll-ugly";
 
 export default {
-    props: ["backMode", "hideClose"],
+    props: ["backMode", "hideClose", "canScroll"],
     data: () => ({
         scrolled: false
     }),
@@ -23,15 +24,17 @@ export default {
     },
     mounted() {
         const sel = this.$refs.scrollable;
-        const ps = new PerfectScrollbar(sel);
-        window.addEventListener("resize", () => ps.update());
-        sel.addEventListener("ps-scroll-y", e => {
-            this.scrolled = sel.scrollTop > 0;
-            console.log("scrolled", sel.scrollTop, this.scrolled);
-        });
 
-        const observer = new MutationObserver(() => ps.update());
-        observer.observe(sel, { childList: true, subtree: true });
+        if (isScrollUgly) {
+            const ps = new PerfectScrollbar(sel);
+            window.addEventListener("resize", () => ps.update());
+            sel.addEventListener("ps-scroll-y", e => {
+                this.scrolled = sel.scrollTop > 0;
+                console.log("scrolled", sel.scrollTop, this.scrolled);
+            });
+            const observer = new MutationObserver(() => ps.update());
+            observer.observe(sel, { childList: true, subtree: true });
+        }
     },
     methods: {
         handleClose() {
@@ -52,8 +55,8 @@ export default {
         overflow-y: hidden;
         position: relative;
 
-        .full & {
-            overflow-y: hidden;
+        .overlay.full & {
+            overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
         }
     }

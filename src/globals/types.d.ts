@@ -42,6 +42,7 @@ interface Category {
 }
 
 type OverlaySize = "full" | "medium" | "small"
+type OverlayPosition = "left" | "bottom" | "bottomLeft"
 type MapOccupied = null | "left" | "bottomSmall" | "bottomMedium"
 
 
