@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts">
+import { mapGetters, mapState } from "vuex";
 import OverlayBar from "./OverlayBar.vue";
 import PerfectScrollbar from "perfect-scrollbar";
 import isScrollUgly from "@/utils/is-scroll-ugly";
@@ -21,6 +22,9 @@ export default {
     }),
     components: {
         OverlayBar
+    },
+    computed: {
+        ...mapState(["overlaySize"])
     },
     mounted() {
         const sel = this.$refs.scrollable;
@@ -37,12 +41,19 @@ export default {
             sel.addEventListener("ps-scroll-y", setScrolled);
         } else {
             update = setScrolled;
-            sel.addEventListener('scroll', setScrolled);
+            sel.addEventListener("scroll", setScrolled);
         }
 
         window.addEventListener("resize", update);
         const observer = new MutationObserver(update);
         observer.observe(sel, { childList: true, subtree: true });
+    },
+    watch: {
+        overlaySize: function(s) {
+            if (s !== "full" && this.$refs.scrollable.scrollTop !== 0){
+                this.$refs.scrollable.scrollTop = 0;
+            }
+        }
     },
     methods: {
         handleClose() {
