@@ -39,7 +39,7 @@ const store1 = new Vuex.Store({
         overlayPosition: (state) => {
             const screen = state.screenSize;
             if (!screen || screen.width > 820) return "left"
-            if (screen.width > screen.height) return "bottomLeft"
+            if (screen.width > screen.height) return "left"
             return "bottom"
         },
         selectedExhibitor: state => state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,

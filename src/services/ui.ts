@@ -12,9 +12,6 @@ switch (store.getters.overlayPosition) {
     case "bottom":
         dispatchSize("medium");
         break;
-    case "bottomLeft":
-        dispatchSize("small");
-        break;
 }
 
 // expand on search focus

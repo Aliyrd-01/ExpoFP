@@ -25,7 +25,7 @@ export default {
         ]),
         occupied() {
             let occupied = null;
-            if (this.overlayPosition === "left" || (this.overlayPosition === "bottomLeft" && this.overlaySize !== "small")) {
+            if (this.overlayPosition === "left") {
                 occupied = "left";
             } else if (this.overlayPosition === "bottom") {
                 switch (this.overlaySize) {
@@ -36,16 +36,7 @@ export default {
                         occupied = "bottomMedium";
                         break;
                 }
-            } else if (this.overlayPosition === "bottomLeft") {
-                switch (this.overlaySize) {
-                    case "small":
-                        occupied = "bottomSmall";
-                        break;
-                    default:
-                        occupied = "left";
-                        break;
-                }
-            }
+            } 
             return occupied;
         },
         visibleRect() {

@@ -25,10 +25,6 @@ export default {
         ...mapGetters(["overlayPosition"]),
         noMove() {
             return this.overlayPosition === "left";
-        },
-        effectiveSize() {
-            if (this.overlayPosition === "bottomLeft" && this.overlaySize === "medium") return "full";
-            return this.overlaySize;
         }
     },
 
@@ -70,20 +66,18 @@ export default {
             let diff = this.startedTouch.clientY - rt.clientY;
             const overlayPosition = this.overlayPosition as OverlayPosition;
             // if (this.negateMove) diff = -diff;
-            const current = getHeight(this.$el, overlayPosition, this.effectiveSize);
+            const current = getHeight(this.$el, overlayPosition, this.overlaySize);
             const medium = getHeight(this.$el, overlayPosition, "medium");
-            let newSize = this.effectiveSize;
+            let newSize = this.overlaySize;
             if (diff < 0) {
-                if (this.effectiveSize === "medium" || current + diff < medium) newSize = "small";
-                else if (this.effectiveSize === "full") {
-                    if (overlayPosition === "bottomLeft") newSize = "small";
-                    else newSize = "medium";
+                if (this.overlaySize === "medium" || current + diff < medium) newSize = "small";
+                else if (this.overlaySize === "full") {
+                    newSize = "medium";
                 }
             } else if (diff > 0) {
-                if (this.effectiveSize === "medium" || current + diff > medium) newSize = "full";
-                else if (this.effectiveSize === "small") {
-                    if (overlayPosition === "bottomLeft") newSize = "full";
-                    else newSize = "medium";
+                if (this.overlaySize === "medium" || current + diff > medium) newSize = "full";
+                else if (this.overlaySize === "small") {
+                    newSize = "medium";
                 }
             }
             console.log("TouchEnd", newSize);
@@ -116,10 +110,6 @@ export default {
                 case "bottom":
                     width = "100%";
                     break;
-                case "bottomLeft":
-                    width = w;
-                    left = "1rem";
-                    break;
             }
 
             el.style.width = width;
@@ -136,7 +126,7 @@ export default {
             const position = this.overlayPosition as OverlayPosition;
             if (position === "left") return;
 
-            let newHeight = getHeight(this.$el, position, this.effectiveSize);
+            let newHeight = getHeight(this.$el, position, this.overlaySize);
 
             let transition = true;
             if (this.touchDiff !== undefined) {
@@ -198,17 +188,6 @@ function getHeight(el, position, size) {
                     return rtp(miniSizeRems);
             }
             break;
-        case "bottomLeft": {
-            switch (size) {
-                case "medium":
-                case "full":
-                    return containerHeight - rtp(paddingRems);
-                // case "medium": return rtp(mediumSizeRems);
-                case "small":
-                    return rtp(miniSizeRems);
-            }
-            break;
-        }
     }
     return null;
 }

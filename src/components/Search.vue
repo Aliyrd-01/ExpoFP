@@ -62,6 +62,7 @@ export default {
         },
         handleBack() {
             this.getInput().value = "";
+            this.setText();
         },
         handleBlur() {
             this.$store.commit("setSearchFocused", false);
