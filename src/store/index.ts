@@ -21,7 +21,7 @@ const store1 = new Vuex.Store({
     state: {
         list: { type: "search", text: '' } as { type: "search", text: string, focused: boolean } | { type: "bookmarks" } | { type: "category", id: number },
         // searchText: '',
-        // searchFocused: false,
+        searchFocused: false,
         details: null as { type: "booth" | "exhibitor"; id: number; },
         overlaySize: "medium" as OverlaySize,
         moveToExhibitor: null as number,
@@ -50,9 +50,9 @@ const store1 = new Vuex.Store({
         // setSearchText(state, text) {
         //     state.searchText = text;
         // },
-        // setSearchFocused(state, val) {
-        //     state.searchFocused = val;
-        // },
+        setSearchFocused(state, val) {
+            state.searchFocused = val;
+        },
         setList(state, val) {
             state.list = val;
         },

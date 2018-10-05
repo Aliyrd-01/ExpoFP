@@ -15,7 +15,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 import isScrollUgly from "@/utils/is-scroll-ugly";
 
 export default {
-    props: ["backMode", "hideClose", "canScroll"],
+    props: ["backMode", "hideClose"],
     data: () => ({
         scrolled: false
     }),

@@ -1,5 +1,5 @@
 
-function dispatchSize(size:OverlaySize) {
+function dispatchSize(size: OverlaySize) {
     store.commit('setOverlaySize', size);
 }
 
@@ -16,3 +16,17 @@ switch (store.getters.overlayPosition) {
         dispatchSize("small");
         break;
 }
+
+// expand on search focus
+store.watch(s => s.searchFocused, focused => {
+    if (focused && store.getters.overlayPosition !== "left") {
+        dispatchSize("full");
+    }
+})
+
+// expand on menu
+store.watch(s => s.menu, focused => {
+    if (focused && store.getters.overlayPosition !== "left") {
+        dispatchSize("full");
+    }
+})

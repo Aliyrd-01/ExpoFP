@@ -161,7 +161,7 @@ export default {
 
         > .fas {
             text-align: center;
-            min-width: var(--iconWidth);
+            min-width: 3rem;
             margin-top: 0.1rem;
             color: #ccc;
             font-size: 1rem;
