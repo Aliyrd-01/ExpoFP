@@ -50,8 +50,9 @@ export default {
 
 <style scoped lang="scss">
 .back {
-    height: var(--size);
-    min-width: var(--iconWidth);
+    /* height: var(--size);
+    min-width: var(--iconWidth); */
+      @include overlay-bar-icon;
     position: relative;
     display: flex;
 }

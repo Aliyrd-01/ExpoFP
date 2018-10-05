@@ -1,10 +1,10 @@
 <template>
-    <div class="bar-container" :class='{scrolled}'>
+    <div class="overlay-bar" :class='{scrolled}'>
         <OverlayBarBack :back-mode='backMode || "menu"' :enable-animation="true" @back='$emit("back")' />
-        <div class='slot'>
+        <div class='overlay-bar__slot'>
             <slot />
         </div>
-        <a class="far fa-times" href='/' @click.prevent='$emit("close")' v-if='!hideClose'></a>
+        <a class="far fa-times overlay-bar__close" href='/' @click.prevent='$emit("close")' v-if='!hideClose'></a>
     </div>
 
 </template>
@@ -18,20 +18,40 @@ export default {
 };
 </script>
 
-<style scoped>
-.bar-container {
+<style lang="scss">
+
+@mixin overlay-bar-icon {
+    height: 3.5rem;
+    min-width: 3rem;
+    line-height: 3.5rem;
+    text-align: center;
+    font-size: 1.3rem;
+    text-decoration: none !important;
+    color: #999999 !important;
+    align-self: flex-start;
+}
+
+.overlay-bar {
     display: flex;
     align-items: center;
     --size: 3.5rem;
     background-color: #fff;
     z-index: 1;
     transition: box-shadow 300ms;
+
+    &__slot {
+        flex-grow: 1;
+    }
+
+    &__close {
+        @include overlay-bar-icon;
+    }
 }
-.bar-container.scrolled {
+.overlay-bar.scrolled {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
-.bar-container >>> .far {
+/* .overlay-bar >>> .far {
     height: var(--size);
     min-width: var(--iconWidth);
     line-height: var(--size);
@@ -40,9 +60,7 @@ export default {
     text-decoration: none;
     color: #999999;
     align-self: flex-start;
-}
+} */
 
-.slot {
-    flex-grow: 1;
-}
+
 </style>
