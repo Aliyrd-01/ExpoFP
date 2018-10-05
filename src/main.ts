@@ -13,6 +13,6 @@ new Vue({
 
 
 
-window.addEventListener("scroll", function (e) {
-    document.body.scrollTop = 0;
-})
+// window.addEventListener("scroll", function (e) {
+//     document.body.scrollTop = 0;
+// })

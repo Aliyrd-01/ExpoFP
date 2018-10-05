@@ -1,10 +1,10 @@
 <template>
     <div id="root">
         <img src='expofp-overlay.png' class='logo-overlay'>
-        <Overlay/>
-        <Map/>
-        <Demo/>
-        <Debug/>
+        <Overlay />
+        <Map />
+        <Demo />
+        <Debug />
         <!-- <Menu/> -->
     </div>
 </template>
@@ -47,6 +47,12 @@ body {
     height: 100%;
     width: 100%;
     font-size: 15px;
+    @media (max-width: 820px) and (orientation: landscape) {
+        font-size: 13px;
+    }
+     @media (max-width: 820px) and (orientation: portrait) {
+        font-size: 16px;
+    }
 }
 #root {
     position: fixed;
