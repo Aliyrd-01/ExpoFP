@@ -1,12 +1,12 @@
 <template>
     <a class="exhibitor-row" :class="{bookmarked}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.id}`" @click.prevent="select">
-        <div class="lines">
+        <div class="exhibitor-row__lines">
             {{exhibitor.name}}
         </div>
-        <div ref="bookmark" class="bookmark" tabindex="0" @click.prevent.stop="bookmark" title="Toggle bookmark">
-            <i class="bk"></i>
+        <div ref="bookmark" class="exhibitor-row__bookmark" tabindex="0" @click.prevent.stop="bookmark" title="Toggle bookmark">
+            <i class="exhibitor-row__bk"></i>
         </div>
-        <div class="booth">
+        <div class="exhibitor-row__booth">
             <div v-for="booth in booths" :key="booth.id">
                 {{booth.name}}
             </div>
@@ -54,40 +54,37 @@ export default {
     min-height: 3.5rem;
     text-decoration: none;
     color: #333;
-}
-@media (hover: hover) {
-    .exhibitor-row:hover {
-        background-color: #f1f1f1;
-    }
-}
-.lines {
-    padding: 0 0.1rem 0 1rem;
-    flex-grow: 1;
 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.booth {
-    padding: 0 1rem 0 0;
-    min-width: 3.5rem;
-    text-align: right;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: #555;
-}
-.bookmark {
-    align-self: stretch;
-    padding: 0 0.5rem 0 1rem;
-    outline: none;
-}
-// .fa-bookmark {
-//     color: #bbb;
-// }
-// .bookmarked .bookmark > .fa-bookmark {
-//     color: #e54839;
-// }
-.bk {
-    @include bookmark;
+    @media (hover: hover) {
+        &:hover {
+            background-color: #f1f1f1;
+        }
+    }
+
+    &__lines {
+        padding: 0 0.1rem 0 1rem;
+        flex-grow: 1;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    &__booth {
+        padding: 0 1rem 0 0;
+        min-width: 3.5rem;
+        text-align: right;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    &__bookmark {
+        align-self: stretch;
+        padding: 0 0.5rem 0 1rem;
+        outline: none;
+    }
+    &__bk {
+        @include bookmark;
+    }
 }
 </style>
