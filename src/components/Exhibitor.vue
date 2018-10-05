@@ -15,7 +15,7 @@
                 </span>
             </div>
             <div class="exhibitor__categories">
-                <a :href='"?" + encodeURIComponent(c.name)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c.name)">{{c.name}}</a>
+                <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)">{{c.name}}</a>
             </div>
             <div class="exhibitor__description" v-if="exhibitor.description || exhibitor.logo">
                 <div class='exhibitor__logo-container'>
@@ -104,8 +104,8 @@ export default {
         }
     },
     methods: {
-        handleCategoryClick(name) {
-            this.$store.dispatch("selectText", name);
+        handleCategoryClick(c) {
+            this.$store.dispatch("selectCategory", c.id);
         },
         bookmark() {
             this.$store.commit("setBookmarked", { id: this.exhibitor.id, yes: !this.bookmarked });
@@ -123,8 +123,10 @@ export default {
     &__categories {
         margin: 0 0 1rem;
         font-size: 0.9rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
         > a {
-            display: block;
             margin: 0 1rem;
         }
     }
