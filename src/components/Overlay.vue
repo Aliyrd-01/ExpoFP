@@ -100,7 +100,7 @@ export default {
             const el = this.$el as HTMLDivElement;
             const position = this.overlayPosition as OverlayPosition;
             let width: string, height: string, left: string, top: string;
-            const w = "24rem";
+            const w = "23.5rem";
             switch (position) {
                 case "left":
                     width = w;

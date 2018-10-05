@@ -46,13 +46,13 @@ body {
     padding: 0;
     height: 100%;
     width: 100%;
-    font-size: 15px;
+    /* font-size: 16px; */
     @media (max-width: 820px) and (orientation: landscape) {
         font-size: 13px;
     }
-     @media (max-width: 820px) and (orientation: portrait) {
+     /* @media (max-width: 820px) and (orientation: portrait) {
         font-size: 16px;
-    }
+    } */
 }
 #root {
     position: fixed;

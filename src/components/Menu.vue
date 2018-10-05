@@ -122,9 +122,9 @@ div.menu-item {
     min-height: 2.5rem;
     display: flex;
     align-items: center;
-    color: #000;
+    color: #444;
     text-decoration: none;
-    font-size: 0.9rem;
+    /* font-size: 0.9rem; */
     /* font-weight: 200; */
 }
 /* .block {
