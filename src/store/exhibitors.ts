@@ -1,7 +1,13 @@
 import boothsState from './booths';
 import { generateUniqueSlug } from '@/services/slug';
+import previewExhibitor from '@/utils/preview-exhibitor';
 
 const baseUrl = Array.from(document.getElementsByTagName('script')).filter(x => x.src.endsWith('data.js'))[0].src.replace(/data.js$/, '');
+if (previewExhibitor) {
+    const i = __data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
+    __data.exhibitors.splice(i, 1, previewExhibitor);
+}
+
 const exhibitors = __data.exhibitors.reduce((a: any, c: Exhibitor) => (c.booths = []) && (a[c.id] = c) && a, {} as any) as { [id: number]: Exhibitor };
 // setup slugs
 for (const b of Object.values(exhibitors)) {
