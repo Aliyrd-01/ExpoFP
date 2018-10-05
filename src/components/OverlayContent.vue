@@ -25,16 +25,23 @@ export default {
     mounted() {
         const sel = this.$refs.scrollable;
 
+        const setScrolled = () => {
+            this.scrolled = sel.scrollTop > 0;
+            console.log("scrolled", sel.scrollTop, this.scrolled);
+        };
+
+        let update: () => void;
         if (isScrollUgly) {
             const ps = new PerfectScrollbar(sel);
-            window.addEventListener("resize", () => ps.update());
-            sel.addEventListener("ps-scroll-y", e => {
-                this.scrolled = sel.scrollTop > 0;
-                console.log("scrolled", sel.scrollTop, this.scrolled);
-            });
-            const observer = new MutationObserver(() => ps.update());
-            observer.observe(sel, { childList: true, subtree: true });
+            update = () => ps.update;
+            sel.addEventListener("ps-scroll-y", setScrolled);
+        } else {
+            sel.addEventListener('scroll', setScrolled);
         }
+
+        window.addEventListener("resize", update);
+        const observer = new MutationObserver(update);
+        observer.observe(sel, { childList: true, subtree: true });
     },
     methods: {
         handleClose() {
