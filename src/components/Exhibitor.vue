@@ -1,29 +1,29 @@
 <template>
-    <OverlayContent v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")'>
+    <OverlayContent class='exhibitor' v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
-            <div class="bar">
+            <div class="exhibitor__bar">
                 {{exhibitor.name}}
-                <a href='' @click.prevent="bookmark" class="bar-bk">
-                    <i class="bk"></i>
+                <a href='' @click.prevent="bookmark" class="exhibitor__bar-bk">
+                    <i class="exhibitor__bk"></i>
                 </a>
             </div>
         </template>
-        <div class="details">
-            <div class="booth">Booth
+        <div class="exhibitor__details">
+            <div class="exhibitor__booth">Booth
                 <span v-for="booth in booths" :key="booth.id">
                     {{booth.name}}
                 </span>
             </div>
-            <div class="categories">
+            <div class="exhibitor__categories">
                 <a :href='"?" + encodeURIComponent(c.name)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c.name)">{{c.name}}</a>
             </div>
-            <div class="description" v-if="exhibitor.description || exhibitor.logo">
-                <div class='logo-container'>
-                    <img :src="exhibitor.logo" class="logo" :key='exhibitor.id'>
+            <div class="exhibitor__description" v-if="exhibitor.description || exhibitor.logo">
+                <div class='exhibitor__logo-container'>
+                    <img :src="exhibitor.logo" class="exhibitor__logo" :key='exhibitor.id'>
                 </div>
                 {{exhibitor.description}}
             </div>
-            <div class="meta">
+            <div class="exhibitor__meta">
                 <div v-if="exhibitor.address || exhibitor.address2">
                     <i class="fas fa-map-marker"></i>
                     <div>
@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-            <div class="social">
+            <div class="exhibitor__social">
                 <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook">
                     <i class='fab fa-facebook'></i>
                 </a>
@@ -114,103 +114,104 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.details {
-}
-
-.booth {
-    margin: 0 1rem 0.2rem;
-    color: #777;
-}
-.categories {
-    margin: 0 0 1rem;
-    font-size: 0.9rem;
-    > a {
-        display: block;
-        margin: 0 1rem;
-    }
-}
-.logo-container {
-    width: 75px;
-    height: 75px;
-    float: left;
-    margin: 0.3rem 0.8rem 0.4rem 0;
-    border: solid 1px #ddd;
-    border-radius: 5px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-}
-.logo {
-    max-width: 100%;
-    max-height: 100%;
-    // height: 75px;
-}
-.description {
-    margin: 1rem;
-    font-size: 0.9rem;
-    color: #444;
-    padding-bottom: 1rem;
-    border-bottom: solid 1px #eee;
-    @include clearfix;
-}
-.meta {
-    > div {
-        display: flex;
-        margin: 0.8rem 0;
-
-        > .fas {
-            text-align: center;
-            min-width: 3rem;
-            margin-top: 0.1rem;
-            color: #ccc;
-            font-size: 1rem;
-        }
-        > div {
-            font-size: 0.9rem;
-            line-height: 1.2rem;
-            color: #888;
-        }
-    }
-}
-.social {
-    border-top: solid 1px #eee;
-    margin: 1rem;
-
-    display: flex;
-    padding-top: 1rem;
-    > a {
-        font-size: 1.5rem;
-        text-decoration: none;
+<style  lang="scss">
+.exhibitor {
+    &__booth {
+        margin: 0 1rem 0.2rem;
         color: #777;
-        margin: 0 1rem 0.5rem 0;
-        &:hover {
-            color: var(--link-color-hover);
+    }
+    &__categories {
+        margin: 0 0 1rem;
+        font-size: 0.9rem;
+        > a {
+            display: block;
+            margin: 0 1rem;
         }
     }
-}
-.bar {
-    min-height: 3.5rem;
-    position: relative;
-    line-height: 1.5rem;
-    color: #333;
-    font-weight: 500;
-    margin-left: 1rem;
-    font-size: 1.1em;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-}
+    &__logo-container {
+        width: 75px;
+        height: 75px;
+        float: left;
+        margin: 0.3rem 0.8rem 0.4rem 0;
+        border: solid 1px #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+    &__logo {
+        max-width: 100%;
+        max-height: 100%;
+        // height: 75px;
+    }
+    &__description {
+        margin: 1rem;
+        font-size: 0.9rem;
+        color: #444;
+        padding-bottom: 1rem;
+        border-bottom: solid 1px #eee;
+        @include clearfix;
+    }
 
-.bar-bk {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 0 1rem 1rem 1rem;
-    /* align-self: stretch; */
-}
+    &__meta {
+        > div {
+            display: flex;
+            margin: 0.8rem 0;
 
-.bk {
-    @include bookmark;
+            > .fas {
+                text-align: center;
+                min-width: 3rem;
+                margin-top: 0.1rem;
+                color: #ccc;
+                font-size: 1rem;
+            }
+            > div {
+                font-size: 0.9rem;
+                line-height: 1.2rem;
+                color: #888;
+            }
+        }
+    }
+    &__social {
+        border-top: solid 1px #eee;
+        margin: 1rem;
+
+        display: flex;
+        padding-top: 1rem;
+        > a {
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: #777;
+            margin: 0 1rem 0.5rem 0;
+            &:hover {
+                color: var(--link-color-hover);
+            }
+        }
+    }
+
+    &__bar {
+        min-height: 3.5rem;
+        position: relative;
+        line-height: 1.5rem;
+        color: #333;
+        font-weight: 500;
+        margin-left: 1rem;
+        font-size: 1.1em;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    &__bar-bk {
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 0 1rem 1rem 1rem;
+        /* align-self: stretch; */
+    }
+
+    &__bk {
+        @include bookmark;
+    }
 }
 </style>
