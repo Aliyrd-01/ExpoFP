@@ -36,13 +36,13 @@ const store1 = new Vuex.Store({
         categories: null as typeof categories.state,
         bookmarked: null as typeof bookmarked.state,
         screenSize: null as typeof screenSize.state,
-        
+
     },
     getters: {
         overlayPosition: (state) => {
             const screen = state.screenSize;
-            if (!screen || screen.width > 820) return "left"
-            if (screen.width > screen.height && screen.width > 500) return "left"
+            if (!screen || screen.width > 550) return "left"
+            // if (screen.width > 450) return "left"
             return "bottom"
         },
         selectedExhibitor: state => state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
@@ -98,12 +98,13 @@ const store1 = new Vuex.Store({
         selectCategory({ commit }, id) {
             commit('setDetails', null);
             commit('setList', { type: "category", id });
+            commit('setOverlaySize', 'full');
         },
         selectSearch({ commit }, text) {
             commit('setDetails', null);
             commit('setList', { type: "search", text: text || '' });
         },
-        clickBooth({ state, dispatch, commit }, id) {
+        clickBooth({ state, getters, dispatch, commit }, id) {
             if (!id) {
                 commit('setDetails', null);
                 return;
@@ -111,11 +112,13 @@ const store1 = new Vuex.Store({
             const booth = state.booths[id];
             if (booth.exhibitors.length === 1) {
                 dispatch('selectExhibitor', booth.exhibitors[0]);
-            // } else if (booth.exhibitors.length > 1) {
-            //     dispatch('selectSearch', booth.name);
+                // } else if (booth.exhibitors.length > 1) {
+                //     dispatch('selectSearch', booth.name);
             } else {
                 dispatch('selectBooth', id);
             }
+
+            if (getters.overlayPosition === "bottom") commit('setOverlaySize', 'medium');
         },
         clickExhibitor({ commit, dispatch }, id) {
             dispatch('selectExhibitor', id);

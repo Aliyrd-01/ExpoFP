@@ -92,7 +92,7 @@ export default {
             this.$store.commit("setSearchFocused", true);
         },
         getInput() {
-            return this.$el.querySelector("input[type=search]");
+            return this.$el.querySelector ? this.$el.querySelector("input[type=search]") : null;
         }
     }
 };

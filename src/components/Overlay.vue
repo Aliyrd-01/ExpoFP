@@ -249,7 +249,7 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
     position: fixed;
     bottom: 0;
     background: #fff;
-    overflow: hidden;
+    /* overflow: hidden; */
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
     /* @media (min-width: 600px) {
          box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);

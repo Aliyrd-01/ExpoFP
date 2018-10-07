@@ -1,7 +1,7 @@
 <template>
-    <a class="exhibitor-row" :class="{bookmarked}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.id}`" @click.prevent="select">
+    <a class="exhibitor-row" :class="{bookmarked, featured}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.id}`" @click.prevent="select">
         <div class="exhibitor-row__lines">
-            {{exhibitor.name}}
+            {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
         </div>
         <div ref="bookmark" class="exhibitor-row__bookmark" tabindex="0" @click.prevent.stop="bookmark" title="Toggle bookmark">
             <i class="exhibitor-row__bk"></i>
@@ -41,6 +41,9 @@ export default {
         },
         bookmarked() {
             return this.$store.state.bookmarked[this.exhibitor.id];
+        },
+        featured() {
+            return this.exhibitor.isFeatured;
         }
     }
 };
@@ -55,6 +58,12 @@ export default {
     text-decoration: none !important;
     color: #333 !important;
 
+    &.featured {
+        .exhibitor-row__lines {
+            font-weight: 500;
+        }
+    }
+
     @media (hover: hover) {
         &:hover {
             background-color: #f1f1f1;
@@ -68,6 +77,10 @@ export default {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        > .fa-gem{
+            color:#02a8ff;
+            font-size: 0.9rem;
+        }
     }
     &__booth {
         padding: 0 1rem 0 0;

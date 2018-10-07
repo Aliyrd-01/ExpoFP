@@ -21,6 +21,7 @@ interface Booth {
 interface Exhibitor {
     id: number,
     name: string,
+    isFeatured: boolean,
     description: string,
     address: string,
     address2: string,
