@@ -30,6 +30,7 @@ const store1 = new Vuex.Store({
         hoveredExhibitor: null as number,
         previewExhibitor: (previewExhibitor ? previewExhibitor.id : null),
         menu: false,
+        overlayShowsAll: false,
         //
         booths: null as typeof booths.state,
         exhibitors: null as typeof exhibitors.state,
@@ -53,6 +54,9 @@ const store1 = new Vuex.Store({
         // setSearchText(state, text) {
         //     state.searchText = text;
         // },
+        setOverlayShowsAll(state, val){
+            state.overlayShowsAll = val;
+        },
         setSearchFocused(state, val) {
             state.searchFocused = val;
         },

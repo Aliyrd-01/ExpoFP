@@ -25,3 +25,7 @@ export function debounce(func: Function, wait: number, immediate: boolean) {
         if (callNow) func.apply(context, args);
     };
 }
+
+export function rtp(rem) {
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}

@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
+import {rtp} from "@/utils";
 import Menu from "./Menu.vue";
 import Search from "./Search.vue";
 import Bookmarks from "./Bookmarks.vue";
@@ -108,6 +109,7 @@ export default {
                     s.top = "0";
                     s.left = "0";
                     s.height = undefined;
+                    this.setShowAll();
                     break;
                 case "bottom":
                     s.left = "0";
@@ -120,6 +122,13 @@ export default {
             // el.style.height = height;
             // el.style.left = left;
             // el.style.top = top;
+        },
+
+        setShowAll() {
+            const all =
+                this.overlayPosition === "left" ||
+                getTopForBottomPosition(this.$el, "full") === this.$el.getBoundingClientRect().top;
+            if (all !== store.state.overlayShowsAll) store.commit("setOverlayShowsAll", all);
         },
 
         setHeight() {
@@ -147,10 +156,12 @@ export default {
                 $el.transition()
                     .ease(d3.easePolyOut)
                     .duration(500)
-                    .style("top", newTop + "px");
+                    .style("top", newTop + "px")
+                    .on("end", this.setShowAll);
             } else {
                 this.$el.style.top = newTop + "px";
             }
+            this.setShowAll();
             // this.$el.style.transition = transition ? "top 500ms" : undefined;
             // this.$el.style.top = newTop + "px";
 
@@ -198,9 +209,7 @@ const miniSizeRems = 4.5;
 const mediumSizeRems = 10;
 const paddingRems = 2;
 
-function rtp(rem) {
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-}
+
 
 // function getHeight(el, position, size) {
 //     const containerHeight = el.parentElement.getBoundingClientRect().height;
@@ -249,7 +258,7 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
     position: fixed;
     bottom: 0;
     background: #fff;
-    /* overflow: hidden; */
+    overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
     /* @media (min-width: 600px) {
          box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
