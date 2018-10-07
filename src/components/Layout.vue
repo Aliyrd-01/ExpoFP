@@ -47,7 +47,7 @@ body {
     height: 100%;
     width: 100%;
     /* font-size: 16px; */
-    @media (max-width: 820px) and (min-width: 500px)  {
+    @media (max-width: 820px) and (min-width: 500px) and (orientation: portrait) {
         font-size: 13px;
     }
      /* @media (max-width: 820px) and (orientation: portrait) {

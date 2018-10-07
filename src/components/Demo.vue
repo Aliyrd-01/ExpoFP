@@ -24,8 +24,8 @@ export default {
     mounted() {
         if (this.demo && !sessionStorage.getItem("demo-dismissed")) {
             if (window.innerWidth < 820) {
-                alert("This is a demo of ExpoFP floor plan. This is not the official in-cosmetics expo plan.");
-                this.dismiss();
+                // alert("This is a demo of ExpoFP floor plan. This is not the official in-cosmetics expo plan.");
+                // this.dismiss();
             } else {
                 window.setTimeout(() => {
                     this.hidden = false;
