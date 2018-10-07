@@ -18,7 +18,6 @@ history.listen((location, action) => {
 
 function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : '';
-    const state = store.state;
     disableStateToUrl = true;
     const booth = store.getters.boothsArray.find((x: Booth) => x.slug === slug);
     if (slug === "bookmarks") {
@@ -90,6 +89,10 @@ function stateToUrl() {
 
     savedSelectedExhibitor = exhibitor;
     savedSelectedBooth = booth;
+}
+
+if (store.state.previewExhibitor){
+    history.replace('?' + store.state.exhibitors[store.state.previewExhibitor].slug);
 }
 
 dispatchFromUrl();

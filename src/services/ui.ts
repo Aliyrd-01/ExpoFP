@@ -10,7 +10,7 @@ switch (store.getters.overlayPosition) {
         dispatchSize("full");
         break;
     case "bottom":
-        dispatchSize("medium");
+        dispatchSize(store.state.previewExhibitor ? "full" : "medium");
         break;
 }
 

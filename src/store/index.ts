@@ -6,6 +6,7 @@ import categories from './categories'
 import bookmarked from './bookmarked'
 import screenSize from './screen-size'
 import filtering from './filtering'
+import previewExhibitor from '@/utils/preview-exhibitor';
 
 Vue.use(Vuex);
 
@@ -27,6 +28,7 @@ const store1 = new Vuex.Store({
         moveToExhibitor: null as number,
         hoveredBooth: null as number,
         hoveredExhibitor: null as number,
+        previewExhibitor: (previewExhibitor ? previewExhibitor.id : null),
         menu: false,
         //
         booths: null as typeof booths.state,
@@ -34,6 +36,7 @@ const store1 = new Vuex.Store({
         categories: null as typeof categories.state,
         bookmarked: null as typeof bookmarked.state,
         screenSize: null as typeof screenSize.state,
+        
     },
     getters: {
         overlayPosition: (state) => {
