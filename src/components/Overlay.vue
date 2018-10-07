@@ -66,16 +66,16 @@ export default {
             let diff = this.startedTouch.clientY - rt.clientY;
             const overlayPosition = this.overlayPosition as OverlayPosition;
             // if (this.negateMove) diff = -diff;
-            const current = getHeight(this.$el, overlayPosition, this.overlaySize);
-            const medium = getHeight(this.$el, overlayPosition, "medium");
+            const current = getTopForBottomPosition(this.$el, this.overlaySize);
+            const medium = getTopForBottomPosition(this.$el, "medium");
             let newSize = this.overlaySize;
             if (diff < 0) {
-                if (this.overlaySize === "medium" || current + diff < medium) newSize = "small";
+                if (this.overlaySize === "medium" || current + diff > medium) newSize = "small";
                 else if (this.overlaySize === "full") {
                     newSize = "medium";
                 }
             } else if (diff > 0) {
-                if (this.overlaySize === "medium" || current + diff > medium) newSize = "full";
+                if (this.overlaySize === "medium" || current + diff < medium) newSize = "full";
                 else if (this.overlaySize === "small") {
                     newSize = "medium";
                 }
@@ -99,25 +99,27 @@ export default {
         position() {
             const el = this.$el as HTMLDivElement;
             const position = this.overlayPosition as OverlayPosition;
-            let width: string, height: string, left: string, top: string;
+            // let width: string, left: string, top: string;
+            const s = el.style;
             const w = "23.5rem";
             switch (position) {
                 case "left":
-                    width = w;
-                    top = "0";
-                    left = "0";
+                    s.width = w;
+                    s.top = "0";
+                    s.left = "0";
+                    s.height = undefined;
                     break;
                 case "bottom":
-                    width = "100%";
+                    s.left = "0";
+                    s.width = "100%";
+                    this.setHeight();
                     break;
             }
 
-            el.style.width = width;
-            el.style.height = height;
-            el.style.left = left;
-            el.style.top = top;
-
-            this.setHeight();
+            // el.style.width = width;
+            // el.style.height = height;
+            // el.style.left = left;
+            // el.style.top = top;
         },
 
         setHeight() {
@@ -126,34 +128,69 @@ export default {
             const position = this.overlayPosition as OverlayPosition;
             if (position === "left") return;
 
-            let newHeight = getHeight(this.$el, position, this.overlaySize);
+            let newTop = getTopForBottomPosition(this.$el, this.overlaySize);
 
             let transition = true;
             if (this.touchDiff !== undefined) {
-                newHeight += this.touchDiff; // this.negateMove ? -this.touchDiff :
-                const maxHeight = getHeight(this.$el, position, "full");
-                if (newHeight > maxHeight) {
-                    newHeight = maxHeight;
-                }
+                newTop -= this.touchDiff; // this.negateMove ? -this.touchDiff :
+                const maxTop = getTopForBottomPosition(this.$el, "small");
+                const minTop = getTopForBottomPosition(this.$el, "full");
+                newTop = Math.min(Math.max(newTop, minTop), maxTop);
                 transition = false;
-            } else if (this.currentHeight == undefined) {
+            } else if (this.currentTop == undefined) {
                 transition = false;
             }
-            if (this.currentHeight === newHeight) return;
+            if (this.currentTop === newTop) return;
             const $el = d3.select(this.$el);
             $el.interrupt();
             if (transition) {
                 $el.transition()
                     .ease(d3.easePolyOut)
                     .duration(500)
-                    .style("height", newHeight + "px");
+                    .style("top", newTop + "px");
             } else {
-                this.$el.style.height = newHeight + "px";
+                this.$el.style.top = newTop + "px";
             }
+            // this.$el.style.transition = transition ? "top 500ms" : undefined;
+            // this.$el.style.top = newTop + "px";
 
-            if (this.currentHeight != newHeight && window.event) window.event.preventDefault();
-            this.currentHeight = newHeight;
+            if (this.currentTop != newTop && window.event) window.event.preventDefault();
+            this.currentTop = newTop;
         }
+        // setHeight_Prev() {
+        //     // height depends on size and ongoing touch
+        //     // let's animate when no touch in progress
+        //     const position = this.overlayPosition as OverlayPosition;
+        //     if (position === "left") return;
+
+        //     let newHeight = getHeight(this.$el, position, this.overlaySize);
+
+        //     let transition = true;
+        //     if (this.touchDiff !== undefined) {
+        //         newHeight += this.touchDiff; // this.negateMove ? -this.touchDiff :
+        //         const maxHeight = getHeight(this.$el, position, "full");
+        //         if (newHeight > maxHeight) {
+        //             newHeight = maxHeight;
+        //         }
+        //         transition = false;
+        //     } else if (this.currentHeight == undefined) {
+        //         transition = false;
+        //     }
+        //     if (this.currentHeight === newHeight) return;
+        //     const $el = d3.select(this.$el);
+        //     $el.interrupt();
+        //     if (transition) {
+        //         $el.transition()
+        //             .ease(d3.easePolyOut)
+        //             .duration(500)
+        //             .style("height", newHeight + "px");
+        //     } else {
+        //         this.$el.style.height = newHeight + "px";
+        //     }
+
+        //     if (this.currentHeight != newHeight && window.event) window.event.preventDefault();
+        //     this.currentHeight = newHeight;
+        // }
     }
 };
 
@@ -165,30 +202,44 @@ function rtp(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
-function getHeight(el, position, size) {
+// function getHeight(el, position, size) {
+//     const containerHeight = el.parentElement.getBoundingClientRect().height;
+//     switch (position) {
+//         case "left":
+//             switch (size) {
+//                 case "full":
+//                     return containerHeight - rtp(paddingRems * 2);
+//                 case "medium":
+//                     return rtp(mediumSizeRems);
+//                 case "small":
+//                     return rtp(miniSizeRems);
+//             }
+//             break;
+//         case "bottom":
+//             switch (size) {
+//                 case "full":
+//                     return containerHeight - rtp(paddingRems);
+//                 case "medium":
+//                     return rtp(mediumSizeRems);
+//                 case "small":
+//                     return rtp(miniSizeRems);
+//             }
+//             break;
+//     }
+//     return null;
+// }
+
+function getTopForBottomPosition(el, size: OverlaySize): number {
     const containerHeight = el.parentElement.getBoundingClientRect().height;
-    switch (position) {
-        case "left":
-            switch (size) {
-                case "full":
-                    return containerHeight - rtp(paddingRems * 2);
-                case "medium":
-                    return rtp(mediumSizeRems);
-                case "small":
-                    return rtp(miniSizeRems);
-            }
-            break;
-        case "bottom":
-            switch (size) {
-                case "full":
-                    return containerHeight - rtp(paddingRems);
-                case "medium":
-                    return rtp(mediumSizeRems);
-                case "small":
-                    return rtp(miniSizeRems);
-            }
-            break;
+    switch (size) {
+        case "full":
+            return rtp(paddingRems);
+        case "medium":
+            return window.innerHeight - rtp(mediumSizeRems);
+        case "small":
+            return window.innerHeight - rtp(miniSizeRems);
     }
+
     return null;
 }
 </script>
@@ -199,6 +250,8 @@ function getHeight(el, position, size) {
     bottom: 0;
     background: #fff;
     overflow: hidden;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+    @media (min-width: 600px) {
+         box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+    }
 }
 </style>
