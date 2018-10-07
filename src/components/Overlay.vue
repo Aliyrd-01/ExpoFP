@@ -194,7 +194,7 @@ export default {
     }
 };
 
-const miniSizeRems = 3.5;
+const miniSizeRems = 4.5;
 const mediumSizeRems = 10;
 const paddingRems = 2;
 
@@ -250,8 +250,9 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
     bottom: 0;
     background: #fff;
     overflow: hidden;
-    @media (min-width: 600px) {
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+    /* @media (min-width: 600px) {
          box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-    }
+    } */
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
     <div class="overlay-content">
+        <OverlayGrip v-if="overlayPosition === 'bottom'"/>
         <OverlayBar :scrolled='scrolled' @close='handleClose' :hide-close='hideClose' :back-mode='backMode' @back="$emit('back')">
             <slot name="bar" />
         </OverlayBar>
@@ -12,6 +13,7 @@
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import OverlayBar from "./OverlayBar.vue";
+import OverlayGrip from "./OverlayGrip.vue";
 import PerfectScrollbar from "perfect-scrollbar";
 import isScrollUgly from "@/utils/is-scroll-ugly";
 
@@ -21,10 +23,11 @@ export default {
         scrolled: false
     }),
     components: {
-        OverlayBar
+        OverlayBar, OverlayGrip
     },
     computed: {
-        ...mapState(["overlaySize"])
+        ...mapState(["overlaySize"]),
+        ...mapGetters(["overlayPosition"])
     },
     mounted() {
         const sel = this.$refs.scrollable;

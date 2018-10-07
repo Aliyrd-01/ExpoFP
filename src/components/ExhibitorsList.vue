@@ -1,5 +1,6 @@
 <template>
     <div class="list">
+          <!-- <div v-for="item in $store.getters.listExhibitors" :key="item.id" :exhibitor='item' style="height: 3rem" /> -->
         <ExhibitorRow v-for="item in $store.getters.listExhibitors" :key="item.id" :exhibitor='item' />
     </div>
 </template>
