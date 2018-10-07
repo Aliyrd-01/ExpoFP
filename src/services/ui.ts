@@ -27,3 +27,10 @@ store.watch(s => s.menu, focused => {
         dispatchSize("full");
     }
 })
+
+// remove menu when not full
+store.watch(s => s.overlaySize, size => {
+    if (size !== "full" && store.state.menu){
+        store.commit('setMenu', false);
+    }
+})

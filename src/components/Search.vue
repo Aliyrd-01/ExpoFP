@@ -34,7 +34,7 @@ export default {
             return this.overlaySize === "full" && this.overlayPosition === "bottom";
         },
         showClose() {
-            return !!(this.text || this.bottomFull);
+            return !!this.text; // || this.bottomFull
         },
         backMode() {
             return this.text ? "back" : "menu";
@@ -68,18 +68,22 @@ export default {
             this.getInput().focus();
         },
         handleClose() {
-            if (this.bottomFull) {
-                this.handleBack();
-                store.commit("setOverlaySize", "medium");
-            } else {
-                this.getInput().value = "";
-                this.getInput().focus();
-                this.setText();
-            }
+            // if (this.bottomFull) {
+            //     this.handleBack();
+            //     store.commit("setOverlaySize", "medium");
+            // } else {
+            //     this.getInput().value = "";
+            //     this.getInput().focus();
+            //     this.setText();
+            // }
+            this.getInput().value = "";
+            this.getInput().focus();
+            this.setText();
         },
         handleBack() {
             this.getInput().value = "";
             this.setText();
+            store.commit("setOverlaySize", "medium");
         },
         handleBlur() {
             this.$store.commit("setSearchFocused", false);
