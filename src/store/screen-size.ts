@@ -1,7 +1,7 @@
 type ScreenSize = { width: number, height: number };
 
 function getData(): ScreenSize {
-    return { width: window.innerWidth, height: window.innerHeight };
+        return { width: window.innerWidth, height: window.innerHeight };
 }
 
 export default {
