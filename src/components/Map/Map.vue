@@ -9,6 +9,7 @@ import { mapGetters, mapState } from "vuex";
 import { initialize, requireRedraw, applyZoomTransform, getBoothIdFromClientXy, setVisibleRect } from "./draw";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
+import c from './drawing-context';
 
 export default {
     name: "Map",
@@ -23,22 +24,22 @@ export default {
             "selectedBoothIds",
             "hoveredBoothIds"
         ]),
-        occupied() {
-            let occupied = null;
-            if (this.overlayPosition === "left") {
-                occupied = "left";
-            } else if (this.overlayPosition === "bottom") {
-                switch (this.overlaySize) {
-                    case "small":
-                        occupied = "bottomSmall";
-                        break;
-                    default:
-                        occupied = "bottomMedium";
-                        break;
-                }
-            } 
-            return occupied;
-        },
+        // occupied() {
+        //     let occupied = null;
+        //     if (this.overlayPosition === "left") {
+        //         occupied = "left";
+        //     } else if (this.overlayPosition === "bottom") {
+        //         switch (this.overlaySize) {
+        //             case "small":
+        //                 occupied = "bottomSmall";
+        //                 break;
+        //             default:
+        //                 occupied = "bottomMedium";
+        //                 break;
+        //         }
+        //     } 
+        //     return occupied;
+        // },
         visibleRect() {
             // console.log("get visibleRect", this.occupied);
             const w = this.screenSize.width;
@@ -49,16 +50,16 @@ export default {
             // w = w1;
             // h = h1;
 
-            switch (this.occupied) {
+            switch (this.overlayPosition) {
                 case "left":
                     return Rect.fromX1y1x2y2(remsToPixels(21), 0, w, h);
-                case "bottomSmall":
-                    return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
-                case "bottomMedium":
+                // case "bottomSmall":
+                //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
+                case "bottom":
                     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(12));
             }
 
-            throw new Error("Not supported `occupied`");
+            throw new Error("Not supported `overlayPosition`");
         }
     },
     mounted() {
@@ -88,8 +89,8 @@ export default {
                 Math.max(...rects.map(x => x.x2)),
                 Math.max(...rects.map(x => x.y2))
             );
-            //const z = getZoomToFitSvgRect(r);
-            const destZoom = d3.zoomIdentity; //.translate(z.x, z.y).scale(z.k);
+            const z = getZoomToFitSvgRect(r, c.zoomScale);
+            const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
             this.$canvas
                 .transition()
                 .duration(200)
@@ -129,6 +130,47 @@ export default {
         }
     }
 };
+
+ function getZoomToFitSvgRect(svgRect: Rect, zoom:number) {
+    // return translateX, tranlateY, scale
+    // we have rect
+    const { cx, cy } = svgRect;
+
+    const browserCx = c.visibleBRect.cx;
+    const browserCy = c.visibleBRect.cy;
+
+    const svgBcx = svgRect.cx * c.fpScale + c.fpCxUnzoomed;
+    const svgBcy = svgRect.cy * c.fpScale + c.fpCyUnzoomed;
+
+    // get this in current coords of canvas
+    // const browserCx = cx * c.fpScale + c.fpTranslateX;
+    // const browserCy = cy * c.fpScale + c.fpTranslateY;
+
+    // const browserCenterX = c.styleWidth / 2;
+    // const browserCenterY = c.styleHeight / 2;
+
+    const diffX = browserCx - svgBcx * zoom;
+    const diffY = browserCy - svgBcy * zoom;
+
+    return { x:  diffX, y: diffY, k:zoom };
+}
+
+// export function getZoomToFitSvgRect(svgRect: Rect, xPart: number = 0.5, yPart: number = 0.5) {
+//     // return translateX, tranlateY, scale
+//     // we have rect
+//     const { cx, cy } = svgRect;
+//     // get this in current coords of canvas
+//     const browserCx = cx * c.fpScale + c.fpTranslateX;
+//     const browserCy = cy * c.fpScale + c.fpTranslateY;
+
+//     const browserCenterX = c.styleWidth / 2;
+//     const browserCenterY = c.styleHeight / 2;
+
+//     const diffX = browserCenterX - browserCx;
+//     const diffY = browserCenterY - browserCy;
+
+//     return { x:  diffX, y: diffY, k: 1 };
+// }
 </script>
 
 <style scoped>
