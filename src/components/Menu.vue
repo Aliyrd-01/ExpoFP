@@ -9,7 +9,7 @@
         </template>
         <div class="menu__content">
             <a :href='EFP_HOME_URL' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo Home&nbsp;<i class="fas fa-external-link"></i></a>
-            <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")' class="menu__item"><i class="fas fa-bookmark"></i> My Bookmarks</a>
+            <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")' class="menu__item"><i class="fas fa-bookmark"></i> My Bookmarks ({{bookmarkedArray.length}})</a>
             <div class="menu__item">Categories</div>
             <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>
                 <div class="menu__cat-bullet">&bullet;</div>
@@ -38,7 +38,7 @@ export default {
     }),
     computed: {
         ...mapState(["menu"]),
-        ...mapGetters(["categoriesArray"]),
+        ...mapGetters(["categoriesArray", "bookmarkedArray"]),
         show() {
             return this.menu;
         }
