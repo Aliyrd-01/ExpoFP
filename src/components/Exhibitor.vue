@@ -78,7 +78,14 @@ import OverlayContent from "./OverlayContent.vue";
 export default {
     components: { OverlayContent },
     computed: {
-        ...mapState(["menu", "details"]),
+        //TODO: fix this
+        // ...mapState(["menu", "details"]),
+        menu(){
+            return this.$store.state.menu;
+        },
+        details(){
+            return this.$store.state.details;
+        },
         show() {
             return !this.menu && this.details && this.details.type === "exhibitor";
         },
@@ -92,7 +99,7 @@ export default {
             return this.exhibitor.categories.map(b => this.$store.state.categories[b]);
         },
         websiteUrl() {
-            this.e;
+            return this.e;
         },
         bookmarked() {
             return this.$store.state.bookmarked[this.exhibitor.id];

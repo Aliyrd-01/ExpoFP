@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import {rtp} from "@/utils";
+import { rtp } from "@/utils";
 import Menu from "./Menu.vue";
 import Search from "./Search.vue";
 import Bookmarks from "./Bookmarks.vue";
@@ -20,7 +20,14 @@ import Exhibitor from "./Exhibitor.vue";
 import Booth from "./Booth.vue";
 
 export default {
-    components: { Menu, Search, Bookmarks, Category, Exhibitor, Booth },
+    components: {
+        Menu,
+        Search,
+        Bookmarks,
+        Category, 
+        Exhibitor, 
+        Booth
+    },
     computed: {
         ...mapState(["overlaySize", "screenSize"]),
         ...mapGetters(["overlayPosition"]),
@@ -208,8 +215,6 @@ export default {
 const miniSizeRems = 3.5;
 const mediumSizeRems = 10;
 const paddingRems = 2;
-
-
 
 // function getHeight(el, position, size) {
 //     const containerHeight = el.parentElement.getBoundingClientRect().height;
