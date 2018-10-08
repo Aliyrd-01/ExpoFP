@@ -2,7 +2,7 @@
     <OverlayContent class='exhibitor' v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
             <div class="exhibitor__bar">
-                {{exhibitor.name}}
+                {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
                 <a href='' @click.prevent="bookmark" class="exhibitor__bar-bk">
                     <i class="exhibitor__bk"></i>
                 </a>
@@ -96,6 +96,9 @@ export default {
         },
         bookmarked() {
             return this.$store.state.bookmarked[this.exhibitor.id];
+        },
+        featured() {
+            return this.exhibitor.isFeatured;
         }
     },
     watch: {
@@ -202,6 +205,11 @@ export default {
         flex-grow: 1;
         display: flex;
         align-items: center;
+        > .fa-gem {
+            color: #02a8ff;
+            margin-left: 0.2rem;
+            font-size: 0.85rem;
+        }
     }
 
     &__bar-bk {
