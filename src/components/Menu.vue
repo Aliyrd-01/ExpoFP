@@ -12,10 +12,10 @@
             <a href='?bookmarks' @click.prevent='close(); $store.dispatch("selectBookmarks")' class="menu__item"><i class="fas fa-bookmark"></i> My Bookmarks</a>
             <div class="menu__item">Categories</div>
             <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='close(); $store.dispatch("selectCategory", c.id)'>
-
-                {{c.name}}
-
-                ({{numOfExhibitors(c.id)}})</a>
+                <div class="menu__cat-bullet">&bullet;</div>
+                <div class="menu__cat-title">{{c.name}}</div>
+                <div class="menu__cat-count">{{numOfExhibitors(c.id)}}</div>
+            </a>
         </div>
     </OverlayContent>
 </template>
@@ -69,6 +69,9 @@ export default {
 </script>
 
 <style lang="scss">
+.menu.shown .menu__title > img {
+    opacity: 1;
+}
 .menu {
     background: #f1f1f1;
     &__title {
@@ -83,9 +86,6 @@ export default {
             width: 160px;
             opacity: 0;
             transition: opacity 500ms;
-        }
-        .shown & img {
-            opacity: 1;
         }
     }
     &__item {
@@ -118,13 +118,30 @@ export default {
     }
 
     &__cat {
-        display: block;
         padding: 0.5rem 1rem;
         min-height: 2.5rem;
         display: flex;
-        align-items: center;
+        justify-content: space-between;
+        /* align-items: center; */
         color: #444 !important;
         text-decoration: none !important;
+        /* border-bottom: solid 1px #ddd; */
+    }
+
+    &__cat-bullet {
+        width: 0.7rem;
+        color: #aaa;
+    }
+    &__cat-title {
+        /* border-bottom: dotted 1px #ccc; */
+        flex-grow: 1;
+        /* padding-left: 0.5rem; */
+    }
+    &__cat-count {
+        color: #888;
+        font-size: 0.9em;
+        /* border-bottom: dotted 1px #ccc */
+        /* font-weight: 500; */
     }
 }
 div.menu__item {
