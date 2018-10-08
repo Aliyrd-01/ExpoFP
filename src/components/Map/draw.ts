@@ -34,7 +34,7 @@ export function requireRedraw() {
 }
 
 export function applyZoomTransform(transform: { k: number, x: number, y: number }) {
-    console.log('applyZoomTransform', transform.k, transform.x, transform.y)
+    // console.log('applyZoomTransform', transform.k, transform.x, transform.y)
     c.zoomScale = Math.round(transform.k * 10000) / 10000;
     c.zoomBx = transform.x;
     c.zoomBy = transform.y;

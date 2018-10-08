@@ -89,7 +89,7 @@ export default {
                 Math.max(...rects.map(x => x.x2)),
                 Math.max(...rects.map(x => x.y2))
             );
-            const z = getZoomToFitSvgRect(r, c.zoomScale);
+            const z = getZoomToCenterSvgRect(r, c.zoomScale);
             const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
             this.$canvas
                 .transition()
@@ -131,9 +131,7 @@ export default {
     }
 };
 
- function getZoomToFitSvgRect(svgRect: Rect, zoom:number) {
-    // return translateX, tranlateY, scale
-    // we have rect
+ function getZoomToCenterSvgRect(svgRect: Rect, zoom:number) {
     const { cx, cy } = svgRect;
 
     const browserCx = c.visibleBRect.cx;
@@ -141,13 +139,6 @@ export default {
 
     const svgBcx = svgRect.cx * c.fpScale + c.fpCxUnzoomed;
     const svgBcy = svgRect.cy * c.fpScale + c.fpCyUnzoomed;
-
-    // get this in current coords of canvas
-    // const browserCx = cx * c.fpScale + c.fpTranslateX;
-    // const browserCy = cy * c.fpScale + c.fpTranslateY;
-
-    // const browserCenterX = c.styleWidth / 2;
-    // const browserCenterY = c.styleHeight / 2;
 
     const diffX = browserCx - svgBcx * zoom;
     const diffY = browserCy - svgBcy * zoom;
