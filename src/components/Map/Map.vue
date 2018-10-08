@@ -89,7 +89,7 @@ export default {
                 Math.max(...rects.map(x => x.x2)),
                 Math.max(...rects.map(x => x.y2))
             );
-            const z = getZoomToCenterSvgRect(r, c.zoomScale);
+            const z = getZoomToCenterSvgRect(r, Math.max(c.zoomScale, 1.2));
             const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
             this.$canvas
                 .transition()
