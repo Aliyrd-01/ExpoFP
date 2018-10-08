@@ -77,8 +77,8 @@ export default {
     },
     watch: {
         moveToExhibitor: function() {
-            if (this.handledMoveToExhibitor === this.moveToExhibitor || !this.moveToExhibitor) return;
-            this.handledMoveToExhibitor = this.moveToExhibitor;
+            if (!this.moveToExhibitor) return;
+            // this.handledMoveToExhibitor = this.moveToExhibitor;
             console.log("watched moveToExhibitor", this.moveToExhibitor);
             // ask map to move to this exhibitor
             const rects = this.boothsArray.filter(b => b.exhibitors.indexOf(this.moveToExhibitor) !== -1).map(b => b.rect);
@@ -95,6 +95,9 @@ export default {
                 .transition()
                 .duration(200)
                 .call(this.zoom.transform, destZoom);
+
+            store.commit('setMoveToExhibitor', null);
+            // this.handledMoveToExhibitor = null;
         },
         hoveredBoothIds: () => requireRedraw(),
         selectedBoothIds: () => requireRedraw(),

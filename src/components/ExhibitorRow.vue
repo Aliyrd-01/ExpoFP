@@ -1,5 +1,5 @@
 <template>
-    <a class="exhibitor-row" :class="{bookmarked, featured}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.id}`" @click.prevent="select">
+    <a class="exhibitor-row" :class="{bookmarked, featured}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.slug}`" @click.prevent="select">
         <div class="exhibitor-row__lines">
             {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
         </div>
