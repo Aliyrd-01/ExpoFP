@@ -205,7 +205,7 @@ export default {
     }
 };
 
-const miniSizeRems = 4;
+const miniSizeRems = 3.5;
 const mediumSizeRems = 10;
 const paddingRems = 2;
 
