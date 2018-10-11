@@ -129,41 +129,33 @@ export default {
     }
 };
 
-function getZoomToCenterSvgRect(svgRect: Rect, zoom: number) {
-    const { cx, cy } = svgRect;
+// function getZoomToCenterSvgRect(svgRect: Rect, zoom: number) {
+//     const { cx, cy } = svgRect;
 
-    const browserCx = c.visibleBRect.cx;
-    const browserCy = c.visibleBRect.cy;
+//     const browserCx = c.visibleBRect.cx;
+//     const browserCy = c.visibleBRect.cy;
 
-    const svgBcx = svgRect.cx * c.fpScale + c.fpCxUnzoomed;
-    const svgBcy = svgRect.cy * c.fpScale + c.fpCyUnzoomed;
+//     const svgBcx = svgRect.cx * c.fpScale + c.fpCxUnzoomed;
+//     const svgBcy = svgRect.cy * c.fpScale + c.fpCyUnzoomed;
 
-    const diffX = browserCx - svgBcx * zoom;
-    const diffY = browserCy - svgBcy * zoom;
+//     const diffX = browserCx - svgBcx * zoom;
+//     const diffY = browserCy - svgBcy * zoom;
 
-    return { x: diffX, y: diffY, k: zoom };
-}
+//     return { x: diffX, y: diffY, k: zoom };
+// }
 
-function getZoomToCenterSvgRect2(svgRect: Rect, maxZoom: number) {
+function getZoomToCenterSvgRect(svgRect: Rect, maxZoom: number) {
     const minPaddingPercent = 5;
-    // const { cx, cy } = svgRect;
 
     const targetRect = c.visibleBRect.withPadding(
         (c.visibleBRect.w * minPaddingPercent) / 100,
         (c.visibleBRect.h * minPaddingPercent) / 100
     );
 
-    // const browserCx = c.visibleBRect.cx;
-    // const browserCy = c.visibleBRect.cy;
-
     const bSvgRect = c.sRectToBrowserUnzoomed(svgRect);
 
     // get max zoom
-    const maxPossibleZoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h);
-    const zoom = Math.min(maxPossibleZoom, maxZoom);
-
-    // const svgBcx = svgRect.cx * c.fpScale + c.fpCxUnzoomed;
-    // const svgBcy = svgRect.cy * c.fpScale + c.fpCyUnzoomed;
+    const zoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
 
     const diffX = targetRect.cx - bSvgRect.cx * zoom;
     const diffY = targetRect.cy - bSvgRect.cy * zoom;
@@ -171,22 +163,6 @@ function getZoomToCenterSvgRect2(svgRect: Rect, maxZoom: number) {
     return { x: diffX, y: diffY, k: zoom };
 }
 
-// export function getZoomToFitSvgRect(svgRect: Rect, xPart: number = 0.5, yPart: number = 0.5) {
-//     // return translateX, tranlateY, scale
-//     // we have rect
-//     const { cx, cy } = svgRect;
-//     // get this in current coords of canvas
-//     const browserCx = cx * c.fpScale + c.fpTranslateX;
-//     const browserCy = cy * c.fpScale + c.fpTranslateY;
-
-//     const browserCenterX = c.styleWidth / 2;
-//     const browserCenterY = c.styleHeight / 2;
-
-//     const diffX = browserCenterX - browserCx;
-//     const diffY = browserCenterY - browserCy;
-
-//     return { x:  diffX, y: diffY, k: 1 };
-// }
 </script>
 
 <style scoped>
