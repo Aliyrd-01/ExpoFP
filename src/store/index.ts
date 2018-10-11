@@ -25,7 +25,7 @@ const store1 = new Vuex.Store({
         searchFocused: false,
         details: null as { type: "booth" | "exhibitor"; id: number; },
         overlaySize: "medium" as OverlaySize,
-        moveToExhibitor: null as number,
+        moveToBooths: null as number[],
         hoveredBooth: null as number,
         hoveredExhibitor: null as number,
         previewExhibitor: (previewExhibitor ? previewExhibitor.id : null),
@@ -54,7 +54,7 @@ const store1 = new Vuex.Store({
         // setSearchText(state, text) {
         //     state.searchText = text;
         // },
-        setOverlayShowsAll(state, val){
+        setOverlayShowsAll(state, val) {
             state.overlayShowsAll = val;
         },
         setSearchFocused(state, val) {
@@ -72,8 +72,8 @@ const store1 = new Vuex.Store({
         setDetails(state, item) {
             state.details = item;
         },
-        setMoveToExhibitor(state, item) {
-            state.moveToExhibitor = item;
+        setMoveToBooths(state, item) {
+            state.moveToBooths = item;
         },
         setHoveredBooth(state, item) {
             state.hoveredBooth = item || null;
@@ -108,6 +108,18 @@ const store1 = new Vuex.Store({
             commit('setDetails', null);
             commit('setList', { type: "search", text: text || '' });
         },
+        clickBookmarks({ commit, dispatch }, id) {
+            commit("setMenu", false);
+            dispatch("selectBookmarks");
+            dispatch("moveToList");
+            dispatch('showMap', id);
+        },
+        clickCategory({ commit, dispatch }, id) {
+            commit("setMenu", false);
+            dispatch("selectCategory", id);
+            dispatch("moveToList");
+            dispatch('showMap', id);
+        },
         clickBooth({ state, getters, dispatch, commit }, id) {
             if (!id) {
                 commit('setDetails', null);
@@ -121,12 +133,23 @@ const store1 = new Vuex.Store({
             } else {
                 dispatch('selectBooth', id);
             }
-
+            dispatch('showMap', id);
+        },
+        showMap({ getters, commit }) {
             if (getters.overlayPosition === "bottom") commit('setOverlaySize', 'medium');
+        },
+        moveToList({ dispatch, getters }) {
+            dispatch('moveToExhibitors', getters.listExhibitorsIds);
+        },
+        moveToExhibitors({ state, commit, dispatch }, ids) {
+            const booths = [];
+            ids.forEach(id => booths.push(...state.exhibitors[id].booths));
+            commit('setMoveToBooths', booths);
         },
         clickExhibitor({ commit, dispatch }, id) {
             dispatch('selectExhibitor', id);
-            commit('setMoveToExhibitor', id);
+            dispatch('moveToExhibitors', [id]);
+
         },
         // clickBookmark({ state, commit }, id) {
         //     if (state.bookmarked.has(id)

@@ -41,6 +41,9 @@ export default {
         //     // }
         //     // return exhibitorsArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         // },
+        listExhibitorsIds(state, getters){
+            return getters.listExhibitors.map(e => e.id);
+        },
 
         listBoothsIds(state, getters) {
             const arr = [] as number[];

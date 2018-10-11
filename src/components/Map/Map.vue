@@ -15,15 +15,8 @@ export default {
     name: "Map",
     data: () => ({}),
     computed: {
-        ...mapState(["overlaySize", "moveToExhibitor", "hoveredBooth", "screenSize", "bookmarked"]),
-        ...mapGetters([
-            "overlayPosition",
-            "exhibitorsArray",
-            "boothsArray",
-            "listBoothsIds",
-            "selectedBoothIds",
-            "hoveredBoothIds"
-        ]),
+        ...mapState(["overlaySize", "moveToBooths", "booths", "hoveredBooth", "screenSize", "bookmarked"]),
+        ...mapGetters(["overlayPosition", "exhibitorsArray", "listBoothsIds", "selectedBoothIds", "hoveredBoothIds"]),
         // occupied() {
         //     let occupied = null;
         //     if (this.overlayPosition === "left") {
@@ -76,22 +69,22 @@ export default {
         initialize(canvas, this.visibleRect);
     },
     watch: {
-        moveToExhibitor: function() {
-            if (!this.moveToExhibitor) return;
-            // this.handledMoveToExhibitor = this.moveToExhibitor;
-            console.log("watched moveToExhibitor", this.moveToExhibitor);
+        moveToBooths: function() {
+            if (!this.moveToBooths) return;
+            // this.handledMoveToExhibitor = this.moveToBooths;
+            console.log("watched moveToBooths", this.moveToBooths);
             // ask map to move to this exhibitor
-            const rects = this.boothsArray.filter(b => b.exhibitors.indexOf(this.moveToExhibitor) !== -1).map(b => b.rect);
+            const rects = this.moveToBooths.map(id => this.booths[id].rect) as Rect[];
             if (rects.length === 0) return;
             var r = Rect.fromMultiple(rects);
-            const z = getZoomToCenterSvgRect2(r, Math.max(c.zoomScale, 1.5));
+            const z = getZoomToCenterSvgRect(r, Math.max(c.zoomScale, 1.2));
             const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
             this.$canvas
                 .transition()
                 .duration(200)
                 .call(this.zoom.transform, destZoom);
 
-            store.commit("setMoveToExhibitor", null);
+            store.commit("setMoveToBooths", null);
             // this.handledMoveToExhibitor = null;
         },
         hoveredBoothIds: () => requireRedraw(),
@@ -162,7 +155,6 @@ function getZoomToCenterSvgRect(svgRect: Rect, maxZoom: number) {
 
     return { x: diffX, y: diffY, k: zoom };
 }
-
 </script>
 
 <style scoped>
