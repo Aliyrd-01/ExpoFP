@@ -22,7 +22,7 @@ export default {
         placeHolder: "Search company, booth or category"
     }),
     computed: {
-        ...mapState(["list", "details", "menu", "overlaySize"]),
+        ...mapState(["list", "details", "menu", "overlaySize", "searchFocused"]),
         ...mapGetters(["overlayPosition"]),
         text() {
             return this.list.text;
@@ -53,6 +53,12 @@ export default {
         overlaySize: function(s) {
             if (s !== "full" && document.activeElement === this.getInput()) {
                 this.getInput().blur();
+            }
+        },
+        searchFocused: function(f){
+            const i = this.getInput();
+            if (i && f && document.activeElement !== i){
+                i.focus();
             }
         }
     },

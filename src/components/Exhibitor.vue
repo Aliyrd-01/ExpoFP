@@ -180,7 +180,7 @@ export default {
             > div {
                 font-size: 0.9rem;
                 line-height: 1.2rem;
-                color: #888;
+                color: #333;
             }
         }
     }
