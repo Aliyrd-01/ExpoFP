@@ -40,6 +40,15 @@ namespace local {
             return this.fromXywh(svgRect.x.baseVal.value, svgRect.y.baseVal.value, svgRect.width.baseVal.value, svgRect.height.baseVal.value);
         }
 
+        static fromMultiple(rects: Rect[]) {
+            return Rect.fromX1y1x2y2(
+                Math.min(...rects.map(x => x.x1)),
+                Math.min(...rects.map(x => x.y1)),
+                Math.max(...rects.map(x => x.x2)),
+                Math.max(...rects.map(x => x.y2))
+            );
+        }
+
         contains(r: Rect): boolean {
             return r.x1 >= this.x1 && r.x2 <= this.x2 && r.y1 >= this.y1 && r.y2 <= this.y2;
         }

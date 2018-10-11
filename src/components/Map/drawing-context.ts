@@ -69,6 +69,15 @@ class DrawingContext {
         return Rect.fromXywh(this.sXToSprite(rect.x1), this.sYToSprite(rect.y1), this.sWToSprite(rect.w), this.sHToSprite(rect.h));
     }
 
+    sWToBrowserUnzoomed(w: number): number { return w * this.fpScale; }
+    sHToBrowserUnzoomed(h: number): number { return h * this.fpScale; }
+    sXToBrowserUnzoomed(x: number): number { return x * this.fpScale + this.fpCxUnzoomed; }
+    sYToBrowserUnzoomed(y: number): number { return y * this.fpScale + this.fpCyUnzoomed; }
+    sRectToBrowserUnzoomed(rect: Rect): Rect {
+        return Rect.fromXywh(this.sXToBrowserUnzoomed(rect.x1), this.sYToBrowserUnzoomed(rect.y1),
+            this.sWToBrowserUnzoomed(rect.w), this.sHToBrowserUnzoomed(rect.h));
+    }
+
     // detail level
     fpAvgBoothArea: number;
     get detailLevel() { return this.fpAvgBoothArea * this.fpScale * this.zoomScale * this.fpScale * this.zoomScale; }

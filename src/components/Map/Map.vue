@@ -9,7 +9,7 @@ import { mapGetters, mapState } from "vuex";
 import { initialize, requireRedraw, applyZoomTransform, getBoothIdFromClientXy, setVisibleRect } from "./draw";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
-import c from './drawing-context';
+import c from "./drawing-context";
 
 export default {
     name: "Map",
@@ -37,7 +37,7 @@ export default {
         //                 occupied = "bottomMedium";
         //                 break;
         //         }
-        //     } 
+        //     }
         //     return occupied;
         // },
         visibleRect() {
@@ -83,20 +83,15 @@ export default {
             // ask map to move to this exhibitor
             const rects = this.boothsArray.filter(b => b.exhibitors.indexOf(this.moveToExhibitor) !== -1).map(b => b.rect);
             if (rects.length === 0) return;
-            var r = Rect.fromX1y1x2y2(
-                Math.min(...rects.map(x => x.x1)),
-                Math.min(...rects.map(x => x.y1)),
-                Math.max(...rects.map(x => x.x2)),
-                Math.max(...rects.map(x => x.y2))
-            );
-            const z = getZoomToCenterSvgRect(r, Math.max(c.zoomScale, 1.2));
+            var r = Rect.fromMultiple(rects);
+            const z = getZoomToCenterSvgRect2(r, Math.max(c.zoomScale, 1.5));
             const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
             this.$canvas
                 .transition()
                 .duration(200)
                 .call(this.zoom.transform, destZoom);
 
-            store.commit('setMoveToExhibitor', null);
+            store.commit("setMoveToExhibitor", null);
             // this.handledMoveToExhibitor = null;
         },
         hoveredBoothIds: () => requireRedraw(),
@@ -134,7 +129,7 @@ export default {
     }
 };
 
- function getZoomToCenterSvgRect(svgRect: Rect, zoom:number) {
+function getZoomToCenterSvgRect(svgRect: Rect, zoom: number) {
     const { cx, cy } = svgRect;
 
     const browserCx = c.visibleBRect.cx;
@@ -146,7 +141,34 @@ export default {
     const diffX = browserCx - svgBcx * zoom;
     const diffY = browserCy - svgBcy * zoom;
 
-    return { x:  diffX, y: diffY, k:zoom };
+    return { x: diffX, y: diffY, k: zoom };
+}
+
+function getZoomToCenterSvgRect2(svgRect: Rect, maxZoom: number) {
+    const minPaddingPercent = 5;
+    // const { cx, cy } = svgRect;
+
+    const targetRect = c.visibleBRect.withPadding(
+        (c.visibleBRect.w * minPaddingPercent) / 100,
+        (c.visibleBRect.h * minPaddingPercent) / 100
+    );
+
+    // const browserCx = c.visibleBRect.cx;
+    // const browserCy = c.visibleBRect.cy;
+
+    const bSvgRect = c.sRectToBrowserUnzoomed(svgRect);
+
+    // get max zoom
+    const maxPossibleZoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h);
+    const zoom = Math.min(maxPossibleZoom, maxZoom);
+
+    // const svgBcx = svgRect.cx * c.fpScale + c.fpCxUnzoomed;
+    // const svgBcy = svgRect.cy * c.fpScale + c.fpCyUnzoomed;
+
+    const diffX = targetRect.cx - bSvgRect.cx * zoom;
+    const diffY = targetRect.cy - bSvgRect.cy * zoom;
+
+    return { x: diffX, y: diffY, k: zoom };
 }
 
 // export function getZoomToFitSvgRect(svgRect: Rect, xPart: number = 0.5, yPart: number = 0.5) {
