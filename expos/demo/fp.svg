@@ -39,7 +39,7 @@
     <rect class="cls-1" x="96.24" y="1726.63" width="1044" height="223.93"/>
     <rect class="cls-2" x="205.33" y="30" width="934.92" height="1920.56"/>
     <rect class="cls-1" x="96.24" y="1824.55" width="254" height="186"/>
-    <rect class="cls-2" x="885.32" y="1917.55" width="254.92" height="93"/>
+    <rect class="cls-2" x="868.83" y="1917.55" width="271.41" height="93"/>
   </g>
   <g id="Booths">
     <rect id="ba90" class="cls-3" x="118.24" y="46.67" width="174.17" height="248.67"/>
@@ -221,6 +221,7 @@
     <rect id="be05" class="cls-3" x="1036.24" y="1751.75" width="55.33" height="50.25"/>
     <rect id="be03" class="cls-3" x="1036.24" y="1802" width="55.33" height="50.67"/>
     <rect id="be01" class="cls-3" x="1036.24" y="1852.67" width="55.33" height="49.83"/>
+    <rect id="bd10" class="cls-3" x="884.24" y="1876" width="95.5" height="114"/>
   </g>
   <g id="Walls">
     <line class="cls-4" x1="292.41" y1="597.17" x2="234.24" y2="597.17"/>
@@ -496,6 +497,10 @@
     <line class="cls-4" x1="290.24" y1="1752" x2="290.24" y2="1990"/>
     <line class="cls-4" x1="118.24" y1="1990" x2="290.24" y2="1990"/>
     <line class="cls-4" x1="118.24" y1="1752" x2="290.24" y2="1752"/>
+    <line class="cls-4" x1="884.24" y1="1876" x2="979.74" y2="1876"/>
+    <line class="cls-4" x1="979.74" y1="1990" x2="979.74" y2="1876"/>
+    <line class="cls-4" x1="884.24" y1="1990" x2="884.24" y2="1876"/>
+    <line class="cls-4" x1="979.74" y1="1990" x2="884.24" y2="1990"/>
   </g>
   <g id="Columns">
     <circle class="cls-5" cx="364.1" cy="54.41" r="10.25"/>

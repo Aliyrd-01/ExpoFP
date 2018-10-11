@@ -20,9 +20,9 @@ export default {
         // enabled: false
     }),
     computed: {
-        ...mapState(["searchText"]),
+        ...mapState(["list"]),
         enabled() {
-            return this.searchText === "debug1";
+            return this.list && this.list.type === "search" && this.list.text === "debug1";
         }
     },
     methods: {
