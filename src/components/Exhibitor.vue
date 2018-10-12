@@ -71,21 +71,14 @@
 
 </template>
 
-<script lant="ts">
+<script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
 
 export default {
     components: { OverlayContent },
     computed: {
-        //TODO: fix this
-        // ...mapState(["menu", "details"]),
-        menu(){
-            return this.$store.state.menu;
-        },
-        details(){
-            return this.$store.state.details;
-        },
+        ...mapState(["menu", "details"]),
         show() {
             return !this.menu && this.details && this.details.type === "exhibitor";
         },

@@ -1,7 +1,7 @@
+import '@/polyfills'
 import '@/globals'
 import '@/store'
 import '@/services'
-
 import Layout from './components/Layout.vue'
 
 Vue.config.productionTip = false
