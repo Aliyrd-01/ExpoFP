@@ -1,13 +1,6 @@
-
-let exhibitor: Exhibitor = null;
-// if (!__ie) {
 const url = new URL(window.location.href);
 const c = url.searchParams.get("__data");
-
-if (c) {
-    exhibitor = JSON.parse(c).exhibitors[0];
-}
-// }
+const exhibitor: Exhibitor = c ? JSON.parse(c).exhibitors[0] : null;
 
 export default exhibitor;
 
