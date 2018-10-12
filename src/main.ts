@@ -1,4 +1,6 @@
-import '@/polyfills'
+import 'core-js';
+import 'path2d-polyfill';
+import 'url-polyfill';
 import '@/globals'
 import '@/store'
 import '@/services'

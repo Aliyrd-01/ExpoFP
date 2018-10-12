@@ -11,11 +11,12 @@
   },
   "dependencies": {
     "color": "^3.1.0",
+    "core-js": "^2.5.7",
     "deepmerge": "^2.2.1",
-    "es6-promise": "^4.2.5",
     "history": "^4.7.2",
     "path2d-polyfill": "^0.3.1",
     "perfect-scrollbar": "^1.4.0",
+    "url-polyfill": "^1.1.0",
     "vue": "^2.5.17",
     "vuex": "^3.0.1"
   },
