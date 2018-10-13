@@ -1,5 +1,5 @@
 <template>
-    <div class="demo" :class='{hidden, bottom}' v-if="demo">
+    <div class="demo" :class='{hidden}' v-if="demo">
         <section>
             <a href='' @click.prevent='dismiss()' class='dismiss'>Dismiss</a>
             This is a demo of
@@ -16,21 +16,13 @@ export default {
     computed: {
         demo() {
             return EFP_EXPO === "demo";
-        },
-        bottom() {
-            return this.$store.getters.overlayPosition === "left";
         }
     },
     mounted() {
-        if (this.demo && !sessionStorage.getItem("demo-dismissed")) {
-            if (window.innerWidth < 820) {
-                // alert("This is a demo of ExpoFP floor plan. This is not the official in-cosmetics expo plan.");
-                // this.dismiss();
-            } else {
-                window.setTimeout(() => {
-                    this.hidden = false;
-                }, 2000);
-            }
+        if (this.demo && !sessionStorage.getItem("demo-dismissed") && window.innerWidth > 820) {
+            window.setTimeout(() => {
+                this.hidden = false;
+            }, 2000);
         }
     },
     methods: {
@@ -49,7 +41,7 @@ export default {
     justify-content: center;
     background: #ab40a0;
     background: linear-gradient(90deg, #e5175c, #5c17e5);
-    top: 0;
+    /* top: 0; */
     color: #fff;
 
     > section {
@@ -78,17 +70,9 @@ export default {
     }
     transition: all 0.5s;
     opacity: 1;
-    transform: translate(0, 0);
+    bottom: 0;
     &.hidden {
-        transform: translate(0, -100%);
-        opacity: 0;
-    }
-    &.bottom {
-        top: unset;
-        bottom: 0;
-        &.hidden {
-            transform: translate(0, 100%);
-        }
+        transform: translate(0, 100%);
     }
 }
 </style>
