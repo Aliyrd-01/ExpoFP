@@ -8,7 +8,7 @@ import drawIcons from './draw-icons';
 import { getFont } from '@/components/Map/utils';
 
 // TODO: dynamic parts
-const parts = c.deviceScale >= 1.5 ? 3 : 2;
+const parts = c.deviceScale >= 1.5 ? 4 : 2;
 const dirtySprites: string[] = [];
 
 export function drawSprites() {
@@ -71,7 +71,7 @@ function createSpriteCanvas(fRect: Rect, sRect: Rect) {
     // c.spriteContext.fillText('Hunan Health-Guard Bio-Tech Inc.', 11.2, 12.3)
 
     c.spriteContext.save();
-    
+
     c.spriteContext.scale(c.spriteScaleX, c.spriteScaleY);
     c.spriteContext.translate(-sRect.x1, -sRect.y1);
 
@@ -80,7 +80,7 @@ function createSpriteCanvas(fRect: Rect, sRect: Rect) {
     drawColumns();
 
     c.spriteContext.restore();
-    
+
     drawLabels();
 
     c.spriteContext.scale(c.spriteScaleX, c.spriteScaleY);
@@ -101,9 +101,10 @@ function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
     ctx.translate(c.fpCx + fRect.x1, c.fpCy + fRect.y1);
 
     ctx.drawImage(sprite.canvas, 0, 0, fRect.w, fRect.h);
-    // ctx.strokeStyle = '#000';
-    // ctx.lineWidth = 0.3;
-    // ctx.strokeRect(0, 0, fRect.w, fRect.h);
+
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 0.3;
+    ctx.strokeRect(0, 0, fRect.w, fRect.h);
 
     ctx.restore();
 
@@ -112,8 +113,9 @@ function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
     return sprite.dirty;
 }
 
-const maxExactCachedCanvases = 2000;
+// const maxExactCachedCanvases = 30;
 const exactCanvasCache = new Map<string, HTMLCanvasElement>();
+// const exactCanvasCacheInfo = new Map<string, { lastTouch: number, size: number }>();
 const exactCachedKeysQueue: string[] = [];
 
 const lastPositionById = new Map<string, string>();
@@ -156,6 +158,12 @@ function getSpriteToDraw(id: string, fRect: Rect, sRect: Rect): { canvas: HTMLCa
 
     if (!dirty) {
         lastCanvasById.set(id, canvas);
+        touchKey(exactKey);
+        // if (exactCanvasCacheInfo[exactKey])
+        // {
+        //     debugger
+        // }
+        //exactCanvasCacheInfo.get(exactKey).lastTouch = performance.now();
     }
 
     return { canvas, dirty };
@@ -163,17 +171,51 @@ function getSpriteToDraw(id: string, fRect: Rect, sRect: Rect): { canvas: HTMLCa
     function createCanvasNow() {
         const canvas = createSpriteCanvas(fRect, sRect);
         exactCanvasCache.set(exactKey, canvas);
+        //exactCanvasCacheInfo.set(exactKey, { lastTouch: performance.now(), size: canvas.width * canvas.height * 4 });
         exactCachedKeysQueue.push(exactKey);
         return canvas;
     }
 }
 
 function trimCache() {
-    while (exactCanvasCache.size > maxExactCachedCanvases) {
+    const maxCacheSize = 50 * 1024 * 1024;
+
+    console.log('Cache size: ', getCacheSize(), exactCanvasCache.size);
+
+    while(getCacheSize() > maxCacheSize){
         const keyToRemove = exactCachedKeysQueue.shift();
         exactCanvasCache.delete(keyToRemove);
+        console.log('Deleted from cache');
     }
 
+    // while (exactCanvasCache.size > maxExactCachedCanvases) {
+    //     const keyToRemove = exactCachedKeysQueue.shift();
+    //     exactCanvasCache.delete(keyToRemove);
+    // }
 }
 
-(window as any)['canvasCache'] = exactCanvasCache
+function touchKey(key:string){
+    // put this key from exactCachedKeysQueue to the end
+    const i = exactCachedKeysQueue.indexOf(key);
+    exactCachedKeysQueue.splice(i,1);
+    exactCachedKeysQueue.push(key);
+}
+
+function getCacheSize() {
+    return Array.from(exactCanvasCache.values()).reduce((p, c) => p + c.width * c.height * 4, 0);
+    //return Array.from(exactCanvasCache.keys()).reduce((p, c) => p + exactCanvasCacheInfo.get(c).size, 0)
+    // for(const k of Array.from(exactCanvasCache.keys())){
+    //     i += exactCanvasCacheInfo[k].size;
+    // }
+    // exactCanvasCache.keys
+}
+
+function deleteAllCache(){
+    while(exactCachedKeysQueue.length){
+        const keyToRemove = exactCachedKeysQueue.shift();
+        exactCanvasCache.delete(keyToRemove);
+        console.log('Deleted all cache');
+    }
+}
+(window as any)['canvasCache'] = exactCanvasCache;
+(window as any)['deleteAllCache'] = deleteAllCache;
