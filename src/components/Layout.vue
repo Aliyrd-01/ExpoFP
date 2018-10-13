@@ -39,6 +39,7 @@ export default Vue.extend({
 }
 * {
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 html,
 body {
@@ -69,6 +70,7 @@ a {
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
 }
+
 a:hover,
 a:visited {
     color: var(--link-color-hover);

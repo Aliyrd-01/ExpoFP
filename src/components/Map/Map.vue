@@ -114,6 +114,9 @@ export default {
             this.raiseBoothOver(undefined);
         },
         handleClick(e) {
+            if (this.overlayPosition === "bottom" && this.overlaySize ==="full"){
+                this.$store.dispatch("showMap");
+            }
             //if (!this.props.onBoothClick) return;
             const id = getBoothIdFromClientXy(e.clientX, e.clientY);
             console.info("click", id);

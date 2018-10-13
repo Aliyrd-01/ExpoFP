@@ -7,7 +7,7 @@ function slugify(text: string) {
         .replace(/-+$/, '');            // Trim - from end of text
 }
 
-const generatedSlugs = new Set<string>();;
+const generatedSlugs = new Set<string>();
 
 export function generateUniqueSlug(text: string) {
     let append = 0;

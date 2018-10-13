@@ -1,5 +1,5 @@
 <template>
-    <div :class='overlaySize' class="overlay">
+    <div :class='overlaySize + " " + overlayPosition' class="overlay">
         <Menu />
         <Search />
         <Bookmarks />
@@ -24,8 +24,8 @@ export default {
         Menu,
         Search,
         Bookmarks,
-        Category, 
-        Exhibitor, 
+        Category,
+        Exhibitor,
         Booth
     },
     computed: {
@@ -265,6 +265,10 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
     background: #fff;
     overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+    &.bottom {
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
     /* @media (min-width: 600px) {
          box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
     } */

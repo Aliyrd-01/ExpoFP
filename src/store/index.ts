@@ -138,6 +138,13 @@ const store1 = new Vuex.Store({
         showMap({ getters, commit }) {
             if (getters.overlayPosition === "bottom") commit('setOverlaySize', 'medium');
         },
+        showOverlay({ getters, commit }) {
+            if (getters.overlayPosition === "bottom") commit('setOverlaySize', 'full');
+        },
+        toggleMapOverlay({ getters, state, commit }) {
+            if (getters.overlayPosition === "bottom" && state.overlaySize === "full") commit('setOverlaySize', 'medium');
+            else if (getters.overlayPosition === "bottom" && state.overlaySize !== "full") commit('setOverlaySize', 'full');
+        },
         moveToList({ dispatch, getters }) {
             dispatch('moveToExhibitors', getters.listExhibitorsIds);
         },
@@ -149,7 +156,7 @@ const store1 = new Vuex.Store({
         clickExhibitor({ commit, dispatch }, id) {
             dispatch('selectExhibitor', id);
             dispatch('moveToExhibitors', [id]);
-
+            dispatch("showMap");
         },
         // clickBookmark({ state, commit }, id) {
         //     if (state.bookmarked.has(id)

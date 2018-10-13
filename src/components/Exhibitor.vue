@@ -2,14 +2,16 @@
     <OverlayContent class='exhibitor' v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
             <div class="exhibitor__bar">
-                {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
+                <span @click='$store.dispatch("toggleMapOverlay")'>
+                    {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
+                </span>
                 <a href='' @click.prevent="bookmark" class="exhibitor__bar-bk">
                     <i class="exhibitor__bk"></i>
                 </a>
             </div>
         </template>
         <div class="exhibitor__details">
-            <div class="exhibitor__booth">Booth
+            <div class="exhibitor__booth" @click='$store.dispatch("toggleMapOverlay")'>Booth
                 <span v-for="booth in booths" :key="booth.id">
                     {{booth.name}}
                 </span>
@@ -205,7 +207,7 @@ export default {
         flex-grow: 1;
         display: flex;
         align-items: center;
-        > .fa-gem {
+        .fa-gem {
             color: #02a8ff;
             margin-left: 0.2rem;
             font-size: 0.85rem;

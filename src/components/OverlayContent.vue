@@ -1,6 +1,6 @@
 <template>
     <div class="overlay-content">
-        <OverlayGrip v-if="overlayPosition === 'bottom'"/>
+        <OverlayGrip v-if="overlayPosition === 'bottom'" />
         <OverlayBar :scrolled='scrolled' @close='handleClose' :hide-close='hideClose' :back-mode='backMode' @back="$emit('back')">
             <slot name="bar" />
         </OverlayBar>
@@ -23,7 +23,8 @@ export default {
         scrolled: false
     }),
     components: {
-        OverlayBar, OverlayGrip
+        OverlayBar,
+        OverlayGrip
     },
     computed: {
         ...mapState(["overlaySize"]),
@@ -53,7 +54,7 @@ export default {
     },
     watch: {
         overlaySize: function(s) {
-            if (s !== "full" && this.$refs.scrollable.scrollTop !== 0){
+            if (s !== "full" && this.$refs.scrollable.scrollTop !== 0) {
                 this.$refs.scrollable.scrollTop = 0;
             }
         }
@@ -71,6 +72,10 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+
+    .overlay.bottom {
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
     &__scrollable {
         flex-grow: 1;
         height: 1px;

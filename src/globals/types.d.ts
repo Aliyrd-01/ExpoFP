@@ -27,6 +27,7 @@ interface Exhibitor {
     address2: string,
     phone1: string,
     website: string,
+    publicEmail: string,
     //...
 
     //populated
