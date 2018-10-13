@@ -44,6 +44,12 @@
                         <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
                     </div>
                 </div>
+                <div v-if="exhibitor.publicEmail">
+                    <i class="fas fa-at"></i>
+                    <div>
+                        <a :href="'mailto:' + exhibitor.publicEmail" target="_blank">{{exhibitor.publicEmail}}</a>
+                    </div>
+                </div>
             </div>
             <div class="exhibitor__social">
                 <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook">
