@@ -8,7 +8,8 @@ import drawIcons from './draw-icons';
 import { getFont } from '@/components/Map/utils';
 
 // TODO: dynamic parts
-const parts = c.deviceScale >= 1.5 ? 3 : 2;
+var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
+const parts = iOS ? 12 : (c.deviceScale >= 1.5 ? 6 : 2);
 const dirtySprites: string[] = [];
 
 export function drawSprites() {
@@ -112,7 +113,7 @@ function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
     return sprite.dirty;
 }
 
-const maxExactCachedCanvases = 2000;
+const maxExactCachedCanvases = 150;
 const exactCanvasCache = new Map<string, HTMLCanvasElement>();
 const exactCachedKeysQueue: string[] = [];
 
