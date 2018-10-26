@@ -20,10 +20,10 @@
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)">{{c.name}}</a>
             </div>
             <div class="exhibitor__description" v-if="exhibitor.description || exhibitor.logo">
-                <div class='exhibitor__logo-container'>
+                <div class='exhibitor__logo-container' v-if="exhibitor.logo">
                     <img :src="exhibitor.logo" class="exhibitor__logo" :key='exhibitor.id'>
                 </div>
-                {{exhibitor.description}}
+                <span v-html="exhibitor.description"></span>
             </div>
             <div class="exhibitor__meta">
                 <div v-if="exhibitor.address || exhibitor.address2">
