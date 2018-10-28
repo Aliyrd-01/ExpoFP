@@ -120,6 +120,9 @@ const store1 = new Vuex.Store({
             dispatch("moveToList");
             dispatch('showMap', id);
         },
+        clickSeminars({ commit, dispatch, getters }) {
+            dispatch("clickCategory", getters.seminarsCategoryId);
+        },
         clickBooth({ state, getters, dispatch, commit }, id) {
             if (!id) {
                 commit('setDetails', null);
