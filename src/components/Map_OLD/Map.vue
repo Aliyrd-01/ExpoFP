@@ -6,11 +6,10 @@
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-// import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
-import { initialize } from "./draw";
+import { initialize, requireRedraw, applyZoomTransform, getBoothIdFromClientXy, setVisibleRect } from "./draw";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
-// import c from "./drawing-context";
+import c from "./drawing-context";
 
 export default {
     name: "Map",
@@ -39,39 +38,39 @@ export default {
         const canvas = this.$el;
         // const $parent = d3.select(canvas.parentElement);
         this.$canvas = d3.select(canvas);
-        // this.zoom = d3
-        //     .zoom()
-        //     .clickDistance(15)
-        //     .scaleExtent([0.8, 8])
-        //     .on("zoom", () => applyZoomTransform(d3.event.transform));
-        // this.$canvas.call(this.zoom);
+        this.zoom = d3
+            .zoom()
+            .clickDistance(15)
+            .scaleExtent([0.8, 8])
+            .on("zoom", () => applyZoomTransform(d3.event.transform));
+        this.$canvas.call(this.zoom);
 
-        initialize(canvas);
+        initialize(canvas, this.visibleRect);
     },
     watch: {
         moveToBooths: function() {
             if (!this.moveToBooths) return;
             // this.handledMoveToExhibitor = this.moveToBooths;
-            // console.log("watched moveToBooths", this.moveToBooths);
-            // // ask map to move to this exhibitor
-            // const rects = this.moveToBooths.map(id => this.booths[id].rect) as Rect[];
-            // if (rects.length === 0) return;
-            // var r = Rect.fromMultiple(rects);
-            // // const z = getZoomToCenterSvgRect(r, Math.max(c.zoomScale, 1.2));
-            // const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
-            // this.$canvas
-            //     .transition()
-            //     .duration(200)
-            //     .call(this.zoom.transform, destZoom);
+            console.log("watched moveToBooths", this.moveToBooths);
+            // ask map to move to this exhibitor
+            const rects = this.moveToBooths.map(id => this.booths[id].rect) as Rect[];
+            if (rects.length === 0) return;
+            var r = Rect.fromMultiple(rects);
+            const z = getZoomToCenterSvgRect(r, Math.max(c.zoomScale, 1.2));
+            const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
+            this.$canvas
+                .transition()
+                .duration(200)
+                .call(this.zoom.transform, destZoom);
 
-            // store.commit("setMoveToBooths", null);
+            store.commit("setMoveToBooths", null);
             // this.handledMoveToExhibitor = null;
-        }
-        // hoveredBoothIds: () => requireRedraw(),
-        // selectedBoothIds: () => requireRedraw(),
-        // bookmarked: () => requireRedraw(),
-        // listBoothsIds: () => requireRedraw(),
-        // visibleRect: v => setVisibleRect(v)
+        },
+        hoveredBoothIds: () => requireRedraw(),
+        selectedBoothIds: () => requireRedraw(),
+        bookmarked: () => requireRedraw(),
+        listBoothsIds: () => requireRedraw(),
+        visibleRect: v => setVisibleRect(v)
     },
     methods: {
         raiseBoothOver(id) {
@@ -81,12 +80,12 @@ export default {
             this.$store.commit("setHoveredBooth", id);
         },
         handleMouseMove(e) {
-            // const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            // this.raiseBoothOver(id);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            this.raiseBoothOver(id);
         },
         handleMouseOver(e) {
-            // const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            // this.raiseBoothOver(id);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            this.raiseBoothOver(id);
         },
         handleMouseOut(e) {
             this.raiseBoothOver(undefined);
@@ -96,9 +95,9 @@ export default {
                 this.$store.dispatch("showMap");
             }
             //if (!this.props.onBoothClick) return;
-            // const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            // console.info("click", id);
-            // this.$store.dispatch("clickBooth", id);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            console.info("click", id);
+            this.$store.dispatch("clickBooth", id);
         }
     }
 };
@@ -118,24 +117,24 @@ export default {
 //     return { x: diffX, y: diffY, k: zoom };
 // }
 
-// function getZoomToCenterSvgRect(svgRect: Rect, maxZoom: number) {
-//     const minPaddingPercent = 5;
+function getZoomToCenterSvgRect(svgRect: Rect, maxZoom: number) {
+    const minPaddingPercent = 5;
 
-//     const targetRect = c.visibleBRect.withPadding(
-//         (c.visibleBRect.w * minPaddingPercent) / 100,
-//         (c.visibleBRect.h * minPaddingPercent) / 100
-//     );
+    const targetRect = c.visibleBRect.withPadding(
+        (c.visibleBRect.w * minPaddingPercent) / 100,
+        (c.visibleBRect.h * minPaddingPercent) / 100
+    );
 
-//     const bSvgRect = c.sRectToBrowserUnzoomed(svgRect);
+    const bSvgRect = c.sRectToBrowserUnzoomed(svgRect);
 
-//     // get max zoom
-//     const zoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
+    // get max zoom
+    const zoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
 
-//     const diffX = targetRect.cx - bSvgRect.cx * zoom;
-//     const diffY = targetRect.cy - bSvgRect.cy * zoom;
+    const diffX = targetRect.cx - bSvgRect.cx * zoom;
+    const diffY = targetRect.cy - bSvgRect.cy * zoom;
 
-//     return { x: diffX, y: diffY, k: zoom };
-// }
+    return { x: diffX, y: diffY, k: zoom };
+}
 </script>
 
 <style scoped>

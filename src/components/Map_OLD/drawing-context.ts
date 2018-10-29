@@ -56,27 +56,27 @@ class DrawingContext {
     context: CanvasRenderingContext2D;
 
     //
-    // spriteContext: CanvasRenderingContext2D;
-    // spriteSRect: Rect;
-    // spriteScaleX: number;
-    // spriteScaleY: number;
+    spriteContext: CanvasRenderingContext2D;
+    spriteSRect: Rect;
+    spriteScaleX: number;
+    spriteScaleY: number;
 
-    // sXToSprite(x: number): number { return this.spriteScaleX * (x - this.spriteSRect.x1); }
-    // sYToSprite(y: number): number { return this.spriteScaleY * (y - this.spriteSRect.y1); }
-    // sWToSprite(w: number): number { return this.spriteScaleX * w; }
-    // sHToSprite(h: number): number { return this.spriteScaleY * h; }
-    // sRectToSprite(rect: Rect): Rect {
-    //     return Rect.fromXywh(this.sXToSprite(rect.x1), this.sYToSprite(rect.y1), this.sWToSprite(rect.w), this.sHToSprite(rect.h));
-    // }
+    sXToSprite(x: number): number { return this.spriteScaleX * (x - this.spriteSRect.x1); }
+    sYToSprite(y: number): number { return this.spriteScaleY * (y - this.spriteSRect.y1); }
+    sWToSprite(w: number): number { return this.spriteScaleX * w; }
+    sHToSprite(h: number): number { return this.spriteScaleY * h; }
+    sRectToSprite(rect: Rect): Rect {
+        return Rect.fromXywh(this.sXToSprite(rect.x1), this.sYToSprite(rect.y1), this.sWToSprite(rect.w), this.sHToSprite(rect.h));
+    }
 
-    // sWToBrowserUnzoomed(w: number): number { return w * this.fpScale; }
-    // sHToBrowserUnzoomed(h: number): number { return h * this.fpScale; }
-    // sXToBrowserUnzoomed(x: number): number { return x * this.fpScale + this.fpCxUnzoomed; }
-    // sYToBrowserUnzoomed(y: number): number { return y * this.fpScale + this.fpCyUnzoomed; }
-    // sRectToBrowserUnzoomed(rect: Rect): Rect {
-    //     return Rect.fromXywh(this.sXToBrowserUnzoomed(rect.x1), this.sYToBrowserUnzoomed(rect.y1),
-    //         this.sWToBrowserUnzoomed(rect.w), this.sHToBrowserUnzoomed(rect.h));
-    // }
+    sWToBrowserUnzoomed(w: number): number { return w * this.fpScale; }
+    sHToBrowserUnzoomed(h: number): number { return h * this.fpScale; }
+    sXToBrowserUnzoomed(x: number): number { return x * this.fpScale + this.fpCxUnzoomed; }
+    sYToBrowserUnzoomed(y: number): number { return y * this.fpScale + this.fpCyUnzoomed; }
+    sRectToBrowserUnzoomed(rect: Rect): Rect {
+        return Rect.fromXywh(this.sXToBrowserUnzoomed(rect.x1), this.sYToBrowserUnzoomed(rect.y1),
+            this.sWToBrowserUnzoomed(rect.w), this.sHToBrowserUnzoomed(rect.h));
+    }
 
     // detail level
     fpAvgBoothArea: number;

@@ -1,6 +1,6 @@
 import c from './drawing-context'
 
-export function getBoothIdFromClientXy(x: number, y: number): number {
+    export function getBoothIdFromClientXy(x: number, y: number): number {
     var b = getLastBoothsFromClientXy(x, y);
     if (b) return b.id;
     return null;
