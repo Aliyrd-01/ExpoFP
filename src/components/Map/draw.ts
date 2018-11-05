@@ -10,9 +10,60 @@ import { createShader, createProgram } from './utils';
 
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
+let matrixUniformLocation: WebGLUniformLocation;
+let zoomTranform: ZoomTranform = { k: 1, x: 0, y: 0 };
 
+type ZoomTranform = { k: number, x: number, y: number };
+
+export function applyZoomTransform(transform: { k: number, x: number, y: number }) {
+    zoomTranform = transform;
+    draw();
+}
+
+const width = 500;
+const height = 1000;
+
+const positions = [
+    0, 0,
+    width, height,
+    0, height
+];
+
+function draw() {
+    let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
+
+    // apply zoom first
+    matrix = m4.translate(matrix, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]);
+    matrix = m4.scale(matrix, [zoomTranform.k, zoomTranform.k, 1]);
+
+    matrix = m4.translate(matrix, [gl.canvas.width / 2, gl.canvas.height / 2, 0]);
+    // matrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
+   
+
+    const scale = Math.min(gl.canvas.width / width, gl.canvas.height / height) * 0.95;
+    // const scale = 1.7;
+
+    matrix = m4.scale(matrix, [scale, scale, 1]);
+    matrix = m4.translate(matrix, [-width / 2, -height / 2, 0]);
+
+    // apply the d3 translate and zoom
+    
+
+
+    // // translate the unit quad to the center 
+    // matrix = m4.translate(matrix, [width / 2, height / 2, 0]);
+    // // make the unit quad be half the size of the canvas
+    // matrix = m4.scale(matrix, [width / 2, height / 2 , 1]);
+
+    gl.uniformMatrix4fv(matrixUniformLocation, false, matrix);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
 
 export function initialize(canvasParam: HTMLCanvasElement) {
+    // create program, set pointers
+
+
     // draw all booths for now
     canvas = canvasParam;
     sizeCanvases();
@@ -33,19 +84,10 @@ export function initialize(canvasParam: HTMLCanvasElement) {
 
     const program = createProgram(gl, vertexShader, fragmentShader);
 
-    const matrixUniformLocation = gl.getUniformLocation(program, 'matrix');
+    matrixUniformLocation = gl.getUniformLocation(program, 'matrix');
     const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    const width = 500;
-    const height = 500;
-
-    const positions = [
-        0, 0,
-        width, height,
-        height, 0
-    ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
@@ -54,39 +96,17 @@ export function initialize(canvasParam: HTMLCanvasElement) {
 
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-    set_transform(1, 0, 0);
-    // gl.drawArrays(gl.TRIANGLES, 0, 3);
+    draw();
+    // set_transform(1, 0, 0);
+    // // gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    function set_transform(k, tx, ty) {
+    // function set_transform(k, tx, ty) {
 
 
-        // change the space to be pixels with 0,0 in top left
-        let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
-        matrix = m4.translate(matrix, [gl.canvas.width / 2, gl.canvas.height / 2, 0]);
-        // matrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
+    //     // change the space to be pixels with 0,0 in top left
         
 
-        const scale = Math.min(gl.canvas.width / width, gl.canvas.height / height) * 0.95;
-        // const scale = 1.7;
-
-        matrix = m4.scale(matrix, [scale, scale, 1]);
-        matrix = m4.translate(matrix, [-width / 2, -height / 2, 0]);
-
-        // apply the d3 translate and zoom
-        matrix = m4.translate(matrix, [tx, ty, 0]);
-        matrix = m4.scale(matrix, [k, k, 1]);
-
-
-        // // translate the unit quad to the center 
-        // matrix = m4.translate(matrix, [width / 2, height / 2, 0]);
-        // // make the unit quad be half the size of the canvas
-        // matrix = m4.scale(matrix, [width / 2, height / 2 , 1]);
-
-        gl.uniformMatrix4fv(matrixUniformLocation, false, matrix);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-    }
+    // }
 }
 
 

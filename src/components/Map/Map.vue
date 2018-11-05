@@ -7,7 +7,7 @@
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 // import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
-import { initialize } from "./draw";
+import { initialize, applyZoomTransform } from "./draw";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
 // import c from "./drawing-context";
@@ -39,12 +39,12 @@ export default {
         const canvas = this.$el;
         // const $parent = d3.select(canvas.parentElement);
         this.$canvas = d3.select(canvas);
-        // this.zoom = d3
-        //     .zoom()
-        //     .clickDistance(15)
-        //     .scaleExtent([0.8, 8])
-        //     .on("zoom", () => applyZoomTransform(d3.event.transform));
-        // this.$canvas.call(this.zoom);
+        this.zoom = d3
+            .zoom()
+            .clickDistance(15)
+            .scaleExtent([0.1, 48])
+            .on("zoom", () => applyZoomTransform(d3.event.transform));
+        this.$canvas.call(this.zoom);
 
         initialize(canvas);
     },
