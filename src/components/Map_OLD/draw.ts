@@ -3,7 +3,7 @@ import { getFpDestinationRectangle } from './utils';
 import c from './drawing-context'
 import { drawFpGrid, drawDebug } from './draw-debug';
 import settings from '@/settings';
-import { drawSprites } from './draw-sprites';
+// import { drawSprites } from './draw-sprites';
 export { getBoothIdFromClientXy } from './booth-by-xy';
 
 export function initialize(rootCanvasParam: HTMLCanvasElement, visibleRect: Rect) {
@@ -74,7 +74,7 @@ function draw() {
     // ctx.fillStyle = '#ffff00';
     // ctx.fillRect(c.fpCx, c.fpCy, c.fpCWidth, c.fpCHeight);
 
-    drawSprites();
+    // drawSprites();
 
     ctx.restore();
 

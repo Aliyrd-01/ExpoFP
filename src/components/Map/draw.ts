@@ -20,15 +20,30 @@ export function applyZoomTransform(transform: { k: number, x: number, y: number 
     requireRedraw();
 }
 
-const width = 500;
-const height = 1000;
+const width = svgWidth;
+const height = svgHeight;
+const booths = store.getters.boothsArray as Booth[];
 
-const positions = [
-    0, 0,
-    width, 0,
-    0, height,
-    width, height
-];
+const positions = [];
+
+function addRect(x1, x2, y1, y2) {
+    positions.push(x1, y1);
+    positions.push(x2, y1);
+    positions.push(x1, y2);
+
+    positions.push(x2, y1);
+    positions.push(x1, y2);
+    positions.push(x2, y2);
+}
+
+// addRect(0, width / 3, 0, height / 3);
+// addRect(width / 2, height / 2, width, height);
+
+for(const b of booths){
+    addRect(b.rect.x1, b.rect.x2, b.rect.y1, b.rect.y2);
+}
+
+console.log(positions);
 
 let animatedFrame: number;
 export function requireRedraw() {
@@ -65,7 +80,7 @@ function draw() {
 
     gl.uniformMatrix4fv(matrixUniformLocation, false, matrix);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
 }
 
 export function initialize(canvasParam: HTMLCanvasElement) {
