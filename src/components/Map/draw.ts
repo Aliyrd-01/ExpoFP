@@ -17,7 +17,7 @@ type ZoomTranform = { k: number, x: number, y: number };
 
 export function applyZoomTransform(transform: { k: number, x: number, y: number }) {
     zoomTranform = transform;
-    draw();
+    requireRedraw();
 }
 
 const width = 500;
@@ -25,9 +25,17 @@ const height = 1000;
 
 const positions = [
     0, 0,
-    width, height,
-    0, height
+    width, 0,
+    0, height,
+    width, height
 ];
+
+let animatedFrame: number;
+export function requireRedraw() {
+    if (animatedFrame) window.cancelAnimationFrame(animatedFrame);
+    animatedFrame = window.requestAnimationFrame(draw);
+}
+
 
 function draw() {
     let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
@@ -38,7 +46,7 @@ function draw() {
 
     matrix = m4.translate(matrix, [gl.canvas.width / 2, gl.canvas.height / 2, 0]);
     // matrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
-   
+
 
     const scale = Math.min(gl.canvas.width / width, gl.canvas.height / height) * 0.95;
     // const scale = 1.7;
@@ -47,7 +55,7 @@ function draw() {
     matrix = m4.translate(matrix, [-width / 2, -height / 2, 0]);
 
     // apply the d3 translate and zoom
-    
+
 
 
     // // translate the unit quad to the center 
@@ -57,7 +65,7 @@ function draw() {
 
     gl.uniformMatrix4fv(matrixUniformLocation, false, matrix);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
 export function initialize(canvasParam: HTMLCanvasElement) {
@@ -104,7 +112,7 @@ export function initialize(canvasParam: HTMLCanvasElement) {
 
 
     //     // change the space to be pixels with 0,0 in top left
-        
+
 
     // }
 }
