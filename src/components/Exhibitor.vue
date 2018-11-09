@@ -132,13 +132,24 @@ export default {
         color: #777;
     }
     &__categories {
-        margin: 0 0 1rem;
+        margin: 0 1rem 1rem 0.8rem;
         font-size: 0.9rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        // display: flex;
+        // flex-direction: column;
+        // align-items: flex-start;
         > a {
-            margin: 0 1rem;
+            display: inline-block;
+            background: #41b6e7;
+            color: #fff !important;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1em;
+            margin: 0.2rem 0 0 0.2rem;
+            text-decoration: none !important;
+
+            &:hover {
+                background: #1598d0;
+            }
         }
     }
     &__logo-container {
