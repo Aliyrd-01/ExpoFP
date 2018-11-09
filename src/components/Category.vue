@@ -34,6 +34,8 @@ export default {
 
 <style scoped lang="scss">
 .bar {
+    min-height: 2.5rem;
+    margin-top: 1rem;
     /* margin-left: 1rem; */
     font-size: 1.1em;
     /* line-height: 1em; */
@@ -42,7 +44,7 @@ export default {
     > span {
         color: #aaa;
     }
-    padding: 0.5rem 0;
+    // padding: 0.5rem 0;
 }
 .note {
     font-size: 0.7rem;
