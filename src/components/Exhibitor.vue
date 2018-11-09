@@ -3,19 +3,24 @@
         <template slot="bar">
             <div class="exhibitor__bar">
                 <span @click='$store.dispatch("toggleMapOverlay")'>
-                    {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
+                    <span>{{exhibitor.name}} </span>
+                    <i class="fas fa-gem" v-if='featured'></i>
                 </span>
                 <a href='' @click.prevent="bookmark" class="exhibitor__bar-bk">
                     <i class="exhibitor__bk"></i>
                 </a>
             </div>
+            <div class="exhibitor__bar-booth" @click='$store.dispatch("toggleMapOverlay")'>Booth
+                <span v-for="booth in booths" :key="booth.id">
+                    {{booth.name}}
+                </span></div>
         </template>
         <div class="exhibitor__details">
-            <div class="exhibitor__booth" @click='$store.dispatch("toggleMapOverlay")'>Booth
+            <!-- <div class="exhibitor__booth" @click='$store.dispatch("toggleMapOverlay")'>Booth
                 <span v-for="booth in booths" :key="booth.id">
                     {{booth.name}}
                 </span>
-            </div>
+            </div> -->
             <div class="exhibitor__categories">
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)">{{c.name}}</a>
             </div>
@@ -127,18 +132,29 @@ export default {
 
 <style  lang="scss">
 .exhibitor {
-    &__booth {
-        margin: 0 1rem 0.2rem;
-        color: #777;
-    }
+    // &__booth {
+    //     margin: 0 1rem 0.2rem;
+    //     color: #777;
+    // }
     &__categories {
-        margin: 0 0 1rem;
+        margin: 0.2rem 1rem 1rem 0.8rem;
         font-size: 0.9rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        // display: flex;
+        // flex-direction: column;
+        // align-items: flex-start;
         > a {
-            margin: 0 1rem;
+            display: inline-block;
+            background: #41b6e7;
+            color: #fff !important;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1em;
+            margin: 0.2rem 0 0 0.2rem;
+            text-decoration: none !important;
+
+            &:hover {
+                background: #1598d0;
+            }
         }
     }
     &__logo-container {
@@ -203,24 +219,45 @@ export default {
     }
 
     &__bar {
-        min-height: 3.5rem;
+        min-height: 2.5rem;
         position: relative;
         line-height: 1.5rem;
         color: #333;
         font-weight: 500;
+        padding-top: 1rem;
         margin-left: 1rem;
         font-size: 1.1em;
         flex-grow: 1;
-        display: flex;
-        align-items: center;
+        // display: flex;
+        // align-items: center;
         .fa-gem {
             color: #02a8ff;
             margin-left: 0.2rem;
             font-size: 0.85rem;
+            line-height: 1.5rem;
         }
+        > span {
+            display: flex;
+            > span {
+                white-space: nowrap;
+                max-width: 18rem;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+    &__bar-booth {
+        margin-left: 1rem;
+        font-size: 0.7rem;
+        color: #777;
+        display: block;
+        font-weight: normal;
+        height: 1rem;
+        line-height: 1em;
     }
 
     &__bar-bk {
+        
         position: absolute;
         right: 0;
         top: 0;
