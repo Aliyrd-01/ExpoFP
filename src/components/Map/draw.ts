@@ -113,7 +113,7 @@ export function initialize(canvasParam: HTMLCanvasElement) {
 
     programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
 
-    const arrays = { a_position: positions, };
+    const arrays = { a_position: { numComponents: 2, data: positions }};
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 
     gl.useProgram(programInfo.program);
