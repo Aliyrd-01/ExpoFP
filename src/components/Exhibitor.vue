@@ -22,14 +22,17 @@
                 </span>
             </div> -->
             <div class="exhibitor__categories">
-                <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)">{{c.name}}</a>
+                <a href='' v-for="booth in booths" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")' class="exhibitor__categories-booth">Booth {{booth.name}}</a>
+                <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)" class="exhibitor__categories-cat">{{c.name}}</a>
             </div>
-            <div class="exhibitor__description" v-if="exhibitor.description || exhibitor.logo">
+            <div class="exhibitor__description" :class={collapsed} v-if="exhibitor.description || exhibitor.logo">
                 <div class='exhibitor__logo-container' v-if="exhibitor.logo">
                     <img :src="exhibitor.logo" class="exhibitor__logo" :key='exhibitor.id'>
                 </div>
-                <span v-html="exhibitor.description"></span>
+                <span v-html="exhibitor.description" @click='collapsed=false'></span>
+                <a href='' class='exhibitor__description-show'>read more</a>
             </div>
+            <div class="exhibitor__sep" v-if=exhibitor.address></div>
             <div class="exhibitor__meta">
                 <div v-if="exhibitor.address || exhibitor.address2">
                     <i class="fas fa-map-marker"></i>
@@ -56,26 +59,27 @@
                     </div>
                 </div>
             </div>
-            <div class="exhibitor__social">
-                <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook">
+            <div class="exhibitor__sep" v-if=anySocial></div>
+            <div class="exhibitor__social" v-if='anySocial'>
+                <a :href="exhibitor.facebook" target="_blank">
                     <i class='fab fa-facebook'></i>
                 </a>
-                <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram">
+                <a :href="exhibitor.instagram" target="_blank">
                     <i class='fab fa-instagram'></i>
                 </a>
-                <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin">
+                <a :href="exhibitor.linkedin" target="_blank">
                     <i class='fab fa-linkedin'></i>
                 </a>
-                <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter">
+                <a :href="exhibitor.twitter" target="_blank">
                     <i class='fab fa-twitter'></i>
                 </a>
-                <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus">
+                <a :href="exhibitor.googlePlus" target="_blank">
                     <i class='fab fa-google-plus'></i>
                 </a>
-                <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing">
+                <a :href="exhibitor.xing" target="_blank">
                     <i class='fab fa-xing'></i>
                 </a>
-                <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube">
+                <a :href="exhibitor.youtube" target="_blank">
                     <i class='fab fa-youtube'></i>
                 </a>
             </div>
@@ -90,6 +94,7 @@ import OverlayContent from "./OverlayContent.vue";
 
 export default {
     components: { OverlayContent },
+    data: () => ({ collapsed: true }),
     computed: {
         ...mapState(["menu", "details"]),
         show() {
@@ -112,11 +117,17 @@ export default {
         },
         featured() {
             return this.exhibitor.isFeatured;
+        },
+        anySocial() {
+            return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
+                s => this.exhibitor[s]
+            );
         }
     },
     watch: {
         exhibitor() {
             this.$el.parentElement.scrollTop = 0;
+            this.collapsed = true;
         }
     },
     methods: {
@@ -137,23 +148,33 @@ export default {
     //     color: #777;
     // }
     &__categories {
-        margin: 0.2rem 1rem 1rem 0.8rem;
+        margin: 0rem 1rem 1rem 0.7rem;
         font-size: 0.9rem;
         // display: flex;
         // flex-direction: column;
         // align-items: flex-start;
         > a {
             display: inline-block;
-            background: #41b6e7;
+
             color: #fff !important;
             font-size: 0.8rem;
-            padding: 0.2rem 0.5rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 1em;
-            margin: 0.2rem 0 0 0.2rem;
+            margin: 0.3rem 0 0 0.3rem;
             text-decoration: none !important;
+        }
 
+        &-cat {
+            background: #41b6e7;
             &:hover {
                 background: #1598d0;
+            }
+        }
+
+        &-booth {
+            background: #fb3e59;
+            &:hover {
+                background: #ea2b46;
             }
         }
     }
@@ -167,53 +188,106 @@ export default {
         overflow: hidden;
         display: flex;
         align-items: center;
+        position: relative;
+        z-index: 2;
     }
     &__logo {
         max-width: 100%;
         max-height: 100%;
+
         // height: 75px;
     }
     &__description {
         margin: 1rem;
         font-size: 0.9rem;
         color: #444;
-        padding-bottom: 1rem;
-        border-bottom: solid 1px #eee;
+        position: relative;
+
+        &-show {
+            display: none;
+            position: absolute;
+            z-index: 2;
+            bottom: -0.7em;
+            width: 100%;
+            padding-left: 87px;
+            // text-align: center;
+            // display: block;
+            // font-size: 2rem;
+            text-decoration: none !important;
+        }
+
+        &.collapsed > span {
+            cursor: pointer;
+            &:hover {
+                color: #000;
+            }
+            height: 6.5em;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            &:after {
+                content: "";
+                position: absolute;
+                z-index: 1;
+                bottom: 0;
+                left: 0;
+                pointer-events: none;
+                background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 90%);
+                width: 100%;
+                height: 4em;
+            }
+        }
+
         @include clearfix;
+    }
+
+    &__sep {
+        margin: 1rem;
+        border-top: dotted 1px #ddd;
     }
 
     &__meta {
         > div {
             display: flex;
-            margin: 0.8rem 0;
+            margin: 0.8rem 1rem;
 
             > .fas {
                 text-align: center;
-                min-width: 3rem;
-                margin-top: 0.1rem;
+                min-width: 0.8rem;
+                margin-top: 0.2rem;
                 color: #ccc;
-                font-size: 1rem;
+                font-size: 0.8rem;
             }
             > div {
-                font-size: 0.9rem;
-                line-height: 1.2rem;
+                font-size: 0.85rem;
+                line-height: 1.1rem;
                 color: #333;
+                margin-left: 0.4rem;
+                // font-weight: 200;
             }
         }
     }
     &__social {
-        border-top: solid 1px #eee;
-        margin: 1rem;
+        margin: 0 1rem 2rem;
 
         display: flex;
-        padding-top: 1rem;
+        justify-content: space-between;
+        // padding-top: 1rem;
         > a {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             text-decoration: none;
-            color: #777;
+
             margin: 0 1rem 0.5rem 0;
+            color: #eee;
             &:hover {
-                color: var(--link-color-hover);
+                color: #eee;
+            }
+            &[href] {
+                color: var(--link-color);
+
+                &:hover {
+                    color: var(--link-color-hover);
+                }
             }
         }
     }
@@ -254,10 +328,14 @@ export default {
         font-weight: normal;
         height: 1rem;
         line-height: 1em;
+        opacity: 0;
+        transition: opacity 200ms;
+        .overlay-bar.scrolled & {
+            opacity: 1;
+        }
     }
 
     &__bar-bk {
-        
         position: absolute;
         right: 0;
         top: 0;
