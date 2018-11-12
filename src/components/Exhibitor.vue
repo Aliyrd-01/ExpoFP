@@ -32,7 +32,7 @@
                 <span v-html="exhibitor.description" @click='collapsed=false'></span>
                 <a href='' class='exhibitor__description-show'>read more</a>
             </div>
-            <div class="exhibitor__sep" v-if=exhibitor.description></div>
+            <div class="exhibitor__sep" v-if=exhibitor.address></div>
             <div class="exhibitor__meta">
                 <div v-if="exhibitor.address || exhibitor.address2">
                     <i class="fas fa-map-marker"></i>
@@ -59,27 +59,27 @@
                     </div>
                 </div>
             </div>
-           <div class="exhibitor__sep" v-if=exhibitor.address></div>
-            <div class="exhibitor__social">
-                <a :href="exhibitor.facebook" target="_blank" v-if="exhibitor.facebook">
+            <div class="exhibitor__sep" v-if=anySocial></div>
+            <div class="exhibitor__social" v-if='anySocial'>
+                <a :href="exhibitor.facebook" target="_blank">
                     <i class='fab fa-facebook'></i>
                 </a>
-                <a :href="exhibitor.instagram" target="_blank" v-if="exhibitor.instagram">
+                <a :href="exhibitor.instagram" target="_blank">
                     <i class='fab fa-instagram'></i>
                 </a>
-                <a :href="exhibitor.linkedin" target="_blank" v-if="exhibitor.linkedin">
+                <a :href="exhibitor.linkedin" target="_blank">
                     <i class='fab fa-linkedin'></i>
                 </a>
-                <a :href="exhibitor.twitter" target="_blank" v-if="exhibitor.twitter">
+                <a :href="exhibitor.twitter" target="_blank">
                     <i class='fab fa-twitter'></i>
                 </a>
-                <a :href="exhibitor.googlePlus" target="_blank" v-if="exhibitor.googlePlus">
+                <a :href="exhibitor.googlePlus" target="_blank">
                     <i class='fab fa-google-plus'></i>
                 </a>
-                <a :href="exhibitor.xing" target="_blank" v-if="exhibitor.xing">
+                <a :href="exhibitor.xing" target="_blank">
                     <i class='fab fa-xing'></i>
                 </a>
-                <a :href="exhibitor.youtube" target="_blank" v-if="exhibitor.youtube">
+                <a :href="exhibitor.youtube" target="_blank">
                     <i class='fab fa-youtube'></i>
                 </a>
             </div>
@@ -94,7 +94,7 @@ import OverlayContent from "./OverlayContent.vue";
 
 export default {
     components: { OverlayContent },
-    data: ()=> ({collapsed: true}),
+    data: () => ({ collapsed: true }),
     computed: {
         ...mapState(["menu", "details"]),
         show() {
@@ -117,6 +117,11 @@ export default {
         },
         featured() {
             return this.exhibitor.isFeatured;
+        },
+        anySocial() {
+            return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
+                s => this.exhibitor[s]
+            );
         }
     },
     watch: {
@@ -197,7 +202,7 @@ export default {
         font-size: 0.9rem;
         color: #444;
         position: relative;
-       
+
         &-show {
             display: none;
             position: absolute;
@@ -213,7 +218,7 @@ export default {
 
         &.collapsed > span {
             cursor: pointer;
-            &:hover{
+            &:hover {
                 color: #000;
             }
             height: 6.5em;
@@ -238,41 +243,51 @@ export default {
 
     &__sep {
         margin: 1rem;
-        border-top: solid 1px #eee;
+        border-top: dotted 1px #ddd;
     }
 
     &__meta {
         > div {
             display: flex;
-            margin: 0.8rem 0;
-            
+            margin: 0.8rem 1rem;
 
             > .fas {
                 text-align: center;
-                min-width: 3rem;
-                margin-top: 0.1rem;
+                min-width: 0.8rem;
+                margin-top: 0.2rem;
                 color: #ccc;
-                font-size: 1rem;
+                font-size: 0.8rem;
             }
             > div {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
                 line-height: 1.1rem;
                 color: #333;
+                margin-left: 0.4rem;
+                // font-weight: 200;
             }
         }
     }
     &__social {
-        margin: 0 1rem;
+        margin: 0 1rem 2rem;
 
         display: flex;
+        justify-content: space-between;
         // padding-top: 1rem;
         > a {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             text-decoration: none;
-            color: #777;
+
             margin: 0 1rem 0.5rem 0;
+            color: #eee;
             &:hover {
-                color: var(--link-color-hover);
+                color: #eee;
+            }
+            &[href] {
+                color: var(--link-color);
+
+                &:hover {
+                    color: var(--link-color-hover);
+                }
             }
         }
     }
