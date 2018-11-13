@@ -25,6 +25,7 @@ type ZoomTranform = { k: number, x: number, y: number };
 export function initialize(canvas: HTMLCanvasElement) {
     gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
     sizeCanvases();
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     console.log(positions);
     boothsProgramInfo = twgl.createProgramInfo(gl, [boothsVertexShaderSource, boothsFragmentSharedSource]);
     boothsBufferInfo = twgl.createBufferInfoFromArrays(gl, { a_position: { numComponents: 2, data: positions } });
@@ -47,7 +48,6 @@ function draw() {
     twgl.setBuffersAndAttributes(gl, boothsProgramInfo, boothsBufferInfo);
     twgl.setUniforms(boothsProgramInfo, { u_matrix: matrix });
 
-    debugger
     gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
 }
 
