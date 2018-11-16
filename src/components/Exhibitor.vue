@@ -25,7 +25,7 @@
                 <a href='' v-for="booth in booths" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")' class="exhibitor__categories-booth">Booth {{booth.name}}</a>
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)" class="exhibitor__categories-cat">{{c.name}}</a>
             </div>
-            <div class="exhibitor__description" :class={collapsed} v-if="exhibitor.description || exhibitor.logo">
+            <div class="exhibitor__description" :class='{collapsed : collapsed && !disableCollapse}' v-if="exhibitor.description || exhibitor.logo">
                 <div class='exhibitor__logo-container' v-if="exhibitor.logo">
                     <img :src="exhibitor.logo" class="exhibitor__logo" :key='exhibitor.id'>
                 </div>
@@ -122,6 +122,9 @@ export default {
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
                 s => this.exhibitor[s]
             );
+        },
+        disableCollapse() {
+            return !this.anySocial && !this.address;
         }
     },
     watch: {
@@ -271,18 +274,20 @@ export default {
         margin: 0 1rem 2rem;
 
         display: flex;
-        justify-content: space-between;
+        // justify-content: space-between;
         // padding-top: 1rem;
         > a {
-            font-size: 1.8rem;
+            font-size: 2rem;
             text-decoration: none;
 
             margin: 0 1rem 0.5rem 0;
             color: #eee;
+            display: none;
             &:hover {
                 color: #eee;
             }
             &[href] {
+                display: block;
                 color: var(--link-color);
 
                 &:hover {
