@@ -35,8 +35,8 @@ export function initialize(canvas: HTMLCanvasElement) {
     boothsBufferInfo = twgl.createBufferInfoFromArrays(gl, { a_position: { numComponents: 2, data: positions } });
 
     textProgramInfo = twgl.createProgramInfo(gl, [textVertexShaderSource, textFragmentSharedSource]);
-    textBufferInfo = primitives.createPlaneBufferInfo(gl, 100, 200, 1, 1, m4.rotateX(Math.PI / 2));
-debugger
+    textBufferInfo = primitives.createPlaneBufferInfo(gl, 1, 1, 1, 1, m4.rotationX(Math.PI / 2));
+
     var textCanvas = makeTextCanvas("Hello!", 100, 26);
     textWidth = textCanvas.width;
     textHeight = textCanvas.height;
@@ -149,17 +149,17 @@ void main() {
 }`;
 
 
-const textVertexShaderSource = `attribute vec4 a_position;
-attribute vec2 a_texcoord;
+const textVertexShaderSource = `attribute vec4 position;
+attribute vec2 texcoord;
 uniform mat4 u_matrix;
 varying vec2 v_texcoord;
 
 void main() {
   // Multiply the position by the matrix.
-  gl_Position = u_matrix * a_position;
+  gl_Position = u_matrix * position;
 
   // Pass the texcoord to the fragment shader.
-  v_texcoord = a_texcoord;
+  v_texcoord = texcoord;
 }`;
 
 const textFragmentSharedSource = `precision mediump float;
@@ -168,7 +168,7 @@ varying vec2 v_texcoord;
 uniform sampler2D u_texture;
 
 void main() {
-   gl_FragColor = vec4(1, 0, 0.5, 1);//texture2D(u_texture, v_texcoord);// + vec4(1,0,0,1);
+   gl_FragColor = texture2D(u_texture, v_texcoord);// + vec4(1,0,0,1);
 }`;
 //////////////////////////////////////////////////////////////////
 // Data
