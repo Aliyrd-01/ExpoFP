@@ -32,8 +32,8 @@
                 <span v-html="exhibitor.description" @click='collapsed=false'></span>
                 <a href='' class='exhibitor__description-show'>read more</a>
             </div>
-            <div class="exhibitor__sep" v-if=exhibitor.address></div>
-            <div class="exhibitor__meta">
+            <div class="exhibitor__sep" v-if=anyAddress></div>
+            <div class="exhibitor__meta" v-if=anyAddress>
                 <div v-if="exhibitor.address || exhibitor.address2">
                     <i class="fas fa-map-marker"></i>
                     <div>
@@ -123,8 +123,13 @@ export default {
                 s => this.exhibitor[s]
             );
         },
+        anyAddress() {
+            return !!["address", "address2", "phone1", "website", "publicEmail"].find(
+                s => this.exhibitor[s]
+            );
+        },
         disableCollapse() {
-            return !this.anySocial && !this.address;
+            return !this.anySocial && !this.anyAddress;
         }
     },
     watch: {

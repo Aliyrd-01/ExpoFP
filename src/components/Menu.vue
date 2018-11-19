@@ -83,7 +83,7 @@ export default {
     background: #f1f1f1;
     &__title {
         display: block;
-        padding: 2rem 1rem;
+        padding: 1.5rem 1rem;
         font-size: 2rem;
         font-weight: 100;
         background: #fff;
@@ -91,6 +91,7 @@ export default {
         margin-right: -3rem;
         img {
             width: 160px;
+            max-height: 100px;
             opacity: 0;
             transition: opacity 500ms;
         }

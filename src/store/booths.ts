@@ -1,12 +1,18 @@
 import svg from '@/tools/svg'
 import { generateUniqueSlug } from '@/services/slug';
 import { getNextId } from '@/services/id';
+import {replaceLetter} from '@/tools/demo-replace'
 
 
 const booths = __data.booths.reduce((a, c) => (a[c.id] = c) && a, {} as { [id: number]: Booth });
 const boothsBySlug = new Map<string, Booth>();
 // setup slugs
 for (const b of Object.values(booths)) {
+    if (EFP_EXPO === "demo"){
+        // debugger;
+        b.name = b.name.replace(/^(A|B|C|D|E)(\d+)$/, (m, p1, p2) => replaceLetter(p1) + p2);
+    }
+
     b.slug = generateUniqueSlug(b.name);
     boothsBySlug.set(b.slug, b);
 }
