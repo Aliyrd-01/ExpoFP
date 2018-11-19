@@ -21,7 +21,7 @@ module.exports = {
             new CopyWebpackPlugin(
                 [
                     {
-                        from: path.join(__dirname, `expos/${expo}/{settings.js,fp.js,*.png}`),
+                        from: path.join(__dirname, `expos/${expo}/{settings.js,fp.js,*.png,*logo.svg}`),
                         to: path.join(__dirname, 'dist'),
                         context: path.join(__dirname, `expos/${expo}`)
                     }
