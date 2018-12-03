@@ -23,11 +23,12 @@ function initialize(gl: WebGLRenderingContext) {
     const booths = store.getters.boothsArray as Booth[];
     const centers = [];
     const deltas = [];
-    const indeces = [];
+    const indices = [];
 
     function addRect(cx, cy) {
         const w = 0.05;
         const h = 0.05;
+        const k = centers.length / 2;
 
         centers.push(cx, cy);
         deltas.push(-w, -h);
@@ -41,17 +42,11 @@ function initialize(gl: WebGLRenderingContext) {
         centers.push(cx, cy);
         deltas.push(w, h);
 
-        const k = indeces.length;
-
-        indeces.push(k + 0, 
-            k + 1, 
-            k + 2, 
-            k + 1, 
-            k + 2, 
-            k + 3);
+        
+        indices.push(k + 0, k + 1, k + 2, k + 1, k + 2, k + 3);
     }
 
-    for (const b of booths) {
+    for (const b of booths.filter((b, i) => i < 10)) {
         addRect(b.rect.cx, b.rect.cy);
     }
 
@@ -60,7 +55,7 @@ function initialize(gl: WebGLRenderingContext) {
         a_delta: { numComponents: 2, data: deltas },
         // texcoord: { numComponents: 2, data: [0, 0, 0, 1, 1, 0, 1, 1], },
         // normal: { numComponents: 3, data: [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1], },
-        indices: { numComponents: 3, data: indeces, },
+        indices: { numComponents: 3, data: indices, },
     };
 
     bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
