@@ -3,7 +3,7 @@ import * as twgl from 'twgl.js'
 const vertexShaderSource = `
 attribute vec2 a_center;
 attribute vec2 a_delta;
-attribute vec4 a_position;
+//attribute vec4 a_position;
 uniform mat4 u_matrix;    
 uniform vec2 u_bscale; 
 void main() {
@@ -26,26 +26,26 @@ function initialize(gl: WebGLRenderingContext) {
     const centers = [];
     const deltas = [];
     const indices = [];
-    const positions = [];
+    // const positions = [];
 
     function addRect(cx, cy, r: Rect) {
         const w = 2;//r.w/2;
         const h = 2;//r.h/2;
         const k = centers.length / 2;
 
-        positions.push(r.x1, r.y1)
+        // positions.push(r.x1, r.y1)
         centers.push(cx, cy);
         deltas.push(-w, -h);
 
-        positions.push(r.x2, r.y1)
+        // positions.push(r.x2, r.y1)
         centers.push(cx, cy);
         deltas.push(w, -h);
 
-        positions.push(r.x1, r.y2)
+        // positions.push(r.x1, r.y2)
         centers.push(cx, cy);
         deltas.push(-w, h);
 
-        positions.push(r.x2, r.y2)
+        // positions.push(r.x2, r.y2)
         centers.push(cx, cy);
         deltas.push(w, h);
 
@@ -59,7 +59,7 @@ function initialize(gl: WebGLRenderingContext) {
     const arrays = {
         a_center: { numComponents: 2, data: centers },
         a_delta: { numComponents: 2, data: deltas },
-        a_position: { numComponents: 2, data: positions },
+        //a_position: { numComponents: 2, data: positions },
         indices: { numComponents: 3, data: indices, },
     };
 
