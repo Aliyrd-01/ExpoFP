@@ -2,6 +2,7 @@ import { svgWidth, svgHeight } from '@/tools/svg'
 // import * as twgl from 'twgl.js'
 import { m4 } from 'twgl.js'
 import { drawBooths } from './draw-booths'
+import { drawLabels } from './draw-labels'
 import settings from '@/settings';
 
 let canvas: HTMLCanvasElement;
@@ -25,12 +26,14 @@ export function requireRedraw() {
 
 
 function draw() {
+
     let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
 
     // apply zoom first
     matrix = m4.translate(matrix, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]);
     matrix = m4.scale(matrix, [zoomTranform.k, zoomTranform.k, 1]);
 
+    
     matrix = m4.translate(matrix, [gl.canvas.width / 2, gl.canvas.height / 2, 0]);
     // matrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
 
@@ -41,9 +44,9 @@ function draw() {
     matrix = m4.scale(matrix, [scale, scale, 1]);
     matrix = m4.translate(matrix, [-svgWidth / 2, -svgHeight / 2, 0]);
 
-  
     gl.clear(gl.COLOR_BUFFER_BIT);
     drawBooths(gl, matrix);
+    drawLabels(gl, matrix);
     // gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
 }
 
