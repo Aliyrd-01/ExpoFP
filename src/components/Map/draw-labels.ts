@@ -5,8 +5,9 @@ attribute vec2 a_center;
 attribute vec2 a_delta;
 attribute vec4 a_position;
 uniform mat4 u_matrix;    
+uniform vec2 u_bscale; 
 void main() {
-    gl_Position = u_matrix * vec4(a_center, 0, 1) + vec4(a_delta, 0, 0);
+    gl_Position = u_matrix * vec4(a_center, 0, 1) + vec4(a_delta * u_bscale, 0, 0);
 }`;
 
 const fragmentSharedSource = `precision mediump float;
@@ -28,8 +29,8 @@ function initialize(gl: WebGLRenderingContext) {
     const positions = [];
 
     function addRect(cx, cy, r: Rect) {
-        const w = 0.01;//r.w/2;
-        const h = 0.01;//r.h/2;
+        const w = 2;//r.w/2;
+        const h = 2;//r.h/2;
         const k = centers.length / 2;
 
         positions.push(r.x1, r.y1)
@@ -68,13 +69,13 @@ function initialize(gl: WebGLRenderingContext) {
     // bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 }
 
-export function drawLabels(gl: WebGLRenderingContext, u_matrix: any) {
+export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale:any) {
     // draw booths there
     if (!programInfo) initialize(gl);
 
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
-    const uniforms = { u_matrix };
+    const uniforms = { u_matrix, u_bscale };
     twgl.setUniforms(programInfo, uniforms);
     gl.drawElements(gl.TRIANGLES, bufferInfo.numElements, gl.UNSIGNED_SHORT, 0);
 }

@@ -28,12 +28,14 @@ export function requireRedraw() {
 function draw() {
 
     let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
+    const browserPxMatrix =  m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
+    const browserScale = [browserPxMatrix[0], browserPxMatrix[5]];
 
     // apply zoom first
     matrix = m4.translate(matrix, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]);
     matrix = m4.scale(matrix, [zoomTranform.k, zoomTranform.k, 1]);
 
-    
+
     matrix = m4.translate(matrix, [gl.canvas.width / 2, gl.canvas.height / 2, 0]);
     // matrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
 
@@ -44,9 +46,12 @@ function draw() {
     matrix = m4.scale(matrix, [scale, scale, 1]);
     matrix = m4.translate(matrix, [-svgWidth / 2, -svgHeight / 2, 0]);
 
+    // scale of CSS px -> projection
+    //const scaleX
+
     gl.clear(gl.COLOR_BUFFER_BIT);
     drawBooths(gl, matrix);
-    drawLabels(gl, matrix);
+    drawLabels(gl, matrix, browserScale);
     // gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
 }
 
