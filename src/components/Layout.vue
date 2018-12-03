@@ -6,6 +6,7 @@
         <!-- <Demo /> -->
         <Debug />
         <!-- <Menu/> -->
+        <div id="fps"></div>
     </div>
 </template>
 
@@ -89,5 +90,12 @@ a:visited {
         bottom: unset;
         width: 3rem;
     }
+}
+#fps{
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    z-index: 999;
 }
 </style>

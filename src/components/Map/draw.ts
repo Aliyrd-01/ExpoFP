@@ -18,17 +18,25 @@ export function applyZoomTransform(transform: { k: number, x: number, y: number 
 }
 
 
-let animatedFrame: number;
+// let animatedFrame: number;
 export function requireRedraw() {
-    if (animatedFrame) window.cancelAnimationFrame(animatedFrame);
-    animatedFrame = window.requestAnimationFrame(draw);
+    // if (animatedFrame) window.cancelAnimationFrame(animatedFrame);
+    // animatedFrame = window.requestAnimationFrame(draw);
 }
 
+let then = 0;
+// const fpsTarget = 
 
-function draw() {
+function draw(now) {
+    now *= 0.001;
+    const deltaTime = now - then;
+    then = now;
+    const fps = 1 / deltaTime;
+    document.getElementById("fps").innerHTML = fps.toFixed(1);
+
 
     let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
-    const browserPxMatrix =  m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
+    const browserPxMatrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
     const browserScale = [browserPxMatrix[0], browserPxMatrix[5]];
 
     // apply zoom first
@@ -52,6 +60,8 @@ function draw() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     drawBooths(gl, matrix);
     drawLabels(gl, matrix, browserScale);
+
+    requestAnimationFrame(draw);
     // gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
 }
 
@@ -61,7 +71,7 @@ export function initialize(canvasParam: HTMLCanvasElement) {
     sizeCanvases();
     gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
-    draw();
+    requestAnimationFrame(draw);
 }
 
 
