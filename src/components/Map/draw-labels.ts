@@ -1,4 +1,5 @@
 import * as twgl from 'twgl.js'
+import { getFont } from './utils';
 
 const vertexShaderSource = `
 attribute vec2 a_center;
@@ -36,33 +37,56 @@ function initialize(gl: WebGLRenderingContext) {
     const indices = [];
     // const positions = [];
 
+    const fontSize = 28;// browser pixels
+    const lineHeight = fontSize;
+    const lineWidth = 100;
+    // render texture for all booth names
+    const textureFontSize = fontSize * devicePixelRatio;
+    const textureLineHeight = fontSize * devicePixelRatio;
+    const textureLineWidth = lineWidth * devicePixelRatio;
+
+    const boothNames = booths.map(b => b.name);
+    let i = 0;
+    let total = boothNames.length;
+    let textureStep = 1 / total;
+    
+
     function addRect(cx, cy, r: Rect) {
-        const w = 25;//r.w/2;
-        const h = 5;//r.h/2;
-        const k = centers.length / 2;
+        const w = lineWidth / 2;//r.w/2;
+        const h = lineHeight / 2;//r.h/2;
+        const k = i * 4;
+        let n  = i;
+        // if (n >= boothNames.length){
+        //     n = n % boothNames.length;
+        // }
+        const t0 = n * textureStep;
+        const t1 = (n+1) * textureStep;
+        
 
         // positions.push(r.x1, r.y1)
         centers.push(cx, cy);
         deltas.push(-w, -h);
-        textcoords.push(0, 0);
+        textcoords.push(0, t0);
 
         // positions.push(r.x2, r.y1)
         centers.push(cx, cy);
         deltas.push(w, -h);
-        textcoords.push(1, 0);
+        textcoords.push(1, t0);
 
-        // positions.push(r.x1, r.y2)
+        // positions.push(r.xt1, r.y2)
         centers.push(cx, cy);
         deltas.push(-w, h);
-        textcoords.push(0, 1);
+        textcoords.push(0, t1);
 
         // positions.push(r.x2, r.y2)
         centers.push(cx, cy);
         deltas.push(w, h);
-        textcoords.push(1, 1);
+        textcoords.push(1, t1);
 
 
         indices.push(k + 0, k + 1, k + 2, k + 1, k + 2, k + 3);
+
+        i++;
     }
 
     for (const b of booths) {//.filter((b, i) => i < 100)
@@ -91,8 +115,10 @@ function initialize(gl: WebGLRenderingContext) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-    const c = makeTextCanvas("hello", 100, 20);
+    const c = makeTextCanvas(boothNames, textureFontSize, textureLineWidth, textureLineHeight);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+    // gl.generateMipmap(gl.TEXTURE_2D);
+    // gl.generateMipmap(gl.TEXTURE_2D);
 
     // var img = new Image();
     // img.addEventListener('load', function () {
@@ -117,12 +143,22 @@ function initialize(gl: WebGLRenderingContext) {
     // bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 }
 
-export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: any) {
+export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: any, zoomScale: number) {
     // draw booths there
     if (!programInfo) initialize(gl);
 
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+    let factor = 0.25;
+    if (zoomScale > 2){
+        factor = 0.5;
+    }
+    if (zoomScale > 3){
+        factor = 1;
+    }
+    
+    u_bscale = [u_bscale[0] * factor, u_bscale[1] * factor];
+
     const uniforms = { u_matrix, u_bscale, u_texture: texture };
     twgl.setUniforms(programInfo, uniforms);
 
@@ -138,18 +174,22 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
 var textCtx = document.createElement("canvas").getContext("2d");
 
 // Puts text in center of canvas.
-function makeTextCanvas(text, width, height) {
+function makeTextCanvas(lines: string[], fontSize, width, lineHeight) {
     textCtx.canvas.width = width;
-    textCtx.canvas.height = height;
-    textCtx.font = "20px monospace";
+    textCtx.canvas.height = lineHeight * lines.length;
+    textCtx.font = getFont(fontSize, 400);
     textCtx.textAlign = "center";
     textCtx.textBaseline = "middle";
 
     // textCtx.clearRect(0, 0, textCtx.canvas.width, textCtx.canvas.height);
     // textCtx.fillStyle = "#00ff00";
     // textCtx.fillRect(0, 0, textCtx.canvas.width, textCtx.canvas.height);
-    textCtx.fillStyle = "black";
+    textCtx.fillStyle = "#fff";
     // textCtx.fillRect(2, 2, textCtx.canvas.width - 4, textCtx.canvas.height - 4);
-    textCtx.fillText(text, width / 2, height / 2);
+
+    for (let i = 0; i < lines.length; i++) {
+        textCtx.fillText(lines[i], width / 2, (i + 0.5) * lineHeight);
+    }
+
     return textCtx.canvas;
 }

@@ -8,7 +8,8 @@ void main() {
 
 const fragmentSharedSource = `precision mediump float;
 void main() {
-    gl_FragColor = vec4(1, 1, 0.5, 1);
+    //41B6E7
+    gl_FragColor = vec4(65.0/ 255.0, 182.0/ 255.0, 231.0/ 255.0, 1);
 }`;
 
 

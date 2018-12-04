@@ -59,7 +59,7 @@ function draw(now) {
 
     gl.clear(gl.COLOR_BUFFER_BIT);
     drawBooths(gl, matrix);
-    drawLabels(gl, matrix, browserScale);
+    drawLabels(gl, matrix, browserScale, zoomTranform.k);
 
     requestAnimationFrame(draw);
     // gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
