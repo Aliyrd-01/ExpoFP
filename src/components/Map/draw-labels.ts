@@ -45,6 +45,8 @@ function initialize(gl: WebGLRenderingContext) {
     const textureLineHeight = fontSize * devicePixelRatio;
     const textureLineWidth = lineWidth * devicePixelRatio;
 
+    const columns = 2;
+
     const boothNames = booths.map(b => b.name);
     let i = 0;
     let total = boothNames.length;
@@ -55,33 +57,34 @@ function initialize(gl: WebGLRenderingContext) {
         const w = lineWidth / 2;//r.w/2;
         const h = lineHeight / 2;//r.h/2;
         const k = i * 4;
-        let n  = i;
+        let row  = i;
+        let col = 0;
         // if (n >= boothNames.length){
         //     n = n % boothNames.length;
         // }
-        const t0 = n * textureStep;
-        const t1 = (n+1) * textureStep;
+        const t0y = row * textureStep;
+        const t1y = (row+1) * textureStep;
         
 
         // positions.push(r.x1, r.y1)
         centers.push(cx, cy);
         deltas.push(-w, -h);
-        textcoords.push(0, t0);
+        textcoords.push(0, t0y);
 
         // positions.push(r.x2, r.y1)
         centers.push(cx, cy);
         deltas.push(w, -h);
-        textcoords.push(1, t0);
+        textcoords.push(1, t0y);
 
         // positions.push(r.xt1, r.y2)
         centers.push(cx, cy);
         deltas.push(-w, h);
-        textcoords.push(0, t1);
+        textcoords.push(0, t1y);
 
         // positions.push(r.x2, r.y2)
         centers.push(cx, cy);
         deltas.push(w, h);
-        textcoords.push(1, t1);
+        textcoords.push(1, t1y);
 
 
         indices.push(k + 0, k + 1, k + 2, k + 1, k + 2, k + 3);
