@@ -8,6 +8,14 @@
         <button @click="save">Save &amp; Reload</button>
         &nbsp;
         <a href='' @click.prevent="cancel">Cancel</a>
+        <div>
+            <label>Canvases ({{debugCanvases.length}}):</label>
+            <div :key=item.toDataURL() v-for="item in debugCanvases" >
+                {{item.width}}x{{item.height}}={{item.width*item.height}}
+                <br/>
+                <img :src='item.toDataURL()' style="background: #aaa" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -22,7 +30,10 @@ export default {
     computed: {
         ...mapState(["list"]),
         enabled() {
-            return this.list && this.list.type === "search" && this.list.text === "debug1";
+            return this.list && this.list.type === "search" && this.list.text === "q1";
+        },
+        debugCanvases(){
+           return debugCanvases;
         }
     },
     methods: {
@@ -31,10 +42,13 @@ export default {
             location.replace("/");
         },
         cancel() {
-            this.$store.commit("setSearchText", "");
+            this.$store.dispatch("selectSearch", "");
         }
     }
 };
+
+// export const debuggedCanvases:HTMLCanvasElement[] = [];
+
 </script>
 <style scoped lang="scss">
 .debug {
@@ -47,6 +61,7 @@ export default {
     left: 1vw;
     padding: 1rem;
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+    overflow: scroll;
     label {
         display: block;
         font-weight: 500;
@@ -54,7 +69,7 @@ export default {
     textarea {
         width: 100%;
         display: block;
-        min-height: 80%;
+        min-height: 20%;
         font-size: 12px;
         font-family: monospace;
         background: #eee;

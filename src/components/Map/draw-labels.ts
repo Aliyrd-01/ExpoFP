@@ -180,10 +180,11 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
 
 
 
-var textCtx = document.createElement("canvas").getContext("2d");
+
 
 // Puts text in center of canvas.
 function makeTextCanvas(lines: string[], fontSize, width, lineHeight) {
+    var textCtx = document.createElement("canvas").getContext("2d");
     textCtx.canvas.width = width;
     textCtx.canvas.height = lineHeight * lines.length;
     textCtx.font = getFont(fontSize, 400);
@@ -200,5 +201,6 @@ function makeTextCanvas(lines: string[], fontSize, width, lineHeight) {
         textCtx.fillText(lines[i], width / 2, (i + 0.5) * lineHeight);
     }
 
+    debugCanvases.push(textCtx.canvas);
     return textCtx.canvas;
 }
