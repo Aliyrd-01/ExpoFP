@@ -10,7 +10,7 @@
         <a href='' @click.prevent="cancel">Cancel</a>
         <div>
             <label>Canvases ({{debugCanvases.length}}):</label>
-            <div :key=item.toDataURL() v-for="item in debugCanvases" >
+            <div :key=item.toDataURL() v-for="item in debugCanvases" style="display: inline-block; padding: 2px; vertical-align: top">
                 {{item.width}}x{{item.height}}={{item.width*item.height}}
                 <br/>
                 <img :src='item.toDataURL()' style="background: #aaa" />

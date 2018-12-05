@@ -40,53 +40,60 @@ function initialize(gl: WebGLRenderingContext) {
     // const positions = [];
 
     const fontSize = 28;// browser pixels
-    const lineHeight = fontSize;
-    const lineWidth = 100;
-    // render texture for all booth names
+    // const lineHeight = fontSize;
+    // const lineWidth = 100;
+    // // render texture for all booth names
     const textureFontSize = fontSize * devicePixelRatio;
-    const textureLineHeight = fontSize * devicePixelRatio;
-    const textureLineWidth = lineWidth * devicePixelRatio;
+    // const textureLineHeight = fontSize * devicePixelRatio;
+    // const textureLineWidth = lineWidth * devicePixelRatio;
 
-    const columns = 2;
+    // const columns = 2;
 
     const boothNames = booths.map(b => b.name);
-    let i = 0;
-    let total = boothNames.length;
-    let textureStep = 1 / total;
-    
+    const canvasData = createTextCanvas(boothNames, textureFontSize);
 
-    function addRect(cx, cy, r: Rect) {
-        const w = lineWidth / 2;//r.w/2;
-        const h = lineHeight / 2;//r.h/2;
+
+    let i = 0;
+    // let total = boothNames.length;
+    // let textureStep = 1 / total;
+
+
+    function addRect(b:Booth) {
+        const {cx, cy} = b.rect;
+        const data = canvasData.info.get(b.name);
+        const dr = data.rect;
+
+        const w = data.widthPx / 2 / devicePixelRatio;
+        const h = data.heightPx / 2/ devicePixelRatio;
         const k = i * 4;
-        let row  = i;
-        let col = 0;
+        // let row = i;
+        // let col = 0;
         // if (n >= boothNames.length){
         //     n = n % boothNames.length;
         // }
-        const t0y = row * textureStep;
-        const t1y = (row+1) * textureStep;
-        
+        // const t0y = row * textureStep;
+        // const t1y = (row + 1) * textureStep;
+
 
         // positions.push(r.x1, r.y1)
         centers.push(cx, cy);
         deltas.push(-w, -h);
-        textcoords.push(0, t0y);
+        textcoords.push(dr.x1, dr.y1);
 
         // positions.push(r.x2, r.y1)
         centers.push(cx, cy);
         deltas.push(w, -h);
-        textcoords.push(1, t0y);
+        textcoords.push(dr.x2, dr.y1);
 
         // positions.push(r.xt1, r.y2)
         centers.push(cx, cy);
         deltas.push(-w, h);
-        textcoords.push(0, t1y);
+        textcoords.push(dr.x1, dr.y2);
 
         // positions.push(r.x2, r.y2)
         centers.push(cx, cy);
         deltas.push(w, h);
-        textcoords.push(1, t1y);
+        textcoords.push(dr.x2, dr.y2);
 
 
         indices.push(k + 0, k + 1, k + 2, k + 1, k + 2, k + 3);
@@ -95,7 +102,7 @@ function initialize(gl: WebGLRenderingContext) {
     }
 
     for (const b of booths) {//.filter((b, i) => i < 100)
-        addRect(b.rect.cx, b.rect.cy, b.rect);
+        addRect(b);
     }
 
     const arrays = {
@@ -120,8 +127,10 @@ function initialize(gl: WebGLRenderingContext) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-    const c = makeTextCanvas(boothNames, textureFontSize, textureLineWidth, textureLineHeight);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+    // const c = makeTextCanvas(boothNames, textureFontSize, textureLineWidth, textureLineHeight);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvasData.canvas);
+
+  
     // gl.generateMipmap(gl.TEXTURE_2D);
     // gl.generateMipmap(gl.TEXTURE_2D);
 
@@ -155,13 +164,13 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     let factor = 0.25;
-    if (zoomScale > 2){
+    if (zoomScale > 2) {
         factor = 0.5;
     }
-    if (zoomScale > 3){
+    if (zoomScale > 3) {
         factor = 1;
     }
-    
+
     u_bscale = [u_bscale[0] * factor, u_bscale[1] * factor];
 
     const uniforms = { u_matrix, u_bscale, u_texture: texture };
@@ -203,4 +212,46 @@ function makeTextCanvas(lines: string[], fontSize, width, lineHeight) {
 
     debugCanvases.push(textCtx.canvas);
     return textCtx.canvas;
+}
+
+
+function createTextCanvas(lines: string[], fontSize: number) {
+    // unique
+    lines = Array.from(new Set(lines));
+
+    const cols = 5;
+    const rows = Math.ceil(lines.length / cols);
+    const cellHeight = fontSize;
+    const maxColWidth = 200 * devicePixelRatio;
+
+    const canvas = document.createElement("canvas")
+    const c = canvas.getContext("2d");
+    c.font = getFont(fontSize, 400);
+    const cellWidth = Math.min(maxColWidth, Math.max(...lines.map(l => c.measureText(l).width)));
+    const width = cols * cellWidth;
+    const height = rows * cellHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    c.font = getFont(fontSize, 400);
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.fillStyle = "#fff";
+
+    const info = new Map<string, {rect:Rect, widthPx: number, heightPx: number}>();
+
+    for (let i = 0; i < lines.length; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x1 = col * cellWidth;
+        const y1 = row * cellHeight;
+
+        const r = Rect.fromXywh(x1, y1, cellWidth, cellHeight);
+        const text = lines[i];
+        c.fillText(text, r.cx, r.cy);
+        info.set(text, { rect: r.normalize(width, height), widthPx: cellWidth, heightPx: cellHeight })
+    }
+
+    debugCanvases.push(canvas);
+    return { canvas, info };
 }

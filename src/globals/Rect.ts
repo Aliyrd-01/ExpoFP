@@ -73,6 +73,14 @@ namespace local {
                 return Rect.fromX1y1x2y2(0, 0, 0, 0);
         }
 
+        normalize(width: number, height: number){
+            const x1 = this.x1 / width;
+            const x2 = this.x2 / width;
+            const y1 = this.y1 / height;
+            const y2 = this.y2 / height;
+            return Rect.fromX1y1x2y2(x1,y1,x2,y2);
+        }
+
         withPadding(x: number, y: number = x) {
             if (this.w < x * 2 || this.h < y * 2) return null;
             return Rect.fromCxcywh(this.cx, this.cy, this.w - x * 2, this.h - y * 2);
