@@ -2,56 +2,40 @@ import * as twgl from 'twgl.js'
 import { getFont } from './utils';
 
 const vertexShaderSource = `
-attribute vec2 a_position1;
-attribute vec2 a_position2;
-attribute float a_vertex_index;
-// just draw rect
-
-// attribute vec2 a_center;
-// attribute vec2 a_delta;
-// attribute vec2 a_texcoord;
-// varying vec2 v_texcoord;
+attribute vec2 a_center;
+attribute vec2 a_delta;
+attribute vec2 a_texcoord;
+//attribute vec4 a_position;
+varying vec2 v_texcoord;
 uniform mat4 u_matrix;    
 uniform vec2 u_bscale; 
 void main() {
-    if (a_vertex_index == 1.0) {
-        gl_Position = vec4(0,0,0,0);
-    } else if (a_vertex_index == 2.0) {
-        gl_Position = vec4(0,1,0,0);
-    } else  {
-        gl_Position = vec4(1,1,0,0);
-    }
-   // u_matrix * vec4(a_center, 0, 1) + vec4(a_delta * u_bscale, 0, 0);
-
-    // v_texcoord = a_texcoord;
+    gl_Position = u_matrix * vec4(a_center, 0, 1) + vec4(a_delta * u_bscale, 0, 0);
+    v_texcoord = a_texcoord;
 }`;
 
 const fragmentSharedSource = `
 precision mediump float;
-// varying vec2 v_texcoord;
-// uniform sampler2D u_texture1;
-// uniform sampler2D u_texture2;
+varying vec2 v_texcoord;
+uniform sampler2D u_texture;
 void main() {
-    gl_FragColor = vec4(1, 0, 0.5, 1);
+    gl_FragColor = texture2D(u_texture, v_texcoord);// vec4(1, 0, 0.5, 1);
 }`;
 
 
 let programInfo: any;
 let bufferInfo: any;
 let prevGl: any;
-let texture1: WebGLTexture;
+let texture: WebGLTexture;
 
 function initialize(gl: WebGLRenderingContext) {
     prevGl = gl;
     programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
 
     const booths = store.getters.boothsArray as Booth[];
-    const positions1 = [];
-    const positions2 = [];
-    const vertex_indexes = [];
-    // const centers = [];
-    // const deltas = [];
-    // const textcoords = [];
+    const centers = [];
+    const deltas = [];
+    const textcoords = [];
     const indices = [];
     // const positions = [];
 
@@ -91,37 +75,26 @@ function initialize(gl: WebGLRenderingContext) {
         // const t1y = (row + 1) * textureStep;
 
 
-        // // positions.push(r.x1, r.y1)
-        // centers.push(cx, cy);
-        // deltas.push(-w, -h);
-        // textcoords.push(dr.x1, dr.y1);
+        // positions.push(r.x1, r.y1)
+        centers.push(cx, cy);
+        deltas.push(-w, -h);
+        textcoords.push(dr.x1, dr.y1);
 
-        // // positions.push(r.x2, r.y1)
-        // centers.push(cx, cy);
-        // deltas.push(w, -h);
-        // textcoords.push(dr.x2, dr.y1);
+        // positions.push(r.x2, r.y1)
+        centers.push(cx, cy);
+        deltas.push(w, -h);
+        textcoords.push(dr.x2, dr.y1);
 
-        // // positions.push(r.xt1, r.y2)
-        // centers.push(cx, cy);
-        // deltas.push(-w, h);
-        // textcoords.push(dr.x1, dr.y2);
+        // positions.push(r.xt1, r.y2)
+        centers.push(cx, cy);
+        deltas.push(-w, h);
+        textcoords.push(dr.x1, dr.y2);
 
-        // // positions.push(r.x2, r.y2)
-        // centers.push(cx, cy);
-        // deltas.push(w, h);
-        // textcoords.push(dr.x2, dr.y2);
+        // positions.push(r.x2, r.y2)
+        centers.push(cx, cy);
+        deltas.push(w, h);
+        textcoords.push(dr.x2, dr.y2);
 
-        positions1.push(b.rect.x1, b.rect.y1);
-        positions1.push(b.rect.x1, b.rect.y1);
-        positions1.push(b.rect.x1, b.rect.y1);
-        positions1.push(b.rect.x1, b.rect.y1);
-
-        positions2.push(b.rect.x2, b.rect.y2);
-        positions2.push(b.rect.x2, b.rect.y2);
-        positions2.push(b.rect.x2, b.rect.y2);
-        positions2.push(b.rect.x2, b.rect.y2);
-
-        vertex_indexes.push(0, 1, 2, 3);
 
         indices.push(k + 0, k + 1, k + 2, k + 1, k + 2, k + 3);
 
@@ -133,24 +106,55 @@ function initialize(gl: WebGLRenderingContext) {
     }
 
     const arrays = {
-        a_position1: { numComponents: 2, data: positions1 },
-        a_position2: { numComponents: 2, data: positions2 },
-        a_vertex_index: { numComponents: 1, data: positions2 },
-        // a_delta: { numComponents: 2, data: deltas },
-        // a_texcoord: { numComponents: 2, data: textcoords },
+        a_center: { numComponents: 2, data: centers },
+        a_delta: { numComponents: 2, data: deltas },
+        a_texcoord: { numComponents: 2, data: textcoords },
         //a_position: { numComponents: 2, data: positions },
         indices: { numComponents: 3, data: indices, },
     };
 
     bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 
-    // texture1 = gl.createTexture();
-    // gl.bindTexture(gl.TEXTURE_2D, texture1);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvasData.canvas);
+    texture = gl.createTexture();
 
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // set it
+    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+    //     new Uint8Array([0, 0, 255, 255]));
+
+    // let's assume all images are not a power of 2
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    // const c = makeTextCanvas(boothNames, textureFontSize, textureLineWidth, textureLineHeight);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvasData.canvas);
+
+  
+    // gl.generateMipmap(gl.TEXTURE_2D);
+    // gl.generateMipmap(gl.TEXTURE_2D);
+
+    // var img = new Image();
+    // img.addEventListener('load', function () {
+
+    //     texture = gl.createTexture();
+    //     gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    //     // let's assume all images are not a power of 2
+    //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    //     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    //     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    //     // gl.generateMipmap(gl.TEXTURE_2D);
+
+    // });
+    // img.src = '/resources/leaves.jpg';
+
+
+
+    // const arrays = { a_position: { numComponents: 3, data: positions } };
+    // bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 }
 
 export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: any, zoomScale: number) {
@@ -159,17 +163,17 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
 
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
-    // let factor = 0.25;
-    // if (zoomScale > 2) {
-    //     factor = 0.5;
-    // }
-    // if (zoomScale > 3) {
-    //     factor = 1;
-    // }
+    let factor = 0.25;
+    if (zoomScale > 2) {
+        factor = 0.5;
+    }
+    if (zoomScale > 3) {
+        factor = 1;
+    }
 
-    // u_bscale = [u_bscale[0] * factor, u_bscale[1] * factor];
+    u_bscale = [u_bscale[0] * factor, u_bscale[1] * factor];
 
-    const uniforms = { u_matrix, u_bscale };
+    const uniforms = { u_matrix, u_bscale, u_texture: texture };
     twgl.setUniforms(programInfo, uniforms);
 
     gl.enable(gl.BLEND);
@@ -185,6 +189,30 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
 
 
 
+
+
+// Puts text in center of canvas.
+function makeTextCanvas(lines: string[], fontSize, width, lineHeight) {
+    var textCtx = document.createElement("canvas").getContext("2d");
+    textCtx.canvas.width = width;
+    textCtx.canvas.height = lineHeight * lines.length;
+    textCtx.font = getFont(fontSize, 400);
+    textCtx.textAlign = "center";
+    textCtx.textBaseline = "middle";
+
+    // textCtx.clearRect(0, 0, textCtx.canvas.width, textCtx.canvas.height);
+    // textCtx.fillStyle = "#00ff00";
+    // textCtx.fillRect(0, 0, textCtx.canvas.width, textCtx.canvas.height);
+    textCtx.fillStyle = "#fff";
+    // textCtx.fillRect(2, 2, textCtx.canvas.width - 4, textCtx.canvas.height - 4);
+
+    for (let i = 0; i < lines.length; i++) {
+        textCtx.fillText(lines[i], width / 2, (i + 0.5) * lineHeight);
+    }
+
+    debugCanvases.push(textCtx.canvas);
+    return textCtx.canvas;
+}
 
 
 function createTextCanvas(lines: string[], fontSize: number) {
