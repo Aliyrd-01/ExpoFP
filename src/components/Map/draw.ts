@@ -1,8 +1,10 @@
 import { svgWidth, svgHeight } from '@/tools/svg'
 // import * as twgl from 'twgl.js'
 import { m4 } from 'twgl.js'
+import { drawBg } from './draw-bg'
 import { drawBooths } from './draw-booths'
 import { drawLabels } from './draw-labels'
+import { drawWalls } from './draw-walls'
 import settings from '@/settings';
 
 let canvas: HTMLCanvasElement;
@@ -56,9 +58,12 @@ function draw(now) {
 
     // scale of CSS px -> projection
     //const scaleX
-
+    gl.clearColor(0.921, 0.921, 0.921, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    drawBg(gl, matrix);
     drawBooths(gl, matrix);
+    drawWalls(gl, matrix);
     drawLabels(gl, matrix, browserScale, zoomTranform.k);
 
     requestAnimationFrame(draw);

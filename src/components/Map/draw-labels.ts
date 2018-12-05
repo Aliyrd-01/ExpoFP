@@ -25,9 +25,11 @@ void main() {
 
 let programInfo: any;
 let bufferInfo: any;
+let prevGl: any;
 let texture: WebGLTexture;
 
 function initialize(gl: WebGLRenderingContext) {
+    prevGl = gl;
     programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
 
     const booths = store.getters.boothsArray as Booth[];
@@ -148,7 +150,7 @@ function initialize(gl: WebGLRenderingContext) {
 
 export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: any, zoomScale: number) {
     // draw booths there
-    if (!programInfo) initialize(gl);
+    if (prevGl !== gl) initialize(gl);
 
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
@@ -170,6 +172,10 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
     gl.depthMask(false);
 
     gl.drawElements(gl.TRIANGLES, bufferInfo.numElements, gl.UNSIGNED_SHORT, 0);
+
+    gl.disable(gl.BLEND);
+    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // gl.depthMask(true);
 }
 
 
