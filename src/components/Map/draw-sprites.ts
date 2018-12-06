@@ -103,9 +103,9 @@ function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
 
     ctx.drawImage(sprite.canvas, 0, 0, fRect.w, fRect.h);
 
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 0.3;
-    ctx.strokeRect(0, 0, fRect.w, fRect.h);
+    // ctx.strokeStyle = '#000';
+    // ctx.lineWidth = 0.3;
+    // ctx.strokeRect(0, 0, fRect.w, fRect.h);
 
     ctx.restore();
 
@@ -114,11 +114,8 @@ function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
     return sprite.dirty;
 }
 
-<<<<<<< HEAD
-// const maxExactCachedCanvases = 30;
-=======
 const maxExactCachedCanvases = 150;
->>>>>>> demo
+
 const exactCanvasCache = new Map<string, HTMLCanvasElement>();
 // const exactCanvasCacheInfo = new Map<string, { lastTouch: number, size: number }>();
 const exactCachedKeysQueue: string[] = [];
