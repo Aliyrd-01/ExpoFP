@@ -25,8 +25,8 @@ export default {
     state: exhibitors,
     getters: {
         exhibitorsArray: (state: any) => Object.values(state).sort(function (a: Exhibitor, b: Exhibitor) {
-            var x = a.name.toLowerCase();
-            var y = b.name.toLowerCase();
+            var x = (a.isFeatured ? '0' : '1') + a.name.toLowerCase();
+            var y = (b.isFeatured ? '0' : '1') + b.name.toLowerCase();
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
         })
     }

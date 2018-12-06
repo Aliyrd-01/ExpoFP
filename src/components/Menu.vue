@@ -10,6 +10,7 @@
         <div class="menu__content">
             <a :href='EFP_HOME_URL' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo Home&nbsp;<i class="fas fa-external-link"></i></a>
             <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");' class="menu__item"><i class="fas fa-bookmark"></i> My Bookmarks ({{bookmarkedArray.length}})</a>
+            <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a>
             <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>
             <div class="menu__item">Categories</div>
             <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='$store.dispatch("clickCategory", c.id);'>
@@ -65,10 +66,10 @@ export default {
         numOfExhibitors(id) {
             return this.$store.getters.exhibitorsArray.filter(e => e.categories.indexOf(id) !== -1).length;
         },
-        handleSearch(){
-            this.close(); 
-            this.$store.dispatch("selectSearch"); 
-            this.$nextTick(()=>this.$store.commit("setSearchFocused", true));
+        handleSearch() {
+            this.close();
+            this.$store.dispatch("selectSearch");
+            this.$nextTick(() => this.$store.commit("setSearchFocused", true));
         }
     }
 };
@@ -82,7 +83,7 @@ export default {
     background: #f1f1f1;
     &__title {
         display: block;
-        padding: 2rem 1rem;
+        padding: 1.5rem 1rem;
         font-size: 2rem;
         font-weight: 100;
         background: #fff;
@@ -90,6 +91,7 @@ export default {
         margin-right: -3rem;
         img {
             width: 160px;
+            max-height: 100px;
             opacity: 0;
             transition: opacity 500ms;
         }
@@ -111,7 +113,7 @@ export default {
 
         > i:first-child {
             color: #999;
-            min-width: 1.6rem;
+            min-width: 1.7rem;
             text-align: center;
             padding-right: 0.5rem;
         }

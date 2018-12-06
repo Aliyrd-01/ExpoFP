@@ -15,6 +15,9 @@ export default {
             var x = a.name.toLowerCase();
             var y = b.name.toLowerCase();
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        })
+        }),
+        seminarsCategoryId: (state: any, getters:any) => {
+            return getters.categoriesArray.find(c => c.slug === 'seminars').id;
+        }
     }
 }
