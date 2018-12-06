@@ -61,9 +61,9 @@ function draw(now) {
     gl.clearColor(0.921, 0.921, 0.921, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // drawBg(gl, matrix);
-    // drawBooths(gl, matrix);
-    // drawWalls(gl, matrix);
+    drawBg(gl, matrix);
+    drawBooths(gl, matrix);
+    drawWalls(gl, matrix);
     drawLabels(gl, matrix, browserScale, zoomTranform.k);
 
     requestAnimationFrame(draw);

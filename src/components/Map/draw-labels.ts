@@ -15,11 +15,11 @@ attribute float a_vertex_index;
 //uniform vec2 u_bscale; 
 void main() {
     if (a_vertex_index == 0.0) {
-        gl_Position = vec4(-0.5, -0.5,0,0);
+        gl_Position = vec4(-0.5,-0.5,1,1);
     } else if (a_vertex_index == 1.0) {
-        gl_Position = vec4(-0.5, 0.5,0,0);
+        gl_Position = vec4(-0.5,0.5,1,1);
     } else  {
-        gl_Position = vec4(0.5, -0.5,0,0);
+        gl_Position = vec4(0.5,-0.5,1,1);
     }
    // u_matrix * vec4(a_center, 0, 1) + vec4(a_delta * u_bscale, 0, 0);
 
