@@ -1,9 +1,9 @@
 import * as twgl from 'twgl.js'
 
-const vertexShaderSource = `attribute vec4 a_position;
+const vertexShaderSource = `attribute vec2 a_position;
 uniform mat4 u_matrix;    
 void main() {
-    gl_Position = u_matrix * a_position;
+    gl_Position = vec4(u_matrix * vec2(a_position.xy), 0, 1);
 }`;
 
 const fragmentSharedSource = `precision mediump float;

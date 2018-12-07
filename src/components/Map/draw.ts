@@ -37,6 +37,7 @@ function draw(now) {
     document.getElementById("fps").innerHTML = fps.toFixed(1);
 
 
+    // canvas/webgl scale
     let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
     const browserPxMatrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
     const browserScale = [browserPxMatrix[0], browserPxMatrix[5]];
@@ -50,6 +51,7 @@ function draw(now) {
     // matrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
 
 
+    // canvas/svg scale
     const scale = Math.min(gl.canvas.width / svgWidth, gl.canvas.height / svgHeight) * 0.95;
     // const scale = 1.7;
 
