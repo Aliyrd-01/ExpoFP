@@ -2,25 +2,50 @@ import * as twgl from 'twgl.js'
 import { getFont } from './utils';
 
 const vertexShaderSource = `
-// attribute vec2 a_position1;
-// attribute vec2 a_position2;
+attribute vec4 a_position1;
+attribute vec4 a_position2;
 attribute float a_vertex_index;
 // just draw rect
 
 // attribute vec2 a_center;
 // attribute vec2 a_delta;
 // attribute vec2 a_texcoord;
-// varying vec2 v_texcoord;
-//uniform mat4 u_matrix;    
-//uniform vec2 u_bscale; 
+varying vec2 v_texcoord;
+attribute vec2 a_tex1_size;
+uniform mat4 u_matrix;    
+uniform vec2 u_bscale; 
 void main() {
-    if (a_vertex_index == 0.0) {
-        gl_Position = vec4(-0.5,-0.5,1,1);
-    } else if (a_vertex_index == 1.0) {
-        gl_Position = vec4(-0.5,0.5,1,1);
-    } else  {
-        gl_Position = vec4(0.5,-0.5,1,1);
+    vec4 pos;
+    vec4 t1s = vec4(a_tex1_size * u_bscale, 0, 0);
+    vec4 pos1 = u_matrix * a_position1;
+    vec4 pos2 = u_matrix * a_position2;
+    vec4 diff = pos2 - pos1;
+    vec4 rest = diff - t1s;
+    vec4 center = (pos1+pos2)*0.5;
+    vec4 pos1s = center - t1s*0.5;
+    vec4 pos2s = center + t1s*0.5;
+
+
+    if (rest.x < 0.0 || rest.y > 0.0) {
+        return;
+       //gl_Position = vec4(0,0,0,1);
+    } else {
+        if (a_vertex_index == 0.0) {
+            pos = pos1s;
+        } else if (a_vertex_index == 1.0) {
+            pos = vec4(pos2s.x, pos1s.y, 0, 1);
+        } else  if (a_vertex_index == 2.0)  {
+            pos = vec4(pos1s.x, pos2s.y, 0, 1);
+        }
+        else  {
+            pos = pos2s;
+        }
+
+        gl_Position = pos;
+        v_texcoord = pos.xy;
     }
+
+
    // u_matrix * vec4(a_center, 0, 1) + vec4(a_delta * u_bscale, 0, 0);
 
     // v_texcoord = a_texcoord;
@@ -28,11 +53,11 @@ void main() {
 
 const fragmentSharedSource = `
 precision mediump float;
-// varying vec2 v_texcoord;
-// uniform sampler2D u_texture1;
+varying vec2 v_texcoord;
+uniform sampler2D u_texture1;
 // uniform sampler2D u_texture2;
 void main() {
-    gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+    gl_FragColor = texture2D(u_texture1, v_texcoord);//vec4(1.0,0.0,0.0,1.0);
 }`;
 
 
@@ -49,6 +74,7 @@ function initialize(gl: WebGLRenderingContext) {
     const positions1 = [];
     const positions2 = [];
     const vertex_indexes = [];
+    const tex1_sizes = [];
     // const centers = [];
     // const deltas = [];
     // const textcoords = [];
@@ -111,48 +137,55 @@ function initialize(gl: WebGLRenderingContext) {
         // deltas.push(w, h);
         // textcoords.push(dr.x2, dr.y2);
 
-        // positions1.push(b.rect.x1, b.rect.y1);
-        // positions1.push(b.rect.x1, b.rect.y1);
-        // positions1.push(b.rect.x1, b.rect.y1);
-        // positions1.push(b.rect.x1, b.rect.y1);
+        tex1_sizes.push(data.widthPx, data.heightPx);
+        tex1_sizes.push(data.widthPx, data.heightPx);
+        tex1_sizes.push(data.widthPx, data.heightPx);
+        tex1_sizes.push(data.widthPx, data.heightPx);
 
-        // positions2.push(b.rect.x2, b.rect.y2);
-        // positions2.push(b.rect.x2, b.rect.y2);
-        // positions2.push(b.rect.x2, b.rect.y2);
-        // positions2.push(b.rect.x2, b.rect.y2);
+        positions1.push(b.rect.x1, b.rect.y1);
+        positions1.push(b.rect.x1, b.rect.y1);
+        positions1.push(b.rect.x1, b.rect.y1);
+        positions1.push(b.rect.x1, b.rect.y1);
 
-        vertex_indexes.push(0, 1, 2);
+        positions2.push(b.rect.x2, b.rect.y2);
+        positions2.push(b.rect.x2, b.rect.y2);
+        positions2.push(b.rect.x2, b.rect.y2);
+        positions2.push(b.rect.x2, b.rect.y2);
 
-        // indices.push(k + 0, k + 1, k + 2, k + 1, k + 2, k + 3);
+        vertex_indexes.push(0, 1, 2, 3);
+
+        indices.push(k + 0, k + 1, k + 2, k + 1, k + 2, k + 3);
 
         i++;
     }
 
     for (const b of booths) {//.filter((b, i) => i < 100)
-        // addRect(b);
+        addRect(b);
     }
 
-    vertex_indexes.push(0, 1, 2);
+    // vertex_indexes.push(0, 1, 2);
+    // indices.push(0,1,2);
 
     const arrays = {
-        // a_position1: { numComponents: 2, data: positions1 },
-        // a_position2: { numComponents: 2, data: positions2 },
+        a_position1: { numComponents: 2, data: positions1 },
+        a_position2: { numComponents: 2, data: positions2 },
         a_vertex_index: { numComponents: 1, data: vertex_indexes },
+        a_tex1_size: {numComponents: 2, data: tex1_sizes},
         // a_delta: { numComponents: 2, data: deltas },
         // a_texcoord: { numComponents: 2, data: textcoords },
         //a_position: { numComponents: 2, data: positions },
-        // indices: { numComponents: 3, data: indices, },
+        indices: { numComponents: 3, data: indices, },
     };
 
     bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
     
 
-    // texture1 = gl.createTexture();
-    // gl.bindTexture(gl.TEXTURE_2D, texture1);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvasData.canvas);
+    texture1 = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture1);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvasData.canvas);
 
 }
 
@@ -161,9 +194,9 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
     if (prevGl !== gl) initialize(gl);
 
     gl.useProgram(programInfo.program);
-    // twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+    twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
 
-    const idxLocation = gl.getAttribLocation(programInfo.program, "a_vertex_index");
+    // const idxLocation = gl.getAttribLocation(programInfo.program, "a_vertex_index");
 
 
     // let factor = 0.25;
@@ -176,24 +209,24 @@ export function drawLabels(gl: WebGLRenderingContext, u_matrix: any, u_bscale: a
 
     // u_bscale = [u_bscale[0] * factor, u_bscale[1] * factor];
 
-    // const uniforms = { u_matrix, u_bscale };
-    // twgl.setUniforms(programInfo, uniforms);
+    const uniforms = { u_matrix, u_bscale, u_texture1: texture1 };
+    twgl.setUniforms(programInfo, uniforms);
 
-    // gl.enable(gl.BLEND);
-    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    // gl.depthMask(false);
-    const idxBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, idxBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,1,2]), gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ARRAY_BUFFER, idxBuffer);
-    gl.enableVertexAttribArray(idxLocation);
-    gl.vertexAttribPointer(idxLocation, 1, gl.FLOAT, false, 0, 0);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+    // const idxBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, idxBuffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,1,2]), gl.STATIC_DRAW);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, idxBuffer);
+    // gl.enableVertexAttribArray(idxLocation);
+    // gl.vertexAttribPointer(idxLocation, 1, gl.FLOAT, false, 0, 0);
 
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    // gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    //gl.drawElements(gl.TRIANGLES, bufferInfo.numElements, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.TRIANGLES, bufferInfo.numElements, gl.UNSIGNED_SHORT, 0);
 
-    // gl.disable(gl.BLEND);
+    gl.disable(gl.BLEND);
     // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     // gl.depthMask(true);
 }
