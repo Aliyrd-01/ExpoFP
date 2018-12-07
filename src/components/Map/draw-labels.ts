@@ -9,7 +9,7 @@ attribute float a_vertex_index;
 
 // attribute vec2 a_center;
 // attribute vec2 a_delta;
-// attribute vec2 a_texcoord;
+attribute vec2 a_texcoord;
 varying vec2 v_texcoord;
 attribute vec2 a_tex1_size;
 uniform mat4 u_matrix;    
@@ -42,7 +42,7 @@ void main() {
         }
 
         gl_Position = pos;
-        v_texcoord = pos.xy;
+        v_texcoord = a_texcoord;
     }
 
 
@@ -77,11 +77,11 @@ function initialize(gl: WebGLRenderingContext) {
     const tex1_sizes = [];
     // const centers = [];
     // const deltas = [];
-    // const textcoords = [];
+    const textcoords = [];
     const indices = [];
     // const positions = [];
 
-    const fontSize = 28;// browser pixels
+    const fontSize = 16;// browser pixels
     // const lineHeight = fontSize;
     // const lineWidth = 100;
     // // render texture for all booth names
@@ -120,22 +120,22 @@ function initialize(gl: WebGLRenderingContext) {
         // // positions.push(r.x1, r.y1)
         // centers.push(cx, cy);
         // deltas.push(-w, -h);
-        // textcoords.push(dr.x1, dr.y1);
+        textcoords.push(dr.x1, dr.y1);
 
         // // positions.push(r.x2, r.y1)
         // centers.push(cx, cy);
         // deltas.push(w, -h);
-        // textcoords.push(dr.x2, dr.y1);
+        textcoords.push(dr.x2, dr.y1);
 
         // // positions.push(r.xt1, r.y2)
         // centers.push(cx, cy);
         // deltas.push(-w, h);
-        // textcoords.push(dr.x1, dr.y2);
+        textcoords.push(dr.x1, dr.y2);
 
         // // positions.push(r.x2, r.y2)
         // centers.push(cx, cy);
         // deltas.push(w, h);
-        // textcoords.push(dr.x2, dr.y2);
+        textcoords.push(dr.x2, dr.y2);
 
         tex1_sizes.push(data.widthPx, data.heightPx);
         tex1_sizes.push(data.widthPx, data.heightPx);
@@ -172,7 +172,7 @@ function initialize(gl: WebGLRenderingContext) {
         a_vertex_index: { numComponents: 1, data: vertex_indexes },
         a_tex1_size: {numComponents: 2, data: tex1_sizes},
         // a_delta: { numComponents: 2, data: deltas },
-        // a_texcoord: { numComponents: 2, data: textcoords },
+        a_texcoord: { numComponents: 2, data: textcoords },
         //a_position: { numComponents: 2, data: positions },
         indices: { numComponents: 3, data: indices, },
     };
