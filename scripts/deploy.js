@@ -1,7 +1,7 @@
 const Confirm = require('prompt-confirm');
 const expo = require('./expo');
 const execa = require('execa');
-const cloudfront = require(`../expos/${expo}/cloudfront`)
+const config = require(`../expos/${expo}/config`)
 
 const live = process.env.EFP_TARGET === "live";
 
@@ -22,7 +22,7 @@ const live = process.env.EFP_TARGET === "live";
     const path = `efp-data/expos/${expo}/${!live ? 'dev' : 'live'}`;
     const invalidate = `/index*.html`;
 
-    const distId = live ? cloudfront.live : cloudfront.dev;
+    const distId = live ? config.cloudFrontLiveId : config.cloudFrontDevId;
 
     const args = ['./dist/**/!(*.map)', '--cwd', './dist', '--bucket', path, '--private', '--profile', 'efp-data'];
     if (live && distId) {
