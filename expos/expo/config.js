@@ -7,6 +7,6 @@ module.exports = {
     cloudFrontLiveId: 'E3PNGMVOHFIU1A',
     cloudFrontDevId: null,
     // optional overrides
-    dataUrl: `https://s3.amazonaws.com/efp-data/expos/expo/data`,
+    //dataUrl: `https://s3.amazonaws.com/efp-data/expos/expo/data`,
     
 }
