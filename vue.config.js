@@ -3,7 +3,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const fs = require('fs');
 const webpack = require('webpack');
 const expo = require('./scripts/expo')
-// const expoDefine = require(`./expos/${expo}/define`)
 const config = require(`./expos/${expo}/config`)
 
 const replaceDataBase = config.dataUrl || `https://${expo}.expofp.com/data`;
@@ -18,8 +17,6 @@ const define = {
     GTAG: JSON.stringify(config.gTag)
 }
 
-// const EFP_DATA_URL_BASE = JSON.stringify(replaceDataBase);
-// const EFP_EXPO = JSON.stringify(expo);
 
 module.exports = {
     devServer: {
