@@ -41,16 +41,17 @@ export function drawSingleLabel(b: Booth) {
     ctx.save();
     try {
         if (c.detailLevel < 5000) {
-            const padding = 5 * c.deviceScale;// c.getUnscaled(5);
+            const padding = 2 * c.deviceScale;// c.getUnscaled(5);
             const rect = c.sRectToSprite(b.rect).withPadding(padding);
             if (!rect) return;
 
             const w = b.rect.w - 2 * padding;
             const h = b.rect.h - 2 * padding;
+            ctx.translate(rect.cx, rect.cy);
             if (w > 0 && h > 0) {
                 // const rect = Rect.fromXywh(c.sXToSprite(b.rect.x1 + padding, b.rect.y1 + padding, w, h);
                 const weight = 500;
-                ctx.translate(rect.cx, rect.cy);
+               
                 const fontSize = getMaxFontSize(rect, b.name, weight);
                 if (fontSize) {
                     const font = getFont(fontSize, weight);

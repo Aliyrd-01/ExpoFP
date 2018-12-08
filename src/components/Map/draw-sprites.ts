@@ -9,7 +9,7 @@ import { getFont } from '@/components/Map/utils';
 
 // TODO: dynamic parts
 var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
-const parts = iOS ? 12 : (c.deviceScale >= 1.5 ? 6 : 2);
+const parts = iOS ? 12 : (c.deviceScale >= 1.5 ? 4 : 2);
 const dirtySprites: string[] = [];
 
 export function drawSprites() {
