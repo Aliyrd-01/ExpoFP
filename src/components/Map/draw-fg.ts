@@ -4,7 +4,13 @@ import { getCurrentSpriteIntersectingObjects } from './caching';
 import settings from '@/settings';
 
 //const fgRects = (d3.select(svg).select('#FG').selectAll('rect').nodes() as SVGRectElement[]).map(r => Rect.fromSvgRectElement(r));
-const wallLines = (d3.select(svg).select('#Walls').selectAll('line').nodes() as SVGLineElement[]).map(r => Line.fromSvgLineElement(r));
+const wallLines = [];//(d3.select(svg).select('#Walls').selectAll('line').nodes() as SVGLineElement[]).map(r => Line.fromSvgLineElement(r));
+const booths = store.getters.boothsArray as Booth[];
+for(var b of booths){
+    const lines = Line.fromRect(b.rect);
+    wallLines.push(...lines);
+}
+
 
 export default function drawFg() {//visibleOnly:boolean = false
     // console.log('drawFg');
@@ -17,7 +23,6 @@ export default function drawFg() {//visibleOnly:boolean = false
     // }
 
     const ctx = c.spriteContext;
-
 
     ctx.strokeStyle = c.dimColor(settings.colors.fg);
     ctx.lineWidth = c.getStrokeWidth();
