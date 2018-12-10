@@ -1,8 +1,8 @@
 module.exports = {
     // 
-    title: 'ExpoFP',
+    title: 'ExpoFP Expo Plan',
     homeUrl : 'https://expofp.com/',
-    logoUrl: 'logo.svg',
+    logoUrl: 'expofp.png',
     gTag: 'UA-857963-22',
     cloudFrontLiveId: 'E3PNGMVOHFIU1A',
     cloudFrontDevId: null,

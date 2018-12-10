@@ -4,7 +4,7 @@
             <a href='' @click.prevent='dismiss()' class='dismiss'>Dismiss</a>
             This is a demo of
             <a href='https://expofp.com/'>ExpoFP</a>
-            floor plan. This is not the official in-cosmetics expo plan.
+            floor plan. This is not the official Expo! Expo!® plan.
 
         </section>
     </div>
@@ -12,23 +12,30 @@
 
 <script lang="ts">
 export default {
-    data: () => ({ hidden: true }),
+    data: () => ({ hidden: true , key: 'note-dismissed' }),
     computed: {
         demo() {
-            return EFP_EXPO === "demo";
+            return EFP_EXPO === "expo";
         }
     },
     mounted() {
-        if (this.demo && !sessionStorage.getItem("demo-dismissed") && window.innerWidth > 820) {
-            window.setTimeout(() => {
-                this.hidden = false;
-            }, 2000);
+        if (this.demo && !sessionStorage.getItem(this.key)){
+            if (window.innerWidth > 820)        
+            {
+                window.setTimeout(() => {
+                    this.hidden = false;
+                }, 2000);
+            } else {
+                alert(`This is a demo of ExpoFP floor plan. 
+This is not the official Expo! Expo!® plan.`);
+                this.dismiss();
+            }
         }
     },
     methods: {
         dismiss() {
             this.hidden = true;
-            sessionStorage.setItem("demo-dismissed", "1");
+            sessionStorage.setItem(this.key, "1");
         }
     }
 };

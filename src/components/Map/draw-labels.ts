@@ -38,9 +38,10 @@ export function drawSingleLabel(b: Booth) {
     // return;
     const s = getBoothState(b);
     const color = c.dimColor('#fff', c.dimmed && s.dimmed);// && !s.selected
+    const xBooth = b.name.toLowerCase().startsWith('x');
     ctx.save();
     try {
-        if (c.detailLevel < 5000) {
+        if (c.detailLevel < 2000 && !xBooth) {
             const padding = 2 * c.deviceScale;// c.getUnscaled(5);
             const rect = c.sRectToSprite(b.rect).withPadding(padding);
             if (!rect) return;
@@ -77,7 +78,7 @@ export function drawSingleLabel(b: Booth) {
         if (!rect) return;
 
         const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
-        lines.unshift(b.name);
+        if (!xBooth) lines.unshift(b.name);
         const fontSize = (c.detailLevel > 22000 ? 14 : 12) * c.deviceScale;
         // const fontSize = c.getUnscaled(detailsFontSize);
         let occupiedHeight = fontSize;
