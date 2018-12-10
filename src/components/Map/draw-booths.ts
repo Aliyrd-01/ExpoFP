@@ -40,12 +40,12 @@ export function drawSingleBooth(b: Booth) {
 
     let defColor =  settings.colors.booths.default;
     if (b.name.startsWith('Y')){
-        defColor = '#fff';
+        defColor = '#aaa';
     } else 
     if (b.name.startsWith('X')){
-        defColor = '#aaa';
+        defColor = '#82D13F';
     } else if (parseInt(b.name)> 949 && parseInt(b.name) < 1000){
-        defColor = '#555';
+        defColor = '#FF9E4D';
     }
 
     const s = getBoothState(b)
