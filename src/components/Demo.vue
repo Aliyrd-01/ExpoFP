@@ -2,9 +2,7 @@
     <div class="demo" :class='{hidden}' v-if="demo">
         <section>
             <a href='' @click.prevent='dismiss()' class='dismiss'>Dismiss</a>
-            This is a demo of
-            <a href='https://expofp.com/'>ExpoFP</a>
-            floor plan. This is not the official Expo! Expo!® plan.
+            This is not an official Expo!Expo!® plan. Get your free expo floor plan at <a href='https://expofp.com/'>ExpoFP.com</a>
 
         </section>
     </div>
@@ -26,8 +24,7 @@ export default {
                     this.hidden = false;
                 }, 2000);
             } else {
-                alert(`This is a demo of ExpoFP floor plan. 
-This is not the official Expo! Expo!® plan.`);
+                alert(`This is not an official Expo!Expo!® plan. Get your free expo floor plan at ExpoFP.com`);
                 this.dismiss();
             }
         }

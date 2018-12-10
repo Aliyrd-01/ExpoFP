@@ -38,7 +38,7 @@ export function drawSingleLabel(b: Booth) {
     // return;
     const s = getBoothState(b);
     const color = c.dimColor('#fff', c.dimmed && s.dimmed);// && !s.selected
-    const xBooth = b.name.toLowerCase().startsWith('x');
+    const xBooth = b.name.startsWith('X') ||  b.name.startsWith('Y');
     ctx.save();
     try {
         if (c.detailLevel < 2000 && !xBooth) {

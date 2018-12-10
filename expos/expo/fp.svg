@@ -279,6 +279,9 @@
     <rect id="b1601" class="cls-2" x="962.8" y="541.24" width="19.29" height="19.19"/>
     <rect id="bx1" class="cls-2" x="162.16" y="71.36" width="60.01" height="67.97"/>
     <rect id="b1645" class="cls-2" x="951.62" y="104.34" width="48.63" height="48.63"/>
+    <rect id="by1" class="cls-2" x="510.43" y="169.4" width="65.52" height="24.09"/>
+    <rect id="by2" class="cls-2" x="510.43" y="125.15" width="65.52" height="38.27"/>
+    <rect id="by3" class="cls-2" x="520.07" y="90.14" width="46.24" height="27.34"/>
   </g>
   <g id="Icons">
     <rect id="WT" class="cls-3" x="152.45" y="623.16" width="58" height="58"/>
