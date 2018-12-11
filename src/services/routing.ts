@@ -82,6 +82,7 @@ function stateToUrl() {
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
         // console.log('history push', queryRaw);
         history.push(newQuery);
+        sendGa();
     } else {
         // console.log('history replace', queryRaw);
         history.replace(newQuery);
@@ -91,9 +92,39 @@ function stateToUrl() {
     savedSelectedBooth = booth;
 }
 
-if (store.state.previewExhibitor){
+if (store.state.previewExhibitor) {
     history.replace('?' + store.state.exhibitors[store.state.previewExhibitor].slug);
 }
 
 dispatchFromUrl();
 setTitle();
+
+let timeout: number;
+
+function sendGa() {
+    if (typeof (gtag) === "undefined") return;
+    // console.log('gtag', newQuery);
+    // gtag('config', GTAG);
+
+    if (timeout) window.clearTimeout(timeout);
+    timeout = window.setTimeout(() => {
+        gtag('config', GTAG, {
+            'page_title': document.title,
+            'page_path': location.href
+        });
+    }, 1000);
+
+
+    // gtag('event', 'page_view', { 'send_to': GTAG });
+
+
+    // gtag('event', 'nav', {
+    //     'event_category': 'Navigation',
+    //     'event_label': newQuery
+    // });
+    // gtag('config', GTAG, {
+    //     'page_title': document.title,
+    //     'page_path': location.href
+    // });
+    // gtag('event', 'page_view', { 'send_to': GTAG });
+}

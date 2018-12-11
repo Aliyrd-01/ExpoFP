@@ -52,3 +52,5 @@ declare const EFP_EXPO:string;
 declare const EFP_TITLE:string;
 declare const EFP_HOME_URL:string;
 declare const EFP_LOGO_URL:string;
+declare const GTAG:string;
+declare const gtag:any;
