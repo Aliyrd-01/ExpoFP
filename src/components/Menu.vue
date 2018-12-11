@@ -8,7 +8,7 @@
             </div>
         </template>
         <div class="menu__content">
-            <a :href='EFP_HOME_URL' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo Home&nbsp;<i class="fas fa-external-link"></i></a>
+            <a :href='EFP_HOME_URL' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo&nbsp;Home&nbsp;<i class="fas fa-external-link"></i></a>
             <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");' class="menu__item"><i class="fas fa-bookmark"></i> My Bookmarks ({{bookmarkedArray.length}})</a>
             <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a>
             <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>

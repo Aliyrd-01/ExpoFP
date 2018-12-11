@@ -3,7 +3,7 @@
         <img src='expofp-overlay.png' class='logo-overlay'>
         <Overlay />
         <Map />
-        <!-- <Demo /> -->
+        <Demo />
         <Debug />
         <!-- <Menu/> -->
         <div id="fps"></div>
