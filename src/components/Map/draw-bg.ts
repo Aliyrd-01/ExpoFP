@@ -15,12 +15,18 @@ void main() {
 let programInfo: any;
 let bufferInfo: any;
 let prevGl: any;
+let program:WebGLProgram;
+let positionLocation: number;
+let positionBuffer: WebGLBuffer;
+let positionsArray: Float32Array;
 
 function initialize(gl: WebGLRenderingContext) {
     prevGl = gl;
     programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
+    program = programInfo.program;
     const positions = [];
-    
+    gl.useProgram(program);
+
     const bgRects = (d3.select(svg).select('#BG').selectAll('rect').nodes() as SVGRectElement[])
         .map(r => Rect.fromSvgRectElement(r));
 
@@ -34,17 +40,35 @@ function initialize(gl: WebGLRenderingContext) {
         positions.push(r.x2, r.y2);
     }
 
-    const arrays = { a_position: { numComponents: 2, data: positions } };
-    bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+    positionLocation = gl.getAttribLocation(program, 'a_position');
+    positionBuffer = gl.createBuffer();
+    positionsArray = new Float32Array(positions);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, positionsArray, gl.STATIC_DRAW);
+    
+    // gl.enableVertexAttribArray(positionLocation);
+    // gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+
+    // const arrays = { a_position: { numComponents: 2, data: positions } };
+    // bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 }
 
 export function drawBg(gl: WebGLRenderingContext, u_matrix: any) {
     // draw booths there
     if (prevGl !== gl) initialize(gl);
 
-    gl.useProgram(programInfo.program);
-    twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
-    twgl.setUniforms(programInfo, { u_matrix });    
-    gl.drawArrays(gl.TRIANGLES, 0, bufferInfo.numElements);
+    gl.useProgram(program);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    // twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+    twgl.setUniforms(programInfo, { u_matrix });  
+
+    gl.drawArrays(gl.TRIANGLES, 0, positionsArray.length / 2);
+    // gl.drawArrays(gl.TRIANGLES, 0, bufferInfo.numElements);
 }
 
