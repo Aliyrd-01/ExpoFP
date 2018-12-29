@@ -3,7 +3,7 @@ import * as twgl from 'twgl.js'
 const vertexShaderSource = `attribute vec2 a_position;
 uniform mat4 u_matrix;    
 void main() {
-    gl_Position = u_matrix * vec4(a_position.xy, 0, 1);
+    gl_Position = vec4(u_matrix * vec2(a_position.xy), 0, 1);
 }`;
 
 const fragmentSharedSource = `precision mediump float;

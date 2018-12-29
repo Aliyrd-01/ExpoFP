@@ -65,8 +65,8 @@ function draw(now) {
 
     drawBg(gl, matrix);
     drawBooths(gl, matrix);
-    drawWalls(gl, matrix);
-    drawLabels(gl, matrix, browserScale, zoomTranform.k);
+    // drawWalls(gl, matrix);
+    // drawLabels(gl, matrix, browserScale, zoomTranform.k);
 
     requestAnimationFrame(draw);
     // gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
