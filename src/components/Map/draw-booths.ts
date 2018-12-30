@@ -5,9 +5,11 @@ attribute vec2 a_center;
 attribute vec2 rotate;
 attribute vec2 a_delta;
 attribute vec2 a_deltapx;
-uniform mat4 u_matrix;    
+uniform mat4 u_matrix;   
+uniform vec2 u_pxscale; 
+
 void main() {
-    gl_Position = u_matrix * vec4(a_center + a_delta, 0, 1);
+    gl_Position = u_matrix * vec4(a_center + a_delta, 0, 1) + vec4(a_deltapx * u_pxscale, 0, 0);
 }`;
 
 const fragmentSharedSource = `precision mediump float;
@@ -26,12 +28,14 @@ let prevGl: any;
 // let positionsArray: Float32Array;
 let centerLocation: number;
 let deltaLocation: number;
+let deltapxLocation: number;
 
 let centerBuffer: WebGLBuffer;
 let deltaBuffer: WebGLBuffer;
+let deltapxBuffer: WebGLBuffer;
 let indexBuffer: WebGLBuffer;
 let numElements: number;
-const indices = [];
+
 // let centerArray: Float32Array;
 
 
@@ -71,7 +75,8 @@ function initialize(gl: WebGLRenderingContext) {
     // NEW BUFFERS
     const centers = [];
     const deltas = [];
-    
+    const deltapxs = [];
+    const indices = [];
 
     for (const b of booths) {
         const r = b.rect;
@@ -79,6 +84,7 @@ function initialize(gl: WebGLRenderingContext) {
         // 4 vertices per booth
         centers.push(r.cx, r.cy, r.cx, r.cy, r.cx, r.cy, r.cx, r.cy);
         deltas.push(-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2, -r.w / 2, r.h / 2, r.w / 2, r.h / 2);
+        deltapxs.push(0.5,0.5,-0.5,0.5,0.5,-0.5,-0.5,-0.5);
 
         // what to draw
         indices.push(i, i + 1, i + 2, i + 1, i + 2, i + 3);
@@ -95,6 +101,11 @@ function initialize(gl: WebGLRenderingContext) {
     deltaBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, deltaBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deltas), gl.STATIC_DRAW);
+    
+    deltapxLocation = gl.getAttribLocation(program, "a_deltapx");
+    deltapxBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, deltapxBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deltapxs), gl.STATIC_DRAW);
 
 
     // gl.enableVertexAttribArray(positionLocation);
@@ -122,7 +133,7 @@ function initialize(gl: WebGLRenderingContext) {
     // bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
 }
 
-export function drawBooths(gl: WebGLRenderingContext, u_matrix: any) {
+export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: any) {
     // draw booths there 
     if (prevGl !== gl) initialize(gl);
 
@@ -136,6 +147,9 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any) {
     gl.enableVertexAttribArray(deltaLocation);
     gl.vertexAttribPointer(deltaLocation, 2, gl.FLOAT, false, 0, 0);
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, deltapxBuffer);
+    gl.enableVertexAttribArray(deltapxLocation);
+    gl.vertexAttribPointer(deltapxLocation, 2, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
@@ -147,7 +161,7 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any) {
     // gl.vertexAttribPointer(centerLocation, 2, gl.FLOAT, false, 0, 0);
 
 
-    twgl.setUniforms(programInfo, { u_matrix });
+    twgl.setUniforms(programInfo, { u_matrix, u_pxscale });
     // gl.drawArrays(gl.TRIANGLES, 0, numElements )
     gl.drawElements(gl.TRIANGLES, numElements, gl.UNSIGNED_SHORT, 0);
 }

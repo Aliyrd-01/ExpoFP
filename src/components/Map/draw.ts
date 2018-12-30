@@ -39,8 +39,10 @@ function draw(now) {
 
     // canvas/webgl scale
     let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
-    const browserPxMatrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
-    const browserScale = [browserPxMatrix[0], browserPxMatrix[5]];
+    // const browserPxMatrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
+    // const browserScale = [browserPxMatrix[0], browserPxMatrix[5]];
+    const pxScale = [2 * devicePixelRatio / gl.canvas.width, -2 * devicePixelRatio/ gl.canvas.height];
+    //const pxScale = [2 / gl.canvas.width, -2/ gl.canvas.height];
 
     // apply zoom first
     matrix = m4.translate(matrix, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]);
@@ -64,7 +66,7 @@ function draw(now) {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     drawBg(gl, matrix);
-    drawBooths(gl, matrix);
+    drawBooths(gl, matrix, pxScale);
     // drawWalls(gl, matrix);
     // drawLabels(gl, matrix, browserScale, zoomTranform.k);
 
