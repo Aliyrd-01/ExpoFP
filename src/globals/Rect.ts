@@ -7,8 +7,8 @@ namespace local {
         y1: number;
         y2: number;
 
-        get h() { return this.y2 - this.y1; }
-        get w() { return this.x2 - this.x1; }
+        get h() { return Math.abs(this.y2 - this.y1); }
+        get w() { return Math.abs(this.x2 - this.x1); }
         get cx() { return (this.x1 + this.x2) / 2; }
         get cy() { return (this.y1 + this.y2) / 2; }
 
