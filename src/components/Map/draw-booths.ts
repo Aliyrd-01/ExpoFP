@@ -2,20 +2,33 @@ import * as twgl from 'twgl.js'
 
 const vertexShaderSource = `//attribute vec2 a_position1;
 attribute vec2 a_center;
-attribute vec2 rotate;
+attribute vec2 a_rotate;
 attribute vec2 a_delta;
 attribute vec2 a_deltapx;
+attribute vec4 a_color;
 uniform mat4 u_matrix;   
 uniform vec2 u_pxscale; 
+varying vec2 v_texcoord;
+varying vec4 v_color;
 
 void main() {
     gl_Position = u_matrix * vec4(a_center + a_delta, 0, 1) + vec4(a_deltapx * u_pxscale, 0, 0);
+    v_texcoord = vec2(0,0);
+    v_color = a_color;
 }`;
 
 const fragmentSharedSource = `precision mediump float;
+varying vec2 v_texcoord;
+varying vec4 v_color;
+uniform sampler2D u_texture;
+
 void main() {
     //41B6E7
-    gl_FragColor = vec4(65.0/ 255.0, 182.0/ 255.0, 231.0/ 255.0, 1);
+    if (v_color.w != 0.0){
+        gl_FragColor = v_color; //vec4(65.0/ 255.0, 182.0/ 255.0, 231.0/ 255.0, 1);
+    } else {
+        gl_FragColor = texture2D(u_texture, v_texcoord);
+    }
 }`;
 
 
@@ -29,12 +42,15 @@ let prevGl: any;
 let centerLocation: number;
 let deltaLocation: number;
 let deltapxLocation: number;
+let colorLocation: number;
 
 let centerBuffer: WebGLBuffer;
 let deltaBuffer: WebGLBuffer;
 let deltapxBuffer: WebGLBuffer;
+let colorBuffer: WebGLBuffer;
 let indexBuffer: WebGLBuffer;
 let numElements: number;
+let texture: WebGLTexture;
 
 // let centerArray: Float32Array;
 
@@ -77,6 +93,7 @@ function initialize(gl: WebGLRenderingContext) {
     const deltas = [];
     const deltapxs = [];
     const indices = [];
+    const colors = [];
 
     for (const b of booths) {
         const r = b.rect;
@@ -84,7 +101,8 @@ function initialize(gl: WebGLRenderingContext) {
         // 4 vertices per booth
         centers.push(r.cx, r.cy, r.cx, r.cy, r.cx, r.cy, r.cx, r.cy);
         deltas.push(-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2, -r.w / 2, r.h / 2, r.w / 2, r.h / 2);
-        deltapxs.push(0.5,0.5,-0.5,0.5,0.5,-0.5,-0.5,-0.5);
+        deltapxs.push(0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5);
+        for (let k = 1; k < 5; k++) colors.push(65.0 / 255.0 / k, 182.0 / 255.0/ k, 231.0 / 255.0/ k, 0);
 
         // what to draw
         indices.push(i, i + 1, i + 2, i + 1, i + 2, i + 3);
@@ -101,11 +119,16 @@ function initialize(gl: WebGLRenderingContext) {
     deltaBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, deltaBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deltas), gl.STATIC_DRAW);
-    
+
     deltapxLocation = gl.getAttribLocation(program, "a_deltapx");
     deltapxBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, deltapxBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deltapxs), gl.STATIC_DRAW);
+
+    colorLocation = gl.getAttribLocation(program, "a_color");
+    colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
 
     // gl.enableVertexAttribArray(positionLocation);
@@ -119,7 +142,12 @@ function initialize(gl: WebGLRenderingContext) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-
+    texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
 
 
 
@@ -151,18 +179,72 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: 
     gl.enableVertexAttribArray(deltapxLocation);
     gl.vertexAttribPointer(deltapxLocation, 2, gl.FLOAT, false, 0, 0);
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.enableVertexAttribArray(colorLocation);
+    gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
 
-   
+
 
     // twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
     // gl.enableVertexAttribArray(centerLocation);
     // gl.vertexAttribPointer(centerLocation, 2, gl.FLOAT, false, 0, 0);
 
 
-    twgl.setUniforms(programInfo, { u_matrix, u_pxscale });
+    twgl.setUniforms(programInfo, { u_matrix, u_pxscale, u_texture: texture });
     // gl.drawArrays(gl.TRIANGLES, 0, numElements )
     gl.drawElements(gl.TRIANGLES, numElements, gl.UNSIGNED_SHORT, 0);
 }
 
+const canvas = document.createElement("canvas")
+const c = canvas.getContext("2d");
+canvas.width = 100;
+canvas.height = 100;
+
+c.fillStyle = '#f00';
+c.fillRect(0, 0, 100, 100);
+
+debugCanvases.push(canvas);
+
+// function createTextCanvas(lines: string[], fontSize: number) {
+//     // unique
+//     lines = Array.from(new Set(lines));
+
+//     const cols = 5;
+//     const rows = Math.ceil(lines.length / cols);
+//     const cellHeight = fontSize;
+//     const maxColWidth = 200 * devicePixelRatio;
+
+//     const canvas = document.createElement("canvas")
+//     const c = canvas.getContext("2d");
+//     c.font = getFont(fontSize, 400);
+//     const cellWidth = Math.min(maxColWidth, Math.max(...lines.map(l => c.measureText(l).width)));
+//     const width = cols * cellWidth;
+//     const height = rows * cellHeight;
+//     canvas.width = width;
+//     canvas.height = height;
+
+//     c.font = getFont(fontSize, 400);
+//     c.textAlign = "center";
+//     c.textBaseline = "middle";
+//     c.fillStyle = "#fff";
+
+//     const info = new Map<string, {rect:Rect, widthPx: number, heightPx: number}>();
+
+//     for (let i = 0; i < lines.length; i++) {
+//         const col = i % cols;
+//         const row = Math.floor(i / cols);
+//         const x1 = col * cellWidth;
+//         const y1 = row * cellHeight;
+
+//         const r = Rect.fromXywh(x1, y1, cellWidth, cellHeight);
+//         const text = lines[i];
+//         c.fillText(text, r.cx, r.cy);
+//         info.set(text, { rect: r.normalize(width, height), widthPx: cellWidth, heightPx: cellHeight })
+//     }
+
+
+//     return { canvas, info };
+// }
