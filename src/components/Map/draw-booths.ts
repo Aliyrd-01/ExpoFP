@@ -16,7 +16,7 @@ varying vec4 v_color;
 void main() {
     // TODO: have px to svg scale
     gl_Position = u_matrix * vec4(a_center + a_delta, 0, 1) + vec4(a_deltapx * u_pxscale, 0, 0);
-    v_texcoord = vec2(0,0);
+    v_texcoord = a_texcoord;//vec2(0,0);
     v_color = a_color;
 }`;
 
@@ -128,13 +128,17 @@ function initialize(gl: WebGLRenderingContext) {
     for (const b of booths) {
         const r = b.rect;
         const i = centers.length / 2;
+
+        const canvas = createTextCanvas(b.name, 16 * devicePixelRatio);
+        const w = canvas.width / devicePixelRatio / 2;
+        const h = canvas.height / devicePixelRatio / 2;
+
         // 4 vertices per booth
         centers.push(r.cx, r.cy, r.cx, r.cy, r.cx, r.cy, r.cx, r.cy);
         deltas.push(0, 0, 0, 0, 0, 0, 0, 0);
-        deltapxs.push(-2, -2, 2, -2, -2, 2, 2, 2);
-        for (let k = 1; k < 5; k++) colors.push(1 / k, 0 / k, 0 / k, 1);
+        deltapxs.push(-w, -h, w, -h, -w, h, w, h);
+        for (let k = 1; k < 5; k++) colors.push(1 / k, 0 / k, 0 / k, 0);
 
-        const canvas = createTextCanvas(b.name, 14 * devicePixelRatio);
         const info = sprite.addCanvas(canvas);
 
         texItems.push(info);
@@ -199,7 +203,7 @@ function initialize(gl: WebGLRenderingContext) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-   
+
 
 
 
@@ -237,7 +241,7 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: 
 
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
     gl.enableVertexAttribArray(texcoordLocation);
-    gl.vertexAttribPointer(texcoordLocation, 4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
@@ -250,8 +254,15 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: 
 
 
     twgl.setUniforms(programInfo, { u_matrix, u_pxscale, u_texture: texture });
+
+    // gl.enable(gl.BLEND);
+    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // gl.blendFunc(gl.SRC_COLOR, gl.DST_COLOR);
+    // gl.depthMask(false);
+
     // gl.drawArrays(gl.TRIANGLES, 0, numElements )
     gl.drawElements(gl.TRIANGLES, numElements, gl.UNSIGNED_SHORT, 0);
+    gl.disable(gl.BLEND);
 }
 
 const canvas = document.createElement("canvas")
