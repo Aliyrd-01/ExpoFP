@@ -12,6 +12,7 @@ varying vec2 v_texcoord;
 varying vec4 v_color;
 
 void main() {
+    // TODO: have px to svg scale
     gl_Position = u_matrix * vec4(a_center + a_delta, 0, 1) + vec4(a_deltapx * u_pxscale, 0, 0);
     v_texcoord = vec2(0,0);
     v_color = a_color;
@@ -43,11 +44,13 @@ let centerLocation: number;
 let deltaLocation: number;
 let deltapxLocation: number;
 let colorLocation: number;
+let rotateLocation: number;
 
 let centerBuffer: WebGLBuffer;
 let deltaBuffer: WebGLBuffer;
 let deltapxBuffer: WebGLBuffer;
 let colorBuffer: WebGLBuffer;
+let rotateBuffer: WebGLBuffer;
 let indexBuffer: WebGLBuffer;
 let numElements: number;
 let texture: WebGLTexture;
@@ -94,6 +97,7 @@ function initialize(gl: WebGLRenderingContext) {
     const deltapxs = [];
     const indices = [];
     const colors = [];
+    //const rotates = [];
 
     for (const b of booths) {
         const r = b.rect;
@@ -102,7 +106,9 @@ function initialize(gl: WebGLRenderingContext) {
         centers.push(r.cx, r.cy, r.cx, r.cy, r.cx, r.cy, r.cx, r.cy);
         deltas.push(-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2, -r.w / 2, r.h / 2, r.w / 2, r.h / 2);
         deltapxs.push(0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5);
-        for (let k = 1; k < 5; k++) colors.push(65.0 / 255.0 / k, 182.0 / 255.0/ k, 231.0 / 255.0/ k, 0);
+        for (let k = 1; k < 5; k++) colors.push(65.0 / 255.0 / k, 182.0 / 255.0 / k, 231.0 / 255.0 / k, 1);
+        // TODO: add rotates and further, read about rotates
+        //for (let k = 1; k < 5; k++) colors.push(65.0 / 255.0 / k, 182.0 / 255.0 / k, 231.0 / 255.0 / k, 1);
 
         // what to draw
         indices.push(i, i + 1, i + 2, i + 1, i + 2, i + 3);
@@ -207,44 +213,3 @@ c.fillStyle = '#f00';
 c.fillRect(0, 0, 100, 100);
 
 debugCanvases.push(canvas);
-
-// function createTextCanvas(lines: string[], fontSize: number) {
-//     // unique
-//     lines = Array.from(new Set(lines));
-
-//     const cols = 5;
-//     const rows = Math.ceil(lines.length / cols);
-//     const cellHeight = fontSize;
-//     const maxColWidth = 200 * devicePixelRatio;
-
-//     const canvas = document.createElement("canvas")
-//     const c = canvas.getContext("2d");
-//     c.font = getFont(fontSize, 400);
-//     const cellWidth = Math.min(maxColWidth, Math.max(...lines.map(l => c.measureText(l).width)));
-//     const width = cols * cellWidth;
-//     const height = rows * cellHeight;
-//     canvas.width = width;
-//     canvas.height = height;
-
-//     c.font = getFont(fontSize, 400);
-//     c.textAlign = "center";
-//     c.textBaseline = "middle";
-//     c.fillStyle = "#fff";
-
-//     const info = new Map<string, {rect:Rect, widthPx: number, heightPx: number}>();
-
-//     for (let i = 0; i < lines.length; i++) {
-//         const col = i % cols;
-//         const row = Math.floor(i / cols);
-//         const x1 = col * cellWidth;
-//         const y1 = row * cellHeight;
-
-//         const r = Rect.fromXywh(x1, y1, cellWidth, cellHeight);
-//         const text = lines[i];
-//         c.fillText(text, r.cx, r.cy);
-//         info.set(text, { rect: r.normalize(width, height), widthPx: cellWidth, heightPx: cellHeight })
-//     }
-
-
-//     return { canvas, info };
-// }
