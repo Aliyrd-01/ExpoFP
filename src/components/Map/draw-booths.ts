@@ -1,4 +1,5 @@
 import * as twgl from 'twgl.js'
+import Sprite, { createTextCanvas, SpriteItem } from './sprite'
 
 const vertexShaderSource = `//attribute vec2 a_position1;
 attribute vec2 a_center;
@@ -6,6 +7,7 @@ attribute vec2 a_rotate;
 attribute vec2 a_delta;
 attribute vec2 a_deltapx;
 attribute vec4 a_color;
+attribute vec2 a_texcoord;
 uniform mat4 u_matrix;   
 uniform vec2 u_pxscale; 
 varying vec2 v_texcoord;
@@ -45,15 +47,19 @@ let deltaLocation: number;
 let deltapxLocation: number;
 let colorLocation: number;
 let rotateLocation: number;
+let texcoordLocation: number;
 
 let centerBuffer: WebGLBuffer;
 let deltaBuffer: WebGLBuffer;
 let deltapxBuffer: WebGLBuffer;
 let colorBuffer: WebGLBuffer;
 let rotateBuffer: WebGLBuffer;
+let texcoordBuffer: WebGLBuffer;
 let indexBuffer: WebGLBuffer;
 let numElements: number;
 let texture: WebGLTexture;
+
+const sprite = new Sprite();
 
 // let centerArray: Float32Array;
 
@@ -97,6 +103,8 @@ function initialize(gl: WebGLRenderingContext) {
     const deltapxs = [];
     const indices = [];
     const colors = [];
+    const texItems = [] as SpriteItem[];
+    //const texcoords = [];
     //const rotates = [];
 
     for (const b of booths) {
@@ -107,12 +115,35 @@ function initialize(gl: WebGLRenderingContext) {
         deltas.push(-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2, -r.w / 2, r.h / 2, r.w / 2, r.h / 2);
         deltapxs.push(0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5);
         for (let k = 1; k < 5; k++) colors.push(65.0 / 255.0 / k, 182.0 / 255.0 / k, 231.0 / 255.0 / k, 1);
+        texItems.push(null);
+        //texcoords.push(0, 0, 0, 0, 0, 0, 0, 0);
         // TODO: add rotates and further, read about rotates
         //for (let k = 1; k < 5; k++) colors.push(65.0 / 255.0 / k, 182.0 / 255.0 / k, 231.0 / 255.0 / k, 1);
 
         // what to draw
         indices.push(i, i + 1, i + 2, i + 1, i + 2, i + 3);
     }
+
+    // add labels
+    for (const b of booths) {
+        const r = b.rect;
+        const i = centers.length / 2;
+        // 4 vertices per booth
+        centers.push(r.cx, r.cy, r.cx, r.cy, r.cx, r.cy, r.cx, r.cy);
+        deltas.push(0, 0, 0, 0, 0, 0, 0, 0);
+        deltapxs.push(-2, -2, 2, -2, -2, 2, 2, 2);
+        for (let k = 1; k < 5; k++) colors.push(1 / k, 0 / k, 0 / k, 1);
+
+        const canvas = createTextCanvas(b.name, 14 * devicePixelRatio);
+        const info = sprite.addCanvas(canvas);
+
+        texItems.push(info);
+        //textcoords.push()
+
+        // what to draw
+        indices.push(i, i + 1, i + 2, i + 1, i + 2, i + 3);
+    }
+
 
     numElements = indices.length;
 
@@ -136,6 +167,26 @@ function initialize(gl: WebGLRenderingContext) {
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
+    texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sprite.generateSpriteCanvas());
+
+    texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
+    texcoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+    const texcoords = [];
+    texItems.forEach(x => {
+        if (x === null) texcoords.push(0, 0, 0, 0, 0, 0, 0, 0);
+        else {
+            const r = x.rect;
+            texcoords.push(r.x1, r.y1, r.x2, r.y1, r.x1, r.y2, r.x2, r.y2);
+        }
+    });
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
+
 
     // gl.enableVertexAttribArray(positionLocation);
     // gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
@@ -148,12 +199,7 @@ function initialize(gl: WebGLRenderingContext) {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
-    texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+   
 
 
 
@@ -188,6 +234,10 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: 
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.enableVertexAttribArray(colorLocation);
     gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+    gl.enableVertexAttribArray(texcoordLocation);
+    gl.vertexAttribPointer(texcoordLocation, 4, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
