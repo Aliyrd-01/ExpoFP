@@ -87,14 +87,14 @@ export function createTextCanvas(text: string, fontSize: number) {
     const { width } = c.measureText(text);
 
     canvas.width = width;
-    canvas.height = fontSize * 3 + 2;
+    canvas.height = fontSize + 2;
     // set font again
     c.font = font;
     c.textAlign = "center";
     c.textBaseline = "middle";
     
-    c.fillStyle = "#000";
-    c.fillRect(0,0,canvas.width, canvas.height);
+    // c.fillStyle = "#000";
+    // c.fillRect(0,0,canvas.width, canvas.height);
 
     c.fillStyle = "#fff";
 

@@ -1,3 +1,4 @@
+//devicePixelRatio = 1;
 // import 'core-js';
 import 'core-js/features/array/from';
 import 'core-js/features/array/find';

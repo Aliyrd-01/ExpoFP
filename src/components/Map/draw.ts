@@ -82,6 +82,7 @@ export function initialize(canvasParam: HTMLCanvasElement) {
     sizeCanvases();
     const options = {};// { premultipliedAlpha: false };
     gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options) as any;
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
 
     requestAnimationFrame(draw);
 }
