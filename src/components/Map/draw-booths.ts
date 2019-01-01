@@ -14,8 +14,11 @@ varying vec2 v_texcoord;
 varying vec4 v_color;
 
 void main() {
-    // TODO: have px to svg scale
-    gl_Position = u_matrix * vec4(a_center + a_delta, 0, 1) + vec4(a_deltapx * u_pxscale, 0, 0);
+    vec2 delta = a_delta + a_deltapx * u_pxscale;
+    vec2 rotatedDelta =  vec2(
+        delta.x * a_rotate.y + delta.y * a_rotate.x,
+        delta.y * a_rotate.y - delta.x * a_rotate.x);
+    gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
     v_texcoord = a_texcoord;//vec2(0,0);
     v_color = a_color;
 }`;
@@ -103,9 +106,14 @@ function initialize(gl: WebGLRenderingContext) {
     const deltapxs = [];
     const indices = [];
     const colors = [];
+    const rotates = [];
     const texItems = [] as SpriteItem[];
     //const texcoords = [];
     //const rotates = [];
+
+    const angleInRadians = 5 * Math.PI / 180;
+    const r0 = Math.sin(angleInRadians);
+    const r1 = Math.cos(angleInRadians);
 
     for (const b of booths) {
         const r = b.rect;
@@ -115,6 +123,7 @@ function initialize(gl: WebGLRenderingContext) {
         deltas.push(-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2, -r.w / 2, r.h / 2, r.w / 2, r.h / 2);
         deltapxs.push(0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5);
         for (let k = 1; k < 5; k++) colors.push(65.0 / 255.0 / k, 182.0 / 255.0 / k, 231.0 / 255.0 / k, 1);
+        for (let k = 1; k < 5; k++) rotates.push(r0, r1);
         texItems.push(null);
         //texcoords.push(0, 0, 0, 0, 0, 0, 0, 0);
         // TODO: add rotates and further, read about rotates
@@ -129,15 +138,17 @@ function initialize(gl: WebGLRenderingContext) {
         const r = b.rect;
         const i = centers.length / 2;
 
-        const canvas = createTextCanvas(b.name, 16 * devicePixelRatio);
-        const w = canvas.width / devicePixelRatio / 2;
-        const h = canvas.height / devicePixelRatio / 2;
+        const upscale = 1;
+        const canvas = createTextCanvas(b.name, 16 * upscale * devicePixelRatio);
+        const w = canvas.width / devicePixelRatio / 2 / upscale;
+        const h = canvas.height / devicePixelRatio / 2 / upscale;
 
         // 4 vertices per booth
         centers.push(r.cx, r.cy, r.cx, r.cy, r.cx, r.cy, r.cx, r.cy);
         deltas.push(0, 0, 0, 0, 0, 0, 0, 0);
         deltapxs.push(-w, -h, w, -h, -w, h, w, h);
         for (let k = 1; k < 5; k++) colors.push(1 / k, 0 / k, 0 / k, 0);
+        for (let k = 1; k < 5; k++) rotates.push(r0, r1);
 
         const info = sprite.addCanvas(canvas);
 
@@ -171,13 +182,18 @@ function initialize(gl: WebGLRenderingContext) {
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
+    rotateLocation = gl.getAttribLocation(program, "a_rotate");
+    rotateBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, rotateBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(rotates), gl.STATIC_DRAW);
+
     texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sprite.generateSpriteCanvas());
 
     texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
@@ -240,6 +256,10 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: 
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.enableVertexAttribArray(colorLocation);
     gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, rotateBuffer);
+    gl.enableVertexAttribArray(rotateLocation);
+    gl.vertexAttribPointer(rotateLocation, 2, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
     gl.enableVertexAttribArray(texcoordLocation);

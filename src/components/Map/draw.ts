@@ -42,7 +42,9 @@ function draw(now) {
     let matrix = m4.ortho(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
     // const browserPxMatrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
     // const browserScale = [browserPxMatrix[0], browserPxMatrix[5]];
+    // px/webgl scale
     const pxScale = [2 * devicePixelRatio / gl.canvas.width, -2 * devicePixelRatio/ gl.canvas.height];
+    
     //const pxScale = [2 / gl.canvas.width, -2/ gl.canvas.height];
 
     // apply zoom first
@@ -54,8 +56,10 @@ function draw(now) {
     // matrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
 
 
-    // canvas/svg scale
+    // px/svg scale
     const scale = Math.min(gl.canvas.width / svgWidth, gl.canvas.height / svgHeight) * 0.95;
+    // svg/px scale
+    // const svgPxScale = [1 / scale / pxScale[0], 1 / scale / pxScale[1]];
     // const scale = 1.7;
 
     matrix = m4.scale(matrix, [scale, scale, 1]);
@@ -67,8 +71,8 @@ function draw(now) {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     drawBg(gl, matrix);
-    drawBooths(gl, matrix, pxScale);
-    drawText(gl, matrix, pxScale);
+    drawBooths(gl, matrix,  [ 1 / scale  * devicePixelRatio / zoomTranform.k, 1 / scale * devicePixelRatio / zoomTranform.k]); //pxScale,
+    // drawText(gl, matrix, pxScale);
     // drawWalls(gl, matrix);
     // drawLabels(gl, matrix, browserScale, zoomTranform.k);
 
