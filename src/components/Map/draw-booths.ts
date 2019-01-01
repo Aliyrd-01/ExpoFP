@@ -255,8 +255,8 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: 
 
     twgl.setUniforms(programInfo, { u_matrix, u_pxscale, u_texture: texture });
 
-    // gl.enable(gl.BLEND);
-    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     // gl.blendFunc(gl.SRC_COLOR, gl.DST_COLOR);
     // gl.depthMask(false);
 

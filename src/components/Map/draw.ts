@@ -3,6 +3,7 @@ import { svgWidth, svgHeight } from '@/tools/svg'
 import { m4 } from 'twgl.js'
 import { drawBg } from './draw-bg'
 import { drawBooths } from './draw-booths'
+import { drawText } from './draw-text'
 import { drawLabels } from './draw-labels'
 import { drawWalls } from './draw-walls'
 import settings from '@/settings';
@@ -67,6 +68,7 @@ function draw(now) {
 
     drawBg(gl, matrix);
     drawBooths(gl, matrix, pxScale);
+    drawText(gl, matrix, pxScale);
     // drawWalls(gl, matrix);
     // drawLabels(gl, matrix, browserScale, zoomTranform.k);
 
@@ -78,7 +80,8 @@ export function initialize(canvasParam: HTMLCanvasElement) {
     // draw all booths for now
     canvas = canvasParam;
     sizeCanvases();
-    gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+    const options = {};// { premultipliedAlpha: false };
+    gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options) as any;
 
     requestAnimationFrame(draw);
 }
