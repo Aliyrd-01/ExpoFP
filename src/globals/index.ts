@@ -1,5 +1,8 @@
 import './extend-global'
 // import './ie'
+//import './Vecs'
+import './Color'
+//import './Point'
 import './Rect'
 import './Line'
 import './Circle'

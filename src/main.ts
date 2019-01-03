@@ -8,6 +8,7 @@ import 'core-js/features/string/ends-with';
 import 'path2d-polyfill';
 import 'url-polyfill';
 import '@/globals'
+import './settings'
 import '@/store'
 import '@/services'
 import Layout from './components/Layout.vue'
