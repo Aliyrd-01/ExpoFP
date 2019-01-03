@@ -131,7 +131,8 @@ export default class Drawer {
             }
             // 4 vec2
             {
-                const r = w.rotate || [0, 0];
+                const angleInRadians = w.rotateRadians || 0;
+                const r = [Math.sin(angleInRadians), Math.cos(angleInRadians)];
                 rotates.push(...r, ...r, ...r, ...r);
             }
             // 4 vec2
@@ -147,8 +148,6 @@ export default class Drawer {
         this.bufferFloat32Array(this.colorBuffer, colors);
         this.bufferFloat32Array(this.rotateBuffer, rotates);
         this.bufferFloat32Array(this.texcoordBuffer, texcoords);
-
-        debugger
     }
 
     private populateIndexBuffer() {
@@ -184,7 +183,7 @@ export interface DrawerObject {
     deltas?: Vec4; // x1, y1, x2, y2
     deltasPx?: Vec4;
     color?: Vec4;
-    rotate?: Vec2;
+    rotateRadians?: number;
     canvas?: HTMLCanvasElement;
 }
 
