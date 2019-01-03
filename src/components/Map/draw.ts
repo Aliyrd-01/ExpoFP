@@ -43,7 +43,7 @@ function draw(now) {
     // const browserPxMatrix = m4.scale(matrix, [devicePixelRatio, devicePixelRatio, 1]);
     // const browserScale = [browserPxMatrix[0], browserPxMatrix[5]];
     // px/webgl scale
-    const pxScale = [2 * devicePixelRatio / gl.canvas.width, -2 * devicePixelRatio/ gl.canvas.height];
+    // const pxScale = [2 * devicePixelRatio / gl.canvas.width, -2 * devicePixelRatio/ gl.canvas.height];
     
     //const pxScale = [2 / gl.canvas.width, -2/ gl.canvas.height];
 

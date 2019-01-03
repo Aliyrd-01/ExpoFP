@@ -147,6 +147,8 @@ export default class Drawer {
         this.bufferFloat32Array(this.colorBuffer, colors);
         this.bufferFloat32Array(this.rotateBuffer, rotates);
         this.bufferFloat32Array(this.texcoordBuffer, texcoords);
+
+        debugger
     }
 
     private populateIndexBuffer() {
