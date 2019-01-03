@@ -5,7 +5,7 @@ export function createTextCanvas(text: string, fontSize: number) {
     const c = canvas.getContext("2d");
     const font = getFont(fontSize, 400);
     c.font = font;
-  
+
     const { width } = c.measureText(text);
 
     canvas.width = width;
@@ -14,7 +14,7 @@ export function createTextCanvas(text: string, fontSize: number) {
     c.font = font;
     c.textAlign = "center";
     c.textBaseline = "middle";
-    
+
     // c.fillStyle = "#000";
     // c.fillRect(0,0,canvas.width, canvas.height);
 
@@ -22,5 +22,19 @@ export function createTextCanvas(text: string, fontSize: number) {
 
     c.fillText(text, width / 2, canvas.height / 2);
 
+    return canvas;
+}
+
+
+export function createCircleCanvas(radius) {
+    const canvas = document.createElement("canvas");
+    const size = radius * 2 + 2;
+    canvas.width = canvas.height = size;
+
+    const c = canvas.getContext("2d");
+    c.fillStyle = '#ffffff';
+    c.beginPath();
+    c.arc(size / 2, size / 2, radius, 0, 2 * Math.PI);
+    c.fill();
     return canvas;
 }
