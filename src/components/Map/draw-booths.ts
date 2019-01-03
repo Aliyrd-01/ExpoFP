@@ -91,14 +91,21 @@ function initialize(gl: WebGLRenderingContext) {
     }
 }
 
-export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, u_pxscale: any) {
+function updateVisibleDetails(pxscale: number) {
+    const booths = store.getters.boothsArray as Booth[];
+    // we can convert svg to px and see how px fits
+}
+
+export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, pxscale: number) {
     // draw booths there 
     if (!drawer || drawer.gl !== gl) initialize(gl);
 
-    // TODO: determine what to show for specific booth
+     // TODO: determine what to show for specific booth
     // see how it was done in old version
 
-    drawer.draw(u_matrix, u_pxscale);
+    updateVisibleDetails();
+   
+    drawer.draw(u_matrix, pxscale);
 }
 
 
