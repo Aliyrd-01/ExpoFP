@@ -5,7 +5,6 @@ export default class Drawer {
     readonly gl: WebGLRenderingContext;
     private dirty = true;
     private groupsDirty = true;
-    private numElements: number;
 
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -81,14 +80,10 @@ export default class Drawer {
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-
         for(let group of this.groups){
-
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
-
             twgl.setUniforms(this.programInfo, { u_matrix, u_pxscale, u_texture: group.texture });
-
-            gl.drawElements(gl.TRIANGLES, this.numElements, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
         }
       
         gl.disable(gl.BLEND);
@@ -102,7 +97,8 @@ export default class Drawer {
         }
         if (this.groupsDirty) {
             this.populateGroups();
-            this.groupsDirty = false;
+            // TODO: uncomment
+            //this.groupsDirty = false;
         }
     }
 
@@ -127,7 +123,7 @@ export default class Drawer {
 
         // populate sprite
         for (let w of this.objects) {
-            if (!w.canvas) return;
+            if (!w.canvas) continue;
             w.spriteItem = sprite.addCanvas(w.canvas);
         }
 
@@ -138,17 +134,19 @@ export default class Drawer {
             gl.bindTexture(gl.TEXTURE_2D, texture);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
             this.canvasToTexture.set(c, texture);
         }
 
         for (let w of this.objects) {
-            if (!w.canvas) return;
+            if (!w.canvas) continue;
             w.texture = this.canvasToTexture.get(w.spriteItem.containerCanvas);
         }
+        
+        // console.log('aaa', this.objects.filter(x => x.texture).length);
 
         for (let i = 0; i < this.objects.length; i++) {
             const w = this.objects[i];
@@ -197,11 +195,12 @@ export default class Drawer {
     }
 
     private populateGroups() {
+        // console.log('this.populateGroups', this.indexBufferPool.length);
         const groups: { indices: number[], texture: WebGLTexture }[] = [];
         let currentGroup: { indices: number[], texture: WebGLTexture };
 
         for (let obj of this.objects) {
-            if (!obj.visible) return;
+            if (!obj.visible) continue;
             if (!currentGroup ||
                 (currentGroup.texture && obj.texture && currentGroup.texture !== obj.texture)) {
                 currentGroup = { indices: [], texture: undefined };
@@ -217,7 +216,8 @@ export default class Drawer {
         this.groups.length = 0;
 
         for (let group of groups) {
-            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer();
+            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer();//
+            indexBuffers.push(buffer);
 
             const realIndices = [];
             for(let i of group.indices){
@@ -232,23 +232,6 @@ export default class Drawer {
         }
 
         this.indexBufferPool.unshift(...indexBuffers);
-
-        //const indexBufferPool = this.groups.map(x => x.indexBuffer);
-
-        // const indices: number[] = [];
-        // for (let i = 0; i < this.objects.length; i++) {
-        //     const w = this.objects[i];
-        //     if (w.visible) {
-        //         const n = i * 4;
-        //         indices.push(n, n + 1, n + 2, n + 1, n + 2, n + 3)
-        //     }
-        // }
-
-
-        // this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        // this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
-
-        // this.numElements = indices.length;
     }
 
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
