@@ -3,7 +3,7 @@ import { svgWidth, svgHeight } from '@/tools/svg'
 import { m4 } from 'twgl.js'
 import { drawBg } from './draw-bg'
 import { drawBooths } from './draw-booths'
-import { drawText } from './draw-text'
+// import { drawText } from './draw-text'
 import { drawLabels } from './draw-labels'
 import { drawWalls } from './draw-walls'
 import settings from '@/settings';

@@ -1,11 +1,15 @@
 import { getFont } from './utils';
 
+const maxHeight = 1000;
+const maxWidth = 1000;
+
 export default class Sprite {
     private items: SpriteItemEx[] = [];
-    private canvas: HTMLCanvasElement;
+    // private canvas: HTMLCanvasElement;
 
     addCanvas(canvas: HTMLCanvasElement): SpriteItem {
         const item: SpriteItemEx = {
+            containerCanvas: undefined,
             canvas,
             width: canvas.width,
             height: canvas.height,
@@ -15,47 +19,58 @@ export default class Sprite {
         };
 
         this.items.push(item);
+
         return item;
     }
 
-    generateSpriteCanvas(): HTMLCanvasElement {
-        // creates large canvas
-        this.canvas = document.createElement("canvas")
-        debugCanvases.push(this.canvas);
-        const c = this.canvas.getContext("2d");
-        const maxWidth = 1000;
+    generateSpriteCanvases(): HTMLCanvasElement[] {
+        const canvases = [];
+        let currentCanvas;
         let drawHeight = 0;
         let nextHeight = 0;
         let drawWidth = 0;
-        for(const item of this.items){
-            
-            if (drawWidth + item.canvas.width > maxWidth){
+
+        for (const item of this.items) {
+
+            if (drawWidth + item.canvas.width > maxWidth) {
                 drawWidth = 0;
                 drawHeight = nextHeight;
             }
+
+            if (!currentCanvas || drawHeight + item.canvas.height > maxHeight) {
+                if (currentCanvas){
+                    currentCanvas.width = maxWidth;
+                    currentCanvas.height = nextHeight;
+                }
+                currentCanvas = document.createElement("canvas");
+                canvases.push(currentCanvas);
+                debugCanvases.push(currentCanvas);
+                drawHeight = nextHeight = drawWidth = 0;
+            }
+
+            item.containerCanvas = currentCanvas;
             item.top = drawHeight;
             item.left = drawWidth;
 
             drawWidth += item.canvas.width;
-            if (drawHeight + item.canvas.height > nextHeight){
+            if (drawHeight + item.canvas.height > nextHeight) {
                 nextHeight = drawHeight + item.canvas.height;
             }
         }
 
-        this.canvas.width = maxWidth;
-        this.canvas.height = nextHeight;
+        currentCanvas.width = maxWidth;
+        currentCanvas.height = nextHeight;
 
-        for(const item of this.items){
+        // draw and set rect
+        for (const item of this.items) {
+            const c = item.containerCanvas.getContext("2d");
             c.drawImage(item.canvas, item.left, item.top);
 
-            item.rect  = Rect.fromXywh(item.left, item.top, item.width, item.height)
-                .normalize(this.canvas.width, this.canvas.height);
+            item.rect = Rect.fromXywh(item.left, item.top, item.width, item.height)
+                .normalize(item.containerCanvas.width, item.containerCanvas.height);
         }
 
-        // put all small canvases into this one
-        // adjust rect for each after it is done
-
-        return this.canvas;
+        return canvases;
     }
 
     //     getSpriteItem():SpriteItem {
@@ -70,6 +85,7 @@ export interface SpriteItem {
     rect: Rect;
     width: number;
     height: number;
+    containerCanvas: HTMLCanvasElement;
 }
 
 interface SpriteItemEx extends SpriteItem {
@@ -78,27 +94,27 @@ interface SpriteItemEx extends SpriteItem {
     left: number
 }
 
-export function createTextCanvas(text: string, fontSize: number) {
-    const canvas = document.createElement("canvas")
-    const c = canvas.getContext("2d");
-    const font = getFont(fontSize, 400);
-    c.font = font;
-  
-    const { width } = c.measureText(text);
+// export function createTextCanvas(text: string, fontSize: number) {
+//     const canvas = document.createElement("canvas")
+//     const c = canvas.getContext("2d");
+//     const font = getFont(fontSize, 400);
+//     c.font = font;
 
-    canvas.width = width;
-    canvas.height = fontSize + 2;
-    // set font again
-    c.font = font;
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    
-    // c.fillStyle = "#000";
-    // c.fillRect(0,0,canvas.width, canvas.height);
+//     const { width } = c.measureText(text);
 
-    c.fillStyle = "#fff";
+//     canvas.width = width;
+//     canvas.height = fontSize + 2;
+//     // set font again
+//     c.font = font;
+//     c.textAlign = "center";
+//     c.textBaseline = "middle";
 
-    c.fillText(text, width / 2, canvas.height / 2);
+//     // c.fillStyle = "#000";
+//     // c.fillRect(0,0,canvas.width, canvas.height);
 
-    return canvas;
-}
+//     c.fillStyle = "#fff";
+
+//     c.fillText(text, width / 2, canvas.height / 2);
+
+//     return canvas;
+// }
