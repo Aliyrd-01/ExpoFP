@@ -3,7 +3,7 @@ import { generateUniqueSlug } from '@/services/slug';
 import { getNextId } from '@/services/id';
 import {replaceLetter} from '@/tools/demo-replace'
 
-__data.booths.splice(3);
+//__data.booths.splice(3);
 
 const booths = __data.booths.reduce((a, c) => (a[c.id] = c) && a, {} as { [id: number]: Booth });
 const boothsBySlug = new Map<string, Booth>();
@@ -24,9 +24,9 @@ for (const r of d3.select(svg).select('#Booths').selectAll('rect').nodes() as SV
     if (!booth) {
         console.error("SVG booth not found in __data: ", idInSvg);
         // create fake booth
-        // booth = { id: getNextId(), name: idInSvg.toUpperCase(), slug: generateUniqueSlug(idInSvg), exhibitors: [], error: true } as any;
-        // booths[booth.id] = booth;
-    } else
+        booth = { id: getNextId(), name: idInSvg.toUpperCase(), slug: generateUniqueSlug(idInSvg), exhibitors: [], error: true } as any;
+        booths[booth.id] = booth;
+    } //else
     booth.rect = Rect.fromSvgRectElement(r);
 }
 

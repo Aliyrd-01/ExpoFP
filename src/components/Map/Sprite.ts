@@ -33,7 +33,12 @@ export default class Sprite {
         let nextHeight = 0;
         let drawWidth = 0;
 
-        this.canvasToSpriteItem.forEach((item, canvas) => {
+        const canvasesKeys = Array.from(this.canvasToSpriteItem.keys());
+        canvasesKeys.sort((a,b) => a.height - b.height);
+
+        for (const canvas of canvasesKeys) {
+            const item = this.canvasToSpriteItem.get(canvas);
+
             if (drawWidth + canvas.width > maxWidth) {
                 drawWidth = 0;
                 drawHeight = nextHeight;
@@ -58,19 +63,21 @@ export default class Sprite {
             if (drawHeight + canvas.height > nextHeight) {
                 nextHeight = drawHeight + canvas.height;
             }
-        })
+        }
 
         currentCanvas.width = maxWidth;
         currentCanvas.height = nextHeight;
 
         // draw and set rect
-        this.canvasToSpriteItem.forEach((item, canvas) => {
+        for (const canvas of canvasesKeys) {
+            const item = this.canvasToSpriteItem.get(canvas);
+
             const c = item.containerCanvas.getContext("2d");
             c.drawImage(canvas, item.left, item.top);
 
             item.rect = Rect.fromXywh(item.left, item.top, item.width, item.height)
                 .normalize(item.containerCanvas.width, item.containerCanvas.height);
-        });
+        }
 
         // clear to free memory
         this.canvasToSpriteItem.clear();

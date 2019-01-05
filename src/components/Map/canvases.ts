@@ -8,19 +8,19 @@ export function createTextCanvas(text: string, fontSize: number) {
 
     const { width } = c.measureText(text);
 
-    canvas.width = width + 1;
-    canvas.height = fontSize + 1;
+    canvas.width = width + 3;
+    canvas.height = fontSize + 4;
     // set font again
     c.font = font;
     c.textAlign = "center";
-    c.textBaseline = "middle";
+    c.textBaseline = "bottom";
 
-    c.fillStyle = "#000";
-    c.fillRect(0,0,canvas.width, canvas.height);
+    // c.fillStyle = "#000";
+    // c.fillRect(0,0,canvas.width, canvas.height);
 
     c.fillStyle = "#fff";
 
-    c.fillText(text, width / 2, canvas.height / 2);
+    c.fillText(text, canvas.width / 2, canvas.height);
 
     return canvas;
 }

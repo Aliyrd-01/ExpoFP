@@ -59,10 +59,10 @@ function initialize(gl: WebGLRenderingContext) {
                 order: 20
             });
 
-            addLabel(b, 16, 'XS')
-            // addLabel(b, 12, 'S')
-            // addLabel(b, 16, 'M')
-            // addLabel(b, 20, 'L')
+            addLabel(b, 9, 'XS')
+            addLabel(b, 12, 'S')
+            addLabel(b, 15, 'M')
+            addLabel(b, 20, 'L')
         }
 
         // borders
@@ -105,6 +105,7 @@ function initialize(gl: WebGLRenderingContext) {
 
 // id to factors
 const mapBoothFactors = new Map<number, number[]>();
+const prefixes = ['Dot', 'XS', 'S', 'M', 'L'];
 
 function prepareBoothDetailsFactors() {
     if (mapBoothFactors.size) return;
@@ -114,11 +115,12 @@ function prepareBoothDetailsFactors() {
         const r = b.rect;
 
         const ar = [];
-        {
+        for (const p of prefixes) {
+            // if (p === 'Dot') continue;
             // deltapx - the real size in pixels
-            const p = drawer.getObject(`bLabXS${b.id}`).deltasPx
-            const width = -p[0]+p[2];
-            const height = -p[1]+p[3];
+            const pxs = drawer.getObject(`bLab${p}${b.id}`).deltasPx;
+            const width = -pxs[0] + pxs[2];
+            const height = -pxs[1] + pxs[3];
             const xFactor = r.w / width;
             const yFactor = r.h / height;
             const factor = Math.min(xFactor, yFactor);
@@ -132,13 +134,25 @@ function prepareBoothDetailsFactors() {
 function updateVisibleDetails(pxscale: number) {
     const booths = store.getters.boothsArray as Booth[];
     for (const b of booths) {
+        let visiblePrefix = '';
         const ff = mapBoothFactors.get(b.id);
-        if (pxscale < ff[0]){
-            drawer.updateVisible(`bLabDot${b.id}`, false);
-            drawer.updateVisible(`bLabXS${b.id}`, true);
-        } else {
-            drawer.updateVisible(`bLabDot${b.id}`, true);
-            drawer.updateVisible(`bLabXS${b.id}`, false);
+
+
+        // if (pxscale < ff[0]) {
+        //     visiblePrefix = 'XS';
+        //     // drawer.updateVisible(`bLabDot${b.id}`, false);
+        //     // drawer.updateVisible(`bLabXS${b.id}`, true);
+        // }
+
+        for (let i = 0; i < prefixes.length; i++) {
+            const p = prefixes[i];
+            const f = ff[i];
+            if (pxscale < f) visiblePrefix = p;
+        }
+
+
+        for (const p of prefixes) {
+            drawer.updateVisible(`bLab${p}${b.id}`, p === visiblePrefix);
         }
     }
 }
