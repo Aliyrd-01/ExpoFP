@@ -1,25 +1,28 @@
-import { getFont } from './utils';
-
 const maxHeight = 1000;
 const maxWidth = 1000;
 
 export default class Sprite {
-    private items: SpriteItemEx[] = [];
+    // private items: SpriteItemEx[] = [];
+    private readonly canvasToSpriteItem = new Map<HTMLCanvasElement, SpriteItemEx>();
     // private canvas: HTMLCanvasElement;
 
     addCanvas(canvas: HTMLCanvasElement): SpriteItem {
-        const item: SpriteItemEx = {
-            containerCanvas: undefined,
-            canvas,
-            width: canvas.width,
-            height: canvas.height,
-            rect: undefined as Rect,
-            top: undefined,
-            left: undefined
-        };
+        let item = this.canvasToSpriteItem.get(canvas);
 
-        this.items.push(item);
+        if (!item) {
+            item = {
+                containerCanvas: undefined,
+                // canvasTmp: canvas,
+                width: canvas.width,
+                height: canvas.height,
+                rect: undefined as Rect,
+                top: undefined,
+                left: undefined
+            };
 
+            // this.items.push(item);
+            this.canvasToSpriteItem.set(canvas, item);
+        }
         return item;
     }
 
@@ -30,15 +33,14 @@ export default class Sprite {
         let nextHeight = 0;
         let drawWidth = 0;
 
-        for (const item of this.items) {
-
-            if (drawWidth + item.canvas.width > maxWidth) {
+        this.canvasToSpriteItem.forEach((item, canvas) => {
+            if (drawWidth + canvas.width > maxWidth) {
                 drawWidth = 0;
                 drawHeight = nextHeight;
             }
 
-            if (!currentCanvas || drawHeight + item.canvas.height > maxHeight) {
-                if (currentCanvas){
+            if (!currentCanvas || drawHeight + canvas.height > maxHeight) {
+                if (currentCanvas) {
                     currentCanvas.width = maxWidth;
                     currentCanvas.height = nextHeight;
                 }
@@ -52,23 +54,26 @@ export default class Sprite {
             item.top = drawHeight;
             item.left = drawWidth;
 
-            drawWidth += item.canvas.width;
-            if (drawHeight + item.canvas.height > nextHeight) {
-                nextHeight = drawHeight + item.canvas.height;
+            drawWidth += canvas.width;
+            if (drawHeight + canvas.height > nextHeight) {
+                nextHeight = drawHeight + canvas.height;
             }
-        }
+        })
 
         currentCanvas.width = maxWidth;
         currentCanvas.height = nextHeight;
 
         // draw and set rect
-        for (const item of this.items) {
+        this.canvasToSpriteItem.forEach((item, canvas) => {
             const c = item.containerCanvas.getContext("2d");
-            c.drawImage(item.canvas, item.left, item.top);
+            c.drawImage(canvas, item.left, item.top);
 
             item.rect = Rect.fromXywh(item.left, item.top, item.width, item.height)
                 .normalize(item.containerCanvas.width, item.containerCanvas.height);
-        }
+        });
+
+        // clear to free memory
+        this.canvasToSpriteItem.clear();
 
         return canvases;
     }
@@ -89,7 +94,7 @@ export interface SpriteItem {
 }
 
 interface SpriteItemEx extends SpriteItem {
-    canvas: HTMLCanvasElement;
+    // canvasTmp: HTMLCanvasElement;
     top: number,
     left: number
 }

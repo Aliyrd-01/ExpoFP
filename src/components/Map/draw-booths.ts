@@ -16,6 +16,24 @@ function initialize(gl: WebGLRenderingContext) {
     const dotW = dotCanvas.width / devicePixelRatio / 2;
     const dotH = dotCanvas.width / devicePixelRatio / 2;
 
+    function addLabel(b: Booth, fontSize: number, sizeName) {
+        const r = b.rect;
+        const upscale = 1;
+        const canvas = createTextCanvas(b.name, fontSize * upscale * devicePixelRatio);
+        const w = canvas.width / devicePixelRatio / 2 / upscale;
+        const h = canvas.height / devicePixelRatio / 2 / upscale;
+
+        drawer.addObject({
+            id: `bLab${sizeName}${b.id}`,
+            center: [r.cx, r.cy],
+            deltas: [0, 0, 0, 0],
+            deltasPx: [-w, -h, w, h],
+            canvasTmp: canvas,
+            order: 20
+        });
+    }
+
+
     for (const b of booths) {
         const r = b.rect;
 
@@ -31,29 +49,21 @@ function initialize(gl: WebGLRenderingContext) {
 
         // labels
         {
-            const upscale = 1;
-            const canvas = createTextCanvas(b.name, 16 * upscale * devicePixelRatio);
-            const w = canvas.width / devicePixelRatio / 2 / upscale;
-            const h = canvas.height / devicePixelRatio / 2 / upscale;
-
+            // dots
             drawer.addObject({
-                id: `bLab2${b.id}`,
+                id: `bLabDot${b.id}`,
                 center: [r.cx, r.cy],
                 deltas: [0, 0, 0, 0],
-                deltasPx: [-w, -h, w, h],
-                canvas,
+                deltasPx: [-dotW, -dotH, dotW, dotH],
+                canvasTmp: dotCanvas,
                 order: 20
             });
+
+            addLabel(b, 16, 'XS')
+            // addLabel(b, 12, 'S')
+            // addLabel(b, 16, 'M')
+            // addLabel(b, 20, 'L')
         }
-        // dots
-        drawer.addObject({
-            id: `bLabDot${b.id}`,
-            center: [r.cx, r.cy],
-            deltas: [0, 0, 0, 0],
-            deltasPx: [-dotW, -dotH, dotW, dotH],
-            canvas: dotCanvas,
-            order: 20
-        });
 
         // borders
         drawer.addObject({
@@ -91,20 +101,58 @@ function initialize(gl: WebGLRenderingContext) {
     }
 }
 
-function updateVisibleDetails(pxscale: number) {
+// Dot, XS, S, M, L
+
+// id to factors
+const mapBoothFactors = new Map<number, number[]>();
+
+function prepareBoothDetailsFactors() {
+    if (mapBoothFactors.size) return;
     const booths = store.getters.boothsArray as Booth[];
     // we can convert svg to px and see how px fits
+    for (const b of booths) {
+        const r = b.rect;
+
+        const ar = [];
+        {
+            // deltapx - the real size in pixels
+            const p = drawer.getObject(`bLabXS${b.id}`).deltasPx
+            const width = -p[0]+p[2];
+            const height = -p[1]+p[3];
+            const xFactor = r.w / width;
+            const yFactor = r.h / height;
+            const factor = Math.min(xFactor, yFactor);
+            ar.push(factor);
+        }
+
+        mapBoothFactors.set(b.id, ar);
+    }
+}
+
+function updateVisibleDetails(pxscale: number) {
+    const booths = store.getters.boothsArray as Booth[];
+    for (const b of booths) {
+        const ff = mapBoothFactors.get(b.id);
+        if (pxscale < ff[0]){
+            drawer.updateVisible(`bLabDot${b.id}`, false);
+            drawer.updateVisible(`bLabXS${b.id}`, true);
+        } else {
+            drawer.updateVisible(`bLabDot${b.id}`, true);
+            drawer.updateVisible(`bLabXS${b.id}`, false);
+        }
+    }
 }
 
 export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, pxscale: number) {
     // draw booths there 
     if (!drawer || drawer.gl !== gl) initialize(gl);
+    prepareBoothDetailsFactors();
 
-     // TODO: determine what to show for specific booth
+    // TODO: determine what to show for specific booth
     // see how it was done in old version
 
-    updateVisibleDetails();
-   
+    updateVisibleDetails(pxscale);
+
     drawer.draw(u_matrix, pxscale);
 }
 

@@ -1,5 +1,5 @@
 import * as twgl from 'twgl.js';
-import Sprite, { SpriteItem } from './sprite';
+import Sprite, { SpriteItem } from './Sprite';
 
 export default class Drawer {
     readonly gl: WebGLRenderingContext;
@@ -58,12 +58,16 @@ export default class Drawer {
         this.objectsById.set(item.id, item);
     }
 
+    getObject(id): DrawerObject {
+        return this.objectsById.get(id);
+    }
+
     updateVisible(id: string, visible: boolean) {
         this.objectsById.get(id).visible = visible;
         this.groupsDirty = true;
     }
 
-    draw(u_matrix: any, u_pxscale: any) {
+    draw(u_matrix: any, pxscale: number) {
         const gl = this.gl;
 
         gl.useProgram(this.program);
@@ -80,12 +84,12 @@ export default class Drawer {
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-        for(let group of this.groups){
+        for (let group of this.groups) {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
-            twgl.setUniforms(this.programInfo, { u_matrix, u_pxscale, u_texture: group.texture });
+            twgl.setUniforms(this.programInfo, { u_matrix, u_pxscale: [pxscale, pxscale], u_texture: group.texture });
             gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
         }
-      
+
         gl.disable(gl.BLEND);
     }
 
@@ -123,8 +127,10 @@ export default class Drawer {
 
         // populate sprite
         for (let w of this.objects) {
-            if (!w.canvas) continue;
-            w.spriteItem = sprite.addCanvas(w.canvas);
+            if (!w.canvasTmp) continue;
+            w.spriteItem = sprite.addCanvas(w.canvasTmp);
+            // destroy it from memory
+            delete w.canvasTmp
         }
 
         var canvases = sprite.generateSpriteCanvases();
@@ -142,10 +148,10 @@ export default class Drawer {
         }
 
         for (let w of this.objects) {
-            if (!w.canvas) continue;
+            if (!w.spriteItem) continue;
             w.texture = this.canvasToTexture.get(w.spriteItem.containerCanvas);
         }
-        
+
         // console.log('aaa', this.objects.filter(x => x.texture).length);
 
         for (let i = 0; i < this.objects.length; i++) {
@@ -220,7 +226,7 @@ export default class Drawer {
             indexBuffers.push(buffer);
 
             const realIndices = [];
-            for(let i of group.indices){
+            for (let i of group.indices) {
                 const n = i * 4;
                 realIndices.push(n, n + 1, n + 2, n + 1, n + 2, n + 3)
             }
@@ -228,7 +234,7 @@ export default class Drawer {
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
             this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(realIndices), this.gl.STATIC_DRAW);
 
-            this.groups.push({texture: group.texture, indexBuffer: buffer, numElements: realIndices.length});
+            this.groups.push({ texture: group.texture, indexBuffer: buffer, numElements: realIndices.length });
         }
 
         this.indexBufferPool.unshift(...indexBuffers);
@@ -253,9 +259,17 @@ export interface DrawerObject {
     deltasPx?: Vec4;
     color?: Vec4;
     rotateRadians?: number;
-    canvas?: HTMLCanvasElement;
+    spriteItem?: SpriteItem;
+    canvasTmp?: HTMLCanvasElement;
     order: number;
     //always: boolean;
+}
+
+interface DrawerObjectEx extends DrawerObject {
+    visible: boolean;
+    texture?: WebGLTexture;
+    texcoords: Vec4; // x1, y1, x2, y2
+    index: number;
 }
 
 interface DrawerGroup {
@@ -263,15 +277,6 @@ interface DrawerGroup {
     indexBuffer: WebGLBuffer;
     numElements: number;
 }
-
-interface DrawerObjectEx extends DrawerObject {
-    visible: boolean;
-    spriteItem?: SpriteItem;
-    texture?: WebGLTexture;
-    texcoords: Vec4; // x1, y1, x2, y2
-    index: number;
-}
-
 
 
 const vertexShaderSource = `attribute vec2 a_center;
