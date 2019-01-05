@@ -3,12 +3,12 @@ import { getFont } from './utils';
 export function createTextCanvas(text: string, fontSize: number) {
     const canvas = document.createElement("canvas")
     const c = canvas.getContext("2d");
-    const font = getFont(fontSize, 400);
+    const font = getFont(fontSize, 600);
     c.font = font;
 
     const { width } = c.measureText(text);
 
-    canvas.width = width + 3;
+    canvas.width = width + 3 + 4; // 4 was added as extra padding
     canvas.height = fontSize + 4;
     // set font again
     c.font = font;

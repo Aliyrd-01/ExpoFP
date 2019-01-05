@@ -12,7 +12,7 @@ function initialize(gl: WebGLRenderingContext) {
     const boothColor = Color.fromHex(__settings.colors.booths.default).toVec4();
     const borderColor = [1, 1, 1, 1] as Vec4;
 
-    const dotCanvas = createCircleCanvas(2 * devicePixelRatio);
+    const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
     const dotW = dotCanvas.width / devicePixelRatio / 2;
     const dotH = dotCanvas.width / devicePixelRatio / 2;
 
@@ -62,7 +62,7 @@ function initialize(gl: WebGLRenderingContext) {
             addLabel(b, 9, 'XS')
             addLabel(b, 12, 'S')
             addLabel(b, 15, 'M')
-            addLabel(b, 20, 'L')
+            // addLabel(b, 20, 'L')
         }
 
         // borders
@@ -105,7 +105,7 @@ function initialize(gl: WebGLRenderingContext) {
 
 // id to factors
 const mapBoothFactors = new Map<number, number[]>();
-const prefixes = ['Dot', 'XS', 'S', 'M', 'L'];
+const prefixes = ['Dot', 'XS', 'S', 'M'];//, 'L'
 
 function prepareBoothDetailsFactors() {
     if (mapBoothFactors.size) return;
