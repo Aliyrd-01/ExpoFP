@@ -13,26 +13,41 @@ function initialize(gl: WebGLRenderingContext) {
     const borderColor = [1, 1, 1, 1] as Vec4;
 
     const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
-    const dotW = dotCanvas.width / devicePixelRatio / 2;
-    const dotH = dotCanvas.width / devicePixelRatio / 2;
+    const dotW = dotCanvas.width / 2;
+    const dotH = dotCanvas.width / 2;
 
-    function addLabel(b: Booth, fontSize: number, sizeName) {
+    const rotateRadians = 15 * Math.PI / 180;
+
+    function addLabel(b: Booth, fontSize: number, sizeName: string) {
         const r = b.rect;
         const upscale = 1;
         const canvas = createTextCanvas(b.name, fontSize * upscale * devicePixelRatio);
-        const w = canvas.width / devicePixelRatio / 2 / upscale;
-        const h = canvas.height / devicePixelRatio / 2 / upscale;
+        const w = canvas.width / 2 / upscale;
+        const h = canvas.height / 2 / upscale;
 
-        drawer.addObject({
-            id: `bLab${sizeName}${b.id}`,
-            center: [r.cx, r.cy],
-            deltas: [0, 0, 0, 0],
-            deltasPx: [-w, -h, w, h],
-            canvasTmp: canvas,
-            order: 20
-        });
+        if (sizeName !== 'M') {
+            drawer.addObject({
+                id: `bLab${sizeName}${b.id}`,
+                center: [r.cx, r.cy],
+                deltas: [0, 0, 0, 0],
+                deltaPts: [-w, -h, w, h],
+                canvasTmp: canvas,
+                texPosition: 'center',
+                order: 20, rotateRadians
+            });
+        } else {
+            drawer.addObject({
+                id: `bLab${sizeName}${b.id}`,
+                center: [r.cx, r.cy],
+                deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+                deltaPts: [.5, .5, -.5, -.5],
+                canvasTmp: canvas,
+                texPosition: 'lefttop',
+                order: 20, rotateRadians
+            });
+        }
+
     }
-
 
     for (const b of booths) {
         const r = b.rect;
@@ -42,9 +57,9 @@ function initialize(gl: WebGLRenderingContext) {
             id: `b${b.id}`,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltasPx: [.5, .5, -.5, -.5],
+            deltaPts: [.5, .5, -.5, -.5],
             color: boothColor,
-            order: 10
+            order: 10, rotateRadians
         });
 
         // labels
@@ -54,9 +69,10 @@ function initialize(gl: WebGLRenderingContext) {
                 id: `bLabDot${b.id}`,
                 center: [r.cx, r.cy],
                 deltas: [0, 0, 0, 0],
-                deltasPx: [-dotW, -dotH, dotW, dotH],
+                deltaPts: [-dotW, -dotH, dotW, dotH],
                 canvasTmp: dotCanvas,
-                order: 20
+                texPosition: 'center',
+                order: 20, rotateRadians
             });
 
             addLabel(b, 9, 'XS')
@@ -70,33 +86,37 @@ function initialize(gl: WebGLRenderingContext) {
             id: `bBorderT${b.id}`,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2],
-            deltasPx: [-.5, -.5, .5, .5],
+            deltaPts: [-.5, -.5, .5, .5],
+            scalePts: devicePixelRatio,
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
         drawer.addObject({
             id: `bBorderL${b.id}`,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, -r.w / 2, r.h / 2],
-            deltasPx: [-.5, -.5, .5, .5],
+            scalePts: devicePixelRatio,
+            deltaPts: [-.5, -.5, .5, .5],
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
         drawer.addObject({
             id: `bBorderB${b.id}`,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, r.h / 2, r.w / 2, r.h / 2],
-            deltasPx: [-.5, -.5, .5, .5],
+            scalePts: devicePixelRatio,
+            deltaPts: [-.5, -.5, .5, .5],
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
         drawer.addObject({
             id: `bBorderR${b.id}`,
             center: [r.cx, r.cy],
             deltas: [r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltasPx: [-.5, -.5, .5, .5],
+            scalePts: devicePixelRatio,
+            deltaPts: [-.5, -.5, .5, .5],
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
     }
 }
@@ -118,11 +138,12 @@ function prepareBoothDetailsFactors() {
         for (const p of prefixes) {
             // if (p === 'Dot') continue;
             // deltapx - the real size in pixels
-            const pxs = drawer.getObject(`bLab${p}${b.id}`).deltasPx;
-            const width = -pxs[0] + pxs[2];
-            const height = -pxs[1] + pxs[3];
-            const xFactor = r.w / width;
-            const yFactor = r.h / height;
+            const cr = drawer.getObject(`bLab${p}${b.id}`).canvasTmp;
+            // const width = -pxs[0] + pxs[2];
+            // const height = -pxs[1] + pxs[3];
+
+            const xFactor = r.w / cr.width;
+            const yFactor = r.h / cr.height;
             const factor = Math.min(xFactor, yFactor);
             ar.push(factor);
         }
@@ -131,14 +152,17 @@ function prepareBoothDetailsFactors() {
     }
 }
 
-function updateVisibleDetails(pxscale: number) {
+let prevPtscale :number;
+
+function updateVisibleDetails(ptscale: number) {
+    if (prevPtscale === ptscale) return;
+    prevPtscale = ptscale;
     const booths = store.getters.boothsArray as Booth[];
     for (const b of booths) {
         let visiblePrefix = '';
         const ff = mapBoothFactors.get(b.id);
 
-
-        // if (pxscale < ff[0]) {
+        // if (ptscale < ff[0]) {
         //     visiblePrefix = 'XS';
         //     // drawer.updateVisible(`bLabDot${b.id}`, false);
         //     // drawer.updateVisible(`bLabXS${b.id}`, true);
@@ -147,7 +171,7 @@ function updateVisibleDetails(pxscale: number) {
         for (let i = 0; i < prefixes.length; i++) {
             const p = prefixes[i];
             const f = ff[i];
-            if (pxscale < f) visiblePrefix = p;
+            if (ptscale < f) visiblePrefix = p;
         }
 
 
@@ -157,7 +181,7 @@ function updateVisibleDetails(pxscale: number) {
     }
 }
 
-export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, pxscale: number) {
+export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, ptscale: number) {
     // draw booths there 
     if (!drawer || drawer.gl !== gl) initialize(gl);
     prepareBoothDetailsFactors();
@@ -165,9 +189,9 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, pxscale: nu
     // TODO: determine what to show for specific booth
     // see how it was done in old version
 
-    updateVisibleDetails(pxscale);
+    updateVisibleDetails(ptscale);
 
-    drawer.draw(u_matrix, pxscale);
+    drawer.draw(u_matrix, ptscale);
 }
 
 

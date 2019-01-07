@@ -15,14 +15,23 @@ export default class Drawer {
     private readonly centerBuffer: WebGLBuffer;
     private readonly deltaLocation: number;
     private readonly deltaBuffer: WebGLBuffer;
-    private readonly deltapxLocation: number;
-    private readonly deltapxBuffer: WebGLBuffer;
+    private readonly deltaptLocation: number;
+    private readonly deltaptBuffer: WebGLBuffer;
     private readonly colorLocation: number;
     private readonly colorBuffer: WebGLBuffer;
     private readonly rotateLocation: number;
     private readonly rotateBuffer: WebGLBuffer;
-    private readonly texcoordLocation: number;
-    private readonly texcoordBuffer: WebGLBuffer;
+    // private readonly texcoordLocation: number;
+    // private readonly texcoordBuffer: WebGLBuffer;
+    private readonly texfixLocation: number;
+    private readonly texfixBuffer: WebGLBuffer;
+    private readonly fixdeltaLocation: number;
+    private readonly fixdeltaBuffer: WebGLBuffer;
+    private readonly fixdeltaptLocation: number;
+    private readonly fixdeltaptBuffer: WebGLBuffer;
+    private readonly fixdeltamaxptLocation: number;
+    private readonly fixdeltamaxptBuffer: WebGLBuffer;
+
     private readonly groups: DrawerGroup[] = [];
 
     private readonly indexBufferPool: WebGLBuffer[] = [];
@@ -36,17 +45,25 @@ export default class Drawer {
 
         this.centerLocation = gl.getAttribLocation(this.program, "a_center");
         this.deltaLocation = gl.getAttribLocation(this.program, "a_delta");
-        this.deltapxLocation = gl.getAttribLocation(this.program, "a_deltapx");
+        this.deltaptLocation = gl.getAttribLocation(this.program, "a_deltapt");
         this.colorLocation = gl.getAttribLocation(this.program, "a_color");
         this.rotateLocation = gl.getAttribLocation(this.program, "a_rotate");
-        this.texcoordLocation = gl.getAttribLocation(this.program, "a_texcoord");
+        // this.texcoordLocation = gl.getAttribLocation(this.program, "a_texcoord");
+        this.texfixLocation = gl.getAttribLocation(this.program, "a_texfix");
+        this.fixdeltaLocation = gl.getAttribLocation(this.program, "a_fixdelta");
+        this.fixdeltaptLocation = gl.getAttribLocation(this.program, "a_fixdeltapt");
+        this.fixdeltamaxptLocation = gl.getAttribLocation(this.program, "a_fixdeltamaxpt");
 
         this.centerBuffer = gl.createBuffer();
         this.deltaBuffer = gl.createBuffer();
-        this.deltapxBuffer = gl.createBuffer();
+        this.deltaptBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
         this.rotateBuffer = gl.createBuffer();
-        this.texcoordBuffer = gl.createBuffer();
+        // this.texcoordBuffer = gl.createBuffer();
+        this.texfixBuffer = gl.createBuffer();
+        this.fixdeltaBuffer = gl.createBuffer();
+        this.fixdeltaptBuffer = gl.createBuffer();
+        this.fixdeltamaxptBuffer = gl.createBuffer();
         // this.indexBuffer = gl.createBuffer();
     }
 
@@ -67,32 +84,6 @@ export default class Drawer {
         this.groupsDirty = true;
     }
 
-    draw(u_matrix: any, pxscale: number) {
-        const gl = this.gl;
-
-        gl.useProgram(this.program);
-
-        this.ensureBuffers();
-
-        this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
-        this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
-        this.enableBuffer(this.deltapxBuffer, this.deltapxLocation, 2);
-        this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
-        this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
-        this.enableBuffer(this.texcoordBuffer, this.texcoordLocation, 2);
-
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-        for (let group of this.groups) {
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
-            twgl.setUniforms(this.programInfo, { u_matrix, u_pxscale: [pxscale, pxscale], u_texture: group.texture });
-            gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
-        }
-
-        gl.disable(gl.BLEND);
-    }
-
     private ensureBuffers() {
         if (!this.dirty && !this.groupsDirty) return;
         if (this.dirty) {
@@ -102,7 +93,7 @@ export default class Drawer {
         if (this.groupsDirty) {
             this.populateGroups();
             // TODO: uncomment
-            //this.groupsDirty = false;
+            this.groupsDirty = false;
         }
     }
 
@@ -111,10 +102,14 @@ export default class Drawer {
 
         const centers: number[] = [];
         const deltas: number[] = [];
-        const deltasPx: number[] = [];
+        const deltaPts: number[] = [];
         const colors: number[] = [];
         const rotates: number[] = [];
         const texcoords: number[] = [];
+        const texfixes: number[] = [];
+        const fixdeltas: number[] = [];
+        const fixdeltapts: number[] = [];
+        const fixdeltamaxpts: number[] = [];
 
         const sprite = new Sprite();
 
@@ -158,17 +153,20 @@ export default class Drawer {
             const w = this.objects[i];
             // 4 vec2
             centers.push(...w.center, ...w.center, ...w.center, ...w.center);
+            // preare points x1, y1, ... xp1, yp1
+            const d = w.deltas || [0, 0, 0, 0];
+            const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
+            const dp = w.deltaPts || [0, 0, 0, 0];
+            const scale = w.scalePts || 1;
+            const xp1 = dp[0] * scale, yp1 = dp[1] * scale, xp2 = dp[2] * scale, yp2 = dp[3] * scale;
             // 4 vec2
             {
-                const d = w.deltas || [0, 0, 0, 0];
-                const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
                 deltas.push(x1, y1, x2, y1, x1, y2, x2, y2);
             }
             // 4 vec2
             {
-                const d = w.deltasPx || [0, 0, 0, 0];
-                const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
-                deltasPx.push(x1, y1, x2, y1, x1, y2, x2, y2);
+
+                deltaPts.push(xp1, yp1, xp2, yp1, xp1, yp2, xp2, yp2);
             }
             // 4 vec4
             {
@@ -190,30 +188,82 @@ export default class Drawer {
                     texcoords.push(r.x1, r.y1, r.x2, r.y1, r.x1, r.y2, r.x2, r.y2);
                 }
             }
+            // texfix 4 vec2
+            {
+                let val: Vec2;
+                if (!w.spriteItem) {
+                    val = [0, 0];
+                } else if (w.texPosition === 'center') {
+                    val = [w.spriteItem.rect.cx, w.spriteItem.rect.cy];
+                } else {
+                    val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
+                }
+
+                texfixes.push(...val, ...val, ...val, ...val);
+            }
+            // fixdelta 4 vec2
+            {
+                let val: Vec2;
+                if (!w.spriteItem || w.texPosition === 'center') {
+                    val = [0, 0];
+                } else {
+                    val = [x1, y1];
+                }
+                fixdeltas.push(...val, ...val, ...val, ...val);
+            }
+            // fixdeltapt 4 vec2
+            {
+                let val: Vec2;
+                if (!w.spriteItem || w.texPosition === 'center') {
+                    val = [0, 0];
+                } else {
+                    val = [xp1, yp1];
+                }
+                fixdeltapts.push(...val, ...val, ...val, ...val);
+            }
+
+            // fixdeltamaxpt 4 vec2
+            {
+                let val: Vec2;
+                if (!w.spriteItem || w.texPosition === 'center') {
+                    val = [0, 0];
+                } else {
+                    val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
+                    //val = [0, 0];
+                }
+                fixdeltamaxpts.push(...val, ...val, ...val, ...val);
+            }
         }
 
         this.bufferFloat32Array(this.centerBuffer, centers);
         this.bufferFloat32Array(this.deltaBuffer, deltas);
-        this.bufferFloat32Array(this.deltapxBuffer, deltasPx);
+        this.bufferFloat32Array(this.deltaptBuffer, deltaPts);
         this.bufferFloat32Array(this.colorBuffer, colors);
         this.bufferFloat32Array(this.rotateBuffer, rotates);
-        this.bufferFloat32Array(this.texcoordBuffer, texcoords);
+        // this.bufferFloat32Array(this.texcoordBuffer, texcoords);
+        this.bufferFloat32Array(this.texfixBuffer, texfixes);
+        this.bufferFloat32Array(this.fixdeltaBuffer, fixdeltas);
+        this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
+        this.bufferFloat32Array(this.fixdeltamaxptBuffer, fixdeltamaxpts);
     }
 
     private populateGroups() {
         // console.log('this.populateGroups', this.indexBufferPool.length);
-        const groups: { indices: number[], texture: WebGLTexture }[] = [];
-        let currentGroup: { indices: number[], texture: WebGLTexture };
+        const groups: { indices: number[], texture: WebGLTexture, texsize: Vec2 }[] = [];
+        let currentGroup: { indices: number[], texture: WebGLTexture, texsize: Vec2 };
 
         for (let obj of this.objects) {
             if (!obj.visible) continue;
             if (!currentGroup ||
                 (currentGroup.texture && obj.texture && currentGroup.texture !== obj.texture)) {
-                currentGroup = { indices: [], texture: undefined };
+                currentGroup = { indices: [], texture: undefined, texsize: undefined };
                 groups.push(currentGroup);
             }
 
-            if (obj.texture && !currentGroup.texture) currentGroup.texture = obj.texture;
+            if (obj.texture && !currentGroup.texture) {
+                currentGroup.texture = obj.texture;
+                currentGroup.texsize = [obj.spriteItem.containerCanvas.width, obj.spriteItem.containerCanvas.height];
+            }
 
             currentGroup.indices.push(obj.index);
         }
@@ -234,7 +284,12 @@ export default class Drawer {
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
             this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(realIndices), this.gl.STATIC_DRAW);
 
-            this.groups.push({ texture: group.texture, indexBuffer: buffer, numElements: realIndices.length });
+            this.groups.push({
+                texture: group.texture,
+                indexBuffer: buffer,
+                numElements: realIndices.length,
+                texsize: group.texsize
+            });
         }
 
         this.indexBufferPool.unshift(...indexBuffers);
@@ -250,18 +305,57 @@ export default class Drawer {
         this.gl.enableVertexAttribArray(location);
         this.gl.vertexAttribPointer(location, size, this.gl.FLOAT, false, 0, 0);
     }
+
+
+    draw(u_matrix: any, ptscale: number) {
+        const gl = this.gl;
+
+        gl.useProgram(this.program);
+
+        this.ensureBuffers();
+
+        this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
+        this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
+        this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
+        this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
+        this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
+        // this.enableBuffer(this.texcoordBuffer, this.texcoordLocation, 2);
+        this.enableBuffer(this.texfixBuffer, this.texfixLocation, 2);
+        this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
+        this.enableBuffer(this.fixdeltaptBuffer, this.fixdeltaptLocation, 2);
+        this.enableBuffer(this.fixdeltamaxptBuffer, this.fixdeltamaxptLocation, 2);
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        for (let group of this.groups) {
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
+            twgl.setUniforms(this.programInfo, {
+                u_matrix,
+                u_ptscale: [ptscale, ptscale],
+                u_texture: group.texture,
+                u_texsize: group.texsize
+            });
+            gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
+        }
+
+        gl.disable(gl.BLEND);
+    }
 }
 
 export interface DrawerObject {
     id: string,
     center: Vec2;
     deltas?: Vec4; // x1, y1, x2, y2
-    deltasPx?: Vec4;
+    deltaPts?: Vec4;
+    scalePts?: number,
+    texPosition?: 'center' | 'lefttop'
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;
     canvasTmp?: HTMLCanvasElement;
     order: number;
+
     //always: boolean;
 }
 
@@ -273,6 +367,7 @@ interface DrawerObjectEx extends DrawerObject {
 }
 
 interface DrawerGroup {
+    texsize: Vec2,
     texture: WebGLTexture;
     indexBuffer: WebGLBuffer;
     numElements: number;
@@ -282,22 +377,45 @@ interface DrawerGroup {
 const vertexShaderSource = `attribute vec2 a_center;
 attribute vec2 a_rotate;
 attribute vec2 a_delta;
-attribute vec2 a_deltapx;
+attribute vec2 a_deltapt;
 attribute vec4 a_color;
-attribute vec2 a_texcoord;
+attribute vec2 a_texcoord; 
+attribute vec2 a_fixdelta;
+attribute vec2 a_fixdeltapt; 
+attribute vec2 a_fixdeltamaxpt; 
+attribute vec2 a_texfix;
 
 uniform mat4 u_matrix;   
-uniform vec2 u_pxscale; 
+uniform vec2 u_ptscale; 
+uniform vec2 u_texsize;
+
 varying vec2 v_texcoord;
 varying vec4 v_color;
 
 void main() {
-    vec2 delta = a_delta + a_deltapx * u_pxscale;
+    vec2 delta = a_delta + a_deltapt * u_ptscale;
+
+    vec2 fixdelta = a_fixdelta + a_fixdeltapt * u_ptscale;
+
+    // calc maxdelta from a_fixdeltamaxpt
+    // this is relative to fix point (on svg)
+    vec2 fixdeltamax = a_fixdeltamaxpt * u_ptscale;
+    vec2 deltamax = fixdeltamax + fixdelta;
+    if (a_fixdeltamaxpt.x > 0.0){
+        delta = vec2(min(delta.x, deltamax.x), min(delta.y, deltamax.y));
+    }
+
+    vec2 diff = delta - fixdelta;
+    vec2 texdeltapt = diff / u_ptscale;
+    vec2 texcoord = a_texfix + texdeltapt;
+
     vec2 rotatedDelta =  vec2(
         delta.x * a_rotate.y + delta.y * a_rotate.x,
         delta.y * a_rotate.y - delta.x * a_rotate.x);
     gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
-    v_texcoord = a_texcoord;
+
+    v_texcoord = texcoord / u_texsize;
+    // v_texcoord = a_texcoord;
     v_color = a_color;
 }`;
 
