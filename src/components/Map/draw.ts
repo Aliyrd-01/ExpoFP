@@ -71,7 +71,7 @@ function draw(now) {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     drawBg(gl, matrix);
-    drawBooths(gl, matrix,  1 / scale  * devicePixelRatio / zoomTranform.k); //pxScale,
+    drawBooths(gl, matrix,  1 / scale / zoomTranform.k); //pxScale, * devicePixelRatio
     // drawText(gl, matrix, pxScale);
     // drawWalls(gl, matrix);
     // drawLabels(gl, matrix, browserScale, zoomTranform.k);
