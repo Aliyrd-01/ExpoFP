@@ -12,12 +12,13 @@ export default class Sprite {
         if (!item) {
             item = {
                 containerCanvas: undefined,
+                rect: undefined,// Rect.fromXywh(0,0, canvas.width, canvas.height),
                 // canvasTmp: canvas,
                 width: canvas.width,
                 height: canvas.height,
-                rect: undefined as Rect,
-                top: undefined,
-                left: undefined
+                // rect: undefined as Rect,
+                // top: undefined,
+                // left: undefined
             };
 
             // this.items.push(item);
@@ -56,8 +57,11 @@ export default class Sprite {
             }
 
             item.containerCanvas = currentCanvas;
-            item.top = drawHeight;
-            item.left = drawWidth;
+
+            item.rect = Rect.fromXywh(drawWidth, drawHeight, item.width, item.height);
+            //item.rect.translate(drawWidth, drawHeight);
+            // item.top = drawHeight;
+            // item.left = drawWidth;
 
             drawWidth += canvas.width;
             if (drawHeight + canvas.height > nextHeight) {
@@ -73,10 +77,10 @@ export default class Sprite {
             const item = this.canvasToSpriteItem.get(canvas);
 
             const c = item.containerCanvas.getContext("2d");
-            c.drawImage(canvas, item.left, item.top);
+            c.drawImage(canvas, item.rect.x1, item.rect.y1);
 
-            item.rect = Rect.fromXywh(item.left, item.top, item.width, item.height)
-                .normalize(item.containerCanvas.width, item.containerCanvas.height);
+            // item.rect = Rect.fromXywh(item.left, item.top, item.width, item.height)
+            //     .normalize(item.containerCanvas.width, item.containerCanvas.height);
         }
 
         // clear to free memory
@@ -95,15 +99,14 @@ export default class Sprite {
 export interface SpriteItem {
     //rectFunc: () => Rect;
     rect: Rect;
-    width: number;
-    height: number;
+   
     containerCanvas: HTMLCanvasElement;
 }
 
 interface SpriteItemEx extends SpriteItem {
     // canvasTmp: HTMLCanvasElement;
-    top: number,
-    left: number
+    width: number;
+    height: number;
 }
 
 // export function createTextCanvas(text: string, fontSize: number) {

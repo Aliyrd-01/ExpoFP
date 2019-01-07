@@ -13,7 +13,17 @@ export default class Drawer {
 
     private readonly centerLocation: number;
     private readonly centerBuffer: WebGLBuffer;
-   
+    private readonly deltaLocation: number;
+    private readonly deltaBuffer: WebGLBuffer;
+    private readonly deltapxLocation: number;
+    private readonly deltapxBuffer: WebGLBuffer;
+    private readonly colorLocation: number;
+    private readonly colorBuffer: WebGLBuffer;
+    private readonly rotateLocation: number;
+    private readonly rotateBuffer: WebGLBuffer;
+    private readonly texcoordLocation: number;
+    private readonly texcoordBuffer: WebGLBuffer;
+    private readonly groups: DrawerGroup[] = [];
 
     private readonly indexBufferPool: WebGLBuffer[] = [];
 
@@ -55,32 +65,6 @@ export default class Drawer {
     updateVisible(id: string, visible: boolean) {
         this.objectsById.get(id).visible = visible;
         this.groupsDirty = true;
-    }
-
-    draw(u_matrix: any, pxscale: number) {
-        const gl = this.gl;
-
-        gl.useProgram(this.program);
-
-        this.ensureBuffers();
-
-        this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
-        this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
-        this.enableBuffer(this.deltapxBuffer, this.deltapxLocation, 2);
-        this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
-        this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
-        this.enableBuffer(this.texcoordBuffer, this.texcoordLocation, 2);
-
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-
-        for (let group of this.groups) {
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
-            twgl.setUniforms(this.programInfo, { u_matrix, u_pxscale: [pxscale, pxscale], u_texture: group.texture });
-            gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
-        }
-
-        gl.disable(gl.BLEND);
     }
 
     private ensureBuffers() {
@@ -192,18 +176,21 @@ export default class Drawer {
 
     private populateGroups() {
         // console.log('this.populateGroups', this.indexBufferPool.length);
-        const groups: { indices: number[], texture: WebGLTexture }[] = [];
-        let currentGroup: { indices: number[], texture: WebGLTexture };
+        const groups: { indices: number[], texture: WebGLTexture, texsize: Vec2 }[] = [];
+        let currentGroup: { indices: number[], texture: WebGLTexture, texsize: Vec2 };
 
         for (let obj of this.objects) {
             if (!obj.visible) continue;
             if (!currentGroup ||
                 (currentGroup.texture && obj.texture && currentGroup.texture !== obj.texture)) {
-                currentGroup = { indices: [], texture: undefined };
+                currentGroup = { indices: [], texture: undefined, texsize: undefined };
                 groups.push(currentGroup);
             }
 
-            if (obj.texture && !currentGroup.texture) currentGroup.texture = obj.texture;
+            if (obj.texture && !currentGroup.texture) {
+                currentGroup.texture = obj.texture;
+                currentGroup.texsize = [obj.spriteItem.containerCanvas.width, obj.spriteItem.containerCanvas.height];
+            }
 
             currentGroup.indices.push(obj.index);
         }
@@ -224,7 +211,12 @@ export default class Drawer {
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
             this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(realIndices), this.gl.STATIC_DRAW);
 
-            this.groups.push({ texture: group.texture, indexBuffer: buffer, numElements: realIndices.length });
+            this.groups.push({
+                texture: group.texture,
+                indexBuffer: buffer,
+                numElements: realIndices.length,
+                texsize: group.texsize
+            });
         }
 
         this.indexBufferPool.unshift(...indexBuffers);
@@ -240,6 +232,38 @@ export default class Drawer {
         this.gl.enableVertexAttribArray(location);
         this.gl.vertexAttribPointer(location, size, this.gl.FLOAT, false, 0, 0);
     }
+
+
+    draw(u_matrix: any, pxscale: number) {
+        const gl = this.gl;
+
+        gl.useProgram(this.program);
+
+        this.ensureBuffers();
+
+        this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
+        this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
+        this.enableBuffer(this.deltapxBuffer, this.deltapxLocation, 2);
+        this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
+        this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
+        this.enableBuffer(this.texcoordBuffer, this.texcoordLocation, 2);
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        for (let group of this.groups) {
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
+            twgl.setUniforms(this.programInfo, {
+                u_matrix,
+                u_pxscale: [pxscale, pxscale],
+                u_texture: group.texture,
+                u_texsize: group.texsize
+            });
+            gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
+        }
+
+        gl.disable(gl.BLEND);
+    }
 }
 
 export interface DrawerObject {
@@ -247,6 +271,7 @@ export interface DrawerObject {
     center: Vec2;
     deltas?: Vec4; // x1, y1, x2, y2
     deltasPx?: Vec4;
+    color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;
     canvasTmp?: HTMLCanvasElement;
@@ -262,32 +287,25 @@ interface DrawerObjectEx extends DrawerObject {
 }
 
 interface DrawerGroup {
+    texsize: Vec2,
     texture: WebGLTexture;
     indexBuffer: WebGLBuffer;
     numElements: number;
 }
 
 
-const vertexShaderSource = `
-attribute vec2 a_fix_svg;
-attribute vec2 a_fix_texpx; 
-attribute vec2 a_delta; 
-attribute vec2 a_deltapx; 
-
-
-uniform mat4 u_matrix;   
-uniform vec2 u_px_to_tex;// maxx and maxy to transform from 0..n px to -1..1 webgl texture
-
-
-attribute vec2 a_center;
+const vertexShaderSource = `attribute vec2 a_center;
 attribute vec2 a_rotate;
 attribute vec2 a_delta;
 attribute vec2 a_deltapx;
 attribute vec4 a_color;
-attribute vec2 a_texcoord;
+attribute vec2 a_texcoord; // in px
+// attribute vec2 a_deltafix;
+// attribute vec2 a_texfix;
 
-
+uniform mat4 u_matrix;   
 uniform vec2 u_pxscale; 
+uniform vec2 u_texsize;
 varying vec2 v_texcoord;
 varying vec4 v_color;
 
@@ -297,7 +315,9 @@ void main() {
         delta.x * a_rotate.y + delta.y * a_rotate.x,
         delta.y * a_rotate.y - delta.x * a_rotate.x);
     gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
-    v_texcoord = a_texcoord;
+
+    v_texcoord = a_texcoord / u_texsize;
+    // v_texcoord = a_texcoord;
     v_color = a_color;
 }`;
 
