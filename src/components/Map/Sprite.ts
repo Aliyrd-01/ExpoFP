@@ -2,9 +2,7 @@ const maxHeight = 1000;
 const maxWidth = 1000;
 
 export default class Sprite {
-    // private items: SpriteItemEx[] = [];
     private readonly canvasToSpriteItem = new Map<HTMLCanvasElement, SpriteItemEx>();
-    // private canvas: HTMLCanvasElement;
 
     addCanvas(canvas: HTMLCanvasElement): SpriteItem {
         let item = this.canvasToSpriteItem.get(canvas);
@@ -12,16 +10,11 @@ export default class Sprite {
         if (!item) {
             item = {
                 containerCanvas: undefined,
-                rect: undefined,// Rect.fromXywh(0,0, canvas.width, canvas.height),
-                // canvasTmp: canvas,
+                rect: undefined,
                 width: canvas.width,
                 height: canvas.height,
-                // rect: undefined as Rect,
-                // top: undefined,
-                // left: undefined
             };
 
-            // this.items.push(item);
             this.canvasToSpriteItem.set(canvas, item);
         }
         return item;
@@ -59,9 +52,6 @@ export default class Sprite {
             item.containerCanvas = currentCanvas;
 
             item.rect = Rect.fromXywh(drawWidth, drawHeight, item.width, item.height);
-            //item.rect.translate(drawWidth, drawHeight);
-            // item.top = drawHeight;
-            // item.left = drawWidth;
 
             drawWidth += canvas.width;
             if (drawHeight + canvas.height > nextHeight) {
@@ -78,9 +68,6 @@ export default class Sprite {
 
             const c = item.containerCanvas.getContext("2d");
             c.drawImage(canvas, item.rect.x1, item.rect.y1);
-
-            // item.rect = Rect.fromXywh(item.left, item.top, item.width, item.height)
-            //     .normalize(item.containerCanvas.width, item.containerCanvas.height);
         }
 
         // clear to free memory
@@ -88,48 +75,16 @@ export default class Sprite {
 
         return canvases;
     }
-
-    //     getSpriteItem():SpriteItem {
-    // return null;
-    //     }
 }
 
 
 
 export interface SpriteItem {
-    //rectFunc: () => Rect;
     rect: Rect;
-   
     containerCanvas: HTMLCanvasElement;
 }
 
 interface SpriteItemEx extends SpriteItem {
-    // canvasTmp: HTMLCanvasElement;
     width: number;
     height: number;
 }
-
-// export function createTextCanvas(text: string, fontSize: number) {
-//     const canvas = document.createElement("canvas")
-//     const c = canvas.getContext("2d");
-//     const font = getFont(fontSize, 400);
-//     c.font = font;
-
-//     const { width } = c.measureText(text);
-
-//     canvas.width = width;
-//     canvas.height = fontSize + 2;
-//     // set font again
-//     c.font = font;
-//     c.textAlign = "center";
-//     c.textBaseline = "middle";
-
-//     // c.fillStyle = "#000";
-//     // c.fillRect(0,0,canvas.width, canvas.height);
-
-//     c.fillStyle = "#fff";
-
-//     c.fillText(text, width / 2, canvas.height / 2);
-
-//     return canvas;
-// }

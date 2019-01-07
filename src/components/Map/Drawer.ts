@@ -21,8 +21,6 @@ export default class Drawer {
     private readonly colorBuffer: WebGLBuffer;
     private readonly rotateLocation: number;
     private readonly rotateBuffer: WebGLBuffer;
-    // private readonly texcoordLocation: number;
-    // private readonly texcoordBuffer: WebGLBuffer;
     private readonly texfixLocation: number;
     private readonly texfixBuffer: WebGLBuffer;
     private readonly fixdeltaLocation: number;
@@ -33,9 +31,7 @@ export default class Drawer {
     private readonly fixdeltamaxptBuffer: WebGLBuffer;
 
     private readonly groups: DrawerGroup[] = [];
-
     private readonly indexBufferPool: WebGLBuffer[] = [];
-
     private readonly canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
 
     constructor(gl: WebGLRenderingContext) {
@@ -48,7 +44,6 @@ export default class Drawer {
         this.deltaptLocation = gl.getAttribLocation(this.program, "a_deltapt");
         this.colorLocation = gl.getAttribLocation(this.program, "a_color");
         this.rotateLocation = gl.getAttribLocation(this.program, "a_rotate");
-        // this.texcoordLocation = gl.getAttribLocation(this.program, "a_texcoord");
         this.texfixLocation = gl.getAttribLocation(this.program, "a_texfix");
         this.fixdeltaLocation = gl.getAttribLocation(this.program, "a_fixdelta");
         this.fixdeltaptLocation = gl.getAttribLocation(this.program, "a_fixdeltapt");
@@ -59,18 +54,15 @@ export default class Drawer {
         this.deltaptBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
         this.rotateBuffer = gl.createBuffer();
-        // this.texcoordBuffer = gl.createBuffer();
         this.texfixBuffer = gl.createBuffer();
         this.fixdeltaBuffer = gl.createBuffer();
         this.fixdeltaptBuffer = gl.createBuffer();
         this.fixdeltamaxptBuffer = gl.createBuffer();
-        // this.indexBuffer = gl.createBuffer();
     }
 
     addObject(obj: DrawerObject) {
         const item = obj as DrawerObjectEx;
         item.visible = true;
-        // item.index = this.objects.length;
         this.objects.push(item);
         this.objectsById.set(item.id, item);
     }
@@ -84,7 +76,7 @@ export default class Drawer {
         this.groupsDirty = true;
     }
 
-    private ensureBuffers() {
+    private ensureBuffersAndGroups() {
         if (!this.dirty && !this.groupsDirty) return;
         if (this.dirty) {
             this.populateBuffers();
@@ -92,7 +84,6 @@ export default class Drawer {
         }
         if (this.groupsDirty) {
             this.populateGroups();
-            // TODO: uncomment
             this.groupsDirty = false;
         }
     }
@@ -240,7 +231,6 @@ export default class Drawer {
         this.bufferFloat32Array(this.deltaptBuffer, deltaPts);
         this.bufferFloat32Array(this.colorBuffer, colors);
         this.bufferFloat32Array(this.rotateBuffer, rotates);
-        // this.bufferFloat32Array(this.texcoordBuffer, texcoords);
         this.bufferFloat32Array(this.texfixBuffer, texfixes);
         this.bufferFloat32Array(this.fixdeltaBuffer, fixdeltas);
         this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
@@ -306,20 +296,18 @@ export default class Drawer {
         this.gl.vertexAttribPointer(location, size, this.gl.FLOAT, false, 0, 0);
     }
 
-
     draw(u_matrix: any, ptscale: number) {
         const gl = this.gl;
 
         gl.useProgram(this.program);
 
-        this.ensureBuffers();
+        this.ensureBuffersAndGroups();
 
         this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
         this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
         this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
         this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
-        // this.enableBuffer(this.texcoordBuffer, this.texcoordLocation, 2);
         this.enableBuffer(this.texfixBuffer, this.texfixLocation, 2);
         this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
         this.enableBuffer(this.fixdeltaptBuffer, this.fixdeltaptLocation, 2);
@@ -415,7 +403,6 @@ void main() {
     gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
 
     v_texcoord = texcoord / u_texsize;
-    // v_texcoord = a_texcoord;
     v_color = a_color;
 }`;
 
@@ -425,7 +412,6 @@ varying vec4 v_color;
 uniform sampler2D u_texture;
 
 void main() {
-    //gl_FragColor = v_color; 
     if (v_color.w != 0.0){
         gl_FragColor = v_color; 
     } else {

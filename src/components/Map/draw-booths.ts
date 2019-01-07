@@ -16,7 +16,7 @@ function initialize(gl: WebGLRenderingContext) {
     const dotW = dotCanvas.width / 2;
     const dotH = dotCanvas.width / 2;
 
-    const rotateRadians = 15 * Math.PI / 180;
+    const rotateRadians = 0;//15 * Math.PI / 180;
 
     function addLabel(b: Booth, fontSize: number, sizeName: string) {
         const r = b.rect;
@@ -162,18 +162,11 @@ function updateVisibleDetails(ptscale: number) {
         let visiblePrefix = '';
         const ff = mapBoothFactors.get(b.id);
 
-        // if (ptscale < ff[0]) {
-        //     visiblePrefix = 'XS';
-        //     // drawer.updateVisible(`bLabDot${b.id}`, false);
-        //     // drawer.updateVisible(`bLabXS${b.id}`, true);
-        // }
-
         for (let i = 0; i < prefixes.length; i++) {
             const p = prefixes[i];
             const f = ff[i];
             if (ptscale < f) visiblePrefix = p;
         }
-
 
         for (const p of prefixes) {
             drawer.updateVisible(`bLab${p}${b.id}`, p === visiblePrefix);

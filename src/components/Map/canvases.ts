@@ -1,4 +1,4 @@
-import { getFont } from './utils';
+//import { getFont } from './utils';
 
 export function createTextCanvas(text: string, fontSize: number) {
     const canvas = document.createElement("canvas")
@@ -37,4 +37,8 @@ export function createCircleCanvas(radius) {
     c.arc(size / 2, size / 2, radius, 0, 2 * Math.PI);
     c.fill();
     return canvas;
+}
+
+function getFont(px: number, weight: number) {
+    return weight + " " + px + 'px -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 }
