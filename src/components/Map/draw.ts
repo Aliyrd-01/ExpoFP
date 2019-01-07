@@ -1,11 +1,7 @@
 import { svgWidth, svgHeight } from '@/tools/svg'
-// import * as twgl from 'twgl.js'
 import { m4 } from 'twgl.js'
 import { drawBg } from './draw-bg'
 import { drawBooths } from './draw-booths'
-// import { drawText } from './draw-text'
-// import { drawLabels } from './draw-labels'
-// import { drawWalls } from './draw-walls'
 import settings from '@/settings';
 
 let canvas: HTMLCanvasElement;
@@ -71,13 +67,9 @@ function draw(now) {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     drawBg(gl, matrix);
-    drawBooths(gl, matrix,  1 / scale / zoomTranform.k); //pxScale, * devicePixelRatio
-    // drawText(gl, matrix, pxScale);
-    // drawWalls(gl, matrix);
-    // drawLabels(gl, matrix, browserScale, zoomTranform.k);
+    drawBooths(gl, matrix,  1 / scale / zoomTranform.k); 
 
     requestAnimationFrame(draw);
-    // gl.drawArrays(gl.TRIANGLES, 0, positions.length / 2);
 }
 
 export function initialize(canvasParam: HTMLCanvasElement) {

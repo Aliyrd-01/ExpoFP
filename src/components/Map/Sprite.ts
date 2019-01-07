@@ -1,5 +1,5 @@
-const maxHeight = 1000;
-const maxWidth = 1000;
+const maxHeight = 2000;
+const maxWidth = 2000;
 
 export default class Sprite {
     private readonly canvasToSpriteItem = new Map<HTMLCanvasElement, SpriteItemEx>();

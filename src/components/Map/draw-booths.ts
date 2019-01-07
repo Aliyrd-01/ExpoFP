@@ -1,6 +1,6 @@
 import * as twgl from 'twgl.js'
 import Drawer from './Drawer'
-import { createTextCanvas, createCircleCanvas } from './canvases';
+import { createLabelCanvas, createCircleCanvas, createDetailsCanvas } from './canvases';
 // import Sprite, { createTextCanvas, SpriteItem } from './sprite'
 
 let drawer: Drawer;
@@ -20,32 +20,42 @@ function initialize(gl: WebGLRenderingContext) {
 
     function addLabel(b: Booth, fontSize: number, sizeName: string) {
         const r = b.rect;
-        const upscale = 1;
-        const canvas = createTextCanvas(b.name, fontSize * upscale * devicePixelRatio);
-        const w = canvas.width / 2 / upscale;
-        const h = canvas.height / 2 / upscale;
 
-        if (sizeName !== 'M') {
-            drawer.addObject({
-                id: `bLab${sizeName}${b.id}`,
-                center: [r.cx, r.cy],
-                deltas: [0, 0, 0, 0],
-                deltaPts: [-w, -h, w, h],
-                canvasTmp: canvas,
-                texPosition: 'center',
-                order: 20, rotateRadians
-            });
-        } else {
-            drawer.addObject({
-                id: `bLab${sizeName}${b.id}`,
-                center: [r.cx, r.cy],
-                deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-                deltaPts: [.5, .5, -.5, -.5],
-                canvasTmp: canvas,
-                texPosition: 'lefttop',
-                order: 20, rotateRadians
-            });
-        }
+        const canvas = createLabelCanvas(b.name, fontSize);
+        const w = canvas.width / 2;
+        const h = canvas.height / 2;
+
+        drawer.addObject({
+            id: `bLab${sizeName}${b.id}`,
+            center: [r.cx, r.cy],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [-w, -h, w, h],
+            canvasTmp: canvas,
+            texPosition: 'center',
+            order: 20, rotateRadians
+        });
+
+        // if (sizeName !== 'M') {
+        //     drawer.addObject({
+        //         id: `bLab${sizeName}${b.id}`,
+        //         center: [r.cx, r.cy],
+        //         deltas: [0, 0, 0, 0],
+        //         deltaPts: [-w, -h, w, h],
+        //         canvasTmp: canvas,
+        //         texPosition: 'center',
+        //         order: 20, rotateRadians
+        //     });
+        // } else {
+        //     drawer.addObject({
+        //         id: `bLab${sizeName}${b.id}`,
+        //         center: [r.cx, r.cy],
+        //         deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+        //         deltaPts: [.5, .5, -.5, -.5],
+        //         canvasTmp: canvas,
+        //         texPosition: 'lefttop',
+        //         order: 20, rotateRadians
+        //     });
+        // }
 
     }
 
@@ -75,9 +85,33 @@ function initialize(gl: WebGLRenderingContext) {
                 order: 20, rotateRadians
             });
 
-            addLabel(b, 9, 'XS')
-            addLabel(b, 12, 'S')
-            addLabel(b, 15, 'M')
+            addLabel(b, 9, 'XS');
+            addLabel(b, 12, 'S');
+            addLabel(b, 14, 'M');
+
+            
+            const detailsCanvas = createDetailsCanvas(b);
+
+            drawer.addObject({
+                id: `bLabDetails${b.id}`,
+                center: [r.cx, r.cy],
+                deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+                deltaPts: [5, 5, -1, -1],
+                canvasTmp: detailsCanvas,
+                texPosition: 'lefttop',
+                order: 20, rotateRadians
+            });
+
+            // // dots
+            // drawer.addObject({
+            //     id: `bLabDetails${b.id}`,
+            //     center: [r.cx, r.cy],
+            //     deltas: [0, 0, 0, 0],
+            //     deltaPts: [-dotW, -dotH, dotW, dotH],
+            //     canvasTmp: detailsCanvas,
+            //     texPosition: 'center',
+            //     order: 20, rotateRadians
+            // });
             // addLabel(b, 20, 'L')
         }
 
@@ -125,7 +159,7 @@ function initialize(gl: WebGLRenderingContext) {
 
 // id to factors
 const mapBoothFactors = new Map<number, number[]>();
-const prefixes = ['Dot', 'XS', 'S', 'M'];//, 'L'
+const prefixes = ['Dot', 'XS', 'S', 'M', 'Details'];//, ];//, 'L'
 
 function prepareBoothDetailsFactors() {
     if (mapBoothFactors.size) return;
@@ -133,26 +167,23 @@ function prepareBoothDetailsFactors() {
     // we can convert svg to px and see how px fits
     for (const b of booths) {
         const r = b.rect;
-
         const ar = [];
-        for (const p of prefixes) {
-            // if (p === 'Dot') continue;
-            // deltapx - the real size in pixels
+        let lastFactor:number;
+        for (const p of prefixes.slice(0, prefixes.length - 1)) {
             const cr = drawer.getObject(`bLab${p}${b.id}`).canvasTmp;
-            // const width = -pxs[0] + pxs[2];
-            // const height = -pxs[1] + pxs[3];
-
             const xFactor = r.w / cr.width;
             const yFactor = r.h / cr.height;
-            const factor = Math.min(xFactor, yFactor);
-            ar.push(factor);
+            lastFactor = Math.min(xFactor, yFactor);
+            ar.push(lastFactor);
         }
+
+        ar.push(lastFactor / 1.5);
 
         mapBoothFactors.set(b.id, ar);
     }
 }
 
-let prevPtscale :number;
+let prevPtscale: number;
 
 function updateVisibleDetails(ptscale: number) {
     if (prevPtscale === ptscale) return;

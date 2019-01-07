@@ -3,8 +3,9 @@ import Sprite, { SpriteItem } from './Sprite';
 
 export default class Drawer {
     readonly gl: WebGLRenderingContext;
-    private dirty = true;
+    private buffersInitialized = true;
     private groupsDirty = true;
+    private colorsDirty = true;
 
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -76,15 +77,24 @@ export default class Drawer {
         this.groupsDirty = true;
     }
 
+    updateColor(id: string, color: Vec4) {
+        this.objectsById.get(id).color = color;
+        this.colorsDirty = true;
+    }
+
     private ensureBuffersAndGroups() {
-        if (!this.dirty && !this.groupsDirty) return;
-        if (this.dirty) {
+        if (this.buffersInitialized) {
             this.populateBuffers();
-            this.dirty = false;
+            this.buffersInitialized = false;
         }
         if (this.groupsDirty) {
             this.populateGroups();
             this.groupsDirty = false;
+        }
+
+        if (this.colorsDirty) {
+            this.populateColorBuffer();
+            this.colorsDirty = false;
         }
     }
 
@@ -235,6 +245,16 @@ export default class Drawer {
         this.bufferFloat32Array(this.fixdeltaBuffer, fixdeltas);
         this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
         this.bufferFloat32Array(this.fixdeltamaxptBuffer, fixdeltamaxpts);
+    }
+
+    private populateColorBuffer() {
+        const colors: number[] = [];
+        for (const w of this.objects) {
+            const c = w.color || [0, 0, 0, 0];
+            colors.push(...c, ...c, ...c, ...c);
+        }
+
+        this.bufferFloat32Array(this.colorBuffer, colors);
     }
 
     private populateGroups() {
