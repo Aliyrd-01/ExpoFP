@@ -1,0 +1,18 @@
+reactive change of state of drawer
+
+// hoveredBoothIds
+// selectedBoothIdsSet
+// listBoothsIdsSet
+// store.state.bookmarked - > bookmarked
+
+monitor changes
+    for these
+
+build changed booths ()
+
+for each change in state -> 
+    add to changed booths array (queue) (compare sets of changed hovered/selected/list/bookmarked)
+    
+
+handler of booth queue -> 
+    

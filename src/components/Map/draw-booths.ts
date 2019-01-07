@@ -89,7 +89,7 @@ function initialize(gl: WebGLRenderingContext) {
             addLabel(b, 12, 'S');
             addLabel(b, 14, 'M');
 
-            
+
             const detailsCanvas = createDetailsCanvas(b);
 
             drawer.addObject({
@@ -168,7 +168,7 @@ function prepareBoothDetailsFactors() {
     for (const b of booths) {
         const r = b.rect;
         const ar = [];
-        let lastFactor:number;
+        let lastFactor: number;
         for (const p of prefixes.slice(0, prefixes.length - 1)) {
             const cr = drawer.getObject(`bLab${p}${b.id}`).canvasTmp;
             const xFactor = r.w / cr.width;
@@ -217,8 +217,23 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, ptscale: nu
     drawer.draw(u_matrix, ptscale);
 }
 
+// monitor changes from state, set of booths that changed thair state (colored)
+// dispatch changes separately for properties 
+// accumulate booths, that affect color
+// bookmarkedChanged (booth, state)
+// selectedChanged (booth, state)
+// listedChanged 
+
+// TODO: learn how to subscribe to specific event
+
 function getBoothState(b: Booth) {
     const g = store.getters;
+    // hoveredBoothIds
+    // selectedBoothIdsSet
+    // listBoothsIdsSet
+    // store.state.bookmarked
+
+
     const hover = g.hoveredBoothIds.indexOf(b.id) !== -1;
     const selected = !!g.selectedBoothIdsSet.has(b.id);
     const inList = g.listBoothsIdsSet.has(b.id);
@@ -228,7 +243,7 @@ function getBoothState(b: Booth) {
     const empty = b.exhibitors.length === 0;
     const error = !!b.error;
     const bookmarked = b.exhibitors.find(e => store.state.bookmarked[e])
-    return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked }
+    return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked };
 }
 
 
