@@ -214,8 +214,21 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, ptscale: nu
     // see how it was done in old version
 
     updateVisibleDetails(ptscale);
-
     drawer.draw(u_matrix, ptscale);
+}
+
+function getBoothState(b: Booth) {
+    const g = store.getters;
+    const hover = g.hoveredBoothIds.indexOf(b.id) !== -1;
+    const selected = !!g.selectedBoothIdsSet.has(b.id);
+    const inList = g.listBoothsIdsSet.has(b.id);
+    const dimmedFp = g.dimmed;
+    const dimmed = dimmedFp && !inList && !selected;
+
+    const empty = b.exhibitors.length === 0;
+    const error = !!b.error;
+    const bookmarked = b.exhibitors.find(e => store.state.bookmarked[e])
+    return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked }
 }
 
 
