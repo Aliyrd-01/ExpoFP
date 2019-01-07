@@ -29,6 +29,9 @@ export default class Drawer {
     private readonly fixdeltaBuffer: WebGLBuffer;
     private readonly fixdeltaptLocation: number;
     private readonly fixdeltaptBuffer: WebGLBuffer;
+    private readonly fixdeltamaxptLocation: number;
+    private readonly fixdeltamaxptBuffer: WebGLBuffer;
+
     private readonly groups: DrawerGroup[] = [];
 
     private readonly indexBufferPool: WebGLBuffer[] = [];
@@ -49,6 +52,7 @@ export default class Drawer {
         this.texfixLocation = gl.getAttribLocation(this.program, "a_texfix");
         this.fixdeltaLocation = gl.getAttribLocation(this.program, "a_fixdelta");
         this.fixdeltaptLocation = gl.getAttribLocation(this.program, "a_fixdeltapt");
+        this.fixdeltamaxptLocation = gl.getAttribLocation(this.program, "a_fixdeltamaxpt");
 
         this.centerBuffer = gl.createBuffer();
         this.deltaBuffer = gl.createBuffer();
@@ -59,6 +63,7 @@ export default class Drawer {
         this.texfixBuffer = gl.createBuffer();
         this.fixdeltaBuffer = gl.createBuffer();
         this.fixdeltaptBuffer = gl.createBuffer();
+        this.fixdeltamaxptBuffer = gl.createBuffer();
         // this.indexBuffer = gl.createBuffer();
     }
 
@@ -104,6 +109,7 @@ export default class Drawer {
         const texfixes: number[] = [];
         const fixdeltas: number[] = [];
         const fixdeltapts: number[] = [];
+        const fixdeltamaxpts: number[] = [];
 
         const sprite = new Sprite();
 
@@ -212,9 +218,20 @@ export default class Drawer {
                     val = [0, 0];
                 } else {
                     val = [xp1, yp1];
-                    //val = [0, 0];
                 }
                 fixdeltapts.push(...val, ...val, ...val, ...val);
+            }
+
+            // fixdeltamaxpt 4 vec2
+            {
+                let val: Vec2;
+                if (!w.spriteItem || w.texPosition === 'center') {
+                    val = [0, 0];
+                } else {
+                    val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
+                    //val = [0, 0];
+                }
+                fixdeltamaxpts.push(...val, ...val, ...val, ...val);
             }
         }
 
@@ -227,6 +244,7 @@ export default class Drawer {
         this.bufferFloat32Array(this.texfixBuffer, texfixes);
         this.bufferFloat32Array(this.fixdeltaBuffer, fixdeltas);
         this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
+        this.bufferFloat32Array(this.fixdeltamaxptBuffer, fixdeltamaxpts);
     }
 
     private populateGroups() {
@@ -305,6 +323,7 @@ export default class Drawer {
         this.enableBuffer(this.texfixBuffer, this.texfixLocation, 2);
         this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
         this.enableBuffer(this.fixdeltaptBuffer, this.fixdeltaptLocation, 2);
+        this.enableBuffer(this.fixdeltamaxptBuffer, this.fixdeltamaxptLocation, 2);
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -361,8 +380,9 @@ attribute vec2 a_delta;
 attribute vec2 a_deltapt;
 attribute vec4 a_color;
 attribute vec2 a_texcoord; 
-attribute vec2 a_fixdelta; // from center
-attribute vec2 a_fixdeltapt; // from center
+attribute vec2 a_fixdelta;
+attribute vec2 a_fixdeltapt; 
+attribute vec2 a_fixdeltamaxpt; 
 attribute vec2 a_texfix;
 
 uniform mat4 u_matrix;   
@@ -374,16 +394,20 @@ varying vec4 v_color;
 
 void main() {
     vec2 delta = a_delta + a_deltapt * u_ptscale;
-    vec2 texdelta = delta;
-    // vec2 texdeltapt = texdelta / u_ptscale;
-    // vec2 texcoord = a_texfix + texdeltapt;
 
     vec2 fixdelta = a_fixdelta + a_fixdeltapt * u_ptscale;
-    vec2 difffix = delta - fixdelta;
-    vec2 texdeltapt = difffix / u_ptscale;
+
+    // calc maxdelta from a_fixdeltamaxpt
+    // this is relative to fix point (on svg)
+    vec2 fixdeltamax = a_fixdeltamaxpt * u_ptscale;
+    vec2 deltamax = fixdeltamax + fixdelta;
+    if (a_fixdeltamaxpt.x > 0.0){
+        delta = vec2(min(delta.x, deltamax.x), min(delta.y, deltamax.y));
+    }
+
+    vec2 diff = delta - fixdelta;
+    vec2 texdeltapt = diff / u_ptscale;
     vec2 texcoord = a_texfix + texdeltapt;
-
-
 
     vec2 rotatedDelta =  vec2(
         delta.x * a_rotate.y + delta.y * a_rotate.x,
