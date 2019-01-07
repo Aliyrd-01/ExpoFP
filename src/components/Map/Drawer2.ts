@@ -25,6 +25,10 @@ export default class Drawer {
     // private readonly texcoordBuffer: WebGLBuffer;
     private readonly texfixLocation: number;
     private readonly texfixBuffer: WebGLBuffer;
+    private readonly fixdeltaLocation: number;
+    private readonly fixdeltaBuffer: WebGLBuffer;
+    private readonly fixdeltaptLocation: number;
+    private readonly fixdeltaptBuffer: WebGLBuffer;
     private readonly groups: DrawerGroup[] = [];
 
     private readonly indexBufferPool: WebGLBuffer[] = [];
@@ -43,6 +47,8 @@ export default class Drawer {
         this.rotateLocation = gl.getAttribLocation(this.program, "a_rotate");
         // this.texcoordLocation = gl.getAttribLocation(this.program, "a_texcoord");
         this.texfixLocation = gl.getAttribLocation(this.program, "a_texfix");
+        this.fixdeltaLocation = gl.getAttribLocation(this.program, "a_fixdelta");
+        this.fixdeltaptLocation = gl.getAttribLocation(this.program, "a_fixdeltapt");
 
         this.centerBuffer = gl.createBuffer();
         this.deltaBuffer = gl.createBuffer();
@@ -51,6 +57,8 @@ export default class Drawer {
         this.rotateBuffer = gl.createBuffer();
         // this.texcoordBuffer = gl.createBuffer();
         this.texfixBuffer = gl.createBuffer();
+        this.fixdeltaBuffer = gl.createBuffer();
+        this.fixdeltaptBuffer = gl.createBuffer();
         // this.indexBuffer = gl.createBuffer();
     }
 
@@ -94,6 +102,8 @@ export default class Drawer {
         const rotates: number[] = [];
         const texcoords: number[] = [];
         const texfixes: number[] = [];
+        const fixdeltas: number[] = [];
+        const fixdeltapts: number[] = [];
 
         const sprite = new Sprite();
 
@@ -137,18 +147,20 @@ export default class Drawer {
             const w = this.objects[i];
             // 4 vec2
             centers.push(...w.center, ...w.center, ...w.center, ...w.center);
+            // preare points x1, y1, ... xp1, yp1
+            const d = w.deltas || [0, 0, 0, 0];
+            const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
+            const dp = w.deltaPts || [0, 0, 0, 0];
+            const scale = w.scalePts || 1;
+            const xp1 = dp[0] * scale, yp1 = dp[1] * scale, xp2 = dp[2] * scale, yp2 = dp[3] * scale;
             // 4 vec2
             {
-                const d = w.deltas || [0, 0, 0, 0];
-                const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
                 deltas.push(x1, y1, x2, y1, x1, y2, x2, y2);
             }
             // 4 vec2
             {
-                const d = w.deltaPts || [0, 0, 0, 0];
-                const scale = w.scalePts || 1;
-                const x1 = d[0] * scale, y1 = d[1] * scale, x2 = d[2] * scale, y2 = d[3] * scale;
-                deltaPts.push(x1, y1, x2, y1, x1, y2, x2, y2);
+
+                deltaPts.push(xp1, yp1, xp2, yp1, xp1, yp2, xp2, yp2);
             }
             // 4 vec4
             {
@@ -172,13 +184,37 @@ export default class Drawer {
             }
             // texfix 4 vec2
             {
+                let val: Vec2;
                 if (!w.spriteItem) {
-                    texfixes.push(0, 0, 0, 0, 0, 0, 0, 0);
+                    val = [0, 0];
+                } else if (w.texPosition === 'center') {
+                    val = [w.spriteItem.rect.cx, w.spriteItem.rect.cy];
                 } else {
-                    // this is for center texPosition only
-                    const tf = [w.spriteItem.rect.cx, w.spriteItem.rect.cy];
-                    texfixes.push(...tf, ...tf, ...tf, ...tf);
+                    val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
                 }
+
+                texfixes.push(...val, ...val, ...val, ...val);
+            }
+            // fixdelta 4 vec2
+            {
+                let val: Vec2;
+                if (!w.spriteItem || w.texPosition === 'center') {
+                    val = [0, 0];
+                } else {
+                    val = [x1, y1];
+                }
+                fixdeltas.push(...val, ...val, ...val, ...val);
+            }
+            // fixdeltapt 4 vec2
+            {
+                let val: Vec2;
+                if (!w.spriteItem || w.texPosition === 'center') {
+                    val = [0, 0];
+                } else {
+                    val = [xp1, yp1];
+                    //val = [0, 0];
+                }
+                fixdeltapts.push(...val, ...val, ...val, ...val);
             }
         }
 
@@ -189,6 +225,8 @@ export default class Drawer {
         this.bufferFloat32Array(this.rotateBuffer, rotates);
         // this.bufferFloat32Array(this.texcoordBuffer, texcoords);
         this.bufferFloat32Array(this.texfixBuffer, texfixes);
+        this.bufferFloat32Array(this.fixdeltaBuffer, fixdeltas);
+        this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
     }
 
     private populateGroups() {
@@ -265,6 +303,8 @@ export default class Drawer {
         this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
         // this.enableBuffer(this.texcoordBuffer, this.texcoordLocation, 2);
         this.enableBuffer(this.texfixBuffer, this.texfixLocation, 2);
+        this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
+        this.enableBuffer(this.fixdeltaptBuffer, this.fixdeltaptLocation, 2);
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -296,7 +336,7 @@ export interface DrawerObject {
     spriteItem?: SpriteItem;
     canvasTmp?: HTMLCanvasElement;
     order: number;
-    
+
     //always: boolean;
 }
 
@@ -321,7 +361,8 @@ attribute vec2 a_delta;
 attribute vec2 a_deltapt;
 attribute vec4 a_color;
 attribute vec2 a_texcoord; 
-// attribute vec2 a_deltafix;
+attribute vec2 a_fixdelta; // from center
+attribute vec2 a_fixdeltapt; // from center
 attribute vec2 a_texfix;
 
 uniform mat4 u_matrix;   
@@ -334,8 +375,15 @@ varying vec4 v_color;
 void main() {
     vec2 delta = a_delta + a_deltapt * u_ptscale;
     vec2 texdelta = delta;
-    vec2 texdeltapt = texdelta / u_ptscale;
+    // vec2 texdeltapt = texdelta / u_ptscale;
+    // vec2 texcoord = a_texfix + texdeltapt;
+
+    vec2 fixdelta = a_fixdelta + a_fixdeltapt * u_ptscale;
+    vec2 difffix = delta - fixdelta;
+    vec2 texdeltapt = difffix / u_ptscale;
     vec2 texcoord = a_texfix + texdeltapt;
+
+
 
     vec2 rotatedDelta =  vec2(
         delta.x * a_rotate.y + delta.y * a_rotate.x,

@@ -16,22 +16,35 @@ function initialize(gl: WebGLRenderingContext) {
     const dotW = dotCanvas.width / 2;
     const dotH = dotCanvas.width / 2;
 
-    function addLabel(b: Booth, fontSize: number, sizeName) {
+    function addLabel(b: Booth, fontSize: number, sizeName: string) {
         const r = b.rect;
         const upscale = 1;
         const canvas = createTextCanvas(b.name, fontSize * upscale * devicePixelRatio);
         const w = canvas.width / 2 / upscale;
         const h = canvas.height / 2 / upscale;
 
-        drawer.addObject({
-            id: `bLab${sizeName}${b.id}`,
-            center: [r.cx, r.cy],
-            deltas: [0, 0, 0, 0],
-            deltaPts: [-w, -h, w, h],
-            canvasTmp: canvas,
-            texPosition: 'center',
-            order: 20
-        });
+        if (sizeName !== 'M') {
+            drawer.addObject({
+                id: `bLab${sizeName}${b.id}`,
+                center: [r.cx, r.cy],
+                deltas: [0, 0, 0, 0],
+                deltaPts: [-w, -h, w, h],
+                canvasTmp: canvas,
+                texPosition: 'center',
+                order: 20
+            });
+        } else {
+            drawer.addObject({
+                id: `bLab${sizeName}${b.id}`,
+                center: [r.cx, r.cy],
+                deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+                deltaPts: [.5, .5, -.5, -.5],
+                canvasTmp: canvas,
+                texPosition: 'lefttop',
+                order: 20
+            });
+        }
+
     }
 
 
@@ -124,11 +137,12 @@ function prepareBoothDetailsFactors() {
         for (const p of prefixes) {
             // if (p === 'Dot') continue;
             // deltapx - the real size in pixels
-            const pxs = drawer.getObject(`bLab${p}${b.id}`).deltaPts;
-            const width = -pxs[0] + pxs[2];
-            const height = -pxs[1] + pxs[3];
-            const xFactor = r.w / width;
-            const yFactor = r.h / height;
+            const cr = drawer.getObject(`bLab${p}${b.id}`).canvasTmp;
+            // const width = -pxs[0] + pxs[2];
+            // const height = -pxs[1] + pxs[3];
+
+            const xFactor = r.w / cr.width;
+            const yFactor = r.h / cr.height;
             const factor = Math.min(xFactor, yFactor);
             ar.push(factor);
         }
@@ -142,7 +156,6 @@ function updateVisibleDetails(ptscale: number) {
     for (const b of booths) {
         let visiblePrefix = '';
         const ff = mapBoothFactors.get(b.id);
-
 
         // if (ptscale < ff[0]) {
         //     visiblePrefix = 'XS';
