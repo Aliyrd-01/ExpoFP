@@ -1,6 +1,8 @@
 import * as twgl from 'twgl.js'
+import Color from 'color';
 import Drawer from './Drawer'
 import { createLabelCanvas, createCircleCanvas, createDetailsCanvas } from './canvases';
+import settings from '@/settings';
 // import Sprite, { createTextCanvas, SpriteItem } from './sprite'
 
 let drawer: Drawer;
@@ -9,7 +11,6 @@ function initialize(gl: WebGLRenderingContext) {
     drawer = new Drawer(gl);
 
     const booths = store.getters.boothsArray as Booth[];
-    const boothColor = Color.fromHex(__settings.colors.booths.default).toVec4();
     const borderColor = [1, 1, 1, 1] as Vec4;
 
     const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
@@ -34,29 +35,6 @@ function initialize(gl: WebGLRenderingContext) {
             texPosition: 'center',
             order: 20, rotateRadians
         });
-
-        // if (sizeName !== 'M') {
-        //     drawer.addObject({
-        //         id: `bLab${sizeName}${b.id}`,
-        //         center: [r.cx, r.cy],
-        //         deltas: [0, 0, 0, 0],
-        //         deltaPts: [-w, -h, w, h],
-        //         canvasTmp: canvas,
-        //         texPosition: 'center',
-        //         order: 20, rotateRadians
-        //     });
-        // } else {
-        //     drawer.addObject({
-        //         id: `bLab${sizeName}${b.id}`,
-        //         center: [r.cx, r.cy],
-        //         deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-        //         deltaPts: [.5, .5, -.5, -.5],
-        //         canvasTmp: canvas,
-        //         texPosition: 'lefttop',
-        //         order: 20, rotateRadians
-        //     });
-        // }
-
     }
 
     for (const b of booths) {
@@ -68,7 +46,7 @@ function initialize(gl: WebGLRenderingContext) {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [.5, .5, -.5, -.5],
-            color: boothColor,
+            color: getBoothColor(b),
             order: 10, rotateRadians
         });
 
@@ -101,18 +79,6 @@ function initialize(gl: WebGLRenderingContext) {
                 texPosition: 'lefttop',
                 order: 20, rotateRadians
             });
-
-            // // dots
-            // drawer.addObject({
-            //     id: `bLabDetails${b.id}`,
-            //     center: [r.cx, r.cy],
-            //     deltas: [0, 0, 0, 0],
-            //     deltaPts: [-dotW, -dotH, dotW, dotH],
-            //     canvasTmp: detailsCanvas,
-            //     texPosition: 'center',
-            //     order: 20, rotateRadians
-            // });
-            // addLabel(b, 20, 'L')
         }
 
         // borders
@@ -205,6 +171,15 @@ function updateVisibleDetails(ptscale: number) {
     }
 }
 
+const boothColorsToHandle = new Set<number>();
+function updateBoothColors() {
+    // avoid using TS downlevel iterations
+    for (const id of Array.from(boothColorsToHandle)) {
+        const color = getBoothColor(store.state.booths[id]);
+        drawer.updateColor(`b${id}`, color);
+    }
+}
+
 export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, ptscale: number) {
     // draw booths there 
     if (!drawer || drawer.gl !== gl) initialize(gl);
@@ -214,6 +189,8 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, ptscale: nu
     // see how it was done in old version
 
     updateVisibleDetails(ptscale);
+    updateBoothColors();
+
     drawer.draw(u_matrix, ptscale);
 }
 
@@ -246,5 +223,43 @@ function getBoothState(b: Booth) {
     return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked };
 }
 
+// todo: profile&cache getting 
+function getBoothColor(b: Booth): Vec4 {
+    const s = getBoothState(b);
+    let color:Color;
+     
+    if (s.selected) color = Color(settings.colors.booths.selected);
+    else color = Color(settings.colors.booths.default);
+    
+    if (s.hover){
+        color = color.darken(0.2);
+    }
+
+    // if (s.selected){
+    //     console.log('settings.colors.booths.selected', settings.colors.booths.selected, color.toString());
+    //     debugger
+    // }
+
+    return ColorInfo.fromHex(color.hex()).toVec4();
+}
 
 
+
+
+store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {
+    handleBoothSetsDifference(new Set(v), new Set(oldV));
+});
+
+
+store.watch(((s, g) => g.selectedBoothIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
+    handleBoothSetsDifference(v, oldV);
+});
+
+
+function handleBoothSetsDifference(v: Set<number>, oldV: Set<number>) {
+    const newElements = Array.from(v).filter(x => !oldV.has(x));
+    const missingElements = Array.from(oldV).filter(x => !v.has(x));
+
+    newElements.forEach(x => boothColorsToHandle.add(x));
+    missingElements.forEach(x => boothColorsToHandle.add(x));
+}

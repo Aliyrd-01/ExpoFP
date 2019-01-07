@@ -1,7 +1,7 @@
 // import extendGlobal from '@/utils/extend-global'
 export { }
 namespace local {
-    export class Color {
+    export class ColorInfo {
         readonly r: number; // 0 - 255
         readonly g: number; // 0 - 255
         readonly b: number; // 0 - 255
@@ -16,7 +16,7 @@ namespace local {
 
         static fromHex(hex: string) {
             var ar = hexToRgbA(hex);
-            return new Color(ar[0], ar[1], ar[2], ar[3]);
+            return new ColorInfo(ar[0], ar[1], ar[2], ar[3]);
         }
 
         toVec4(): Vec4 {
@@ -41,9 +41,9 @@ function hexToRgbA(hex) {
 }
 
 declare global {
-    const Color: typeof local.Color;
-    type Color = local.Color;
+    const ColorInfo: typeof local.ColorInfo;
+    type ColorInfo = local.ColorInfo;
 }
 
-extendGlobal({ Color: local.Color })
+extendGlobal({ ColorInfo: local.ColorInfo })
 
