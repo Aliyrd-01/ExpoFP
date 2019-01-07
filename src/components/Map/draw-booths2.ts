@@ -16,6 +16,8 @@ function initialize(gl: WebGLRenderingContext) {
     const dotW = dotCanvas.width / 2;
     const dotH = dotCanvas.width / 2;
 
+    const rotateRadians = 15 * Math.PI / 180;
+
     function addLabel(b: Booth, fontSize: number, sizeName: string) {
         const r = b.rect;
         const upscale = 1;
@@ -31,7 +33,7 @@ function initialize(gl: WebGLRenderingContext) {
                 deltaPts: [-w, -h, w, h],
                 canvasTmp: canvas,
                 texPosition: 'center',
-                order: 20
+                order: 20, rotateRadians
             });
         } else {
             drawer.addObject({
@@ -41,12 +43,11 @@ function initialize(gl: WebGLRenderingContext) {
                 deltaPts: [.5, .5, -.5, -.5],
                 canvasTmp: canvas,
                 texPosition: 'lefttop',
-                order: 20
+                order: 20, rotateRadians
             });
         }
 
     }
-
 
     for (const b of booths) {
         const r = b.rect;
@@ -58,7 +59,7 @@ function initialize(gl: WebGLRenderingContext) {
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [.5, .5, -.5, -.5],
             color: boothColor,
-            order: 10
+            order: 10, rotateRadians
         });
 
         // labels
@@ -71,7 +72,7 @@ function initialize(gl: WebGLRenderingContext) {
                 deltaPts: [-dotW, -dotH, dotW, dotH],
                 canvasTmp: dotCanvas,
                 texPosition: 'center',
-                order: 20
+                order: 20, rotateRadians
             });
 
             addLabel(b, 9, 'XS')
@@ -88,7 +89,7 @@ function initialize(gl: WebGLRenderingContext) {
             deltaPts: [-.5, -.5, .5, .5],
             scalePts: devicePixelRatio,
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
         drawer.addObject({
             id: `bBorderL${b.id}`,
@@ -97,7 +98,7 @@ function initialize(gl: WebGLRenderingContext) {
             scalePts: devicePixelRatio,
             deltaPts: [-.5, -.5, .5, .5],
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
         drawer.addObject({
             id: `bBorderB${b.id}`,
@@ -106,7 +107,7 @@ function initialize(gl: WebGLRenderingContext) {
             scalePts: devicePixelRatio,
             deltaPts: [-.5, -.5, .5, .5],
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
         drawer.addObject({
             id: `bBorderR${b.id}`,
@@ -115,7 +116,7 @@ function initialize(gl: WebGLRenderingContext) {
             scalePts: devicePixelRatio,
             deltaPts: [-.5, -.5, .5, .5],
             color: borderColor,
-            order: 40
+            order: 40, rotateRadians
         });
     }
 }

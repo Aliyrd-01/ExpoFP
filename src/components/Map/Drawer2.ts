@@ -93,7 +93,7 @@ export default class Drawer {
         if (this.groupsDirty) {
             this.populateGroups();
             // TODO: uncomment
-            //this.groupsDirty = false;
+            this.groupsDirty = false;
         }
     }
 
