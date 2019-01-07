@@ -185,31 +185,14 @@ export function drawBooths(gl: WebGLRenderingContext, u_matrix: any, ptscale: nu
     if (!drawer || drawer.gl !== gl) initialize(gl);
     prepareBoothDetailsFactors();
 
-    // TODO: determine what to show for specific booth
-    // see how it was done in old version
-
     updateVisibleDetails(ptscale);
     updateBoothColors();
 
     drawer.draw(u_matrix, ptscale);
 }
 
-// monitor changes from state, set of booths that changed thair state (colored)
-// dispatch changes separately for properties 
-// accumulate booths, that affect color
-// bookmarkedChanged (booth, state)
-// selectedChanged (booth, state)
-// listedChanged 
-
-// TODO: learn how to subscribe to specific event
-
 function getBoothState(b: Booth) {
     const g = store.getters;
-    // hoveredBoothIds
-    // selectedBoothIdsSet
-    // listBoothsIdsSet
-    // store.state.bookmarked
-
 
     const hover = g.hoveredBoothIds.indexOf(b.id) !== -1;
     const selected = !!g.selectedBoothIdsSet.has(b.id);
@@ -243,9 +226,6 @@ function getBoothColor(b: Booth): Vec4 {
     return ColorInfo.fromHex(color.hex()).toVec4();
 }
 
-
-
-
 store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {
     handleBoothSetsDifference(new Set(v), new Set(oldV));
 });
@@ -262,4 +242,6 @@ function handleBoothSetsDifference(v: Set<number>, oldV: Set<number>) {
 
     newElements.forEach(x => boothColorsToHandle.add(x));
     missingElements.forEach(x => boothColorsToHandle.add(x));
+
+    // may be later -> call require-redraw
 }
