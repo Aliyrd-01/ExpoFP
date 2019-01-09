@@ -1,12 +1,11 @@
 module.exports = {
     // 
-    title: 'ExpoFP Expo Plan',
-    homeUrl : 'https://www.myexpoexpo.com/expoexpo2018/Public/MainHall.aspx?',
-    logoUrl: 'expofp.png',
+    title: 'JTrade Expo Plan',
+    homeUrl : 'https://www.jtrade.co.uk/',
+    logoUrl: 'jtrade-logo.png',
     gTag: 'UA-857963-22',
-    cloudFrontLiveId: 'E3PNGMVOHFIU1A',
-    cloudFrontDevId: null,
+    cloudFrontLiveId: 'E3T78ESGFBYYZR',
+//    cloudFrontDevId: null,
     // optional overrides
-    //dataUrl: `https://s3.amazonaws.com/efp-data/expos/expo/data`,
-    
+    //dataUrl: `https://efp-data.s3.amazonaws.com/expos/jtrade19/data`,
 }
