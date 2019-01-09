@@ -1,5 +1,5 @@
 const gitBranch = require('git-branch');
-const defaultExpo = "demo";
+const defaultExpo = "expo";
 
 let branch = gitBranch.sync();
 if (branch.startsWith("demo-")) branch = "demo";
