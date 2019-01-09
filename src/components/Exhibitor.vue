@@ -11,7 +11,7 @@
                 </a>
             </div>
             <div class="exhibitor__bar-booth" @click='$store.dispatch("toggleMapOverlay")'>Booth
-                <span v-for="booth in booths" :key="booth.id">
+                <span v-for="booth in booths.filter(b => !b.name.startsWith('X') && !b.name.startsWith('Y'))" :key="booth.id">
                     {{booth.name}}
                 </span></div>
         </template>
@@ -22,7 +22,7 @@
                 </span>
             </div> -->
             <div class="exhibitor__categories">
-                <a href='' v-for="booth in booths" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")' class="exhibitor__categories-booth">Booth {{booth.name}}</a>
+                <a href='' v-for="booth in booths.filter(b => !b.name.startsWith('X') && !b.name.startsWith('Y'))" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")' class="exhibitor__categories-booth">Booth {{booth.name}}</a>
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)" class="exhibitor__categories-cat">{{c.name}}</a>
             </div>
             <div class="exhibitor__description" :class='{collapsed : collapsed && !disableCollapse}' v-if="exhibitor.description || exhibitor.logo">

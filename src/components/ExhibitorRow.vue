@@ -7,7 +7,7 @@
             <i class="exhibitor-row__bk"></i>
         </div>
         <div class="exhibitor-row__booth">
-            <div v-for="booth in booths" :key="booth.id">
+            <div v-for="booth in booths.filter(b => !b.name.startsWith('X') && !b.name.startsWith('Y'))" :key="booth.id">
                 {{booth.name}}
             </div>
         </div>

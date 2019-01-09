@@ -38,14 +38,25 @@ export function drawSingleBooth(b: Booth) {
     ctx.save();
     ctx.translate(b.rect.x1, b.rect.y1);
 
+    let defColor =  settings.colors.booths.default;
+    if (b.name.startsWith('Y')){
+        defColor = '#aaa';
+    } else 
+    if (b.name.startsWith('X')){
+        defColor = '#82D13F';
+    } else if (parseInt(b.name)> 949 && parseInt(b.name) < 1000){
+        defColor = '#FF9E4D';
+    }
+
     const s = getBoothState(b)
+    
     let color: string;
     if (s.error) color = '#f33'
     else if (s.selected) color = settings.colors.booths.selected;
     // else if (s.selected) color = settings.colors.booths.selected;
     // else if (s.hover) color = !s.empty ? settings.colors.booths.defaultHover : settings.colors.booths.emptyHover;
     else if (s.empty) color = settings.colors.booths.empty;
-    else color = settings.colors.booths.default;
+    else color = defColor;
 
     if (s.dimmed && !s.selected) {
         color = settings.colors.booths.empty; // Color(color).desaturate(0.5).toString();
@@ -72,7 +83,7 @@ export function getBoothState(b: Booth) {
     const dimmed = dimmedFp && !inList && !selected;
 
     const empty = b.exhibitors.length === 0;
-    const error = !!b.error;
+    const error = !!b.error && !b.name.startsWith('Y');
     const bookmarked = b.exhibitors.find(e => store.state.bookmarked[e])
     return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked }
 }

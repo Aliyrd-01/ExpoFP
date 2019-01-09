@@ -82,6 +82,7 @@ function stateToUrl() {
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
         // console.log('history push', queryRaw);
         history.push(newQuery);
+        sendGa();
     } else {
         // console.log('history replace', queryRaw);
         history.replace(newQuery);
@@ -91,9 +92,22 @@ function stateToUrl() {
     savedSelectedBooth = booth;
 }
 
-if (store.state.previewExhibitor){
+if (store.state.previewExhibitor) {
     history.replace('?' + store.state.exhibitors[store.state.previewExhibitor].slug);
 }
 
 dispatchFromUrl();
 setTitle();
+
+let timeout: number;
+
+function sendGa() {
+    if (typeof (gtag) === "undefined") return;
+    if (timeout) window.clearTimeout(timeout);
+    timeout = window.setTimeout(() => {
+        gtag('config', GTAG, {
+            'page_title': document.title,
+            'page_path': location.pathname + location.search
+        });
+    }, 1000);
+}

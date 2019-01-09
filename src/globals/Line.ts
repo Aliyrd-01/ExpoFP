@@ -31,6 +31,20 @@ namespace local {
             return new Line(svgLine.x1.baseVal.value, svgLine.y1.baseVal.value, svgLine.x2.baseVal.value, svgLine.y2.baseVal.value);
         }
 
+        static fromRect(r: Rect){
+            // 4 lines
+            return [
+                // top
+                new Line(r.x1, r.y1, r.x2, r.y1),
+                // right
+                new Line(r.x2, r.y1, r.x2, r.y2),
+                // bottom
+                new Line(r.x2, r.y2, r.x1, r.y2),
+                // left
+                new Line(r.x1, r.y2, r.x1, r.y1),
+            ]
+        }
+
         intersects(r: Rect|Line): boolean {
             const swap = this.x1 > this.x2 || this.x1 === this.x2 && this.y2 < this.y1;
             const x1 = swap ? this.x2 : this.x1;

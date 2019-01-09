@@ -3,19 +3,26 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const fs = require('fs');
 const webpack = require('webpack');
 const expo = require('./scripts/expo')
-const expoDefine = require(`./expos/${expo}/define`)
+const config = require(`./expos/${expo}/config`)
 
-const replaceDataBase = `https://${expo}.expofp.com/data`;
-const devDataBase = `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
+const replaceDataBase = config.dataUrl || `https://${expo}.expofp.com/data`;
+const devDataBase = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
 
-const EFP_DATA_URL_BASE = JSON.stringify(replaceDataBase);
+const define = {
+    EFP_DATA_URL_BASE: JSON.stringify(replaceDataBase),
+    EFP_EXPO: JSON.stringify(expo),
+    EFP_TITLE: JSON.stringify(config.title),
+    EFP_HOME_URL: JSON.stringify(config.homeUrl),
+    EFP_LOGO_URL: JSON.stringify(config.logoUrl),
+    GTAG: JSON.stringify(config.gTag)
+}
 
-const EFP_EXPO = JSON.stringify(expo);
 
 module.exports = {
     devServer: {
         contentBase: [path.join(__dirname, 'public'), path.join(__dirname, `expos/${expo}`)]
     },
+    baseUrl: './',
     configureWebpack: {
         plugins: [
             new CopyWebpackPlugin(
@@ -27,7 +34,7 @@ module.exports = {
                     }
                 ]
             ),
-            new webpack.DefinePlugin({ EFP_DATA_URL_BASE, EFP_EXPO, ...expoDefine }),
+            new webpack.DefinePlugin(define),
             {
                 apply: (compiler) => {
                     compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {

@@ -9,7 +9,7 @@ import { getFont } from '@/components/Map/utils';
 
 // TODO: dynamic parts
 var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
-const parts = iOS ? 12 : (c.deviceScale >= 1.5 ? 6 : 2);
+const parts = iOS ? 12 : (c.deviceScale >= 1.5 ? 4 : 2);
 const dirtySprites: string[] = [];
 
 export function drawSprites() {
@@ -103,9 +103,9 @@ function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
 
     ctx.drawImage(sprite.canvas, 0, 0, fRect.w, fRect.h);
 
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 0.3;
-    ctx.strokeRect(0, 0, fRect.w, fRect.h);
+    // ctx.strokeStyle = '#000';
+    // ctx.lineWidth = 0.3;
+    // ctx.strokeRect(0, 0, fRect.w, fRect.h);
 
     ctx.restore();
 
@@ -113,8 +113,6 @@ function drawSprite(id: string, fRect: Rect, sRect: Rect): boolean {
 
     return sprite.dirty;
 }
-
-
 
 const exactCanvasCache = new Map<string, HTMLCanvasElement>();
 // const exactCanvasCacheInfo = new Map<string, { lastTouch: number, size: number }>();
