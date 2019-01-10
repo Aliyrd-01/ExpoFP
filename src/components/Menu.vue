@@ -86,11 +86,11 @@ export default {
         padding: 1.5rem 1rem;
         font-size: 2rem;
         font-weight: 100;
-        background: #fff;
+        background: #000;
         text-align: center;
         margin-right: -3rem;
         img {
-            width: 160px;
+            width: 220px;
             max-height: 100px;
             opacity: 0;
             transition: opacity 500ms;
