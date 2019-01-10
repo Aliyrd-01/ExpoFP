@@ -17,6 +17,7 @@ for (const b of Object.values(booths)) {
     boothsBySlug.set(b.slug, b);
 }
 
+
 for (const r of d3.select(svg).select('#Booths').selectAll('rect').nodes() as SVGRectElement[]) {
     const idInSvg = r.id.substring(1);
     let booth = boothsBySlug.get(idInSvg);
