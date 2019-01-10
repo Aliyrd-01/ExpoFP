@@ -1,0 +1,32 @@
+import { validate } from 'jsonschema'
+
+const schema = {
+    type: "object",
+    properties: {
+        booths: {
+            type: "array", required: true,
+            items: {
+                type: "object",
+                properties: {
+                    id: { type: "number", required: true },
+                    name: { type: "string", required: true },
+                    exhibitors: { type: "array", required: true, items: { type: "number" } },
+                    //availableColor: { type: "string", required: true },
+                    //soldColor: { type: "string", required: true },
+
+                }
+            }
+        }
+    }
+};
+
+
+
+const res = validate(__data, schema);
+if (res.errors.length) {
+    console.error('__data validation errors: ', res);
+} else {
+    console.info("__data is valid", res);
+}
+
+

@@ -38,24 +38,25 @@ export function drawSingleBooth(b: Booth) {
     ctx.save();
     ctx.translate(b.rect.x1, b.rect.y1);
 
-    let defColor =  settings.colors.booths.default;
-    if (b.name.startsWith('Y')){
-        defColor = '#aaa';
-    } else 
-    if (b.name.startsWith('X')){
-        defColor = '#82D13F';
-    } else if (parseInt(b.name)> 949 && parseInt(b.name) < 1000){
-        defColor = '#FF9E4D';
-    }
+    const s = getBoothState(b);
+    let defColor = s.empty ? (b.availableColor || settings.colors.booths.empty) : (b.soldColor || settings.colors.booths.default);
+    // if (b.name.startsWith('Y')){
+    //     defColor = '#aaa';
+    // } else 
+    // if (b.name.startsWith('X')){
+    //     defColor = '#82D13F';
+    // } else if (parseInt(b.name)> 949 && parseInt(b.name) < 1000){
+    //     defColor = '#FF9E4D';
+    // }
 
-    const s = getBoothState(b)
-    
+
+
     let color: string;
     if (s.error) color = '#f33'
     else if (s.selected) color = settings.colors.booths.selected;
     // else if (s.selected) color = settings.colors.booths.selected;
     // else if (s.hover) color = !s.empty ? settings.colors.booths.defaultHover : settings.colors.booths.emptyHover;
-    else if (s.empty) color = settings.colors.booths.empty;
+    //else if (s.empty) color = settings.colors.booths.empty;
     else color = defColor;
 
     if (s.dimmed && !s.selected) {
