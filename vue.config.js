@@ -22,7 +22,7 @@ module.exports = {
     devServer: {
         contentBase: [path.join(__dirname, 'public'), path.join(__dirname, `expos/${expo}`)]
     },
-    baseUrl: './',
+    publicPath: './',
     configureWebpack: {
         plugins: [
             new CopyWebpackPlugin(

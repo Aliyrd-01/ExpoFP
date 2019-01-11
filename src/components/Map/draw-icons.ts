@@ -78,7 +78,7 @@ function getIconCanvas(icon: IconData, size: number, dimmed: boolean) {
         const pathNodes = Array.from(d3.select(icon.svg).selectAll("path").nodes()) as SVGPathElement[];
         
         for(const a of pathNodes){
-            const p = new Path2D(a.getAttribute("d"));
+            const p = new Path2D(a.getAttribute("d") as any);
             ctx.fillStyle = c.dimColor("#2B2A29", dimmed);
             ctx.fill(p);
         }
