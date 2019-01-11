@@ -38,7 +38,7 @@ export function drawSingleLabel(b: Booth) {
     // return;
     const s = getBoothState(b);
     const color = c.dimColor('#fff', c.dimmed && s.dimmed);// && !s.selected
-    const xBooth = b.name.startsWith('X') ||  b.name.startsWith('Y');
+    const xBooth = b.name.startsWith('X') || b.name.startsWith('Y');
     ctx.save();
     try {
         if (c.detailLevel < 2000 && !xBooth) {
@@ -52,7 +52,7 @@ export function drawSingleLabel(b: Booth) {
             if (w > 0 && h > 0) {
                 // const rect = Rect.fromXywh(c.sXToSprite(b.rect.x1 + padding, b.rect.y1 + padding, w, h);
                 const weight = 500;
-               
+
                 const fontSize = getMaxFontSize(rect, b.name, weight);
                 if (fontSize) {
                     const font = getFont(fontSize, weight);
@@ -78,6 +78,10 @@ export function drawSingleLabel(b: Booth) {
         if (!rect) return;
 
         const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
+        if (!b.exhibitors.length) {
+            if (b.size) lines.push(b.size);
+            if (b.price) lines.push(b.price);
+        }
         if (!xBooth) lines.unshift(b.name);
         const fontSize = (c.detailLevel > 22000 ? 14 : 12) * c.deviceScale;
         // const fontSize = c.getUnscaled(detailsFontSize);
