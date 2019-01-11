@@ -180,9 +180,9 @@ export default {
         }
 
         &-booth {
-            background: #fb3e59;
+            background: #E9522A; //#fb3e59;
             &:hover {
-                background: #ea2b46;
+                background: #E9522A;//#ea2b46;
             }
         }
     }

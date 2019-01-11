@@ -18,7 +18,7 @@ export default function drawIcons() {
 
     // ctx.fillStyle = c.dimColor(settings.colors.columns);
     // const size = svg.he * c.zoomScale;// / c.deviceScale;// Math.floor(c.getUnscaled(16));
-    const sizeS = Math.floor(Math.sqrt(svgHeight * svgWidth) / 34);// c.getUnscaled(size);
+    const sizeS = Math.floor(Math.sqrt(svgHeight * svgWidth) / 6);// c.getUnscaled(size);
     const size = sizeS * c.zoomScale * c.deviceScale * c.fpScale;
 
     const rects = icons.map(i => {
@@ -60,10 +60,10 @@ function getIconCanvas(icon: IconData, size: number, dimmed: boolean) {
         // ctx.restore();
         // return canvas;
 
-        ctx.fillStyle = c.dimColor(settings.colors.icons, dimmed);
-        // ctx.fillRect(0, 0, size, size);
-        roundRect(ctx, 0, 0, size, size, size / 5);
-        ctx.fill();
+        // ctx.fillStyle = c.dimColor(settings.colors.icons, dimmed);
+        // // ctx.fillRect(0, 0, size, size);
+        // roundRect(ctx, 0, 0, size, size, size / 5);
+        // ctx.fill();
 
         const scale = Math.min(size / icon.width, size / icon.height) * 0.7;
         const scaledWidth = icon.width * scale;
@@ -74,10 +74,14 @@ function getIconCanvas(icon: IconData, size: number, dimmed: boolean) {
 
         ctx.scale(scale, scale);
 
-        const pathNode = d3.select(icon.svg).select("path").node() as SVGPathElement;
-        const p = new Path2D(pathNode.getAttribute("d"));
-        ctx.fillStyle = c.dimColor("#fff", dimmed);
-        ctx.fill(p);
+        //const pathNode = d3.select(icon.svg).select("path").node() as SVGPathElement;
+        const pathNodes = Array.from(d3.select(icon.svg).selectAll("path").nodes()) as SVGPathElement[];
+        
+        for(const a of pathNodes){
+            const p = new Path2D(a.getAttribute("d") as any);
+            ctx.fillStyle = c.dimColor("#2B2A29", dimmed);
+            ctx.fill(p);
+        }
 
         canvasCache.set(key, canvas);
     }

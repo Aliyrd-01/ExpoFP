@@ -1,7 +1,8 @@
 declare const __data: {
     booths: Booth[],
     exhibitors: Exhibitor[],
-    categories: Category[]
+    categories: Category[],
+    reserveInstructions: string
 };
 declare const __fp: string;
 declare const __icons: { [id: string]: string };
@@ -15,7 +16,12 @@ interface Booth {
     slug: string,
     error?: boolean,
     size: string,
-    price: string
+    price: string,
+    availableColor: string,
+    soldColor: string,
+    buyUrl: string,
+    boothTypeName: string,
+    isOnHold: boolean
 }
 
 interface Exhibitor {

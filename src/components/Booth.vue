@@ -4,10 +4,13 @@
             <div class="bar">Booth {{booth.name}}</div>
         </template>
         <div class="booth" v-if="!boothExhibitors.length">
-            <div class="info" v-if='booth.size'>Size: {{booth.size}}</div>
-            <div class="info" v-if='booth.price'>Price: {{booth.price}}</div>
-            <div class="buy">
-                <button @click="buy">Buy</button>
+            <div class="info" v-if='booth.isOnHold'>On Hold</div>
+            <div class="info" v-if='booth.boothTypeName && !booth.isOnHold'>Booth Type: {{booth.boothTypeName}}<br/><br/></div>
+            <div class="info" v-if='booth.size && !booth.isOnHold'>{{booth.size}}</div>
+            <div class="info" v-if='booth.price && !booth.isOnHold'>{{booth.price}}</div>
+            <span v-html="instructions" v-if='!booth.isOnHold'></span>
+            <div class="buy" v-if='booth.buyUrl && !booth.isOnHold'>
+                <a :href='booth.buyUrl' target='_blank'>Buy</a>
             </div>
         </div>
         <ExhibitorRow v-for="item in boothExhibitors" :key="item.id" :exhibitor='item' />
@@ -23,6 +26,9 @@ export default {
     components: { OverlayContent, ExhibitorRow },
     computed: {
         ...mapState(["exhibitors", "menu", "details"]),
+        instructions(){
+            return __data.reserveInstructions;
+        }, 
         booth() {
             return this.$store.getters.selectedBooth;
         },
@@ -31,6 +37,9 @@ export default {
         },
         show() {
             return !this.menu && this.details && this.details.type === "booth";
+        },
+        buyUrl() {
+
         }
     },
     methods: {
@@ -52,8 +61,10 @@ export default {
     text-align: center;
     margin: 2rem 0;
 }
-button {
+.buy > a {
     border: none;
+    text-decoration: none;
+    display: inline-block;
     background: #41b6e7;
     padding: 0.5rem 1rem;
     min-width: 10rem;

@@ -10,7 +10,7 @@
         <div class="menu__content">
             <a :href='EFP_HOME_URL' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo&nbsp;Home&nbsp;<i class="fas fa-external-link"></i></a>
             <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");' class="menu__item"><i class="fas fa-bookmark"></i> My Bookmarks ({{bookmarkedArray.length}})</a>
-            <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a>
+            <!-- <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a> -->
             <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>
             <div class="menu__item">Categories</div>
             <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='$store.dispatch("clickCategory", c.id);'>
@@ -86,11 +86,11 @@ export default {
         padding: 1.5rem 1rem;
         font-size: 2rem;
         font-weight: 100;
-        background: #fff;
+        background: #2B2A29;
         text-align: center;
         margin-right: -3rem;
         img {
-            width: 160px;
+            width: 220px;
             max-height: 100px;
             opacity: 0;
             transition: opacity 500ms;

@@ -7,6 +7,7 @@ import 'core-js/features/object/values';
 import 'core-js/features/string/ends-with';
 import 'path2d-polyfill';
 import 'url-polyfill';
+import '@/data-jsonschema'
 import '@/globals'
 import './settings'
 import '@/store'

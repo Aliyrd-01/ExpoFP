@@ -1,8 +1,8 @@
-import { replaceXml } from './demo-replace';
+// import { replaceXml } from './demo-replace';
 
 function parseSvg(text: string) {
-    if (EFP_EXPO === "demo") text = replaceXml(text);
-    console.log(text);
+    // if (EFP_EXPO === "demo") text = replaceXml(text);
+    // console.log(text);
 
     const parser = new DOMParser();
     return parser.parseFromString(text, "image/svg+xml").documentElement as any as SVGElement;

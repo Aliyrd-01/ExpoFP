@@ -17,7 +17,8 @@ export default {
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
         }),
         seminarsCategoryId: (state: any, getters:any) => {
-            return getters.categoriesArray.find(c => c.slug === 'seminars').id;
+            const cat = getters.categoriesArray.find(c => c.slug === 'seminars');
+            return cat ? cat.id : 0;
         }
     }
 }
