@@ -12,8 +12,10 @@ const defaultSettings = {
         icons: 'rgba(0,0,0,0.4)',
         dim: 0.5,
         booths: {
-            default: '#E9522A',
-            selected: '#2B2A29',
+            default: '#41b6e7',//'#41b6e7',
+            selected: '#FB3E59',
+            // default: '#E9522A',
+            // selected: '#2B2A29',
             // defaultHover: '#2ca2d3',
             // selected: '#f3b501',
             empty: '#b3b3b3',

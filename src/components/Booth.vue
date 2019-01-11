@@ -4,8 +4,9 @@
             <div class="bar">Booth {{booth.name}}</div>
         </template>
         <div class="booth" v-if="!boothExhibitors.length">
-            <div class="info" v-if='booth.size'>Size: {{booth.size}}</div>
-            <div class="info" v-if='booth.price'>Price: {{booth.price}}</div>
+            <div class="info" v-if='booth.boothTypeName'>Booth Type: {{booth.boothTypeName}}<br/><br/></div>
+            <div class="info" v-if='booth.size'>{{booth.size}}</div>
+            <div class="info" v-if='booth.price'>{{booth.price}}</div>
             <span v-html="instructions"></span>
             <div class="buy" v-if='booth.buyUrl'>
                 <a :href='booth.buyUrl' target='_blank'>Buy</a>

@@ -19,7 +19,8 @@ interface Booth {
     price: string,
     availableColor: string,
     soldColor: string,
-    buyUrl: string
+    buyUrl: string,
+    boothTypeName: string
 }
 
 interface Exhibitor {

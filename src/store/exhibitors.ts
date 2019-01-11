@@ -13,6 +13,7 @@ const exhibitors = __data.exhibitors.reduce((a: any, c: Exhibitor) => (c.booths 
 for (const b of Object.values(exhibitors)) {
     b.slug = generateUniqueSlug(b.name);
     if (b.logo) b.logo = baseUrl + b.logo;
+    if (!b.categories) b.categories = [];
 }
 
 for (const booth of Object.values(boothsState.state)) {
