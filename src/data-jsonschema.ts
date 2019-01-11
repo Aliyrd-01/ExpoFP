@@ -11,6 +11,7 @@ const schema = {
                     id: { type: "number", required: true },
                     name: { type: "string", required: true },
                     exhibitors: { type: "array", required: true, items: { type: "number" } },
+                    isOnHold: { type: "boolean" }
                     //availableColor: { type: "string", required: true },
                     //soldColor: { type: "string", required: true },
 

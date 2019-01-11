@@ -79,8 +79,9 @@ export function drawSingleLabel(b: Booth) {
 
         const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
         if (!b.exhibitors.length) {
-            if (b.size) lines.push(b.size);
-            if (b.price) lines.push(b.price);
+            if (b.isOnHold){
+                lines.push('On Hold');
+            }
         }
         if (!xBooth) lines.unshift(b.name);
         const fontSize = (c.detailLevel > 22000 ? 14 : 12) * c.deviceScale;

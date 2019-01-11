@@ -20,7 +20,8 @@ interface Booth {
     availableColor: string,
     soldColor: string,
     buyUrl: string,
-    boothTypeName: string
+    boothTypeName: string,
+    isOnHold: boolean
 }
 
 interface Exhibitor {

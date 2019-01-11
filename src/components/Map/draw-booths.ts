@@ -83,7 +83,7 @@ export function getBoothState(b: Booth) {
     const dimmedFp = g.dimmed;
     const dimmed = dimmedFp && !inList && !selected;
 
-    const empty = b.exhibitors.length === 0;
+    const empty = b.exhibitors.length === 0 && !b.isOnHold;
     const error = !!b.error && !b.name.startsWith('Y');
     const bookmarked = b.exhibitors.find(e => store.state.bookmarked[e])
     return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked }
