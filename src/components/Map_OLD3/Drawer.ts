@@ -35,10 +35,6 @@ export default class Drawer {
     private readonly indexBufferPool: WebGLBuffer[] = [];
     private readonly canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
 
-    // to be set externally
-    public u_matrix: any;
-    public ptscale: number;
-
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
@@ -320,7 +316,7 @@ export default class Drawer {
         this.gl.vertexAttribPointer(location, size, this.gl.FLOAT, false, 0, 0);
     }
 
-    draw() {
+    draw(u_matrix: any, ptscale: number) {
         const gl = this.gl;
 
         gl.useProgram(this.program);
@@ -343,8 +339,8 @@ export default class Drawer {
         for (let group of this.groups) {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
             twgl.setUniforms(this.programInfo, {
-                u_matrix: this.u_matrix,
-                u_ptscale: [this.ptscale, this.ptscale],
+                u_matrix,
+                u_ptscale: [ptscale, ptscale],
                 u_texture: group.texture,
                 u_texsize: group.texsize,
                 u_dim: 1
