@@ -343,7 +343,7 @@ export default class Drawer {
                 u_ptscale: [ptscale, ptscale],
                 u_texture: group.texture,
                 u_texsize: group.texsize,
-                u_desaturate: 1
+                u_dim: 1
             });
             gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
         }
@@ -432,101 +432,33 @@ varying vec2 v_texcoord;
 varying vec4 v_color;
 varying float v_skipdim;
 uniform sampler2D u_texture;
-uniform float u_desaturate; 
-//uniform vec3 vHSV;
+uniform float u_dim; 
 
-// vec3 rgb2hsv(vec3 c)
-// {
-//     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-//     vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
-//     vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
-
-//     float d = q.x - min(q.w, q.y);
-//     float e = 1.0e-10;
-//     return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
-// }
-
-// vec3 hsv2rgb(vec3 c)
-// {
-//     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-//     vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-//     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-// }
 
 // https://gamedev.stackexchange.com/questions/59797/glsl-shader-change-hue-saturation-brightness
 // https://github.com/jamieowen/glsl-blend/blob/master/_temp/conversion/desaturate.glsl
-// vec3 desaturate(vec3 color, float desaturation)
-// {
-//     //color = mix(color, vec3(1.0, 1.0, 1.0), 0.5);
-// 	vec3 grayXfer = vec3(0.3, 0.59, 0.11);//1.26;
-//     vec3 gray = vec3(dot(grayXfer, color));
-//     // gray.x = min(gray.x, 1.0);
-//     // gray.y = min(gray.y, 1.0);
-//     // gray.z = min(gray.z, 1.0);
-// 	return mix(color, gray, desaturation);
-// }
+
 
 vec4 dimColor(vec4 col, float desaturation){
-    float lightenFactor = 1.0 + (0.02 * desaturation);
+    float lightenFactor = 1.0 + (0.04 * desaturation);
     vec3 grayXfer = vec3(0.3, 0.59, 0.11) * lightenFactor;
-    vec3 gray = vec3(dot(grayXfer, col.rgb/col.w));
-    //gray = vec3(1.0);
-    // gray.x = min(gray.x, 1.0);
-    // gray.y = min(gray.y, 1.0);
-    // gray.z = min(gray.z, 1.0);
-    vec3 m = mix(col.rgb/col.w, gray, desaturation);
-    //col = vec4(mix(col.rgb, gray, desaturation), col.w);
-
+    vec3 colStraight = col.rgb / col.w;
+    vec3 gray = vec3(dot(grayXfer, colStraight));
+    vec3 m = mix(colStraight, gray, desaturation);
+    // we may have rgb > 1.0, see if this needs to be fixed somewhere
     return vec4(m * col.w, col.w / lightenFactor / lightenFactor / lightenFactor);
 }
 
 void main() {
-    //vec3 vHSV = vec3(1.0, 1.0, 1.0);
     vec4 col;
-    if (v_color.w != 0.0){
+    if (v_color.w != 0.0) {
         col = v_color; 
     } else {
         col = texture2D(u_texture, v_texcoord);
-        // if (u_desaturate > 0.0){
-        //     float factor = 1.26;
-        //     vec3 grayXfer = vec3(0.3, 0.59, 0.11) * factor;
-        //     vec3 gray = vec3(dot(grayXfer, col.rgb/col.w));
-        //     //gray = vec3(1.0);
-        //     // gray.x = min(gray.x, 1.0);
-        //     // gray.y = min(gray.y, 1.0);
-        //     // gray.z = min(gray.z, 1.0);
-        //     vec3 m = mix(col.rgb/col.w, gray, 1.0);
-        //     //col = vec4(mix(col.rgb, gray, u_desaturate), col.w);
-    
-        //     col = vec4(m * col.w, col.w / factor / factor / factor);
-        //     //vec3 desaturatedRgb = desaturate(col.rgb*col.w, u_desaturate);
-        //     //col = vec4(desaturatedRgb/col.w, col.w);
-        // }
     }
-    if (u_desaturate > 0.0){
-        col = dimColor(col, u_desaturate);
-        // float lightenFactor = 1.0 + (0.02 * u_desaturate);
-        // vec3 grayXfer = vec3(0.3, 0.59, 0.11) * lightenFactor;
-        // vec3 gray = vec3(dot(grayXfer, col.rgb/col.w));
-        // //gray = vec3(1.0);
-        // // gray.x = min(gray.x, 1.0);
-        // // gray.y = min(gray.y, 1.0);
-        // // gray.z = min(gray.z, 1.0);
-        // vec3 m = mix(col.rgb/col.w, gray, u_desaturate);
-        // //col = vec4(mix(col.rgb, gray, u_desaturate), col.w);
-
-        // col = vec4(m * col.w, col.w / lightenFactor / lightenFactor / lightenFactor);
+    if (u_dim > 0.0) {
+        col = dimColor(col, u_dim);
     }
-    //vec3 fragRGB = Desaturate(col.rgb, 0.0);
-    // vec3 fragHSV = rgb2hsv(fragRGB);
-    // float h = vHSV.x / 360.0;
-    // // fragHSV.x *= h;
-    // fragHSV.y = 0.5;
-    // //fragHSV.yz *= vHSV.yz;
-    // // fragHSV.x = mod(fragHSV.x, 1.0);
-    // // fragHSV.y = mod(fragHSV.y, 1.0);
-    // // fragHSV.z = mod(fragHSV.z, 1.0);
-    // fragRGB = hsv2rgb(fragHSV);
-    gl_FragColor = col;//vec4(fragRGB, col.w);
+    gl_FragColor = col;
 }`;
 
