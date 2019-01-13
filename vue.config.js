@@ -7,16 +7,17 @@ const config = require(`./expos/${expo}/config`)
 
 const replaceDataBase = config.dataUrl || `https://${expo}.expofp.com/data`;
 const devDataBase = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
+const gTag = config.gTag || 'UA-857963-22';
+const logoUrl = config.logoUrl || `${expo}-logo.png`
 
 const define = {
     EFP_DATA_URL_BASE: JSON.stringify(replaceDataBase),
     EFP_EXPO: JSON.stringify(expo),
     EFP_TITLE: JSON.stringify(config.title),
     EFP_HOME_URL: JSON.stringify(config.homeUrl),
-    EFP_LOGO_URL: JSON.stringify(config.logoUrl),
-    GTAG: JSON.stringify(config.gTag)
-}
-
+    EFP_LOGO_URL: JSON.stringify(logoUrl),
+    GTAG: JSON.stringify(gTag)
+};
 
 module.exports = {
     devServer: {
