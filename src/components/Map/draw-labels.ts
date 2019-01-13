@@ -79,8 +79,11 @@ export function drawSingleLabel(b: Booth) {
 
         const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
         if (!b.exhibitors.length) {
-            if (b.isOnHold){
+            if (b.isOnHold) {
                 lines.push('On Hold');
+            } else {
+                if (b.size) lines.push(b.size);
+                if (b.price) lines.push(b.price);
             }
         }
         if (!xBooth) lines.unshift(b.name);
