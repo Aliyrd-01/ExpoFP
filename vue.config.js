@@ -38,7 +38,7 @@ module.exports = {
             {
                 apply: (compiler) => {
                     compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {
-                        console.log('here');
+                        if (!fs.existsSync(path.join(__dirname, 'dist'))) return;
                         const prodIndex = path.join(__dirname, 'dist', 'index.html');
                         const devIndex = path.join(__dirname, 'dist', 'index.dev.html');
                         const data = fs.readFileSync(prodIndex, 'utf-8');
