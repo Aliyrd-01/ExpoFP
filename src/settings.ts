@@ -1,5 +1,7 @@
 import deepmerge from 'deepmerge';
 
+// TODO: remove unneeded settings from here (leave debug only)?
+
 
 let settings = {
     debug: localStorage.getItem('debug'),
