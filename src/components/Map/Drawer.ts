@@ -427,17 +427,14 @@ void main() {
     v_color = a_color;
 }`;
 
+// https://gamedev.stackexchange.com/questions/59797/glsl-shader-change-hue-saturation-brightness
+// https://github.com/jamieowen/glsl-blend/blob/master/_temp/conversion/desaturate.glsl
 const fragmentSharedSource = `precision mediump float;
 varying vec2 v_texcoord;
 varying vec4 v_color;
 varying float v_skipdim;
 uniform sampler2D u_texture;
 uniform float u_dim; 
-
-
-// https://gamedev.stackexchange.com/questions/59797/glsl-shader-change-hue-saturation-brightness
-// https://github.com/jamieowen/glsl-blend/blob/master/_temp/conversion/desaturate.glsl
-
 
 vec4 dimColor(vec4 col, float desaturation){
     float lightenFactor = 1.0 + (0.04 * desaturation);
