@@ -38,8 +38,8 @@ module.exports = {
             {
                 apply: (compiler) => {
                     compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {
-                        console.log('here');
                         const prodIndex = path.join(__dirname, 'dist', 'index.html');
+                        if (!fs.existsSync(prodIndex)) return;
                         const devIndex = path.join(__dirname, 'dist', 'index.dev.html');
                         const data = fs.readFileSync(prodIndex, 'utf-8');
                         fs.writeFileSync(devIndex, data.replace(replaceDataBase, devDataBase));
