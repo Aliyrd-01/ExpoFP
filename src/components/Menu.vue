@@ -2,7 +2,7 @@
     <OverlayContent v-if="show" @close='close' @back='close' back-mode='none' class="menu" :class='{shown}'>
         <template slot="bar">
             <div class="menu__bar">
-                <a class="menu__title" href="https://expofp.com" target="_blank">
+                <a class="menu__title" :href="EFP_HOME_URL" target="_blank">
                     <img :src="EFP_LOGO_URL" />
                 </a>
             </div>

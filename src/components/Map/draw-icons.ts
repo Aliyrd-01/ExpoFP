@@ -79,7 +79,7 @@ function getIconCanvas(icon: IconData, size: number, dimmed: boolean) {
         
         for(const a of pathNodes){
             const p = new Path2D(a.getAttribute("d") as any);
-            ctx.fillStyle = c.dimColor("#2B2A29", dimmed);
+            ctx.fillStyle = c.dimColor("#444444", dimmed);
             ctx.fill(p);
         }
 
