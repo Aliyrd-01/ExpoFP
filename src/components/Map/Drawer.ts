@@ -119,7 +119,7 @@ export default class Drawer {
         const sprite = new Sprite();
 
         // sort objects
-        this.objects.sort((a, b) => a.order - b.order);
+        //this.objects.sort((a, b) => a.order - b.order);
         // set index
         for (let i = 0; i < this.objects.length; i++) {
             this.objects[i].index = i;
@@ -367,7 +367,7 @@ export interface DrawerObject {
     rotateRadians?: number;
     spriteItem?: SpriteItem;
     canvasTmp?: HTMLCanvasElement;
-    order: number;
+    //order: number;
 
     //always: boolean;
 }

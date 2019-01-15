@@ -29,24 +29,33 @@ export interface Updatable {
     update(): void;
 }
 
-export type RequireDrawerFunc = typeof requireDrawer;
-export type RequireUpdateFunc = typeof requireUpdate;
+// export type RequireDrawerFunc = typeof requireDrawer;
+// export type RequireUpdateFunc = typeof requireUpdate;
 
-export interface ConfigureDrawerFunc {
-    (requireDrawer: RequireDrawerFunc, requireUpdate: RequireUpdateFunc): void;
-}
+// export interface ConfigureDrawerFunc {
+//     (requireDrawer: RequireDrawerFunc, requireUpdate: RequireUpdateFunc): void;
+// }
 
 // export interface RequireDrawerFunc{
 //     (type: string, order: number): Drawer;
 // }
 
 // export interface 
-function requireDrawer(type: string, order: number): Drawer {
+export function requireDrawer(type: string): Drawer {
     return null;
 }
 
-function requireUpdate(u: Updatable): void {
+export function getAllDrawers(): Drawer[] {
+    return [];
+}
 
+interface UpdateFunc {
+    (): void;
+    (allDrawers: Drawer[]): void;
+}
+
+export function requireUpdate(u: UpdateFunc): void {
+    // add to set and then call all and clean set after it
 }
 
 
@@ -76,11 +85,10 @@ export function initialize(canvas1: HTMLCanvasElement) {
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
 
     // initialize all objects to draw
-    drawer = new Drawer(gl);
+    // drawer = new Drawer(gl);
 
 
-
-    [configBooths].forEach(f => f(requireDrawer, requireUpdate));
+    configBooths();
 
     //configurers.push(...getBoothsDrawerConfigurers());
 

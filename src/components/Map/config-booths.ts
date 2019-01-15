@@ -1,56 +1,83 @@
-import { RequireDrawerFunc, RequireUpdateFunc } from "./draw";
+import Color from 'color';
+import { requireDrawer, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
 
 
-// let requireDrawer: RequireDrawerFunc;
-// let requireUpdate: RequireUpdateFunc;
+const boothBgDrawerById = new Map<number, BoothBgDrawer>();
 
-export default function configBooths(requireDrawer: RequireDrawerFunc, requireUpdate: RequireUpdateFunc) {
-    // requireDrawer = requireDrawerFunc;
-    // requireUpdate = requireUpdateFunc;
-
+export default function config() {
     const booths = store.getters.boothsArray as Booth[];
-    booths.forEach(b => new BoothDrawer(b, requireDrawer, requireUpdate));
+    for (const b of booths) {
+        boothBgDrawerById.set(b.id, new BoothBgDrawer(b))
+    }
 };
 
+abstract class BoothDrawerBase {
+    protected readonly booth: Booth;
+    protected readonly drawer: Drawer;
 
-class BoothDrawer {
-    private requireDrawer: RequireDrawerFunc;
-    private requireUpdate: RequireUpdateFunc;
-    private booth: Booth;
-
-    constructor(booth: Booth, requireDrawer: RequireDrawerFunc, requireUpdate: RequireUpdateFunc) {
-        this.requireDrawer = requireDrawer;
-        this.requireUpdate = requireUpdate;
+    constructor(booth: Booth, drawerType: string) {
         this.booth = booth;
-
-        // add drawer objects per this booth
-        // bg, borders, -> need subdrawers
+        this.drawer = requireDrawer(drawerType);
     }
 
+    protected getId(name: string) {
+        return `b${this.booth.id}${name}`;
+    }
+}
+
+
+
+class BoothBgDrawer extends BoothDrawerBase {
+    constructor(booth: Booth) {
+        super(booth, 'booth-bg');
+
+        const r = this.booth.rect;
+        this.drawer.addObject({
+            id: this.getId('bg'),
+            center: [r.cx, r.cy],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            deltaPts: [.5, .5, -.5, -.5],
+            color: getBoothColor(this.booth)
+        });
+    }
+
+    private update(){
+        
+    }
 
 }
 
-// export default config;
 
-// export default function getBoothsDrawerConfigurers(
-//     requireDrawer: (type: string, order: number) => Drawer,
-//     requireUpdate: (configurer: DrawerConfigurer) => void): DrawerConfigurer[] {
+function getBoothState(b: Booth) {
+    const g = store.getters;
 
-//     return [];
-// }
+    const hover = g.hoveredBoothIds.indexOf(b.id) !== -1;
+    const selected = !!g.selectedBoothIdsSet.has(b.id);
+    const inList = g.listBoothsIdsSet.has(b.id);
+    const dimmedFp = g.dimmed;
+    const dimmed = dimmedFp && !inList && !selected;
 
-//const configure: = function()
-
-// class BoothUpdatable implements Updatable {
-//     constructor() {
-
-//     }
-// }
+    const empty = b.exhibitors.length === 0;
+    const error = !!b.error;
+    const bookmarked = b.exhibitors.find(e => store.state.bookmarked[e])
+    return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked };
+}
 
 
-// export default const e: ConfigureDrawerFunc = (r, u) => {
-//     return [];
-// }
+function getBoothColor(b: Booth): Vec4 {
+    const s = getBoothState(b);
+    let color: Color;
+
+    if (s.selected) color = Color(__settings.colors.booths.selected);
+    else color = Color(__settings.colors.booths.default);
+
+    if (s.hover) {
+        color = color.darken(0.2);
+    }
+
+    return ColorInfo.fromHex(color.hex()).toVec4();
+}
+
 
 
