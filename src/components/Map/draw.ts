@@ -1,7 +1,7 @@
 import { svgWidth, svgHeight } from '@/tools/svg'
 import { m4 } from 'twgl.js'
 import { drawBg } from './draw-bg'
-import getBoothsDrawerConfigurers from './config-booths'
+import configBooths from './config-booths';
 import { sizeCanvas } from './utils';
 import Drawer from './Drawer';
 
@@ -18,16 +18,51 @@ export function applyZoomTransform(transform: { k: number, x: number, y: number 
     zoomTranform = transform;
 }
 
+//type requireDrawer = 
 
-export interface DrawerConfigurer {
-    configure(requireDrawer: (type:string, order:number) => Drawer, requireUpdateCallback: () => void);
-    update(requireDrawer: (type:string) => Drawer, allDrawers: Drawer[]);
+// export interface DrawerConfigurer {
+//     //configure(requireDrawer: (type:string, order:number) => Drawer, requireUpdateCallback: () => void):void;
+//     //update(allDrawers: Drawer[]);
+// }
+
+export interface Updatable {
+    update(): void;
+}
+
+export type RequireDrawerFunc = typeof requireDrawer;
+export type RequireUpdateFunc = typeof requireUpdate;
+
+export interface ConfigureDrawerFunc {
+    (requireDrawer: RequireDrawerFunc, requireUpdate: RequireUpdateFunc): void;
+}
+
+// export interface RequireDrawerFunc{
+//     (type: string, order: number): Drawer;
+// }
+
+// export interface 
+function requireDrawer(type: string, order: number): Drawer {
+    return null;
+}
+
+function requireUpdate(u: Updatable): void {
+
+}
+
+
+
+// export type configureDrawerFunc = (requireDrawer: (type: string, order: number) => Drawer, requireUpdateCallback: () => void) => { update(): void }[];
+
+var a: ConfigureDrawerFunc = (r, ru) => {
+    return [];
 }
 
 // let animatedFrame: number;
 
-const configurers = [] as DrawerConfigurer[];
-const requireUpdate = [] as DrawerConfigurer[];
+//const configurers = [] as DrawerConfigurer[];
+
+
+
 
 function draw() {
 
@@ -43,12 +78,16 @@ export function initialize(canvas1: HTMLCanvasElement) {
     // initialize all objects to draw
     drawer = new Drawer(gl);
 
-    configurers.push(...getBoothsDrawerConfigurers());
 
 
-    for (const conf of configurers) {
-        conf.configure(drawer, () => requireUpdate.push(conf));
-    }
+    [configBooths].forEach(f => f(requireDrawer, requireUpdate));
+
+    //configurers.push(...getBoothsDrawerConfigurers());
+
+
+    // for (const conf of configurers) {
+    //     conf.configure(drawer, () => requireUpdate.push(conf));
+    // }
 
 
 
