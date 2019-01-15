@@ -36,7 +36,7 @@ export default class Drawer {
     private readonly canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
 
     // to be set externally
-    public u_matrix: any;
+    public matrix: any;
     public ptscale: number;
 
     constructor(gl: WebGLRenderingContext) {
@@ -69,7 +69,7 @@ export default class Drawer {
         const item = obj as DrawerObjectEx;
         item.visible = true;
         this.objects.push(item);
-        this.objectsById.set(item.id, item);
+        if (item.id) this.objectsById.set(item.id, item);
     }
 
     getObject(id): DrawerObject {
@@ -342,13 +342,19 @@ export default class Drawer {
 
         for (let group of this.groups) {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
-            twgl.setUniforms(this.programInfo, {
-                u_matrix: this.u_matrix,
+            
+            const uniforms = {
+                u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
-                u_texture: group.texture,
-                u_texsize: group.texsize,
                 u_dim: 1
-            });
+            } as any;
+
+            if (group.texture) {
+                uniforms.u_texture = group.texture;
+                uniforms.u_texsize = group.texsize;
+            }
+
+            twgl.setUniforms(this.programInfo, uniforms);
             gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
         }
 
@@ -357,7 +363,7 @@ export default class Drawer {
 }
 
 export interface DrawerObject {
-    id: string,
+    id?: string,
     center: Vec2;
     deltas?: Vec4; // x1, y1, x2, y2
     deltaPts?: Vec4;

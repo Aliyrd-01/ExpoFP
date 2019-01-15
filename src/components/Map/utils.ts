@@ -2,7 +2,7 @@ export function remsToPixels(rem: number): number {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
-export function sizeCanvas(canvas:HTMLCanvasElement) {
+export function sizeCanvasToParentElement(canvas:HTMLCanvasElement) {
     const bWidth = canvas.parentElement.clientWidth;
     const bHeight = canvas.parentElement.clientHeight;
     const cWidth = bWidth * devicePixelRatio;

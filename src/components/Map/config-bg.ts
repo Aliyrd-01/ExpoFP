@@ -1,14 +1,23 @@
 import Color from 'color';
 import { requireDrawer, requireUpdate } from "./draw";
-import Drawer from "./Drawer";
+import Drawer, { DrawerObject } from "./Drawer";
+import settings from '@/settings';
+import svg from '@/tools/svg'
 
+export default function configBg() {
+    const drawer = requireDrawer('bg');
 
-const boothBgDrawerById = new Map<number, BoothBgDrawer>();
+    const rects = (d3.select(svg).select('#BG').selectAll('rect').nodes() as SVGRectElement[])
+        .map(r => Rect.fromSvgRectElement(r));
 
-export default function config() {
-    const booths = store.getters.boothsArray as Booth[];
-    for (const b of booths) {
-        boothBgDrawerById.set(b.id, new BoothBgDrawer(b))
+    const color = ColorInfo.fromHex(settings.colors.bg).toVec4();
+
+    for (const r of rects) {
+        drawer.addObject({
+            center: [r.cx, r.cy],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            color
+        } as DrawerObject)
     }
 };
 
@@ -40,8 +49,8 @@ class BoothBgDrawer extends BoothDrawerBase {
         });
     }
 
-    private update(){
-        
+    private update() {
+
     }
 
 }

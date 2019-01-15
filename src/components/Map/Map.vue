@@ -10,6 +10,7 @@ import { mapGetters, mapState } from "vuex";
 import { initialize, applyZoomTransform } from "./draw";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
+// import { setZoomAndDimensions } from './matrix-scale';
 // import c from "./drawing-context";
 
 export default {

@@ -28,7 +28,7 @@ export default class Sprite {
         let drawWidth = 0;
 
         const canvasesKeys = Array.from(this.canvasToSpriteItem.keys());
-        canvasesKeys.sort((a,b) => a.height - b.height);
+        canvasesKeys.sort((a, b) => a.height - b.height);
 
         for (const canvas of canvasesKeys) {
             const item = this.canvasToSpriteItem.get(canvas);
@@ -59,8 +59,10 @@ export default class Sprite {
             }
         }
 
-        currentCanvas.width = maxWidth;
-        currentCanvas.height = nextHeight;
+        if (currentCanvas) {
+            currentCanvas.width = maxWidth;
+            currentCanvas.height = nextHeight;
+        }
 
         // draw and set rect
         for (const canvas of canvasesKeys) {
