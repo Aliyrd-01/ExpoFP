@@ -21,7 +21,9 @@
   </defs>
   <title>fp</title>
   <g id="BG">
-    <rect class="cls-1" x="13.66" y="89.55" width="593.36" height="699.17"/>
+    <rect class="cls-1" x="13.66" y="118.89" width="593.36" height="669.84"/>
+    <rect class="cls-1" x="13.66" y="89.22" width="344.53" height="31.75"/>
+    <rect class="cls-1" x="543.68" y="89.22" width="63.34" height="47.63"/>
   </g>
   <g id="Booths">
     <rect id="bh6" class="cls-2" x="33.66" y="148.89" width="20" height="30"/>
@@ -313,6 +315,6 @@
     <rect id="bd1" class="cls-2" x="313.66" y="98.89" width="30" height="20"/>
   </g>
   <g id="Icons">
-    <rect id="ENTERS1" class="cls-3" x="439.66" y="19.44" width="58" height="58"/>
+    <rect id="ENTERS1" class="cls-3" x="421.94" y="54.33" width="58" height="58"/>
   </g>
 </svg>

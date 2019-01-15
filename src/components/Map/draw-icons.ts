@@ -18,7 +18,7 @@ export default function drawIcons() {
 
     // ctx.fillStyle = c.dimColor(settings.colors.columns);
     // const size = svg.he * c.zoomScale;// / c.deviceScale;// Math.floor(c.getUnscaled(16));
-    const sizeS = Math.floor(Math.sqrt(svgHeight * svgWidth) / 6);// c.getUnscaled(size);
+    const sizeS = Math.floor(Math.sqrt(svgHeight * svgWidth) / 3.5);// c.getUnscaled(size);
     const size = sizeS * c.zoomScale * c.deviceScale * c.fpScale;
 
     const rects = icons.map(i => {
