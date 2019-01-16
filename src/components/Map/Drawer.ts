@@ -346,7 +346,7 @@ export default class Drawer {
             const uniforms = {
                 u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
-                u_dim: 1
+                u_dim: 0
             } as any;
 
             if (group.texture) {
