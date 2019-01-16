@@ -33,13 +33,20 @@ export function requireDrawer(type: string): Drawer {
 }
 
 const updateQueue: (() => void)[] = [];
-let requestedFrame: number;
+
 export function requireUpdate(u: () => void): void {
     updateQueue.push(u);
+    requireRedraw();
+}
+
+let requestedFrame: number;
+function requireRedraw() {
     if (!requestedFrame) requestedFrame = window.requestAnimationFrame(draw);
 }
 
-function draw(now) {
+const instantDraw = false;
+function draw() {
+    showFps();//if (__settings.debug) 
     requestedFrame = undefined;
     for (const u of updateQueue) {
         u();
@@ -49,12 +56,39 @@ function draw(now) {
     for (var d of allDrawers) {
         d.draw();
     }
+
+    if (instantDraw) {
+        requireRedraw();
+    }
+}
+
+let then = 0;
+let prevFps = [];
+let prevHtml = '';
+function showFps() {
+    const now = performance.now() * 0.001;
+    const deltaTime = now - then;
+    then = now;
+    const roundTo = 2;
+    const fps = Math.round(1 / deltaTime / 2) * 2;
+    prevFps.push(fps);
+    if (prevFps.length > 20) prevFps.shift();
+    const avgFps = prevFps.reduce((sume, el) => sume + el, 0) / prevFps.length;
+    const html = avgFps.toFixed(0);
+    if (prevHtml !== html){
+        document.getElementById("fps").innerHTML = html;
+        prevHtml = html;
+    }
 }
 
 export function initialize(canvas1: HTMLCanvasElement) {
     canvas = canvas1;
     sizeCanvasToParentElement(canvas);
-    window.addEventListener('resize', () => { sizeCanvasToParentElement(canvas); fireZoomDimensionsChange(); });
+    window.addEventListener('resize', () => {
+        sizeCanvasToParentElement(canvas);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        fireZoomDimensionsChange();
+    });
 
     const options = {};
     gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options) as any;
@@ -63,9 +97,9 @@ export function initialize(canvas1: HTMLCanvasElement) {
 
     configBg();
     configMatrix();
-    // configBooths();
+    configBooths();
 
-    window.requestAnimationFrame(draw);
+    requireRedraw();
 }
 
 

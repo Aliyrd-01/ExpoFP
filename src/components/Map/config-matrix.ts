@@ -42,5 +42,5 @@ function ensureMatrixAndScale() {
 
     ptscale = 1 / scale / zoomTranform.k;
 
-    console.log('Matrix updated', matrix, ptscale);
+    console.log('Matrix updated',canvasWidth, canvasHeight, zoomTranform, matrix, ptscale);
 }

@@ -47,6 +47,27 @@ class BoothBgDrawer extends BoothDrawerBase {
 }
 
 
+store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {
+    handleBoothSetsDifference(new Set(v), new Set(oldV));
+});
+
+
+store.watch(((s, g) => g.selectedBoothIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
+    handleBoothSetsDifference(v, oldV);
+});
+
+
+function handleBoothSetsDifference(v: Set<number>, oldV: Set<number>) {
+    const newElements = Array.from(v).filter(x => !oldV.has(x));
+    const missingElements = Array.from(oldV).filter(x => !v.has(x));
+
+    newElements.forEach(x => boothColorsToHandle.add(x));
+    missingElements.forEach(x => boothColorsToHandle.add(x));
+
+    // may be later -> call require-redraw
+}
+
+
 function getBoothState(b: Booth) {
     const g = store.getters;
 
