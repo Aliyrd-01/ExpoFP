@@ -83,8 +83,8 @@ export default class TriangleDrawer {
         this.enableBuffer(this.posBuffer, this.posLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
 
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        // gl.enable(gl.BLEND);
+        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         const uniforms = {
             u_matrix: this.matrix,
@@ -94,7 +94,7 @@ export default class TriangleDrawer {
         twgl.setUniforms(this.programInfo, uniforms);
         gl.drawArrays(gl.TRIANGLES, 0, this.objects.length * 3);
 
-        gl.disable(gl.BLEND);
+        // gl.disable(gl.BLEND);
     }
 }
 
