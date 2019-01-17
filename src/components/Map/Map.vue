@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
+import getBoothIdFromClientXy from './booth-by-xy';
 // import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
 import { initialize, applyZoomTransform } from "./draw";
 //import { ZoomBehavior } from "d3";
@@ -82,12 +83,12 @@ export default {
             this.$store.commit("setHoveredBooth", id);
         },
         handleMouseMove(e) {
-            // const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            // this.raiseBoothOver(id);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            this.raiseBoothOver(id);
         },
         handleMouseOver(e) {
-            // const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            // this.raiseBoothOver(id);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            this.raiseBoothOver(id);
         },
         handleMouseOut(e) {
             this.raiseBoothOver(undefined);

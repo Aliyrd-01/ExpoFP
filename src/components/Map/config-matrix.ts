@@ -42,5 +42,8 @@ function ensureMatrixAndScale() {
 
     ptscale = 1 / scale / zoomTranform.k;
 
-    console.log('Matrix updated',canvasWidth, canvasHeight, zoomTranform, matrix, ptscale);
+    // matrix can translate from svg coordinate to -1,1
+    // we need a matrix to translate from browser px to svg
+    console.log('Matrix updated', canvasWidth, canvasHeight, zoomTranform, matrix, ptscale);
 }
+
