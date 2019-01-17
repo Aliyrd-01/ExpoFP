@@ -1,6 +1,7 @@
 import { getCanvas, getZoomTransform } from "./draw";
-import { m4 } from 'twgl.js';
+import { m4, v3 } from 'twgl.js';
 import { svgWidth, svgHeight } from "@/tools/svg";
+import { getCurrentMatrixAndScale } from "./config-matrix";
 
 
 export default function getBoothIdFromClientXy(x: number, y: number): number {
@@ -20,9 +21,8 @@ for (const b of booths) {
 }
 
 function getLastBoothsFromClientXy(x: number, y: number): Booth {
-
-    const xs = convertXyToSvg(x);//(x * c.deviceScale - c.fpCx) / c.fpScale / c.zoomScale / c.deviceScale;
-    const ys = y;//(y * c.deviceScale - c.fpCy) / c.fpScale / c.zoomScale / c.deviceScale;
+    var { pxSvgMatrix } = getCurrentMatrixAndScale();
+    const [xs, ys] = m4.transformPoint(pxSvgMatrix, [x, y, 1]);
 
     // if (prevBooth && prevBooth.rect.containsPoint(xs, ys)) {
     //     return prevBooth;
@@ -40,36 +40,4 @@ function getLastBoothsFromClientXy(x: number, y: number): Booth {
         return rectsToBooths.get(foundOne);
     }
     return null;
-}
-
-function convertXyToSvg(x) {
-    const canvas = getCanvas();
-    const zoomTranform = getZoomTransform();
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
-
-    const fpScale = Math.max(canvasWidth / svgWidth, canvasHeight / svgHeight) * 0.95;
-    const fpCx = canvasWidth / 2 - svgWidth * fpScale / 2;
-
-    console.log(fpCx, fpScale,canvasWidth, svgWidth, svgWidth * fpScale);
-    const xs = (x * devicePixelRatio - fpCx) / fpScale / devicePixelRatio;
-
-    return xs;
-
-    // const 
-
-    // // this translates from svg coord to -1,1
-
-    // let matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1);
-
-    // matrix = m4.translate(matrix, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]);
-    // matrix = m4.scale(matrix, [zoomTranform.k, zoomTranform.k, 1]);
-    // matrix = m4.translate(matrix, [canvasWidth / 2, canvasHeight / 2, 0]);
-
-    // // px/svg scale
-    // const scale = Math.min(canvasWidth / svgWidth, canvasHeight / svgHeight) * 0.95;
-
-    // matrix = m4.scale(matrix, [scale, scale, 1]);
-    // matrix = m4.translate(matrix, [-svgWidth / 2, -svgHeight / 2, 0]);
-
 }
