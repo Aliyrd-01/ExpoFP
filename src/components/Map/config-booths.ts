@@ -1,5 +1,4 @@
 import { requireDrawer, requireUpdate } from "./draw";
-import Drawer from "./Drawer";
 import BoothBgDrawer from './config-booths-bg';
 import BoothBorderDrawer from "./config-booths-border";
 
@@ -12,7 +11,6 @@ export default function config() {
         new BoothBorderDrawer(b);
     }
 };
-
 
 store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {
     handleBoothSetsDifference(new Set(v), new Set(oldV));
