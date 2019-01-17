@@ -13,9 +13,9 @@ export default function configBg() {
 
     // TODO: move meshing to build stage
     for (const p of paths) {
-        const d = p.getAttribute('d');
+        const d = parseInt(p.getAttribute('data-index'));
         const color = ColorInfo.fromHex(Color(p.style.fill).hex()).toVec4();
-
+        
         const mesh = __fpPaths[d];
         //var mesh = svgMesh3d(d, { normalize: false, scale: 8 });
         for (const p of mesh.positions) {

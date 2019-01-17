@@ -11,13 +11,17 @@ const base = jetpack.cwd(__dirname + "/..");
 
 // fp.svg
 {
-    const svgText = base.read(`expos/${expo}/fp.svg`)
+    let svgText = base.read(`expos/${expo}/fp.svg`)
     const paths = [];
-    svgText.replace(/d="(M[^"]+)"/g, (m, g1) => paths.push(g1));
-    const fpPaths = {};
+    let i = 0;
+    svgText = svgText.replace(/d="(M[^"]+)"/g, (m, g1) => {
+        paths.push(g1);
+        return `data-index="${i++}"`;
+    });
+    const fpPaths = [];
     for (const p of paths) {
         const m = svgMesh3d(p, { normalize: false, scale: 8 });
-        fpPaths[p] = m;
+        fpPaths.push(m);
     }
 
     let js = "var __fp = " + JSON.stringify(svgText) + ";";
