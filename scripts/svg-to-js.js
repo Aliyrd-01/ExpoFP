@@ -26,17 +26,17 @@ const base = jetpack.cwd(__dirname + "/..");
     base.write(`expos/${expo}/fp.js`, js)
 }
 
-{
-    const iconsSrc = base.cwd("scripts/icons");
-    const iconData = {};
-    for (const file of iconsSrc.list()) {
-        if (!file.toLowerCase().endsWith(".svg")) continue;
-        console.log(file);
-        const svg = iconsSrc.read(file);
-        iconData[path.parse(file).name] = svg;
-    }
-    const js = "var __icons = " + JSON.stringify(iconData) + ";";
-    base.write('public/icons.js', js)
-}
+// {
+//     const iconsSrc = base.cwd("scripts/icons");
+//     const iconData = {};
+//     for (const file of iconsSrc.list()) {
+//         if (!file.toLowerCase().endsWith(".svg")) continue;
+//         console.log(file);
+//         const svg = iconsSrc.read(file);
+//         iconData[path.parse(file).name] = svg;
+//     }
+//     const js = "var __icons = " + JSON.stringify(iconData) + ";";
+//     base.write('public/icons.js', js)
+// }
 
 
