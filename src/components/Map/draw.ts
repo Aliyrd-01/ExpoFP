@@ -1,16 +1,29 @@
 import { sizeCanvasToParentElement } from './utils';
 import Drawer from './Drawer';
+import TriangleDrawer from './TriangleDrawer';
 import configMatrix from './config-matrix';
 import configBg from './config-bg';
 import configBooths from './config-booths';
 
 
+// type AnyDrawer = Drawer | TriangleDrawer;
+// var a: Drawer;
+// var b: AnyDrawer;
+// b = a;
+
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
 let zoomTranform = { k: 1, x: 0, y: 0 };
 const zoomDimensionSubscribers: (() => void)[] = [];
-const drawersByType = new Map<string, Drawer>();
-export const allDrawers: Drawer[] = [];
+const drawersByType = new Map<string, AnyDrawer>();
+export const allDrawers: AnyDrawer[] = [];
+
+interface AnyDrawer {
+    draw();
+    matrix: number[][];
+    ptscale?: number;
+}
+
 
 export function getCanvas() { return canvas; }
 export function getZoomTransform() { return zoomTranform; }
@@ -20,13 +33,15 @@ export function applyZoomTransform(transform: typeof zoomTranform) {
 }
 export function subscribeZoomDimensionsChange(cb: () => void) { zoomDimensionSubscribers.push(cb); }
 
+
 function fireZoomDimensionsChange() { zoomDimensionSubscribers.forEach(x => x()); }
 
-export function requireDrawer(type: string): Drawer {
-    let d = drawersByType.get(type);
+export function requireDrawer<T extends AnyDrawer>(id: string,
+    TypeClass: new (gl: WebGLRenderingContext) => T): T {
+    let d = drawersByType.get(id) as T;
     if (!d) {
-        d = new Drawer(gl);
-        drawersByType.set(type, d);
+        d = new TypeClass(gl);
+        drawersByType.set(id, d);
         allDrawers.push(d);
     }
     return d;
@@ -75,7 +90,7 @@ function showFps() {
     if (prevFps.length > 20) prevFps.shift();
     const avgFps = prevFps.reduce((sume, el) => sume + el, 0) / prevFps.length;
     const html = avgFps.toFixed(0);
-    if (prevHtml !== html){
+    if (prevHtml !== html) {
         document.getElementById("fps").innerHTML = html;
         prevHtml = html;
     }

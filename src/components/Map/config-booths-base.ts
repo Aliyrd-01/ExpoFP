@@ -8,7 +8,7 @@ export abstract class BoothDrawerBase {
 
     constructor(booth: Booth, drawerType: string) {
         this.booth = booth;
-        this.drawer = requireDrawer(drawerType);
+        this.drawer = requireDrawer(drawerType, Drawer);
         this.updateBound = this.update.bind(this);
     }
 
