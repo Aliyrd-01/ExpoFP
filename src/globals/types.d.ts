@@ -5,6 +5,7 @@ declare const __data: {
     reserveInstructions: string
 };
 declare const __fp: string;
+declare const __fpPaths: { [id: string]: any };
 declare const __icons: { [id: string]: string };
 
 interface Booth {
@@ -50,13 +51,13 @@ interface Category {
 }
 
 type OverlaySize = "full" | "medium" | "small"
-type OverlayPosition = "left" | "bottom" 
+type OverlayPosition = "left" | "bottom"
 type MapOccupied = null | "left" | "bottomSmall" | "bottomMedium"
 
 
-declare const EFP_EXPO:string;
-declare const EFP_TITLE:string;
-declare const EFP_HOME_URL:string;
-declare const EFP_LOGO_URL:string;
-declare const GTAG:string;
-declare const gtag:any;
+declare const EFP_EXPO: string;
+declare const EFP_TITLE: string;
+declare const EFP_HOME_URL: string;
+declare const EFP_LOGO_URL: string;
+declare const GTAG: string;
+declare const gtag: any;

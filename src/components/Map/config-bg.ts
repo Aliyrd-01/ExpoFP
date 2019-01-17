@@ -3,7 +3,7 @@ import { requireDrawer, requireUpdate } from "./draw";
 import TriangleDrawer, { TriangleDrawerObject } from "./TriangleDrawer";
 import settings from '@/settings';
 import svg from '@/tools/svg'
-import svgMesh3d from 'svg-mesh-3d';
+// import svgMesh3d from 'svg-mesh-3d';
 
 export default function configBg() {
     const drawer = requireDrawer('bg', TriangleDrawer);
@@ -16,7 +16,8 @@ export default function configBg() {
         const d = p.getAttribute('d');
         const color = ColorInfo.fromHex(Color(p.style.fill).hex()).toVec4();
 
-        var mesh = svgMesh3d(d, { normalize: false, scale: 8 });
+        const mesh = __fpPaths[d];
+        //var mesh = svgMesh3d(d, { normalize: false, scale: 8 });
         for (const p of mesh.positions) {
             // a bug in svgMesh3d when normalize: false ?
             p[1] = -p[1];

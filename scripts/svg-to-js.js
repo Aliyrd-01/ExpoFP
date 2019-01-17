@@ -1,6 +1,7 @@
 const jetpack = require('fs-jetpack');
 const path = require('path');
-const expo = require('./expo')
+const expo = require('./expo');
+const svgMesh3d = require('svg-mesh-3d');
 
 console.log('svg-to-js...')
 
@@ -10,8 +11,18 @@ const base = jetpack.cwd(__dirname + "/..");
 
 // fp.svg
 {
-    const svg = base.read(`expos/${expo}/fp.svg`)
-    const js = "var __fp = " + JSON.stringify(svg) + ";";
+    const svgText = base.read(`expos/${expo}/fp.svg`)
+    const paths = [];
+    svgText.replace(/d="(M[^"]+)"/g, (m, g1) => paths.push(g1));
+    const fpPaths = {};
+    for (const p of paths) {
+        const m = svgMesh3d(p, { normalize: false, scale: 8 });
+        fpPaths[p] = m;
+    }
+
+    let js = "var __fp = " + JSON.stringify(svgText) + ";";
+    js += "\n";
+    js += "var __fpPaths = " + JSON.stringify(fpPaths) + ";";
     base.write(`expos/${expo}/fp.js`, js)
 }
 
@@ -27,3 +38,5 @@ const base = jetpack.cwd(__dirname + "/..");
     const js = "var __icons = " + JSON.stringify(iconData) + ";";
     base.write('public/icons.js', js)
 }
+
+

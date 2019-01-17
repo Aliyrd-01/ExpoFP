@@ -17,9 +17,12 @@ const live = process.env.EFP_TARGET === "live";
     const build = await execa('yarn', ['build'], { stdio: 'inherit' });
     if (build.code !== 0) process.exit(build.code);
 
-    console.log('Deploying dist to ' + expo);
+    let deployExpo = expo;
+    // make all dev deploy to dev-demo so far
+    if (!live) deployExpo = 'demo';
+    console.log('Deploying dist to ' + deployExpo);
 
-    const path = `efp-data/expos/${expo}/${!live ? 'dev' : 'live'}`;
+    const path = `efp-data/expos/${deployExpo}/${!live ? 'dev' : 'live'}`;
     const invalidate = `/index.html`;
 
     const distId = live ? config.cloudFrontLiveId : config.cloudFrontDevId;
