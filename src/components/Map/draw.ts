@@ -59,7 +59,7 @@ function requireRedraw() {
     if (!requestedFrame) requestedFrame = window.requestAnimationFrame(draw);
 }
 
-const instantDraw = false;
+const instantDraw = true;
 function draw() {
     showFps();//if (__settings.debug) 
     requestedFrame = undefined;

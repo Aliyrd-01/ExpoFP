@@ -40,7 +40,6 @@ export default class TriangleDrawer {
     }
 
     private populateBuffers() {
-        const gl = this.gl;
 
         const positions: number[] = [];
         const colors: number[] = [];
@@ -56,8 +55,8 @@ export default class TriangleDrawer {
                 const c = w.color || [0, 0, 0];
                 colors.push(...c, ...c, ...c);
             }
-          
         }
+
 
         this.bufferFloat32Array(this.posBuffer, positions);
         this.bufferFloat32Array(this.colorBuffer, colors);
