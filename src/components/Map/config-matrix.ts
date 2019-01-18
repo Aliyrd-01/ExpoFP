@@ -50,31 +50,8 @@ function ensureMatrixAndScale() {
 
     m4.inverse(pxSvgMatrix, pxSvgMatrix);
 
-    // matrices.forEach(m => m4.translate(m, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0], m))
-
-    // matrix = m4.translate(matrix, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]);
-    // pxSvgMatrix = m4.translate(pxSvgMatrix, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]);
-    // matrix = m4.scale(matrix, [zoomTranform.k, zoomTranform.k, 1]);
-    // pxSvgMatrix = m4.scale(pxSvgMatrix, [zoomTranform.k, zoomTranform.k, 1]);
-    // matrix = m4.translate(matrix, [canvasWidth / 2, canvasHeight / 2, 0]);
-    // pxSvgMatrix = m4.translate(pxSvgMatrix, [canvasWidth / 2, canvasHeight / 2, 0]);
-
-
-
-    // matrix = m4.scale(matrix, [scale, scale, 1]);
-    // pxSvgMatrix = m4.scale(pxSvgMatrix, [scale, scale, 1]);
-    // matrix = m4.translate(matrix, [-svgWidth / 2, -svgHeight / 2, 0]);
-    // pxSvgMatrix = m4.translate(pxSvgMatrix, [-svgWidth / 2, -svgHeight / 2, 0]);
-
-
-    // matrix converts from svg to -1..1
-
-    //pxSvgMatrix = m4.inverse(matrix);
-
     ptscale = 1 / scale / zoomTranform.k;
-
-    // matrix can translate from svg coordinate to -1,1
-    // we need a matrix to translate from browser px to svg
-    console.log('Matrix updated', canvasWidth, canvasHeight, zoomTranform, matrix, ptscale);
+    
+    //console.log('Matrix updated', canvasWidth, canvasHeight, zoomTranform, matrix, ptscale);
 }
 

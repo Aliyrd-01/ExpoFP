@@ -8,14 +8,14 @@ import svg from '@/tools/svg'
 export default function configBg() {
     const drawer = requireDrawer('bg', TriangleDrawer);
 
-    const color1 = [0, 0, 0, 1] as Vec4;
+    const color1 = [0, 0, 0, 0.5] as Vec4;
     const paths = (d3.select(svg).select('#BG').selectAll('path').nodes() as SVGPathElement[]);
 
     // TODO: move meshing to build stage
     for (const p of paths) {
         const d = parseInt(p.getAttribute('data-index'));
         const color = ColorInfo.fromHex(Color(p.style.fill).hex()).toVec4();
-        
+
         const mesh = __fpPaths[d];
         //var mesh = svgMesh3d(d, { normalize: false, scale: 8 });
         for (const p of mesh.positions) {
@@ -41,6 +41,11 @@ export default function configBg() {
     for (const ro of rects) {
         const r = Rect.fromSvgRectElement(ro);
         const color = ColorInfo.fromHex(Color(ro.style.fill).hex()).toVec4();
+        // const c = 0.5;
+        // color[0] = color[0] * c;
+        // color[1] = color[1] * c;
+        // color[2] = color[2] * c;
+        // color[3] = c;
 
         drawer.addObject({
             p0: [r.x1, r.y1],
@@ -55,6 +60,29 @@ export default function configBg() {
             color
         });
     }
+
+    drawer.alpha = 0;
+
+    function startAnimating() {
+        const start = performance.now();
+        const duration = 300;
+        const i = d3.interpolateNumber(0, 1);
+        function animationStep() {
+            const part = (performance.now() - start) / duration;
+            
+            if (part >= 1) {
+                drawer.alpha = 1;
+            } else {
+                drawer.alpha = i(part);
+                requireUpdate(animationStep);
+            }
+            console.log('Bg animation', part, drawer.alpha);
+        }
+        requireUpdate(animationStep);
+
+    }
+    window.setTimeout(() => requireUpdate(startAnimating), 1);
+
 };
 
 

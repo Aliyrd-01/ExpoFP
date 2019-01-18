@@ -4,6 +4,7 @@ import TriangleDrawer from './TriangleDrawer';
 import configMatrix from './config-matrix';
 import configBg from './config-bg';
 import configBooths from './config-booths';
+import settings from '@/settings';
 
 
 // type AnyDrawer = Drawer | TriangleDrawer;
@@ -69,11 +70,18 @@ const instantDraw = false;
 function draw() {
     showFps();//if (__settings.debug) 
     requestedFrame = undefined;
-    for (const u of updateQueue) {
-        u();
-    }
+
+    const queue = updateQueue.slice(0);
     updateQueue.length = 0;
 
+    for (const u of queue) {
+        u();
+    }
+    // gl.clearColor(...ColorInfo.fromHex(settings.colors.base).toVec4());
+    // Clear the context with the newly set color. This is
+    // the function call that actually does the drawing.
+    // gl.clear(gl.COLOR_BUFFER_BIT);
+    
     for (var d of allDrawers) {
         d.draw();
     }
@@ -116,7 +124,7 @@ export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
     gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options) as any;
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
 
-
+    
     configBg();
     configMatrix();
     configBooths();

@@ -12,10 +12,11 @@ export default class TriangleDrawer {
     private readonly posBuffer: WebGLBuffer;
     private readonly colorLocation: number;
     private readonly colorBuffer: WebGLBuffer;
-    
+
     // to be set externally
     public matrix: any;
     public ptscale: number;
+    public alpha: number = 1;
 
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
@@ -49,7 +50,7 @@ export default class TriangleDrawer {
 
             // 3 vec2
             positions.push(...w.p0, ...w.p1, ...w.p2);
-            
+
             // 3 vec4
             {
                 const c = w.color || [0, 0, 0];
@@ -84,11 +85,12 @@ export default class TriangleDrawer {
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
 
         // gl.enable(gl.BLEND);
-        // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        // gl.blendFunc(gl.ONE, gl.ZERO);
 
         const uniforms = {
             u_matrix: this.matrix,
-            u_dim: 0
+            u_dim: 0,
+            u_alpha: this.alpha
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);
@@ -119,6 +121,7 @@ void main() {
 const fragmentSharedSource = `precision mediump float;
 varying vec4 v_color;
 uniform float u_dim; 
+uniform float u_alpha;
 
 vec4 dimColor(vec4 col, float desaturation){
     float lightenFactor = 1.0 + (0.04 * desaturation);
@@ -131,7 +134,7 @@ vec4 dimColor(vec4 col, float desaturation){
 }
 
 void main() {
-    vec4 col = v_color;
+    vec4 col = vec4(v_color.xyz / v_color.w * u_alpha, u_alpha);
     if (u_dim > 0.0) {
         col = dimColor(col, u_dim);
     }
