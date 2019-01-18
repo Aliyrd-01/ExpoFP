@@ -25,7 +25,16 @@ export function createLabelCanvas(text: string, fontSize: number) {
 }
 
 export function createDetailsCanvas(b:Booth) {
-    const companies = b.exhibitors.map(e => store.state.exhibitors[e].name)
+    const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
+    
+    if (!b.exhibitors.length) {
+        if (b.isOnHold) {
+            lines.push('On Hold');
+        } else {
+            if (b.size) lines.push(b.size);
+            if (b.price) lines.push(b.price);
+        }
+    }
 
     const boothFontSize = 14 * devicePixelRatio;
     const detailFontSize = 13 * devicePixelRatio;
@@ -38,10 +47,10 @@ export function createDetailsCanvas(b:Booth) {
     c.font = boothFont;
     const boothWidth = c.measureText(b.name).width;
     c.font = detailFont;
-    const companiesWidth = companies.map(x => c.measureText(x).width);
+    const companiesWidth = lines.map(x => c.measureText(x).width);
     const maxTextWidth = Math.max(boothWidth, ...companiesWidth);
     canvas.width = maxTextWidth + 2;
-    const height = boothFontSize + boothPadding + companies.length * detailFontSize + 3 * devicePixelRatio;
+    const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * devicePixelRatio;
     canvas.height = height;
 
     let nextLine = 0;
@@ -53,7 +62,7 @@ export function createDetailsCanvas(b:Booth) {
     nextLine += boothFontSize + boothPadding;
     c.font = detailFont;
 
-    for(const line of companies){
+    for(const line of lines){
         c.fillText(line, 0, nextLine);
         nextLine += detailFontSize;
     }
