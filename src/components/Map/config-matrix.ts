@@ -1,15 +1,25 @@
 import { m4 } from 'twgl.js';
 import { svgWidth, svgHeight } from '@/tools/svg';
 import { allDrawers, getCanvas, getZoomTransform, getVisibleRect, subscribeZoomDimensionsChange, requireUpdate } from "./draw";
+import animate from './animate';
 
 let matrix: number[][];
 let pxSvgMatrix: number[][];
 let ptscale: number;
 let dirty = true;
+let visibleScale = 0;
+const maxVisibleScale = 0.95;
 
 export default function configMatrix() {
     requireUpdate(update);
     subscribeZoomDimensionsChange(() => { dirty = true; requireUpdate(update); });
+
+    animate(0, 1000, d3.easeExpOut, d3.interpolateNumber(visibleScale, maxVisibleScale), v => {
+        console.log(v);
+        visibleScale = v;
+        dirty = true;
+        update();
+    });
 }
 
 export function getCurrentMatrixAndScale() { ensureMatrixAndScale(); return { matrix, ptscale, pxSvgMatrix } };
@@ -34,7 +44,7 @@ function ensureMatrixAndScale() {
     matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1);
     pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]);
     // px/svg scale
-    const scale = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight) * 0.95;
+    const scale = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight) * visibleScale;
 
     const matrices = [matrix, pxSvgMatrix];
     const actions = [
@@ -51,7 +61,7 @@ function ensureMatrixAndScale() {
     m4.inverse(pxSvgMatrix, pxSvgMatrix);
 
     ptscale = 1 / scale / zoomTranform.k;
-    
+
     //console.log('Matrix updated', canvasWidth, canvasHeight, zoomTranform, matrix, ptscale);
 }
 

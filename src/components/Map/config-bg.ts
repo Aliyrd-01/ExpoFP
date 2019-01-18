@@ -3,6 +3,7 @@ import { requireDrawer, requireUpdate } from "./draw";
 import TriangleDrawer, { TriangleDrawerObject } from "./TriangleDrawer";
 import settings from '@/settings';
 import svg from '@/tools/svg'
+import animate from './animate';
 // import svgMesh3d from 'svg-mesh-3d';
 
 export default function configBg() {
@@ -57,27 +58,8 @@ export default function configBg() {
     }
 
     drawer.alpha = 0;
-
-    function startAnimating() {
-        const start = performance.now();
-        const duration = 300;
-        const i = d3.interpolateNumber(0, 1);
-        function animationStep() {
-            const part = (performance.now() - start) / duration;
-
-            if (part >= 1) {
-                drawer.alpha = 1;
-            } else {
-                drawer.alpha = i(part);
-                requireUpdate(animationStep);
-            }
-            console.log('Bg animation', part, drawer.alpha);
-        }
-        requireUpdate(animationStep);
-
-    }
-    window.setTimeout(() => requireUpdate(startAnimating), 1);
-
+    
+    animate(600, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
 };
 
 

@@ -1,6 +1,5 @@
 import { sizeCanvasToParentElement } from './utils';
-import Drawer from './Drawer';
-import TriangleDrawer from './TriangleDrawer';
+
 import configMatrix from './config-matrix';
 import configBg from './config-bg';
 import configBooths from './config-booths';
