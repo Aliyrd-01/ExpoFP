@@ -223,7 +223,7 @@ function getBoothColor(b: Booth): Vec4 {
     //     debugger
     // }
 
-    return ColorInfo.fromHex(color.hex()).toVec4();
+    return color.vec4();
 }
 
 store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {

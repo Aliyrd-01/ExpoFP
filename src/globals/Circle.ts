@@ -16,14 +16,14 @@ namespace local {
         }
 
         intersects(r: Rect): boolean {
-            const x1 = this.cx - this.r/2;
-            const x2 = this.cx + this.r/2;
-            const y1 = this.cy - this.r/2;
-            const y2 = this.cy + this.r/2;
+            const x1 = this.cx - this.r / 2;
+            const x2 = this.cx + this.r / 2;
+            const y1 = this.cy - this.r / 2;
+            const y2 = this.cy + this.r / 2;
 
             return (x2 >= r.x1 && x1 <= r.x2) && (y2 >= r.y1 && y1 <= r.y2);
         }
-       
+
         // equals(r: Rect) {
         //     return r.cx === this.cx && r.r === this.r && r.cy === this.cy && r.y2 === this.y2;
         // }

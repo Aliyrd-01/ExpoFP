@@ -13,7 +13,7 @@ export default function configBg() {
 
     for (const p of paths) {
         const d = parseInt(p.getAttribute('data-index'));
-        const color = ColorInfo.fromHex(Color(p.style.fill).hex()).toVec4();
+        const color = Color(p.style.fill).vec4();
 
         const mesh = __fpPaths[d];
         //var mesh = svgMesh3d(d, { normalize: false, scale: 8 });
@@ -39,7 +39,7 @@ export default function configBg() {
     // const color = ColorInfo.fromHex(settings.colors.bg).toVec4();
     for (const ro of rects) {
         const r = Rect.fromSvgRectElement(ro);
-        const color = ColorInfo.fromHex(Color(ro.style.fill).hex()).toVec4();
+        const color = Color(ro.style.fill).vec4();
 
 
         drawer.addObject({
@@ -64,7 +64,7 @@ export default function configBg() {
         const i = d3.interpolateNumber(0, 1);
         function animationStep() {
             const part = (performance.now() - start) / duration;
-            
+
             if (part >= 1) {
                 drawer.alpha = 1;
             } else {
