@@ -207,6 +207,8 @@ export default class Drawer {
                     val = [0, 0];
                 } else if (w.texPosition === 'center') {
                     val = [w.spriteItem.rect.cx, w.spriteItem.rect.cy];
+                } else if (w.texPosition === 'lefttop') {
+                    val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
                 } else {
                     val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
                 }
@@ -218,7 +220,10 @@ export default class Drawer {
                 let val: Vec2;
                 if (!w.spriteItem || w.texPosition === 'center') {
                     val = [0, 0];
-                } else {
+                } else if (w.texPosition === 'lefttop') {
+                    val = [x1, y1];
+                }
+                else {
                     val = [x1, y1];
                 }
                 fixdeltas.push(...val, ...val, ...val, ...val);
@@ -228,6 +233,8 @@ export default class Drawer {
                 let val: Vec2;
                 if (!w.spriteItem || w.texPosition === 'center') {
                     val = [0, 0];
+                } else if (w.texPosition === 'lefttop') {
+                    val = [xp1, yp1];
                 } else {
                     val = [xp1, yp1];
                 }
@@ -377,7 +384,7 @@ export interface DrawerObject {
     deltas?: Vec4; // x1, y1, x2, y2
     deltaPts?: Vec4;
     scalePts?: number,
-    texPosition?: 'center' | 'lefttop'
+    texPosition?: 'center' | 'lefttop' | 'righttop'
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;

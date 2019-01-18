@@ -24,9 +24,9 @@ export function createLabelCanvas(text: string, fontSize: number) {
     return canvas;
 }
 
-export function createDetailsCanvas(b:Booth) {
+export function createDetailsCanvas(b: Booth) {
     const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
-    
+
     if (!b.exhibitors.length) {
         if (b.isOnHold) {
             lines.push('On Hold');
@@ -40,7 +40,7 @@ export function createDetailsCanvas(b:Booth) {
     const detailFontSize = 13 * devicePixelRatio;
     const boothFont = getFont(boothFontSize, 600);
     const detailFont = getFont(detailFontSize, 400);
-    const boothPadding =  0 * devicePixelRatio;
+    const boothPadding = 0 * devicePixelRatio;
 
     const canvas = document.createElement("canvas");
     const c = canvas.getContext("2d");
@@ -62,7 +62,7 @@ export function createDetailsCanvas(b:Booth) {
     nextLine += boothFontSize + boothPadding;
     c.font = detailFont;
 
-    for(const line of lines){
+    for (const line of lines) {
         c.fillText(line, 0, nextLine);
         nextLine += detailFontSize;
     }
@@ -82,6 +82,35 @@ export function createCircleCanvas(radius) {
     c.beginPath();
     c.arc(size / 2, size / 2, radius, 0, 2 * Math.PI);
     c.fill();
+    return canvas;
+}
+
+export function createBookmarkCanvas(widthPx: number) {
+    const canvas = document.createElement("canvas");
+    const padding = 1 * devicePixelRatio;
+    const w = widthPx * devicePixelRatio;
+    const h = w * 1.4;
+    canvas.width = w + padding * 2;
+    canvas.height = h + padding * 2;
+
+    const c = canvas.getContext("2d");
+    c.translate(padding, padding);
+    c.fillStyle = "#e64839";
+    c.strokeStyle = "#fff"
+    c.lineWidth = 1 * devicePixelRatio / 1.5;
+    // ctx.fillRect(b.rect.w - 1.5 * w, 0, w, h);
+
+    c.beginPath();
+
+    c.moveTo(0, 0);
+    c.lineTo(0, h);
+    c.lineTo(w / 2, h - w / 2);
+    c.lineTo(w, h);
+    c.lineTo(w, 0);
+    // c.lineTo(0, 0)
+    c.fill();
+    c.stroke();
+
     return canvas;
 }
 
