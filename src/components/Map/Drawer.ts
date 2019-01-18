@@ -210,7 +210,7 @@ export default class Drawer {
                 } else if (w.texPosition === 'lefttop') {
                     val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
                 } else {
-                    val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
+                    val = [w.spriteItem.rect.x2, w.spriteItem.rect.y1];
                 }
 
                 texfixes.push(...val, ...val, ...val, ...val);
@@ -224,7 +224,7 @@ export default class Drawer {
                     val = [x1, y1];
                 }
                 else {
-                    val = [x1, y1];
+                    val = [x2, y1];
                 }
                 fixdeltas.push(...val, ...val, ...val, ...val);
             }
@@ -236,7 +236,7 @@ export default class Drawer {
                 } else if (w.texPosition === 'lefttop') {
                     val = [xp1, yp1];
                 } else {
-                    val = [xp1, yp1];
+                    val = [xp2, yp1];
                 }
                 fixdeltapts.push(...val, ...val, ...val, ...val);
             }

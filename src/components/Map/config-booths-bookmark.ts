@@ -5,9 +5,6 @@ import { createBookmarkCanvas } from './canvases';
 import { getCurrentMatrixAndScale, subscribePtscaleChange } from './config-matrix';
 
 const bookmarkCanvas = createBookmarkCanvas(10);
-const dotW = bookmarkCanvas.width / 2;
-const dotH = bookmarkCanvas.height / 2;
-
 
 export default class BoothBookmarkDrawer extends BoothDrawerBase {
 
@@ -19,10 +16,10 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
         this.drawer.addObject({
             id: this.getId("bookmark"),
             center: [r.cx, r.cy],
-            deltas: [r.w/3, -r.h/2, r.w/2, r.h/2],
-            deltaPts: [-1, -1, 0, 0],
+            deltas: [-r.w/2, -r.h/2, r.w/2, r.h/2],
+            deltaPts: [-1, -1, -5, 0],
             canvasTmp: bookmarkCanvas,
-            texPosition: 'lefttop',
+            texPosition: 'righttop',
         });
     }
 
