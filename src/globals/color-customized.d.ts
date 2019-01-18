@@ -102,6 +102,7 @@ declare module "color" {
         hcg(...args: number[]): Color;
         apple(...args: number[]): Color;
 
+        // ET: added this
         vec4(): [number, number, number, number];
     }
 
