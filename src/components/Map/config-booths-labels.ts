@@ -3,6 +3,7 @@ import settings from '@/settings';
 import { BoothDrawerBase } from './config-booths-base';
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from './canvases';
 import { getCurrentMatrixAndScale, subscribePtscaleChange } from './config-matrix';
+import { requireUpdate } from './draw';
 
 const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
 const dotW = dotCanvas.width / 2;
@@ -47,7 +48,9 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
         this.calcFactors();
         // allDrawers.push(this);
 
-        subscribePtscaleChange(this.updateVisibleLabel.bind(this));
+        const updateVisibleBound = this.updateVisibleLabel.bind(this);
+
+        subscribePtscaleChange(()=> requireUpdate(updateVisibleBound));
     }
 
     calcFactors() {
