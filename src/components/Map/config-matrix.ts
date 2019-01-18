@@ -9,6 +9,7 @@ let ptscale: number;
 let dirty = true;
 let visibleScale = 0;
 const maxVisibleScale = 0.95;
+const ptscaleChangeSubscribers: ((ptscale) => void)[] = [];
 
 export default function configMatrix() {
     requireUpdate(update);
@@ -22,7 +23,10 @@ export default function configMatrix() {
     });
 }
 
+
+export function subscribePtscaleChange(cb: (ptscale) => void) { ptscaleChangeSubscribers.push(cb); }
 export function getCurrentMatrixAndScale() { ensureMatrixAndScale(); return { matrix, ptscale, pxSvgMatrix } };
+function firePtscaleChange() { ptscaleChangeSubscribers.forEach(x => x(ptscale)); }
 
 function update() {
     ensureMatrixAndScale();
@@ -32,6 +36,7 @@ function update() {
     }
 }
 
+let prevPtscale;
 function ensureMatrixAndScale() {
     if (!dirty) return;
     dirty = false;
@@ -62,6 +67,13 @@ function ensureMatrixAndScale() {
 
     ptscale = 1 / scale / zoomTranform.k;
 
+    if (prevPtscale !== ptscale) {
+        firePtscaleChange();
+        prevPtscale = ptscale;
+    }
+
     //console.log('Matrix updated', canvasWidth, canvasHeight, zoomTranform, matrix, ptscale);
 }
+
+
 

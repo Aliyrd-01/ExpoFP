@@ -1,6 +1,7 @@
 import { requireDrawer, requireUpdate } from "./draw";
 import BoothBgDrawer from './config-booths-bg';
 import BoothBorderDrawer from "./config-booths-border";
+import BoothLabelDrawer from "./config-booths-labels";
 
 const boothBgDrawerById = new Map<number, BoothBgDrawer>();
 
@@ -8,6 +9,7 @@ export default function config() {
     const booths = store.getters.boothsArray as Booth[];
     for (const b of booths) {
         boothBgDrawerById.set(b.id, new BoothBgDrawer(b))
+        new BoothLabelDrawer(b);
         new BoothBorderDrawer(b);
     }
 };

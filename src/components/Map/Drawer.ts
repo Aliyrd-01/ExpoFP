@@ -69,7 +69,7 @@ export default class Drawer {
 
     addObject(obj: DrawerObject) {
         const item = obj as DrawerObjectEx;
-        item.visible = true;
+        if (typeof item.visible === "undefined") item.visible = true;
         this.objects.push(item);
         if (item.id) this.objectsById.set(item.id, item);
     }
@@ -382,13 +382,14 @@ export interface DrawerObject {
     rotateRadians?: number;
     spriteItem?: SpriteItem;
     canvasTmp?: HTMLCanvasElement;
+    visible?: boolean;
     //order: number;
 
     //always: boolean;
 }
 
 interface DrawerObjectEx extends DrawerObject {
-    visible: boolean;
+
     texture?: WebGLTexture;
     texcoords: Vec4; // x1, y1, x2, y2
     index: number;
