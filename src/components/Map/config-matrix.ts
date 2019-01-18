@@ -29,18 +29,18 @@ function ensureMatrixAndScale() {
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
     const zoomTranform = getZoomTransform();
-    const visibleRect = getVisibleRect();
+    const visibleRect = getVisibleRect().scale(devicePixelRatio);
 
     matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1);
     pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]);
     // px/svg scale
-    const scale = Math.min(canvasWidth / svgWidth, canvasHeight / svgHeight) * 0.95;
+    const scale = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight) * 0.95;
 
     const matrices = [matrix, pxSvgMatrix];
     const actions = [
         [m4.translate, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]],
         [m4.scale, [zoomTranform.k, zoomTranform.k, 1]],
-        [m4.translate, [canvasWidth / 2, canvasHeight / 2, 0]],
+        [m4.translate, [visibleRect.cx, visibleRect.cy, 0]],
         [m4.scale, [scale, scale, 1]],
         [m4.translate, [-svgWidth / 2, -svgHeight / 2, 0]],
     ];
