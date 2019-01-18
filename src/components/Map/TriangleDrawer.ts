@@ -75,6 +75,7 @@ export default class TriangleDrawer {
     }
 
     draw() {
+        if (this.alpha < 0.05) return;
         const gl = this.gl;
 
         gl.useProgram(this.program);
