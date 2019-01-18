@@ -66,7 +66,7 @@ function getBoothColor(b: Booth): Vec4 {
     //     color = color.darken(0.2);
     // }
 
-    return ColorInfo.fromHex(colorInfo.hex()).toVec4();
+    return colorInfo.vec4();
 }
 
 
