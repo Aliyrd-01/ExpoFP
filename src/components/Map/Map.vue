@@ -119,7 +119,7 @@ export default {
             ) {
                 this.$store.dispatch("showMap");
             }
-            if (!this.props.onBoothClick) return;
+            // if (!this.props.onBoothClick) return;
             const id = getBoothIdFromClientXy(e.clientX, e.clientY);
             console.info("click", id);
             this.$store.dispatch("clickBooth", id);

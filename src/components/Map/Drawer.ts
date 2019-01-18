@@ -34,6 +34,7 @@ export default class Drawer {
     private readonly groups: DrawerGroup[] = [];
     private readonly indexBufferPool: WebGLBuffer[] = [];
     private readonly canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
+    private readonly fallBackTexture: WebGLTexture;
 
     // to be set externally
     public matrix: any;
@@ -63,6 +64,7 @@ export default class Drawer {
         this.fixdeltaBuffer = gl.createBuffer();
         this.fixdeltaptBuffer = gl.createBuffer();
         this.fixdeltamaxptBuffer = gl.createBuffer();
+        this.fallBackTexture = gl.createTexture();
     }
 
     addObject(obj: DrawerObject) {
@@ -145,6 +147,11 @@ export default class Drawer {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
             this.canvasToTexture.set(c, texture);
+        }
+        {
+            gl.bindTexture(gl.TEXTURE_2D, this.fallBackTexture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                new Uint8Array([0, 0, 255, 255]));
         }
 
         for (let w of this.objects) {
@@ -342,7 +349,7 @@ export default class Drawer {
 
         for (let group of this.groups) {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
-            
+
             const uniforms = {
                 u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
@@ -352,6 +359,8 @@ export default class Drawer {
             if (group.texture) {
                 uniforms.u_texture = group.texture;
                 uniforms.u_texsize = group.texsize;
+            } else {
+                uniforms.u_texture = this.fallBackTexture;
             }
 
             twgl.setUniforms(this.programInfo, uniforms);
