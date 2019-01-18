@@ -14,6 +14,7 @@ import configBooths from './config-booths';
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
 let zoomTranform = { k: 1, x: 0, y: 0 };
+let visibleRect: Rect;
 const zoomDimensionSubscribers: (() => void)[] = [];
 const drawersByType = new Map<string, AnyDrawer>();
 export const allDrawers: AnyDrawer[] = [];
@@ -27,8 +28,13 @@ interface AnyDrawer {
 
 export function getCanvas() { return canvas; }
 export function getZoomTransform() { return zoomTranform; }
+export function getVisibleRect() { return visibleRect; }
 export function applyZoomTransform(transform: typeof zoomTranform) {
     zoomTranform = transform;
+    fireZoomDimensionsChange();
+}
+export function applyVisibleRect(rect: Rect) {
+    visibleRect = rect;
     fireZoomDimensionsChange();
 }
 export function subscribeZoomDimensionsChange(cb: () => void) { zoomDimensionSubscribers.push(cb); }
@@ -96,8 +102,9 @@ function showFps() {
     }
 }
 
-export function initialize(canvas1: HTMLCanvasElement) {
+export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
     canvas = canvas1;
+    visibleRect = visibleRect1;
     sizeCanvasToParentElement(canvas);
     window.addEventListener('resize', () => {
         sizeCanvasToParentElement(canvas);

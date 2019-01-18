@@ -1,6 +1,6 @@
 import { m4 } from 'twgl.js';
 import { svgWidth, svgHeight } from '@/tools/svg';
-import { allDrawers, getCanvas, getZoomTransform, subscribeZoomDimensionsChange, requireUpdate } from "./draw";
+import { allDrawers, getCanvas, getZoomTransform, getVisibleRect, subscribeZoomDimensionsChange, requireUpdate } from "./draw";
 
 let matrix: number[][];
 let pxSvgMatrix: number[][];
@@ -29,6 +29,7 @@ function ensureMatrixAndScale() {
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
     const zoomTranform = getZoomTransform();
+    const visibleRect = getVisibleRect();
 
     matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1);
     pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]);

@@ -1,14 +1,20 @@
 <template>
-    <canvas class="map" @mousemove="handleMouseMove" @click="handleClick" @mouseover="handleMouseOver" @mouseout="handleMouseOut">
+    <canvas
+        class="map"
+        @mousemove="handleMouseMove"
+        @click="handleClick"
+        @mouseover="handleMouseOver"
+        @mouseout="handleMouseOut"
+    >
         I'm map
     </canvas>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import getBoothIdFromClientXy from './booth-by-xy';
+import getBoothIdFromClientXy from "./booth-by-xy";
 // import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
-import { initialize, applyZoomTransform } from "./draw";
+import { initialize, applyZoomTransform, applyVisibleRect } from "./draw";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
 // import { setZoomAndDimensions } from './matrix-scale';
@@ -18,8 +24,21 @@ export default {
     name: "Map",
     data: () => ({}),
     computed: {
-        ...mapState(["overlaySize", "moveToBooths", "booths", "hoveredBooth", "screenSize", "bookmarked"]),
-        ...mapGetters(["overlayPosition", "exhibitorsArray", "listBoothsIds", "selectedBoothIds", "hoveredBoothIds"]),
+        ...mapState([
+            "overlaySize",
+            "moveToBooths",
+            "booths",
+            "hoveredBooth",
+            "screenSize",
+            "bookmarked"
+        ]),
+        ...mapGetters([
+            "overlayPosition",
+            "exhibitorsArray",
+            "listBoothsIds",
+            "selectedBoothIds",
+            "hoveredBoothIds"
+        ]),
         visibleRect() {
             // console.log("get visibleRect", this.occupied);
             const w = this.screenSize.width;
@@ -48,7 +67,7 @@ export default {
             .on("zoom", () => applyZoomTransform(d3.event.transform));
         this.$canvas.call(this.zoom);
 
-        initialize(canvas);
+        initialize(canvas, this.visibleRect);
     },
     watch: {
         moveToBooths: function() {
@@ -68,12 +87,12 @@ export default {
 
             // store.commit("setMoveToBooths", null);
             // this.handledMoveToExhibitor = null;
-        }
+        },
         // hoveredBoothIds: () => requireRedraw(),
         // selectedBoothIds: () => requireRedraw(),
         // bookmarked: () => requireRedraw(),
         // listBoothsIds: () => requireRedraw(),
-        // visibleRect: v => setVisibleRect(v)
+        visibleRect: v => applyVisibleRect(v)
     },
     methods: {
         raiseBoothOver(id) {
@@ -94,13 +113,16 @@ export default {
             this.raiseBoothOver(undefined);
         },
         handleClick(e) {
-            if (this.overlayPosition === "bottom" && this.overlaySize === "full") {
+            if (
+                this.overlayPosition === "bottom" &&
+                this.overlaySize === "full"
+            ) {
                 this.$store.dispatch("showMap");
             }
-            //if (!this.props.onBoothClick) return;
-            // const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            // console.info("click", id);
-            // this.$store.dispatch("clickBooth", id);
+            if (!this.props.onBoothClick) return;
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            console.info("click", id);
+            this.$store.dispatch("clickBooth", id);
         }
     }
 };
