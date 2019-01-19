@@ -28,6 +28,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltaPts: [-dotW, -dotH, dotW, dotH],
             canvasTmp: dotCanvas,
             texPosition: 'center',
+            z: 0.8
         });
 
         this.addLabel(9, 'XS');
@@ -43,14 +44,13 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltaPts: [5, 5, -1, -1],
             canvasTmp: detailsCanvas,
             texPosition: 'lefttop',
+            z: 0.8
         });
 
         this.calcFactors();
         // allDrawers.push(this);
 
-        const updateVisibleBound = this.updateVisibleLabel.bind(this);
-
-        subscribePtscaleChange(()=> requireUpdate(updateVisibleBound));
+        subscribePtscaleChange(()=> requireUpdate(this.updateBound));
     }
 
     calcFactors() {
@@ -68,7 +68,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
         this.factors.push(lastFactor / 1.5);
     }
 
-    updateVisibleLabel() {
+    update() {
         let visiblePrefix = '';
         const { ptscale } = getCurrentMatrixAndScale();
 
@@ -100,7 +100,8 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
             visible: false,
-            texPosition: 'center'
+            texPosition: 'center',
+            z: 0.8
         });
     }
 }

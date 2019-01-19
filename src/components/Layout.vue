@@ -62,7 +62,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #ebebeb;
+    background: #0f0;
     overflow: hidden;
     // font-size: 15px;
 }

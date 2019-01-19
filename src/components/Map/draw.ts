@@ -1,5 +1,7 @@
 import { sizeCanvasToParentElement } from './utils';
 
+import Color from 'color';
+import configCanvas from './config-canvas';
 import configMatrix from './config-matrix';
 import configDim from './config-dim';
 import configBg from './config-bg';
@@ -22,9 +24,9 @@ export const allDrawers: AnyDrawer[] = [];
 
 interface AnyDrawer {
     draw();
-    matrix: number[][];
+    matrix?: number[][];
     ptscale?: number;
-    dim: number;
+    dim?: number;
 }
 
 
@@ -55,10 +57,10 @@ export function requireDrawer<T extends AnyDrawer>(id: string,
     return d;
 }
 
-const updateQueue: (() => void)[] = [];
+const updateQueue = new Set<() => void>();
 
 export function requireUpdate(u: () => void): void {
-    updateQueue.push(u);
+    updateQueue.add(u);
     requireRedraw();
 }
 
@@ -68,21 +70,21 @@ function requireRedraw() {
 }
 
 const instantDraw = false;
+
 function draw() {
     showFps();//if (__settings.debug) 
     requestedFrame = undefined;
 
-    const queue = updateQueue.slice(0);
-    updateQueue.length = 0;
+    const queue = Array.from(updateQueue)
+    updateQueue.clear();;
 
     for (const u of queue) {
         u();
     }
-    // gl.clearColor(...ColorInfo.fromHex(settings.colors.base).toVec4());
-    // Clear the context with the newly set color. This is
-    // the function call that actually does the drawing.
-    // gl.clear(gl.COLOR_BUFFER_BIT);
-    
+
+    gl.clearColor(0, 0, 1, 1);   // clear to blue
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
     for (var d of allDrawers) {
         d.draw();
     }
@@ -121,11 +123,16 @@ export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
         fireZoomDimensionsChange();
     });
 
-    const options = {};
+    const options = { };
     gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options) as any;
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
+    // gl.enable(gl.DEPTH_TEST);
+    // gl.depthFunc(gl.ALWAYS);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // gl.colorMask(true, true, true, false);
 
-    
+    configCanvas();
     configBg();
     configMatrix();
     configDim();

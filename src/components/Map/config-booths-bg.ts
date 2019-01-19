@@ -13,6 +13,7 @@ export default class BoothBgDrawer extends BoothDrawerBase {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [.5, .5, -.5, -.5],
+            z: 0.7
         });
         this.update();
     }
@@ -22,8 +23,7 @@ export default class BoothBgDrawer extends BoothDrawerBase {
         const c = getBoothColor(s, this.booth);
         this.drawer.updateColor(this.getId('bg'), c);
         this.drawer.updateSkipdim(this.getId('bg'), s.skipDim);
-        // if (this.booth.name == "H2") debugger
-        if (s.skipDim) console.log('sdim');
+        
     }
 }
 

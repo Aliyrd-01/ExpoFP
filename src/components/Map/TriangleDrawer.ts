@@ -1,4 +1,5 @@
 import * as twgl from 'twgl.js';
+import { dimColor } from './common-glsl';
 
 export default class TriangleDrawer {
     readonly gl: WebGLRenderingContext;
@@ -86,19 +87,18 @@ export default class TriangleDrawer {
         this.enableBuffer(this.posBuffer, this.posLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
 
-        // gl.enable(gl.BLEND);
-        // gl.blendFunc(gl.ONE, gl.ZERO);
+
 
         const uniforms = {
             u_matrix: this.matrix,
-            u_dim: 0,
+            u_dim: this.dim,
             u_alpha: this.alpha
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);
         gl.drawArrays(gl.TRIANGLES, 0, this.objects.length * 3);
 
-        // gl.disable(gl.BLEND);
+    
     }
 }
 
@@ -115,7 +115,7 @@ uniform mat4 u_matrix;
 varying vec4 v_color;
 
 void main() {
-    gl_Position = u_matrix * vec4(a_pos, 0, 1);
+    gl_Position = u_matrix * vec4(a_pos, 0.5, 1);
     v_color = a_color;
 }`;
 
@@ -125,21 +125,14 @@ varying vec4 v_color;
 uniform float u_dim; 
 uniform float u_alpha;
 
-vec4 dimColor(vec4 col, float desaturation){
-    float lightenFactor = 1.0 + (0.04 * desaturation);
-    vec3 grayXfer = vec3(0.3, 0.59, 0.11) * lightenFactor;
-    vec3 colStraight = col.rgb / col.w;
-    vec3 gray = vec3(dot(grayXfer, colStraight));
-    vec3 m = mix(colStraight, gray, desaturation);
-    // we may have rgb > 1.0, see if this needs to be fixed somewhere
-    return vec4(m * col.w, col.w / lightenFactor / lightenFactor / lightenFactor);
-}
+${dimColor}
 
 void main() {
-    vec4 col = vec4(v_color.xyz / v_color.w * u_alpha, u_alpha);
+    vec4 col = v_color;
     if (u_dim > 0.0) {
         col = dimColor(col, u_dim);
     }
+    col = vec4(col.xyz / v_color.w * u_alpha, u_alpha);
     gl_FragColor = col;
 }`;
 

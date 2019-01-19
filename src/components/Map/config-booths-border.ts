@@ -10,28 +10,32 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2],
             deltaPts: [-.5, -.5, .5, .5],
             scalePts: devicePixelRatio,
-            color: borderColor
+            color: borderColor,
+            z: 0.88
         });
         this.drawer.addObject({
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, -r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
             deltaPts: [-.5, -.5, .5, .5],
-            color: borderColor
+            color: borderColor,
+            z: 0.88
         });
         this.drawer.addObject({
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, r.h / 2, r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
             deltaPts: [-.5, -.5, .5, .5],
-            color: borderColor
+            color: borderColor,
+            z: 0.88
         });
         this.drawer.addObject({
             center: [r.cx, r.cy],
             deltas: [r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
             deltaPts: [-.5, -.5, .5, .5],
-            color: borderColor
+            color: borderColor,
+            z: 0.88
         });
     }
 

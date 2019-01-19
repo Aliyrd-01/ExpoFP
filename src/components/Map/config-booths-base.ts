@@ -16,6 +16,10 @@ export abstract class BoothDrawerBase {
         return `b${this.booth.id}${name}`;
     }
 
+    protected subscribeToBoothChange() {
+
+    }
+
     update() { }
 }
 

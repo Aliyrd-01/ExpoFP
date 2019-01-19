@@ -1,5 +1,6 @@
 import * as twgl from 'twgl.js';
 import Sprite, { SpriteItem } from './Sprite';
+import { dimColor } from './common-glsl';
 
 export default class Drawer {
     readonly gl: WebGLRenderingContext;
@@ -169,9 +170,9 @@ export default class Drawer {
             gl.bindTexture(gl.TEXTURE_2D, texture);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
             this.canvasToTexture.set(c, texture);
         }
@@ -191,7 +192,7 @@ export default class Drawer {
         for (let i = 0; i < this.objects.length; i++) {
             const w = this.objects[i];
             // 4 vec2
-            centers.push(...w.center, ...w.center, ...w.center, ...w.center);
+            centers.push(...w.center, w.z, ...w.center, w.z, ...w.center, w.z, ...w.center, w.z);
             // preare points x1, y1, ... xp1, yp1
             const d = w.deltas || [0, 0, 0, 0];
             const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
@@ -305,7 +306,7 @@ export default class Drawer {
         const skipdims: number[] = [];
         for (const w of this.objects) {
             const c = w.skipdim ? 1 : 0;
-            skipdims.push(c,c,c,c);
+            skipdims.push(c, c, c, c);
         }
 
         this.bufferFloat32Array(this.skipdimBuffer, skipdims);
@@ -364,7 +365,7 @@ export default class Drawer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
     }
 
-    private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 4) {
+    private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 3 | 4) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.gl.enableVertexAttribArray(location);
         this.gl.vertexAttribPointer(location, size, this.gl.FLOAT, false, 0, 0);
@@ -377,7 +378,7 @@ export default class Drawer {
 
         this.ensureBuffersAndGroups();
 
-        this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
+        this.enableBuffer(this.centerBuffer, this.centerLocation, 3);
         this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
         this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
@@ -387,9 +388,6 @@ export default class Drawer {
         this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
         this.enableBuffer(this.fixdeltaptBuffer, this.fixdeltaptLocation, 2);
         this.enableBuffer(this.fixdeltamaxptBuffer, this.fixdeltamaxptLocation, 2);
-
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         for (let group of this.groups) {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
@@ -411,7 +409,7 @@ export default class Drawer {
             gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
         }
 
-        gl.disable(gl.BLEND);
+
     }
 }
 
@@ -428,6 +426,7 @@ export interface DrawerObject {
     canvasTmp?: HTMLCanvasElement;
     visible?: boolean;
     skipdim?: boolean;
+    z: number;
     //order: number;
 
     //always: boolean;
@@ -448,7 +447,7 @@ interface DrawerGroup {
 }
 
 
-const vertexShaderSource = `attribute vec2 a_center;
+const vertexShaderSource = `attribute vec3 a_center;
 attribute vec2 a_rotate;
 attribute vec2 a_delta;
 attribute vec2 a_deltapt;
@@ -459,7 +458,6 @@ attribute vec2 a_fixdeltapt;
 attribute vec2 a_fixdeltamaxpt; 
 attribute vec2 a_texfix;
 attribute float a_skipdim;
-
 
 uniform mat4 u_matrix;   
 uniform vec2 u_ptscale; 
@@ -493,7 +491,7 @@ void main() {
     vec2 rotatedDelta =  vec2(
         delta.x * a_rotate.y + delta.y * a_rotate.x,
         delta.y * a_rotate.y - delta.x * a_rotate.x);
-    gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
+    gl_Position = u_matrix * vec4(a_center.xy + rotatedDelta, a_center.z, 1);
 
     v_texcoord = texcoord / u_texsize;
     v_color = a_color;
@@ -508,22 +506,25 @@ varying vec4 v_color;
 uniform sampler2D u_texture;
 varying float v_dim; 
 
-vec4 dimColor(vec4 col, float desaturation){
-    float lightenFactor = 1.0 + (0.04 * desaturation);
-    vec3 grayXfer = vec3(0.3, 0.59, 0.11) * lightenFactor;
-    vec3 colStraight = col.rgb / col.w;
-    vec3 gray = vec3(dot(grayXfer, colStraight));
-    vec3 m = mix(colStraight, gray, desaturation);
-    // we may have rgb > 1.0, see if this needs to be fixed somewhere
-    return vec4(m * col.w, col.w / lightenFactor / lightenFactor / lightenFactor);
-}
+${dimColor}
 
 void main() {
     vec4 col;
     if (v_color.w != 0.0) {
         col = v_color; 
+        col.rgb = vec3(0.5,0,0);
+        col.w = 0.5;
     } else {
         col = texture2D(u_texture, v_texcoord);
+        //col.rgb = col.rgb * col.w;
+        if (col.w > 0.0){
+            col.w = 0.5;
+        }
+        col.rgb = vec3(0.5,0,0);
+        // if (col.w > 0.0){
+        
+        // }
+        // //col.w = 1.0;
     }
     if (v_dim > 0.0) {
         col = dimColor(col, v_dim);
