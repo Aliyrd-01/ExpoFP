@@ -9,6 +9,6 @@ import './Circle'
 import './vue'
 import './d3'
 import './debug'
-// import './polyfill';
+import './ie-polyfills';
 
     
