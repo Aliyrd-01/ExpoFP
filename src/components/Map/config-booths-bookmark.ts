@@ -38,14 +38,14 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             id: this.getId("S"),
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [-bookmarkCanvasS.width / 2, -bookmarkCanvasS.height / 2, bookmarkCanvasS.width / 2, bookmarkCanvasS.height / 2],
+            deltaPts:
+                [-bookmarkCanvasS.width / 2, -bookmarkCanvasS.height / 2,
+                bookmarkCanvasS.width / 2, bookmarkCanvasS.height / 2],
             canvasTmp: bookmarkCanvasS,
             texPosition: 'center',
             visible: false
         });
 
-
-        //const updateVisibleBound = this.updateVisible.bind(this);
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
     }
 
