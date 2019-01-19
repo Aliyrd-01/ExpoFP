@@ -16,7 +16,7 @@ export default function configMatrix() {
     subscribeZoomDimensionsChange(() => { dirty = true; requireUpdate(update); });
 
     animate(0, 1000, d3.easeExpOut, d3.interpolateNumber(visibleScale, maxVisibleScale), v => {
-        console.log(v);
+        // console.log(v);
         visibleScale = v;
         dirty = true;
         update();

@@ -127,8 +127,8 @@ export default class Drawer {
         }
 
         if (this.skipdimDirty) {
-            this.populateColorBuffer();
-            this.colorsDirty = false;
+            this.populateSkipdimBuffer();
+            this.skipdimDirty = false;
         }
     }
 
@@ -138,7 +138,6 @@ export default class Drawer {
         const centers: number[] = [];
         const deltas: number[] = [];
         const deltaPts: number[] = [];
-        const colors: number[] = [];
         const rotates: number[] = [];
         const texcoords: number[] = [];
         const texfixes: number[] = [];
@@ -207,11 +206,6 @@ export default class Drawer {
             {
 
                 deltaPts.push(xp1, yp1, xp2, yp1, xp1, yp2, xp2, yp2);
-            }
-            // 4 vec4
-            {
-                const c = w.color || [0, 0, 0, 0];
-                colors.push(...c, ...c, ...c, ...c);
             }
             // 4 vec2
             {
@@ -287,13 +281,13 @@ export default class Drawer {
         this.bufferFloat32Array(this.centerBuffer, centers);
         this.bufferFloat32Array(this.deltaBuffer, deltas);
         this.bufferFloat32Array(this.deltaptBuffer, deltaPts);
-        this.bufferFloat32Array(this.colorBuffer, colors);
         this.bufferFloat32Array(this.rotateBuffer, rotates);
         this.bufferFloat32Array(this.texfixBuffer, texfixes);
         this.bufferFloat32Array(this.fixdeltaBuffer, fixdeltas);
         this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
         this.bufferFloat32Array(this.fixdeltamaxptBuffer, fixdeltamaxpts);
 
+        this.populateColorBuffer();
         this.populateSkipdimBuffer();
     }
 

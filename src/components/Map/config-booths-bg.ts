@@ -22,6 +22,8 @@ export default class BoothBgDrawer extends BoothDrawerBase {
         const c = getBoothColor(s, this.booth);
         this.drawer.updateColor(this.getId('bg'), c);
         this.drawer.updateSkipdim(this.getId('bg'), s.skipDim);
+        // if (this.booth.name == "H2") debugger
+        if (s.skipDim) console.log('sdim');
     }
 }
 
@@ -31,7 +33,7 @@ function getBoothState(b: Booth) {
     const hover = g.hoveredBoothIds.indexOf(b.id) !== -1;
     const selected = !!g.selectedBoothIdsSet.has(b.id);
     const inList = g.listBoothsIdsSet.has(b.id);
-    // const dimmedFp = g.dimmed;
+    const dimmedFp = g.dimmed;
     // const dimmed = dimmedFp && !inList && !selected;
     const skipDim = inList || selected;
 
