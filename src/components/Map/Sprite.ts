@@ -53,7 +53,7 @@ export default class Sprite {
 
             item.rect = Rect.fromXywh(drawWidth, drawHeight, item.width, item.height);
 
-            drawWidth += canvas.width;
+            drawWidth += canvas.width + 2; // add padding
             if (drawHeight + canvas.height > nextHeight) {
                 nextHeight = drawHeight + canvas.height;
             }

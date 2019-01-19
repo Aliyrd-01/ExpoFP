@@ -17,8 +17,8 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
         this.drawer.addObject({
             id: this.getId("L"),
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [-1, -1, -5, 0],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 4],
+            deltaPts: [-1, -3, -5, 0],
             canvasTmp: bookmarkCanvasL,
             texPosition: 'righttop',
             visible: true
@@ -28,33 +28,46 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             id: this.getId("M"),
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [-1, -1, -5, 0],
+            deltaPts: [-1, -2, -2, 0],
             canvasTmp: bookmarkCanvasM,
             texPosition: 'righttop',
             visible: false
         });
 
-        // this.drawer.addObject({
-        //     id: this.getId("S"),
-        //     center: [r.cx, r.cy],
-        //     deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-        //     deltaPts: [-1, -1, -5, 0],
-        //     canvasTmp: bookmarkCanvasS,
-        //     texPosition: 'center',
-        //     visible: false
-        // });
+        this.drawer.addObject({
+            id: this.getId("S"),
+            center: [r.cx, r.cy],
+            // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            deltaPts: [-bookmarkCanvasS.width / 2, -bookmarkCanvasS.height / 2, bookmarkCanvasS.width / 2, bookmarkCanvasS.height / 2],
+            canvasTmp: bookmarkCanvasS,
+            texPosition: 'center',
+            visible: false
+        });
 
 
-        const updateVisibleBound = this.updateVisible.bind(this);
-        subscribePtscaleChange(() => requireUpdate(updateVisibleBound));
+        //const updateVisibleBound = this.updateVisible.bind(this);
+        subscribePtscaleChange(() => requireUpdate(this.updateBound));
     }
 
-    updateVisible() {
+    update() {
         const { ptscale } = getCurrentMatrixAndScale();
-        const widthPx = this.booth.rect.w / ptscale;
 
-        const viewLarge = widthPx > 25 * devicePixelRatio;
-        this.drawer.updateVisible(this.getId("L"), viewLarge);
-        this.drawer.updateVisible(this.getId("M"), !viewLarge);
+        const bookmarked = this.booth.exhibitors.find(e => store.state.bookmarked[e]);
+
+        let viewL = false;
+        let viewM = false;
+        let viewS = false;
+
+        if (bookmarked) {
+            const widthPx = this.booth.rect.w / ptscale / devicePixelRatio;
+            const heightPx = this.booth.rect.h / ptscale / devicePixelRatio;
+            viewL = widthPx > 25 && heightPx > 25;
+            viewM = !viewL && widthPx > 10;
+            viewS = !viewL && !viewM;
+        }
+
+        this.drawer.updateVisible(this.getId("L"), viewL);
+        this.drawer.updateVisible(this.getId("M"), viewM);
+        this.drawer.updateVisible(this.getId("S"), viewS);
     }
 }

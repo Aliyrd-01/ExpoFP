@@ -79,8 +79,11 @@ export default class Drawer {
     }
 
     updateVisible(id: string, visible: boolean) {
-        this.objectsById.get(id).visible = visible;
-        this.groupsDirty = true;
+        const obj = this.objectsById.get(id);
+        if (obj.visible !== visible){
+            obj.visible = visible;
+            this.groupsDirty = true;
+        }
     }
 
     updateColor(id: string, color: Vec4) {

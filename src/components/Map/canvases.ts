@@ -87,7 +87,7 @@ export function createCircleCanvas(radius) {
 
 export function createBookmarkCanvas(widthPx: number) {
     const canvas = document.createElement("canvas");
-    const padding = 1 * devicePixelRatio;
+    const padding = 2 * devicePixelRatio;
     const w = widthPx * devicePixelRatio;
     const h = w * 1.4;
     canvas.width = w + padding * 2;
