@@ -82,8 +82,8 @@ function draw() {
         u();
     }
 
-    gl.clearColor(0, 0, 1, 1);   // clear to blue
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    //gl.clearColor(0, 0, 1, 1);   // clear to blue
+    //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     for (var d of allDrawers) {
         d.draw();
@@ -102,7 +102,7 @@ function showFps() {
     const deltaTime = now - then;
     then = now;
     const roundTo = 2;
-    const fps = Math.round(1 / deltaTime / 2) * 2;
+    const fps = Math.round(1 / deltaTime / roundTo) * roundTo;
     prevFps.push(fps);
     if (prevFps.length > 20) prevFps.shift();
     const avgFps = prevFps.reduce((sume, el) => sume + el, 0) / prevFps.length;
@@ -129,7 +129,7 @@ export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     // gl.colorMask(true, true, true, false);
 
     configCanvas();

@@ -27,8 +27,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
             canvasTmp: dotCanvas,
-            texPosition: 'center',
-            z: 0.8
+            texPosition: 'center'
         });
 
         this.addLabel(9, 'XS');
@@ -43,8 +42,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [5, 5, -1, -1],
             canvasTmp: detailsCanvas,
-            texPosition: 'lefttop',
-            z: 0.8
+            texPosition: 'lefttop'
         });
 
         this.calcFactors();
@@ -100,8 +98,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
             visible: false,
-            texPosition: 'center',
-            z: 0.8
+            texPosition: 'center'
         });
     }
 }

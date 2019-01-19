@@ -192,7 +192,7 @@ export default class Drawer {
         for (let i = 0; i < this.objects.length; i++) {
             const w = this.objects[i];
             // 4 vec2
-            centers.push(...w.center, w.z, ...w.center, w.z, ...w.center, w.z, ...w.center, w.z);
+            centers.push(...w.center, ...w.center, ...w.center, ...w.center);
             // preare points x1, y1, ... xp1, yp1
             const d = w.deltas || [0, 0, 0, 0];
             const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
@@ -378,7 +378,7 @@ export default class Drawer {
 
         this.ensureBuffersAndGroups();
 
-        this.enableBuffer(this.centerBuffer, this.centerLocation, 3);
+        this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
         this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
         this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
@@ -408,8 +408,6 @@ export default class Drawer {
             twgl.setUniforms(this.programInfo, uniforms);
             gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
         }
-
-
     }
 }
 
@@ -426,7 +424,6 @@ export interface DrawerObject {
     canvasTmp?: HTMLCanvasElement;
     visible?: boolean;
     skipdim?: boolean;
-    z: number;
     //order: number;
 
     //always: boolean;
@@ -447,7 +444,7 @@ interface DrawerGroup {
 }
 
 
-const vertexShaderSource = `attribute vec3 a_center;
+const vertexShaderSource = `attribute vec2 a_center;
 attribute vec2 a_rotate;
 attribute vec2 a_delta;
 attribute vec2 a_deltapt;
@@ -491,7 +488,7 @@ void main() {
     vec2 rotatedDelta =  vec2(
         delta.x * a_rotate.y + delta.y * a_rotate.x,
         delta.y * a_rotate.y - delta.x * a_rotate.x);
-    gl_Position = u_matrix * vec4(a_center.xy + rotatedDelta, a_center.z, 1);
+    gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
 
     v_texcoord = texcoord / u_texsize;
     v_color = a_color;
@@ -512,16 +509,16 @@ void main() {
     vec4 col;
     if (v_color.w != 0.0) {
         col = v_color; 
-        col.rgb = vec3(0.5,0,0);
-        col.w = 0.5;
+        // col.rgb = vec3(0.5,0,0);
+        // col.w = 0.5;
     } else {
         col = texture2D(u_texture, v_texcoord);
-        //col.rgb = col.rgb * col.w;
-        if (col.w > 0.0){
-            col.w = 0.5;
-        }
-        col.rgb = vec3(0.5,0,0);
+        // //col.rgb = col.rgb * col.w;
         // if (col.w > 0.0){
+        //     col.w = 0.5;
+        // }
+        // col.rgb = vec3(0.5,0,0);
+        // // if (col.w > 0.0){
         
         // }
         // //col.w = 1.0;

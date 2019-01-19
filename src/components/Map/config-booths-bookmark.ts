@@ -21,8 +21,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             deltaPts: [-1, -3, -5, 0],
             canvasTmp: bookmarkCanvasL,
             texPosition: 'righttop',
-            visible: true,
-            z: 0.87
+            visible: true
         });
 
         this.drawer.addObject({
@@ -32,8 +31,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             deltaPts: [-1, -2, -2, 0],
             canvasTmp: bookmarkCanvasM,
             texPosition: 'righttop',
-            visible: false,
-            z: 0.87
+            visible: false
         });
 
         this.drawer.addObject({
@@ -45,8 +43,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
                 bookmarkCanvasS.width / 2, bookmarkCanvasS.height / 2],
             canvasTmp: bookmarkCanvasS,
             texPosition: 'center',
-            visible: false,
-            z: 0.87
+            visible: false
         });
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
