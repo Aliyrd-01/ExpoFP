@@ -6,7 +6,7 @@ import { requireUpdate } from './draw';
 
 const bookmarkCanvasL = createBookmarkCanvas(8);
 const bookmarkCanvasM = createBookmarkCanvas(5);
-const bookmarkCanvasS = createBookmarkCanvas(5);
+// const bookmarkCanvasS = createBookmarkCanvas(5);
 
 export default class BoothBookmarkDrawer extends BoothDrawerBase {
 
@@ -41,9 +41,9 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts:
-                [-bookmarkCanvasS.width / 2, -bookmarkCanvasS.height / 2,
-                bookmarkCanvasS.width / 2, bookmarkCanvasS.height / 2],
-            canvasTmp: bookmarkCanvasS,
+                [-bookmarkCanvasM.width / 2, -bookmarkCanvasM.height / 2,
+                bookmarkCanvasM.width / 2, bookmarkCanvasM.height / 2],
+            canvasTmp: bookmarkCanvasM,
             texPosition: 'center',
             visible: false
         });
