@@ -1,6 +1,9 @@
 TODO
 move-to-exhibitor
+moveto booths
+
 dim animation
+inertial scroll
 
 
 
