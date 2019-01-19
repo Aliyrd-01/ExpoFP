@@ -5,11 +5,13 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
         super(booth, 'booth-border');
         const borderColor = [1, 1, 1, 1] as Vec4;
         const r = this.booth.rect;
+        const width = 0.4;
+
         this.drawer.addObject({
             id: this.getId("_1"),
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2],
-            deltaPts: [-.5, -.5, .5, .5],
+            deltaPts: [-width, -width, width, width],
             scalePts: devicePixelRatio,
             color: borderColor
         });
@@ -18,7 +20,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, -r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
-            deltaPts: [-.5, -.5, .5, .5],
+            deltaPts: [-width, -width, width, width],
             color: borderColor
         });
         this.drawer.addObject({
@@ -26,7 +28,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, r.h / 2, r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
-            deltaPts: [-.5, -.5, .5, .5],
+            deltaPts: [-width, -width, width, width],
             color: borderColor
         });
         this.drawer.addObject({
@@ -34,7 +36,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
             center: [r.cx, r.cy],
             deltas: [r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
-            deltaPts: [-.5, -.5, .5, .5],
+            deltaPts: [-width, -width, width, width],
             color: borderColor
         });
 

@@ -57,8 +57,8 @@ export default function configBg() {
         });
     }
 
-    drawer.alpha = 0;
-    animate(600, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
+    drawer.alpha = 1;
+    //animate(600, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
 
     // drawer.alpha = 0.5;
 };

@@ -1,6 +1,6 @@
 import { m4 } from 'twgl.js';
 import { svgWidth, svgHeight } from '@/tools/svg';
-import { allDrawers, getCanvas, getZoomTransform, getVisibleRect, subscribeZoomDimensionsChange, requireUpdate } from "./draw";
+import { delayAnimations, allDrawers, getCanvas, getZoomTransform, getVisibleRect, subscribeZoomDimensionsChange, requireUpdate } from "./draw";
 import animate from './animate';
 
 let matrix: number[][];
@@ -15,7 +15,7 @@ export default function configMatrix() {
     requireUpdate(update);
     subscribeZoomDimensionsChange(() => { dirty = true; requireUpdate(update); });
 
-    animate(0, 1000, d3.easeExpOut, d3.interpolateNumber(visibleScale, maxVisibleScale), v => {
+    animate(delayAnimations, 1000, d3.easeExpOut, d3.interpolateNumber(visibleScale, maxVisibleScale), v => {
         // console.log(v);
         visibleScale = v;
         dirty = true;

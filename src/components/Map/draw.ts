@@ -14,6 +14,8 @@ import settings from '@/settings';
 // var b: AnyDrawer;
 // b = a;
 
+export const delayAnimations = 500;
+
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
 let zoomTranform = { k: 1, x: 0, y: 0 };
@@ -138,7 +140,7 @@ export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
     configDim();
     configBooths();
 
-    requireRedraw();
+    window.setTimeout(requireRedraw, delayAnimations);
 }
 
 

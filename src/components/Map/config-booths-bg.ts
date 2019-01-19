@@ -2,6 +2,7 @@ import Color from 'color';
 import settings from '@/settings';
 import { BoothDrawerBase } from './config-booths-base';
 import { getBoothState } from './config-booths';
+import animate from './animate';
 
 
 export default class BoothBgDrawer extends BoothDrawerBase {
@@ -18,16 +19,33 @@ export default class BoothBgDrawer extends BoothDrawerBase {
         this.update();
     }
 
+    // private prevColor: string;
+    // private cancelColorAnimate: () => void;
+
     update() {
         const s = getBoothState(this.booth);
         const c = getBoothColor(this.booth);
-        this.drawer.updateColor(this.getId('bg'), c);
+        // if (this.prevColor !== c) {
+        //     if (this.cancelColorAnimate) this.cancelColorAnimate();
+        //     // animate color
+        //     if (this.prevColor) {
+        //         this.cancelColorAnimate = animate(0, 100, null, 
+        //             d3.interpolate(this.prevColor, c), v => {
+        //             this.drawer.updateColor(this.getId('bg'), Color(v).vec4());
+        //         })
+        //     } else {
+        //         this.drawer.updateColor(this.getId('bg'), Color(c).vec4());
+        //     }
+        //     this.prevColor = c;
+        // }
+
+        this.drawer.updateColor(this.getId('bg'), c.vec4());
         this.drawer.updateSkipdim(this.getId('bg'), s.skipDim);
     }
 }
 
 
-function getBoothColor(b: Booth): Vec4 {
+function getBoothColor(b: Booth) {
     const s = getBoothState(b);
     let color: string;
     const defColor = s.empty ? (b.availableColor || settings.colors.booths.empty) :
@@ -46,7 +64,7 @@ function getBoothColor(b: Booth): Vec4 {
         colorInfo = colorInfo.darken(0.2);
     }
 
-    return colorInfo.vec4();
+    return colorInfo;
 }
 
 

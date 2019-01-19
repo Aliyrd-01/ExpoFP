@@ -98,7 +98,7 @@ export default class TriangleDrawer {
         twgl.setUniforms(this.programInfo, uniforms);
         gl.drawArrays(gl.TRIANGLES, 0, this.objects.length * 3);
 
-    
+
     }
 }
 
@@ -132,7 +132,9 @@ void main() {
     if (u_dim > 0.0) {
         col = dimColor(col, u_dim);
     }
-    col = vec4(col.xyz / v_color.w * u_alpha, u_alpha);
+    if (u_alpha != 1.0){
+        col *= u_alpha;
+    }
     gl_FragColor = col;
 }`;
 

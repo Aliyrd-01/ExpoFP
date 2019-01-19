@@ -21,7 +21,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             deltaPts: [-1, -3, -5, 0],
             canvasTmp: bookmarkCanvasL,
             texPosition: 'righttop',
-            visible: true
+            visible: false
         });
 
         this.drawer.addObject({

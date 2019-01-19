@@ -45,6 +45,7 @@ export default class Drawer {
     public matrix: any;
     public ptscale: number;
     public dim = 0;
+    public alpha = 1;
 
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
@@ -322,7 +323,7 @@ export default class Drawer {
         let currentGroup: { indices: number[], texture: WebGLTexture, texsize: Vec2 };
 
         if (resortObejcts) {
-           
+
             this.sortedObjects.sort((a, b) => (a.skipdim ? 1 : 0) - (b.skipdim ? 1 : 0));
         }
 
@@ -382,6 +383,7 @@ export default class Drawer {
     }
 
     draw() {
+        if (this.alpha < 0.05) return;
         const gl = this.gl;
 
         gl.useProgram(this.program);
@@ -405,7 +407,8 @@ export default class Drawer {
             const uniforms = {
                 u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
-                u_dim: this.dim
+                u_dim: this.dim,
+                u_alpha: this.alpha
             } as any;
 
             if (group.texture) {
@@ -511,6 +514,7 @@ const fragmentSharedSource = `precision mediump float;
 varying vec2 v_texcoord;
 varying vec4 v_color;
 uniform sampler2D u_texture;
+uniform float u_alpha;
 varying float v_dim; 
 
 ${dimColor}
@@ -519,22 +523,14 @@ void main() {
     vec4 col;
     if (v_color.w != 0.0) {
         col = v_color; 
-        // col.rgb = vec3(0.5,0,0);
-        // col.w = 0.5;
     } else {
         col = texture2D(u_texture, v_texcoord);
-        // //col.rgb = col.rgb * col.w;
-        // if (col.w > 0.0){
-        //     col.w = 0.5;
-        // }
-        // col.rgb = vec3(0.5,0,0);
-        // // if (col.w > 0.0){
-        
-        // }
-        // //col.w = 1.0;
     }
     if (v_dim > 0.0) {
         col = dimColor(col, v_dim);
+    }
+    if (u_alpha != 1.0){
+        col *= u_alpha;
     }
     gl_FragColor = col;
 }`;

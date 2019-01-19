@@ -3,7 +3,9 @@ import settings from '@/settings';
 import { BoothDrawerBase } from './config-booths-base';
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from './canvases';
 import { getCurrentMatrixAndScale, subscribePtscaleChange } from './config-matrix';
-import { requireUpdate } from './draw';
+import { delayAnimations, requireUpdate } from './draw';
+import Drawer from './Drawer';
+import animate from './animate';
 
 const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
 const dotW = dotCanvas.width / 2;
@@ -11,13 +13,28 @@ const dotH = dotCanvas.width / 2;
 
 const prefixes = ['Dot', 'XS', 'S', 'M', 'Details'];
 
-// const allDrawers: BoothLabelDrawer[] = [];
+let canUpdate = false;
+const updates = [];
+let drawer: Drawer;
+function initDrawer(drawer1:Drawer){
+    if (drawer) return;
+    drawer = drawer1;
+    drawer.alpha = 0;
+
+    window.setTimeout(()=>{
+        canUpdate = true;
+        updates.forEach(u => u());
+        animate(0, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
+    }, delayAnimations + 800);
+}
 
 export default class BoothLabelDrawer extends BoothDrawerBase {
     private readonly factors: number[] = [];
 
     constructor(booth: Booth) {
         super(booth, 'booth-label');
+        initDrawer(this.drawer);
+        
 
         const r = this.booth.rect;
 
@@ -30,7 +47,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             texPosition: 'center'
         });
 
-        this.addLabel(9, 'XS');
+        this.addLabel(7, 'XS');
         this.addLabel(12, 'S');
         this.addLabel(14, 'M');
 
@@ -49,6 +66,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
         this.update();
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
+        updates.push(this.updateBound);
     }
 
     calcFactors() {
@@ -67,6 +85,8 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
     }
 
     update() {
+        // if (!canDraw) return;
+        if (!canUpdate) return;
         let visiblePrefix = '';
         const { ptscale } = getCurrentMatrixAndScale();
 
@@ -98,7 +118,6 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltas: [0, 0, 0, 0],
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
-            visible: false,
             texPosition: 'center'
         });
     }
