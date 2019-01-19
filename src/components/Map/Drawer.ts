@@ -246,9 +246,11 @@ export default class Drawer {
                 let val: Vec2;
                 if (!w.spriteItem || w.texPosition === 'center') {
                     val = [0, 0];
-                } else {
+                } else if (w.texPosition === 'lefttop') {
                     val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
                     //val = [0, 0];
+                } else {
+                    val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
                 }
                 fixdeltamaxpts.push(...val, ...val, ...val, ...val);
             }
@@ -437,8 +439,10 @@ void main() {
     // this is relative to fix point (on svg)
     vec2 fixdeltamax = a_fixdeltamaxpt * u_ptscale;
     vec2 deltamax = fixdeltamax + fixdelta;
-    if (a_fixdeltamaxpt.x > 0.0){
+    if (a_fixdeltamaxpt.x > 0.0) {
         delta = vec2(min(delta.x, deltamax.x), min(delta.y, deltamax.y));
+    } else if (a_fixdeltamaxpt.x < 0.0) {
+        delta = vec2(max(delta.x, deltamax.x), max(delta.y, deltamax.y));
     }
 
     vec2 diff = delta - fixdelta;
