@@ -54,20 +54,25 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
 
         const bookmarked = this.booth.exhibitors.find(e => store.state.bookmarked[e]);
 
-        let viewL = false;
-        let viewM = false;
-        let viewS = false;
+        let view: string;
+
 
         if (bookmarked) {
             const widthPx = this.booth.rect.w / ptscale / devicePixelRatio;
             const heightPx = this.booth.rect.h / ptscale / devicePixelRatio;
-            viewL = widthPx > 25 && heightPx > 25;
-            viewM = !viewL && widthPx > 10;
-            viewS = !viewL && !viewM;
+            if (widthPx > 25 && heightPx > 25) {
+                view = "L";
+            } else if (widthPx > 10) {
+                view = "M";
+            } else {
+                view = "S";
+            }
         }
 
-        this.drawer.updateVisible(this.getId("L"), viewL);
-        this.drawer.updateVisible(this.getId("M"), viewM);
-        this.drawer.updateVisible(this.getId("S"), viewS);
+        const skipDimm = this.getBoothState().skipDim;
+        ["L", "M", "S"].forEach(x => {
+            this.drawer.updateVisible(this.getId(x), x === view);
+            this.drawer.updateSkipdim(this.getId(x), skipDimm);
+        });
     }
 }

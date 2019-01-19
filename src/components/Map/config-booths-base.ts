@@ -1,5 +1,6 @@
 import { requireDrawer } from "./draw";
 import Drawer from "./Drawer";
+import { getBoothState } from "./config-booths";
 
 export abstract class BoothDrawerBase {
     protected readonly booth: Booth;
@@ -14,6 +15,10 @@ export abstract class BoothDrawerBase {
 
     protected getId(name: string) {
         return `b${this.booth.id}${name}`;
+    }
+
+    protected getBoothState(){
+        return getBoothState(this.booth);
     }
 
     protected subscribeToBoothChange() {

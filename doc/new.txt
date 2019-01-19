@@ -2,10 +2,11 @@ TODO
 move-to-exhibitor
 moveto booths
 
-so far: remove z
-alpha for dimmed mode and texture is weird
+//so far: remove z
+//alpha for dimmed mode and texture is weird
 // save booth state somewhere
-dim well, then animate
+//dim well, then animate
+animate dim
 inertial scroll
 
 

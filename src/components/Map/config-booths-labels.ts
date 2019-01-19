@@ -46,9 +46,9 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
         });
 
         this.calcFactors();
-        // allDrawers.push(this);
+        this.update();
 
-        subscribePtscaleChange(()=> requireUpdate(this.updateBound));
+        subscribePtscaleChange(() => requireUpdate(this.updateBound));
     }
 
     calcFactors() {
@@ -80,6 +80,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             var obj = this.drawer.getObject(this.getId(p));
             if (!obj) debugger;
             this.drawer.updateVisible(this.getId(p), p === visiblePrefix);
+            this.drawer.updateSkipdim(this.getId(p), this.getBoothState().skipDim);
         }
     }
 
