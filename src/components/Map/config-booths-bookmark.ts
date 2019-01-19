@@ -18,7 +18,8 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             id: this.getId("L"),
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 4],
-            deltaPts: [-1, -3, -5, 0],
+            deltaPts: [-1, -2, -5, 0],
+            scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasL,
             texPosition: 'righttop',
             visible: false
@@ -29,6 +30,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [-1, -2, -2, 0],
+            scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasM,
             texPosition: 'righttop',
             visible: false
@@ -62,7 +64,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
             const heightPx = this.booth.rect.h / ptscale / devicePixelRatio;
             if (widthPx > 25 && heightPx > 25) {
                 view = "L";
-            } else if (widthPx > 10) {
+            } else if (widthPx > 14) {
                 view = "M";
             } else {
                 view = "S";

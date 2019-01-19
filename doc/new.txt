@@ -2,11 +2,13 @@ TODO
 move-to-exhibitor
 moveto booths
 
+add row names to svg
+
 //so far: remove z
 //alpha for dimmed mode and texture is weird
 // save booth state somewhere
 //dim well, then animate
-animate dim
+//animate dim
 inertial scroll
 
 

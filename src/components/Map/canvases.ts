@@ -6,8 +6,8 @@ export function createLabelCanvas(text: string, fontSize: number) {
     const c = canvas.getContext("2d");
     const font = getFont(fontSize, 600);
     c.font = font;
-    const { width } = c.measureText(text);
-
+    let { width } = c.measureText(text);
+    //if (text.length < 3) width += fontSize / 8;
     canvas.width = width + 3 + 4; // 4 was added as extra padding
     canvas.height = fontSize + 4;
     // set font again
@@ -37,7 +37,7 @@ export function createDetailsCanvas(b: Booth) {
     }
 
     const boothFontSize = 14 * devicePixelRatio;
-    const detailFontSize = 13 * devicePixelRatio;
+    const detailFontSize = 11 * devicePixelRatio;
     const boothFont = getFont(boothFontSize, 600);
     const detailFont = getFont(detailFontSize, 400);
     const boothPadding = 0 * devicePixelRatio;

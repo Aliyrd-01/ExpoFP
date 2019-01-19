@@ -48,7 +48,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
         });
 
         this.addLabel(7, 'XS');
-        this.addLabel(12, 'S');
+        this.addLabel(10, 'S');
         this.addLabel(14, 'M');
 
         const detailsCanvas = createDetailsCanvas(this.booth);
