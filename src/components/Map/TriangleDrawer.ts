@@ -16,7 +16,8 @@ export default class TriangleDrawer {
     // to be set externally
     public matrix: any;
     public ptscale: number;
-    public alpha: number = 1;
+    public alpha = 1;
+    public dim = 0;
 
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;

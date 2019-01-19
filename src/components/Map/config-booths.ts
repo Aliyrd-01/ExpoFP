@@ -21,6 +21,10 @@ store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) 
     handleBoothSetsDifference(new Set(v), new Set(oldV));
 });
 
+store.watch(((s, g) => g.listBoothsIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
+    handleBoothSetsDifference(v, oldV);
+});
+
 store.watch(((s, g) => g.selectedBoothIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
     handleBoothSetsDifference(v, oldV);
 });
@@ -30,8 +34,6 @@ store.watch(((s, g) => g.bookmarkedArray) as any, (v: number[], oldV: number[]) 
     const exhibitors = v.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c));
     handleBoothSetsDifference(new Set(exhibitors), new Set(oldExhibitors));
 });
-
-
 
 function handleBoothSetsDifference(v: Set<number>, oldV: Set<number>) {
     const newElements = Array.from(v).filter(x => !oldV.has(x));

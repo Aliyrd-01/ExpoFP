@@ -13,13 +13,15 @@ export default class BoothBgDrawer extends BoothDrawerBase {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [.5, .5, -.5, -.5],
-            color: getBoothColor(this.booth)
         });
+        this.update();
     }
 
     update() {
-        const c =  getBoothColor(this.booth);
+        const s = getBoothState(this.booth);
+        const c = getBoothColor(s, this.booth);
         this.drawer.updateColor(this.getId('bg'), c);
+        this.drawer.updateSkipdim(this.getId('bg'), s.skipDim);
     }
 }
 
@@ -29,17 +31,17 @@ function getBoothState(b: Booth) {
     const hover = g.hoveredBoothIds.indexOf(b.id) !== -1;
     const selected = !!g.selectedBoothIdsSet.has(b.id);
     const inList = g.listBoothsIdsSet.has(b.id);
-    const dimmedFp = g.dimmed;
-    const dimmed = dimmedFp && !inList && !selected;
+    // const dimmedFp = g.dimmed;
+    // const dimmed = dimmedFp && !inList && !selected;
+    const skipDim = inList || selected;
 
     const empty = b.exhibitors.length === 0;
     const error = !!b.error;
     const bookmarked = b.exhibitors.find(e => store.state.bookmarked[e])
-    return { hover, selected, dimmed, dimmedFp, error, empty, bookmarked };
+    return { hover, selected, skipDim, error, empty, bookmarked };
 }
 
-function getBoothColor(b: Booth): Vec4 {
-    const s = getBoothState(b);
+function getBoothColor(s: ReturnType<typeof getBoothState>, b: Booth): Vec4 {
     let color: string;
     const defColor = s.empty ? (b.availableColor || settings.colors.booths.empty) : 
         (b.soldColor || settings.colors.booths.default);
@@ -48,9 +50,9 @@ function getBoothColor(b: Booth): Vec4 {
     else if (s.selected) color = settings.colors.booths.selected;
     else color = defColor;
 
-    if (s.dimmed && !s.selected) {
-        color = settings.colors.booths.empty; ;
-    }
+    // if (s.dimmed && !s.selected) {
+    //     color = settings.colors.booths.empty; ;
+    // }
 
     let colorInfo = Color(color);
     if (s.hover && !s.selected) {

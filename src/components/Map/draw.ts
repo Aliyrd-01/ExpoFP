@@ -1,6 +1,7 @@
 import { sizeCanvasToParentElement } from './utils';
 
 import configMatrix from './config-matrix';
+import configDim from './config-dim';
 import configBg from './config-bg';
 import configBooths from './config-booths';
 import settings from '@/settings';
@@ -23,6 +24,7 @@ interface AnyDrawer {
     draw();
     matrix: number[][];
     ptscale?: number;
+    dim: number;
 }
 
 
@@ -126,6 +128,7 @@ export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
     
     configBg();
     configMatrix();
+    configDim();
     configBooths();
 
     requireRedraw();

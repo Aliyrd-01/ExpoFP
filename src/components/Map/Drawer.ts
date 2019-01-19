@@ -6,6 +6,7 @@ export default class Drawer {
     private buffersInitialized = true;
     private groupsDirty = true;
     private colorsDirty = true;
+    private skipdimDirty = true;
 
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -20,6 +21,8 @@ export default class Drawer {
     private readonly deltaptBuffer: WebGLBuffer;
     private readonly colorLocation: number;
     private readonly colorBuffer: WebGLBuffer;
+    private readonly skipdimLocation: number;
+    private readonly skipdimBuffer: WebGLBuffer;
     private readonly rotateLocation: number;
     private readonly rotateBuffer: WebGLBuffer;
     private readonly texfixLocation: number;
@@ -39,6 +42,7 @@ export default class Drawer {
     // to be set externally
     public matrix: any;
     public ptscale: number;
+    public dim = 0;
 
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
@@ -49,6 +53,7 @@ export default class Drawer {
         this.deltaLocation = gl.getAttribLocation(this.program, "a_delta");
         this.deltaptLocation = gl.getAttribLocation(this.program, "a_deltapt");
         this.colorLocation = gl.getAttribLocation(this.program, "a_color");
+        this.skipdimLocation = gl.getAttribLocation(this.program, "a_skipdim");
         this.rotateLocation = gl.getAttribLocation(this.program, "a_rotate");
         this.texfixLocation = gl.getAttribLocation(this.program, "a_texfix");
         this.fixdeltaLocation = gl.getAttribLocation(this.program, "a_fixdelta");
@@ -59,6 +64,7 @@ export default class Drawer {
         this.deltaBuffer = gl.createBuffer();
         this.deltaptBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
+        this.skipdimBuffer = gl.createBuffer();
         this.rotateBuffer = gl.createBuffer();
         this.texfixBuffer = gl.createBuffer();
         this.fixdeltaBuffer = gl.createBuffer();
@@ -80,15 +86,29 @@ export default class Drawer {
 
     updateVisible(id: string, visible: boolean) {
         const obj = this.objectsById.get(id);
-        if (obj.visible !== visible){
+        if (obj.visible !== visible) {
             obj.visible = visible;
             this.groupsDirty = true;
         }
     }
 
+    updateSkipdim(id: string, skipdim: boolean) {
+        const obj = this.objectsById.get(id);
+        if (obj.skipdim !== skipdim) {
+            obj.skipdim = skipdim;
+            this.skipdimDirty = true;
+        }
+    }
+
     updateColor(id: string, color: Vec4) {
-        this.objectsById.get(id).color = color;
-        this.colorsDirty = true;
+        const obj = this.objectsById.get(id);
+        if (!obj.color || obj.color[0] !== color[0]
+            || obj.color[1] !== color[1]
+            || obj.color[2] !== color[2]
+            || obj.color[3] !== color[3]) {
+            this.objectsById.get(id).color = color;
+            this.colorsDirty = true;
+        }
     }
 
     private ensureBuffersAndGroups() {
@@ -102,6 +122,11 @@ export default class Drawer {
         }
 
         if (this.colorsDirty) {
+            this.populateColorBuffer();
+            this.colorsDirty = false;
+        }
+
+        if (this.skipdimDirty) {
             this.populateColorBuffer();
             this.colorsDirty = false;
         }
@@ -268,6 +293,8 @@ export default class Drawer {
         this.bufferFloat32Array(this.fixdeltaBuffer, fixdeltas);
         this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
         this.bufferFloat32Array(this.fixdeltamaxptBuffer, fixdeltamaxpts);
+
+        this.populateSkipdimBuffer();
     }
 
     private populateColorBuffer() {
@@ -278,6 +305,16 @@ export default class Drawer {
         }
 
         this.bufferFloat32Array(this.colorBuffer, colors);
+    }
+
+    private populateSkipdimBuffer() {
+        const skipdims: number[] = [];
+        for (const w of this.objects) {
+            const c = w.skipdim ? 1 : 0;
+            skipdims.push(c,c,c,c);
+        }
+
+        this.bufferFloat32Array(this.skipdimBuffer, skipdims);
     }
 
     private populateGroups() {
@@ -333,7 +370,7 @@ export default class Drawer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
     }
 
-    private enableBuffer(buffer: WebGLBuffer, location: number, size: 2 | 4) {
+    private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 4) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.gl.enableVertexAttribArray(location);
         this.gl.vertexAttribPointer(location, size, this.gl.FLOAT, false, 0, 0);
@@ -350,6 +387,7 @@ export default class Drawer {
         this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
         this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
+        this.enableBuffer(this.skipdimBuffer, this.skipdimLocation, 1);
         this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
         this.enableBuffer(this.texfixBuffer, this.texfixLocation, 2);
         this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
@@ -365,7 +403,7 @@ export default class Drawer {
             const uniforms = {
                 u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
-                u_dim: 0
+                u_dim: this.dim
             } as any;
 
             if (group.texture) {
@@ -395,6 +433,7 @@ export interface DrawerObject {
     spriteItem?: SpriteItem;
     canvasTmp?: HTMLCanvasElement;
     visible?: boolean;
+    skipdim?: boolean;
     //order: number;
 
     //always: boolean;
@@ -425,13 +464,18 @@ attribute vec2 a_fixdelta;
 attribute vec2 a_fixdeltapt; 
 attribute vec2 a_fixdeltamaxpt; 
 attribute vec2 a_texfix;
+attribute float a_skipdim;
+
 
 uniform mat4 u_matrix;   
 uniform vec2 u_ptscale; 
 uniform vec2 u_texsize;
+uniform float u_dim;
 
 varying vec2 v_texcoord;
 varying vec4 v_color;
+
+varying float v_dim;
 
 void main() {
     vec2 delta = a_delta + a_deltapt * u_ptscale;
@@ -459,6 +503,7 @@ void main() {
 
     v_texcoord = texcoord / u_texsize;
     v_color = a_color;
+    v_dim = a_skipdim > 0.0 ? 0.0 : u_dim;
 }`;
 
 // https://gamedev.stackexchange.com/questions/59797/glsl-shader-change-hue-saturation-brightness
@@ -466,9 +511,8 @@ void main() {
 const fragmentSharedSource = `precision mediump float;
 varying vec2 v_texcoord;
 varying vec4 v_color;
-varying float v_skipdim;
 uniform sampler2D u_texture;
-uniform float u_dim; 
+varying float v_dim; 
 
 vec4 dimColor(vec4 col, float desaturation){
     float lightenFactor = 1.0 + (0.04 * desaturation);
@@ -487,8 +531,8 @@ void main() {
     } else {
         col = texture2D(u_texture, v_texcoord);
     }
-    if (u_dim > 0.0) {
-        col = dimColor(col, u_dim);
+    if (v_dim > 0.0) {
+        col = dimColor(col, v_dim);
     }
     gl_FragColor = col;
 }`;
