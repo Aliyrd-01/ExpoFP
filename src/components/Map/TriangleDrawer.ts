@@ -87,7 +87,7 @@ export default class TriangleDrawer {
         this.enableBuffer(this.posBuffer, this.posLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
 
-
+        // if (!this.matrix) debugger;
 
         const uniforms = {
             u_matrix: this.matrix,

@@ -60,7 +60,7 @@ class BgDrawer {
 }
 
 export default function configCanvas() {
-    requireDrawer('01canvas', BgDrawer);
+    requireDrawer('canvas', BgDrawer);
 };
 
 

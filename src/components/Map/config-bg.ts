@@ -10,11 +10,31 @@ export default function configBg() {
     const drawer = requireDrawer('bg', TriangleDrawer);
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
-    const paths = (d3.select(svg).select('#BG').selectAll('path').nodes() as SVGPathElement[]);
+    const bgElements = (d3.select(svg).select('#BG').selectAll('path, rect').nodes() as SVGElement[]);
 
-    for (const p of paths) {
-        const d = parseInt(p.getAttribute('data-index'));
-        const color = Color(p.style.fill).vec4();
+    for (const el of bgElements) {
+        if (el.tagName === "path") {
+            addPath(el as SVGPathElement);
+        } else if (el.tagName === "rect") {
+            addRect(el as SVGRectElement);
+        }
+    }
+
+    // for (const p of paths) {
+    //     addPath(p);
+    // }
+
+    // const rects = (d3.select(svg).select('#BG').selectAll('rect').nodes() as SVGRectElement[]);
+
+    // // const color = ColorInfo.fromHex(settings.colors.bg).toVec4();
+    // for (const ro of rects) {
+    //     addRect(ro);
+
+    // }
+
+    function addPath(svgPath: SVGPathElement) {
+        const d = parseInt(svgPath.getAttribute('data-index'));
+        const color = Color(svgPath.style.fill).vec4();
 
         const mesh = __fpPaths[d];
         //var mesh = svgMesh3d(d, { normalize: false, scale: 8 });
@@ -35,13 +55,9 @@ export default function configBg() {
         }
     }
 
-    const rects = (d3.select(svg).select('#BG').selectAll('rect').nodes() as SVGRectElement[]);
-
-    // const color = ColorInfo.fromHex(settings.colors.bg).toVec4();
-    for (const ro of rects) {
-        const r = Rect.fromSvgRectElement(ro);
-        const color = Color(ro.style.fill).vec4();
-
+    function addRect(svgRect: SVGRectElement) {
+        const r = Rect.fromSvgRectElement(svgRect);
+        const color = Color(svgRect.style.fill).vec4();
 
         drawer.addObject({
             p0: [r.x1, r.y1],
@@ -57,7 +73,7 @@ export default function configBg() {
         });
     }
 
-    drawer.alpha = 1;
+    // drawer.alpha = 1;
     //animate(600, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
 
     // drawer.alpha = 0.5;
