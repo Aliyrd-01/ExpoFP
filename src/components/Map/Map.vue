@@ -59,12 +59,125 @@ export default {
     mounted() {
         const canvas = this.$el;
         // const $parent = d3.select(canvas.parentElement);
-        this.$canvas = d3.select(canvas);
-        this.zoom = d3
+        const d3canv = this.$canvas = d3.select(canvas);
+
+        let transforms = [];
+        let currentInertialAf;
+        const transitionDuration = 1000;
+        let initialTransitionSpeedX = 0.4; // per ms
+        let initialTransitionSpeedY = 0.4; // per ms
+
+        const zoom = this.zoom = d3
             .zoom()
             .clickDistance(15)
-            .scaleExtent([0.1, 48])
-            .on("zoom", () => applyZoomTransform(d3.event.transform));
+            .scaleExtent([0.5, 12])
+            .on("zoom", () => applyZoomTransform(d3.event.transform))
+            .on("zoom.inertial start end", () => {
+                var e = d3.event;
+                console.log(
+                    "zoom start end",
+                    e,
+                    e.type,
+                    e.sourceEvent,
+                    e.transform
+                );
+
+                if (e.sourceEvent) {
+                    this.$canvas.interrupt();
+                }
+
+                if (e.type === "start" && e.sourceEvent) {
+                    window.cancelAnimationFrame(currentInertialAf);
+                    transforms = [];
+                    transforms.push({
+                        at: performance.now(),
+                        transform: e.transform
+                    });
+                    // lastTransform = e.transform;
+                    // lastTransformTime = performance.now();
+                }
+
+                if (e.type === "zoom" && e.sourceEvent) {
+                    transforms.push({
+                        at: performance.now(),
+                        transform: e.transform
+                    });
+                    // remove all having
+                }
+
+                if (e.type === "end" && e.sourceEvent) {
+                    const min = 50;
+                    const now = performance.now();
+                    const maxAt = now - min;
+                    for (var i = transforms.length - 1; i >= 0; i--) {
+                        var t = transforms[i];
+                        if (t.at < maxAt || i == 0) {
+                            // take it
+                            var time = now - t.at;
+                            var diffX =
+                                (e.transform.x - t.transform.x) / e.transform.k;
+                            var diffY =
+                                (e.transform.y - t.transform.y) / e.transform.k;
+                            initialTransitionSpeedX = diffX / time;
+                            initialTransitionSpeedY = diffY / time;
+                            break;
+                        }
+                    }
+
+                    console.log(
+                        "spped",
+                        initialTransitionSpeedX,
+                        initialTransitionSpeedY
+                    );
+                    //if (enableInertia)
+                    doTransition();
+                    //root.transition().duration(1000).call(zoom.translateBy, 300,300)
+                    //window.setTimeout(function(){root.interrupt()}, 200)
+                }
+            });
+
+        function doTransition() {
+            console.log("Started transitino");
+
+            //var totalDistance = (initialSpeed * initialSpeed ) * declineK;
+
+            var start = performance.now();
+            var till = start + transitionDuration;
+            var prevSpeedX = initialTransitionSpeedX;
+            var prevSpeedY = initialTransitionSpeedY;
+            var prevTime = start;
+
+            function doStep() {
+                var now = performance.now();
+                var part = (till - now) / transitionDuration;
+                if (part < 0) part = 0;
+                var partEasy = d3.easePolyIn.exponent(3)(part);
+                var currentSpeedX = initialTransitionSpeedX * partEasy;
+                var currentSpeedY = initialTransitionSpeedY * partEasy;
+                var avgSpeedX = (currentSpeedX + prevSpeedX) / 2;
+                var avgSpeedY = (currentSpeedY + prevSpeedY) / 2;
+                var durationSincePrev = now - prevTime;
+                prevSpeedX = currentSpeedX;
+                prevSpeedY = currentSpeedY;
+                prevTime = now;
+                const distanceSincePrevX = durationSincePrev * avgSpeedX;
+                const distanceSincePrevY = durationSincePrev * avgSpeedY;
+                //console.log("doStep", partEasy);
+
+                d3canv.call(
+                    zoom.translateBy,
+                    distanceSincePrevX,
+                    distanceSincePrevY
+                );
+
+                // root.call(zoom.translateBy, transitionSpeed, transitionSpeed);
+                if (partEasy > 0.02) {
+                    currentInertialAf = window.requestAnimationFrame(doStep);
+                }
+            }
+            currentInertialAf = window.requestAnimationFrame(doStep);
+        }
+
         this.$canvas.call(this.zoom);
 
         initialize(canvas, this.visibleRect);
