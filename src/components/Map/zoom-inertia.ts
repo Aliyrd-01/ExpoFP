@@ -4,6 +4,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
 
     let $canvas: d3.Selection<any, {}, null, undefined>;
     let transforms = [];
+    let initialK;
     let currentInertialAf;
     const transitionDuration = 1000;
     let initialTransitionSpeedX = 0.4; // per ms
@@ -18,6 +19,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
 
         window.cancelAnimationFrame(currentInertialAf);
         transforms = [];
+        initialK = e.transform.k;
         transforms.push({
             at: performance.now(),
             transform: e.transform
@@ -36,6 +38,8 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
     zoom.on("end", function () {
         const e = d3.event;
         if (!e.sourceEvent) return;
+        const lastK = transforms[transforms.length - 1].transform.k;
+        if (lastK !== initialK) return;
         const min = 50;
         const now = performance.now();
         const maxAt = now - min;
@@ -56,7 +60,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
 
         const speed = Math.sqrt(initialTransitionSpeedX * initialTransitionSpeedX + initialTransitionSpeedY * initialTransitionSpeedY);
         console.log("zoom speed", speed, initialTransitionSpeedX, initialTransitionSpeedY);
-                if (speed > 0.08) doTransition();
+        if (speed > 0.08) doTransition();
     });
 
 

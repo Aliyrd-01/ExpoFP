@@ -17,7 +17,7 @@ import getBoothIdFromClientXy from "./booth-by-xy";
 import { initialize, applyZoomTransform, applyVisibleRect } from "./draw";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
-import configInertia from './zoom-inertia';
+import configInertia from "./zoom-inertia";
 // import { setZoomAndDimensions } from './matrix-scale';
 // import c from "./drawing-context";
 
@@ -60,7 +60,7 @@ export default {
     mounted() {
         const canvas = this.$el;
         // const $parent = d3.select(canvas.parentElement);
-        const d3canv = this.$canvas = d3.select(canvas);
+        const d3canv = (this.$canvas = d3.select(canvas));
 
         let transforms = [];
         let currentInertialAf;
@@ -68,11 +68,14 @@ export default {
         let initialTransitionSpeedX = 0.4; // per ms
         let initialTransitionSpeedY = 0.4; // per ms
 
-        const zoom = this.zoom = d3
+        const zoom = (this.zoom = d3
             .zoom()
             .clickDistance(15)
             .scaleExtent([0.5, 12])
-            .on("zoom", () => applyZoomTransform(d3.event.transform));
+            .on("zoom", () => {
+                // TODO: prevent off-screen zooming: http://bl.ocks.org/shawnbot/6518285
+                applyZoomTransform(d3.event.transform);
+            }));
         configInertia(zoom);
         this.$canvas.call(this.zoom);
         initialize(canvas, this.visibleRect);
