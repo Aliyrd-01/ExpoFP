@@ -54,26 +54,26 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
             }
         }
 
-        const speed = Math.sqrt(initialTransitionSpeedX * initialTransitionSpeedX, initialTransitionSpeedY * initialTransitionSpeedY);
+        const speed = Math.sqrt(initialTransitionSpeedX * initialTransitionSpeedX + initialTransitionSpeedY * initialTransitionSpeedY);
         console.log("zoom speed", speed, initialTransitionSpeedX, initialTransitionSpeedY);
-                if (speed > 0.04) doTransition();
+                if (speed > 0.08) doTransition();
     });
 
 
     function doTransition() {
         const start = performance.now();
         const till = start + transitionDuration;
-        const prevSpeedX = initialTransitionSpeedX;
-        const prevSpeedY = initialTransitionSpeedY;
-        const prevTime = start;
+        let prevSpeedX = initialTransitionSpeedX;
+        let prevSpeedY = initialTransitionSpeedY;
+        let prevTime = start;
 
         function doStep() {
             const now = performance.now();
-            const part = (till - now) / transitionDuration;
+            let part = (till - now) / transitionDuration;
             if (part < 0) part = 0;
-            const partEasy = d3.easeExpIn(part);
-            const currentSpeedX = initialTransitionSpeedX * partEasy;
-            const currentSpeedY = initialTransitionSpeedY * partEasy;
+            const partEased = d3.easeExpIn(part);
+            const currentSpeedX = initialTransitionSpeedX * partEased;
+            const currentSpeedY = initialTransitionSpeedY * partEased;
             const avgSpeedX = (currentSpeedX + prevSpeedX) / 2;
             const avgSpeedY = (currentSpeedY + prevSpeedY) / 2;
             const durationSincePrev = now - prevTime;
@@ -89,7 +89,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
                 distanceSincePrevY
             );
 
-            if (partEasy > 0.02) {
+            if (partEased > 0.02) {
                 currentInertialAf = window.requestAnimationFrame(doStep);
             }
         }
