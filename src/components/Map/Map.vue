@@ -13,8 +13,10 @@
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import getBoothIdFromClientXy from "./booth-by-xy";
+import { svgWidth, svgHeight } from "@/tools/svg";
 // import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
 import { initialize, applyZoomTransform, applyVisibleRect } from "./draw";
+import { getCurrentMatrixAndScale } from "./config-matrix";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
@@ -73,7 +75,25 @@ export default {
             .clickDistance(15)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                // TODO: prevent off-screen zooming: http://bl.ocks.org/shawnbot/6518285
+                console.error('zoom bounds are buggy!!!')
+                // inspired by: http://bl.ocks.org/shawnbot/6518285
+                const { ptscale } = getCurrentMatrixAndScale();
+                const transform = d3.event.transform;
+                const svgToPxScale = 1 / ptscale / transform.k / devicePixelRatio;
+                const svgPy = svgHeight * svgToPxScale;
+                const svgPx = svgWidth * svgToPxScale;
+                const vRect = this.visibleRect as Rect;
+                //max/min are not symmetric
+                const allow = 0.8;
+                const maxTy = (vRect.h * allow + svgPy) / 2;
+                const minTy = -maxTy * transform.k;
+                const maxTx = (vRect.w * allow + svgPx) / 2;
+                const minTx = -maxTx * transform.k;
+
+                //console.log(svgPy, maxTy, transform.y, transform.k);
+                transform.y = Math.min(maxTy, Math.max(minTy, transform.y));
+                transform.x = Math.min(maxTx, Math.max(minTx, transform.x));
+                
                 applyZoomTransform(d3.event.transform);
             }));
         configInertia(zoom);
