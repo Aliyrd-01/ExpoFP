@@ -1,32 +1,98 @@
-import { requireUpdate } from "./draw";
+import { ZoomBehavior } from "d3-zoom";
 
-export default function animate<T>(timeout: number, duration: number,
-    easingFunc: (k: number) => number,
-    interpolateFunc: (k: number) => T,
-    setFunc: (t: T) => void) {
+export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
 
-    let stopAnimation = false;
+    let $canvas: d3.Selection<any, {}, null, undefined>;
+    let transforms = [];
+    let currentInertialAf;
+    const transitionDuration = 1000;
+    let initialTransitionSpeedX = 0.4; // per ms
+    let initialTransitionSpeedY = 0.4; // per ms
 
-    function doAnimation() {
-        const start = performance.now();
+    zoom.on("start", function () {
+        const e = d3.event;
+        if (!e.sourceEvent) return;
 
-        function animationStep() {
-            if (stopAnimation) return;
-            const part = Math.min(1, (performance.now() - start) / duration);
-            const easedPart = easingFunc ? easingFunc(part) : part;
-            const val = interpolateFunc(easedPart);
-            setFunc(val);
-            if (part !== 1) {
-                requireUpdate(animationStep);
+        $canvas = d3.select(this);
+        $canvas.interrupt();
+
+        window.cancelAnimationFrame(currentInertialAf);
+        transforms = [];
+        transforms.push({
+            at: performance.now(),
+            transform: e.transform
+        });
+    });
+
+    zoom.on("zoom.inertial", function () {
+        const e = d3.event;
+        if (!e.sourceEvent) return;
+        transforms.push({
+            at: performance.now(),
+            transform: e.transform
+        });
+    });
+
+    zoom.on("end", function () {
+        const e = d3.event;
+        if (!e.sourceEvent) return;
+        const min = 50;
+        const now = performance.now();
+        const maxAt = now - min;
+        for (let i = transforms.length - 1; i >= 0; i--) {
+            let t = transforms[i];
+            if (t.at < maxAt || i == 0) {
+                // take it
+                let time = now - t.at;
+                let diffX =
+                    (e.transform.x - t.transform.x) / e.transform.k;
+                let diffY =
+                    (e.transform.y - t.transform.y) / e.transform.k;
+                initialTransitionSpeedX = diffX / time;
+                initialTransitionSpeedY = diffY / time;
+                break;
             }
         }
-        requireUpdate(animationStep);
-    }
 
-    if (timeout) window.setTimeout(doAnimation, timeout);
-    else doAnimation();
+        const speed = Math.sqrt(initialTransitionSpeedX * initialTransitionSpeedX, initialTransitionSpeedY * initialTransitionSpeedY);
+        console.log("zoom speed", speed, initialTransitionSpeedX, initialTransitionSpeedY);
+                if (speed > 0.04) doTransition();
+    });
 
-    return () => {
-        stopAnimation = true;
+
+    function doTransition() {
+        const start = performance.now();
+        const till = start + transitionDuration;
+        const prevSpeedX = initialTransitionSpeedX;
+        const prevSpeedY = initialTransitionSpeedY;
+        const prevTime = start;
+
+        function doStep() {
+            const now = performance.now();
+            const part = (till - now) / transitionDuration;
+            if (part < 0) part = 0;
+            const partEasy = d3.easeExpIn(part);
+            const currentSpeedX = initialTransitionSpeedX * partEasy;
+            const currentSpeedY = initialTransitionSpeedY * partEasy;
+            const avgSpeedX = (currentSpeedX + prevSpeedX) / 2;
+            const avgSpeedY = (currentSpeedY + prevSpeedY) / 2;
+            const durationSincePrev = now - prevTime;
+            prevSpeedX = currentSpeedX;
+            prevSpeedY = currentSpeedY;
+            prevTime = now;
+            const distanceSincePrevX = durationSincePrev * avgSpeedX;
+            const distanceSincePrevY = durationSincePrev * avgSpeedY;
+
+            $canvas.call(
+                zoom.translateBy,
+                distanceSincePrevX,
+                distanceSincePrevY
+            );
+
+            if (partEasy > 0.02) {
+                currentInertialAf = window.requestAnimationFrame(doStep);
+            }
+        }
+        currentInertialAf = window.requestAnimationFrame(doStep);
     }
 }
