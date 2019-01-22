@@ -96,30 +96,6 @@ export default {
                 const maxTx = centerTx + maxDeltaX;
                 const minTx = centerTx - maxDeltaX;
 
-                //const svgPx = svgWidth * svgToPxScale;
-                // const allow = 0.8;
-                // const maxTy = (vRect.h * allow + svgHeightUnscaled) / 2;
-                // const minTy = -maxTy * transform.k;
-                // const maxTx = (vRect.w * allow + svgWidthUnscaled) / 2;
-                // const minTx = -maxTx * transform.k;
-                //max/min are not symmetric
-                //
-                // const maxTy = (vRect.h * allow + svgPy) / 2;
-                // const minTy = -maxTy * transform.k;
-                // const maxTx = (vRect.w * allow + svgPx) / 2;
-                // const minTx = -maxTx * transform.k;
-
-                // console.log(
-                //     maxDeltaY,
-                //     maxTy,
-                //     minTy,
-                //     centerTy,
-                //     centerTx,
-                //     transform.y,
-                //     transform.x,
-                //     transform.k
-                // );
-
                 transform.y = Math.min(maxTy, Math.max(minTy, transform.y));
                 transform.x = Math.min(maxTx, Math.max(minTx, transform.x));
 
@@ -131,6 +107,7 @@ export default {
     },
     watch: {
         moveToBooths: function() {
+            console.log('this.moveToBooths', this.moveToBooths);    
             if (!this.moveToBooths) return;
             // this.handledMoveToExhibitor = this.moveToBooths;
             // console.log("watched moveToBooths", this.moveToBooths);
