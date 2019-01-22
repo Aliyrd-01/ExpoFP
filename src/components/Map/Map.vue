@@ -60,38 +60,48 @@ export default {
         }
     },
     mounted() {
-        const canvas = this.$el;
+        const canvas = this.$el as HTMLCanvasElement;
         // const $parent = d3.select(canvas.parentElement);
-        const d3canv = (this.$canvas = d3.select(canvas));
+        this.$canvas = d3.select(canvas);
 
-        let transforms = [];
-        let currentInertialAf;
-        const transitionDuration = 1000;
-        let initialTransitionSpeedX = 0.4; // per ms
-        let initialTransitionSpeedY = 0.4; // per ms
-
-        const zoom = (this.zoom = d3
+        this.zoom = d3
             .zoom()
             .clickDistance(15)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                // console.error('zoom bounds are buggy!!!')
-                // inspired by: http://bl.ocks.org/shawnbot/6518285
+                // cannot use ptscale here, it has previous transform.k in it
                 const { pxSvgScale } = getCurrentMatrixAndScale();
                 const transform = d3.event.transform;
-                //const svgToPxScale = 1 / ptscale / transform.k / devicePixelRatio;
 
-                const svgPyUnscaled =
+                const svgHeightUnscaled =
                     (svgHeight * pxSvgScale) / devicePixelRatio;
-                const svgPxUnscaled =
+                const svgWidthUnscaled =
                     (svgWidth * pxSvgScale) / devicePixelRatio;
                 const vRect = this.visibleRect as Rect;
+
+                const svgHeightScaled = svgHeightUnscaled * transform.k;
+                const svgWidthScaled = svgWidthUnscaled * transform.k;
+
+                // calc center zoom tx/ty
+                const centerTy = -vRect.cy * (transform.k - 1);
+                const centerTx = -vRect.cx * (transform.k - 1);
+
+                const extra = 0.5;
+
+                const maxDeltaY = Math.abs((svgHeightScaled - vRect.h) / 2) + Math.min(vRect.h, svgHeightScaled) * extra;
+                const maxTy = centerTy + maxDeltaY;
+                const minTy = centerTy - maxDeltaY;
+
+                const maxDeltaX = Math.abs((svgWidthScaled - vRect.w) / 2) + Math.min(vRect.w, svgWidthScaled) * extra;
+                const maxTx = centerTx + maxDeltaX;
+                const minTx = centerTx - maxDeltaX;
+
                 //const svgPx = svgWidth * svgToPxScale;
-                const allow = 0.8;
-                const maxTy = (vRect.h * allow + svgPyUnscaled) / 2;
-                const minTy = -maxTy * transform.k;
-                const maxTx = (vRect.w * allow + svgPxUnscaled) / 2;
-                const minTx = -maxTx * transform.k;
+                // const allow = 0.8;
+                // const maxTy = (vRect.h * allow + svgHeightUnscaled) / 2;
+                // const minTy = -maxTy * transform.k;
+                // const maxTx = (vRect.w * allow + svgWidthUnscaled) / 2;
+                // const minTx = -maxTx * transform.k;
                 //max/min are not symmetric
                 //
                 // const maxTy = (vRect.h * allow + svgPy) / 2;
@@ -99,13 +109,23 @@ export default {
                 // const maxTx = (vRect.w * allow + svgPx) / 2;
                 // const minTx = -maxTx * transform.k;
 
-                console.log(svgPyUnscaled, transform.y, transform.k);
+                // console.log(
+                //     maxDeltaY,
+                //     maxTy,
+                //     minTy,
+                //     centerTy,
+                //     centerTx,
+                //     transform.y,
+                //     transform.x,
+                //     transform.k
+                // );
+
                 transform.y = Math.min(maxTy, Math.max(minTy, transform.y));
                 transform.x = Math.min(maxTx, Math.max(minTx, transform.x));
 
                 applyZoomTransform(d3.event.transform);
-            }));
-        configInertia(zoom);
+            });
+        configInertia(this.zoom);
         this.$canvas.call(this.zoom);
         initialize(canvas, this.visibleRect);
     },
