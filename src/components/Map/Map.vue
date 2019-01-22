@@ -75,25 +75,34 @@ export default {
             .clickDistance(15)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                console.error('zoom bounds are buggy!!!')
+                // console.error('zoom bounds are buggy!!!')
                 // inspired by: http://bl.ocks.org/shawnbot/6518285
-                const { ptscale } = getCurrentMatrixAndScale();
+                const { pxSvgScale } = getCurrentMatrixAndScale();
                 const transform = d3.event.transform;
-                const svgToPxScale = 1 / ptscale / transform.k / devicePixelRatio;
-                const svgPy = svgHeight * svgToPxScale;
-                const svgPx = svgWidth * svgToPxScale;
-                const vRect = this.visibleRect as Rect;
-                //max/min are not symmetric
-                const allow = 0.8;
-                const maxTy = (vRect.h * allow + svgPy) / 2;
-                const minTy = -maxTy * transform.k;
-                const maxTx = (vRect.w * allow + svgPx) / 2;
-                const minTx = -maxTx * transform.k;
+                //const svgToPxScale = 1 / ptscale / transform.k / devicePixelRatio;
 
-                //console.log(svgPy, maxTy, transform.y, transform.k);
+                const svgPyUnscaled =
+                    (svgHeight * pxSvgScale) / devicePixelRatio;
+                const svgPxUnscaled =
+                    (svgWidth * pxSvgScale) / devicePixelRatio;
+                const vRect = this.visibleRect as Rect;
+                //const svgPx = svgWidth * svgToPxScale;
+                const allow = 0.8;
+                const maxTy = (vRect.h * allow + svgPyUnscaled) / 2;
+                const minTy = -maxTy * transform.k;
+                const maxTx = (vRect.w * allow + svgPxUnscaled) / 2;
+                const minTx = -maxTx * transform.k;
+                //max/min are not symmetric
+                //
+                // const maxTy = (vRect.h * allow + svgPy) / 2;
+                // const minTy = -maxTy * transform.k;
+                // const maxTx = (vRect.w * allow + svgPx) / 2;
+                // const minTx = -maxTx * transform.k;
+
+                console.log(svgPyUnscaled, transform.y, transform.k);
                 transform.y = Math.min(maxTy, Math.max(minTy, transform.y));
                 transform.x = Math.min(maxTx, Math.max(minTx, transform.x));
-                
+
                 applyZoomTransform(d3.event.transform);
             }));
         configInertia(zoom);

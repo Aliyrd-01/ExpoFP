@@ -6,6 +6,7 @@ import animate from './animate';
 let matrix: number[][];
 let pxSvgMatrix: number[][];
 let ptscale: number;
+let pxSvgScale: number;
 let dirty = true;
 let visibleScale = 0;
 const maxVisibleScale = 0.95;
@@ -25,7 +26,7 @@ export default function configMatrix() {
 
 
 export function subscribePtscaleChange(cb: (ptscale) => void) { ptscaleChangeSubscribers.push(cb); }
-export function getCurrentMatrixAndScale() { ensureMatrixAndScale(); return { matrix, ptscale, pxSvgMatrix } };
+export function getCurrentMatrixAndScale() { ensureMatrixAndScale(); return { matrix, ptscale, pxSvgMatrix, pxSvgScale } };
 function firePtscaleChange() { ptscaleChangeSubscribers.forEach(x => x(ptscale)); }
 
 function update() {
@@ -49,14 +50,14 @@ function ensureMatrixAndScale() {
     matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1);
     pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]);
     // px/svg scale
-    const scale = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight) * visibleScale;
+    pxSvgScale = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight) * visibleScale;
 
     const matrices = [matrix, pxSvgMatrix];
     const actions = [
         [m4.translate, [zoomTranform.x * devicePixelRatio, zoomTranform.y * devicePixelRatio, 0]],
         [m4.scale, [zoomTranform.k, zoomTranform.k, 1]],
         [m4.translate, [visibleRect.cx, visibleRect.cy, 0]],
-        [m4.scale, [scale, scale, 1]],
+        [m4.scale, [pxSvgScale, pxSvgScale, 1]],
         [m4.translate, [-svgWidth / 2, -svgHeight / 2, 0]],
     ];
 
@@ -65,7 +66,7 @@ function ensureMatrixAndScale() {
 
     m4.inverse(pxSvgMatrix, pxSvgMatrix);
 
-    ptscale = 1 / scale / zoomTranform.k;
+    ptscale = 1 / pxSvgScale / zoomTranform.k;
 
     if (prevPtscale !== ptscale) {
         firePtscaleChange();

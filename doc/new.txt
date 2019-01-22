@@ -1,6 +1,8 @@
 TODO
+bounds
 move-to-exhibitor
 moveto booths
+
 
 //add row names to svg
 
@@ -9,7 +11,7 @@ moveto booths
 // save booth state somewhere
 //dim well, then animate
 //animate dim
-inertial scroll
+//inertial scroll
 
 
 
