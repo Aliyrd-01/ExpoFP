@@ -4,6 +4,7 @@ move-to-exhibitor
 moveto booths
 this strange hover bug
 
+refactor these matrix things
 
 
 //add row names to svg

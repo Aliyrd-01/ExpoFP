@@ -15,11 +15,17 @@ import { mapGetters, mapState } from "vuex";
 import getBoothIdFromClientXy from "./booth-by-xy";
 import { svgWidth, svgHeight } from "@/tools/svg";
 // import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
-import { initialize, applyZoomTransform, applyVisibleRect } from "./draw";
+import {
+    initialize,
+    applyZoomTransform,
+    applyVisibleRect,
+    getZoomTransform
+} from "./draw";
 import { getCurrentMatrixAndScale } from "./config-matrix";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
+import { m4 } from "twgl.js";
 // import { setZoomAndDimensions } from './matrix-scale';
 // import c from "./drawing-context";
 
@@ -88,11 +94,15 @@ export default {
 
                 const extra = 0.5;
 
-                const maxDeltaY = Math.abs((svgHeightScaled - vRect.h) / 2) + Math.min(vRect.h, svgHeightScaled) * extra;
+                const maxDeltaY =
+                    Math.abs((svgHeightScaled - vRect.h) / 2) +
+                    Math.min(vRect.h, svgHeightScaled) * extra;
                 const maxTy = centerTy + maxDeltaY;
                 const minTy = centerTy - maxDeltaY;
 
-                const maxDeltaX = Math.abs((svgWidthScaled - vRect.w) / 2) + Math.min(vRect.w, svgWidthScaled) * extra;
+                const maxDeltaX =
+                    Math.abs((svgWidthScaled - vRect.w) / 2) +
+                    Math.min(vRect.w, svgWidthScaled) * extra;
                 const maxTx = centerTx + maxDeltaX;
                 const minTx = centerTx - maxDeltaX;
 
@@ -107,23 +117,26 @@ export default {
     },
     watch: {
         moveToBooths: function() {
-            console.log('this.moveToBooths', this.moveToBooths);    
+            console.log("this.moveToBooths", this.moveToBooths);
             if (!this.moveToBooths) return;
-            // this.handledMoveToExhibitor = this.moveToBooths;
-            // console.log("watched moveToBooths", this.moveToBooths);
+            this.handledMoveToExhibitor = this.moveToBooths;
+            console.log("watched moveToBooths", this.moveToBooths);
             // // ask map to move to this exhibitor
-            // const rects = this.moveToBooths.map(id => this.booths[id].rect) as Rect[];
-            // if (rects.length === 0) return;
-            // var r = Rect.fromMultiple(rects);
-            // // const z = getZoomToCenterSvgRect(r, Math.max(c.zoomScale, 1.2));
-            // const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
-            // this.$canvas
-            //     .transition()
-            //     .duration(200)
-            //     .call(this.zoom.transform, destZoom);
+            const rects = this.moveToBooths.map(
+                id => this.booths[id].rect
+            ) as Rect[];
+            if (rects.length === 0) return;
+            var r = Rect.fromMultiple(rects);
+            const zoomScale = getZoomTransform().k;
+            const z = getTramsformToCenterSvgRect(r, this.visibleRect, Math.max(zoomScale, 1.2));
+            const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
+            this.$canvas
+                .transition()
+                .duration(200)
+                .call(this.zoom.transform, destZoom);
 
-            // store.commit("setMoveToBooths", null);
-            // this.handledMoveToExhibitor = null;
+            store.commit("setMoveToBooths", null);
+            this.handledMoveToExhibitor = null;
         },
         visibleRect: v => applyVisibleRect(v)
     },
@@ -160,7 +173,7 @@ export default {
     }
 };
 
-// function getZoomToCenterSvgRect(svgRect: Rect, zoom: number) {
+// function getTramsformToCenterSvgRect(svgRect: Rect, zoom: number) {
 //     const { cx, cy } = svgRect;
 
 //     const browserCx = c.visibleBRect.cx;
@@ -175,7 +188,7 @@ export default {
 //     return { x: diffX, y: diffY, k: zoom };
 // }
 
-// function getZoomToCenterSvgRect(svgRect: Rect, maxZoom: number) {
+// function getTramsformToCenterSvgRect(svgRect: Rect, maxZoom: number) {
 //     const minPaddingPercent = 5;
 
 //     const targetRect = c.visibleBRect.withPadding(
@@ -193,6 +206,44 @@ export default {
 
 //     return { x: diffX, y: diffY, k: zoom };
 // }
+
+function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number) {
+    const minPaddingPercent = 5;
+
+    const targetRect = vRect.withPadding(
+        (vRect.w * minPaddingPercent) / 100,
+        (vRect.h * minPaddingPercent) / 100
+    );
+    const { pxSvgMatrix } = getCurrentMatrixAndScale();
+    let svgPxMatrix = [];
+    m4.inverse(pxSvgMatrix, svgPxMatrix);
+
+    const [x1, y1] = m4.transformPoint(svgPxMatrix, [
+        svgRect.x1,
+        svgRect.y1,
+        1
+    ]);
+    const [x2, y2] = m4.transformPoint(svgPxMatrix, [
+        svgRect.x2,
+        svgRect.y2,
+        1
+    ]);
+    const bSvgRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
+
+    
+
+    // get max zoom
+    const zoom = Math.min(
+        targetRect.w / bSvgRect.w,
+        targetRect.h / bSvgRect.h,
+        maxZoom
+    );
+
+    const diffX = targetRect.cx - bSvgRect.cx * zoom;
+    const diffY = targetRect.cy - bSvgRect.cy * zoom;
+
+    return { x: diffX, y: diffY, k: zoom };
+}
 </script>
 
 <style scoped>
