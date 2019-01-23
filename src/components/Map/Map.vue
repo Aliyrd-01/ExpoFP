@@ -6,7 +6,7 @@
         @mouseover="handleMouseOver"
         @mouseout="handleMouseOut"
     >
-        I'm map
+        ExpoFP.com
     </canvas>
 </template>
 
@@ -19,9 +19,7 @@ import * as m from "./matrix";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
 import { m4 } from "twgl.js";
-import zoomBound from './zoom-bound';
-// import { setZoomAndDimensions } from './matrix-scale';
-// import c from "./drawing-context";
+import zoomBound from "./zoom-bound";
 
 export default {
     name: "Map",
@@ -88,7 +86,7 @@ export default {
                 id => this.booths[id].rect
             ) as Rect[];
             if (rects.length === 0) return;
-            var r = Rect.fromMultiple(rects);
+            const r = Rect.fromMultiple(rects);
             const zoomScale = m.getZoomScale();
             const z = getTramsformToCenterSvgRect(
                 r,
@@ -139,40 +137,6 @@ export default {
     }
 };
 
-// function getTramsformToCenterSvgRect(svgRect: Rect, zoom: number) {
-//     const { cx, cy } = svgRect;
-
-//     const browserCx = c.visibleBRect.cx;
-//     const browserCy = c.visibleBRect.cy;
-
-//     const svgBcx = svgRect.cx * c.fpScale + c.fpCxUnzoomed;
-//     const svgBcy = svgRect.cy * c.fpScale + c.fpCyUnzoomed;
-
-//     const diffX = browserCx - svgBcx * zoom;
-//     const diffY = browserCy - svgBcy * zoom;
-
-//     return { x: diffX, y: diffY, k: zoom };
-// }
-
-// function getTramsformToCenterSvgRect(svgRect: Rect, maxZoom: number) {
-//     const minPaddingPercent = 5;
-
-//     const targetRect = c.visibleBRect.withPadding(
-//         (c.visibleBRect.w * minPaddingPercent) / 100,
-//         (c.visibleBRect.h * minPaddingPercent) / 100
-//     );
-
-//     const bSvgRect = c.sRectToBrowserUnzoomed(svgRect);
-
-//     // get max zoom
-//     const zoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
-
-//     const diffX = targetRect.cx - bSvgRect.cx * zoom;
-//     const diffY = targetRect.cy - bSvgRect.cy * zoom;
-
-//     return { x: diffX, y: diffY, k: zoom };
-// }
-
 function getTramsformToCenterSvgRect(
     svgRect: Rect,
     vRect: Rect,
@@ -185,10 +149,7 @@ function getTramsformToCenterSvgRect(
         (vRect.h * minPaddingPercent) / 100
     );
 
-    // NO, we need unzoomed matrix
-    const pxSvgMatrix = m.getPxSvgMatrix();
-    let svgPxMatrix = [];
-    m4.inverse(pxSvgMatrix, svgPxMatrix);
+    const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
 
     const [x1, y1] = m4.transformPoint(svgPxMatrix, [
         svgRect.x1,
@@ -202,7 +163,7 @@ function getTramsformToCenterSvgRect(
     ]);
     const bSvgRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
 
-    console.log(bSvgRect.w, bSvgRect.h, bSvgRect);
+    // console.log(bSvgRect.w, bSvgRect.h, bSvgRect);
 
     // get max zoom
     const zoom = Math.min(
