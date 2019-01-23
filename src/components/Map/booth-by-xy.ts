@@ -1,5 +1,5 @@
 import { m4 } from 'twgl.js';
-import { getCurrentMatrixAndScale } from "./config-matrix";
+import { getPxSvgMatrix } from "./matrix";
 
 export default function getBoothIdFromClientXy(x: number, y: number): number {
     var b = getLastBoothsFromClientXy(x, y);
@@ -35,7 +35,7 @@ console.log('hover segmentToRects', segmentToRects);
 
 let prevSegment: Rect;
 function getLastBoothsFromClientXy(x: number, y: number): Booth {
-    var { pxSvgMatrix } = getCurrentMatrixAndScale();
+    var pxSvgMatrix = getPxSvgMatrix();
     const [xs, ys] = m4.transformPoint(pxSvgMatrix, [x, y, 1]);
 
     let segm:Rect;

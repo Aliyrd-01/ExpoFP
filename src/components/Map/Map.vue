@@ -17,11 +17,11 @@ import { svgWidth, svgHeight } from "@/tools/svg";
 // import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
 import {
     initialize,
-    applyZoomTransform,
-    applyVisibleRect,
-    getZoomTransform
+    // applyZoomTransform,
+    // applyVisibleRect,
+    // getZoomTransform
 } from "./draw";
-import { getCurrentMatrixAndScale } from "./config-matrix";
+import { getPxSvgMatrix, getPxSvgScale, setVisibleRect, getZoomTransform, setZoomTransform, } from "./matrix";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
@@ -76,7 +76,7 @@ export default {
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
                 // cannot use ptscale here, it has previous transform.k in it
-                const { pxSvgScale } = getCurrentMatrixAndScale();
+                const pxSvgScale = getPxSvgScale();
                 const transform = d3.event.transform;
 
                 const svgHeightUnscaled =
@@ -109,7 +109,7 @@ export default {
                 transform.y = Math.min(maxTy, Math.max(minTy, transform.y));
                 transform.x = Math.min(maxTx, Math.max(minTx, transform.x));
 
-                applyZoomTransform(d3.event.transform);
+                setZoomTransform(d3.event.transform);
             });
         configInertia(this.zoom);
         this.$canvas.call(this.zoom);
@@ -128,7 +128,11 @@ export default {
             if (rects.length === 0) return;
             var r = Rect.fromMultiple(rects);
             const zoomScale = getZoomTransform().k;
-            const z = getTramsformToCenterSvgRect(r, this.visibleRect, Math.max(zoomScale, 1.2));
+            const z = getTramsformToCenterSvgRect(
+                r,
+                this.visibleRect,
+                Math.max(zoomScale, 1.2)
+            );
             const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
             this.$canvas
                 .transition()
@@ -138,7 +142,7 @@ export default {
             store.commit("setMoveToBooths", null);
             this.handledMoveToExhibitor = null;
         },
-        visibleRect: v => applyVisibleRect(v)
+        visibleRect: v => setVisibleRect(v)
     },
     methods: {
         raiseBoothOver(id) {
@@ -207,14 +211,20 @@ export default {
 //     return { x: diffX, y: diffY, k: zoom };
 // }
 
-function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number) {
+function getTramsformToCenterSvgRect(
+    svgRect: Rect,
+    vRect: Rect,
+    maxZoom: number
+) {
     const minPaddingPercent = 5;
 
     const targetRect = vRect.withPadding(
         (vRect.w * minPaddingPercent) / 100,
         (vRect.h * minPaddingPercent) / 100
     );
-    const { pxSvgMatrix } = getCurrentMatrixAndScale();
+
+    // NO, we need unzoomed matrix
+    const pxSvgMatrix = getPxSvgMatrix();
     let svgPxMatrix = [];
     m4.inverse(pxSvgMatrix, svgPxMatrix);
 
@@ -230,7 +240,7 @@ function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number
     ]);
     const bSvgRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
 
-    
+    console.log(bSvgRect.w, bSvgRect.h, bSvgRect);
 
     // get max zoom
     const zoom = Math.min(

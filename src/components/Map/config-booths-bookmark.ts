@@ -1,7 +1,7 @@
 import settings from '@/settings';
 import { BoothDrawerBase } from './config-booths-base';
 import { createBookmarkCanvas } from './canvases';
-import { getCurrentMatrixAndScale, subscribePtscaleChange } from './config-matrix';
+import { subscribePtscaleChange, getPtscale } from './matrix';
 import { requireUpdate } from './draw';
 
 const bookmarkCanvasL = createBookmarkCanvas(8);
@@ -52,7 +52,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
     }
 
     update() {
-        const { ptscale } = getCurrentMatrixAndScale();
+        const ptscale = getPtscale();
 
         const bookmarked = this.booth.exhibitors.find(e => store.state.bookmarked[e]);
 

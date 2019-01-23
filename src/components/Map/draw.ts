@@ -1,6 +1,5 @@
 import { sizeCanvasToParentElement } from './utils';
-
-import Color from 'color';
+import { setCanvasSize } from './matrix';
 import configCanvas from './config-canvas';
 import configMatrix from './config-matrix';
 import configDim from './config-dim';
@@ -18,9 +17,9 @@ export const delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 
 
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
-let zoomTranform = { k: 1, x: 0, y: 0 };
-let visibleRect: Rect;
-const zoomDimensionSubscribers: (() => void)[] = [];
+// let zoomTranform = { k: 1, x: 0, y: 0 };
+// let visibleRect: Rect;
+// const zoomDimensionSubscribers: (() => void)[] = [];
 const drawersByType = new Map<string, AnyDrawer>();
 export const allDrawers: AnyDrawer[] = [];
 
@@ -32,21 +31,21 @@ interface AnyDrawer {
 }
 
 
-export function getCanvas() { return canvas; }
-export function getZoomTransform() { return zoomTranform; }
-export function getVisibleRect() { return visibleRect; }
-export function applyZoomTransform(transform: typeof zoomTranform) {
-    zoomTranform = transform;
-    fireZoomDimensionsChange();
-}
-export function applyVisibleRect(rect: Rect) {
-    visibleRect = rect;
-    fireZoomDimensionsChange();
-}
-export function subscribeZoomDimensionsChange(cb: () => void) { zoomDimensionSubscribers.push(cb); }
+// export function getCanvas() { return canvas; }
+// export function getZoomTransform() { return zoomTranform; }
+// export function getVisibleRect() { return visibleRect; }
+// export function applyZoomTransform(transform: typeof zoomTranform) {
+//     zoomTranform = transform;
+//     fireZoomDimensionsChange();
+// }
+// export function applyVisibleRect(rect: Rect) {
+//     visibleRect = rect;
+//     fireZoomDimensionsChange();
+// }
+// export function subscribeZoomDimensionsChange(cb: () => void) { zoomDimensionSubscribers.push(cb); }
 
 
-function fireZoomDimensionsChange() { zoomDimensionSubscribers.forEach(x => x()); }
+// function fireZoomDimensionsChange() { zoomDimensionSubscribers.forEach(x => x()); }
 
 export function requireDrawer<T extends AnyDrawer>(id: string,
     TypeClass: new (gl: WebGLRenderingContext) => T): T {
@@ -117,12 +116,13 @@ function showFps() {
 
 export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
     canvas = canvas1;
-    visibleRect = visibleRect1;
+    // visibleRect = visibleRect1;
     sizeCanvasToParentElement(canvas);
+    setCanvasSize(canvas.width, canvas.height);
     window.addEventListener('resize', () => {
         sizeCanvasToParentElement(canvas);
         gl.viewport(0, 0, canvas.width, canvas.height);
-        fireZoomDimensionsChange();
+        setCanvasSize(canvas.width, canvas.height);
     });
 
     const options = {};

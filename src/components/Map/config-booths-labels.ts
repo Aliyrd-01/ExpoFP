@@ -2,7 +2,7 @@ import Color from 'color';
 import settings from '@/settings';
 import { BoothDrawerBase } from './config-booths-base';
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from './canvases';
-import { getCurrentMatrixAndScale, subscribePtscaleChange } from './config-matrix';
+import { subscribePtscaleChange, getPtscale } from './matrix';
 import { delayAnimations, requireUpdate } from './draw';
 import Drawer from './Drawer';
 import animate from './animate';
@@ -16,12 +16,12 @@ const prefixes = ['Dot', 'XS', 'S', 'M', 'Details'];
 let canUpdate = false;
 const updates = [];
 let drawer: Drawer;
-function initDrawer(drawer1:Drawer){
+function initDrawer(drawer1: Drawer) {
     if (drawer) return;
     drawer = drawer1;
     drawer.alpha = 0;
 
-    window.setTimeout(()=>{
+    window.setTimeout(() => {
         canUpdate = true;
         updates.forEach(u => u());
         animate(0, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
@@ -34,7 +34,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
     constructor(booth: Booth) {
         super(booth, 'booth-label');
         initDrawer(this.drawer);
-        
+
 
         const r = this.booth.rect;
 
@@ -88,7 +88,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
         // if (!canDraw) return;
         if (!canUpdate) return;
         let visiblePrefix = '';
-        const { ptscale } = getCurrentMatrixAndScale();
+        const ptscale = getPtscale();
 
         for (let i = 0; i < prefixes.length; i++) {
             const p = prefixes[i];
