@@ -27,9 +27,12 @@ import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
 
 window.setTimeout(function() {
-    const img = new Image();
-    img.src = EFP_LOGO_URL;
-}, 1000);
+    const link = document.createElement("link");
+    link.href = EFP_LOGO_URL;
+    link.rel = "preload";
+    link.as = "image";
+    document.head.appendChild(link);
+}, 2000);
 
 export default {
     components: { OverlayContent },

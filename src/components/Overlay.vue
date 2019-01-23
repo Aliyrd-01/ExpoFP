@@ -265,7 +265,7 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
     background: #fff;
     overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-    &.bottom {
+    &.medium.bottom, &.small.bottom {
         border-radius: 0.5rem 0.5rem 0 0;
     }
 
