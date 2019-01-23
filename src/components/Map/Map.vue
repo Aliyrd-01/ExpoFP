@@ -14,15 +14,8 @@
 import { mapGetters, mapState } from "vuex";
 import getBoothIdFromClientXy from "./booth-by-xy";
 import { svgWidth, svgHeight } from "@/tools/svg";
-// import { initialize, requireRedraw, applyZoomTransform, setVisibleRect } from "./draw";
-import {
-    initialize,
-    // applyZoomTransform,
-    // applyVisibleRect,
-    // getZoomTransform
-} from "./draw";
+import { initialize } from "./draw";
 import * as m from "./matrix";
-//import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
 import { m4 } from "twgl.js";
@@ -129,7 +122,7 @@ export default {
             ) as Rect[];
             if (rects.length === 0) return;
             var r = Rect.fromMultiple(rects);
-            const zoomScale = m.getZoomTransform().k;
+            const zoomScale = m.getZoomScale();
             const z = getTramsformToCenterSvgRect(
                 r,
                 this.visibleRect,

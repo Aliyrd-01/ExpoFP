@@ -60,7 +60,7 @@ export function getPtscale() { ensureAll(); return ptscale; }
 export function getPxSvgMatrix() { ensureAll(); return pxSvgMatrix; }
 export function getPxSvgScale() { ensureAll(); return pxSvgScale; }
 // TODO: remove from here
-export function getZoomTransform() { return zoomTransform; }
+export function getZoomScale() { return zoomTransform.k; }
 
 //
 // subscribe
@@ -77,7 +77,6 @@ function fireMatrixChange() { matrixChangeSubscribers.forEach(x => x(matrix)); }
 //
 // core
 //
-
 function ensureAll() {
     if (!dirty) return;
     dirty = false;
