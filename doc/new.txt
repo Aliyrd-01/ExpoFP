@@ -2,6 +2,7 @@ TODO
 
 menu bug disappear
 this strange hover bug
+go when enter clicked
 
 //bounds
 //move-to-exhibitor
