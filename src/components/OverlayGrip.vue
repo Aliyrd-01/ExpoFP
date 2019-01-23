@@ -53,5 +53,13 @@ export default {
             }
         }
     }
+     &.arr > svg > path {
+        &:first-child {
+            display: inherit;
+        }
+        &:last-child {
+            display: none;
+        }
+    }
 }
 </style>
