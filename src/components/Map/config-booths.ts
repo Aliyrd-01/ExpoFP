@@ -1,4 +1,4 @@
-import { requireDrawer, requireUpdate } from "./draw";
+import { requireUpdate } from "./draw";
 import BoothBgDrawer from './config-booths-bg';
 import BoothBorderDrawer from "./config-booths-border";
 import BoothLabelDrawer from "./config-booths-labels";
