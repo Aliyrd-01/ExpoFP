@@ -39,5 +39,5 @@ export default function zoomBound(transform: ZoomTransform): ZoomTransform {
     if (y !== transform.y || x !== transform.x) {
         return { x, y, k: transform.k };
     }
-    return transform;
+    return null;
 }

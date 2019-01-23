@@ -64,10 +64,15 @@ export default {
         this.zoom = d3
             .zoom()
             .clickDistance(15)
+            .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                const transform = zoomBound(d3.event.transform);
-                m.setZoomTransform(transform);
+                const t = d3.event.transform;
+                const nt = zoomBound(t);
+                if (nt) {
+                    this.zoomTo(nt, false);
+                    //  console.log('fixed bounds 2', t, nt)
+                } else m.setZoomTransform(t);
             });
         configInertia(this.zoom);
         m.setVisibleRect(this.visibleRect);
@@ -87,22 +92,22 @@ export default {
             ) as Rect[];
             if (rects.length === 0) return;
             const r = Rect.fromMultiple(rects);
-            const zoomScale = m.getZoomScale();
+            const zoomScale = m.getZoomTransform().k;
             const z = getTramsformToCenterSvgRect(
                 r,
                 this.visibleRect,
                 Math.max(zoomScale, 1.2)
             );
-            const destZoom = d3.zoomIdentity.translate(z.x, z.y).scale(z.k);
-            this.$canvas
-                .transition()
-                .duration(200)
-                .call(this.zoom.transform, destZoom);
+            this.zoomTo(z, true);
 
             store.commit("setMoveToBooths", null);
             this.handledMoveToExhibitor = null;
         },
-        visibleRect: v => m.setVisibleRect(v)
+        visibleRect: function(v) {
+            console.log("visibleRect change", v);
+            m.setVisibleRect(v);
+            this.zoomBoundCurrent();
+        }
     },
     methods: {
         raiseBoothOver(id) {
@@ -133,6 +138,26 @@ export default {
             const id = getBoothIdFromClientXy(e.clientX, e.clientY);
             console.info("click", id);
             this.$store.dispatch("clickBooth", id);
+        },
+        zoomTo(transform: ZoomTransform, animated: boolean) {
+            let c = this.$canvas;
+            if (animated)
+                c = c
+                    .transition()
+                    .ease(d3.easeExpOut)
+                    .duration(500);
+            const z = d3.zoomIdentity
+                .translate(transform.x, transform.y)
+                .scale(transform.k);
+            c.call(this.zoom.transform, z);
+        },
+        zoomBoundCurrent() {
+            const ct = m.getZoomTransform();
+            const nt = zoomBound(ct);
+            if (nt) {
+                // console.log('fixed bounds', ct, nt)
+                this.zoomTo(nt, false);
+            }
         }
     }
 };

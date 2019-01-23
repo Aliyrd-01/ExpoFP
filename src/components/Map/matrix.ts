@@ -1,7 +1,7 @@
 import { m4 } from 'twgl.js';
 import { svgWidth, svgHeight } from '@/tools/svg';
 
-
+let started = false;
 // svg -> -1..1
 let matrix: Float32Array;
 // browser px -> svg
@@ -14,7 +14,6 @@ let svgPxUnzoomedMatrix: Float32Array;
 //
 // dependencies and misc
 //
-let dirty = true;
 let prevPtscale: number;
 
 let canvasWidth: number;
@@ -27,34 +26,41 @@ let zoomTransform: ZoomTransform;
 // setters
 //
 export function setZoomTransform(transform: ZoomTransform) {
+    console.log('zz', transform);
     zoomTransform = transform;
-    dirty = true;
+    calcAll();
 }
 
 export function setVisibleRect(rect: Rect) {
     visibleRect = rect;
-    dirty = true;
+    calcAll();
 }
 
 export function setCanvasSize(width: number, height: number) {
     canvasWidth = width;
     canvasHeight = height;
-    dirty = true;
+    calcAll();
 }
 
 export function setVisbleScale(scale: number) {
     visibleScale = scale;
-    dirty = true;
+    calcAll();
+}
+
+
+export function start() {
+    started = true;
+    calcAll();
 }
 
 //
 // getters
 //
-export function getMatrix() { ensureAll(); return matrix; }
-export function getPtscale() { ensureAll(); return ptscale; }
-export function getPxSvgMatrix() { ensureAll(); return pxSvgMatrix; }
-export function getSvgPxUnzoomedMatrix() { ensureAll(); return svgPxUnzoomedMatrix; }
-export function getZoomScale() { return zoomTransform.k; }
+export function getMatrix() { return matrix; }
+export function getPtscale() { return ptscale; }
+export function getPxSvgMatrix() { return pxSvgMatrix; }
+export function getSvgPxUnzoomedMatrix() { return svgPxUnzoomedMatrix; }
+export function getZoomTransform() { return zoomTransform; }
 export function getVisibleRect() { return visibleRect; }
 
 //
@@ -72,9 +78,9 @@ function fireMatrixChange() { matrixChangeSubscribers.forEach(x => x(matrix)); }
 // core
 //
 
-function ensureAll() {
-    if (!dirty) return;
-    dirty = false;
+function calcAll() {
+    if (!started) return;
+    // dirty = false;
 
     const visibleRectPt = visibleRect.scale(devicePixelRatio);
     const svgPxScaleUnzoomed = Math.min(visibleRectPt.w / svgWidth, visibleRectPt.h / svgHeight);

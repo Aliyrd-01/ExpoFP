@@ -5,19 +5,23 @@ import animate from './animate';
 import * as m from './matrix';
 
 
+const minVisibleScale = 0;
 const maxVisibleScale = 0.95;
 
 export default function configMatrix() {
     requireUpdate(update);
     m.subscribeMatrixChange(() => requireUpdate(update));
+    m.setVisbleScale(minVisibleScale);
+    m.start();
 
-    animate(delayAnimations, 1000, d3.easeExpOut, d3.interpolateNumber(0, maxVisibleScale), v => {
+    animate(delayAnimations, 1000, d3.easeExpOut, d3.interpolateNumber(minVisibleScale, maxVisibleScale), v => {
         m.setVisbleScale(v);
         update();
     });
 }
 
 function update() {
+    // console.log('matrix change', m.getZoomTransform())
     for (const d of allDrawers) {
         d.matrix = m.getMatrix();
         d.ptscale = m.getPtscale();

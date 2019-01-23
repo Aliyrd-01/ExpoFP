@@ -3,9 +3,10 @@ TODO
 //move-to-exhibitor
 //moveto booths
 
-fix bounds - need to modify transform when out of bounds
+//fix bounds - need to modify transform when out of bounds
 this strange hover bug
 make movetobooth use easign func
+smaller fonts than in old?
 
 
 //refactor these matrix things

@@ -120,6 +120,7 @@ export function initialize(canvas1: HTMLCanvasElement) {
     sizeCanvasToParentElement(canvas);
     setCanvasSize(canvas.width, canvas.height);
     window.addEventListener('resize', () => {
+        // console.log('canvas change', canvas);
         sizeCanvasToParentElement(canvas);
         gl.viewport(0, 0, canvas.width, canvas.height);
         setCanvasSize(canvas.width, canvas.height);
