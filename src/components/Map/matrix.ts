@@ -3,17 +3,13 @@ import { svgWidth, svgHeight } from '@/tools/svg';
 
 
 // svg -> -1..1
-let matrix: number[][];
+let matrix: Float32Array;
 // browser px -> svg
-let pxSvgMatrix: number[][];
+let pxSvgMatrix: Float32Array;
 // canvas point -> svg scale
 let ptscale: number;
-// svg -> canvas point (when unzoomed) 
-let pxSvgScale: number;
-// replace above with:
 // svg -> browser px matrix (unzoomed)
-let svgPxUnzoomedMatrix: number[][];
-let visibleRectPt: Rect;
+let svgPxUnzoomedMatrix: Float32Array;
 
 //
 // dependencies and misc
@@ -57,7 +53,6 @@ export function setVisbleScale(scale: number) {
 export function getMatrix() { ensureAll(); return matrix; }
 export function getPtscale() { ensureAll(); return ptscale; }
 export function getPxSvgMatrix() { ensureAll(); return pxSvgMatrix; }
-export function getPxSvgScale() { ensureAll(); return pxSvgScale; }
 export function getSvgPxUnzoomedMatrix() { ensureAll(); return svgPxUnzoomedMatrix; }
 export function getZoomScale() { return zoomTransform.k; }
 export function getVisibleRect() { return visibleRect; }
@@ -69,8 +64,8 @@ const ptscaleChangeSubscribers: ((ptscale: number) => void)[] = [];
 export function subscribePtscaleChange(cb: (ptscale) => void) { ptscaleChangeSubscribers.push(cb); }
 function firePtscaleChange() { ptscaleChangeSubscribers.forEach(x => x(ptscale)); }
 
-const matrixChangeSubscribers: ((matrix: number[][]) => void)[] = [];
-export function subscribeMatrixChange(cb: (ptscale: number[][]) => void) { matrixChangeSubscribers.push(cb); }
+const matrixChangeSubscribers: ((matrix: Float32Array) => void)[] = [];
+export function subscribeMatrixChange(cb: (ptscale: Float32Array) => void) { matrixChangeSubscribers.push(cb); }
 function fireMatrixChange() { matrixChangeSubscribers.forEach(x => x(matrix)); }
 
 //
@@ -81,8 +76,9 @@ function ensureAll() {
     if (!dirty) return;
     dirty = false;
 
-    visibleRectPt = visibleRect.scale(devicePixelRatio);
-    pxSvgScale = Math.min(visibleRectPt.w / svgWidth, visibleRectPt.h / svgHeight) * visibleScale;
+    const visibleRectPt = visibleRect.scale(devicePixelRatio);
+    const svgPxScaleUnzoomed = Math.min(visibleRectPt.w / svgWidth, visibleRectPt.h / svgHeight);
+    const svgPxScale = svgPxScaleUnzoomed * visibleScale;
 
     // create helper matrices
     const zoomMatrix = m4.translation([zoomTransform.x * devicePixelRatio, zoomTransform.y * devicePixelRatio, 0]);
@@ -90,8 +86,12 @@ function ensureAll() {
 
     // px/svg scale
     const centerSvgMatrix = m4.translation([visibleRectPt.cx, visibleRectPt.cy, 0]);
-    m4.scale(centerSvgMatrix, [pxSvgScale, pxSvgScale, 1], centerSvgMatrix);
-    m4.translate(centerSvgMatrix, [-svgWidth / 2, -svgHeight / 2, 0], centerSvgMatrix);
+    m4.scale(centerSvgMatrix, [svgPxScaleUnzoomed, svgPxScaleUnzoomed, 1], centerSvgMatrix);
+    const centerSvgMatrixWithoutVisibleScale = new Float32Array(centerSvgMatrix);
+    m4.scale(centerSvgMatrix, [visibleScale, visibleScale, 1], centerSvgMatrix);
+    const moveToCenter = [-svgWidth / 2, -svgHeight / 2, 0];
+    m4.translate(centerSvgMatrix, moveToCenter, centerSvgMatrix);
+    m4.translate(centerSvgMatrixWithoutVisibleScale, moveToCenter, centerSvgMatrixWithoutVisibleScale);
 
     // create matrices
     matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1);
@@ -99,14 +99,14 @@ function ensureAll() {
     m4.multiply(matrix, centerSvgMatrix, matrix);
 
     pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]);
-    svgPxUnzoomedMatrix = m4.copy(pxSvgMatrix);
+    svgPxUnzoomedMatrix = new Float32Array(pxSvgMatrix);
     m4.multiply(pxSvgMatrix, zoomMatrix, pxSvgMatrix);
     m4.multiply(pxSvgMatrix, centerSvgMatrix, pxSvgMatrix);
     m4.inverse(pxSvgMatrix, pxSvgMatrix);
 
-    m4.multiply(svgPxUnzoomedMatrix, centerSvgMatrix, svgPxUnzoomedMatrix);
+    m4.multiply(svgPxUnzoomedMatrix, centerSvgMatrixWithoutVisibleScale, svgPxUnzoomedMatrix);
 
-    ptscale = 1 / pxSvgScale / zoomTransform.k;
+    ptscale = 1 / svgPxScale / zoomTransform.k;
 
     fireMatrixChange();
     if (prevPtscale !== ptscale) {

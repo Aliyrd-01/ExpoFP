@@ -2,6 +2,10 @@ import { m4 } from 'twgl.js';
 import { getPxSvgMatrix } from "./matrix";
 
 export default function getBoothIdFromClientXy(x: number, y: number): number {
+    // const zz = getSvgPxUnzoomedMatrix();
+    // var point = m4.transformPoint(zz, [1000, 1000, 1])
+    // console.log('point', point);
+
     const b = getLastBoothsFromClientXy(x, y);
     if (b) return b.id;
     return null;

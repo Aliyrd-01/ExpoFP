@@ -4,9 +4,6 @@ import BoothBorderDrawer from "./config-booths-border";
 import BoothLabelDrawer from "./config-booths-labels";
 import BoothBookmarkDrawer from "./config-booths-bookmark";
 import { BoothDrawerBase } from "./config-booths-base";
-
-// const boothBgDrawerById = new Map<number, BoothBgDrawer>();
-// const boothBookmarkDrawerById = new Map<number, BoothBookmarkDrawer>();
 const boothDrawers = new Map<number, BoothDrawerBase[]>();
 const boothStateCache = new Map<number, BoothState>();
 

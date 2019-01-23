@@ -25,7 +25,7 @@ export const allDrawers: AnyDrawer[] = [];
 
 interface AnyDrawer {
     draw();
-    matrix?: number[][];
+    matrix?: Float32Array;
     ptscale?: number;
     dim?: number;
 }

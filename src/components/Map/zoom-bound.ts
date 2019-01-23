@@ -1,15 +1,17 @@
-import { getPxSvgScale, getVisibleRect } from './matrix';
+import * as m from './matrix';
 import { svgWidth, svgHeight } from '@/tools/svg';
 
 export default function zoomBound(transform: ZoomTransform): ZoomTransform {
     // cannot use ptscale here, it has previous transform.k in it
-    const pxSvgScale = getPxSvgScale();
+    // const pxSvgScale = m.getPxSvgScale();
+    const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
+    // https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati
+    const scale = svgPxMatrix[0];
 
-    const svgHeightUnscaled =
-        (svgHeight * pxSvgScale) / devicePixelRatio;
-    const svgWidthUnscaled =
-        (svgWidth * pxSvgScale) / devicePixelRatio;
-    const vRect = getVisibleRect();
+    const svgHeightUnscaled = svgHeight * scale;
+    const svgWidthUnscaled = svgWidth * scale;
+
+    const vRect = m.getVisibleRect();
 
     const svgHeightScaled = svgHeightUnscaled * transform.k;
     const svgWidthScaled = svgWidthUnscaled * transform.k;

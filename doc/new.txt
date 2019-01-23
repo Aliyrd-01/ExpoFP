@@ -1,10 +1,13 @@
 TODO
 //bounds
-move-to-exhibitor
-moveto booths
+//move-to-exhibitor
+//moveto booths
+
+fix bounds - need to modify transform when out of bounds
 this strange hover bug
 
-refactor these matrix things
+
+//refactor these matrix things
 
 
 //add row names to svg
