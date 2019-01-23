@@ -11,7 +11,7 @@ const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
 const dotW = dotCanvas.width / 2;
 const dotH = dotCanvas.width / 2;
 
-const prefixes = ['Dot', 'XS', 'S', 'M', 'Details'];
+const prefixes = ['Dot', 'XS', 'S', 'M', 'L', 'Details'];
 
 let canUpdate = false;
 const updates = [];
@@ -49,7 +49,8 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
 
         this.addLabel(7, 'XS');
         this.addLabel(10, 'S');
-        this.addLabel(14, 'M');
+        this.addLabel(12, 'M');
+        this.addLabel(14, 'L');
 
         const detailsCanvas = createDetailsCanvas(this.booth);
 
@@ -57,7 +58,8 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             id: this.getId("Details"),
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [5, 5, -1, -1],
+            deltaPts: [3, 3, -1, -1],
+            scalePts: devicePixelRatio,
             canvasTmp: detailsCanvas,
             texPosition: 'lefttop'
         });
@@ -81,7 +83,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             this.factors.push(lastFactor);
         }
 
-        this.factors.push(lastFactor / 1.5);
+        this.factors.push(lastFactor / 1.8);
     }
 
     update() {

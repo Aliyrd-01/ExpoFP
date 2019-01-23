@@ -6,7 +6,7 @@ import * as m from './matrix';
 
 
 const minVisibleScale = 0;
-const maxVisibleScale = 0.95;
+const maxVisibleScale = 0.96;
 
 export default function configMatrix() {
     requireUpdate(update);
