@@ -21,7 +21,7 @@ import {
     // applyVisibleRect,
     // getZoomTransform
 } from "./draw";
-import { getPxSvgMatrix, getPxSvgScale, setVisibleRect, getZoomTransform, setZoomTransform, } from "./matrix";
+import * as m from "./matrix";
 //import { ZoomBehavior } from "d3";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
@@ -76,7 +76,7 @@ export default {
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
                 // cannot use ptscale here, it has previous transform.k in it
-                const pxSvgScale = getPxSvgScale();
+                const pxSvgScale = m.getPxSvgScale();
                 const transform = d3.event.transform;
 
                 const svgHeightUnscaled =
@@ -109,11 +109,13 @@ export default {
                 transform.y = Math.min(maxTy, Math.max(minTy, transform.y));
                 transform.x = Math.min(maxTx, Math.max(minTx, transform.x));
 
-                setZoomTransform(d3.event.transform);
+                m.setZoomTransform(d3.event.transform);
             });
         configInertia(this.zoom);
         this.$canvas.call(this.zoom);
-        initialize(canvas, this.visibleRect);
+        m.setVisibleRect(this.visibleRect);
+        m.setZoomTransform(d3.zoomIdentity);
+        initialize(canvas);
     },
     watch: {
         moveToBooths: function() {
@@ -127,7 +129,7 @@ export default {
             ) as Rect[];
             if (rects.length === 0) return;
             var r = Rect.fromMultiple(rects);
-            const zoomScale = getZoomTransform().k;
+            const zoomScale = m.getZoomTransform().k;
             const z = getTramsformToCenterSvgRect(
                 r,
                 this.visibleRect,
@@ -142,7 +144,7 @@ export default {
             store.commit("setMoveToBooths", null);
             this.handledMoveToExhibitor = null;
         },
-        visibleRect: v => setVisibleRect(v)
+        visibleRect: v => m.setVisibleRect(v)
     },
     methods: {
         raiseBoothOver(id) {
@@ -224,7 +226,7 @@ function getTramsformToCenterSvgRect(
     );
 
     // NO, we need unzoomed matrix
-    const pxSvgMatrix = getPxSvgMatrix();
+    const pxSvgMatrix = m.getPxSvgMatrix();
     let svgPxMatrix = [];
     m4.inverse(pxSvgMatrix, svgPxMatrix);
 

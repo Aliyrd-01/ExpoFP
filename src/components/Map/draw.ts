@@ -114,7 +114,7 @@ function showFps() {
     }
 }
 
-export function initialize(canvas1: HTMLCanvasElement, visibleRect1: Rect) {
+export function initialize(canvas1: HTMLCanvasElement) {
     canvas = canvas1;
     // visibleRect = visibleRect1;
     sizeCanvasToParentElement(canvas);

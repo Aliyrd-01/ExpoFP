@@ -59,14 +59,19 @@ export function getMatrix() { ensureAll(); return matrix; }
 export function getPtscale() { ensureAll(); return ptscale; }
 export function getPxSvgMatrix() { ensureAll(); return pxSvgMatrix; }
 export function getPxSvgScale() { ensureAll(); return pxSvgScale; }
+// TODO: remove from here
 export function getZoomTransform() { return zoomTransform; }
 
 //
-// misc
+// subscribe
 //
-const ptscaleChangeSubscribers: ((ptscale) => void)[] = [];
+const ptscaleChangeSubscribers: ((ptscale:number) => void)[] = [];
 export function subscribePtscaleChange(cb: (ptscale) => void) { ptscaleChangeSubscribers.push(cb); }
 function firePtscaleChange() { ptscaleChangeSubscribers.forEach(x => x(ptscale)); }
+
+const matrixChangeSubscribers: ((matrix:number[][]) => void)[] = [];
+export function subscribeMatrixChange(cb: (ptscale:number[][]) => void) { matrixChangeSubscribers.push(cb); }
+function fireMatrixChange() { matrixChangeSubscribers.forEach(x => x(matrix)); }
 
 
 //
@@ -100,6 +105,7 @@ function ensureAll() {
 
     ptscale = 1 / pxSvgScale / zoomTransform.k;
 
+    fireMatrixChange();
     if (prevPtscale !== ptscale) {
         firePtscaleChange();
         prevPtscale = ptscale;

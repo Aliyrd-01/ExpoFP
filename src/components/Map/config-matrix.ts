@@ -15,7 +15,7 @@ const maxVisibleScale = 0.95;
 
 export default function configMatrix() {
     requireUpdate(update);
-    m.subscribePtscaleChange(() => requireUpdate(update));
+    m.subscribeMatrixChange(() => requireUpdate(update));
     // subscribeZoomDimensionsChange(() => { dirty = true; requireUpdate(update); });
 
     animate(delayAnimations, 1000, d3.easeExpOut, d3.interpolateNumber(0, maxVisibleScale), v => {
