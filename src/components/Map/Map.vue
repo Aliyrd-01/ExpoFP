@@ -19,6 +19,7 @@ import * as m from "./matrix";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
 import { m4 } from "twgl.js";
+import zoomBound from './zoom-bound';
 // import { setZoomAndDimensions } from './matrix-scale';
 // import c from "./drawing-context";
 
@@ -60,7 +61,6 @@ export default {
     },
     mounted() {
         const canvas = this.$el as HTMLCanvasElement;
-        // const $parent = d3.select(canvas.parentElement);
         this.$canvas = d3.select(canvas);
 
         this.zoom = d3
@@ -68,46 +68,13 @@ export default {
             .clickDistance(15)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                // cannot use ptscale here, it has previous transform.k in it
-                const pxSvgScale = m.getPxSvgScale();
-                const transform = d3.event.transform;
-
-                const svgHeightUnscaled =
-                    (svgHeight * pxSvgScale) / devicePixelRatio;
-                const svgWidthUnscaled =
-                    (svgWidth * pxSvgScale) / devicePixelRatio;
-                const vRect = this.visibleRect as Rect;
-
-                const svgHeightScaled = svgHeightUnscaled * transform.k;
-                const svgWidthScaled = svgWidthUnscaled * transform.k;
-
-                // calc center zoom tx/ty
-                const centerTy = -vRect.cy * (transform.k - 1);
-                const centerTx = -vRect.cx * (transform.k - 1);
-
-                const extra = 0.5;
-
-                const maxDeltaY =
-                    Math.abs((svgHeightScaled - vRect.h) / 2) +
-                    Math.min(vRect.h, svgHeightScaled) * extra;
-                const maxTy = centerTy + maxDeltaY;
-                const minTy = centerTy - maxDeltaY;
-
-                const maxDeltaX =
-                    Math.abs((svgWidthScaled - vRect.w) / 2) +
-                    Math.min(vRect.w, svgWidthScaled) * extra;
-                const maxTx = centerTx + maxDeltaX;
-                const minTx = centerTx - maxDeltaX;
-
-                transform.y = Math.min(maxTy, Math.max(minTy, transform.y));
-                transform.x = Math.min(maxTx, Math.max(minTx, transform.x));
-
-                m.setZoomTransform(d3.event.transform);
+                const transform = zoomBound(d3.event.transform);
+                m.setZoomTransform(transform);
             });
         configInertia(this.zoom);
-        this.$canvas.call(this.zoom);
         m.setVisibleRect(this.visibleRect);
         m.setZoomTransform(d3.zoomIdentity);
+        this.$canvas.call(this.zoom);
         initialize(canvas);
     },
     watch: {

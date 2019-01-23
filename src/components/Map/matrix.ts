@@ -24,13 +24,13 @@ let canvasWidth: number;
 let canvasHeight: number;
 let visibleRect: Rect;
 let visibleScale: number;
-let zoomTransform: { x: number, y: number, k: number };
+let zoomTransform: ZoomTransform;
 
 
 //
 // setters
 //
-export function setZoomTransform(transform: typeof zoomTransform) {
+export function setZoomTransform(transform: ZoomTransform) {
     zoomTransform = transform;
     dirty = true;
 }
@@ -59,8 +59,8 @@ export function getMatrix() { ensureAll(); return matrix; }
 export function getPtscale() { ensureAll(); return ptscale; }
 export function getPxSvgMatrix() { ensureAll(); return pxSvgMatrix; }
 export function getPxSvgScale() { ensureAll(); return pxSvgScale; }
-// TODO: remove from here
 export function getZoomScale() { return zoomTransform.k; }
+export function getVisibleRect() { return visibleRect; }
 
 //
 // subscribe
