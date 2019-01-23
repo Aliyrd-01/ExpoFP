@@ -1,7 +1,9 @@
 <template>
     <a href='' class="overlay-grip" :class="{arr}" @click.prevent="handleClick">
-        <span></span>
-        <span></span>
+        <svg viewBox="0 0 1200 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100,100 l 500 100 L 1100 100" />
+            <path d="M100,150 l 500 0 L 1100 150" />
+        </svg>
     </a>
 </template>
 
@@ -18,18 +20,6 @@ export default {
     methods: {
         handleClick() {
             this.$store.dispatch("toggleMapOverlay");
-            // switch (this.overlaySize) {
-            //     case "full":
-
-            //         break;
-            //     case "small":
-            //     case "medium":
-            //         this.$store.dispatch("showOverlay");
-            //         break;
-            // }
-            // if (this.arr) {
-            //     this.$store.dispatch("showMap");
-            // }
         }
     }
 };
@@ -49,30 +39,17 @@ export default {
     height: $h;
     z-index: 2;
 
-    > span {
-        top: 0.5rem;
-        position: absolute;
-        width: $w/2;
-        height: 0.2rem;
-        background-color: #bbb;
-        display: inline-block;
-        transition: transform 0.2s ease;
-        border-radius: 1rem;
-        &:first-child {
-            right: $w/2 - $s * 0.6;
-        }
-        &:last-child {
-            left: $w/2 - $s * 0.6;
-        }
-    }
-
-    &.arr {
-        > span {
-            &:first-child {
-                transform: rotate(15deg);
-            }
-            &:last-child {
-                transform: rotate(-15deg);
+    > svg{
+        width: $w;
+        height: $h;
+        display: block;
+        > path{
+            stroke: #bbb;
+            stroke-width: 90;
+            fill: none;
+            stroke-linecap: round;
+            &:first-child{
+                display: none;
             }
         }
     }

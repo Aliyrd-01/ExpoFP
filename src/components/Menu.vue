@@ -86,7 +86,7 @@ export default {
     background: #f1f1f1;
     &__title {
         display: block;
-        padding: 1.5rem 1rem;
+        padding: 2.5rem 1rem;
         font-size: 2rem;
         font-weight: 100;
         background: #2B2A29;
