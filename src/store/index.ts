@@ -124,6 +124,7 @@ const store1 = new Vuex.Store({
             dispatch("clickCategory", getters.seminarsCategoryId);
         },
         clickBooth({ state, getters, dispatch, commit }, id) {
+            commit("setMenu", false);
             if (!id) {
                 commit('setDetails', null);
                 return;
