@@ -2,7 +2,8 @@ TODO
 
 //menu bug disappear
 //this strange hover bug
-release to jtrade19
+link expofp
+//release to jtrade19
 
 go when enter clicked
 
