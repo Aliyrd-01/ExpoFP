@@ -73,7 +73,7 @@ function requireRedraw() {
 const instantDraw = false;
 
 function draw() {
-    showFps();//if (__settings.debug) 
+    showFps();
     requestedFrame = undefined;
 
     const queue = Array.from(updateQueue)
@@ -99,6 +99,7 @@ let then = 0;
 let prevFps = [];
 let prevHtml = '';
 function showFps() {
+    if (!__settings.debug && !location.host.startsWith('dev')) return;
     const now = performance.now() * 0.001;
     const deltaTime = now - then;
     then = now;
