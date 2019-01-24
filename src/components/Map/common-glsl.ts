@@ -1,5 +1,35 @@
 export const dimColor = `
 vec4 dimColor(vec4 col, float amount){
+   
+    vec3 grayXfer = vec3(0.3, 0.59, 0.11);
+    vec3 colStraight = col.rgb / col.w;
+    vec3 gray = vec3(dot(grayXfer, colStraight));
+    vec3 m = mix(colStraight, gray, amount);
+    m = mix(m, vec3(0.0,0.0,0.0), amount/2.0);
+    // we may have rgb > 1.0, see if this needs to be fixed somewhere
+    col = vec4(m * col.w, col.w);
+    return col;
+}
+
+`; 
+
+/*
+
+vec4 dimColorEx(vec4 col, float amount, float w){
+    vec3 grayXfer = vec3(0.3, 0.59, 0.11);
+    vec3 colStraight = col.rgb / col.w;
+    vec3 gray = vec3(dot(grayXfer, colStraight));
+    vec3 m = mix(colStraight, gray, amount);
+    m = mix(m, vec3(0.0,0.0,0.0), amount/2.0);
+    // we may have rgb > 1.0, see if this needs to be fixed somewhere
+    col = vec4(m * w, w);
+    return col;
+}
+
+vec4 dimColor(vec4 col, float amount){
+    return dimColorEx(col, amount, col.w);
+}
+vec4 dimColor(vec4 col, float amount){
     float lightenFactor = 1.0;// + (0.01 * amount);
     vec3 grayXfer = vec3(0.3, 0.59, 0.11) * lightenFactor;
     vec3 colStraight = col.rgb / col.w;
@@ -13,9 +43,6 @@ vec4 dimColor(vec4 col, float amount){
     return col;
 }
 
-`; 
-
-/*
 
 vec4 dimColor(vec4 col, float amount){
     float scale = 1.0 - (0.04 * amount);

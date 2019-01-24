@@ -99,7 +99,7 @@ let then = 0;
 let prevFps = [];
 let prevHtml = '';
 function showFps() {
-    if (!__settings.debug && !location.host.startsWith('dev')) return;
+    if (!__settings.debug) return;
     const now = performance.now() * 0.001;
     const deltaTime = now - then;
     then = now;

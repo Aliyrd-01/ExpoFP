@@ -1,6 +1,6 @@
 <template>
     <div id="root">
-        <img src='expofp-overlay.png' class='logo-overlay'>
+        <a href='https://expofp.com/' target="_blank" class='logo-overlay'><img src='expofp-overlay.png' ></a>
         <Overlay />
         <Map />
         <Demo />
@@ -79,16 +79,23 @@ a:visited {
 }
 
 .logo-overlay {
+    display: block;
     position: fixed;
     bottom: 1rem;
     right: 1rem;
-    width: 5rem;
-    pointer-events: none;
+   
     @media screen and (max-width: 500px) {
         top: 0.5rem;
         right: 0.5rem;
         bottom: unset;
-        width: 3rem;
+        > img {
+            width: 3rem !important;
+        }
+        
+    }
+    > img {
+        display: block;
+        width: 5rem;
     }
 }
 #fps{
