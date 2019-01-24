@@ -20,6 +20,7 @@ export default {
     props: ["exhibitor"],
     methods: {
         select() {
+            this.$store.commit("setHoveredExhibitor", null);
             this.$store.dispatch("clickExhibitor", this.exhibitor.id);
         },
         bookmark() {
