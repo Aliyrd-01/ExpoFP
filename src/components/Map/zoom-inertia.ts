@@ -1,8 +1,9 @@
 import { ZoomBehavior } from "d3-zoom";
+import { event as currentEvent, Selection } from "d3-selection";
 
 export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
 
-    let $canvas: d3.Selection<any, {}, null, undefined>;
+    let $canvas: Selection<any, {}, null, undefined>;
     let transforms = [];
     let initialK;
     let currentInertialAf;
@@ -11,7 +12,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
     let initialTransitionSpeedY = 0.4; // per ms
 
     zoom.on("start", function () {
-        const e = d3.event;
+        const e = currentEvent;
         if (!e.sourceEvent) return;
 
         $canvas = d3.select(this);
@@ -27,7 +28,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
     });
 
     zoom.on("zoom.inertial", function () {
-        const e = d3.event;
+        const e = currentEvent;
         if (!e.sourceEvent) return;
         transforms.push({
             at: performance.now(),
@@ -36,7 +37,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
     });
 
     zoom.on("end", function () {
-        const e = d3.event;
+        const e = currentEvent;
         if (!e.sourceEvent) return;
         const lastK = transforms[transforms.length - 1].transform.k;
         if (lastK !== initialK) return;

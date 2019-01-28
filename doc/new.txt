@@ -1,6 +1,7 @@
 TODO
 
-search
+d3 cleanup
+disable console.log = function() {}
 
 //menu bug disappear
 //this strange hover bug

@@ -19,6 +19,7 @@ import * as m from "./matrix";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
 import { m4 } from "twgl.js";
+import { event as currentEvent } from "d3-selection";
 import zoomBound from "./zoom-bound";
 
 export default {
@@ -67,7 +68,7 @@ export default {
             .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                const t = d3.event.transform;
+                const t = currentEvent.transform;
                 const nt = zoomBound(t);
                 if (nt) {
                     this.zoomTo(nt, false);

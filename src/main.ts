@@ -1,5 +1,4 @@
-//devicePixelRatio = 1;
-// import 'core-js';
+//import * as d31 from 'd3'
 import 'core-js/features/array/from';
 import 'core-js/features/array/find';
 import 'core-js/features/promise';
