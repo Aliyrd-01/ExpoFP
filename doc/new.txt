@@ -1,6 +1,6 @@
 TODO
 
-d3 cleanup
+//d3 cleanup
 disable console.log = function() {}
 
 //menu bug disappear

@@ -1,0 +1,1 @@
+if (!__settings.debug) console.log = function() {}

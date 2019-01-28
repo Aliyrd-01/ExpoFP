@@ -6,12 +6,13 @@ import 'core-js/features/object/values';
 import 'core-js/features/string/ends-with';
 import 'path2d-polyfill';
 import 'url-polyfill';
-import '@/data-jsonschema'
-import '@/globals'
-import './settings'
-import '@/store'
-import '@/services'
-import Layout from './components/Layout.vue'
+import '@/globals';
+import './settings';
+import './utils/logging';
+import '@/data-jsonschema';
+import '@/store';
+import '@/services';
+import Layout from './components/Layout.vue';
 
 Vue.config.productionTip = false
 
