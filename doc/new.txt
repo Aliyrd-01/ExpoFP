@@ -1,6 +1,8 @@
 TODO
 
-fix odd bookmark
+//adjust filtering and setList function
+conditional list
+//fix odd bookmark
 //d3 cleanup
 //disable console.log = function() {}
 

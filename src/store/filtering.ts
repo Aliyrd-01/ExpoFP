@@ -1,3 +1,11 @@
+type SearchResultItem =
+    | { type: "exhibitor"; obj: Exhibitor }
+    | { type: "category"; obj: Category }
+    | { type: "booth"; obj: Booth };
+
+// interface SearchResult {
+//     items: SearchResultItem[];
+// }
 
 export default {
     getters: {
@@ -17,11 +25,23 @@ export default {
         },
         listExhibitors(state, getters, rootState) {
             switch (rootState.list.type) {
-                case "search": return getters.searchedExhibitors;
-                case "bookmarks": return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
-                case "category": return getters.categoryExhibitors;
+                case "search":
+                    return getters.searchedExhibitors;
+                case "bookmarks":
+                    return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
+                case "category":
+                    return getters.categoryExhibitors;
             }
             throw new Error("Unknown list.type");
+        },
+        listItems(state, getters, rootState) {
+            // see the current list type
+            // popuplate objects from it to show
+            let items: SearchResultItem[] = [];
+            items.push({ type: "category", obj: getters.categoriesArray[0] });
+            items.push(...getters.listExhibitors.map(x => ({ type: "exhibitor", obj: x } as SearchResultItem)));
+
+            return items;
         },
         // this should go away
         // filteredExhibitors(state, getters, rootState) {
@@ -41,7 +61,7 @@ export default {
         //     // }
         //     // return exhibitorsArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         // },
-        listExhibitorsIds(state, getters){
+        listExhibitorsIds(state, getters) {
             return getters.listExhibitors.map(e => e.id);
         },
 
@@ -92,4 +112,4 @@ export default {
             return new Map(array);
         }
     }
-}
+};

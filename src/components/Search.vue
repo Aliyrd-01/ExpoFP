@@ -6,17 +6,18 @@
                 <input type="search" v-if="hideRealInput" :placeholder="placeHolder" :value="text" @focus.prevent="handleReplicaFocus" />
             </div>
         </template>
-        <ExhibitorsList />
+        <List />
     </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import ExhibitorsList from "./ExhibitorsList.vue";
+import List from "./List.vue";
 import OverlayContent from "./OverlayContent.vue";
 
 export default {
-    components: { ExhibitorsList, OverlayContent },
+    components: { ExhibitorsList, OverlayContent, List },
     data: () => ({
         hideRealInput: true,
         placeHolder: "Search company, booth or category"
