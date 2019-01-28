@@ -1,7 +1,8 @@
 TODO
 
+fix odd bookmark
 //d3 cleanup
-disable console.log = function() {}
+//disable console.log = function() {}
 
 //menu bug disappear
 //this strange hover bug

@@ -1,12 +1,14 @@
-import Vue from 'vue'
-import Vuex, { GetterTree } from 'vuex'
-import booths from './booths'
-import exhibitors from './exhibitors'
-import categories from './categories'
-import bookmarked from './bookmarked'
-import screenSize from './screen-size'
-import filtering from './filtering'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import booths from './booths';
+import exhibitors from './exhibitors';
+import categories from './categories';
+import bookmarked from './bookmarked';
+import screenSize from './screen-size';
+import filtering from './filtering';
 import previewExhibitor from '@/utils/preview-exhibitor';
+
+type ListType = { type: "search", text: string, focused: boolean } | { type: "bookmarks" } | { type: "category", id: number };
 
 Vue.use(Vuex);
 
@@ -20,7 +22,7 @@ const store1 = new Vuex.Store({
         filtering
     },
     state: {
-        list: { type: "search", text: '' } as { type: "search", text: string, focused: boolean } | { type: "bookmarks" } | { type: "category", id: number },
+        list: { type: "search", text: '' } as ListType,
         // searchText: '',
         searchFocused: false,
         details: null as { type: "booth" | "exhibitor"; id: number; },
@@ -37,7 +39,6 @@ const store1 = new Vuex.Store({
         categories: null as typeof categories.state,
         bookmarked: null as typeof bookmarked.state,
         screenSize: null as typeof screenSize.state,
-
     },
     getters: {
         overlayPosition: (state) => {

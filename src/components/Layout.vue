@@ -5,13 +5,11 @@
         <Map />
         <Demo />
         <Debug />
-        <!-- <Menu/> -->
         <div id="fps"></div>
     </div>
 </template>
 
 <script lang="ts">
-import Menu from "./Menu.vue";
 import Overlay from "./Overlay.vue";
 import Map from "./Map/Map.vue";
 import Debug from "./Debug.vue";
@@ -23,7 +21,6 @@ export default Vue.extend({
         Overlay,
         Map,
         Debug,
-        Menu,
         Demo
     }
 });
