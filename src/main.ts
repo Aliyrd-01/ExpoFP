@@ -7,12 +7,12 @@ import 'core-js/features/string/ends-with';
 import 'path2d-polyfill';
 import 'url-polyfill';
 import '@/globals';
-import './settings';
-import './utils/logging';
+import '@/settings';
+import '@/utils/logging';
 import '@/data-jsonschema';
 import '@/store';
 import '@/services';
-import Layout from './components/Layout.vue';
+import Layout from '@/components/Layout.vue';
 
 Vue.config.productionTip = false
 

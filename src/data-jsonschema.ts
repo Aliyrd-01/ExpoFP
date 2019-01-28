@@ -26,7 +26,7 @@ const res = validate(__data, schema);
 if (res.errors.length) {
     console.error('__data jsonschema validation errors: ', res);
 } else {
-    console.debug("__data jsonschema is valid", res);
+    console.log("__data jsonschema is valid", res);
 }
 
 

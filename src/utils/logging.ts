@@ -1,1 +1,1 @@
-if (!__settings.debug) console.log = function() {}
+if (!__settings.debug) console.log = console.debug = function () { }

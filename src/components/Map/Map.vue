@@ -137,7 +137,7 @@ export default {
             }
             // if (!this.props.onBoothClick) return;
             const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            console.info("click", id);
+            console.log("click", id);
             this.$store.dispatch("clickBooth", id);
         },
         zoomTo(transform: ZoomTransform, animated: boolean) {
