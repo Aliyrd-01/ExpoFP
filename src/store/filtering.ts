@@ -1,11 +1,19 @@
-type SearchResultItem =
+import searchItems from './search-items';
+export type SearchResultItem =
     | { type: "exhibitor"; obj: Exhibitor }
     | { type: "category"; obj: Category }
     | { type: "booth"; obj: Booth };
 
-// interface SearchResult {
-//     items: SearchResultItem[];
-// }
+
+export function exhibitorsToItems(list: Exhibitor[]): SearchResultItem[] {
+    return list.map(x => ({ type: "exhibitor", obj: x } as SearchResultItem));
+}
+export function categoriesToItems(list: Category[]): SearchResultItem[] {
+    return list.map(x => ({ type: "category", obj: x } as SearchResultItem));
+}
+export function boothsToItems(list: Booth[]): SearchResultItem[] {
+    return list.map(x => ({ type: "booth", obj: x } as SearchResultItem));
+}
 
 export default {
     getters: {
@@ -23,6 +31,7 @@ export default {
             if (rootState.list.type !== "category") return [];
             return getters.exhibitorsByCategoryId.get(rootState.list.id) || [];
         },
+        // TODO: remove this
         listExhibitors(state, getters, rootState) {
             switch (rootState.list.type) {
                 case "search":
@@ -34,34 +43,20 @@ export default {
             }
             throw new Error("Unknown list.type");
         },
+        searchItems,
         listItems(state, getters, rootState) {
-            // see the current list type
-            // popuplate objects from it to show
-            let items: SearchResultItem[] = [];
-            items.push({ type: "category", obj: getters.categoriesArray[0] });
-            items.push(...getters.listExhibitors.map(x => ({ type: "exhibitor", obj: x } as SearchResultItem)));
-
-            return items;
+            switch (rootState.list.type) {
+                case "search":
+                    return getters.searchItems;
+                case "bookmarks":
+                    return exhibitorsToItems(getters.bookmarkedArray.map(id => rootState.exhibitors[id]));
+                case "category":
+                    return exhibitorsToItems(getters.categoryExhibitors);
+            }
+            throw new Error("Unknown list.type");
         },
-        // this should go away
-        // filteredExhibitors(state, getters, rootState) {
-        //     return [];
-        //     // const exhibitorsArray = getters.exhibitorsArray;
-        //     // let text = rootState.searchText.trim().toLowerCase();
-        //     // if (!text) return exhibitorsArray;
-        //     // if (getters.boothNameMap.has(text)) {
-        //     //     const b = getters.boothNameMap.get(text);
-        //     //     return b.exhibitors.map(id => rootState.exhibitors[id]);
-        //     // }
-        //     // if (text === "my bookmarks") {
-        //     //     return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
-        //     // }
-        //     // if (getters.exhibitorsByCategoryNameMap.has(text)) {
-        //     //     return getters.exhibitorsByCategoryNameMap.get(text);
-        //     // }
-        //     // return exhibitorsArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
-        // },
         listExhibitorsIds(state, getters) {
+            // TODO: replace this with listItems?
             return getters.listExhibitors.map(e => e.id);
         },
 
@@ -75,18 +70,6 @@ export default {
         listBoothsIdsSet(state, getters, rootState) {
             return new Set(getters.listBoothsIds);
         },
-        // highlightedBoothIds(state, getters, rootState) {
-        //     // if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
-        //     // if (getters.selectedBooth) return [getters.selectedBooth.id];
-        //     // if (rootState.searchText.trim()) return getters.filteredBoothsIds;
-        //     return null;
-        // },
-        // highlightedBoothIdsObj(state, getters, rootState) {
-        //     return {};
-        //     // return getters.highlightedBoothIds ?
-        //     //     getters.highlightedBoothIds.reduce((c: number, id) => (c[id] = true) && c, {} as { [id: number]: boolean })
-        //     //     : {};
-        // },
         selectedBoothIds(state, getters, rootState) {
             if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
             if (getters.selectedBooth) return [getters.selectedBooth.id];

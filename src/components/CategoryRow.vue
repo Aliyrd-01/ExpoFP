@@ -1,6 +1,6 @@
 <template>
-    <a :href="`aa`">
-      Cat
+    <a :href='"?" + encodeURIComponent(category.slug)' @click.prevent='click' class="category-row">
+        {{category.name}}
     </a>
 </template>
 
@@ -9,13 +9,18 @@ export default {
     name: "CategoryRow",
     props: ["category"],
     methods: {
-        
+        click() {
+            this.$store.dispatch("clickCategory", this.category.id);
+        },
     },
     computed: {
-        
+
     }
 };
 </script>
 
 <style lang="scss">
+.category-row {
+    display: block;
+}
 </style>
