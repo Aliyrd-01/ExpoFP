@@ -6,19 +6,19 @@
                 <div class='note'>Category</div>
             </div>
         </template>
-        <ExhibitorsList />
+        <List />
     </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import ExhibitorsList from "./ExhibitorsList.vue";
+import List from "./List.vue";
 import OverlayContent from "./OverlayContent.vue";
 
 export default {
-    components: { ExhibitorsList, OverlayContent },
+    components: { List, OverlayContent },
     computed: {
-         ...mapState(["details", "menu"]),
+        ...mapState(["details", "menu"]),
         ...mapGetters(["selectedCategory", "categoryExhibitors"]),
         show() {
             return !this.details && !this.menu && this.selectedCategory;

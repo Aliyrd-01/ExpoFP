@@ -1,7 +1,14 @@
 TODO
 
+search issues
+    doesnt move to clicked booth - need to use different method instead of clickBooth?
+    see routing issues? back/forward
+    need to refator click/select?
+
+
+
 //adjust filtering and setList function
-conditional list
+//conditional list
 //fix odd bookmark
 //d3 cleanup
 //disable console.log = function() {}

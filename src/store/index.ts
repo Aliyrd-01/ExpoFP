@@ -1,14 +1,14 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import booths from './booths';
-import exhibitors from './exhibitors';
-import categories from './categories';
-import bookmarked from './bookmarked';
-import screenSize from './screen-size';
-import filtering from './filtering';
-import previewExhibitor from '@/utils/preview-exhibitor';
+import Vue from "vue";
+import Vuex from "vuex";
+import booths from "./booths";
+import exhibitors from "./exhibitors";
+import categories from "./categories";
+import bookmarked from "./bookmarked";
+import screenSize from "./screen-size";
+import filtering, { SearchResultItem, exhibitorsToItems } from "./filtering";
+import previewExhibitor from "@/utils/preview-exhibitor";
 
-type ListType = { type: "search", text: string, focused: boolean } | { type: "bookmarks" } | { type: "category", id: number };
+type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
 
 Vue.use(Vuex);
 
@@ -22,15 +22,15 @@ const store1 = new Vuex.Store({
         filtering
     },
     state: {
-        list: { type: "search", text: '' } as ListType,
+        list: { type: "search", text: "" } as ListType,
         // searchText: '',
         searchFocused: false,
-        details: null as { type: "booth" | "exhibitor"; id: number; },
+        details: null as { type: "booth" | "exhibitor"; id: number },
         overlaySize: "medium" as OverlaySize,
         moveToBooths: null as number[],
         hoveredBooth: null as number,
         hoveredExhibitor: null as number,
-        previewExhibitor: (previewExhibitor ? previewExhibitor.id : null),
+        previewExhibitor: previewExhibitor ? previewExhibitor.id : null,
         menu: false,
         overlayShowsAll: false,
         //
@@ -38,18 +38,19 @@ const store1 = new Vuex.Store({
         exhibitors: null as typeof exhibitors.state,
         categories: null as typeof categories.state,
         bookmarked: null as typeof bookmarked.state,
-        screenSize: null as typeof screenSize.state,
+        screenSize: null as typeof screenSize.state
     },
     getters: {
-        overlayPosition: (state) => {
+        overlayPosition: state => {
             const screen = state.screenSize;
-            if (!screen || screen.width > 550) return "left"
+            if (!screen || screen.width > 550) return "left";
             // if (screen.width > 450) return "left"
-            return "bottom"
+            return "bottom";
         },
-        selectedExhibitor: state => state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
-        selectedBooth: (state) => state.details && state.details.type === "booth" ? state.booths[state.details.id] : null,
-        selectedCategory: (state) => state.list.type === "category" ? state.categories[state.list.id] : null,
+        selectedExhibitor: state =>
+            state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
+        selectedBooth: state => (state.details && state.details.type === "booth" ? state.booths[state.details.id] : null),
+        selectedCategory: state => (state.list.type === "category" ? state.categories[state.list.id] : null)
     },
     mutations: {
         // setSearchText(state, text) {
@@ -88,38 +89,38 @@ const store1 = new Vuex.Store({
     },
     actions: {
         selectExhibitor({ commit }, id) {
-            commit('setDetails', { type: 'exhibitor', id });
+            commit("setDetails", { type: "exhibitor", id });
         },
         selectBooth({ commit }, id) {
-            commit('setDetails', { type: 'booth', id });
+            commit("setDetails", { type: "booth", id });
         },
         selectNone({ commit }) {
-            commit('setDetails', null);
+            commit("setDetails", null);
         },
         selectBookmarks({ commit }) {
-            commit('setDetails', null);
-            commit('setList', { type: "bookmarks" });
+            commit("setDetails", null);
+            commit("setList", { type: "bookmarks" });
         },
         selectCategory({ commit }, id) {
-            commit('setDetails', null);
-            commit('setList', { type: "category", id });
-            commit('setOverlaySize', 'full');
+            commit("setDetails", null);
+            commit("setList", { type: "category", id });
+            commit("setOverlaySize", "full");
         },
         selectSearch({ commit }, text) {
-            commit('setDetails', null);
-            commit('setList', { type: "search", text: text || '' });
+            commit("setDetails", null);
+            commit("setList", { type: "search", text: text || "" });
         },
         clickBookmarks({ commit, dispatch }, id) {
             commit("setMenu", false);
             dispatch("selectBookmarks");
             dispatch("moveToList");
-            dispatch('showMap', id);
+            dispatch("showMap", id);
         },
         clickCategory({ commit, dispatch }, id) {
             commit("setMenu", false);
             dispatch("selectCategory", id);
             dispatch("moveToList");
-            dispatch('showMap', id);
+            dispatch("showMap", id);
         },
         clickSeminars({ commit, dispatch, getters }) {
             dispatch("clickCategory", getters.seminarsCategoryId);
@@ -127,51 +128,68 @@ const store1 = new Vuex.Store({
         clickBooth({ state, getters, dispatch, commit }, id) {
             commit("setMenu", false);
             if (!id) {
-                commit('setDetails', null);
+                commit("setDetails", null);
                 return;
             }
             const booth = state.booths[id];
             if (booth.exhibitors.length === 1) {
-                dispatch('selectExhibitor', booth.exhibitors[0]);
+                dispatch("selectExhibitor", booth.exhibitors[0]);
                 // } else if (booth.exhibitors.length > 1) {
                 //     dispatch('selectSearch', booth.name);
             } else {
-                dispatch('selectBooth', id);
+                dispatch("selectBooth", id);
             }
-            dispatch('showMap', id);
+            dispatch("showMap", id);
         },
         showMap({ getters, commit }) {
-            if (getters.overlayPosition === "bottom") commit('setOverlaySize', 'medium');
+            if (getters.overlayPosition === "bottom") commit("setOverlaySize", "medium");
         },
         showOverlay({ getters, commit }) {
-            if (getters.overlayPosition === "bottom") commit('setOverlaySize', 'full');
+            if (getters.overlayPosition === "bottom") commit("setOverlaySize", "full");
         },
         toggleMapOverlay({ getters, state, commit }) {
-            if (getters.overlayPosition === "bottom" && state.overlaySize === "full") commit('setOverlaySize', 'medium');
-            else if (getters.overlayPosition === "bottom" && state.overlaySize !== "full") commit('setOverlaySize', 'full');
+            if (getters.overlayPosition === "bottom" && state.overlaySize === "full") commit("setOverlaySize", "medium");
+            else if (getters.overlayPosition === "bottom" && state.overlaySize !== "full") commit("setOverlaySize", "full");
         },
-        moveToList({ dispatch, getters }) {
-            dispatch('moveToExhibitors', getters.listExhibitorsIds);
-        },
-        moveToExhibitors({ state, commit, dispatch }, ids) {
+        moveToList({ state, commit, getters }, items) {
+            // take only to booths and exhibitors, ignore categories
+            items = items || (getters.listItems as SearchResultItem[]);
             const booths = [];
-            ids.forEach(id => booths.push(...state.exhibitors[id].booths));
-            commit('setMoveToBooths', booths);
+            items.forEach(item => {
+                switch (item.type) {
+                    case "exhibitor":
+                        booths.push(...item.obj.booths);
+                        break;
+                    case "booth":
+                        booths.push(item.obj);
+                        break;
+                }
+            });
+            // ids.forEach(id => booths.push(...state.exhibitors[id].booths));
+            // dispatch('moveToExhibitors', getters.listExhibitorsIds);
+            commit("setMoveToBooths", booths);
         },
-        clickExhibitor({ commit, dispatch }, id) {
-            dispatch('selectExhibitor', id);
-            dispatch('moveToExhibitors', [id]);
+        // moveToExhibitors({ state, commit, dispatch }, ids) {
+        //     const booths = [];
+        //     ids.forEach(id => booths.push(...state.exhibitors[id].booths));
+        //     commit('setMoveToBooths', booths);
+        // },
+        moveToExhibitor({ state, commit, dispatch }, id) {
+            dispatch("moveToList", exhibitorsToItems([state.exhibitors[id]]));
+        },
+        clickExhibitor({ state, commit, dispatch }, id) {
+            dispatch("selectExhibitor", id);
+            dispatch("moveToExhibitor", id);
             dispatch("showMap");
-        },
+        }
         // clickBookmark({ state, commit }, id) {
         //     if (state.bookmarked.has(id)
         // }
     }
-})
-
+});
 
 declare global {
     const store: typeof store1;
 }
 
-extendGlobal({ store: store1 })
+extendGlobal({ store: store1 });

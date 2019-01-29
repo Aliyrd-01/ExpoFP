@@ -5,17 +5,17 @@
                 My Bookmarks&nbsp;<span>({{bookmarkedArray.length}})</span>
             </div>
         </template>
-        <ExhibitorsList />
+        <List />
     </OverlayContent>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
-import ExhibitorsList from "./ExhibitorsList.vue";
+import List from "./List.vue";
 import OverlayContent from "./OverlayContent.vue";
 
 export default {
-    components: { ExhibitorsList, OverlayContent },
+    components: { List, OverlayContent },
     computed: {
         ...mapState(["list", "details"]),
         ...mapGetters(["bookmarkedArray"]),
