@@ -161,7 +161,7 @@ const store1 = new Vuex.Store({
                         booths.push(...item.obj.booths);
                         break;
                     case "booth":
-                        booths.push(item.obj);
+                        booths.push(item.obj.id);
                         break;
                 }
             });
