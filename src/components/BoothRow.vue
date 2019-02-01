@@ -1,26 +1,22 @@
 <template>
-    <a :href='"?" + encodeURIComponent(booth.slug)' @click.prevent='click' class="booth-row">
-        {{booth.name}}
-    </a>
+    <SimpleRow :slug="booth.slug" @click="click" :line1="`${booth.name}`" :line2='"Booth"' />
 </template>
 
 <script lang="ts">
+
+import SimpleRow from "./SimpleRow.vue";
+
 export default {
     name: "CategoryRow",
+    components: { SimpleRow },
     props: ["booth"],
     methods: {
         click() {
             this.$store.dispatch("clickBooth", this.booth.id);
         },
-    },
-    computed: {
-
     }
 };
 </script>
 
 <style lang="scss">
-.booth-row {
-    display: block;
-}
 </style>
