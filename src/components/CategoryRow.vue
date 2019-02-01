@@ -1,5 +1,5 @@
 <template>
-    <SimpleRow :slug="category.slug" @click="click" :line1="`${category.name} (${numOfExhibitors})`" :line2='"Category"' />
+    <SimpleRow :slug="category.slug" @click="click" :line1="`${category.name} (${numOfExhibitors})`" line2='Category' />
 </template>
 
 <script lang="ts">

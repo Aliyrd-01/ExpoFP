@@ -1,5 +1,5 @@
 <template>
-    <a :href='"?" + encodeURIComponent(slug)' @click.prevent='click' class="simple-row">
+    <a :href='"?" + encodeURIComponent(slug)' @click.prevent='click' class="simple-row" @mouseover='$emit("mouseover")' @mouseout='$emit("mouseout")'>
         <div class="simple-row__main">{{line1}}</div>
         <div class="simple-row__sub">{{line2}}</div>
     </a>

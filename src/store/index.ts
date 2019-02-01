@@ -5,7 +5,7 @@ import exhibitors from "./exhibitors";
 import categories from "./categories";
 import bookmarked from "./bookmarked";
 import screenSize from "./screen-size";
-import filtering, { SearchResultItem, exhibitorsToItems } from "./filtering";
+import filtering, { SearchResultItem, exhibitorsToItems, boothsToItems } from "./filtering";
 import previewExhibitor from "@/utils/preview-exhibitor";
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
@@ -78,7 +78,7 @@ const store1 = new Vuex.Store({
         setMoveToBooths(state, item) {
             state.moveToBooths = item;
         },
-        setCenterMap(state, val){
+        setCenterMap(state, val) {
             state.centerMap = val;
         },
         setHoveredBooth(state, item) {
@@ -128,6 +128,12 @@ const store1 = new Vuex.Store({
         },
         clickSeminars({ commit, dispatch, getters }) {
             dispatch("clickCategory", getters.seminarsCategoryId);
+        },
+        clickBoothInList({ state, getters, dispatch, commit }, id) {
+            dispatch("selectBooth", id);
+            const booth = state.booths[id];
+            dispatch("moveToList", boothsToItems([booth]));
+            dispatch("showMap", id);
         },
         clickBooth({ state, getters, dispatch, commit }, id) {
             commit("setMenu", false);
