@@ -4,7 +4,7 @@ search issues
     doesnt move to clicked booth - need to use different method instead of clickBooth?
     see routing issues? back/forward
     need to refator click/select?
-    zoomout on search change
+    //zoomout on search change
 
 
 

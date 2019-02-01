@@ -1,11 +1,5 @@
 <template>
-    <canvas
-        class="map"
-        @mousemove="handleMouseMove"
-        @click="handleClick"
-        @mouseover="handleMouseOver"
-        @mouseout="handleMouseOut"
-    >
+    <canvas class="map" @mousemove="handleMouseMove" @click="handleClick" @mouseover="handleMouseOver" @mouseout="handleMouseOut">
         ExpoFP.com
     </canvas>
 </template>
@@ -29,6 +23,7 @@ export default {
         ...mapState([
             "overlaySize",
             "moveToBooths",
+            "centerMap",
             "booths",
             "hoveredBooth",
             "screenSize",
@@ -82,7 +77,12 @@ export default {
         initialize(canvas);
     },
     watch: {
-        moveToBooths: function() {
+        centerMap: function () {
+            if (!this.centerMap) return;
+            store.commit("setCenterMap", false);
+            this.zoomTo({ x: 0, y: 0, k: 1 }, true);
+        },
+        moveToBooths: function () {
             console.log("this.moveToBooths", this.moveToBooths);
             if (!this.moveToBooths) return;
             this.handledMoveToExhibitor = this.moveToBooths;
@@ -104,7 +104,7 @@ export default {
             store.commit("setMoveToBooths", null);
             this.handledMoveToExhibitor = null;
         },
-        visibleRect: function(v) {
+        visibleRect: function (v) {
             console.log("visibleRect change", v);
             m.setVisibleRect(v);
             this.zoomBoundCurrent();
@@ -141,7 +141,10 @@ export default {
             this.$store.dispatch("clickBooth", id);
         },
         zoomTo(transform: ZoomTransform, animated: boolean) {
-            let c = this.$canvas;
+            const t = m.getZoomTransform();
+            if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
+
+            let c = this.$canvas.interrupt();
             if (animated)
                 c = c
                     .transition()

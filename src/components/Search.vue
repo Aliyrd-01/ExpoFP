@@ -64,6 +64,7 @@ export default {
     },
     methods: {
         setText() {
+            this.$store.commit('setCenterMap', true);
             this.$store.commit("setList", {
                 type: "search",
                 text: this.getInput().value,

@@ -27,6 +27,7 @@ const store1 = new Vuex.Store({
         searchFocused: false,
         details: null as { type: "booth" | "exhibitor"; id: number },
         overlaySize: "medium" as OverlaySize,
+        centerMap: false,
         moveToBooths: null as number[],
         hoveredBooth: null as number,
         hoveredExhibitor: null as number,
@@ -76,6 +77,9 @@ const store1 = new Vuex.Store({
         },
         setMoveToBooths(state, item) {
             state.moveToBooths = item;
+        },
+        setCenterMap(state, val){
+            state.centerMap = val;
         },
         setHoveredBooth(state, item) {
             state.hoveredBooth = item || null;
