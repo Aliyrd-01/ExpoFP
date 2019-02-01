@@ -97,6 +97,7 @@ export default {
     data: () => ({ collapsed: true }),
     computed: {
         ...mapState(["menu", "details"]),
+        ...mapGetters(["overlayPosition"]),
         show() {
             return !this.menu && this.details && this.details.type === "exhibitor";
         },
@@ -129,7 +130,7 @@ export default {
             );
         },
         disableCollapse() {
-            return !this.anySocial && !this.anyAddress;
+            return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
         }
     },
     watch: {
