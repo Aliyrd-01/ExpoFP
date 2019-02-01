@@ -30,7 +30,7 @@ window.setTimeout(function() {
     const link = document.createElement("link");
     link.href = EFP_LOGO_URL;
     link.rel = "preload";
-    link.as = "image";
+    (link as any).as = "image";
     document.head.appendChild(link);
 }, 2000);
 
