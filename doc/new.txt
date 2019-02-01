@@ -1,7 +1,17 @@
 TODO
 
+
+keyboard selector -> add activeListIndex=0; to store and use it
+fix category subtitle (to be same as in list)
+
+
+change cursor when dragging like on google
+scroll after seach doesn't reset
+
 search issues
-    doesnt move to clicked booth - need to use different method instead of clickBooth?
+
+
+    //doesnt move to clicked booth - need to use different method instead of clickBooth?
     //unhide hidden parts on desktop
     //see routing issues? back/forward
     //need to refator click/select?
