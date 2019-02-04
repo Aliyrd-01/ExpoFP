@@ -34,6 +34,7 @@ const store1 = new Vuex.Store({
         previewExhibitor: previewExhibitor ? previewExhibitor.id : null,
         menu: false,
         overlayShowsAll: false,
+        activeListIndex: 0,
         //
         booths: null as typeof booths.state,
         exhibitors: null as typeof exhibitors.state,
@@ -89,6 +90,9 @@ const store1 = new Vuex.Store({
         },
         setMenu(state, shown) {
             state.menu = shown;
+        },
+        setActiveListIndex(state, val) {
+            state.activeListIndex = val;
         }
     },
     actions: {
@@ -191,6 +195,11 @@ const store1 = new Vuex.Store({
             dispatch("selectExhibitor", id);
             dispatch("moveToExhibitor", id);
             dispatch("showMap");
+        },
+        changeActiveListIndex({ state, getters, commit }, delta) {
+            let newVal = state.activeListIndex + delta;
+            newVal = Math.max(0, Math.min(getters.listItems.length - 1, newVal));
+            commit("setActiveListIndex", newVal);
         }
         // clickBookmark({ state, commit }, id) {
         //     if (state.bookmarked.has(id)

@@ -2,7 +2,8 @@
     <OverlayContent v-if="show" @close='handleClose' @back='handleBack' :back-mode='backMode' :hide-close='!showClose'>
         <template slot="bar">
             <div class="search__bar">
-                <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="text" @input="setText" @focus="handleFocus" @blur="handleBlur" />
+                <input type="search" :class={fixed:hideRealInput} :placeholder="placeHolder" :value="text" @input="setText"
+                    @keydown="handleKeydown" @focus="handleFocus" @blur="handleBlur" />
                 <input type="search" v-if="hideRealInput" :placeholder="placeHolder" :value="text" @focus.prevent="handleReplicaFocus" />
             </div>
         </template>
@@ -50,14 +51,14 @@ export default {
         window.setInterval(setPosition, 50);
     },
     watch: {
-        overlaySize: function(s) {
+        overlaySize: function (s) {
             if (s !== "full" && document.activeElement === this.getInput()) {
                 this.getInput().blur();
             }
         },
-        searchFocused: function(f){
+        searchFocused: function (f) {
             const i = this.getInput();
-            if (i && f && document.activeElement !== i){
+            if (i && f && document.activeElement !== i) {
                 i.focus();
             }
         }
@@ -70,6 +71,24 @@ export default {
                 text: this.getInput().value,
                 focused: document.activeElement === this.getInput()
             });
+        },
+        handleKeydown(e) {
+            // console.log('handleKeydown', e);
+            let delta = 0;
+            switch (e.key) {
+                case "Down":
+                case "ArrowDown":
+                    delta = 1;
+                    break;
+                case "Up":
+                case "ArrowUp":
+                    delta = -1;
+                    break;
+            }
+            if (delta) {
+                e.preventDefault();
+                this.$store.dispatch("changeActiveListIndex", delta);
+            }
         },
         handleReplicaFocus() {
             this.getInput().focus();
