@@ -1,9 +1,11 @@
 TODO
 
 
+Make sure activeListIndex is correct
+Highlight+focus row on change of activeListIndex
+
 keyboard selector -> add activeListIndex=0; to store and use it
 fix category subtitle (to be same as in list)
-
 
 change cursor when dragging like on google
 scroll after seach doesn't reset
