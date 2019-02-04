@@ -7,8 +7,7 @@
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "deploy": "node ./scripts/deploy.js",
-        "deploy-live": "cross-env EFP_TARGET=live node ./scripts/deploy.js",
-        "svg": "node ./scripts/svg-to-js.js"
+        "deploy-live": "cross-env EFP_TARGET=live node ./scripts/deploy.js"
     },
     "dependencies": {
         "color": "^3.1.0",
@@ -39,7 +38,6 @@
         "s3-deploy": "^1.2.0",
         "sass-loader": "^7.1.0",
         "style-resources-loader": "^1.2.1",
-        "svg-mesh-3d": "^1.1.0",
         "typescript": "3.1.6",
         "vue-template-compiler": "^2.5.21"
     }
