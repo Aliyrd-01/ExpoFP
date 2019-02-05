@@ -65,10 +65,13 @@ export default {
     },
     methods: {
         setText() {
+            const text = this.getInput().value;
             this.$store.commit('setCenterMap', true);
+            this.$store.commit('setActiveListIndex', text ? 0 : -1);
+
             this.$store.commit("setList", {
                 type: "search",
-                text: this.getInput().value,
+                text,
                 focused: document.activeElement === this.getInput()
             });
         },
@@ -84,6 +87,10 @@ export default {
                 case "ArrowUp":
                     delta = -1;
                     break;
+                case "Enter":
+                    e.preventDefault();
+                    this.$store.dispatch("openActiveListItem");    
+                    return;
             }
             if (delta) {
                 e.preventDefault();

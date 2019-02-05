@@ -13,7 +13,6 @@ export default {
     props: ["booth"],
     methods: {
         click() {
-            this.$store.commit("setHoveredBooth", null);
             this.$store.dispatch("clickBoothInList", this.booth.id);
         },
         mouseover() {

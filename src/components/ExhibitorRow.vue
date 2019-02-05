@@ -1,5 +1,6 @@
 <template>
-    <a class="exhibitor-row" :class="{bookmarked, featured}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.slug}`" @click.prevent="select">
+    <a class="exhibitor-row" :class="{bookmarked, featured}" @mouseover="mouseover" @mouseout="mouseout" :href="`?${exhibitor.slug}`"
+        @click.prevent="select">
         <div class="exhibitor-row__lines">
             {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
         </div>
@@ -16,11 +17,10 @@
 
 <script lang="ts">
 export default {
-    name: "ListRow",
+    name: "ExhibitorRow",
     props: ["exhibitor"],
     methods: {
         select() {
-            this.$store.commit("setHoveredExhibitor", null);
             this.$store.dispatch("clickExhibitor", this.exhibitor.id);
         },
         bookmark() {
@@ -54,20 +54,12 @@ export default {
 .exhibitor-row {
     display: flex;
     align-items: center;
-    border-top: solid 1px #ebebeb;
-    min-height: 3.5rem;
     text-decoration: none !important;
     color: #333 !important;
 
     &.featured {
         .exhibitor-row__lines {
             font-weight: 500;
-        }
-    }
-
-    @media (hover: hover) {
-        &:hover {
-            background-color: #f1f1f1;
         }
     }
 
@@ -78,8 +70,8 @@ export default {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        > .fa-gem{
-            color:#02a8ff;
+        > .fa-gem {
+            color: #02a8ff;
             font-size: 0.9rem;
         }
     }

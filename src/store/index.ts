@@ -34,7 +34,7 @@ const store1 = new Vuex.Store({
         previewExhibitor: previewExhibitor ? previewExhibitor.id : null,
         menu: false,
         overlayShowsAll: false,
-        activeListIndex: 0,
+        activeListIndex: -1,
         //
         booths: null as typeof booths.state,
         exhibitors: null as typeof exhibitors.state,
@@ -97,6 +97,7 @@ const store1 = new Vuex.Store({
     },
     actions: {
         selectExhibitor({ commit }, id) {
+            commit("setHoveredExhibitor", null);
             commit("setDetails", { type: "exhibitor", id });
         },
         selectBooth({ commit }, id) {
@@ -117,6 +118,7 @@ const store1 = new Vuex.Store({
         selectSearch({ commit }, text) {
             commit("setDetails", null);
             commit("setList", { type: "search", text: text || "" });
+            commit("setActiveListIndex", -1);
         },
         clickBookmarks({ commit, dispatch }, id) {
             commit("setMenu", false);
@@ -134,6 +136,7 @@ const store1 = new Vuex.Store({
             dispatch("clickCategory", getters.seminarsCategoryId);
         },
         clickBoothInList({ state, getters, dispatch, commit }, id) {
+            commit("setHoveredBooth", null);
             dispatch("selectBooth", id);
             const booth = state.booths[id];
             dispatch("moveToList", boothsToItems([booth]));
@@ -154,6 +157,11 @@ const store1 = new Vuex.Store({
                 dispatch("selectBooth", id);
             }
             dispatch("showMap", id);
+        },
+        clickExhibitor({ state, commit, dispatch }, id) {
+            dispatch("selectExhibitor", id);
+            dispatch("moveToExhibitor", id);
+            dispatch("showMap");
         },
         showMap({ getters, commit }) {
             if (getters.overlayPosition === "bottom") commit("setOverlaySize", "medium");
@@ -183,27 +191,30 @@ const store1 = new Vuex.Store({
             // dispatch('moveToExhibitors', getters.listExhibitorsIds);
             commit("setMoveToBooths", booths);
         },
-        // moveToExhibitors({ state, commit, dispatch }, ids) {
-        //     const booths = [];
-        //     ids.forEach(id => booths.push(...state.exhibitors[id].booths));
-        //     commit('setMoveToBooths', booths);
-        // },
         moveToExhibitor({ state, commit, dispatch }, id) {
             dispatch("moveToList", exhibitorsToItems([state.exhibitors[id]]));
-        },
-        clickExhibitor({ state, commit, dispatch }, id) {
-            dispatch("selectExhibitor", id);
-            dispatch("moveToExhibitor", id);
-            dispatch("showMap");
         },
         changeActiveListIndex({ state, getters, commit }, delta) {
             let newVal = state.activeListIndex + delta;
             newVal = Math.max(0, Math.min(getters.listItems.length - 1, newVal));
             commit("setActiveListIndex", newVal);
+        },
+        openActiveListItem({ state, getters, dispatch }) {
+            const item = getters.listItems[state.activeListIndex];
+            if (!item) return;
+            console.log("Opening", item);
+            switch (item.type) {
+                case "exhibitor":
+                    dispatch("clickExhibitor", item.obj.id);
+                    break;
+                case "category":
+                    dispatch("clickCategory", item.obj.id);
+                    break;
+                case "booth":
+                    dispatch("clickBoothInList", item.obj.id);
+                    break;
+            }
         }
-        // clickBookmark({ state, commit }, id) {
-        //     if (state.bookmarked.has(id)
-        // }
     }
 });
 

@@ -51,5 +51,6 @@ export default {
     color: #aaa;
     display: block;
     font-weight: normal;
+    margin-top: -2px;
 }
 </style>

@@ -1,9 +1,12 @@
 <template>
     <div>
-        <template v-for="item in items">
-            <ExhibitorRow :exhibitor='item.obj' :key="`e${item.obj.id}`" v-if='item.type === "exhibitor"' />
-            <CategoryRow :category='item.obj' :key="`c${item.obj.id}`" v-else-if='item.type === "category"' />
-            <BoothRow :booth='item.obj' :key="`c${item.obj.id}`" v-else-if='item.type === "booth"' />
+        <template v-for="(item, index) in items">
+            <ExhibitorRow :exhibitor='item.obj' :key="`e${item.obj.id}`" v-if='item.type === "exhibitor"' class='list-row'
+                :class='{active: index === activeListIndex}' />
+            <CategoryRow :category='item.obj' :key="`c${item.obj.id}`" v-else-if='item.type === "category"' class='list-row'
+                :class='{active: index === activeListIndex}' />
+            <BoothRow :booth='item.obj' :key="`c${item.obj.id}`" v-else-if='item.type === "booth"' class='list-row'
+                :class='{active: index === activeListIndex}' />
         </template>
     </div>
 </template>
@@ -21,16 +24,47 @@ console.log('List n:', n);
 export default {
     components: { ExhibitorRow, CategoryRow, BoothRow },
     computed: {
-        ...mapState(["overlayShowsAll"]),
+        ...mapState(["overlayShowsAll", "activeListIndex"]),
         ...mapGetters(["listItems"]),
         items() {
-            console.log('', this.listItems)
+            // console.log('', this.listItems)
             if (this.overlayShowsAll || this.listItems.length <= n) return this.listItems;
             return this.listItems.slice(0, n);
         },
-    }
+    },
+    updated: function () {
+        const el = document.querySelector('.list-row.active');
+        if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
+        // this.$nextTick(function () {
+        //     console.log('activiting')
+
+        // })
+    },
+    // watch: {
+    //     activeListIndex(idx) {
+    //         console.log('activeListIndex', idx);
+    //         const el = document.querySelector('.list-row.active');
+    //         if (el) el.scrollIntoView(false);
+    //         window.setTimeout(() => {
+
+    //         }, 1);
+    //     }
+    // }
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+.list-row {
+    border-top: solid 1px #ebebeb;
+    min-height: 3.5rem;
+    @media (hover: hover) {
+        &.active {
+            background: #eee;
+        }
+        &:hover,
+        &.active:hover {
+            background-color: #f1f1f1;
+        }
+    }
+}
 </style>
