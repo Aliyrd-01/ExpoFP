@@ -1,5 +1,7 @@
 TODO
 
+moveToList should move a bit, not that much
+look like zoomBounds, but lighter
 
 //Make sure activeListIndex is correct
 //Highlight+focus row on change of activeListIndex

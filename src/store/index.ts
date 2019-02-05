@@ -190,6 +190,7 @@ const store1 = new Vuex.Store({
             // ids.forEach(id => booths.push(...state.exhibitors[id].booths));
             // dispatch('moveToExhibitors', getters.listExhibitorsIds);
             commit("setMoveToBooths", booths);
+            // commit("setCenterMap", true)
         },
         moveToExhibitor({ state, commit, dispatch }, id) {
             dispatch("moveToList", exhibitorsToItems([state.exhibitors[id]]));
