@@ -1,5 +1,6 @@
 <template>
-    <canvas class="map" @mousemove="handleMouseMove" @click="handleClick" @mouseover="handleMouseOver" @mouseout="handleMouseOut">
+    <canvas class="map" @mousemove="handleMouseMove" @click="handleClick" @mouseover="handleMouseOver" @mouseout="handleMouseOut"
+        :class='{moving}'>
         ExpoFP.com
     </canvas>
 </template>
@@ -18,7 +19,7 @@ import zoomBound from "./zoom-bound";
 
 export default {
     name: "Map",
-    data: () => ({}),
+    data: () => ({ moving: false }),
     computed: {
         ...mapState([
             "overlaySize",
@@ -63,13 +64,18 @@ export default {
             .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
+                 this.moving = true;
                 const t = currentEvent.transform;
                 const nt = zoomBound(t);
+                // fix bounds if any
                 if (nt) {
                     this.zoomTo(nt, false);
-                    //  console.log('fixed bounds 2', t, nt)
                 } else m.setZoomTransform(t);
+            })
+            .on("end", () => {
+                this.moving = false;
             });
+        ;
         configInertia(this.zoom);
         m.setVisibleRect(this.visibleRect);
         m.setZoomTransform(d3.zoomIdentity);
@@ -208,5 +214,8 @@ function getTramsformToCenterSvgRect(
 }
 </script>
 
-<style scoped>
+<style>
+canvas.moving {
+    cursor: move;
+}
 </style>

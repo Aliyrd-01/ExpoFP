@@ -11,7 +11,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
     let initialTransitionSpeedX = 0.4; // per ms
     let initialTransitionSpeedY = 0.4; // per ms
 
-    zoom.on("start", function () {
+    zoom.on("start.inertial", function () {
         const e = currentEvent;
         if (!e.sourceEvent) return;
 
@@ -36,7 +36,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
         });
     });
 
-    zoom.on("end", function () {
+    zoom.on("end.inertial", function () {
         const e = currentEvent;
         if (!e.sourceEvent) return;
         const lastK = transforms[transforms.length - 1].transform.k;
