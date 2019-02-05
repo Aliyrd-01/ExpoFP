@@ -41,7 +41,7 @@ export default {
         let update: () => void;
         if (isScrollUgly) {
             const ps = new PerfectScrollbar(sel);
-            update = () => ps.update;
+            update = () => ps.update();
             sel.addEventListener("ps-scroll-y", setScrolled);
         } else {
             update = setScrolled;
