@@ -64,9 +64,10 @@ export default {
             .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                 this.moving = true;
+                this.moving = true;
                 const t = currentEvent.transform;
                 const nt = zoomBound(t);
+                // console.log('zooming', t, nt)
                 // fix bounds if any
                 if (nt) {
                     this.zoomTo(nt, false);
@@ -147,7 +148,9 @@ export default {
             this.$store.dispatch("clickBooth", id);
         },
         zoomTo(transform: ZoomTransform, animated: boolean) {
-            const t = m.getZoomTransform();
+            //const t = m.getZoomTransform();
+            const t = d3.zoomTransform(this.$canvas.node());
+            //console.log(t, t1);
             if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
 
             let c = this.$canvas.interrupt();

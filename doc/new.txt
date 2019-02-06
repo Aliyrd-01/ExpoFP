@@ -2,6 +2,7 @@ TODO
 
 moveToList should move a bit, not that much
 look like zoomBounds, but lighter
+//zoomintertia doesn't respect bounds
 
 //Make sure activeListIndex is correct
 //Highlight+focus row on change of activeListIndex
