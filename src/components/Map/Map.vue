@@ -1,11 +1,6 @@
 <template>
-    <canvas
-        class="map"
-        @mousemove="handleMouseMove"
-        @click="handleClick"
-        @mouseover="handleMouseOver"
-        @mouseout="handleMouseOut"
-    >
+    <canvas class="map" @mousemove="handleMouseMove" @click="handleClick" @mouseover="handleMouseOver" @mouseout="handleMouseOut"
+        :class='{moving}'>
         ExpoFP.com
     </canvas>
 </template>
@@ -19,15 +14,17 @@ import * as m from "./matrix";
 import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
 import { m4 } from "twgl.js";
+import { event as currentEvent } from "d3-selection";
 import zoomBound from "./zoom-bound";
 
 export default {
     name: "Map",
-    data: () => ({}),
+    data: () => ({ moving: false }),
     computed: {
         ...mapState([
             "overlaySize",
             "moveToBooths",
+            "centerMap",
             "booths",
             "hoveredBooth",
             "screenSize",
@@ -67,13 +64,18 @@ export default {
             .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
             .on("zoom", () => {
-                const t = d3.event.transform;
+                 this.moving = true;
+                const t = currentEvent.transform;
                 const nt = zoomBound(t);
+                // fix bounds if any
                 if (nt) {
                     this.zoomTo(nt, false);
-                    //  console.log('fixed bounds 2', t, nt)
                 } else m.setZoomTransform(t);
+            })
+            .on("end", () => {
+                this.moving = false;
             });
+        ;
         configInertia(this.zoom);
         m.setVisibleRect(this.visibleRect);
         m.setZoomTransform(d3.zoomIdentity);
@@ -81,7 +83,12 @@ export default {
         initialize(canvas);
     },
     watch: {
-        moveToBooths: function() {
+        centerMap: function () {
+            if (!this.centerMap) return;
+            store.commit("setCenterMap", false);
+            this.zoomTo({ x: 0, y: 0, k: 1 }, true);
+        },
+        moveToBooths: function () {
             console.log("this.moveToBooths", this.moveToBooths);
             if (!this.moveToBooths) return;
             this.handledMoveToExhibitor = this.moveToBooths;
@@ -103,7 +110,7 @@ export default {
             store.commit("setMoveToBooths", null);
             this.handledMoveToExhibitor = null;
         },
-        visibleRect: function(v) {
+        visibleRect: function (v) {
             console.log("visibleRect change", v);
             m.setVisibleRect(v);
             this.zoomBoundCurrent();
@@ -136,11 +143,14 @@ export default {
             }
             // if (!this.props.onBoothClick) return;
             const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            console.info("click", id);
+            console.log("click", id);
             this.$store.dispatch("clickBooth", id);
         },
         zoomTo(transform: ZoomTransform, animated: boolean) {
-            let c = this.$canvas;
+            const t = m.getZoomTransform();
+            if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
+
+            let c = this.$canvas.interrupt();
             if (animated)
                 c = c
                     .transition()
@@ -204,5 +214,8 @@ function getTramsformToCenterSvgRect(
 }
 </script>
 
-<style scoped>
+<style>
+canvas.moving {
+    cursor: move;
+}
 </style>

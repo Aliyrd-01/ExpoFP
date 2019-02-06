@@ -4,7 +4,7 @@ import deepmerge from 'deepmerge';
 
 
 let settings = {
-    debug: localStorage.getItem('debug') || location.host.startsWith('dev'),
+    debug: (localStorage.getItem('debug') || location.host.startsWith('dev')) && localStorage.getItem('debug') !== '0',
     colors: {
         base: '#ebebeb',
         bg: '#d6d6d6',

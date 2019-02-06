@@ -1,8 +1,23 @@
+import searchItems from "./search-items";
+export type SearchResultItem =
+    | { type: "exhibitor"; obj: Exhibitor }
+    | { type: "category"; obj: Category }
+    | { type: "booth"; obj: Booth };
+
+export function exhibitorsToItems(list: Exhibitor[]): SearchResultItem[] {
+    return list.map(x => ({ type: "exhibitor", obj: x } as SearchResultItem));
+}
+export function categoriesToItems(list: Category[]): SearchResultItem[] {
+    return list.map(x => ({ type: "category", obj: x } as SearchResultItem));
+}
+export function boothsToItems(list: Booth[]): SearchResultItem[] {
+    return list.map(x => ({ type: "booth", obj: x } as SearchResultItem));
+}
 
 export default {
     getters: {
         dimmed(state, getters, rootState) {
-            return getters.listExhibitors.length !== getters.exhibitorsArray.length;
+            return getters.listItems.length !== getters.exhibitorsArray.length || getters.listItems.find(x => x.type !== 'exhibitor');
         },
         searchedExhibitors(state, getters, rootState) {
             if (rootState.list.type !== "search") return [];
@@ -15,58 +30,53 @@ export default {
             if (rootState.list.type !== "category") return [];
             return getters.exhibitorsByCategoryId.get(rootState.list.id) || [];
         },
-        listExhibitors(state, getters, rootState) {
+        // // TODO: remove this
+        // listExhibitors(state, getters, rootState) {
+        //     switch (rootState.list.type) {
+        //         case "search":
+        //             return getters.searchedExhibitors;
+        //         case "bookmarks":
+        //             return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
+        //         case "category":
+        //             return getters.categoryExhibitors;
+        //     }
+        //     throw new Error("Unknown list.type");
+        // },
+        searchItems,
+        listItems(state, getters, rootState) {
             switch (rootState.list.type) {
-                case "search": return getters.searchedExhibitors;
-                case "bookmarks": return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
-                case "category": return getters.categoryExhibitors;
+                case "search":
+                    return getters.searchItems;
+                case "bookmarks":
+                    return exhibitorsToItems(getters.bookmarkedArray.map(id => rootState.exhibitors[id]));
+                case "category":
+                    return exhibitorsToItems(getters.categoryExhibitors);
             }
             throw new Error("Unknown list.type");
         },
-        // this should go away
-        // filteredExhibitors(state, getters, rootState) {
-        //     return [];
-        //     // const exhibitorsArray = getters.exhibitorsArray;
-        //     // let text = rootState.searchText.trim().toLowerCase();
-        //     // if (!text) return exhibitorsArray;
-        //     // if (getters.boothNameMap.has(text)) {
-        //     //     const b = getters.boothNameMap.get(text);
-        //     //     return b.exhibitors.map(id => rootState.exhibitors[id]);
-        //     // }
-        //     // if (text === "my bookmarks") {
-        //     //     return getters.bookmarkedArray.map(id => rootState.exhibitors[id]);
-        //     // }
-        //     // if (getters.exhibitorsByCategoryNameMap.has(text)) {
-        //     //     return getters.exhibitorsByCategoryNameMap.get(text);
-        //     // }
-        //     // return exhibitorsArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
+        // listExhibitorsIds(state, getters) {
+        //     // TODO: replace this with listItems?
+        //     return getters.listExhibitors.map(e => e.id);
         // },
-        listExhibitorsIds(state, getters){
-            return getters.listExhibitors.map(e => e.id);
-        },
 
         listBoothsIds(state, getters) {
             const arr = [] as number[];
-            for (let e of getters.listExhibitors) {
-                arr.push(...e.booths);
-            }
+            const items = getters.listItems as SearchResultItem[];
+            items.forEach(item => {
+                switch (item.type) {
+                    case "exhibitor":
+                        arr.push(...item.obj.booths);
+                        break;
+                    case "booth":
+                        arr.push(item.obj.id);
+                        break;
+                }
+            });
             return arr;
         },
         listBoothsIdsSet(state, getters, rootState) {
             return new Set(getters.listBoothsIds);
         },
-        // highlightedBoothIds(state, getters, rootState) {
-        //     // if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
-        //     // if (getters.selectedBooth) return [getters.selectedBooth.id];
-        //     // if (rootState.searchText.trim()) return getters.filteredBoothsIds;
-        //     return null;
-        // },
-        // highlightedBoothIdsObj(state, getters, rootState) {
-        //     return {};
-        //     // return getters.highlightedBoothIds ?
-        //     //     getters.highlightedBoothIds.reduce((c: number, id) => (c[id] = true) && c, {} as { [id: number]: boolean })
-        //     //     : {};
-        // },
         selectedBoothIds(state, getters, rootState) {
             if (getters.selectedExhibitor) return getters.selectedExhibitor.booths;
             if (getters.selectedBooth) return [getters.selectedBooth.id];
@@ -92,4 +102,4 @@ export default {
             return new Map(array);
         }
     }
-}
+};

@@ -1,17 +1,15 @@
 <template>
     <div id="root">
-        <a href='https://expofp.com/' target="_blank" class='logo-overlay'><img src='expofp-overlay.png' ></a>
+        <a href='https://expofp.com/' target="_blank" class='logo-overlay'><img src='expofp-overlay.png'></a>
         <Overlay />
         <Map />
         <Demo />
         <Debug />
-        <!-- <Menu/> -->
         <div id="fps"></div>
     </div>
 </template>
 
 <script lang="ts">
-import Menu from "./Menu.vue";
 import Overlay from "./Overlay.vue";
 import Map from "./Map/Map.vue";
 import Debug from "./Debug.vue";
@@ -23,7 +21,6 @@ export default Vue.extend({
         Overlay,
         Map,
         Debug,
-        Menu,
         Demo
     }
 });
@@ -52,7 +49,7 @@ body {
     @media (max-width: 820px) and (min-width: 500px) and (orientation: portrait) {
         font-size: 13px;
     }
-     /* @media (max-width: 820px) and (orientation: portrait) {
+    /* @media (max-width: 820px) and (orientation: portrait) {
         font-size: 16px;
     } */
 }
@@ -83,7 +80,7 @@ a:visited {
     position: fixed;
     bottom: 1rem;
     right: 1rem;
-   
+
     @media screen and (max-width: 500px) {
         top: 0.5rem;
         right: 0.5rem;
@@ -91,14 +88,13 @@ a:visited {
         > img {
             width: 3rem !important;
         }
-        
     }
     > img {
         display: block;
         width: 5rem;
     }
 }
-#fps{
+#fps {
     position: fixed;
     top: 10px;
     right: 10px;
