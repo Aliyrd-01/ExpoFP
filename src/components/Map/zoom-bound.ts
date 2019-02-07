@@ -19,7 +19,7 @@ export default function zoomBound(transform: ZoomTransform, forAutoMove: boolean
     // calc center zoom tx/ty
     const centerTy = -vRect.cy * (transform.k - 1);
     const centerTx = -vRect.cx * (transform.k - 1);
-    forAutoMove = true;
+    // forAutoMove = true;
     const extra = forAutoMove ? 0.1 : 0.5;
 
     const allowShiftYBase = (svgHeightScaled - vRect.h) / 2;
