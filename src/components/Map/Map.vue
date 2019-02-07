@@ -66,7 +66,7 @@ export default {
             .on("zoom", () => {
                 this.moving = true;
                 const t = currentEvent.transform;
-                const nt = zoomBound(t);
+                const nt = zoomBound(t, false);
                 // console.log('zooming', t, nt)
                 // fix bounds if any
                 if (nt) {
@@ -166,7 +166,7 @@ export default {
         },
         zoomBoundCurrent() {
             const ct = m.getZoomTransform();
-            const nt = zoomBound(ct);
+            const nt = zoomBound(ct, false);
             if (nt) {
                 // console.log('fixed bounds', ct, nt)
                 this.zoomTo(nt, false);
@@ -212,8 +212,9 @@ function getTramsformToCenterSvgRect(
 
     const diffX = targetRect.cx - bSvgRect.cx * zoom;
     const diffY = targetRect.cy - bSvgRect.cy * zoom;
-
-    return { x: diffX, y: diffY, k: zoom };
+    let t = { x: diffX, y: diffY, k: zoom };
+    t = zoomBound(t, true) || t;
+    return t;
 }
 </script>
 

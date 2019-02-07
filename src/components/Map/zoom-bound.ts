@@ -1,7 +1,7 @@
-import * as m from './matrix';
-import { svgWidth, svgHeight } from '@/tools/svg';
+import * as m from "./matrix";
+import { svgWidth, svgHeight } from "@/tools/svg";
 
-export default function zoomBound(transform: ZoomTransform): ZoomTransform {
+export default function zoomBound(transform: ZoomTransform, forAutoMove: boolean): ZoomTransform {
     // cannot use ptscale here, it has previous transform.k in it
     // const pxSvgScale = m.getPxSvgScale();
     const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
@@ -19,18 +19,18 @@ export default function zoomBound(transform: ZoomTransform): ZoomTransform {
     // calc center zoom tx/ty
     const centerTy = -vRect.cy * (transform.k - 1);
     const centerTx = -vRect.cx * (transform.k - 1);
+    forAutoMove = true;
+    const extra = forAutoMove ? 0.1 : 0.5;
 
-    const extra = 0.5;
-
-    const maxDeltaY =
-        Math.abs((svgHeightScaled - vRect.h) / 2) +
-        Math.min(vRect.h, svgHeightScaled) * extra;
+    const allowShiftYBase = (svgHeightScaled - vRect.h) / 2;
+    const allowShiftY = forAutoMove ? Math.max(allowShiftYBase, 0) : Math.abs(allowShiftYBase);
+    const maxDeltaY = allowShiftY + Math.min(vRect.h, svgHeightScaled) * extra;
     const maxTy = centerTy + maxDeltaY;
     const minTy = centerTy - maxDeltaY;
 
-    const maxDeltaX =
-        Math.abs((svgWidthScaled - vRect.w) / 2) +
-        Math.min(vRect.w, svgWidthScaled) * extra;
+    const allowShiftXBase = (svgWidthScaled - vRect.w) / 2;
+    const allowShiftX = forAutoMove ? Math.max(allowShiftXBase, 0) : Math.abs(allowShiftXBase);
+    const maxDeltaX = allowShiftX + Math.min(vRect.w, svgWidthScaled) * extra;
     const maxTx = centerTx + maxDeltaX;
     const minTx = centerTx - maxDeltaX;
 
