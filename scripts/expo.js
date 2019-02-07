@@ -5,6 +5,7 @@ const fullBranch = gitBranch.sync();
 let branch = fullBranch;
 if (branch.startsWith("demo-")) branch = "demo";
 if (branch.startsWith("jtrade-")) branch = "jtrade19";
+if (branch.startsWith("expo-")) branch = "expo";
 if (fullBranch !== branch && process.env.EFP_TARGET === "live") {
     throw new Error(`Unknown expo. Won't run on ${branch} branch`);
 }
