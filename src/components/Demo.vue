@@ -3,7 +3,7 @@
         <section>
             <a href='' @click.prevent='dismiss()' class='dismiss'>Dismiss</a>
             <span>This is not an official Expo!Expo!® plan. </span>
-            <span>Get your free expo floor plan at <a href='https://expofp.com/'>ExpoFP.com</a></span>
+            <span>Get your free expo floor plan at <a href='https://expofp.com/' style='color:#fff; text-decoration: underline'>ExpoFP.com</a></span>
 
         </section>
     </div>
@@ -11,7 +11,7 @@
 
 <script lang="ts">
 export default {
-    data: () => ({ hidden: true , key: 'note-dismissed1' }),
+    data: () => ({ hidden: true , key: 'note-dismissed2' }),
     computed: {
         demo() {
             return EFP_EXPO === "expo";
