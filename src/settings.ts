@@ -14,10 +14,14 @@ let settings = {
         dim: 0.5,
         booths: {
             default: '#41b6e7',
-            selected: '#dc6533',
+            selected: '#FB3E59',
             empty: '#b3b3b3',
         }
     }
+}
+
+if (EFP_EXPO === "jtrade19"){
+    settings.colors.booths.selected = '#dc6533';
 }
 
 settings = deepmerge(settings, window['__settings'] || {});

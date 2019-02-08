@@ -22,8 +22,10 @@
                 </span>
             </div> -->
             <div class="exhibitor__categories">
-                <a href='' v-for="booth in booths.filter(b => !b.hideName)" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")' class="exhibitor__categories-booth">Booth {{booth.name}}</a>
-                <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)" class="exhibitor__categories-cat">{{c.name}}</a>
+                <a href='' v-for="booth in booths.filter(b => !b.hideName)" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")'
+                    class="exhibitor__categories-booth">Booth {{booth.name}}</a>
+                <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)"
+                    class="exhibitor__categories-cat">{{c.name}}</a>
             </div>
             <div class="exhibitor__description" :class='{collapsed : collapsed && !disableCollapse}' v-if="exhibitor.description || exhibitor.logo">
                 <div class='exhibitor__logo-container' v-if="exhibitor.logo">
@@ -151,6 +153,12 @@ export default {
 </script>
 
 <style  lang="scss">
+.expo-jtrade19 .exhibitor__categories-booth {
+    background: #e9522a; //#fb3e59;
+    &:hover {
+        background: #e9522a; //#ea2b46;
+    }
+}
 .exhibitor {
     // &__booth {
     //     margin: 0 1rem 0.2rem;
@@ -181,9 +189,9 @@ export default {
         }
 
         &-booth {
-            background: #E9522A; //#fb3e59;
+            background: #fb3e59;
             &:hover {
-                background: #E9522A;//#ea2b46;
+                background: #ea2b46;
             }
         }
     }
