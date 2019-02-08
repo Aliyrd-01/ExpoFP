@@ -6,7 +6,10 @@ import { getNextId } from '@/services/id';
 //__data.booths.splice(3);
 
 const booths = __data.booths.reduce((a, c) => (a[c.id] = c) && a, {} as { [id: number]: Booth });
-const boothsBySlug = new Map<string, Booth>();
+//const boothsBySlug = new Map<string, Booth>();
+const boothsByName = new Map<string, Booth>();
+
+
 // setup slugs
 for (const b of Object.values(booths)) {
     // if (EFP_EXPO === "demo"){
@@ -15,13 +18,14 @@ for (const b of Object.values(booths)) {
     // }
 
     b.slug = generateUniqueSlug(b.name);
-    boothsBySlug.set(b.slug, b);
+    //boothsBySlug.set(b.slug, b);
+    boothsByName.set(b.name.toLowerCase(), b);
 }
 
 
 for (const r of d3.select(svg).select('#Booths').selectAll('rect').nodes() as SVGRectElement[]) {
-    const idInSvg = r.id.substring(1);
-    let booth = boothsBySlug.get(idInSvg);
+    const idInSvg = (r.getAttribute("data-name") || r.id).substring(1).toLowerCase();
+    let booth = boothsByName.get(idInSvg);
     if (!booth) {
         console.error("SVG booth not found in __data: ", idInSvg);
         // create fake booth

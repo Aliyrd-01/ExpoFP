@@ -8,6 +8,11 @@
     <rect x="693.16" y="617.05" width="60.95" height="57.6" style="fill: #d6d6d6;stroke: #000;stroke-miterlimit: 10"/>
     <rect x="1075.35" y="602.48" width="60.95" height="57.6" style="fill: #d6d6d6;stroke: #000;stroke-miterlimit: 10"/>
     <rect x="792.36" y="617.05" width="220.64" height="57.6" style="fill: #d6d6d6;stroke: #000;stroke-miterlimit: 10"/>
+    <rect x="393.67" y="212.82" width="115.76" height="112.69" style="fill: #9beb9b;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect x="432.25" y="75.42" width="221.86" height="130.88" style="fill: #c3ebff;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect x="510.43" y="169.4" width="65.52" height="32.02" style="fill: #e6bbff;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect x="510.43" y="111.42" width="65.52" height="52" style="fill: #e6bbff;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect x="520.07" y="79.25" width="46.24" height="30.26" style="fill: #e6bbff;stroke: #9c0;stroke-miterlimit: 10"/>
   </g>
   <g id="Booths">
     <rect id="b442" x="239.33" y="128.62" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
@@ -81,7 +86,7 @@
     <rect id="b1137" x="673.41" y="167.46" width="38.59" height="58.26" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1437" x="847.04" y="186.88" width="19.29" height="38.84" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1436" x="808.46" y="206.3" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="bx5" x="904.92" y="167.46" width="38.59" height="58.26" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect id="b_INT" x="904.92" y="167.46" width="38.59" height="58.26" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1536" x="866.34" y="186.88" width="19.29" height="38.84" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1537" x="962.8" y="186.88" width="19.29" height="38.84" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b333" x="200.74" y="225.72" width="38.59" height="38.84" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
@@ -94,7 +99,7 @@
     <rect id="b734" x="393.67" y="225.72" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b635" x="374.38" y="225.72" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b835" x="490.13" y="225.72" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="bx4" x="557.65" y="225.72" width="38.59" height="26.58" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect id="b_FB2" x="557.65" y="225.72" width="38.59" height="26.58" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1435" x="847.04" y="225.72" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1434" x="808.46" y="225.72" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1335" x="789.17" y="206.3" width="19.29" height="38.84" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
@@ -118,7 +123,7 @@
     <rect id="b927" x="557.65" y="264.56" width="38.59" height="58.26" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1330" x="750.58" y="264.56" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1231" x="731.29" y="264.56" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="bx3" x="789.17" y="264.56" width="96.46" height="58.26" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect id="b_PITSTOP" x="789.17" y="264.56" width="96.46" height="58.26" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1631" x="962.8" y="264.56" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b428" x="220.04" y="283.99" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b328" x="162.16" y="283.99" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
@@ -209,7 +214,7 @@
     <rect id="b510" x="277.91" y="445.29" width="19.29" height="19.19" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b411" x="258.62" y="445.29" width="19.29" height="19.19" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1110" x="634.83" y="426.1" width="19.29" height="38.38" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="bx2" x="731.29" y="406.91" width="96.46" height="57.57" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect id="b_VIBE" x="731.29" y="406.91" width="96.46" height="57.57" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1111" x="673.41" y="445.29" width="38.59" height="19.19" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1610" x="924.21" y="445.29" width="19.29" height="19.19" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1511" x="904.92" y="445.29" width="19.29" height="19.19" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
@@ -256,10 +261,7 @@
     <rect id="b1501" x="904.92" y="522.05" width="38.59" height="38.38" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1500" x="866.34" y="522.05" width="19.29" height="38.38" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1601" x="962.8" y="541.24" width="19.29" height="19.19" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="bx1" x="162.16" y="71.36" width="60.01" height="67.97" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect id="b_FB1" x="162.16" y="71.36" width="60.01" height="67.97" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1645" x="951.62" y="104.34" width="48.63" height="48.63" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="by1" x="510.43" y="169.4" width="65.52" height="24.09" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="by2" x="510.43" y="125.15" width="65.52" height="38.27" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="by3" x="520.07" y="90.14" width="46.24" height="27.34" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
   </g>
 </svg>

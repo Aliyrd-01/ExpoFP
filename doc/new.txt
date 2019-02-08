@@ -1,5 +1,12 @@
 TODO
 
+color booths using our method
+do not show booths names starting with _
+
+
+
+booth with multuple complanies - problem
+
 //moveToList should move a bit, not that much
 //look like zoomBounds, but lighter
 //zoomintertia doesn't respect bounds
