@@ -13,7 +13,7 @@
                 <a :href='booth.buyUrl' target='_blank'>Buy</a>
             </div>
         </div>
-        <ExhibitorRow v-for="item in boothExhibitors" :key="item.id" :exhibitor='item' />
+        <ExhibitorRow v-for="item in boothExhibitors" :key="item.id" :exhibitor='item' class="list-row" />
     </OverlayContent>
 </template>
 

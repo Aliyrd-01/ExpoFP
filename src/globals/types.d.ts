@@ -22,7 +22,8 @@ interface Booth {
     soldColor: string,
     buyUrl: string,
     boothTypeName: string,
-    isOnHold: boolean
+    isOnHold: boolean,
+    hideName: boolean
 }
 
 interface Exhibitor {

@@ -1,6 +1,7 @@
 //import { getFont } from './utils';
 
 export function createLabelCanvas(text: string, fontSize: number) {
+    text = text.replace(/^_/,'');
     fontSize *= devicePixelRatio
     const canvas = document.createElement("canvas");
     const c = canvas.getContext("2d");
@@ -58,8 +59,10 @@ export function createDetailsCanvas(b: Booth) {
     c.textAlign = "start";
     c.textBaseline = "hanging";
     c.font = boothFont;
-    c.fillText(b.name, 0, nextLine);
-    nextLine += boothFontSize + boothPadding;
+    if (!b.hideName){
+        c.fillText(b.name, 0, nextLine);
+        nextLine += boothFontSize + boothPadding;
+    }
     c.font = detailFont;
 
     for (const line of lines) {
