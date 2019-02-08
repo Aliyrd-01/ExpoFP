@@ -82,6 +82,12 @@ export default {
 .menu.shown .menu__title > img {
     opacity: 1;
 }
+.expo-jtrade19 .menu__title{
+    background: #2B2A29;
+}
+.expo-expo .menu__title > img {
+    padding-right: 2rem;
+}
 .menu {
     background: #f1f1f1;
     &__title {
@@ -89,7 +95,6 @@ export default {
         padding: 2.5rem 1rem;
         font-size: 2rem;
         font-weight: 100;
-        background: #2B2A29;
         text-align: center;
         margin-right: -3rem;
         img {

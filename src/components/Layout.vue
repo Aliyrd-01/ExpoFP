@@ -1,5 +1,5 @@
 <template>
-    <div id="root">
+    <div id="root" :class='"expo-" + expo'>
         <a href='https://expofp.com/' target="_blank" class='logo-overlay'><img src='expofp-overlay.png'></a>
         <Overlay />
         <Map />
@@ -22,7 +22,12 @@ export default Vue.extend({
         Map,
         Debug,
         Demo
-    }
+    },
+    computed: {
+        expo() {
+            return EFP_EXPO;
+        }
+    },
 });
 </script>
 
