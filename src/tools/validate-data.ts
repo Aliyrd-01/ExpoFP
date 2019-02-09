@@ -29,15 +29,35 @@ if (res.errors.length) {
     console.log("__data jsonschema is valid", res);
 }
 
+if (__settings.debug){
+    for (const name of Object.keys(__data)) {
+        const errors = new Set<string>();
+        for (const b of __data[name]) {
+            const kk = Object.keys(b);
+            for (const k of kk) {
+                const val = b[k];
+                if (val === "") {
+                    errors.add(`__data.${name}.${k} is sometimes empty string. Don't pass empty strings.`);
+                } else if (val === false) {
+                    errors.add(`__data.${name}.${k} is sometimes false. Don't pass false for booleans.`);
+                } else if (Array.isArray(val) && val.length === 0) {
+                    errors.add(`__data.${name}.${k} is sometimes empty array. Don't pass empty arrays.`);
+                }
+            }
+        }
+        errors.forEach(e => console.warn(e));
+    }
+}
+
 // convert obsolete fields
 for (const booth of __data.booths) {
     const b = booth as any;
-    booth.onHold = booth.isOnHold;
-    booth.availColor = booth.availableColor;
-    booth.type = booth.boothTypeName;
+    booth.onHold = b.isOnHold;
+    booth.availColor = b.availableColor;
+    booth.type = b.boothTypeName;
 }
 for (const exhibitor of __data.exhibitors) {
     const e = exhibitor as any;
-    exhibitor.featured = exhibitor.isFeatured;
-    exhibitor.email = exhibitor.publicEmail;
+    exhibitor.featured = e.isFeatured;
+    exhibitor.email = e.publicEmail;
 }

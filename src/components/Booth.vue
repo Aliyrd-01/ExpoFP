@@ -4,12 +4,12 @@
             <div class="bar">Booth {{booth.name}}</div>
         </template>
         <div class="booth" v-if="!boothExhibitors.length">
-            <div class="info" v-if='booth.isOnHold'>On Hold</div>
-            <div class="info" v-if='booth.boothTypeName && !booth.isOnHold'>Booth Type: {{booth.boothTypeName}}<br/><br/></div>
-            <div class="info" v-if='booth.size && !booth.isOnHold'>{{booth.size}}</div>
-            <div class="info" v-if='booth.price && !booth.isOnHold'>{{booth.price}}</div>
-            <span v-html="instructions" v-if='!booth.isOnHold'></span>
-            <div class="buy" v-if='booth.buyUrl && !booth.isOnHold'>
+            <div class="info" v-if='booth.onHold'>On Hold</div>
+            <div class="info" v-if='booth.type && !booth.onHold'>Booth Type: {{booth.type}}<br/><br/></div>
+            <div class="info" v-if='booth.size && !booth.onHold'>{{booth.size}}</div>
+            <div class="info" v-if='booth.price && !booth.onHold'>{{booth.price}}</div>
+            <span v-html="instructions" v-if='!booth.onHold'></span>
+            <div class="buy" v-if='booth.buyUrl && !booth.onHold'>
                 <a :href='booth.buyUrl' target='_blank'>Buy</a>
             </div>
         </div>

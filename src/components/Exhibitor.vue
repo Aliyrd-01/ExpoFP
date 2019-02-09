@@ -54,10 +54,10 @@
                         <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
                     </div>
                 </div>
-                <div v-if="exhibitor.publicEmail">
+                <div v-if="exhibitor.email">
                     <i class="fas fa-at"></i>
                     <div>
-                        <a :href="'mailto:' + exhibitor.publicEmail" target="_blank">{{exhibitor.publicEmail}}</a>
+                        <a :href="'mailto:' + exhibitor.email" target="_blank">{{exhibitor.email}}</a>
                     </div>
                 </div>
             </div>
@@ -119,7 +119,7 @@ export default {
             return this.$store.state.bookmarked[this.exhibitor.id];
         },
         featured() {
-            return this.exhibitor.isFeatured;
+            return this.exhibitor.featured;
         },
         anySocial() {
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
@@ -127,7 +127,7 @@ export default {
             );
         },
         anyAddress() {
-            return !!["address", "address2", "phone1", "website", "publicEmail"].find(
+            return !!["address", "address2", "phone1", "website", "email"].find(
                 s => this.exhibitor[s]
             );
         },

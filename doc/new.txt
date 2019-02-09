@@ -1,7 +1,8 @@
 TODO
 
-use title and url from _data.js
 use new fields instead of obsolete
+use title and url from _data.js
+fix IE11
 
 jsonscheme
 center text

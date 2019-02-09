@@ -29,7 +29,7 @@ export function createDetailsCanvas(b: Booth) {
     const lines = b.exhibitors.map(e => store.state.exhibitors[e].name);
 
     if (!b.exhibitors.length) {
-        if (b.isOnHold) {
+        if (b.onHold) {
             lines.push('On Hold');
         } else {
             if (b.size) lines.push(b.size);
