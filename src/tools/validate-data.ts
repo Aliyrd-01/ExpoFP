@@ -29,7 +29,7 @@ if (res.errors.length) {
     console.log("__data jsonschema is valid", res);
 }
 
-if (__settings.debug){
+if (__settings.debug) {
     for (const name of Object.keys(__data)) {
         const errors = new Set<string>();
         for (const b of __data[name]) {
@@ -49,15 +49,20 @@ if (__settings.debug){
     }
 }
 
-// convert obsolete fields
+// convert obsolete fields and fix false/empty strings/arrays
 for (const booth of __data.booths) {
     const b = booth as any;
     booth.onHold = b.isOnHold;
     booth.availColor = b.availableColor;
     booth.type = b.boothTypeName;
+
+    booth.exhibitors = booth.exhibitors || [];
 }
+
 for (const exhibitor of __data.exhibitors) {
     const e = exhibitor as any;
     exhibitor.featured = e.isFeatured;
     exhibitor.email = e.publicEmail;
+    
+    exhibitor.categories = exhibitor.categories || [];
 }
