@@ -18,24 +18,29 @@ interface Booth {
     error?: boolean,
     size: string,
     price: string,
-    availableColor: string,
+    availableColor: string,// obsolete
+    availColor: string,// new
     soldColor: string,
     buyUrl: string,
-    boothTypeName: string,
-    isOnHold: boolean,
+    boothTypeName: string,// obsolete
+    type: string,// new
+    isOnHold: boolean,// obsolete
+    onHold: boolean,// new
     hideName: boolean
 }
 
 interface Exhibitor {
     id: number,
     name: string,
-    isFeatured: boolean,
+    isFeatured: boolean,//obsolete
+    featured:boolean, //new
     description: string,
     address: string,
     address2: string,
     phone1: string,
     website: string,
-    publicEmail: string,
+    publicEmail: string, // obsolete
+    email,// new
     //...
 
     //populated

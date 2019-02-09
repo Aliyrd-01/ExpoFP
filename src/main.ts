@@ -9,7 +9,7 @@ import 'url-polyfill';
 import '@/globals';
 import '@/settings';
 import '@/utils/logging';
-import '@/data-jsonschema';
+import '@/tools/validate-data';
 import '@/store';
 import '@/services';
 import Layout from '@/components/Layout.vue';

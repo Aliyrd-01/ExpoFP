@@ -1,11 +1,20 @@
 TODO
 
-color booths using our method
-do not show booths names starting with _
+use title and url from _data.js
+use new fields instead of obsolete
+
+jsonscheme
+center text
+google crawl
+aws api
+
+
+//color booths using our method
+//do not show booths names starting with 
 
 
 
-booth with multuple complanies - problem
+//booth with multuple complanies - problem
 
 //moveToList should move a bit, not that much
 //look like zoomBounds, but lighter

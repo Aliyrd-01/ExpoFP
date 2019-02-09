@@ -1,0 +1,133 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://expofp.com/floorplans/datajs.schema.json",
+    "title": "ExpoFP data.js Schema",
+    "type": "object",
+    "required": ["booths", "exhibitors", "categories"],
+    "properties": {
+        "reserveInstructions": {
+            "type": "string"
+        },
+        "booths": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["id", "name", "exhibitors"],
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "exhibitors": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "boothTypeName": {
+                        "type": "string",
+                        "description": "Obsolete, use type"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "size": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "string"
+                    },
+                    "availableColor": {
+                        "type": "string",
+                        "description": "Obsolete, use availColor"
+                    },
+                    "availColor": {
+                        "type": "string"
+                    },
+                    "soldColor": {
+                        "type": "string"
+                    },
+                    "buyUrl": {
+                        "type": "string"
+                    },
+                    "isOnHold": {
+                        "type": "boolean",
+                        "description": "Obsolete, use onHold"
+                    },
+                    "onHold": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "exhibitors": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["id", "name", "categories"],
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "categories": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "isFeatured": {
+                        "type": "boolean",
+                        "description": "Obsolete, use featured"
+                    },
+                    "featured": {
+                        "type": "boolean"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "address": {
+                        "type": "string"
+                    },
+                    "address2": {
+                        "type": "string"
+                    },
+                    "phone1": {
+                        "type": "string"
+                    },
+                    "publicEmail": {
+                        "type": "string",
+                        "description": "Obsolete, use email"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "website": {
+                        "type": "string",
+                        "format": "uri"
+                    }
+                }
+            }
+        },
+        "categories": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["id", "name"],
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

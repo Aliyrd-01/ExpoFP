@@ -5,6 +5,7 @@
         "noImplicitAny": false,
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
         "sourceMap": true,
         "allowJs": true,
         "baseUrl": ".",
