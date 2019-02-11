@@ -188,7 +188,7 @@
     <rect id="b734" x="267.27" y="188.98" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b635" x="247.98" y="188.98" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b835" x="363.74" y="188.98" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="b_FB2" x="431.26" y="188.98" width="38.59" height="26.58" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect id="b_FOOD2" x="431.26" y="188.98" width="38.59" height="26.58" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1435" x="720.65" y="188.98" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1434" x="682.06" y="188.98" width="19.29" height="19.42" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1335" x="662.77" y="169.56" width="19.29" height="38.84" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
@@ -350,7 +350,7 @@
     <rect id="b1501" x="778.53" y="485.3" width="38.59" height="38.38" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1500" x="739.94" y="485.3" width="19.29" height="38.38" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1601" x="836.4" y="504.49" width="19.29" height="19.19" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
-    <rect id="b_FB1" x="35.76" y="34.61" width="60.01" height="67.97" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
+    <rect id="b_FOOD1" x="35.76" y="34.61" width="60.01" height="67.97" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
     <rect id="b1645" x="825.23" y="67.6" width="48.63" height="48.63" style="fill: none;stroke: #9c0;stroke-miterlimit: 10"/>
   </g>
 </svg>

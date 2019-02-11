@@ -3,13 +3,11 @@ TODO
 //use new fields instead of obsolete
 //use title and url from _data.js -> remove those from config
 //Also, could you please remove the warning about expo expo, but keep Get your free plan... 
-
-handle fb urls
+//handle fb urls
 
 fix IE11
 
-
-Rename fb to food
+//Rename fb to food
 
 fpdev1,fpdev2
 

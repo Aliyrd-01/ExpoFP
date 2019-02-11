@@ -92,6 +92,11 @@ function stateToUrl() {
     savedSelectedBooth = booth;
 }
 
+// facebook fix
+if (history.location.search.startsWith("?fbclid")){
+    history.replace('?');
+}
+
 if (store.state.previewExhibitor) {
     history.replace('?' + store.state.exhibitors[store.state.previewExhibitor].slug);
 }
