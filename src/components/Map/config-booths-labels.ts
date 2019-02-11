@@ -40,6 +40,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
 
         this.drawer.addObject({
             id: this.getId("Dot"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
@@ -56,6 +57,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
 
         this.drawer.addObject({
             id: this.getId("Details"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [3, 3, -1, -1],
@@ -116,6 +118,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
 
         this.drawer.addObject({
             id: this.getId(sizeName),
+            rotateRadians: this.booth.rotate,
             center: [r.cx, r.cy],
             deltas: [0, 0, 0, 0],
             deltaPts: [-w, -h, w, h],

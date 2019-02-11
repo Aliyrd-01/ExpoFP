@@ -12,6 +12,7 @@ export default class BoothBgDrawer extends BoothDrawerBase {
         const r = this.booth.rect;
         this.drawer.addObject({
             id: this.getId('bg'),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [.5, .5, -.5, -.5]

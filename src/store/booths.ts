@@ -33,6 +33,18 @@ for (const r of d3.select(svg).select('#Booths').selectAll('rect').nodes() as SV
         booth = { id: getNextId(), name: idInSvg.toUpperCase(), slug: generateUniqueSlug(idInSvg), exhibitors: [], error: true } as any;
         booths[booth.id] = booth;
     } //else
+
+    const transform = r.getAttribute("transform");
+    if (transform){
+        const m = transform.match(/translate\(([\-0-9\.]+) ([\-0-9\.]+)\) rotate\(([\-0-9\.]+)\)/);
+        if (m){
+            const translateX = parseFloat(m[1]);
+            const translateY = parseFloat(m[2]);
+            const rotate = parseFloat(m[3]);
+            booth.rotate = -rotate * Math.PI / 180;
+        }
+    }
+
     booth.rect = Rect.fromSvgRectElement(r);
 }
 

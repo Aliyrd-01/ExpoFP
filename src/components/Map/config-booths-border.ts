@@ -10,6 +10,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
 
         this.drawer.addObject({
             id: this.getId("_1"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, -r.h / 2],
             deltaPts: [-width, -width, width, width],
@@ -18,6 +19,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
         });
         this.drawer.addObject({
             id: this.getId("_2"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, -r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
@@ -26,6 +28,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
         });
         this.drawer.addObject({
             id: this.getId("_3"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, r.h / 2, r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,
@@ -34,6 +37,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
         });
         this.drawer.addObject({
             id: this.getId("_4"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             scalePts: devicePixelRatio,

@@ -16,6 +16,7 @@ interface Booth {
     exhibitors: number[]
     // populated
     rect: Rect,
+    rotate: number,
     slug: string,
     error?: boolean,
     size: string,

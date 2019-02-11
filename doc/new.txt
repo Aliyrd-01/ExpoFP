@@ -5,14 +5,16 @@ TODO
 //Also, could you please remove the warning about expo expo, but keep Get your free plan... 
 //handle fb urls
 
-fix IE11
+//fix IE11
 
 //Rename fb to food
 
 fpdev1,fpdev2
 
 
-jsonscheme
+//jsonscheme
+rotate - group sprite
+
 center text
 google crawl
 aws api

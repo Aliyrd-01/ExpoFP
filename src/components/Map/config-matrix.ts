@@ -1,5 +1,3 @@
-import { m4 } from 'twgl.js';
-import { svgWidth, svgHeight } from '@/tools/svg';
 import { delayAnimations, allDrawers, requireUpdate } from "./draw";
 import animate from './animate';
 import * as m from './matrix';

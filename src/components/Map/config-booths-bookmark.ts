@@ -16,6 +16,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
 
         this.drawer.addObject({
             id: this.getId("L"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 4],
             deltaPts: [-1, -2, -5, 0],
@@ -27,6 +28,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
 
         this.drawer.addObject({
             id: this.getId("M"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [-1, -2, -2, 0],
@@ -38,6 +40,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
 
         this.drawer.addObject({
             id: this.getId("S"),
+            rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts:

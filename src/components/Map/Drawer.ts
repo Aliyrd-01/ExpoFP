@@ -1,6 +1,6 @@
-import * as twgl from 'twgl.js';
-import Sprite, { SpriteItem } from './Sprite';
-import { dimColor } from './common-glsl';
+import * as twgl from "twgl.js";
+import Sprite, { SpriteItem } from "./Sprite";
+import { dimColor } from "./common-glsl";
 
 export default class Drawer {
     readonly gl: WebGLRenderingContext;
@@ -107,10 +107,13 @@ export default class Drawer {
 
     updateColor(id: string, color: Vec4) {
         const obj = this.objectsById.get(id);
-        if (!obj.color || obj.color[0] !== color[0]
-            || obj.color[1] !== color[1]
-            || obj.color[2] !== color[2]
-            || obj.color[3] !== color[3]) {
+        if (
+            !obj.color ||
+            obj.color[0] !== color[0] ||
+            obj.color[1] !== color[1] ||
+            obj.color[2] !== color[2] ||
+            obj.color[3] !== color[3]
+        ) {
             this.objectsById.get(id).color = color;
             this.colorsDirty = true;
         }
@@ -165,7 +168,7 @@ export default class Drawer {
             if (!w.canvasTmp) continue;
             w.spriteItem = sprite.addCanvas(w.canvasTmp);
             // destroy it from memory
-            delete w.canvasTmp
+            delete w.canvasTmp;
         }
 
         var canvases = sprite.generateSpriteCanvases();
@@ -176,15 +179,13 @@ export default class Drawer {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
             this.canvasToTexture.set(c, texture);
         }
         {
             gl.bindTexture(gl.TEXTURE_2D, this.fallBackTexture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-                new Uint8Array([0, 0, 255, 255]));
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
         }
 
         for (let w of this.objects) {
@@ -200,17 +201,22 @@ export default class Drawer {
             centers.push(...w.center, ...w.center, ...w.center, ...w.center);
             // preare points x1, y1, ... xp1, yp1
             const d = w.deltas || [0, 0, 0, 0];
-            const x1 = d[0], y1 = d[1], x2 = d[2], y2 = d[3];
+            const x1 = d[0],
+                y1 = d[1],
+                x2 = d[2],
+                y2 = d[3];
             const dp = w.deltaPts || [0, 0, 0, 0];
             const scale = w.scalePts || 1;
-            const xp1 = dp[0] * scale, yp1 = dp[1] * scale, xp2 = dp[2] * scale, yp2 = dp[3] * scale;
+            const xp1 = dp[0] * scale,
+                yp1 = dp[1] * scale,
+                xp2 = dp[2] * scale,
+                yp2 = dp[3] * scale;
             // 4 vec2
             {
                 deltas.push(x1, y1, x2, y1, x1, y2, x2, y2);
             }
             // 4 vec2
             {
-
                 deltaPts.push(xp1, yp1, xp2, yp1, xp1, yp2, xp2, yp2);
             }
             // 4 vec2
@@ -233,9 +239,9 @@ export default class Drawer {
                 let val: Vec2;
                 if (!w.spriteItem) {
                     val = [0, 0];
-                } else if (w.texPosition === 'center') {
+                } else if (w.texPosition === "center") {
                     val = [w.spriteItem.rect.cx, w.spriteItem.rect.cy];
-                } else if (w.texPosition === 'lefttop') {
+                } else if (w.texPosition === "lefttop") {
                     val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
                 } else {
                     val = [w.spriteItem.rect.x2, w.spriteItem.rect.y1];
@@ -246,12 +252,11 @@ export default class Drawer {
             // fixdelta 4 vec2
             {
                 let val: Vec2;
-                if (!w.spriteItem || w.texPosition === 'center') {
+                if (!w.spriteItem || w.texPosition === "center") {
                     val = [0, 0];
-                } else if (w.texPosition === 'lefttop') {
+                } else if (w.texPosition === "lefttop") {
                     val = [x1, y1];
-                }
-                else {
+                } else {
                     val = [x2, y1];
                 }
                 fixdeltas.push(...val, ...val, ...val, ...val);
@@ -259,9 +264,9 @@ export default class Drawer {
             // fixdeltapt 4 vec2
             {
                 let val: Vec2;
-                if (!w.spriteItem || w.texPosition === 'center') {
+                if (!w.spriteItem || w.texPosition === "center") {
                     val = [0, 0];
-                } else if (w.texPosition === 'lefttop') {
+                } else if (w.texPosition === "lefttop") {
                     val = [xp1, yp1];
                 } else {
                     val = [xp2, yp1];
@@ -272,9 +277,9 @@ export default class Drawer {
             // fixdeltamaxpt 4 vec2
             {
                 let val: Vec2;
-                if (!w.spriteItem || w.texPosition === 'center') {
+                if (!w.spriteItem || w.texPosition === "center") {
                     val = [0, 0];
-                } else if (w.texPosition === 'lefttop') {
+                } else if (w.texPosition === "lefttop") {
                     val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
                     //val = [0, 0];
                 } else {
@@ -319,20 +324,24 @@ export default class Drawer {
 
     private populateGroups(resortObejcts: boolean) {
         // console.log('this.populateGroups', this.indexBufferPool.length);
-        const groups: { indices: number[], texture: WebGLTexture, texsize: Vec2 }[] = [];
-        let currentGroup: { indices: number[], texture: WebGLTexture, texsize: Vec2 };
+        const groups: { indices: number[]; texture: WebGLTexture; texsize: Vec2; rotated: boolean }[] = [];
+        let currentGroup: { indices: number[]; texture: WebGLTexture; texsize: Vec2; rotated: boolean };
 
         if (resortObejcts) {
-
             this.sortedObjects.sort((a, b) => (a.skipdim ? 1 : 0) - (b.skipdim ? 1 : 0));
         }
 
         for (const obj of this.sortedObjects) {
             //obj.index = i;
             if (!obj.visible) continue;
-            if (!currentGroup ||
-                (currentGroup.texture && obj.texture && currentGroup.texture !== obj.texture)) {
-                currentGroup = { indices: [], texture: undefined, texsize: undefined };
+            const rotated = !!obj.rotateRadians;
+            if (
+                !currentGroup ||
+                (currentGroup.texture &&
+                    obj.texture &&
+                    (currentGroup.texture !== obj.texture || currentGroup.rotated !== rotated))
+            ) {
+                currentGroup = { indices: [], texture: undefined, texsize: undefined, rotated };
                 groups.push(currentGroup);
             }
 
@@ -348,13 +357,13 @@ export default class Drawer {
         this.groups.length = 0;
 
         for (let group of groups) {
-            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer();//
+            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer(); //
             indexBuffers.push(buffer);
 
             const realIndices = [];
             for (let i of group.indices) {
                 const n = i * 4;
-                realIndices.push(n, n + 1, n + 2, n + 1, n + 2, n + 3)
+                realIndices.push(n, n + 1, n + 2, n + 1, n + 2, n + 3);
             }
 
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
@@ -364,7 +373,8 @@ export default class Drawer {
                 texture: group.texture,
                 indexBuffer: buffer,
                 numElements: realIndices.length,
-                texsize: group.texsize
+                texsize: group.texsize,
+                rotated: group.rotated
             });
         }
 
@@ -414,23 +424,33 @@ export default class Drawer {
             if (group.texture) {
                 uniforms.u_texture = group.texture;
                 uniforms.u_texsize = group.texsize;
+
+                gl.bindTexture(gl.TEXTURE_2D, group.texture);
+                if (group.rotated) {
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                } else {
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                }
             } else {
                 uniforms.u_texture = this.fallBackTexture;
             }
 
             twgl.setUniforms(this.programInfo, uniforms);
+
             gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
         }
     }
 }
 
 export interface DrawerObject {
-    id?: string,
+    id?: string;
     center: Vec2;
     deltas?: Vec4; // x1, y1, x2, y2
     deltaPts?: Vec4;
-    scalePts?: number,
-    texPosition?: 'center' | 'lefttop' | 'righttop'
+    scalePts?: number;
+    texPosition?: "center" | "lefttop" | "righttop";
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;
@@ -443,19 +463,18 @@ export interface DrawerObject {
 }
 
 interface DrawerObjectEx extends DrawerObject {
-
     texture?: WebGLTexture;
     texcoords: Vec4; // x1, y1, x2, y2
     index: number;
 }
 
 interface DrawerGroup {
-    texsize: Vec2,
+    texsize: Vec2;
     texture: WebGLTexture;
     indexBuffer: WebGLBuffer;
     numElements: number;
+    rotated: boolean;
 }
-
 
 const vertexShaderSource = `attribute vec2 a_center;
 attribute vec2 a_rotate;
@@ -534,4 +553,3 @@ void main() {
     }
     gl_FragColor = col;
 }`;
-
