@@ -1,4 +1,6 @@
 declare const __data: {
+    title: string,
+    homeUrl: string,
     booths: Booth[],
     exhibitors: Exhibitor[],
     categories: Category[],
@@ -64,8 +66,8 @@ type ZoomTransform = { x: number, y: number, k: number };
 
 
 declare const EFP_EXPO: string;
-declare const EFP_TITLE: string;
-declare const EFP_HOME_URL: string;
+//declare const EFP_TITLE: string;
+//declare const EFP_HOME_URL: string;
 declare const EFP_LOGO_URL: string;
 declare const GTAG: string;
 declare const gtag: any;

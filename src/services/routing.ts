@@ -1,5 +1,5 @@
 import { createBrowserHistory } from 'history'
-import settings from '@/settings';
+// import settings from '@/settings';
 
 const history = createBrowserHistory();
 
@@ -46,7 +46,7 @@ function setTitle() {
     else if (store.state.searchText) title = '`' + store.state.searchText + '`';
 
     if (title.length) title += ' – ';
-    title += EFP_TITLE + ' – Expo Floor Plan by ExpoFP';
+    title += __data.title + ' – Expo Floor Plan by ExpoFP';
 
     document.title = title;
 }

@@ -28,6 +28,10 @@ if (__settings.debug) {
     }
 }
 
+// some data fixed
+if (!__data.homeUrl && EFP_EXPO === "jtrade19") __data.homeUrl = "https://www.jtrade.co.uk/";
+if (!__data.homeUrl) __data.homeUrl = 'https://expofp.com/';
+
 // convert obsolete fields and fix false/empty strings/arrays
 for (const booth of __data.booths) {
     const b = booth as any;

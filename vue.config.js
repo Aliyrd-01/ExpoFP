@@ -13,8 +13,8 @@ const logoUrl = config.logoUrl || `${expo}-logo.png`
 const define = {
     EFP_DATA_URL_BASE: JSON.stringify(replaceDataBase),
     EFP_EXPO: JSON.stringify(expo),
-    EFP_TITLE: JSON.stringify(config.title),
-    EFP_HOME_URL: JSON.stringify(config.homeUrl),
+    //EFP_TITLE: JSON.stringify(config.title),
+    //EFP_HOME_URL: JSON.stringify(config.homeUrl),
     EFP_LOGO_URL: JSON.stringify(logoUrl),
     GTAG: JSON.stringify(gTag)
 };

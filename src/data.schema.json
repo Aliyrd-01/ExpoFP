@@ -3,8 +3,15 @@
     "$id": "https://expofp.com/floorplans/datajs.schema.json",
     "title": "ExpoFP data.js Schema",
     "type": "object",
-    "required": ["booths", "exhibitors", "categories"],
+    "required": ["title", "expoUrl", "booths", "exhibitors", "categories"],
     "properties": {
+        "title": {
+            "type": "string"
+        },
+        "expoUrl": {
+            "type": "string",
+            "format": "uri"
+        },
         "reserveInstructions": {
             "type": "string"
         },
