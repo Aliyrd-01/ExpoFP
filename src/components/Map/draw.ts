@@ -13,7 +13,7 @@ import settings from '@/settings';
 // var b: AnyDrawer;
 // b = a;
 
-export const delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
+export const delayAnimations = 0;///Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
@@ -73,6 +73,7 @@ function requireRedraw() {
 const instantDraw = false;
 
 function draw() {
+    // if (!gl) return; 
     showFps();
     requestedFrame = undefined;
 
