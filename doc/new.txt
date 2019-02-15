@@ -1,7 +1,9 @@
 TODO
 
-update jtrade!
-setup proper analytics
+ads on floor plan?
+
+//update jtrade!
+//setup proper analytics
 
 //use new fields instead of obsolete
 //use title and url from _data.js -> remove those from config
@@ -19,8 +21,8 @@ fpdev1,fpdev2
 //rotate - group sprite
 
 //center text
-google crawl
-aws api
+//google crawl
+//aws api
 
 
 //color booths using our method

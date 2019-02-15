@@ -10,20 +10,20 @@
                     <i class="exhibitor__bk"></i>
                 </a>
             </div>
-            <div class="exhibitor__bar-booth" @click='$store.dispatch("toggleMapOverlay")'>Booth
+            <div class="exhibitor__bar-booth" @click='$store.dispatch("toggleMapOverlay")'>{{__data.boothTerm}}
                 <span v-for="booth in booths" :key="booth.id">
                     {{booth.name}}
                 </span></div>
         </template>
         <div class="exhibitor__details">
-            <!-- <div class="exhibitor__booth" @click='$store.dispatch("toggleMapOverlay")'>Booth
+            <!-- <div class="exhibitor__booth" @click='$store.dispatch("toggleMapOverlay")'>{{__data.boothTerm}}
                 <span v-for="booth in booths" :key="booth.id">
                     {{booth.name}}
                 </span>
             </div> -->
             <div class="exhibitor__categories">
                 <a href='' v-for="booth in booths.filter(b => !b.hideName)" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")'
-                    class="exhibitor__categories-booth">Booth {{booth.name}}</a>
+                    class="exhibitor__categories-booth">{{__data.boothTerm}} {{booth.name}}</a>
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)"
                     class="exhibitor__categories-cat">{{c.name}}</a>
             </div>

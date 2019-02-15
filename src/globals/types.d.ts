@@ -1,6 +1,7 @@
 declare const __data: {
     title: string,
     homeUrl: string,
+    boothTerm: string,
     booths: Booth[],
     exhibitors: Exhibitor[],
     categories: Category[],

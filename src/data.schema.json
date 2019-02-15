@@ -15,6 +15,10 @@
         "reserveInstructions": {
             "type": "string"
         },
+        "boothTerm": {
+            "type": "string",
+            "description": "Booth term (typically 'booth' or 'stand'"
+        },
         "booths": {
             "type": "array",
             "items": {

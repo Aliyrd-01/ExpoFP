@@ -1,11 +1,11 @@
 <template>
     <OverlayContent v-if="show" back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
-            <div class="bar">Booth {{booth.name}}</div>
+            <div class="bar">{{__data.boothTerm}} {{booth.name}}</div>
         </template>
         <div class="booth" v-if="!boothExhibitors.length">
             <div class="info" v-if='booth.onHold'>On Hold</div>
-            <div class="info" v-if='booth.type && !booth.onHold'>Booth Type: {{booth.type}}<br/><br/></div>
+            <div class="info" v-if='booth.type && !booth.onHold'>{{__data.boothTerm}} Type: {{booth.type}}<br/><br/></div>
             <div class="info" v-if='booth.size && !booth.onHold'>{{booth.size}}</div>
             <div class="info" v-if='booth.price && !booth.onHold'>{{booth.price}}</div>
             <span v-html="instructions" v-if='!booth.onHold'></span>

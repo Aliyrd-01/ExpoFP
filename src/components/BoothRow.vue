@@ -1,5 +1,5 @@
 <template>
-    <SimpleRow :slug="booth.slug" @click="click" :line1="`${booth.name}`" line2='Booth' @mouseover='mouseover'
+    <SimpleRow :slug="booth.slug" @click="click" :line1="`${booth.name}`" :line2='__data.boothTerm' @mouseover='mouseover'
         @mouseout='mouseout' />
 </template>
 
