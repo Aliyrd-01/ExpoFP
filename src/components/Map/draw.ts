@@ -1,19 +1,18 @@
-import { sizeCanvasToParentElement } from './utils';
-import { setCanvasSize } from './matrix';
-import configCanvas from './config-canvas';
-import configMatrix from './config-matrix';
-import configDim from './config-dim';
-import configBg from './config-bg';
-import configBooths from './config-booths';
-import settings from '@/settings';
-
+import { sizeCanvasToParentElement } from "./utils";
+import { setCanvasSize } from "./matrix";
+import configCanvas from "./config-canvas";
+import configMatrix from "./config-matrix";
+import configDim from "./config-dim";
+import configBg from "./config-bg";
+import configBooths from "./config-booths";
+import settings from "@/settings";
 
 // type AnyDrawer = Drawer | TriangleDrawer;
 // var a: Drawer;
 // var b: AnyDrawer;
 // b = a;
 
-export const delayAnimations = 0;///Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
+export const delayAnimations = 0; ///Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
@@ -30,7 +29,6 @@ interface AnyDrawer {
     dim?: number;
 }
 
-
 // export function getCanvas() { return canvas; }
 // export function getZoomTransform() { return zoomTranform; }
 // export function getVisibleRect() { return visibleRect; }
@@ -44,11 +42,9 @@ interface AnyDrawer {
 // }
 // export function subscribeZoomDimensionsChange(cb: () => void) { zoomDimensionSubscribers.push(cb); }
 
-
 // function fireZoomDimensionsChange() { zoomDimensionSubscribers.forEach(x => x()); }
 
-export function requireDrawer<T extends AnyDrawer>(id: string,
-    TypeClass: new (gl: WebGLRenderingContext) => T): T {
+export function requireDrawer<T extends AnyDrawer>(id: string, TypeClass: new (gl: WebGLRenderingContext) => T): T {
     let d = drawersByType.get(id) as T;
     if (!d) {
         d = new TypeClass(gl);
@@ -73,12 +69,12 @@ function requireRedraw() {
 const instantDraw = false;
 
 function draw() {
-    // if (!gl) return; 
+    // if (!gl) return;
     showFps();
     requestedFrame = undefined;
 
-    const queue = Array.from(updateQueue)
-    updateQueue.clear();;
+    const queue = Array.from(updateQueue);
+    updateQueue.clear();
 
     for (const u of queue) {
         u();
@@ -98,7 +94,7 @@ function draw() {
 
 let then = 0;
 let prevFps = [];
-let prevHtml = '';
+let prevHtml = "";
 function showFps() {
     if (!__settings.debug) return;
     const now = performance.now() * 0.001;
@@ -121,7 +117,7 @@ export function initialize(canvas1: HTMLCanvasElement) {
     // visibleRect = visibleRect1;
     sizeCanvasToParentElement(canvas);
     setCanvasSize(canvas.width, canvas.height);
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
         // console.log('canvas change', canvas);
         sizeCanvasToParentElement(canvas);
         gl.viewport(0, 0, canvas.width, canvas.height);
@@ -129,7 +125,12 @@ export function initialize(canvas1: HTMLCanvasElement) {
     });
 
     const options = {};
-    gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options) as any;
+    gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
+    if (!gl) {
+        const d = document.createElement("div");
+        d.innerHTML = "<!--no webgl-->";
+        document.body.appendChild(d);
+    }
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
@@ -145,5 +146,3 @@ export function initialize(canvas1: HTMLCanvasElement) {
 
     window.setTimeout(requireRedraw, delayAnimations);
 }
-
-

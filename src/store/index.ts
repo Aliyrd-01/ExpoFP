@@ -7,6 +7,8 @@ import bookmarked from "./bookmarked";
 import screenSize from "./screen-size";
 import filtering, { SearchResultItem, exhibitorsToItems, boothsToItems } from "./filtering";
 import previewExhibitor from "@/utils/preview-exhibitor";
+import { isWebGlSupported } from "@/components/Map/utils";
+
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
 
@@ -164,7 +166,7 @@ const store1 = new Vuex.Store({
             dispatch("showMap");
         },
         showMap({ getters, commit }) {
-            if (getters.overlayPosition === "bottom") commit("setOverlaySize", "medium");
+            if (getters.overlayPosition === "bottom" && isWebGlSupported()) commit("setOverlaySize", "medium");
         },
         showOverlay({ getters, commit }) {
             if (getters.overlayPosition === "bottom") commit("setOverlaySize", "full");
