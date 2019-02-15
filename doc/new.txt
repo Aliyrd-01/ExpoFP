@@ -1,5 +1,8 @@
 TODO
 
+update jtrade!
+setup proper analytics
+
 //use new fields instead of obsolete
 //use title and url from _data.js -> remove those from config
 //Also, could you please remove the warning about expo expo, but keep Get your free plan... 
@@ -13,9 +16,9 @@ fpdev1,fpdev2
 
 
 //jsonscheme
-rotate - group sprite
+//rotate - group sprite
 
-center text
+//center text
 google crawl
 aws api
 
