@@ -3,7 +3,7 @@ module.exports = {
     //title: 'ExpoFP Floor Plan',
     //homeUrl : 'https://www.myexpoexpo.com/expoexpo2018/Public/MainHall.aspx?',
     logoUrl: 'expofp.png',
-    gTag: 'UA-857963-22',
+    gTag: 'UA-134602409-2',
     cloudFrontLiveId: 'E3PNGMVOHFIU1A',
     cloudFrontDevId: null,
     // optional overrides
