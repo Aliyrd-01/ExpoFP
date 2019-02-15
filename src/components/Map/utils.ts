@@ -27,6 +27,11 @@ export function isWebGlSupported() {
         const c = document.createElement("canvas");
         const gl = c.getContext("webgl") || (c.getContext("experimental-webgl") as any);
         isWebGlSupportedVal = !!gl;
+        if (!isWebGlSupportedVal) {
+            const d = document.createElement("div");
+            d.innerHTML = "<!--no webgl-->";
+            document.body.appendChild(d);
+        }
     }
     return isWebGlSupportedVal;
 }

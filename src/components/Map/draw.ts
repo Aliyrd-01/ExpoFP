@@ -12,7 +12,7 @@ import settings from "@/settings";
 // var b: AnyDrawer;
 // b = a;
 
-export const delayAnimations = 0; ///Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
+export const delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500; 
 
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
@@ -126,11 +126,6 @@ export function initialize(canvas1: HTMLCanvasElement) {
 
     const options = {};
     gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
-    if (!gl) {
-        const d = document.createElement("div");
-        d.innerHTML = "<!--no webgl-->";
-        document.body.appendChild(d);
-    }
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
