@@ -57,7 +57,7 @@ const store1 = new Vuex.Store({
             state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
         selectedBooth: state => (state.details && state.details.type === "booth" ? state.booths[state.details.id] : null),
         selectedCategory: state => (state.list.type === "category" ? state.categories[state.list.id] : null),
-        wsHeightPx: state => 50
+        wsHeightPx: state => 48
     },
     mutations: {
         // setSearchText(state, text) {
