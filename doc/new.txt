@@ -1,7 +1,7 @@
 TODO
 
-ads on floor plan?
-make visible rect more correct
+//ads on floor plan?
+//make visible rect more correct
 
 //update jtrade!
 //setup proper analytics
