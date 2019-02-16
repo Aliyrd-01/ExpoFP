@@ -42,7 +42,9 @@ const store1 = new Vuex.Store({
         exhibitors: null as typeof exhibitors.state,
         categories: null as typeof categories.state,
         bookmarked: null as typeof bookmarked.state,
-        screenSize: null as typeof screenSize.state
+        screenSize: null as typeof screenSize.state,
+        overlayWidthRems: 23.5,
+        overlayMediumHeightRems: 10
     },
     getters: {
         overlayPosition: state => {
@@ -54,7 +56,8 @@ const store1 = new Vuex.Store({
         selectedExhibitor: state =>
             state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
         selectedBooth: state => (state.details && state.details.type === "booth" ? state.booths[state.details.id] : null),
-        selectedCategory: state => (state.list.type === "category" ? state.categories[state.list.id] : null)
+        selectedCategory: state => (state.list.type === "category" ? state.categories[state.list.id] : null),
+        wsHeightPx: state => 50
     },
     mutations: {
         // setSearchText(state, text) {

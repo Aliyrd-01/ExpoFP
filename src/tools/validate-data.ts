@@ -31,10 +31,15 @@ if (__settings.debug) {
 // some data fixes (expo-specific will be removed)
 if (!__data.homeUrl && EFP_EXPO === "jtrade19") __data.homeUrl = "https://www.jtrade.co.uk/";
 // this is permanent
-if (!__data.homeUrl) __data.homeUrl = 'https://expofp.com/';
+if (!__data.homeUrl) __data.homeUrl = "https://expofp.com/";
 if (!__data.boothTerm && EFP_EXPO === "jtrade19") __data.boothTerm = "Stand";
 // this is permanent
 if (!__data.boothTerm) __data.boothTerm = "Booth";
+if (EFP_EXPO === "expo") {
+    //__data.exhibitors.filter(x => ["eventPower", "Fern", "Ungerboeck", "Tradeshow Engineering"]
+    //   .indexOf(x.name) !== -1).forEach(x => (x.advertise = true));
+    __data.exhibitors.filter(x => x.logo).forEach(x => (x.advertise = true));
+}
 
 // convert obsolete fields and fix false/empty strings/arrays
 for (const booth of __data.booths) {

@@ -15,6 +15,7 @@ import { remsToPixels } from "./utils";
 import configInertia from "./zoom-inertia";
 import { m4 } from "twgl.js";
 import { event as currentEvent } from "d3-selection";
+// import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
 
 export default {
@@ -28,14 +29,17 @@ export default {
             "booths",
             "hoveredBooth",
             "screenSize",
-            "bookmarked"
+            "bookmarked",
+            "overlayWidthRems",
+            "overlayMediumHeightRems"
         ]),
         ...mapGetters([
             "overlayPosition",
             "exhibitorsArray",
             "listBoothsIds",
             "selectedBoothIds",
-            "hoveredBoothIds"
+            "hoveredBoothIds",
+            "wsHeightPx"
         ]),
         visibleRect() {
             // console.log("get visibleRect", this.occupied);
@@ -44,11 +48,11 @@ export default {
 
             switch (this.overlayPosition) {
                 case "left":
-                    return Rect.fromX1y1x2y2(remsToPixels(21), 0, w, h);
+                    return Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsHeightPx, w, h);
                 // case "bottomSmall":
                 //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
                 case "bottom":
-                    return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(12));
+                    return Rect.fromX1y1x2y2(0, this.wsHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
             }
 
             throw new Error("Not supported `overlayPosition`");

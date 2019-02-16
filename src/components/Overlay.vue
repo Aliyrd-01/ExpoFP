@@ -18,6 +18,8 @@ import Bookmarks from "./Bookmarks.vue";
 import Category from "./Category.vue";
 import Exhibitor from "./Exhibitor.vue";
 import Booth from "./Booth.vue";
+// import { overlayWidthRems, overlayMediumHeightRems } from './sizes';
+
 
 export default {
     components: {
@@ -29,14 +31,14 @@ export default {
         Booth
     },
     computed: {
-        ...mapState(["overlaySize", "screenSize"]),
+        ...mapState(["overlaySize", "screenSize", "overlayWidthRems", "overlayMediumHeightRems"]),
         ...mapGetters(["overlayPosition"]),
         noMove() {
             return this.overlayPosition === "left";
         }
     },
 
-    mounted: function() {
+    mounted: function () {
         this.$el.ontouchstart = this.handleTouchStart;
         this.$el.ontouchmove = this.handleTouchMove;
         this.$el.ontouchend = this.handleTouchEnd;
@@ -44,7 +46,6 @@ export default {
         this.position();
         ["screenSize", "overlaySize", "overlayPosition"].forEach(p => this.$watch(p, this.position));
     },
-
     methods: {
         handleTouchStart(e) {
             if (this.noMove) return;
@@ -105,14 +106,15 @@ export default {
         },
 
         position() {
+            // console.log('Overlay positioning');
             const el = this.$el as HTMLDivElement;
             const position = this.overlayPosition as OverlayPosition;
             // let width: string, left: string, top: string;
             const s = el.style;
-            const w = "23.5rem";
+            // const w = "23.5rem";
             switch (position) {
                 case "left":
-                    s.width = w;
+                    s.width = this.overlayWidthRems + "rem";
                     s.top = "0";
                     s.left = "0";
                     s.height = undefined;
@@ -213,7 +215,6 @@ export default {
 };
 
 const miniSizeRems = 3.5;
-const mediumSizeRems = 10;
 const paddingRems = 2;
 
 // function getHeight(el, position, size) {
@@ -224,7 +225,7 @@ const paddingRems = 2;
 //                 case "full":
 //                     return containerHeight - rtp(paddingRems * 2);
 //                 case "medium":
-//                     return rtp(mediumSizeRems);
+//                     return rtp(overlayMediumHeightRems);
 //                 case "small":
 //                     return rtp(miniSizeRems);
 //             }
@@ -234,7 +235,7 @@ const paddingRems = 2;
 //                 case "full":
 //                     return containerHeight - rtp(paddingRems);
 //                 case "medium":
-//                     return rtp(mediumSizeRems);
+//                     return rtp(overlayMediumHeightRems);
 //                 case "small":
 //                     return rtp(miniSizeRems);
 //             }
@@ -249,7 +250,7 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
         case "full":
             return rtp(paddingRems);
         case "medium":
-            return window.innerHeight - rtp(mediumSizeRems);
+            return window.innerHeight - rtp(store.state.overlayMediumHeightRems);
         case "small":
             return window.innerHeight - rtp(miniSizeRems);
     }
@@ -265,7 +266,8 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
     background: #fff;
     overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
-    &.medium.bottom, &.small.bottom {
+    &.medium.bottom,
+    &.small.bottom {
         border-radius: 0.5rem 0.5rem 0 0;
     }
 

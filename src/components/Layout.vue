@@ -1,8 +1,10 @@
 <template>
     <div id="root" :class='"expo-" + expo'>
         <a href='https://expofp.com/' target="_blank" class='logo-overlay'><img src='expofp-overlay.png'></a>
+        <Ws/>
         <Overlay />
         <Map />
+        
         <Demo />
         <Debug />
         <div id="fps"></div>
@@ -13,6 +15,7 @@
 import Overlay from "./Overlay.vue";
 import Map from "./Map/Map.vue";
 import Debug from "./Debug.vue";
+import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
 
 export default Vue.extend({
@@ -20,6 +23,7 @@ export default Vue.extend({
     components: {
         Overlay,
         Map,
+        Ws,
         Debug,
         Demo
     },

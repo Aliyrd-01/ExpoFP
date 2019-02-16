@@ -98,6 +98,9 @@
                     "featured": {
                         "type": "boolean"
                     },
+                    "advertise": {
+                        "type": "boolean"
+                    },
                     "description": {
                         "type": "string"
                     },
