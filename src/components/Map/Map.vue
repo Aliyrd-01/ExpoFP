@@ -46,15 +46,23 @@ export default {
             const w = this.screenSize.width;
             const h = this.screenSize.height;
 
+            let rect: Rect;
+
             switch (this.overlayPosition) {
                 case "left":
-                    return Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsHeightPx, w, h);
+                    rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsHeightPx, w, h);
+                    break;
                 // case "bottomSmall":
                 //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
                 case "bottom":
-                    return Rect.fromX1y1x2y2(0, this.wsHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
+                    rect = Rect.fromX1y1x2y2(0, this.wsHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
+                    break;
             }
 
+            if (rect) {
+                rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+                return rect;
+            }
             throw new Error("Not supported `overlayPosition`");
         }
     },
