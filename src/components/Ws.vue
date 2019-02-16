@@ -1,5 +1,5 @@
 <template>
-    <transition-group name="wslist" tag="section" :class="sectionClass" :style="sectionStyle" @mouseover="mouseover"
+    <transition-group name="ws__list" tag="section" :class="sectionClass" :style="sectionStyle" @mouseover="mouseover"
         @mouseout="mouseout">
         <a :href="`?${e.slug}`" v-for="e in adv" :key="e.slug" class="ws__exhibitor" :style='{height: `${wsHeightPx}px`}'
             @click.prevent="select(e.id)"><img :src='e.logo' :alt='e.name'></a>
@@ -120,18 +120,18 @@ export default {
         }
     }
 }
-.wslist-item {
+.ws__list-item {
     display: inline-block;
     margin-right: 10px;
 }
-.ws.left .wslist-enter-active {
+.ws.left .ws__list-enter-active {
     transition: all 0.5s;
 }
-.wslist-leave-active {
+.ws__list-leave-active {
     display: none;
 }
-.ws.left .wslist-enter,
-.ws.left .wslist-leave-to {
+.ws.left .ws__list-enter,
+.ws.left .ws__list-leave-to {
     opacity: 0;
     transform: scale(1.1);
 }
