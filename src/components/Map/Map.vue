@@ -70,56 +70,24 @@ export default {
         const canvas = this.$el as HTMLCanvasElement;
         this.$canvas = d3.select(canvas);
 
-
         this.zoom = d3
             .zoom()
             .clickDistance(15)
             .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
-            // .on("wheel.zoom", () => {
-            //     const t = currentEvent.transform;
-            //     console.log('zoom.wheel');
-            // })
             .constrain((transform, extent, translateExtent) => zoomBound(transform, false))
-            // .filter(() => {
-            //     const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-            //     console.log('zoom', isWheel, currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
-            //     return  false;//!isWheel;
-            //     //console.log('zoom', isWheel, currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
-            // })
-            // .on("start", () => {
-            //     const t = currentEvent.transform;
-            //     const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-            //     const tc = d3.zoomTransform(this.$canvas.node());
-            //     console.log('zoomstart', tc.k, t.k, isWheel, currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
-            // })
             .on("zoom", () => {
-                this.moving = true;
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                // const tc = d3.zoomTransform(this.$canvas.node());
-                console.log('zoom', isWheel, currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
-                //const pt = m.getZoomTransform();
-                //console.log('Zooming', Math.abs(t.k - pt.k));
-                // const nt = zoomBound(t, false);
-                // // console.log('zooming', t, nt)
-                // // fix bounds if any
-                // if (nt) {
-                //     this.zoomTo(nt, isWheel);
-                // } else {
-                // if (isWheel) this.zoomTo(t, isWheel);
-                // else 
-                // if (isWheel){
-                //     this.zoomTo(m.getZoomTransform(), false);
-                //     this.zoomTo(t, true);
-                // } else 
-                if (isWheel) {
+                console.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
+                if (isWheel)
                     setZoomTransformAnimated(t, 300, d3.easeExpOut);
-                } else if (t.animate) {
+                else if (t.animate)
                     setZoomTransformAnimated(t, 500, d3.easeExpOut);
-                } else
+                else
                     setZoomTransformAnimated(t, 0, null);
-                // }
+
+                this.moving = true;
             })
             .on("end", () => {
                 this.moving = false;
@@ -162,7 +130,9 @@ export default {
         visibleRect: function (v) {
             console.log("visibleRect change", v);
             m.setVisibleRect(v);
-            // this.zoomBoundCurrent();
+            // rezoom to make it fit bounds
+            // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
+            this.zoomBoundCurrent();
         }
     },
     methods: {
@@ -195,32 +165,20 @@ export default {
             console.log("click", id);
             this.$store.dispatch("clickBooth", id);
         },
-        zoomTo(transform: ZoomTransform, animated: boolean) {
-            //const t = m.getZoomTransform();
+        zoomTo(transform: ZoomTransform) {
             const t = d3.zoomTransform(this.$canvas.node());
-            //console.log(t, t1);
             if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
-
-            // let c = this.$canvas.interrupt();
-            // if (animated)
-            //     c = c
-            //         .transition()
-            //         .ease(d3.easeExpOut)
-            //         .duration(500);
-            // const z = d3.zoomIdentity
-            //     .translate(transform.x, transform.y)
-            //     .scale(transform.k);
             (transform as any).animate = true;
             this.$canvas.call(this.zoom.transform, transform);
         },
-        // zoomBoundCurrent() {
-        //     const ct = m.getZoomTransform();
-        //     const nt = zoomBound(ct, false);
-        //     if (nt) {
-        //         // console.log('fixed bounds', ct, nt)
-        //         this.zoomTo(nt, false);
-        //     }
-        // }
+        zoomBoundCurrent() {
+            const ct = d3.zoomTransform(this.$canvas.node());
+            const nt = zoomBound(ct, false);
+            if (nt !== ct) {
+                // console.log('fixed bounds', ct, nt)
+                this.zoomTo(nt);
+            }
+        }
     }
 };
 
