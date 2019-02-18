@@ -122,5 +122,5 @@ function getFont(px: number, weight: number) {
 }
 
 function getFont2(px: number, weight: number) {
-    return weight + " " + px + 'px "Oswald", sans-serif';
+    return weight + " " + px + 'px -apple-system, Roboto, "Oswald", sans-serif';
 }
