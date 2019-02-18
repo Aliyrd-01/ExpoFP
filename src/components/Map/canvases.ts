@@ -7,7 +7,7 @@ export function createLabelCanvas(text: string, fontSize: number) {
     const c = canvas.getContext("2d");
     const font = getFont(fontSize, 500);
     c.font = font;
-    let { width } = c.measureText(text.replace(/[0-9]/g,'3'));
+    let { width } = c.measureText(text.replace(/[0-9]/g,'3').replace(/[A-Z]/g,'A'));
     //if (text.length < 3) width += fontSize / 8;
     canvas.width = width + 3 + 3; // 4 was added as extra padding
     canvas.height = fontSize + 4;
