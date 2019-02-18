@@ -1,6 +1,9 @@
 TODO
 
-better font for FP
+center/wrap labels
+placement for images
+
+//better font for FP
 
 //zoom
 
