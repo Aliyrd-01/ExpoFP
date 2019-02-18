@@ -9,7 +9,7 @@ export function createLabelCanvas(text: string, fontSize: number) {
     c.font = font;
     let { width } = c.measureText(text.replace(/./g,'3'));
     //if (text.length < 3) width += fontSize / 8;
-    canvas.width = width + 3 + 4; // 4 was added as extra padding
+    canvas.width = width + 3 + 2; // 4 was added as extra padding
     canvas.height = fontSize + 4;
     // set font again
     c.font = font;
