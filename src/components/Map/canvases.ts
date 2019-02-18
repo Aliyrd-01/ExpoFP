@@ -40,7 +40,7 @@ export function createDetailsCanvas(b: Booth) {
     const boothFontSize = 12 * devicePixelRatio;
     const detailFontSize = 12 * devicePixelRatio;
     const boothFont = getFont(boothFontSize, 500);
-    const detailFont = getFont(detailFontSize, 200);
+    const detailFont = getFont(detailFontSize, 400);
     const boothPadding = 1 * devicePixelRatio;
 
     const canvas = document.createElement("canvas");
