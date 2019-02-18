@@ -7,7 +7,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase {
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
-        const width = 0.9;
+        const width = 0.7;
 
         this.drawer.addObject({
             id: this.getId("_1"),
