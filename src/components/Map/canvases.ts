@@ -5,7 +5,7 @@ export function createLabelCanvas(text: string, fontSize: number) {
     fontSize *= devicePixelRatio
     const canvas = document.createElement("canvas");
     const c = canvas.getContext("2d");
-    const font = getFont2(fontSize, 400);
+    const font = getFont(fontSize, 500);
     c.font = font;
     let { width } = c.measureText(text.replace(/./g,'3'));
     //if (text.length < 3) width += fontSize / 8;
@@ -37,10 +37,10 @@ export function createDetailsCanvas(b: Booth) {
         }
     }
 
-    const boothFontSize = 13 * devicePixelRatio;
-    const detailFontSize = 13 * devicePixelRatio;
-    const boothFont = getFont2(boothFontSize, 500);
-    const detailFont = getFont2(detailFontSize, 300);
+    const boothFontSize = 12 * devicePixelRatio;
+    const detailFontSize = 12 * devicePixelRatio;
+    const boothFont = getFont(boothFontSize, 500);
+    const detailFont = getFont(detailFontSize, 200);
     const boothPadding = 1 * devicePixelRatio;
 
     const canvas = document.createElement("canvas");
@@ -118,9 +118,9 @@ export function createBookmarkCanvas(widthPx: number) {
 }
 
 function getFont(px: number, weight: number) {
-    return weight + " " + px + 'px "Gill Sans Nova", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+    return weight + " " + px + 'px -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 }
 
-function getFont2(px: number, weight: number) {
-    return weight + " " + px + 'px -apple-system, Roboto, "Oswald", sans-serif';
-}
+// function getFont(px: number, weight: number) {
+//     return weight + " " + px + 'px "Oswald", sans-serif';//-apple-system, Roboto, 
+// }
