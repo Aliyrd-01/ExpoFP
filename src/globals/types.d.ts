@@ -65,7 +65,7 @@ type OverlaySize = "full" | "medium" | "small";
 type OverlayPosition = "left" | "bottom";
 type MapOccupied = null | "left" | "bottomSmall" | "bottomMedium";
 
-type ZoomTransform = { x: number; y: number; k: number };
+type ZoomTransform = typeof d3.zoomIdentity;// { x: number; y: number; k: number };
 
 declare const EFP_EXPO: string;
 //declare const EFP_TITLE: string;

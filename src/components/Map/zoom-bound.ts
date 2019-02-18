@@ -1,7 +1,7 @@
 import * as m from "./matrix";
 import { svgWidth, svgHeight } from "@/tools/svg";
 
-export default function zoomBound(transform: ZoomTransform, forAutoMove: boolean): ZoomTransform {
+export default function zoomBound(transform: ZoomTransform, forAutoMove: boolean) {
     // cannot use ptscale here, it has previous transform.k in it
     // const pxSvgScale = m.getPxSvgScale();
     const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
@@ -37,7 +37,7 @@ export default function zoomBound(transform: ZoomTransform, forAutoMove: boolean
     const y = Math.min(maxTy, Math.max(minTy, transform.y));
     const x = Math.min(maxTx, Math.max(minTx, transform.x));
     if (y !== transform.y || x !== transform.x) {
-        return { x, y, k: transform.k };
+        return d3.zoomIdentity.translate(x, y).scale(transform.k);// { x, y, k: transform.k };
     }
-    return null;
+    return transform;
 }
