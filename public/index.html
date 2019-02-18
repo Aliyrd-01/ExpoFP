@@ -8,16 +8,22 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="build-date" content="<%- new Date().toISOString() %>" />
     <title>ExpoFP Floor Plan</title>
+    <!-- <link href="https://fonts.googleapis.com/css?family=Fira+Sans+Extra+Condensed|Montserrat|Oswald|Russo+One" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Oswald:200,300,400,500,600,700&amp;subset=cyrillic,latin-ext,vietnamese" rel="stylesheet">
     <link href="vendor/fa/css/fontawesome-all.min.css" rel="stylesheet">
     <link href="vendor/sanitize-css/sanitize.css" rel="stylesheet">
     <link href="vendor/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
     <link rel="icon" href="/favicon.png">
+
     <% if (typeof(GTAG) !== "undefined" && GTAG) { %>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=<%- GTAG %>"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
         gtag('js', new Date());
         gtag('config', '<%- GTAG %>');
     </script>
@@ -25,6 +31,17 @@
 </head>
 
 <body>
+    <div style="pointer-events: none; visibility: hidden">
+        <!-- <span style="font-family: Montserrat"></span>
+        <span style="font-family: 'Fira Sans Extra Condensed', sans-serif;"></span>
+        <span style="font-family: 'Russo One', sans-serif;"></span> -->
+        <span style="font-family: 'Oswald', sans-serif; font-weight: 200"></span>
+        <span style="font-family: 'Oswald', sans-serif; font-weight: 300"></span>
+        <span style="font-family: 'Oswald', sans-serif; font-weight: 400"></span>
+        <span style="font-family: 'Oswald', sans-serif; font-weight: 500"></span>
+        <span style="font-family: 'Oswald', sans-serif; font-weight: 600"></span>
+        <span style="font-family: 'Oswald', sans-serif; font-weight: 700"></span>
+    </div>
     <div id="app">
         <div style='font-family: serif; font-size: 3rem; line-height: 1em; padding-top: 40vh; text-align: center; color: #1F0B6D'>...</div>
     </div>

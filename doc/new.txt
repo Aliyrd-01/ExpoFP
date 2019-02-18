@@ -1,5 +1,10 @@
 TODO
 
+better font for FP
+
+//zoom
+
+
 //ads on floor plan?
 //make visible rect more correct
 

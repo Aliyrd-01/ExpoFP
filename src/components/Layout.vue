@@ -1,10 +1,9 @@
 <template>
     <div id="root" :class='"expo-" + expo'>
         <a href='https://expofp.com/' target="_blank" class='logo-overlay'><img src='expofp-overlay.png'></a>
-        <Ws/>
+        <Ws />
         <Overlay />
-        <Map />
-        
+        <Map v-if="mapReady" />
         <Demo />
         <Debug />
         <div id="fps"></div>
@@ -27,11 +26,22 @@ export default Vue.extend({
         Debug,
         Demo
     },
+    data: () => ({ mapReady: false }),
     computed: {
         expo() {
             return EFP_EXPO;
         }
     },
+    mounted() {
+        const d = document as any;
+        if (d.fonts && d.fonts.ready) {
+            d.fonts.ready.then(() => {
+                this.mapReady = true;
+            });
+        } else {
+            this.mapReady = true;
+        }
+    }
 });
 </script>
 

@@ -1,15 +1,15 @@
-//import { getFont } from './utils';
+//import { getFont2 } from './utils';
 
 export function createLabelCanvas(text: string, fontSize: number) {
     text = text.replace(/^_/,'');
     fontSize *= devicePixelRatio
     const canvas = document.createElement("canvas");
     const c = canvas.getContext("2d");
-    const font = getFont(fontSize, 600);
+    const font = getFont2(fontSize, 400);
     c.font = font;
-    let { width } = c.measureText(text);
+    let { width } = c.measureText(text.replace(/./g,'3'));
     //if (text.length < 3) width += fontSize / 8;
-    canvas.width = width + 3 + 2; // 4 was added as extra padding
+    canvas.width = width + 3 + 4; // 4 was added as extra padding
     canvas.height = fontSize + 4;
     // set font again
     c.font = font;
@@ -37,11 +37,11 @@ export function createDetailsCanvas(b: Booth) {
         }
     }
 
-    const boothFontSize = 12 * devicePixelRatio;
-    const detailFontSize = 12 * devicePixelRatio;
-    const boothFont = getFont(boothFontSize, 700);
-    const detailFont = getFont(detailFontSize, 400);
-    const boothPadding = 0 * devicePixelRatio;
+    const boothFontSize = 13 * devicePixelRatio;
+    const detailFontSize = 13 * devicePixelRatio;
+    const boothFont = getFont2(boothFontSize, 500);
+    const detailFont = getFont2(detailFontSize, 300);
+    const boothPadding = 1 * devicePixelRatio;
 
     const canvas = document.createElement("canvas");
     const c = canvas.getContext("2d");
@@ -52,7 +52,7 @@ export function createDetailsCanvas(b: Booth) {
     const maxTextWidth = Math.max(boothWidth, ...companiesWidth);
     canvas.width = maxTextWidth + 2;
     const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * devicePixelRatio;
-    canvas.height = height;
+    canvas.height = height + 4;
 
     let nextLine = 0;
     c.fillStyle = "#fff";
@@ -67,7 +67,7 @@ export function createDetailsCanvas(b: Booth) {
 
     for (const line of lines) {
         c.fillText(line, 0, nextLine);
-        nextLine += detailFontSize;
+        nextLine += detailFontSize + 1 * devicePixelRatio;
     }
 
 
@@ -119,4 +119,8 @@ export function createBookmarkCanvas(widthPx: number) {
 
 function getFont(px: number, weight: number) {
     return weight + " " + px + 'px "Gill Sans Nova", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+}
+
+function getFont2(px: number, weight: number) {
+    return weight + " " + px + 'px "Oswald", sans-serif';
 }
