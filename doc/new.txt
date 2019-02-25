@@ -1,7 +1,11 @@
 TODO
 
-center/wrap labels
-placement for images
+make preview working
+
+decided to center labels - design a way to wrap and select layout based on zoom
+
+// center/wrap labels
+// placement for images
 
 //better font for FP
 
