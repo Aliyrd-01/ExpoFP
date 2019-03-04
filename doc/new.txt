@@ -1,6 +1,7 @@
 TODO
 
 make preview working
+let's have show-version of expo.expofp.com -> it should pick data and svg from show s3
 
 decided to center labels - design a way to wrap and select layout based on zoom
 
