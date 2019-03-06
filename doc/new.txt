@@ -1,6 +1,6 @@
 TODO
 
-fix demo
+invalidate cloudfront single distribution id when pushing to cloudfront
 make preview working
 let's have show-version of expo.expofp.com -> it should pick data and svg from show s3
 
