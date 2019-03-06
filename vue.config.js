@@ -5,13 +5,14 @@ const webpack = require('webpack');
 const expo = require('./scripts/expo')
 const config = require(`./expos/${expo}/config`)
 
-const replaceDataBase = config.dataUrl || `https://${expo}.expofp.com/data`;
-const devDataBase = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
+const dataUrlBase = config.dataUrl || `https://${expo}.expofp.com/data`;
+const dataUrlBaseDev = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
+const dataUrlBaseShow = config.dataUrl || `https://s3.amazonaws.com/efp-data-show/expos/${expo}/data`;
 const gTag = config.gTag || 'UA-857963-22';
 const logoUrl = config.logoUrl || `${expo}-logo.png`
 
 const define = {
-    EFP_DATA_URL_BASE: JSON.stringify(replaceDataBase),
+    EFP_DATA_URL_BASE: JSON.stringify(dataUrlBase),
     EFP_EXPO: JSON.stringify(expo),
     //EFP_TITLE: JSON.stringify(config.title),
     //EFP_HOME_URL: JSON.stringify(config.homeUrl),
@@ -19,31 +20,35 @@ const define = {
     GTAG: JSON.stringify(gTag)
 };
 
+//const live = process.env.EFP_TARGET === "live";
+const dist = 'dist';// + (live ? 'live' : 'dev');
+
 module.exports = {
     devServer: {
         contentBase: [path.join(__dirname, 'public'), path.join(__dirname, `expos/${expo}`)]
     },
-    publicPath: './',
+    outputDir: dist,
+    publicPath: `./`,
     configureWebpack: {
         plugins: [
             new CopyWebpackPlugin(
-                [
-                    {
-                        from: path.join(__dirname, `expos/${expo}/{settings.js,*.png,*logo.svg}`),
-                        to: path.join(__dirname, 'dist'),
-                        context: path.join(__dirname, `expos/${expo}`)
-                    }
-                ]
+                [{
+                    from: path.join(__dirname, `expos/${expo}/{settings.js,*.png,*logo.svg}`),
+                    to: path.join(__dirname, dist),
+                    context: path.join(__dirname, `expos/${expo}`)
+                }]
             ),
             new webpack.DefinePlugin(define),
             {
                 apply: (compiler) => {
                     compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {
-                        if (!fs.existsSync(path.join(__dirname, 'dist'))) return;
-                        const prodIndex = path.join(__dirname, 'dist', 'index.html');
-                        const devIndex = path.join(__dirname, 'dist', 'index.dev.html');
+                        if (!fs.existsSync(path.join(__dirname, dist))) return;
+                        const prodIndex = path.join(__dirname, dist, 'index.html');
+                        const devIndex = path.join(__dirname, dist, 'index.dev.html');
+                        const showIndex = path.join(__dirname, dist, 'index.show.html');
                         const data = fs.readFileSync(prodIndex, 'utf-8');
-                        fs.writeFileSync(devIndex, data.replace(replaceDataBase, devDataBase));
+                        fs.writeFileSync(devIndex, data.replace(dataUrlBase, dataUrlBaseDev));
+                        fs.writeFileSync(showIndex, data.replace(dataUrlBase, dataUrlBaseShow));
                     });
                 }
             }
