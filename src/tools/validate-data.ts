@@ -44,9 +44,9 @@ if (EFP_EXPO === "expo") {
 // convert obsolete fields and fix false/empty strings/arrays
 for (const booth of __data.booths) {
     const b = booth as any;
-    booth.onHold = b.isOnHold;
-    booth.availColor = b.availableColor;
-    booth.type = b.boothTypeName;
+    if (typeof booth.onHold === "undefined") booth.onHold = b.isOnHold;
+    if (typeof booth.availColor === "undefined") booth.availColor = b.availableColor;
+    if (typeof booth.type === "undefined")  booth.type = b.boothTypeName;
 
     booth.exhibitors = booth.exhibitors || [];
 }
