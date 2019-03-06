@@ -9,12 +9,19 @@ const live = process.env.EFP_TARGET === "live";
 
     let answer = true;
     if (live) {
-        const prompt = new Confirm({ message: `Are you sure want to deploy to live ${expo.toUpperCase()}?`, default: false });
+        const prompt = new Confirm({
+            message: `Are you sure want to deploy to live ${expo.toUpperCase()}?`,
+            default: false
+        });
         answer = await prompt.run();
     }
 
-    if (!answer) { return; }
-    const build = await execa('yarn', ['build'], { stdio: 'inherit' });
+    if (!answer) {
+        return;
+    }
+    const build = await execa('yarn', ['build'], {
+        stdio: 'inherit'
+    });
     if (build.code !== 0) process.exit(build.code);
 
     let deployExpo = expo;
@@ -22,18 +29,16 @@ const live = process.env.EFP_TARGET === "live";
     //if (!live) deployExpo = 'demo';
     console.log('Deploying dist to ' + deployExpo);
 
-    const path = `efp-data/expos/${deployExpo}/${!live ? 'dev' : 'live'}`;
-    const invalidate = `/index.html`;
+    const path = `/expos/${deployExpo}/${!live ? 'dev' : 'live'}`;
+    const bucket = `efp-data${path}`;
 
-    const distId = live ? config.cloudFrontLiveId : config.cloudFrontDevId;
+    const args = ['./dist/**/!(*.map)', '--cwd', './dist', '--bucket', bucket, '--private', '--profile', 'efp-data'];
+    // invalidate
+    args.push('--distId', "ETXR07B411G19", '--invalidate', `${path}/index*`);
 
-    const args = ['./dist/**/!(*.map)', '--cwd', './dist', '--bucket', path, '--private', '--profile', 'efp-data'];
-    if (live && distId) {
-        args.push('--distId', distId, '--invalidate', invalidate);
-    }
-
-    const deploy = await execa('s3-deploy', args, { stdio: 'inherit' });
+    const deploy = await execa('s3-deploy', args, {
+        stdio: 'inherit'
+    });
 
     if (deploy.code !== 0) process.exit(deploy.code);
 })();
-
