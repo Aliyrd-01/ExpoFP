@@ -1,7 +1,28 @@
 TODO
 
 
-make preview working
+//make preview working: 
+  //  https://jtrade19-dev.expofp.com/?preview=001
+  //  https://jtrade19-dev.expofp.com/?preview=001 - hanle in lamda - check that parameters are not cached
+  //  https://jtrade19-dev.expofp.com/preview.html
+//lambda - 
+//whitelist preview parameter in default behaviour
+//so preview param will be forwarded to index.*.html
+//create viewer request handler -> see if preview param is there
+
+//steps
+//create origin request handler: handlePreviewOriginRequest
+//create origin response handler: 
+//see what it writes to log -> we need preview param
+
+cleanup unneeded functions
+
+
+//viewer request - handle ?preview parameter 
+//viewer response - handle current preview parameter and modify the content - unable
+
+//create a new distribution to test lamda on *.test.expofp.com
+
 
 decided to center labels - design a way to wrap and select layout based on zoom
 
