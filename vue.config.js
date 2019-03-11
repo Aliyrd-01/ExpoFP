@@ -63,6 +63,23 @@ module.exports = {
             }
         },
     },
+    chainWebpack: config => {
+        config
+            .plugin('html')
+            .tap(args => {
+                args[0].minify = {
+                    collapseWhitespace: true,
+                    preserveLineBreaks: true,
+                    removeAttributeQuotes: true,
+                    removeComments: true,
+                    removeRedundantAttributes: true,
+                    removeScriptTypeAttributes: true,
+                    removeStyleLinkTypeAttributes: true,
+                    useShortDoctype: true
+                };
+                return args;
+            })
+    },
     css: {
         loaderOptions: {
             sass: {
