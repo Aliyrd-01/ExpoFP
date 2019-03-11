@@ -21,7 +21,11 @@ const define = {
 };
 
 //const live = process.env.EFP_TARGET === "live";
-const dist = 'dist';// + (live ? 'live' : 'dev');
+const dist = 'dist'; // + (live ? 'live' : 'dev');
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
 
 module.exports = {
     devServer: {
@@ -47,8 +51,8 @@ module.exports = {
                         const devIndex = path.join(__dirname, dist, 'index.dev.html');
                         const showIndex = path.join(__dirname, dist, 'index.show.html');
                         const data = fs.readFileSync(prodIndex, 'utf-8');
-                        fs.writeFileSync(devIndex, data.replace(dataUrlBase, dataUrlBaseDev));
-                        fs.writeFileSync(showIndex, data.replace(dataUrlBase, dataUrlBaseShow));
+                        fs.writeFileSync(devIndex, data.replace(new RegExp(escapeRegExp(dataUrlBase), 'g'), dataUrlBaseDev));
+                        fs.writeFileSync(showIndex, data.replace(new RegExp(escapeRegExp(dataUrlBase), 'g'), dataUrlBaseShow));
                     });
                 }
             }
