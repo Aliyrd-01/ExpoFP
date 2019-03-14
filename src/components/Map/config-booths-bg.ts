@@ -49,16 +49,17 @@ export default class BoothBgDrawer extends BoothDrawerBase {
 function getBoothColor(b: Booth) {
     const s = getBoothState(b);
     let color: string;
-    // if (b.name == "B4"){
-    //     debugger
-    // }
-    const defColor = s.empty ? (b.availColor || settings.colors.booths.empty) :
+    
+    const defColor = (s.empty && !s.onhold) ? (b.availColor || settings.colors.booths.empty) :
         (b.soldColor || settings.colors.booths.default);
 
     if (s.error) color = '#f33'
     else if (s.selected) color = settings.colors.booths.selected;
     else color = defColor;
 
+    // if (b.name == "A51"){
+    //     debugger
+    // }
     // if (s.dimmed && !s.selected) {
     //     color = settings.colors.booths.empty; ;
     // }

@@ -1,5 +1,6 @@
 TODO
 
+use domain for scripts
 
 //make preview working: 
   //  https://jtrade19-dev.expofp.com/?preview=001

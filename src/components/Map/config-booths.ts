@@ -55,6 +55,7 @@ interface BoothState {
     skipDim: boolean;
     error: boolean;
     empty: boolean;
+    onhold: boolean;
     bookmarked: boolean;
 }
 
@@ -66,11 +67,11 @@ export function getBoothState(b: Booth) {
         const selected = !!g.selectedBoothIdsSet.has(b.id);
         const inList = g.listBoothsIdsSet.has(b.id);
         const skipDim = inList || selected;
-
+        const onhold = b.onHold;
         const empty = b.exhibitors.length === 0;
         const error = !!b.error;
         const bookmarked = !!b.exhibitors.find(e => store.state.bookmarked[e]);
-        state = { hover, selected, skipDim, error, empty, bookmarked };
+        state = { hover, selected, skipDim, error, empty, onhold, bookmarked };
 
         boothStateCache.set(b.id, state);
     }
