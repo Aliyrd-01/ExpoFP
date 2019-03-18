@@ -32,6 +32,7 @@
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
+import { copyToClipboard } from "@/utils";
 
 window.setTimeout(function () {
     const link = document.createElement("link");
@@ -68,6 +69,8 @@ export default {
     methods: {
         shareBookmarks(e) {
             e.target.blur();
+            const url = `${location.protocol}//${location.host}/?bk` + this.$store.getters.bookmarkedArray.join('|');
+            copyToClipboard(url);
             alert("Link to bookmarks was copied to clipboard");
         },
         close() {
