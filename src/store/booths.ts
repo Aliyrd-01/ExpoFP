@@ -53,7 +53,7 @@ for (const r of d3
         } else {
             const mm = transform.match(/matrix\(\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*\)/);
             if (mm) {
-                booth.rotate = -parseFloat(mm[2]);
+                booth.rotate = Math.asin(-parseFloat(mm[2]));
             }
         }
     }
