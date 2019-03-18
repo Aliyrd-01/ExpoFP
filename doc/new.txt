@@ -1,8 +1,8 @@
 TODO
 
+see the svg difference
 
-
-use domain for scripts
+//use domain for scripts
 
 //make preview working: 
   //  https://jtrade19-dev.expofp.com/?preview=001
