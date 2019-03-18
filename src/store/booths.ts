@@ -46,8 +46,8 @@ for (const r of d3
     if (transform) {
         const mt = transform.match(/translate\(([\-0-9\.]+) ([\-0-9\.]+)\) rotate\(([\-0-9\.]+)\)/);
         if (mt) {
-            const translateX = parseFloat(mt[1]);
-            const translateY = parseFloat(mt[2]);
+            // const translateX = parseFloat(mt[1]);
+            // const translateY = parseFloat(mt[2]);
             const rotate = parseFloat(mt[3]);
             booth.rotate = (-rotate * Math.PI) / 180;
         } else {

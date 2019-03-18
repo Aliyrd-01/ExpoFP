@@ -8,12 +8,19 @@
             </div>
         </template>
         <div class="menu__content">
-            <a :href='homeUrl' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo&nbsp;Home&nbsp;<i class="fas fa-external-link"></i></a>
-            <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");' class="menu__item"><i class="fas fa-bookmark"></i> My Bookmarks ({{bookmarkedArray.length}})</a>
+            <a :href='homeUrl' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo&nbsp;Home&nbsp;<i
+                    class="fas fa-external-link"></i></a>
+            <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");'
+                class="menu__item -bookmarks"><i class="fas fa-bookmark"></i>
+                <span>My Bookmarks ({{bookmarkedArray.length}})</span>
+                <button @click.stop.prevent=' shareBookmarks' v-if='bookmarkedArray.length' class="fas fa-share-square"
+                    title="Share bookmarks"></button>
+            </a>
             <!-- <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a> -->
             <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>
             <div class="menu__item">Categories</div>
-            <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id" @click.prevent='$store.dispatch("clickCategory", c.id);'>
+            <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id"
+                @click.prevent='$store.dispatch("clickCategory", c.id);'>
                 <div class="menu__cat-bullet">&bullet;</div>
                 <div class="menu__cat-title">{{c.name}}</div>
                 <div class="menu__cat-count">{{numOfExhibitors(c.id)}}</div>
@@ -26,7 +33,7 @@
 import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
 
-window.setTimeout(function() {
+window.setTimeout(function () {
     const link = document.createElement("link");
     link.href = EFP_LOGO_URL;
     link.rel = "preload";
@@ -59,6 +66,10 @@ export default {
     },
 
     methods: {
+        shareBookmarks(e) {
+            e.target.blur();
+            alert("Link to bookmarks was copied to clipboard");
+        },
         close() {
             this.$store.commit("setMenu", false);
         },
@@ -82,8 +93,8 @@ export default {
 .menu.shown .menu__title > img {
     opacity: 1;
 }
-.expo-jtrade19 .menu__title{
-    background: #2B2A29;
+.expo-jtrade19 .menu__title {
+    background: #2b2a29;
 }
 .expo-expo .menu__title > img {
     padding-right: 2rem;
@@ -124,6 +135,19 @@ export default {
             min-width: 1.7rem;
             text-align: center;
             padding-right: 0.5rem;
+        }
+        &.-bookmarks {
+            > span {
+                flex-grow: 1;
+            }
+            > button {
+                border: none;
+                cursor: pointer;
+                align-self: stretch;
+                &:hover {
+                    color: #000;
+                }
+            }
         }
     }
 
