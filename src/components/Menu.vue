@@ -144,6 +144,8 @@ export default {
                 flex-grow: 1;
             }
             > button {
+                padding: 0 0.4rem 0 0.4rem;
+                margin-right: -0.4rem;
                 border: none;
                 cursor: pointer;
                 align-self: stretch;
