@@ -20,6 +20,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=<%- GTAG %>"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
+
         function gtag() {
             dataLayer.push(arguments);
         }
@@ -27,6 +28,93 @@
         gtag('config', '<%- GTAG %>');
     </script>
     <% } %>
+    <style>
+        html{
+            background: #EBEBEB;
+        }
+        .lds-grid {
+            margin: 42vh auto;
+            display: block;
+            position: relative;
+            width: 64px;
+            height: 64px;
+        }
+
+        .lds-grid div {
+            position: absolute;
+            width: 13px;
+            height: 13px;
+            background: #41B6E7;
+            border: solid 1px #fff;
+            animation: lds-grid 1.2s linear infinite;
+        }
+
+        .lds-grid div:nth-child(1) {
+            top: 6px;
+            left: 6px;
+            animation-delay: 0s;
+        }
+
+        .lds-grid div:nth-child(2) {
+            top: 6px;
+            left: 26px;
+            animation-delay: -0.4s;
+        }
+
+        .lds-grid div:nth-child(3) {
+            top: 6px;
+            left: 45px;
+            animation-delay: -0.8s;
+        }
+
+        .lds-grid div:nth-child(4) {
+            top: 26px;
+            left: 6px;
+            animation-delay: -0.4s;
+        }
+
+        .lds-grid div:nth-child(5) {
+            top: 26px;
+            left: 26px;
+            animation-delay: -0.8s;
+        }
+
+        .lds-grid div:nth-child(6) {
+            top: 26px;
+            left: 45px;
+            animation-delay: -1.2s;
+        }
+
+        .lds-grid div:nth-child(7) {
+            top: 45px;
+            left: 6px;
+            animation-delay: -0.8s;
+        }
+
+        .lds-grid div:nth-child(8) {
+            top: 45px;
+            left: 26px;
+            animation-delay: -1.2s;
+        }
+
+        .lds-grid div:nth-child(9) {
+            top: 45px;
+            left: 45px;
+            animation-delay: -1.6s;
+        }
+
+        @keyframes lds-grid {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -39,7 +127,18 @@
         <span style="font-family: 'Oswald', sans-serif; font-weight: 700"></span>
     </div> -->
     <div id="app">
-        <div style='font-family: serif; font-size: 3rem; line-height: 1em; padding-top: 40vh; text-align: center; color: #1F0B6D'>...</div>
+        <div class="lds-grid">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <!-- <div style='font-family: serif; font-size: 3rem; line-height: 1em; padding-top: 40vh; text-align: center; color: #1F0B6D'>...</div> -->
     </div>
     <!-- <script src='vendor/d3/d3.min.js'></script> -->
     <script src='<%- EFP_DATA_URL_BASE %>/data.js'></script>
