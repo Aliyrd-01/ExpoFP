@@ -40,7 +40,7 @@ window.setTimeout(function () {
     link.rel = "preload";
     (link as any).as = "image";
     document.head.appendChild(link);
-}, 2000);
+}, 4000);
 
 export default {
     components: { OverlayContent },
