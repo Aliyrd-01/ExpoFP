@@ -32,7 +32,7 @@
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
-import { copyToClipboard } from "@/utils";
+import copyToClipboard from 'copy-to-clipboard';
 
 window.setTimeout(function () {
     const link = document.createElement("link");
