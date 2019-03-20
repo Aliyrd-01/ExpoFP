@@ -44,6 +44,13 @@ interface Exhibitor {
     address2: string;
     phone1: string;
     website: string;
+    facebook: string;
+    instagram: string;
+    linkedin: string;
+    twitter: string;
+    googlePlus: string;
+    xing: string;
+    youtube: string;
     //publicEmail: string, // obsolete
     email; // new
     //...
@@ -65,7 +72,7 @@ type OverlaySize = "full" | "medium" | "small";
 type OverlayPosition = "left" | "bottom";
 type MapOccupied = null | "left" | "bottomSmall" | "bottomMedium";
 
-type ZoomTransform = typeof d3.zoomIdentity;// { x: number; y: number; k: number };
+type ZoomTransform = typeof d3.zoomIdentity; // { x: number; y: number; k: number };
 
 declare const EFP_EXPO: string;
 //declare const EFP_TITLE: string;

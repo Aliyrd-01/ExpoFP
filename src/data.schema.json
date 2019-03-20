@@ -17,7 +17,7 @@
         },
         "boothTerm": {
             "type": "string",
-            "description": "Booth term (typically 'booth' or 'stand'"
+            "description": "Booth term (typically 'booth' or 'stand')"
         },
         "booths": {
             "type": "array",
@@ -37,10 +37,6 @@
                             "type": "number"
                         }
                     },
-                    "boothTypeName": {
-                        "type": "string",
-                        "description": "Obsolete, use type"
-                    },
                     "type": {
                         "type": "string"
                     },
@@ -50,10 +46,6 @@
                     "price": {
                         "type": "string"
                     },
-                    "availableColor": {
-                        "type": "string",
-                        "description": "Obsolete, use availColor"
-                    },
                     "availColor": {
                         "type": "string"
                     },
@@ -62,10 +54,6 @@
                     },
                     "buyUrl": {
                         "type": "string"
-                    },
-                    "isOnHold": {
-                        "type": "boolean",
-                        "description": "Obsolete, use onHold"
                     },
                     "onHold": {
                         "type": "boolean"
@@ -91,10 +79,6 @@
                             "type": "number"
                         }
                     },
-                    "isFeatured": {
-                        "type": "boolean",
-                        "description": "Obsolete, use featured"
-                    },
                     "featured": {
                         "type": "boolean"
                     },
@@ -113,15 +97,39 @@
                     "phone1": {
                         "type": "string"
                     },
-                    "publicEmail": {
-                        "type": "string",
-                        "description": "Obsolete, use email"
-                    },
                     "email": {
                         "type": "string",
                         "format": "email"
                     },
                     "website": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "facebook": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "instagram": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "linkedin": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "twitter": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "googlePlus": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "xing": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "youtube": {
                         "type": "string",
                         "format": "uri"
                     }
