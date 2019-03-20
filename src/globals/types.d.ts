@@ -42,6 +42,10 @@ interface Exhibitor {
     description: string;
     address: string;
     address2: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
     phone1: string;
     website: string;
     facebook: string;
