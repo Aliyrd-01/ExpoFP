@@ -46,15 +46,15 @@ for (const booth of __data.booths) {
     const b = booth as any;
     if (typeof booth.onHold === "undefined") booth.onHold = b.isOnHold;
     if (typeof booth.availColor === "undefined") booth.availColor = b.availableColor;
-    if (typeof booth.type === "undefined")  booth.type = b.boothTypeName;
+    if (typeof booth.type === "undefined") booth.type = b.boothTypeName;
 
     booth.exhibitors = booth.exhibitors || [];
 }
 
 for (const exhibitor of __data.exhibitors) {
     const e = exhibitor as any;
-    exhibitor.featured = e.isFeatured;
-    exhibitor.email = e.publicEmail;
+    if (typeof exhibitor.featured === "undefined") exhibitor.featured = e.isFeatured;
+    if (typeof exhibitor.email === "undefined") exhibitor.email = e.publicEmail;
 
     exhibitor.categories = exhibitor.categories || [];
 }

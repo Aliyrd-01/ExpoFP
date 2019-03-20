@@ -39,7 +39,14 @@
                 <div v-if="exhibitor.address || exhibitor.address2">
                     <i class="fas fa-map-marker"></i>
                     <div>
-                        {{exhibitor.address}}<br />{{exhibitor.address2}}
+                        {{exhibitor.address}}
+                        <div v-if="exhibitor.address2">{{exhibitor.address2}}</div>
+                        <div v-if="exhibitor.city || exhibitor.state || exhibitor.zip">
+                            {{exhibitor.city}}<span v-if="exhibitor.city && exhibitor.state">,</span>
+                            {{exhibitor.state}}
+                            {{exhibitor.zip}}
+                        </div>
+                        <div v-if="exhibitor.country">{{exhibitor.country}}</div>
                     </div>
                 </div>
                 <div v-if="exhibitor.phone1">
