@@ -21,7 +21,7 @@ if (c) {
 const bookmarked = bookmarkedAr.reduce((c: BookmarkedType, id) => (c[id] = true) && c, {} as BookmarkedType);
 const bookmarkedArray = (state: BookmarkedType) => Object.keys(state).filter(x => state[x]);
 
-function saveToLocalStorage(ar: number[]) {
+function saveToLocalStorage(ar: (string|number)[]) {
     localStorage.setItem("bookmarked", JSON.stringify(ar));
 }
 
@@ -34,7 +34,6 @@ export default {
         setBookmarked(state: BookmarkedType, { id, yes }: any) {
             if (yes) Vue.set(state, id, true);
             else Vue.delete(state, id);
-            // persist in localStorage
             saveToLocalStorage(bookmarkedArray(state));
         }
     }
