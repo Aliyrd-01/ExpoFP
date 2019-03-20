@@ -69,7 +69,7 @@ export default {
     methods: {
         shareBookmarks(e) {
             e.target.blur();
-            const url = `${location.protocol}//${location.host}/?bk` + this.$store.getters.bookmarkedArray.join('|');
+            const url = `${location.protocol}//${location.host}/?b=` + this.$store.getters.bookmarkedArray.join('|');
             copyToClipboard(url);
             alert("Link to bookmarks was copied to clipboard");
         },

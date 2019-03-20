@@ -96,6 +96,10 @@ function stateToUrl() {
 if (history.location.search.startsWith("?preview=")){
     history.replace('?');
 }
+// go to bookmarks when receive thouse
+if (history.location.search.startsWith("?b=")){
+    history.replace('?bookmarks');
+}
 
 // facebook fix
 if (history.location.search.startsWith("?fbclid")){
