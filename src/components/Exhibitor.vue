@@ -143,7 +143,7 @@ export default {
             return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
         },
         showEdit() {
-            return __data.sendLoginLinkUrl && this.sendLinkEmail;
+            return true;// __data.sendLoginLinkUrl && this.sendLinkEmail;
         },
         sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
@@ -159,18 +159,26 @@ export default {
         handleCategoryClick(c) {
             this.$store.dispatch("selectCategory", c.id);
         },
-        sendLoginLink() {
+        sendLoginLink(e) {
+            e.target.blur();
             const email = this.sendLinkEmail;
             if (!confirm(`Send login instructions to ${email} to edit profile?`)) return;
-            const xhr = new XMLHttpRequest();   
+            const xhr = new XMLHttpRequest();
             xhr.open("POST", __data.sendLoginLinkUrl);
             xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onload = function () {
+            function er() {
+                alert("Error sending login instructions.");
+            }
+            xhr.onload = function (e) {
+                if (this.status !== 200) {
+                    er();
+                    return;
+                }
                 alert(`A link to edit profile was sent to ${email}.`)
             };
             xhr.onerror = function (e) {
                 console.error("Error", e);
-                alert("Error sendig login instructions.");
+                er();
             };
             xhr.send(JSON.stringify({ "id": this.exhibitor.id }));
         },
