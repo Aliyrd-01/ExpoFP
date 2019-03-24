@@ -5,7 +5,7 @@
             {{exhibitor.name}} <i class="fas fa-gem" v-if='featured'></i>
         </div>
         <div ref="bookmark" class="exhibitor-row__bookmark" tabindex="0" @click.prevent.stop="bookmark" title="Toggle bookmark">
-            <i class="exhibitor-row__bk"></i>
+            <BookmarkSvg />
         </div>
         <div class="exhibitor-row__booth">
             <div v-for="booth in booths.filter(b => !b.hideName)" :key="booth.id">
@@ -16,9 +16,12 @@
 </template>
 
 <script lang="ts">
+import BookmarkSvg from "./BookmarkSvg.vue";
+
 export default {
     name: "ExhibitorRow",
     props: ["exhibitor"],
+    components: { BookmarkSvg },
     methods: {
         select() {
             this.$store.dispatch("clickExhibitor", this.exhibitor.id);
@@ -88,9 +91,6 @@ export default {
         align-self: stretch;
         padding: 0 0.5rem 0 1rem;
         outline: none;
-    }
-    &__bk {
-        @include bookmark;
     }
 }
 </style>

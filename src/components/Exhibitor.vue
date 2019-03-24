@@ -7,7 +7,7 @@
                     <i class="fas fa-gem" v-if='featured'></i>
                 </span>
                 <a href='' @click.prevent="bookmark" class="exhibitor__bar-bk">
-                    <i class="exhibitor__bk"></i>
+                    <BookmarkSvg/>
                 </a>
             </div>
             <div class="exhibitor__bar-booth" @click='$store.dispatch("toggleMapOverlay")'>{{__data.boothTerm}}
@@ -101,9 +101,10 @@
 <script lang="ts">
 import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
+import BookmarkSvg from "./BookmarkSvg.vue";
 
 export default {
-    components: { OverlayContent },
+    components: { OverlayContent, BookmarkSvg },
     data: () => ({ collapsed: true }),
     computed: {
         ...mapState(["menu", "details"]),
@@ -189,7 +190,7 @@ export default {
 };
 </script>
 
-<style  lang="scss">
+<style lang="scss">
 .expo-jtrade19 .exhibitor__categories-booth {
     background: #e9522a; //#fb3e59;
     &:hover {
@@ -400,9 +401,7 @@ export default {
         /* align-self: stretch; */
     }
 
-    &__bk {
-        @include bookmark;
-    }
+   
 
     &__edit {
         position: relative;
