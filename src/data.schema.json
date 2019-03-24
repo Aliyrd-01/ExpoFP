@@ -21,7 +21,8 @@
         },
         "sendLoginLinkUrl": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "description": "Endpoint URL to send intructions to exhibitors to edit their data"
         },
         "boothTerm": {
             "type": "string",
@@ -128,7 +129,7 @@
                     },
                     "privateEmail": {
                         "type": "string",
-                        "description": "Presentation of private email of exhibitor - with hidden characters in it. Hard to guess."
+                        "description": "Presentation of private email of exhibitor - with hidden characters in it - hard to guess"
                     },
                     "website": {
                         "type": "string",
