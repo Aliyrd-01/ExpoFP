@@ -4,8 +4,12 @@
     "title": "ExpoFP data.js Schema",
     "type": "object",
     "required": ["title", "homeUrl", "booths", "exhibitors", "categories"],
+    "additionalProperties": false,
     "properties": {
         "title": {
+            "type": "string"
+        },
+        "subtitle": {
             "type": "string"
         },
         "homeUrl": {
@@ -24,6 +28,7 @@
             "items": {
                 "type": "object",
                 "required": ["id", "name"],
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "type": "number"
@@ -66,6 +71,7 @@
             "items": {
                 "type": "object",
                 "required": ["id", "name"],
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "type": "number"
@@ -86,6 +92,9 @@
                         "type": "boolean"
                     },
                     "description": {
+                        "type": "string"
+                    },
+                    "logo": {
                         "type": "string"
                     },
                     "address": {
@@ -144,6 +153,10 @@
                     "youtube": {
                         "type": "string",
                         "format": "uri"
+                    },
+                    "sendLoginLink": {
+                        "type": "string",
+                        "format": "uri"
                     }
                 }
             }
@@ -153,6 +166,7 @@
             "items": {
                 "type": "object",
                 "required": ["id", "name"],
+                "additionalProperties": false,
                 "properties": {
                     "id": {
                         "type": "number"

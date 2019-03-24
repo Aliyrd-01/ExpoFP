@@ -32,7 +32,7 @@ if (__settings.debug) {
 if (!__data.homeUrl && EFP_EXPO === "jtrade19") __data.homeUrl = "https://www.jtrade.co.uk/";
 // this is permanent
 if (!__data.homeUrl) __data.homeUrl = "https://expofp.com/";
-if (!__data.boothTerm && EFP_EXPO === "jtrade19") __data.boothTerm = "Stand";
+if (!__data.boothTerm) __data.boothTerm = "Booth";
 // this is permanent
 if (!__data.boothTerm) __data.boothTerm = "Booth";
 if (EFP_EXPO === "expo") {

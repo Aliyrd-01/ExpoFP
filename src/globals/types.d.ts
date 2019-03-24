@@ -1,5 +1,6 @@
 declare const __data: {
     title: string;
+    subtitle: string;
     homeUrl: string;
     boothTerm: string;
     booths: Booth[];
