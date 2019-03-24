@@ -19,6 +19,10 @@
         "reserveInstructions": {
             "type": "string"
         },
+        "sendLoginLinkUrl": {
+            "type": "string",
+            "format": "uri"
+        },
         "boothTerm": {
             "type": "string",
             "description": "Booth term (typically 'booth' or 'stand')"
@@ -122,6 +126,9 @@
                         "type": "string",
                         "format": "email"
                     },
+                    "privateEmail": {
+                        "type": "string"
+                    },
                     "website": {
                         "type": "string",
                         "format": "uri"
@@ -151,10 +158,6 @@
                         "format": "uri"
                     },
                     "youtube": {
-                        "type": "string",
-                        "format": "uri"
-                    },
-                    "sendLoginLink": {
                         "type": "string",
                         "format": "uri"
                     }

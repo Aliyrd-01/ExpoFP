@@ -35,6 +35,7 @@
                 <a href='' class='exhibitor__description-show'>read more</a>
             </div>
             <div class="exhibitor__sep" v-if=anyAddress></div>
+            <div class="exhibitor__edit" v-if=showEdit><button class="far fa-pencil" title="Edit" @click="sendLoginLink"></button></div>
             <div class="exhibitor__meta" v-if=anyAddress>
                 <div v-if="exhibitor.address || exhibitor.address2">
                     <i class="fas fa-map-marker"></i>
@@ -56,7 +57,7 @@
                     </div>
                 </div>
                 <div v-if="exhibitor.website">
-                    <i class="fas fa-browser"></i>
+                    <i class="fas fa-globe"></i>
                     <div>
                         <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
                     </div>
@@ -140,6 +141,12 @@ export default {
         },
         disableCollapse() {
             return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
+        },
+        showEdit() {
+            return __data.sendLoginLinkUrl && this.sendLinkEmail;
+        },
+        sendLinkEmail() {
+            return this.exhibitor.privateEmail || this.exhibitor.email;
         }
     },
     watch: {
@@ -151,6 +158,21 @@ export default {
     methods: {
         handleCategoryClick(c) {
             this.$store.dispatch("selectCategory", c.id);
+        },
+        sendLoginLink() {
+            const email = this.sendLinkEmail;
+            if (!confirm(`Send login instructions to ${email} to edit profile?`)) return;
+            const xhr = new XMLHttpRequest();   
+            xhr.open("POST", __data.sendLoginLinkUrl);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function () {
+                alert(`A link to edit profile was sent to ${email}.`)
+            };
+            xhr.onerror = function (e) {
+                console.error("Error", e);
+                alert("Error sendig login instructions.");
+            };
+            xhr.send(JSON.stringify({ "id": this.exhibitor.id }));
         },
         bookmark() {
             this.$store.commit("setBookmarked", { id: this.exhibitor.id, yes: !this.bookmarked });
@@ -275,7 +297,8 @@ export default {
             display: flex;
             margin: 0.8rem 1rem;
 
-            > .fas {
+            > .fas,
+            > .far {
                 text-align: center;
                 min-width: 0.8rem;
                 margin-top: 0.2rem;
@@ -371,6 +394,21 @@ export default {
 
     &__bk {
         @include bookmark;
+    }
+
+    &__edit {
+        position: relative;
+        > button {
+            position: absolute;
+            right: 1rem;
+            padding: 0 0 1rem 1rem;
+            border: 0;
+            cursor: pointer;
+            color: #aaa;
+            &:hover {
+                color: #555;
+            }
+        }
     }
 }
 </style>

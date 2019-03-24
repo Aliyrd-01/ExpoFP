@@ -7,6 +7,7 @@ declare const __data: {
     exhibitors: Exhibitor[];
     categories: Category[];
     reserveInstructions: string;
+    sendLoginLinkUrl: string;
 };
 declare const __fp: string;
 declare const __fpPaths: { [id: string]: any };
@@ -57,7 +58,8 @@ interface Exhibitor {
     xing: string;
     youtube: string;
     //publicEmail: string, // obsolete
-    email; // new
+    email: string; // new
+    privateEmail: string;
     //...
 
     //populated
