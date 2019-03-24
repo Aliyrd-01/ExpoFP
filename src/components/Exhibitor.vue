@@ -143,7 +143,7 @@ export default {
             return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
         },
         showEdit() {
-            return true;// __data.sendLoginLinkUrl && this.sendLinkEmail;
+            return __data.sendLoginLinkUrl && this.sendLinkEmail;
         },
         sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
