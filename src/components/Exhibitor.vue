@@ -406,6 +406,7 @@ export default {
 
     &__edit {
         position: relative;
+        display: none;
         > button {
             position: absolute;
             right: 1rem;
@@ -416,6 +417,10 @@ export default {
             &:hover {
                 color: #555;
             }
+        }
+
+        .exhibitor__details:hover > &{
+            display: block;
         }
     }
 }
