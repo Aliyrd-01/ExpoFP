@@ -27,6 +27,9 @@ if (__settings.debug) {
         errors.forEach(e => console.warn(e));
     }
 }
+if (!__data.exhibitors) __data.exhibitors = [];
+if (!__data.booths) __data.booths = [];
+if (!__data.categories) __data.categories = [];
 
 // some data fixes (expo-specific will be removed)
 if (!__data.homeUrl && EFP_EXPO === "jtrade19") __data.homeUrl = "https://www.jtrade.co.uk/";
