@@ -1,5 +1,7 @@
 # EFP-APP
 
+Never commit/merge to master!
+
 ## Project setup
 ```
 yarn install
@@ -21,8 +23,3 @@ Prev jtrade19 28f77a259b9e6bc7d155430a7bef8ff694f95d95  bb121165bcbb634bea36e708
 Prev expo 13285116061c1f36dc2d1254db93dba9c980e58f
 Prev demo 77359614d1b81928a853dbe06c2b2a6688b203e7
 
-Good (needed) branches:
-expo
-jtrade19
-demo
-demo-bg
