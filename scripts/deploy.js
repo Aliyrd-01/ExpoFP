@@ -32,7 +32,7 @@ const live = process.env.EFP_TARGET === "live";
     const path = `/expos/${deployExpo}/${!live ? 'dev' : 'live'}`;
     const bucket = `efp-data${path}`;
 
-    const args = ['./dist/**/!(*.map)', '--cwd', './dist', '--bucket', bucket, '--private', '--profile', 'efp-data'];
+    const args = ['./dist/**/!(*.map)', '--cwd', './dist', '--bucket', bucket, '--private', '--profile', 'efp-deploy-fp'];
     // invalidate
     args.push('--distId', "ETXR07B411G19", '--invalidate', `${path}/index*`);
 
