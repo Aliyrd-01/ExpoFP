@@ -29,6 +29,7 @@ interface Booth {
     //availableColor: string,// obsolete
     availColor: string; // new
     soldColor: string;
+    typeColor: string;
     buyUrl: string;
     //boothTypeName: string,// obsolete
     type: string; // new

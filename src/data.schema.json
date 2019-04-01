@@ -69,6 +69,9 @@
                     "soldColor": {
                         "type": "string"
                     },
+                    "typeColor": {
+                        "type": "string"
+                    },
                     "buyUrl": {
                         "type": "string"
                     },
