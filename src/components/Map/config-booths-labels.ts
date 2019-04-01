@@ -100,6 +100,10 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             if (ptscale < f) visiblePrefix = p;
         }
 
+        if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith('_food') && visiblePrefix !== 'Dot'){
+            visiblePrefix = "Details";
+        }
+
         for (const p of prefixes) {
             var obj = this.drawer.getObject(this.getId(p));
             if (!obj) debugger;
