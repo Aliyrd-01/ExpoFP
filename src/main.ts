@@ -10,9 +10,12 @@ import '@/globals';
 import '@/settings';
 import '@/utils/logging';
 import '@/tools/validate-data';
+import '@/tools/gtag'
 import '@/store';
 import '@/services';
+
 import Layout from '@/components/Layout.vue';
+
 
 Vue.config.productionTip = false
 Vue.prototype.__data = __data;

@@ -3,7 +3,7 @@
     "$id": "https://expofp.com/floorplans/datajs.schema.json",
     "title": "ExpoFP data.js Schema",
     "type": "object",
-    "required": ["title", "homeUrl", "booths", "exhibitors", "categories"],
+    "required": ["title", "homeUrl", "logo", "booths", "exhibitors", "categories"],
     "additionalProperties": false,
     "properties": {
         "title": {
@@ -15,6 +15,13 @@
         "homeUrl": {
             "type": "string",
             "format": "uri"
+        },
+        "logo": {
+            "type": "string"
+        },
+        "gtag": {
+            "type": "string",
+            "description": "Google Analytics or Tag Manager ID"
         },
         "reserveInstructions": {
             "type": "string"

@@ -3,7 +3,7 @@
         <template slot="bar">
             <div class="menu__bar">
                 <a class="menu__title" :href="homeUrl" target="_blank">
-                    <img :src="EFP_LOGO_URL" />
+                    <img :src="logoUrl" />
                 </a>
             </div>
         </template>
@@ -33,10 +33,13 @@
 import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
 import copyToClipboard from 'copy-to-clipboard';
+import baseUrl from '@/tools/base-data-url';
+
+const logoUrl = baseUrl + __data.logo;
 
 window.setTimeout(function () {
     const link = document.createElement("link");
-    link.href = EFP_LOGO_URL;
+    link.href = logoUrl;
     link.rel = "preload";
     (link as any).as = "image";
     document.head.appendChild(link);
@@ -46,7 +49,7 @@ export default {
     components: { OverlayContent },
     data: () => ({
         homeUrl: __data.homeUrl,
-        EFP_LOGO_URL,
+        logoUrl,
         shown: false
     }),
     computed: {
@@ -99,7 +102,8 @@ export default {
 .expo-jtrade19 .menu__title {
     background: #2b2a29;
 }
-.expo-awslondon19 .menu__title, .expo-awsamsterdam19 .menu__title {
+.expo-awslondon19 .menu__title,
+.expo-awsamsterdam19 .menu__title {
     background: rgb(47, 7, 122);
     background: linear-gradient(207deg, rgba(47, 7, 122, 1) 0%, rgba(175, 60, 119, 1) 47%, rgba(235, 97, 60, 1) 100%);
     padding-top: 1.5rem;

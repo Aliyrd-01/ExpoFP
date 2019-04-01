@@ -1,10 +1,14 @@
 import { validate } from "jsonschema";
 import schema from "@/data.schema.json";
+import baseUrl from "./base-data-url";
 
 // before data validation
 if (!__data.exhibitors) __data.exhibitors = [];
 if (!__data.booths) __data.booths = [];
 if (!__data.categories) __data.categories = [];
+if (!__data.gtag  && EFP_EXPO === "jtrade19") __data.gtag = "UA-134602409-3";
+if (!__data.gtag  && EFP_EXPO === "expo") __data.gtag = "UA-134602409-2";
+
 
 const res = validate(__data, schema);
 if (res.errors.length) {
@@ -34,11 +38,11 @@ if (__settings.debug) {
 }
 
 // some data fixes (expo-specific will be removed)
+if (!__data.logo && EFP_EXPO === "expo") __data.logo = "../logo.svg";
+if (!__data.logo) __data.logo = '../' + EFP_EXPO + "-logo.png";
 if (!__data.homeUrl && EFP_EXPO === "jtrade19") __data.homeUrl = "https://www.jtrade.co.uk/";
 // this is permanent
 if (!__data.homeUrl) __data.homeUrl = "https://expofp.com/";
-if (!__data.boothTerm) __data.boothTerm = "Booth";
-// this is permanent
 if (!__data.boothTerm) __data.boothTerm = "Booth";
 if (EFP_EXPO === "expo") {
     //__data.exhibitors.filter(x => ["eventPower", "Fern", "Ungerboeck", "Tradeshow Engineering"]

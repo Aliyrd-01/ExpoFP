@@ -1,10 +1,9 @@
 import boothsState from "./booths";
 import { generateUniqueSlug } from "@/services/slug";
 import previewExhibitor from "@/utils/preview-exhibitor";
+import baseUrl from '@/tools/base-data-url';
 
-const baseUrl = Array.from(document.getElementsByTagName("script"))
-    .filter(x => x.src.endsWith("data.js"))[0]
-    .src.replace(/data.js$/, "");
+
 if (previewExhibitor) {
     const i = __data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
     __data.exhibitors.splice(i, 1, previewExhibitor);

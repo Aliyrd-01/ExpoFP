@@ -2,22 +2,28 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const fs = require('fs');
 const webpack = require('webpack');
-const expo = require('./scripts/expo')
-const config = require(`./expos/${expo}/config`)
+const expo = require('./scripts/expo');
+let config;
+try {
+    config = require(`./expos/${expo}/config`);
+} catch (ex) {
+    config = {};
+}
+// const config = require(`./expos/${expo}/config`)
 
 const dataUrlBase = config.dataUrl || `https://${expo}.expofp.com/data`;
 const dataUrlBaseDev = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
 const dataUrlBaseShow = config.dataUrl || `https://s3.amazonaws.com/efp-data-show/expos/${expo}/data`;
-const gTag = config.gTag || 'UA-857963-22';
-const logoUrl = config.logoUrl || `${expo}-logo.png`
+// const gTag = config.gTag || 'UA-857963-22';
+//const logoUrl = config.logoUrl || `${expo}-logo.png`
 
 const define = {
     EFP_DATA_URL_BASE: JSON.stringify(dataUrlBase),
     EFP_EXPO: JSON.stringify(expo),
     //EFP_TITLE: JSON.stringify(config.title),
     //EFP_HOME_URL: JSON.stringify(config.homeUrl),
-    EFP_LOGO_URL: JSON.stringify(logoUrl),
-    GTAG: JSON.stringify(gTag)
+    //EFP_LOGO_URL: JSON.stringify(logoUrl),
+    // GTAG: JSON.stringify(gTag)
 };
 
 //const live = process.env.EFP_TARGET === "live";
@@ -37,7 +43,7 @@ module.exports = {
         plugins: [
             new CopyWebpackPlugin(
                 [{
-                    from: path.join(__dirname, `expos/${expo}/{settings.js,*.png,*logo.svg}`),
+                    from: path.join(__dirname, `expos/${expo}/{*.png,*.svg}`),
                     to: path.join(__dirname, dist),
                     context: path.join(__dirname, `expos/${expo}`)
                 }]

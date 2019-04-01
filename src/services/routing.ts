@@ -1,4 +1,5 @@
 import { createBrowserHistory } from "history";
+import gtag from '@/tools/gtag'
 // import settings from '@/settings';
 
 const history = createBrowserHistory();
@@ -124,10 +125,10 @@ setTitle();
 let timeout: number;
 
 function sendGa() {
-    if (typeof gtag === "undefined") return;
+    if (!__data.gtag) return;
     if (timeout) window.clearTimeout(timeout);
     timeout = window.setTimeout(() => {
-        gtag("config", GTAG, {
+        gtag("config", __data.gtag, {
             page_title: document.title,
             page_path: location.pathname + location.search
         });

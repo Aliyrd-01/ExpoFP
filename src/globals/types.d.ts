@@ -2,6 +2,8 @@ declare const __data: {
     title: string;
     subtitle: string;
     homeUrl: string;
+    logo: string;
+    gtag: string;
     boothTerm: string;
     booths: Booth[];
     exhibitors: Exhibitor[];
@@ -84,6 +86,6 @@ type ZoomTransform = typeof d3.zoomIdentity; // { x: number; y: number; k: numbe
 declare const EFP_EXPO: string;
 //declare const EFP_TITLE: string;
 //declare const EFP_HOME_URL: string;
-declare const EFP_LOGO_URL: string;
-declare const GTAG: string;
-declare const gtag: any;
+// declare const EFP_LOGO_URL: string;
+// declare const GTAG: string;
+// declare const gtag: any;
