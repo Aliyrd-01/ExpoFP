@@ -57,7 +57,7 @@ export default class BoothBookmarkDrawer extends BoothDrawerBase {
     update() {
         const ptscale = getPtscale();
 
-        const bookmarked = this.booth.exhibitors.find(e => store.state.bookmarked[e]);
+        const bookmarked = this.booth.special === false && this.booth.exhibitors.find(e => store.state.bookmarked[e]);
 
         let view: string;
 

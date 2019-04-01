@@ -67,10 +67,10 @@ export function getBoothState(b: Booth) {
         const selected = !!g.selectedBoothIdsSet.has(b.id);
         const inList = g.listBoothsIdsSet.has(b.id);
         const skipDim = inList || selected;
-        const onhold = b.onHold;
-        const empty = b.exhibitors.length === 0;
+        const onhold = b.special == false && b.onHold;
+        const empty = b.special == false && b.exhibitors.length === 0;
         const error = !!b.error;
-        const bookmarked = !!b.exhibitors.find(e => store.state.bookmarked[e]);
+        const bookmarked = b.special == false && !!b.exhibitors.find(e => store.state.bookmarked[e]);
         state = { hover, selected, skipDim, error, empty, onhold, bookmarked };
 
         boothStateCache.set(b.id, state);

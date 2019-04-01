@@ -1,8 +1,7 @@
 import boothsState from "./booths";
 import { generateUniqueSlug } from "@/services/slug";
 import previewExhibitor from "@/utils/preview-exhibitor";
-import baseUrl from '@/tools/base-data-url';
-
+import baseUrl from "@/tools/base-data-url";
 
 if (previewExhibitor) {
     const i = __data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
@@ -20,8 +19,10 @@ for (const b of Object.values(exhibitors)) {
 }
 
 for (const booth of Object.values(boothsState.state)) {
-    for (const exhibitorId of booth.exhibitors) {
-        exhibitors[exhibitorId].booths.push(booth.id);
+    if (booth.special === false) {
+        for (const exhibitorId of booth.exhibitors) {
+            exhibitors[exhibitorId].booths.push(booth.id);
+        }
     }
 }
 
