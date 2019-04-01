@@ -1,7 +1,7 @@
 const Confirm = require('prompt-confirm');
 const expo = require('./expo');
 const execa = require('execa');
-const config = require(`../expos/${expo}/config`)
+// const config = require(`../expos/${expo}/config`)
 
 const live = process.env.EFP_TARGET === "live";
 
