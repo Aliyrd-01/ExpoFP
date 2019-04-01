@@ -1,21 +1,20 @@
-import Color from 'color';
-import settings from '@/settings';
-import { BoothDrawerBase } from './config-booths-base';
-import { getBoothState } from './config-booths';
-import animate from './animate';
-
+import Color from "color";
+import settings from "@/settings";
+import { BoothDrawerBase } from "./config-booths-base";
+import { getBoothState } from "./config-booths";
+import animate from "./animate";
 
 export default class BoothBgDrawer extends BoothDrawerBase {
     constructor(booth: Booth) {
-        super(booth, 'booth-bg');
+        super(booth, "booth-bg");
 
         const r = this.booth.rect;
         this.drawer.addObject({
-            id: this.getId('bg'),
+            id: this.getId("bg"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [.5, .5, -.5, -.5]
+            deltaPts: [0.5, 0.5, -0.5, -0.5]
         });
         this.update();
     }
@@ -30,7 +29,7 @@ export default class BoothBgDrawer extends BoothDrawerBase {
         //     if (this.cancelColorAnimate) this.cancelColorAnimate();
         //     // animate color
         //     if (this.prevColor) {
-        //         this.cancelColorAnimate = animate(0, 100, null, 
+        //         this.cancelColorAnimate = animate(0, 100, null,
         //             d3.interpolate(this.prevColor, c), v => {
         //             this.drawer.updateColor(this.getId('bg'), Color(v).vec4());
         //         })
@@ -40,20 +39,23 @@ export default class BoothBgDrawer extends BoothDrawerBase {
         //     this.prevColor = c;
         // }
 
-        this.drawer.updateColor(this.getId('bg'), c.vec4());
-        this.drawer.updateSkipdim(this.getId('bg'), s.skipDim);
+        this.drawer.updateColor(this.getId("bg"), c.vec4());
+        this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
     }
 }
-
 
 function getBoothColor(b: Booth) {
     const s = getBoothState(b);
     let color: string;
-    
-    const defColor = (s.empty && !s.onhold) ? (b.availColor || settings.colors.booths.empty) :
-        (b.soldColor || settings.colors.booths.default);
+    let defColor: any;
+    if (b.special === true) {
+        defColor = b.color;
+    } else if (b.special === false) {
+        defColor =
+            s.empty && !s.onhold ? b.availColor || settings.colors.booths.empty : b.soldColor || settings.colors.booths.default;
+    }
 
-    if (s.error) color = '#f33'
+    if (s.error) color = "#f33";
     else if (s.selected) color = settings.colors.booths.selected;
     else color = defColor;
 
@@ -71,6 +73,3 @@ function getBoothColor(b: Booth) {
 
     return colorInfo;
 }
-
-
-

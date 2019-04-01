@@ -15,15 +15,11 @@ declare const __fp: string;
 declare const __fpPaths: { [id: string]: any };
 declare const __icons: { [id: string]: string };
 
-interface Booth {
-    id: number;
-    name: string;
+type Booth = SpecialBooth | RegularBooth;
+
+interface RegularBooth extends BoothBase {
     exhibitors: number[];
     // populated
-    rect: Rect;
-    rotate: number;
-    slug: string;
-    error?: boolean;
     size: string;
     price: string;
     //availableColor: string,// obsolete
@@ -35,7 +31,24 @@ interface Booth {
     type: string; // new
     //isOnHold: boolean,// obsolete
     onHold: boolean; // new
-    hideName: boolean;
+    special: false;
+}
+
+interface SpecialBooth extends BoothBase {
+    title: string;
+    description: string;
+    color: string;
+    special: true;
+}
+
+interface BoothBase {
+    id: number;
+    name: string;
+    title: string;
+    rect: Rect;
+    rotate: number;
+    slug: string;
+    error?: boolean;
 }
 
 interface Exhibitor {

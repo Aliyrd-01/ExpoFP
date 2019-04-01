@@ -8,7 +8,7 @@
             <BookmarkSvg />
         </div>
         <div class="exhibitor-row__booth">
-            <div v-for="booth in booths.filter(b => !b.hideName)" :key="booth.id">
+            <div v-for="booth in booths" :key="booth.id">
                 {{booth.name}}
             </div>
         </div>

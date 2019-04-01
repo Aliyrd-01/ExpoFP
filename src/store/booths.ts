@@ -17,7 +17,7 @@ for (const b of Object.values(booths)) {
     // }
 
     b.slug = generateUniqueSlug(b.name);
-    b.hideName = b.name.startsWith("_");
+    // b.hideName = b.name.startsWith("_");
     //boothsBySlug.set(b.slug, b);
     boothsByName.set(b.name.toLowerCase(), b);
 }

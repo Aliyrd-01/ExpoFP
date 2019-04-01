@@ -22,7 +22,7 @@
                 </span>
             </div> -->
             <div class="exhibitor__categories">
-                <a href='' v-for="booth in booths.filter(b => !b.hideName)" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")'
+                <a href='' v-for="booth in booths" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")'
                     class="exhibitor__categories-booth">{{__data.boothTerm}} {{booth.name}}</a>
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)"
                     class="exhibitor__categories-cat">{{c.name}}</a>

@@ -6,9 +6,8 @@ import baseUrl from "./base-data-url";
 if (!__data.exhibitors) __data.exhibitors = [];
 if (!__data.booths) __data.booths = [];
 if (!__data.categories) __data.categories = [];
-if (!__data.gtag  && EFP_EXPO === "jtrade19") __data.gtag = "UA-134602409-3";
-if (!__data.gtag  && EFP_EXPO === "expo") __data.gtag = "UA-134602409-2";
-
+if (!__data.gtag && EFP_EXPO === "jtrade19") __data.gtag = "UA-134602409-3";
+if (!__data.gtag && EFP_EXPO === "expo") __data.gtag = "UA-134602409-2";
 
 const res = validate(__data, schema);
 if (res.errors.length) {
@@ -39,7 +38,7 @@ if (__settings.debug) {
 
 // some data fixes (expo-specific will be removed)
 if (!__data.logo && EFP_EXPO === "expo") __data.logo = "../logo.svg";
-if (!__data.logo) __data.logo = '../' + EFP_EXPO + "-logo.png";
+if (!__data.logo) __data.logo = "../" + EFP_EXPO + "-logo.png";
 if (!__data.homeUrl && EFP_EXPO === "jtrade19") __data.homeUrl = "https://www.jtrade.co.uk/";
 // this is permanent
 if (!__data.homeUrl) __data.homeUrl = "https://expofp.com/";
@@ -53,11 +52,14 @@ if (EFP_EXPO === "expo") {
 // convert obsolete fields and fix false/empty strings/arrays
 for (const booth of __data.booths) {
     const b = booth as any;
-    if (typeof booth.onHold === "undefined") booth.onHold = b.isOnHold;
-    if (typeof booth.availColor === "undefined") booth.availColor = b.availableColor;
-    if (typeof booth.type === "undefined") booth.type = b.boothTypeName;
-
-    booth.exhibitors = booth.exhibitors || [];
+    // normalize special
+    booth.special = !!booth.special;
+    if (booth.special === false) {
+        if (typeof booth.onHold === "undefined") booth.onHold = b.isOnHold;
+        if (typeof booth.availColor === "undefined") booth.availColor = b.availableColor;
+        if (typeof booth.type === "undefined") booth.type = b.boothTypeName;
+        booth.exhibitors = booth.exhibitors || [];
+    }
 }
 
 for (const exhibitor of __data.exhibitors) {

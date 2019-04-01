@@ -1,17 +1,20 @@
 <template>
     <OverlayContent v-if="show" back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
-            <div class="bar">{{__data.boothTerm}} {{booth.name}}</div>
+            <div class="bar">{{title}}</div>
         </template>
-        <div class="booth" v-if="!boothExhibitors.length">
+        <div class="booth__content -reg" v-if="booth.special === false && !boothExhibitors.length">
             <div class="info" v-if='booth.onHold'>On Hold</div>
-            <div class="info" v-if='booth.type && !booth.onHold'>{{__data.boothTerm}} Type: {{booth.type}}<br/><br/></div>
+            <div class="info" v-if='booth.type && !booth.onHold'>{{__data.boothTerm}} Type: {{booth.type}}<br /><br /></div>
             <div class="info" v-if='booth.size && !booth.onHold'>{{booth.size}}</div>
             <div class="info" v-if='booth.price && !booth.onHold'>{{booth.price}}</div>
             <span v-html="instructions" v-if='!booth.onHold'></span>
             <div class="buy" v-if='booth.buyUrl && !booth.onHold'>
                 <a :href='booth.buyUrl' target='_blank'>Buy</a>
             </div>
+        </div>
+        <div class="booth__content -spec" v-if="booth.special === true">
+            <div class="booth__desc" v-if='booth.description' v-html="booth.description"></div>
         </div>
         <ExhibitorRow v-for="item in boothExhibitors" :key="item.id" :exhibitor='item' class="list-row" />
     </OverlayContent>
@@ -26,9 +29,9 @@ export default {
     components: { OverlayContent, ExhibitorRow },
     computed: {
         ...mapState(["exhibitors", "menu", "details"]),
-        instructions(){
+        instructions() {
             return __data.reserveInstructions;
-        }, 
+        },
         booth() {
             return this.$store.getters.selectedBooth;
         },
@@ -38,21 +41,31 @@ export default {
         show() {
             return !this.menu && this.details && this.details.type === "booth";
         },
-        buyUrl() {
-
+        title() {
+            const b = this.booth as Booth;
+            if (b.special === true) {
+                return b.title || b.name;
+            } else if (b.special === false) {
+                return __data.boothTerm + ' ' + b.name;
+            }
         }
+        // buyUrl() {
+
+        // }
     },
     methods: {
-        buy() {
-            alert("This functionality is disabled in the demo version");
-        }
+        // buy() {
+        //     alert("This functionality is disabled in the demo version");
+        // }
     }
 };
 </script>
 
 <style scoped lang="scss">
 .booth {
-    margin: 0 1rem;
+    &__content {
+        margin: 0 1rem;
+    }
 }
 .title {
     font-weight: 500;
