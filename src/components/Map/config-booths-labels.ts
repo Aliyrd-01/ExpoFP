@@ -1,17 +1,17 @@
-import Color from 'color';
-import settings from '@/settings';
-import { BoothDrawerBase } from './config-booths-base';
-import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from './canvases';
-import { subscribePtscaleChange, getPtscale } from './matrix';
-import { delayAnimations, requireUpdate } from './draw';
-import Drawer from './Drawer';
-import animate from './animate';
+import Color from "color";
+import settings from "@/settings";
+import { BoothDrawerBase } from "./config-booths-base";
+import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from "./canvases";
+import { subscribePtscaleChange, getPtscale } from "./matrix";
+import { delayAnimations, requireUpdate } from "./draw";
+import Drawer from "./Drawer";
+import animate from "./animate";
 
 const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
 const dotW = dotCanvas.width / 2;
 const dotH = dotCanvas.width / 2;
 
-const prefixes = ['Dot', 'XS', 'S', 'M', 'L', 'Details'];
+const prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
 
 let canUpdate = false;
 const updates = [];
@@ -24,7 +24,7 @@ function initDrawer(drawer1: Drawer) {
     window.setTimeout(() => {
         canUpdate = true;
         updates.forEach(u => u());
-        animate(0, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
+        animate(0, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => (drawer.alpha = v));
     }, delayAnimations + 800);
 }
 
@@ -32,9 +32,8 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
     private readonly factors: number[] = [];
 
     constructor(booth: Booth) {
-        super(booth, 'booth-label');
+        super(booth, "booth-label");
         initDrawer(this.drawer);
-
 
         const r = this.booth.rect;
 
@@ -45,13 +44,13 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
             canvasTmp: dotCanvas,
-            texPosition: 'center'
+            texPosition: "center"
         });
 
-        this.addLabel(7, 'XS');
-        this.addLabel(10, 'S');
-        this.addLabel(12, 'M');
-        this.addLabel(14, 'L');
+        this.addLabel(7, "XS");
+        this.addLabel(10, "S");
+        this.addLabel(12, "M");
+        this.addLabel(14, "L");
 
         const detailsCanvas = createDetailsCanvas(this.booth);
 
@@ -63,7 +62,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltaPts: [3, 3, -1, -1],
             scalePts: devicePixelRatio,
             canvasTmp: detailsCanvas,
-            texPosition: 'lefttop'
+            texPosition: "lefttop"
         });
 
         this.calcFactors();
@@ -91,7 +90,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
     update() {
         // if (!canDraw) return;
         if (!canUpdate) return;
-        let visiblePrefix = '';
+        let visiblePrefix = "";
         const ptscale = getPtscale();
 
         for (let i = 0; i < prefixes.length; i++) {
@@ -100,7 +99,8 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             if (ptscale < f) visiblePrefix = p;
         }
 
-        if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith('_food') && visiblePrefix !== 'Dot'){
+        if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith("_food") && visiblePrefix !== "Dot") {
+            // console.debug("awsamsterdam1");
             visiblePrefix = "Details";
         }
 
@@ -127,11 +127,10 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             deltas: [0, 0, 0, 0],
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
-            texPosition: 'center'
+            texPosition: "center"
         });
     }
 }
-
 
 // subscribePtscaleChange(() => {
 //     allDrawers.forEach(d => d.updateVisibleLabel());
