@@ -48,35 +48,62 @@
                     "name": {
                         "type": "string"
                     },
+                    
+                    "special": {
+                        "type": "boolean",
+                        "description": "When true - may have `title`, `description` and `color` fields. "
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Only for special=true"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "HTML. Only for special=true"
+                    },
+                    "color": {
+                        "type": "string",
+                        "description": "Only for special=true"
+                    },
                     "exhibitors": {
                         "type": "array",
                         "items": {
                             "type": "number"
-                        }
+                        },
+                        "description": "HTML. Only for special=false"
                     },
                     "type": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "HTML. Only for special=false"
                     },
                     "size": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "HTML. Only for special=false"
                     },
                     "price": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "HTML. Only for special=false"
                     },
+                   
                     "availColor": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "HTML. Only for special=false"
                     },
                     "soldColor": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "HTML. Only for special=false"
                     },
                     "typeColor": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "HTML. Only for special=false"
                     },
                     "buyUrl": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "HTML. Only for special=false"
                     },
                     "onHold": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "HTML. Only for special=false"
                     }
                 }
             }
