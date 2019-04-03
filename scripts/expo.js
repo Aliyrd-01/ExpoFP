@@ -1,7 +1,7 @@
 const gitBranch = require('git-branch');
 //const defaultExpo = "jtrade19";
 
-const fullBranch = gitBranch.sync();
+const fullBranch = gitBranch.sync().replace(/^expo-/, '');
 let branch = fullBranch;
 if (branch.startsWith("demo-")) branch = "demo";
 if (branch.startsWith("jtrade-")) branch = "jtrade19";
