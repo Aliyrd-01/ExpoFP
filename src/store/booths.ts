@@ -51,9 +51,16 @@ for (const r of d3
             const rotate = parseFloat(mt[3]);
             booth.rotate = (-rotate * Math.PI) / 180;
         } else {
-            const mm = transform.match(/matrix\(\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*\)/);
-            if (mm) {
-                booth.rotate = Math.asin(-parseFloat(mm[2]));
+            const mt = transform.match(/rotate\(([\-0-9\.]+).*\)/);
+            if (mt) {
+                const rotate = parseFloat(mt[1]);
+                booth.rotate = (-rotate * Math.PI) / 180;
+            }
+            else {
+                const mm = transform.match(/matrix\(\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*\)/);
+                if (mm) {
+                    booth.rotate = Math.asin(-parseFloat(mm[2]));
+                }
             }
         }
     }
