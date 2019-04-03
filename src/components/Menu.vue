@@ -109,7 +109,7 @@ export default {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
 }
-.expo-gcwsaustin .menu__title {
+.expo-atxcws20 .menu__title {
     padding-top: 1rem;
     padding-bottom: 1rem;
     > img {
