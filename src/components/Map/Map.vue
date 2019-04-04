@@ -103,7 +103,7 @@ export default {
         centerMap: function () {
             if (!this.centerMap) return;
             store.commit("setCenterMap", false);
-            this.zoomTo({ x: 0, y: 0, k: 1 }, true);
+            this.zoomTo(d3.zoomIdentity, true);
         },
         moveToBooths: function () {
             console.log("this.moveToBooths", this.moveToBooths);
