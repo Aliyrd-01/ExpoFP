@@ -155,7 +155,7 @@ const store1 = new Vuex.Store({
                 return;
             }
             const booth = state.booths[id];
-            if (booth.exhibitors.length === 1) {
+            if (booth.exhibitors && booth.exhibitors.length === 1) {
                 dispatch("selectExhibitor", booth.exhibitors[0]);
                 // } else if (booth.exhibitors.length > 1) {
                 //     dispatch('selectSearch', booth.name);
