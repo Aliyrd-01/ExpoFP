@@ -1,13 +1,14 @@
 const gitBranch = require('git-branch');
 //const defaultExpo = "jtrade19";
 
-const fullBranch = gitBranch.sync().replace(/^expo-/, '');
-let branch = fullBranch;
-if (branch.startsWith("demo-")) branch = "demo";
-if (branch.startsWith("jtrade-")) branch = "jtrade19";
-if (branch.startsWith("expo-")) branch = "expo";
-if (fullBranch !== branch && process.env.EFP_TARGET === "live") {
-    throw new Error(`Unknown expo. Won't run on ${branch} branch`);
+const branch = gitBranch.sync();
+let expo = branch.replace(/^expo-/, '');
+const expoBranch = expo !== branch;
+// let's have some expo branch for non-expo branch
+if (!expoBranch) expo = "expo"
+
+if (!expoBranch && process.env.EFP_TARGET === "live") {
+    throw new Error(`Unknown expo. Won't run LIVE on ${branch} branch - this is not expo branch.`);
 }
 
-module.exports = branch;
+module.exports = expo;
