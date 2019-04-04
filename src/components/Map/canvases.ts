@@ -48,13 +48,20 @@ export function createDetailsCanvas(b: Booth) {
     const detailFont = getFont(detailFontSize, 400);
     const boothPadding = 1 * devicePixelRatio;
 
+    let mainLine: string;
+    if (b.special === false) {
+        mainLine = b.name;
+    } else if (b.special === true) {
+        mainLine = b.title || b.name;
+    }
+
     const canvas = document.createElement("canvas");
     const c = canvas.getContext("2d");
     c.font = boothFont;
-    const boothWidth = c.measureText(b.name).width;
+    const mainLineWidth = c.measureText(mainLine).width;
     c.font = detailFont;
     const companiesWidth = lines.map(x => c.measureText(x).width);
-    const maxTextWidth = Math.max(boothWidth, ...companiesWidth);
+    const maxTextWidth = Math.max(mainLineWidth, ...companiesWidth);
     canvas.width = maxTextWidth + 2;
     const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * devicePixelRatio;
     canvas.height = height + 4;
@@ -64,10 +71,10 @@ export function createDetailsCanvas(b: Booth) {
     c.textAlign = "start";
     c.textBaseline = "hanging";
     c.font = boothFont;
-    if (b.special === false) {
-        c.fillText(b.name, 0, nextLine);
-        nextLine += boothFontSize + boothPadding;
-    }
+   
+    c.fillText(mainLine, 0, nextLine);
+    nextLine += boothFontSize + boothPadding;
+
     c.font = detailFont;
 
     for (const line of lines) {

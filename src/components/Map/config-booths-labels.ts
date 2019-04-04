@@ -104,6 +104,10 @@ export default class BoothLabelDrawer extends BoothDrawerBase {
             visiblePrefix = "Details";
         }
 
+        if (this.booth.special && visiblePrefix !== "Dot"){
+            visiblePrefix = "Details";
+        }
+
         for (const p of prefixes) {
             var obj = this.drawer.getObject(this.getId(p));
             if (!obj) debugger;

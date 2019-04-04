@@ -36,7 +36,7 @@ export default {
             return this.$store.getters.selectedBooth;
         },
         boothExhibitors() {
-            return this.booth.exhibitors.map(x => this.exhibitors[x]);
+            return this.booth.exhibitors ? this.booth.exhibitors.map(x => this.exhibitors[x]): [];
         },
         show() {
             return !this.menu && this.details && this.details.type === "booth";
