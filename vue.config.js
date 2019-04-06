@@ -11,7 +11,7 @@ try {
 }
 
 const localDataExists = fs.existsSync(`./expos/${expo}/data`);
-const localDataUrl = localDataExists ? 'data' : null;
+const localDataUrl = (localDataExists && process.env.NODE_ENV === "development") ? './data' : null;
 
 const dataUrlBase = localDataUrl || config.dataUrl || `https://${expo}.expofp.com/data`;
 const dataUrlBaseDev = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
