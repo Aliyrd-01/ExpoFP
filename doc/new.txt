@@ -1,10 +1,12 @@
 TODO
 
-rotate coords
+rotate coords -> create method rotate(rads):Polygon4
 add 2nd triangle
 add paths
 
 consolidate paths work (for bg + booths)
+
+
 
 
 
