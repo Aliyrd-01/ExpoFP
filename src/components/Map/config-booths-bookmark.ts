@@ -3,15 +3,16 @@ import { BoothDrawerBase } from './config-booths-base';
 import { createBookmarkCanvas } from './canvases';
 import { subscribePtscaleChange, getPtscale } from './matrix';
 import { requireUpdate } from './draw';
+import Drawer from './Drawer';
 
 const bookmarkCanvasL = createBookmarkCanvas(8);
 const bookmarkCanvasM = createBookmarkCanvas(5);
 // const bookmarkCanvasS = createBookmarkCanvas(5);
 
-export default class BoothBookmarkDrawer extends BoothDrawerBase {
+export default class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
 
     constructor(booth: Booth) {
-        super(booth, 'booth-bookmark');
+        super(booth, 'booth-bookmark', Drawer);
         const r = this.booth.rect;
 
         this.drawer.addObject({

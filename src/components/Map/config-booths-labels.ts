@@ -28,11 +28,11 @@ function initDrawer(drawer1: Drawer) {
     }, delayAnimations + 800);
 }
 
-export default class BoothLabelDrawer extends BoothDrawerBase {
+export default class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
     private readonly factors: number[] = [];
 
     constructor(booth: Booth) {
-        super(booth, "booth-label");
+        super(booth, "booth-label", Drawer);
         initDrawer(this.drawer);
 
         const r = this.booth.rect;

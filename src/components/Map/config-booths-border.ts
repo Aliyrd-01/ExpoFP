@@ -1,9 +1,10 @@
 import { BoothDrawerBase } from './config-booths-base';
 import Color from 'color';
+import Drawer from './Drawer';
 
-export default class BoothBorderDrawer extends BoothDrawerBase {
+export default class BoothBorderDrawer extends BoothDrawerBase<Drawer> {
     constructor(booth: Booth) {
-        super(booth, 'booth-border');
+        super(booth, 'booth-border', Drawer);
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;

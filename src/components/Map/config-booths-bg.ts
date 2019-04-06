@@ -3,44 +3,45 @@ import settings from "@/settings";
 import { BoothDrawerBase } from "./config-booths-base";
 import { getBoothState } from "./config-booths";
 import animate from "./animate";
+import TriangleDrawer2 from "./TriangleDrawer2";
+import { requireDrawer } from "./draw";
 
-export default class BoothBgDrawer extends BoothDrawerBase {
+export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
+
+    protected readonly booth: Booth;
+    protected readonly drawer: TriangleDrawer2;
+    public readonly updateBound: () => void;
+
     constructor(booth: Booth) {
-        super(booth, "booth-bg");
+        super(booth, "booth-bg", TriangleDrawer2);
+        // this.booth = booth;
+        // this.drawer = requireDrawer("booth-bg", TriangleDrawer2);
+        // this.updateBound = this.update.bind(this);
 
         const r = this.booth.rect;
+        const p0 = [r.x1, r.y1] as Vec2;
+        const p1 = [r.x2, r.y1] as Vec2;
+        const p2 = [r.x1, r.y2] as Vec2;
+        const p3 = [r.x2, r.y2] as Vec2;
+
+        const c = getBoothColor(this.booth);
+
         this.drawer.addObject({
-            id: this.getId("bg"),
-            rotateRadians: booth.rotate,
-            center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [0.5, 0.5, -0.5, -0.5]
+            p0, p1, p2,
+            color: c.vec4()
         });
         this.update();
     }
 
-    // private prevColor: string;
-    // private cancelColorAnimate: () => void;
+    // protected getId(name: string) {
+    //     return `b${this.booth.id}${name}`;
+    // }
 
     update() {
         const s = getBoothState(this.booth);
         const c = getBoothColor(this.booth);
-        // if (this.prevColor !== c) {
-        //     if (this.cancelColorAnimate) this.cancelColorAnimate();
-        //     // animate color
-        //     if (this.prevColor) {
-        //         this.cancelColorAnimate = animate(0, 100, null,
-        //             d3.interpolate(this.prevColor, c), v => {
-        //             this.drawer.updateColor(this.getId('bg'), Color(v).vec4());
-        //         })
-        //     } else {
-        //         this.drawer.updateColor(this.getId('bg'), Color(c).vec4());
-        //     }
-        //     this.prevColor = c;
-        // }
-
-        this.drawer.updateColor(this.getId("bg"), c.vec4());
-        this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
+        // this.drawer.updateColor(this.getId("bg"), c.vec4());
+        // this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
     }
 }
 
@@ -58,13 +59,6 @@ function getBoothColor(b: Booth) {
     if (s.error) color = "#f33";
     else if (s.selected) color = settings.colors.booths.selected;
     else color = defColor;
-
-    // if (b.name == "A51"){
-    //     debugger
-    // }
-    // if (s.dimmed && !s.selected) {
-    //     color = settings.colors.booths.empty; ;
-    // }
 
     let colorInfo = Color(color);
     if (s.hover && !s.selected) {

@@ -4,14 +4,14 @@ import BoothBorderDrawer from "./config-booths-border";
 import BoothLabelDrawer from "./config-booths-labels";
 import BoothBookmarkDrawer from "./config-booths-bookmark";
 import { BoothDrawerBase } from "./config-booths-base";
-const boothDrawers = new Map<number, BoothDrawerBase[]>();
+const boothDrawers = new Map<number, BoothDrawerBase<any>[]>();
 const boothStateCache = new Map<number, BoothState>();
 
 export default function config() {
     const booths = store.getters.boothsArray as Booth[];
     const drawerClasses = [BoothBgDrawer, BoothLabelDrawer, BoothBookmarkDrawer, BoothBorderDrawer];
     for (const b of booths) {
-        const ar: BoothDrawerBase[] = [];
+        const ar: BoothDrawerBase<any>[] = [];
         for (const Class of drawerClasses) {
             ar.push(new Class(b));
         }
