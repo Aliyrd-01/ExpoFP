@@ -9,11 +9,15 @@ try {
 } catch (ex) {
     config = {};
 }
-// const config = require(`./expos/${expo}/config`)
 
-const dataUrlBase = config.dataUrl || `https://${expo}.expofp.com/data`;
+const localDataExists = fs.existsSync(`./expos/${expo}/data`);
+const localDataUrl = localDataExists ? 'data' : null;
+
+const dataUrlBase = localDataUrl || config.dataUrl || `https://${expo}.expofp.com/data`;
 const dataUrlBaseDev = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
 const dataUrlBaseShow = config.dataUrl || `https://s3.amazonaws.com/efp-data-show/expos/${expo}/data`;
+
+console.info("Serving data from: ", dataUrlBase)
 // const gTag = config.gTag || 'UA-857963-22';
 //const logoUrl = config.logoUrl || `${expo}-logo.png`
 

@@ -2,7 +2,10 @@
 node_modules
 bower_components
 /dist
+# local copy of data
 /expos/*/data
+# same, but ignored by config
+/expos/*/data_
 
 # local env files
 .env.local
