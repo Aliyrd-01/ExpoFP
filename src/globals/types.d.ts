@@ -47,6 +47,7 @@ interface BoothBase {
     title: string;
     rect: Rect;
     rotate: number;
+    pathTriangles: Triangle[]
     slug: string;
     error?: boolean;
 }

@@ -68,6 +68,34 @@ for (const r of d3
     booth.rect = Rect.fromSvgRectElement(r);
 }
 
+for (const svgPath of d3
+    .select(svg)
+    .select("#Booths")
+    .selectAll("path")
+    .nodes() as SVGPathElement[]) {
+    const idInSvg = (svgPath.getAttribute("data-name") || svgPath.id).substring(1).toLowerCase();
+    let booth = boothsByName.get(idInSvg);
+    if (!booth) {
+        console.error("Invalid path for booth:", idInSvg);
+        continue;
+    }
+    const d = parseInt(svgPath.getAttribute('data-index'));
+    const mesh = __fpPaths[d];
+    for (const p of mesh.positions) {
+        // a bug in svgMesh3d when normalize: false ?
+        p[1] = -p[1];
+        p.length = 2;
+    }
+    booth.pathTriangles = [];
+    for (const c of mesh.cells) {
+        booth.pathTriangles.push([
+            mesh.positions[c[0]],
+            mesh.positions[c[1]],
+            mesh.positions[c[2]],
+        ]);
+    }
+}
+
 for (const b of Object.values(booths)) {
     if (!b.rect) {
         console.error("__data booth not found in SVG:", b.name, b);

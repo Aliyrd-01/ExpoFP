@@ -1,10 +1,15 @@
 TODO
 
-rotate coords -> create method rotate(rads):Polygon4
-add 2nd triangle
-add paths
+learn makersjs example
+make add outline path
 
-consolidate paths work (for bg + booths)
+//rotate coords -> create method rotate(rads):Polygon4
+//add 2nd triangle
+//add paths
+
+//consolidate paths work (for bg + booths)
+
+
 
 
 

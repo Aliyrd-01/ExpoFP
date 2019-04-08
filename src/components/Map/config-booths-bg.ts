@@ -18,18 +18,28 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
         // this.drawer = requireDrawer("booth-bg", TriangleDrawer2);
         // this.updateBound = this.update.bind(this);
 
-        const r = this.booth.rect;
-        const p0 = [r.x1, r.y1] as Vec2;
-        const p1 = [r.x2, r.y1] as Vec2;
-        const p2 = [r.x1, r.y2] as Vec2;
-        const p3 = [r.x2, r.y2] as Vec2;
+        let triangles: Triangle[];
+
+        if (booth.pathTriangles) triangles = booth.pathTriangles;
+        else {
+            const p = Polygon4.fromRect(this.booth.rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
+            triangles = [
+                [[p.x1, p.y1], [p.x2, p.y2], [p.x4, p.y4]],
+                [[p.x2, p.y2], [p.x4, p.y4], [p.x3, p.y3]]
+            ];
+        }
 
         const c = getBoothColor(this.booth);
+        for (const t of triangles) {
+            this.drawer.addObject({
+                p0: t[0],
+                p1: t[1],
+                p2: t[2],
+                color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+            });
+        }
 
-        this.drawer.addObject({
-            p0, p1, p2,
-            color: c.vec4()
-        });
+
         this.update();
     }
 
