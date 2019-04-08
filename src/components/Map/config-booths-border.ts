@@ -10,6 +10,44 @@ export default class BoothBorderDrawer extends BoothDrawerBase<Drawer> {
         const r = this.booth.rect;
         const width = 0.7;
 
+        
+        // this.drawer.addObject({
+        //     id: this.getId("_1"),
+        //     rotateRadians: booth.rotate,
+        //     center: [r.cx, r.cy],
+        //     deltas: [-r.w / 2 - width, -r.h / 2 - width, r.w / 2 + width, -r.h / 2 + width],
+        //     deltaPts: [-0, -0, 0, 0],
+        //     scalePts: devicePixelRatio,
+        //     color: borderColor
+        // });
+        // this.drawer.addObject({
+        //     id: this.getId("_2"),
+        //     rotateRadians: booth.rotate,
+        //     center: [r.cx, r.cy],
+        //     deltas: [-r.w / 2 - width, -r.h / 2 - width, -r.w / 2 + width, r.h / 2 + width],
+        //     scalePts: devicePixelRatio,
+        //     deltaPts: [-0, -0, 0, 0],
+        //     color: borderColor
+        // });
+        // this.drawer.addObject({
+        //     id: this.getId("_3"),
+        //     rotateRadians: booth.rotate,
+        //     center: [r.cx, r.cy],
+        //     deltas: [-r.w / 2 - width, r.h / 2 - width, r.w / 2 + width, r.h / 2 + width],
+        //     scalePts: devicePixelRatio,
+        //     deltaPts: [-0, -0, 0, 0],
+        //     color: borderColor
+        // });
+        // this.drawer.addObject({
+        //     id: this.getId("_4"),
+        //     rotateRadians: booth.rotate,
+        //     center: [r.cx, r.cy],
+        //     deltas: [r.w / 2 - width, -r.h / 2 - width, r.w / 2 + width, r.h / 2 + width],
+        //     scalePts: devicePixelRatio,
+        //     deltaPts: [-0, -0, 0, 0],
+        //     color: borderColor
+        // });
+
         this.drawer.addObject({
             id: this.getId("_1"),
             rotateRadians: booth.rotate,
