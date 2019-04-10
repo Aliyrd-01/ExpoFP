@@ -1,8 +1,8 @@
 <template>
     <transition-group name="ws__list" tag="section" :class="sectionClass" :style="sectionStyle" @mouseover="mouseover"
         @mouseout="mouseout">
-        <a :href="`?${e.slug}`" v-for="e in adv" :key="e.slug" class="ws__exhibitor" :style='{height: `${wsHeightPx}px`}'
-            @click.prevent="select(e.id)"><img :src='e.logo' :alt='e.name'></a>
+        <a :href="`?${e.e.slug}`" v-for="e in adv" :key="e.key" class="ws__exhibitor" :style='{height: `${wsHeightPx}px`}'
+            @click.prevent="select(e.e.id)"><img :src='e.e.logo' :alt='e.e.name'></a>
     </transition-group>
 </template>
 
@@ -72,7 +72,7 @@ export default {
                 if (filledWidth + width > maxWidth) break;
 
                 filledWidth += width;
-                adv.push(e);
+                adv.push({ key: adv.length, e: e });
                 this.index++;
 
             } while (true)

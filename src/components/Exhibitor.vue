@@ -164,6 +164,7 @@ export default {
             e.target.blur();
             const email = this.sendLinkEmail;
             if (!confirm(`Send login instructions to ${email} to edit profile?`)) return;
+            if (EFP_EXPO !== "expo") return;
             const xhr = new XMLHttpRequest();
             xhr.open("POST", __data.sendLoginLinkUrl);
             xhr.setRequestHeader("Content-Type", "application/json");
