@@ -1,7 +1,14 @@
 TODO
 
-learn makersjs example
-make add outline path
+modify example to create 0.4pt inside-outside border around paths
+make it part of svg-prepare
+
+add var to fp code - outline width for rects
+make expo-expo draw outline of path (border)
+
+
+//learn makersjs example
+//make add outline path
 
 //rotate coords -> create method rotate(rads):Polygon4
 //add 2nd triangle
