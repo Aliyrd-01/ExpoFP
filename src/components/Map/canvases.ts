@@ -36,7 +36,7 @@ export function createDetailsCanvas(b: Booth) {
                 lines.push("On Hold");
             } else {
                 if (b.size) lines.push(b.size);
-                if (b.price) lines.push(b.price);
+                if (b.price && b.price !== '0') lines.push(b.price);
             }
         }
     }
