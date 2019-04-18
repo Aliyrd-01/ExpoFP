@@ -63,7 +63,8 @@
                             "type": "string"
                         },
                         "price": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "if '0' string, then the floor plan will show `reserve` instead of `buy`"
                         },
                         "availColor": {
                             "type": "string"

@@ -10,7 +10,7 @@
             <div class="info" v-if='booth.price && !booth.onHold'>{{booth.price}}</div>
             <span v-html="instructions" v-if='!booth.onHold'></span>
             <div class="buy" v-if='booth.buyUrl && !booth.onHold'>
-                <a :href='booth.buyUrl' target='_blank'>Buy</a>
+                <a :href='booth.buyUrl' target='_blank'>{{booth.price === '0' ? 'Reserve' : 'Buy'}}</a>
             </div>
         </div>
         <div class="booth__content -spec" v-if="booth.special === true">
