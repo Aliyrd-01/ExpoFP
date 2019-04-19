@@ -3,7 +3,7 @@
         <template slot="bar">
             <div class="menu__bar">
                 <a class="menu__title" :href="homeUrl" target="_blank">
-                    <img :src="logoUrl" />
+                    <img :src="logoUrl" onerror="this.style.visibility='hidden'"/>
                 </a>
             </div>
         </template>
