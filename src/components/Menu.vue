@@ -3,12 +3,12 @@
         <template slot="bar">
             <div class="menu__bar">
                 <a class="menu__title" :href="homeUrl" target="_blank">
-                    <img :src="logoUrl" />
+                    <img :src="logoUrl" onerror="this.style.visibility='hidden'"/>
                 </a>
             </div>
         </template>
         <div class="menu__content">
-            <a :href='homeUrl' target="_blank" class="menu__item"><i class="fas fa-home"></i> Expo&nbsp;Home&nbsp;<i
+            <a :href='homeUrl' target="_blank" class="menu__item"><i class="fas fa-home"></i> Event&nbsp;Home&nbsp;<i
                     class="fas fa-external-link"></i></a>
             <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");'
                 class="menu__item -bookmarks"><i class="fas fa-bookmark"></i>
@@ -18,7 +18,7 @@
             </a>
             <!-- <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a> -->
             <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>
-            <div class="menu__item">Categories</div>
+            <div class="menu__item" v-if="categoriesArray.length">Categories</div>
             <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id"
                 @click.prevent='$store.dispatch("clickCategory", c.id);'>
                 <div class="menu__cat-bullet">&bullet;</div>

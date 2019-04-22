@@ -7,10 +7,10 @@
             <div class="info" v-if='booth.onHold'>On Hold</div>
             <div class="info" v-if='booth.type && !booth.onHold'>{{__data.boothTerm}} Type: {{booth.type}}<br /><br /></div>
             <div class="info" v-if='booth.size && !booth.onHold'>{{booth.size}}</div>
-            <div class="info" v-if='booth.price && !booth.onHold'>{{booth.price}}</div>
+            <div class="info" v-if='booth.price && !booth.onHold && !reserve'>{{booth.price}}</div>
             <span v-html="instructions" v-if='!booth.onHold'></span>
             <div class="buy" v-if='booth.buyUrl && !booth.onHold'>
-                <a :href='booth.buyUrl' target='_blank'>Buy</a>
+                <a :href='booth.buyUrl' target='_blank'>{{reserve ? 'Reserve' : 'Buy'}}</a>
             </div>
         </div>
         <div class="booth__content -spec" v-if="booth.special === true">
@@ -34,6 +34,9 @@ export default {
         },
         booth() {
             return this.$store.getters.selectedBooth;
+        },
+        reserve(){
+            return this.booth.price === '0';
         },
         boothExhibitors() {
             return this.booth.exhibitors ? this.booth.exhibitors.map(x => this.exhibitors[x]): [];
