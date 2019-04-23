@@ -1,5 +1,14 @@
 TODO
 
+
+modify FP to draw start now for booth 1745
+FP doesn't launch (
+
+
+//svg-prepare
+    //load svg as xml
+
+
 modify example to create 0.4pt inside-outside border around paths
 make it part of svg-prepare
 
