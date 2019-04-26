@@ -182,6 +182,10 @@ namespace local {
 
             return new Polygon4(x1, y1, x2, y2, x3, y3, x4, y4);
         }
+
+        toTriangles(): [Triangle, Triangle] {
+            return [[[this.x1, this.y1], [this.x2, this.y2], [this.x4, this.y4]], [[this.x2, this.y2], [this.x4, this.y4], [this.x3, this.y3]]];
+        }
     }
 }
 

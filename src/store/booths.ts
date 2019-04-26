@@ -70,6 +70,25 @@ for (const r of d3
     booth.rect = Rect.fromSvgRectElement(r);
 }
 
+function getTrianglesFromFpPaths(index: number) {
+    const mesh = __fpPaths[index];
+    for (const p of mesh.positions) {
+        // a bug in svgMesh3d when normalize: false ?
+        p[1] = -p[1];
+        p.length = 2;
+    }
+    const pathTriangles = [];
+    for (const c of mesh.cells) {
+        pathTriangles.push([
+            mesh.positions[c[0]],
+            mesh.positions[c[1]],
+            mesh.positions[c[2]],
+        ]);
+    }
+
+    return pathTriangles;
+}
+
 for (const svgPath of d3
     .select(svg)
     .select("#Booths")
@@ -82,20 +101,8 @@ for (const svgPath of d3
         continue;
     }
     const d = parseInt(svgPath.getAttribute('data-index'));
-    const mesh = __fpPaths[d];
-    for (const p of mesh.positions) {
-        // a bug in svgMesh3d when normalize: false ?
-        p[1] = -p[1];
-        p.length = 2;
-    }
-    booth.pathTriangles = [];
-    for (const c of mesh.cells) {
-        booth.pathTriangles.push([
-            mesh.positions[c[0]],
-            mesh.positions[c[1]],
-            mesh.positions[c[2]],
-        ]);
-    }
+    booth.pathTriangles = getTrianglesFromFpPaths(d);
+    booth.borderPathTriangles = getTrianglesFromFpPaths(d + 1);
 }
 
 for (const b of Object.values(booths)) {

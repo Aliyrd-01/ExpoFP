@@ -8,8 +8,8 @@ import { requireDrawer } from "./draw";
 
 export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
 
-    protected readonly booth: Booth;
-    protected readonly drawer: TriangleDrawer2;
+    // protected readonly booth: Booth;
+    // protected readonly drawer: TriangleDrawer2;
     public readonly updateBound: () => void;
 
     constructor(booth: Booth) {
@@ -23,10 +23,7 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
         if (booth.pathTriangles) triangles = booth.pathTriangles;
         else {
             const p = Polygon4.fromRect(this.booth.rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
-            triangles = [
-                [[p.x1, p.y1], [p.x2, p.y2], [p.x4, p.y4]],
-                [[p.x2, p.y2], [p.x4, p.y4], [p.x3, p.y3]]
-            ];
+            triangles = p.toTriangles();
         }
 
         const c = getBoothColor(this.booth);
@@ -38,7 +35,6 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
                 color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
             });
         }
-
 
         this.update();
     }
