@@ -41,6 +41,7 @@ for (const r of d3
             error: true
         } as any;
         booths[booth.id] = booth;
+        boothsByName.set(idInSvg, booth);
     } //else
 
     const transform = r.getAttribute("transform");

@@ -33,7 +33,6 @@ d3.select(svg).selectAll("style").each(function () {
 d3.select(svg).selectAll("*[class]").each(function () {
     const el = this as SVGGraphicsElement;
     el.style.fill = classFill.get(el.className.baseVal);
-    console.log(el);
 });
 
 
