@@ -2,7 +2,7 @@ TODO
 
 
 modify FP to draw start now for booth 1745
-FP doesn't launch (
+FP doesn't launch (see why and fix
 
 
 //svg-prepare
@@ -24,16 +24,6 @@ make expo-expo draw outline of path (border)
 //add paths
 
 //consolidate paths work (for bg + booths)
-
-
-
-
-
-
-
-
-
-
 
 
 

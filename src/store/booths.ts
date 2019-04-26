@@ -5,6 +5,7 @@ import { getNextId } from "@/services/id";
 
 //__data.booths.splice(3);
 
+
 const booths = __data.booths.reduce((a, c) => (a[c.id] = c) && a, {} as { [id: number]: Booth });
 //const boothsBySlug = new Map<string, Booth>();
 const boothsByName = new Map<string, Booth>();
@@ -30,7 +31,7 @@ for (const r of d3
     const idInSvg = (r.getAttribute("data-name") || r.id).substring(1).toLowerCase();
     let booth = boothsByName.get(idInSvg);
     if (!booth) {
-        console.error("SVG booth not found in __data: ", idInSvg);
+        console.error("SVG booth rect not found in __data:", idInSvg);
         // create fake booth
         booth = {
             id: getNextId(),
@@ -76,7 +77,7 @@ for (const svgPath of d3
     const idInSvg = (svgPath.getAttribute("data-name") || svgPath.id).substring(1).toLowerCase();
     let booth = boothsByName.get(idInSvg);
     if (!booth) {
-        console.error("Invalid path for booth:", idInSvg);
+        console.error("SVG booth path not found in __data:", idInSvg);
         continue;
     }
     const d = parseInt(svgPath.getAttribute('data-index'));
