@@ -9,7 +9,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
-        const width = typeof __fpBorderWidth !== "undefined" && __fpBorderWidth || 1;
+        const width = __fpBorderWidth;
 
         let triangles: Triangle[];
 

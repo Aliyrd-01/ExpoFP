@@ -54,11 +54,13 @@ export default class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
 
         const detailsCanvas = createDetailsCanvas(this.booth);
 
+        const pad = __fpBorderWidth / 2;
+
         this.drawer.addObject({
             id: this.getId("Details"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
             deltaPts: [3, 3, -1, -1],
             scalePts: devicePixelRatio,
             canvasTmp: detailsCanvas,
@@ -104,7 +106,7 @@ export default class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             visiblePrefix = "Details";
         }
 
-        if (this.booth.special && visiblePrefix !== "Dot"){
+        if (this.booth.special && visiblePrefix !== "Dot") {
             visiblePrefix = "Details";
         }
 

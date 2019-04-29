@@ -1,6 +1,8 @@
 TODO
 
-on zoom - border hides text
+//on zoom - border hides text
+save border-width in SVG
+publish new svg creator
 
 //make it draw border for star - 
 //save border width in svg.js and have default and use it

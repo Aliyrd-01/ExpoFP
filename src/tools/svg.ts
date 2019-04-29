@@ -1,10 +1,9 @@
 function parseSvg(text: string) {
-    // if (EFP_EXPO === "demo") text = replaceXml(text);
-    // console.log(text);
-
     const parser = new DOMParser();
     return parser.parseFromString(text, "image/svg+xml").documentElement as any as SVGElement;
 }
+
+if (typeof __fpBorderWidth === "undefined") window["__fpBorderWidth"] = 1;
 
 const overrideSvg = localStorage.getItem('overrideSvg');
 
