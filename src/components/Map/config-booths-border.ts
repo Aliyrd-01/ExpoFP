@@ -1,6 +1,6 @@
 import { BoothDrawerBase } from './config-booths-base';
 import Color from 'color';
-import TriangleDrawer from './TriangleDrawer2';
+import TriangleDrawer from './TriangleDrawer';
 
 export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
 
