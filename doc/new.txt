@@ -5,8 +5,10 @@ TODO
 //save border width in svg.js and have default and use it
 //restore rotated booths
 //rotate borders (add func to Polygon4)
-restore good color and hover
-    add skipdim and updatecolor to triangledrawer2
+//restore good color and hover
+    //add skipdim and updatecolor to triangledrawer2
+make TriangleDrawer2 sortable by skipdim (use indices?)
+    
 
 
 remvoe old TriangleDrawer in favor of TriangleDrawer2(see why I created it)

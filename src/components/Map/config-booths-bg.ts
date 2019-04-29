@@ -8,15 +8,10 @@ import { requireDrawer } from "./draw";
 
 export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
 
-    // protected readonly booth: Booth;
-    // protected readonly drawer: TriangleDrawer2;
     public readonly updateBound: () => void;
 
     constructor(booth: Booth) {
         super(booth, "booth-bg", TriangleDrawer2);
-        // this.booth = booth;
-        // this.drawer = requireDrawer("booth-bg", TriangleDrawer2);
-        // this.updateBound = this.update.bind(this);
 
         let triangles: Triangle[];
 
@@ -39,10 +34,6 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
 
         this.update();
     }
-
-    // protected getId(name: string) {
-    //     return `b${this.booth.id}${name}`;
-    // }
 
     update() {
         const s = getBoothState(this.booth);
