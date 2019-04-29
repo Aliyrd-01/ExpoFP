@@ -1,8 +1,11 @@
 TODO
 
 //on zoom - border hides text
-save border-width in SVG
+//save border-width in SVG booth element
 publish new svg creator
+test new demo with existing data
+publish to expo-expo (save old)
+
 
 //make it draw border for star - 
 //save border width in svg.js and have default and use it
