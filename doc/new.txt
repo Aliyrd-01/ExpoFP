@@ -8,6 +8,8 @@ TODO
 //restore good color and hover
     //add skipdim and updatecolor to triangledrawer2
 make TriangleDrawer2 sortable by skipdim (use indices?)
+    see how current Drawer works
+cursor for links in not hand! 
     
 
 

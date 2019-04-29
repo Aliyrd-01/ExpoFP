@@ -77,18 +77,11 @@ export default class TriangleDrawer2 {
 
             // 3 vec2
             positions.push(...w.p0, ...w.p1, ...w.p2);
-
-            // 3 vec4
-            // {
-            //     const c = w.color || [0, 0, 0];
-            //     colors.push(...c, ...c, ...c);
-            // }
         }
 
         this.bufferFloat32Array(this.posBuffer, positions);
-        // this.bufferFloat32Array(this.colorBuffer, colors);
 
-        // this.populateColorBuffer();
+        this.populateColorBuffer();
         this.populateSkipdimBuffer();
     }
 
