@@ -53,19 +53,23 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer2> 
 
         let triangles: Triangle[];
 
+        function addTriangles(cx, cy, w, h) {
+            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(cx, cy, w, h)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+        }
+
         if (booth.pathTriangles) triangles = booth.borderPathTriangles;
         else {
             triangles = [];
-            // 
 
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx, r.cy - r.h / 2, r.w + width, width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx, r.cy + r.h / 2, r.w + width, width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx - r.w / 2, r.cy, width, r.h + width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx + r.w / 2, r.cy, width, r.h + width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+            addTriangles(r.cx, r.cy - r.h / 2, r.w + width, width);
+            addTriangles(r.cx, r.cy + r.h / 2, r.w + width, width);
+            addTriangles(r.cx - r.w / 2, r.cy, width, r.h + width);
+            addTriangles(r.cx + r.w / 2, r.cy, width, r.h + width);
         }
 
         for (const t of triangles) {
             this.drawer.addObject({
+                id: this.getId("border"),
                 p0: t[0],
                 p1: t[1],
                 p2: t[2],
@@ -117,7 +121,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer2> 
 
     update() {
         const skipDimm = this.getBoothState().skipDim;
-        // this.drawer.updateSkipdim(this.getId('_1'), skipDimm);
+        this.drawer.updateSkipdim(this.getId('border'), skipDimm);
         // this.drawer.updateSkipdim(this.getId('_2'), skipDimm);
         // this.drawer.updateSkipdim(this.getId('_3'), skipDimm);
         // this.drawer.updateSkipdim(this.getId('_4'), skipDimm);

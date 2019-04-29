@@ -29,10 +29,11 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
         const c = getBoothColor(this.booth);
         for (const t of triangles) {
             this.drawer.addObject({
+                id: this.getId("bg"),
                 p0: t[0],
                 p1: t[1],
                 p2: t[2],
-                color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+                // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
             });
         }
 
@@ -46,8 +47,8 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
     update() {
         const s = getBoothState(this.booth);
         const c = getBoothColor(this.booth);
-        // this.drawer.updateColor(this.getId("bg"), c.vec4());
-        // this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
+        this.drawer.updateColor(this.getId("bg"), c.vec4());
+        this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
     }
 }
 
