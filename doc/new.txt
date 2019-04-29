@@ -1,5 +1,6 @@
 TODO
 
+on zoom - border hides text
 
 //make it draw border for star - 
 //save border width in svg.js and have default and use it
@@ -7,16 +8,19 @@ TODO
 //rotate borders (add func to Polygon4)
 //restore good color and hover
     //add skipdim and updatecolor to triangledrawer2
-make TriangleDrawer2 sortable by skipdim (use indices?)
+//make TriangleDrawer2 sortable by skipdim (use indices?)
     //see how current Drawer works
-    redo in indices DrawElements
+    //redo in indices DrawElements
+
+
+
 cursor for links in not hand! 
     
 
 
-remvoe old TriangleDrawer in favor of TriangleDrawer2(see why I created it)
-test dim, triangledrawer2 should have updateSkipDim
-on zoom - border hides text
+//remvoe old TriangleDrawer in favor of TriangleDrawer2(see why I created it)
+//test dim, triangledrawer2 should have updateSkipDim
+
 
 
 //modify FP to draw start now for booth 1745

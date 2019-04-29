@@ -52,50 +52,6 @@ export default class TriangleDrawer2 {
         }
     }
 
-    private ensureBuffersAndGroups() {
-        if (this.buffersInitialized) {
-            this.populateBuffers();
-            this.buffersInitialized = false;
-        }
-
-        if (this.colorsDirty) {
-            this.populateColorBuffer();
-            this.colorsDirty = false;
-        }
-
-        if (this.skipdimDirty) {
-            this.populateSkipdimBuffer();
-            this.skipdimDirty = false;
-        }
-    }
-
-    private populateBuffers() {
-
-        const positions: number[] = [];
-        // const colors: number[] = [];
-
-        for (let i = 0; i < this.objects.length; i++) {
-            const w = this.objects[i];
-
-            // 3 vec2
-            positions.push(...w.p0, ...w.p1, ...w.p2);
-        }
-
-        this.bufferFloat32Array(this.posBuffer, positions);
-
-        const indices: number[] = [];
-        for (let i = 0; i < this.objects.length * 3; i += 3) {
-            indices.push(i, i + 1, i + 2);
-        }
-
-        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
-
-
-        this.populateColorBuffer();
-        this.populateSkipdimBuffer();
-    }
-
     updateSkipdim(id: string, skipdim: boolean) {
         const objs = this.objectsById.get(id) || [];
         for (const obj of objs) {
@@ -122,6 +78,45 @@ export default class TriangleDrawer2 {
         }
     }
 
+    private ensureBuffersAndGroups() {
+        if (this.buffersInitialized) {
+            this.populateBuffers();
+            this.buffersInitialized = false;
+        }
+
+        if (this.colorsDirty) {
+            this.populateColorBuffer();
+            this.colorsDirty = false;
+        }
+
+        if (this.skipdimDirty) {
+            this.populateSkipdimBuffer();
+            this.populateIndexBuffer();
+            this.skipdimDirty = false;
+        }
+    }
+
+    private populateBuffers() {
+
+        const positions: number[] = [];
+        // const colors: number[] = [];
+
+        for (let i = 0; i < this.objects.length; i++) {
+            const w = this.objects[i];
+
+            // 3 vec2
+            positions.push(...w.p0, ...w.p1, ...w.p2);
+        }
+
+        this.bufferFloat32Array(this.posBuffer, positions);
+
+
+        this.populateColorBuffer();
+        this.populateSkipdimBuffer();
+        this.populateIndexBuffer();
+    }
+
+
     private populateColorBuffer() {
         const colors: number[] = [];
         for (const w of this.objects) {
@@ -140,6 +135,21 @@ export default class TriangleDrawer2 {
         }
 
         this.bufferFloat32Array(this.skipdimBuffer, skipdims);
+    }
+
+    private populateIndexBuffer() {
+        const indices: number[] = [];
+        const skipDimIndices: number[] = [];
+
+        for (let i = 0; i < this.objects.length; i++) {
+            let ar = this.objects[i].skipdim ? skipDimIndices : indices;
+            ar.push(i * 3, i * 3 + 1, i * 3 + 2);
+        }
+
+        indices.push(...skipDimIndices);
+
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
     }
 
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
