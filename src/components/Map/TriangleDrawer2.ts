@@ -18,6 +18,7 @@ export default class TriangleDrawer2 {
     private readonly colorBuffer: WebGLBuffer;
     private readonly skipdimLocation: number;
     private readonly skipdimBuffer: WebGLBuffer;
+    private readonly indexBuffer: WebGLBuffer;
 
     // to be set externally
     public matrix: any;
@@ -35,6 +36,7 @@ export default class TriangleDrawer2 {
         this.posBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
         this.skipdimBuffer = gl.createBuffer();
+        this.indexBuffer = gl.createBuffer();
     }
 
     addObject(item: TriangleDrawerObject) {
@@ -80,6 +82,15 @@ export default class TriangleDrawer2 {
         }
 
         this.bufferFloat32Array(this.posBuffer, positions);
+
+        const indices: number[] = [];
+        for (let i = 0; i < this.objects.length * 3; i += 3) {
+            indices.push(i, i + 1, i + 2);
+        }
+
+        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.gl.STATIC_DRAW);
+
 
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
@@ -150,6 +161,8 @@ export default class TriangleDrawer2 {
 
         this.ensureBuffersAndGroups();
 
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+
         this.enableBuffer(this.posBuffer, this.posLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
         this.enableBuffer(this.skipdimBuffer, this.skipdimLocation, 1);
@@ -163,7 +176,9 @@ export default class TriangleDrawer2 {
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);
-        gl.drawArrays(gl.TRIANGLES, 0, this.objects.length * 3);
+        //gl.drawArrays(gl.TRIANGLES, 0, this.objects.length * 3);
+
+        gl.drawElements(gl.TRIANGLES, this.objects.length * 3, gl.UNSIGNED_SHORT, 0);
     }
 }
 
