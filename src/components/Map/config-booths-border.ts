@@ -11,7 +11,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer2> 
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
-        const width = 0.7;
+        const width = typeof __fpBorderWidth !== "undefined" && __fpBorderWidth || 1;
 
 
         // this.drawer.addObject({
@@ -56,18 +56,20 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer2> 
         if (booth.pathTriangles) triangles = booth.borderPathTriangles;
         else {
             triangles = [];
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx, r.cy - r.h / 2, r.w + width, width)).toTriangles());
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx, r.cy + r.h / 2, r.w + width, width)).toTriangles());
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx - r.w / 2, r.cy, width, r.h + width)).toTriangles());
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx + r.w / 2, r.cy, width, r.h + width)).toTriangles());
-            }
+            // 
+
+            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx, r.cy - r.h / 2, r.w + width, width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx, r.cy + r.h / 2, r.w + width, width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx - r.w / 2, r.cy, width, r.h + width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(r.cx + r.w / 2, r.cy, width, r.h + width)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+        }
 
         for (const t of triangles) {
             this.drawer.addObject({
                 p0: t[0],
                 p1: t[1],
                 p2: t[2],
-                color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+                color: borderColor//Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
             });
         }
 

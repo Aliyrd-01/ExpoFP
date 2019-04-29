@@ -44,6 +44,8 @@ for (const r of d3
         boothsByName.set(idInSvg, booth);
     } //else
 
+    booth.rect = Rect.fromSvgRectElement(r);
+
     const transform = r.getAttribute("transform");
     if (transform) {
         const mt = transform.match(/translate\(([\-0-9\.]+) ([\-0-9\.]+)\) rotate\(([\-0-9\.]+)\)/);
@@ -59,15 +61,21 @@ for (const r of d3
                 booth.rotate = (-rotate * Math.PI) / 180;
             }
             else {
-                const mm = transform.match(/matrix\(\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*,\s*([\-0-9\.]+)\s*\)/);
+                const mm = transform.match(/matrix\(\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*\)/);
                 if (mm) {
                     booth.rotate = Math.asin(-parseFloat(mm[2]));
                 }
             }
         }
+        // ET: this is a fix for Illustrator re-save (it can have large rotates)
+        const maxDegree = 45.5;
+        if (booth.rotate > maxDegree / 180 * Math.PI) {
+            booth.rotate = booth.rotate - 90 * Math.PI / 180;
+            // also swap width and height of rect
+            const r = booth.rect;
+            booth.rect = Rect.fromCxcywh(r.cx, r.cy, r.h, r.w);
+        }
     }
-
-    booth.rect = Rect.fromSvgRectElement(r);
 }
 
 function getTrianglesFromFpPaths(index: number) {

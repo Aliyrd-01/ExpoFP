@@ -1,8 +1,10 @@
 TODO
 
 
-make it draw border for star - 
-save border width in svg.js and have default and use it
+//make it draw border for star - 
+//save border width in svg.js and have default and use it
+//restore rotated booths
+rotate borders (add func to Polygon4)
 remvoe old TriangleDrawer in favor of TriangleDrawer2(see why I created it)
 test dim, triangledrawer2 should have updateSkipDim
 on zoom - border hides text
