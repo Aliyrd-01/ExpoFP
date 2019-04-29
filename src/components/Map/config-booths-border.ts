@@ -1,11 +1,11 @@
 import { BoothDrawerBase } from './config-booths-base';
 import Color from 'color';
-import TriangleDrawer2 from './TriangleDrawer2';
+import TriangleDrawer from './TriangleDrawer2';
 
-export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer2> {
+export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
 
     constructor(booth: Booth) {
-        super(booth, 'booth-border', TriangleDrawer2);
+        super(booth, 'booth-border', TriangleDrawer);
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;

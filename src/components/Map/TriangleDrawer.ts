@@ -1,7 +1,7 @@
 import * as twgl from 'twgl.js';
 import { dimColor } from './common-glsl';
 
-export default class TriangleDrawer2 {
+export default class TriangleDrawer {
     readonly gl: WebGLRenderingContext;
     private buffersInitialized = true;
     private colorsDirty = true;

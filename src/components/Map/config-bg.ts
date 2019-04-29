@@ -1,13 +1,11 @@
 import Color from 'color';
-import { requireDrawer, requireUpdate } from "./draw";
-import TriangleDrawer2 from "./TriangleDrawer2";
-import settings from '@/settings';
+import { requireDrawer } from "./draw";
+import TriangleDrawer from "./TriangleDrawer";
 import svg from '@/tools/svg'
-import animate from './animate';
 // import svgMesh3d from 'svg-mesh-3d';
 
 export default function configBg() {
-    const drawer = requireDrawer('bg', TriangleDrawer2);
+    const drawer = requireDrawer('bg', TriangleDrawer);
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
     const bgElements = (d3.select(svg).select('#BG').selectAll('path, rect').nodes() as SVGElement[]);

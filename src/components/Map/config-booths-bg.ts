@@ -2,16 +2,14 @@ import Color from "color";
 import settings from "@/settings";
 import { BoothDrawerBase } from "./config-booths-base";
 import { getBoothState } from "./config-booths";
-import animate from "./animate";
-import TriangleDrawer2 from "./TriangleDrawer2";
-import { requireDrawer } from "./draw";
+import TriangleDrawer from "./TriangleDrawer";
 
-export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer2> {
+export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
 
     public readonly updateBound: () => void;
 
     constructor(booth: Booth) {
-        super(booth, "booth-bg", TriangleDrawer2);
+        super(booth, "booth-bg", TriangleDrawer);
 
         let triangles: Triangle[];
 

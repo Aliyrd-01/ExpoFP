@@ -1,9 +1,9 @@
 import { requireDrawer } from "./draw";
 import Drawer from "./Drawer";
 import { getBoothState } from "./config-booths";
-import TriangleDrawer2 from "./TriangleDrawer2";
+import TriangleDrawer from "./TriangleDrawer";
 
-export abstract class BoothDrawerBase<T extends Drawer | TriangleDrawer2> {
+export abstract class BoothDrawerBase<T extends Drawer | TriangleDrawer> {
     protected readonly booth: Booth;
     protected readonly drawer: T;
     public readonly updateBound: () => void;
