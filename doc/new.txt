@@ -2,9 +2,9 @@ TODO
 
 //on zoom - border hides text
 //save border-width in SVG booth element
-publish new svg creator
-test new demo with existing data
-publish to expo-expo (save old)
+//publish new svg creator
+//test new demo with existing data
+//publish to expo-expo (save old)
 
 
 //make it draw border for star - 
@@ -19,7 +19,7 @@ publish to expo-expo (save old)
 
 
 
-cursor for links in not hand! 
+//cursor for links in not hand! 
     
 
 
