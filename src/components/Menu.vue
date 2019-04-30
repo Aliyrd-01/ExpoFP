@@ -10,14 +10,15 @@
         <div class="menu__content">
             <a :href='homeUrl' target="_blank" class="menu__item"><i class="fas fa-home"></i> Event&nbsp;Home&nbsp;<i
                     class="fas fa-external-link"></i></a>
+                    <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>
             <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");'
                 class="menu__item -bookmarks"><i class="fas fa-bookmark"></i>
-                <span>My Bookmarks ({{bookmarkedArray.length}})</span>
+                <span>Bookmarks ({{bookmarkedArray.length}})</span>
                 <button @click.stop.prevent=' shareBookmarks' v-if='bookmarkedArray.length' class="fas fa-share-square"
                     title="Share bookmarks"></button>
             </a>
             <!-- <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a> -->
-            <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>
+            
             <div class="menu__item" v-if="categoriesArray.length">Categories</div>
             <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id"
                 @click.prevent='$store.dispatch("clickCategory", c.id);'>
