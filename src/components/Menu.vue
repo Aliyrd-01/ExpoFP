@@ -75,7 +75,7 @@ export default {
             e.target.blur();
             const url = `${location.protocol}//${location.host}/?b=` + this.$store.getters.bookmarkedArray.join('|');
             copyToClipboard(url);
-            alert("Link to bookmarks was copied to clipboard");
+            alert("Link copied to clipboard.\nOpen it on another device to import bookmarks.");
         },
         close() {
             this.$store.commit("setMenu", false);
