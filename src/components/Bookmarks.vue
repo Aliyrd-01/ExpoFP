@@ -2,7 +2,7 @@
     <OverlayContent v-if="show" @close='handleCloseAndBack' @back='handleCloseAndBack' back-mode='menu'>
         <template slot="bar">
             <div class="bar">
-                My Bookmarks&nbsp;<span>({{bookmarkedArray.length}})</span>
+                Bookmarks&nbsp;<span>({{bookmarkedArray.length}})</span>
             </div>
         </template>
         <List />
