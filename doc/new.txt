@@ -1,5 +1,7 @@
 TODO
 
+dots
+
 //on zoom - border hides text
 //save border-width in SVG booth element
 //publish new svg creator
