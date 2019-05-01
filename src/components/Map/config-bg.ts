@@ -31,6 +31,7 @@ export default function configBg() {
     // }
 
     function addPath(svgPath: SVGPathElement) {
+        if (!svgPath.style.fill) return;
         const d = parseInt(svgPath.getAttribute('data-index'));
         const color = Color(svgPath.style.fill).vec4();
 
@@ -54,6 +55,7 @@ export default function configBg() {
     }
 
     function addRect(svgRect: SVGRectElement) {
+        if (!svgRect.style.fill) return;
         const r = Rect.fromSvgRectElement(svgRect);
         const color = Color(svgRect.style.fill).vec4();
 
