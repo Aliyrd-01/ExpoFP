@@ -4,4 +4,3 @@ they can't have their owns state
 
 kind of selectors?
 
-тест
