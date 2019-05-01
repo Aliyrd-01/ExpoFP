@@ -3,3 +3,5 @@ but they cannot dispatch/subscribe
 they can't have their owns state
 
 kind of selectors?
+
+тест
