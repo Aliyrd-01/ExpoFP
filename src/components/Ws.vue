@@ -27,7 +27,7 @@ export default {
             "exhibitorsArray",
         ]),
         all() {
-            return shuffle(this.exhibitorsArray.filter(x => x.advertise));
+            return shuffle(this.exhibitorsArray.filter(x => x.advertise && x.logo));
         },
         sectionClass() {
             return 'ws ' + this.overlayPosition;
