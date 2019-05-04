@@ -5,7 +5,15 @@ import svg from '@/tools/svg'
 // import svgMesh3d from 'svg-mesh-3d';
 
 export default function configBg() {
-    const drawer = requireDrawer('bg', TriangleDrawer);
+    let drawer: TriangleDrawer = requireDrawer('bg', TriangleDrawer);
+
+    // let drIndex = 0;
+    // function setDrawer() {
+    //     // if (!drawer || drawer.objects.length > 15000) {
+    //     //     drawer = requireDrawer('bg' + drIndex++, TriangleDrawer);
+    //     // }
+    // }
+
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
     const bgElements = (d3.select(svg).select('#BG').selectAll('path, rect').nodes() as SVGElement[]);
@@ -36,14 +44,15 @@ export default function configBg() {
         const color = Color(svgPath.style.fill).vec4();
 
         const mesh = __fpPaths[d];
-        //var mesh = svgMesh3d(d, { normalize: false, scale: 8 });
+        
+        // TODO: remove in future versions 
         for (const p of mesh.positions) {
             // a bug in svgMesh3d when normalize: false ?
-            p[1] = -p[1];
+            p[1] = Math.abs(p[1]);
             p.length = 2;
-        }
-        for (const c of mesh.cells) {
+        } 
 
+        for (const c of mesh.cells) {
             drawer.addObject({
                 p0: mesh.positions[c[0]],
                 p1: mesh.positions[c[1]],
@@ -53,6 +62,8 @@ export default function configBg() {
 
         }
     }
+
+
 
     function addRect(svgRect: SVGRectElement) {
         if (!svgRect.style.fill) return;
@@ -72,6 +83,8 @@ export default function configBg() {
             color
         });
     }
+
+    // console.log('BG objcs', drawer.objects.length);
 
     // drawer.alpha = 1;
     //animate(600, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);

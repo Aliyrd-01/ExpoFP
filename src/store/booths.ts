@@ -80,9 +80,11 @@ for (const r of d3
 
 function getTrianglesFromFpPaths(index: number) {
     const mesh = __fpPaths[index];
+    if (!mesh) return [];
+    // TODO: remove in future versions 
     for (const p of mesh.positions) {
         // a bug in svgMesh3d when normalize: false ?
-        p[1] = -p[1];
+        p[1] = Math.abs(p[1]);
         p.length = 2;
     }
     const pathTriangles = [];
