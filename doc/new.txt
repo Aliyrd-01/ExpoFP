@@ -1,6 +1,11 @@
 TODO
 
+fix transform for vau
+make list of all expos
+make all FP use new codebase (with proper Math.abs for cells)
+deploy new transform
 dots
+
 
 //on zoom - border hides text
 //save border-width in SVG booth element

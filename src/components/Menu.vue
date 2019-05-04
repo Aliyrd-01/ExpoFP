@@ -120,6 +120,10 @@ export default {
 .expo-expo .menu__title > img {
     padding-right: 2rem;
 }
+.expo-vaughanribfest19 .menu__title > img {
+    width: auto;
+}
+
 .menu {
     background: #f1f1f1;
     &__title {

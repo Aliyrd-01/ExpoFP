@@ -17,7 +17,7 @@ if ((svg.firstChild as Element).tagName === "parsererror") {
 }
 
 // prepare map of fill colors per class
-const classFill = new Map<string, string>();;
+const classFill = new Map<string, string>();
 d3.select(svg).selectAll("style").each(function () {
     const css = (this as any).textContent as string;
     const r = /\.([a-z0-9.]+)\s*{[^}]*fill\s*:\s*([^};]+);[^}]*}/gi;

@@ -7,6 +7,8 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
     constructor(booth: Booth) {
         super(booth, 'booth-border', TriangleDrawer);
 
+        if (EFP_EXPO === "vaughanribfest19") return;
+
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
         const width = __fpBorderWidth;
@@ -41,6 +43,8 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
     }
 
     update() {
+        if (EFP_EXPO === "vaughanribfest19") return;
+
         const skipDimm = this.getBoothState().skipDim;
         this.drawer.updateSkipdim(this.getId('border'), skipDimm);
     }
