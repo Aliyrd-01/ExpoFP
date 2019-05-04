@@ -104,7 +104,8 @@ export default {
     background: #2b2a29;
 }
 .expo-awslondon19 .menu__title,
-.expo-awsamsterdam19 .menu__title {
+.expo-awsamsterdam19 .menu__title, 
+.expo-awsstockholm19 .menu__title {
     background: rgb(47, 7, 122);
     background: linear-gradient(207deg, rgba(47, 7, 122, 1) 0%, rgba(175, 60, 119, 1) 47%, rgba(235, 97, 60, 1) 100%);
     padding-top: 1.5rem;
