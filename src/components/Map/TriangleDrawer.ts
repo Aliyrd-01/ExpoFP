@@ -20,10 +20,7 @@ export default class TriangleDrawer {
     private readonly skipdimLocation: number;
     private readonly skipdimBuffer: WebGLBuffer;
     private readonly indexBuffer: WebGLBuffer;
-    // private readonly indexBuffer2: WebGLBuffer;
-    // private indexBufferLength: number;
     private indexBufferIsUint32: boolean;
-    // private index2Objects: number;
 
     // to be set externally
     public matrix: any;
@@ -43,15 +40,9 @@ export default class TriangleDrawer {
         this.colorBuffer = gl.createBuffer();
         this.skipdimBuffer = gl.createBuffer();
         this.indexBuffer = gl.createBuffer();
-        // this.indexBuffer2 = gl.createBuffer();
     }
 
-    // canAdd() {
-    //     return this.objects.length < this.maxObjects;
-    // }
-
     addObject(item: TriangleDrawerObject) {
-        // if (!this.canAdd()) throw new Error("Cannot add more to this drawer");
         this.objects.push(item);
         item.skipdim = !!item.skipdim;
         if (item.id) {
@@ -161,17 +152,9 @@ export default class TriangleDrawer {
 
         this.indexBufferIsUint32 = indices.length > 65535;
         const ar = this.indexBufferIsUint32 ? new Uint32Array(indices) : new Uint16Array(indices);
-        // const idx1 = indices.slice(0, max);
-        // const idx2 = indices.slice(max);
 
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, ar, this.gl.STATIC_DRAW);
-
-        // this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer2);
-        // this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(idx2), this.gl.STATIC_DRAW);
-        // this.index2Objects = idx2.length;
-
-        // console.log("idx", this.indexObjects, this.index2Objects);
     }
 
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
@@ -206,16 +189,11 @@ export default class TriangleDrawer {
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);
-        //gl.drawArrays(gl.TRIANGLES, 0, this.objects.length * 3);
 
         const elementsToDraw = this.objects.length * 3;
-        // console.log("Drawing", elementsToDraw)
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         gl.drawElements(gl.TRIANGLES, elementsToDraw, this.indexBufferIsUint32 ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
-
-        // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer2);
-        // gl.drawElements(gl.TRIANGLES, this.index2Objects, gl.UNSIGNED_SHORT, 0);
     }
 }
 

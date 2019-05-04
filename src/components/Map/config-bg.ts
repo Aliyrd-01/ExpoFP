@@ -5,15 +5,7 @@ import svg from '@/tools/svg'
 // import svgMesh3d from 'svg-mesh-3d';
 
 export default function configBg() {
-    let drawer: TriangleDrawer = requireDrawer('bg', TriangleDrawer);
-
-    // let drIndex = 0;
-    // function setDrawer() {
-    //     // if (!drawer || drawer.objects.length > 15000) {
-    //     //     drawer = requireDrawer('bg' + drIndex++, TriangleDrawer);
-    //     // }
-    // }
-
+    const drawer: TriangleDrawer = requireDrawer('bg', TriangleDrawer);
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
     const bgElements = (d3.select(svg).select('#BG').selectAll('path, rect').nodes() as SVGElement[]);
@@ -25,18 +17,6 @@ export default function configBg() {
             addRect(el as SVGRectElement);
         }
     }
-
-    // for (const p of paths) {
-    //     addPath(p);
-    // }
-
-    // const rects = (d3.select(svg).select('#BG').selectAll('rect').nodes() as SVGRectElement[]);
-
-    // // const color = ColorInfo.fromHex(settings.colors.bg).toVec4();
-    // for (const ro of rects) {
-    //     addRect(ro);
-
-    // }
 
     function addPath(svgPath: SVGPathElement) {
         if (!svgPath.style.fill) return;
@@ -83,8 +63,6 @@ export default function configBg() {
             color
         });
     }
-
-    // console.log('BG objcs', drawer.objects.length);
 
     // drawer.alpha = 1;
     //animate(600, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
