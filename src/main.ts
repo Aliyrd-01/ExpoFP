@@ -22,13 +22,13 @@ Vue.prototype.__data = __data;
 Vue.prototype.__settings = __settings;
 
 const df = document['fonts'];
-if (df) {
-    df.ready.then(render);
-} else {
-    window.addEventListener("load", render);
-}
+window.addEventListener("load", render);
+if (df) df.ready.then(render);
 
+let rendered = false;
 function render() {
+    if (rendered) return;
+    rendered = true;
     new Vue({
         store,
         render: h => h(Layout)
