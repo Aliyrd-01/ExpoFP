@@ -14,13 +14,13 @@ export function createLabelCanvas(text: string, fontSize: number) {
     // set font again
     c.font = font;
     c.textAlign = "center";
-    c.textBaseline = "bottom";
+    c.textBaseline = "alphabetic";
 
     // c.fillStyle = "#000";
     // c.fillRect(0,0,canvas.width, canvas.height);
 
     c.fillStyle = "#fff";
-    c.fillText(text, canvas.width / 2, canvas.height);
+    c.fillText(text, canvas.width / 2, canvas.height - 4);
 
     return canvas;
 }
@@ -66,10 +66,10 @@ export function createDetailsCanvas(b: Booth) {
     const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * devicePixelRatio;
     canvas.height = height + 4;
 
-    let nextLine = 0;
+    let nextLine = boothFontSize;
     c.fillStyle = "#fff";
     c.textAlign = "start";
-    c.textBaseline = "hanging";
+    c.textBaseline = "alphabetic";
     c.font = boothFont;
    
     c.fillText(mainLine, 0, nextLine);
