@@ -10,7 +10,7 @@ export function createLabelCanvas(text: string, fontSize: number) {
     let { width } = c.measureText(text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A"));
     //if (text.length < 3) width += fontSize / 8;
     canvas.width = width + 3 + 3; // 4 was added as extra padding
-    canvas.height = fontSize + 4;
+    canvas.height = fontSize + 4 ;
     // set font again
     c.font = font;
     c.textAlign = "center";
@@ -20,7 +20,7 @@ export function createLabelCanvas(text: string, fontSize: number) {
     // c.fillRect(0,0,canvas.width, canvas.height);
 
     c.fillStyle = "#fff";
-    c.fillText(text, canvas.width / 2, canvas.height - 2);
+    c.fillText(text, canvas.width / 2, canvas.height - 2 * devicePixelRatio);
 
     return canvas;
 }

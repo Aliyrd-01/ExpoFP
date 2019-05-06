@@ -33,14 +33,16 @@ export default Vue.extend({
         }
     },
     mounted() {
-        const d = document as any;
-        if (d.fonts && d.fonts.ready) {
-            d.fonts.ready.then(() => {
-                this.mapReady = true;
-            });
-        } else {
+        function doSet(cause) {
+            if (this.mapReady) return;
+            console.log("mapReady", cause); 
             this.mapReady = true;
         }
+
+        window.setTimeout(doSet.bind(this, "timeout"), 5000);
+        window.addEventListener("load", doSet.bind(this, "load"))
+        const f = document['fonts'];
+        if (f && f.ready) f.ready.then(doSet.bind(this, "ready"));
     }
 });
 </script>

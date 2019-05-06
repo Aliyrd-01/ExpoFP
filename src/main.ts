@@ -21,19 +21,10 @@ Vue.config.productionTip = false
 Vue.prototype.__data = __data;
 Vue.prototype.__settings = __settings;
 
-const df = document['fonts'];
-window.addEventListener("load", render);
-if (df) df.ready.then(render);
-
-let rendered = false;
-function render() {
-    if (rendered) return;
-    rendered = true;
-    new Vue({
-        store,
-        render: h => h(Layout)
-    }).$mount('#app');
-}
+new Vue({
+    store,
+    render: h => h(Layout)
+}).$mount('#app');
 
 
 
