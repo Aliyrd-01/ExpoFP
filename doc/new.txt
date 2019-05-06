@@ -1,10 +1,13 @@
 TODO
 
-fix transform for vau
-make list of all expos
-make all FP use new codebase (with proper Math.abs for cells)
-deploy new transform
-dots
+create expo expo fp from multiple paths
+test things
+
+//fix transform for vau
+//make list of all expos
+//make all FP use new codebase (with proper Math.abs for cells)
+//deploy new transform
+//dots
 
 
 //on zoom - border hides text

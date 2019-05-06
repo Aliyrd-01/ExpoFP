@@ -48,10 +48,14 @@ interface BoothBase {
     title: string;
     rect: Rect;
     rotate: number;
-    pathTriangles: Triangle[];
-    borderPathTriangles: Triangle[];
+    paths: PathInfo[];
     slug: string;
     error?: boolean;
+}
+
+interface PathInfo{
+    triangles: Triangle[];
+    color: string;
 }
 
 interface Exhibitor {

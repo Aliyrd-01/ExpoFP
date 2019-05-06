@@ -15,12 +15,16 @@ for (const b of Object.values(booths)) {
     boothsByName.set(b.name.toLowerCase(), b);
 }
 
-for (const r of d3
-    .select(svg)
-    .select("#Booths")
-    .selectAll("rect")
-    .nodes() as SVGRectElement[]) {
-    const idInSvg = (r.getAttribute("data-name") || r.id).substring(1).toLowerCase();
+for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]').nodes() as (SVGRectElement | SVGPathElement)[]) {
+    let rect: SVGRectElement;
+    if (el.tagName === 'rect') {
+        rect = el as SVGRectElement;
+    } else {
+        rect = el.firstChild as SVGRectElement;
+        if (!rect || rect.tagName !== 'rect') continue;
+    }
+
+    const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
     let booth = boothsByName.get(idInSvg);
     if (!booth) {
         console.error("SVG booth rect not found in __data:", idInSvg);
@@ -36,9 +40,10 @@ for (const r of d3
         boothsByName.set(idInSvg, booth);
     } //else
 
-    booth.rect = Rect.fromSvgRectElement(r);
+    booth.rect = Rect.fromSvgRectElement(rect);
+    booth.paths = [];
 
-    const transform = r.getAttribute("transform");
+    const transform = rect.getAttribute("transform");
     if (transform) {
         const mt = transform.match(/translate\(([\-0-9\.]+) ([\-0-9\.]+)\) rotate\(([\-0-9\.]+)\)/);
         if (mt) {
@@ -68,7 +73,79 @@ for (const r of d3
             booth.rect = Rect.fromCxcywh(r.cx, r.cy, r.h, r.w);
         }
     }
+
+    if (el.tagName === 'g') {
+        for (const kid of Array.from(el.children)) {
+            if (kid.tagName === 'path') {
+                const path = kid as SVGPathElement;
+                if (path.tagName !== 'path' || !path.style.fill) continue;
+                const d = parseInt(path.getAttribute('data-index'));
+                if (!d) continue;
+                // const triangles = getTrianglesFromFpPaths(d);
+                const pi: PathInfo = {
+                    triangles: getTrianglesFromFpPaths(d),
+                    color: path.style.fill
+                };
+                booth.paths.push(pi);
+            }
+        }
+    }
 }
+
+// for (const r of d3
+//     .select(svg)
+//     .select("#Booths")
+//     .selectAll("rect")
+//     .nodes() as SVGRectElement[]) {
+//     const idInSvg = (r.getAttribute("data-name") || r.id).substring(1).toLowerCase();
+//     let booth = boothsByName.get(idInSvg);
+//     if (!booth) {
+//         console.error("SVG booth rect not found in __data:", idInSvg);
+//         // create fake booth
+//         booth = {
+//             id: getNextId(),
+//             name: idInSvg.toUpperCase(),
+//             slug: generateUniqueSlug(idInSvg),
+//             exhibitors: [],
+//             error: true
+//         } as any;
+//         booths[booth.id] = booth;
+//         boothsByName.set(idInSvg, booth);
+//     } //else
+
+//     booth.rect = Rect.fromSvgRectElement(r);
+
+//     const transform = r.getAttribute("transform");
+//     if (transform) {
+//         const mt = transform.match(/translate\(([\-0-9\.]+) ([\-0-9\.]+)\) rotate\(([\-0-9\.]+)\)/);
+//         if (mt) {
+//             // const translateX = parseFloat(mt[1]);
+//             // const translateY = parseFloat(mt[2]);
+//             const rotate = parseFloat(mt[3]);
+//             booth.rotate = (-rotate * Math.PI) / 180;
+//         } else {
+//             const mt = transform.match(/rotate\(([\-0-9\.]+).*\)/);
+//             if (mt) {
+//                 const rotate = parseFloat(mt[1]);
+//                 booth.rotate = (-rotate * Math.PI) / 180;
+//             }
+//             else {
+//                 const mm = transform.match(/matrix\(\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*(?:,|\s)\s*([\-0-9\.]+)\s*\)/);
+//                 if (mm) {
+//                     booth.rotate = Math.asin(-parseFloat(mm[2]));
+//                 }
+//             }
+//         }
+//         // ET: this is a fix for Illustrator re-save (it can have large rotates)
+//         const maxDegree = 45.5;
+//         if (booth.rotate > maxDegree / 180 * Math.PI) {
+//             booth.rotate = booth.rotate - 90 * Math.PI / 180;
+//             // also swap width and height of rect
+//             const r = booth.rect;
+//             booth.rect = Rect.fromCxcywh(r.cx, r.cy, r.h, r.w);
+//         }
+//     }
+// }
 
 function getTrianglesFromFpPaths(index: number) {
     const mesh = __fpPaths[index];
@@ -90,21 +167,23 @@ function getTrianglesFromFpPaths(index: number) {
     return pathTriangles;
 }
 
-for (const svgPath of d3
-    .select(svg)
-    .select("#Booths")
-    .selectAll("path")
-    .nodes() as SVGPathElement[]) {
-    const idInSvg = (svgPath.getAttribute("data-name") || svgPath.id).substring(1).toLowerCase();
-    let booth = boothsByName.get(idInSvg);
-    if (!booth) {
-        console.error("SVG booth path not found in __data:", idInSvg);
-        continue;
-    }
-    const d = parseInt(svgPath.getAttribute('data-index'));
-    booth.pathTriangles = getTrianglesFromFpPaths(d);
-    booth.borderPathTriangles = getTrianglesFromFpPaths(d + 1);
-}
+// for (const svgPath of d3
+//     .select(svg)
+//     .select("#Booths")
+//     .selectAll("path")
+//     .nodes() as SVGPathElement[]) {
+//     const idInSvg = (svgPath.getAttribute("data-name") || svgPath.id).substring(1).toLowerCase();
+//     let booth = boothsByName.get(idInSvg);
+//     if (!booth) {
+//         console.error("SVG booth path not found in __data:", idInSvg);
+//         continue;
+//     }
+//     const d = parseInt(svgPath.getAttribute('data-index'));
+//     booth.pathTriangles = getTrianglesFromFpPaths(d);
+//     booth.borderPathTriangles = getTrianglesFromFpPaths(d + 1);
+// }
+
+
 
 for (const b of Object.values(booths)) {
     if (!b.rect) {

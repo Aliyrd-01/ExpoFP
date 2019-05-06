@@ -19,7 +19,7 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
             triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(cx, cy, w, h)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
         }
 
-        if (booth.pathTriangles) triangles = booth.borderPathTriangles;
+        if (booth.paths) triangles = [];
         else {
             triangles = [];
 

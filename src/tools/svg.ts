@@ -42,5 +42,7 @@ export const svgHeight = viewBox.baseVal.height as number;
 d3.select(svg).attr('width', svgWidth);
 d3.select(svg).attr('height', svgHeight);
 
+window['__svg'] = svg;
+
 export default svg
 

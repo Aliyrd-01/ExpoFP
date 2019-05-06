@@ -45,11 +45,16 @@ export default class TriangleDrawer {
     addObject(item: TriangleDrawerObject) {
         this.objects.push(item);
         item.skipdim = !!item.skipdim;
-        if (item.id) {
-            let ar = this.objectsById.get(item.id);
+        this.addToId(item, item.id);
+        this.addToId(item, item.groupId);
+    }
+
+    private addToId(item: TriangleDrawerObject, id: string){
+        if (id) {
+            let ar = this.objectsById.get(id);
             if (!ar) {
                 ar = [];
-                this.objectsById.set(item.id, ar);
+                this.objectsById.set(id, ar);
             }
             ar.push(item);
         }
@@ -199,6 +204,7 @@ export default class TriangleDrawer {
 
 export interface TriangleDrawerObject {
     id?: string;
+    groupId?: string;
     p0: Vec2;
     p1: Vec2;
     p2: Vec2;
