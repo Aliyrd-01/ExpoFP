@@ -20,7 +20,7 @@ export function createLabelCanvas(text: string, fontSize: number) {
     // c.fillRect(0,0,canvas.width, canvas.height);
 
     c.fillStyle = "#fff";
-    c.fillText(text, canvas.width / 2, canvas.height - 4);
+    c.fillText(text, canvas.width / 2, canvas.height - 2);
 
     return canvas;
 }
@@ -42,10 +42,10 @@ export function createDetailsCanvas(b: Booth) {
     }
     // const lines = !b.special &&  || [];
 
-    const boothFontSize = 12 * devicePixelRatio;
-    const detailFontSize = 12 * devicePixelRatio;
+    const boothFontSize = 14 * devicePixelRatio;
+    const detailFontSize = 14 * devicePixelRatio;
     const boothFont = getFont(boothFontSize, 500);
-    const detailFont = getFont(detailFontSize, 400);
+    const detailFont = getFont(detailFontSize, 300);
     const boothPadding = 1 * devicePixelRatio;
 
     let mainLine: string;
@@ -132,7 +132,7 @@ function getFont(px: number, weight: number) {
         weight +
         " " +
         px +
-        'px -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        'px Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     );
 }
 
