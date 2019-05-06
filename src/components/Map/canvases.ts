@@ -20,7 +20,7 @@ export function createLabelCanvas(text: string, fontSize: number) {
     // c.fillRect(0,0,canvas.width, canvas.height);
 
     c.fillStyle = "#fff";
-    c.fillText(text, canvas.width / 2, canvas.height - 2 * devicePixelRatio);
+    c.fillText(text, canvas.width / 2, canvas.height - 2);
 
     return canvas;
 }
