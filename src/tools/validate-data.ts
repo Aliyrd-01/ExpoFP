@@ -46,7 +46,8 @@ if (!__data.boothTerm) __data.boothTerm = "Booth";
 if (EFP_EXPO === "expo") {
     //__data.exhibitors.filter(x => ["eventPower", "Fern", "Ungerboeck", "Tradeshow Engineering"]
     //   .indexOf(x.name) !== -1).forEach(x => (x.advertise = true));
-    __data.exhibitors.filter(x => x.logo).forEach(x => (x.advertise = true));
+    var ads = [2567,2704,2681,2592,2740, 2709, 2482,2609,2734,2696,2840,2566,2736];
+    __data.exhibitors.filter(x => x.logo && ads.indexOf(x.id) !== -1).forEach(x => (x.advertise = true));
 }
 
 // convert obsolete fields and fix false/empty strings/arrays
