@@ -78,12 +78,15 @@ function getBoothPathColor(b: Booth, defaultColor: string) {
     // for white always return white
     // TODO: finish
     const s = getBoothState(b);
-    let colorInfo = Color(defaultColor);
-    if (colorInfo.hsl().object().l > 90) {
+    let colorInfo = Color(defaultColor).hsl();
+    if (colorInfo.lightness() > 90) {
         return colorInfo;
     }
+
     if (s.selected) {
-        colorInfo = colorInfo.darken(0.2);
+        const selColor = Color(settings.colors.booths.selected).hsl();
+        colorInfo = colorInfo.hue(selColor.hue());
+        //colorInfo.hue(selColor.h);
     } else if (s.hover) {
         colorInfo = colorInfo.darken(0.1);
     }
