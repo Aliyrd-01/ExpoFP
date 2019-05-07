@@ -47,6 +47,7 @@ interface BoothBase {
     name: string;
     title: string;
     rect: Rect;
+    noLabels: boolean;
     rotate: number;
     paths: PathInfo[];
     slug: string;

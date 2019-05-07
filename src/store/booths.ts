@@ -20,8 +20,9 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
     if (el.tagName === 'rect') {
         rect = el as SVGRectElement;
     } else {
-        rect = el.firstChild as SVGRectElement;
+        rect = el.lastElementChild as SVGRectElement;
         if (!rect || rect.tagName !== 'rect') continue;
+      
     }
 
     const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
@@ -41,8 +42,8 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
     } //else
 
     booth.rect = Rect.fromSvgRectElement(rect);
-    booth.paths = [];
-
+    booth.noLabels = rect.id.startsWith("no");
+    
     const transform = rect.getAttribute("transform");
     if (transform) {
         const mt = transform.match(/translate\(([\-0-9\.]+) ([\-0-9\.]+)\) rotate\(([\-0-9\.]+)\)/);
@@ -75,16 +76,18 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
     }
 
     if (el.tagName === 'g') {
-        for (const kid of Array.from(el.children)) {
+        booth.paths = [];
+        for (const kid of d3.select(el).selectAll('path, rect').nodes() as (SVGPathElement|SVGRectElement)[]) {
             if (kid.tagName === 'path') {
                 const path = kid as SVGPathElement;
-                if (path.tagName !== 'path' || !path.style.fill) continue;
+                if (path.tagName !== 'path') continue;
+                const color = path.style.fill || '#000';
                 const d = parseInt(path.getAttribute('data-index'));
                 if (!d) continue;
-                // const triangles = getTrianglesFromFpPaths(d);
+                 // const triangles = getTrianglesFromFpPaths(d);
                 const pi: PathInfo = {
                     triangles: getTrianglesFromFpPaths(d),
-                    color: path.style.fill
+                    color
                 };
                 booth.paths.push(pi);
             }

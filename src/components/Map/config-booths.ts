@@ -13,6 +13,7 @@ export default function config() {
     for (const b of booths) {
         const ar: BoothDrawerBase<any>[] = [];
         for (const Class of drawerClasses) {
+            if (b.noLabels && Class === BoothLabelDrawer) continue;
             ar.push(new Class(b));
         }
         boothDrawers.set(b.id, ar);

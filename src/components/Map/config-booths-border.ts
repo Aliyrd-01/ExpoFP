@@ -22,7 +22,6 @@ export default class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
         if (booth.paths) triangles = [];
         else {
             triangles = [];
-
             addTriangles(r.cx, r.cy - r.h / 2, r.w + width, width);
             addTriangles(r.cx, r.cy + r.h / 2, r.w + width, width);
             addTriangles(r.cx - r.w / 2, r.cy, width, r.h + width);

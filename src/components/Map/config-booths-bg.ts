@@ -15,7 +15,7 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
 
         // let triangles: Triangle[];
 
-        if (booth.paths.length) {
+        if (booth.paths) {
             // 
             for (var p of booth.paths) {
                 // const color = Color(p.color).vec4();
@@ -67,7 +67,7 @@ export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
         this.drawer.updateColor(this.getId("bg-rect"), c.vec4());
         this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
 
-        for(const color of Array.from(this.pathsDefaultColors)){
+        for (const color of Array.from(this.pathsDefaultColors)) {
             const newColor = getBoothPathColor(this.booth, color);
             this.drawer.updateColor(this.getId("bg-" + color), newColor.vec4());
         }
@@ -79,11 +79,13 @@ function getBoothPathColor(b: Booth, defaultColor: string) {
     // TODO: finish
     const s = getBoothState(b);
     let colorInfo = Color(defaultColor);
-    // if (colorInfo.hsl().object().l === 100){
-    //     return colorInfo;
-    // }
-    if (s.hover || s.selected) {
+    if (colorInfo.hsl().object().l > 90) {
+        return colorInfo;
+    }
+    if (s.selected) {
         colorInfo = colorInfo.darken(0.2);
+    } else if (s.hover) {
+        colorInfo = colorInfo.darken(0.1);
     }
 
     return colorInfo;
@@ -108,7 +110,7 @@ function getBoothColor(b: Booth) {
     if (s.hover && !s.selected) {
         colorInfo = colorInfo.darken(0.2);
     }
-// var Col = Color;
-// debugger
+    // var Col = Color;
+    // debugger
     return colorInfo;
 }
