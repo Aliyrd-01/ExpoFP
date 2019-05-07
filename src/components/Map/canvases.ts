@@ -86,13 +86,13 @@ export function createDetailsCanvas(b: Booth) {
     return canvas;
 }
 
-export function createCircleCanvas(radius) {
+export function createCircleCanvas(radius, color: string) {
     const canvas = document.createElement("canvas");
-    const size = radius * 2 + 2;
+    const size = radius * 2 + 2 * devicePixelRatio;
     canvas.width = canvas.height = size;
 
     const c = canvas.getContext("2d");
-    c.fillStyle = "#ffffff";
+    c.fillStyle = color;
     c.beginPath();
     c.arc(size / 2, size / 2, radius, 0, 2 * Math.PI);
     c.fill();

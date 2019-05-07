@@ -7,7 +7,7 @@ import { delayAnimations, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
 
-const dotCanvas = createCircleCanvas(1.5 * devicePixelRatio);
+const dotCanvas = createCircleCanvas(1.5, "#fff");
 const dotW = dotCanvas.width / 2;
 const dotH = dotCanvas.width / 2;
 

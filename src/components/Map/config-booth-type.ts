@@ -18,7 +18,6 @@ export default function configBoothBookmark(booth: Booth) {
 }
 
 class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
-
     constructor(booth: Booth) {
         super(booth, 'booth-type', Drawer);
         const r = this.booth.rect;
@@ -27,10 +26,10 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
             id: this.getId("L"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth, r.w / 2, r.h / 4],
-            deltaPts: [-1, -2, -5, 0],
+            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
+            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
             scalePts: devicePixelRatio,
-            canvasTmp: bookmarkCanvasL,
+            canvasTmp: bookmarkCanvasL.canvas,
             texPosition: 'righttop',
             visible: false
         });
@@ -39,10 +38,10 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
             id: this.getId("M"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [-1, -2, -2, 0],
+            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
+            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
             scalePts: devicePixelRatio,
-            canvasTmp: bookmarkCanvasM,
+            canvasTmp: bookmarkCanvasM.canvas,
             texPosition: 'righttop',
             visible: false
         });
@@ -53,9 +52,9 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts:
-                [-bookmarkCanvasM.width / 2, -bookmarkCanvasM.height / 2,
-                bookmarkCanvasM.width / 2, bookmarkCanvasM.height / 2],
-            canvasTmp: bookmarkCanvasM,
+                [-bookmarkCanvasM.canvas.width / 2, -bookmarkCanvasM.canvas.height / 2,
+                bookmarkCanvasM.canvas.width / 2, bookmarkCanvasM.canvas.height / 2],
+            canvasTmp: bookmarkCanvasM.canvas,
             texPosition: 'center',
             visible: false
         });
