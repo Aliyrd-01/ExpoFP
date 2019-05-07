@@ -1,7 +1,7 @@
 import { requireUpdate } from "./draw";
 import configBoothBg from './config-booth-bg';
 import configBoothBookmark from './config-booth-bookmark';
-import configBoothType from './config-booth-type';
+// import configBoothType from './config-booth-type';
 import configBoothLabels from './config-booth-labels';
 import configBoothBorder from './config-booth-border';
 import BoothDrawerBase from "./BoothDrawerBase";

@@ -5,7 +5,6 @@ import { subscribePtscaleChange, getPtscale } from "./matrix";
 import { delayAnimations, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
-import { getBoothState } from "./config-booths";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
@@ -33,16 +32,32 @@ export default function configBoothLabels(booth: Booth) {
     return new BoothLabelDrawer(booth);
 }
 
+function replaceColorTmp(color: string) {
+    switch (color) {
+        case "#ffcd31":
+            return "#ffe2ac";
+        case "#2382c5":
+            return "#c4edff";
+        case "#41c122":
+            return "#b0f575";
+    }
+    return color;
+}
+
 class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
     private readonly factors: number[] = [];
+    private readonly labelColor: string;
 
     constructor(booth: Booth) {
         super(booth, "booth-label", Drawer, 130);
         initDrawer(this.drawer);
 
+        if (booth.special === true || booth.onHold || booth.exhibitors.length > 0 || !booth.typeColor) this.labelColor = '#fff';
+        else this.labelColor = replaceColorTmp(booth.typeColor);
+
         const r = this.booth.rect;
 
-        const dotCanvas = createCircleCanvas(1.5, this.getColor());
+        const dotCanvas = createCircleCanvas(1.5, this.labelColor);
         const dotW = dotCanvas.canvas.width / 2;
         const dotH = dotCanvas.canvas.width / 2;
 
@@ -61,7 +76,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         this.addLabel(12, "M");
         this.addLabel(14, "L");
 
-        const detailsCanvas = createDetailsCanvas(this.booth, this.getColor());
+        const detailsCanvas = createDetailsCanvas(this.booth, this.labelColor);
 
         const pad = __fpBorderWidth / 2;
 
@@ -127,51 +142,13 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         }
     }
 
-    getColor() {
-        const s = getBoothState(this.booth);
-        let color: string;
-        if (!s.empty || s.onhold || this.booth.special === true || !this.booth.typeColor) { color = '#fff'; }
-        else {
-            if (this.booth.type === "Blue") {
-                color = "#c4edff";
-            } else if (this.booth.type === "Orange") {
-                color = "#ffe2ac";
-            } else {
-                color = "#b0f575";
-            }
-            // let col = Color(b.typeColor).hsl();
-            // col = col.lightness(90);
 
-
-            // color = col.toString();// b.typeColor;
-        }
-        return color;
-    }
 
     addLabel(fontSize: number, sizeName: string) {
         const b = this.booth;
         const r = b.rect;
 
-        // const s = getBoothState(b);
-        // let color: string;
-        // if (!s.empty || s.onhold || b.special === true || !b.typeColor) { color = '#fff'; }
-        // else {
-        //     if (b.type === "Blue") {
-        //         color = "#c4edff";
-        //     } else if (b.type === "Orange") {
-        //         color = "#ffe2ac";
-        //     } else {
-        //         color = "#b0f575";
-        //     }
-        //     // let col = Color(b.typeColor).hsl();
-        //     // col = col.lightness(90);
-
-
-        //     // color = col.toString();// b.typeColor;
-        // }
-
-
-        const canvas = createLabelCanvas(b.name, fontSize, this.getColor());
+        const canvas = createLabelCanvas(b.name, fontSize, this.labelColor);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
