@@ -1,25 +1,33 @@
-import settings from '@/settings';
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from './canvases';
 import { subscribePtscaleChange, getPtscale } from './matrix';
 import { requireUpdate } from './draw';
 import Drawer from './Drawer';
+import { getBoothState } from "./config-booths";
 
 const bookmarkCanvasL = createBookmarkCanvas(8);
 const bookmarkCanvasM = createBookmarkCanvas(5);
-// const bookmarkCanvasS = createBookmarkCanvas(5);
 
-export default class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
+
+export default function configBoothBookmark(booth: Booth) {
+    if (booth.special !== false) return;
+    if (!booth.typeColor) return;
+    const s = getBoothState(booth);
+    if (!s.empty) return;
+    return new BoothTypeDrawer(booth);
+}
+
+class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
 
     constructor(booth: Booth) {
-        super(booth, 'booth-bookmark', Drawer);
+        super(booth, 'booth-type', Drawer);
         const r = this.booth.rect;
 
         this.drawer.addObject({
             id: this.getId("L"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 4],
+            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth, r.w / 2, r.h / 4],
             deltaPts: [-1, -2, -5, 0],
             scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasL,
