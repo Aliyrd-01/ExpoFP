@@ -1,5 +1,5 @@
 import settings from '@/settings';
-import { BoothDrawerBase } from './config-booths-base';
+import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from './canvases';
 import { subscribePtscaleChange, getPtscale } from './matrix';
 import { requireUpdate } from './draw';

@@ -1,21 +1,26 @@
 import { requireUpdate } from "./draw";
-import BoothBgDrawer from './config-booths-bg';
-import BoothBorderDrawer from "./config-booths-border";
-import BoothLabelDrawer from "./config-booths-labels";
-import BoothBookmarkDrawer from "./config-booths-bookmark";
-import { BoothDrawerBase } from "./config-booths-base";
+import configBoothBg from './config-booth-bg';
+import configBoothBookmark from './config-booth-bookmark';
+import configBoothLabels from './config-booth-labels';
+import configBoothBorder from './config-booth-border';
+import BoothDrawerBase from "./BoothDrawerBase";
 const boothDrawers = new Map<number, BoothDrawerBase<any>[]>();
 const boothStateCache = new Map<number, BoothState>();
 
 export default function config() {
     const booths = store.getters.boothsArray as Booth[];
-    const drawerClasses = [BoothBgDrawer, BoothLabelDrawer, BoothBookmarkDrawer, BoothBorderDrawer];
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothBookmark, configBoothBorder];
+
     for (const b of booths) {
         const ar: BoothDrawerBase<any>[] = [];
-        for (const Class of drawerClasses) {
-            if (b.noLabels && Class === BoothLabelDrawer) continue;
-            ar.push(new Class(b));
+        for (const func of configFuncs) {
+            const drawer = func(b);
+            if (drawer) ar.push(drawer);
         }
+        // for (const Class of drawerClasses) {
+        //     if (b.noLabels && Class === BoothLabelDrawer) continue;
+        //     ar.push(new Class(b));
+        // }
         boothDrawers.set(b.id, ar);
     }
 };

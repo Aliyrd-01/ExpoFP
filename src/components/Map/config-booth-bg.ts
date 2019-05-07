@@ -1,13 +1,15 @@
 import Color from "color";
 import settings from "@/settings";
-import { BoothDrawerBase } from "./config-booths-base";
+import BoothDrawerBase from "./BoothDrawerBase";
 import { getBoothState } from "./config-booths";
 import TriangleDrawer from "./TriangleDrawer";
 
-export default class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
+export default function configBoothBg(booth: Booth) {
+    return new BoothBgDrawer(booth);
+}
 
+class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
     public readonly updateBound: () => void;
-
     private readonly pathsDefaultColors = new Set<string>();
 
     constructor(booth: Booth) {

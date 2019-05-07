@@ -1,6 +1,6 @@
 import Color from "color";
 import settings from "@/settings";
-import { BoothDrawerBase } from "./config-booths-base";
+import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
 import { delayAnimations, requireUpdate } from "./draw";
@@ -28,7 +28,12 @@ function initDrawer(drawer1: Drawer) {
     }, delayAnimations + 800);
 }
 
-export default class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
+export default function configBoothLabels(booth: Booth) {
+    if (booth.noLabels) return null;
+    return new BoothLabelDrawer(booth);
+}
+
+class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
     private readonly factors: number[] = [];
 
     constructor(booth: Booth) {
