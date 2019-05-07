@@ -23,10 +23,10 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             id: this.getId("L"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 4],
-            deltaPts: [-1, -2, -5, 0],
+            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
+            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
             scalePts: devicePixelRatio,
-            canvasTmp: bookmarkCanvasL,
+            canvasTmp: bookmarkCanvasL.canvas,
             texPosition: 'righttop',
             visible: false
         });
@@ -36,9 +36,9 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
-            deltaPts: [-1, -2, -2, 0],
+            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
             scalePts: devicePixelRatio,
-            canvasTmp: bookmarkCanvasM,
+            canvasTmp: bookmarkCanvasM.canvas,
             texPosition: 'righttop',
             visible: false
         });
@@ -49,9 +49,9 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts:
-                [-bookmarkCanvasM.width / 2, -bookmarkCanvasM.height / 2,
-                bookmarkCanvasM.width / 2, bookmarkCanvasM.height / 2],
-            canvasTmp: bookmarkCanvasM,
+                [-bookmarkCanvasM.canvas.width / 2, -bookmarkCanvasM.canvas.height / 2,
+                bookmarkCanvasM.canvas.width / 2, bookmarkCanvasM.canvas.height / 2],
+            canvasTmp: bookmarkCanvasM.canvas,
             texPosition: 'center',
             visible: false
         });

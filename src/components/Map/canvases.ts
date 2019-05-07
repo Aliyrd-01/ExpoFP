@@ -116,17 +116,18 @@ export function createBookmarkCanvas(widthPx: number) {
 
     c.beginPath();
 
-    c.moveTo(0, 0);
-    c.lineTo(0, h);
+    c.moveTo(c.lineWidth, c.lineWidth);
+    c.lineTo(c.lineWidth, h);
     c.lineTo(w / 2, h - w / 2);
     c.lineTo(w, h);
-    c.lineTo(w, 0);
-    // c.lineTo(0, 0)
+    c.lineTo(w, c.lineWidth);
+    c.lineTo(c.lineWidth, c.lineWidth)
     c.fill();
     c.stroke();
 
-    return canvas;
+    return { canvas, lineWidth: c.lineWidth, padding };
 }
+
 
 function getFont(px: number, weight: number) {
     return (
