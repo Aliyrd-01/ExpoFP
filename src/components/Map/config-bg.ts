@@ -5,7 +5,7 @@ import svg from '@/tools/svg'
 // import svgMesh3d from 'svg-mesh-3d';
 
 export default function configBg() {
-    const drawer: TriangleDrawer = requireDrawer('bg', TriangleDrawer);
+    const drawer: TriangleDrawer = requireDrawer('bg', TriangleDrawer, 10);
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
     const bgElements = (d3.select(svg).select('#BG').selectAll('path, rect').nodes() as SVGElement[]);

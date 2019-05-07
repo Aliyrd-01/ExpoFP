@@ -23,11 +23,12 @@ export default class TriangleDrawer {
     private indexBufferIsUint32: boolean;
 
     // to be set externally
+    public orderPriority: number;
     public matrix: any;
     public ptscale: number;
     public alpha = 1;
     public dim = 0;
-    private readonly maxObjects = Math.floor(65545 / 3);
+    // private readonly maxObjects = Math.floor(65545 / 3);
 
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;

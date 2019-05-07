@@ -13,7 +13,7 @@ class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
     private readonly pathsDefaultColors = new Set<string>();
 
     constructor(booth: Booth) {
-        super(booth, "booth-bg", TriangleDrawer);
+        super(booth, "booth-bg", TriangleDrawer, 110);
 
         // let triangles: Triangle[];
 

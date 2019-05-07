@@ -1,5 +1,3 @@
-import Color from "color";
-import settings from "@/settings";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
@@ -37,7 +35,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
     private readonly factors: number[] = [];
 
     constructor(booth: Booth) {
-        super(booth, "booth-label", Drawer);
+        super(booth, "booth-label", Drawer, 130);
         initDrawer(this.drawer);
 
         const r = this.booth.rect;

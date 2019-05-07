@@ -32,13 +32,13 @@ export default function configBoothBookmark(booth: Booth) {
 
 class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
     constructor(booth: RegularBooth) {
-        super(booth, 'booth-type', Drawer);
+        super(booth, 'booth-type', Drawer, 120);
         const r = this.booth.rect.withPadding(__fpBorderWidth / 2);
 
-        const canvL = requireCanvas(6, booth.typeColor);
-        const canvM = requireCanvas(3, booth.typeColor);
-        const canvS = requireCanvas(2, booth.typeColor);
-        const canvXS = requireCanvas(1.5, booth.typeColor);
+        const canvL = requireCanvas(12, booth.typeColor);
+        const canvM = requireCanvas(6, booth.typeColor);
+        const canvS = requireCanvas(4, booth.typeColor);
+        const canvXS = requireCanvas(8, booth.typeColor);
 
         this.drawer.addObject({
             id: this.getId("L"),

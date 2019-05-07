@@ -27,6 +27,7 @@ interface AnyDrawer {
     matrix?: Float32Array;
     ptscale?: number;
     dim?: number;
+    orderPriority: number;
 }
 
 // export function getCanvas() { return canvas; }
@@ -44,12 +45,14 @@ interface AnyDrawer {
 
 // function fireZoomDimensionsChange() { zoomDimensionSubscribers.forEach(x => x()); }
 
-export function requireDrawer<T extends AnyDrawer>(id: string, TypeClass: new (gl: WebGLRenderingContext) => T): T {
+export function requireDrawer<T extends AnyDrawer>(id: string, TypeClass: new (gl: WebGLRenderingContext) => T, drawerOrderPriority: number): T {
     let d = drawersByType.get(id) as T;
     if (!d) {
         d = new TypeClass(gl);
+        d.orderPriority = drawerOrderPriority;
         drawersByType.set(id, d);
         allDrawers.push(d);
+        allDrawers.sort((a, b) => a.orderPriority - b.orderPriority);
     }
     return d;
 }

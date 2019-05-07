@@ -42,6 +42,7 @@ export default class Drawer {
     private readonly fallBackTexture: WebGLTexture;
 
     // to be set externally
+    public orderPriority: number;
     public matrix: any;
     public ptscale: number;
     public dim = 0;

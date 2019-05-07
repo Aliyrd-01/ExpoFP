@@ -8,6 +8,7 @@ const bgColor = Color(settings.colors.base).vec4();
 
 
 class BgDrawer {
+    public orderPriority: number;
     private readonly gl: WebGLRenderingContext;
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -60,7 +61,7 @@ class BgDrawer {
 }
 
 export default function configCanvas() {
-    requireDrawer('canvas', BgDrawer);
+    requireDrawer('canvas', BgDrawer, 5);
 };
 
 

@@ -8,9 +8,9 @@ export default abstract class BoothDrawerBase<T extends Drawer | TriangleDrawer>
     protected readonly drawer: T;
     public readonly updateBound: () => void;
 
-    constructor(booth: Booth, drawerType: string, drawerClass: new (gl: WebGLRenderingContext) => T) {
+    constructor(booth: Booth, drawerType: string, drawerClass: new (gl: WebGLRenderingContext) => T, drawerOrderPriority: number) {
         this.booth = booth;
-        this.drawer = requireDrawer(drawerType, drawerClass);
+        this.drawer = requireDrawer(drawerType, drawerClass, drawerOrderPriority);
         this.updateBound = this.update.bind(this);
     }
 

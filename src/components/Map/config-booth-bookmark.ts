@@ -16,7 +16,7 @@ export default function configBoothBookmark(booth: Booth) {
 class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
 
     constructor(booth: Booth) {
-        super(booth, 'booth-bookmark', Drawer);
+        super(booth, 'booth-bookmark', Drawer, 140);
         const r = this.booth.rect.withPadding(__fpBorderWidth / 2);
 
         this.drawer.addObject({

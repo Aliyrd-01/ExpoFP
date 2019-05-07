@@ -11,7 +11,7 @@ export default function configBoothBorder(booth: Booth) {
 class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
 
     constructor(booth: Booth) {
-        super(booth, 'booth-border', TriangleDrawer);
+        super(booth, 'booth-border', TriangleDrawer, 150);
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
