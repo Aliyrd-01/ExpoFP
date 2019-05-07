@@ -17,13 +17,13 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
 
     constructor(booth: Booth) {
         super(booth, 'booth-bookmark', Drawer);
-        const r = this.booth.rect;
+        const r = this.booth.rect.withPadding(__fpBorderWidth / 2);
 
         this.drawer.addObject({
             id: this.getId("L"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
             scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasL.canvas,
@@ -35,7 +35,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             id: this.getId("M"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
             scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasM.canvas,

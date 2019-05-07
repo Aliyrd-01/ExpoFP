@@ -8,8 +8,8 @@ import Drawer from "./Drawer";
 import animate from "./animate";
 
 const dotCanvas = createCircleCanvas(1.5, "#fff");
-const dotW = dotCanvas.width / 2;
-const dotH = dotCanvas.width / 2;
+const dotW = dotCanvas.canvas.width / 2;
+const dotH = dotCanvas.canvas.width / 2;
 
 const prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
 
@@ -48,7 +48,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             center: [r.cx, r.cy],
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
-            canvasTmp: dotCanvas,
+            canvasTmp: dotCanvas.canvas,
             texPosition: "center"
         });
 

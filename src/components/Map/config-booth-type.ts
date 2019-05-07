@@ -1,13 +1,26 @@
 import BoothDrawerBase from "./BoothDrawerBase";
-import { createBookmarkCanvas } from './canvases';
+import { createBookmarkCanvas, createCircleCanvas } from './canvases';
 import { subscribePtscaleChange, getPtscale } from './matrix';
 import { requireUpdate } from './draw';
 import Drawer from './Drawer';
 import { getBoothState } from "./config-booths";
 
-const bookmarkCanvasL = createBookmarkCanvas(8);
-const bookmarkCanvasM = createBookmarkCanvas(5);
+// const bookmarkCanvasL = createBookmarkCanvas(8);
+// const bookmarkCanvasM = createBookmarkCanvas(5);
 
+
+const canvasCache = new Map<string, ReturnType<typeof createCircleCanvas>>();
+
+function requireCanvas(radius, color) {
+    const key = `${radius}${color}`;
+    let cached = canvasCache.get(key);
+    if (!cached) {
+        cached = createCircleCanvas(radius, color);
+        canvasCache.set(key, cached);
+    }
+
+    return cached;
+}
 
 export default function configBoothBookmark(booth: Booth) {
     if (booth.special !== false) return;
@@ -18,18 +31,22 @@ export default function configBoothBookmark(booth: Booth) {
 }
 
 class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
-    constructor(booth: Booth) {
+    constructor(booth: RegularBooth) {
         super(booth, 'booth-type', Drawer);
-        const r = this.booth.rect;
+        const r = this.booth.rect.withPadding(__fpBorderWidth / 2)
+
+        const canvL = requireCanvas(12, booth.typeColor);
+        const canvM = requireCanvas(8, booth.typeColor);
+        const canvS = requireCanvas(4, booth.typeColor);
 
         this.drawer.addObject({
             id: this.getId("L"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
-            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            deltaPts: [0, 0, 0, 0],
             scalePts: devicePixelRatio,
-            canvasTmp: bookmarkCanvasL.canvas,
+            canvasTmp: canvL.canvas,
             texPosition: 'righttop',
             visible: false
         });
@@ -38,10 +55,10 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
             id: this.getId("M"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2 + __fpBorderWidth / 2, r.w / 2 - __fpBorderWidth / 2, r.h / 2],
-            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            deltaPts: [0, 0, 0, 0],
             scalePts: devicePixelRatio,
-            canvasTmp: bookmarkCanvasM.canvas,
+            canvasTmp: canvM.canvas,
             texPosition: 'righttop',
             visible: false
         });
@@ -51,10 +68,8 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts:
-                [-bookmarkCanvasM.canvas.width / 2, -bookmarkCanvasM.canvas.height / 2,
-                bookmarkCanvasM.canvas.width / 2, bookmarkCanvasM.canvas.height / 2],
-            canvasTmp: bookmarkCanvasM.canvas,
+            deltaPts: [-canvS.canvas.width / 2, -canvS.canvas.height / 2, canvS.canvas.width / 2, canvS.canvas.height / 2],
+            canvasTmp: canvS.canvas,
             texPosition: 'center',
             visible: false
         });
