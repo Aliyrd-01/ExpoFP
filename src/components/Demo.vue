@@ -87,18 +87,18 @@ export default {
         min-height: 2.5rem;
         top: 0;
         width: 100%;
-        > section{
+        > section {
             flex-grow: 1;
         }
         span {
             display: inline-block;
         }
 
-        .demo__message{
+        .demo__message {
             flex-grow: 1;
         }
     }
-    
+
     &.hidden {
         transform: translate(0, 100%);
     }
