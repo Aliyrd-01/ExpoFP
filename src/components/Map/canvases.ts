@@ -1,6 +1,6 @@
 //import { getFont2 } from './utils';
 
-export function createLabelCanvas(text: string, fontSize: number) {
+export function createLabelCanvas(text: string, fontSize: number, color: string) {
     text = text.replace(/^_/, "");
     fontSize *= devicePixelRatio;
     const canvas = document.createElement("canvas");
@@ -20,13 +20,13 @@ export function createLabelCanvas(text: string, fontSize: number) {
     // c.fillStyle = "#000";
     // c.fillRect(0,0,canvas.width, canvas.height);
 
-    c.fillStyle = "#fff";
+    c.fillStyle = color;
     c.fillText(text, canvas.width / 2, canvas.height - vPad / 2 * devicePixelRatio);
 
     return canvas;
 }
 
-export function createDetailsCanvas(b: Booth) {
+export function createDetailsCanvas(b: Booth, color: string) {
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
     //const br = !b.special ? (b as RegularBooth) : undefined;
@@ -68,7 +68,7 @@ export function createDetailsCanvas(b: Booth) {
     canvas.height = height + 4;
 
     let nextLine = boothFontSize;
-    c.fillStyle = "#fff";
+    c.fillStyle = color;
     c.textAlign = "start";
     c.textBaseline = "alphabetic";
     c.font = boothFont;
@@ -77,6 +77,7 @@ export function createDetailsCanvas(b: Booth) {
     nextLine += boothFontSize + boothPadding;
 
     c.font = detailFont;
+    c.fillStyle = '#fff';
 
     for (const line of lines) {
         c.fillText(line, 0, nextLine);

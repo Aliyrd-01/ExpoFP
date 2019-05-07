@@ -10,7 +10,7 @@ const boothStateCache = new Map<number, BoothState>();
 
 export default function config() {
     const booths = store.getters.boothsArray as Booth[];
-    const configFuncs = [configBoothBg, configBoothType, configBoothLabels, configBoothBookmark, configBoothBorder];
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothBookmark, configBoothBorder];//configBoothType,
 
     for (const b of booths) {
         const ar: BoothDrawerBase<any>[] = [];

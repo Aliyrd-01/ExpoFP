@@ -1,13 +1,15 @@
+import Color from "color";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
 import { delayAnimations, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
+import { getBoothState } from "./config-booths";
 
-const dotCanvas = createCircleCanvas(1.5, "#fff");
-const dotW = dotCanvas.canvas.width / 2;
-const dotH = dotCanvas.canvas.width / 2;
+// const dotCanvas = createCircleCanvas(1.5, "#fff");
+// const dotW = dotCanvas.canvas.width / 2;
+// const dotH = dotCanvas.canvas.width / 2;
 
 const prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
 
@@ -40,6 +42,10 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
 
         const r = this.booth.rect;
 
+        const dotCanvas = createCircleCanvas(1.5, this.getColor());
+        const dotW = dotCanvas.canvas.width / 2;
+        const dotH = dotCanvas.canvas.width / 2;
+
         this.drawer.addObject({
             id: this.getId("Dot"),
             rotateRadians: booth.rotate,
@@ -55,7 +61,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         this.addLabel(12, "M");
         this.addLabel(14, "L");
 
-        const detailsCanvas = createDetailsCanvas(this.booth);
+        const detailsCanvas = createDetailsCanvas(this.booth, this.getColor());
 
         const pad = __fpBorderWidth / 2;
 
@@ -121,11 +127,51 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         }
     }
 
+    getColor() {
+        const s = getBoothState(this.booth);
+        let color: string;
+        if (!s.empty || s.onhold || this.booth.special === true || !this.booth.typeColor) { color = '#fff'; }
+        else {
+            if (this.booth.type === "Blue") {
+                color = "#c4edff";
+            } else if (this.booth.type === "Orange") {
+                color = "#ffe2ac";
+            } else {
+                color = "#b0f575";
+            }
+            // let col = Color(b.typeColor).hsl();
+            // col = col.lightness(90);
+
+
+            // color = col.toString();// b.typeColor;
+        }
+        return color;
+    }
+
     addLabel(fontSize: number, sizeName: string) {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize);
+        // const s = getBoothState(b);
+        // let color: string;
+        // if (!s.empty || s.onhold || b.special === true || !b.typeColor) { color = '#fff'; }
+        // else {
+        //     if (b.type === "Blue") {
+        //         color = "#c4edff";
+        //     } else if (b.type === "Orange") {
+        //         color = "#ffe2ac";
+        //     } else {
+        //         color = "#b0f575";
+        //     }
+        //     // let col = Color(b.typeColor).hsl();
+        //     // col = col.lightness(90);
+
+
+        //     // color = col.toString();// b.typeColor;
+        // }
+
+
+        const canvas = createLabelCanvas(b.name, fontSize, this.getColor());
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
