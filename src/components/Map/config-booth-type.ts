@@ -38,7 +38,7 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
         const canvL = requireCanvas(6, booth.typeColor);
         const canvM = requireCanvas(3, booth.typeColor);
         const canvS = requireCanvas(2, booth.typeColor);
-        const canvXS = requireCanvas(3.5, booth.typeColor);
+        const canvXS = requireCanvas(1.5, booth.typeColor);
 
         this.drawer.addObject({
             id: this.getId("L"),
@@ -76,16 +76,29 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
             visible: false
         });
 
+
         this.drawer.addObject({
             id: this.getId("XS"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [-canvXS.canvas.width / 2, -canvXS.canvas.height / 2, canvXS.canvas.width / 2, canvXS.canvas.height / 2],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            deltaPts: [0, 0, 0, 0],
+            scalePts: devicePixelRatio,
             canvasTmp: canvXS.canvas,
-            texPosition: 'center',
+            texPosition: 'righttop',
             visible: false
         });
+
+        // this.drawer.addObject({
+        //     id: this.getId("XS"),
+        //     rotateRadians: booth.rotate,
+        //     center: [r.cx, r.cy],
+        //     // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+        //     deltaPts: [-canvXS.canvas.width / 2, -canvXS.canvas.height / 2, canvXS.canvas.width / 2, canvXS.canvas.height / 2],
+        //     canvasTmp: canvXS.canvas,
+        //     texPosition: 'center',
+        //     visible: false
+        // });
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
     }
@@ -100,9 +113,10 @@ class BoothTypeDrawer extends BoothDrawerBase<Drawer> {
             view = "L";
         } else if (widthPx > 25) {
             view = "M";
-        } else if (widthPx > 14) {
+        } else if (widthPx > 12) {
             view = "S";
-        } else {
+        }
+        else {
             view = "XS";
         }
 
