@@ -5,6 +5,7 @@ import { subscribePtscaleChange, getPtscale } from "./matrix";
 import { delayAnimations, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
+import settings from "@/settings";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
@@ -78,7 +79,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
 
         const detailsCanvas = createDetailsCanvas(this.booth, this.labelColor);
 
-        const pad = __fpBorderWidth / 2;
+        const pad = settings.borderWidth / 2;
 
         this.drawer.addObject({
             id: this.getId("Details"),

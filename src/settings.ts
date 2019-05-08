@@ -5,6 +5,7 @@ import deepmerge from 'deepmerge';
 
 let settings = {
     debug: (localStorage.getItem('debug') || location.host.startsWith('dev')) && localStorage.getItem('debug') !== '0',
+    borderWidth: 1,
     colors: {
         base: '#ebebeb',
         bg: '#d6d6d6',

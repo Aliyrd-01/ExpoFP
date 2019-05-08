@@ -1,9 +1,10 @@
 import BoothDrawerBase from "./BoothDrawerBase";
 import Color from 'color';
 import TriangleDrawer from './TriangleDrawer';
+import settings from "@/settings";
 
 export default function configBoothBorder(booth: Booth) {
-    if (EFP_EXPO === "vaughanribfest19") return null;
+    // if (EFP_EXPO === "vaughanribfest19") return null;
     if (booth.paths) return null;
     return new BoothBorderDrawer(booth);
 }
@@ -15,7 +16,7 @@ class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
-        const width = __fpBorderWidth;
+        const width = settings.borderWidth;
 
         const triangles: Triangle[] = []
 

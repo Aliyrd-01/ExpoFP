@@ -2,7 +2,6 @@ import Color from 'color';
 import { requireDrawer } from "./draw";
 import TriangleDrawer from "./TriangleDrawer";
 import svg from '@/tools/svg'
-// import svgMesh3d from 'svg-mesh-3d';
 
 export default function configBg() {
     const drawer: TriangleDrawer = requireDrawer('bg', TriangleDrawer, 10);
@@ -42,8 +41,6 @@ export default function configBg() {
 
         }
     }
-
-
 
     function addRect(svgRect: SVGRectElement) {
         if (!svgRect.style.fill) return;

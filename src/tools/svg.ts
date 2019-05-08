@@ -3,7 +3,9 @@ function parseSvg(text: string) {
     return parser.parseFromString(text, "image/svg+xml").documentElement as any as SVGElement;
 }
 
-if (typeof __fpBorderWidth === "undefined") window["__fpBorderWidth"] = 1;
+//if (typeof __fpBorderWidth === "undefined") window["__fpBorderWidth"] = 2;
+// TODO: make it a conta
+// window["__fpBorderWidth"] = 2
 
 const overrideSvg = localStorage.getItem('overrideSvg');
 

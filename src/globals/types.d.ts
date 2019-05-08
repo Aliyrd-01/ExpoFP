@@ -13,7 +13,7 @@ declare const __data: {
 };
 declare const __fp: string;
 declare const __fpPaths: { [id: string]: any };
-declare const __fpBorderWidth: number;
+// declare const __fpBorderWidth: number;
 declare const __icons: { [id: string]: string };
 
 type Booth = SpecialBooth | RegularBooth;

@@ -5,7 +5,6 @@ import configMatrix from "./config-matrix";
 import configDim from "./config-dim";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
-import settings from "@/settings";
 
 // type AnyDrawer = Drawer | TriangleDrawer;
 // var a: Drawer;

@@ -44,10 +44,8 @@ if (!__data.homeUrl && EFP_EXPO === "jtrade19") __data.homeUrl = "https://www.jt
 if (!__data.homeUrl) __data.homeUrl = "https://expofp.com/";
 if (!__data.boothTerm) __data.boothTerm = "Booth";
 if (EFP_EXPO === "expo") {
-    //__data.exhibitors.filter(x => ["eventPower", "Fern", "Ungerboeck", "Tradeshow Engineering"]
-    //   .indexOf(x.name) !== -1).forEach(x => (x.advertise = true));
-    var ads = [2567,2704,2681,2592,2740, 2709, 2482,2609,2734,2696,2840,2566,2736];
-    __data.exhibitors.filter(x => x.logo && ads.indexOf(x.id) !== -1).forEach(x => (x.advertise = true));
+    const expoExpoAds = [2567, 2704, 2681, 2592, 2740, 2709, 2482, 2609, 2734, 2696, 2840, 2566, 2736];
+    __data.exhibitors.filter(x => x.logo && expoExpoAds.indexOf(x.id) !== -1).forEach(x => (x.advertise = true));
 }
 
 // convert obsolete fields and fix false/empty strings/arrays

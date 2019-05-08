@@ -18,7 +18,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
 
     constructor(booth: Booth) {
         super(booth, 'booth-bookmark', Drawer, 140);
-        const r = this.booth.rect.withPadding(__fpBorderWidth / 2);
+        const r = this.booth.rect.withPadding(settings.borderWidth / 2);
 
         this.drawer.addObject({
             id: this.getId("XL"),
