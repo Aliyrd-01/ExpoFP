@@ -17,7 +17,7 @@ import '@/services';
 import Layout from '@/components/Layout.vue';
 
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 Vue.prototype.__data = __data;
 Vue.prototype.__settings = __settings;
 
@@ -27,6 +27,10 @@ new Vue({
 }).$mount('#app');
 
 
+// window.addEventListener("beforeprint", function(){
+//     // window.document.title = "aaa";
+//     // alert('onbeforeprint');
+// }) 
 
 
 // window.addEventListener("scroll", function (e) {

@@ -77,6 +77,9 @@ export default {
             background: #69b7ff;
         }
         margin-left: 0.5rem;
+        @media print {
+            display: none;
+        }
     }
 
     transition: all 0.5s;

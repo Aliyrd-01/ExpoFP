@@ -119,6 +119,9 @@ export default {
             max-height: 100%;
         }
     }
+    @media print {
+        display: none;
+    }
 }
 .ws__list-item {
     display: inline-block;
