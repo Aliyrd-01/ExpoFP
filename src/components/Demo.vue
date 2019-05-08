@@ -2,7 +2,7 @@
     <div class="demo" :class='{hidden, top}' v-if="demo">
         <section>
             <!-- <span>This is not an official Expo!Expo!® plan. </span> -->
-            <div class="demo__message"><span>Get your free event floor plan at
+            <div class="demo__message"><span>Get your free floor plan at
                     <a href='https://expofp.com/' target="_blank">ExpoFP.com</a></span></div>
             <a href='' @click.prevent='dismiss()' class='demo__dismiss'>Dismiss</a>
         </section>
