@@ -7,7 +7,7 @@
                     <i class="fas fa-gem" v-if='featured'></i>
                 </span>
                 <a href='' @click.prevent="bookmark" class="exhibitor__bar-bk">
-                    <BookmarkSvg/>
+                    <BookmarkSvg />
                 </a>
             </div>
             <div class="exhibitor__bar-booth" @click='$store.dispatch("toggleMapOverlay")'>{{__data.boothTerm}}
@@ -53,7 +53,7 @@
                 <div v-if="exhibitor.phone1">
                     <i class="fas fa-phone"></i>
                     <div>
-                        {{exhibitor.phone1}}
+                        <a :href="'tel:'+exhibitor.phone1">{{exhibitor.phone1}}</a>
                     </div>
                 </div>
                 <div v-if="exhibitor.website">
@@ -402,8 +402,6 @@ export default {
         /* align-self: stretch; */
     }
 
-   
-
     &__edit {
         position: relative;
         display: none;
@@ -419,7 +417,7 @@ export default {
             }
         }
 
-        .exhibitor__details:hover > &{
+        .exhibitor__details:hover > & {
             display: block;
         }
     }
