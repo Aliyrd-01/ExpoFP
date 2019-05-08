@@ -26,7 +26,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [0, -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding, -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding, 0],
-            scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasXL.canvas,
             texPosition: 'righttop',
             visible: false
@@ -38,7 +37,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
-            scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasL.canvas,
             texPosition: 'righttop',
             visible: false
@@ -50,7 +48,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
-            scalePts: devicePixelRatio,
             canvasTmp: bookmarkCanvasM.canvas,
             texPosition: 'righttop',
             visible: false

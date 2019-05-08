@@ -118,12 +118,12 @@ export function createBookmarkCanvas(widthPx: number) {
 
     c.beginPath();
 
-    c.moveTo(c.lineWidth, c.lineWidth);
-    c.lineTo(c.lineWidth, h);
+    c.moveTo(0, 0);
+    c.lineTo(0, h);
     c.lineTo(w / 2, h - w / 2);
     c.lineTo(w, h);
-    c.lineTo(w, c.lineWidth);
-    c.lineTo(c.lineWidth, c.lineWidth)
+    c.lineTo(w, 0);
+    c.lineTo(0, 0)
     c.fill();
     c.stroke();
 
