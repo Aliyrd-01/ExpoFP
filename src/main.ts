@@ -17,7 +17,7 @@ import '@/services';
 import Layout from '@/components/Layout.vue';
 
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 Vue.prototype.__data = __data;
 Vue.prototype.__settings = __settings;
 

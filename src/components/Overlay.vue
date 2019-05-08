@@ -271,6 +271,9 @@ function getTopForBottomPosition(el, size: OverlaySize): number {
         border-radius: 0.5rem 0.5rem 0 0;
     }
 
+    @media print {
+        display: none;
+    }
     /* @media (min-width: 600px) {
          box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
     } */

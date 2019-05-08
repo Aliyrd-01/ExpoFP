@@ -98,6 +98,15 @@ export default {
         setZoomTransformAnimated(d3.zoomIdentity, 0, null);
         this.$canvas.call(this.zoom);
         initialize(canvas);
+
+
+        window.addEventListener("beforeprint", () => {
+            let rect = Rect.fromXywh(0, 0, this.screenSize.width, this.screenSize.height);
+            rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+            m.setVisibleRect(rect);
+            //m.setZoomTransform(d3.zoomIdentity);
+            this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
+        });
     },
     watch: {
         centerMap: function () {
@@ -251,6 +260,14 @@ function getTramsformToCenterSvgRect(
 </script>
 
 <style>
+@media print {
+    canvas {
+        width: auto !important;
+        height: auto !important;
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
 canvas.moving {
     cursor: move;
 }

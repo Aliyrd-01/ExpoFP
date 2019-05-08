@@ -1,7 +1,9 @@
 TODO
 
-create expo expo fp from multiple paths
-test things
+make printing cener things
+
+//create expo expo fp from multiple paths
+//test things
 
 //fix transform for vau
 //make list of all expos
