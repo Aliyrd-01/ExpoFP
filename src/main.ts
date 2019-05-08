@@ -27,10 +27,6 @@ new Vue({
 }).$mount('#app');
 
 
-// window.addEventListener("beforeprint", function(){
-//     // window.document.title = "aaa";
-//     // alert('onbeforeprint');
-// }) 
 
 
 // window.addEventListener("scroll", function (e) {

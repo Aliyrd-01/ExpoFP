@@ -20,7 +20,7 @@ import zoomBound from "./zoom-bound";
 
 export default {
     name: "Map",
-    data: () => ({ moving: false, printing: false }),
+    data: () => ({ moving: false }),
     computed: {
         ...mapState([
             "overlaySize",
@@ -99,15 +99,13 @@ export default {
         this.$canvas.call(this.zoom);
         initialize(canvas);
 
+
         window.addEventListener("beforeprint", () => {
-            console.log('beforeprint vrect', this.visibleRect.w, this.visibleRect.h, document.body.clientWidth);
+            let rect = Rect.fromXywh(0, 0, this.screenSize.width, this.screenSize.height);
+            rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+            m.setVisibleRect(rect);
+            //m.setZoomTransform(d3.zoomIdentity);
             this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
-            this.printing = true;
-            // this.zoomTo(d3.zoomIdentity, false);
-        });
-        window.addEventListener("afterprint", () => {
-            this.printing = false;
-            // this.zoomTo(d3.zoomIdentity, false);
         });
     },
     watch: {
@@ -138,21 +136,12 @@ export default {
             store.commit("setMoveToBooths", null);
             this.handledMoveToExhibitor = null;
         },
-        printing: function (v) {
-            console.log("printing change", v);
-        },
         visibleRect: function (v) {
-            console.log("visibleRect change", v, this.printing, document.body.clientWidth );
-            if (this.printing) {
-                m.setVisibleRect(v);
-                this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
-                // this.zoomTo(d3.zoomIdentity, true);
-            } else {
-                m.setVisibleRect(v);
-                // rezoom to make it fit bounds
-                // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
-                this.zoomBoundCurrent();
-            }
+            console.log("visibleRect change", v);
+            m.setVisibleRect(v);
+            // rezoom to make it fit bounds
+            // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
+            this.zoomBoundCurrent();
         }
     },
     methods: {
@@ -271,6 +260,14 @@ function getTramsformToCenterSvgRect(
 </script>
 
 <style>
+@media print {
+    canvas {
+        width: auto !important;
+        height: auto !important;
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
 canvas.moving {
     cursor: move;
 }
