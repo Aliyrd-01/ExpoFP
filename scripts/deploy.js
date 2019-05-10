@@ -27,7 +27,7 @@ const live = process.env.EFP_TARGET === "live";
     let deployExpo = expo;
     // make all dev deploy to dev-demo so far
     //if (!live) deployExpo = 'demo';
-    console.log('Deploying dist to ' + deployExpo);
+    __logger.log('Deploying dist to ' + deployExpo);
 
     const path = `/expos/${deployExpo}/${!live ? 'dev' : 'live'}`;
     const bucket = `efp-data${path}`;

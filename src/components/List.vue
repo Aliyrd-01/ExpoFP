@@ -19,7 +19,7 @@ import CategoryRow from "./CategoryRow.vue";
 import BoothRow from "./BoothRow.vue";
 
 const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - rtp(3.5 + 2)) / rtp(3.5));
-console.log('List n:', n);
+__logger.log('List n:', n);
 
 export default {
     components: { ExhibitorRow, CategoryRow, BoothRow },
@@ -27,7 +27,7 @@ export default {
         ...mapState(["overlayShowsAll", "activeListIndex"]),
         ...mapGetters(["listItems"]),
         items() {
-            // console.log('', this.listItems)
+            // __logger.log('', this.listItems)
             if (this.overlayShowsAll || this.listItems.length <= n) return this.listItems;
             return this.listItems.slice(0, n);
         },
@@ -36,13 +36,13 @@ export default {
         const el = document.querySelector('.list-row.active');
         if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
         // this.$nextTick(function () {
-        //     console.log('activiting')
+        //     __logger.log('activiting')
 
         // })
     },
     // watch: {
     //     activeListIndex(idx) {
-    //         console.log('activeListIndex', idx);
+    //         __logger.log('activeListIndex', idx);
     //         const el = document.querySelector('.list-row.active');
     //         if (el) el.scrollIntoView(false);
     //         window.setTimeout(() => {

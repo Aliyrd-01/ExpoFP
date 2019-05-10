@@ -60,7 +60,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
         }
 
         const speed = Math.sqrt(initialTransitionSpeedX * initialTransitionSpeedX + initialTransitionSpeedY * initialTransitionSpeedY);
-        // console.log("zoom speed", speed, initialTransitionSpeedX, initialTransitionSpeedY);
+        // __logger.log("zoom speed", speed, initialTransitionSpeedX, initialTransitionSpeedY);
         if (speed > 0.08) doTransition();
     });
 

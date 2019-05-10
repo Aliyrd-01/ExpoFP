@@ -8,7 +8,8 @@ import 'path2d-polyfill';
 import 'url-polyfill';
 import '@/globals';
 import '@/settings';
-import '@/utils/logging';
+import '@/tools/logger';
+import '@/tools/error-handling';
 import '@/tools/validate-data';
 import '@/tools/gtag'
 import '@/store';
@@ -16,6 +17,9 @@ import '@/services';
 
 import Layout from '@/components/Layout.vue';
 
+
+// var a = null;
+// alert(a.prop);
 
 Vue.config.productionTip = false;
 Vue.prototype.__data = __data;

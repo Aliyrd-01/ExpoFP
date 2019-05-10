@@ -8,6 +8,7 @@ import './Line'
 import './Circle'
 import './vue'
 import './d3'
+// import './logging'
 import './debug'
 import './ie-polyfills';
 

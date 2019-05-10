@@ -4,7 +4,7 @@ import { getPxSvgMatrix } from "./matrix";
 export default function getBoothIdFromClientXy(x: number, y: number): number {
     // const zz = getSvgPxUnzoomedMatrix();
     // var point = m4.transformPoint(zz, [1000, 1000, 1])
-    // console.log('point', point);
+    // __logger.log('point', point);
 
     const b = getLastBoothsFromClientXy(x, y);
     if (b) return b.id;
@@ -35,7 +35,7 @@ for (let x = 0; x < parts; x++) {
         segmentToRects.set(segm, rectsInSegm);
     }
 }
-console.log('hover segmentToRects', segmentToRects);
+__logger.log('hover segmentToRects', segmentToRects);
 
 let prevSegment: Rect;
 function getLastBoothsFromClientXy(x: number, y: number): Booth {

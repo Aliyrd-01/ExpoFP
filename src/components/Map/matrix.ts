@@ -26,7 +26,7 @@ let zoomTransform: ZoomTransform;
 // setters
 //
 export function setZoomTransform(transform: ZoomTransform) {
-    // console.log('zz', transform);
+    // __logger.log('zz', transform);
     zoomTransform = transform;
     calcAll();
 }

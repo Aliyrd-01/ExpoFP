@@ -28,7 +28,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
     const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
     let booth = boothsByName.get(idInSvg);
     if (!booth) {
-        console.error("SVG booth rect not found in __data:", idInSvg);
+        __logger.error("SVG booth rect not found in __data:", idInSvg);
         // create fake booth
         booth = {
             id: getNextId(),
@@ -103,7 +103,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
 //     const idInSvg = (r.getAttribute("data-name") || r.id).substring(1).toLowerCase();
 //     let booth = boothsByName.get(idInSvg);
 //     if (!booth) {
-//         console.error("SVG booth rect not found in __data:", idInSvg);
+//         __logger.error("SVG booth rect not found in __data:", idInSvg);
 //         // create fake booth
 //         booth = {
 //             id: getNextId(),
@@ -178,7 +178,7 @@ function getTrianglesFromFpPaths(index: number) {
 //     const idInSvg = (svgPath.getAttribute("data-name") || svgPath.id).substring(1).toLowerCase();
 //     let booth = boothsByName.get(idInSvg);
 //     if (!booth) {
-//         console.error("SVG booth path not found in __data:", idInSvg);
+//         __logger.error("SVG booth path not found in __data:", idInSvg);
 //         continue;
 //     }
 //     const d = parseInt(svgPath.getAttribute('data-index'));
@@ -190,7 +190,7 @@ function getTrianglesFromFpPaths(index: number) {
 
 for (const b of Object.values(booths)) {
     if (!b.rect) {
-        console.error("__data booth not found in SVG:", b.name, b);
+        __logger.error("__data booth not found in SVG:", b.name, b);
         delete booths[b.id];
     }
 }

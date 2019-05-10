@@ -127,7 +127,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         }
 
         if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith("_food") && visiblePrefix !== "Dot") {
-            // console.debug("awsamsterdam1");
+            // __logger.debug("awsamsterdam1");
             visiblePrefix = "Details";
         }
 

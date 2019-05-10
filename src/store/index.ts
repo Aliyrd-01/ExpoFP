@@ -209,7 +209,7 @@ const store1 = new Vuex.Store({
         openActiveListItem({ state, getters, dispatch }) {
             const item = getters.listItems[state.activeListIndex];
             if (!item) return;
-            console.log("Opening", item);
+            __logger.log("Opening", item);
             switch (item.type) {
                 case "exhibitor":
                     dispatch("clickExhibitor", item.obj.id);

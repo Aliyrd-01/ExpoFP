@@ -9,7 +9,7 @@ export function sizeCanvasToParentElement(canvas: HTMLCanvasElement) {
     const cHeight = bHeight * devicePixelRatio;
 
     if (canvas.clientWidth !== bWidth || canvas.clientHeight !== bHeight) {
-        console.log("Setting canvas style width/height");
+        __logger.log("Setting canvas style width/height");
 
         canvas.style.width = bWidth + "px";
         canvas.style.height = bHeight + "px";

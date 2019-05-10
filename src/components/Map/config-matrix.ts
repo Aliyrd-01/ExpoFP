@@ -19,7 +19,7 @@ export default function configMatrix() {
 }
 
 function update() {
-    // console.log('matrix change', m.getZoomTransform())
+    // __logger.log('matrix change', m.getZoomTransform())
     for (const d of allDrawers) {
         d.matrix = m.getMatrix();
         d.ptscale = m.getPtscale();

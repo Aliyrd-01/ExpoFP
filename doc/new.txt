@@ -173,7 +173,7 @@ search issues
 //conditional list
 //fix odd bookmark
 //d3 cleanup
-//disable console.log = function() {}
+//disable __logger.log = function() {}
 
 //menu bug disappear
 //this strange hover bug

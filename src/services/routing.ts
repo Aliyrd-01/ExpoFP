@@ -9,7 +9,7 @@ let savedSelectedExhibitor: Exhibitor | null = null;
 let savedSelectedBooth: Booth | null = null;
 
 history.listen((location, action) => {
-    console.log("history", action, location);
+    __logger.log("history", action, location);
     if (action === "POP") {
         // we moved back in history - need to adjust selected exhibitor//search-text
         dispatchFromUrl();
@@ -89,11 +89,11 @@ function stateToUrl() {
     if (history.location.search === newQuery) return;
 
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
-        // console.log('history push', queryRaw);
+        // __logger.log('history push', queryRaw);
         history.push(newQuery);
         sendGa();
     } else {
-        // console.log('history replace', queryRaw);
+        // __logger.log('history replace', queryRaw);
         history.replace(newQuery);
     }
 

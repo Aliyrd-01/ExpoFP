@@ -11,7 +11,7 @@ const overrideSvg = localStorage.getItem('overrideSvg');
 
 let svg = parseSvg(overrideSvg || __fp);
 if ((svg.firstChild as Element).tagName === "parsererror") {
-    console.error('Parsed svg with error: ', svg)
+    __logger.error('Parsed svg with error: ', svg)
     if (overrideSvg) {
         alert('FP SVG error, see console');
         svg = parseSvg(__fp);

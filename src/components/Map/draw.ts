@@ -120,7 +120,7 @@ export function initialize(canvas1: HTMLCanvasElement) {
     sizeCanvasToParentElement(canvas);
     setCanvasSize(canvas.width, canvas.height);
     window.addEventListener("resize", () => {
-        // console.log('canvas change', canvas);
+        // __logger.log('canvas change', canvas);
         sizeCanvasToParentElement(canvas);
         gl.viewport(0, 0, canvas.width, canvas.height);
         setCanvasSize(canvas.width, canvas.height);
@@ -131,9 +131,9 @@ export function initialize(canvas1: HTMLCanvasElement) {
     if (!gl) {
         gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
         const ext = gl.getExtension('OES_element_index_uint');
-        if (!ext) console.warn('OES_element_index_uint not supported');
+        if (!ext) __logger.warn('OES_element_index_uint not supported');
     }
-    console.log('GL', gl.getParameter(gl.VERSION));
+    __logger.log('GL', gl.getParameter(gl.VERSION));
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);

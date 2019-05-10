@@ -11,9 +11,9 @@ if (!__data.gtag && EFP_EXPO === "expo") __data.gtag = "UA-134602409-2";
 
 const res = validate(__data, schema);
 if (res.errors.length) {
-    console.error("__data jsonschema validation errors: ", res);
+    __logger.error("__data jsonschema validation errors: ", res);
 } else {
-    console.log("__data jsonschema is valid", res);
+    __logger.log("__data jsonschema is valid", res);
 }
 
 if (__settings.debug) {
@@ -32,7 +32,7 @@ if (__settings.debug) {
                 }
             }
         }
-        errors.forEach(e => console.warn(e));
+        errors.forEach(e => __logger.warn(e));
     }
 }
 

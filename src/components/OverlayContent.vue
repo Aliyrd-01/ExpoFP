@@ -35,7 +35,7 @@ export default {
 
         const setScrolled = () => {
             this.scrolled = sel.scrollTop > 0;
-            console.log("scrolled", sel.scrollTop, this.scrolled);
+            __logger.log("scrolled", sel.scrollTop, this.scrolled);
         };
 
         let update: () => void;

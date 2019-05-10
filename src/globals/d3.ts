@@ -13,7 +13,7 @@ const d3Obj = {
     ...d3Transition
 };
 
-//console.log('d3s', d3Obj.event, d3Obj);
+//__logger.log('d3s', d3Obj.event, d3Obj);
 
 extendGlobal({ d3: d3Obj });
 

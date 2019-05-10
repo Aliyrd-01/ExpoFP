@@ -179,7 +179,7 @@ export default {
                 alert(`A link to edit profile was sent to ${email}.`)
             };
             xhr.onerror = function (e) {
-                console.error("Error", e);
+                __logger.error("Error", e);
                 er();
             };
             xhr.send(JSON.stringify({ "id": this.exhibitor.id }));

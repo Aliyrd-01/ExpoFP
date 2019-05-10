@@ -76,7 +76,7 @@ export default {
             });
         },
         handleKeydown(e) {
-            // console.log('handleKeydown', e);
+            // __logger.log('handleKeydown', e);
             let delta = 0;
             switch (e.key) {
                 case "Down":

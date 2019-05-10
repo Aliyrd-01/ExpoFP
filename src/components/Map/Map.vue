@@ -42,7 +42,7 @@ export default {
             "wsHeightPx"
         ]),
         visibleRect() {
-            // console.log("get visibleRect", this.occupied);
+            // __logger.log("get visibleRect", this.occupied);
             const w = this.screenSize.width;
             const h = this.screenSize.height;
 
@@ -79,7 +79,7 @@ export default {
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                console.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
+                __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
                 if (isWheel)
                     setZoomTransformAnimated(t, 300, d3.easeExpOut);
                 else if (t.animate)
@@ -115,10 +115,10 @@ export default {
             this.zoomTo(d3.zoomIdentity, true);
         },
         moveToBooths: function () {
-            console.log("this.moveToBooths", this.moveToBooths);
+            __logger.log("this.moveToBooths", this.moveToBooths);
             if (!this.moveToBooths) return;
             this.handledMoveToExhibitor = this.moveToBooths;
-            console.log("watched moveToBooths", this.moveToBooths);
+            __logger.log("watched moveToBooths", this.moveToBooths);
             // // ask map to move to this exhibitor
             const rects = this.moveToBooths.map(
                 id => this.booths[id].rect
@@ -137,7 +137,7 @@ export default {
             this.handledMoveToExhibitor = null;
         },
         visibleRect: function (v) {
-            console.log("visibleRect change", v);
+            __logger.log("visibleRect change", v);
             m.setVisibleRect(v);
             // rezoom to make it fit bounds
             // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
@@ -171,7 +171,7 @@ export default {
             }
             // if (!this.props.onBoothClick) return;
             const id = getBoothIdFromClientXy(e.clientX, e.clientY);
-            console.log("click", id);
+            __logger.log("click", id);
             this.$store.dispatch("clickBooth", id);
         },
         zoomTo(transform: ZoomTransform) {
@@ -184,7 +184,7 @@ export default {
             const ct = d3.zoomTransform(this.$canvas.node());
             const nt = zoomBound(ct, false);
             if (nt !== ct) {
-                // console.log('fixed bounds', ct, nt)
+                // __logger.log('fixed bounds', ct, nt)
                 this.zoomTo(nt);
             }
         }
@@ -211,7 +211,7 @@ function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc
         if (part !== 1) {
             zoomAf = requestAnimationFrame(animationStep);
         } else {
-            console.log("setZoomTransformAnimated ended", part)
+            __logger.log("setZoomTransformAnimated ended", part)
         }
     }
     animationStep();
@@ -243,7 +243,7 @@ function getTramsformToCenterSvgRect(
     ]);
     const bSvgRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
 
-    // console.log(bSvgRect.w, bSvgRect.h, bSvgRect);
+    // __logger.log(bSvgRect.w, bSvgRect.h, bSvgRect);
 
     // get max zoom
     const zoom = Math.min(

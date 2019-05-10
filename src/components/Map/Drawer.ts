@@ -194,7 +194,7 @@ export default class Drawer {
             w.texture = this.canvasToTexture.get(w.spriteItem.containerCanvas);
         }
 
-        // console.log('aaa', this.objects.filter(x => x.texture).length);
+        // __logger.log('aaa', this.objects.filter(x => x.texture).length);
 
         for (let i = 0; i < this.objects.length; i++) {
             const w = this.objects[i];
@@ -324,7 +324,7 @@ export default class Drawer {
     }
 
     private populateGroups(resortObejcts: boolean) {
-        // console.log('this.populateGroups', this.indexBufferPool.length);
+        // __logger.log('this.populateGroups', this.indexBufferPool.length);
         const groups: { indices: number[]; texture: WebGLTexture; texsize: Vec2; rotated: boolean }[] = [];
         let currentGroup: { indices: number[]; texture: WebGLTexture; texsize: Vec2; rotated: boolean };
 

@@ -35,7 +35,7 @@ export default Vue.extend({
     mounted() {
         function doSet(cause) {
             if (this.mapReady) return;
-            console.log("mapReady", cause); 
+            __logger.log("mapReady", cause); 
             this.mapReady = true;
         }
 

@@ -12,6 +12,6 @@ declare global {
 // };
 
 extendGlobal({ debugCanvases: [] });//, devtools: false
-// console.log('%c', devtool);
+// __logger.log('%c', devtool);
 
 

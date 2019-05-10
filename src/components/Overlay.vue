@@ -49,7 +49,7 @@ export default {
     methods: {
         handleTouchStart(e) {
             if (this.noMove) return;
-            console.log("TouchStart", e);
+            __logger.log("TouchStart", e);
             if (this.startedTouch) return;
 
             const scrollable = e.target.closest(".overlay-content__scrollable");
@@ -63,7 +63,7 @@ export default {
             const rt = Array.from(e.changedTouches).filter(x => x.identifier === this.startedTouch.identifier)[0];
             if (!rt) return;
             this.touchDiff = this.startedTouch.clientY - rt.clientY;
-            console.log("TouchMove", this.touchDiff);
+            __logger.log("TouchMove", this.touchDiff);
             this.setHeight();
         },
 
@@ -89,7 +89,7 @@ export default {
                     newSize = "medium";
                 }
             }
-            console.log("TouchEnd", newSize);
+            __logger.log("TouchEnd", newSize);
             const touchDiff = this.touchDiff;
             this.startedTouch = undefined;
             this.touchDiff = undefined;
@@ -106,7 +106,7 @@ export default {
         },
 
         position() {
-            // console.log('Overlay positioning');
+            // __logger.log('Overlay positioning');
             const el = this.$el as HTMLDivElement;
             const position = this.overlayPosition as OverlayPosition;
             // let width: string, left: string, top: string;
