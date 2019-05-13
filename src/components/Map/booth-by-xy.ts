@@ -40,7 +40,8 @@ __logger.log('hover segmentToRects', segmentToRects);
 let prevSegment: Rect;
 function getLastBoothsFromClientXy(x: number, y: number): Booth {
     var pxSvgMatrix = getPxSvgMatrix();
-    const [xs, ys] = m4.transformPoint(pxSvgMatrix, [x, y, 1]);
+    const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);
+    const xs = xys[0], ys = xys[1];
 
     let segm: Rect;
     if (prevSegment && prevSegment.containsPoint(xs, ys)) {

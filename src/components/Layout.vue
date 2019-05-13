@@ -11,13 +11,14 @@
 </template>
 
 <script lang="ts">
+
 import Overlay from "./Overlay.vue";
 import Map from "./Map/Map.vue";
 import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
 
-export default Vue.extend({
+export default {
     // name: 'app',
     components: {
         Overlay,
@@ -44,7 +45,7 @@ export default Vue.extend({
         const f = document['fonts'];
         if (f && f.ready) f.ready.then(doSet.bind(this, "ready"));
     }
-});
+};
 </script>
 
 <style lang="scss">

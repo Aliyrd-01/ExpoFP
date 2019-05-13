@@ -100,11 +100,11 @@ function calcAll() {
     m4.translate(centerSvgMatrixWithoutVisibleScale, moveToCenter, centerSvgMatrixWithoutVisibleScale);
 
     // create matrices
-    matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1);
+    matrix = m4.ortho(0, canvasWidth, canvasHeight, 0, -1, 1) as Float32Array;
     m4.multiply(matrix, zoomMatrix, matrix);
     m4.multiply(matrix, centerSvgMatrix, matrix);
 
-    pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]);
+    pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]) as Float32Array;
     svgPxUnzoomedMatrix = new Float32Array(pxSvgMatrix);
     m4.multiply(pxSvgMatrix, zoomMatrix, pxSvgMatrix);
     m4.multiply(pxSvgMatrix, centerSvgMatrix, pxSvgMatrix);

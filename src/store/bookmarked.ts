@@ -1,4 +1,5 @@
 import exhibitorsState from "./exhibitors";
+import Vue from 'vue';
 
 type BookmarkedType = { [id: string]: boolean };
 

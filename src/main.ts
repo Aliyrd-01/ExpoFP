@@ -1,4 +1,5 @@
 //import * as d31 from 'd3'
+
 import 'core-js/features/array/from';
 import 'core-js/features/array/find';
 import 'core-js/features/promise';
@@ -16,6 +17,7 @@ import '@/store';
 import '@/services';
 
 import Layout from '@/components/Layout.vue';
+import Vue from 'vue';
 
 
 // var a = null;

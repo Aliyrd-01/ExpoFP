@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue';
 import { mapGetters, mapState } from "vuex";
 import OverlayContent from "./OverlayContent.vue";
 import copyToClipboard from 'copy-to-clipboard';

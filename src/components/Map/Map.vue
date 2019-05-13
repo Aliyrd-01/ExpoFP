@@ -231,16 +231,18 @@ function getTramsformToCenterSvgRect(
 
     const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
 
-    const [x1, y1] = m4.transformPoint(svgPxMatrix, [
+    const xy1 = m4.transformPoint(svgPxMatrix, [
         svgRect.x1,
         svgRect.y1,
         1
-    ]);
-    const [x2, y2] = m4.transformPoint(svgPxMatrix, [
+    ], null);
+    const x1 = xy1[0], y1 = xy1[1];
+    const xy2 = m4.transformPoint(svgPxMatrix, [
         svgRect.x2,
         svgRect.y2,
         1
-    ]);
+    ], null);
+    const x2 = xy2[0], y2 = xy2[1];
     const bSvgRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
 
     // __logger.log(bSvgRect.w, bSvgRect.h, bSvgRect);

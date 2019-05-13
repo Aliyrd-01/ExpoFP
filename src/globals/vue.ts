@@ -1,8 +1,13 @@
-import v from 'vue'
+// import Vue1, {VueConstructor} from "vue";
 
-declare global {
-    const Vue: typeof v
-    type Vue = typeof v
-}
+// declare global {
+//     const Vue: VueConstructor<Vue1>;
+//     type Vue = VueConstructor<Vue1>;
+// }
 
-extendGlobal({ Vue: v })
+
+// // Vue1.config
+// // Vue1.config
+
+// // Vue1.config.productionTip = false;
+// extendGlobal({ Vue: Vue1 })
