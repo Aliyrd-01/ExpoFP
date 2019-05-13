@@ -13,6 +13,7 @@ import { remsToPixels } from '@/components/Map/utils';
 
 const imgByExhibitorId = new Map<number, HTMLImageElement>();
 let intervaId: number;
+let keySeq = 0;
 
 export default {
     data: () => ({ loadedAdv: [], adv: [], index: 0 }),
@@ -61,6 +62,7 @@ export default {
             const maxWidth = rectWidth - remsToPixels(0.3) * 2; // exclude padding
             let filledWidth = 0;
             const adv = [];
+            let key = 0;
             do {
                 const e = this.loadedAdv[this.index % this.loadedAdv.length];
                 const img = imgByExhibitorId.get(e.id);
@@ -69,7 +71,7 @@ export default {
                 if (filledWidth + width > maxWidth && adv.length) break;
 
                 filledWidth += width;
-                adv.push({ key: adv.length, e: e });
+                adv.push({ key: keySeq++, e: e });
                 this.index++;
 
             } while (true)
@@ -133,6 +135,8 @@ export default {
 .overlay-left .ws .ws__list-enter,
 .overlay-left .ws .ws__list-leave-to {
     opacity: 0;
-    transform: scale(1.1);
+    /* filter: grayscale(100%); */
+    /* transform: translate(1000px); */
+    /* transform: scale(1.1); */
 }
 </style>
