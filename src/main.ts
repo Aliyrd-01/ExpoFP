@@ -9,7 +9,7 @@ import 'url-polyfill';
 import '@/globals';
 import '@/settings';
 import '@/tools/logger';
-import '@/tools/error-handling';
+import reportError from '@/tools/report-error';
 import '@/tools/validate-data';
 import '@/tools/gtag'
 import '@/store';
@@ -27,10 +27,13 @@ Vue.prototype.__settings = __settings;
 
 new Vue({
     store,
-    render: h => h(Layout)
+    render: h => h(Layout),
+    errorCaptured(error, vm, info) {
+        reportError({ message: `Error in ${info}: "${error.toString()}"`, error });
+    }
 }).$mount('#app');
 
-
+window.addEventListener("error", reportError);
 
 
 // window.addEventListener("scroll", function (e) {

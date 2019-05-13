@@ -1,10 +1,10 @@
 <template>
     <div class='debug' v-if="enabled">
-        <label>Override SVG:</label>
+        <!-- <label>Override SVG:</label> -->
 
-        <textarea v-model="overrideSvg">
-        </textarea>
-        <br/>
+        <!-- <textarea v-model="overrideSvg">
+        </textarea> -->
+        <br />
         <button @click="save">Save &amp; Reload</button>
         &nbsp;
         <a href='' @click.prevent="cancel">Cancel</a>
@@ -12,7 +12,7 @@
             <label>Canvases ({{debugCanvases.length}}):</label>
             <div :key=item.toDataURL() v-for="item in debugCanvases" style="display: inline-block; padding: 2px; vertical-align: top">
                 {{item.width}}x{{item.height}}={{item.width*item.height}}
-                <br/>
+                <br />
                 <img :src='item.toDataURL()' style="background: #aaa" />
             </div>
         </div>
@@ -24,7 +24,7 @@ import { mapState } from "vuex";
 
 export default {
     data: () => ({
-        overrideSvg: localStorage.getItem("overrideSvg") || ""
+        //overrideSvg: localStorage.getItem("overrideSvg") || ""
         // enabled: false
     }),
     computed: {
@@ -32,13 +32,14 @@ export default {
         enabled() {
             return this.list && this.list.type === "search" && this.list.text === "q1";
         },
-        debugCanvases(){
-           return debugCanvases;
+        debugCanvases() {
+            return debugCanvases;
         }
     },
     methods: {
         save() {
-            localStorage.setItem("overrideSvg", this.overrideSvg);
+            // localStorage.setItem("overrideSvg", this.overrideSvg);
+            throw new Error('Test error');
             location.replace("/");
         },
         cancel() {
@@ -66,13 +67,13 @@ export default {
         display: block;
         font-weight: 500;
     }
-    textarea {
+    /* textarea {
         width: 100%;
         display: block;
         min-height: 20%;
         font-size: 12px;
         font-family: monospace;
         background: #eee;
-    }
+    } */
 }
 </style>

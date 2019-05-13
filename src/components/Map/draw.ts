@@ -126,6 +126,7 @@ export function initialize(canvas1: HTMLCanvasElement) {
         setCanvasSize(canvas.width, canvas.height);
     });
 
+    // throw new Error('aaa')
     const options = {};
     gl = canvas.getContext("webgl2", options) as WebGLRenderingContext;
     if (!gl) {

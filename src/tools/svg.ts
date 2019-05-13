@@ -7,15 +7,15 @@ function parseSvg(text: string) {
 // TODO: make it a conta
 // window["__fpBorderWidth"] = 2
 
-const overrideSvg = localStorage.getItem('overrideSvg');
+//const overrideSvg = localStorage.getItem('overrideSvg');
 
-let svg = parseSvg(overrideSvg || __fp);
+let svg = parseSvg(__fp);//overrideSvg || 
 if ((svg.firstChild as Element).tagName === "parsererror") {
     __logger.error('Parsed svg with error: ', svg)
-    if (overrideSvg) {
-        alert('FP SVG error, see console');
-        svg = parseSvg(__fp);
-    }
+    // if (overrideSvg) {
+    //     alert('FP SVG error, see console');
+    //     svg = parseSvg(__fp);
+    // }
 }
 
 // prepare map of fill colors per class
