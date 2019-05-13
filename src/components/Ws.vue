@@ -1,5 +1,5 @@
 <template>
-    <transition-group name="ws__list" tag="section" :class="sectionClass" :style="sectionStyle" @mouseover="mouseover"
+    <transition-group name="ws__list" tag="section" class="ws" :style="sectionStyle" @mouseover="mouseover"
         @mouseout="mouseout">
         <a :href="`?${e.e.slug}`" v-for="e in adv" :key="e.key" class="ws__exhibitor" :style='{height: `${wsHeightPx}px`}'
             @click.prevent="select(e.e.id)"><img :src='e.e.logo' :alt='e.e.name'></a>
@@ -28,9 +28,6 @@ export default {
         ]),
         all() {
             return shuffle(this.exhibitorsArray.filter(x => x.advertise && x.logo));
-        },
-        sectionClass() {
-            return 'ws ' + this.overlayPosition;
         },
         sectionStyle() {
             const width = this.overlayPosition === "left" ? `calc(100% - ${this.$store.state.overlayWidthRems}rem)` : '100%';
@@ -69,7 +66,7 @@ export default {
                 const img = imgByExhibitorId.get(e.id);
                 const width = img.width * this.wsHeightPx / img.height + 20; //padding
 
-                if (filledWidth + width > maxWidth) break;
+                if (filledWidth + width > maxWidth && adv.length) break;
 
                 filledWidth += width;
                 adv.push({ key: adv.length, e: e });
@@ -127,14 +124,14 @@ export default {
     display: inline-block;
     margin-right: 10px;
 }
-.ws.left .ws__list-enter-active {
+.overlay-left .ws .ws__list-enter-active {
     transition: all 0.5s;
 }
 .ws__list-leave-active {
     display: none;
 }
-.ws.left .ws__list-enter,
-.ws.left .ws__list-leave-to {
+.overlay-left .ws .ws__list-enter,
+.overlay-left .ws .ws__list-leave-to {
     opacity: 0;
     transform: scale(1.1);
 }
