@@ -7,7 +7,7 @@ import bookmarked from "./bookmarked";
 import screenSize from "./screen-size";
 import filtering, { SearchResultItem, exhibitorsToItems, boothsToItems } from "./filtering";
 import previewExhibitor from "@/utils/preview-exhibitor";
-import { isWebGlSupported } from "@/components/Map/utils";
+import { isWebGlSupported, remsToPixels } from "@/components/Map/utils";
 
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
@@ -57,8 +57,9 @@ const store1 = new Vuex.Store({
             state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
         selectedBooth: state => (state.details && state.details.type === "booth" ? state.booths[state.details.id] : null),
         selectedCategory: state => (state.list.type === "category" ? state.categories[state.list.id] : null),
-        
-        wsHeightPx: (state, getters) => getters.advertisedExhibitors.length ? 48 : 0
+
+        wsHeightPx: (state, getters) => getters.advertisedExhibitors.length ? 48 : 0,
+        wsFullHeightPx: (state, getters) => getters.wsHeightPx ? getters.wsHeightPx + remsToPixels(0.3 * 2) : 0
     },
     mutations: {
         // setSearchText(state, text) {

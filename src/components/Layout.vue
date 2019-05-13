@@ -1,6 +1,7 @@
 <template>
-    <div id="root" :class='"expo-" + expo'>
-        <a href='https://expofp.com/' target="_blank" class='logo-overlay'><img src='expofp-overlay.png'></a>
+    <div id="root" :class='"expo-" + expo + " overlay-" + overlayPosition'>
+        <a href='https://expofp.com/' target="_blank" class='logo-overlay' :style='{"margin-top": `${wsFullHeightPx}px`}'><img
+                src='expofp-overlay.png'></a>
         <Ws />
         <Overlay />
         <Map v-if="mapReady" />
@@ -17,6 +18,8 @@ import Map from "./Map/Map.vue";
 import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
+import { mapGetters, mapState } from "vuex";
+import { remsToPixels } from './Map/utils';
 
 export default {
     // name: 'app',
@@ -31,12 +34,16 @@ export default {
     computed: {
         expo() {
             return EFP_EXPO;
-        }
+        },
+        ...mapGetters([
+            "overlayPosition",
+            "wsFullHeightPx",
+        ])
     },
     mounted() {
         function doSet(cause) {
             if (this.mapReady) return;
-            __logger.log("mapReady", cause); 
+            __logger.log("mapReady", cause);
             this.mapReady = true;
         }
 
@@ -44,6 +51,10 @@ export default {
         window.addEventListener("load", doSet.bind(this, "load"))
         const f = document['fonts'];
         if (f && f.ready) f.ready.then(doSet.bind(this, "ready"));
+
+        window.setTimeout(()=>{
+            (document.querySelector('.logo-overlay') as HTMLAnchorElement).style.opacity = "1";
+        }, 3000);
     }
 };
 </script>
@@ -102,8 +113,10 @@ a:visited {
     position: fixed;
     bottom: 1rem;
     right: 1rem;
+    opacity: 0;
+    transition: opacity 0.5s;
 
-    @media screen and (max-width: 500px) {
+    .overlay-bottom & {
         top: 0.5rem;
         right: 0.5rem;
         bottom: unset;

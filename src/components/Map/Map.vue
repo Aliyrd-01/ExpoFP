@@ -39,7 +39,7 @@ export default {
             "listBoothsIds",
             "selectedBoothIds",
             "hoveredBoothIds",
-            "wsHeightPx"
+            "wsFullHeightPx"
         ]),
         visibleRect() {
             // __logger.log("get visibleRect", this.occupied);
@@ -50,12 +50,12 @@ export default {
 
             switch (this.overlayPosition) {
                 case "left":
-                    rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsHeightPx, w, h);
+                    rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsFullHeightPx, w, h);
                     break;
                 // case "bottomSmall":
                 //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
                 case "bottom":
-                    rect = Rect.fromX1y1x2y2(0, this.wsHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
+                    rect = Rect.fromX1y1x2y2(0, this.wsFullHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
                     break;
             }
 
