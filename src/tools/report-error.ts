@@ -13,7 +13,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
             lineno: e.lineno,
             colno: e.colno,
             stack: e.error.stack,
-            log: __logger.messages,
+            log: __logger.messages.join("\n"),
             userAgent: navigator.userAgent,
             language,
         };
