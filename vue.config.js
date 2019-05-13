@@ -17,7 +17,7 @@ const dataUrlBase = localDataUrl || config.dataUrl || `https://${expo}.expofp.co
 const dataUrlBaseDev = config.dataUrl || `https://s3.amazonaws.com/efp-data-dev/expos/${expo}/data`;
 const dataUrlBaseShow = config.dataUrl || `https://s3.amazonaws.com/efp-data-show/expos/${expo}/data`;
 
-__logger.info("Serving data from: ", dataUrlBase)
+console.info("Serving data from: ", dataUrlBase)
 // const gTag = config.gTag || 'UA-857963-22';
 //const logoUrl = config.logoUrl || `${expo}-logo.png`
 
