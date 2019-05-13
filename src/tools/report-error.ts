@@ -8,6 +8,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
     timeoutId = window.setTimeout(async function () {
         const language = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
         const data = {
+            host: document.location.host,
             message: e.message,
             filename: e.filename,
             lineno: e.lineno,
@@ -21,7 +22,6 @@ export default function reportError(e: Partial<ErrorEvent>) {
         const rawResponse = await fetch('https://expofp.com/report-fp-error', {
             method: 'POST',
             headers: {
-                // 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
