@@ -11,12 +11,15 @@ const c = url.searchParams.get("b");
 const ca = url.searchParams.get("ba");
 const combined = c || ca;
 if (combined) {
-    const append = !!ca;
+
     bookmarkedAr = combined
         .split("|")
         .map(x => parseInt(x))
         .filter(x => x);
-    saveToLocalStorage(bookmarkedAr, append);
+
+    const append = !!ca;
+    if (append) bookmarkedAr.push(...getFromLocalStorage());
+    saveToLocalStorage(bookmarkedAr);
 } else {
     bookmarkedAr = getFromLocalStorage();
 }
@@ -29,10 +32,11 @@ function getFromLocalStorage() {
     return ls ? (JSON.parse(ls) as number[]).filter(e => exhibitorsState.state[e]) : [];
 }
 
-function saveToLocalStorage(ar: (string | number)[], append: boolean) {
-    const dest = [...ar, ...(append ? getFromLocalStorage() : [])];
-    const unique = Array.from(new Set(dest));
-    localStorage.setItem("bookmarked", JSON.stringify(unique));
+function saveToLocalStorage(ar: (string | number)[]) {
+    // const dest = [...ar, ...(append ? getFromLocalStorage() : [])];
+    // const unique = Array.from(new Set(dest));
+    // debugger
+    localStorage.setItem("bookmarked", JSON.stringify(ar));
 }
 
 export default {
@@ -44,7 +48,7 @@ export default {
         setBookmarked(state: BookmarkedType, { id, yes }: any) {
             if (yes) Vue.set(state, id, true);
             else Vue.delete(state, id);
-            saveToLocalStorage(bookmarkedArray(state), false);
+            saveToLocalStorage(bookmarkedArray(state));
         }
     }
 };

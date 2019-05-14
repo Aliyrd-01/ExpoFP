@@ -108,8 +108,16 @@ if (locationSearch.startsWith("?preview=")) {
     history.replace("?");
 }
 // go to bookmarks when receive thouse
-if (locationSearch.startsWith("?b=") || locationSearch.startsWith("?ba=")) {
+if (locationSearch.startsWith("?b=")) {
     history.replace("?bookmarks");
+}
+
+if (locationSearch.startsWith("?ba=")){
+    const url = new URL(window.location.href);
+    const ba = url.searchParams.get("ba");
+    const exhibitor = store.state.exhibitors[ba];
+    if (exhibitor) history.replace("?" + exhibitor.slug);
+    else history.replace("?bookmarks");
 }
 
 // facebook fix
