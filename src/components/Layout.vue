@@ -136,4 +136,7 @@ a:visited {
     font-size: 10px;
     z-index: 999;
 }
+.fa-phone{
+    transform: scaleX(-1);
+}
 </style>

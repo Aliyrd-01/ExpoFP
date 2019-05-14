@@ -59,7 +59,7 @@
                 <div v-if="exhibitor.website">
                     <i class="fas fa-globe"></i>
                     <div>
-                        <a :href="exhibitor.website" target="_blank">{{exhibitor.website}}</a>
+                        <a :href="exhibitor.website" target="_blank">{{websiteTrimmed}}</a>
                     </div>
                 </div>
                 <div v-if="exhibitor.email">
@@ -121,8 +121,8 @@ export default {
         categories() {
             return this.exhibitor.categories.map(b => this.$store.state.categories[b]);
         },
-        websiteUrl() {
-            return this.e;
+        websiteTrimmed() {
+            return this.exhibitor.website.replace(/^(http(s?):\/\/)([^/]+)(\/)?$/i, "$3");
         },
         bookmarked() {
             return this.$store.state.bookmarked[this.exhibitor.id];
