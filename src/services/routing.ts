@@ -101,17 +101,19 @@ function stateToUrl() {
     savedSelectedBooth = booth;
 }
 
+const locationSearch = history.location.search;
+
 // preview fix
-if (history.location.search.startsWith("?preview=")) {
+if (locationSearch.startsWith("?preview=")) {
     history.replace("?");
 }
 // go to bookmarks when receive thouse
-if (history.location.search.startsWith("?b=")) {
+if (locationSearch.startsWith("?b=") || locationSearch.startsWith("?ba=")) {
     history.replace("?bookmarks");
 }
 
 // facebook fix
-if (history.location.search.startsWith("?fbclid")) {
+if (locationSearch.startsWith("?fbclid")) {
     history.replace("?");
 }
 
