@@ -122,7 +122,7 @@ export default {
             return this.exhibitor.categories.map(b => this.$store.state.categories[b]);
         },
         websiteTrimmed() {
-            return this.exhibitor.website.replace(/^(http(s?):\/\/)([^/]+)(\/)?$/i, "$3");
+            return this.exhibitor.website ? this.exhibitor.website.replace(/^(http(s?):\/\/)([^/]+)(\/)?$/i, "$3") : "";
         },
         bookmarked() {
             return this.$store.state.bookmarked[this.exhibitor.id];
