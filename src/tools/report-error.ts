@@ -19,7 +19,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
             language,
         };
 
-        const rawResponse = await fetch('https://expofp.com/report-fp-error', {
+        const rawResponse = await fetch('https://expofp.com/api/report-fp-error', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
