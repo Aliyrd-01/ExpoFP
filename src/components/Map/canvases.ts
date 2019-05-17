@@ -27,6 +27,7 @@ export function createLabelCanvas(text: string, fontSize: number, color: string)
 }
 
 export function createDetailsCanvas(b: Booth, color: string) {
+    const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
     //const br = !b.special ? (b as RegularBooth) : undefined;
@@ -41,7 +42,8 @@ export function createDetailsCanvas(b: Booth, color: string) {
             }
         }
     }
-    // const lines = !b.special &&  || [];
+
+    if (fixBooth) lines.push(b.title);
 
     const boothFontSize = 14 * devicePixelRatio;
     const detailFontSize = 14 * devicePixelRatio;
@@ -50,7 +52,7 @@ export function createDetailsCanvas(b: Booth, color: string) {
     const boothPadding = 1 * devicePixelRatio;
 
     let mainLine: string;
-    if (b.special === false) {
+    if (b.special === false || fixBooth) {
         mainLine = b.name;
     } else if (b.special === true) {
         mainLine = b.title || b.name;
@@ -87,7 +89,7 @@ export function createDetailsCanvas(b: Booth, color: string) {
     return canvas;
 }
 
-export function createCircleCanvas(radius:number, color: string) {
+export function createCircleCanvas(radius: number, color: string) {
     const canvas = document.createElement("canvas");
     const padding = 1;
     const size = radius * 2 * devicePixelRatio + padding * 2;
