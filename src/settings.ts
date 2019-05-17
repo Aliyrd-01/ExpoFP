@@ -16,7 +16,7 @@ let settings = {
         booths: {
             default: '#41b6e7',
             selected: '#FB3E59',
-            empty: '#aaaaaa',
+            empty: 'rgba(0,0,0,0.205)',
         }
     }
 }
