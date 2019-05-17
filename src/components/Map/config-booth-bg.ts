@@ -21,10 +21,11 @@ class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
             // 
             for (var p of booth.paths) {
                 // const color = Color(p.color).vec4();
-                this.pathsDefaultColors.add(p.color);
+                const colored = !!p.color;
+                if (colored) this.pathsDefaultColors.add(p.color);
                 for (const t of p.triangles) {
                     this.drawer.addObject({
-                        id: this.getId("bg-" + p.color),
+                        id: colored ? this.getId("bg-" + p.color) : this.getId("bg-def"),
                         groupId: this.getId("bg"),
                         p0: t[0],
                         p1: t[1],
@@ -38,7 +39,7 @@ class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
             const triangles = p.toTriangles();
             for (const t of triangles) {
                 this.drawer.addObject({
-                    id: this.getId("bg-rect"),
+                    id: this.getId("bg-def"),
                     groupId: this.getId("bg"),
                     p0: t[0],
                     p1: t[1],
@@ -51,7 +52,7 @@ class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
         //const c = getBoothColor(this.booth);
         // for (const t of triangles) {
         //     this.drawer.addObject({
-        //         id: this.getId("bg-rect"),
+        //         id: this.getId("bg-def"),
         //         groupId: this.getId("bg"),
         //         p0: t[0],
         //         p1: t[1],
@@ -66,7 +67,7 @@ class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
     update() {
         const s = getBoothState(this.booth);
         const c = getBoothColor(this.booth);
-        this.drawer.updateColor(this.getId("bg-rect"), c.vec4());
+        this.drawer.updateColor(this.getId("bg-def"), c.vec4());
         this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
 
         for (const color of Array.from(this.pathsDefaultColors)) {

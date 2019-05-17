@@ -81,7 +81,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
             if (kid.tagName === 'path') {
                 const path = kid as SVGPathElement;
                 if (path.tagName !== 'path') continue;
-                const color = path.style.fill || '#000';
+                const color = path.style.fill;
                 const d = parseInt(path.getAttribute('data-index'));
                 if (!d) continue;
                  // const triangles = getTrianglesFromFpPaths(d);

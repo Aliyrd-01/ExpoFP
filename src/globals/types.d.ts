@@ -54,7 +54,7 @@ interface BoothBase {
     error?: boolean;
 }
 
-interface PathInfo{
+interface PathInfo {
     triangles: Triangle[];
     color: string;
 }
