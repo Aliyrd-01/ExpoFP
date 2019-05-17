@@ -1,27 +1,19 @@
 import deepmerge from 'deepmerge';
 
-// TODO: remove unneeded settings from here (leave debug only)?
-
-
 let settings = {
     debug: (localStorage.getItem('debug') || location.host.startsWith('dev')) && localStorage.getItem('debug') !== '0',
     borderWidth: 1,
     colors: {
         base: '#ebebeb',
-        bg: '#d6d6d6',
-        fg: '#fff',
-        columns: 'rgba(0,0,0,0.1)',
-        icons: 'rgba(0,0,0,0.4)',
-        dim: 0.5,
         booths: {
             default: '#41b6e7',
             selected: '#FB3E59',
-            empty: 'rgba(0,0,0,0.205)',
+            empty: 'rgba(0,0,0,0.205)', // this is #aaa for default BG #d6d6d6d
         }
     }
 }
 
-if (EFP_EXPO === "jtrade19"){
+if (EFP_EXPO === "jtrade19") {
     settings.colors.booths.selected = '#dc6533';
 }
 
@@ -32,4 +24,3 @@ extendGlobal({ __settings: settings })
 declare global {
     const __settings: typeof settings;
 }
- 
