@@ -6,6 +6,7 @@
         <Overlay />
         <Map v-if="mapReady" />
         <Demo />
+        <Message />
         <Debug />
         <div id="fps"></div>
     </div>
@@ -18,6 +19,7 @@ import Map from "./Map/Map.vue";
 import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
+import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
 import { remsToPixels } from './Map/utils';
 
@@ -28,7 +30,8 @@ export default {
         Map,
         Ws,
         Debug,
-        Demo
+        Demo,
+        Message
     },
     data: () => ({ mapReady: false }),
     computed: {
