@@ -102,7 +102,7 @@ function getBoothColor(b: Booth) {
     let color: string;
     let defColor: any;
     if (b.special === true) {
-        defColor = b.color;
+        defColor = b.color || settings.colors.booths.empty;
     } else if (b.special === false) {
         defColor =
             s.empty && !s.onhold ? b.availColor || settings.colors.booths.empty : b.soldColor || settings.colors.booths.default;
