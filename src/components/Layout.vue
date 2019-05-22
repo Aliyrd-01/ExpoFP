@@ -4,6 +4,7 @@
                 src='expofp-overlay.png'></a>
         <Ws />
         <Controls />
+        <Areas />
         <Overlay />
         <Map v-if="mapReady" />
         <Demo />
@@ -18,6 +19,7 @@
 import Overlay from "./Overlay.vue";
 import Map from "./Map/Map.vue";
 import Controls from "./Controls.vue";
+import Areas from "./Areas.vue";
 import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
@@ -31,6 +33,7 @@ export default {
         Overlay,
         Map,
         Controls,
+        Areas,
         Ws,
         Debug,
         Demo,

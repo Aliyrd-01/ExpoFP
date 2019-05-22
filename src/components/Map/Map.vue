@@ -27,6 +27,7 @@ export default {
             "moveToBooths",
             "centerMap",
             "zoomBy",
+            "area",
             "booths",
             "hoveredBooth",
             "screenSize",
@@ -111,6 +112,8 @@ export default {
             //m.setZoomTransform(d3.zoomIdentity);
             this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
         });
+
+        store.commit("setArea", "ground");
     },
     watch: {
         centerMap: function () {
@@ -130,6 +133,28 @@ export default {
             // d3.sca
             // t = t.scaleBy(1)
             // this.zoomTo(t, true);
+        },
+        area: function () {
+            if (!this.area) return;
+            const a = this.area;
+            store.commit("setArea", null);
+            let x: number;
+            if (a === "ground") {
+                x = 559;
+            } else if (a === "mezzanine") {
+                x = 1964;
+            } else if (a === "first") {
+                x = 3400;
+            }
+            if (x) {
+                const r = Rect.fromCxcywh(x, 621, 1111 * 0.85, 1238 * 0.85);
+                const z = getTramsformToCenterSvgRect(
+                    r,
+                    this.visibleRect,
+                    4
+                );
+                this.zoomTo(z, true);
+            }
         },
         moveToBooths: function () {
             __logger.log("this.moveToBooths", this.moveToBooths);

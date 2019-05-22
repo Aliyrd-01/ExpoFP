@@ -31,6 +31,7 @@ const store1 = new Vuex.Store({
         overlaySize: "medium" as OverlaySize,
         centerMap: false,
         zoomBy: null as number,
+        area: null as number,
         moveToBooths: null as number[],
         hoveredBooth: null as number,
         hoveredExhibitor: null as number,
@@ -92,6 +93,9 @@ const store1 = new Vuex.Store({
         },
         setZoomBy(state, val) {
             state.zoomBy = val;
+        },
+        setArea(state, val) {
+            state.area = val;
         },
         setHoveredBooth(state, item) {
             state.hoveredBooth = item || null;
