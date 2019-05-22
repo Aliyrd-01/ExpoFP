@@ -13,6 +13,17 @@ for (const b of Object.values(booths)) {
     // b.hideName = b.name.startsWith("_");
     //boothsBySlug.set(b.slug, b);
     boothsByName.set(b.name.toLowerCase(), b);
+
+    if (EFP_EXPO === "cbresupplypartner") {
+        if (b.special === false && !b.availColor && b.type) {
+            if (b.type.endsWith("Passport")) b.availColor = "#939393";
+            else if (b.type === "Premium A - 2m") b.availColor = "#FF9E4E";
+            else if (b.type === "Premium A - 4m") b.availColor = "#EA4335";
+            else if (b.type === "Premium B - 2m") b.availColor = "#523BC0";
+            else if (b.type === "Premium C - 2.4m") b.availColor = "#3ECC78";
+        }
+    }
+
 }
 
 for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]').nodes() as (SVGRectElement | SVGPathElement)[]) {
@@ -22,7 +33,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
     } else {
         rect = el.lastElementChild as SVGRectElement;
         if (!rect || rect.tagName !== 'rect') continue;
-      
+
     }
 
     const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
@@ -43,7 +54,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
 
     booth.rect = Rect.fromSvgRectElement(rect);
     booth.noLabels = rect.id.startsWith("no");
-    
+
     const transform = rect.getAttribute("transform");
     if (transform) {
         const mt = transform.match(/translate\(([\-0-9\.]+) ([\-0-9\.]+)\) rotate\(([\-0-9\.]+)\)/);
@@ -77,14 +88,14 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
 
     if (el.tagName === 'g') {
         booth.paths = [];
-        for (const kid of d3.select(el).selectAll('path, rect').nodes() as (SVGPathElement|SVGRectElement)[]) {
+        for (const kid of d3.select(el).selectAll('path, rect').nodes() as (SVGPathElement | SVGRectElement)[]) {
             if (kid.tagName === 'path') {
                 const path = kid as SVGPathElement;
                 if (path.tagName !== 'path') continue;
                 const color = path.style.fill;
                 const d = parseInt(path.getAttribute('data-index'));
                 if (!d) continue;
-                 // const triangles = getTrianglesFromFpPaths(d);
+                // const triangles = getTrianglesFromFpPaths(d);
                 const pi: PathInfo = {
                     triangles: getTrianglesFromFpPaths(d),
                     color
