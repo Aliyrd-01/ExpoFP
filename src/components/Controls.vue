@@ -50,8 +50,13 @@ export default {
         width: $s;
         cursor: pointer;
         color: #777;
-        &:hover {
+        .overlay-left &:hover {
             color: #111;
+        }
+
+        &:active {
+            color: #111;
+            background: #f1f1f1;
         }
     }
 
