@@ -37,29 +37,40 @@ export default {
     }
 
     > button {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(12, 27, 48, 0.9);
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
+        color: #fff;
         min-width: 130px;
         line-height: 1.8rem;
-        border: solid 1px #777;
+        border-radius: 2px;
+        margin: 3px;
+        border: none;
+        /* border: solid 1px transparent; */
         font-weight: 500;
         &.active {
             color: #fff;
             background: #0c1b30;
         }
         &:nth-child(n + 1) {
-            margin-left: -1px;
+            margin-left: 0;
         }
         cursor: pointer;
         outline: none;
 
         &:active {
-            color: #333;
-            background: #eee;
+            color: #eee;
+            background: rgba(12, 27, 48, 1);
         }
     }
 
-    /* .overlay-bottom & {
-        display: none;
-    } */
+    .overlay-bottom & {
+        top: 4.3rem;
+        left: unset;
+        right: 1.3rem;
+        > button {
+            display: block;
+            margin-top: 0;
+        }
+    }
 }
 </style>
