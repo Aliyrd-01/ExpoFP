@@ -3,9 +3,9 @@
         <a href='https://expofp.com/' target="_blank" class='logo-overlay' :style='{"margin-top": `${wsFullHeightPx}px`}'><img
                 src='expofp-overlay.png'></a>
         <Ws />
+        <Controls />
         <Overlay />
         <Map v-if="mapReady" />
-        <Controls />
         <Demo />
         <!-- <Message /> -->
         <Debug />
