@@ -114,7 +114,8 @@ function getBoothColor(b: Booth) {
 
     let colorInfo = Color(color);
     if (s.hover && !s.selected) {
-        colorInfo = colorInfo.darken(0.2);
+        const a = colorInfo.alpha();
+        colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
     }
     // var Col = Color;
     // debugger
