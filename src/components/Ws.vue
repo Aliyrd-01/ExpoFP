@@ -1,6 +1,5 @@
 <template>
-    <transition-group name="ws__list" tag="section" class="ws" :style="sectionStyle" @mouseover="mouseover"
-        @mouseout="mouseout">
+    <transition-group name="ws__list" tag="section" class="ws" :style="sectionStyle" @mouseover="mouseover" @mouseout="mouseout">
         <a :href="`?${e.e.slug}`" v-for="e in adv" :key="e.key" class="ws__exhibitor" :style='{height: `${wsHeightPx}px`}'
             @click.prevent="select(e.e.id)"><img :src='e.e.logo' :alt='e.e.name'></a>
     </transition-group>
@@ -95,7 +94,12 @@ export default {
 <style lang="scss">
 .ws {
     position: fixed;
-    top: 0;
+    /* top: 0;
+    .expo-cbresupplypartner & {
+        top: unset;
+        bottom: 0;
+    } */
+    bottom: 0;
     right: 0;
     /* height: 0; */
     background: #fff;
@@ -106,6 +110,10 @@ export default {
     filter: brightness(97%);
     transition: opacity 0.5s;
 
+    .overlay-bottom & {
+        bottom: unset;
+        top: 0;
+    }
     &__exhibitor {
         /* height: 100%; */
         display: flex;

@@ -35,7 +35,7 @@ export default {
         }
     },
     watch: {
-        showBack: function() {
+        showBack: function () {
             this.animationEnded = false;
             if (this.backTimeout) window.clearTimeout(this.backTimeout);
             this.backTimeout = window.setTimeout(() => {

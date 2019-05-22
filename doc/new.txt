@@ -1,6 +1,7 @@
 TODO
 
 make printing cener things
+efp logo position 
 
 //create expo expo fp from multiple paths
 //test things

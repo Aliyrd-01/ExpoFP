@@ -26,6 +26,7 @@ export default {
             "overlaySize",
             "moveToBooths",
             "centerMap",
+            "zoomBy",
             "booths",
             "hoveredBooth",
             "screenSize",
@@ -50,7 +51,9 @@ export default {
 
             switch (this.overlayPosition) {
                 case "left":
-                    rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsFullHeightPx, w, h);
+                    // rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsFullHeightPx, w, h);
+                    // if (EFP_EXPO === 'cbresupplypartner') 
+                    rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), 0, w, h - this.wsFullHeightPx);
                     break;
                 // case "bottomSmall":
                 //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
@@ -80,13 +83,14 @@ export default {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
-                if (isWheel)
+                if (isWheel || this.animatePlease)
                     setZoomTransformAnimated(t, 300, d3.easeExpOut);
                 else if (t.animate)
                     setZoomTransformAnimated(t, 500, d3.easeExpOut);
                 else
                     setZoomTransformAnimated(t, 0, null);
 
+                this.animatePlease = false;
                 this.moving = true;
             })
             .on("end", () => {
@@ -113,6 +117,19 @@ export default {
             if (!this.centerMap) return;
             store.commit("setCenterMap", false);
             this.zoomTo(d3.zoomIdentity, true);
+        },
+        zoomBy: function () {
+            if (!this.zoomBy) return;
+            const z = this.zoomBy;
+            store.commit("setZoomBy", null);
+            //const t = d3.zoomTransform(this.$canvas.node());
+            this.animatePlease = true;
+            this.$canvas.call(this.zoom.scaleBy, z === -1 ? 0.66 : 1.5);
+
+            // const t = d3.zoomTransform(this.$canvas.node());
+            // d3.sca
+            // t = t.scaleBy(1)
+            // this.zoomTo(t, true);
         },
         moveToBooths: function () {
             __logger.log("this.moveToBooths", this.moveToBooths);
