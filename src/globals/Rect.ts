@@ -13,7 +13,19 @@ namespace local {
         get cy() { return (this.y1 + this.y2) / 2; }
 
         private constructor(x1: number, y1: number, x2: number, y2: number) {
-            if (x1 > x2 || y1 > y2) throw new Error('Invalid rect');
+            if (x1 > x2) {
+                const x1Orig = x1;
+                x1 = x2;
+                x2 = x1Orig;
+            }
+            if (y1 > y2) {
+                const y1Orig = y1;
+                y1 = y2;
+                y2 = y1Orig;
+            }
+            if (x1 >= x2 || y1 >= y2) {
+                throw new Error('Invalid rect');
+            }
             this.x1 = x1;
             this.y1 = y1;
             this.x2 = x2;
@@ -37,6 +49,12 @@ namespace local {
         }
 
         static fromSvgRectElement(svgRect: SVGRectElement) {
+            // let x = svgRect.x.baseVal.value;
+            // let y = svgRect.y.baseVal.value;
+            // let w = svgRect.width.baseVal.value;
+            // let h = svgRect.height.baseVal.value;
+            // if (w < 0) { x += w; w = -w; }
+            // if (h < 0) { y += h; h = -h; }
             return this.fromXywh(svgRect.x.baseVal.value, svgRect.y.baseVal.value, svgRect.width.baseVal.value, svgRect.height.baseVal.value);
         }
 
