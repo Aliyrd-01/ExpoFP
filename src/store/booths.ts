@@ -22,8 +22,10 @@ for (const b of Object.values(booths)) {
             else if (b.type === "Premium B - 2m") b.availColor = "#523BC0";
             else if (b.type === "Premium C - 2.4m") b.availColor = "#3ECC78";
         }
+        if (b.special === false) {
+            b.size = undefined;
+        }
     }
-
 }
 
 for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]').nodes() as (SVGRectElement | SVGPathElement)[]) {

@@ -1,8 +1,8 @@
 <template>
     <div class="areas" :class="{ '-ready': ready }" v-if='shown'>
         <button @click="area('ground')">Ground Floor</button>
-        <button @click="area('mezzanine')">Mezzanine</button>
-        <button @click="area('first')">First Floor</button>
+        <button @click="area('mezzanine')">Level 1</button>
+        <button @click="area('first')">Level 2</button>
     </div>
 </template>
 
@@ -28,8 +28,8 @@ export default {
 <style lang="scss">
 .areas {
     position: fixed;
-    top: 1.3rem;
-    left: 25rem;
+    top: 0.5rem;
+    left: 24.3rem;
     opacity: 0;
     transition: 500ms opacity;
     &.-ready {
@@ -41,7 +41,8 @@ export default {
         box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
         color: #fff;
         min-width: 130px;
-        line-height: 1.8rem;
+        line-height: 1.35rem;
+        font-size: 0.85rem;
         border-radius: 2px;
         margin: 3px;
         border: none;
