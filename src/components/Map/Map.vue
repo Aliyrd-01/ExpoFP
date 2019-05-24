@@ -113,7 +113,7 @@ export default {
             this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
         });
 
-        store.commit("setArea", "ground");
+        if (EFP_EXPO === "cbresupplypartner") store.commit("setArea", "ground");
     },
     watch: {
         centerMap: function () {
