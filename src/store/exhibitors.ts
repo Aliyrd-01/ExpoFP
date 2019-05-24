@@ -5,7 +5,8 @@ import baseUrl from "@/tools/base-data-url";
 
 if (previewExhibitor) {
     const i = __data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
-    __data.exhibitors.splice(i, 1, previewExhibitor);
+    if (i !== -1) __data.exhibitors.splice(i, 1, previewExhibitor);
+    else __data.exhibitors.push(previewExhibitor);
 }
 
 const exhibitors = __data.exhibitors.reduce((a: any, c: Exhibitor) => (c.booths = []) && (a[c.id] = c) && a, {} as any) as {
@@ -30,7 +31,7 @@ export default {
     state: exhibitors,
     getters: {
         exhibitorsArray: (state: any) =>
-            Object.values(state).sort(function(a: Exhibitor, b: Exhibitor) {
+            Object.values(state).sort(function (a: Exhibitor, b: Exhibitor) {
                 var x = (a.featured ? "0" : "1") + a.name.toLowerCase();
                 var y = (b.featured ? "0" : "1") + b.name.toLowerCase();
                 return x < y ? -1 : x > y ? 1 : 0;
