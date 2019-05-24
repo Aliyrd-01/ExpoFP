@@ -38,6 +38,7 @@ export default {
         margin-bottom: 0.5rem;
     }
     > .fa {
+        padding: 0;
         background: #fff;
         outline: none;
         border: none;
