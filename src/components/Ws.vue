@@ -1,6 +1,6 @@
 <template>
-    <transition-group name="ws__list" tag="section" class="ws" :style="sectionStyle"
-        @mouseover="mouseover" @mouseout="mouseout" v-if="wsShown">
+    <transition-group name="ws__list" tag="section" class="ws" :style="sectionStyle" @mouseover="mouseover" @mouseout="mouseout"
+        v-if="wsShown">
         <a :href="`?${e.e.slug}`" v-for="e in adv" :key="e.key" class="ws__exhibitor" :style='{height: `${wsImageHeightPx}px`}'
             @click.prevent="select(e.e.id)"><img :src='e.e.logo' :alt='e.e.name'></a>
     </transition-group>
@@ -20,7 +20,8 @@ export default {
     computed: {
         ...mapState([
             //"overlayWidthRems",
-            "screenSize"
+            "screenSize",
+            "wsStarted"
         ]),
         ...mapGetters([
             "wsShown",
@@ -38,7 +39,7 @@ export default {
             const style = {
                 width: this.overlayPosition === "left" ? `${this.wsWidthPx}px` : '100%',
                 // todo: remove
-                opacity: this.adv.length ? 1 : 0,
+                opacity: this.wsStarted ? 1 : 0,
                 right: 0,
                 padding: `0 ${this.wsPaddingPx}px`
             } as any;
@@ -56,7 +57,8 @@ export default {
     },
     mounted() {
         // this.$watch("loadedAdv", this.setupNext);
-        window.setTimeout(() =>
+        window.setTimeout(() => {
+            if (this.all.length === 0) store.commit("setWsStarted", true);
             this.all.forEach(x => {
                 const img = new Image();
                 img.onload = () => {
@@ -70,7 +72,8 @@ export default {
                     }
                 };
                 img.src = x.logo;
-            }), 2000);
+            })        }, 2000);
+
     },
     methods: {
         setupNext() {
@@ -92,6 +95,7 @@ export default {
 
             } while (true)
             this.adv = adv;
+            if (!this.wsStarted) store.commit("setWsStarted", true);
         },
         select(id) {
             this.$store.dispatch("clickExhibitor", id);

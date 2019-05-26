@@ -1,5 +1,5 @@
 <template>
-    <div class="controls" :class="{ '-ready': ready }" :style="style">
+    <div class="controls" :class="{ '-ready': wsStarted }" :style="style">
         <button class="fa fa-plus" title="Zoom In" @click="zoom(1)"></button>
         <button class="fa fa-minus" title="Zoom Out" @click="zoom(-1)"></button>
     </div>
@@ -10,8 +10,9 @@ import { mapGetters, mapState } from "vuex";
 import { remsToPixels } from './Map/utils';
 
 export default {
-    data: () => ({ ready: false }),
+    //data: () => ({ ready: false }),
     computed: {
+        ...mapState(["wsStarted"]),
         ...mapGetters([
             "mapVisibleTop",
             "mapVisibleLeft"
@@ -23,11 +24,11 @@ export default {
             }
         }
     },
-    mounted() {
-        window.setTimeout(() => {
-            this.ready = true;
-        }, 2000);
-    },
+    // mounted() {
+    //     // window.setTimeout(() => {
+    //     //     this.ready = true;
+    //     // }, 2000);
+    // },
     methods: {
         zoom(val) {
             this.$store.commit("setZoomBy", val);

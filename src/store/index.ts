@@ -40,6 +40,7 @@ const store1 = new Vuex.Store({
         previewExhibitor: previewExhibitor ? previewExhibitor.id : null,
         menu: false,
         overlayShowsAll: false,
+        wsStarted: false,
         activeListIndex: -1,
         //
         booths: null as typeof booths.state,
@@ -49,7 +50,8 @@ const store1 = new Vuex.Store({
         screenSize: null as typeof screenSize.state,
         // overlayWidthRems: 23.5,
         overlayMediumHeightRems: 10,
-        devicePixelRatio: window.devicePixelRatio
+        devicePixelRatio: window.devicePixelRatio,
+        
     },
     getters: {
         // overlayPosition: state => {
@@ -115,6 +117,9 @@ const store1 = new Vuex.Store({
         },
         setDevicePixelRatio(state, val) {
             state.devicePixelRatio = val;
+        },
+        setWsStarted(state, val) {
+            state.wsStarted = val;
         }
     },
     actions: {

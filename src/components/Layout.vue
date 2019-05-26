@@ -64,9 +64,9 @@ export default {
         const f = document['fonts'];
         if (f && f.ready) f.ready.then(doSet.bind(this, "ready"));
 
-        window.setTimeout(() => {
-            (document.querySelector('.logo-overlay') as HTMLAnchorElement).style.opacity = "1";
-        }, 3000);
+        // window.setTimeout(() => {
+        //     (document.querySelector('.logo-overlay') as HTMLAnchorElement).style.opacity = "1";
+        // }, 3000);
     }
 };
 </script>

@@ -10,6 +10,7 @@ export default {
     // props: ["scrolled", "backMode", "hideClose"],
     // components: {}
     computed: {
+        ...mapState(["wsStarted"]),
         ...mapGetters([
             "overlayPosition",
             "mapVisibleTop",
@@ -17,8 +18,11 @@ export default {
         ]),
         style() {
             const pad = this.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
-            if (this.overlayPosition === "left") return { bottom: (this.mapVisibleBottom + pad) + 'px', right: pad + 'px', width: '5rem' };
-            return { top: (this.mapVisibleTop + pad) + 'px', right: pad + 'px', width: '3rem' };
+            let style: any;
+            if (this.overlayPosition === "left") style = { bottom: (this.mapVisibleBottom + pad) + 'px', right: pad + 'px', width: '5rem' };
+            else style = { top: (this.mapVisibleTop + pad) + 'px', right: pad + 'px', width: '3rem' };
+            style.opacity = this.wsStarted ? 1 : 0;
+            return style;
         }
     }
 };
@@ -30,10 +34,9 @@ export default {
     position: fixed;
     /* bottom: 1rem; */
     /* right: 0.5rem; */
-    opacity: 0;
+    /* opacity: 0; */
     transition: opacity 0.5s;
 
-  
     > img {
         display: block;
         width: 100%;
