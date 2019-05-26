@@ -125,7 +125,7 @@ if (locationSearch.startsWith("?fbclid")) {
     history.replace("?");
 }
 
-if (store.state.previewExhibitor) {
+if (typeof store.state.previewExhibitor === "number") {
     history.replace("?" + store.state.exhibitors[store.state.previewExhibitor].slug);
 }
 
