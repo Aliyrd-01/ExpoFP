@@ -29,7 +29,7 @@ export default {
 .areas {
     position: fixed;
     top: 0.5rem;
-    left: 24.3rem;
+    right: 0.5rem;
     opacity: 0;
     transition: 500ms opacity;
     &.-ready {
@@ -66,8 +66,7 @@ export default {
 
     .overlay-bottom & {
         top: 4.3rem;
-        left: unset;
-        right: 1.3rem;
+        right: 0.5rem;
         > button {
             display: block;
             margin-top: 0;
