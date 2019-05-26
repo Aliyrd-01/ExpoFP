@@ -48,7 +48,7 @@ function setTitle() {
     if (title.length) title += " – ";
     title += __data.title;
     if (__data.subtitle) title += " – " + __data.subtitle;
-    title +=" – Expo Floor Plan by ExpoFP";
+    title += " – Expo Floor Plan by ExpoFP";
 
     document.title = title;
 }
@@ -112,7 +112,7 @@ if (locationSearch.startsWith("?b=")) {
     history.replace("?bookmarks");
 }
 
-if (locationSearch.startsWith("?ba=")){
+if (locationSearch.startsWith("?ba=")) {
     const url = new URL(window.location.href);
     const ba = url.searchParams.get("ba");
     const exhibitor = store.state.exhibitors[ba];
