@@ -51,7 +51,7 @@ const store1 = new Vuex.Store({
         // overlayWidthRems: 23.5,
         overlayMediumHeightRems: 10,
         devicePixelRatio: window.devicePixelRatio,
-        
+
     },
     getters: {
         // overlayPosition: state => {
@@ -246,9 +246,14 @@ const store1 = new Vuex.Store({
     }
 });
 
-matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener("change", () => {
-    store1.commit("setDevicePixelRatio", window.devicePixelRatio);
-});
+// monitor devicePixelRatio changes
+const mm = typeof matchMedia !== "undefined" ? matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`) : null;
+if (mm && mm.addEventListener) {
+    mm.addEventListener("change", () => {
+        store1.commit("setDevicePixelRatio", window.devicePixelRatio);
+    });
+}
+
 
 declare global {
     const store: typeof store1;
