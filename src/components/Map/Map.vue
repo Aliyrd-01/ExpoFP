@@ -32,8 +32,8 @@ export default {
             "hoveredBooth",
             "screenSize",
             "bookmarked",
-            "overlayWidthRems",
-            "overlayMediumHeightRems"
+            // "overlayWidthRems",
+            // "overlayMediumHeightRems"
         ]),
         ...mapGetters([
             "overlayPosition",
@@ -41,33 +41,39 @@ export default {
             "listBoothsIds",
             "selectedBoothIds",
             "hoveredBoothIds",
-            "wsFullHeightPx"
+            "mapVisibleTop",
+            "mapVisibleBottom",
+            "mapVisibleLeft"
         ]),
         visibleRect() {
             // __logger.log("get visibleRect", this.occupied);
             const w = this.screenSize.width;
             const h = this.screenSize.height;
 
-            let rect: Rect;
+            const rect = Rect.fromX1y1x2y2(this.mapVisibleLeft, this.mapVisibleTop, w, h - this.mapVisibleBottom);
 
-            switch (this.overlayPosition) {
-                case "left":
-                    // rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsFullHeightPx, w, h);
-                    // if (EFP_EXPO === 'cbresupplypartner') 
-                    rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), 0, w, h - this.wsFullHeightPx);
-                    break;
-                // case "bottomSmall":
-                //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
-                case "bottom":
-                    rect = Rect.fromX1y1x2y2(0, this.wsFullHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
-                    break;
-            }
+            return rect.withPadding(rect.w * 0.05, rect.h * 0.05);
 
-            if (rect) {
-                rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
-                return rect;
-            }
-            throw new Error("Not supported `overlayPosition`");
+            // let rect: Rect;
+
+            // switch (this.overlayPosition) {
+            //     case "left":
+            //         // rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsOccupiedHeightPx, w, h);
+            //         // if (EFP_EXPO === 'cbresupplypartner') 
+            //         rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), 0, w, h - this.wsOccupiedHeightPx);
+            //         break;
+            //     // case "bottomSmall":
+            //     //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
+            //     case "bottom":
+            //         rect = Rect.fromX1y1x2y2(0, this.wsOccupiedHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
+            //         break;
+            // }
+
+            // if (rect) {
+            //     rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+            //     return rect;
+            // }
+            // throw new Error("Not supported `overlayPosition`");
         }
     },
     mounted() {

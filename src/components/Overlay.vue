@@ -31,8 +31,8 @@ export default {
         Booth
     },
     computed: {
-        ...mapState(["overlaySize", "screenSize", "overlayWidthRems", "overlayMediumHeightRems"]),
-        ...mapGetters(["overlayPosition"]),
+        ...mapState(["overlaySize", "screenSize", "overlayMediumHeightRems"]),
+        ...mapGetters(["overlayPosition", "overlayWidthPx"]),
         noMove() {
             return this.overlayPosition === "left";
         }
@@ -114,7 +114,7 @@ export default {
             // const w = "23.5rem";
             switch (position) {
                 case "left":
-                    s.width = this.overlayWidthRems + "rem";
+                    s.width = this.overlayWidthPx + "px";
                     s.top = "0";
                     s.left = "0";
                     s.height = undefined;

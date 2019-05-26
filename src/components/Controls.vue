@@ -1,15 +1,27 @@
 <template>
-    <div class="controls" :class="{ '-ready': ready }">
+    <div class="controls" :class="{ '-ready': ready }" :style="style">
         <button class="fa fa-plus" title="Zoom In" @click="zoom(1)"></button>
         <button class="fa fa-minus" title="Zoom Out" @click="zoom(-1)"></button>
     </div>
 </template>
 
 <script lang="ts">
+import { mapGetters, mapState } from "vuex";
+import { remsToPixels } from './Map/utils';
+
 export default {
     data: () => ({ ready: false }),
     computed: {
-
+        ...mapGetters([
+            "mapVisibleTop",
+            "mapVisibleLeft"
+        ]),
+        style() {
+            return {
+                left: (this.mapVisibleLeft + remsToPixels(0.7)) + 'px',
+                top: (this.mapVisibleTop + remsToPixels(0.7)) + 'px',
+            }
+        }
     },
     mounted() {
         window.setTimeout(() => {
@@ -26,8 +38,6 @@ export default {
 <style lang="scss">
 .controls {
     position: fixed;
-    top: 10px;
-    right: 10px;
     opacity: 0;
     transition: 500ms opacity;
     &.-ready {
@@ -59,13 +69,6 @@ export default {
             color: #111;
             background: #f1f1f1;
         }
-    }
-
-    .overlay-bottom & {
-        top: 65px;
-        right: unset;
-        left: 10px;
-        /* display: none; */
     }
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
-    <transition-group name="ws__list" tag="section" class="ws" :style="sectionStyle" @mouseover="mouseover" @mouseout="mouseout">
-        <a :href="`?${e.e.slug}`" v-for="e in adv" :key="e.key" class="ws__exhibitor" :style='{height: `${wsHeightPx}px`}'
+    <transition-group name="ws__list" tag="section" class="ws" :style="sectionStyle"
+        @mouseover="mouseover" @mouseout="mouseout" v-if="wsShown">
+        <a :href="`?${e.e.slug}`" v-for="e in adv" :key="e.key" class="ws__exhibitor" :style='{height: `${wsImageHeightPx}px`}'
             @click.prevent="select(e.e.id)"><img :src='e.e.logo' :alt='e.e.name'></a>
     </transition-group>
 </template>
@@ -18,23 +19,39 @@ export default {
     data: () => ({ loadedAdv: [], adv: [], index: 0 }),
     computed: {
         ...mapState([
-            "overlayWidthRems",
+            //"overlayWidthRems",
             "screenSize"
         ]),
         ...mapGetters([
+            "wsShown",
+            "wsWidthPx",
+            "wsPaddingPx",
             "overlayPosition",
-            "wsHeightPx",
+            "wsPosition",
+            "wsImageHeightPx",
             "exhibitorsArray",
         ]),
         all() {
             return shuffle(this.exhibitorsArray.filter(x => x.advertise && x.logo));
         },
         sectionStyle() {
-            const width = this.overlayPosition === "left" ? `calc(100% - ${this.$store.state.overlayWidthRems}rem)` : '100%';
-            const opacity = this.adv.length ? 1 : 0;
+            const style = {
+                width: this.overlayPosition === "left" ? `${this.wsWidthPx}px` : '100%',
+                // todo: remove
+                opacity: this.adv.length ? 1 : 0,
+                right: 0,
+                padding: `0 ${this.wsPaddingPx}px`
+            } as any;
+
+            if (this.wsPosition === "top") style.top = 0;
+            else style.bottom = 0;
+            // const width = this.overlayPosition === "left" ? `${this.wsWidthPx}px` : '100%';
+            // const opacity = this.adv.length ? 1 : 0;
+            // const right = 0;
+
             // const display = this.adv.length ? 'flex' : 'none';
             // const height = `${this.wsHeightPx}px`;
-            return { width, opacity };
+            return style;
         },
     },
     mounted() {
@@ -65,7 +82,7 @@ export default {
             do {
                 const e = this.loadedAdv[this.index % this.loadedAdv.length];
                 const img = imgByExhibitorId.get(e.id);
-                const width = img.width * this.wsHeightPx / img.height + 20; //padding
+                const width = img.width * this.wsImageHeightPx / img.height + 20; //padding
 
                 if (filledWidth + width > maxWidth && adv.length) break;
 
@@ -95,25 +112,25 @@ export default {
 .ws {
     position: fixed;
     /* top: 0;
-    .expo-cbresupplypartner & {
+    &.-desktop-bottom {
         top: unset;
         bottom: 0;
     } */
-    bottom: 0;
+    /* bottom: 0; */
     right: 0;
     /* height: 0; */
     background: #fff;
     display: flex;
     justify-content: space-around;
-    padding: 0 0.3rem;
+    //padding: 0 0.3rem;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
     filter: brightness(97%);
     transition: opacity 0.5s;
 
-    .overlay-bottom & {
+    /* .overlay-bottom & {
         bottom: unset;
         top: 0;
-    }
+    } */
     &__exhibitor {
         /* height: 100%; */
         display: flex;

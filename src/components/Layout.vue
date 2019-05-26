@@ -1,7 +1,6 @@
 <template>
-    <div id="root" :class='"expo-" + expo + " overlay-" + overlayPosition'>
-        <a href='https://expofp.com/' target="_blank" class='logo-overlay' :style='{"margin-top": `${wsFullHeightPx}px`}'><img
-                src='expofp-overlay.png'></a>
+    <div id="root" :class='classes'>
+        <LogoOverlay />
         <Ws />
         <Controls />
         <Areas />
@@ -17,6 +16,7 @@
 <script lang="ts">
 
 import Overlay from "./Overlay.vue";
+import LogoOverlay from "./LogoOverlay.vue";
 import Map from "./Map/Map.vue";
 import Controls from "./Controls.vue";
 import Areas from "./Areas.vue";
@@ -30,6 +30,7 @@ import { remsToPixels } from './Map/utils';
 export default {
     // name: 'app',
     components: {
+        LogoOverlay,
         Overlay,
         Map,
         Controls,
@@ -45,9 +46,11 @@ export default {
             return EFP_EXPO;
         },
         ...mapGetters([
-            "overlayPosition",
-            "wsFullHeightPx",
-        ])
+            "overlayPosition"
+        ]),
+        classes() {
+            return `expo-${EFP_EXPO} overlay-${this.overlayPosition}`;
+        }
     },
     mounted() {
         function doSet(cause) {
@@ -61,7 +64,7 @@ export default {
         const f = document['fonts'];
         if (f && f.ready) f.ready.then(doSet.bind(this, "ready"));
 
-        window.setTimeout(()=>{
+        window.setTimeout(() => {
             (document.querySelector('.logo-overlay') as HTMLAnchorElement).style.opacity = "1";
         }, 3000);
     }
@@ -117,27 +120,6 @@ a:visited {
     text-decoration: underline;
 }
 
-.logo-overlay {
-    display: block;
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    opacity: 0;
-    transition: opacity 0.5s;
-
-    .overlay-bottom & {
-        top: 0.5rem;
-        right: 0.5rem;
-        bottom: unset;
-        > img {
-            width: 3rem !important;
-        }
-    }
-    > img {
-        display: block;
-        width: 5rem;
-    }
-}
 #fps {
     position: fixed;
     top: 10px;
@@ -145,7 +127,7 @@ a:visited {
     font-size: 10px;
     z-index: 999;
 }
-.fa-phone{
+.fa-phone {
     transform: scaleX(-1);
 }
 </style>

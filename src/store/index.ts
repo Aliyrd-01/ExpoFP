@@ -5,6 +5,7 @@ import exhibitors from "./exhibitors";
 import categories from "./categories";
 import bookmarked from "./bookmarked";
 import screenSize from "./screen-size";
+import positions from "./positions";
 import filtering, { SearchResultItem, exhibitorsToItems, boothsToItems } from "./filtering";
 import previewExhibitor from "@/utils/preview-exhibitor";
 import { isWebGlSupported, remsToPixels } from "@/components/Map/utils";
@@ -21,7 +22,8 @@ const store1 = new Vuex.Store({
         categories,
         bookmarked,
         screenSize,
-        filtering
+        filtering,
+        positions
     },
     state: {
         list: { type: "search", text: "" } as ListType,
@@ -45,23 +47,25 @@ const store1 = new Vuex.Store({
         categories: null as typeof categories.state,
         bookmarked: null as typeof bookmarked.state,
         screenSize: null as typeof screenSize.state,
-        overlayWidthRems: 23.5,
-        overlayMediumHeightRems: 10
+        // overlayWidthRems: 23.5,
+        overlayMediumHeightRems: 10,
+        devicePixelRatio: window.devicePixelRatio
     },
     getters: {
-        overlayPosition: state => {
-            const screen = state.screenSize;
-            if (!screen || screen.width > 550) return "left";
-            // if (screen.width > 450) return "left"
-            return "bottom";
-        },
+        // overlayPosition: state => {
+        //     const screen = state.screenSize;
+        //     if (!screen || screen.width > 550) return "left";
+        //     // if (screen.width > 450) return "left"
+        //     return "bottom";
+        // },
         selectedExhibitor: state =>
             state.details && state.details.type === "exhibitor" ? state.exhibitors[state.details.id] : null,
         selectedBooth: state => (state.details && state.details.type === "booth" ? state.booths[state.details.id] : null),
         selectedCategory: state => (state.list.type === "category" ? state.categories[state.list.id] : null),
 
-        wsHeightPx: (state, getters) => getters.advertisedExhibitors.length ? 48 : 0,
-        wsFullHeightPx: (state, getters) => getters.wsHeightPx ? getters.wsHeightPx + remsToPixels(0.3 * 2) : 0
+        // wsDesktopPosition: (state, getters) => EFP_EXPO === "expo" ? "bottom" : "top",
+        //wsHeightPx: (state, getters) => getters.advertisedExhibitors.length ? 48 : 0,
+        //wsFullHeightPx: (state, getters) => getters.wsHeightPx ? getters.wsHeightPx + remsToPixels(0.3 * 2) : 0
     },
     mutations: {
         // setSearchText(state, text) {
@@ -108,6 +112,9 @@ const store1 = new Vuex.Store({
         },
         setActiveListIndex(state, val) {
             state.activeListIndex = val;
+        },
+        setDevicePixelRatio(state, val) {
+            state.devicePixelRatio = val;
         }
     },
     actions: {
@@ -232,6 +239,10 @@ const store1 = new Vuex.Store({
             }
         }
     }
+});
+
+matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener("change", () => {
+    store1.commit("setDevicePixelRatio", window.devicePixelRatio);
 });
 
 declare global {
