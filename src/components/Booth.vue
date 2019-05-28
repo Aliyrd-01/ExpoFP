@@ -11,9 +11,12 @@
             <span v-html="instructions" v-if='!booth.onHold'></span>
             <div class="buy" v-if='showBuy'>
                 <a :href='booth.buyUrl' target='_blank'>Buy</a>
+                <div class="booth__buy-note" v-if="showBuyNote">Secure immediately by <br />credit card
+                    payment</div>
             </div>
             <div class="buy" v-if='showReserve'>
                 <a :href='booth.reserveUrl || booth.buyUrl' target='_blank'>Reserve</a>
+                <div class="booth__buy-note" v-if="showBuyNote">Pay by Invoice <br />30 day payment terms</div>
             </div>
         </div>
         <div class="booth__content -spec" v-if="booth.special === true">
@@ -44,6 +47,9 @@ export default {
         showBuy() {
             return !this.booth.onHold && this.booth.buyUrl && this.booth.price !== '0';
         },
+        showBuyNote() {
+            return EFP_EXPO === 'cbresupplypartner';
+        },
         boothExhibitors() {
             return this.booth.exhibitors ? this.booth.exhibitors.map(x => this.exhibitors[x]) : [];
         },
@@ -71,6 +77,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.booth__buy-note {
+    font-weight: 700;
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+    color: #555;
+}
 .booth {
     &__content {
         margin: 0 1rem;
