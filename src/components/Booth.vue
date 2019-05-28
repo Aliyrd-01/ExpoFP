@@ -10,12 +10,12 @@
             <div class="info" v-if='booth.price && !booth.onHold && booth.price !== "0"'>{{booth.price}}</div>
             <span v-html="instructions" v-if='!booth.onHold'></span>
             <div class="buy" v-if='showBuy'>
-                <a :href='booth.buyUrl' target='_blank'>Buy</a>
+                <a :href='booth.buyUrl'>Buy</a>
                 <div class="booth__buy-note" v-if="showBuyNote">Secure immediately by <br />credit card
                     payment</div>
             </div>
             <div class="buy" v-if='showReserve'>
-                <a :href='booth.reserveUrl || booth.buyUrl' target='_blank'>Reserve</a>
+                <a :href='booth.reserveUrl || booth.buyUrl'>Reserve</a>
                 <div class="booth__buy-note" v-if="showBuyNote">Pay by Invoice <br />30 day payment terms</div>
             </div>
         </div>
