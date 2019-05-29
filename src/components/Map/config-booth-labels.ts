@@ -56,6 +56,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         if (booth.special === true || booth.onHold || booth.exhibitors.length > 0 || !booth.typeColor) this.labelColor = '#fff';
         else this.labelColor = replaceColorTmp(booth.typeColor);
         if (EFP_EXPO === "cbresupplypartner") this.labelColor = '#fff';
+        if (EFP_EXPO === "podcastmovement2019") this.labelColor = '#fff';
 
         const r = this.booth.rect;
 
