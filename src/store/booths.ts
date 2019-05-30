@@ -16,7 +16,8 @@ for (const b of Object.values(booths)) {
 
     if (EFP_EXPO === "cbresupplypartner") {
         if (b.special === false && !b.availColor && b.type) {
-            if (b.type.endsWith("Passport")) b.availColor = "#939393";
+            if (b.type.indexOf("No free-standing") !== -1) b .availColor = "#BA3DC8";
+            else if (b.type.endsWith("Passport")) b.availColor = "#939393";
             else if (b.type.startsWith("Premium A - 2m")) b.availColor = "#FF9E4E";
             else if (b.type.startsWith("Premium A - 4m")) b.availColor = "#EA4335";
             else if (b.type.startsWith("Premium B - 2m")) b.availColor = "#523BC0";
