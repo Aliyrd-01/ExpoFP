@@ -15,7 +15,7 @@
                     payment</div>
             </div>
             <div class="buy" v-if='showReserve'>
-                <a :href='booth.reserveUrl || booth.buyUrl'>Reserve</a>
+                <a :href='booth.reserveUrl || booth.buyUrl'>{{reserveTitle}}</a>
                 <div class="booth__buy-note" v-if="showBuyNote">Pay by Invoice <br />30 day payment terms</div>
             </div>
         </div>
@@ -63,6 +63,9 @@ export default {
             } else if (b.special === false) {
                 return __data.boothTerm + ' ' + b.name;
             }
+        },
+        reserveTitle(){
+            return EFP_EXPO === 'cbresupplypartner' ? "Reserve & Request Invoice for Payment" : "Reserve";
         }
         // buyUrl() {
 

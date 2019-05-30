@@ -23,7 +23,7 @@ for (const b of Object.values(booths)) {
             else if (b.type.startsWith("Premium C - 2.4m")) b.availColor = "#3ECC78";
         }
         if (b.special === false) {
-            b.size = undefined;
+            //b.size = undefined;
         }
     }
 }
