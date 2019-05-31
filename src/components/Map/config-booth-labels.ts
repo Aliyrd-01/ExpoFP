@@ -113,7 +113,8 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             this.factors.push(lastFactor);
         }
 
-        this.factors.push(lastFactor / 1.8);
+        // for details?
+        this.factors.push(lastFactor / 5);
     }
 
     update() {
