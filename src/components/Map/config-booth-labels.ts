@@ -144,8 +144,6 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         }
     }
 
-
-
     addLabel(fontSize: number, sizeName: string) {
         const b = this.booth;
         const r = b.rect;
