@@ -39,6 +39,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
     }
 
     const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
+
     let booth = boothsByName.get(idInSvg);
     if (!booth) {
         __logger.error("SVG booth rect not found in __data:", idInSvg);
@@ -48,6 +49,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
             name: idInSvg.toUpperCase(),
             slug: generateUniqueSlug(idInSvg),
             exhibitors: [],
+            special: false,
             error: true
         } as any;
         booths[booth.id] = booth;
@@ -56,6 +58,12 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
 
     booth.rect = Rect.fromSvgRectElement(rect);
     booth.noLabels = rect.id.startsWith("no");
+    if (booth.special === false) {
+        booth.availColor = el.getAttribute("data-avail-color") || booth.availColor;
+        booth.soldColor = el.getAttribute("data-sold-color") || booth.soldColor;
+    } else if (booth.special === true) {
+        booth.color = el.getAttribute("data-color") || booth.color;
+    }
 
     const transform = rect.getAttribute("transform");
     if (transform) {
