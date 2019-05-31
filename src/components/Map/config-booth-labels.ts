@@ -48,6 +48,7 @@ function replaceColorTmp(color: string) {
 class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
     private readonly factors: number[] = [];
     private readonly labelColor: string;
+    private readonly detailsHeight: number;
 
     constructor(booth: Booth) {
         super(booth, "booth-label", Drawer, 130);
@@ -80,6 +81,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         this.addLabel(14, "L");
 
         const detailsCanvas = createDetailsCanvas(this.booth, this.labelColor);
+        this.detailsHeight = detailsCanvas.height;
 
         const pad = settings.borderWidth / 2;
 
@@ -107,14 +109,15 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
 
         for (const p of prefixes.slice(0, prefixes.length - 1)) {
             const cr = this.drawer.getObject(this.getId(p)).canvasTmp;
-            const xFactor = r.w / cr.width;
+            const xFactor = r.w / cr.width;//Math.min(cr.height * 5, cr.width);
             const yFactor = r.h / cr.height;
+            
             lastFactor = Math.min(xFactor, yFactor);
             this.factors.push(lastFactor);
         }
 
-        // for details?
-        this.factors.push(lastFactor / 5);
+        // Details are show at:
+        this.factors.push(lastFactor / 1.8);
     }
 
     update() {
@@ -122,6 +125,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         if (!canUpdate) return;
         let visiblePrefix = "";
         const ptscale = getPtscale();
+        const rectHeight = this.booth.rect.h * ptscale;
 
         for (let i = 0; i < prefixes.length; i++) {
             const p = prefixes[i];
@@ -134,7 +138,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             visiblePrefix = "Details";
         }
 
-        if (this.booth.special && visiblePrefix !== "Dot") {
+        if (this.booth.special && visiblePrefix !== "Dot" && this.booth.title && (this.booth.title.length > this.booth.name.length)) {
             visiblePrefix = "Details";
         }
 
