@@ -2,7 +2,7 @@
     <div class="areas" :class="{ '-ready': ready }" v-if='shown'>
         <button @click="area('ground')">Ground Floor</button>
         <button @click="area('mezzanine')">Level 1</button>
-        <button @click="area('first')">Level 2</button>
+        <!-- <button @click="area('first')">Level 2</button> -->
     </div>
 </template>
 

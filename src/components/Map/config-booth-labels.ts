@@ -56,6 +56,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         if (booth.special === true || booth.onHold || booth.exhibitors.length > 0 || !booth.typeColor) this.labelColor = '#fff';
         else this.labelColor = replaceColorTmp(booth.typeColor);
         if (EFP_EXPO === "cbresupplypartner") this.labelColor = '#fff';
+        if (EFP_EXPO === "podcastmovement2019") this.labelColor = '#fff';
 
         const r = this.booth.rect;
 
@@ -112,7 +113,8 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             this.factors.push(lastFactor);
         }
 
-        this.factors.push(lastFactor / 1.8);
+        // for details?
+        this.factors.push(lastFactor / 5);
     }
 
     update() {
