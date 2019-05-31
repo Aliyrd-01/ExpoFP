@@ -91,6 +91,10 @@ namespace local {
                 return Rect.fromX1y1x2y2(0, 0, 0, 0);
         }
 
+        getRotated90(): Rect {
+            return Rect.fromCxcywh(this.cx, this.cy, this.h, this.w);
+        }
+
         normalize(width: number, height: number) {
             const x1 = this.x1 / width;
             const x2 = this.x2 / width;

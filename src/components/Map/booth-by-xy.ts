@@ -19,9 +19,14 @@ const segments: Rect[] = [];
 const segmentToRects = new Map<Rect, Rect[]>();
 let superSegment = Rect.fromMultiple(booths.map(b => b.rect));
 for (const b of booths) {
-    rects.push(b.rect);
-    rectsToBooths.set(b.rect, b);
+    let rect = b.rect;
+    if (Math.abs(b.rotate) === 90 * Math.PI / 180){
+        rect = rect.getRotated90();
+    }
+    rects.push(rect);
+    rectsToBooths.set(rect, b);
 }
+
 const parts = 2; // 4 segmetns
 const segmentWidth = Math.ceil(superSegment.w / parts);
 const segmentHeight = Math.ceil(superSegment.h / parts);

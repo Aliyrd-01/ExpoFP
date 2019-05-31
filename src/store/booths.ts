@@ -93,9 +93,13 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
         if (booth.rotate > maxDegree / 180 * Math.PI) {
             booth.rotate = booth.rotate - 90 * Math.PI / 180;
             // also swap width and height of rect
-            const r = booth.rect;
-            booth.rect = Rect.fromCxcywh(r.cx, r.cy, r.h, r.w);
-        }
+            booth.rect = booth.rect.getRotated90();
+        }     
+    }
+
+    if (!booth.rotate && (booth.rect.h > booth.rect.w * 1.5) && booth.name.length > 5){
+        booth.rotate = 90 * Math.PI / 180;
+        booth.rect = booth.rect.getRotated90();
     }
 
     if (el.tagName === 'g') {
