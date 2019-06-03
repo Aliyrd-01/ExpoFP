@@ -5,7 +5,7 @@
         <Controls />
         <Areas />
         <Overlay />
-        <Map v-if="mapReady" />
+        <Map v-if="mapReady && webglSupported" />
         <Demo />
         <!-- <Message /> -->
         <Debug />
@@ -25,7 +25,7 @@ import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
 // import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
-import { remsToPixels } from './Map/utils';
+import { remsToPixels, isWebGlSupported } from './Map/utils';
 
 export default {
     // name: 'app',
@@ -40,7 +40,7 @@ export default {
         Demo,
         // Message
     },
-    data: () => ({ mapReady: false }),
+    data: () => ({ mapReady: false, webglSupported: isWebGlSupported() }),
     computed: {
         expo() {
             return EFP_EXPO;

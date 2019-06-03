@@ -5,6 +5,7 @@ import configBoothBookmark from './config-booth-bookmark';
 import configBoothLabels from './config-booth-labels';
 import configBoothBorder from './config-booth-border';
 import BoothDrawerBase from "./BoothDrawerBase";
+import { isWebGlSupported } from "./utils";
 const boothDrawers = new Map<number, BoothDrawerBase<any>[]>();
 const boothStateCache = new Map<number, BoothState>();
 
@@ -26,23 +27,25 @@ export default function config() {
     }
 };
 
-store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {
-    handleBoothSetsDifference(new Set(v), new Set(oldV));
-});
+if (isWebGlSupported()) {
+    store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {
+        handleBoothSetsDifference(new Set(v), new Set(oldV));
+    });
 
-store.watch(((s, g) => g.listBoothsIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
-    handleBoothSetsDifference(v, oldV);
-});
+    store.watch(((s, g) => g.listBoothsIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
+        handleBoothSetsDifference(v, oldV);
+    });
 
-store.watch(((s, g) => g.selectedBoothIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
-    handleBoothSetsDifference(v, oldV);
-});
+    store.watch(((s, g) => g.selectedBoothIdsSet) as any, (v: Set<number>, oldV: Set<number>) => {
+        handleBoothSetsDifference(v, oldV);
+    });
 
-store.watch(((s, g) => g.bookmarkedArray) as any, (v: number[], oldV: number[]) => {
-    const oldExhibitors = oldV.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c));
-    const exhibitors = v.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c));
-    handleBoothSetsDifference(new Set(exhibitors), new Set(oldExhibitors));
-});
+    store.watch(((s, g) => g.bookmarkedArray) as any, (v: number[], oldV: number[]) => {
+        const oldExhibitors = oldV.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c));
+        const exhibitors = v.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c));
+        handleBoothSetsDifference(new Set(exhibitors), new Set(oldExhibitors));
+    });
+}
 
 function handleBoothSetsDifference(v: Set<number>, oldV: Set<number>) {
     const newElements = Array.from(v).filter(x => !oldV.has(x));
