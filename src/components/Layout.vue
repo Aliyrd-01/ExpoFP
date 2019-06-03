@@ -4,7 +4,7 @@
                 src='expofp-overlay.png'></a>
         <Ws />
         <Overlay />
-        <Map v-if="mapReady" />
+        <Map v-if="mapReady && webglSupported" />
         <Demo />
         <Debug />
         <div id="fps"></div>
@@ -19,7 +19,7 @@ import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
 import { mapGetters, mapState } from "vuex";
-import { remsToPixels } from './Map/utils';
+import { remsToPixels, isWebGlSupported } from './Map/utils';
 
 export default {
     // name: 'app',
@@ -30,7 +30,7 @@ export default {
         Debug,
         Demo
     },
-    data: () => ({ mapReady: false }),
+    data: () => ({ mapReady: false, webglSupported: isWebGlSupported() }),
     computed: {
         expo() {
             return EFP_EXPO;
