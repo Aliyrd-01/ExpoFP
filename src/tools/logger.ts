@@ -4,23 +4,23 @@ class Logger {
     log(...args) {
         this.push("DEBUG", args);
         if (!__settings.debug) return;
-        console.log.apply(console.log, args);
+        callLogFunc(console.log, args);
     }
 
     error(...args) {
         this.push("ERROR", args);
-        console.error.apply(console.error, args);
+        callLogFunc(console.error, args);
     }
 
 
     warn(...args) {
         this.push("WARN", args);
-        console.warn.apply(console.warn, args);
+        callLogFunc(console.warn, args);
     }
 
     info(...args) {
         this.push("INFO", args);
-        console.info.apply(console.info, args);
+        callLogFunc(console.info, args);
     }
 
     private push(level, args: any[]) {
@@ -31,6 +31,12 @@ class Logger {
             this.messages.splice(0, max / 2);
         }
     }
+}
+
+function callLogFunc(func, args) {
+    try {
+        func.apply(func, args);
+    } catch { }
 }
 
 export const logger = new Logger();
