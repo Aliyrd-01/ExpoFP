@@ -33,6 +33,7 @@ class Logger {
     }
 }
 
+// fix for IE11
 function callLogFunc(func, args) {
     try {
         func.apply(func, args);
