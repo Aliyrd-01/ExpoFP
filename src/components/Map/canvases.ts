@@ -142,7 +142,7 @@ export function getFont(px: number, weight: number = 500) {
     );
 }
 
-export function createMultilineText(lines: string[], width: number, fontSize: number) {
+export function createMultilineTextCanvas(lines: string[], width: number, fontSize: number) {
     const canvas = document.createElement("canvas");
     const padding = fontSize * 0.5;
     const lineHeight = fontSize;

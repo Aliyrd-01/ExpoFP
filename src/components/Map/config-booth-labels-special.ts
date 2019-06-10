@@ -1,5 +1,5 @@
 import BoothDrawerBase from "./BoothDrawerBase";
-import { createCircleCanvas, createLabelCanvas, createDetailsCanvas, getFont } from "./canvases";
+import { createCircleCanvas, createLabelCanvas, createDetailsCanvas, getFont, createMultilineTextCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
 import { delayAnimations, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
@@ -27,7 +27,7 @@ function initDrawer(drawer1: Drawer) {
     }, delayAnimations + 800);
 }
 
-export default function configBoothLabels(booth: Booth) {
+export default function configBoothLabelsSpecial(booth: Booth) {
     if (!booth.special) return null;
     if (booth.noLabels) return null;
     return new BoothLabelSpecialDrawer(booth);
@@ -35,33 +35,48 @@ export default function configBoothLabels(booth: Booth) {
 
 class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
     private readonly steps: TextFitData[];
+    private readonly ids: string[];
 
     constructor(booth: Booth) {
-        super(booth, "booth-label", Drawer, 130);
+        super(booth, "booth-label-special", Drawer, 130);
         initDrawer(this.drawer);
 
         const r = this.booth.rect;
         const text = this.booth.title || this.booth.name;
 
         this.steps = textFitter.getStepsForRect(text, r.w, r.h);
+        this.ids = [];
 
         for (const s of this.steps) {
-
+            const canvasTmp = createMultilineTextCanvas(s.lines, s.width, s.fontSize);
+            const id = this.getId(s.factor.toString());
+            this.drawer.addObject({
+                id,
+                rotateRadians: booth.rotate,
+                center: [r.cx, r.cy],
+                deltas: [0, 0, 0, 0],
+                deltaPts: [-canvasTmp.width / 2, -canvasTmp.height / 2, canvasTmp.width / 2, canvasTmp.height / 2],
+                canvasTmp: canvasTmp,
+                texPosition: "center"
+            });
+            this.ids.push(id);
         }
 
-        // const dotCanvas = createCircleCanvas(1.5, this.labelColor);
-        // const dotW = dotCanvas.canvas.width / 2;
-        // const dotH = dotCanvas.canvas.width / 2;
+        const dotCanvas = createCircleCanvas(1.5, "#fff");
+        const dotW = dotCanvas.canvas.width / 2;
+        const dotH = dotCanvas.canvas.width / 2;
+        const dotId = this.getId("Dot");
+        this.drawer.addObject({
+            id: dotId,
+            rotateRadians: booth.rotate,
+            center: [r.cx, r.cy],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [-dotW, -dotH, dotW, dotH],
+            canvasTmp: dotCanvas.canvas,
+            texPosition: "center"
+        });
 
-        // this.drawer.addObject({
-        //     id: this.getId("Dot"),
-        //     rotateRadians: booth.rotate,
-        //     center: [r.cx, r.cy],
-        //     deltas: [0, 0, 0, 0],
-        //     deltaPts: [-dotW, -dotH, dotW, dotH],
-        //     canvasTmp: dotCanvas.canvas,
-        //     texPosition: "center"
-        // });
+        this.ids.push(dotId);
 
         // this.addLabel(7, "XS");
         // this.addLabel(10, "S");
@@ -91,51 +106,38 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         updates.push(this.updateBound);
     }
 
-    calcFactors() {
-        // let lastFactor: number;
-        // const r = this.booth.rect;
+    // calcFactors() {
+    //     // let lastFactor: number;
+    //     // const r = this.booth.rect;
 
-        // for (const p of prefixes.slice(0, prefixes.length - 1)) {
-        //     const cr = this.drawer.getObject(this.getId(p)).canvasTmp;
-        //     const xFactor = r.w / cr.width;//Math.min(cr.height * 5, cr.width);
-        //     const yFactor = r.h / cr.height;
+    //     // for (const p of prefixes.slice(0, prefixes.length - 1)) {
+    //     //     const cr = this.drawer.getObject(this.getId(p)).canvasTmp;
+    //     //     const xFactor = r.w / cr.width;//Math.min(cr.height * 5, cr.width);
+    //     //     const yFactor = r.h / cr.height;
 
-        //     lastFactor = Math.min(xFactor, yFactor);
-        //     this.steps.push(lastFactor);
-        // }
+    //     //     lastFactor = Math.min(xFactor, yFactor);
+    //     //     this.steps.push(lastFactor);
+    //     // }
 
-        // // Details are show at:
-        // this.steps.push(lastFactor / 1.8);
-    }
+    //     // // Details are show at:
+    //     // this.steps.push(lastFactor / 1.8);
+    // }
 
     update() {
         // if (!canDraw) return;
         if (!canUpdate) return;
         // let visiblePrefix = "";
-        // const ptscale = getPtscale();
-        // const rectHeight = this.booth.rect.h * ptscale;
+        const ptscale = getPtscale();
+        // find first with factor larger than this
+        const step = this.steps.find(s => s.factor < ptscale);
+        const visibleId = this.getId(step ? step.factor.toString() : "Dot");
 
-        // for (let i = 0; i < prefixes.length; i++) {
-        //     const p = prefixes[i];
-        //     const f = this.steps[i];
-        //     if (ptscale < f) visiblePrefix = p;
-        // }
-
-        // if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith("_food") && visiblePrefix !== "Dot") {
-        //     // __logger.debug("awsamsterdam1");
-        //     visiblePrefix = "Details";
-        // }
-
-        // if (this.booth.special && visiblePrefix !== "Dot" && this.booth.title && (this.booth.title.length > this.booth.name.length)) {
-        //     visiblePrefix = "Details";
-        // }
-
-        // for (const p of prefixes) {
-        //     var obj = this.drawer.getObject(this.getId(p));
-        //     if (!obj) debugger;
-        //     this.drawer.updateVisible(this.getId(p), p === visiblePrefix);
-        //     this.drawer.updateSkipdim(this.getId(p), this.getBoothState().skipDim);
-        // }
+        for (const id of this.ids) {
+            var obj = this.drawer.getObject(id);
+            if (!obj) debugger;
+            this.drawer.updateVisible(id, id === visibleId);
+            this.drawer.updateSkipdim(id, this.getBoothState().skipDim);
+        }
     }
 
     // addLabel(fontSize: number, sizeName: string) {
