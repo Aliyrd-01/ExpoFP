@@ -103,9 +103,19 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         // });
 
         // this.calcFactors();
-        this.updateAction();
+        this.update();
 
-        subscribePtscaleChange(() => requireUpdate(this.updateBound));
+        let timeoutId: number;
+        subscribePtscaleChange(() => {
+            if (timeoutId) {
+                window.clearTimeout(timeoutId);
+            }
+
+            timeoutId = window.setTimeout(() => {
+                requireUpdate(this.updateBound)
+                timeoutId = undefined;
+            }, 20);
+        });
         updates.push(this.updateBound);
     }
 
@@ -126,22 +136,22 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
     //     // this.steps.push(lastFactor / 1.8);
     // }
 
-    lastCall: number;
-    timeoutId: number;
+    // lastCall: number;
+    // timeoutId: number;
+    // update() {
+    //     if (this.timeoutId) {
+    //         window.clearTimeout(this.timeoutId);
+    //     }
+
+    //     this.timeoutId = window.setTimeout(() => {
+    //         this.updateAction();
+    //         requireRedraw();
+    //         this.timeoutId = undefined;
+
+    //     }, 100);
+    // }
+
     update() {
-        if (this.timeoutId) {
-            window.clearTimeout(this.timeoutId);
-        }
-
-        this.timeoutId = window.setTimeout(() => {
-            this.updateAction();
-            requireRedraw();
-            this.timeoutId = undefined;
-
-        }, 100);
-    }
-
-    updateAction() {
         // if (!canDraw) return;
         if (!canUpdate) return;
         console.log('updateAction')

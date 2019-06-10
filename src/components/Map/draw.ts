@@ -64,7 +64,7 @@ export function requireUpdate(u: () => void): void {
 }
 
 let requestedFrame: number;
-export function requireRedraw() {
+function requireRedraw() {
     if (!requestedFrame) requestedFrame = window.requestAnimationFrame(draw);
 }
 
