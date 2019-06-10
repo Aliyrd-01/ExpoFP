@@ -1,7 +1,7 @@
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas, getFont, createMultilineTextCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
-import { delayAnimations, requireUpdate, requireRedraw } from "./draw";
+import { delayAnimations, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
 import settings from "@/settings";
@@ -105,17 +105,19 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         // this.calcFactors();
         this.update();
 
-        let timeoutId: number;
-        subscribePtscaleChange(() => {
-            if (timeoutId) {
-                window.clearTimeout(timeoutId);
-            }
+        // let timeoutId: number;
+        // subscribePtscaleChange(() => {
+        //     if (timeoutId) {
+        //         window.clearTimeout(timeoutId);
+        //     }
 
-            timeoutId = window.setTimeout(() => {
-                requireUpdate(this.updateBound)
-                timeoutId = undefined;
-            }, 20);
-        });
+        //     timeoutId = window.setTimeout(() => {
+        //         requireUpdate(this.updateBound)
+        //         timeoutId = undefined;
+        //     }, 20);
+        // });
+
+        subscribePtscaleChange(() => requireUpdate(this.updateBound));
         updates.push(this.updateBound);
     }
 

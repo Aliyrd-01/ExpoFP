@@ -31,6 +31,7 @@ export default class TextFitter {
 
         const res = [];
         let minFactor = Infinity;
+        let minRows = 0;
 
         for (const fontSize of this.fontSizes) {
             const lineHeight = fontSize;
@@ -49,8 +50,9 @@ export default class TextFitter {
                 const factorW = minWidth / width;
                 const factorH = minHeight / height;
                 const factor = Math.max(factorH, factorW);
-                if (factor > minFactor) continue;
+                if (factor > minFactor || rows < minRows) continue;
                 minFactor = factor;
+                minRows = rows;
 
                 const lineSetsPossible = getPossibleLineSetsForWidth(w, rows, sBlocks, sSpaceWidth);
                 const lineSetBest = selectBestLines(lineSetsPossible, sBlocks, sSpaceWidth);
