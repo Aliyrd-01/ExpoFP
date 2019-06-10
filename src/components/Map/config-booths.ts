@@ -3,6 +3,7 @@ import configBoothBg from './config-booth-bg';
 import configBoothBookmark from './config-booth-bookmark';
 // import configBoothType from './config-booth-type';
 import configBoothLabels from './config-booth-labels';
+import configBoothLabelsSpecial from './config-booth-labels-special';
 import configBoothBorder from './config-booth-border';
 import BoothDrawerBase from "./BoothDrawerBase";
 import { isWebGlSupported } from "./utils";
@@ -11,7 +12,7 @@ const boothStateCache = new Map<number, BoothState>();
 
 export default function config() {
     const booths = store.getters.boothsArray as Booth[];
-    const configFuncs = [configBoothBg, configBoothLabels, configBoothBookmark, configBoothBorder];//configBoothType,
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark, configBoothBorder];//configBoothType,
 
     for (const b of booths) {
         const ar: BoothDrawerBase<any>[] = [];

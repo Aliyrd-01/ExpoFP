@@ -133,13 +133,40 @@ export function createBookmarkCanvas(widthPx: number) {
 }
 
 
-function getFont(px: number, weight: number) {
+export function getFont(px: number, weight: number = 500) {
     return (
         weight +
         " " +
         px +
         'px Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     );
+}
+
+export function createMultilineText(lines: string[], width: number, fontSize: number) {
+    const canvas = document.createElement("canvas");
+    const padding = fontSize * 0.5;
+    const lineHeight = fontSize;
+
+    canvas.width = width + padding * 2;
+    canvas.height = lines.length * lineHeight + padding * 2;
+
+    const c = canvas.getContext("2d");
+
+    c.textAlign = "center";
+    c.textBaseline = "alphabetic";
+    c.font = getFont(fontSize);
+
+    const totalHeight = lines.length * lineHeight;
+    const startFrom = canvas.height / 2 - totalHeight / 2;
+
+    for (let i = 0; i < lines.length; i++) {
+        // c.fillStyle = "#aaa";
+        // c.fillRect(0, startFrom + lineHeight * i, canvas.width, lineHeight);
+        c.fillStyle = "#fff";
+        c.fillText(lines[i], canvas.width / 2, startFrom + lineHeight * (i + 1));
+    }
+
+    return canvas;
 }
 
 // function getFont(px: number, weight: number) {

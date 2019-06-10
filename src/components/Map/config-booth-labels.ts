@@ -29,6 +29,7 @@ function initDrawer(drawer1: Drawer) {
 }
 
 export default function configBoothLabels(booth: Booth) {
+    if (booth.special) return null;
     if (booth.noLabels) return null;
     return new BoothLabelDrawer(booth);
 }
