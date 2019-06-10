@@ -1,7 +1,7 @@
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createLabelCanvas, createDetailsCanvas, getFont, createMultilineTextCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
-import { delayAnimations, requireUpdate } from "./draw";
+import { delayAnimations, requireUpdate, requireRedraw } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
 import settings from "@/settings";
@@ -41,7 +41,8 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         super(booth, "booth-label-special", Drawer, 130);
         initDrawer(this.drawer);
 
-        const r = this.booth.rect;
+        let r = this.booth.rect;
+        r = r.withPadding(r.w * 0.1, r.h * 0.1);
         const text = this.booth.title || this.booth.name;
 
         this.steps = textFitter.getStepsForRect(text, r.w, r.h);
@@ -57,7 +58,8 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
                 deltas: [0, 0, 0, 0],
                 deltaPts: [-canvasTmp.width / 2, -canvasTmp.height / 2, canvasTmp.width / 2, canvasTmp.height / 2],
                 canvasTmp: canvasTmp,
-                texPosition: "center"
+                texPosition: "center",
+                visible: false
             });
             this.ids.push(id);
         }
@@ -73,7 +75,8 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
             canvasTmp: dotCanvas.canvas,
-            texPosition: "center"
+            texPosition: "center",
+            visible: false
         });
 
         this.ids.push(dotId);
@@ -100,7 +103,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         // });
 
         // this.calcFactors();
-        this.update();
+        this.updateAction();
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
         updates.push(this.updateBound);
@@ -123,22 +126,39 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
     //     // this.steps.push(lastFactor / 1.8);
     // }
 
+    lastCall: number;
+    timeoutId: number;
     update() {
+        if (this.timeoutId) {
+            window.clearTimeout(this.timeoutId);
+        }
+
+        this.timeoutId = window.setTimeout(() => {
+            this.updateAction();
+            requireRedraw();
+            this.timeoutId = undefined;
+
+        }, 100);
+    }
+
+    updateAction() {
         // if (!canDraw) return;
         if (!canUpdate) return;
+        console.log('updateAction')
         // let visiblePrefix = "";
         const ptscale = getPtscale();
         // find first with factor larger than this
-        const step = this.steps.find(s => s.factor < ptscale);
+        const step = this.steps.find(s => s.factor < 1 / ptscale);
         const visibleId = this.getId(step ? step.factor.toString() : "Dot");
 
         for (const id of this.ids) {
-            var obj = this.drawer.getObject(id);
-            if (!obj) debugger;
+            // var obj = this.drawer.getObject(id);
+            // if (!obj) debugger;
             this.drawer.updateVisible(id, id === visibleId);
             this.drawer.updateSkipdim(id, this.getBoothState().skipDim);
         }
     }
+
 
     // addLabel(fontSize: number, sizeName: string) {
     //     const b = this.booth;
