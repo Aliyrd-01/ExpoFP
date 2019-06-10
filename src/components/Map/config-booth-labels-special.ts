@@ -11,7 +11,7 @@ let canUpdate = false;
 const updates = [];
 let drawer: Drawer;
 const pixelRatio = devicePixelRatio;
-const allowedFontSizes = [18, 16, 14, 12, 10, 9].map(f => f * pixelRatio);
+const allowedFontSizes = [18, 16, 14, 12, 10, 7].map(f => f * pixelRatio);
 const maxMultilineFontSize = 14 * pixelRatio;
 const textFitter = new TextFitter(getFont, allowedFontSizes, maxMultilineFontSize);
 
@@ -42,7 +42,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         initDrawer(this.drawer);
 
         let r = this.booth.rect;
-        r = r.withPadding(r.w * 0.1, r.h * 0.1);
+        r = r.withPadding(r.w * 0.05, r.h * 0.05);
         const text = this.booth.title || this.booth.name;
 
         this.steps = textFitter.getStepsForRect(text, r.w, r.h);

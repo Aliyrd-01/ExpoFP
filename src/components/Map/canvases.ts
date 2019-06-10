@@ -157,7 +157,7 @@ export function createMultilineTextCanvas(lines: string[], width: number, fontSi
     c.font = getFont(fontSize);
 
     const totalHeight = lines.length * lineHeight;
-    const startFrom = canvas.height / 2 - totalHeight / 2;
+    const startFrom = canvas.height / 2 - totalHeight / 2 - fontSize * 0.1;
 
     for (let i = 0; i < lines.length; i++) {
         // c.fillStyle = "#aaa";
