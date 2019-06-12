@@ -29,40 +29,41 @@ function initDrawer(drawer1: Drawer) {
 }
 
 export default function configBoothLabels(booth: Booth) {
-    if (booth.special) return null;
-    if (booth.noLabels) return null;
+    if (booth.special === true|| booth.noLabels) return null;
     return new BoothLabelDrawer(booth);
 }
 
-function replaceColorTmp(color: string) {
-    switch (color) {
-        case "#ffcd31":
-            return "#ffe2ac";
-        case "#2382c5":
-            return "#c4edff";
-        case "#41c122":
-            return "#b0f575";
-    }
-    return color;
-}
+// function replaceColorTmp(color: string) {
+//     switch (color) {
+//         case "#ffcd31":
+//             return "#ffe2ac";
+//         case "#2382c5":
+//             return "#c4edff";
+//         case "#41c122":
+//             return "#b0f575";
+//     }
+//     return color;
+// }
 
 class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
     private readonly factors: number[] = [];
-    private readonly labelColor: string;
-    private readonly detailsHeight: number;
+    // private readonly labelColor: string;
+    // private readonly detailsHeight: number;
 
-    constructor(booth: Booth) {
+    constructor(booth: RegularBooth) {
         super(booth, "booth-label", Drawer, 130);
         initDrawer(this.drawer);
 
-        if (booth.special === true || booth.onHold || booth.exhibitors.length > 0 || !booth.typeColor) this.labelColor = '#fff';
-        else this.labelColor = replaceColorTmp(booth.typeColor);
-        if (EFP_EXPO === "cbresupplypartner") this.labelColor = '#fff';
-        if (EFP_EXPO === "podcastmovement2019") this.labelColor = '#fff';
+        // if (booth.special === true || booth.onHold || booth.exhibitors.length > 0 || !booth.typeColor) this.labelColor = '#fff';
+        // else this.labelColor = replaceColorTmp(booth.typeColor);
+        // if (EFP_EXPO === "cbresupplypartner") this.labelColor = '#fff';
+        // if (EFP_EXPO === "podcastmovement2019") this.labelColor = '#fff';
+
+        // this.labelColor = '#fff';
 
         const r = this.booth.rect;
 
-        const dotCanvas = createCircleCanvas(1.5, this.labelColor);
+        const dotCanvas = createCircleCanvas(1.5);
         const dotW = dotCanvas.canvas.width / 2;
         const dotH = dotCanvas.canvas.width / 2;
 
@@ -81,8 +82,8 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         this.addLabel(12, "M");
         this.addLabel(14, "L");
 
-        const detailsCanvas = createDetailsCanvas(this.booth, this.labelColor);
-        this.detailsHeight = detailsCanvas.height;
+        const detailsCanvas = createDetailsCanvas(booth);
+        // this.detailsHeight = detailsCanvas.height;
 
         const pad = settings.borderWidth / 2;
 
@@ -126,7 +127,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         if (!canUpdate) return;
         let visiblePrefix = "";
         const ptscale = getPtscale();
-        const rectHeight = this.booth.rect.h * ptscale;
+        // const rectHeight = this.booth.rect.h * ptscale;
 
         for (let i = 0; i < prefixes.length; i++) {
             const p = prefixes[i];
@@ -134,14 +135,14 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             if (ptscale < f) visiblePrefix = p;
         }
 
-        if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith("_food") && visiblePrefix !== "Dot") {
-            // __logger.debug("awsamsterdam1");
-            visiblePrefix = "Details";
-        }
+        // if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith("_food") && visiblePrefix !== "Dot") {
+        //     // __logger.debug("awsamsterdam1");
+        //     visiblePrefix = "Details";
+        // }
 
-        if (this.booth.special && visiblePrefix !== "Dot" && this.booth.title && (this.booth.title.length > this.booth.name.length)) {
-            visiblePrefix = "Details";
-        }
+        // if (this.booth.special && visiblePrefix !== "Dot" && this.booth.title && (this.booth.title.length > this.booth.name.length)) {
+        //     visiblePrefix = "Details";
+        // }
 
         for (const p of prefixes) {
             var obj = this.drawer.getObject(this.getId(p));
@@ -155,7 +156,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize, this.labelColor);
+        const canvas = createLabelCanvas(b.name, fontSize);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 

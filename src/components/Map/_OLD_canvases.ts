@@ -26,24 +26,24 @@ export function createLabelCanvas(text: string, fontSize: number, color: string 
     return canvas;
 }
 
-export function createDetailsCanvas(b: RegularBooth, color: string = "#fff") {
-    //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
+export function createDetailsCanvas(b: Booth, color: string = "#fff") {
+    const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
     //const br = !b.special ? (b as RegularBooth) : undefined;
-    // if (b.special === false) {
-    lines.push(...b.exhibitors.map(e => store.state.exhibitors[e].name));
-    if (!b.exhibitors.length) {
-        if (b.onHold) {
-            lines.push("On Hold");
-        } else {
-            if (b.size) lines.push(b.size);
-            if (b.price && b.price !== '0') lines.push(b.price);
+    if (b.special === false) {
+        lines.push(...b.exhibitors.map(e => store.state.exhibitors[e].name));
+        if (!b.exhibitors.length) {
+            if (b.onHold) {
+                lines.push("On Hold");
+            } else {
+                if (b.size) lines.push(b.size);
+                if (b.price && b.price !== '0') lines.push(b.price);
+            }
         }
     }
-    // }
 
-    // if (fixBooth) lines.push(b.title);
+    if (fixBooth) lines.push(b.title);
 
     const boothFontSize = 14 * devicePixelRatio;
     const detailFontSize = 14 * devicePixelRatio;
@@ -51,12 +51,12 @@ export function createDetailsCanvas(b: RegularBooth, color: string = "#fff") {
     const detailFont = getFont(detailFontSize, 300);
     const boothPadding = 1 * devicePixelRatio;
 
-    let mainLine = b.name;
-    // if (b.special === false || fixBooth) {
-    //     mainLine = b.name;
-    // } else if (b.special === true) {
-    //     mainLine = b.title || b.name;
-    // }
+    let mainLine: string;
+    if (b.special === false || fixBooth) {
+        mainLine = b.name;
+    } else if (b.special === true) {
+        mainLine = b.title || b.name;
+    }
 
     const canvas = document.createElement("canvas");
     const c = canvas.getContext("2d");

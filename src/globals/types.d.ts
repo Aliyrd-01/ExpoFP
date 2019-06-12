@@ -26,7 +26,7 @@ interface RegularBooth extends BoothBase {
     //availableColor: string,// obsolete
     availColor: string; // new
     soldColor: string;
-    typeColor: string;
+    // typeColor: string;
     buyUrl: string;
     reserveUrl: string;
     //boothTypeName: string,// obsolete
