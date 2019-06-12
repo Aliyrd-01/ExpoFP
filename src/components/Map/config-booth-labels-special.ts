@@ -1,10 +1,9 @@
 import BoothDrawerBase from "./BoothDrawerBase";
-import { createCircleCanvas, createLabelCanvas, createDetailsCanvas, getFont, createMultilineTextCanvas } from "./canvases";
+import { createCircleCanvas, getFont, createMultilineTextCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
 import { delayAnimations, requireUpdate } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
-import settings from "@/settings";
 import TextFitter, { TextFitData } from "./TextFitter";
 
 let canUpdate = false;
@@ -81,77 +80,12 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
 
         this.ids.push(dotId);
 
-        // this.addLabel(7, "XS");
-        // this.addLabel(10, "S");
-        // this.addLabel(12, "M");
-        // this.addLabel(14, "L");
-
-        // const detailsCanvas = createDetailsCanvas(this.booth, this.labelColor);
-        // this.detailsHeight = detailsCanvas.height;
-
-        // const pad = settings.borderWidth / 2;
-
-        // this.drawer.addObject({
-        //     id: this.getId("Details"),
-        //     rotateRadians: booth.rotate,
-        //     center: [r.cx, r.cy],
-        //     deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
-        //     deltaPts: [3, 3, -1, -1],
-        //     scalePts: devicePixelRatio,
-        //     canvasTmp: detailsCanvas,
-        //     texPosition: "lefttop"
-        // });
-
-        // this.calcFactors();
         this.update();
-
-        // let timeoutId: number;
-        // subscribePtscaleChange(() => {
-        //     if (timeoutId) {
-        //         window.clearTimeout(timeoutId);
-        //     }
-
-        //     timeoutId = window.setTimeout(() => {
-        //         requireUpdate(this.updateBound)
-        //         timeoutId = undefined;
-        //     }, 20);
-        // });
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
         updates.push(this.updateBound);
     }
 
-    // calcFactors() {
-    //     // let lastFactor: number;
-    //     // const r = this.booth.rect;
-
-    //     // for (const p of prefixes.slice(0, prefixes.length - 1)) {
-    //     //     const cr = this.drawer.getObject(this.getId(p)).canvasTmp;
-    //     //     const xFactor = r.w / cr.width;//Math.min(cr.height * 5, cr.width);
-    //     //     const yFactor = r.h / cr.height;
-
-    //     //     lastFactor = Math.min(xFactor, yFactor);
-    //     //     this.steps.push(lastFactor);
-    //     // }
-
-    //     // // Details are show at:
-    //     // this.steps.push(lastFactor / 1.8);
-    // }
-
-    // lastCall: number;
-    // timeoutId: number;
-    // update() {
-    //     if (this.timeoutId) {
-    //         window.clearTimeout(this.timeoutId);
-    //     }
-
-    //     this.timeoutId = window.setTimeout(() => {
-    //         this.updateAction();
-    //         requireRedraw();
-    //         this.timeoutId = undefined;
-
-    //     }, 100);
-    // }
 
     update() {
         // if (!canDraw) return;
@@ -170,29 +104,5 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
             this.drawer.updateSkipdim(id, this.getBoothState().skipDim);
         }
     }
-
-
-    // addLabel(fontSize: number, sizeName: string) {
-    //     const b = this.booth;
-    //     const r = b.rect;
-
-    //     const canvas = createLabelCanvas(b.name, fontSize, this.labelColor);
-    //     const w = canvas.width / 2;
-    //     const h = canvas.height / 2;
-
-    //     this.drawer.addObject({
-    //         id: this.getId(sizeName),
-    //         rotateRadians: this.booth.rotate,
-    //         center: [r.cx, r.cy],
-    //         deltas: [0, 0, 0, 0],
-    //         deltaPts: [-w, -h, w, h],
-    //         canvasTmp: canvas,
-    //         texPosition: "center"
-    //     });
-    // }
 }
 
-// subscribePtscaleChange(() => {
-//     allDrawers.forEach(d => d.updateVisibleLabel());
-// });
-// subscribe to scale changes
