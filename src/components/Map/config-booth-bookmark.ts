@@ -72,10 +72,9 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
     update() {
         const ptscale = getPtscale();
 
-        const bookmarked = this.booth.special === false && this.booth.exhibitors.find(e => store.state.bookmarked[e]);
+        const { bookmarked, skipDim } = this.getBoothState();
 
         let view: string;
-
 
         if (bookmarked) {
             const widthPx = this.booth.rect.w / ptscale / devicePixelRatio;
@@ -91,10 +90,9 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
             }
         }
 
-        const skipDimm = this.getBoothState().skipDim;
         ["XL", "L", "M", "S"].forEach(x => {
             this.drawer.updateVisible(this.getId(x), x === view);
-            this.drawer.updateSkipdim(this.getId(x), skipDimm);
+            this.drawer.updateSkipdim(this.getId(x), skipDim);
         });
     }
 }

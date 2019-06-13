@@ -42,8 +42,8 @@ if (isWebGlSupported()) {
     });
 
     store.watch(((s, g) => g.bookmarkedArray) as any, (v: number[], oldV: number[]) => {
-        const oldExhibitors = oldV.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c));
-        const exhibitors = v.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c));
+        const oldExhibitors = oldV.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c), []);
+        const exhibitors = v.map(id => store.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c), []);
         handleBoothSetsDifference(new Set(exhibitors), new Set(oldExhibitors));
     });
 }

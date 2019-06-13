@@ -35,6 +35,8 @@ export default function configBoothLabelsSpecial(booth: Booth) {
 class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
     private readonly steps: TextFitData[];
     private readonly ids: string[];
+    private previousVisibleId: string;
+    private previousSkipDim: boolean;
 
     constructor(booth: Booth) {
         super(booth, "booth-label-special", Drawer, 130);
@@ -97,11 +99,19 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         const step = this.steps.find(s => s.factor < 1 / ptscale);
         const visibleId = this.getId(step ? step.factor.toString() : "Dot");
 
-        for (const id of this.ids) {
-            // var obj = this.drawer.getObject(id);
-            // if (!obj) debugger;
-            this.drawer.updateVisible(id, id === visibleId);
-            this.drawer.updateSkipdim(id, this.getBoothState().skipDim);
+
+        if (visibleId !== this.previousVisibleId) {
+            if (visibleId) this.drawer.updateVisible(visibleId, true);
+            if (this.previousVisibleId) this.drawer.updateVisible(this.previousVisibleId, false);
+            this.previousVisibleId = visibleId;
+        }
+
+        const newSkipDim = this.getBoothState().skipDim;
+        if (newSkipDim !== this.previousSkipDim) {
+            for (const id of this.ids) {
+                this.drawer.updateSkipdim(id, newSkipDim);
+            }
+            this.previousSkipDim = newSkipDim;
         }
     }
 }
