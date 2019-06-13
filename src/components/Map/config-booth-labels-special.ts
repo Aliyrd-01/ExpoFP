@@ -90,7 +90,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
     update() {
         // if (!canDraw) return;
         if (!canUpdate) return;
-        console.log('updateAction')
+        // console.log('updateAction')
         // let visiblePrefix = "";
         const ptscale = getPtscale();
         // find first with factor larger than this

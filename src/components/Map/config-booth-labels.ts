@@ -29,7 +29,7 @@ function initDrawer(drawer1: Drawer) {
 }
 
 export default function configBoothLabels(booth: Booth) {
-    if (booth.special === true|| booth.noLabels) return null;
+    if (booth.special === true || booth.noLabels) return null;
     return new BoothLabelDrawer(booth);
 }
 
@@ -47,6 +47,8 @@ export default function configBoothLabels(booth: Booth) {
 
 class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
     private readonly factors: number[] = [];
+    private previousVisiblePrefix: string;
+    private previousSkipDim: boolean;
     // private readonly labelColor: string;
     // private readonly detailsHeight: number;
 
@@ -74,7 +76,8 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
             canvasTmp: dotCanvas.canvas,
-            texPosition: "center"
+            texPosition: "center",
+            visible: false
         });
 
         this.addLabel(7, "XS");
@@ -95,7 +98,8 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             deltaPts: [3, 3, -1, -1],
             scalePts: devicePixelRatio,
             canvasTmp: detailsCanvas,
-            texPosition: "lefttop"
+            texPosition: "lefttop",
+            visible: false
         });
 
         this.calcFactors();
@@ -113,7 +117,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             const cr = this.drawer.getObject(this.getId(p)).canvasTmp;
             const xFactor = r.w / cr.width;//Math.min(cr.height * 5, cr.width);
             const yFactor = r.h / cr.height;
-            
+
             lastFactor = Math.min(xFactor, yFactor);
             this.factors.push(lastFactor);
         }
@@ -121,6 +125,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         // Details are show at:
         this.factors.push(lastFactor / 1.8);
     }
+
 
     update() {
         // if (!canDraw) return;
@@ -135,20 +140,18 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             if (ptscale < f) visiblePrefix = p;
         }
 
-        // if (EFP_EXPO === "awsamsterdam19" && this.booth.slug.startsWith("_food") && visiblePrefix !== "Dot") {
-        //     // __logger.debug("awsamsterdam1");
-        //     visiblePrefix = "Details";
-        // }
+        if (visiblePrefix !== this.previousVisiblePrefix) {
+            if (visiblePrefix) this.drawer.updateVisible(this.getId(visiblePrefix), true);
+            if (this.previousVisiblePrefix) this.drawer.updateVisible(this.getId(this.previousVisiblePrefix), false);
+            this.previousVisiblePrefix = visiblePrefix;
+        }
 
-        // if (this.booth.special && visiblePrefix !== "Dot" && this.booth.title && (this.booth.title.length > this.booth.name.length)) {
-        //     visiblePrefix = "Details";
-        // }
-
-        for (const p of prefixes) {
-            var obj = this.drawer.getObject(this.getId(p));
-            if (!obj) debugger;
-            this.drawer.updateVisible(this.getId(p), p === visiblePrefix);
-            this.drawer.updateSkipdim(this.getId(p), this.getBoothState().skipDim);
+        const newSkipDim = this.getBoothState().skipDim;
+        if (newSkipDim !== this.previousSkipDim){
+            for (const p of prefixes) {
+                this.drawer.updateSkipdim(this.getId(p), newSkipDim);
+            }
+            this.previousSkipDim = newSkipDim;
         }
     }
 
@@ -167,7 +170,8 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
             deltas: [0, 0, 0, 0],
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
-            texPosition: "center"
+            texPosition: "center",
+            visible: false
         });
     }
 }
