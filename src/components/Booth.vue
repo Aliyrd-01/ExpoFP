@@ -4,10 +4,24 @@
             <div class="booth__bar">{{title}}</div>
         </template>
         <div class="booth__content -reg" v-if="booth.special === false && !boothExhibitors.length">
-            <div class="booth__info" v-if='booth.onHold'>On Hold</div>
-            <div class="booth__info" v-if='booth.type && !booth.onHold'>{{__data.boothTerm}} Type: {{booth.type}}<br /><br /></div>
-            <div class="booth__info" v-if='booth.size && !booth.onHold'>{{booth.size}}</div>
-            <div class="booth__info" v-if='booth.price && !booth.onHold && booth.price !== "0"'>{{booth.price}}</div>
+            <div v-if='booth.onHold'>On Hold</div>
+            <div class="booth__infos">
+                <div class="booth__info" v-if='booth.type && !booth.onHold'>
+                    <i class="fas fa-cube"></i>
+                    <!-- <div class="booth__info-title">{{__data.boothTerm}} Type</div> -->
+                    <div class="booth__info-val">{{booth.type}}</div>
+                </div>
+                <div class="booth__info" v-if='booth.size && !booth.onHold'>
+                    <i class="fas fa-expand-alt"></i>
+                    <!-- <div class="booth__info-title">Size</div> -->
+                    <div class="booth__info-val">{{booth.size}}</div>
+                </div>
+                <div class="booth__info" v-if='booth.price && !booth.onHold && booth.price !== "0"'>
+                    <i class="fas fa-tag"></i>
+                    <!-- <div class="booth__info-title">Price</div> -->
+                    <div class="booth__info-val">{{booth.price}}</div>
+                </div>
+            </div>
             <span v-html="instructions" v-if='!booth.onHold'></span>
             <div class="booth__buy" v-if='showBuy'>
                 <a :href='booth.buyUrl'>Buy</a>
@@ -39,7 +53,12 @@ export default {
             return __data.reserveInstructions;
         },
         booth() {
-            return this.$store.getters.selectedBooth;
+            const b = this.$store.getters.selectedBooth;
+            // if (__settings.debug) {
+            //     // b.onHold = true;
+            //     b.price = '1232$';
+            // }
+            return b;
         },
         showReserve() {
             return !this.booth.onHold && (this.booth.price === '0' || this.booth.reserveUrl);
@@ -101,6 +120,50 @@ export default {
     &__title {
         font-weight: 500;
     }
+
+    $im: 0.2rem;
+    &__infos {
+        display: flex;
+        margin: 0 -1rem;
+        padding: $im * 2 $im;
+        background: #fff;
+    }
+
+    &__info {
+        /* min-height: 6rem; */
+        background: #41b6e7;
+        border-radius: 4px;
+        flex-grow: 1;
+        flex-basis: 1px;
+        text-align: center;
+        /* border: solid 1px #aaa; */
+        margin: 0 $im;
+        padding: 1.2rem 0.2rem;
+
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+
+        > i {
+            font-size: 2rem;
+            padding-bottom: 0.5rem;
+            color: #fff;
+            opacity: 0.7;
+        }
+        /* &-title {
+            color: #fff;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: none;
+        } */
+        &-val {
+            text-transform: uppercase;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #fff;
+        }
+    }
+
     &__buy {
         text-align: center;
         margin: 2rem 0;
@@ -112,7 +175,8 @@ export default {
             background: #41b6e7;
             padding: 0.5rem 1rem;
             min-width: 10rem;
-            color: #fff;
+            color: #fff !important;
+            text-decoration: none !important;
             transition: background-color 200ms;
             border-radius: 2px;
             &:hover {
