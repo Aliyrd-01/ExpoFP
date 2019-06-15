@@ -1,20 +1,20 @@
 <template>
     <OverlayContent v-if="show" back-mode=none @close='$store.dispatch("selectNone")'>
         <template slot="bar">
-            <div class="bar">{{title}}</div>
+            <div class="booth__bar">{{title}}</div>
         </template>
         <div class="booth__content -reg" v-if="booth.special === false && !boothExhibitors.length">
-            <div class="info" v-if='booth.onHold'>On Hold</div>
-            <div class="info" v-if='booth.type && !booth.onHold'>{{__data.boothTerm}} Type: {{booth.type}}<br /><br /></div>
-            <div class="info" v-if='booth.size && !booth.onHold'>{{booth.size}}</div>
-            <div class="info" v-if='booth.price && !booth.onHold && booth.price !== "0"'>{{booth.price}}</div>
+            <div class="booth__info" v-if='booth.onHold'>On Hold</div>
+            <div class="booth__info" v-if='booth.type && !booth.onHold'>{{__data.boothTerm}} Type: {{booth.type}}<br /><br /></div>
+            <div class="booth__info" v-if='booth.size && !booth.onHold'>{{booth.size}}</div>
+            <div class="booth__info" v-if='booth.price && !booth.onHold && booth.price !== "0"'>{{booth.price}}</div>
             <span v-html="instructions" v-if='!booth.onHold'></span>
-            <div class="buy" v-if='showBuy'>
+            <div class="booth__buy" v-if='showBuy'>
                 <a :href='booth.buyUrl'>Buy</a>
                 <div class="booth__buy-note" v-if="showBuyNote">Secure immediately by <br />credit card
                     payment</div>
             </div>
-            <div class="buy" v-if='showReserve'>
+            <div class="booth__buy" v-if='showReserve'>
                 <a :href='booth.reserveUrl || booth.buyUrl'>{{reserveTitle}}</a>
                 <div class="booth__buy-note" v-if="showBuyNote">Pay by Invoice <br />30 day payment terms</div>
             </div>
@@ -64,7 +64,7 @@ export default {
                 return __data.boothTerm + ' ' + b.name;
             }
         },
-        reserveTitle(){
+        reserveTitle() {
             return EFP_EXPO === 'cbresupplypartner' ? "Reserve & Request Invoice for Payment" : "Reserve";
         }
         // buyUrl() {
@@ -79,47 +79,49 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
-.booth__buy-note {
-    font-weight: 700;
-    font-size: 0.75rem;
-    margin-top: 0.2rem;
-    color: #555;
-}
+<style lang="scss">
 .booth {
+    &__bar {
+        line-height: 1.5rem;
+        color: #333;
+        font-weight: 500;
+        margin-left: 1rem;
+        font-size: 1.1em;
+    }
     &__content {
         margin: 0 1rem;
     }
-}
-.title {
-    font-weight: 500;
-}
-.buy {
-    text-align: center;
-    margin: 2rem 0;
-}
-.buy > a {
-    border: none;
-    text-decoration: none;
-    display: inline-block;
-    background: #41b6e7;
-    padding: 0.5rem 1rem;
-    min-width: 10rem;
-    color: #fff;
-    transition: background-color 200ms;
-    border-radius: 2px;
-    &:hover {
-        background: #2f99c7;
+    &__buy-note {
+        font-weight: 700;
+        font-size: 0.75rem;
+        margin-top: 0.2rem;
+        color: #555;
     }
-    &:active {
-        background: #2285af;
+
+    &__title {
+        font-weight: 500;
     }
-}
-.bar {
-    line-height: 1.5rem;
-    color: #333;
-    font-weight: 500;
-    margin-left: 1rem;
-    font-size: 1.1em;
+    &__buy {
+        text-align: center;
+        margin: 2rem 0;
+
+        > a {
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            background: #41b6e7;
+            padding: 0.5rem 1rem;
+            min-width: 10rem;
+            color: #fff;
+            transition: background-color 200ms;
+            border-radius: 2px;
+            &:hover {
+                background: #2f99c7;
+            }
+            &:active {
+                background: #2285af;
+            }
+        }
+    }
 }
 </style>
