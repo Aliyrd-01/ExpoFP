@@ -54,11 +54,11 @@ export default {
         },
         booth() {
             const b = this.$store.getters.selectedBooth;
-            // if (__settings.debug) {
-            //     // b.onHold = true;
-            //     b.size = "3 x 4 m"
-            //     b.price = '$1750';
-            // }
+            if (__settings.debug) {
+                // b.onHold = true;
+                b.size = "3 x 4 m"
+                b.price = '$1750';
+            }
             return b;
         },
         showReserve() {

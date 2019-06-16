@@ -54,11 +54,11 @@ export default {
         },
         booth() {
             const b = this.$store.getters.selectedBooth;
-            // if (__settings.debug) {
-            //     // b.onHold = true;
-            //     b.size = "3 x 4 m"
-            //     b.price = '$1750';
-            // }
+            if (__settings.debug) {
+                // b.onHold = true;
+                b.size = "3 x 4 m"
+                b.price = '$1750';
+            }
             return b;
         },
         showReserve() {
@@ -139,20 +139,21 @@ export default {
         text-align: center; */
         /* border: solid 1px #aaa; */
         /* margin: 0 $im; */
-        padding: 1rem 0;
+        /* padding: 1rem 0; */
 
         display: grid;
         grid-template-columns: 5rem auto;
-        align-items: center;
+        align-items: stretch;
+        /* justify-items: stretch; */
         /* flex-direction: column; */
         /* justify-content: center; */
         margin-bottom: 1rem;
 
         > i {
-            font-size: 2.1rem;
+            font-size: 1.8rem;
             /* padding-bottom: 0.5rem; */
-            color: #71b7d4;
-            opacity: 0.7;
+            color: #e1ecf1;
+            /* opacity: 0.7; */
             /* grid-column-start: 1; */
             /* grid-column-end: 1; */
             /* grid-row-start: 1; */
@@ -160,7 +161,10 @@ export default {
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* justify-content: center; */
+            padding: 1rem 0;
+            border-radius: 4px 0 0 4px;
+            background: #91aebb;
+            justify-content: center;
         }
         &-title {
             grid-column: 2;
@@ -168,8 +172,10 @@ export default {
             font-weight: 600;
             color: #557988;
             text-transform: uppercase;
+            padding: 1rem 1rem 0;
         }
         &-val {
+            padding: 0 1rem 1rem 1rem;
             grid-column: 2;
             /* grid-column-end: 2; */
             grid-row: 2;
@@ -178,9 +184,8 @@ export default {
             /* text-transform: uppercase; */
             /* font-weight: 500; */
             font-size: 1rem;
-            font-weight: 600;
             /* color: #000; */
-            padding: 0 1rem 0 0;
+            font-weight: 600;
         }
     }
 
