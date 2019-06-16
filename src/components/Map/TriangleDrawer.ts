@@ -4,9 +4,10 @@ import { dimColor } from './common-glsl';
 
 export default class TriangleDrawer {
     private readonly gl: WebGLRenderingContext;
-    private buffersInitialized = true;
-    private colorsDirty = true;
+    private buffersInitialized = false;
+    // private colorsDirty = true;
     private skipdimDirty = true;
+    private readonly colorsObjectsPending: TriangleDrawerObject[] = [];
 
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -93,7 +94,6 @@ export default class TriangleDrawer {
 
     updateColor(id: string, color: Vec4) {
         const objs = this.objectsById.get(id) || [];
-        // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
         for (const obj of objs) {
             if (
                 !obj.color ||
@@ -103,26 +103,23 @@ export default class TriangleDrawer {
                 obj.color[3] !== color[3]
             ) {
                 obj.color = color;
-                if (this.colorsDirty) continue;
-                const index = this.objectsIndices.get(obj);
-                const c = obj.color || [0, 0, 0, 1];
-                const ar = [...c, ...c, ...c];
-                const offset = ar.length * index * 4; // 4 comes from float32 bytes
-                this.replaceInBuffer(this.colorBuffer, offset, ar);
+                if (this.buffersInitialized) this.colorsObjectsPending.push(obj);
             }
         }
     }
 
     private ensureBuffersAndGroups() {
-        if (this.buffersInitialized) {
+        if (!this.buffersInitialized) {
             this.populateBuffers();
-            this.buffersInitialized = false;
+            this.buffersInitialized = true;
         }
 
-        if (this.colorsDirty) {
-            this.populateColorBuffer();
-            this.colorsDirty = false;
-        }
+        // if (this.colorsDirty) {
+        //     this.populateColorBuffer();
+        //     this.colorsDirty = false;
+        // }
+
+        this.updateColorBuffer();
 
         if (this.skipdimDirty) {
             this.populateSkipdimBuffer();
@@ -144,7 +141,6 @@ export default class TriangleDrawer {
 
         this.bufferFloat32Array(this.posBuffer, positions);
 
-
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
         this.populateIndexBuffer();
@@ -154,11 +150,22 @@ export default class TriangleDrawer {
     private populateColorBuffer() {
         const colors: number[] = [];
         for (const w of this.objects) {
-            const c = w.color || [0, 0, 0];
-            colors.push(...c, ...c, ...c);
+            colors.push(...getObjColorArray(w));
         }
-
         this.bufferFloat32Array(this.colorBuffer, colors);
+    }
+
+    private updateColorBuffer() {
+        if (this.colorsObjectsPending.length === 0) return;
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
+
+        for (const obj of this.colorsObjectsPending) {
+            const index = this.objectsIndices.get(obj);
+            const ar = getObjColorArray(obj);
+            const offset = ar.length * index * 4; // 4 comes from float32 bytes
+            this.gl.bufferSubData(this.gl.ARRAY_BUFFER, offset, new Float32Array(ar));
+        }
+        this.colorsObjectsPending.length = 0;
     }
 
     private populateSkipdimBuffer() {
@@ -194,12 +201,6 @@ export default class TriangleDrawer {
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
     }
 
-    private replaceInBuffer(buffer: WebGLBuffer, offset: number, data: number[]) {
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
-        // this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
-        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, offset, new Float32Array(data));
-    }
-
     private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 3 | 4) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.gl.enableVertexAttribArray(location);
@@ -218,8 +219,6 @@ export default class TriangleDrawer {
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
         this.enableBuffer(this.skipdimBuffer, this.skipdimLocation, 1);
 
-        // if (!this.matrix) debugger;
-
         const uniforms = {
             u_matrix: this.matrix,
             u_dim: this.dim,
@@ -233,6 +232,12 @@ export default class TriangleDrawer {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         gl.drawElements(gl.TRIANGLES, elementsToDraw, this.indexBufferIsUint32 ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
     }
+}
+
+// utility functions
+function getObjColorArray(obj: TriangleDrawerObject) {
+    const c = obj.color || [0, 0, 0, 1];
+    return [...c, ...c, ...c];
 }
 
 export interface TriangleDrawerObject {
@@ -259,7 +264,6 @@ void main() {
     v_dim = a_skipdim > 0.0 ? 0.0 : u_dim;
 }`;
 
-// TODO: move dimColor to lib
 const fragmentSharedSource = `precision mediump float;
 varying vec4 v_color;
 varying float v_dim; 
