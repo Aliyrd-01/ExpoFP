@@ -16,17 +16,23 @@
                 </span></div>
         </template>
         <div class="exhibitor__details">
+            <!-- <div class="exhibitor__booth" @click='$store.dispatch("toggleMapOverlay")'>{{__data.boothTerm}}
+                <span v-for="booth in booths" :key="booth.id">
+                    {{booth.name}}
+                </span>
+            </div> -->
             <div class="exhibitor__categories">
                 <a href='' v-for="booth in booths" :key="booth.id" @click.prevent='$store.dispatch("toggleMapOverlay")'
                     class="exhibitor__categories-booth">{{__data.boothTerm}} {{booth.name}}</a>
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)"
                     class="exhibitor__categories-cat">{{c.name}}</a>
             </div>
-            <div class="exhibitor__description" v-if="exhibitor.description || exhibitor.logo">
+            <div class="exhibitor__description" :class='{collapsed : collapsed && !disableCollapse}' v-if="exhibitor.description || exhibitor.logo">
                 <div class='exhibitor__logo-container' v-if="exhibitor.logo">
                     <img :src="exhibitor.logo" class="exhibitor__logo" :key='exhibitor.id'>
                 </div>
-                <span v-html="exhibitor.description" v-if="exhibitor.description"></span>
+                <span v-html="exhibitor.description" @click='collapsed=false'></span>
+                <a href='' class='exhibitor__description-show'>read more</a>
             </div>
             <div class="exhibitor__sep" v-if=anyAddress></div>
             <div class="exhibitor__edit" v-if=showEdit><button class="far fa-pencil" title="Edit" @click="sendLoginLink"></button></div>
@@ -99,7 +105,7 @@ import BookmarkSvg from "./BookmarkSvg.vue";
 
 export default {
     components: { OverlayContent, BookmarkSvg },
-    data: () => ({ }),
+    data: () => ({ collapsed: true }),
     computed: {
         ...mapState(["menu", "details"]),
         ...mapGetters(["overlayPosition"]),
@@ -134,9 +140,9 @@ export default {
                 s => this.exhibitor[s]
             );
         },
-        // disableCollapse() {
-        //     return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
-        // },
+        disableCollapse() {
+            return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
+        },
         showEdit() {
             return __data.sendLoginLinkUrl && this.sendLinkEmail;
         },
@@ -147,7 +153,7 @@ export default {
     watch: {
         exhibitor() {
             this.$el.parentElement.scrollTop = 0;
-            // this.collapsed = true;
+            this.collapsed = true;
         }
     },
     methods: {
@@ -238,8 +244,8 @@ export default {
         overflow: hidden;
         display: flex;
         align-items: center;
-        /* position: relative; */
-        /* z-index: 2; */
+        position: relative;
+        z-index: 2;
     }
     &__logo {
         max-width: 100%;
@@ -251,9 +257,9 @@ export default {
         margin: 1rem;
         font-size: 0.9rem;
         color: #444;
-        /* position: relative; */
+        position: relative;
 
-        /* &-show {
+        &-show {
             display: none;
             position: absolute;
             z-index: 2;
@@ -264,9 +270,9 @@ export default {
             // display: block;
             // font-size: 2rem;
             text-decoration: none !important;
-        } */
+        }
 
-        /* &.collapsed > span {
+        &.collapsed > span {
             cursor: pointer;
             &:hover {
                 color: #000;
@@ -286,7 +292,7 @@ export default {
                 width: 100%;
                 height: 4em;
             }
-        } */
+        }
 
         @include clearfix;
     }
