@@ -121,33 +121,33 @@ export default {
         font-weight: 500;
     }
 
-    $im: 0.2rem;
+    $im: 0.4rem;
     &__infos {
         display: flex;
         margin: 0 -1rem;
-        padding: $im * 2 $im;
+        padding: 0 $im;
         background: #fff;
     }
 
     &__info {
         /* min-height: 6rem; */
-        background: #41b6e7;
+        background: #e1ecf1;
         border-radius: 4px;
         flex-grow: 1;
         flex-basis: 1px;
         text-align: center;
         /* border: solid 1px #aaa; */
         margin: 0 $im;
-        padding: 1.2rem 0.2rem;
+        padding: 1rem 0.4rem;
 
         display: flex;
         flex-direction: column;
-        /* justify-content: center; */
+        justify-content: center;
 
         > i {
             font-size: 2rem;
             padding-bottom: 0.5rem;
-            color: #fff;
+            color: #71b7d4;
             opacity: 0.7;
         }
         /* &-title {
@@ -160,7 +160,7 @@ export default {
             text-transform: uppercase;
             font-weight: 500;
             font-size: 1rem;
-            color: #fff;
+            color: #000;
         }
     }
 
