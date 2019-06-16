@@ -12,6 +12,7 @@ export default class TriangleDrawer {
     private readonly program: WebGLProgram;
     private readonly objects: TriangleDrawerObject[] = [];
     private readonly objectsById = new Map<string, TriangleDrawerObject[]>();
+    private readonly objectsIndices = new Map<TriangleDrawerObject, number>();
 
     private readonly posLocation: number;
     private readonly posBuffer: WebGLBuffer;
@@ -44,13 +45,14 @@ export default class TriangleDrawer {
     }
 
     addObject(item: TriangleDrawerObject) {
+        this.objectsIndices.set(item, this.objects.length);
         this.objects.push(item);
         item.skipdim = !!item.skipdim;
         this.addToId(item, item.id);
         this.addToId(item, item.groupId);
     }
 
-    private addToId(item: TriangleDrawerObject, id: string){
+    private addToId(item: TriangleDrawerObject, id: string) {
         if (id) {
             let ar = this.objectsById.get(id);
             if (!ar) {
@@ -71,8 +73,27 @@ export default class TriangleDrawer {
         }
     }
 
+    // updateColorOld(id: string, color: Vec4) {
+    //     const objs = this.objectsById.get(id) || [];
+    //     for (const obj of objs) {
+
+
+    //         if (
+    //             !obj.color ||
+    //             obj.color[0] !== color[0] ||
+    //             obj.color[1] !== color[1] ||
+    //             obj.color[2] !== color[2] ||
+    //             obj.color[3] !== color[3]
+    //         ) {
+    //             obj.color = color;
+    //             this.colorsDirty = true;
+    //         }
+    //     }
+    // }
+
     updateColor(id: string, color: Vec4) {
         const objs = this.objectsById.get(id) || [];
+        // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorBuffer);
         for (const obj of objs) {
             if (
                 !obj.color ||
@@ -82,7 +103,12 @@ export default class TriangleDrawer {
                 obj.color[3] !== color[3]
             ) {
                 obj.color = color;
-                this.colorsDirty = true;
+                if (this.colorsDirty) continue;
+                const index = this.objectsIndices.get(obj);
+                const c = obj.color || [0, 0, 0, 1];
+                const ar = [...c, ...c, ...c];
+                const offset = ar.length * index * 4; // 4 comes from float32 bytes
+                this.replaceInBuffer(this.colorBuffer, offset, ar);
             }
         }
     }
@@ -166,6 +192,12 @@ export default class TriangleDrawer {
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
+    }
+
+    private replaceInBuffer(buffer: WebGLBuffer, offset: number, data: number[]) {
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
+        // this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
+        this.gl.bufferSubData(this.gl.ARRAY_BUFFER, offset, new Float32Array(data));
     }
 
     private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 3 | 4) {

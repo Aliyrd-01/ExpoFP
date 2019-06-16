@@ -4,7 +4,10 @@ import BoothDrawerBase from "./BoothDrawerBase";
 import { getBoothState } from "./config-booths";
 import TriangleDrawer from "./TriangleDrawer";
 
+// let picked = 0;
 export default function configBoothBg(booth: Booth) {
+    // picked++;
+    // if (picked > 1) return null;
     return new BoothBgDrawer(booth);
 }
 
