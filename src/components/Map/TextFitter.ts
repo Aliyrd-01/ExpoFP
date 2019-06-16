@@ -1,5 +1,5 @@
 export interface TextFitData {
-    factor: number; 
+    factor: number;
     fontSize: number;
     lines: string[];
     width: number;
@@ -204,10 +204,18 @@ function getPossibleLineSetsForWidth(maxWidth, lineCount, blocks, spaceWidth) {
             .filter(len => len > 0)
             .map(len => createRange(from, len));
 
+        // function createRange(start, length) {
+        //     return Array(length)
+        //         .fill(0)
+        //         .map((_, idx) => start + idx);
+        // }
+
         function createRange(start, length) {
-            return Array(length)
-                .fill(0)
-                .map((_, idx) => start + idx);
+            const c = Array(length);
+            while (length--) {
+                c[length] = length + start;
+            }
+            return c;
         }
     }
 }
