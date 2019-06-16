@@ -15,7 +15,7 @@ export default abstract class BoothDrawerBase<T extends Drawer | TriangleDrawer>
         this.updateBound = this.update.bind(this);
     }
     protected getId(name: string) {
-        return this.getIdMap.get(name) || this.getIdMap.set(name, `b${this.booth.id}${name}`) && this.getIdMap.get(name);
+        return this.getIdMap.get(name) || (this.getIdMap.set(name, `b${this.booth.id}${name}`) || true) && this.getIdMap.get(name);
     }
 
     protected getBoothState() {
