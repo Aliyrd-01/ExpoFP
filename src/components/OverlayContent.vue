@@ -1,6 +1,6 @@
 <template>
     <div class="overlay-content" id="overlay-content">
-        <div id='particles-js'></div>
+        <OverlayParticles v-if='particles' />
         <OverlayGrip v-if="overlayPosition === 'bottom'" />
         <OverlayBar :scrolled='scrolled' @close='handleClose' :hide-close='hideClose' :back-mode='backMode' @back="$emit('back')">
             <slot name="bar" />
@@ -15,17 +15,19 @@
 import { mapGetters, mapState } from "vuex";
 import OverlayBar from "./OverlayBar.vue";
 import OverlayGrip from "./OverlayGrip.vue";
+import OverlayParticles from "./OverlayParticles.vue";
 import PerfectScrollbar from "perfect-scrollbar";
 import isScrollUgly from "@/utils/is-scroll-ugly";
 
 export default {
-    props: ["backMode", "hideClose"],
+    props: ["backMode", "hideClose", 'particles'],
     data: () => ({
         scrolled: false
     }),
     components: {
         OverlayBar,
-        OverlayGrip
+        OverlayGrip,
+        OverlayParticles
     },
     computed: {
         ...mapState(["overlaySize"]),
@@ -91,11 +93,11 @@ export default {
     }
 }
 
-#particles-js {
+/* #particles-js {
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-}
+} */
 </style>
