@@ -238,8 +238,9 @@ export default {
         overflow: hidden;
         display: flex;
         align-items: center;
-        position: relative; 
+        position: relative;
         z-index: 2;
+        background: #fff;
     }
     &__logo {
         max-width: 100%;
@@ -252,7 +253,6 @@ export default {
         font-size: 0.9rem;
         color: #444;
         position: relative;
-        
 
         /* &-show {
             display: none;
@@ -267,7 +267,7 @@ export default {
             text-decoration: none !important;
         } */
 
-        &-html{
+        &-html {
             > *:first-child {
                 margin-top: 0;
                 padding-top: 0;
@@ -283,17 +283,8 @@ export default {
             display: block;
             overflow: hidden;
             text-overflow: ellipsis;
-            &:after {
-                content: "";
-                position: absolute;
-                z-index: 1;
-                bottom: 0;
-                left: 0;
-                pointer-events: none;
-                background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 90%);
-                width: 100%;
-                height: 4em;
-            }
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
+            mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
         }
 
         @include clearfix;
