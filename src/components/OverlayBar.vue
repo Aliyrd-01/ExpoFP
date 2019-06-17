@@ -23,7 +23,7 @@ export default {
 .overlay-bar {
     display: flex;
     align-items: center;
-    background-color: #fff;
+    /* background-color: #fff; */
     z-index: 1;
     transition: box-shadow 300ms;
 

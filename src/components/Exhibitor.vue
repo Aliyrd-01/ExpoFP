@@ -1,5 +1,6 @@
 <template>
-    <OverlayContent class='exhibitor' v-if="show" :class={bookmarked} back-mode=none @close='$store.dispatch("selectNone")'>
+    <OverlayContent class='exhibitor' :class="{'-exhibitor-featured': featured, bookmarked}" v-if="show" back-mode=none
+        @close='$store.dispatch("selectNone")'>
         <template slot="bar">
             <div class="exhibitor__bar">
                 <span @click='$store.dispatch("toggleMapOverlay")'>
@@ -122,6 +123,7 @@ export default {
             return this.$store.state.bookmarked[this.exhibitor.id];
         },
         featured() {
+            // if (__settings.debug) return true;
             return this.exhibitor.featured;
         },
         anySocial() {
@@ -192,6 +194,15 @@ export default {
         background: #e9522a; //#ea2b46;
     }
 }
+
+.overlay-content.-exhibitor-featured {
+    background: #230762;
+    color: #fff;
+    .exhibitor__bar, .exhibitor__meta {
+        color: #fff;
+    }
+}
+
 .exhibitor {
     // &__booth {
     //     margin: 0 1rem 0.2rem;
@@ -251,7 +262,7 @@ export default {
     &__description {
         margin: 1rem;
         font-size: 0.9rem;
-        color: #444;
+
         position: relative;
 
         /* &-show {
@@ -272,7 +283,7 @@ export default {
                 margin-top: 0;
                 padding-top: 0;
             }
-             > *:last-child {
+            > *:last-child {
                 margin-bottom: 0;
                 padding-bottom: 0;
             }
@@ -281,8 +292,9 @@ export default {
         &.collapsed > .exhibitor__description-html {
             cursor: pointer;
             &:hover {
-                color: #000;
+                opacity: 1;
             }
+            opacity: 0.8;
             height: 6.5em;
             display: block;
             overflow: hidden;
@@ -300,6 +312,7 @@ export default {
     }
 
     &__meta {
+        color: #333;
         > div {
             display: flex;
             margin: 0.8rem 1rem;
@@ -316,7 +329,7 @@ export default {
             > div {
                 font-size: 0.85rem;
                 line-height: 1.1rem;
-                color: #333;
+
                 margin-left: 0.4rem;
                 text-overflow: ellipsis;
                 overflow: hidden;
