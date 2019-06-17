@@ -1,5 +1,6 @@
 <template>
-    <div class="overlay-content">
+    <div class="overlay-content" id="overlay-content">
+        <div id='particles-js'></div>
         <OverlayGrip v-if="overlayPosition === 'bottom'" />
         <OverlayBar :scrolled='scrolled' @close='handleClose' :hide-close='hideClose' :back-mode='backMode' @back="$emit('back')">
             <slot name="bar" />
@@ -53,7 +54,7 @@ export default {
         observer.observe(sel, { childList: true, subtree: true });
     },
     watch: {
-        overlaySize: function(s) {
+        overlaySize: function (s) {
             if (s !== "full" && this.$refs.scrollable.scrollTop !== 0) {
                 this.$refs.scrollable.scrollTop = 0;
             }
@@ -72,6 +73,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 
     .overlay.bottom {
         border-radius: 0.5rem 0.5rem 0 0;
@@ -87,5 +89,13 @@ export default {
             -webkit-overflow-scrolling: touch;
         }
     }
+}
+
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
 </style>

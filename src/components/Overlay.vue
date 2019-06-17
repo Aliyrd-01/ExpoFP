@@ -1,5 +1,5 @@
 <template>
-    <div :class='overlaySize + " " + overlayPosition' class="overlay">
+    <div :class='overlaySize + " " + overlayPosition' class="overlay" id="overlay">
         <Menu />
         <Search />
         <Bookmarks />
