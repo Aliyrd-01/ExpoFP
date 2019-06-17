@@ -22,11 +22,11 @@
                 <a :href='"?" + encodeURIComponent(c.slug)' v-for="c in categories" :key="c.id" @click.prevent="handleCategoryClick(c)"
                     class="exhibitor__categories-cat">{{c.name}}</a>
             </div>
-            <div class="exhibitor__description" v-if="exhibitor.description || exhibitor.logo">
+            <div class="exhibitor__description" :class='{collapsed : collapsed && !disableCollapse}' v-if="exhibitor.description || exhibitor.logo">
                 <div class='exhibitor__logo-container' v-if="exhibitor.logo">
                     <img :src="exhibitor.logo" class="exhibitor__logo" :key='exhibitor.id'>
                 </div>
-                <span v-html="exhibitor.description" v-if="exhibitor.description"></span>
+                <span class="exhibitor__description-html" v-html="exhibitor.description" @click='collapsed=false'></span>
             </div>
             <div class="exhibitor__sep" v-if=anyAddress></div>
             <div class="exhibitor__edit" v-if=showEdit><button class="far fa-pencil" title="Edit" @click="sendLoginLink"></button></div>
@@ -99,7 +99,7 @@ import BookmarkSvg from "./BookmarkSvg.vue";
 
 export default {
     components: { OverlayContent, BookmarkSvg },
-    data: () => ({ }),
+    data: () => ({ collapsed: true }),
     computed: {
         ...mapState(["menu", "details"]),
         ...mapGetters(["overlayPosition"]),
@@ -134,9 +134,9 @@ export default {
                 s => this.exhibitor[s]
             );
         },
-        // disableCollapse() {
-        //     return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
-        // },
+        disableCollapse() {
+            return !this.anySocial && !this.anyAddress || this.overlayPosition === "left" && (this.exhibitor.description || '').length < 800;
+        },
         showEdit() {
             return __data.sendLoginLinkUrl && this.sendLinkEmail;
         },
@@ -147,7 +147,7 @@ export default {
     watch: {
         exhibitor() {
             this.$el.parentElement.scrollTop = 0;
-            // this.collapsed = true;
+            this.collapsed = true;
         }
     },
     methods: {
@@ -238,8 +238,8 @@ export default {
         overflow: hidden;
         display: flex;
         align-items: center;
-        /* position: relative; */
-        /* z-index: 2; */
+        position: relative; 
+        z-index: 2;
     }
     &__logo {
         max-width: 100%;
@@ -251,7 +251,8 @@ export default {
         margin: 1rem;
         font-size: 0.9rem;
         color: #444;
-        /* position: relative; */
+        position: relative;
+        
 
         /* &-show {
             display: none;
@@ -266,7 +267,14 @@ export default {
             text-decoration: none !important;
         } */
 
-        /* &.collapsed > span {
+        &-html{
+            > *:first-child {
+                margin-top: 0;
+                padding-top: 0;
+            }
+        }
+
+        &.collapsed > .exhibitor__description-html {
             cursor: pointer;
             &:hover {
                 color: #000;
@@ -286,7 +294,7 @@ export default {
                 width: 100%;
                 height: 4em;
             }
-        } */
+        }
 
         @include clearfix;
     }
