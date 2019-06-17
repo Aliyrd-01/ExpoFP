@@ -3,7 +3,9 @@
         <path d="M0 0 H12 V18 L6 12 L0 18 H0" />
     </svg>
 </template>
-
+<script >
+export default {};
+</script>
 <style lang="scss">
 .bookmark-svg {
     display: block;
