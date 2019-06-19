@@ -63,6 +63,7 @@ for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]
     if (booth.special === false) {
         booth.availColor = el.getAttribute("data-avail-color") || booth.availColor;
         booth.soldColor = el.getAttribute("data-sold-color") || booth.soldColor;
+        booth.size = el.getAttribute("data-size") || booth.size;
     } else if (booth.special === true) {
         booth.color = el.getAttribute("data-color") || booth.color;
     }
