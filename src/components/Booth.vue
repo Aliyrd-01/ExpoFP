@@ -199,11 +199,21 @@ export default {
             text-decoration: none !important;
             transition: background-color 200ms;
             border-radius: 2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
             &:hover {
                 background: #2f99c7;
             }
             &:active {
                 background: #2285af;
+            }
+
+            .overlay.bottom & {
+                width: 100%;
+                min-height: 3rem;
+                font-size: 1.2rem;
             }
         }
     }
