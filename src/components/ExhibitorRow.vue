@@ -47,7 +47,7 @@ export default {
             return this.$store.state.bookmarked[this.exhibitor.id];
         },
         featured() {
-            return this.exhibitor.isFeatured;
+            return this.exhibitor.featured;
         }
     }
 };
@@ -62,7 +62,7 @@ export default {
 
     &.featured {
         .exhibitor-row__lines {
-            font-weight: 500;
+            font-weight: 700;
         }
     }
 

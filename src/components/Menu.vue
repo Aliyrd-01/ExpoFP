@@ -162,10 +162,10 @@ export default {
         padding: 0.5rem 1rem;
         min-height: 3rem;
         display: block;
-        font-weight: 700;
+        font-weight: 600;
         display: flex;
         align-items: center;
-        color: #555 !important;
+        color: #000 !important;
         text-decoration: none !important;
 
         > i:nth-child(2) {
@@ -208,7 +208,7 @@ export default {
         display: flex;
         justify-content: space-between;
         /* align-items: center; */
-        color: #444 !important;
+        color: #555 !important;
         text-decoration: none !important;
         /* border-bottom: solid 1px #ddd; */
     }

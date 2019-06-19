@@ -39,10 +39,11 @@ export default {
     /* margin-left: 1rem; */
     font-size: 1.1em;
     /* line-height: 1em; */
-    font-weight: 500;
+    font-weight: 600;
     color: #333;
     > span {
         color: #aaa;
+        font-weight: 400;
     }
     // padding: 0.5rem 0;
 }

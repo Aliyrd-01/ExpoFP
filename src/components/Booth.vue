@@ -104,7 +104,7 @@ export default {
     &__bar {
         line-height: 1.5rem;
         color: #333;
-        font-weight: 500;
+        font-weight: 600;
         margin-left: 1rem;
         font-size: 1.1em;
     }
