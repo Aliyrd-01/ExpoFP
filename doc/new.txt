@@ -1,7 +1,9 @@
 TODO
 
-make printing cener things
-efp logo position 
+Disable animation of labels - to speed up things
+
+//make printing cener things
+//efp logo position 
 
 //create expo expo fp from multiple paths
 //test things

@@ -14,7 +14,7 @@ export default function configMatrix() {
 
     animate(delayAnimations, 1000, d3.easeExpOut, d3.interpolateNumber(minVisibleScale, maxVisibleScale), v => {
         m.setVisbleScale(v);
-        update();
+        update()
     });
 }
 

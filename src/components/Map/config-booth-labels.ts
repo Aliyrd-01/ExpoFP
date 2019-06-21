@@ -108,7 +108,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
         store.watchBoothState(booth.id, () => requireUpdate(this.updateBound), "skipDim");
-        updates.push(this.updateBound);
+        // updates.push(this.updateBound);
     }
 
     calcFactors() {
