@@ -27,9 +27,9 @@ function initDrawer(drawer1: Drawer) {
 }
 
 export default function configBoothLabelsSpecial(booth: Booth) {
-    if (!booth.special) return null;
-    if (booth.noLabels) return null;
-    return new BoothLabelSpecialDrawer(booth);
+    if (!booth.special) return;
+    if (booth.noLabels) return;
+    new BoothLabelSpecialDrawer(booth);
 }
 
 class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
@@ -85,6 +85,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<Drawer> {
         this.update();
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
+        store.watchBoothState(booth.id, () => requireUpdate(this.updateBound), "skipDim");
         updates.push(this.updateBound);
     }
 

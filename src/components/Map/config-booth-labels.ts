@@ -23,14 +23,15 @@ function initDrawer(drawer1: Drawer) {
 
     window.setTimeout(() => {
         canUpdate = true;
+        drawer.alpha = 1;
         updates.forEach(u => u());
         animate(0, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => (drawer.alpha = v));
     }, delayAnimations + 800);
 }
 
 export default function configBoothLabels(booth: Booth) {
-    if (booth.special === true || booth.noLabels) return null;
-    return new BoothLabelDrawer(booth);
+    if (booth.special === true || booth.noLabels) return;
+    new BoothLabelDrawer(booth);
 }
 
 // function replaceColorTmp(color: string) {
@@ -106,6 +107,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         this.update();
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
+        store.watchBoothState(booth.id, () => requireUpdate(this.updateBound), "skipDim");
         updates.push(this.updateBound);
     }
 
@@ -147,7 +149,7 @@ class BoothLabelDrawer extends BoothDrawerBase<Drawer> {
         }
 
         const newSkipDim = this.getBoothState().skipDim;
-        if (newSkipDim !== this.previousSkipDim){
+        if (newSkipDim !== this.previousSkipDim) {
             for (const p of prefixes) {
                 this.drawer.updateSkipdim(this.getId(p), newSkipDim);
             }

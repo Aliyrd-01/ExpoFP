@@ -11,7 +11,7 @@ const bookmarkCanvasM = createBookmarkCanvas(6);
 
 
 export default function configBoothBookmark(booth: Booth) {
-    return new BoothBookmarkDrawer(booth);
+    new BoothBookmarkDrawer(booth);
 }
 
 class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
@@ -67,6 +67,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<Drawer> {
         });
 
         subscribePtscaleChange(() => requireUpdate(this.updateBound));
+        store.watchBoothState(booth.id, () => requireUpdate(this.updateBound), "skipDim");
     }
 
     update() {

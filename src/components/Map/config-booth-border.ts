@@ -2,11 +2,12 @@ import BoothDrawerBase from "./BoothDrawerBase";
 import Color from 'color';
 import TriangleDrawer from './TriangleDrawer';
 import settings from "@/settings";
+import { requireUpdate } from "./draw";
 
 export default function configBoothBorder(booth: Booth) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
-    if (booth.paths) return null;
-    return new BoothBorderDrawer(booth);
+    if (booth.paths) return;
+    new BoothBorderDrawer(booth);
 }
 
 class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
@@ -40,6 +41,7 @@ class BoothBorderDrawer extends BoothDrawerBase<TriangleDrawer> {
         }
 
         this.update();
+        store.watchBoothState(booth.id, () => requireUpdate(this.updateBound), "skipDim");
     }
 
     update() {

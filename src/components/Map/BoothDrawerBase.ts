@@ -1,6 +1,5 @@
 import { requireDrawer } from "./draw";
 import Drawer from "./Drawer";
-import { getBoothState } from "./config-booths";
 import TriangleDrawer from "./TriangleDrawer";
 
 export default abstract class BoothDrawerBase<T extends Drawer | TriangleDrawer> {
@@ -19,7 +18,7 @@ export default abstract class BoothDrawerBase<T extends Drawer | TriangleDrawer>
     }
 
     protected getBoothState() {
-        return getBoothState(this.booth);
+        return store.getBoothState(this.booth);
     }
 
     protected subscribeToBoothChange() {

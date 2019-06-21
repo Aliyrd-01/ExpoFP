@@ -1,14 +1,15 @@
 import Color from "color";
 import settings from "@/settings";
 import BoothDrawerBase from "./BoothDrawerBase";
-import { getBoothState } from "./config-booths";
+// import { getBoothState } from "./config-booths";
 import TriangleDrawer from "./TriangleDrawer";
+import { requireUpdate } from "./draw";
 
 // let picked = 0;
 export default function configBoothBg(booth: Booth) {
     // picked++;
     // if (picked > 1) return null;
-    return new BoothBgDrawer(booth);
+    new BoothBgDrawer(booth);
 }
 
 class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
@@ -65,62 +66,65 @@ class BoothBgDrawer extends BoothDrawerBase<TriangleDrawer> {
         // }
 
         this.update();
+        store.watchBoothState(booth.id, () => requireUpdate(this.updateBound), "hover", "skipDim");
     }
 
     update() {
-        const s = getBoothState(this.booth);
-        const c = getBoothColor(this.booth);
+        const s = this.getBoothState();
+        const c = this.getBoothColor();
         this.drawer.updateColor(this.getId("bg-def"), c.vec4());
         this.drawer.updateSkipdim(this.getId("bg"), s.skipDim);
 
         for (const color of Array.from(this.pathsDefaultColors)) {
-            const newColor = getBoothPathColor(this.booth, color);
+            const newColor = this.getBoothPathColor(color);
             this.drawer.updateColor(this.getId("bg-" + color), newColor.vec4());
         }
     }
-}
 
-function getBoothPathColor(b: Booth, defaultColor: string) {
-    // for white always return white
-    // TODO: finish
-    const s = getBoothState(b);
-    let colorInfo = Color(defaultColor).hsl();
-    if (colorInfo.lightness() > 90) {
+
+    getBoothPathColor(defaultColor: string) {
+        // for white always return white
+        const s = store.getBoothState(this.booth);
+        let colorInfo = Color(defaultColor).hsl();
+        if (colorInfo.lightness() > 90) {
+            return colorInfo;
+        }
+
+        if (s.selected) {
+            const selColor = Color(settings.colors.booths.selected).hsl();
+            colorInfo = colorInfo.hue(selColor.hue());
+            //colorInfo.hue(selColor.h);
+        } else if (s.hover) {
+            colorInfo = colorInfo.darken(0.1);
+        }
+
         return colorInfo;
     }
 
-    if (s.selected) {
-        const selColor = Color(settings.colors.booths.selected).hsl();
-        colorInfo = colorInfo.hue(selColor.hue());
-        //colorInfo.hue(selColor.h);
-    } else if (s.hover) {
-        colorInfo = colorInfo.darken(0.1);
+    getBoothColor() {
+        const b = this.booth;
+        const s = this.getBoothState();
+        let color: string;
+        let defColor: any;
+        if (b.special === true) {
+            defColor = b.color || settings.colors.booths.empty;
+        } else if (b.special === false) {
+            defColor =
+                s.empty && !s.onhold ? b.availColor || settings.colors.booths.empty : b.soldColor || settings.colors.booths.default;
+        }
+
+        if (s.error) color = "#f33";
+        else if (s.selected) color = settings.colors.booths.selected;
+        else color = defColor;
+
+        let colorInfo = Color(color);
+        if (s.hover && !s.selected) {
+            const a = colorInfo.alpha();
+            colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
+        }
+        // var Col = Color;
+        // debugger
+        return colorInfo;
     }
 
-    return colorInfo;
-}
-
-function getBoothColor(b: Booth) {
-    const s = getBoothState(b);
-    let color: string;
-    let defColor: any;
-    if (b.special === true) {
-        defColor = b.color || settings.colors.booths.empty;
-    } else if (b.special === false) {
-        defColor =
-            s.empty && !s.onhold ? b.availColor || settings.colors.booths.empty : b.soldColor || settings.colors.booths.default;
-    }
-
-    if (s.error) color = "#f33";
-    else if (s.selected) color = settings.colors.booths.selected;
-    else color = defColor;
-
-    let colorInfo = Color(color);
-    if (s.hover && !s.selected) {
-        const a = colorInfo.alpha();
-        colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
-    }
-    // var Col = Color;
-    // debugger
-    return colorInfo;
 }
