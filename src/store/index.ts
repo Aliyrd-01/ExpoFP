@@ -9,13 +9,15 @@ import positions from "./positions";
 import filtering, { SearchResultItem, exhibitorsToItems, boothsToItems } from "./filtering";
 import previewExhibitor from "@/utils/preview-exhibitor";
 import { isWebGlSupported, remsToPixels } from "@/components/Map/utils";
+import ExtendedStore from './ExtendedStore';
 
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
 
 Vue.use(Vuex);
 
-const store1 = new Vuex.Store({
+
+const store1 = new ExtendedStore({
     modules: {
         booths,
         exhibitors,
@@ -246,6 +248,10 @@ const store1 = new Vuex.Store({
     }
 });
 
+// const storeWithWatchers = extendWatches(store1);
+
+
+
 // monitor devicePixelRatio changes
 const mm = typeof matchMedia !== "undefined" ? matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`) : null;
 if (mm && mm.addEventListener) {
@@ -253,6 +259,7 @@ if (mm && mm.addEventListener) {
         store1.commit("setDevicePixelRatio", window.devicePixelRatio);
     });
 }
+
 
 
 declare global {
