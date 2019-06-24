@@ -14,20 +14,27 @@ export default function config() {
     const booths = store.getters.boothsArray as Booth[];
     const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark, configBoothBorder] as ((Booth) => BoothDrawerBase<any>)[];//configBoothType,
 
-    for (const b of booths) {
-        // const ar: BoothDrawerBase<any>[] = [];
-        for (const func of configFuncs) {
-            //const drawer = 
+
+    for (const func of configFuncs) {
+        //const drawer = 
+        const name = "config-func " + func.name;
+        if (__settings.debug) console.time(name);
+        for (const b of booths) {
             func(b);
-            // if (drawer) ar.push(drawer);
         }
-        // for (const Class of drawerClasses) {
-        //     if (b.noLabels && Class === BoothLabelDrawer) continue;
-        //     ar.push(new Class(b));
-        // }
-        // boothDrawers.set(b.id, ar);
+        if (__settings.debug) console.timeEnd(name);
+        // if (drawer) ar.push(drawer);
     }
-};
+
+    // const ar: BoothDrawerBase<any>[] = [];
+
+    // for (const Class of drawerClasses) {
+    //     if (b.noLabels && Class === BoothLabelDrawer) continue;
+    //     ar.push(new Class(b));
+    // }
+    // boothDrawers.set(b.id, ar);
+    // }
+}
 
 // if (isWebGlSupported()) {
 //     store.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {

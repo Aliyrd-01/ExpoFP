@@ -1,7 +1,7 @@
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, getFont, createMultilineTextCanvas } from "./canvases";
 import { subscribePtscaleChange, getPtscale } from "./matrix";
-import { delayAnimations, requireUpdate } from "./draw";
+import { requireUpdate, delayAnimations } from "./draw";
 import Drawer from "./Drawer";
 import animate from "./animate";
 import TextFitter, { TextFitData } from "./TextFitter";

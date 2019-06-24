@@ -145,9 +145,11 @@ export function initialize(canvas1: HTMLCanvasElement) {
 
     configCanvas();
     configBg();
-    configMatrix();
+    const animateMatrix = configMatrix();
     configDim();
     configBooths();
 
-    window.setTimeout(requireRedraw, delayAnimations);
+
+    // requireRedraw();
+    window.setTimeout(animateMatrix, delayAnimations);
 }

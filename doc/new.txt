@@ -1,5 +1,8 @@
 TODO
 
+add preDraw method to drawers - use it before initial animations started
+make Drawer updateVisible same as in triangle drawer?
+
 Disable animation of labels - to speed up things
 
 //make printing cener things

@@ -1,4 +1,4 @@
-import { delayAnimations, allDrawers, requireUpdate } from "./draw";
+import { allDrawers, requireUpdate } from "./draw";
 import animate from './animate';
 import * as m from './matrix';
 
@@ -12,7 +12,7 @@ export default function configMatrix() {
     m.setVisbleScale(minVisibleScale);
     m.start();
 
-    animate(delayAnimations, 1000, d3.easeExpOut, d3.interpolateNumber(minVisibleScale, maxVisibleScale), v => {
+    return () => animate(0, 1000, d3.easeExpOut, d3.interpolateNumber(minVisibleScale, maxVisibleScale), v => {
         m.setVisbleScale(v);
         update()
     });
