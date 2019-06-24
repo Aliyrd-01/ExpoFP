@@ -59,16 +59,7 @@
                         "type": {
                             "type": "string"
                         },
-                        "size": {
-                            "type": "string"
-                        },
                         "price": {
-                            "type": "string"
-                        },
-                        "availColor": {
-                            "type": "string"
-                        },
-                        "soldColor": {
                             "type": "string"
                         },
                         "buyUrl": {
@@ -84,7 +75,7 @@
                 }, {
                     "type": "object",
                     "description": "Special booth",
-                    "required": ["id", "name", "title", "color"],
+                    "required": ["id", "name"],
                     "additionalProperties": false,
                     "properties": {
                         "id": {
@@ -103,9 +94,6 @@
                         "description": {
                             "type": "string",
                             "description": "HTML"
-                        },
-                        "color": {
-                            "type": "string"
                         }
                     }
                 }]

@@ -21,25 +21,22 @@ type Booth = SpecialBooth | RegularBooth;
 interface RegularBooth extends BoothBase {
     exhibitors: number[];
     // populated
-    size: string;
-    price: string;
-    //availableColor: string,// obsolete
-    availColor: string; // new
-    soldColor: string;
+    size: string; // comes from svg or data.js
+    price: string; // comes from svg or data.js
+    availColor: string; // comes from svg or data.js
+    soldColor: string; // comes from svg or data.js
     // typeColor: string;
     buyUrl: string;
     reserveUrl: string;
-    //boothTypeName: string,// obsolete
-    type: string; // new
-    //isOnHold: boolean,// obsolete
-    onHold: boolean; // new
+    type: string; 
+    onHold: boolean; 
     special: false;
 }
 
 interface SpecialBooth extends BoothBase {
     title: string;
     description: string;
-    color: string;
+    color: string; // comes from svg or data.js
     special: true;
 }
 
