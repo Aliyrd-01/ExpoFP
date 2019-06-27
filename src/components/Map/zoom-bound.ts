@@ -1,17 +1,18 @@
-import * as m from "./matrix";
 import { svgWidth, svgHeight } from "@/tools/svg";
+import { Drawer } from "./drawing/drawer";
+// import { MatrixReadonly } from "./drawing/Matrix";
 
-export default function zoomBound(transform: ZoomTransform, forAutoMove: boolean) {
+export default function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolean) {
     // cannot use ptscale here, it has previous transform.k in it
-    // const pxSvgScale = m.getPxSvgScale();
-    const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
+    const svgPxMatrix = drawer.getSvgPxUnzoomedMatrix();
+    // const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
     // https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati
     const scale = svgPxMatrix[0];
 
     const svgHeightUnscaled = svgHeight * scale;
     const svgWidthUnscaled = svgWidth * scale;
 
-    const vRect = m.getVisibleRect();
+    const vRect = drawer.getVisibleRect();
 
     const svgHeightScaled = svgHeightUnscaled * transform.k;
     const svgWidthScaled = svgWidthUnscaled * transform.k;

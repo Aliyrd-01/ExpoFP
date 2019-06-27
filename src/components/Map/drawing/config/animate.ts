@@ -1,9 +1,10 @@
-import { requireUpdate } from "./draw";
 
 export default function animate<T>(timeout: number, duration: number,
     easingFunc: (k: number) => number,
     interpolateFunc: (k: number) => T,
-    setFunc: (t: T) => void) {
+    requireUpdateFunc: (func: () => void) => void,
+    setFunc: (t: T) => void,
+    callback: () => void) {
 
     let stopAnimation = false;
 
@@ -17,10 +18,12 @@ export default function animate<T>(timeout: number, duration: number,
             const val = interpolateFunc(easedPart);
             setFunc(val);
             if (part !== 1) {
-                requireUpdate(animationStep);
+                requireUpdateFunc(animationStep);
+            } else {
+                callback();
             }
         }
-        requireUpdate(animationStep);
+        requireUpdateFunc(animationStep);
     }
 
     if (timeout) window.setTimeout(doAnimation, timeout);

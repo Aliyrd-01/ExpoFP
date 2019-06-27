@@ -9,14 +9,17 @@
 import { mapGetters, mapState } from "vuex";
 import getBoothIdFromClientXy from "./booth-by-xy";
 import { svgWidth, svgHeight } from "@/tools/svg";
-import { initialize } from "./draw";
-import * as m from "./matrix";
-import { remsToPixels } from "./utils";
+// import { initialize } from "./draw";
+// import * as m from "./matrix";
+import { remsToPixels, sizeCanvasToParentElement } from "./utils";
 import configInertia from "./zoom-inertia";
 import { m4 } from "twgl.js";
 import { event as currentEvent } from "d3-selection";
 // import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
+import createDrawer, { Drawer } from './drawing/drawer';
+
+let drawer: Drawer;
 
 export default {
     name: "Map",
@@ -85,7 +88,7 @@ export default {
             .clickDistance(15)
             .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
-            .constrain((transform, extent, translateExtent) => zoomBound(transform, false))
+            .constrain((transform, extent, translateExtent) => zoomBound(drawer, transform, false))
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
@@ -105,16 +108,28 @@ export default {
             });
         ;
         configInertia(this.zoom);
-        m.setVisibleRect(this.visibleRect);
+        //m.setVisibleRect(this.visibleRect);
+        sizeCanvasToParentElement(canvas);
+        drawer = createDrawer(canvas, true);
+        drawer.setVisibleRect(this.visibleRect);
+        
+        window.addEventListener("resize", () => {
+            // __logger.log('canvas change', canvas);
+            sizeCanvasToParentElement(canvas);
+            drawer.resetCanvasSize();
+        });
+
         setZoomTransformAnimated(d3.zoomIdentity, 0, null);
         this.$canvas.call(this.zoom);
-        initialize(canvas);
+
+
+        // initialize(canvas);
 
 
         window.addEventListener("beforeprint", () => {
             let rect = Rect.fromXywh(0, 0, this.screenSize.width, this.screenSize.height);
             rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
-            m.setVisibleRect(rect);
+            drawer.setVisibleRect(rect);
             //m.setZoomTransform(d3.zoomIdentity);
             this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
         });
@@ -186,7 +201,7 @@ export default {
         },
         visibleRect: function (v) {
             __logger.log("visibleRect change", v);
-            m.setVisibleRect(v);
+            drawer.setVisibleRect(v);
             // rezoom to make it fit bounds
             // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
             this.zoomBoundCurrent();
@@ -200,11 +215,11 @@ export default {
             this.$store.commit("setHoveredBooth", id);
         },
         handleMouseMove(e) {
-            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY, drawer);
             this.raiseBoothOver(id);
         },
         handleMouseOver(e) {
-            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY, drawer);
             this.raiseBoothOver(id);
         },
         handleMouseOut(e) {
@@ -218,7 +233,7 @@ export default {
                 this.$store.dispatch("showMap");
             }
             // if (!this.props.onBoothClick) return;
-            const id = getBoothIdFromClientXy(e.clientX, e.clientY);
+            const id = getBoothIdFromClientXy(e.clientX, e.clientY, drawer);
             __logger.log("click", id);
             this.$store.dispatch("clickBooth", id);
         },
@@ -230,7 +245,7 @@ export default {
         },
         zoomBoundCurrent() {
             const ct = d3.zoomTransform(this.$canvas.node());
-            const nt = zoomBound(ct, false);
+            const nt = zoomBound(drawer, ct, false);
             if (nt !== ct) {
                 // __logger.log('fixed bounds', ct, nt)
                 this.zoomTo(nt);
@@ -244,10 +259,10 @@ function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc
     // animate from existing position to dest
     if (zoomAf) cancelAnimationFrame(zoomAf);
     if (!duration) {
-        m.setZoomTransform(t);
+        drawer.setZoomTransform(t);
         return;
     }
-    const ct = m.getZoomTransform();
+    const ct = drawer.getZoomTransform();
     const i = d3.interpolate(ct, t);
     const start = performance.now();
 
@@ -255,7 +270,7 @@ function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc
         const part = Math.min(1, (performance.now() - start) / duration);
         const easedPart = easingFunc ? easingFunc(part) : part;
         const val = i(easedPart);
-        m.setZoomTransform(val);
+        drawer.setZoomTransform(val);
         if (part !== 1) {
             zoomAf = requestAnimationFrame(animationStep);
         } else {
@@ -277,7 +292,7 @@ function getTramsformToCenterSvgRect(
         (vRect.h * minPaddingPercent) / 100
     );
 
-    const svgPxMatrix = m.getSvgPxUnzoomedMatrix();
+    const svgPxMatrix = drawer.getSvgPxUnzoomedMatrix();
 
     const xy1 = m4.transformPoint(svgPxMatrix, [
         svgRect.x1,
@@ -305,7 +320,7 @@ function getTramsformToCenterSvgRect(
     const diffX = targetRect.cx - bSvgRect.cx * zoom;
     const diffY = targetRect.cy - bSvgRect.cy * zoom;
     const t = d3.zoomIdentity.translate(diffX, diffY).scale(zoom);// { x: diffX, y: diffY, k: zoom };
-    return zoomBound(t, true);
+    return zoomBound(drawer, t, true);
 }
 </script>
 

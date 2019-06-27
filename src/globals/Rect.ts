@@ -209,6 +209,16 @@ namespace local {
             return [[[this.x1, this.y1], [this.x2, this.y2], [this.x4, this.y4]], [[this.x2, this.y2], [this.x4, this.y4], [this.x3, this.y3]]];
         }
     }
+
+    export class Size {
+        width: number;
+        height: number;
+
+        constructor(width: number, height: number) {
+            this.width = width;
+            this.height = height;
+        }
+    }
 }
 
 
@@ -217,7 +227,9 @@ declare global {
     type Rect = local.Rect;
     const Polygon4: typeof local.Polygon4;
     type Polygon4 = local.Polygon4;
+    const Size: typeof local.Size;
+    type Size = local.Size;
 }
 
-extendGlobal({ Rect: local.Rect, Polygon4: local.Polygon4 })
+extendGlobal({ Rect: local.Rect, Polygon4: local.Polygon4 , Size: local.Size })
 

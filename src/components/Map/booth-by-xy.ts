@@ -1,12 +1,13 @@
 import { m4 } from 'twgl.js';
-import { getPxSvgMatrix } from "./matrix";
+import { Drawer } from './drawing/drawer';
+// import { getPxSvgMatrix } from "./matrix";
 
-export default function getBoothIdFromClientXy(x: number, y: number): number {
+export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): number {
     // const zz = getSvgPxUnzoomedMatrix();
     // var point = m4.transformPoint(zz, [1000, 1000, 1])
     // __logger.log('point', point);
 
-    const b = getLastBoothsFromClientXy(x, y);
+    const b = getLastBoothsFromClientXy(x, y, drawer);
     if (b) return b.id;
     return null;
 }
@@ -43,8 +44,8 @@ for (let x = 0; x < parts; x++) {
 __logger.log('hover segmentToRects', segmentToRects);
 
 let prevSegment: Rect;
-function getLastBoothsFromClientXy(x: number, y: number): Booth {
-    var pxSvgMatrix = getPxSvgMatrix();
+function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {
+    var pxSvgMatrix = drawer.getPxSvgMatrix();
     const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);
     const xs = xys[0], ys = xys[1];
 

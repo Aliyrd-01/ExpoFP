@@ -11,7 +11,11 @@ import configBooths from "./config-booths";
 // var b: AnyDrawer;
 // b = a;
 
-export const delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
+let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
+if (EFP_EXPO === "sydneybuildexpo"){
+    delayAnimations += 8000;
+}
+
 
 let canvas: HTMLCanvasElement;
 let gl: WebGLRenderingContext;
@@ -27,6 +31,7 @@ interface AnyDrawer {
     ptscale?: number;
     dim?: number;
     orderPriority: number;
+    ensureBuffers();
 }
 
 // export function getCanvas() { return canvas; }
@@ -69,8 +74,14 @@ function requireRedraw() {
 }
 
 const instantDraw = false;
+let startAnimations;
 
 function draw() {
+    __logger.log('draw', performance.now());
+    if (startAnimations) {
+        startAnimations();
+        startAnimations = null;
+    }
     // if (!gl) return;
     showFps();
     requestedFrame = undefined;
@@ -145,11 +156,16 @@ export function initialize(canvas1: HTMLCanvasElement) {
 
     configCanvas();
     configBg();
-    const animateMatrix = configMatrix();
+    startAnimations = configMatrix();
     configDim();
     configBooths();
 
+    if (__settings.debug) console.time("ensureBuffers");
+    for (const b of allDrawers) {
+        b.ensureBuffers();
+    }
+    if (__settings.debug) console.timeEnd("ensureBuffers");
 
     // requireRedraw();
-    window.setTimeout(animateMatrix, delayAnimations);
+    window.setTimeout(requireRedraw, delayAnimations);
 }
