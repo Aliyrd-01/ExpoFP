@@ -39,7 +39,6 @@ export class DrawerImpl extends Matrix {
     private readonly paintersByType = new Map<string, Painter>();
     readonly allPainters: Painter[] = [];
     readonly updatable: boolean;
-    pixelRatio = devicePixelRatio;
     private gl: WebGLRenderingContext;
     private readonly drawBound: () => void;
 
