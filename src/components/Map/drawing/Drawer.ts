@@ -74,6 +74,7 @@ export class DrawerImpl extends Matrix {
 
     private draw() {
         showFps();
+        window['benchFrames']++;
         this.requestedFrame = undefined;
 
         const queue = Array.from(this.updateQueue);
@@ -86,8 +87,7 @@ export class DrawerImpl extends Matrix {
         for (var d of this.allPainters) {
             d.paint();
         }
-
-        this.requireRedraw();
+        //this.requireRedraw();
     }
 
     //////////////////
@@ -150,5 +150,53 @@ function createGl(canvas: HTMLCanvasElement) {
 
     // gl.colorMask(true, true, true, false);
     return gl;
+}
+
+
+window['benchFrames'] = 0;
+window['startBench'] = function () {
+    window['benchFrames'] = 0;
+    console.time('bench');
+
+    const exhibitorId = store.getters.exhibitorsArray[0].id;
+    const exhibitorId2 = store.getters.exhibitorsArray[1].id;
+
+    const n = 500;
+    let steps = [
+        [() => store.commit('setList', { "type": "search", "text": "a", "focused": true }), n],
+        [() => store.commit('setCenterMap', true), n],
+        [() => store.dispatch('clickExhibitor', exhibitorId), n],
+        [() => store.commit('setCenterMap', true), n],
+        [() => store.dispatch('clickExhibitor', exhibitorId2), n],
+        [() => store.dispatch('selectNone'), n],
+        [() => store.dispatch('selectSearch', ''), n],
+        [() => store.commit('setZoomBy', 1), n],
+        [() => store.commit('setZoomBy', 1), n],
+        [() => store.commit('setZoomBy', 1), n],
+        [() => store.commit('setZoomBy', 1), n],
+        [() => store.commit('setCenterMap', true), n],
+        [() => store.commit('setZoomBy', -1), n],
+        [() => store.commit('setZoomBy', -1), n],
+        [() => store.commit('setZoomBy', -1), n],
+        [() => store.commit('setCenterMap', true), n]
+    ];
+    steps = [...steps];
+    doSteps(steps as any, () => {
+        console.log('total frames:', window['benchFrames']);
+        window.setTimeout(() => alert(window['benchFrames']), 1000);
+        console.timeEnd('bench');
+    });
+
+
+    function doSteps(ar: [() => void, number][], cb: () => void) {
+        const s = ar.shift();
+        s[0]();
+        if (ar.length) {
+            window.setTimeout(() => doSteps(ar, cb), s[1]);
+        } else {
+            cb();
+        }
+    }
+
 }
 

@@ -92,7 +92,7 @@ export default {
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
+                // __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
                 if (isWheel || this.animatePlease)
                     setZoomTransformAnimated(t, 300, d3.easeExpOut);
                 else if (t.animate)
