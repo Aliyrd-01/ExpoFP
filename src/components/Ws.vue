@@ -72,7 +72,8 @@ export default {
                     }
                 };
                 img.src = x.logo;
-            })        }, 2000);
+            })
+        }, 1000);
 
     },
     methods: {

@@ -5,16 +5,25 @@ import configCanvas from './config-canvas';
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 
+let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
+if (EFP_EXPO === "sydneybuildexpo") delayAnimations += 400;
+
 export default function configAll(context: DrawerContext) {
-    // config booths
-    const matrixAfter = configMatrix(context);
+
+    const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
     configBg(context);
-    configBooths(context);
+    const boothsAnimate = configBooths(context)
+
+    matrixAfter();
 
     return function () {
         // to be running when all painters prepared
-        matrixAfter();
+        if (context.updatable) {
+            window.setTimeout(() => {
+                matrixAnimate(boothsAnimate);
+            }, delayAnimations)
+        }
     };
 }

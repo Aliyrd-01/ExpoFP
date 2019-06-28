@@ -10,10 +10,9 @@ import { DrawerContext } from "../drawer";
 
 const prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
 
-// let canUpdate = false;
 // const updates = [];
-// let drawer: Drawer;
-// function initDrawer(drawer1: Drawer) {
+// let drawer: Painter;
+// function initPainter(drawer1: Painter) {
 //     if (drawer) return;
 //     drawer = drawer1;
 //     drawer.alpha = 0;
@@ -28,7 +27,7 @@ const prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
 
 export default function configBoothLabels(context: DrawerContext, booth: Booth) {
     if (booth.special === true || booth.noLabels) return;
-    new BoothLabelDrawer(context, booth);
+    return new BoothLabelDrawer(context, booth);
 }
 
 // function replaceColorTmp(color: string) {
@@ -47,12 +46,13 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     private readonly factors: number[] = [];
     private previousVisiblePrefix: string;
     private previousSkipDim: boolean;
+    public locked = true;
     // private readonly labelColor: string;
     // private readonly detailsHeight: number;
 
     constructor(context: DrawerContext, booth: RegularBooth) {
         super(context, booth, "booth-label", RectPainter, 130);
-        // initDrawer(this.drawer);
+        // initPainter(this.painter);
 
         // if (booth.special === true || booth.onHold || booth.exhibitors.length > 0 || !booth.typeColor) this.labelColor = '#fff';
         // else this.labelColor = replaceColorTmp(booth.typeColor);
@@ -126,9 +126,16 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     }
 
 
+    unlock(){
+        this.locked = false;
+        this.update();
+    }
+    
     update() {
         // if (!canDraw) return;
         // if (!canUpdate) return;
+        // if (this.painter.alpha === 0) return;
+        if (this.locked) return;
         let visiblePrefix = "";
         const ptscale = this.context.getPtscale();
         // const rectHeight = this.booth.rect.h * ptscale;

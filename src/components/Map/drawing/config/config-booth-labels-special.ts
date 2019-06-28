@@ -27,7 +27,7 @@ const textFitter = new TextFitter(getFont, allowedFontSizes, maxMultilineFontSiz
 export default function configBoothLabelsSpecial(context: DrawerContext, booth: Booth) {
     if (!booth.special) return;
     if (booth.noLabels) return;
-    new BoothLabelSpecialDrawer(context,booth);
+    return new BoothLabelSpecialDrawer(context, booth);
 }
 
 class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
@@ -35,9 +35,10 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     private readonly ids: string[];
     private previousVisibleId: string;
     private previousSkipDim: boolean;
+    public locked = true;
 
     constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, "booth-label-special", RectPainter, 130);
+        super(context, booth, "booth-label", RectPainter, 130);
         // initDrawer(this.drawer);
 
         let r = this.booth.rect;
@@ -87,9 +88,13 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // updates.push(this.updateBound);
     }
 
-
+    unlock(){
+        this.locked = false;
+        this.update();
+    }
+    
     update() {
-        // if (!canDraw) return;
+        if (this.locked) return;
         // if (!canUpdate) return;
         // console.log('updateAction')
         // let visiblePrefix = "";

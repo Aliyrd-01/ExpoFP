@@ -7,7 +7,7 @@ export default function configDim(context: DrawerContext) {
     let dim = 0;
     let cancelAnimation: () => void;
 
-    context.requireUpdate(update);
+    // context.requireUpdate(update);
     store.watch(((s, g) => g.dimmed) as any, (v: boolean, oldV: boolean) => {
         // dim = v ? 1 : 0;
         // __logger.log('dim', dim);
@@ -36,6 +36,8 @@ export default function configDim(context: DrawerContext) {
             d.dim = dim;
         }
     }
+
+    return setAllPainters();
 }
 
 

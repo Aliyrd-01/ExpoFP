@@ -74,7 +74,7 @@ export class DrawerImpl extends Matrix {
 
     private draw() {
         showFps();
-        window['benchFrames']++;
+        benchFrames++;
         this.requestedFrame = undefined;
 
         const queue = Array.from(this.updateQueue);
@@ -97,9 +97,9 @@ export class DrawerImpl extends Matrix {
         this.requireRedraw();
     }
 
-    requirePainter<T extends Painter>(id: string, TypeClass: new (gl: WebGLRenderingContext) => T, painterOrderPriority: number): T {
+    requirePainter<T extends Painter>(id: string, TypeClass?: new (gl: WebGLRenderingContext) => T, painterOrderPriority?: number): T {
         let d = this.paintersByType.get(id) as T;
-        if (!d) {
+        if (!d && TypeClass) {
             d = new TypeClass(this.gl);
             d.orderPriority = painterOrderPriority;
             this.paintersByType.set(id, d);
@@ -153,9 +153,9 @@ function createGl(canvas: HTMLCanvasElement) {
 }
 
 
-window['benchFrames'] = 0;
+let benchFrames = 0;
 window['startBench'] = function () {
-    window['benchFrames'] = 0;
+    benchFrames = 0;
     console.time('bench');
 
     const exhibitorId = store.getters.exhibitorsArray[0].id;
@@ -182,11 +182,10 @@ window['startBench'] = function () {
     ];
     steps = [...steps];
     doSteps(steps as any, () => {
-        console.log('total frames:', window['benchFrames']);
-        window.setTimeout(() => alert(window['benchFrames']), 1000);
+        console.log('total frames:', benchFrames);
+        window.setTimeout(() => alert(benchFrames), 1000);
         console.timeEnd('bench');
     });
-
 
     function doSteps(ar: [() => void, number][], cb: () => void) {
         const s = ar.shift();
@@ -197,6 +196,5 @@ window['startBench'] = function () {
             cb();
         }
     }
-
 }
 
