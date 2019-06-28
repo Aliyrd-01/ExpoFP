@@ -122,10 +122,7 @@ export default {
         setZoomTransformAnimated(d3.zoomIdentity, 0, null);
         this.$canvas.call(this.zoom);
 
-
         // initialize(canvas);
-
-
         window.addEventListener("beforeprint", () => {
             let rect = Rect.fromXywh(0, 0, this.screenSize.width, this.screenSize.height);
             rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
