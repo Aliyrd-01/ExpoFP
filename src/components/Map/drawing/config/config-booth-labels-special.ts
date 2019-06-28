@@ -29,10 +29,11 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     private readonly ids: string[];
     private previousVisibleId: string;
     private previousSkipDim: boolean;
-    public locked = true;
+    public locked:boolean;
 
     constructor(context: DrawerContext, booth: Booth) {
         super(context, booth, "booth-label", RectPainter, 130);
+        this.locked = context.updatable;
         // initDrawer(this.drawer);
 
         let r = this.booth.rect;
@@ -77,9 +78,10 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
 
         this.update();
 
-        this.context.subscribePtscaleChange(() => this.context.requireUpdate(this.updateBound));
-        store.watchBoothState(booth.id, () => this.context.requireUpdate(this.updateBound), "skipDim");
-        // updates.push(this.updateBound);
+        if (context.updatable) {
+            this.context.subscribePtscaleChange(() => this.context.requireUpdate(this.updateBound));
+            store.watchBoothState(booth.id, () => this.context.requireUpdate(this.updateBound), "skipDim");
+        }
     }
 
     unlock() {

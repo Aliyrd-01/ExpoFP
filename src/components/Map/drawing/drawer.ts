@@ -11,6 +11,7 @@ export type Drawer = Pick<DrawerImpl,
     | 'getVisibleRect'
     | 'resetCanvasSize'
     | 'setPixelRatio'
+    | 'draw'
 >;
 
 export type DrawerContext = Pick<DrawerImpl,
@@ -62,7 +63,7 @@ export class DrawerImpl extends Matrix {
 
         cb();
 
-        this.requireRedraw();
+        if (updatable) this.requireRedraw();
     }
 
     // called by consumer when it resizes things
@@ -75,7 +76,7 @@ export class DrawerImpl extends Matrix {
         if (!this.requestedFrame) this.requestedFrame = window.requestAnimationFrame(this.drawBound);
     }
 
-    private draw() {
+    public draw() {
         showFps();
         benchFrames++;
         this.requestedFrame = undefined;

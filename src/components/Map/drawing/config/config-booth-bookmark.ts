@@ -64,8 +64,10 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             visible: false
         });
 
-        this.context.subscribePtscaleChange(() => this.context.requireUpdate(this.updateBound));
-        store.watchBoothState(booth.id, () => this.context.requireUpdate(this.updateBound), "skipDim", "bookmarked");
+        if (context.updatable) {
+            this.context.subscribePtscaleChange(() => this.context.requireUpdate(this.updateBound));
+            store.watchBoothState(booth.id, () => this.context.requireUpdate(this.updateBound), "skipDim", "bookmarked");
+        }
     }
 
     update() {

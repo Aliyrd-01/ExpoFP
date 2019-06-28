@@ -10,6 +10,7 @@
         <a href='' @click.prevent="cancel">Cancel</a>
         <div>
             <label>Canvases ({{debugCanvases.length}}):</label>
+            <canvas ref='print-canvas'></canvas>
             <div :key=item.toDataURL() v-for="item in debugCanvases" style="display: inline-block; padding: 2px; vertical-align: top">
                 {{item.width}}x{{item.height}}={{item.width*item.height}}
                 <br />
@@ -21,6 +22,7 @@
 
 <script lang="ts">
 import { mapState } from "vuex";
+import createDrawer from './Map/drawing/drawer';
 
 export default {
     data: () => ({
@@ -36,10 +38,25 @@ export default {
             return debugCanvases;
         }
     },
+    updated: function () {
+        if (!this.enabled) return;
+        const canvas = this.$refs['print-canvas'];
+        canvas.width = 1500;
+        canvas.height = 1500;
+        const drawer = createDrawer(canvas, false);
+        drawer.setPixelRatio(2);
+        drawer.draw();
+    },
+    // watch: {
+    //     enabled(val) {
+    //         if (!val) return;
+
+    //     }
+    // },
     methods: {
         save() {
             // localStorage.setItem("overrideSvg", this.overrideSvg);
-            throw new Error('Test error');
+            // throw new Error('Test error');
             location.replace("/");
         },
         cancel() {

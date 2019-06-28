@@ -9,7 +9,6 @@ let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 if (EFP_EXPO === "sydneybuildexpo") delayAnimations += 400;
 
 export default function configAll(context: DrawerContext) {
-
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);

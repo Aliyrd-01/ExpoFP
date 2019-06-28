@@ -46,12 +46,13 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     private readonly factors: number[] = [];
     private previousVisiblePrefix: string;
     private previousSkipDim: boolean;
-    public locked = true;
+    public locked: boolean;
     // private readonly labelColor: string;
     // private readonly detailsHeight: number;
 
     constructor(context: DrawerContext, booth: RegularBooth) {
         super(context, booth, "booth-label", RectPainter, 130);
+        this.locked = context.updatable;
         // initPainter(this.painter);
 
         // if (booth.special === true || booth.onHold || booth.exhibitors.length > 0 || !booth.typeColor) this.labelColor = '#fff';
@@ -103,8 +104,10 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         this.calcFactors();
         this.update();
 
-        context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-        store.watchBoothState(booth.id, () => context.requireUpdate(this.updateBound), "skipDim");
+        if (context.updatable) {
+            context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            store.watchBoothState(booth.id, () => context.requireUpdate(this.updateBound), "skipDim");
+        }
         // updates.push(this.updateBound);
     }
 
@@ -126,11 +129,11 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     }
 
 
-    unlock(){
+    unlock() {
         this.locked = false;
         this.update();
     }
-    
+
     update() {
         // if (!canDraw) return;
         // if (!canUpdate) return;
