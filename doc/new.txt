@@ -1,5 +1,7 @@
 TODO
 
+better print non-square FPs
+
 //why so slower?
 //bookmark now shown
 //restore fps meter

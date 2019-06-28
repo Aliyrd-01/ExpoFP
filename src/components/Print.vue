@@ -1,5 +1,5 @@
 <template>
-    <div class="print" v-if='visible'>
+    <div class="print">
         <h1>{{__data.title}}</h1>
         <h2>{{__data.subtitle}}</h2>
         <canvas ref='canvas' class="print__canvas"></canvas>
@@ -27,26 +27,26 @@ export default {
     },
     mounted() {
         window.addEventListener("beforeprint", () => {
-            this.visible = true;
+            const canvas = this.$refs['canvas'];
+            canvas.width = 3000;
+            canvas.height = 3000;
+            const drawer = createDrawer(canvas, false);
+            drawer.setPixelRatio(2);
+            drawer.draw();
         });
         window.addEventListener("afterprint", () => {
-            this.visible = false;
+            //this.visible = false;
         });
     },
-    updated: function () {
-        if (!this.visible) return;
-        const canvas = this.$refs['canvas'];
-        canvas.width = 3000;
-        canvas.height = 3000;
-        const drawer = createDrawer(canvas, false);
-        drawer.setPixelRatio(2);
-        drawer.draw();
-    },
-    watch: {
-        visible(val) {
-            this.$emit('printing-change', val);
-        }
-    }
+    // updated: function () {
+    //     if (!this.visible) return;
+
+    // },
+    // watch: {
+    //     visible(val) {
+    //         this.$emit('printing-change', val);
+    //     }
+    // }
 };
 </script>
 
@@ -58,8 +58,8 @@ export default {
     background: #fff;
     /* min-height: 100vh; */
     width: 100%;
-
     text-align: center;
+    display: none;
 
     &__canvas {
         max-width: 100%;
@@ -74,6 +74,12 @@ export default {
         font-size: 1.5rem;
         color: #555;
         margin: 0.5rem 0 1rem;
+    }
+
+    @media print {
+        & {
+            display: block;
+        }
     }
     /* p {
         min-height: 20vh;

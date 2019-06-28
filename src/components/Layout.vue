@@ -12,7 +12,7 @@
             <Debug />
             <div id="fps"></div>
         </div>
-        <Print @printing-change='val => hideFixed = val'  />
+        <Print />
     </div>
 </template>
 
@@ -45,7 +45,7 @@ export default {
         Print
         // Message
     },
-    data: () => ({ mapReady: false, webglSupported: isWebGlSupported(), hideFixed: false }),
+    data: () => ({ mapReady: false, webglSupported: isWebGlSupported() }),
     computed: {
         expo() {
             return EFP_EXPO;
@@ -54,7 +54,7 @@ export default {
             "overlayPosition"
         ]),
         classes() {
-            return `expo-${EFP_EXPO} overlay-${this.overlayPosition}${this.hideFixed ? " -hide-fixed": ""}`;
+            return `expo-${EFP_EXPO} overlay-${this.overlayPosition}`;
         }
     },
     mounted() {
@@ -113,7 +113,9 @@ body {
         bottom: 0;
         /* background: #ebebeb; */
         overflow: hidden;
-        &.-hide-fixed{
+    }
+    &media print {
+        &__fixed {
             visibility: hidden;
         }
     }
