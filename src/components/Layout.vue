@@ -1,15 +1,18 @@
 <template>
-    <div id="root" :class='classes'>
-        <LogoOverlay />
-        <Ws />
-        <Controls />
-        <Areas />
-        <Overlay />
-        <Map v-if="mapReady && webglSupported" />
-        <Demo />
-        <!-- <Message /> -->
-        <Debug />
-        <div id="fps"></div>
+    <div class=layout>
+        <div class="layout__fixed" :class='classes'>
+            <LogoOverlay />
+            <Ws />
+            <Controls />
+            <Areas />
+            <Overlay />
+            <Map v-if="mapReady && webglSupported" />
+            <Demo />
+            <!-- <Message /> -->
+            <Debug />
+            <div id="fps"></div>
+        </div>
+        <Print @printing-change='val => hideFixed = val'  />
     </div>
 </template>
 
@@ -23,6 +26,7 @@ import Areas from "./Areas.vue";
 import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
+import Print from "./Print.vue";
 // import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
 import { remsToPixels, isWebGlSupported } from './Map/utils';
@@ -38,9 +42,10 @@ export default {
         Ws,
         Debug,
         Demo,
+        Print
         // Message
     },
-    data: () => ({ mapReady: false, webglSupported: isWebGlSupported() }),
+    data: () => ({ mapReady: false, webglSupported: isWebGlSupported(), hideFixed: false }),
     computed: {
         expo() {
             return EFP_EXPO;
@@ -49,7 +54,7 @@ export default {
             "overlayPosition"
         ]),
         classes() {
-            return `expo-${EFP_EXPO} overlay-${this.overlayPosition}`;
+            return `expo-${EFP_EXPO} overlay-${this.overlayPosition}${this.hideFixed ? " -hide-fixed": ""}`;
         }
     },
     mounted() {
@@ -67,7 +72,7 @@ export default {
         // window.setTimeout(() => {
         //     (document.querySelector('.logo-overlay') as HTMLAnchorElement).style.opacity = "1";
         // }, 3000);
-    }
+    },
 };
 </script>
 
@@ -98,15 +103,20 @@ body {
         font-size: 16px;
     } */
 }
-#root {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: #ebebeb;
-    overflow: hidden;
+.layout {
     // font-size: 15px;
+    &__fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        /* background: #ebebeb; */
+        overflow: hidden;
+        &.-hide-fixed{
+            visibility: hidden;
+        }
+    }
 }
 a {
     color: var(--link-color);

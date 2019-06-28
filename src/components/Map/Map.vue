@@ -125,13 +125,13 @@ export default {
         this.$canvas.call(this.zoom);
 
         // initialize(canvas);
-        window.addEventListener("beforeprint", () => {
-            let rect = Rect.fromXywh(0, 0, this.screenSize.width, this.screenSize.height);
-            rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
-            drawer.setVisibleRect(rect);
-            //m.setZoomTransform(d3.zoomIdentity);
-            this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
-        });
+        // window.addEventListener("beforeprint", () => {
+        //     let rect = Rect.fromXywh(0, 0, this.screenSize.width, this.screenSize.height);
+        //     rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+        //     drawer.setVisibleRect(rect);
+        //     //m.setZoomTransform(d3.zoomIdentity);
+        //     this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
+        // });
 
         if (EFP_EXPO === "cbresupplypartner") store.commit("setArea", "ground");
     },
