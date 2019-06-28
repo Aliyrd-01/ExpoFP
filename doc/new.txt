@@ -1,6 +1,6 @@
 TODO
 
-why so slower?
+//why so slower?
 //bookmark now shown
 //restore fps meter
 //add preDraw method to drawers - use it before initial animations started
