@@ -28,7 +28,7 @@ export default class ExtendedStore extends Vuex.Store<any> {
         this.watch(((s, g) => g.bookmarkedArray) as any, (v: number[], oldV: number[]) => {
             const oldExhibitors = oldV.map(id => this.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c), []);
             const exhibitors = v.map(id => this.state.exhibitors[id].booths as number[]).reduce((p, c) => p.concat(c), []);
-            this.handleBoothSetsDifference(new Set(exhibitors), new Set(oldExhibitors));
+            this.handleBoothSetsDifference(new Set(exhibitors), new Set(oldExhibitors), "bookmarked");
         });
     }
 

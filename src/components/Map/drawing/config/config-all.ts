@@ -1,6 +1,7 @@
 import { DrawerContext } from "../Drawer";
 import configMatrix from './config-matrix';
 import configDim from './config-dim';
+import configCanvas from './config-canvas';
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 
@@ -8,6 +9,7 @@ export default function configAll(context: DrawerContext) {
     // config booths
     const matrixAfter = configMatrix(context);
     configDim(context);
+    configCanvas(context);
     configBg(context);
     configBooths(context);
 
