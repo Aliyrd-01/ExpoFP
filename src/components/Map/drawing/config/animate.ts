@@ -4,7 +4,7 @@ export default function animate<T>(timeout: number, duration: number,
     interpolateFunc: (k: number) => T,
     requireUpdateFunc: (func: () => void) => void,
     setFunc: (t: T) => void,
-    callback: () => void) {
+    callback?: () => void) {
 
     let stopAnimation = false;
 
@@ -19,7 +19,7 @@ export default function animate<T>(timeout: number, duration: number,
             setFunc(val);
             if (part !== 1) {
                 requireUpdateFunc(animationStep);
-            } else {
+            } else if (callback) {
                 callback();
             }
         }

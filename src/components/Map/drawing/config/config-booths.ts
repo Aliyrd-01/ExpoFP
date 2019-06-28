@@ -1,19 +1,13 @@
-// import { requireUpdate } from "./draw";
 import configBoothBg from './config-booth-bg';
-// import configBoothBookmark from './config-booth-bookmark';
 import configBoothLabels from './config-booth-labels';
-// import configBoothLabelsSpecial from './config-booth-labels-special';
-// import configBoothBorder from './config-booth-border';
-// import BoothDrawerBase from "./BoothDrawerBase";
+import configBoothLabelsSpecial from './config-booth-labels-special';
+import configBoothBookmark from './config-booth-bookmark';
+import configBoothBorder from './config-booth-border';
 import { DrawerContext } from '../drawer';
-// import { isWebGlSupported } from "./utils";
-// const boothDrawers = new Map<number, BoothDrawerBase<any>[]>();
-// const boothStateCache = new Map<number, BoothState>();
 
 export default function config(context: DrawerContext) {
     const booths = store.getters.boothsArray as Booth[];
-    // , , configBoothLabelsSpecial, configBoothBookmark, configBoothBorder
-    const configFuncs = [configBoothBg, configBoothLabels] as ((DrawerContext, Booth) => void)[];//configBoothType,
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark, configBoothBorder] as ((DrawerContext, Booth) => void)[];//configBoothType,
 
     for (const func of configFuncs) {
         //const drawer = 

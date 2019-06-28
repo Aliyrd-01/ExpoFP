@@ -1,7 +1,8 @@
 TODO
 
 why so slower?
-restore fps meter
+bookmark now shown
+//restore fps meter
 //add preDraw method to drawers - use it before initial animations started
 make Drawer updateVisible same as in triangle drawer?
 
