@@ -4,25 +4,19 @@ import TextFitter, { TextFitData } from "./TextFitter";
 import { DrawerContext } from "../drawer";
 import RectPainter from "../painters/RectPainter";
 
-// let canUpdate = false;
-// const updates = [];
-// let drawer: Drawer;
-const pixelRatio = devicePixelRatio;
-const allowedFontSizes = [18, 16, 14, 12, 10, 7].map(f => f * pixelRatio);
-const maxMultilineFontSize = 14 * pixelRatio;
-const textFitter = new TextFitter(getFont, allowedFontSizes, maxMultilineFontSize);
-
-// function initDrawer(drawer1: Drawer) {
-//     if (drawer) return;
-//     drawer = drawer1;
-//     drawer.alpha = 0;
-
-//     window.setTimeout(() => {
-//         canUpdate = true;
-//         updates.forEach(u => u());
-//         animate(0, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => (drawer.alpha = v));
-//     }, delayAnimations + 800);
-// }
+const textFitters = new Map<number, TextFitter>();
+function cteateTextFitter(pixelRatio: number) {
+    let d = textFitters.get(pixelRatio);
+    if (!d) {
+        const allowedFontSizes = [18, 16, 14, 12, 10, 7].map(f => f * pixelRatio);
+        const maxMultilineFontSize = 14 * pixelRatio;
+        d = new TextFitter(getFont, allowedFontSizes, maxMultilineFontSize);
+        textFitters.set(pixelRatio, d);
+        // cleanup
+        setTimeout(() => textFitters.delete(pixelRatio), 5000);
+    }
+    return d;
+}
 
 export default function configBoothLabelsSpecial(context: DrawerContext, booth: Booth) {
     if (!booth.special) return;
@@ -45,7 +39,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         r = r.withPadding(r.w * 0.05, r.h * 0.05);
         const text = this.booth.title || this.booth.name;
 
-        this.steps = textFitter.getStepsForRect(text, r.w, r.h);
+        this.steps = cteateTextFitter(context.pixelRatio).getStepsForRect(text, r.w, r.h);
         this.ids = [];
 
         for (const s of this.steps) {
@@ -64,7 +58,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             this.ids.push(id);
         }
 
-        const dotCanvas = createCircleCanvas(1.5, "#fff");
+        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio);
         const dotW = dotCanvas.canvas.width / 2;
         const dotH = dotCanvas.canvas.width / 2;
         const dotId = this.getId("Dot");
@@ -88,11 +82,11 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // updates.push(this.updateBound);
     }
 
-    unlock(){
+    unlock() {
         this.locked = false;
         this.update();
     }
-    
+
     update() {
         if (this.locked) return;
         // if (!canUpdate) return;

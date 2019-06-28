@@ -35,6 +35,7 @@ export default {
             "hoveredBooth",
             "screenSize",
             "bookmarked",
+            "devicePixelRatio"
             // "overlayWidthRems",
             // "overlayMediumHeightRems"
         ]),
@@ -112,7 +113,8 @@ export default {
         sizeCanvasToParentElement(canvas);
         drawer = createDrawer(canvas, true);
         drawer.setVisibleRect(this.visibleRect);
-        
+        drawer.setPixelRatio(this.devicePixelRatio);
+
         window.addEventListener("resize", () => {
             // __logger.log('canvas change', canvas);
             sizeCanvasToParentElement(canvas);
@@ -134,6 +136,9 @@ export default {
         if (EFP_EXPO === "cbresupplypartner") store.commit("setArea", "ground");
     },
     watch: {
+        devicePixelRatio: function () {
+            drawer.setPixelRatio(this.devicePixelRatio);
+        },
         centerMap: function () {
             if (!this.centerMap) return;
             store.commit("setCenterMap", false);

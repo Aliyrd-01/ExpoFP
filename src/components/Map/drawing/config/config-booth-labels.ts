@@ -63,7 +63,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const r = this.booth.rect;
 
-        const dotCanvas = createCircleCanvas(1.5);
+        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio);
         const dotW = dotCanvas.canvas.width / 2;
         const dotH = dotCanvas.canvas.width / 2;
 
@@ -83,7 +83,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         this.addLabel(12, "M");
         this.addLabel(14, "L");
 
-        const detailsCanvas = createDetailsCanvas(booth);
+        const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio);
         // this.detailsHeight = detailsCanvas.height;
 
         const pad = settings.borderWidth / 2;
@@ -94,7 +94,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
             deltaPts: [3, 3, -1, -1],
-            scalePts: devicePixelRatio,
+            scalePts: context.pixelRatio,
             canvasTmp: detailsCanvas,
             texPosition: "lefttop",
             visible: false
@@ -165,7 +165,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize);
+        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 

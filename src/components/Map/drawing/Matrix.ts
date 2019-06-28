@@ -12,6 +12,8 @@ export default class Matrix {
     // svg -> browser px matrix (unzoomed)
     private svgPxUnzoomedMatrix: Float32Array;
 
+    public pixelRatio = devicePixelRatio;
+
     //
     // dependencies and misc
     //
@@ -54,6 +56,11 @@ export default class Matrix {
         this.calcAll();
     }
 
+    setPixelRatio(pixelRatio: number) {
+        this.pixelRatio = pixelRatio;
+        this.calcAll();
+    }
+
     //
     // getters
     //
@@ -83,12 +90,12 @@ export default class Matrix {
         // dirty = false;
         const { zoomTransform, visibleRect, visibleScale, canvasSize } = this;
 
-        const visibleRectPt = visibleRect.scale(devicePixelRatio);
+        const visibleRectPt = visibleRect.scale(this.pixelRatio);
         const svgPxScaleUnzoomed = Math.min(visibleRectPt.w / svgWidth, visibleRectPt.h / svgHeight);
         const svgPxScale = svgPxScaleUnzoomed * visibleScale;
 
         // create helper matrices
-        const zoomMatrix = m4.translation([zoomTransform.x * devicePixelRatio, zoomTransform.y * devicePixelRatio, 0]);
+        const zoomMatrix = m4.translation([zoomTransform.x * this.pixelRatio, zoomTransform.y * this.pixelRatio, 0]);
         m4.scale(zoomMatrix, [zoomTransform.k, zoomTransform.k, 1], zoomMatrix);
 
         // px/svg scale
@@ -105,7 +112,7 @@ export default class Matrix {
         m4.multiply(this.matrix, zoomMatrix, this.matrix);
         m4.multiply(this.matrix, centerSvgMatrix, this.matrix);
 
-        this.pxSvgMatrix = m4.scale(m4.identity(), [1 / devicePixelRatio, 1 / devicePixelRatio, 1]) as Float32Array;
+        this.pxSvgMatrix = m4.scale(m4.identity(), [1 / this.pixelRatio, 1 / this.pixelRatio, 1]) as Float32Array;
         this.svgPxUnzoomedMatrix = new Float32Array(this.pxSvgMatrix);
         m4.multiply(this.pxSvgMatrix, zoomMatrix, this.pxSvgMatrix);
         m4.multiply(this.pxSvgMatrix, centerSvgMatrix, this.pxSvgMatrix);

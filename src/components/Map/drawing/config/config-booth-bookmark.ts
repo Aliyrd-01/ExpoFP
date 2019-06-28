@@ -4,11 +4,6 @@ import { createBookmarkCanvas } from './canvases';
 import { DrawerContext } from '../drawer';
 import RectPainter from '../painters/RectPainter';
 
-const bookmarkCanvasXL = createBookmarkCanvas(11);
-const bookmarkCanvasL = createBookmarkCanvas(8);
-const bookmarkCanvasM = createBookmarkCanvas(6);
-
-
 export default function configBoothBookmark(context: DrawerContext, booth: Booth) {
     new BoothBookmarkDrawer(context, booth);
 }
@@ -18,6 +13,10 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
     constructor(context: DrawerContext, booth: Booth) {
         super(context, booth, 'booth-bookmark', RectPainter, 140);
         const r = this.booth.rect.withPadding(settings.borderWidth / 2);
+
+        const bookmarkCanvasXL = createBookmarkCanvas(11, context.pixelRatio);
+        const bookmarkCanvasL = createBookmarkCanvas(8, context.pixelRatio);
+        const bookmarkCanvasM = createBookmarkCanvas(6, context.pixelRatio);
 
         this.painter.addObject({
             id: this.getId("XL"),
@@ -77,8 +76,8 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         let view: string;
 
         if (bookmarked) {
-            const widthPx = this.booth.rect.w / ptscale / devicePixelRatio;
-            const heightPx = this.booth.rect.h / ptscale / devicePixelRatio;
+            const widthPx = this.booth.rect.w / ptscale / this.context.pixelRatio;
+            const heightPx = this.booth.rect.h / ptscale / this.context.pixelRatio;
             if (widthPx > 50 && heightPx > 50) {
                 view = "XL";
             } else if (widthPx > 25 && heightPx > 25) {
