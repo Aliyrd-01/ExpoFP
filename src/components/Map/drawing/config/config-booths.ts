@@ -31,7 +31,7 @@ export default function configBooths(context: DrawerContext) {
     const labelsPainter = context.requirePainter('booth-label') as RectPainter;
     if (context.updatable) {
         labelsPainter.alpha = 0;
-    }
+    } 
 
     return function () {
         for (const dr of lockedDrawers) {
