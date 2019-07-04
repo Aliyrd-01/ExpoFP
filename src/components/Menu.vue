@@ -17,7 +17,7 @@
                 <button @click.stop.prevent=' shareBookmarks' v-if='bookmarkedArray.length' class="fas fa-share-square"
                     title="Share bookmarks"></button>
             </a>
-             <a href='javascript:print()' class="menu__item -print"><i class="fas fa-print"></i> Print</a>
+             <!-- <a href='javascript:print()' class="menu__item -print"><i class="fas fa-print"></i> Print</a> -->
             <!-- <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a> -->
 
             <div class="menu__item" v-if="categoriesArray.length">Categories</div>
