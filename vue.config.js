@@ -24,6 +24,7 @@ console.info("Serving data from: ", dataUrlBase)
 const define = {
     EFP_DATA_URL_BASE: JSON.stringify(dataUrlBase),
     EFP_EXPO: JSON.stringify(expo),
+    EFP_LIVE: JSON.stringify(process.env.EFP_TARGET === 'live')
     //EFP_TITLE: JSON.stringify(config.title),
     //EFP_HOME_URL: JSON.stringify(config.homeUrl),
     //EFP_LOGO_URL: JSON.stringify(logoUrl),

@@ -104,6 +104,7 @@ type MapOccupied = null | "left" | "bottomSmall" | "bottomMedium";
 type ZoomTransform = typeof d3.zoomIdentity; // { x: number; y: number; k: number };
 
 declare const EFP_EXPO: string;
+declare const EFP_LIVE: boolean;
 //declare const EFP_TITLE: string;
 //declare const EFP_HOME_URL: string;
 // declare const EFP_LOGO_URL: string;

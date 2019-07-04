@@ -17,6 +17,7 @@
                 <button @click.stop.prevent=' shareBookmarks' v-if='bookmarkedArray.length' class="fas fa-share-square"
                     title="Share bookmarks"></button>
             </a>
+            <a href='' class="menu__item -pdf" @click.prevent='$store.commit("setPrintingPdf", true)' v-if='!EFP_LIVE'><i class="fas fa-file-pdf"></i> Download PDF</a>
              <!-- <a href='javascript:print()' class="menu__item -print"><i class="fas fa-print"></i> Print</a> -->
             <!-- <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a> -->
 
