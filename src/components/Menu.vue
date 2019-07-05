@@ -102,6 +102,8 @@ export default {
 .menu.shown .menu__title > img {
     opacity: 1;
 }
+
+/* CUSTOM SHOW RULES */
 .expo-jtrade19 .menu__title {
     background: #2b2a29;
 }
@@ -126,7 +128,6 @@ export default {
 .expo-vaughanribfest19 .menu__title > img {
     width: auto;
 }
-
 .expo-sydneybuildexpo {
     .menu.shown .overlay-bar__close {
         color: #555 !important;
@@ -143,6 +144,20 @@ export default {
     }
 }
 
+.expo-sync2020{
+     .menu__title {
+        padding-top: 0;
+        padding-bottom: 0;
+        background: #fff;
+
+        > img {
+            max-height: 150px;
+            width: auto;
+        }
+    }
+}
+
+/* END */
 .menu {
     background: #f1f1f1;
     &__title {
