@@ -10,9 +10,10 @@
             <Demo />
             <!-- <Message /> -->
             <Debug />
+            <Pdf />
             <div id="fps"></div>
         </div>
-        <Print />
+        <!-- <Print /> -->
     </div>
 </template>
 
@@ -26,7 +27,8 @@ import Areas from "./Areas.vue";
 import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
-import Print from "./Print.vue";
+import Pdf from "./Pdf.vue";
+// import Print from "./Print.vue";
 // import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
 import { remsToPixels, isWebGlSupported } from './Map/utils';
@@ -42,7 +44,8 @@ export default {
         Ws,
         Debug,
         Demo,
-        Print
+        Pdf,
+        // Print
         // Message
     },
     data: () => ({ mapReady: false, webglSupported: isWebGlSupported() }),
@@ -114,11 +117,11 @@ body {
         /* background: #ebebeb; */
         overflow: hidden;
     }
-    &media print {
+    /* &media print {
         &__fixed {
             visibility: hidden;
         }
-    }
+    } */
 }
 a {
     color: var(--link-color);

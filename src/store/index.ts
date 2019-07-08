@@ -53,6 +53,7 @@ const store1 = new ExtendedStore({
         // overlayWidthRems: 23.5,
         overlayMediumHeightRems: 10,
         devicePixelRatio: window.devicePixelRatio,
+        printingPdf: false
 
     },
     getters: {
@@ -122,6 +123,9 @@ const store1 = new ExtendedStore({
         },
         setWsStarted(state, val) {
             state.wsStarted = val;
+        },
+        setPrintingPdf(state, val){
+            state.printingPdf = val;
         }
     },
     actions: {
