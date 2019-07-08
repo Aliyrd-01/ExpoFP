@@ -8,7 +8,7 @@ const live = process.env.EFP_TARGET === "live";
 
 if (!live && onMasterBranch) {
     throw new Error(`Won't deploy DEV from master`);
-} else if (!onExpoBranch) {
+} else if (!onExpoBranch && !onMasterBranch) {
     throw new Error(`Won't deploy from non-expo branch`);
 }
 
