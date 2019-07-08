@@ -42,7 +42,7 @@ export default {
                 var doc = new window['jsPDF']();
 
                 doc.setFontSize(30);
-                doc.text(__data.title, 1, 25);
+                doc.text(__data.title, 25, 25);
 
                 const canvas = document.createElement("canvas");
                 canvas.width = 3000;
