@@ -1,6 +1,6 @@
 <template>
-    <div class="pdf" v-if="show">
-        <h1>Generating PDF...</h1>
+    <div class="pdf" v-if="show" :class="{'-visible': visible}">
+        <div class="pdf__text">Preparing PDF...</div>
     </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
     components: {
 
     },
-    data: () => ({ visible: true }),
+    data: () => ({ visible: false }),
     computed: {
         ...mapState(["printingPdf"]),
         show() {
@@ -39,6 +39,10 @@ export default {
             if (val) {
                 //alert('Printing...');
 
+                window.setTimeout(() => {
+                    this.visible = true;
+                }, 10);
+
                 window.setTimeout(async () => {
                     const { default: jsPDF } = await import('jspdf');
                     const doc = new jsPDF();//window['jsPDF']();
@@ -56,8 +60,14 @@ export default {
 
                     doc.save('Floor Plan.pdf')
 
-                    //this.$store.commit('setPrintingPdf', false);
-                }, 500);
+                    window.setTimeout(() => {
+                        this.visible = false;
+                        window.setTimeout(()=>{
+                            this.$store.commit('setPrintingPdf', false);
+                        }, 300);
+                    }, 2000);
+
+                }, 300);
             }
         }
     }
@@ -71,7 +81,21 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.8);
     z-index: 999;
+    opacity: 0;
+    transition: opacity 300ms;
+
+    &__text {
+        text-align: center;
+        color: #eee;
+        margin-top: 45vh;
+        font-size: 2rem;
+        font-weight: 300;
+    }
+
+    &.-visible {
+        opacity: 1;
+    }
 }
 </style>
