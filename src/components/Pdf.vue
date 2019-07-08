@@ -50,8 +50,8 @@ export default {
                     doc.text(__data.title, 25, 25);
 
                     const canvas = document.createElement("canvas");
-                    canvas.width = 3000;
-                    canvas.height = 3000;
+                    canvas.width = 500;
+                    canvas.height = 500;
                     const drawer = createDrawer(canvas, false);
                     drawer.setPixelRatio(2);
                     drawer.draw();
