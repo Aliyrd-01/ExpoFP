@@ -1,6 +1,6 @@
 <template>
     <div class="pdf" v-if="show">
-        <h1>Generating PDF</h1>
+        <h1>Generating PDF...</h1>
     </div>
 </template>
 
@@ -52,7 +52,6 @@ export default {
                 drawer.draw();
 
                 doc.addImage(canvas, 'JPEG', 15, 40, 180, 180);
-
 
                 doc.save('Floor Plan.pdf')
 
