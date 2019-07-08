@@ -50,10 +50,15 @@ export default {
                     doc.text(__data.title, 25, 25);
 
                     const canvas = document.createElement("canvas");
-                    canvas.width = 500;
-                    canvas.height = 500;
+                    canvas.width = 2000;
+                    canvas.height = 2000;
+
+                    debugCanvases.push(canvas);
+
                     const drawer = createDrawer(canvas, false);
                     drawer.setPixelRatio(2);
+                    // drawer.resetCanvasSize();
+                    console.log('setPixelRatio', drawer.getPtscale());
                     drawer.draw();
 
                     doc.addImage(canvas, 'JPEG', 15, 40, 180, 180);
@@ -62,7 +67,7 @@ export default {
 
                     window.setTimeout(() => {
                         this.visible = false;
-                        window.setTimeout(()=>{
+                        window.setTimeout(() => {
                             this.$store.commit('setPrintingPdf', false);
                         }, 300);
                     }, 2000);

@@ -81,6 +81,7 @@ export default {
         }
     },
     mounted() {
+        // return;
         const canvas = this.$el as HTMLCanvasElement;
         this.$canvas = d3.select(canvas);
 

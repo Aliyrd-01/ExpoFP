@@ -41,10 +41,11 @@ export default {
     updated: function () {
         if (!this.enabled) return;
         const canvas = this.$refs['print-canvas'];
-        canvas.width = 1500;
-        canvas.height = 1500;
+        canvas.width = 1000;
+        canvas.height = 1000;
         const drawer = createDrawer(canvas, false);
-        drawer.setPixelRatio(2);
+        drawer.setPixelRatio(1.5);
+        // drawer.resetCanvasSize();
         drawer.draw();
     },
     // watch: {

@@ -25,7 +25,7 @@ export default class Matrix {
 
 
     constructor(canvasSize: Size) {
-        this.canvasSize = canvasSize
+        this.canvasSize = canvasSize;
         this.visibleRect = Rect.fromXywh(0, 0, canvasSize.width, canvasSize.height);
         this.zoomTransform = zoomIdentity;
         this.visibleScale = 1;
@@ -93,6 +93,8 @@ export default class Matrix {
         const visibleRectPt = visibleRect.scale(this.pixelRatio);
         const svgPxScaleUnzoomed = Math.min(visibleRectPt.w / svgWidth, visibleRectPt.h / svgHeight);
         const svgPxScale = svgPxScaleUnzoomed * visibleScale;
+
+        //if (!this['updatable']) debugger;
 
         // create helper matrices
         const zoomMatrix = m4.translation([zoomTransform.x * this.pixelRatio, zoomTransform.y * this.pixelRatio, 0]);

@@ -39,8 +39,10 @@ export class DrawerImpl extends Matrix {
     private readonly paintersByType = new Map<string, Painter>();
     readonly allPainters: Painter[] = [];
     readonly updatable: boolean;
+    private prepared: boolean;
     private gl: WebGLRenderingContext;
     private readonly drawBound: () => void;
+
 
     constructor(canvas: HTMLCanvasElement, updatable: boolean) {
         super(new Size(canvas.width, canvas.height));
@@ -54,15 +56,10 @@ export class DrawerImpl extends Matrix {
         if (!updatable) this.requireUpdate = null;
 
         // configure all objects there
-        const cb = configAll(this as DrawerContext);
-
-        for (var d of this.allPainters) {
-            d.preparePaint();
+        if (updatable) {
+            this.prepare();
+            this.requireRedraw();
         }
-
-        cb();
-
-        if (updatable) this.requireRedraw();
     }
 
     // called by consumer when it resizes things
@@ -71,11 +68,24 @@ export class DrawerImpl extends Matrix {
         this.setCanvasSize(new Size(this.canvas.width, this.canvas.height));
     }
 
+    private prepare() {
+        // console.log('Prepare painters');
+        const cb = configAll(this as DrawerContext);
+
+        for (var d of this.allPainters) {
+            d.preparePaint();
+        }
+
+        cb();
+        this.prepared = true;
+    }
+
     private requireRedraw() {
         if (!this.requestedFrame) this.requestedFrame = window.requestAnimationFrame(this.drawBound);
     }
 
     public draw() {
+        if (!this.prepared) this.prepare();
         showFps();
         benchFrames++;
         this.requestedFrame = undefined;

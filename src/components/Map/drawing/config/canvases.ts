@@ -135,6 +135,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number) {
         c.stroke();
 
         res = { canvas, lineWidth: c.lineWidth, padding };
+        bookmarkCanvasCache.set(key, res);
         // cleanup
         setTimeout(() => bookmarkCanvasCache.delete(key), 5000);
     }
