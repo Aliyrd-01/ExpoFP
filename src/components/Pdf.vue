@@ -9,6 +9,7 @@
 // import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
 import createDrawer from './Map/drawing/drawer';
+// import jsPDF from 'jspdf';
 
 export default {
     // name: 'app',
@@ -36,7 +37,25 @@ export default {
     watch: {
         show(val) {
             if (val) {
-                alert('Printing');
+                //alert('Printing...');
+
+                var doc = new window['jsPDF']();
+
+                doc.setFontSize(30);
+                doc.text(__data.title, 1, 25);
+
+                const canvas = document.createElement("canvas");
+                canvas.width = 3000;
+                canvas.height = 3000;
+                const drawer = createDrawer(canvas, false);
+                drawer.setPixelRatio(2);
+                drawer.draw();
+
+                doc.addImage(canvas, 'JPEG', 15, 40, 180, 180);
+
+
+                doc.save('Floor Plan.pdf')
+
                 this.$store.commit('setPrintingPdf', false);
             }
         }

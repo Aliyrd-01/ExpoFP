@@ -54,7 +54,8 @@ export default {
     data: () => ({
         homeUrl: __data.homeUrl,
         logoUrl,
-        shown: false
+        shown: false,
+        EFP_LIVE: EFP_LIVE
     }),
     computed: {
         ...mapState(["menu"]),
