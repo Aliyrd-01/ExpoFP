@@ -39,23 +39,25 @@ export default {
             if (val) {
                 //alert('Printing...');
 
-                var doc = new window['jsPDF']();
+                window.setTimeout(async () => {
+                    const { default: jsPDF } = await import('jspdf');
+                    const doc = new jsPDF();//window['jsPDF']();
+                    doc.setFontSize(30);
+                    doc.text(__data.title, 25, 25);
 
-                doc.setFontSize(30);
-                doc.text(__data.title, 25, 25);
+                    const canvas = document.createElement("canvas");
+                    canvas.width = 3000;
+                    canvas.height = 3000;
+                    const drawer = createDrawer(canvas, false);
+                    drawer.setPixelRatio(2);
+                    drawer.draw();
 
-                const canvas = document.createElement("canvas");
-                canvas.width = 3000;
-                canvas.height = 3000;
-                const drawer = createDrawer(canvas, false);
-                drawer.setPixelRatio(2);
-                drawer.draw();
+                    doc.addImage(canvas, 'JPEG', 15, 40, 180, 180);
 
-                doc.addImage(canvas, 'JPEG', 15, 40, 180, 180);
+                    doc.save('Floor Plan.pdf')
 
-                doc.save('Floor Plan.pdf')
-
-                this.$store.commit('setPrintingPdf', false);
+                    //this.$store.commit('setPrintingPdf', false);
+                }, 500);
             }
         }
     }
@@ -67,6 +69,9 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
     z-index: 999;
 }
 </style>

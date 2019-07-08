@@ -18,6 +18,7 @@
         "deepmerge": "^3.2.0",
         "history": "^4.9.0",
         "jsonschema": "^1.2.4",
+        "jspdf": "^1.5.3",
         "path2d-polyfill": "^0.4.1",
         "perfect-scrollbar": "^1.4.0",
         "twgl.js": "4.9.1",
