@@ -33,16 +33,19 @@ export default {
     //     if (!this.visible) return;
 
     // },
-    // watch: {
-    //     visible(val) {
-    //         this.$emit('printing-change', val);
-    //     }
-    // }
+    watch: {
+        show(val) {
+            if (val) {
+                alert('Printing');
+                this.$store.commit('setPrintingPdf', false);
+            }
+        }
+    }
 };
 </script>
 
 <style lang="scss">
-.pdf{
+.pdf {
     position: fixed;
     top: 0;
     left: 0;
