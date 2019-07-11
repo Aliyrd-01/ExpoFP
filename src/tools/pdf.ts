@@ -59,10 +59,12 @@ export async function generatePdf() {
         occupied = totalHeight;
     }
 
-    const heightLeft = height - occupied;
+    const imgPadding = baseSize * 0.005;
+
+    const heightLeft = height - occupied - imgPadding * 2;
 
     const blockHeight = heightLeft;
-    const blockWidth = width;
+    const blockWidth = width - imgPadding * 2;
 
     const yRatio = blockHeight / svgHeight;
     const xRatio = blockWidth / svgWidth;
@@ -72,7 +74,7 @@ export async function generatePdf() {
     const imageHeight = svgHeight * ratio;
 
     const cx = width / 2;
-    const cy = occupied + blockHeight / 2;
+    const cy = occupied + imgPadding + blockHeight / 2;
     const left = cx - imageWidth / 2;
     const top = cy - imageHeight / 2;
 
