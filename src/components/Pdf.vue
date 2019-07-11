@@ -8,7 +8,6 @@
 
 // import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
-import createDrawer from './Map/drawing/drawer';
 // import jsPDF from 'jspdf';
 
 export default {
@@ -47,26 +46,6 @@ export default {
 
                     const { generatePdf } = await import('@/tools/pdf');
                     await generatePdf();
-                    // const { default: jsPDF } = await import('jspdf');
-                    // const doc = new jsPDF({format: "a4"});//window['jsPDF']();
-                    // doc.setFontSize(30);
-                    // doc.text(__data.title, 25, 25);
-
-                    // const canvas = document.createElement("canvas");
-                    // canvas.width = 2000;
-                    // canvas.height = 2000;
-
-                    // debugCanvases.push(canvas);
-
-                    // const drawer = createDrawer(canvas, false);
-                    // drawer.setPixelRatio(2);
-                    // // drawer.resetCanvasSize();
-                    // console.log('setPixelRatio', drawer.getPtscale());
-                    // drawer.draw();
-
-                    // doc.addImage(canvas, 'JPEG', 0, 40, 210, 130);
-
-                    // doc.save('Floor Plan.pdf')
 
                     window.setTimeout(() => {
                         this.visible = false;

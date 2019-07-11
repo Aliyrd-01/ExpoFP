@@ -11,7 +11,8 @@
         <div>
             <label>Canvases ({{debugCanvases.length}}):</label>
             <canvas ref='print-canvas'></canvas>
-            <div :key=item.toDataURL() v-for="item in debugCanvases" style="display: inline-block; padding: 2px; vertical-align: top">
+            <div :key=item.toDataURL() v-for="item in debugCanvases"
+                style="display: inline-block; padding: 2px; vertical-align: top">
                 {{item.width}}x{{item.height}}={{item.width*item.height}}
                 <br />
                 <img :src='item.toDataURL()' style="background: #aaa" />
@@ -22,7 +23,6 @@
 
 <script lang="ts">
 import { mapState } from "vuex";
-import createDrawer from './Map/drawing/drawer';
 
 export default {
     data: () => ({
@@ -41,14 +41,7 @@ export default {
     updated: function () {
         if (!this.enabled) return;
         const canvas = this.$refs['print-canvas'];
-        canvas.width = 1000;
-        canvas.height = 1000;
-        // canvas.style.minWidth = canvas.width / 1.5 + 'px';
-        // canvas.style.minHeight = canvas.height / 1.5 + 'px';
-        const drawer = createDrawer(canvas, false);
-        drawer.setPixelRatio(4);
-        // drawer.resetCanvasSize();
-        drawer.draw();
+
     },
     // watch: {
     //     enabled(val) {

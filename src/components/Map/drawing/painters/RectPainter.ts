@@ -172,7 +172,7 @@ export default class RectPainter implements Painter {
             delete w.canvasTmp;
         }
 
-        var canvases = sprite.generateSpriteCanvases();
+        const canvases = sprite.generateSpriteCanvases();
         // create texture per canvas
         for (const c of canvases) {
             const texture = gl.createTexture();

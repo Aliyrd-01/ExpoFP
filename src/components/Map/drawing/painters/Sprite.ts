@@ -45,7 +45,7 @@ export default class Sprite {
                 }
                 currentCanvas = document.createElement("canvas");
                 canvases.push(currentCanvas);
-                debugCanvases.push(currentCanvas);
+                if (__settings.debug) debugCanvases.push(currentCanvas);
                 drawHeight = nextHeight = drawWidth = 0;
             }
 

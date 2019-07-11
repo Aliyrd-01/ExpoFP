@@ -110,77 +110,9 @@ export async function generatePdf() {
             'PNG', width - logoWidthMm - logoPadding, height - logoHeightMm - logoPadding, logoWidthMm, logoHeightMm);
     }
 
-
-    // const paddingPercent = 0.03;
-    // const padding = minSize * paddingPercent;
-    // const titleFontSize = minSize * titleFontSizePercentOfWidth;
-    // const innerWidth = width - padding * 2;
-    // // const innerHeight = height - padding * 2;
-
-    // doc.setFillColor("#EBEBEB");
-    // doc.rect(0, 0, width, height, "f");
-    // doc.setFont("OpenSans-Bold");
-
-    // // doc.rect(padding, padding, innerWidth, innerHeight);
-
-    // let occupied = padding;
-    // {
-    //     doc.setFontSize(mmToPt(titleFontSize));
-    //     const title = __data.title;
-    //     const lines = doc.splitTextToSize(title, innerWidth);
-    //     doc.text(lines, width / 2, occupied, { align: "center", baseline: "top" });
-    //     occupied += lines.length * ptToMm(doc.getLineHeight());
-    // }
-
-    // {
-    //     doc.setFontSize(mmToPt(titleFontSize * 0.4));
-    //     doc.setFont("OpenSans-Regular");
-    //     anyDoc.setTextColor('#555');
-    //     const subtitle = __data.subtitle;
-    //     const lines = doc.splitTextToSize(subtitle, innerWidth);
-    //     doc.text(lines, width / 2, occupied, { align: "center", baseline: "top" });
-    //     occupied += lines.length * ptToMm(doc.getLineHeight());
-    // }
-
-    // const heightLeft = height - occupied - padding;
-    // // doc.rect(padding, occupied, innerWidth, heightLeft);
-
-    // const blockHeight = heightLeft;
-    // const blockWidth = innerWidth;
-
-    // const yRatio = blockHeight / svgHeight;
-    // const xRatio = blockWidth / svgWidth;
-    // const ratio = Math.min(yRatio, xRatio);
-
-    // const imageWidth = svgWidth * ratio;
-    // const imageHeight = svgHeight * ratio;
-
-    // const cx = width / 2;
-    // const cy = occupied + blockHeight / 2;
-    // const left = cx - imageWidth / 2;
-    // const top = cy - imageHeight / 2;
-
-    // // doc.rect(left, top, imageWidth, imageHeight);
-
-
-    // const canvas = document.createElement("canvas");
-    // canvas.width = mmToPrinterPoints(imageWidth);
-    // canvas.height = mmToPrinterPoints(imageHeight);
-
-    // debugCanvases.push(canvas);
-
-    // const drawer = createDrawer(canvas, false);
-    // drawer.setVisibleScale(1);
-    // drawer.setPixelRatio(2);
-    // // drawer.resetCanvasSize();
-    // drawer.draw();
-
-    // doc.addImage(canvas, 'JPEG', left, top, imageWidth, imageHeight);
-
-
-    __logger.log('generatePdf', {
-        //width, height, padding, titleFontSize, fontList: doc.getFontList(), imageWidth, imageHeight, canvasWidth: canvas.width
-    });
+    // __logger.log('generatePdf', {
+    //     //width, height, padding, titleFontSize, fontList: doc.getFontList(), imageWidth, imageHeight, canvasWidth: canvas.width
+    // });
 
 
     doc.save(slugify(__data.title) + '.pdf')

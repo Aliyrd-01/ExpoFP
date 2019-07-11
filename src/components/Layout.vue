@@ -21,10 +21,9 @@
 
 import Overlay from "./Overlay.vue";
 import LogoOverlay from "./LogoOverlay.vue";
-import Map from "./Map/Map.vue";
+// import Map from "./Map/Map.vue";
 import Controls from "./Controls.vue";
 import Areas from "./Areas.vue";
-import Debug from "./Debug.vue";
 import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
 import Pdf from "./Pdf.vue";
@@ -32,17 +31,19 @@ import Pdf from "./Pdf.vue";
 // import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
 import { remsToPixels, isWebGlSupported } from './Map/utils';
+import Vue from 'vue';
 
 export default {
     // name: 'app',
     components: {
         LogoOverlay,
         Overlay,
-        Map,
+        Map: () => import('./Map/Map.vue'),
+        Debug: __settings.debug ? () => import('./Debug.vue') : { render: () => null },
         Controls,
         Areas,
         Ws,
-        Debug,
+        //Debug2: () => import('./Debug2.vue'),
         Demo,
         Pdf,
         // Print
