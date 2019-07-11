@@ -99,7 +99,14 @@ export default {
                 c.id,
                 getters.exhibitorsArray.filter(e => e.categories.indexOf(c.id) !== -1)
             ]);
-            return new Map(array);
+            const map = new Map(array);
+            // workaround for IE11
+            if (map.size !== array.length) {
+                for (const val of array) {
+                    map.set(val[0], val[1]);
+                }
+            }
+            return map;
         }
     }
 };

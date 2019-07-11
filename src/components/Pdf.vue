@@ -99,7 +99,7 @@ export default {
         color: #eee;
         margin-top: 45vh;
         font-size: 2rem;
-        font-weight: 300;
+        font-weight: 400;
     }
 
     &.-visible {

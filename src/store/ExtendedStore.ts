@@ -5,14 +5,17 @@ type WatcherType = Extract<typeof watcherTypes[keyof typeof watcherTypes], strin
 
 export default class ExtendedStore extends Vuex.Store<any> {
     private readonly boothStateCache = new Map<number, BoothState>();
-    private readonly watcherTypes = new Map<WatcherType, Map<number, Function[]>>(
-        watcherTypes.map(x => [x, new Map])
-    );
+    private readonly watcherTypes = new Map<WatcherType, Map<number, Function[]>>();
 
 
     constructor(args) {
         super(args);
 
+        // new Map(iterable) doesnot work in IE11
+        for (const w of watcherTypes){
+            this.watcherTypes.set(w, new Map());
+        }
+        
         this.watch(((s, g) => g.hoveredBoothIds) as any, (v: number[], oldV: number[]) => {
             this.handleBoothSetsDifference(new Set(v), new Set(oldV), "hover");
         });
