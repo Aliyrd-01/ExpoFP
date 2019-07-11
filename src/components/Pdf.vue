@@ -44,7 +44,7 @@ export default {
 
                 window.setTimeout(async () => {
 
-                    const { generatePdf } = await import('@/tools/pdf');
+                    const { generatePdf } = await import(/* webpackChunkName: "tools-pdf" */ /* webpackPreload: true */ '@/tools/pdf');
                     await generatePdf();
 
                     window.setTimeout(() => {

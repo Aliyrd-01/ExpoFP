@@ -1,5 +1,5 @@
 <template>
-    <div class="demo" :class='{hidden, top}' v-if="demo">
+    <div class="demo" :class='{hidden, top}'>
         <section>
             <!-- <span>This is not an official Expo!Expo!® plan. </span> -->
             <div class="demo__message"><span>Get your free floor plan at
@@ -13,15 +13,12 @@
 export default {
     data: () => ({ hidden: true, key: 'note-dismissed3' }),
     computed: {
-        demo() {
-            return EFP_EXPO === "expo";
-        },
         top() {
             return window.innerWidth <= 820;
         }
     },
     mounted() {
-        if (this.demo && !sessionStorage.getItem(this.key)) {
+        if (!sessionStorage.getItem(this.key)) {
             window.setTimeout(() => {
                 this.hidden = false;
             }, 2000);

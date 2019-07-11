@@ -1,6 +1,7 @@
 TODO
 
-Try to make Map or drawer a separate chunk
+tools-pdf are not loaded on demand
+//Try to make Map or drawer a separate chunk
 //Fix IE11
 //problem in matrix!
 

@@ -20,7 +20,6 @@ import zoomBound from "./zoom-bound";
 import createDrawer, { Drawer } from './drawing/drawer';
 
 let drawer: Drawer;
-
 export default {
     name: "Map",
     data: () => ({ moving: false }),

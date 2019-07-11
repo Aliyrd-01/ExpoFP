@@ -6,14 +6,12 @@
             <Controls />
             <Areas />
             <Overlay />
-            <!-- <Map v-if="mapReady && webglSupported" /> -->
+            <Map v-if="mapReady" />
             <Demo />
-            <!-- <Message /> -->
             <Debug />
             <Pdf />
             <div id="fps"></div>
         </div>
-        <!-- <Print /> -->
     </div>
 </template>
 
@@ -21,35 +19,31 @@
 
 import Overlay from "./Overlay.vue";
 import LogoOverlay from "./LogoOverlay.vue";
-// import Map from "./Map/Map.vue";
 import Controls from "./Controls.vue";
-import Areas from "./Areas.vue";
-import Ws from "./Ws.vue";
 import Demo from "./Demo.vue";
-import Pdf from "./Pdf.vue";
-// import Print from "./Print.vue";
-// import Message from "./Message.vue";
 import { mapGetters, mapState } from "vuex";
 import { remsToPixels, isWebGlSupported } from './Map/utils';
 import Vue from 'vue';
+
+const dummy = { render: () => null };
 
 export default {
     // name: 'app',
     components: {
         LogoOverlay,
         Overlay,
-        Map: () => import('./Map/Map.vue'),
-        Debug: __settings.debug ? () => import('./Debug.vue') : { render: () => null },
+        Map: isWebGlSupported() ? () => import(
+            /* webpackChunkName: "Map.vue" */
+            /* webpackPreload: true */
+            './Map/Map.vue') : dummy,
+        Debug: __settings.debug ? () => import(/* webpackChunkName: "Debug.vue" */'./Debug.vue') : dummy,
         Controls,
-        Areas,
-        Ws,
-        //Debug2: () => import('./Debug2.vue'),
-        Demo,
-        Pdf,
-        // Print
-        // Message
+        Areas: isWebGlSupported() && EFP_EXPO === "cbresupplypartner" ? () => import( /* webpackChunkName: "Areas.vue" */ './Areas.vue') : dummy,
+        Ws: isWebGlSupported() ? () => import( /* webpackChunkName: "Ws.vue" */ './Ws.vue') : dummy,
+        Demo: isWebGlSupported() && EFP_EXPO === "expo" ? () => import(/* webpackChunkName: "Demo.vue" */'./Demo.vue') : dummy,
+        Pdf: isWebGlSupported() ? () => import(/* webpackChunkName: "Pdf.vue" */ './Pdf.vue') : dummy,
     },
-    data: () => ({ mapReady: false, webglSupported: isWebGlSupported() }),
+    data: () => ({ mapReady: false }),
     computed: {
         expo() {
             return EFP_EXPO;
