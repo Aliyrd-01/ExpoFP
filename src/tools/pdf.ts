@@ -8,7 +8,7 @@ const jsPDFAPI = jsPDF['API'];
 export async function generatePdf() {
     const dpi = 72;
     const printerPpi = 300;
-    const format = "letter";
+    const format = "Tabloid";
 
     //const titleFontSizePercentOfWidth = 0.05;
     const orientation = svgWidth / svgHeight > 1.2 ? "landscape" : "portrait";
@@ -87,7 +87,7 @@ export async function generatePdf() {
 
     const drawer = createDrawer(canvas, false);
     drawer.setVisibleScale(1);
-    drawer.setPixelRatio(2);
+    drawer.setPixelRatio(2.5);
     // drawer.resetCanvasSize();
     drawer.draw();
 
