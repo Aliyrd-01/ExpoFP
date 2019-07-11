@@ -1,16 +1,17 @@
 import jsPDF from 'jspdf';
 import createDrawer from '@/components/Map/drawing/drawer';
 import slugify from 'slugify';
+import { svgWidth, svgHeight } from '@/tools/svg';
 
 const jsPDFAPI = jsPDF['API'];
 
 export async function generatePdf() {
-    // const { default: jsPDF } = await import('jspdf');
     const dpi = 72;
+    const printerPpi = 300;
     const format = "a4";
-    const paddingPercent = 0.05;
+    const paddingPercent = 0.03;
     const titleFontSizePercentOfWidth = 0.05;
-    const orientation = "portrait";
+    const orientation = svgWidth / svgHeight > 1.2 ? "landscape" : "portrait";
     const doc = new jsPDF({ format, orientation });
     const anyDoc = doc as any;
     const width = Math.floor(doc.internal.pageSize.getWidth());
@@ -19,13 +20,13 @@ export async function generatePdf() {
     const padding = minSize * paddingPercent;
     const titleFontSize = minSize * titleFontSizePercentOfWidth;
     const innerWidth = width - padding * 2;
-    const innerHeight = height - padding * 2;
+    // const innerHeight = height - padding * 2;
 
-    doc.setFillColor("#D6D6D6");
+    doc.setFillColor("#EBEBEB");
     doc.rect(0, 0, width, height, "f");
     doc.setFont("OpenSans-Bold");
 
-    doc.rect(padding, padding, innerWidth, innerHeight);
+    // doc.rect(padding, padding, innerWidth, innerHeight);
 
     let occupied = padding;
     {
@@ -46,32 +47,55 @@ export async function generatePdf() {
         occupied += lines.length * ptToMm(doc.getLineHeight());
     }
 
+    const heightLeft = height - occupied - padding;
+    // doc.rect(padding, occupied, innerWidth, heightLeft);
+
+    const blockHeight = heightLeft;
+    const blockWidth = innerWidth;
+
+    const yRatio = blockHeight / svgHeight;
+    const xRatio = blockWidth / svgWidth;
+    const ratio = Math.min(yRatio, xRatio);
+
+    const imageWidth = svgWidth * ratio;
+    const imageHeight = svgHeight * ratio;
+
+    const cx = width / 2;
+    const cy = occupied + blockHeight / 2;
+    const left = cx - imageWidth / 2;
+    const top = cy - imageHeight / 2;
+
+    // doc.rect(left, top, imageWidth, imageHeight);
+
+
+    const canvas = document.createElement("canvas");
+    canvas.width = mmToPrinterPoints(imageWidth);
+    canvas.height = mmToPrinterPoints(imageHeight);
+
+    debugCanvases.push(canvas);
+
+    const drawer = createDrawer(canvas, false);
+    drawer.setVisibleScale(1);
+    drawer.setPixelRatio(2);
+    // drawer.resetCanvasSize();
+    drawer.draw();
+
+    doc.addImage(canvas, 'JPEG', left, top, imageWidth, imageHeight);
+
+
     __logger.log('generatePdf', {
-        width, height, padding, titleFontSize, fontList: doc.getFontList()
+        width, height, padding, titleFontSize, fontList: doc.getFontList(), imageWidth, imageHeight, canvasWidth: canvas.width
     });
 
-
-    // doc.setFontSize(30);
-    // doc.text(__data.title, 25, 25);
-
-    // const canvas = document.createElement("canvas");
-    // canvas.width = 2000;
-    // canvas.height = 2000;
-
-    // debugCanvases.push(canvas);
-
-    // const drawer = createDrawer(canvas, false);
-    // drawer.setPixelRatio(2);
-    // // drawer.resetCanvasSize();
-    // console.log('setPixelRatio', drawer.getPtscale());
-    // drawer.draw();
-
-    // doc.addImage(canvas, 'JPEG', 0, 40, 210, 130);
 
     doc.save(slugify(__data.title) + '.pdf')
 
     function mmToPt(mm: number) {
         return mm / 25.4 * dpi;
+    }
+
+    function mmToPrinterPoints(mm: number){
+        return mm / 25.4 * printerPpi;
     }
 
     function ptToMm(pt: number) {

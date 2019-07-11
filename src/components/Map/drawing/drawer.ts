@@ -11,6 +11,7 @@ export type Drawer = Pick<DrawerImpl,
     | 'getVisibleRect'
     | 'resetCanvasSize'
     | 'setPixelRatio'
+    | 'setVisibleScale'
     | 'draw'
 >;
 
