@@ -1,6 +1,12 @@
 TODO
 
-tools-pdf are not loaded on demand
+see what else to cleanup
+
+//cleanup current
+
+//make map.vue sync
+
+//tools-pdf are not loaded on demand
 //Try to make Map or drawer a separate chunk
 //Fix IE11
 //problem in matrix!

@@ -24,7 +24,7 @@ console.info("Serving data from: ", dataUrlBase);
 const define = {
     EFP_DATA_URL_BASE: JSON.stringify(dataUrlBase),
     EFP_EXPO: JSON.stringify(expo),
-    EFP_LIVE: JSON.stringify(process.env.EFP_TARGET === 'live')
+    EFP_LIVE: JSON.stringify(process.env.EFP_TARGET === "live")
     //EFP_TITLE: JSON.stringify(config.title),
     //EFP_HOME_URL: JSON.stringify(config.homeUrl),
     //EFP_LOGO_URL: JSON.stringify(logoUrl),
@@ -87,6 +87,21 @@ module.exports = {
                 useShortDoctype: true
             };
             return args;
+        });
+
+        // for historical:
+        // config.plugin("preload").tap(options => {
+        //     options[0].include = {
+        //         type: "allChunks",
+        //         chunks: ["app", "chunk-vendors", "Map.vue"]
+        //     };
+        //     return options;
+        // });
+
+        // remove rare chunks from prefetch
+        config.plugin("prefetch").tap(options => {
+            options[0].fileBlacklist = [/\/tools-pdf/, /Debug/, /Areas/, /\.map/];
+            return options;
         });
     },
     css: {

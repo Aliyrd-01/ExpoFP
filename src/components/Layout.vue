@@ -6,10 +6,10 @@
             <Controls />
             <Areas />
             <Overlay />
-            <Map v-if="mapReady" />
+            <Map v-if="mapReady && webGlSupported" />
             <Demo />
             <Debug />
-            <Pdf />
+            <Pdf v-if="webGlSupported" />
             <div id="fps"></div>
         </div>
     </div>
@@ -21,29 +21,31 @@ import Overlay from "./Overlay.vue";
 import LogoOverlay from "./LogoOverlay.vue";
 import Controls from "./Controls.vue";
 import Demo from "./Demo.vue";
+import Ws from "./Ws.vue";
+import Pdf from "./Pdf.vue";
+import Map from "./Map/Map.vue";
 import { mapGetters, mapState } from "vuex";
 import { remsToPixels, isWebGlSupported } from './Map/utils';
 import Vue from 'vue';
 
 const dummy = { render: () => null };
+const Debug = __settings.debug ? () => import(/* webpackChunkName: "Debug.vue" */'./Debug.vue') : dummy;
+const Areas = isWebGlSupported() && EFP_EXPO === "cbresupplypartner" ? () => import( /* webpackChunkName: "Areas.vue" */ './Areas.vue') : dummy;
 
 export default {
     // name: 'app',
     components: {
         LogoOverlay,
         Overlay,
-        Map: isWebGlSupported() ? () => import(
-            /* webpackChunkName: "Map.vue" */
-            /* webpackPreload: true */
-            './Map/Map.vue') : dummy,
-        Debug: __settings.debug ? () => import(/* webpackChunkName: "Debug.vue" */'./Debug.vue') : dummy,
+        Map,
+        Debug,
         Controls,
-        Areas: isWebGlSupported() && EFP_EXPO === "cbresupplypartner" ? () => import( /* webpackChunkName: "Areas.vue" */ './Areas.vue') : dummy,
-        Ws: isWebGlSupported() ? () => import( /* webpackChunkName: "Ws.vue" */ './Ws.vue') : dummy,
-        Demo: isWebGlSupported() && EFP_EXPO === "expo" ? () => import(/* webpackChunkName: "Demo.vue" */'./Demo.vue') : dummy,
-        Pdf: isWebGlSupported() ? () => import(/* webpackChunkName: "Pdf.vue" */ './Pdf.vue') : dummy,
+        Areas,
+        Ws,
+        Demo,
+        Pdf,
     },
-    data: () => ({ mapReady: false }),
+    data: () => ({ mapReady: false, webGlSupported: isWebGlSupported() }),
     computed: {
         expo() {
             return EFP_EXPO;
