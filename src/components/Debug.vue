@@ -43,8 +43,10 @@ export default {
         const canvas = this.$refs['print-canvas'];
         canvas.width = 1000;
         canvas.height = 1000;
+        // canvas.style.minWidth = canvas.width / 1.5 + 'px';
+        // canvas.style.minHeight = canvas.height / 1.5 + 'px';
         const drawer = createDrawer(canvas, false);
-        drawer.setPixelRatio(1.5);
+        drawer.setPixelRatio(4);
         // drawer.resetCanvasSize();
         drawer.draw();
     },

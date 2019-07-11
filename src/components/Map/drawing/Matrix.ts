@@ -90,9 +90,12 @@ export default class Matrix {
         // dirty = false;
         const { zoomTransform, visibleRect, visibleScale, canvasSize } = this;
 
-        const visibleRectPt = visibleRect.scale(this.pixelRatio);
-        const svgPxScaleUnzoomed = Math.min(visibleRectPt.w / svgWidth, visibleRectPt.h / svgHeight);
+        //const visibleRectPt = visibleRect.scale(this.pixelRatio);
+        const svgPxScaleUnzoomed = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight);
         const svgPxScale = svgPxScaleUnzoomed * visibleScale;
+
+        // console.log('svgPxScaleUnzoomed', svgPxScaleUnzoomed, 'pixelRatio', this.pixelRatio, 
+        //     'visibleRect', visibleRect.w, 'visibleRect', visibleRect.w);
 
         //if (!this['updatable']) debugger;
 
@@ -101,7 +104,7 @@ export default class Matrix {
         m4.scale(zoomMatrix, [zoomTransform.k, zoomTransform.k, 1], zoomMatrix);
 
         // px/svg scale
-        const centerSvgMatrix = m4.translation([visibleRectPt.cx, visibleRectPt.cy, 0]);
+        const centerSvgMatrix = m4.translation([visibleRect.cx, visibleRect.cy, 0]);
         m4.scale(centerSvgMatrix, [svgPxScaleUnzoomed, svgPxScaleUnzoomed, 1], centerSvgMatrix);
         const centerSvgMatrixWithoutVisibleScale = new Float32Array(centerSvgMatrix);
         m4.scale(centerSvgMatrix, [visibleScale, visibleScale, 1], centerSvgMatrix);

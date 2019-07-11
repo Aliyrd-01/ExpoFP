@@ -113,7 +113,7 @@ export default {
         //m.setVisibleRect(this.visibleRect);
         sizeCanvasToParentElement(canvas);
         drawer = createDrawer(canvas, true);
-        drawer.setVisibleRect(this.visibleRect);
+        drawer.setVisibleRect((this.visibleRect as Rect).scale(this.devicePixelRatio));
         drawer.setPixelRatio(this.devicePixelRatio);
 
         window.addEventListener("resize", () => {
@@ -204,7 +204,7 @@ export default {
         },
         visibleRect: function (v) {
             __logger.log("visibleRect change", v);
-            drawer.setVisibleRect(v);
+            drawer.setVisibleRect(v.scale(this.devicePixelRatio));
             // rezoom to make it fit bounds
             // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
             this.zoomBoundCurrent();
