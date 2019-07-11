@@ -1,6 +1,7 @@
 TODO
 
-Fix IE11
+Try to make Map or drawer a separate chunk
+//Fix IE11
 //problem in matrix!
 
 //better print non-square FPs

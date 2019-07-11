@@ -1,6 +1,6 @@
 <template>
-    <canvas class="map" @mousemove="handleMouseMove" @click="handleClick" @mouseover="handleMouseOver"
-        @mouseout="handleMouseOut" :class='{moving}'>
+    <canvas class="map" @mousemove="handleMouseMove" @click="handleClick" @mouseover="handleMouseOver" @mouseout="handleMouseOut"
+        :class='{moving}'>
         ExpoFP.com
     </canvas>
 </template>
@@ -57,6 +57,27 @@ export default {
             const rect = Rect.fromX1y1x2y2(this.mapVisibleLeft, this.mapVisibleTop, w, h - this.mapVisibleBottom);
 
             return rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+
+            // let rect: Rect;
+
+            // switch (this.overlayPosition) {
+            //     case "left":
+            //         // rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), this.wsOccupiedHeightPx, w, h);
+            //         // if (EFP_EXPO === 'cbresupplypartner') 
+            //         rect = Rect.fromX1y1x2y2(remsToPixels(this.overlayWidthRems), 0, w, h - this.wsOccupiedHeightPx);
+            //         break;
+            //     // case "bottomSmall":
+            //     //     return Rect.fromX1y1x2y2(0, 0, w, h - remsToPixels(4));
+            //     case "bottom":
+            //         rect = Rect.fromX1y1x2y2(0, this.wsOccupiedHeightPx, w, h - remsToPixels(this.overlayMediumHeightRems));
+            //         break;
+            // }
+
+            // if (rect) {
+            //     rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+            //     return rect;
+            // }
+            // throw new Error("Not supported `overlayPosition`");
         }
     },
     mounted() {
@@ -103,6 +124,15 @@ export default {
 
         setZoomTransformAnimated(d3.zoomIdentity, 0, null);
         this.$canvas.call(this.zoom);
+
+        // initialize(canvas);
+        // window.addEventListener("beforeprint", () => {
+        //     let rect = Rect.fromXywh(0, 0, this.screenSize.width, this.screenSize.height);
+        //     rect = rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+        //     drawer.setVisibleRect(rect);
+        //     //m.setZoomTransform(d3.zoomIdentity);
+        //     this.$canvas.call(this.zoom.transform, d3.zoomIdentity);
+        // });
 
         if (EFP_EXPO === "cbresupplypartner") store.commit("setArea", "ground");
     },
@@ -253,7 +283,11 @@ function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc
     animationStep();
 }
 
-function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number) {
+function getTramsformToCenterSvgRect(
+    svgRect: Rect,
+    vRect: Rect,
+    maxZoom: number
+) {
     const minPaddingPercent = 5;
 
     const targetRect = vRect.withPadding(
@@ -294,6 +328,14 @@ function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number
 </script>
 
 <style>
+@media print {
+    canvas {
+        width: auto !important;
+        height: auto !important;
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
 canvas.moving {
     cursor: move;
 }
