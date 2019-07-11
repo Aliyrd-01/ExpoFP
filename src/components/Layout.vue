@@ -6,7 +6,7 @@
             <Controls />
             <Areas />
             <Overlay />
-            <Map v-if="mapReady && webglSupported" />
+            <!-- <Map v-if="mapReady && webglSupported" /> -->
             <Demo />
             <!-- <Message /> -->
             <Debug />
@@ -21,7 +21,7 @@
 
 import Overlay from "./Overlay.vue";
 import LogoOverlay from "./LogoOverlay.vue";
-import Map from "./Map/Map.vue";
+// import Map from "./Map/Map.vue";
 import Controls from "./Controls.vue";
 import Areas from "./Areas.vue";
 import Debug from "./Debug.vue";
@@ -38,7 +38,7 @@ export default {
     components: {
         LogoOverlay,
         Overlay,
-        Map,
+        // Map,
         Controls,
         Areas,
         Ws,
