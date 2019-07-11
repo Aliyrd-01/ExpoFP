@@ -6,7 +6,7 @@
             <Controls />
             <Areas />
             <Overlay />
-            <Map v-if="mapReady && webglSupported" />
+            <!-- <Map v-if="mapReady && webglSupported" /> -->
             <Demo />
             <!-- <Message /> -->
             <Debug />
