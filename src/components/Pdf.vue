@@ -44,26 +44,29 @@ export default {
                 }, 10);
 
                 window.setTimeout(async () => {
-                    const { default: jsPDF } = await import('jspdf');
-                    const doc = new jsPDF();//window['jsPDF']();
-                    doc.setFontSize(30);
-                    doc.text(__data.title, 25, 25);
 
-                    const canvas = document.createElement("canvas");
-                    canvas.width = 2000;
-                    canvas.height = 2000;
+                    const { generatePdf } = await import('@/tools/pdf');
+                    await generatePdf();
+                    // const { default: jsPDF } = await import('jspdf');
+                    // const doc = new jsPDF({format: "a4"});//window['jsPDF']();
+                    // doc.setFontSize(30);
+                    // doc.text(__data.title, 25, 25);
 
-                    debugCanvases.push(canvas);
+                    // const canvas = document.createElement("canvas");
+                    // canvas.width = 2000;
+                    // canvas.height = 2000;
 
-                    const drawer = createDrawer(canvas, false);
-                    drawer.setPixelRatio(2);
-                    // drawer.resetCanvasSize();
-                    console.log('setPixelRatio', drawer.getPtscale());
-                    drawer.draw();
+                    // debugCanvases.push(canvas);
 
-                    doc.addImage(canvas, 'JPEG', 15, 40, 180, 180);
+                    // const drawer = createDrawer(canvas, false);
+                    // drawer.setPixelRatio(2);
+                    // // drawer.resetCanvasSize();
+                    // console.log('setPixelRatio', drawer.getPtscale());
+                    // drawer.draw();
 
-                    doc.save('Floor Plan.pdf')
+                    // doc.addImage(canvas, 'JPEG', 0, 40, 210, 130);
+
+                    // doc.save('Floor Plan.pdf')
 
                     window.setTimeout(() => {
                         this.visible = false;
