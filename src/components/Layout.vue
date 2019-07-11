@@ -28,9 +28,10 @@ import { mapGetters, mapState } from "vuex";
 import { remsToPixels, isWebGlSupported } from './Map/utils';
 import Vue from 'vue';
 
+const webGlSupported = isWebGlSupported();
 const dummy = { render: () => null };
 const Debug = __settings.debug ? () => import(/* webpackChunkName: "Debug.vue" */'./Debug.vue') : dummy;
-const Areas = isWebGlSupported() && EFP_EXPO === "cbresupplypartner" ? () => import( /* webpackChunkName: "Areas.vue" */ './Areas.vue') : dummy;
+const Areas = webGlSupported && EFP_EXPO === "cbresupplypartner" ? () => import( /* webpackChunkName: "Areas.vue" */ './Areas.vue') : dummy;
 
 export default {
     // name: 'app',
@@ -45,7 +46,7 @@ export default {
         Demo,
         Pdf,
     },
-    data: () => ({ mapReady: false, webGlSupported: isWebGlSupported() }),
+    data: () => ({ mapReady: false, webGlSupported }),
     computed: {
         expo() {
             return EFP_EXPO;
