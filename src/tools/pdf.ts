@@ -8,7 +8,7 @@ const jsPDFAPI = jsPDF['API'];
 export async function generatePdf() {
     const dpi = 72;
     const printerPpi = 300;
-    const format = "a4";
+    const format = "letter";
     const paddingPercent = 0.03;
     const titleFontSizePercentOfWidth = 0.05;
     const orientation = svgWidth / svgHeight > 1.2 ? "landscape" : "portrait";
