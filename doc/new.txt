@@ -1,6 +1,7 @@
 TODO
 
-problem in matrix!
+Fix IE11
+//problem in matrix!
 
 //better print non-square FPs
 
