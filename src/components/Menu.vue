@@ -137,7 +137,7 @@ export default {
     .menu__title {
         padding-top: 0;
         padding-bottom: 0.5rem;
-        background: #bbbdc7;
+        /* background: #bbbdc7; */
 
         > img {
             max-height: 150px;
