@@ -46,13 +46,9 @@ export async function generatePdf() {
         occupied += lines.length * ptToMm(doc.getLineHeight());
     }
 
-
     __logger.log('generatePdf', {
         width, height, padding, titleFontSize, fontList: doc.getFontList()
     });
-
-
-
 
 
     // doc.setFontSize(30);
