@@ -14,8 +14,8 @@ export async function generatePdf() {
     const orientation = svgWidth / svgHeight > 1.2 ? "landscape" : "portrait";
     const doc = new jsPDF({ format, orientation });
     const anyDoc = doc as any;
-    const width = Math.floor(doc.internal.pageSize.getWidth());
-    const height = Math.floor(doc.internal.pageSize.getHeight());
+    const width = Math.ceil(doc.internal.pageSize.getWidth());
+    const height = Math.ceil(doc.internal.pageSize.getHeight());
     const minSize = Math.min(width, height);
     const padding = minSize * paddingPercent;
     const titleFontSize = minSize * titleFontSizePercentOfWidth;
