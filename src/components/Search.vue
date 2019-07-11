@@ -20,7 +20,7 @@ export default {
     components: { OverlayContent, List },
     data: () => ({
         hideRealInput: true,
-        placeHolder: `Search company, ${__data.boothTerm} or category`
+        placeHolder: `Search company, ${__data.boothTerm.toLowerCase()} or category`
     }),
     computed: {
         ...mapState(["list", "details", "menu", "overlaySize", "searchFocused"]),
