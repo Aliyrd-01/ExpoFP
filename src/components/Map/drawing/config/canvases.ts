@@ -89,22 +89,32 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number) {
     return canvas;
 }
 
+const circleCanvasCache = new Map<string, { canvas: HTMLCanvasElement, padding: number }>();
 export function createCircleCanvas(radius: number, pixelRatio: number) {
-    const canvas = document.createElement("canvas");
-    const padding = 1;
-    const size = radius * 2 * pixelRatio + padding * 2;
-    canvas.width = canvas.height = size;
+    const key = radius + " " + pixelRatio;
+    let res = circleCanvasCache.get(key);
 
-    const c = canvas.getContext("2d");
-    c.fillStyle = '#fff';
-    c.beginPath();
-    c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
-    c.fill();
-    return { canvas, padding };
+    if (!res) {
+        const canvas = document.createElement("canvas");
+        const padding = 1;
+        const size = radius * 2 * pixelRatio + padding * 2;
+        canvas.width = canvas.height = size;
+    
+        const c = canvas.getContext("2d");
+        c.fillStyle = '#fff';
+        c.beginPath();
+        c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
+        c.fill();
+        res = { canvas, padding };
+
+        circleCanvasCache.set(key, res);
+        // cleanup
+        setTimeout(() => circleCanvasCache.delete(key), 5000);
+    }
+    return res;
 }
 
 const bookmarkCanvasCache = new Map<string, { canvas: HTMLCanvasElement, lineWidth: number, padding: number }>();
-
 export function createBookmarkCanvas(widthPx: number, pixelRatio: number) {
     const key = widthPx + " " + pixelRatio;
     let res = bookmarkCanvasCache.get(key);
