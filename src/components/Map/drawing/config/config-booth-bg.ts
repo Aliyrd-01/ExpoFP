@@ -115,6 +115,8 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 s.empty && !s.onhold ? b.availColor || settings.colors.booths.empty : b.soldColor || settings.colors.booths.default;
         }
 
+        if (defColor === '#aaaaaa') defColor = settings.colors.booths.empty;
+
         if (s.error) color = "#f33";
         else if (s.selected) color = settings.colors.booths.selected;
         else color = defColor;
