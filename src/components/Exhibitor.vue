@@ -54,7 +54,7 @@
                 <div v-if="exhibitor.website">
                     <i class="fas fa-globe"></i>
                     <div>
-                        <a :href="exhibitor.website" target="_blank">{{websiteTrimmed}}</a>
+                        <a :href="exhibitor.website" target="_blank" rel="noopener">{{websiteTrimmed}}</a>
                     </div>
                 </div>
                 <div v-if="exhibitor.email">
@@ -66,25 +66,25 @@
             </div>
             <div class="exhibitor__sep" v-if=anySocial></div>
             <div class="exhibitor__social" v-if='anySocial'>
-                <a :href="exhibitor.facebook" target="_blank">
+                <a :href="exhibitor.facebook" target="_blank" rel="noopener">
                     <i class='fab fa-facebook'></i>
                 </a>
-                <a :href="exhibitor.instagram" target="_blank">
+                <a :href="exhibitor.instagram" target="_blank" rel="noopener">
                     <i class='fab fa-instagram'></i>
                 </a>
-                <a :href="exhibitor.linkedin" target="_blank">
+                <a :href="exhibitor.linkedin" target="_blank" rel="noopener">
                     <i class='fab fa-linkedin'></i>
                 </a>
-                <a :href="exhibitor.twitter" target="_blank">
+                <a :href="exhibitor.twitter" target="_blank" rel="noopener">
                     <i class='fab fa-twitter'></i>
                 </a>
-                <a :href="exhibitor.googlePlus" target="_blank">
+                <a :href="exhibitor.googlePlus" target="_blank" rel="noopener">
                     <i class='fab fa-google-plus'></i>
                 </a>
-                <a :href="exhibitor.xing" target="_blank">
+                <a :href="exhibitor.xing" target="_blank" rel="noopener">
                     <i class='fab fa-xing'></i>
                 </a>
-                <a :href="exhibitor.youtube" target="_blank">
+                <a :href="exhibitor.youtube" target="_blank" rel="noopener">
                     <i class='fab fa-youtube'></i>
                 </a>
             </div>

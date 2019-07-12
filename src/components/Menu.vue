@@ -2,7 +2,7 @@
     <OverlayContent v-if="show" @close='close' @back='close' back-mode='none' class="menu" :class='{shown}'>
         <template slot="bar">
             <div class="menu__bar">
-                <a class="menu__title" :href="homeUrl" target="_blank">
+                <a class="menu__title" :href="homeUrl" target="_blank" rel="noopener">
                     <img :src="logoUrl" onerror="this.style.visibility='hidden'" />
                 </a>
             </div>

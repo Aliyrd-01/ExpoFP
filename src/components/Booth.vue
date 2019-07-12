@@ -24,12 +24,12 @@
             </div>
             <span v-html="instructions" v-if='!booth.onHold'></span>
             <div class="booth__buy" v-if='showBuy'>
-                <a :href='booth.buyUrl'>Buy</a>
+                <a :href='booth.buyUrl' rel="noopener">Buy</a>
                 <div class="booth__buy-note" v-if="showBuyNote">Secure immediately by <br />credit card
                     payment</div>
             </div>
             <div class="booth__buy" v-if='showReserve'>
-                <a :href='booth.reserveUrl || booth.buyUrl'>{{reserveTitle}}</a>
+                <a :href='booth.reserveUrl || booth.buyUrl' rel="noopener">{{reserveTitle}}</a>
                 <div class="booth__buy-note" v-if="showBuyNote">Pay by Invoice <br />30 day payment terms</div>
             </div>
         </div>

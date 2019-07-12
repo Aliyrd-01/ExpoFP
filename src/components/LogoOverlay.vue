@@ -1,5 +1,5 @@
 <template>
-    <a href='https://expofp.com/' target="_blank" class='logo-overlay' :style='style'><img src='expofp-overlay.png'></a>
+    <a href='https://expofp.com/' target="_blank" rel="noopener" class='logo-overlay' :style='style'><img src='expofp-overlay.png'></a>
 
 </template>
 

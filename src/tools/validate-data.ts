@@ -22,6 +22,7 @@ if (validationEnabled) {
     console.log("__data JSON Schema validation disabled. Run `localStorage.setItem('validate', 1)` in Console to enable validation.`");
 }
 
+// validation is a heavy process (using Url.parse) - so let's disable by default for all
 if (validationEnabled) {
     for (const name of Object.keys(__data)) {
         const errors = new Set<string>();
