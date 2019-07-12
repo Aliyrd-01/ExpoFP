@@ -44,10 +44,10 @@ const logoUrl = baseUrl + __data.logo;
 window.setTimeout(function () {
     const link = document.createElement("link");
     link.href = logoUrl;
-    link.rel = "preload";
+    link.rel = "prefetch";
     (link as any).as = "image";
     document.head.appendChild(link);
-}, 4000);
+}, 2000);
 
 export default {
     components: { OverlayContent },
