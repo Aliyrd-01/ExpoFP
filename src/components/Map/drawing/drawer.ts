@@ -13,6 +13,7 @@ export type Drawer = Pick<DrawerImpl,
     | 'setPixelRatio'
     | 'setVisibleScale'
     | 'draw'
+    | 'pixelRatio'
 >;
 
 export type DrawerContext = Pick<DrawerImpl,

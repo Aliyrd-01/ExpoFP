@@ -12,7 +12,7 @@ export default function zoomBound(drawer: Drawer, transform: ZoomTransform, forA
     const svgHeightUnscaled = svgHeight * scale;
     const svgWidthUnscaled = svgWidth * scale;
 
-    const vRect = drawer.getVisibleRect();
+    const vRect = drawer.getVisibleRect().scale(1 / drawer.pixelRatio);
 
     const svgHeightScaled = svgHeightUnscaled * transform.k;
     const svgWidthScaled = svgWidthUnscaled * transform.k;
