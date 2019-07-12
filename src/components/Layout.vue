@@ -6,7 +6,7 @@
             <Controls />
             <Areas />
             <Overlay />
-            <Map v-if="mapReady && webGlSupported" />
+            <Map v-if="fontsReady && webGlSupported" />
             <Demo />
             <Debug />
             <Pdf v-if="webGlSupported" />
@@ -46,7 +46,7 @@ export default {
         Demo,
         Pdf,
     },
-    data: () => ({ mapReady: false, webGlSupported }),
+    data: () => ({ fontsReady: false, webGlSupported }),
     computed: {
         expo() {
             return EFP_EXPO;
@@ -60,9 +60,9 @@ export default {
     },
     mounted() {
         function doSet(cause) {
-            if (this.mapReady) return;
-            __logger.log("mapReady", cause);
-            this.mapReady = true;
+            if (this.fontsReady) return;
+            __logger.log("fontsReady", cause);
+            this.fontsReady = true;
         }
 
         window.setTimeout(doSet.bind(this, "timeout"), 5000);

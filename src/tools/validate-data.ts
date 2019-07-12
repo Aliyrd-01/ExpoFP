@@ -1,6 +1,6 @@
 import { validate } from "jsonschema";
 import schema from "@/data.schema.json";
-import baseUrl from "./base-data-url";
+// import baseUrl from "./base-data-url";
 
 // before data validation
 if (!__data.exhibitors) __data.exhibitors = [];
@@ -9,14 +9,20 @@ if (!__data.categories) __data.categories = [];
 if (!__data.gtag && EFP_EXPO === "jtrade19") __data.gtag = "UA-134602409-3";
 if (!__data.gtag && EFP_EXPO === "expo") __data.gtag = "UA-134602409-2";
 
-const res = validate(__data, schema);
-if (res.errors.length) {
-    __logger.error("__data jsonschema validation errors: ", res);
+const validationEnabled = __settings.debug || localStorage.getItem('validate') === "1";
+
+if (validationEnabled) {
+    const res = validate(__data, schema);
+    if (res.errors.length) {
+        console.error("__data jsonschema validation errors: ", res);
+    } else {
+        console.log("__data jsonschema is valid", res);
+    }
 } else {
-    __logger.log("__data jsonschema is valid", res);
+    console.log("__data JSON Schema validation disabled. Run `localStorage.setItem('validate', 1)` in Console to enable validation.`");
 }
 
-if (__settings.debug) {
+if (validationEnabled) {
     for (const name of Object.keys(__data)) {
         const errors = new Set<string>();
         for (const b of __data[name]) {
