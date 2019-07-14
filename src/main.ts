@@ -14,6 +14,7 @@ import reportError from '@/tools/report-error';
 import '@/tools/validate-data';
 import '@/tools/gtag'
 import '@/store';
+import '@/stores';
 import '@/services';
 
 import Layout from '@/components/Layout.vue';
