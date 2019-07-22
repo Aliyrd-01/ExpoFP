@@ -19,13 +19,14 @@ export default {
         dimmed(state, getters, rootState) {
             return getters.listItems.length !== getters.exhibitorsArray.length || getters.listItems.find(x => x.type !== 'exhibitor');
         },
-        searchedExhibitors(state, getters, rootState) {
-            if (rootState.list.type !== "search") return [];
-            const exhibitorsArray = getters.exhibitorsArray;
-            let text = rootState.list.text.trim().toLowerCase();
-            if (!text) return exhibitorsArray;
-            return exhibitorsArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
-        },
+        // searchedExhibitors(state, getters, rootState) {
+        //     if (rootState.list.type !== "search") return [];
+        //     const exhibitorsArray = getters.exhibitorsArray;
+        //     let text = rootState.list.text.trim().toLowerCase();
+        //     if (!text) return exhibitorsArray;
+        //     if (text === 'testerror') throw new Error('Test error');
+        //     return exhibitorsArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
+        // },
         categoryExhibitors(state, getters, rootState) {
             if (rootState.list.type !== "category") return [];
             return getters.exhibitorsByCategoryId.get(rootState.list.id) || [];
