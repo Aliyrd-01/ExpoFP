@@ -6,6 +6,22 @@ export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId) return;
 
     timeoutId = window.setTimeout(async function () {
+        const ipInfoRequest = await fetch('https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg');
+        const ipInfo = await ipInfoRequest.json();
+
+        __logger.log('ipify', ipInfo, ipInfoRequest);
+        let ipData;
+        if (ipInfoRequest.ok) {
+            ipData = {
+                ip: ipInfo.ip,
+                ...ipInfo.location
+            }
+        } else {
+            ipData = {
+                ip: ipInfo.messages
+            }
+        }
+
         const language = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
         const data = {
             host: document.location.host,
@@ -17,7 +33,10 @@ export default function reportError(e: Partial<ErrorEvent>) {
             log: __logger.messages.join("\n"),
             userAgent: navigator.userAgent,
             language,
+            ...ipData
         };
+
+        console.log("Sending error report", data);
 
         const rawResponse = await fetch('https://expofp.com/api/report-fp-error', {
             method: 'POST',
