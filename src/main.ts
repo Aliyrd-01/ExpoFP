@@ -11,6 +11,7 @@ import '@/globals';
 import '@/settings';
 import '@/tools/logger';
 import reportError from '@/tools/report-error';
+window.addEventListener("error", reportError);
 import '@/tools/validate-data';
 import '@/tools/gtag'
 import '@/store';
@@ -19,13 +20,13 @@ import '@/services';
 import Layout from '@/components/Layout.vue';
 import Vue from 'vue';
 
-
 // var a = null;
 // alert(a.prop);
 
 Vue.config.productionTip = false;
 Vue.prototype.__data = __data;
 Vue.prototype.__settings = __settings;
+
 
 new Vue({
     store,
@@ -35,7 +36,7 @@ new Vue({
     }
 }).$mount('#app');
 
-window.addEventListener("error", reportError);
+
 
 
 // window.addEventListener("scroll", function (e) {

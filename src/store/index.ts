@@ -16,7 +16,6 @@ type ListType = { type: "search"; text: string; focused: boolean } | { type: "bo
 
 Vue.use(Vuex);
 
-
 const store1 = new ExtendedStore({
     modules: {
         booths,

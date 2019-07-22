@@ -9,6 +9,10 @@ export default function searchItems(state, getters, rootState) {
     let text = rootState.list.text.trim().toLowerCase() as string;
     let words = text.split(/\s+/).filter(x => x);
     if (!text) return exhibitorsToItems(exhibitorsArray);
+    if (text === 'testerror') throw new Error('Test error');
+    if (text === '2testerror') {
+        window.setTimeout(() => { throw new Error('Test error'); }, 1000);
+    }
 
     let items: SearchResultItem[] = [];
 
