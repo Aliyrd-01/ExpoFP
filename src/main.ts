@@ -12,10 +12,10 @@ import '@/settings';
 import '@/tools/logger';
 import reportError from '@/tools/report-error';
 window.addEventListener("error", reportError);
-// import '@/tools/validate-data';
+import '@/tools/validate-data';
 // import '@/tools/gtag'
 // import '@/store';
-import '@/stores';
+import '@/store';
 // import '@/services';
 
 import Layout from '@/components/Layout.vue';

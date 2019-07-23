@@ -1,19 +1,24 @@
-declare const __data: {
-    title: string;
-    subtitle: string;
-    homeUrl: string;
-    logo: string;
-    gtag: string;
-    boothTerm: string;
-    // booths: Booth[];
-    // exhibitors: Exhibitor[];
-    // categories: Category[];
-    reserveInstructions: string;
-    sendLoginLinkUrl: string;
-};
-declare const __fp: string;
-declare const __fpPaths: { [id: string]: any };
-declare const __icons: { [id: string]: string };
+import { Category } from "@/store/CategoryStore";
+
+declare global {
+    const __data: {
+        title: string;
+        subtitle: string;
+        homeUrl: string;
+        logo: string;
+        gtag: string;
+        boothTerm: string;
+        // booths: Booth[];
+        // exhibitors: Exhibitor[];
+        categories: Pick<Category, 'id' | 'name'>[]
+        reserveInstructions: string;
+        sendLoginLinkUrl: string;
+    };
+
+    const __fp: string;
+    const __fpPaths: { [id: string]: any };
+    const __icons: { [id: string]: string };
+}
 
 // type Booth = SpecialBooth | RegularBooth;
 
@@ -95,12 +100,3 @@ interface PathInfo {
 //     name: string;
 //     slug: string;
 // }
-
-type OverlaySize = "full" | "medium" | "small";
-type OverlayPosition = "left" | "bottom";
-type MapOccupied = null | "left" | "bottomSmall" | "bottomMedium";
-
-type ZoomTransform = typeof d3.zoomIdentity; 
-
-declare const EFP_EXPO: string;
-declare const EFP_LIVE: boolean;
