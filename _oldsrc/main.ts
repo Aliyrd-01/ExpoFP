@@ -15,7 +15,7 @@ window.addEventListener("error", reportError);
 // import '@/tools/validate-data';
 // import '@/tools/gtag'
 // import '@/store';
-import '@/stores';
+// import '@/stores';
 // import '@/services';
 
 import Layout from '@/components/Layout.vue';
@@ -28,7 +28,7 @@ Vue.prototype.__settings = __settings;
 
 
 new Vue({
-    //store,
+    store,
     render: h => h(Layout),
     errorCaptured(error, vm, info) {
         reportError({ message: `Error in ${info}: "${error.toString()}"`, error });
