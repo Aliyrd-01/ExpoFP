@@ -10,6 +10,8 @@
             <Demo />
             <Debug />
             <Pdf v-if="webGlSupported" /> -->
+            {{store.uiState.overlayPosition}}
+            {{classes}}
             <div id="fps"></div>
         </div>
     </div>
@@ -26,51 +28,82 @@
 // import Map from "./Map/Map.vue";
 // import { mapGetters, mapState } from "vuex";
 import { remsToPixels, isWebGlSupported } from './Map/utils';
+import { Observer } from 'mobx-vue';
+import Component from 'vue-class-component'
 import Vue from 'vue';
+import { autorun } from 'mobx';
 
 const webGlSupported = isWebGlSupported();
 const dummy = { render: () => null };
 // const Debug = __settings.debug ? () => import(/* webpackChunkName: "Debug.vue" */'./Debug.vue') : dummy;
 // const Areas = webGlSupported && EFP_EXPO === "cbresupplypartner" ? () => import( /* webpackChunkName: "Areas.vue" */ './Areas.vue') : dummy;
 
-export default {
-    // name: 'app',
-    components: {
-        // LogoOverlay,
-        // Overlay,
-        // Map,
-        // Debug,
-        // Controls,
-        // Areas,
-        // Ws,
-        // Demo,
-        // Pdf,
-    },
-    data: () => ({ fontsReady: false, webGlSupported }),
-    computed: {
-        expo() {
-            return EFP_EXPO;
-        },
-        // ...mapGetters([
-        //     "overlayPosition"
-        // ]),
-        classes() {
-           // return `expo-${EFP_EXPO} overlay-${this.overlayPosition}`;
-        }
-    },
+autorun(() => {
+    console.log(store.uiState.overlayPosition);
+})
+
+@Observer
+@Component
+export default class Layout extends Vue {
+    store = store;
+    state = { fontsReady: false, webGlSupported };//new ViewModel()
+    mm = "";
     mounted() {
-        function doSet(cause) {
-            if (this.fontsReady) return;
+        const doSet = (cause) => {
+            if (this.state.fontsReady) return;
             __logger.log("fontsReady", cause);
-            this.fontsReady = true;
+            this.state.fontsReady = true;
         }
 
         window.setTimeout(doSet.bind(this, "timeout"), 5000);
         window.addEventListener("load", doSet.bind(this, "load"))
         const f = document['fonts'];
         if (f && f.ready) f.ready.then(doSet.bind(this, "ready"));
-    },
-};
+
+        // window.setInterval(()=>{
+        //     this.mm += "1";
+        // }, 1000)
+    }
+
+    get expo() {
+        return EFP_EXPO;
+    }
+
+    get classes() {
+        console.log(`expo-${EFP_EXPO} overlay-${this.store.uiState.overlayPosition} ${this.store === store}`);
+        return `expo-${EFP_EXPO} overlay-${this.store.uiState.overlayPosition} ${this.mm}`;
+    }
+}
+
+// export default {
+//     // name: 'app',
+//     components: {
+//         // LogoOverlay,
+//         // Overlay,
+//         // Map,
+//         // Debug,
+//         // Controls,
+//         // Areas,
+//         // Ws,
+//         // Demo,
+//         // Pdf,
+//     },
+//     data: () => ({ fontsReady: false, webGlSupported }),
+//     computed: {
+//         expo() {
+//             return EFP_EXPO;
+//         },
+//         // ...mapGetters([
+//         //     "overlayPosition"
+//         // ]),
+//         classes() {
+//             // return `expo-${EFP_EXPO} overlay-${this.overlayPosition}`;
+//         }
+//     },
+//     mounted() {
+
+//     },
+// };
 </script>
 
 <style lang="scss">

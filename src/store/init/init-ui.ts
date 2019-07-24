@@ -1,4 +1,5 @@
 import RootStore from '../RootStore';
+import { runInAction } from 'mobx';
 
 export default function initUi(store: RootStore) {
     updateScreenSize(store);
@@ -6,6 +7,8 @@ export default function initUi(store: RootStore) {
 }
 
 function updateScreenSize(store: RootStore) {
-    store.uiState.screenSize = { width: window.innerWidth, height: window.innerHeight };
+    runInAction(() => {
+        store.uiState.screenSize = { width: window.innerWidth, height: window.innerHeight };
+    });
 }
 

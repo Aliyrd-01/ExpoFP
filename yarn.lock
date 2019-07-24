@@ -4489,6 +4489,12 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
+mobx-vue@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/mobx-vue/-/mobx-vue-2.0.9.tgz#656c8c4810f5f31b83eab806c350babb5b862fa1"
+  dependencies:
+    tslib "^1.9.0"
+
 mobx@^5.11.0:
   version "5.11.0"
   resolved "https://registry.yarnpkg.com/mobx/-/mobx-5.11.0.tgz#58c64769bc2408ccde35fc2bac4cd5b8ae7b28a6"
@@ -7102,6 +7108,10 @@ verror@1.10.0:
 vm-browserify@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.0.tgz#bd76d6a23323e2ca8ffa12028dc04559c75f9019"
+
+vue-class-component@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.1.0.tgz#b33efcb10e17236d684f70b1e96f1946ec793e87"
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.3"
