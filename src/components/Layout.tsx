@@ -1,10 +1,15 @@
 import React from "react";
 import "./Layout.scss";
-import { observer, useLocalStore } from 'mobx-react-lite';
+import { observer, useLocalStore } from "mobx-react-lite";
 
-export default function Layout() {
-
-    const overlayPosition = "1"
+export default observer(function Layout() {
+    const overlayPosition = "1";
+    const store = useLocalStore(() => ({
+        overlayPosition: 1,
+        inc() {
+            store.overlayPosition += 1;
+        }
+    }));
 
     return (
         <div className="layout">
@@ -17,9 +22,10 @@ export default function Layout() {
                 <Map v-if="fontsReady && webGlSupported" />
                 <Demo />
                 <Debug />
-                <Pdf v-if="webGlSupported" /> */}
+                <Pdf v-if="webGlSupported" /> */
+                }
                 <div id="fps" />
             </div>
         </div>
     );
-}
+});
