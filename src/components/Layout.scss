@@ -1,0 +1,54 @@
+:root {
+    --error-color: red;
+    --color: #34a1e6;
+    --color-light: #44aef1;
+    --color-dark: #337caa;
+    --link-color: #13a1de;
+    --link-color-hover: #13a1de;
+}
+* {
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    @media (max-width: 820px) and (min-width: 500px) and (orientation: portrait) {
+        font-size: 13px;
+    }
+}
+.layout {
+    &__fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+}
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a:hover,
+a:visited {
+    color: var(--link-color-hover);
+    text-decoration: underline;
+}
+
+#fps {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    z-index: 999;
+}
+.fa-phone {
+    transform: scaleX(-1);
+}
