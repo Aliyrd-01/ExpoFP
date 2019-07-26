@@ -1,1 +1,1 @@
-start ConEmu.exe -runlist ".\node_modules\.bin\vue-cli-service" serve --open
+start ConEmu.exe -runlist yarn start
