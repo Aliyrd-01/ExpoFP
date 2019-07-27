@@ -1,4 +1,4 @@
-import { observable, computed } from 'mobx';
+import { observable, computed, action } from 'mobx';
 import RootStore from "./RootStore";
 import { remsToPixels } from '../utils';
 
@@ -10,6 +10,7 @@ export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType;
+    @observable menu = false;
     @observable.struct screenSize: ScreenSize;
     @observable overlaySize: OverlaySize = "medium";
     @observable overlayShowsAll = false;
@@ -50,6 +51,14 @@ export default class UIState {
         return remsToPixels(this.overlayMediumHeightRems);
     }
     @computed get mapVisibleLeft() { return this.overlayLeft ? this.overlayWidthPx : 0; }
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+    // actions
+    @action toggleMapOverlay() {
+        if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.overlaySize = "medium";
+        else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.overlaySize = "full";
+    }
 
     ///////////////////////////////////////////////////////////////////////////
 }

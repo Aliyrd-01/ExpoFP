@@ -1,0 +1,21 @@
+.overlay-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    .overlay.bottom {
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+    &__scrollable {
+        flex-grow: 1;
+        height: 1px;
+        overflow-y: hidden;
+        position: relative;
+
+        .overlay.full & {
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+}

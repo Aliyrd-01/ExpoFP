@@ -1,0 +1,34 @@
+.overlay-bar-back {
+    min-width: 3rem;
+    height: $overlay-height;
+    align-self: flex-start;
+    position: relative;
+    display: flex;
+
+    &__icon1,
+    &__icon2 {
+        position: absolute;
+        @include overlay-bar-icon;
+    }
+
+    &.anim.end > &__icon1 {
+        transition: all 0.3s;
+        transform: rotate(-180deg);
+    }
+    &.end > &__icon1,
+    &.start > &__icon2 {
+        opacity: 0;
+    }
+
+    &.anim.end > &__icon1.fa-chevron-left,
+    &.anim.start > &__icon2.fa-chevron-left {
+        transform: rotate(180deg);
+    }
+
+    &.start > &__icon2.fa-bars {
+        transform: rotate(-180deg);
+    }
+    &.anim.end > &__icon2 {
+        transition: all 0.3s;
+    }
+}
