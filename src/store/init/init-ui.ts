@@ -1,14 +1,16 @@
 import RootStore from '../RootStore';
+import UIState from '../UIState';
 import { runInAction } from 'mobx';
 
 export default function initUi(store: RootStore) {
-    updateScreenSize(store);
-    window.addEventListener("resize", () => updateScreenSize(store));
+    const { uiState } = store;
+    updateScreenSize(uiState);
+    window.addEventListener("resize", () => updateScreenSize(uiState));
 }
 
-function updateScreenSize(store: RootStore) {
-    runInAction(() => {
-        store.uiState.screenSize = { width: window.innerWidth, height: window.innerHeight };
+function updateScreenSize(uiState: UIState) {
+    runInAction("uiState.screenSize", () => {
+        uiState.screenSize = { width: window.innerWidth, height: window.innerHeight };
     });
 }
 

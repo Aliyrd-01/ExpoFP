@@ -7,6 +7,7 @@
         "@types/node": "12.6.8",
         "@types/react": "16.8.23",
         "@types/react-dom": "16.8.5",
+        "d3": "^5.9.7",
         "deepmerge": "^4.0.0",
         "mobx": "^5.13.0",
         "mobx-react-lite": "^1.4.1",
@@ -36,6 +37,7 @@
         ]
     },
     "devDependencies": {
+        "@types/d3": "^5.7.2",
         "env-cmd": "^9.0.3",
         "git-branch": "^2.0.1",
         "node-sass": "^4.12.0"

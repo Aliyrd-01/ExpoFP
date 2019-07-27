@@ -1,15 +1,19 @@
 import { observable, computed } from 'mobx';
 import RootStore from "./RootStore";
+import { remsToPixels } from '../utils';
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
+export type OverlaySize = "full" | "medium" | "small";
 export type ScreenSize = { width: number, height: number };
-
 
 export default class UIState {
     private readonly rootStore: RootStore;
 
-    @observable.struct list: ListType;// = { type: "search", text: "", focused: false };
+    @observable.struct list: ListType;
     @observable.struct screenSize: ScreenSize;
+    @observable overlaySize: OverlaySize = "medium";
+    @observable overlayShowsAll = false;
+    overlayMediumHeightRems = 10;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -22,6 +26,30 @@ export default class UIState {
         return "bottom";
     }
 
+    @computed get overlayBottom() { return this.overlayPosition === "bottom"; }
+    @computed get overlayLeft() { return this.overlayPosition === "left"; }
+    @computed get overlayWidthPx() { return this.overlayLeft ? remsToPixels(23.5) : remsToPixels(this.screenSize.width); }
+
+    @computed get wsWidthPx() { return this.overlayLeft ? this.screenSize.width - this.overlayWidthPx : this.screenSize.width; }
+    @computed get wsImageHeightPx() { return remsToPixels(3); }
+    @computed get wsPaddingPx() { return remsToPixels(0.3); }
+    @computed get wsOccupiedHeightPx() { return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0; }
+    @computed get wsShown() {
+        // TODO: RESTORE
+        return false;//this.advertisedExhibitors.length > 0;
+    }
+
+    @computed get wsDesktopPosition() { return process.env.REACT_APP_EFP_EXPO === "cbresupplypartner" ? "bottom" : "top" }
+    @computed get wsPosition() { return this.overlayBottom ? "top" : this.wsDesktopPosition; }
+    // map
+    @computed get mapVisibleTop() { return this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0; }
+    @computed get mapVisibleBottom() {
+        if (this.overlayLeft) {
+            return this.wsPosition === "bottom" ? this.wsOccupiedHeightPx : 0;
+        }
+        return remsToPixels(this.overlayMediumHeightRems);
+    }
+    @computed get mapVisibleLeft() { return this.overlayLeft ? this.overlayWidthPx : 0; }
 
     ///////////////////////////////////////////////////////////////////////////
 }

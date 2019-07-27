@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 
 let settings = {
-    debug: (localStorage.getItem('debug') || window.location.host.startsWith('dev')) && localStorage.getItem('debug') !== '0',
+    debug: (localStorage.getItem('debug') || window.location.host.startsWith('localhost') || window.location.host.startsWith('dev')) && localStorage.getItem('debug') !== '0',
     borderWidth: 1,
     colors: {
         base: '#ebebeb',

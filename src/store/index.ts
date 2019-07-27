@@ -1,11 +1,11 @@
 import { configure } from 'mobx';
 import RootStore from './RootStore';
+import init from './init';
 
-// import init from './init';
-configure({ computedRequiresReaction: true, enforceActions: 'observed' });
+configure({ computedRequiresReaction: true });
 
 const store = new RootStore();
-// init(store1);
+init(store);
 export default store;
 
 // declare global {
