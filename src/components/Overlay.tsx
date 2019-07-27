@@ -5,7 +5,9 @@ import store from "../store";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import { OverlaySize } from "../store/UIState";
+// TODO: RESTORE - only use what's needed from d3
 import * as d3 from "d3";
+import { autorun } from "mobx";
 const { uiState } = store;
 
 export default observer(function Overlay() {
@@ -29,7 +31,8 @@ export default observer(function Overlay() {
         el.current.ontouchmove = handleTouchMove;
         el.current.ontouchend = handleTouchEnd;
         el.current.ontouchcancel = handleTouchCancel;
-        position();
+        
+        autorun(position);
 
         function handleTouchStart(e: TouchEvent) {
             if (s.noMove) return;
@@ -88,9 +91,7 @@ export default observer(function Overlay() {
         }
 
         function position() {
-            // let width: string, left: string, top: string;
             const s = el.current.style;
-            // const w = "23.5rem";
             switch (uiState.overlayPosition) {
                 case "left":
                     s.width = uiState.overlayWidthPx + "px";
@@ -116,8 +117,7 @@ export default observer(function Overlay() {
         function setHeight() {
             // height depends on size and ongoing touch
             // let's animate when no touch in progress
-            const position = uiState.overlayPosition;
-            if (position === "left") return;
+            if (uiState.overlayPosition === "left") return;
 
             let newTop = getTopForBottomPosition(uiState.overlaySize);
 
