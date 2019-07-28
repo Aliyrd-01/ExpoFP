@@ -4,6 +4,7 @@ import data from '../../data';
 import ExhibitorStore, { Exhibitor } from '../ExhibitorStore';
 import { generateUniqueSlug } from '../../tools/slug';
 import baseUrl from "../../tools/base-data-url";
+import { autorun } from 'mobx';
 
 export default function initExhibitors(store: RootStore) {
 
@@ -35,5 +36,47 @@ export default function initExhibitors(store: RootStore) {
     // dispose
     delete data.exhibitors;
     logger.log('initExhibitors', exhibitorStore.exhibitors.length);
+
+    initBookmarked(exhibitorStore);
+}
+
+function initBookmarked(exhibitorStore: ExhibitorStore) {
+    let bookmarkedAr: number[];
+
+    const url = new URL(window.location.href);
+    const c = url.searchParams.get("b");
+    const ca = url.searchParams.get("ba");
+    const combined = c || ca;
+    if (combined) {
+        bookmarkedAr = combined
+            .split("|")
+            .map(x => parseInt(x))
+            .filter(x => x);
+
+        const append = !!ca;
+        if (append) bookmarkedAr.push(...getFromLocalStorage());
+        saveToLocalStorage(bookmarkedAr);
+    } else {
+        bookmarkedAr = getFromLocalStorage();
+    }
+
+    exhibitorStore.setBookmarked(bookmarkedAr);
+
+    autorun(() => {
+        saveToLocalStorage(exhibitorStore.bookmarked.map(x => x.id));
+    });
+}
+
+function getFromLocalStorage() {
+    const ls = localStorage.getItem("bookmarked");
+    return ls ? (JSON.parse(ls) as number[]) : [];
+}
+
+function saveToLocalStorage(ar: number[]) {
+    logger.log("saveToLocalStorage", ar.length);
+    // const dest = [...ar, ...(append ? getFromLocalStorage() : [])];
+    // const unique = Array.from(new Set(dest));
+    // debugger
+    localStorage.setItem("bookmarked", JSON.stringify(ar));
 }
 

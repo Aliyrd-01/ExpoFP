@@ -2,7 +2,7 @@
 import RootStore from "./RootStore";
 import { Category } from "./CategoryStore";
 import { RegularBooth } from "./BoothStore";
-import { computed } from "mobx";
+import { computed, observable, action } from "mobx";
 
 
 export default class ExhibitorStore {
@@ -10,6 +10,23 @@ export default class ExhibitorStore {
     readonly exhibitors: Exhibitor[] = [];
     @computed({ keepAlive: true }) get exhibitorById() {
         return new Map<number, Exhibitor>(this.exhibitors.map(c => [c.id, c]));
+    }
+
+    @computed get bookmarked() {
+        return this.exhibitors.filter(x => x.bookmarked);
+    }
+
+    @action setBookmarked(ids: number[]) {
+        //const current = new Set(this.bookmarked);
+        const ar = ids.map(x => this.exhibitorById.get(x));
+        const set = new Set(ar);
+        const toRemove = this.bookmarked.filter(e => !set.has(e));
+        for(const e of toRemove){
+            e.bookmarked = false;
+        }
+        for(const e of ar){
+            e.bookmarked = true;
+        }
     }
 
     constructor(rootStore: RootStore) {
@@ -45,6 +62,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     //populated
     readonly logo: string;
     readonly slug: string;
+    @observable bookmarked: boolean;
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];
