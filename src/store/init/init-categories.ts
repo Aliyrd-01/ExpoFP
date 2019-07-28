@@ -6,15 +6,20 @@ import logger from '../../tools/logger';
 
 
 export default function initCategories(store: RootStore) {
+    const { categoryStore } = store;
+
     for (const b of data.categories || []) {
         const c = new Category() as MutableRequired<Category>;
         Object.assign(c, b);
 
         c.slug = generateUniqueSlug(c.name);
-        (c['store'] as CategoryStore) = store.categoryStore;
-        store.categoryStore.categories.push(c as Category);
+        (c['store'] as CategoryStore) = categoryStore;
+        categoryStore.categories.push(c as Category);
     }
+
+    // (categoryStore.categoryById as Map<number, Category>) = new Map<number, Category>(categoryStore.categories.map(c => [c.id, c]));
+
     // dispose
     delete data.categories;
-    logger.log('initCategories', store.categoryStore.categories.length);
+    logger.log('initCategories', categoryStore.categories.length);
 }

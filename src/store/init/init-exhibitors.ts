@@ -4,7 +4,6 @@ import data from '../../data';
 import ExhibitorStore, { Exhibitor } from '../ExhibitorStore';
 import { generateUniqueSlug } from '../../tools/slug';
 import baseUrl from "../../tools/base-data-url";
-import { RegularBooth } from '../BoothStore';
 
 export default function initExhibitors(store: RootStore) {
 
@@ -24,16 +23,9 @@ export default function initExhibitors(store: RootStore) {
 
         if (e.logo) e.logo = baseUrl + e.logo;
         e.categories = [];
+        e.booths = [];
         for (const c of raw.categories || []) {
             e.categories.push(store.categoryStore.categoryById.get(c));
-        }
-
-        for (const boothId of raw.booths || []) {
-            const b = store.boothStore.boothById.get(boothId);
-            // this may happen when booth is not present in SVG
-            if (!b || !(b instanceof RegularBooth)) continue;
-            b.exhibitors.push(e as Exhibitor);
-            e.booths.push(b);
         }
 
         (e['store'] as ExhibitorStore) = exhibitorStore;

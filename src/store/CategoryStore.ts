@@ -5,9 +5,9 @@ import { computed } from "mobx";
 export default class CategoryStore {
     private readonly rootStore: RootStore;
 
-    //@observable.struct list: ListType = { type: "search", text: "", focused: false };
     readonly categories: Category[] = [];
-    @computed get categoryById() {
+    @computed({keepAlive: true}) get categoryById() {
+        console.log('categoryById');
         return new Map<number, Category>(this.categories.map(c => [c.id, c]));
     }
 

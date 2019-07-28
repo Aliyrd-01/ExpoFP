@@ -1,7 +1,6 @@
 import RootStore from '../RootStore';
 import logger from '../../tools/logger';
 import data from '../../data';
-import { Exhibitor } from '../ExhibitorStore';
 import { generateUniqueSlug } from '../../tools/slug';
 import BoothStore, { Booth, SpecialBooth, RegularBooth } from '../BoothStore';
 import * as d3 from 'd3-selection';
@@ -20,8 +19,18 @@ export default function initBooths(store: RootStore) {
         Object.assign(b, raw);
 
         b.slug = generateUniqueSlug(b.name);
-        boothsByName.set(b.name.toLowerCase(), b);
-        fixCbre(b);
+        boothsByName.set(b.name.toLowerCase(), b as Booth);
+        fixCbre(b as Booth);
+
+        if (b instanceof RegularBooth) {
+            const boothReg = b as MutableRequired<RegularBooth>;
+            boothReg.exhibitors = [];
+            for (const exhibitorId of (raw as RawRegularBooth).exhibitors) {
+                const exhibitor = store.exhibitorStore.exhibitorById.get(exhibitorId);
+                boothReg.exhibitors.push(exhibitor);
+                exhibitor.booths.push(boothReg as RegularBooth);
+            }
+        }
 
         booths.push(b);
     }
@@ -48,7 +57,8 @@ export default function initBooths(store: RootStore) {
             booth.name = idInSvg.toUpperCase();
             booth.slug = generateUniqueSlug(idInSvg);
             booth.error = true;
-            boothsByName.set(idInSvg, booth);
+            booth.exhibitors = [];
+            boothsByName.set(idInSvg, booth as Booth);
             booths.push(booth);
         }
 
@@ -124,10 +134,7 @@ export default function initBooths(store: RootStore) {
             logger.error("__data booth not found in SVG:", b.name, b);
         } else {
             (b['store'] as BoothStore) = boothStore;
-            if (b instanceof RegularBooth) {
-                (b.exhibitors as Exhibitor[]) = [];
-            }
-            boothStore.booths.push(b);
+            boothStore.booths.push(b as Booth);
         }
     }
 

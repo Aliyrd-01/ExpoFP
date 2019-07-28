@@ -6,7 +6,7 @@ import initBooths from './init-booths';
 
 export default function initStore(store: RootStore) {
     initCategories(store);
-    initBooths(store);
     initExhibitors(store);
+    initBooths(store);
     initUi(store);
 }

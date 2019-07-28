@@ -7,7 +7,7 @@ import { computed } from "mobx";
 export default class BoothStore {
     private readonly rootStore: RootStore;
     readonly booths: Booth[] = [];
-    @computed get boothById() {
+    @computed({ keepAlive: true }) get boothById() {
         return new Map<number, Booth>(this.booths.map(c => [c.id, c]));
     }
 
@@ -17,6 +17,7 @@ export default class BoothStore {
 }
 
 abstract class BoothBase {
+    protected readonly store: BoothStore;
     readonly id: number;
     readonly name: string;
     readonly title: string;

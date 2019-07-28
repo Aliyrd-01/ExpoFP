@@ -30,6 +30,7 @@ interface RawRegularBooth extends RawBoothBase {
     reserveUrl: string;
     type: string;
     onHold: boolean;
+    exhibitors: number[];
 }
 
 interface RawSpecialBooth extends RawBoothBase {
@@ -78,8 +79,6 @@ interface RawExhibitor {
 
     //populated
     logo: string;
-    // slug: string;
-    booths: number[];
     categories: number[];
 }
 

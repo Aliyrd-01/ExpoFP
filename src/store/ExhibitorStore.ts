@@ -2,11 +2,15 @@
 import RootStore from "./RootStore";
 import { Category } from "./CategoryStore";
 import { RegularBooth } from "./BoothStore";
+import { computed } from "mobx";
 
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
     readonly exhibitors: Exhibitor[] = [];
+    @computed({ keepAlive: true }) get exhibitorById() {
+        return new Map<number, Exhibitor>(this.exhibitors.map(c => [c.id, c]));
+    }
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
