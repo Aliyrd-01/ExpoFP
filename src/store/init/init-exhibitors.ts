@@ -29,6 +29,8 @@ export default function initExhibitors(store: RootStore) {
         for (const c of raw.categories || []) {
             e.categories.push(store.categoryStore.categoryById.get(c));
         }
+
+
         // for(const )
         // if (!c.categories) c.categories = [];
 
@@ -37,10 +39,11 @@ export default function initExhibitors(store: RootStore) {
         exhibitorStore.exhibitors.push(e);
     }
 
+    // TODO: update booth exhibitors[] and itself booths[]
 
 
     // dispose
     delete data.exhibitors;
-    logger.log('initExhibitors', store.categoryStore.categories.length);
+    logger.log('initExhibitors', exhibitorStore.exhibitors.length);
 }
 

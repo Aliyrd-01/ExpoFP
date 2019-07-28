@@ -5,7 +5,7 @@ import Rect from "../core/Rect";
 
 export default class BoothStore {
     private readonly rootStore: RootStore;
-    readonly booths: (RegularBooth | SpecialBooth)[] = [];
+    readonly booths: Booth[] = [];
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -23,6 +23,8 @@ abstract class BoothBase {
     readonly slug: string;
     readonly error: boolean;
 }
+
+export type Booth = RegularBooth | SpecialBooth;
 
 export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "exhibitors"> {
     readonly buyUrl: string;

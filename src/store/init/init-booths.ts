@@ -1,0 +1,177 @@
+import RootStore from '../RootStore';
+import logger from '../../tools/logger';
+import data from '../../data';
+import { Exhibitor } from '../ExhibitorStore';
+import { generateUniqueSlug } from '../../tools/slug';
+import BoothStore, { Booth, SpecialBooth, RegularBooth } from '../BoothStore';
+import * as d3 from 'd3-selection';
+import svg from '../../data/svg';
+import { getNextId } from '../../tools/id';
+import Rect from '../../core/Rect';
+
+export default function initBooths(store: RootStore) {
+    const { boothStore } = store;
+    const boothsByName = new Map<string, Booth>();
+
+    const booths = [];
+
+    for (const raw of data.booths || []) {
+        const b = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
+        Object.assign(b, raw);
+
+        (b.slug as string) = generateUniqueSlug(b.name);
+        boothsByName.set(b.name.toLowerCase(), b);
+        fixCbre(b);
+        if (b instanceof RegularBooth) {
+            (b.exhibitors as Exhibitor[]) = [];
+        }
+
+        (b['store'] as BoothStore) = boothStore;
+        booths.push(b);
+    }
+
+
+    for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]').nodes() as (SVGRectElement | SVGPathElement)[]) {
+        let rect: SVGRectElement;
+        if (el.tagName === 'rect') {
+            rect = el as SVGRectElement;
+        } else {
+            rect = el.lastElementChild as SVGRectElement;
+            if (!rect || rect.tagName !== 'rect') continue;
+
+        }
+
+        const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
+
+        let booth = boothsByName.get(idInSvg) as MutableRequired<Booth>;
+        let boothReg = booth instanceof RegularBooth ? booth as MutableRequired<RegularBooth> : null;
+        let boothSpec = booth instanceof SpecialBooth ? booth as MutableRequired<SpecialBooth> : null;
+        if (!booth) {
+            logger.error("SVG booth rect not found in __data:", idInSvg);
+            // create fake booth
+            booth = boothReg = new RegularBooth();
+            booth.id = getNextId();
+            booth.name = idInSvg.toUpperCase();
+            booth.slug = generateUniqueSlug(idInSvg);
+            booth.error = true;
+            booth.exhibitors = [];
+            boothsByName.set(idInSvg, booth);
+            booths.push(booth);
+        }
+
+        booth.rect = Rect.fromSvgRectElement(rect);
+        booth.noLabels = rect.id.startsWith("no");
+        if (boothReg) {
+            boothReg.availColor = el.getAttribute("data-avail-color") || boothReg.availColor;
+            boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
+            boothReg.size = el.getAttribute("data-size") || boothReg.size;
+            boothReg.type = el.getAttribute("data-type") || boothReg.type;
+            boothReg.price = el.getAttribute("data-price") || boothReg.price;
+        } {
+            boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
+        }
+
+        const transform = rect.getAttribute("transform");
+        if (transform) {
+            const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\) rotate\(([-0-9.]+)\)/);
+            if (mt) {
+                // const translateX = parseFloat(mt[1]);
+                // const translateY = parseFloat(mt[2]);
+                const rotate = parseFloat(mt[3]);
+                booth.rotate = (-rotate * Math.PI) / 180;
+            } else {
+                const mt = transform.match(/rotate\(([-0-9.]+).*\)/);
+                if (mt) {
+                    const rotate = parseFloat(mt[1]);
+                    booth.rotate = (-rotate * Math.PI) / 180;
+                }
+                else {
+                    const mm = transform.match(/matrix\(\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*\)/);
+                    if (mm) {
+                        booth.rotate = Math.asin(-parseFloat(mm[2]));
+                    }
+                }
+            }
+            // ET: this is a fix for Illustrator re-save (it can have large rotates)
+            const maxDegree = 45.5;
+            if (booth.rotate > maxDegree / 180 * Math.PI) {
+                booth.rotate = booth.rotate - 90 * Math.PI / 180;
+                // also swap width and height of rect
+                booth.rect = booth.rect.getRotated90();
+            }
+        }
+
+        if (!booth.rotate && (booth.rect.h > booth.rect.w * 1.5) && booth.name.length > 5) {
+            booth.rotate = 90 * Math.PI / 180;
+            booth.rect = booth.rect.getRotated90();
+        }
+
+        if (el.tagName === 'g') {
+            booth.paths = [];
+            for (const kid of d3.select(el).selectAll('path, rect').nodes() as (SVGPathElement | SVGRectElement)[]) {
+                if (kid.tagName === 'path') {
+                    const path = kid as SVGPathElement;
+                    if (path.tagName !== 'path') continue;
+                    const color = path.style.fill;
+                    const d = parseInt(path.getAttribute('data-index'));
+                    if (!d) continue;
+                    // const triangles = getTrianglesFromFpPaths(d);
+                    const pi: PathInfo = {
+                        triangles: getTrianglesFromFpPaths(d),
+                        color
+                    };
+                    booth.paths.push(pi);
+                }
+            }
+        }
+    }
+
+
+    // TORO: RESTORE
+    for (const b of booths) {
+        if (!b.rect) {
+            logger.error("__data booth not found in SVG:", b.name, b);
+        } else {
+            boothStore.booths.push(b);
+        }
+    }
+
+    // dispose
+    delete data.booths;
+    logger.log('initBooths', boothStore.booths.length);
+}
+
+
+function fixCbre(b: Booth) {
+    if (process.env.REACT_APP_EFP_EXPO === "cbresupplypartner") {
+        if (b instanceof RegularBooth && !b.availColor && b.type) {
+            if (b.type.indexOf("Premium A - 2m height restriction Passport") !== -1) (b.availColor as string) = "#939393";
+            else if (b.type.indexOf("No free-standing") !== -1) (b.availColor as string) = "#BA3DC8";
+            else if (b.type.endsWith("Passport")) (b.availColor as string) = "#939393";
+            else if (b.type.startsWith("Premium A - 2m")) (b.availColor as string) = "#FF9E4E";
+            else if (b.type.startsWith("Premium A - 4m")) (b.availColor as string) = "#EA4335";
+            else if (b.type.startsWith("Premium B - 2m")) (b.availColor as string) = "#523BC0";
+            else if (b.type.startsWith("Premium C - 2.4m")) (b.availColor as string) = "#3ECC78";
+        }
+    }
+}
+
+function getTrianglesFromFpPaths(index: number) {
+    const mesh = window['__fpPaths'][index];
+    // TODO: remove in future versions 
+    for (const p of mesh.positions) {
+        // a bug in svgMesh3d when normalize: false ?
+        p[1] = Math.abs(p[1]);
+        p.length = 2;
+    }
+    const pathTriangles = [];
+    for (const c of mesh.cells) {
+        pathTriangles.push([
+            mesh.positions[c[0]],
+            mesh.positions[c[1]],
+            mesh.positions[c[2]],
+        ]);
+    }
+
+    return pathTriangles;
+}
