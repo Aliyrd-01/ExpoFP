@@ -32,12 +32,12 @@ export default function initExhibitors(store: RootStore) {
             const b = store.boothStore.boothById.get(boothId);
             // this may happen when booth is not present in SVG
             if (!b || !(b instanceof RegularBooth)) continue;
-            b.exhibitors.push(e);
+            b.exhibitors.push(e as Exhibitor);
             e.booths.push(b);
         }
 
         (e['store'] as ExhibitorStore) = exhibitorStore;
-        exhibitorStore.exhibitors.push(e);
+        exhibitorStore.exhibitors.push(e as Exhibitor);
     }
 
     // dispose

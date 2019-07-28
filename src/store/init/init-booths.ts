@@ -136,7 +136,6 @@ export default function initBooths(store: RootStore) {
     logger.log('initBooths', boothStore.booths.length);
 }
 
-
 function fixCbre(b: Booth) {
     if (process.env.REACT_APP_EFP_EXPO === "cbresupplypartner") {
         if (b instanceof RegularBooth && !b.availColor && b.type) {

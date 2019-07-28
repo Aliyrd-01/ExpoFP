@@ -7,12 +7,12 @@ import logger from '../../tools/logger';
 
 export default function initCategories(store: RootStore) {
     for (const b of data.categories || []) {
-        const c = new Category();
+        const c = new Category() as MutableRequired<Category>;
         Object.assign(c, b);
 
-        (c.slug as string) = generateUniqueSlug(c.name);
+        c.slug = generateUniqueSlug(c.name);
         (c['store'] as CategoryStore) = store.categoryStore;
-        store.categoryStore.categories.push(c);
+        store.categoryStore.categories.push(c as Category);
     }
     // dispose
     delete data.categories;

@@ -14,6 +14,7 @@ export default class ExhibitorStore {
 }
 
 export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
+    private readonly store: ExhibitorStore;
     readonly id: number;
     readonly name: string;
     readonly featured: boolean; //new
