@@ -2,10 +2,14 @@
 import RootStore from "./RootStore";
 import { Exhibitor } from "./ExhibitorStore";
 import Rect from "../core/Rect";
+import { computed } from "mobx";
 
 export default class BoothStore {
     private readonly rootStore: RootStore;
     readonly booths: Booth[] = [];
+    @computed get boothById() {
+        return new Map<number, Booth>(this.booths.map(c => [c.id, c]));
+    }
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;

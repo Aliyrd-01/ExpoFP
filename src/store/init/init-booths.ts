@@ -13,23 +13,18 @@ export default function initBooths(store: RootStore) {
     const { boothStore } = store;
     const boothsByName = new Map<string, Booth>();
 
-    const booths = [];
+    const booths: MutableRequired<Booth>[] = [];
 
     for (const raw of data.booths || []) {
-        const b = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
+        const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);
 
-        (b.slug as string) = generateUniqueSlug(b.name);
+        b.slug = generateUniqueSlug(b.name);
         boothsByName.set(b.name.toLowerCase(), b);
         fixCbre(b);
-        if (b instanceof RegularBooth) {
-            (b.exhibitors as Exhibitor[]) = [];
-        }
 
-        (b['store'] as BoothStore) = boothStore;
         booths.push(b);
     }
-
 
     for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]').nodes() as (SVGRectElement | SVGPathElement)[]) {
         let rect: SVGRectElement;
@@ -38,7 +33,6 @@ export default function initBooths(store: RootStore) {
         } else {
             rect = el.lastElementChild as SVGRectElement;
             if (!rect || rect.tagName !== 'rect') continue;
-
         }
 
         const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
@@ -54,7 +48,6 @@ export default function initBooths(store: RootStore) {
             booth.name = idInSvg.toUpperCase();
             booth.slug = generateUniqueSlug(idInSvg);
             booth.error = true;
-            booth.exhibitors = [];
             boothsByName.set(idInSvg, booth);
             booths.push(booth);
         }
@@ -67,7 +60,7 @@ export default function initBooths(store: RootStore) {
             boothReg.size = el.getAttribute("data-size") || boothReg.size;
             boothReg.type = el.getAttribute("data-type") || boothReg.type;
             boothReg.price = el.getAttribute("data-price") || boothReg.price;
-        } {
+        } else {
             boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
         }
 
@@ -126,12 +119,14 @@ export default function initBooths(store: RootStore) {
         }
     }
 
-
-    // TORO: RESTORE
     for (const b of booths) {
         if (!b.rect) {
             logger.error("__data booth not found in SVG:", b.name, b);
         } else {
+            (b['store'] as BoothStore) = boothStore;
+            if (b instanceof RegularBooth) {
+                (b.exhibitors as Exhibitor[]) = [];
+            }
             boothStore.booths.push(b);
         }
     }

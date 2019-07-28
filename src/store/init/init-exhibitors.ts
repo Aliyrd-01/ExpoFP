@@ -1,12 +1,10 @@
 import RootStore from '../RootStore';
-import UIState from '../UIState';
-import { runInAction } from 'mobx';
 import logger from '../../tools/logger';
 import data from '../../data';
 import ExhibitorStore, { Exhibitor } from '../ExhibitorStore';
 import { generateUniqueSlug } from '../../tools/slug';
-import { Category } from '../CategoryStore';
 import baseUrl from "../../tools/base-data-url";
+import { RegularBooth } from '../BoothStore';
 
 export default function initExhibitors(store: RootStore) {
 
@@ -19,28 +17,28 @@ export default function initExhibitors(store: RootStore) {
     const { exhibitorStore } = store;
 
     for (const raw of data.exhibitors || []) {
-        const e = new Exhibitor();
+        const e = new Exhibitor() as MutableRequired<Exhibitor>;
         Object.assign(e, raw);
 
-        (e.slug as string) = generateUniqueSlug(e.name);
+        e.slug = generateUniqueSlug(e.name);
 
-        if (e.logo) (e.logo as string) = baseUrl + e.logo;
-        (e.categories as Category[]) = [];
+        if (e.logo) e.logo = baseUrl + e.logo;
+        e.categories = [];
         for (const c of raw.categories || []) {
             e.categories.push(store.categoryStore.categoryById.get(c));
         }
 
-
-        // for(const )
-        // if (!c.categories) c.categories = [];
-
+        for (const boothId of raw.booths || []) {
+            const b = store.boothStore.boothById.get(boothId);
+            // this may happen when booth is not present in SVG
+            if (!b || !(b instanceof RegularBooth)) continue;
+            b.exhibitors.push(e);
+            e.booths.push(b);
+        }
 
         (e['store'] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e);
     }
-
-    // TODO: update booth exhibitors[] and itself booths[]
-
 
     // dispose
     delete data.exhibitors;
