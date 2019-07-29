@@ -60,7 +60,7 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
         bookmarkedAr = getFromLocalStorage();
     }
 
-    exhibitorStore.setBookmarked(bookmarkedAr);
+    exhibitorStore.replaceBookmarked(bookmarkedAr);
 
     autorun(() => {
         saveToLocalStorage(exhibitorStore.bookmarked.map(x => x.id));

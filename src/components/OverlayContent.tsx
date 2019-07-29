@@ -1,12 +1,68 @@
-import React, { ReactNode } from "react";
-import "./OverlayContent.scss";
 import { observer } from "mobx-react-lite";
+import PerfectScrollbar from "perfect-scrollbar";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { uiState } from "../store";
+import logger from "../tools/logger";
+import isScrollUgly from "../utils/is-scroll-ugly";
+import OverlayBar from "./OverlayBar";
+import "./OverlayContent.scss";
+import OverlayGrip from "./OverlayGrip";
+import OverlayParticles from "./OverlayParticles";
 
-const OverlayContent: React.FC<{ bar: ReactNode }> = ({ bar, children }) => {
+const OverlayContent: React.FC<{
+    bar: ReactNode;
+    className: string;
+    particles: boolean;
+    backMode: "back" | "menu" | "none";
+    hideClose: boolean;
+    onBack: () => void;
+    onClose: () => void;
+}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
+    const [scrolled, setScrolled1] = useState(false);
+    const scrollable = useRef<HTMLDivElement>();
+
+    useEffect(() => {
+        const sel = scrollable.current;
+        const setScrolled = () => {
+            setScrolled1(sel.scrollTop > 0);
+            logger.log("scrolled", sel.scrollTop, scrolled);
+        };
+
+        let update: () => void;
+        if (isScrollUgly) {
+            const ps = new PerfectScrollbar(sel);
+            update = () => ps.update();
+            sel.addEventListener("ps-scroll-y", setScrolled);
+        } else {
+            update = setScrolled;
+            sel.addEventListener("scroll", setScrolled);
+        }
+
+        window.addEventListener("resize", update);
+        const observer = new MutationObserver(update);
+        observer.observe(sel, { childList: true, subtree: true });
+
+        return () => {
+            window.removeEventListener("resize", update);
+            observer.disconnect();
+        };
+    }, [scrollable.current]);
+
+    useEffect(() => {
+        if (uiState.overlaySize !== "full" && scrollable.current.scrollTop !== 0) {
+            scrollable.current.scrollTop = 0;
+        }
+    }, [uiState.overlaySize]);
+
     return (
-        <div className="overlay-content" id="overlay-content">
-            {bar}
-            <div className="overlay-content__scrollable" ref="scrollable">
+        <div className={`overlay-content ${className}`} id="overlay-content">
+            {particles ? <OverlayParticles /> : null}
+            {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
+            <OverlayBar scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>
+                {bar}
+            </OverlayBar>
+
+            <div className="overlay-content__scrollable" ref={scrollable}>
                 {children}
             </div>
         </div>

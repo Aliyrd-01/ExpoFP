@@ -16,15 +16,15 @@ export default class ExhibitorStore {
         return this.exhibitors.filter(x => x.bookmarked);
     }
 
-    @action setBookmarked(ids: number[]) {
+    @action replaceBookmarked(ids: number[]) {
         //const current = new Set(this.bookmarked);
         const ar = ids.map(x => this.exhibitorById.get(x));
         const set = new Set(ar);
         const toRemove = this.bookmarked.filter(e => !set.has(e));
-        for(const e of toRemove){
+        for (const e of toRemove) {
             e.bookmarked = false;
         }
-        for(const e of ar){
+        for (const e of ar) {
             e.bookmarked = true;
         }
     }
