@@ -5,6 +5,7 @@ import store from "../store";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import { OverlaySize } from "../store/UIState";
+import Menu from "./Menu";
 // TODO: RESTORE - only use what's needed from d3
 import * as d3 from "d3";
 import { autorun } from "mobx";
@@ -31,7 +32,7 @@ export default observer(function Overlay() {
         el.current.ontouchmove = handleTouchMove;
         el.current.ontouchend = handleTouchEnd;
         el.current.ontouchcancel = handleTouchCancel;
-        
+
         autorun(position);
 
         function handleTouchStart(e: TouchEvent) {
@@ -153,8 +154,8 @@ export default observer(function Overlay() {
     return (
         <div className={`overlay ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
             {s.noMove}
-            {/* <Menu />
-        <Search />
+            <Menu />
+            {/* <Search />
         <Bookmarks />
         <Category />
         <Exhibitor />

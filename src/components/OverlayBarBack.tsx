@@ -1,7 +1,7 @@
-import React, { useState, useMemo, useEffect, MouseEvent } from "react";
-import "./OverlayBarBack.scss";
 import classNames from "classnames";
+import React, { MouseEvent, useEffect, useState } from "react";
 import store from "../store";
+import "./OverlayBarBack.scss";
 const { uiState } = store;
 
 const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "menu" | "none"; onBack: () => void }> = ({

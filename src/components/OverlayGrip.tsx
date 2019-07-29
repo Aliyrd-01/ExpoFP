@@ -1,8 +1,8 @@
-import React, { ReactNode, MouseEvent } from "react";
-import "./OverlayGrip.scss";
-import { observer } from "mobx-react-lite";
-import store from "../store";
 import classNames from "classnames";
+import { observer } from "mobx-react-lite";
+import React, { MouseEvent } from "react";
+import store from "../store";
+import "./OverlayGrip.scss";
 
 function OverlayGrip() {
     function classes() {
@@ -18,7 +18,7 @@ function OverlayGrip() {
     }
 
     return (
-        <a href="" className={classes()} onClick={handleClick}>
+        <a href="/#" className={classes()} onClick={handleClick}>
             <svg viewBox="0 0 1200 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100,100 l 500 100 L 1100 100" />
                 <path d="M100,150 l 500 0 L 1100 150" />

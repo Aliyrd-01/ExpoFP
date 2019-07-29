@@ -1,9 +1,9 @@
 import copyToClipboard from "copy-to-clipboard";
 import { VisibilityProperty } from "csstype";
 import { observer, useLocalStore } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import React, { MouseEvent, useEffect } from "react";
 import data from "../data";
-import { exhibitorStore, uiState } from "../store";
+import store, { exhibitorStore, uiState, categoryStore } from "../store";
 import baseUrl from "../tools/base-data-url";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
@@ -40,42 +40,68 @@ function Menu() {
 
     const barContent = (
         <div className="menu__bar">
-            <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener">
-                <img src={logoUrl} onError={() => (s.logoVisibility = "hidden")} style={{ visibility: s.logoVisibility }} />
+            <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer">
+                <img src={logoUrl} onError={() => (s.logoVisibility = "hidden")} style={{ visibility: s.logoVisibility }} alt=''/>
             </a>
         </div>
     );
 
-    return (
-        <OverlayContent className={`menu ${s.shown ? "shown" : ""}`} bar={barContent} onC>
-            <div className="menu__content">
-                {/* <a :href='homeUrl' target="_blank" class="menu__item"><i class="fas fa-home"></i> Event&nbsp;Home&nbsp;<i
-                    class="fas fa-external-link"></i></a>
-            <a href='' @click.prevent='handleSearch' class="menu__item"><i class="fas fa-search"></i> Search</a>
-            <a href='?bookmarks' @click.prevent='$store.dispatch("clickBookmarks"); $store.dispatch("moveToList");'
-                class="menu__item -bookmarks"><i class="fas fa-bookmark"></i>
-                <span>Bookmarks ({{bookmarkedArray.length}})</span>
-                <button @click.stop.prevent=' shareBookmarks' v-if='bookmarkedArray.length' class="fas fa-share-square"
-                    title="Share bookmarks"></button>
-            </a>
-            <a href='' class="menu__item -pdf" @click.prevent='$store.commit("setPrintingPdf", true)'><i class="fas fa-file-pdf"></i> Download PDF</a>
-             <!-- <a href='javascript:print()' class="menu__item -print"><i class="fas fa-print"></i> Print</a> -->
-            <!-- <a href='?seminars' @click.prevent='$store.dispatch("clickSeminars");' class="menu__item"><i class="fas fa-graduation-cap"></i> Seminars</a> -->
+    const categories = categoryStore.categories.length ? (
+        <>
+            <div className="menu__item">Categories</div>
+            {categoryStore.categories.map(c => (
+                <a
+                    className="menu__cat"
+                    href={`?${encodeURIComponent(c.slug)}`}
+                    key={c.id}
+                    onClick={handleCategory.bind(window, c.id)}
+                >
+                    <div className="menu__cat-bullet">&bullet;</div>
+                    <div className="menu__cat-title">{c.name}</div>
+                    <div className="menu__cat-count">{numOfExhibitors(c.id)}</div>
+                </a>
+            ))}
+        </>
+    ) : null;
 
-            <div class="menu__item" v-if="categoriesArray.length">Categories</div>
-            <a class="menu__cat" :href='"?" + encodeURIComponent(c.slug)' v-for="c in categoriesArray" :key="c.id"
-                @click.prevent='$store.dispatch("clickCategory", c.id);'>
-                <div class="menu__cat-bullet">&bullet;</div>
-                <div class="menu__cat-title">{{c.name}}</div>
-                <div class="menu__cat-count">{{numOfExhibitors(c.id)}}</div>
-            </a> */}
+    // TODO: replace a href="/#" with buttons everywhere
+    return (
+        <OverlayContent
+            className={`menu ${s.shown ? "shown" : ""}`}
+            bar={barContent}
+            onClose={close}
+            onBack={close}
+            backMode="none"
+        >
+            <div className="menu__content">
+                <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
+                    <i className="fas fa-home" /> Event&nbsp;Home&nbsp;
+                    <i className="fas fa-external-link" />
+                </a>
+                <a href="/#" onClick={handleSearch} className="menu__item">
+                    <i className="fas fa-search" /> Search
+                </a>
+                <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
+                    <i className="fas fa-bookmark" />
+                    <span>Bookmarks ({exhibitorStore.bookmarked.length})</span>
+                    {exhibitorStore.bookmarked.length ? (
+                        <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
+                    ) : null}
+                </a>
+                <a href="/#" className="menu__item -pdf" onClick={handlePdf}>
+                    <i className="fas fa-file-pdf" /> Download PDF
+                </a>
+                ${categories}
             </div>
         </OverlayContent>
     );
 
-    function shareBookmarks(e) {
-        e.target.blur();
-        const url = `${location.protocol}//${location.host}/?b=` + exhibitorStore.bookmarked.map(x => x.id).join("|");
+    function shareBookmarks(e: MouseEvent) {
+        e.stopPropagation();
+        e.preventDefault();
+        (e.target as HTMLButtonElement).blur();
+        const loc = window.location;
+        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map(x => x.id).join("|");
         copyToClipboard(url);
         alert("Link copied to clipboard.\nOpen it on another device to import bookmarks.");
     }
@@ -88,10 +114,29 @@ function Menu() {
         return exhibitorStore.exhibitors.filter(e => e.categories.find(c => c.id === id)).length;
     }
 
-    function handleSearch() {
-        // this.close();
-        // this.$store.dispatch("selectSearch");
-        // this.$nextTick(() => this.$store.commit("setSearchFocused", true));
+    function handleSearch(e: MouseEvent) {
+        e.preventDefault();
+        close();
+        store.selectSearch();
+        window.setTimeout(() => {
+            store.setSearchFocused(true);
+        }, 1);
+    }
+
+    function handleBookmarks(e: MouseEvent) {
+        e.preventDefault();
+        store.clickBookmarks();
+        store.moveToList();
+    }
+
+    function handlePdf(e: MouseEvent) {
+        e.preventDefault();
+        uiState.printingPdf = true;
+    }
+
+    function handleCategory(id: number, e: MouseEvent) {
+        e.preventDefault();
+        store.clickCategory(id);
     }
 }
 

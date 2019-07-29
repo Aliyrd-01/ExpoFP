@@ -11,9 +11,11 @@ export default class UIState {
 
     @observable.struct list: ListType;
     @observable menu = false;
+    @observable printingPdf = false;
     @observable.struct screenSize: ScreenSize;
     @observable overlaySize: OverlaySize = "medium";
     @observable overlayShowsAll = false;
+    
     overlayMediumHeightRems = 10;
 
     constructor(rootStore: RootStore) {

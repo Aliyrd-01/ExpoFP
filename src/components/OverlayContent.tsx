@@ -12,12 +12,12 @@ import OverlayParticles from "./OverlayParticles";
 const OverlayContent: React.FC<{
     bar: ReactNode;
     className: string;
-    particles: boolean;
+    particles?: boolean;
     backMode: "back" | "menu" | "none";
-    hideClose: boolean;
+    hideClose?: boolean;
     onBack: () => void;
     onClose: () => void;
-}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
+}> = ({ bar, className, particles, backMode, hideClose , onBack, onClose, children }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
 
