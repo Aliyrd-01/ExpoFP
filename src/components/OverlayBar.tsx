@@ -11,7 +11,6 @@ const OverlayBar: React.FC<{
     onClose: () => void;
 }> = ({ scrolled, backMode, hideClose, onBack, onClose, children }) => {
     function handleClose(e: MouseEvent) {
-        e.preventDefault();
         onClose();
     }
 
@@ -19,7 +18,7 @@ const OverlayBar: React.FC<{
         <div className={`overlay-bar ${classNames({ scrolled })}`}>
             <OverlayBarBack backMode={backMode || "menu"} enableAnimation={true} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
-            {hideClose ? null : <a className="far fa-times overlay-bar__close" href="/#" onClick={handleClose} >&nbsp;</a>}
+            {hideClose ? null : <button className="far fa-times overlay-bar__close" onClick={handleClose} />}
         </div>
     );
 };

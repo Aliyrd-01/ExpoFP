@@ -27,27 +27,13 @@ function Menu() {
     }));
 
     useAutorun(() => {
-        if (uiState.menu) {
+        if (!uiState.menu) {
             s.shown = false;
             if (s.shownTimeout) window.clearTimeout(s.shownTimeout);
         } else {
-            s.shownTimeout = window.setTimeout(() => {
-                s.shown = true;
-            }, 1);
+            s.shownTimeout = window.setTimeout(() => (s.shown = true), 1);
         }
     });
-
-    // useEffect(() => {
-    //     if (uiState.menu) {
-    //         s.shown = false;
-    //         if (s.shownTimeout) window.clearTimeout(s.shownTimeout);
-    //     } else {
-    //         s.shownTimeout = window.setTimeout(() => {
-    //             s.shown = true;
-    //         }, 1);
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [uiState.menu]);
 
     const barContent = (
         <div className="menu__bar">
@@ -93,7 +79,6 @@ function Menu() {
                 backMode="none"
             >
                 <div className="menu__content">
-                
                     <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                         <i className="fas fa-home" /> Event&nbsp;Home&nbsp;
                         <i className="fas fa-external-link" />

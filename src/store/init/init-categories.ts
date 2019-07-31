@@ -8,6 +8,12 @@ import logger from '../../tools/logger';
 export default function initCategories(store: RootStore) {
     const { categoryStore } = store;
 
+    data.categories.sort(function (a: RawCategory, b: RawCategory) {
+        var x = a.name.toLowerCase();
+        var y = b.name.toLowerCase();
+        return x < y ? -1 : x > y ? 1 : 0;
+    });
+
     for (const b of data.categories || []) {
         const c = new Category() as MutableRequired<Category>;
         Object.assign(c, b);

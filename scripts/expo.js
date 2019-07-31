@@ -7,7 +7,7 @@ const live = process.env.EFP_TARGET === "live";
 
 // let's have some expo branch for non-expo branch
 if (!onExpoBranch) {
-    expo = onMasterBranch && live ? "_template_for_new_event_" : "jtrade19";
+    expo = onMasterBranch && live ? "_template_for_new_event_" : "expo";
 }
 
 module.exports = {

@@ -1,4 +1,4 @@
-@import "../styles/index.scss";
+@import "../styles/import.scss";
 
 .overlay-bar {
     display: flex;
@@ -12,6 +12,7 @@
     }
 
     &__close {
+        @include like-anchor;
         @include overlay-bar-icon;
         align-self: flex-start;
     }

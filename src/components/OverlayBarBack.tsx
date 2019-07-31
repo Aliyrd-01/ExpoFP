@@ -44,8 +44,7 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
     return (
         <div className={`overlay-bar-back ${divClass()}`}>
             <i className={`overlay-bar-back__icon1 far ${icon1Class()}`} />
-            // eslint-disable-next-line
-            <a className={`overlay-bar-back__icon2 far ${icon2Class()}`} href="/" onClick={handleClick} />
+            <a className={`overlay-bar-back__icon2 far ${icon2Class()}`} href="/" onClick={handleClick} >&nbsp;</a>
         </div>
     );
 
