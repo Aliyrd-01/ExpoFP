@@ -7,4 +7,4 @@ import Layout from "./components/Layout";
 // import reportError from "./tools/report-error";
 // window.addEventListener("error", reportError);
 
-ReactDOM.render(<Layout />, document.getElementById("root"));
+ReactDOM.render(<Layout />, document.getElementById("app"));

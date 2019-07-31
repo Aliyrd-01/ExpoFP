@@ -19,8 +19,7 @@ const OverlayBar: React.FC<{
         <div className={`overlay-bar ${classNames({ scrolled })}`}>
             <OverlayBarBack backMode={backMode || "menu"} enableAnimation={true} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
-            // eslint-disable-next-line
-            {hideClose ? null : <a className="far fa-times overlay-bar__close" href="/#" onClick={handleClose} />}
+            {hideClose ? null : <a className="far fa-times overlay-bar__close" href="/#" onClick={handleClose} >&nbsp;</a>}
         </div>
     );
 };

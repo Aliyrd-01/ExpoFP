@@ -72,7 +72,7 @@ function Menu() {
                     key={c.id}
                     onClick={handleCategory.bind(window, c.id)}
                 >
-                    <div className="menu__cat-bullet">&bullet;</div>
+                    <div className="menu__cat-bullet">&bull;</div>
                     <div className="menu__cat-title">{c.name}</div>
                     <div className="menu__cat-count">{numOfExhibitors(c.id)}</div>
                 </a>
@@ -93,6 +93,7 @@ function Menu() {
                 backMode="none"
             >
                 <div className="menu__content">
+                
                     <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                         <i className="fas fa-home" /> Event&nbsp;Home&nbsp;
                         <i className="fas fa-external-link" />
@@ -110,7 +111,7 @@ function Menu() {
                     <a href="/#" className="menu__item -pdf" onClick={handlePdf}>
                         <i className="fas fa-file-pdf" /> Download PDF
                     </a>
-                    ${categories}
+                    {categories}
                 </div>
             </OverlayContent>
         );
