@@ -10,7 +10,7 @@ export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType;
-    @observable menu = false;
+    @observable menu = true;
     @observable printingPdf = false;
     @observable.struct screenSize: ScreenSize;
     @observable overlaySize: OverlaySize = "medium";

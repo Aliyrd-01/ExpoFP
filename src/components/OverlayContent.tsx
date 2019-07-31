@@ -2,7 +2,6 @@ import { observer } from "mobx-react-lite";
 import PerfectScrollbar from "perfect-scrollbar";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { uiState } from "../store";
-import logger from "../tools/logger";
 import isScrollUgly from "../utils/is-scroll-ugly";
 import OverlayBar from "./OverlayBar";
 import "./OverlayContent.scss";
@@ -17,7 +16,7 @@ const OverlayContent: React.FC<{
     hideClose?: boolean;
     onBack: () => void;
     onClose: () => void;
-}> = ({ bar, className, particles, backMode, hideClose , onBack, onClose, children }) => {
+}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
 
@@ -25,7 +24,7 @@ const OverlayContent: React.FC<{
         const sel = scrollable.current;
         const setScrolled = () => {
             setScrolled1(sel.scrollTop > 0);
-            logger.log("scrolled", sel.scrollTop, scrolled);
+            // logger.log("scrolled", sel.scrollTop, scrolled);
         };
 
         let update: () => void;
@@ -46,12 +45,13 @@ const OverlayContent: React.FC<{
             window.removeEventListener("resize", update);
             observer.disconnect();
         };
-    }, [scrollable.current]);
+    }, [scrollable]);
 
     useEffect(() => {
         if (uiState.overlaySize !== "full" && scrollable.current.scrollTop !== 0) {
             scrollable.current.scrollTop = 0;
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [uiState.overlaySize]);
 
     return (

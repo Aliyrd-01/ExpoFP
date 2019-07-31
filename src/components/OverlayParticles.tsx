@@ -1,55 +1,43 @@
-import React, { useEffect, useState } from "react";
-import "./OverlayParticles.scss";
 import { observer } from "mobx-react-lite";
-import store from "../store";
+import React, { useEffect, useState } from "react";
+import { uiState } from "../store";
+import { useAutorun } from "../utils/mobx";
+import "./OverlayParticles.scss";
 
 function OverlayParticles() {
     const [visible, setVisible] = useState(false);
-    const [starting, setStarting] = useState(false);
-    const [particles, setParticles] = useState();
+    const [ParticlesClass, setParticlesClass] = useState();
+    const [canShow, setCanShow] = useState(false);
 
-    function canShow() {
-        return store.uiState.overlayPosition === "left";
-    }
+    useAutorun(() => setCanShow(uiState.overlayPosition === "left"));
 
-    function stop() {
-        setStarting(false);
-        if (particles) {
-            particles.destroy();
-            setParticles(null);
-        }
-    }
-
+    // init ParticlesClass
     useEffect(() => {
-        if (!canShow()) {
-            stop();
-            return;
+        if (canShow && !ParticlesClass) {
+            waitFor(() => window["Particles"], Particles => setParticlesClass(Particles));
         }
-        setStarting(true);
+    }, [canShow, ParticlesClass]);
 
-        // btw, we do not want it immediately - it can be broken sometimes
-        waitFor(
-            () => window["Particles"],
-            Particles => {
-                if (!starting) return;
-                setVisible(true);
+    // init/destroy particles
+    useEffect(() => {
+        if (ParticlesClass && canShow) {
+            const particles = ParticlesClass.init({
+                selector: ".overlay__particles",
+                maxParticles: 50,
+                speed: 0.4,
+                sizeVariations: 4,
+                color: "#557988",
+                connectParticles: true
+            });
+            setVisible(true);
 
-                const particles = Particles.init({
-                    selector: ".overlay__particles",
-                    maxParticles: 50,
-                    speed: 0.4,
-                    sizeVariations: 4,
-                    color: "#557988",
-                    connectParticles: true
-                });
-                setParticles(particles);
-            }
-        );
+            return () => {
+                particles.destroy();
+            };
+        }
+    }, [ParticlesClass, canShow]);
 
-        return stop;
-    }, [canShow()]);
-
-    if (!canShow()) return null;
+    if (!canShow) return null;
     return <canvas className={`overlay__particles ${visible ? "-visible" : ""}`} />;
 }
 

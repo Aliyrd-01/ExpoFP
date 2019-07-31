@@ -20,9 +20,7 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
         });
     }
 
-    function showBack() {
-        return backMode === "back";
-    }
+    const showBack = backMode === "back";
 
     function icon1Class() {
         return !showBack ? "fa-chevron-left" : "fa-bars";
@@ -39,21 +37,24 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
             setAnimationEnded(true);
         }, 20);
         setBackTimeout(backTimeoutId);
-    }, [showBack()]);
-
-    function handleClick(e: MouseEvent) {
-        e.preventDefault();
-        if (showBack()) onBack();
-        else uiState.menu = true;
-    }
+        // TODO: do this work at all?
+    }, [showBack, backTimeout]);
 
     if (backMode === "none") return null;
     return (
         <div className={`overlay-bar-back ${divClass()}`}>
             <i className={`overlay-bar-back__icon1 far ${icon1Class()}`} />
+            // eslint-disable-next-line
             <a className={`overlay-bar-back__icon2 far ${icon2Class()}`} href="/" onClick={handleClick} />
         </div>
     );
+
+    function handleClick(e: MouseEvent) {
+        e.preventDefault();
+        if (showBack) onBack();
+        else uiState.menu = true;
+    }
+
 };
 
 export default OverlayBarBack; //observer(OverlayBarBack);
