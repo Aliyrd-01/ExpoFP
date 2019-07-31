@@ -1,6 +1,8 @@
 import { observable, computed, action } from 'mobx';
 import RootStore from "./RootStore";
 import { remsToPixels } from '../utils';
+import { Exhibitor } from './ExhibitorStore';
+import { Booth } from './BoothStore';
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
 export type OverlaySize = "full" | "medium" | "small";
@@ -9,13 +11,17 @@ export type ScreenSize = { width: number, height: number };
 export default class UIState {
     private readonly rootStore: RootStore;
 
-    @observable.struct list: ListType;
-    @observable menu = true;
+    @observable.struct list: ListType = { type: "search", text: "", focused: false };
+    @observable.ref details: Booth | Exhibitor = null;
+    @observable menu = false;
+    @observable searchFocused = false;
     @observable printingPdf = false;
     @observable.struct screenSize: ScreenSize;
     @observable overlaySize: OverlaySize = "medium";
     @observable overlayShowsAll = false;
-    
+    @observable centerMap = false;
+    @observable activeListIndex = -1;
+
     overlayMediumHeightRems = 10;
 
     constructor(rootStore: RootStore) {

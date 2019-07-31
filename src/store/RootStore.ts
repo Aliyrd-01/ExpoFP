@@ -22,7 +22,7 @@ export default class RootStore {
     @action clickBookmarks() {
         throw new Error('Not implemented');
     }
-
+    
     @action moveToList() {
         throw new Error('Not implemented');
     }
@@ -36,6 +36,14 @@ export default class RootStore {
     }
 
     @action clickCategory(id: number) {
+        throw new Error("Method not implemented.");
+    }
+
+    @action openActiveListItem() {
+        throw new Error("Method not implemented.");
+    }
+
+    @action changeActiveListIndex(delta: number) {
         throw new Error("Method not implemented.");
     }
 }

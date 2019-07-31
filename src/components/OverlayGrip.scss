@@ -1,0 +1,36 @@
+.overlay-grip {
+    $h: 1rem;
+    $w: 3rem;
+    $s: 0.2rem;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: $w;
+    height: $h;
+    z-index: 2;
+
+    > svg{
+        width: $w;
+        height: $h;
+        display: block;
+        > path{
+            stroke: #bbb;
+            stroke-width: 90;
+            fill: none;
+            stroke-linecap: round;
+            &:first-child{
+                display: none;
+            }
+        }
+    }
+     &.arr > svg > path {
+        &:first-child {
+            display: inherit;
+        }
+        &:last-child {
+            display: none;
+        }
+    }
+}

@@ -6,6 +6,7 @@ import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import { OverlaySize } from "../store/UIState";
 import Menu from "./Menu";
+import Search from "./Search";
 // TODO: RESTORE - only use what's needed from d3
 import * as d3 from "d3";
 import { autorun } from "mobx";
@@ -155,8 +156,8 @@ export default observer(function Overlay() {
         <div className={`overlay ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
             {s.noMove}
             <Menu />
-            {/* <Search />
-        <Bookmarks />
+            <Search />
+        {/* <Bookmarks />
         <Category />
         <Exhibitor />
         <Booth /> */}

@@ -1,20 +1,20 @@
 import classNames from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
-import store from "../store";
+import { uiState } from "../store";
 import "./OverlayGrip.scss";
 
 function OverlayGrip() {
     function classes() {
         return classNames({
             "overlay-grip": true,
-            arr: store.uiState.overlaySize === "full"
+            arr: uiState.overlaySize === "full"
         });
     }
 
     function handleClick(e: MouseEvent) {
         e.preventDefault();
-        store.uiState.toggleMapOverlay();
+        uiState.toggleMapOverlay();
     }
 
     return (

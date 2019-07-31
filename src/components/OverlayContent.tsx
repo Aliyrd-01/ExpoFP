@@ -10,7 +10,7 @@ import OverlayParticles from "./OverlayParticles";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
-    className: string;
+    className?: string;
     particles?: boolean;
     backMode: "back" | "menu" | "none";
     hideClose?: boolean;
@@ -55,7 +55,7 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     return (
-        <div className={`overlay-content ${className}`} id="overlay-content">
+        <div className={`overlay-content ${className || ""}`} id="overlay-content">
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
             <OverlayBar scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>

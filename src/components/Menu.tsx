@@ -146,4 +146,4 @@ function Menu() {
     }
 }
 
-export default Menu;
+export default () => useObserver(() => <>{uiState.menu ? <Menu /> : null}</>);
