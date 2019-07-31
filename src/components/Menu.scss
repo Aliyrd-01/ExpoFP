@@ -1,3 +1,5 @@
+@import "../styles/import.scss";
+
 .menu.shown .menu__title > img {
     opacity: 1;
 }
@@ -110,6 +112,10 @@
                 }
             }
         }
+
+        // &.-pdf{
+        //     @include like-anchor;
+        // }
 
         .overlay-bottom &.-print {
            display: none;

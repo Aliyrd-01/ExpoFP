@@ -31,12 +31,14 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
     }
 
     useEffect(() => {
-        setAnimationEnded(false);
-        if (backTimeout) window.clearTimeout(backTimeout);
-        const backTimeoutId = window.setTimeout(() => {
-            setAnimationEnded(true);
-        }, 20);
-        setBackTimeout(backTimeoutId);
+        if (showBack) {
+            setAnimationEnded(false);
+            if (backTimeout) window.clearTimeout(backTimeout);
+            const backTimeoutId = window.setTimeout(() => {
+                setAnimationEnded(true);
+            }, 20);
+            setBackTimeout(backTimeoutId);
+        }
         // TODO: do this work at all?
     }, [showBack, backTimeout]);
 
@@ -44,7 +46,9 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
     return (
         <div className={`overlay-bar-back ${divClass()}`}>
             <i className={`overlay-bar-back__icon1 far ${icon1Class()}`} />
-            <a className={`overlay-bar-back__icon2 far ${icon2Class()}`} href="/" onClick={handleClick} >&nbsp;</a>
+            <a className={`overlay-bar-back__icon2 far ${icon2Class()}`} href="/" onClick={handleClick}>
+                &nbsp;
+            </a>
         </div>
     );
 
@@ -53,7 +57,6 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
         if (showBack) onBack();
         else uiState.menu = true;
     }
-
 };
 
 export default OverlayBarBack; //observer(OverlayBarBack);
