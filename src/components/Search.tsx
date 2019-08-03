@@ -5,6 +5,7 @@ import data from "../data";
 import store, { uiState } from "../store";
 import { useAutorun } from "../utils/mobx";
 import OverlayContent from "./OverlayContent";
+import List from "./List";
 import "./Search.scss";
 
 const placeHolder = `Search company, ${data.boothTerm.toLowerCase()} or category`;
@@ -73,7 +74,9 @@ function Search() {
                 <input type="search" v-if="hideRealInput" placeholder={placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
             </div>
         );
-        return <OverlayContent onClose={handleClose} onBack={handleBack} backMode="none" hideClose={!s.showClose} bar={bar} />;
+        return <OverlayContent onClose={handleClose} onBack={handleBack} backMode="none" hideClose={!s.showClose} bar={bar} >
+            <List/>
+        </OverlayContent>;
     });
 
     function setText() {

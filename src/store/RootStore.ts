@@ -1,12 +1,10 @@
 import { action } from 'mobx';
 import BoothStore from './BoothStore';
-import CategoryStore from './CategoryStore';
-import ExhibitorStore from './ExhibitorStore';
+import CategoryStore, { Category } from './CategoryStore';
+import ExhibitorStore, { Exhibitor } from './ExhibitorStore';
 import UIState from './UIState';
 
 export default class RootStore {
-
-
     readonly categoryStore: CategoryStore;
     readonly exhibitorStore: ExhibitorStore;
     readonly boothStore: BoothStore;
@@ -22,6 +20,10 @@ export default class RootStore {
     @action clickBookmarks() {
         throw new Error('Not implemented');
     }
+
+    @action clickExhibitor(exhibitor: Exhibitor) {
+        throw new Error('Not implemented');
+    }
     
     @action moveToList() {
         throw new Error('Not implemented');
@@ -35,7 +37,7 @@ export default class RootStore {
         throw new Error("Method not implemented.");
     }
 
-    @action clickCategory(id: number) {
+    @action clickCategory(category: Category) {
         throw new Error("Method not implemented.");
     }
 

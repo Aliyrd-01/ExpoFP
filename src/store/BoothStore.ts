@@ -16,7 +16,7 @@ export default class BoothStore {
     }
 }
 
-abstract class BoothBase {
+export abstract class BoothBase {
     protected readonly store: BoothStore;
     readonly id: number;
     readonly name: string;

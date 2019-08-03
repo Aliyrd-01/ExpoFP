@@ -3,6 +3,7 @@ import RootStore from "./RootStore";
 import { remsToPixels } from '../utils';
 import { Exhibitor } from './ExhibitorStore';
 import { Booth } from './BoothStore';
+import { Category } from './CategoryStore';
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
 export type OverlaySize = "full" | "medium" | "small";
@@ -13,6 +14,7 @@ export default class UIState {
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
     @observable.ref details: Booth | Exhibitor = null;
+    @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable menu = false;
     @observable searchFocused = false;
     @observable printingPdf = false;
@@ -61,8 +63,18 @@ export default class UIState {
     @computed get mapVisibleLeft() { return this.overlayLeft ? this.overlayWidthPx : 0; }
     ///////////////////////////////////////////////////////////////////////////
 
+
     ///////////////////////////////////////////////////////////////////////////
-    // actions
+    // positions
+    @computed get listItems(): (Booth | Exhibitor | Category)[] {
+        throw new Error('Not implemented');
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // actions TODO: move all to root store?
     @action toggleMapOverlay() {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.overlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.overlaySize = "full";

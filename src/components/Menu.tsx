@@ -8,6 +8,7 @@ import baseUrl from "../tools/base-data-url";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
+import { Category } from "../store/CategoryStore";
 
 const logoUrl = baseUrl + data.logo;
 
@@ -56,7 +57,7 @@ function Menu() {
                     className="menu__cat"
                     href={`?${encodeURIComponent(c.slug)}`}
                     key={c.id}
-                    onClick={handleCategory.bind(window, c.id)}
+                    onClick={handleCategoryClick.bind(window, c)}
                 >
                     <div className="menu__cat-bullet">&bull;</div>
                     <div className="menu__cat-title">{c.name}</div>
@@ -140,9 +141,9 @@ function Menu() {
         uiState.printingPdf = true;
     }
 
-    function handleCategory(id: number, e: MouseEvent) {
+    function handleCategoryClick(c: Category, e: MouseEvent) {
         e.preventDefault();
-        store.clickCategory(id);
+        store.clickCategory(c);
     }
 }
 
