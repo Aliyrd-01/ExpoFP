@@ -7,6 +7,7 @@ import * as d3 from 'd3-selection';
 import svg from '../../data/svg';
 import { getNextId } from '../../tools/id';
 import Rect from '../../core/Rect';
+import { sortByName } from '../../utils';
 
 export default function initBooths(store: RootStore) {
     const { boothStore } = store;
@@ -33,6 +34,11 @@ export default function initBooths(store: RootStore) {
         }
 
         booths.push(b);
+    }
+
+    // sort booths of exhibitors
+    for(const e of store.exhibitorStore.exhibitors){
+        sortByName(e.booths);
     }
 
     for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]').nodes() as (SVGRectElement | SVGPathElement)[]) {

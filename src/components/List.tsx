@@ -7,6 +7,8 @@ import { Exhibitor } from "../store/ExhibitorStore";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import ExhibitorRow from "./ExhibitorRow";
+import "./List.scss";
+
 
 const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5));
 logger.log("List n:", n);
