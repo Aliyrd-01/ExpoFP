@@ -2,7 +2,7 @@ import { observable, computed, action } from 'mobx';
 import RootStore from "./RootStore";
 import { remsToPixels } from '../utils';
 import { Exhibitor } from './ExhibitorStore';
-import { Booth } from './BoothStore';
+import { Booth, RegularBooth } from './BoothStore';
 import { Category } from './CategoryStore';
 
 type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
@@ -65,9 +65,57 @@ export default class UIState {
 
 
     ///////////////////////////////////////////////////////////////////////////
-    // positions
+    // filtering
+    @computed get searchItems(): (Booth | Exhibitor | Category)[] {
+        if (this.list.type !== "search") return [];
+        let text = this.list.text.trim().toLowerCase() as string;
+        // let words = text.split(/\s+/).filter(x => x);
+
+        const {exhibitorStore, categoryStore, boothStore} = this.rootStore;
+
+        const exhibitorsArray = exhibitorStore.exhibitors;
+        const categoriesArray = categoryStore.categories;
+        const boothsArray = boothStore.booths;
+
+
+        if (!text) return exhibitorsArray;
+        if (text === 'testerror') throw new Error('Test error');
+        if (text === '2testerror') {
+            window.setTimeout(() => { throw new Error('Test error'); }, 1000);
+        }
+
+        let items: (Booth | Exhibitor | Category)[] = [];
+
+        // rulles here
+        const matchingExhibitors = exhibitorsArray.filter(
+            e =>
+                e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 ||
+                e.booths.find(b => b.name.toLowerCase() === text)
+        );
+        const matchingCategories = categoriesArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
+        const matchingBooths = boothsArray.filter(
+            e => (!(e instanceof RegularBooth) || !matchingExhibitors.find(x => x.booths.indexOf(e) !== -1)) &&
+                e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
+        );
+
+        items.push(...matchingExhibitors);
+        items.push(...matchingCategories);
+        items.push(...matchingBooths);
+
+        return items;
+    }
+
+
     @computed get listItems(): (Booth | Exhibitor | Category)[] {
-        throw new Error('Not implemented');
+        switch (this.list.type) {
+            case "search":
+                return this.searchItems;
+            case "bookmarks":
+                return this.rootStore.exhibitorStore.bookmarked;
+            case "category":
+                return this.rootStore.categoryStore.categories;
+        }
+        throw new Error("Unknown list.type");
     }
 
     ///////////////////////////////////////////////////////////////////////////
