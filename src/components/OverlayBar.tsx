@@ -14,6 +14,8 @@ const OverlayBar: React.FC<{
         onClose();
     }
 
+    // console.log('OverlayBar', { scrolled, backMode, hideClose, onBack, onClose, children })
+
     return (
         <div className={`overlay-bar ${classNames({ scrolled })}`}>
             <OverlayBarBack backMode={backMode || "menu"} enableAnimation={true} onBack={onBack} />

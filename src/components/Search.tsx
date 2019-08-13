@@ -7,6 +7,7 @@ import { useAutorun } from "../utils/mobx";
 import OverlayContent from "./OverlayContent";
 import List from "./List";
 import "./Search.scss";
+// import logger from "../tools/logger";
 
 const placeHolder = `Search company, ${data.boothTerm.toLowerCase()} or category`;
 
@@ -14,7 +15,10 @@ function Search() {
     const el = useRef<HTMLDivElement>();
 
     const s = useLocalStore(() => ({
-        hideRealInput: false,
+        elementTop: 0,
+        get hideRealInput() {
+            return uiState.overlayBottom ? this.elementTop > 50 || uiState.overlaySize !== "full" : false;
+        },
         get text() {
             return uiState.list.type === "search" ? uiState.list.text : "";
         },
@@ -47,17 +51,30 @@ function Search() {
     });
 
     useEffect(() => {
-        const setPosition = () => {
-            // if (!el.current.tagName) return;
-            const newVal = el.current.getBoundingClientRect().top > 50;
-            s.hideRealInput = newVal || uiState.overlaySize !== "full";
+        const setTop = () => {
+            s.elementTop = el.current.getBoundingClientRect().top;
         };
-        setPosition();
-        const intervalId = window.setInterval(setPosition, 50);
+        setTop();
+        const intervalId = window.setInterval(setTop, 50);
         return () => window.clearInterval(intervalId);
     }, [s]);
 
+    // useEffect(() => {
+    //     const setPosition = () => {
+    //         // if (!el.current.tagName) return;
+    //         const newVal = el.current.getBoundingClientRect().top > 50;
+    //         s.hideRealInput = newVal || uiState.overlaySize !== "full";
+    //         // logger.log("s.hideRealInput", s.hideRealInput, uiState.overlaySize, el.current.getBoundingClientRect().top > 50)
+    //     };
+    //     setPosition();
+    //     const intervalId = window.setInterval(setPosition, 50);
+    //     return () => window.clearInterval(intervalId);
+    // }, [s]);
+
     return useObserver(() => {
+        const fakeInput = s.hideRealInput ? (
+            <input type="search" placeholder={placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
+        ) : null;
         const bar = (
             <div className="search__bar" ref={el}>
                 <input
@@ -70,13 +87,15 @@ function Search() {
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                 />
-
-                <input type="search" v-if="hideRealInput" placeholder={placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
+                {fakeInput}
             </div>
         );
-        return <OverlayContent onClose={handleClose} onBack={handleBack} backMode={s.backMode} hideClose={!s.showClose} bar={bar} >
-            <List/>
-        </OverlayContent>;
+        // console.log("Search", s.hideRealInput, s.text);
+        return (
+            <OverlayContent onClose={handleClose} onBack={handleBack} backMode={s.backMode} hideClose={!s.showClose} bar={bar}>
+                <List />
+            </OverlayContent>
+        );
     });
 
     function setText() {
@@ -134,7 +153,7 @@ function Search() {
     function handleBack() {
         getInput().value = "";
         setText();
-        uiState.overlaySize = "medium";
+        uiState.desiredOverlaySize = "medium";
     }
 }
 

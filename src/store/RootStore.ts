@@ -40,7 +40,7 @@ export default class RootStore {
     @action selectCategory(category: Category) {
         this.uiState.details = null;
         this.uiState.list = { type: "category", category };
-        this.uiState.overlaySize = "full";
+        this.uiState.desiredOverlaySize = "full";
     }
 
     @action selectSearch(text?: string) {
@@ -125,17 +125,17 @@ export default class RootStore {
     }
 
     @action showMap() {
-        if (this.uiState.overlayPosition === "bottom" && isWebGlSupported) this.uiState.overlaySize = "medium";
+        if (this.uiState.overlayPosition === "bottom" && isWebGlSupported) this.uiState.desiredOverlaySize = "medium";
         // if (getters.overlayPosition === "bottom" && isWebGlSupported() commit("setOverlaySize", "medium");
     }
     @action showOverlay() {
-        if (this.uiState.overlayPosition === "bottom") this.uiState.overlaySize = "full";
+        if (this.uiState.overlayPosition === "bottom") this.uiState.desiredOverlaySize = "full";
         // if (getters.overlayPosition === "bottom") commit("setOverlaySize", "full");
     }
     @action toggleMapOverlay() {
-        if (this.uiState.overlayPosition === "bottom" && this.uiState.overlaySize === "full") this.uiState.overlaySize = "medium";
+        if (this.uiState.overlayPosition === "bottom" && this.uiState.overlaySize === "full") this.uiState.desiredOverlaySize = "medium";
         else if (this.uiState.overlayPosition === "bottom" && this.uiState.overlaySize !== "full")
-            this.uiState.overlaySize = "full";
+            this.uiState.desiredOverlaySize = "full";
         // if (getters.overlayPosition === "bottom" && state.overlaySize === "full") commit("setOverlaySize", "medium");
         // else if (getters.overlayPosition === "bottom" && state.overlaySize !== "full") commit("setOverlaySize", "full");
     }

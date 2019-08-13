@@ -25,7 +25,7 @@ export default class UIState {
     @observable searchFocused = false;
     @observable printingPdf = false;
     @observable.struct screenSize: ScreenSize;
-    @observable overlaySize: OverlaySize = "medium";
+    @observable desiredOverlaySize: OverlaySize = "medium";
     @observable overlayShowsAll = false;
     @observable centerMap = false;
     @observable activeListIndex = -1;
@@ -42,7 +42,10 @@ export default class UIState {
         if (!this.screenSize || this.screenSize.width > 550) return "left";
         return "bottom";
     }
-
+    @computed get overlaySize(): OverlaySize {
+        if (this.overlayLeft) return "full";
+        return this.desiredOverlaySize;
+    }
     @computed get overlayBottom() {
         return this.overlayPosition === "bottom";
     }
@@ -52,7 +55,6 @@ export default class UIState {
     @computed get overlayWidthPx() {
         return this.overlayLeft ? remsToPixels(23.5) : remsToPixels(this.screenSize.width);
     }
-
     @computed get wsWidthPx() {
         return this.overlayLeft ? this.screenSize.width - this.overlayWidthPx : this.screenSize.width;
     }
@@ -149,8 +151,8 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // actions TODO: move all to root store?
     @action toggleMapOverlay() {
-        if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.overlaySize = "medium";
-        else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.overlaySize = "full";
+        if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
+        else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
     }
 
     ///////////////////////////////////////////////////////////////////////////

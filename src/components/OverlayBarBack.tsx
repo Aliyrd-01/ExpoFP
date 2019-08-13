@@ -4,13 +4,31 @@ import store from "../store";
 import "./OverlayBarBack.scss";
 const { uiState } = store;
 
-const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "menu" | "none"; onBack: () => void }> = ({
+type BackMode = "back" | "menu" | "none";
+
+const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: BackMode; onBack: () => void }> = ({
     enableAnimation,
     backMode,
     onBack
 }) => {
-    const [animationEnded, setAnimationEnded] = useState(true);
-    const [backTimeout, setBackTimeout] = useState(undefined);
+    const showBack = backMode === "back";
+    const [nextShowBack, setNextShowBack] = useState<boolean>(showBack);
+    const animationEnded = nextShowBack === showBack;
+
+    useEffect(() => {
+        // set nextShowBack after initial render
+        setNextShowBack(showBack);
+    }, [showBack]);
+
+    // console.log("OverlayBarBack", isFirstRun.current, showBack, backMode, animationEnded, divClass(), icon1Class(), icon2Class());
+    if (backMode === "none") return null;
+
+    return (
+        <div className={`overlay-bar-back ${divClass()}`}>
+            <i className={`overlay-bar-back__icon1 far ${icon1Class()}`} />
+            <button className={`overlay-bar-back__icon2 far ${icon2Class()}`} onClick={handleClick}></button>
+        </div>
+    );
 
     function divClass() {
         return classNames({
@@ -20,8 +38,6 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
         });
     }
 
-    const showBack = backMode === "back";
-
     function icon1Class() {
         return !showBack ? "fa-chevron-left" : "fa-bars";
     }
@@ -29,28 +45,6 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: "back" | "m
     function icon2Class() {
         return showBack ? "fa-chevron-left" : "fa-bars";
     }
-
-    useEffect(() => {
-        if (showBack) {
-            setAnimationEnded(false);
-            if (backTimeout) window.clearTimeout(backTimeout);
-            const backTimeoutId = window.setTimeout(() => {
-                setAnimationEnded(true);
-            }, 20);
-            setBackTimeout(backTimeoutId);
-        }
-        // TODO: do this work at all?
-    }, [showBack, backTimeout]);
-
-    if (backMode === "none") return null;
-    return (
-        <div className={`overlay-bar-back ${divClass()}`}>
-            <i className={`overlay-bar-back__icon1 far ${icon1Class()}`} />
-            <a className={`overlay-bar-back__icon2 far ${icon2Class()}`} href="/" onClick={handleClick}>
-                &nbsp;
-            </a>
-        </div>
-    );
 
     function handleClick(e: MouseEvent) {
         e.preventDefault();

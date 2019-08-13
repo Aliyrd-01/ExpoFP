@@ -82,7 +82,7 @@ export default observer(function Overlay() {
             s.startedTouch = undefined;
             s.touchDiff = undefined;
             if (Math.abs(touchDiff) > 10 && newSize !== uiState.overlaySize) {
-                uiState.overlaySize = newSize;
+                uiState.desiredOverlaySize = newSize;
             }
             // this will now transition to desired size
             position();
@@ -152,6 +152,7 @@ export default observer(function Overlay() {
         }
     }, [s]);
 
+    console.log('Overlay rendered')
     return (
         <div className={`overlay ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
             {s.noMove}
