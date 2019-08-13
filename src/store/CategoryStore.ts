@@ -11,6 +11,10 @@ export default class CategoryStore {
         return new Map<number, Category>(this.categories.map(c => [c.id, c]));
     }
 
+    @computed get seminarsCategory() {
+        return this.categories.find(c => c.slug === 'seminars');
+    }
+
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }

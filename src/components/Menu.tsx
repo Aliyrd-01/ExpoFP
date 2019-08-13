@@ -126,7 +126,7 @@ function Menu() {
         close();
         store.selectSearch();
         window.setTimeout(() => {
-            store.setSearchFocused(true);
+            uiState.searchFocused = true;
         }, 1);
     }
 

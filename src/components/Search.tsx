@@ -99,7 +99,7 @@ function Search() {
     }
 
     function handleKeydown(e: KeyboardEvent) {
-        let delta = 0;
+        let delta = 0 as 0 | 1 | -1;
         switch (e.key) {
             case "Down":
             case "ArrowDown":

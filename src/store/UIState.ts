@@ -1,13 +1,17 @@
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action } from "mobx";
 import RootStore from "./RootStore";
-import { remsToPixels } from '../utils';
-import { Exhibitor } from './ExhibitorStore';
-import { Booth, RegularBooth } from './BoothStore';
-import { Category } from './CategoryStore';
+import { remsToPixels } from "../utils";
+import { Exhibitor } from "./ExhibitorStore";
+import { Booth, RegularBooth } from "./BoothStore";
+import { Category } from "./CategoryStore";
 
-type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; category: Category };
+type ListType =
+    | { type: "search"; text: string; focused: boolean }
+    | { type: "bookmarks" }
+    | { type: "category"; category: Category };
 export type OverlaySize = "full" | "medium" | "small";
-export type ScreenSize = { width: number, height: number };
+export type ScreenSize = { width: number; height: number };
+export type ListItem = Booth | Exhibitor | Category;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -15,6 +19,8 @@ export default class UIState {
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
     @observable.ref details: Booth | Exhibitor = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
+    @observable.ref hoveredBooth: Booth = null;
+    @observable moveToBooths: Booth[] = null;
     @observable menu = false;
     @observable searchFocused = false;
     @observable printingPdf = false;
@@ -37,64 +43,85 @@ export default class UIState {
         return "bottom";
     }
 
-    @computed get overlayBottom() { return this.overlayPosition === "bottom"; }
-    @computed get overlayLeft() { return this.overlayPosition === "left"; }
-    @computed get overlayWidthPx() { return this.overlayLeft ? remsToPixels(23.5) : remsToPixels(this.screenSize.width); }
-
-    @computed get wsWidthPx() { return this.overlayLeft ? this.screenSize.width - this.overlayWidthPx : this.screenSize.width; }
-    @computed get wsImageHeightPx() { return remsToPixels(3); }
-    @computed get wsPaddingPx() { return remsToPixels(0.3); }
-    @computed get wsOccupiedHeightPx() { return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0; }
-    @computed get wsShown() {
-        // TODO: RESTORE
-        return false;//this.advertisedExhibitors.length > 0;
+    @computed get overlayBottom() {
+        return this.overlayPosition === "bottom";
+    }
+    @computed get overlayLeft() {
+        return this.overlayPosition === "left";
+    }
+    @computed get overlayWidthPx() {
+        return this.overlayLeft ? remsToPixels(23.5) : remsToPixels(this.screenSize.width);
     }
 
-    @computed get wsDesktopPosition() { return process.env.REACT_APP_EFP_EXPO === "cbresupplypartner" ? "bottom" : "top" }
-    @computed get wsPosition() { return this.overlayBottom ? "top" : this.wsDesktopPosition; }
+    @computed get wsWidthPx() {
+        return this.overlayLeft ? this.screenSize.width - this.overlayWidthPx : this.screenSize.width;
+    }
+    @computed get wsImageHeightPx() {
+        return remsToPixels(3);
+    }
+    @computed get wsPaddingPx() {
+        return remsToPixels(0.3);
+    }
+    @computed get wsOccupiedHeightPx() {
+        return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0;
+    }
+    @computed get wsShown() {
+        // TODO: RESTORE
+        return false; //this.advertisedExhibitors.length > 0;
+    }
+
+    @computed get wsDesktopPosition() {
+        return process.env.REACT_APP_EFP_EXPO === "cbresupplypartner" ? "bottom" : "top";
+    }
+    @computed get wsPosition() {
+        return this.overlayBottom ? "top" : this.wsDesktopPosition;
+    }
     // map
-    @computed get mapVisibleTop() { return this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0; }
+    @computed get mapVisibleTop() {
+        return this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0;
+    }
     @computed get mapVisibleBottom() {
         if (this.overlayLeft) {
             return this.wsPosition === "bottom" ? this.wsOccupiedHeightPx : 0;
         }
         return remsToPixels(this.overlayMediumHeightRems);
     }
-    @computed get mapVisibleLeft() { return this.overlayLeft ? this.overlayWidthPx : 0; }
+    @computed get mapVisibleLeft() {
+        return this.overlayLeft ? this.overlayWidthPx : 0;
+    }
     ///////////////////////////////////////////////////////////////////////////
-
 
     ///////////////////////////////////////////////////////////////////////////
     // filtering
-    @computed get searchItems(): (Booth | Exhibitor | Category)[] {
+    @computed get searchItems(): (ListItem)[] {
         if (this.list.type !== "search") return [];
         let text = this.list.text.trim().toLowerCase() as string;
         // let words = text.split(/\s+/).filter(x => x);
 
-        const {exhibitorStore, categoryStore, boothStore} = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
 
-
         if (!text) return exhibitorsArray;
-        if (text === 'testerror') throw new Error('Test error');
-        if (text === '2testerror') {
-            window.setTimeout(() => { throw new Error('Test error'); }, 1000);
+        if (text === "testerror") throw new Error("Test error");
+        if (text === "2testerror") {
+            window.setTimeout(() => {
+                throw new Error("Test error");
+            }, 1000);
         }
 
-        let items: (Booth | Exhibitor | Category)[] = [];
+        let items: (ListItem)[] = [];
 
         // rulles here
         const matchingExhibitors = exhibitorsArray.filter(
-            e =>
-                e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 ||
-                e.booths.find(b => b.name.toLowerCase() === text)
+            e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find(b => b.name.toLowerCase() === text)
         );
         const matchingCategories = categoriesArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         const matchingBooths = boothsArray.filter(
-            e => (!(e instanceof RegularBooth) || !matchingExhibitors.find(x => x.booths.indexOf(e) !== -1)) &&
+            e =>
+                (!(e instanceof RegularBooth) || !matchingExhibitors.find(x => x.booths.indexOf(e) !== -1)) &&
                 e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
         );
 
@@ -105,8 +132,7 @@ export default class UIState {
         return items;
     }
 
-
-    @computed get listItems(): (Booth | Exhibitor | Category)[] {
+    @computed get listItems(): (ListItem)[] {
         switch (this.list.type) {
             case "search":
                 return this.searchItems;
@@ -120,7 +146,6 @@ export default class UIState {
 
     ///////////////////////////////////////////////////////////////////////////
 
-
     ///////////////////////////////////////////////////////////////////////////
     // actions TODO: move all to root store?
     @action toggleMapOverlay() {
@@ -130,6 +155,3 @@ export default class UIState {
 
     ///////////////////////////////////////////////////////////////////////////
 }
-
-
-
