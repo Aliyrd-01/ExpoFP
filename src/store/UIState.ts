@@ -5,7 +5,7 @@ import { Exhibitor } from './ExhibitorStore';
 import { Booth, RegularBooth } from './BoothStore';
 import { Category } from './CategoryStore';
 
-type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; id: number };
+type ListType = { type: "search"; text: string; focused: boolean } | { type: "bookmarks" } | { type: "category"; category: Category };
 export type OverlaySize = "full" | "medium" | "small";
 export type ScreenSize = { width: number, height: number };
 

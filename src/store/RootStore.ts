@@ -35,17 +35,17 @@ export default class RootStore {
         this.uiState.list = { type: "bookmarks" };
     }
 
-    // @action selectCategory({ commit }, id) {
-    //     commit("setDetails", null);
-    //     commit("setList", { type: "category", id });
-    //     commit("setOverlaySize", "full");
-    // }
+    @action selectCategory(category: Category) {
+        this.uiState.details = null;
+        this.uiState.list = { type: "category", category };
+        this.uiState.overlaySize = "full";
+    }
 
-    // @action selectSearch({ commit }, text) {
-    //     commit("setDetails", null);
-    //     commit("setList", { type: "search", text: text || "" });
-    //     commit("setActiveListIndex", -1);
-    // }
+    @action selectSearch(text?: string) {
+        this.uiState.details = null;
+        this.uiState.list = { type: "search", text: text || "", focused: false };
+        this.uiState.activeListIndex = -1;
+    }
 
     @action clickBookmarks() {
         throw new Error("Not implemented");
