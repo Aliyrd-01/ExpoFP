@@ -74,7 +74,7 @@ function Search() {
                 <input type="search" v-if="hideRealInput" placeholder={placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
             </div>
         );
-        return <OverlayContent onClose={handleClose} onBack={handleBack} backMode="none" hideClose={!s.showClose} bar={bar} >
+        return <OverlayContent onClose={handleClose} onBack={handleBack} backMode={s.backMode} hideClose={!s.showClose} bar={bar} >
             <List/>
         </OverlayContent>;
     });
