@@ -60,9 +60,6 @@ function setTitle() {
     document.title = title;
 }
 
-autorun(()=>stateToUrl);
-autorun(()=>setTitle);
-
 function stateToUrl() {
     if (disableStateToUrl) return;
     let queryRaw = "";
@@ -135,7 +132,8 @@ if (uiState.previewExhibitor) {
 }
 
 dispatchFromUrl();
-setTitle();
+autorun(setTitle);
+autorun(stateToUrl);
 
 let timeout: number;
 

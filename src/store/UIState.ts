@@ -37,15 +37,15 @@ export default class UIState {
         this.rootStore = rootStore;
     }
 
-    @computed get selectedExhibitor() {
+    @computed({keepAlive: true}) get selectedExhibitor() {
         return this.details instanceof Exhibitor ? this.details : null;
     }
 
-    @computed get selectedBooth() {
+    @computed({keepAlive: true}) get selectedBooth() {
         return this.details instanceof BoothBase ? this.details : null;
     }
 
-    @computed get selectedCategory() {
+    @computed({keepAlive: true}) get selectedCategory() {
         return this.list.type === "category" ? this.list.category : null;
     }
 

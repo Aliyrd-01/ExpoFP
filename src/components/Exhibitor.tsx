@@ -47,7 +47,7 @@ function ExhibitorComponent() {
     useReaction(
         () => s.exhibitor,
         () => {
-            el.current.parentElement.scrollTop = 0;
+            if (el.current) el.current.parentElement.scrollTop = 0;
             s.collapsed = true;
         }
     );
@@ -57,7 +57,7 @@ function ExhibitorComponent() {
         const bar = (
             <>
                 <div className="exhibitor__bar">
-                    <span onClick={()=>store.toggleMapOverlay()}>
+                    <span onClick={() => store.toggleMapOverlay()}>
                         <span>{exhibitor.name}</span>
                         {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                     </span>
@@ -65,7 +65,7 @@ function ExhibitorComponent() {
                         <BookmarkSvg />
                     </a>
                 </div>
-                <div className="exhibitor__bar-booth" onClick={()=>store.toggleMapOverlay()}>
+                <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
                     {data.boothTerm}
                     {exhibitor.booths.map(booth => (
                         <span key={booth.id}>{booth.name}</span>
@@ -226,7 +226,7 @@ function ExhibitorComponent() {
         store.selectCategory(c);
     }
 
-    function sendLoginLink(e:MouseEvent<HTMLButtonElement>) {
+    function sendLoginLink(e: MouseEvent<HTMLButtonElement>) {
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
         if (!window.confirm(`Send login instructions to ${email} to edit profile?`)) return;
