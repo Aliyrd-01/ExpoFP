@@ -7,6 +7,7 @@ import { remsToPixels } from "../utils";
 import { OverlaySize } from "../store/UIState";
 import Menu from "./Menu";
 import Search from "./Search";
+import Exhibitor from "./Exhibitor";
 // TODO: RESTORE - only use what's needed from d3
 import * as d3 from "d3";
 import { autorun } from "mobx";
@@ -158,6 +159,7 @@ export default observer(function Overlay() {
             {s.noMove}
             <Menu />
             <Search />
+            <Exhibitor />
         {/* <Bookmarks />
         <Category />
         <Exhibitor />

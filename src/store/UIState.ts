@@ -2,7 +2,7 @@ import { observable, computed, action } from "mobx";
 import RootStore from "./RootStore";
 import { remsToPixels } from "../utils";
 import { Exhibitor } from "./ExhibitorStore";
-import { Booth, RegularBooth } from "./BoothStore";
+import { Booth, RegularBooth, BoothBase } from "./BoothStore";
 import { Category } from "./CategoryStore";
 
 type ListType =
@@ -34,6 +34,18 @@ export default class UIState {
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
+    }
+
+    @computed get selectedExhibitor() {
+        return this.details instanceof Exhibitor ? this.details : null;
+    }
+
+    @computed get selectedBooth() {
+        return this.details instanceof BoothBase ? this.details : null;
+    }
+
+    @computed get selectedCategory() {
+        return this.list.type === "category" ? this.list.category : null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
