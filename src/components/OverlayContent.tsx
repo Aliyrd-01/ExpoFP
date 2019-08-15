@@ -14,7 +14,7 @@ const OverlayContent: React.FC<{
     particles?: boolean;
     backMode: "back" | "menu" | "none";
     hideClose?: boolean;
-    onBack: () => void;
+    onBack?: () => void;
     onClose: () => void;
 }> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
     const [scrolled, setScrolled1] = useState(false);
