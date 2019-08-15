@@ -11,6 +11,7 @@
         "copy-to-clipboard": "^3.2.0",
         "d3": "^5.9.7",
         "deepmerge": "^4.0.0",
+        "history": "^4.9.0",
         "jsonschema": "^1.2.4",
         "mobx": "^5.13.0",
         "mobx-react-lite": "^1.4.1",
@@ -43,6 +44,7 @@
     "devDependencies": {
         "@types/classnames": "^2.2.9",
         "@types/d3": "^5.7.2",
+        "@types/history": "^4.7.2",
         "env-cmd": "^9.0.3",
         "git-branch": "^2.0.1",
         "node-sass": "^4.12.0"

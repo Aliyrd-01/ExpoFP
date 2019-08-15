@@ -29,6 +29,7 @@ export default class UIState {
     @observable overlayShowsAll = false;
     @observable centerMap = false;
     @observable activeListIndex = -1;
+    previewExhibitor: Exhibitor = null;
 
     overlayMediumHeightRems = 10;
 
