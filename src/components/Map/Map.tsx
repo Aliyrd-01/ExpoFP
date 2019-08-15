@@ -1,9 +1,10 @@
-import "./Map.scss";
-import { useObserver, useLocalStore } from "mobx-react-lite";
 import classNames from "classnames";
-import { useEffect, useRef, useMemo } from "react";
 // TODO: RESTORE - only use what's needed from d3
 import * as d3 from "d3";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import React, { useEffect, useMemo, useRef } from "react";
+import "./Map.scss";
+
 
 export default function Map() {
     const el = useRef<HTMLCanvasElement>();

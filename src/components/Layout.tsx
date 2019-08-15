@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import "./Layout.scss";
-import Overlay from "./Overlay";
 import { observer } from "mobx-react-lite";
+import React, { useEffect, useState } from "react";
 import store from "../store";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
+import "./Layout.scss";
 import Map from "./Map/Map";
+import Overlay from "./Overlay";
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
