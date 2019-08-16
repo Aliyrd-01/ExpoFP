@@ -23,7 +23,7 @@ export default function Map() {
 
     const s = useLocalStore(() => ({
         animatePlease: false,
-        moving: false,
+        moving: false
         // $canvas : null as d3.Selection<HTMLCanvasElement, unknown, null, undefined>,
         // zoom: null as d3.ZoomBehavior<Element, unknown>,
         // drawer: null as Drawer
@@ -55,26 +55,26 @@ export default function Map() {
                 s.moving = false;
             });
 
-            setZoom(zoom);
+        setZoom(zoom);
 
-            configInertia(s.zoom);
-            //m.setVisibleRect(this.visibleRect);
-            sizeCanvasToParentElement(el.current);
-            const drawer = createDrawer(el.current, true);
-            setDrawer(drawer);
-            drawer.setVisibleRect((this.visibleRect as Rect).scale(this.devicePixelRatio));
-            drawer.setPixelRatio(this.devicePixelRatio);
-    
-            window.addEventListener("resize", () => {
-                // __logger.log('canvas change', canvas);
-                sizeCanvasToParentElement(canvas);
-                drawer.resetCanvasSize();
-            });
-    
-            setZoomTransformAnimated(d3.zoomIdentity, 0, null);
-            this.$canvas.call(this.zoom);
-    
-            //if (EFP_EXPO === "cbresupplypartner") store.commit("setArea", "ground");
+        configInertia(zoom);
+        //m.setVisibleRect(this.visibleRect);
+        sizeCanvasToParentElement(el.current);
+        const drawer = createDrawer(el.current, true);
+        setDrawer(drawer);
+        drawer.setVisibleRect((this.visibleRect as Rect).scale(this.devicePixelRatio));
+        drawer.setPixelRatio(this.devicePixelRatio);
+
+        window.addEventListener("resize", () => {
+            // __logger.log('canvas change', canvas);
+            sizeCanvasToParentElement(canvas);
+            drawer.resetCanvasSize();
+        });
+
+        setZoomTransformAnimated(d3.zoomIdentity, 0, null);
+        $canvas.call(zoom);
+
+        //if (EFP_EXPO === "cbresupplypartner") store.commit("setArea", "ground");
     }, [el.current]);
 
     return useObserver(() => (
@@ -89,9 +89,6 @@ export default function Map() {
             ExpoFP.com
         </canvas>
     ));
-
-
-
 
     let zoomAf: number;
     function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc: (k: number) => number) {
