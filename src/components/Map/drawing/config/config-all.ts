@@ -1,7 +1,7 @@
 import { DrawerContext } from "../Drawer1";
-import configMatrix from './config-matrix';
-import configDim from './config-dim';
-import configCanvas from './config-canvas';
+import configMatrix from "./config-matrix";
+import configDim from "./config-dim";
+import configCanvas from "./config-canvas";
 import configBg from "./config-bg";
 // import configBooths from "./config-booths";
 
@@ -13,16 +13,17 @@ export default function configAll(context: DrawerContext) {
     configDim(context);
     configCanvas(context);
     configBg(context);
-    // const boothsAnimate = configBooths(context)
+    const boothsAnimate = null;
+    //configBooths(context)
 
     matrixAfter();
 
-    return function () {
+    return function() {
         // to be running when all painters prepared
         if (context.updatable) {
             window.setTimeout(() => {
-                // matrixAnimate(boothsAnimate);
-            }, delayAnimations)
+                matrixAnimate(boothsAnimate);
+            }, delayAnimations);
         }
     };
 }
