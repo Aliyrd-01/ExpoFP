@@ -1,45 +1,67 @@
 import classNames from "classnames";
 // TODO: RESTORE - only use what's needed from d3
 import * as d3 from "d3";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import "./Map.scss";
-import configInertia from "./zoom-inertia";
-import { m4 } from "twgl.js";
+import { ZoomTransform } from "d3";
 import { event as currentEvent } from "d3-selection";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import React, { useEffect, useRef } from "react";
+import { m4 } from "twgl.js";
+import Rect from "../../core/Rect";
+import store, { uiState } from "../../store";
+import { Booth } from "../../store/BoothStore";
+import logger from "../../tools/logger";
+import getBoothIdFromClientXy from "./booth-by-xy";
+import createDrawer, { Drawer } from "./drawing/Drawer1";
+import "./Map.scss";
+import { sizeCanvasToParentElement } from "./utils";
 // import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
-import { ZoomTransform } from "d3";
-import Rect from "../../core/Rect";
-import createDrawer, { Drawer } from "./drawing/drawer";
-import logger from "../../tools/logger";
-import { sizeCanvasToParentElement } from "./utils";
+import configInertia from "./zoom-inertia";
 
 export default function Map() {
+    // do not use useState unless really needed
     const el = useRef<HTMLCanvasElement>();
-    const [$canvas, set$canvas] = useState<d3.Selection<HTMLCanvasElement, unknown, null, undefined>>();
-    const [zoom, setZoom] = useState<d3.ZoomBehavior<Element, unknown>>();
-    const [drawer, setDrawer] = useState<Drawer>();
-
+    // use mobx for everything
     const s = useLocalStore(() => ({
         animatePlease: false,
-        moving: false
-        // $canvas : null as d3.Selection<HTMLCanvasElement, unknown, null, undefined>,
-        // zoom: null as d3.ZoomBehavior<Element, unknown>,
-        // drawer: null as Drawer
+        moving: false,
+        $canvas: null as d3.Selection<HTMLCanvasElement, unknown, null, undefined>,
+        zoom: null as d3.ZoomBehavior<Element, unknown>,
+        drawer: null as Drawer,
+        prevBoothOver: null as Booth,
+        get visibleRect(){
+            const w = uiState.screenSize.width;
+            const h = uiState.screenSize.height;
+            const rect = Rect.fromX1y1x2y2(uiState.mapVisibleLeft, uiState.mapVisibleTop, w, h - uiState.mapVisibleBottom);
+            return rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+        }
     }));
 
     // init
-    useEffect(() => {
-        const $canvas = d3.select(el.current);
-        set$canvas($canvas);
+    useEffect(init, []);
+
+    return useObserver(() => (
+        <canvas
+            ref={el}
+            className={classNames({ map: true, moving: s.moving })}
+            onMouseMove={handleMouseMoveAndOver}
+            onClick={handleClick}
+            onMouseOver={handleMouseMoveAndOver}
+            onMouseOut={handleMouseOut}
+        >
+            ExpoFP.com
+        </canvas>
+    ));
+
+    function init() {
+        s.$canvas = d3.select(el.current);
         //s.$canvas = d3.select(el.current);
-        const zoom = d3
+        s.zoom = d3
             .zoom()
             .clickDistance(15)
             .interpolate(d3.interpolate)
             .scaleExtent([0.5, 12])
-            .constrain((transform, extent, translateExtent) => zoomBound(drawer, transform, false))
+            .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
@@ -47,48 +69,53 @@ export default function Map() {
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, d3.easeExpOut);
                 else if (t.animate) setZoomTransformAnimated(t, 500, d3.easeExpOut);
                 else setZoomTransformAnimated(t, 0, null);
-
                 s.animatePlease = false;
                 s.moving = true;
             })
             .on("end", () => {
                 s.moving = false;
             });
-
-        setZoom(zoom);
-
-        configInertia(zoom);
+        
+        configInertia(s.zoom);
         //m.setVisibleRect(this.visibleRect);
         sizeCanvasToParentElement(el.current);
-        const drawer = createDrawer(el.current, true);
-        setDrawer(drawer);
-        drawer.setVisibleRect((this.visibleRect as Rect).scale(this.devicePixelRatio));
-        drawer.setPixelRatio(this.devicePixelRatio);
-
+        s.drawer = createDrawer(el.current, true);
+       
+        s.drawer.setVisibleRect((s.visibleRect as Rect).scale(uiState.devicePixelRatio));
+        s.drawer.setPixelRatio(uiState.devicePixelRatio);
         window.addEventListener("resize", () => {
             // __logger.log('canvas change', canvas);
-            sizeCanvasToParentElement(canvas);
-            drawer.resetCanvasSize();
+            sizeCanvasToParentElement(el.current);
+            s.drawer.resetCanvasSize();
         });
-
         setZoomTransformAnimated(d3.zoomIdentity, 0, null);
-        $canvas.call(zoom);
+        s.$canvas.call(s.zoom as any);
+    }
 
-        //if (EFP_EXPO === "cbresupplypartner") store.commit("setArea", "ground");
-    }, [el.current]);
+    function raiseBoothOver(b: Booth) {
+        if (s.prevBoothOver === b) return;
+        s.prevBoothOver = b;
+        uiState.hoveredBooth = b;
+    }
 
-    return useObserver(() => (
-        <canvas
-            ref={el}
-            className={classNames({ map: true, moving: s.moving })}
-            onMouseMove={handleMouseMove}
-            onClick={handleClick}
-            onMouseOver={handleMouseOver}
-            onMouseOut={handleMouseOut}
-        >
-            ExpoFP.com
-        </canvas>
-    ));
+    function handleMouseMoveAndOver(e) {
+        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        raiseBoothOver(b);
+    }
+ 
+    function handleMouseOut(e) {
+        raiseBoothOver(undefined);
+    }
+
+    function handleClick(e: React.MouseEvent) {
+        if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
+            store.showMap();
+        }
+        // if (!this.props.onBoothClick) return;
+        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        logger.log("click", b);
+        store.clickBooth(b);
+    }
 
     let zoomAf: number;
     function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc: (k: number) => number) {

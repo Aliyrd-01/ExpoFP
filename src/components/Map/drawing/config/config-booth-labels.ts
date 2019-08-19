@@ -1,8 +1,9 @@
-import BoothDrawerBase from "./BoothDrawerBase";
-import { createCircleCanvas, createLabelCanvas, createDetailsCanvas } from "./canvases";
+import { RegularBooth } from "../../../../store/BoothStore";
+import settings from "../../../../tools/settings";
+import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import settings from "@/settings";
-import { DrawerContext } from "../drawer";
+import BoothDrawerBase from "./BoothDrawerBase";
+import { createCircleCanvas, createDetailsCanvas, createLabelCanvas } from "./canvases";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;

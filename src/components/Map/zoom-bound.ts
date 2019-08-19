@@ -1,5 +1,6 @@
-import { svgWidth, svgHeight } from "@/tools/svg";
-import { Drawer } from "./drawing/drawer";
+import { Drawer } from "./drawing/Drawer1";
+import { ZoomTransform, zoomIdentity } from "d3-zoom";
+import { svgHeight, svgWidth } from "../../data/svg";
 // import { MatrixReadonly } from "./drawing/Matrix";
 
 export default function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolean) {
@@ -38,7 +39,7 @@ export default function zoomBound(drawer: Drawer, transform: ZoomTransform, forA
     const y = Math.min(maxTy, Math.max(minTy, transform.y));
     const x = Math.min(maxTx, Math.max(minTx, transform.x));
     if (y !== transform.y || x !== transform.x) {
-        return d3.zoomIdentity.translate(x, y).scale(transform.k);// { x, y, k: transform.k };
+        return zoomIdentity.translate(x, y).scale(transform.k); // { x, y, k: transform.k };
     }
     return transform;
 }

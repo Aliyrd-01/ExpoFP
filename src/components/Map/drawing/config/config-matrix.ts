@@ -1,6 +1,8 @@
 // import { allDrawers, requireUpdate } from "./draw";
 import animate from './animate';
-import { DrawerContext } from "../Drawer";
+import { DrawerContext } from "../Drawer1";
+import { easeExpOut } from 'd3-ease';
+import { interpolateNumber } from 'd3-interpolate';
 
 
 export default function configMatrix(c: DrawerContext) {
@@ -15,7 +17,7 @@ export default function configMatrix(c: DrawerContext) {
         after: update,
         animate: (cb) => {
             if (c.updatable) {
-                animate(0, 1000, d3.easeExpOut, d3.interpolateNumber(minVisibleScale, maxVisibleScale),
+                animate(0, 1000, easeExpOut, interpolateNumber(minVisibleScale, maxVisibleScale),
                     c.requireUpdate.bind(c),
                     v => {
                         c.setVisibleScale(v);

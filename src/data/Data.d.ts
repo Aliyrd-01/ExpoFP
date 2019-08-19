@@ -86,3 +86,6 @@ interface PathInfo {
     triangles: Triangle[];
     color: string;
 }
+
+declare const __fp: string;
+declare const __fpPaths: { [id: string]: any };

@@ -1,13 +1,18 @@
-import Color from 'color';
+import Color from "color";
 import TrianglePainter from "../painters/TrianglePainter";
-import svg from '@/tools/svg'
-import { DrawerContext } from '../Drawer';
+import { DrawerContext } from "../Drawer1";
+import svg from "../../../../data/svg";
+import Rect from "../../../../core/Rect";
+import { select } from "d3-selection";
 
 export default function configBg(context: DrawerContext) {
-    const drawer: TrianglePainter = context.requirePainter('bg', TrianglePainter, 10);
+    const drawer: TrianglePainter = context.requirePainter("bg", TrianglePainter, 10);
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
-    const bgElements = (d3.select(svg).select('#BG').selectAll('path, rect').nodes() as SVGElement[]);
+    const bgElements = select(svg)
+        .select("#BG")
+        .selectAll("path, rect")
+        .nodes() as SVGElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") {
@@ -19,12 +24,12 @@ export default function configBg(context: DrawerContext) {
 
     function addPath(svgPath: SVGPathElement) {
         if (!svgPath.style.fill) return;
-        const d = parseInt(svgPath.getAttribute('data-index'));
+        const d = parseInt(svgPath.getAttribute("data-index"));
         const color = Color(svgPath.style.fill).vec4();
 
         const mesh = __fpPaths[d];
 
-        // TODO: remove in future versions 
+        // TODO: remove in future versions
         for (const p of mesh.positions) {
             // a bug in svgMesh3d when normalize: false ?
             p[1] = Math.abs(p[1]);
@@ -38,7 +43,6 @@ export default function configBg(context: DrawerContext) {
                 p2: mesh.positions[c[2]],
                 color
             });
-
         }
     }
 
@@ -65,9 +69,4 @@ export default function configBg(context: DrawerContext) {
     //animate(600, 300, d3.easeLinear, d3.interpolateNumber(0, 1), v => drawer.alpha = v);
 
     // drawer.alpha = 0.5;
-};
-
-
-
-
-
+}

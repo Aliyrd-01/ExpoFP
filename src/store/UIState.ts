@@ -29,6 +29,7 @@ export default class UIState {
     @observable overlayShowsAll = false;
     @observable centerMap = false;
     @observable activeListIndex = -1;
+    @observable devicePixelRatio = window.devicePixelRatio;
     previewExhibitor: Exhibitor = null;
 
     overlayMediumHeightRems = 10;
@@ -37,15 +38,15 @@ export default class UIState {
         this.rootStore = rootStore;
     }
 
-    @computed({keepAlive: true}) get selectedExhibitor() {
+    @computed({ keepAlive: true }) get selectedExhibitor() {
         return this.details instanceof Exhibitor ? this.details : null;
     }
 
-    @computed({keepAlive: true}) get selectedBooth() {
+    @computed({ keepAlive: true }) get selectedBooth() {
         return this.details instanceof BoothBase ? this.details : null;
     }
 
-    @computed({keepAlive: true}) get selectedCategory() {
+    @computed({ keepAlive: true }) get selectedCategory() {
         return this.list.type === "category" ? this.list.category : null;
     }
 
@@ -108,6 +109,12 @@ export default class UIState {
 
     ///////////////////////////////////////////////////////////////////////////
     // filtering
+    @computed get dimmed() {
+        return (
+            this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
+            this.listItems.find(x => !(x instanceof Exhibitor))
+        );
+    }
     @computed get searchItems(): (ListItem)[] {
         if (this.list.type !== "search") return [];
         let text = this.list.text.trim().toLowerCase() as string;

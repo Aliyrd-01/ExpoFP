@@ -1,5 +1,8 @@
 import Matrix from "./Matrix";
 import configAll from "./config/config-all";
+import logger from "../../../tools/logger";
+import settings from "../../../tools/settings";
+import Size from "../../../core/Size";
 
 export type Drawer = Pick<DrawerImpl,
     'setVisibleRect'
@@ -130,7 +133,7 @@ let then = 0;
 let prevFps = [];
 let prevHtml = "";
 function showFps() {
-    if (!__settings.debug) return;
+    if (!settings.debug) return;
     const now = performance.now() * 0.001;
     const deltaTime = now - then;
     then = now;
@@ -154,9 +157,9 @@ function createGl(canvas: HTMLCanvasElement) {
         gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
         if (!gl) return;
         const ext = gl.getExtension('OES_element_index_uint');
-        if (!ext) __logger.warn('OES_element_index_uint not supported');
+        if (!ext) logger.warn('OES_element_index_uint not supported');
     }
-    __logger.log('GL', gl.getParameter(gl.VERSION));
+    logger.log('GL', gl.getParameter(gl.VERSION));
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
@@ -169,47 +172,47 @@ function createGl(canvas: HTMLCanvasElement) {
 
 
 let benchFrames = 0;
-window['startBench'] = function () {
-    benchFrames = 0;
-    console.time('bench');
+// window['startBench'] = function () {
+//     benchFrames = 0;
+//     console.time('bench');
 
-    const exhibitorId = store.getters.exhibitorsArray[0].id;
-    const exhibitorId2 = store.getters.exhibitorsArray[1].id;
+//     const exhibitorId = store.getters.exhibitorsArray[0].id;
+//     const exhibitorId2 = store.getters.exhibitorsArray[1].id;
 
-    const n = 500;
-    let steps = [
-        [() => store.commit('setList', { "type": "search", "text": "a", "focused": true }), n],
-        [() => store.commit('setCenterMap', true), n],
-        [() => store.dispatch('clickExhibitor', exhibitorId), n],
-        [() => store.commit('setCenterMap', true), n],
-        [() => store.dispatch('clickExhibitor', exhibitorId2), n],
-        [() => store.dispatch('selectNone'), n],
-        [() => store.dispatch('selectSearch', ''), n],
-        [() => store.commit('setZoomBy', 1), n],
-        [() => store.commit('setZoomBy', 1), n],
-        [() => store.commit('setZoomBy', 1), n],
-        [() => store.commit('setZoomBy', 1), n],
-        [() => store.commit('setCenterMap', true), n],
-        [() => store.commit('setZoomBy', -1), n],
-        [() => store.commit('setZoomBy', -1), n],
-        [() => store.commit('setZoomBy', -1), n],
-        [() => store.commit('setCenterMap', true), n]
-    ];
-    steps = [...steps];
-    doSteps(steps as any, () => {
-        console.log('total frames:', benchFrames);
-        window.setTimeout(() => alert(benchFrames), 1000);
-        console.timeEnd('bench');
-    });
+//     const n = 500;
+//     let steps = [
+//         [() => store.commit('setList', { "type": "search", "text": "a", "focused": true }), n],
+//         [() => store.commit('setCenterMap', true), n],
+//         [() => store.dispatch('clickExhibitor', exhibitorId), n],
+//         [() => store.commit('setCenterMap', true), n],
+//         [() => store.dispatch('clickExhibitor', exhibitorId2), n],
+//         [() => store.dispatch('selectNone'), n],
+//         [() => store.dispatch('selectSearch', ''), n],
+//         [() => store.commit('setZoomBy', 1), n],
+//         [() => store.commit('setZoomBy', 1), n],
+//         [() => store.commit('setZoomBy', 1), n],
+//         [() => store.commit('setZoomBy', 1), n],
+//         [() => store.commit('setCenterMap', true), n],
+//         [() => store.commit('setZoomBy', -1), n],
+//         [() => store.commit('setZoomBy', -1), n],
+//         [() => store.commit('setZoomBy', -1), n],
+//         [() => store.commit('setCenterMap', true), n]
+//     ];
+//     steps = [...steps];
+//     doSteps(steps as any, () => {
+//         console.log('total frames:', benchFrames);
+//         window.setTimeout(() => alert(benchFrames), 1000);
+//         console.timeEnd('bench');
+//     });
 
-    function doSteps(ar: [() => void, number][], cb: () => void) {
-        const s = ar.shift();
-        s[0]();
-        if (ar.length) {
-            window.setTimeout(() => doSteps(ar, cb), s[1]);
-        } else {
-            cb();
-        }
-    }
-}
+//     function doSteps(ar: [() => void, number][], cb: () => void) {
+//         const s = ar.shift();
+//         s[0]();
+//         if (ar.length) {
+//             window.setTimeout(() => doSteps(ar, cb), s[1]);
+//         } else {
+//             cb();
+//         }
+//     }
+// }
 
