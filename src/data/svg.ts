@@ -53,3 +53,5 @@ export default svg
 
 
 
+declare  const __fp: string;
+declare const __fpPaths: { [id: string]: any };

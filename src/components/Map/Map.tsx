@@ -19,6 +19,7 @@ import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
 
 export default function Map() {
+    let zoomAf: number;
     // do not use useState unless really needed
     const el = useRef<HTMLCanvasElement>();
     // use mobx for everything
@@ -117,7 +118,7 @@ export default function Map() {
         store.clickBooth(b);
     }
 
-    let zoomAf: number;
+   
     function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc: (k: number) => number) {
         // animate from existing position to dest
         if (zoomAf) cancelAnimationFrame(zoomAf);

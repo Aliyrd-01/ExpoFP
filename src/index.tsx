@@ -5,6 +5,8 @@ import Layout from "./components/Layout";
 // import "./tools/logger";
 import "./services/routing";
 
+
+
 // import reportError from "./tools/report-error";
 // window.addEventListener("error", reportError);
 

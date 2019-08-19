@@ -70,3 +70,8 @@ export default function configBg(context: DrawerContext) {
 
     // drawer.alpha = 0.5;
 }
+
+
+
+declare  const __fp: string;
+declare const __fpPaths: { [id: string]: any };

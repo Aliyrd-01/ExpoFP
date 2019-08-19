@@ -21,7 +21,7 @@ export default function configDim(context: DrawerContext) {
         const targetDim = uiState.dimmed ? 1 : 0;
         if (targetDim === dim) return;
         if (cancelAnimation) cancelAnimation();
-        if (targetDim == 1) {
+        if (targetDim === 1) {
             cancelAnimation = animate(
                 0,
                 200,

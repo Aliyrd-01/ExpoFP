@@ -47,7 +47,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
         const maxAt = now - min;
         for (let i = transforms.length - 1; i >= 0; i--) {
             let t = transforms[i];
-            if (t.at < maxAt || i == 0) {
+            if (t.at < maxAt || i === 0) {
                 // take it
                 let time = now - t.at;
                 let diffX =

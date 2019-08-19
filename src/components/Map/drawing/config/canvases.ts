@@ -1,3 +1,5 @@
+import { RegularBooth } from "../../../../store/BoothStore";
+
 //import { getFont2 } from './utils';
 
 export function createLabelCanvas(text: string, fontSize: number, pixelRatio: number) {
@@ -32,7 +34,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number) {
     // const bs = b.special ? (b as SpecialBooth) : undefined;
     //const br = !b.special ? (b as RegularBooth) : undefined;
     // if (b.special === false) {
-    lines.push(...b.exhibitors.map(e => store.state.exhibitors[e].name));
+    lines.push(...b.exhibitors.map(e => e.name));
     if (!b.exhibitors.length) {
         if (b.onHold) {
             lines.push("On Hold");

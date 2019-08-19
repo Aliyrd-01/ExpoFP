@@ -1,92 +1,95 @@
-const maxHeight = 2000;
-const maxWidth = 2000;
+export {};
+// import settings from "../../../../tools/settings";
 
-export default class Sprite {
-    private readonly canvasToSpriteItem = new Map<HTMLCanvasElement, SpriteItemEx>();
+// const maxHeight = 2000;
+// const maxWidth = 2000;
 
-    addCanvas(canvas: HTMLCanvasElement): SpriteItem {
-        let item = this.canvasToSpriteItem.get(canvas);
+// export default class Sprite {
+//     private readonly canvasToSpriteItem = new Map<HTMLCanvasElement, SpriteItemEx>();
 
-        if (!item) {
-            item = {
-                containerCanvas: undefined,
-                rect: undefined,
-                width: canvas.width,
-                height: canvas.height,
-            };
+//     addCanvas(canvas: HTMLCanvasElement): SpriteItem {
+//         let item = this.canvasToSpriteItem.get(canvas);
 
-            this.canvasToSpriteItem.set(canvas, item);
-        }
-        return item;
-    }
+//         if (!item) {
+//             item = {
+//                 containerCanvas: undefined,
+//                 rect: undefined,
+//                 width: canvas.width,
+//                 height: canvas.height,
+//             };
 
-    generateSpriteCanvases(): HTMLCanvasElement[] {
-        const canvases = [];
-        let currentCanvas;
-        let drawHeight = 0;
-        let nextHeight = 0;
-        let drawWidth = 0;
+//             this.canvasToSpriteItem.set(canvas, item);
+//         }
+//         return item;
+//     }
 
-        const canvasesKeys = Array.from(this.canvasToSpriteItem.keys());
-        canvasesKeys.sort((a, b) => a.height - b.height);
+//     generateSpriteCanvases(): HTMLCanvasElement[] {
+//         const canvases = [];
+//         let currentCanvas;
+//         let drawHeight = 0;
+//         let nextHeight = 0;
+//         let drawWidth = 0;
 
-        for (const canvas of canvasesKeys) {
-            const item = this.canvasToSpriteItem.get(canvas);
+//         const canvasesKeys = Array.from(this.canvasToSpriteItem.keys());
+//         canvasesKeys.sort((a, b) => a.height - b.height);
 
-            if (drawWidth + canvas.width > maxWidth) {
-                drawWidth = 0;
-                drawHeight = nextHeight;
-            }
+//         for (const canvas of canvasesKeys) {
+//             const item = this.canvasToSpriteItem.get(canvas);
 
-            if (!currentCanvas || drawHeight + canvas.height > maxHeight) {
-                if (currentCanvas) {
-                    currentCanvas.width = maxWidth;
-                    currentCanvas.height = nextHeight;
-                }
-                currentCanvas = document.createElement("canvas");
-                canvases.push(currentCanvas);
-                if (__settings.debug) debugCanvases.push(currentCanvas);
-                drawHeight = nextHeight = drawWidth = 0;
-            }
+//             if (drawWidth + canvas.width > maxWidth) {
+//                 drawWidth = 0;
+//                 drawHeight = nextHeight;
+//             }
 
-            item.containerCanvas = currentCanvas;
+//             if (!currentCanvas || drawHeight + canvas.height > maxHeight) {
+//                 if (currentCanvas) {
+//                     currentCanvas.width = maxWidth;
+//                     currentCanvas.height = nextHeight;
+//                 }
+//                 currentCanvas = document.createElement("canvas");
+//                 canvases.push(currentCanvas);
+//                 if (settings.debug) debugCanvases.push(currentCanvas);
+//                 drawHeight = nextHeight = drawWidth = 0;
+//             }
 
-            item.rect = Rect.fromXywh(drawWidth, drawHeight, item.width, item.height);
+//             item.containerCanvas = currentCanvas;
 
-            drawWidth += canvas.width + 2; // add padding
-            if (drawHeight + canvas.height > nextHeight) {
-                nextHeight = drawHeight + canvas.height;
-            }
-        }
+//             item.rect = Rect.fromXywh(drawWidth, drawHeight, item.width, item.height);
 
-        if (currentCanvas) {
-            currentCanvas.width = maxWidth;
-            currentCanvas.height = nextHeight;
-        }
+//             drawWidth += canvas.width + 2; // add padding
+//             if (drawHeight + canvas.height > nextHeight) {
+//                 nextHeight = drawHeight + canvas.height;
+//             }
+//         }
 
-        // draw and set rect
-        for (const canvas of canvasesKeys) {
-            const item = this.canvasToSpriteItem.get(canvas);
+//         if (currentCanvas) {
+//             currentCanvas.width = maxWidth;
+//             currentCanvas.height = nextHeight;
+//         }
 
-            const c = item.containerCanvas.getContext("2d");
-            c.drawImage(canvas, item.rect.x1, item.rect.y1);
-        }
+//         // draw and set rect
+//         for (const canvas of canvasesKeys) {
+//             const item = this.canvasToSpriteItem.get(canvas);
 
-        // clear to free memory
-        this.canvasToSpriteItem.clear();
+//             const c = item.containerCanvas.getContext("2d");
+//             c.drawImage(canvas, item.rect.x1, item.rect.y1);
+//         }
 
-        return canvases;
-    }
-}
+//         // clear to free memory
+//         this.canvasToSpriteItem.clear();
+
+//         return canvases;
+//     }
+// }
 
 
 
-export interface SpriteItem {
-    rect: Rect;
-    containerCanvas: HTMLCanvasElement;
-}
+// export interface SpriteItem {
+//     rect: Rect;
+//     containerCanvas: HTMLCanvasElement;
+// }
 
-interface SpriteItemEx extends SpriteItem {
-    width: number;
-    height: number;
-}
+// interface SpriteItemEx extends SpriteItem {
+//     width: number;
+//     height: number;
+// }

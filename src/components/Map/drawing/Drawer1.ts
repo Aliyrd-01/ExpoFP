@@ -3,34 +3,37 @@ import configAll from "./config/config-all";
 import logger from "../../../tools/logger";
 import settings from "../../../tools/settings";
 import Size from "../../../core/Size";
+import Painter from "./painters/Painter";
 
-export type Drawer = Pick<DrawerImpl,
-    'setVisibleRect'
-    | 'setZoomTransform'
-    | 'getPtscale'
-    | 'getSvgPxUnzoomedMatrix'
-    | 'getZoomTransform'
-    | 'getPxSvgMatrix'
-    | 'getVisibleRect'
-    | 'resetCanvasSize'
-    | 'setPixelRatio'
-    | 'setVisibleScale'
-    | 'draw'
-    | 'pixelRatio'
+export type Drawer = Pick<
+    DrawerImpl,
+    | "setVisibleRect"
+    | "setZoomTransform"
+    | "getPtscale"
+    | "getSvgPxUnzoomedMatrix"
+    | "getZoomTransform"
+    | "getPxSvgMatrix"
+    | "getVisibleRect"
+    | "resetCanvasSize"
+    | "setPixelRatio"
+    | "setVisibleScale"
+    | "draw"
+    | "pixelRatio"
 >;
 
-export type DrawerContext = Pick<DrawerImpl,
-    'getPtscale'
-    | 'pixelRatio'
-    | 'updatable'
-    | 'allPainters'
-    | 'requirePainter'
-    | 'requireUpdate'
-    | 'getVisibleScale'
-    | 'setVisibleScale'
-    | 'subscribeMatrixChange'
-    | 'getMatrix'
-    | 'subscribePtscaleChange'
+export type DrawerContext = Pick<
+    DrawerImpl,
+    | "getPtscale"
+    | "pixelRatio"
+    | "updatable"
+    | "allPainters"
+    | "requirePainter"
+    | "requireUpdate"
+    | "getVisibleScale"
+    | "setVisibleScale"
+    | "subscribeMatrixChange"
+    | "getMatrix"
+    | "subscribePtscaleChange"
 >;
 
 export default function createDrawer(canvas: HTMLCanvasElement, updatable: boolean) {
@@ -47,7 +50,6 @@ export class DrawerImpl extends Matrix {
     private prepared: boolean;
     private gl: WebGLRenderingContext;
     private readonly drawBound: () => void;
-
 
     constructor(canvas: HTMLCanvasElement, updatable: boolean) {
         super(new Size(canvas.width, canvas.height));
@@ -115,7 +117,11 @@ export class DrawerImpl extends Matrix {
         this.requireRedraw();
     }
 
-    requirePainter<T extends Painter>(id: string, TypeClass?: new (gl: WebGLRenderingContext) => T, painterOrderPriority?: number): T {
+    requirePainter<T extends Painter>(
+        id: string,
+        TypeClass?: new (gl: WebGLRenderingContext) => T,
+        painterOrderPriority?: number
+    ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
             d = new TypeClass(this.gl);
@@ -144,7 +150,7 @@ function showFps() {
     const avgFps = prevFps.reduce((sume, el) => sume + el, 0) / prevFps.length;
     const html = avgFps.toFixed(0);
     if (prevHtml !== html) {
-        document.getElementById("fps").innerHTML = html;
+        // document.getElementById("fps").innerHTML = html;
         prevHtml = html;
     }
 }
@@ -156,10 +162,10 @@ function createGl(canvas: HTMLCanvasElement) {
     if (!gl) {
         gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
         if (!gl) return;
-        const ext = gl.getExtension('OES_element_index_uint');
-        if (!ext) logger.warn('OES_element_index_uint not supported');
+        const ext = gl.getExtension("OES_element_index_uint");
+        if (!ext) logger.warn("OES_element_index_uint not supported");
     }
-    logger.log('GL', gl.getParameter(gl.VERSION));
+    logger.log("GL", gl.getParameter(gl.VERSION));
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
@@ -170,7 +176,7 @@ function createGl(canvas: HTMLCanvasElement) {
     return gl;
 }
 
-
+// eslint-disable-next-line
 let benchFrames = 0;
 // window['startBench'] = function () {
 //     benchFrames = 0;
@@ -215,4 +221,3 @@ let benchFrames = 0;
 //         }
 //     }
 // }
-

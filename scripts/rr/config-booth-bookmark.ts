@@ -1,0 +1,99 @@
+// import settings from '@/settings';
+// import BoothDrawerBase from "./BoothDrawerBase";
+// import { createBookmarkCanvas } from './canvases';
+// import { DrawerContext } from '../drawer';
+// import RectPainter from '../painters/RectPainter';
+
+// export default function configBoothBookmark(context: DrawerContext, booth: Booth) {
+//     new BoothBookmarkDrawer(context, booth);
+// }
+
+// class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
+
+//     constructor(context: DrawerContext, booth: Booth) {
+//         super(context, booth, 'booth-bookmark', RectPainter, 140);
+//         const r = this.booth.rect.withPadding(settings.borderWidth / 2);
+
+//         const bookmarkCanvasXL = createBookmarkCanvas(11, context.pixelRatio);
+//         const bookmarkCanvasL = createBookmarkCanvas(8, context.pixelRatio);
+//         const bookmarkCanvasM = createBookmarkCanvas(6, context.pixelRatio);
+
+//         this.painter.addObject({
+//             id: this.getId("XL"),
+//             rotateRadians: booth.rotate,
+//             center: [r.cx, r.cy],
+//             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+//             deltaPts: [0, -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding, -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding, 0],
+//             canvasTmp: bookmarkCanvasXL.canvas,
+//             texPosition: 'righttop',
+//             visible: false
+//         });
+
+//         this.painter.addObject({
+//             id: this.getId("L"),
+//             rotateRadians: booth.rotate,
+//             center: [r.cx, r.cy],
+//             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+//             deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
+//             canvasTmp: bookmarkCanvasL.canvas,
+//             texPosition: 'righttop',
+//             visible: false
+//         });
+
+//         this.painter.addObject({
+//             id: this.getId("M"),
+//             rotateRadians: booth.rotate,
+//             center: [r.cx, r.cy],
+//             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+//             deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
+//             canvasTmp: bookmarkCanvasM.canvas,
+//             texPosition: 'righttop',
+//             visible: false
+//         });
+
+//         this.painter.addObject({
+//             id: this.getId("S"),
+//             rotateRadians: booth.rotate,
+//             center: [r.cx, r.cy],
+//             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+//             deltaPts:
+//                 [-bookmarkCanvasM.canvas.width / 2, -bookmarkCanvasM.canvas.height / 2,
+//                 bookmarkCanvasM.canvas.width / 2, bookmarkCanvasM.canvas.height / 2],
+//             canvasTmp: bookmarkCanvasM.canvas,
+//             texPosition: 'center',
+//             visible: false
+//         });
+
+//         if (context.updatable) {
+//             this.context.subscribePtscaleChange(() => this.context.requireUpdate(this.updateBound));
+//             store.watchBoothState(booth.id, () => this.context.requireUpdate(this.updateBound), "skipDim", "bookmarked");
+//         }
+//     }
+
+//     update() {
+//         const ptscale = this.context.getPtscale();
+//         const { bookmarked, skipDim } = this.getBoothState();
+//         // __logger.log('bookmark update', bookmarked, skipDim);
+
+//         let view: string;
+
+//         if (bookmarked) {
+//             const widthPx = this.booth.rect.w / ptscale / this.context.pixelRatio;
+//             const heightPx = this.booth.rect.h / ptscale / this.context.pixelRatio;
+//             if (widthPx > 50 && heightPx > 50) {
+//                 view = "XL";
+//             } else if (widthPx > 25 && heightPx > 25) {
+//                 view = "L";
+//             } else if (widthPx > 14) {
+//                 view = "M";
+//             } else {
+//                 view = "S";
+//             }
+//         }
+
+//         ["XL", "L", "M", "S"].forEach(x => {
+//             this.painter.updateVisible(this.getId(x), x === view);
+//             this.painter.updateSkipdim(this.getId(x), skipDim);
+//         });
+//     }
+// }

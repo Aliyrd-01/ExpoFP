@@ -87,5 +87,5 @@ interface PathInfo {
     color: string;
 }
 
-declare const __fp: string;
-declare const __fpPaths: { [id: string]: any };
+const __fp: string;
+const __fpPaths: { [id: string]: any };

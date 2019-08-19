@@ -1,4 +1,4 @@
-import { DrawerContext } from '../drawer';
+import { DrawerContext } from '../Drawer1';
 import BgPainter from '../painters/BgPainter';
 
 export default function configCanvas(context: DrawerContext) {
