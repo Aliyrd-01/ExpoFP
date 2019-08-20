@@ -166,7 +166,7 @@ export default class UIState {
         throw new Error("Unknown list.type");
     }
 
-    @computed get listBooths() {
+    @computed({ keepAlive: true }) get listBooths() {
         const arr = [] as Booth[];
         this.listItems.forEach(item => {
             if (item instanceof Exhibitor) {
@@ -180,7 +180,7 @@ export default class UIState {
     // @computed get listBoothsIdsSet() {
     //     return new Set(getters.listBoothsIds);
     // }
-    @computed get selectedBooths() {
+    @computed({ keepAlive: true }) get selectedBooths() {
         let arr: Booth[];
         if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
         else if (this.selectedBooth) arr = [this.selectedBooth];
@@ -189,7 +189,7 @@ export default class UIState {
     // @computed get selectedBoothIdsSet() {
     //     return new Set(getters.selectedBoothIds);
     // }
-    @computed get hoveredBooths() {
+    @computed({ keepAlive: true }) get hoveredBooths() {
         let arr: Booth[];
         if (this.hoveredBooth) arr = [this.hoveredBooth];
         else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths;

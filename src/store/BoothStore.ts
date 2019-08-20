@@ -4,7 +4,6 @@ import Rect from "../core/Rect";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 
-
 // interface BoothState {
 //     hover: boolean;
 //     selected: boolean;
@@ -39,26 +38,26 @@ export abstract class BoothBase {
     readonly slug: string;
     readonly error: boolean;
 
-    @computed private get uiState(){
+    @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;
     }
 
-    @computed private get inList(){
-        return this.uiState.listBooths.has(this as unknown as Booth);
+    @computed({ keepAlive: true }) private get inList() {
+        return this.uiState.listBooths.has((this as unknown) as Booth);
     }
 
-    @computed get hover(){
-        return this.uiState.hoveredBooths.has(this as unknown as Booth);
+    @computed({ keepAlive: true }) get hover() {
+        return this.uiState.hoveredBooths.has((this as unknown) as Booth);
     }
 
-    @computed get selected(){
-        return this.uiState.selectedBooths.has(this as unknown as Booth);
+    @computed({ keepAlive: true }) get selected() {
+        return this.uiState.selectedBooths.has((this as unknown) as Booth);
     }
-    
-    @computed get skipDim(){
+
+    @computed({ keepAlive: true }) get skipDim() {
         return this.inList || this.selected;
     }
-    
+
     // // skipDim: boolean;
     // empty: boolean;
     // //onhold: boolean;
@@ -81,16 +80,16 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
 
     readonly exhibitors: Exhibitor[];
 
-    @computed get empty(){
+    @computed({ keepAlive: true }) get empty() {
         return this.exhibitors.length === 0;
     }
 
-    @computed get bookmarked(){
+    @computed({ keepAlive: true }) get bookmarked() {
         return !this.exhibitors.find(x => x.bookmarked);
     }
 }
 
-export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special">  {
+export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {
     readonly title: string;
     readonly description: string;
     readonly color: string; // comes from svg or data.js
