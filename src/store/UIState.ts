@@ -166,6 +166,36 @@ export default class UIState {
         throw new Error("Unknown list.type");
     }
 
+    @computed get listBooths() {
+        const arr = [] as Booth[];
+        this.listItems.forEach(item => {
+            if (item instanceof Exhibitor) {
+                arr.push(...item.booths);
+            } else if (item instanceof BoothBase) {
+                arr.push(item as Booth);
+            }
+        });
+        return new Set(arr);
+    }
+    // @computed get listBoothsIdsSet() {
+    //     return new Set(getters.listBoothsIds);
+    // }
+    @computed get selectedBooths() {
+        let arr: Booth[];
+        if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
+        else if (this.selectedBooth) arr = [this.selectedBooth];
+        return new Set(arr);
+    }
+    // @computed get selectedBoothIdsSet() {
+    //     return new Set(getters.selectedBoothIds);
+    // }
+    @computed get hoveredBooths() {
+        let arr: Booth[];
+        if (this.hoveredBooth) arr = [this.hoveredBooth];
+        else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths;
+        return new Set(arr);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
