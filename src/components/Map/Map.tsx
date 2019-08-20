@@ -17,6 +17,7 @@ import { sizeCanvasToParentElement } from "./utils";
 // import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import { useReaction } from "../../utils/mobx";
 
 export default function Map() {
     let zoomAf: number;
@@ -30,7 +31,7 @@ export default function Map() {
         zoom: null as d3.ZoomBehavior<Element, unknown>,
         drawer: null as Drawer,
         prevBoothOver: null as Booth,
-        get visibleRect(){
+        get visibleRect() {
             const w = uiState.screenSize.width;
             const h = uiState.screenSize.height;
             const rect = Rect.fromX1y1x2y2(uiState.mapVisibleLeft, uiState.mapVisibleTop, w, h - uiState.mapVisibleBottom);
@@ -40,6 +41,65 @@ export default function Map() {
 
     // init
     useEffect(init, []);
+    useReaction(
+        () => uiState.devicePixelRatio,
+        () => {
+            s.drawer.setPixelRatio(uiState.devicePixelRatio);
+        }
+    );
+
+    useReaction(
+        () => s.visibleRect,
+        () => {
+            const v = s.visibleRect;
+            logger.log("visibleRect change", v);
+            s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
+            // rezoom to make it fit bounds
+            // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
+            zoomBoundCurrent();
+        }
+    );
+
+    useReaction(
+        () => uiState.centerMap,
+        () => {
+            if (!uiState.centerMap) return;
+            uiState.centerMap = false;
+            zoomTo(d3.zoomIdentity);
+        }
+    );
+
+    useReaction(
+        () => uiState.zoomBy,
+        () => {
+            if (!uiState.zoomBy) return;
+            const z = uiState.zoomBy;
+            uiState.zoomBy = null;
+            s.animatePlease = true;
+            s.$canvas.call(s.zoom.scaleBy as any, z === -1 ? 0.66 : 1.5);
+        }
+    );
+
+    useReaction(
+        () => uiState.moveToBooths,
+        () => {
+            logger.log("this.moveToBooths", uiState.moveToBooths);
+            if (!uiState.moveToBooths) return;
+            //this.handledMoveToExhibitor = uiState.moveToBooths;
+            logger.log("watched moveToBooths", uiState.moveToBooths);
+            // // ask map to move to this exhibitor
+            const rects = uiState.moveToBooths.map(b => b.rect) as Rect[];
+            if (rects.length === 0) return;
+            const r = Rect.fromMultiple(rects);
+            const zoomScale = d3.zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
+            const z = getTramsformToCenterSvgRect(r, s.visibleRect, Math.max(zoomScale, 1.2));
+            zoomTo(z);
+
+            uiState.moveToBooths = null;
+            // store.commit("setMoveToBooths", null);
+            // this.handledMoveToExhibitor = null;
+        }
+    );
 
     return useObserver(() => (
         <canvas
@@ -76,12 +136,12 @@ export default function Map() {
             .on("end", () => {
                 s.moving = false;
             });
-        
+
         configInertia(s.zoom);
         //m.setVisibleRect(this.visibleRect);
         sizeCanvasToParentElement(el.current);
         s.drawer = createDrawer(el.current, true);
-       
+
         s.drawer.setVisibleRect((s.visibleRect as Rect).scale(uiState.devicePixelRatio));
         s.drawer.setPixelRatio(uiState.devicePixelRatio);
         window.addEventListener("resize", () => {
@@ -103,7 +163,7 @@ export default function Map() {
         const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
         raiseBoothOver(b);
     }
- 
+
     function handleMouseOut(e) {
         raiseBoothOver(undefined);
     }
@@ -118,7 +178,22 @@ export default function Map() {
         store.clickBooth(b);
     }
 
-   
+    function zoomTo(transform: ZoomTransform) {
+        const t = d3.zoomTransform(s.$canvas.node());
+        if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
+        (transform as any).animate = true;
+        s.$canvas.call(s.zoom.transform as any, transform);
+    }
+
+    function zoomBoundCurrent() {
+        const ct = d3.zoomTransform(s.$canvas.node());
+        const nt = zoomBound(s.drawer, ct, false);
+        if (nt !== ct) {
+            // __logger.log('fixed bounds', ct, nt)
+            zoomTo(nt);
+        }
+    }
+
     function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc: (k: number) => number) {
         // animate from existing position to dest
         if (zoomAf) cancelAnimationFrame(zoomAf);

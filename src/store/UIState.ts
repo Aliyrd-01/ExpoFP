@@ -1,9 +1,9 @@
-import { observable, computed, action } from "mobx";
-import RootStore from "./RootStore";
+import { action, computed, observable } from "mobx";
 import { remsToPixels } from "../utils";
-import { Exhibitor } from "./ExhibitorStore";
-import { Booth, RegularBooth, BoothBase } from "./BoothStore";
+import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
+import { Exhibitor } from "./ExhibitorStore";
+import RootStore from "./RootStore";
 
 type ListType =
     | { type: "search"; text: string; focused: boolean }
@@ -20,6 +20,7 @@ export default class UIState {
     @observable.ref details: Booth | Exhibitor = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
+    @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
     @observable menu = false;
     @observable searchFocused = false;
