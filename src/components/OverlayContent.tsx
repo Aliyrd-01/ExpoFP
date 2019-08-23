@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import PerfectScrollbar from "perfect-scrollbar";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState, useLayoutEffect } from "react";
 import { uiState } from "../store";
 import isScrollUgly from "../utils/is-scroll-ugly";
 import OverlayBar from "./OverlayBar";
@@ -20,7 +20,7 @@ const OverlayContent: React.FC<{
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const sel = scrollable.current;
         const setScrolled = () => {
             setScrolled1(sel.scrollTop > 0);
