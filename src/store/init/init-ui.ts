@@ -1,7 +1,7 @@
-import RootStore from "../RootStore";
-import UIState from "../UIState";
 import { runInAction } from "mobx";
 import previewExhibitor from "../../utils/preview-exhibitor";
+import RootStore from "../RootStore";
+import UIState from "../UIState";
 
 export default function initUi(store: RootStore) {
     const { uiState } = store;
@@ -16,6 +16,10 @@ export default function initUi(store: RootStore) {
             uiState.devicePixelRatio = window.devicePixelRatio;
         });
     }
+
+    // autorun(()=>{
+    //     console.log('hoveredBooth', uiState.hoveredBooth);
+    // })
 }
 
 function updateScreenSize(uiState: UIState) {

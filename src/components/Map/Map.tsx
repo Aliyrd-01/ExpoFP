@@ -10,6 +10,7 @@ import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
+import { useReaction } from "../../utils/mobx";
 import getBoothIdFromClientXy from "./booth-by-xy";
 import createDrawer, { Drawer } from "./drawing/Drawer1";
 import "./Map.scss";
@@ -17,7 +18,6 @@ import { sizeCanvasToParentElement } from "./utils";
 // import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import { useReaction } from "../../utils/mobx";
 
 export default function Map() {
     let zoomAf: number;
@@ -161,6 +161,7 @@ export default function Map() {
 
     function handleMouseMoveAndOver(e) {
         const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        // console.log("handleMouseMoveAndOver", b);
         raiseBoothOver(b);
     }
 

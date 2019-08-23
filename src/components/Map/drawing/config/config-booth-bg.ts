@@ -17,7 +17,6 @@ export default function configBoothBg(context: DrawerContext, booth: Booth) {
 }
 
 class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
-    public readonly updateBound: () => void;
     private readonly pathsDefaultColors = new Set<string>();
 
     constructor(context: DrawerContext, booth: Booth) {
