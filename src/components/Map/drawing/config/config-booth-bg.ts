@@ -69,7 +69,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
 
         this.update();
         if (context.updatable) {
-            reaction(() => [booth.hover, booth.skipDim], () => context.requireUpdate(this.updateBound));
+            reaction(() => [booth.hover, booth.skipDim, booth.selected], () => context.requireUpdate(this.updateBound));
             // store.watchBoothState(booth.id, () => context.requireUpdate(this.updateBound), "hover", "skipDim");
         }
     }
