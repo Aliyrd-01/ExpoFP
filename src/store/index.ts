@@ -1,4 +1,4 @@
-import { configure } from 'mobx';
+import { configure, autorun } from 'mobx';
 import RootStore from './RootStore';
 import init from './init';
 
@@ -21,3 +21,6 @@ export const categoryStore = store.categoryStore;
 
 // extendGlobal({ store: store1 });
 
+autorun(()=>{
+    console.log('aaaa', uiState.hoveredBooth && uiState.hoveredBooth.name, Array.from(uiState.hoveredBooths.values()).map(v => v.name))
+})

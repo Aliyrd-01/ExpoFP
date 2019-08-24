@@ -7,7 +7,8 @@ import { DrawerContext } from "../Drawer1";
 import { Booth, SpecialBooth, RegularBooth } from "../../../../store/BoothStore";
 import Polygon4 from "../../../../core/Polygon";
 import settings from "../../../../tools/settings";
-import { reaction } from "mobx";
+import { reaction, autorun } from "mobx";
+import { uiState } from "../../../../store";
 
 // let picked = 0;
 export default function configBoothBg(context: DrawerContext, booth: Booth) {
@@ -77,6 +78,8 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
     update() {
         const s = this.booth; //this.getBoothState();
         const c = this.getBoothColor();
+
+        //console.log('update', s.name, s.hover)
         this.painter.updateColor(this.getId("bg-def"), c.vec4());
         this.painter.updateSkipdim(this.getId("bg"), s.skipDim);
 

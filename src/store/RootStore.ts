@@ -20,7 +20,7 @@ export default class RootStore {
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
-        this.uiState.hoveredExhibitor = exhibitor;
+        this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
     }
 
