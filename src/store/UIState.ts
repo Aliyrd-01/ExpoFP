@@ -34,6 +34,7 @@ export default class UIState {
     @observable activeListIndex = -1;
     @observable devicePixelRatio = window.devicePixelRatio;
     previewExhibitor: Exhibitor = null;
+    @observable wsStarted = false;
 
     overlayMediumHeightRems = 10;
 
@@ -75,7 +76,7 @@ export default class UIState {
     @computed get wsWidthPx() {
         return this.overlayLeft ? this.screenSize.width - this.overlayWidthPx : this.screenSize.width;
     }
-    @computed get wsImageHeightPx() {
+    @computed({keepAlive: true}) get wsImageHeightPx() {
         return remsToPixels(3);
     }
     @computed get wsPaddingPx() {
@@ -85,8 +86,7 @@ export default class UIState {
         return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0;
     }
     @computed get wsShown() {
-        // TODO: RESTORE
-        return false; //this.advertisedExhibitors.length > 0;
+        return this.rootStore.exhibitorStore.advertised.length > 0;
     }
 
     @computed get wsDesktopPosition() {

@@ -6,6 +6,7 @@ import { isWebGlSupported } from "../utils";
 import "./Layout.scss";
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
+import Ws from "./Ws";
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -35,9 +36,9 @@ export default observer(function Layout() {
         <div className="layout">
             <div className={`layout__fixed expo-${process.env.REACT_APP_EFP_EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Overlay />
-                {/* <LogoOverlay />
+                {/* <LogoOverlay />*/}
                 <Ws />
-                <Controls />
+                {/*<Controls />
                 <Areas />
                 <Overlay /> */}
                 {fontsReady && isWebGlSupported && <Map />}

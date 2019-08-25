@@ -4,7 +4,6 @@ import { Category } from "./CategoryStore";
 import { RegularBooth } from "./BoothStore";
 import { computed, observable, action } from "mobx";
 
-
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
     readonly exhibitors: Exhibitor[] = [];
@@ -14,6 +13,10 @@ export default class ExhibitorStore {
 
     @computed get bookmarked() {
         return this.exhibitors.filter(x => x.bookmarked);
+    }
+
+    @computed get advertised() {
+        return this.exhibitors.filter(x => x.advertise && x.logo);
     }
 
     @action replaceBookmarked(ids: number[]) {
