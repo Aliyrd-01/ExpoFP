@@ -108,9 +108,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         if (context.updatable) {
             context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-
             reaction(()=> booth.skipDim, () => context.requireUpdate(this.updateBound));
-            // store.watchBoothState(booth.id, () => context.requireUpdate(this.updateBound), "skipDim");
         }
         // updates.push(this.updateBound);
     }
