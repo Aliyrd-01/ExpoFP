@@ -113,5 +113,4 @@ function Booth() {
     });
 }
 
-export default () =>
-    useObserver(() => <>{!uiState.menu && uiState.details && uiState.details instanceof BoothBase ? <Booth /> : null}</>);
+export default () => useObserver(() => !uiState.menu && uiState.details && uiState.details instanceof BoothBase && <Booth />);

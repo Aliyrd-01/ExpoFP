@@ -1,0 +1,21 @@
+.bar {
+    min-height: 2.5rem;
+    margin-top: 1rem;
+    /* margin-left: 1rem; */
+    font-size: 1.1em;
+    /* line-height: 1em; */
+    font-weight: 600;
+    color: #333;
+    > span {
+        color: #aaa;
+        font-weight: 400;
+    }
+    // padding: 0.5rem 0;
+}
+.note {
+    font-size: 0.7rem;
+    color: #aaa;
+    display: block;
+    font-weight: normal;
+    margin-top: -0.2rem;
+}

@@ -1,6 +1,7 @@
 // import { observable } from 'mobx';
 import RootStore from "./RootStore";
 import { computed } from "mobx";
+import { Exhibitor } from "./ExhibitorStore";
 
 export default class CategoryStore {
     private readonly rootStore: RootStore;
@@ -27,6 +28,7 @@ export class Category {
     readonly name: string;
     readonly slug: string;
 
+    readonly exhibitors: Exhibitor[];
     // populated
     // readonly exhibitors: Exhibitor[];
 }

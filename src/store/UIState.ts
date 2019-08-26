@@ -21,7 +21,7 @@ export default class UIState {
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
-    
+
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
     @observable menu = false;
@@ -76,7 +76,7 @@ export default class UIState {
     @computed get wsWidthPx() {
         return this.overlayLeft ? this.screenSize.width - this.overlayWidthPx : this.screenSize.width;
     }
-    @computed({keepAlive: true}) get wsImageHeightPx() {
+    @computed({ keepAlive: true }) get wsImageHeightPx() {
         return remsToPixels(3);
     }
     @computed get wsPaddingPx() {
@@ -118,6 +118,7 @@ export default class UIState {
             this.listItems.find(x => !(x instanceof Exhibitor))
         );
     }
+
     @computed get searchItems(): (ListItem)[] {
         if (this.list.type !== "search") return [];
         let text = this.list.text.trim().toLowerCase() as string;
@@ -164,7 +165,7 @@ export default class UIState {
             case "bookmarks":
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
-                return this.rootStore.categoryStore.categories;
+                return this.list.category.exhibitors;
         }
         throw new Error("Unknown list.type");
     }

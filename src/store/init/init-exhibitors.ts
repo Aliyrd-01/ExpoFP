@@ -26,7 +26,9 @@ export default function initExhibitors(store: RootStore) {
         e.categories = [];
         e.booths = [];
         for (const c of raw.categories || []) {
-            e.categories.push(store.categoryStore.categoryById.get(c));
+            const ca = store.categoryStore.categoryById.get(c);
+            e.categories.push(ca);
+            ca.exhibitors.push(e as Exhibitor);
         }
 
         (e['store'] as ExhibitorStore) = exhibitorStore;
