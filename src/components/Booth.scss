@@ -1,0 +1,119 @@
+
+.booth {
+    &__bar {
+        line-height: 1.5rem;
+        color: #333;
+        font-weight: 600;
+        margin-left: 1rem;
+        font-size: 1.1em;
+    }
+    &__content {
+        margin: 0 1rem;
+    }
+    // &__buy-note {
+    //     font-weight: 700;
+    //     font-size: 0.75rem;
+    //     margin-top: 0.2rem;
+    //     color: #555;
+    // }
+
+    &__title {
+        font-weight: 500;
+    }
+
+    $im: 0.4rem;
+    &__infos {
+        /* display: flex;
+        margin: 0 -1rem;
+        padding: 0 $im;
+        background: #fff; */
+    }
+
+    &__info {
+        /* min-height: 6rem; */
+        background: #e1ecf1;
+        border-radius: 4px;
+        /* flex-grow: 1;
+        flex-basis: 1px;
+        text-align: center; */
+        /* border: solid 1px #aaa; */
+        /* margin: 0 $im; */
+        padding: 1rem 0;
+
+        display: grid;
+        grid-template-columns: 5rem auto;
+        align-items: center;
+        /* flex-direction: column; */
+        /* justify-content: center; */
+        margin-bottom: 1rem;
+
+        > i {
+            font-size: 2.1rem;
+            /* padding-bottom: 0.5rem; */
+            color: #71b7d4;
+            opacity: 0.7;
+            /* grid-column-start: 1; */
+            /* grid-column-end: 1; */
+            /* grid-row-start: 1; */
+            grid-row: 1 / span 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* justify-content: center; */
+        }
+        &-title {
+            grid-column: 2;
+            font-size: 0.7em;
+            font-weight: 600;
+            color: #557988;
+            text-transform: uppercase;
+        }
+        &-val {
+            grid-column: 2;
+            /* grid-column-end: 2; */
+            grid-row: 2;
+            /* grid-row-end: 2; */
+
+            /* text-transform: uppercase; */
+            /* font-weight: 500; */
+            font-size: 1rem;
+            font-weight: 600;
+            /* color: #000; */
+            padding: 0 1rem 0 0;
+        }
+    }
+
+    &__buy {
+        text-align: center;
+        margin: 2rem 0;
+
+        > a {
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            background: #41b6e7;
+            padding: 0.5rem 1rem;
+            min-width: 10rem;
+            color: #fff !important;
+            text-decoration: none !important;
+            transition: background-color 200ms;
+            border-radius: 2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background: #2f99c7;
+            }
+            &:active {
+                background: #2285af;
+            }
+
+            .overlay.bottom & {
+                width: 100%;
+                min-height: 3rem;
+                font-size: 1.2rem;
+            }
+        }
+    }
+}
