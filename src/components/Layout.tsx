@@ -4,6 +4,7 @@ import store from "../store";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import "./Layout.scss";
+import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
 import Ws from "./Ws";
@@ -36,7 +37,7 @@ export default observer(function Layout() {
         <div className="layout">
             <div className={`layout__fixed expo-${process.env.REACT_APP_EFP_EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Overlay />
-                {/* <LogoOverlay />*/}
+                <LogoOverlay />
                 <Ws />
                 {/*<Controls />
                 <Areas />
