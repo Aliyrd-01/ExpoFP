@@ -1,14 +1,14 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { uiState } from "../store";
-import { Booth } from "../store/BoothStore";
+import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
-
+import BoothRow from "./BoothRow";
 
 const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5));
 logger.log("List n:", n);
@@ -33,6 +33,14 @@ export default function List() {
                     exhibitor={item}
                     key={`e${item.id}`}
                     className={`list-row ${index === uiState.activeListIndex ? "active" : ""}`}
+                />
+            );
+        } else if (item instanceof BoothBase) {
+            return (
+                <BoothRow
+                    booth={item}
+                    key={`c${item.id}`}
+                    className={"list-row" + (index === uiState.activeListIndex ? " active" : "")}
                 />
             );
         }
