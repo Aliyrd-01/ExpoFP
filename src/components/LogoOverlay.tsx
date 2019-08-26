@@ -18,8 +18,8 @@ export default function LogoOverlay() {
     }));
 
     return useObserver(() => (
-        <a href="https://expofp.com/" target="_blank" rel="noopener" className="logo-overlay" style={s.style}>
-            <img src="expofp-overlay.png" />
+        <a href="https://expofp.com/" target="_blank" className="logo-overlay" style={s.style} rel="noopener noreferrer">
+            <img src="expofp-overlay.png" alt="Made with ExpoFP" />
         </a>
     ));
 }
