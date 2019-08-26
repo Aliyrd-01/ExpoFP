@@ -16,7 +16,6 @@ export default class TextFitter {
     constructor(fontFunc: (number) => string, fontSizes: number[], maxMultilineFontSize: number) {
         this.baseFontSize = this.maxMultilineFontSize = maxMultilineFontSize;
         this.fontSizes = fontSizes;
-        fontFunc;
         const canvas = document.createElement("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.textAlign = "center";

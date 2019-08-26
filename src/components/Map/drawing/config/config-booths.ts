@@ -1,6 +1,6 @@
 import configBoothBg from './config-booth-bg';
 import configBoothLabels from './config-booth-labels';
-// import configBoothLabelsSpecial from './config-booth-labels-special';
+import configBoothLabelsSpecial from './config-booth-labels-special';
 // import configBoothBookmark from './config-booth-bookmark';
 // import configBoothBorder from './config-booth-border';
 // import { DrawerContext } from '../Drawer1';
@@ -13,8 +13,8 @@ import { interpolateNumber } from 'd3-interpolate';
 import { DrawerContext } from '../Drawer1';
 
 export default function configBooths(context: DrawerContext) {
-    const booths = boothStore.booths;//, configBoothLabelsSpecial, configBoothBookmark, configBoothBorder
-    const configFuncs = [configBoothBg, configBoothLabels] as
+    const booths = boothStore.booths;//, configBoothBookmark, configBoothBorder
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial] as
         ((DrawerContext, Booth) => void | { unlock: () => void })[];//configBoothType,
 
     // const after = [];
