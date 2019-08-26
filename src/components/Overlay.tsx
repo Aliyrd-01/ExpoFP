@@ -13,6 +13,7 @@ import * as d3 from "d3";
 import { autorun } from "mobx";
 import Booth from "./Booth";
 import Category from "./Category";
+import Bookmarks from "./Bookmarks";
 const { uiState } = store;
 
 export default observer(function Overlay() {
@@ -163,7 +164,7 @@ export default observer(function Overlay() {
             <Search />
             <Exhibitor />
             <Booth />
-            {/* <Bookmarks />*/}
+            <Bookmarks />
             <Category />
         </div>
     );
