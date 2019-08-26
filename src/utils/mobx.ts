@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, EffectCallback } from "react";
 import { autorun, IReactionPublic, IAutorunOptions, reaction, IReactionOptions } from "mobx";
 
 export function useAutorun(view: (r: IReactionPublic) => any, opts?: IAutorunOptions) {
@@ -19,4 +19,8 @@ export function useReaction<T>(
         // eslint-disable-next-line
         []
     );
+}
+
+export function useInit(effect: EffectCallback){
+    return useEffect(effect, []);
 }

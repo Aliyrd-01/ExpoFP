@@ -1,14 +1,13 @@
 import Color from "color";
-
-import BoothDrawerBase from "./BoothDrawerBase";
+import { reaction } from "mobx";
+import Polygon4 from "../../../../core/Polygon";
+import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
+import settings from "../../../../tools/settings";
+import { DrawerContext } from "../Drawer1";
 // import { getBoothState } from "./config-booths";
 import TrianglePainter from "../painters/TrianglePainter";
-import { DrawerContext } from "../Drawer1";
-import { Booth, SpecialBooth, RegularBooth } from "../../../../store/BoothStore";
-import Polygon4 from "../../../../core/Polygon";
-import settings from "../../../../tools/settings";
-import { reaction, autorun } from "mobx";
-import { uiState } from "../../../../store";
+import BoothDrawerBase from "./BoothDrawerBase";
+
 
 // let picked = 0;
 export default function configBoothBg(context: DrawerContext, booth: Booth) {

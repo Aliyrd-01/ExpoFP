@@ -1,14 +1,14 @@
 import { reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
+import React from "react";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import store, { exhibitorStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { remsToPixels, shuffle } from "../utils";
+import { useInit } from "../utils/mobx";
 import "./Ws.scss";
 
 function Ws() {
-    // const el = useRef();
-
     const s = useLocalStore(() => ({
         el: null as HTMLElement,
         all: [] as Exhibitor[],
@@ -32,34 +32,37 @@ function Ws() {
         }
     }));
 
-    useEffect(() => {
+    useInit(() => {
         (async function() {
             s.all = shuffle(exhibitorStore.advertised);
             s.imgByExhbitorId = await loadExhbibitorImages();
             setupNext();
             mouseout();
             uiState.wsStarted = true;
-        })();
 
-        reaction(() => uiState.screenSize, setupNext);
+            reaction(() => uiState.screenSize, setupNext);
+        })();
     });
 
     return useObserver(() => (
         <section className="ws" ref={n => (s.el = n)} onMouseOver={mouseover} onMouseOut={mouseout} style={s.sectionStyle}>
-            {s.adv.map(e => (
-                <a
-                    href={`?${e.e.slug}`}
-                    key={e.key}
-                    className="ws__exhibitor"
-                    style={{ height: `${uiState.wsImageHeightPx}px` }}
-                    onClick={x => {
-                        x.preventDefault();
-                        select(e.e);
-                    }}
-                >
-                    <img src={e.e.logo} alt={e.e.name} />
-                </a>
-            ))}
+            <TransitionGroup component={null}>
+                {s.adv.map(e => (
+                    <CSSTransition key={e.key} timeout={500}>
+                        <a
+                            href={`?${e.e.slug}`}
+                            className="ws__exhibitor"
+                            style={{ height: `${uiState.wsImageHeightPx}px` }}
+                            onClick={x => {
+                                x.preventDefault();
+                                select(e.e);
+                            }}
+                        >
+                            <img src={e.e.logo} alt={e.e.name} />
+                        </a>
+                    </CSSTransition>
+                ))}
+            </TransitionGroup>
         </section>
     ));
 
@@ -97,7 +100,7 @@ function Ws() {
     }
 
     function mouseout() {
-        s.intervalId = window.setInterval(setupNext, 10000);
+        s.intervalId = window.setInterval(setupNext, 8000);
     }
 
     async function loadExhbibitorImages(): Promise<Map<number, HTMLImageElement>> {

@@ -40,16 +40,24 @@
     display: inline-block;
     margin-right: 10px;
 }
-.overlay-left .ws .ws__list-enter-active {
-    transition: all 0.5s;
-}
-.ws__list-leave-active {
+.ws__exhibitor.exit {
     display: none;
 }
-.overlay-left .ws .ws__list-enter,
-.overlay-left .ws .ws__list-leave-to {
-    opacity: 0;
-    /* filter: grayscale(100%); */
-    /* transform: translate(1000px); */
-    /* transform: scale(1.1); */
+.overlay-left .ws__exhibitor {
+    &.enter {
+        opacity: 0;
+    }
+    &.enter-active {
+        opacity: 1;
+        transition: opacity 0.5s;
+    }
+    &.exit {
+        display: none;
+    }
 }
+// // .overlay-left .ws
+
+// // .overlay-left .ws .ws__exhibitor.enter,
+// // .overlay-left .ws .ws__exhibitor.leave-to {
+// //     opacity: 0;
+// }
