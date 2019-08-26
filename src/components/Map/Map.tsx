@@ -48,16 +48,27 @@ export default function Map() {
         }
     );
 
+    // useReaction(
+    //     () => s.visibleRect,
+    //     ()=>{
+    //         if (!s.drawer) return;
+    //         const v = s.visibleRect;
+    //         s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
+    //         zoomBoundCurrent();
+    //     }
+    // );
+
     useReaction(
-        () => s.visibleRect,
+        () => [s.visibleRect, s.drawer],
         () => {
+            if (!s.drawer) return;
             const v = s.visibleRect;
             logger.log("visibleRect change", v);
             s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
             // rezoom to make it fit bounds
             // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
             zoomBoundCurrent();
-        }
+        }, {fireImmediately: true}
     );
 
     useReaction(
@@ -142,7 +153,7 @@ export default function Map() {
         sizeCanvasToParentElement(el.current);
         s.drawer = createDrawer(el.current, true);
 
-        s.drawer.setVisibleRect((s.visibleRect as Rect).scale(uiState.devicePixelRatio));
+        // s.drawer.setVisibleRect((s.visibleRect as Rect).scale(uiState.devicePixelRatio));
         s.drawer.setPixelRatio(uiState.devicePixelRatio);
         window.addEventListener("resize", () => {
             // __logger.log('canvas change', canvas);

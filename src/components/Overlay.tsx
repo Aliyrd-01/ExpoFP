@@ -11,6 +11,7 @@ import Exhibitor from "./Exhibitor";
 // TODO: RESTORE - only use what's needed from d3
 import * as d3 from "d3";
 import { autorun } from "mobx";
+import Booth from "./Booth";
 const { uiState } = store;
 
 export default observer(function Overlay() {
@@ -160,10 +161,11 @@ export default observer(function Overlay() {
             <Menu />
             <Search />
             <Exhibitor />
+            <Booth />
         {/* <Bookmarks />
         <Category />
-        <Exhibitor />
-        <Booth /> */}
+
+         */}
         </div>
     );
 });
