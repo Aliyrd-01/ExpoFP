@@ -5,7 +5,7 @@ import { uiState } from "../store";
 import { useInit } from "../utils/mobx";
 import classNames from "classnames";
 
-const key = "note-dismissed4";
+const key = "note-dismissed5";
 
 export default function Demo() {
     const s = useLocalStore(() => ({
