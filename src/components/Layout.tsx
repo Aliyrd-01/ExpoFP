@@ -8,6 +8,7 @@ import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
 import Ws from "./Ws";
+import Controls from "./Controls";
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -38,8 +39,8 @@ export default observer(function Layout() {
             <div className={`layout__fixed expo-${process.env.REACT_APP_EFP_EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <LogoOverlay />
                 <Ws />
-                {/*<Controls />
-                <Areas />*/}
+                <Controls />
+                {/*<Areas />*/}
                 <Overlay />
                 {fontsReady && isWebGlSupported && <Map />}
                 {/* <Demo />
