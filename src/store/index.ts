@@ -22,5 +22,5 @@ export const categoryStore = store.categoryStore;
 // extendGlobal({ store: store1 });
 
 autorun(()=>{
-    console.log('aaaa', uiState.listItems.length, uiState.listItems)
+    // console.log('aaaa', uiState.listItems.length, uiState.listItems)
 })

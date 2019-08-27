@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import store from "../store";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -7,9 +7,11 @@ import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
+// import Demo from "./Demo";
 import Ws from "./Ws";
 import Controls from "./Controls";
 import Pdf from "./Pdf";
+const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -20,6 +22,7 @@ export default observer(function Layout() {
     //     }
     // }));
     const [fontsReady, setFontsReady] = useState(false);
+    // const [Demo, setDemo] = useState(null);
     useEffect(() => {
         let set = false;
         function doSet(cause) {
@@ -44,9 +47,13 @@ export default observer(function Layout() {
                 {/*<Areas />*/}
                 <Overlay />
                 {fontsReady && isWebGlSupported && <Map />}
-                {/* <Demo />
-                <Debug />*/}
-                <Pdf /> 
+                {process.env.REACT_APP_EFP_EXPO === "expo" && (
+                    <Suspense fallback={null}>
+                        <Demo />
+                    </Suspense>
+                )}
+                {/* <Debug />*/}
+                <Pdf />
                 <div id="fps" />
             </div>
         </div>

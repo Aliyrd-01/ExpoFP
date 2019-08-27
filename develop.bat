@@ -1,1 +1,0 @@
-start ConEmu.exe -runlist yarn start
