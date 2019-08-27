@@ -9,6 +9,7 @@ import { remsToPixels } from "../utils";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 import BoothRow from "./BoothRow";
+import CategoryRow from "./CategoryRow";
 
 const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5));
 logger.log("List n:", n);
@@ -27,22 +28,13 @@ export default function List() {
     }, []);
 
     function mapItem(item: Booth | Category | Exhibitor, index: number) {
+        const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
         if (item instanceof Exhibitor) {
-            return (
-                <ExhibitorRow
-                    exhibitor={item}
-                    key={`e${item.id}`}
-                    className={`list-row ${index === uiState.activeListIndex ? "active" : ""}`}
-                />
-            );
+            return <ExhibitorRow exhibitor={item} key={`e${item.id}`} className={cls} />;
         } else if (item instanceof BoothBase) {
-            return (
-                <BoothRow
-                    booth={item}
-                    key={`c${item.id}`}
-                    className={"list-row" + (index === uiState.activeListIndex ? " active" : "")}
-                />
-            );
+            return <BoothRow booth={item} key={`b${item.id}`} className={cls} />;
+        } else if (item instanceof Category) {
+            return <CategoryRow category={item} key={`c${item.id}`} className={cls} />;
         }
     }
 

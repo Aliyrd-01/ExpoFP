@@ -8,8 +8,8 @@ const SimpleRow: React.FC<{
     active?: boolean;
     className: string;
     onClick: () => void;
-    onMouseOver: () => void;
-    onMouseOut: () => void;
+    onMouseOver?: () => void;
+    onMouseOut?: () => void;
 }> = ({ line1, line2, slug, className, active = false, onClick, onMouseOver, onMouseOut }) => {
     return (
         <a
