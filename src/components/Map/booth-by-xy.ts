@@ -1,4 +1,4 @@
-import { m4 } from 'twgl-base.js';
+import { m4 } from 'twgl.js';
 import { Drawer } from './drawing/Drawer1';
 import { Booth } from '../../store/BoothStore';
 import Rect from '../../core/Rect';
