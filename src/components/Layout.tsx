@@ -36,12 +36,11 @@ export default observer(function Layout() {
     return (
         <div className="layout">
             <div className={`layout__fixed expo-${process.env.REACT_APP_EFP_EXPO} overlay-${store.uiState.overlayPosition}`}>
-                <Overlay />
                 <LogoOverlay />
                 <Ws />
                 {/*<Controls />
-                <Areas />
-                <Overlay /> */}
+                <Areas />*/}
+                <Overlay />
                 {fontsReady && isWebGlSupported && <Map />}
                 {/* <Demo />
                 <Debug />

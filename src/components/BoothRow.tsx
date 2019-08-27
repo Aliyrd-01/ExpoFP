@@ -3,6 +3,7 @@ import { Booth } from "../store/BoothStore";
 import SimpleRow from "./SimpleRow";
 import data from "../data";
 import store, { uiState } from "../store";
+import './BoothRow.scss'
 
 const BoothRow: React.FC<{
     booth: Booth;
