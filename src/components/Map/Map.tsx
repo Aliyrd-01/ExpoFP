@@ -1,8 +1,5 @@
 import classNames from "classnames";
-// TODO: RESTORE - only use what's needed from d3
-import * as d3 from "d3";
-import { ZoomTransform } from "d3";
-import { event as currentEvent } from "d3-selection";
+import { event as currentEvent, select } from "d3-selection";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { m4 } from "twgl.js";
@@ -18,6 +15,9 @@ import { sizeCanvasToParentElement } from "./utils";
 // import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import { zoomIdentity, zoomTransform, ZoomTransform, zoom } from "d3-zoom";
+import { interpolate } from "d3-interpolate";
+import { easeExpOut } from "d3-ease";
 
 export default function Map() {
     let zoomAf: number;
@@ -66,9 +66,10 @@ export default function Map() {
             logger.log("visibleRect change", v);
             s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
             // rezoom to make it fit bounds
-            // this.$canvas.call(this.zoom.transform, d3.zoomTransform(this.$canvas.node()));
+            // this.$canvas.call(this.zoom.transform, zoomTransform(this.$canvas.node()));
             zoomBoundCurrent();
-        }, {fireImmediately: true}
+        },
+        { fireImmediately: true }
     );
 
     useReaction(
@@ -76,7 +77,7 @@ export default function Map() {
         () => {
             if (!uiState.centerMap) return;
             uiState.centerMap = false;
-            zoomTo(d3.zoomIdentity);
+            zoomTo(zoomIdentity);
         }
     );
 
@@ -102,7 +103,7 @@ export default function Map() {
             const rects = uiState.moveToBooths.map(b => b.rect) as Rect[];
             if (rects.length === 0) return;
             const r = Rect.fromMultiple(rects);
-            const zoomScale = d3.zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
+            const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
             const z = getTramsformToCenterSvgRect(r, s.visibleRect, Math.max(zoomScale, 1.2));
             zoomTo(z);
 
@@ -126,20 +127,19 @@ export default function Map() {
     ));
 
     function init() {
-        s.$canvas = d3.select(el.current);
-        //s.$canvas = d3.select(el.current);
-        s.zoom = d3
-            .zoom()
+        s.$canvas = select(el.current);
+        //s.$canvas = select(el.current);
+        s.zoom = zoom()
             .clickDistance(15)
-            .interpolate(d3.interpolate)
+            .interpolate(interpolate)
             .scaleExtent([0.5, 12])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 // __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
-                if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, d3.easeExpOut);
-                else if (t.animate) setZoomTransformAnimated(t, 500, d3.easeExpOut);
+                if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
+                else if (t.animate) setZoomTransformAnimated(t, 500, easeExpOut);
                 else setZoomTransformAnimated(t, 0, null);
                 s.animatePlease = false;
                 s.moving = true;
@@ -160,7 +160,7 @@ export default function Map() {
             sizeCanvasToParentElement(el.current);
             s.drawer.resetCanvasSize();
         });
-        setZoomTransformAnimated(d3.zoomIdentity, 0, null);
+        setZoomTransformAnimated(zoomIdentity, 0, null);
         s.$canvas.call(s.zoom as any);
     }
 
@@ -191,14 +191,14 @@ export default function Map() {
     }
 
     function zoomTo(transform: ZoomTransform) {
-        const t = d3.zoomTransform(s.$canvas.node());
+        const t = zoomTransform(s.$canvas.node());
         if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
         (transform as any).animate = true;
         s.$canvas.call(s.zoom.transform as any, transform);
     }
 
     function zoomBoundCurrent() {
-        const ct = d3.zoomTransform(s.$canvas.node());
+        const ct = zoomTransform(s.$canvas.node());
         const nt = zoomBound(s.drawer, ct, false);
         if (nt !== ct) {
             // __logger.log('fixed bounds', ct, nt)
@@ -214,7 +214,7 @@ export default function Map() {
             return;
         }
         const ct = s.drawer.getZoomTransform();
-        const i = d3.interpolate(ct, t);
+        const i = interpolate(ct, t);
         const start = performance.now();
 
         function animationStep() {
@@ -253,7 +253,7 @@ export default function Map() {
 
         const diffX = targetRect.cx - bSvgRect.cx * zoom;
         const diffY = targetRect.cy - bSvgRect.cy * zoom;
-        const t = d3.zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
+        const t = zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
         return zoomBound(s.drawer, t, true);
     }
 }

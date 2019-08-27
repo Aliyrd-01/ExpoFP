@@ -27,6 +27,7 @@
         "typescript": "3.5.3"
     },
     "scripts": {
+        "analyze": "source-map-explorer 'build/static/js/*.js'",
         "start": "env-cmd -f ./scripts/env.js react-scripts start",
         "build": "env-cmd -f ./scripts/env.js react-scripts build",
         "test": "react-scripts test"
@@ -52,6 +53,7 @@
         "@types/history": "^4.7.2",
         "env-cmd": "^9.0.3",
         "git-branch": "^2.0.1",
-        "node-sass": "^4.12.0"
+        "node-sass": "^4.12.0",
+        "source-map-explorer": "^2.0.1"
     }
 }

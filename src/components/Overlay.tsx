@@ -1,19 +1,19 @@
-import React, { useRef, useEffect } from "react";
-import "./Overlay.scss";
+import { easePolyOut } from "d3-ease";
+import { select } from "d3-selection";
+import { autorun } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
+import React, { useEffect, useRef } from "react";
 import store from "../store";
+import { OverlaySize } from "../store/UIState";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
-import { OverlaySize } from "../store/UIState";
-import Menu from "./Menu";
-import Search from "./Search";
-import Exhibitor from "./Exhibitor";
-// TODO: RESTORE - only use what's needed from d3
-import * as d3 from "d3";
-import { autorun } from "mobx";
+import Bookmarks from "./Bookmarks";
 import Booth from "./Booth";
 import Category from "./Category";
-import Bookmarks from "./Bookmarks";
+import Exhibitor from "./Exhibitor";
+import Menu from "./Menu";
+import "./Overlay.scss";
+import Search from "./Search";
 const { uiState } = store;
 
 export default observer(function Overlay() {
@@ -138,11 +138,11 @@ export default observer(function Overlay() {
                 transition = false;
             }
             if (s.currentTop === newTop) return;
-            const $el = d3.select(el.current);
+            const $el = select(el.current);
             $el.interrupt();
             if (transition) {
                 $el.transition()
-                    .ease(d3.easePolyOut)
+                    .ease(easePolyOut)
                     .duration(500)
                     .style("top", newTop + "px")
                     .on("end", setShowAll);
