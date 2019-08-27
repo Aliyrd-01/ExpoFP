@@ -1,5 +1,5 @@
 import Color from "color";
-import * as twgl from "twgl.js";
+import * as twgl from "twgl-base.js";
 import { dimColor } from "./common-glsl";
 import settings from "../../../../tools/settings";
 import Painter from "./Painter";

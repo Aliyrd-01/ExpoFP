@@ -9763,10 +9763,10 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
 
-twgl.js@^4.11.1:
-  version "4.11.1"
-  resolved "https://registry.yarnpkg.com/twgl.js/-/twgl.js-4.11.1.tgz#59eef90c66474ec099dd50cf9dafdebef890ebcc"
-  integrity sha512-+2Xea0zoqstxx4IfxGMiufYGgDMIShPzMD4OKCI04GUk3PIaq+BKaltt33kStI6yO7zrFCizqwM8kWt5wZFdhQ==
+twgl-base.js@^4.11.2:
+  version "4.11.2"
+  resolved "https://registry.yarnpkg.com/twgl-base.js/-/twgl-base.js-4.11.2.tgz#59cf2a18930df8f9edec3d038e94d671b6c096ab"
+  integrity sha512-hJvDyAAtbSp4N7CNLK70uxKP38soP6bCwUS2BEoXBX70KZiCGB2NiZhQ0PcOLHad6PBim/tPR9XBABo+m+PJgg==
 
 type-check@~0.3.2:
   version "0.3.2"

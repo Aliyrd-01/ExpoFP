@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { event as currentEvent, select } from "d3-selection";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
-import { m4 } from "twgl.js";
+import { m4 } from "twgl-base.js";
 import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";

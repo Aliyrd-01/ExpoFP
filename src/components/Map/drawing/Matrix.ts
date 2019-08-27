@@ -1,5 +1,5 @@
 import { zoomIdentity, ZoomTransform } from 'd3-zoom';
-import { m4 } from 'twgl.js';
+import { m4 } from 'twgl-base.js';
 import Rect from '../../../core/Rect';
 import Size from '../../../core/Size';
 import { svgHeight, svgWidth } from '../../../data/svg';

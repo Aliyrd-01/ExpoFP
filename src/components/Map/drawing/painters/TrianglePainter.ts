@@ -1,4 +1,4 @@
-import * as twgl from "twgl.js";
+import * as twgl from "twgl-base.js";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 
