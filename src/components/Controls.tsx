@@ -1,8 +1,8 @@
-import React from "react";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import store, { uiState } from "../store";
-import { remsToPixels } from "../utils";
 import classNames from "classnames";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import React from "react";
+import { uiState } from "../store";
+import { remsToPixels } from "../utils";
 import "./Controls.scss";
 
 export default function Controls() {

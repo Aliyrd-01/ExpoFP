@@ -9,6 +9,7 @@ import Map from "./Map/Map";
 import Overlay from "./Overlay";
 import Ws from "./Ws";
 import Controls from "./Controls";
+import Pdf from "./Pdf";
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -44,8 +45,8 @@ export default observer(function Layout() {
                 <Overlay />
                 {fontsReady && isWebGlSupported && <Map />}
                 {/* <Demo />
-                <Debug />
-                <Pdf v-if="webGlSupported" /> */}
+                <Debug />*/}
+                <Pdf /> 
                 <div id="fps" />
             </div>
         </div>
