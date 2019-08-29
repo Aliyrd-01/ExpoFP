@@ -13,7 +13,7 @@ export default function validateData(data: Data) {
     if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
 
-    const validationEnabled = settings.debug || localStorage.getItem('validate') === "1";
+    const validationEnabled = settings.debug || localStorage.getItem("validate") === "1";
 
     if (validationEnabled) {
         const res = validate(data, schema);
@@ -23,12 +23,15 @@ export default function validateData(data: Data) {
             console.log("data jsonschema is valid", res);
         }
     } else {
-        console.log("data JSON Schema validation disabled. Run `localStorage.setItem('validate', 1)` in Console to enable validation.`");
+        console.log(
+            "data JSON Schema validation disabled. Run `localStorage.setItem('validate', 1)` in Console to enable validation.`"
+        );
     }
 
     // validation is a heavy process (using Url.parse) - so let's disable by default for all
     if (validationEnabled) {
         for (const name of Object.keys(data)) {
+            if (data[name][Symbol.iterator] !== "function") continue;
             const errors = new Set<string>();
             for (const b of data[name]) {
                 const kk = Object.keys(b);
@@ -81,5 +84,3 @@ export default function validateData(data: Data) {
         exhibitor.categories = exhibitor.categories || [];
     }
 }
-
-

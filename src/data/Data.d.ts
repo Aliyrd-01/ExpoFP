@@ -1,4 +1,5 @@
 interface Data {
+    free: boolean;
     title: string;
     subtitle: string;
     homeUrl: string;
