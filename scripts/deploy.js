@@ -1,3 +1,3 @@
 
-const live = process.env.EFP_DEPLOY_TARGET === "live";
+const live = process.argv0 === "live";
 console.log("Deploying...", live)

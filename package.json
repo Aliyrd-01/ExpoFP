@@ -28,10 +28,11 @@
     },
     "scripts": {
         "analyze": "source-map-explorer 'build/static/js/*.js'",
-        "start": "env-cmd -f ./scripts/env.js react-scripts start",
-        "build": "env-cmd -f ./scripts/env.js react-scripts build",
+        "start": "env-cmd -f ./scripts/env-develop.js react-scripts start",
+        "build": "env-cmd -f ./scripts/env-deploy.js react-scripts build",
+        "build-live": "env-cmd -f ./scripts/env-deploy-live.js react-scripts build",
         "deploy": "yarn build && node ./scripts/deploy.js",
-        "deploy-live": "yarn build && cross-env EFP_DEPLOY_TARGET=live node ./scripts/deploy.js",
+        "deploy-live": "yarn build-live && node ./scripts/deploy.js --live",
         "test": "react-scripts test"
     },
     "eslintConfig": {

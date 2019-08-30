@@ -10,6 +10,7 @@
 
 # production
 /build
+/expos/*/data
 
 # misc
 .DS_Store
