@@ -1,6 +1,8 @@
 const { expo } = require("./expo");
 
+// const production = process.env.NODE_ENV;
+// console.log('production', production);
+
 module.exports = {
-    REACT_APP_EFP_EXPO: expo,
-    REACT_APP_DATA_URL: `https://${expo}.expofp.com/data`
+    REACT_APP_EFP_EXPO: expo
 }

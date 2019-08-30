@@ -30,6 +30,8 @@
         "analyze": "source-map-explorer 'build/static/js/*.js'",
         "start": "env-cmd -f ./scripts/env.js react-scripts start",
         "build": "env-cmd -f ./scripts/env.js react-scripts build",
+        "deploy": "yarn build && node ./scripts/deploy.js",
+        "deploy-live": "yarn build && cross-env EFP_DEPLOY_TARGET=live node ./scripts/deploy.js",
         "test": "react-scripts test"
     },
     "eslintConfig": {
@@ -51,6 +53,7 @@
         "@types/classnames": "^2.2.9",
         "@types/d3": "^5.7.2",
         "@types/history": "^4.7.2",
+        "cross-env": "^5.2.0",
         "env-cmd": "^9.0.3",
         "git-branch": "^2.0.1",
         "node-sass": "^4.12.0",
