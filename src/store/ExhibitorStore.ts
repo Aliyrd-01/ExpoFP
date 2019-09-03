@@ -15,7 +15,7 @@ export default class ExhibitorStore {
         return this.exhibitors.filter(x => x.bookmarked);
     }
 
-    @computed get advertised() {
+    @computed({ keepAlive: true }) get advertised() {
         return this.exhibitors.filter(x => x.advertise && x.logo);
     }
 
