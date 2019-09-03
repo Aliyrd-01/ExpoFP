@@ -19,7 +19,7 @@ export default function initUi(store: RootStore) {
     }
 
     uiState.desiredOverlaySize = previewExhibitor || !isWebGlSupported ? "full" : "medium";
-    
+
     // expand on search focus or menu focus
     autorun(() => {
         if ((uiState.searchFocused || uiState.menu) && uiState.overlayPosition !== "left") {
@@ -33,6 +33,8 @@ export default function initUi(store: RootStore) {
             uiState.menu = false;
         }
     });
+
+    if (!uiState.wsShown) uiState.wsStarted = true;
 
     // autorun(()=>{
     //     console.log('hoveredBooth', uiState.hoveredBooth);
