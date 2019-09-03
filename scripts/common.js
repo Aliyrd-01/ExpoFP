@@ -14,6 +14,6 @@ function reportVars() {
 module.exports = {
     expoFromBranch,
     onMasterBranch,
-    fallBackExpo: "jtrade19",
+    fallBackExpo: "hhase",
     reportVars
 };

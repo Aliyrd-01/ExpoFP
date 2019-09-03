@@ -28,7 +28,7 @@ export default class UIState {
     @observable searchFocused = false;
     @observable printingPdf = false;
     @observable.struct screenSize: ScreenSize;
-    @observable desiredOverlaySize: OverlaySize = "medium";
+    @observable desiredOverlaySize: OverlaySize;
     @observable overlayShowsAll = false;
     @observable centerMap = false;
     @observable activeListIndex = -1;

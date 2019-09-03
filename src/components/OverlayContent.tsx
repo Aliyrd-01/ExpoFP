@@ -64,6 +64,8 @@ const OverlayContent: React.FC<{
 
             <div className="overlay-content__scrollable" ref={scrollable}>
                 {children}
+                {/* FIX PART - make chrome start handling click events and correctly draw content (not sure why) */}
+                <div style={{ visibility: "hidden", pointerEvents: "none", height: 0, position: "absolute", bottom: 0 }}></div>
             </div>
         </div>
     );

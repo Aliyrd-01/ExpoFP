@@ -1,7 +1,8 @@
-import { runInAction } from "mobx";
+import { runInAction, autorun } from "mobx";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import UIState from "../UIState";
+import { isWebGlSupported } from "../../utils";
 
 export default function initUi(store: RootStore) {
     const { uiState } = store;
@@ -16,6 +17,22 @@ export default function initUi(store: RootStore) {
             uiState.devicePixelRatio = window.devicePixelRatio;
         });
     }
+
+    uiState.desiredOverlaySize = previewExhibitor || !isWebGlSupported ? "full" : "medium";
+    
+    // expand on search focus or menu focus
+    autorun(() => {
+        if ((uiState.searchFocused || uiState.menu) && uiState.overlayPosition !== "left") {
+            uiState.desiredOverlaySize = "full";
+        }
+    });
+
+    // remove menu when not full
+    autorun(() => {
+        if (uiState.overlaySize !== "full" && uiState.menu) {
+            uiState.menu = false;
+        }
+    });
 
     // autorun(()=>{
     //     console.log('hoveredBooth', uiState.hoveredBooth);
