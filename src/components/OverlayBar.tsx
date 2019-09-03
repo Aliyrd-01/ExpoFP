@@ -18,7 +18,7 @@ const OverlayBar: React.FC<{
 
     return (
         <div className={`overlay-bar ${classNames({ scrolled })}`}>
-            <OverlayBarBack backMode={backMode || "menu"} enableAnimation={true} onBack={onBack} />
+            <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
             {hideClose ? null : <button className="far fa-times overlay-bar__close" onClick={handleClose} />}
         </div>

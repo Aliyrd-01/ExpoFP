@@ -6,18 +6,17 @@ const { uiState } = store;
 
 type BackMode = "back" | "menu" | "none";
 
-const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: BackMode; onBack: () => void }> = ({
-    enableAnimation,
-    backMode,
-    onBack
-}) => {
+const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ backMode, onBack }) => {
     const showBack = backMode === "back";
     const [nextShowBack, setNextShowBack] = useState<boolean>(showBack);
     const animationEnded = nextShowBack === showBack;
 
     useEffect(() => {
         // set nextShowBack after initial render
-        setNextShowBack(showBack);
+        const timeoutId = window.setTimeout(() => {
+            setNextShowBack(showBack);
+        }, 20);
+        return () => window.clearTimeout(timeoutId);
     }, [showBack]);
 
     // console.log("OverlayBarBack", isFirstRun.current, showBack, backMode, animationEnded, divClass(), icon1Class(), icon2Class());
@@ -32,7 +31,7 @@ const OverlayBarBack: React.FC<{ enableAnimation: boolean; backMode: BackMode; o
 
     function divClass() {
         return classNames({
-            anim: enableAnimation,
+            anim: true,
             end: animationEnded,
             start: !animationEnded
         });
