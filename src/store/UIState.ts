@@ -85,7 +85,7 @@ export default class UIState {
     @computed get wsOccupiedHeightPx() {
         return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0;
     }
-    @computed get wsShown() {
+    @computed({ keepAlive: true }) get wsShown() {
         return this.rootStore.exhibitorStore.advertised.length > 0;
     }
 
