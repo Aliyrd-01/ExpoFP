@@ -117,7 +117,7 @@ export async function generatePdf() {
     // });
 
 
-    doc.save(slugify(data.title) + '.pdf')
+    doc.save(slugify(data.title, { remove: /[*+~.()'"!:@]/g, lower: true }) + '.pdf')
 
     function mmToPt(mm: number) {
         return mm / 25.4 * dpi;
