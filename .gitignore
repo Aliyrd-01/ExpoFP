@@ -11,6 +11,7 @@
 # production
 /build
 /expos/*/data
+/public/data
 
 # misc
 .DS_Store
