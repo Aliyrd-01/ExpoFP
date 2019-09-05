@@ -22,7 +22,7 @@ function OverlayParticles() {
     useEffect(() => {
         if (ParticlesClass && canShow) {
             const particles = ParticlesClass.init({
-                selector: ".overlay__particles",
+                selector: ".overlay-particles__canvas",
                 maxParticles: 50,
                 speed: 0.4,
                 sizeVariations: 4,
@@ -32,13 +32,15 @@ function OverlayParticles() {
             setVisible(true);
 
             return () => {
+                // try{
                 particles.destroy();
+                // }catch{}
             };
         }
     }, [ParticlesClass, canShow]);
 
     if (!canShow) return null;
-    return <canvas className={`overlay__particles ${visible ? "-visible" : ""}`} />;
+    return <div><canvas className={`overlay-particles__canvas ${visible ? "-visible" : ""}`} /></div>;
 }
 
 export default observer(OverlayParticles);
