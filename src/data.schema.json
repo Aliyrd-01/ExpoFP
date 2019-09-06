@@ -6,6 +6,9 @@
     "required": ["title", "homeUrl", "logo", "booths", "exhibitors", "categories"],
     "additionalProperties": false,
     "properties": {
+        "free": {
+            "type": "boolean"
+        },
         "title": {
             "type": "string"
         },

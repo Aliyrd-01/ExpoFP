@@ -1,4 +1,4 @@
-const { expoFromBranch, onMasterBranch, fallBackExpo, reportVars } = require("./common");
+const { expoFromBranch, createShowDevHtml, onMasterBranch, fallBackExpo, reportVars } = require("./common");
 const Confirm = require("prompt-confirm");
 const execa = require("execa");
 require("colors");
@@ -29,6 +29,7 @@ const live = process.argv[2] === "--live";
 
     const p = await execa("react-scripts", ["build"], { stdio: "inherit" });
     if (p.exitCode !== 0) process.exit(p.exitCode);
+    createShowDevHtml();
 
     const deployExpo = expo;
     console.log("Deploying dist to " + deployExpo);
