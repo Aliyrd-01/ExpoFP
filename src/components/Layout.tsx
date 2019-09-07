@@ -25,6 +25,8 @@ export default observer(function Layout() {
     // }));
     const [fontsReady, setFontsReady] = useState(false);
     // const [Demo, setDemo] = useState(null);
+
+    // use useLayoutEffect because it seems that f.ready worked bad otherwise
     useLayoutEffect(() => {
         let set = false;
         function doSet(cause) {
@@ -37,6 +39,7 @@ export default observer(function Layout() {
         window.setTimeout(doSet.bind(window, "timeout"), 5000);
         window.addEventListener("load", doSet.bind(window, "load"));
         const f = document["fonts"];
+        // never seen when next line worked, but anyway
         if (f && f.addEventListener) f.addEventListener("onloadingdone", doSet.bind(window, "onloadingdone"));
         if (f && f.ready) f.ready.then(doSet.bind(window, "ready"));
     }, []);
