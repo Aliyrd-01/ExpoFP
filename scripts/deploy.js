@@ -6,12 +6,24 @@ const live = process.argv[2] === "--live";
 
 (async () => {
     let expo = expoFromBranch;
-    if (!expo && live && onMasterBranch) {
-        expo = "_template_for_new_event_";
-    }
-    if (!expo && !live) {
+
+    if (!expo) {
+        if (live) {
+            throw new Error("Won't deploy LIVE from non-expo branch. ");
+        }
         expo = fallBackExpo;
     }
+    // if (!expo && !live) {
+    // } else if (!expo && live) {
+    //     throw new Error("Won't deploy LIVE from non-expo branch. ");
+    // }
+
+    // if (!expo && live && onMasterBranch) {
+    //     expo = "_template_for_new_event_";
+    // }
+    // if (!expo && !live) {
+    //     expo = fallBackExpo;
+    // }
 
     process.env.REACT_APP_EFP_EXPO = expo;
     process.env.REACT_APP_DATA_URL = `https://${expo}.expofp.com/data`;
