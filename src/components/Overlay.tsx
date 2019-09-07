@@ -2,7 +2,7 @@ import { easePolyOut } from "d3-ease";
 import { select } from "d3-selection";
 import { autorun } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
-import React, { useEffect, useRef, useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import store from "../store";
 import { OverlaySize } from "../store/UIState";
 import logger from "../tools/logger";

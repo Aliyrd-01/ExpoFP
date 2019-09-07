@@ -5,8 +5,15 @@ import ExhibitorStore, { Exhibitor } from '../ExhibitorStore';
 import { generateUniqueSlug } from '../../tools/slug';
 import baseUrl from "../../tools/base-data-url";
 import { autorun } from 'mobx';
+import previewExhibitor from "../../utils/preview-exhibitor";
 
 export default function initExhibitors(store: RootStore) {
+
+    if (previewExhibitor){
+        const i = data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
+        if (i !== -1) data.exhibitors.splice(i, 1, previewExhibitor);
+        else data.exhibitors.push(previewExhibitor);
+    }
 
     data.exhibitors.sort(function (a: RawExhibitor, b: RawExhibitor) {
         var x = (a.featured ? "0" : "1") + a.name.toLowerCase();

@@ -5,10 +5,11 @@ import UIState from "../UIState";
 import { isWebGlSupported } from "../../utils";
 
 export default function initUi(store: RootStore) {
-    const { uiState } = store;
+    const { uiState, exhibitorStore } = store;
     updateScreenSize(uiState);
     window.addEventListener("resize", () => updateScreenSize(uiState));
-    uiState.previewExhibitor = previewExhibitor;
+    if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
+    // uiState.previewExhibitor = previewExhibitor;
 
     // monitor devicePixelRatio changes
     const mm = typeof matchMedia !== "undefined" ? matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`) : null;
