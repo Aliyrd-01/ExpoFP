@@ -1,17 +1,17 @@
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState, Suspense } from "react";
+import React, { Suspense, useLayoutEffect, useState } from "react";
+import data from "../data";
 import store from "../store";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
+import Controls from "./Controls";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
+import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
-import Controls from "./Controls";
-import Pdf from "./Pdf";
-import data from "../data";
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 
@@ -25,7 +25,7 @@ export default observer(function Layout() {
     // }));
     const [fontsReady, setFontsReady] = useState(false);
     // const [Demo, setDemo] = useState(null);
-    useEffect(() => {
+    useLayoutEffect(() => {
         let set = false;
         function doSet(cause) {
             if (set) return;
@@ -37,6 +37,7 @@ export default observer(function Layout() {
         window.setTimeout(doSet.bind(window, "timeout"), 5000);
         window.addEventListener("load", doSet.bind(window, "load"));
         const f = document["fonts"];
+        if (f && f.addEventListener) f.addEventListener("onloadingdone", doSet.bind(window, "onloadingdone"));
         if (f && f.ready) f.ready.then(doSet.bind(window, "ready"));
     }, []);
 
