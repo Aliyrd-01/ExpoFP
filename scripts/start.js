@@ -1,4 +1,4 @@
-const { expoFromBranch, onExpoBranch, onMasterBranch, fallBackExpo, reportVars } = require("./common");
+const { expoFromBranch, fallBackExpo, reportVars } = require("./common");
 const execa = require("execa");
 
 (async () => {

@@ -1,13 +1,19 @@
-const branch = require("git-branch").sync();
+const git = require('git-rev-sync');
 require("colors");
+const branch = git.branch();
+const os = require("os");
+const dateFormat = require('dateformat');
 
-const onMasterBranch = branch === "master";
+// const onMasterBranch = branch === "master";
 let expoFromBranch = branch.startsWith("expo-") ? branch.replace(/^expo-/, "") : null;
 
 function reportVars() {
+    process.env.REACT_APP_VERSION = `${git.long()} ${dateFormat("ddd mmm dd yyyy HH:MM:ss Z")}`
+
     console.log("REACT_APP_MODE", process.env.REACT_APP_MODE.yellow);
     console.log("REACT_APP_EFP_EXPO", process.env.REACT_APP_EFP_EXPO.yellow);
     console.log("REACT_APP_DATA_URL", process.env.REACT_APP_DATA_URL.yellow);
+    console.log("REACT_APP_VERSION", process.env.REACT_APP_VERSION.yellow);
     console.log("");
 }
 
@@ -34,7 +40,7 @@ function createShowDevHtml() {
 
 module.exports = {
     expoFromBranch,
-    onMasterBranch,
+    // onMasterBranch,
     fallBackExpo: "sydneybuildexpo",
     reportVars,
     createShowDevHtml

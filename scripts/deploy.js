@@ -1,4 +1,4 @@
-const { expoFromBranch, createShowDevHtml, onMasterBranch, fallBackExpo, reportVars } = require("./common");
+const { expoFromBranch, createShowDevHtml, fallBackExpo, reportVars } = require("./common");
 const Confirm = require("prompt-confirm");
 const execa = require("execa");
 require("colors");
