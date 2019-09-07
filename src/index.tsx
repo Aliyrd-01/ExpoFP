@@ -6,8 +6,7 @@ import Layout from "./components/Layout";
 import "./services/routing";
 
 
-
-// import reportError from "./tools/report-error";
-// window.addEventListener("error", reportError);
+import reportError from "./tools/report-error";
+window.addEventListener("error", reportError);
 
 ReactDOM.render(<Layout />, document.getElementById("app"));
