@@ -41,7 +41,7 @@ function createShowDevHtml() {
 module.exports = {
     expoFromBranch,
     // onMasterBranch,
-    fallBackExpo: "sydneybuildexpo",
+    fallBackExpo: "hhase",
     reportVars,
     createShowDevHtml
 };
