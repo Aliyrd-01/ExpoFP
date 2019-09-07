@@ -1,14 +1,15 @@
 const git = require('git-rev-sync');
 require("colors");
 const branch = git.branch();
-const os = require("os");
+// const os = require("os");
 const dateFormat = require('dateformat');
+const username = require('username');
 
 // const onMasterBranch = branch === "master";
 let expoFromBranch = branch.startsWith("expo-") ? branch.replace(/^expo-/, "") : null;
 
 function reportVars() {
-    process.env.REACT_APP_VERSION = `${git.long()} ${dateFormat("ddd mmm dd yyyy HH:MM:ss Z")}`
+    process.env.REACT_APP_VERSION = `${git.long()} ${dateFormat("ddd mmm dd yyyy HH:MM:ss Z")} (${username.sync()})`
 
     console.log("REACT_APP_MODE", process.env.REACT_APP_MODE.yellow);
     console.log("REACT_APP_EFP_EXPO", process.env.REACT_APP_EFP_EXPO.yellow);
