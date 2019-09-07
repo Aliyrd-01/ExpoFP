@@ -156,7 +156,6 @@ export default observer(function Overlay() {
         }
     }, [s]);
 
-    console.log("Overlay rendered");
     return (
         <div className={`overlay ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
             {s.noMove}

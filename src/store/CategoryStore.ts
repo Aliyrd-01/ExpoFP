@@ -8,7 +8,6 @@ export default class CategoryStore {
 
     readonly categories: Category[] = [];
     @computed({keepAlive: true}) get categoryById() {
-        console.log('categoryById');
         return new Map<number, Category>(this.categories.map(c => [c.id, c]));
     }
 
