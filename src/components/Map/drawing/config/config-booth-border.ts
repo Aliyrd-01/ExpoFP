@@ -1,5 +1,4 @@
 import Color from 'color';
-import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
 import { Booth } from "../../../../store/BoothStore";
