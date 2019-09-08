@@ -2,6 +2,7 @@ import { Booth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
 import Painter from "../painters/Painter";
+import { autorun } from "mobx";
 
 export default abstract class BoothDrawerBase<T extends Painter | TrianglePainter> {
     protected readonly booth: Booth;
@@ -35,4 +36,24 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
     protected subscribeToBoothChange() {}
 
     update() {}
+
+    startAutoupdate() {
+        let initial = true;
+
+        // console.log("autorun1");
+        autorun(
+            reaction => {
+                this.update();
+                if (!this.context.updatable) reaction.dispose();
+            },
+            {
+                scheduler: run => {
+                    if (initial) {
+                        run();
+                        initial = false;
+                    } else this.context.requireUpdate(run);
+                }
+            }
+        );
+    }
 }

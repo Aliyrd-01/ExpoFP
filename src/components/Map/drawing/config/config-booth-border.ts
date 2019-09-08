@@ -44,10 +44,12 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
             });
         }
 
-        this.update();
-        if (context.updatable) {
-            reaction(()=> booth.skipDim, () => context.requireUpdate(this.updateBound));
-        }
+        this.startAutoupdate();
+
+        // this.update();
+        // if (context.updatable) {
+        //     reaction(()=> booth.skipDim, () => context.requireUpdate(this.updateBound));
+        // }
     }
 
     update() {

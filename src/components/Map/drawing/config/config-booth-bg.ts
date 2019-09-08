@@ -1,5 +1,4 @@
 import Color from "color";
-import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
@@ -7,7 +6,6 @@ import { DrawerContext } from "../Drawer1";
 // import { getBoothState } from "./config-booths";
 import TrianglePainter from "../painters/TrianglePainter";
 import BoothDrawerBase from "./BoothDrawerBase";
-
 
 // let picked = 0;
 export default function configBoothBg(context: DrawerContext, booth: Booth) {
@@ -67,14 +65,43 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
         //     });
         // }
 
-        this.update();
-        if (context.updatable) {
-            reaction(() => [booth.hover, booth.skipDim, booth.selected], () => context.requireUpdate(this.updateBound));
-            // store.watchBoothState(booth.id, () => context.requireUpdate(this.updateBound), "hover", "skipDim");
-        }
+        // this.update();
+        // let initial = true;
+
+        // console.log('autorun1')
+        // autorun(
+        //     reaction => {
+        //         this.update();
+        //         if (!context.updatable) reaction.dispose();
+        //     },
+        //     {
+        //         scheduler: run => {
+        //             if (initial) {
+        //                 // console.log('autorun2')
+        //                 run();
+        //                 initial = false;
+        //             } else 
+        //             context.requireUpdate(run);
+        //         }
+        //     }
+        // );
+
+        // console.log('autorun3')
+
+        // if (context.updatable) {
+        //     reaction(() => [booth.hover, booth.skipDim, booth.selected], () => context.requireUpdate(this.updateBound));
+        //     // store.watchBoothState(booth.id, () => context.requireUpdate(this.updateBound), "hover", "skipDim");
+        // }
+        this.startAutoupdate();
     }
 
+    // @computed({ keepAlive: true }) get boothColor() {
+    //     return null;
+    // }
+
     update() {
+        // console.log('autorun2a')
+
         const s = this.booth; //this.getBoothState();
         const c = this.getBoothColor();
 
