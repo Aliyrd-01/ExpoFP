@@ -229,7 +229,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
         if (b.error) color = "#f33";
         else if (b.selected) {
             const color0 = settings.colors.booths.selected;
-            const color1 = "#fffff";
+            const color1 = "#fb3e59";
             const c = colorInterpolate([color0, color1]);
             color = c(this.shape.selectBgAnimationPart);
         } else color = this.defaultColor;
