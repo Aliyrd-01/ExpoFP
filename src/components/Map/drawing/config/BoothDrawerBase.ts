@@ -3,9 +3,11 @@ import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
 import Painter from "../painters/Painter";
 import { autorun } from "mobx";
+import BoothShape from "./BoothShape";
 
 export default abstract class BoothDrawerBase<T extends Painter | TrianglePainter> {
     protected readonly booth: Booth;
+    protected readonly shape: BoothShape;
     protected readonly painter: T;
     protected readonly context: DrawerContext;
     public readonly updateBound: () => void;
@@ -19,6 +21,7 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
         painterOrderPriority: number
     ) {
         this.booth = booth;
+        this.shape = BoothShape.get(booth);
         this.painter = context.requirePainter(painterType, painterClass, painterOrderPriority);
         this.context = context;
         this.updateBound = this.update.bind(this);
