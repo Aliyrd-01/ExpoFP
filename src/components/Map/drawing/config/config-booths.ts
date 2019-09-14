@@ -12,7 +12,7 @@ import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
 
 export default function configBooths(context: DrawerContext) {
-    const booths = boothStore.booths;//.filter(x => x.name === '4268');
+    const booths = boothStore.booths; //.filter(x => x.name === '4268');
     // booths.splice(2740);
     const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark, configBoothBorder] as ((
         DrawerContext,
@@ -36,7 +36,7 @@ export default function configBooths(context: DrawerContext) {
     }
 
     const labelsPainter = context.requirePainter("booth-label") as RectPainter;
-    if (context.updatable) {
+    if (context.updatable && labelsPainter) {
         labelsPainter.alpha = 0;
     }
 
@@ -44,7 +44,9 @@ export default function configBooths(context: DrawerContext) {
         for (const dr of lockedDrawers) {
             dr.unlock();
         }
-        animate(0, 300, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), v => (labelsPainter.alpha = v));
+        animate(0, 300, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), v =>
+            labelsPainter ? (labelsPainter.alpha = v) : null
+        );
     };
     // if (after.length) return function () { for (const f of after) { f(); } }
 }
