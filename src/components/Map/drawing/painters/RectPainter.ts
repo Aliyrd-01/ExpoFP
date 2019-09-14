@@ -41,6 +41,7 @@ export default class RectPainter implements Painter {
     private readonly indexBufferPool: WebGLBuffer[] = [];
     private readonly canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
     private readonly fallBackTexture: WebGLTexture;
+    private indexBuffersAreUint: boolean;
 
     // to be set externally
     public orderPriority: number;
@@ -368,8 +369,11 @@ export default class RectPainter implements Painter {
         const indexBuffers: WebGLBuffer[] = [];
         this.groups.length = 0;
 
+        this.indexBuffersAreUint = this.sortedObjects.length * 4 > 65535;
+        const ArType = this.indexBuffersAreUint ? Uint32Array : Uint16Array;
+
         for (let group of groups) {
-            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer(); //
+            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer();
             indexBuffers.push(buffer);
 
             const realIndices = [];
@@ -379,7 +383,7 @@ export default class RectPainter implements Painter {
             }
 
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
-            this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(realIndices), this.gl.STATIC_DRAW);
+            this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new ArType(realIndices), this.gl.DYNAMIC_DRAW);
 
             this.groups.push({
                 texture: group.texture,
@@ -454,7 +458,8 @@ export default class RectPainter implements Painter {
 
             twgl.setUniforms(this.programInfo, uniforms);
 
-            gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
+            // console.log("zzz", group.numElements, group.indexBufferIsUint);
+            gl.drawElements(gl.TRIANGLES, group.numElements, this.indexBuffersAreUint ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
         }
     }
 }
