@@ -3,6 +3,7 @@ import Sprite, { SpriteItem } from "./Sprite";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 import settings from "../../../../tools/settings";
+import { CanvasDescriptor } from "../config/canvases";
 
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -478,7 +479,7 @@ export interface DrawerObject {
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;
-    canvasTmp?: HTMLCanvasElement;
+    canvasTmp?: HTMLCanvasElement|CanvasDescriptor;
     visible?: boolean;
     skipdim?: boolean;
     //order: number;

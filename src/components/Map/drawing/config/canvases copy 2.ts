@@ -9,9 +9,7 @@ export interface CanvasDescriptor {
     draw(x: number, y: number, c: CanvasRenderingContext2D): void;
 }
 
-let prevMeasureFont: string;
-function measureText(font: string, text: string ) {
-    if (prevMeasureFont !== font) ctx.font = font;
+function measureText(text: string, font: string) {
     return ctx.measureText(text).width;
 }
 
@@ -21,7 +19,7 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
     const font = getFont(fontSize, 500);
-    const width = measureText(font, text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A")) + 3 + 3; //
+    const width = measureText(text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A"), font) + 3 + 3; //
     const vPad = 4;
     const height = fontSize + vPad;
 
@@ -38,12 +36,12 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
             // c.fillRect(0,0,canvas.width, canvas.height);
 
             c.fillStyle = "#fff";
-            c.fillText(text, x + width / 2, y + height - (vPad / 2) * pixelRatio);
+            c.fillText(text, x + canvas.width / 2, y + canvas.height - (vPad / 2) * pixelRatio);
         }
     };
 }
 
-export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): CanvasDescriptor  {
+export function createDetailsCanvas(b: RegularBooth, pixelRatio: number) {
     //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
@@ -75,38 +73,35 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
     //     mainLine = b.title || b.name;
     // }
 
-    // const canvas = document.createElement("canvas");
-    // const c = canvas.getContext("2d");
-    const mainLineWidth = measureText(boothFont, mainLine);// c.measureText(mainLine).width;
-    const companiesWidth = lines.map(x => measureText(detailFont, x));
+    const canvas = document.createElement("canvas");
+    const c = canvas.getContext("2d");
+    c.font = boothFont;
+    const mainLineWidth = c.measureText(mainLine).width;
+    c.font = detailFont;
+    const companiesWidth = lines.map(x => c.measureText(x).width);
     const maxTextWidth = Math.max(mainLineWidth, ...companiesWidth);
+    canvas.width = maxTextWidth + 2;
+    const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * pixelRatio;
+    canvas.height = height + 4;
 
-    const width = maxTextWidth + 2;
-    const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * pixelRatio + 4;;
+    let nextLine = boothFontSize;
+    c.fillStyle = "#fff";
+    c.textAlign = "start";
+    c.textBaseline = "alphabetic";
+    c.font = boothFont;
 
+    c.fillText(mainLine, 0, nextLine);
+    nextLine += boothFontSize + boothPadding;
 
-    return {
-        width, height,
-        draw(x,y,c){
-            let nextLine = boothFontSize;
+    c.font = detailFont;
+    c.fillStyle = "#fff";
 
-            c.fillStyle = "#fff";
-            c.textAlign = "start";
-            c.textBaseline = "alphabetic";
-            c.font = boothFont;
-        
-            c.fillText(mainLine, x + 0, y + nextLine);
-            nextLine += boothFontSize + boothPadding;
-        
-            c.font = detailFont;
-            c.fillStyle = "#fff";
-        
-            for (const line of lines) {
-                c.fillText(line, x + 0, y + nextLine);
-                nextLine += detailFontSize + 1 * pixelRatio;
-            }
-        }
-    };
+    for (const line of lines) {
+        c.fillText(line, 0, nextLine);
+        nextLine += detailFontSize + 1 * pixelRatio;
+    }
+
+    return canvas;
 }
 
 const circleCanvasCache = new Map<string, { canvas: HTMLCanvasElement; padding: number }>();

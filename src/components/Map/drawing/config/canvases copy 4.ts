@@ -38,7 +38,7 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
             // c.fillRect(0,0,canvas.width, canvas.height);
 
             c.fillStyle = "#fff";
-            c.fillText(text, x + width / 2, y + height - (vPad / 2) * pixelRatio);
+            c.fillText(text, x + canvas.width / 2, y + canvas.height - (vPad / 2) * pixelRatio);
         }
     };
 }

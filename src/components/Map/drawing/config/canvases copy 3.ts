@@ -21,7 +21,7 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
     const font = getFont(fontSize, 500);
-    const width = measureText(font, text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A")) + 3 + 3; //
+    const width = measureText(text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A"), font) + 3 + 3; //
     const vPad = 4;
     const height = fontSize + vPad;
 
@@ -38,7 +38,7 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
             // c.fillRect(0,0,canvas.width, canvas.height);
 
             c.fillStyle = "#fff";
-            c.fillText(text, x + width / 2, y + height - (vPad / 2) * pixelRatio);
+            c.fillText(text, x + canvas.width / 2, y + canvas.height - (vPad / 2) * pixelRatio);
         }
     };
 }
