@@ -1,6 +1,6 @@
 import { reaction } from "mobx";
+import { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
-import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
@@ -14,7 +14,7 @@ export default function configBoothBookmark(context: DrawerContext, booth: Booth
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
     constructor(context: DrawerContext, booth: RegularBooth) {
         super(context, booth, "booth-bookmark", RectPainter, 140);
-        const r = this.booth.rect.withPadding(settings.borderWidth / 2);
+        const r = this.booth.rect.withPadding(boothStore.borderWidth / 2);
 
         const bookmarkCanvasXL = createBookmarkCanvas(11, context.pixelRatio);
         const bookmarkCanvasL = createBookmarkCanvas(8, context.pixelRatio);

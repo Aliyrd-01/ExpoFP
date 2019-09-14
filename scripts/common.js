@@ -42,7 +42,7 @@ function createShowDevHtml() {
 module.exports = {
     expoFromBranch,
     // onMasterBranch,
-    fallBackExpo: "bigone",
+    fallBackExpo: "expo",
     reportVars,
     createShowDevHtml
 };

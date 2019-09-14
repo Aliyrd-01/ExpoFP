@@ -1,11 +1,12 @@
-import Color from 'color';
+import Color from "color";
 import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
+import { boothStore } from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
-import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
 import BoothDrawerBase from "./BoothDrawerBase";
+// import { boothStore } from '../../../../store';
 
 export default function configBoothBorder(context: DrawerContext, booth: Booth) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
@@ -14,18 +15,21 @@ export default function configBoothBorder(context: DrawerContext, booth: Booth) 
 }
 
 class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
-
     constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, 'booth-border', TrianglePainter, 150);
+        super(context, booth, "booth-border", TrianglePainter, 150);
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
-        const width = settings.borderWidth;
+        const width = boothStore.borderWidth;
 
-        const triangles: Triangle[] = []
+        const triangles: Triangle[] = [];
 
         function addTriangles(cx, cy, w, h) {
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(cx, cy, w, h)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+            triangles.push(
+                ...Polygon4.fromRect(Rect.fromCxcywh(cx, cy, w, h))
+                    .rotate(booth.rotate, r.cx, r.cy)
+                    .toTriangles()
+            );
         }
 
         addTriangles(r.cx, r.cy - r.h / 2, r.w + width, width);
@@ -39,7 +43,7 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
                 p0: t[0],
                 p1: t[1],
                 p2: t[2],
-                color: borderColor//Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+                color: borderColor //Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
             });
         }
 
@@ -53,9 +57,6 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
 
     update() {
         const skipDimm = this.booth.skipDim;
-        this.painter.updateSkipdim(this.getId('border'), skipDimm);
+        this.painter.updateSkipdim(this.getId("border"), skipDimm);
     }
 }
-
-
-

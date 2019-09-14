@@ -1,10 +1,10 @@
-import { RegularBooth, Booth } from "../../../../store/BoothStore";
-import settings from "../../../../tools/settings";
+import { reaction } from "mobx";
+import { boothStore } from "../../../../store";
+import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createDetailsCanvas, createLabelCanvas } from "./canvases";
-import { reaction } from "mobx";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
@@ -89,7 +89,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio);
         // this.detailsHeight = detailsCanvas.height;
 
-        const pad = settings.borderWidth / 2;
+        const pad = boothStore.borderWidth / 2;
 
         this.painter.addObject({
             id: this.getId("Details"),
