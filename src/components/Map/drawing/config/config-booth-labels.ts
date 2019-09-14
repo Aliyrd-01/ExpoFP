@@ -10,7 +10,7 @@ import { reaction } from "mobx";
 // const dotW = dotCanvas.canvas.width / 2;
 // const dotH = dotCanvas.canvas.width / 2;
 
-const prefixes = <const>["Dot", "XS", "S", "M", "L", "Details"];
+const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
 
 // const updates = [];
 // let drawer: Painter;
