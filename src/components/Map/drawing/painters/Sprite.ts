@@ -7,9 +7,9 @@ const maxHeight = 2000;
 const maxWidth = 2000;
 
 export default class Sprite {
-    private readonly canvasToSpriteItem = new Map<HTMLCanvasElement | CanvasDescriptor, SpriteItemEx>();
+    private readonly canvasToSpriteItem = new Map<CanvasDescriptor, SpriteItemEx>();
 
-    addCanvas(canvas: HTMLCanvasElement | CanvasDescriptor): SpriteItem {
+    addCanvas(canvas: CanvasDescriptor): SpriteItem {
         let item = this.canvasToSpriteItem.get(canvas);
 
         if (!item) {
@@ -81,12 +81,13 @@ export default class Sprite {
                 c = item.containerCanvas.getContext("2d");
                 cache.set(item.containerCanvas, c);
             }
-            if (canvas instanceof HTMLCanvasElement) {
-                c.drawImage(canvas, item.rect.x1, item.rect.y1);
-            } else {
-                // c.fillRect(item.rect.x1, item.rect.y1, item.rect.w, item.rect.h);
-                canvas.draw(item.rect.x1, item.rect.y1, c);
-            }
+            // if (canvas instanceof HTMLCanvasElement) {
+            //     c.drawImage(canvas, item.rect.x1, item.rect.y1);
+            // } else {
+            // c.fillRect(item.rect.x1, item.rect.y1, item.rect.w, item.rect.h);
+            c.setTransform(1, 0, 0, 1, item.rect.x1, item.rect.y1);
+            canvas.draw(c);
+            // }
         }
 
         // clear to free memory

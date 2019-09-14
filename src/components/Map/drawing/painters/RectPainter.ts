@@ -146,7 +146,7 @@ export default class RectPainter implements Painter {
     }
 
     private populateBuffers() {
-        if (settings.debug) console.time('RectPainter.populateBuffers');
+        if (settings.debug) console.time("RectPainter.populateBuffers");
         const gl = this.gl;
 
         const centers: number[] = [];
@@ -175,7 +175,7 @@ export default class RectPainter implements Painter {
             // destroy it from memory
             delete w.canvasTmp;
         }
-        
+
         const canvases = sprite.generateSpriteCanvases();
         const canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
         // create texture per canvas
@@ -317,7 +317,7 @@ export default class RectPainter implements Painter {
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
 
-        if (settings.debug) console.timeEnd('RectPainter.populateBuffers')
+        if (settings.debug) console.timeEnd("RectPainter.populateBuffers");
     }
 
     private populateColorBuffer() {
@@ -479,7 +479,7 @@ export interface DrawerObject {
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;
-    canvasTmp?: HTMLCanvasElement|CanvasDescriptor;
+    canvasTmp?: CanvasDescriptor;
     visible?: boolean;
     skipdim?: boolean;
     //order: number;

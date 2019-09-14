@@ -67,8 +67,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const r = this.booth.rect;
 
         const dotCanvas = createCircleCanvas(1.5, context.pixelRatio);
-        const dotW = dotCanvas.canvas.width / 2;
-        const dotH = dotCanvas.canvas.width / 2;
+        const dotW = dotCanvas.width / 2;
+        const dotH = dotCanvas.width / 2;
 
         this.painter.addObject({
             id: this.getId("Dot"),
@@ -76,7 +76,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             center: [r.cx, r.cy],
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
-            canvasTmp: dotCanvas.canvas,
+            canvasTmp: dotCanvas,
             texPosition: "center",
             visible: false
         });

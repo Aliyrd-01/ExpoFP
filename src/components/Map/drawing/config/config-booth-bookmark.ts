@@ -31,7 +31,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                 -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding,
                 0
             ],
-            canvasTmp: bookmarkCanvasXL.canvas,
+            canvasTmp: bookmarkCanvasXL,
             texPosition: "righttop",
             visible: false
         });
@@ -47,7 +47,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                 -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
                 0
             ],
-            canvasTmp: bookmarkCanvasL.canvas,
+            canvasTmp: bookmarkCanvasL,
             texPosition: "righttop",
             visible: false
         });
@@ -63,7 +63,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                 -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
                 0
             ],
-            canvasTmp: bookmarkCanvasM.canvas,
+            canvasTmp: bookmarkCanvasM,
             texPosition: "righttop",
             visible: false
         });
@@ -74,12 +74,12 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [
-                -bookmarkCanvasM.canvas.width / 2,
-                -bookmarkCanvasM.canvas.height / 2,
-                bookmarkCanvasM.canvas.width / 2,
-                bookmarkCanvasM.canvas.height / 2
+                -bookmarkCanvasM.width / 2,
+                -bookmarkCanvasM.height / 2,
+                bookmarkCanvasM.width / 2,
+                bookmarkCanvasM.height / 2
             ],
-            canvasTmp: bookmarkCanvasM.canvas,
+            canvasTmp: bookmarkCanvasM,
             texPosition: "center",
             visible: false
         });
