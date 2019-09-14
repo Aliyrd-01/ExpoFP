@@ -10,7 +10,7 @@ import { reaction } from "mobx";
 // const dotW = dotCanvas.canvas.width / 2;
 // const dotH = dotCanvas.canvas.width / 2;
 
-const prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
+const prefixes = <const>["Dot", "XS", "S", "M", "L", "Details"];
 
 // const updates = [];
 // let drawer: Painter;
@@ -46,7 +46,7 @@ export default function configBoothLabels(context: DrawerContext, booth: Booth) 
 
 class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     private readonly factors: number[] = [];
-    private previousVisiblePrefix: string;
+    private previousVisiblePrefix: typeof prefixes[number];
     private previousSkipDim: boolean;
     public locked: boolean;
     // private readonly labelColor: string;
@@ -108,7 +108,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         if (context.updatable) {
             context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-            reaction(()=> booth.skipDim, () => context.requireUpdate(this.updateBound));
+            reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
         }
         // updates.push(this.updateBound);
     }
@@ -119,7 +119,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         for (const p of prefixes.slice(0, prefixes.length - 1)) {
             const cr = this.painter.getObject(this.getId(p)).canvasTmp;
-            const xFactor = r.w / cr.width;//Math.min(cr.height * 5, cr.width);
+            const xFactor = r.w / cr.width; //Math.min(cr.height * 5, cr.width);
             const yFactor = r.h / cr.height;
 
             lastFactor = Math.min(xFactor, yFactor);
@@ -129,7 +129,6 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         // Details are show at:
         this.factors.push(lastFactor / 1.8);
     }
-
 
     unlock() {
         this.locked = false;
@@ -141,7 +140,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         // if (!canUpdate) return;
         // if (this.painter.alpha === 0) return;
         if (this.locked) return;
-        let visiblePrefix = "";
+        let visiblePrefix: typeof prefixes[number] = null;
         const ptscale = this.context.getPtscale();
         // const rectHeight = this.booth.rect.h * ptscale;
 
@@ -150,6 +149,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             const f = this.factors[i];
             if (ptscale < f) visiblePrefix = p;
         }
+
+        // visiblePrefix = "Dot";
 
         if (visiblePrefix !== this.previousVisiblePrefix) {
             if (visiblePrefix) this.painter.updateVisible(this.getId(visiblePrefix), true);

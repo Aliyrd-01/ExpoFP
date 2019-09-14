@@ -1,0 +1,33 @@
+.debug {
+    position: fixed;
+    z-index: 999;
+    background: #fff;
+    width: calc(100vw - 2rem);
+    height: calc(100vh - 2rem);
+    top: 1rem;
+    left: 1vw;
+    padding: 1rem;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+    overflow: scroll;
+    label {
+        display: block;
+        font-weight: 500;
+    }
+
+    &__canvas {
+        display: inline-block;
+        padding: 2px;
+        vertical-align: top;
+        > img {
+            background: #aaa;
+        }
+    }
+    /* textarea {
+        width: 100%;
+        display: block;
+        min-height: 20%;
+        font-size: 12px;
+        font-family: monospace;
+        background: #eee;
+    } */
+}

@@ -12,8 +12,10 @@ import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
+import settings from "../tools/settings";
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
+const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -58,7 +60,11 @@ export default observer(function Layout() {
                 <Overlay />
                 {fontsReady && isWebGlSupported && <Map />}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {/* <Debug />*/}
+                {settings.debug ? (
+                    <Suspense fallback={null}>
+                        <Debug />
+                    </Suspense>
+                ) : null}
                 <Pdf />
                 <div id="fps" />
             </div>
