@@ -1,5 +1,6 @@
-import { Booth } from "../../../../store/BoothStore";
+import { easeQuadInOut } from "d3-ease";
 import { observable, reaction } from "mobx";
+import { Booth } from "../../../../store/BoothStore";
 
 const map = new Map<Booth, BoothShape>();
 
@@ -10,7 +11,7 @@ export default class BoothShape {
 
     constructor(booth: Booth) {
         this.booth = booth;
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = t), 750, true);
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, true);
     }
 
     static get(b: Booth) {
