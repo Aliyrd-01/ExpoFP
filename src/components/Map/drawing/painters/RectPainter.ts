@@ -39,7 +39,6 @@ export default class RectPainter implements Painter {
 
     private readonly groups: DrawerGroup[] = [];
     private readonly indexBufferPool: WebGLBuffer[] = [];
-    private readonly canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
     private readonly fallBackTexture: WebGLTexture;
     private indexBuffersAreUint: boolean;
 
@@ -175,6 +174,7 @@ export default class RectPainter implements Painter {
         }
 
         const canvases = sprite.generateSpriteCanvases();
+        const canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
         // create texture per canvas
         for (const c of canvases) {
             const texture = gl.createTexture();
@@ -184,7 +184,7 @@ export default class RectPainter implements Painter {
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
-            this.canvasToTexture.set(c, texture);
+            canvasToTexture.set(c, texture);
         }
 
         // eslint-disable-next-line
@@ -195,7 +195,7 @@ export default class RectPainter implements Painter {
 
         for (let w of this.objects) {
             if (!w.spriteItem) continue;
-            w.texture = this.canvasToTexture.get(w.spriteItem.containerCanvas);
+            w.texture = canvasToTexture.get(w.spriteItem.containerCanvas);
         }
 
         // __logger.log('aaa', this.objects.filter(x => x.texture).length);
