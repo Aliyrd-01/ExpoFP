@@ -39,7 +39,7 @@ export default function configMatrix(c: DrawerContext) {
         // __logger.log('matrix change', m.getZoomTransform())
         for (const d of c.allPainters) {
             d.matrix = c.getMatrix();
-            d.ptscale = c.getPtscale();
+            d.ptscale = c.ptscale;
         }
     }
 }

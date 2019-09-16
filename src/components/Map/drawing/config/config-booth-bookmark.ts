@@ -85,19 +85,19 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         });
 
         if (context.updatable) {
-            context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-            reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
+            // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            // reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
         }
     }
 
-    private prevVisible:boolean = false;
+    private prevVisible: boolean = false;
 
     update() {
         const { bookmarked, skipDim } = this.booth as RegularBooth;
         if (!bookmarked && !this.prevVisible) return;
         this.prevVisible = bookmarked;
 
-        const ptscale = this.context.getPtscale();
+        const ptscale = this.context.ptscale;
         // __logger.log('bookmark update', bookmarked, skipDim);
 
         let view: string;

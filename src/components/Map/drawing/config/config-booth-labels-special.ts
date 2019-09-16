@@ -81,8 +81,8 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         this.update();
 
         if (context.updatable) {
-            context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-            reaction(()=> booth.skipDim, () => context.requireUpdate(this.updateBound));
+            // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            reaction(()=> [booth.skipDim, context.ptscale] , () => context.requireUpdate(this.updateBound));
         }
     }
 
@@ -96,7 +96,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // if (!canUpdate) return;
         // console.log('updateAction')
         // let visiblePrefix = "";
-        const ptscale = this.context.getPtscale();
+        const ptscale = this.context.ptscale;
         // find first with factor larger than this
         const step = this.steps.find(s => s.factor < 1 / ptscale);
         const visibleId = this.getId(step ? step.factor.toString() : "Dot");

@@ -1,8 +1,9 @@
-import { zoomIdentity, ZoomTransform } from 'd3-zoom';
-import { m4 } from 'twgl.js';
-import Rect from '../../../core/Rect';
-import Size from '../../../core/Size';
-import { svgHeight, svgWidth } from '../../../data/svg';
+import { zoomIdentity, ZoomTransform } from "d3-zoom";
+import { m4 } from "twgl.js";
+import Rect from "../../../core/Rect";
+import Size from "../../../core/Size";
+import { svgHeight, svgWidth } from "../../../data/svg";
+// import { observable, computed } from "mobx";
 
 export default class Matrix {
     // svg -> -1..1
@@ -10,7 +11,8 @@ export default class Matrix {
     // browser px -> svg
     private pxSvgMatrix: Float32Array;
     // canvas point -> svg scale
-    private ptscale: number;
+    //@observable private 
+    ptscaleVal: number;
     // svg -> browser px matrix (unzoomed)
     private svgPxUnzoomedMatrix: Float32Array;
 
@@ -19,12 +21,11 @@ export default class Matrix {
     //
     // dependencies and misc
     //
-    private prevPtscale: number;
+    // private prevPtscale: number;
     private canvasSize: Size;
     private visibleRect: Rect;
     private visibleScale: number;
     private zoomTransform: ZoomTransform;
-
 
     constructor(canvasSize: Size) {
         this.canvasSize = canvasSize;
@@ -66,24 +67,46 @@ export default class Matrix {
     //
     // getters
     //
-    getMatrix() { return this.matrix; }
-    getPtscale() { return this.ptscale; }
-    getPxSvgMatrix() { return this.pxSvgMatrix; }
-    getSvgPxUnzoomedMatrix() { return this.svgPxUnzoomedMatrix; }
-    getZoomTransform() { return this.zoomTransform; }
-    getVisibleRect() { return this.visibleRect; }
-    getVisibleScale() { return this.visibleScale; }
+    getMatrix() {
+        return this.matrix;
+    }
+    getPtscale() {
+        return this.ptscaleVal;
+    }
+    // @computed({ keepAlive: true }) 
+    get ptscale() {
+        return this.ptscaleVal;
+    }
+    getPxSvgMatrix() {
+        return this.pxSvgMatrix;
+    }
+    getSvgPxUnzoomedMatrix() {
+        return this.svgPxUnzoomedMatrix;
+    }
+    getZoomTransform() {
+        return this.zoomTransform;
+    }
+    getVisibleRect() {
+        return this.visibleRect;
+    }
+    getVisibleScale() {
+        return this.visibleScale;
+    }
 
     //
     // subscribe
     //
-    private ptscaleChangeSubscribers: ((ptscale: number) => void)[] = [];
-    subscribePtscaleChange(cb: (ptscale) => void) { this.ptscaleChangeSubscribers.push(cb); }
-    private firePtscaleChange() { this.ptscaleChangeSubscribers.forEach(x => x(this.ptscale)); }
+    // private ptscaleChangeSubscribers: ((ptscale: number) => void)[] = [];
+    // subscribePtscaleChange(cb: (ptscale) => void) { this.ptscaleChangeSubscribers.push(cb); }
+    // private firePtscaleChange() { this.ptscaleChangeSubscribers.forEach(x => x(this.ptscale)); }
 
     private matrixChangeSubscribers: ((matrix: Float32Array) => void)[] = [];
-    subscribeMatrixChange(cb: (ptscale: Float32Array) => void) { this.matrixChangeSubscribers.push(cb); }
-    private fireMatrixChange() { this.matrixChangeSubscribers.forEach(x => x(this.matrix)); }
+    subscribeMatrixChange(cb: (matrix: Float32Array) => void) {
+        this.matrixChangeSubscribers.push(cb);
+    }
+    private fireMatrixChange() {
+        this.matrixChangeSubscribers.forEach(x => x(this.matrix));
+    }
 
     //
     // core
@@ -96,7 +119,7 @@ export default class Matrix {
         const svgPxScaleUnzoomed = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight);
         const svgPxScale = svgPxScaleUnzoomed * visibleScale;
 
-        // console.log('svgPxScaleUnzoomed', svgPxScaleUnzoomed, 'pixelRatio', this.pixelRatio, 
+        // console.log('svgPxScaleUnzoomed', svgPxScaleUnzoomed, 'pixelRatio', this.pixelRatio,
         //     'visibleRect', visibleRect.w, 'visibleRect', visibleRect.w);
 
         //if (!this['updatable']) debugger;
@@ -127,12 +150,13 @@ export default class Matrix {
 
         m4.multiply(this.svgPxUnzoomedMatrix, centerSvgMatrixWithoutVisibleScale, this.svgPxUnzoomedMatrix);
 
-        this.ptscale = 1 / svgPxScale / zoomTransform.k;
 
         this.fireMatrixChange();
-        if (this.prevPtscale !== this.ptscale) {
-            this.firePtscaleChange();
-            this.prevPtscale = this.ptscale;
-        }
+        // this.ptscaleVal = 1 / svgPxScale / zoomTransform.k;
+
+        // if (this.prevPtscale !== this.ptscale) {
+        //     this.firePtscaleChange();
+        //     this.prevPtscale = this.ptscale;
+        // }
     }
 }

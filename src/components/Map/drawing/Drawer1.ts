@@ -9,6 +9,7 @@ export type Drawer = Pick<
     DrawerImpl,
     | "setVisibleRect"
     | "setZoomTransform"
+    | "ptscale"
     | "getPtscale"
     | "getSvgPxUnzoomedMatrix"
     | "getZoomTransform"
@@ -23,6 +24,7 @@ export type Drawer = Pick<
 
 export type DrawerContext = Pick<
     DrawerImpl,
+    | "ptscale"
     | "getPtscale"
     | "pixelRatio"
     | "updatable"
@@ -33,7 +35,7 @@ export type DrawerContext = Pick<
     | "setVisibleScale"
     | "subscribeMatrixChange"
     | "getMatrix"
-    | "subscribePtscaleChange"
+    // | "subscribePtscaleChange"
 >;
 
 export default function createDrawer(canvas: HTMLCanvasElement, updatable: boolean) {

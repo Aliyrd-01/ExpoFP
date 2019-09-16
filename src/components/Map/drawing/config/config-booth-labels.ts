@@ -5,6 +5,7 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createDetailsCanvas, createLabelCanvas } from "./canvases";
+import { NumberObserver } from "./NumberObserver";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
@@ -107,11 +108,17 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         this.update();
 
         if (context.updatable) {
-            context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            // const cru = () => context.requireUpdate(this.updateBound);
+            // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
+            // const obs = NumberObserver.fromContext(context);
+            // this.factors.forEach(f => obs.observeValue(f, cru));
+            // reaction(() => booth.skipDim, cru);
         }
         // updates.push(this.updateBound);
     }
+
+    observeFactors(factors: number[]) {}
 
     calcFactors() {
         let lastFactor: number;
@@ -188,7 +195,4 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     }
 }
 
-// subscribePtscaleChange(() => {
-//     allDrawers.forEach(d => d.updateVisibleLabel());
-// });
-// subscribe to scale changes
+
