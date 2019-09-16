@@ -60,6 +60,8 @@ export default class Sprite {
             if (!currentContainer || drawHeight + canvas.height > maxHeight) {
                 if (currentContainer) {
                     currentContainer.width = maxWidth;
+                    // round nextHeight up
+                    if (nextHeight < maxHeight && nextHeight > maxHeight - 100) nextHeight = maxHeight;
                     currentContainer.height = nextHeight;
                 }
                 currentContainer = { width: 0, height: 0, items: [] };
@@ -69,13 +71,6 @@ export default class Sprite {
             }
 
             currentContainer.items.push(item);
-            // let ar = containerCanvasItems.get(currentContainer);
-            // if (!ar){
-            //     ar = [];
-            //     containerCanvasItems.set(currentContainer, ar);
-            // }
-            // ar.push(item);
-            // item.containerCanvas = currentContainer;
 
             item.rect = Rect.fromXywh(drawWidth, drawHeight, item.width, item.height);
 
@@ -90,40 +85,24 @@ export default class Sprite {
             currentContainer.height = nextHeight;
         }
 
-        // for(const ci of containerCanvasInfos){
-
-        // }
-
-        // // cache adds 15% improvement
-        // const cache = new Map<HTMLCanvasElement, CanvasRenderingContext2D>();
-        // // draw and set rect
-        // for (const canvas of canvasesKeys) {
-        //     const item = this.canvasToSpriteItem.get(canvas);
-
-        //     let c = cache.get(item.containerCanvas);
-        //     if (!c) {
-        //         c = item.containerCanvas.getContext("2d");
-        //         cache.set(item.containerCanvas, c);
-        //     }
-        //     // if (canvas instanceof HTMLCanvasElement) {
-        //     //     c.drawImage(canvas, item.rect.x1, item.rect.y1);
-        //     // } else {
-        //     // c.fillRect(item.rect.x1, item.rect.y1, item.rect.w, item.rect.h);
-        //     c.setTransform(1, 0, 0, 1, item.rect.x1, item.rect.y1);
-        //     canvas.draw(c);
-        //     // }
-        // }
-
         // clear to free memory
         this.canvasToSpriteItem.clear();
 
         if (settings.debug) console.timeEnd("sprite.generateSpriteCanvases");
+        const canvas = document.createElement("canvas");
+        const c = canvas.getContext("2d");
+
+        // we're reusing same canvas
         return containerCanvasInfos.map((ci, i) => () => {
-            const canvas = document.createElement("canvas");
             canvas.id = "cnvs_" + i;
-            canvas.width = ci.width;
-            canvas.height = ci.height;
-            const c = canvas.getContext("2d");
+
+            if (canvas.width !== ci.width || canvas.height !== ci.height) {
+                canvas.width = ci.width;
+                canvas.height = ci.height;
+            }
+
+            c.resetTransform();
+            c.clearRect(0, 0, canvas.width, canvas.height);
 
             for (const item of ci.items) {
                 c.setTransform(1, 0, 0, 1, item.rect.x1, item.rect.y1);
@@ -134,7 +113,7 @@ export default class Sprite {
                 // item.containerCanvas = canvas;
             }
 
-            if (settings.debug) debugCanvases.push(currentContainer);
+            if (settings.debug) debugCanvases.push(canvas);
             return canvas;
         });
     }
