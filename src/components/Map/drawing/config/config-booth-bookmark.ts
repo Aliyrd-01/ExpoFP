@@ -90,9 +90,14 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         }
     }
 
+    private prevVisible:boolean = false;
+
     update() {
-        const ptscale = this.context.getPtscale();
         const { bookmarked, skipDim } = this.booth as RegularBooth;
+        if (!bookmarked && !this.prevVisible) return;
+        this.prevVisible = bookmarked;
+
+        const ptscale = this.context.getPtscale();
         // __logger.log('bookmark update', bookmarked, skipDim);
 
         let view: string;
