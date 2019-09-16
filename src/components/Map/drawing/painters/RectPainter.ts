@@ -177,7 +177,7 @@ export default class RectPainter implements Painter {
         }
 
         const canvases = sprite.generateSpriteCanvases();
-        const canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
+        const canvasIdToTexture = new Map<string, WebGLTexture>();
         // create texture per canvas
         for (const c of canvases) {
             const texture = gl.createTexture();
@@ -186,8 +186,9 @@ export default class RectPainter implements Painter {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
-            canvasToTexture.set(c, texture);
+            const canvas = c();
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+            canvasIdToTexture.set(canvas.id, texture);
         }
 
         // eslint-disable-next-line
@@ -198,7 +199,7 @@ export default class RectPainter implements Painter {
 
         for (let w of this.objects) {
             if (!w.spriteItem) continue;
-            w.texture = canvasToTexture.get(w.spriteItem.containerCanvas);
+            w.texture = canvasIdToTexture.get(w.spriteItem.containerCanvasId);
         }
 
         // __logger.log('aaa', this.objects.filter(x => x.texture).length);
@@ -365,7 +366,7 @@ export default class RectPainter implements Painter {
 
             if (obj.texture && !currentGroup.texture) {
                 currentGroup.texture = obj.texture;
-                currentGroup.texsize = [obj.spriteItem.containerCanvas.width, obj.spriteItem.containerCanvas.height];
+                currentGroup.texsize = [obj.spriteItem.containerCanvasWidth, obj.spriteItem.containerCanvasHeight];
             }
 
             currentGroup.indices.push(obj.index);
