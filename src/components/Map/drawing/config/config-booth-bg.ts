@@ -100,7 +100,14 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
 
         if (s.selected) {
             const selColor = Color(settings.colors.booths.selected).hsl();
-            colorInfo = colorInfo.hue(selColor.hue());
+            // console.log('zzz', defaultColor, settings.colors.booths.selected, selColor.hue())
+            const startLightness = selColor.lightness();
+            const curLightness = startLightness * this.shape.selectBgAnimationPart;
+
+            colorInfo = colorInfo.hue(selColor.hue()).lightness(curLightness);
+            // console.log("zzz", colorInfo);
+
+            // colorInfo = Color('#000');
             //colorInfo.hue(selColor.h);
         } else if (s.hover) {
             colorInfo = colorInfo.darken(0.1);
@@ -126,8 +133,8 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
     }
 
     @computed get selectedColorInterpolateFunc() {
-        const color0 = settings.colors.booths.selected;
-        const color1 = "#fb3e59";
+        const color0 = "#000";
+        const color1 = settings.colors.booths.selected;
         return colorInterpolate([color0, color1]);
     }
 

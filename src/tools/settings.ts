@@ -7,7 +7,7 @@ let settings = {
         base: '#ebebeb',
         booths: {
             default: '#41b6e7',
-            selected: '#000',//'#002cff',
+            selected: '#fb3e59',//'#002cff',
             empty: 'rgba(0,0,0,0.205)', // this is #aaa for default BG #d6d6d6d
         }
     }
