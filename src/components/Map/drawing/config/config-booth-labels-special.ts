@@ -1,8 +1,11 @@
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, getFont, createMultilineTextCanvas } from "./canvases";
 import TextFitter, { TextFitData } from "./TextFitter";
-import { DrawerContext } from "../drawer";
+import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
+import { Booth, SpecialBooth } from "../../../../store/BoothStore";
+import { reaction } from "mobx";
+import { NumberObserver } from "./NumberObserver";
 
 const textFitters = new Map<number, TextFitter>();
 function cteateTextFitter(pixelRatio: number) {
@@ -19,7 +22,7 @@ function cteateTextFitter(pixelRatio: number) {
 }
 
 export default function configBoothLabelsSpecial(context: DrawerContext, booth: Booth) {
-    if (!booth.special) return;
+    if (!(booth instanceof SpecialBooth) || booth.noLabels) return;
     if (booth.noLabels) return;
     return new BoothLabelSpecialDrawer(context, booth);
 }
@@ -29,7 +32,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     private readonly ids: string[];
     private previousVisibleId: string;
     private previousSkipDim: boolean;
-    public locked:boolean;
+    public locked: boolean;
 
     constructor(context: DrawerContext, booth: Booth) {
         super(context, booth, "booth-label", RectPainter, 130);
@@ -60,8 +63,8 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         }
 
         const dotCanvas = createCircleCanvas(1.5, context.pixelRatio);
-        const dotW = dotCanvas.canvas.width / 2;
-        const dotH = dotCanvas.canvas.width / 2;
+        const dotW = dotCanvas.width / 2;
+        const dotH = dotCanvas.width / 2;
         const dotId = this.getId("Dot");
         this.painter.addObject({
             id: dotId,
@@ -69,7 +72,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             center: [r.cx, r.cy],
             deltas: [0, 0, 0, 0],
             deltaPts: [-dotW, -dotH, dotW, dotH],
-            canvasTmp: dotCanvas.canvas,
+            canvasTmp: dotCanvas,
             texPosition: "center",
             visible: false
         });
@@ -79,8 +82,15 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         this.update();
 
         if (context.updatable) {
-            this.context.subscribePtscaleChange(() => this.context.requireUpdate(this.updateBound));
-            store.watchBoothState(booth.id, () => this.context.requireUpdate(this.updateBound), "skipDim");
+            const cru = () => context.requireUpdate(this.updateBound);
+            // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            // reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
+            const obs = NumberObserver.singletonForObject("labels-special", () => 1 / context.ptscale);
+            this.steps.forEach(s => obs.observeValue(s.factor, cru));
+            reaction(() => booth.skipDim, cru);
+
+            // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            // reaction(() => [booth.skipDim, context.ptscale], () => context.requireUpdate(this.updateBound));
         }
     }
 
@@ -94,11 +104,10 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // if (!canUpdate) return;
         // console.log('updateAction')
         // let visiblePrefix = "";
-        const ptscale = this.context.getPtscale();
+        const ptscale = this.context.ptscale;
         // find first with factor larger than this
         const step = this.steps.find(s => s.factor < 1 / ptscale);
         const visibleId = this.getId(step ? step.factor.toString() : "Dot");
-
 
         if (visibleId !== this.previousVisibleId) {
             if (visibleId) this.painter.updateVisible(visibleId, true);
@@ -106,7 +115,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             this.previousVisibleId = visibleId;
         }
 
-        const newSkipDim = this.getBoothState().skipDim;
+        const newSkipDim = this.booth.skipDim;
         if (newSkipDim !== this.previousSkipDim) {
             for (const id of this.ids) {
                 this.painter.updateSkipdim(id, newSkipDim);
@@ -115,4 +124,3 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         }
     }
 }
-

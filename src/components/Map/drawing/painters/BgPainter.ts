@@ -1,8 +1,11 @@
-import Color from 'color';
-import * as twgl from 'twgl.js';
-import settings from '@/settings';
-import { dimColor } from './common-glsl';
+import Color from "color";
+import * as twgl from "twgl.js";
+import { dimColor } from "./common-glsl";
+import settings from "../../../../tools/settings";
+import Painter from "./Painter";
+import "../../../../tools/Color";
 
+// console.log('coo', Color, settings, settings.colors)
 const bgColor = Color(settings.colors.base).vec4();
 
 export default class BgPainter implements Painter {
@@ -31,7 +34,7 @@ export default class BgPainter implements Painter {
         this.bufferFloat32Array(this.colorBuffer, [...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor]);
     }
 
-    preparePaint() { }
+    preparePaint() {}
 
     paint() {
         const gl = this.gl;
@@ -60,7 +63,6 @@ export default class BgPainter implements Painter {
     }
 }
 
-
 const vertexShaderSource = `attribute vec2 a_position;
 attribute vec4 a_color;
 varying vec4 v_color;
@@ -70,7 +72,6 @@ void main() {
     gl_Position = vec4(a_position, 0, 1);
     v_color = a_color;
 }`;
-
 
 const fragmentSharedSource = `precision mediump float;
 varying vec4 v_color;
@@ -85,8 +86,3 @@ void main() {
     }
     gl_FragColor = col;
 }`;
-
-
-
-
-

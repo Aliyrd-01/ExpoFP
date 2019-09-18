@@ -1,5 +1,6 @@
 import { ZoomBehavior } from "d3-zoom";
-import { event as currentEvent, Selection } from "d3-selection";
+import { event as currentEvent, Selection, select } from "d3-selection";
+import { easeExpIn } from "d3-ease";
 
 export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
 
@@ -15,7 +16,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
         const e = currentEvent;
         if (!e.sourceEvent) return;
 
-        $canvas = d3.select(this);
+        $canvas = select(this);
         $canvas.interrupt();
 
         window.cancelAnimationFrame(currentInertialAf);
@@ -46,7 +47,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
         const maxAt = now - min;
         for (let i = transforms.length - 1; i >= 0; i--) {
             let t = transforms[i];
-            if (t.at < maxAt || i == 0) {
+            if (t.at < maxAt || i === 0) {
                 // take it
                 let time = now - t.at;
                 let diffX =
@@ -76,7 +77,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
             const now = performance.now();
             let part = (till - now) / transitionDuration;
             if (part < 0) part = 0;
-            const partEased = d3.easeExpIn(part);
+            const partEased = easeExpIn(part);
             const currentSpeedX = initialTransitionSpeedX * partEased;
             const currentSpeedY = initialTransitionSpeedY * partEased;
             const avgSpeedX = (currentSpeedX + prevSpeedX) / 2;

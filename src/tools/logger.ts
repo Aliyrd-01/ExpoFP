@@ -1,9 +1,11 @@
+import settings from "./settings";
+
 class Logger {
     public readonly messages: string[] = [];
 
     log(...args) {
         this.push("DEBUG", args);
-        if (!__settings.debug) return;
+        if (!settings.debug) return;
         callLogFunc(console.log, args);
     }
 
@@ -40,14 +42,16 @@ function callLogFunc(func, args) {
     } catch { }
 }
 
-export const logger = new Logger();
+export default new Logger();
 
-declare global {
-    const __logger: typeof logger;
-}
+// //
 
-extendGlobal({
-    __logger: logger,
-});
+// declare global {
+//     const __logger: typeof logger1;
+// }
+
+// extendGlobal({
+//     __logger: logger1,
+// });
 
 

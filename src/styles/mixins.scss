@@ -38,10 +38,17 @@ $overlay-height: 3.5rem;
     color: #999999 !important;
 }
 
-@mixin clearfix{
+@mixin like-anchor {
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+}
+
+@mixin clearfix {
     &:after {
         content: "";
         display: table;
         clear: both;
-      }
+    }
 }

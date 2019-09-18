@@ -1,18 +1,20 @@
 import { m4 } from 'twgl.js';
-import { Drawer } from './drawing/drawer';
+import { Drawer } from './drawing/Drawer1';
+import { Booth } from '../../store/BoothStore';
+import Rect from '../../core/Rect';
+import { boothStore } from '../../store';
+import logger from '../../tools/logger';
 // import { getPxSvgMatrix } from "./matrix";
 
-export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): number {
+export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): Booth {
     // const zz = getSvgPxUnzoomedMatrix();
     // var point = m4.transformPoint(zz, [1000, 1000, 1])
     // __logger.log('point', point);
 
-    const b = getLastBoothsFromClientXy(x, y, drawer);
-    if (b) return b.id;
-    return null;
+    return getLastBoothsFromClientXy(x, y, drawer);
 }
 
-const booths = store.getters.boothsArray as Booth[];
+const booths = boothStore.booths;
 const rectsToBooths = new Map<Rect, Booth>();
 const rects: Rect[] = [];
 
@@ -41,7 +43,7 @@ for (let x = 0; x < parts; x++) {
         segmentToRects.set(segm, rectsInSegm);
     }
 }
-__logger.log('hover segmentToRects', segmentToRects);
+logger.log('hover segmentToRects', segmentToRects);
 
 let prevSegment: Rect;
 function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {

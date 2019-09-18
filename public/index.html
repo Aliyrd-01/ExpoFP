@@ -1,138 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="build-date" content="<%- new Date().toISOString() %>" />
-    <title>ExpoFP Floor Plan</title>
-    <link rel="preload" href="/vendor/fa/webfonts/fa-regular-400.woff2" as="font" crossorigin="anonymous" />
-    <link rel="preload" href="/vendor/fa/webfonts/fa-solid-900.woff2" as="font" crossorigin="anonymous" />
-    <link href="vendor/fa/css/fontawesome-all.min.css" rel="stylesheet">
-    <link href="vendor/sanitize-css/sanitize.css" rel="stylesheet">
-    <link href="fonts/fonts.css" rel="stylesheet">
-    <link href="vendor/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
-    <link rel="icon" href="/favicon.png">
-
-    <style>
-        html{
-            background: #EBEBEB;
-        }
-        .lds-grid {
-            top: 42vh;
-            margin: 0 auto;
-            display: block;
-            position: relative;
-            width: 64px;
-            height: 64px;
-        }
-
-        .lds-grid div {
-            position: absolute;
-            width: 13px;
-            height: 13px;
-            background: #aaa;
-            border-radius: 50%;
-            /* border: solid 1px #fff; */
-            animation: lds-grid 1.2s linear infinite;
-        }
-
-        .lds-grid div:nth-child(1) {
-            top: 6px;
-            left: 6px;
-            animation-delay: 0s;
-        }
-
-        .lds-grid div:nth-child(2) {
-            top: 6px;
-            left: 26px;
-            animation-delay: -0.4s;
-        }
-
-        .lds-grid div:nth-child(3) {
-            top: 6px;
-            left: 45px;
-            animation-delay: -0.8s;
-        }
-
-        .lds-grid div:nth-child(4) {
-            top: 26px;
-            left: 6px;
-            animation-delay: -0.4s;
-        }
-
-        .lds-grid div:nth-child(5) {
-            top: 26px;
-            left: 26px;
-            animation-delay: -0.8s;
-        }
-
-        .lds-grid div:nth-child(6) {
-            top: 26px;
-            left: 45px;
-            animation-delay: -1.2s;
-        }
-
-        .lds-grid div:nth-child(7) {
-            top: 45px;
-            left: 6px;
-            animation-delay: -0.8s;
-        }
-
-        .lds-grid div:nth-child(8) {
-            top: 45px;
-            left: 26px;
-            animation-delay: -1.2s;
-        }
-
-        .lds-grid div:nth-child(9) {
-            top: 45px;
-            left: 45px;
-            animation-delay: -1.6s;
-        }
-
-        @keyframes lds-grid {
-
-            0%,
-            100% {
-                opacity: 1;
+<html lang="en" data-efp='%REACT_APP_VERSION%'>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.png" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width" />
+        <meta name="theme-color" content="#000000" />
+        <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+        <link rel="preload" href="/vendor/fa/webfonts/fa-regular-400.woff2" as="font" crossorigin="anonymous" />
+        <link rel="preload" href="/vendor/fa/webfonts/fa-solid-900.woff2" as="font" crossorigin="anonymous" />
+        <link href="vendor/fa/css/fontawesome-all.min.css" rel="stylesheet" />
+        <link href="vendor/sanitize-css/sanitize.css" rel="stylesheet" />
+        <link href="fonts/fonts.css" rel="stylesheet" />
+        <link href="vendor/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
+        <style>
+            html {
+                background: #ebebeb;
+            }
+            .lds-grid {
+                top: 42vh;
+                margin: 0 auto;
+                display: block;
+                position: relative;
+                width: 64px;
+                height: 64px;
             }
 
-            50% {
-                opacity: 0.5;
+            .lds-grid div {
+                position: absolute;
+                width: 13px;
+                height: 13px;
+                background: #aaa;
+                border-radius: 50%;
+                /* border: solid 1px #fff; */
+                animation: lds-grid 1.2s linear infinite;
             }
-        }
-    </style>
-</head>
 
-<body>
-    <div style="pointer-events: none; visibility: hidden">
-        <!-- <span style="font-weight: 200; font-family: Oswald"></span> -->
-        <span style="font-weight: 300; font-family: Oswald"></span>
-        <!-- <span style="font-weight: 400; font-family: Oswald"></span> -->
-        <span style="font-weight: 500; font-family: Oswald"></span>
-        <!-- <span style="font-weight: 600; font-family: Oswald"></span> -->
-        <!-- <span style="font-weight: 700; font-family: Oswald"></span> -->
-    </div>
-    <div id="app">
-        <div class="lds-grid">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            .lds-grid div:nth-child(1) {
+                top: 6px;
+                left: 6px;
+                animation-delay: 0s;
+            }
+
+            .lds-grid div:nth-child(2) {
+                top: 6px;
+                left: 26px;
+                animation-delay: -0.4s;
+            }
+
+            .lds-grid div:nth-child(3) {
+                top: 6px;
+                left: 45px;
+                animation-delay: -0.8s;
+            }
+
+            .lds-grid div:nth-child(4) {
+                top: 26px;
+                left: 6px;
+                animation-delay: -0.4s;
+            }
+
+            .lds-grid div:nth-child(5) {
+                top: 26px;
+                left: 26px;
+                animation-delay: -0.8s;
+            }
+
+            .lds-grid div:nth-child(6) {
+                top: 26px;
+                left: 45px;
+                animation-delay: -1.2s;
+            }
+
+            .lds-grid div:nth-child(7) {
+                top: 45px;
+                left: 6px;
+                animation-delay: -0.8s;
+            }
+
+            .lds-grid div:nth-child(8) {
+                top: 45px;
+                left: 26px;
+                animation-delay: -1.2s;
+            }
+
+            .lds-grid div:nth-child(9) {
+                top: 45px;
+                left: 45px;
+                animation-delay: -1.6s;
+            }
+
+            @keyframes lds-grid {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.5;
+                }
+            }
+        </style>
+        <title>ExpoFP Floor Plan</title>
+        <script>
+            if (window.navigator.userAgent.indexOf('Trident/') !== -1){
+                alert("Your are using old unsupported Internet Explorer browser.\nPlease upgrade to view this page properly.");
+            }
+        </script>
+    </head>
+
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div style="pointer-events: none; visibility: hidden">
+            <!-- <span style="font-weight: 200; font-family: Oswald"></span> -->
+            <span style="font-weight: 300; font-family: Oswald"></span>
+            <!-- <span style="font-weight: 400; font-family: Oswald"></span> -->
+            <span style="font-weight: 500; font-family: Oswald"></span>
+            <!-- <span style="font-weight: 600; font-family: Oswald"></span> -->
+            <!-- <span style="font-weight: 700; font-family: Oswald"></span> -->
         </div>
-    </div>
-    <script src='<%- EFP_DATA_URL_BASE %>/data.js'></script>
-    <script src='<%- EFP_DATA_URL_BASE %>/fp.svg.js'></script>
-    <script src='/vendor/particles.js/particles.min.js' async></script>
-    <!-- built files will be auto injected -->
-</body>
-
+        <div id="app">
+            <div class="lds-grid">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <script src="%REACT_APP_DATA_URL%/data.js"></script>
+        <script src="%REACT_APP_DATA_URL%/fp.svg.js"></script>
+        <script src="/vendor/particles.js/particles.min.js" async></script>
+    </body>
 </html>

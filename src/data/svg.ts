@@ -1,0 +1,57 @@
+import logger from "../tools/logger";
+import * as d3 from "d3-selection";
+
+function parseSvg(text: string) {
+    const parser = new DOMParser();
+    return parser.parseFromString(text, "image/svg+xml").documentElement as any as SVGElement;
+}
+
+//if (typeof __fpBorderWidth === "undefined") window["__fpBorderWidth"] = 2;
+// TODO: make it a conta
+// window["__fpBorderWidth"] = 2
+
+//const overrideSvg = localStorage.getItem('overrideSvg');
+
+let svg = parseSvg(window['__fp']);//overrideSvg || 
+if ((svg.firstChild as Element).tagName === "parsererror") {
+    logger.error('Parsed svg with error: ', svg)
+    // if (overrideSvg) {
+    //     alert('FP SVG error, see console');
+    //     svg = parseSvg(__fp);
+    // }
+}
+
+// prepare map of fill colors per class
+const classFill = new Map<string, string>();
+d3.select(svg).selectAll("style").each(function () {
+    const css = (this as any).textContent as string;
+    const r = /\.([a-z0-9.]+)\s*{[^}]*fill\s*:\s*([^};]+);[^}]*}/gi;
+    let m: string[];
+    while ((m = r.exec(css)) !== null) {
+        const cls = m[1], fill = m[2];
+        classFill.set(cls, fill);
+    }
+});
+
+// set fill attrs for elements having class attrs
+d3.select(svg).selectAll("*[class]").each(function () {
+    const el = this as SVGGraphicsElement;
+    el.style.fill = classFill.get(el.className.baseVal);
+});
+
+
+const viewBox = (svg as any).viewBox;
+export const svgWidth = viewBox.baseVal.width as number;
+export const svgHeight = viewBox.baseVal.height as number;
+
+d3.select(svg).attr('width', svgWidth);
+d3.select(svg).attr('height', svgHeight);
+
+window['__svg'] = svg;
+
+export default svg
+
+
+
+declare  const __fp: string;
+declare const __fpPaths: { [id: string]: any };

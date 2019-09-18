@@ -1,0 +1,13 @@
+.list-row {
+    border-top: solid 1px #ebebeb;
+    min-height: 3.5rem;
+    @media (hover: hover) {
+        &.active {
+            background: #eee;
+        }
+        &:hover,
+        &.active:hover {
+            background-color: #f1f1f1;
+        }
+    }
+}

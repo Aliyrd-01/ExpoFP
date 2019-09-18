@@ -1,0 +1,7 @@
+.bookmark-svg {
+    display: block;
+    fill: #ddd;
+    .bookmarked & {
+        fill: #e54839;
+    }
+}

@@ -1,18 +1,20 @@
-import settings from '@/settings';
+import { reaction, when } from "mobx";
+import { boothStore } from "../../../../store";
+import { Booth, RegularBooth } from "../../../../store/BoothStore";
+import { DrawerContext } from "../Drawer1";
+import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
-import { createBookmarkCanvas } from './canvases';
-import { DrawerContext } from '../drawer';
-import RectPainter from '../painters/RectPainter';
+import { createBookmarkCanvas } from "./canvases";
 
 export default function configBoothBookmark(context: DrawerContext, booth: Booth) {
+    if (!(booth instanceof RegularBooth)) return;
     new BoothBookmarkDrawer(context, booth);
 }
 
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
-
-    constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, 'booth-bookmark', RectPainter, 140);
-        const r = this.booth.rect.withPadding(settings.borderWidth / 2);
+    constructor(context: DrawerContext, booth: RegularBooth) {
+        super(context, booth, "booth-bookmark", RectPainter, 140);
+        const r = this.booth.rect.withPadding(boothStore.borderWidth / 2);
 
         const bookmarkCanvasXL = createBookmarkCanvas(11, context.pixelRatio);
         const bookmarkCanvasL = createBookmarkCanvas(8, context.pixelRatio);
@@ -23,9 +25,14 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [0, -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding, -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding, 0],
-            canvasTmp: bookmarkCanvasXL.canvas,
-            texPosition: 'righttop',
+            deltaPts: [
+                0,
+                -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding,
+                -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding,
+                0
+            ],
+            canvasTmp: bookmarkCanvasXL,
+            texPosition: "righttop",
             visible: false
         });
 
@@ -34,9 +41,14 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
-            canvasTmp: bookmarkCanvasL.canvas,
-            texPosition: 'righttop',
+            deltaPts: [
+                0,
+                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                0
+            ],
+            canvasTmp: bookmarkCanvasL,
+            texPosition: "righttop",
             visible: false
         });
 
@@ -45,9 +57,14 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts: [0, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding, 0],
-            canvasTmp: bookmarkCanvasM.canvas,
-            texPosition: 'righttop',
+            deltaPts: [
+                0,
+                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                0
+            ],
+            canvasTmp: bookmarkCanvasM,
+            texPosition: "righttop",
             visible: false
         });
 
@@ -56,23 +73,45 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
             // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
-            deltaPts:
-                [-bookmarkCanvasM.canvas.width / 2, -bookmarkCanvasM.canvas.height / 2,
-                bookmarkCanvasM.canvas.width / 2, bookmarkCanvasM.canvas.height / 2],
-            canvasTmp: bookmarkCanvasM.canvas,
-            texPosition: 'center',
+            deltaPts: [
+                -bookmarkCanvasM.width / 2,
+                -bookmarkCanvasM.height / 2,
+                bookmarkCanvasM.width / 2,
+                bookmarkCanvasM.height / 2
+            ],
+            canvasTmp: bookmarkCanvasM,
+            texPosition: "center",
             visible: false
         });
 
         if (context.updatable) {
-            this.context.subscribePtscaleChange(() => this.context.requireUpdate(this.updateBound));
-            store.watchBoothState(booth.id, () => this.context.requireUpdate(this.updateBound), "skipDim", "bookmarked");
+            // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
+
+            reaction(
+                () => booth.bookmarked,
+                () => {
+                    context.requireUpdate(this.updateBound);
+                    if (booth.bookmarked) {
+                        const dispose = reaction(
+                            () => [booth.skipDim, context.ptscale],
+                            () => context.requireUpdate(this.updateBound)
+                        );
+                        when(() => !booth.bookmarked, () => dispose());
+                    }
+                }
+            );
         }
     }
 
+    private prevVisible: boolean = false;
+
     update() {
-        const ptscale = this.context.getPtscale();
-        const { bookmarked, skipDim } = this.getBoothState();
+        const { bookmarked, skipDim } = this.booth as RegularBooth;
+        if (!bookmarked && !this.prevVisible) return;
+        this.prevVisible = bookmarked;
+
+        const ptscale = this.context.ptscale;
         // __logger.log('bookmark update', bookmarked, skipDim);
 
         let view: string;

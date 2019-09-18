@@ -1,28 +1,47 @@
+import Rect from "../../../../core/Rect";
+import debugCanvases from "../../../../tools/debugCanvases";
+import settings from "../../../../tools/settings";
+import { CanvasDescriptor } from "../config/canvases";
+
 const maxHeight = 2000;
 const maxWidth = 2000;
 
-export default class Sprite {
-    private readonly canvasToSpriteItem = new Map<HTMLCanvasElement, SpriteItemEx>();
+type ContainerCanvasInfo = {
+    width: number;
+    height: number;
+    items: SpriteItemEx[];
+};
 
-    addCanvas(canvas: HTMLCanvasElement): SpriteItem {
+export default class Sprite {
+    private readonly canvasToSpriteItem = new Map<CanvasDescriptor, SpriteItemEx>();
+
+    addCanvas(canvas: CanvasDescriptor): SpriteItem {
         let item = this.canvasToSpriteItem.get(canvas);
 
         if (!item) {
             item = {
-                containerCanvas: undefined,
+                // containerCanvas: undefined,
+                containerCanvasId: undefined,
+                containerCanvasWidth: undefined,
+                containerCanvasHeight: undefined,
                 rect: undefined,
-                width: canvas.width,
-                height: canvas.height,
+                width: Math.ceil(canvas.width),
+                height: Math.ceil(canvas.height),
+                canvas
             };
-
+            // console.log('zzzz', item);
             this.canvasToSpriteItem.set(canvas, item);
         }
         return item;
     }
 
-    generateSpriteCanvases(): HTMLCanvasElement[] {
-        const canvases = [];
-        let currentCanvas;
+    generateSpriteCanvases(): (() => HTMLCanvasElement)[] {
+        if (settings.debug) console.time("sprite.generateSpriteCanvases");
+
+        // const containerCanvasItems = new Map<CanvasInfo, SpriteItemEx[]>();
+
+        const containerCanvasInfos = [] as ContainerCanvasInfo[];
+        let currentContainer: ContainerCanvasInfo;
         let drawHeight = 0;
         let nextHeight = 0;
         let drawWidth = 0;
@@ -38,18 +57,20 @@ export default class Sprite {
                 drawHeight = nextHeight;
             }
 
-            if (!currentCanvas || drawHeight + canvas.height > maxHeight) {
-                if (currentCanvas) {
-                    currentCanvas.width = maxWidth;
-                    currentCanvas.height = nextHeight;
+            if (!currentContainer || drawHeight + canvas.height > maxHeight) {
+                if (currentContainer) {
+                    currentContainer.width = maxWidth;
+                    // round nextHeight up
+                    if (nextHeight < maxHeight && nextHeight > maxHeight - 100) nextHeight = maxHeight;
+                    currentContainer.height = nextHeight;
                 }
-                currentCanvas = document.createElement("canvas");
-                canvases.push(currentCanvas);
-                if (__settings.debug) debugCanvases.push(currentCanvas);
+                currentContainer = { width: 0, height: 0, items: [] };
+                containerCanvasInfos.push(currentContainer);
+                //
                 drawHeight = nextHeight = drawWidth = 0;
             }
 
-            item.containerCanvas = currentCanvas;
+            currentContainer.items.push(item);
 
             item.rect = Rect.fromXywh(drawWidth, drawHeight, item.width, item.height);
 
@@ -59,34 +80,55 @@ export default class Sprite {
             }
         }
 
-        if (currentCanvas) {
-            currentCanvas.width = maxWidth;
-            currentCanvas.height = nextHeight;
-        }
-
-        // draw and set rect
-        for (const canvas of canvasesKeys) {
-            const item = this.canvasToSpriteItem.get(canvas);
-
-            const c = item.containerCanvas.getContext("2d");
-            c.drawImage(canvas, item.rect.x1, item.rect.y1);
+        if (currentContainer) {
+            currentContainer.width = maxWidth;
+            currentContainer.height = nextHeight;
         }
 
         // clear to free memory
         this.canvasToSpriteItem.clear();
 
-        return canvases;
+        if (settings.debug) console.timeEnd("sprite.generateSpriteCanvases");
+        const canvas = document.createElement("canvas");
+        const c = canvas.getContext("2d");
+
+        // we're reusing same canvas
+        return containerCanvasInfos.map((ci, i) => () => {
+            canvas.id = "cnvs_" + i;
+
+            if (canvas.width !== ci.width || canvas.height !== ci.height) {
+                canvas.width = ci.width;
+                canvas.height = ci.height;
+            }
+
+            c.resetTransform();
+            c.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (const item of ci.items) {
+                c.setTransform(1, 0, 0, 1, item.rect.x1, item.rect.y1);
+                item.canvas.draw(c);
+                item.containerCanvasId = canvas.id;
+                item.containerCanvasWidth = canvas.width;
+                item.containerCanvasHeight = canvas.height;
+                // item.containerCanvas = canvas;
+            }
+
+            if (settings.debug) debugCanvases.push(canvas);
+            return canvas;
+        });
     }
 }
 
-
-
 export interface SpriteItem {
     rect: Rect;
-    containerCanvas: HTMLCanvasElement;
+    containerCanvasId: string;
+    containerCanvasWidth: number;
+    containerCanvasHeight: number;
+    // containerCanvas: () => HTMLCanvasElement;
 }
 
 interface SpriteItemEx extends SpriteItem {
     width: number;
     height: number;
+    canvas: CanvasDescriptor;
 }

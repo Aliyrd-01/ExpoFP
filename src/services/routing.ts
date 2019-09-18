@@ -1,5 +1,12 @@
 import { createBrowserHistory } from "history";
-import gtag from '@/tools/gtag'
+import { Exhibitor } from "../store/ExhibitorStore";
+import gtag from "../tools/gtag";
+import { Booth } from "../store/BoothStore";
+import logger from "../tools/logger";
+import store, { uiState } from "../store";
+import { Category } from "../store/CategoryStore";
+import data from "../data";
+import { autorun } from "mobx";
 // import settings from '@/settings';
 
 const history = createBrowserHistory();
@@ -9,7 +16,7 @@ let savedSelectedExhibitor: Exhibitor | null = null;
 let savedSelectedBooth: Booth | null = null;
 
 history.listen((location, action) => {
-    __logger.log("history", action, location);
+    logger.log("history", action, location);
     if (action === "POP") {
         // we moved back in history - need to adjust selected exhibitor//search-text
         dispatchFromUrl();
@@ -19,18 +26,18 @@ history.listen((location, action) => {
 function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
     disableStateToUrl = true;
-    const booth = store.getters.boothsArray.find((x: Booth) => x.slug === slug);
+    const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug);
     if (slug === "bookmarks") {
-        store.dispatch("selectBookmarks");
+        store.selectBookmarks();
     } else if (booth) {
-        store.dispatch("selectBooth", booth.id);
+        store.selectBooth(booth);
     } else {
-        const exhibitor = store.getters.exhibitorsArray.find((x: Exhibitor) => x.slug === slug);
-        if (exhibitor) store.dispatch("selectExhibitor", exhibitor.id);
+        const exhibitor = store.exhibitorStore.exhibitors.find((x: Exhibitor) => x.slug === slug);
+        if (exhibitor) store.selectExhibitor(exhibitor);
         else {
-            const category = store.getters.categoriesArray.find((x: Category) => x.slug === slug);
-            if (category) store.dispatch("selectCategory", category.id);
-            else store.dispatch("selectSearch", slug);
+            const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
+            if (category) store.selectCategory(category);
+            else store.selectSearch(slug);
         }
     }
 
@@ -40,44 +47,39 @@ function dispatchFromUrl() {
 }
 
 function setTitle() {
-    const exhibitor = store.getters.selectedExhibitor;
+    const exhibitor = uiState.selectedExhibitor;
     let title = "";
     if (exhibitor) title = exhibitor.name;
-    else if (store.state.searchText) title = "`" + store.state.searchText + "`";
+    else if (uiState.list.type === "search" && uiState.list.text) title = "`" + uiState.list.text + "`";
 
     if (title.length) title += " – ";
-    title += __data.title;
-    if (__data.subtitle) title += " – " + __data.subtitle;
+    title += data.title;
+    if (data.subtitle) title += " – " + data.subtitle;
     title += " – Expo Floor Plan by ExpoFP";
 
     document.title = title;
 }
 
-store.subscribe(() => {
-    stateToUrl();
-    setTitle();
-});
-
 function stateToUrl() {
     if (disableStateToUrl) return;
     let queryRaw = "";
-    const exhibitor = store.getters.selectedExhibitor;
-    const booth = store.getters.selectedBooth;
+    const exhibitor = uiState.selectedExhibitor;
+    const booth = uiState.selectedBooth;
 
     if (exhibitor) {
         queryRaw = exhibitor.slug;
     } else if (booth) {
         queryRaw = booth.slug;
     } else {
-        switch (store.state.list.type) {
+        switch (uiState.list.type) {
             case "bookmarks":
                 queryRaw = "bookmarks";
                 break;
             case "category":
-                queryRaw = store.getters.selectedCategory.slug;
+                queryRaw = uiState.selectedCategory.slug;
                 break;
             case "search":
-                queryRaw = store.state.list.text;
+                queryRaw = uiState.list.text;
                 break;
             default:
                 throw new Error("Unkown list.type");
@@ -89,11 +91,11 @@ function stateToUrl() {
     if (history.location.search === newQuery) return;
 
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
-        // __logger.log('history push', queryRaw);
+        // logger.log('history push', queryRaw);
         history.push(newQuery);
         sendGa();
     } else {
-        // __logger.log('history replace', queryRaw);
+        // logger.log('history replace', queryRaw);
         history.replace(newQuery);
     }
 
@@ -114,8 +116,8 @@ if (locationSearch.startsWith("?b=")) {
 
 if (locationSearch.startsWith("?ba=")) {
     const url = new URL(window.location.href);
-    const ba = url.searchParams.get("ba");
-    const exhibitor = store.state.exhibitors[ba];
+    const ba = parseInt(url.searchParams.get("ba"));
+    const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
     if (exhibitor) history.replace("?" + exhibitor.slug);
     else history.replace("?bookmarks");
 }
@@ -125,22 +127,23 @@ if (locationSearch.startsWith("?fbclid")) {
     history.replace("?");
 }
 
-if (typeof store.state.previewExhibitor === "number") {
-    history.replace("?" + store.state.exhibitors[store.state.previewExhibitor].slug);
+if (uiState.previewExhibitor) {
+    history.replace("?" + uiState.previewExhibitor.slug);
 }
 
 dispatchFromUrl();
-setTitle();
+autorun(setTitle);
+autorun(stateToUrl);
 
 let timeout: number;
 
 function sendGa() {
-    if (!__data.gtag) return;
+    if (!data.gtag) return;
     if (timeout) window.clearTimeout(timeout);
     timeout = window.setTimeout(() => {
-        gtag("config", __data.gtag, {
+        gtag("config", data.gtag, {
             page_title: document.title,
-            page_path: location.pathname + location.search
+            page_path: window.location.pathname + window.location.search
         });
     }, 1000);
 }

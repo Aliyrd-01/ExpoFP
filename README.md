@@ -1,5 +1,1 @@
-# EFP-APP
-
-Never commit/merge to master!
-
-https://docs.google.com/document/d/1PFsE2xD_6ZdcKfTkb6JbOwSPy7PVzX5m8HvtkebVupM/edit#
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

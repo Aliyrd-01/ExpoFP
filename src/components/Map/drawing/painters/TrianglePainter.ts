@@ -1,6 +1,6 @@
-import * as twgl from 'twgl.js';
-import { dimColor } from './common-glsl';
-
+import * as twgl from "twgl.js";
+import { dimColor } from "./common-glsl";
+import Painter from "./Painter";
 
 export default class TrianglePainter implements Painter {
     private readonly gl: WebGLRenderingContext;
@@ -111,7 +111,6 @@ export default class TrianglePainter implements Painter {
     }
 
     private populateBuffers() {
-
         const positions: number[] = [];
         // const colors: number[] = [];
 
@@ -127,7 +126,6 @@ export default class TrianglePainter implements Painter {
         this.populateSkipdimBuffer();
         this.populateIndexBuffer();
     }
-
 
     private populateColorBuffer() {
         const colors: number[] = [];
@@ -266,4 +264,3 @@ void main() {
     }
     gl_FragColor = col;
 }`;
-

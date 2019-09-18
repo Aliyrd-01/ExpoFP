@@ -1,7 +1,9 @@
+import logger from "./logger";
+
 let timeoutId: number;
 
 export default function reportError(e: Partial<ErrorEvent>) {
-    __logger.error('Handling error', e.error)
+    logger.error('Handling error', e.error)
 
     if (timeoutId) return;
 
@@ -17,7 +19,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
             lineno: e.lineno,
             colno: e.colno,
             stack: e.error.stack,
-            log: __logger.messages.join("\n"),
+            log: logger.messages.join("\n"),
             userAgent: navigator.userAgent,
             language,
             ...ipData
@@ -31,7 +33,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
             body: JSON.stringify(data)
         });
 
-        __logger.log('Reporter response: ', await rawResponse.text());
+        logger.log('Reporter response: ', await rawResponse.text());
     }, 2000);
 }
 
@@ -40,7 +42,7 @@ async function getIpData() {
         const ipInfoRequest = await fetch('https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg');
         const ipInfo = await ipInfoRequest.json();
 
-        __logger.log('ipify', ipInfo, ipInfoRequest);
+        logger.log('ipify', ipInfo, ipInfoRequest);
 
         if (ipInfoRequest.ok) {
             return {
@@ -52,7 +54,7 @@ async function getIpData() {
         }
     }
     catch (e) {
-        __logger.error(e);
+        logger.error(e);
         return { ip: e.message };
     }
 }

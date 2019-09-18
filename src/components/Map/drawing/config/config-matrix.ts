@@ -1,7 +1,8 @@
 // import { allDrawers, requireUpdate } from "./draw";
-import animate from './animate';
-import { DrawerContext } from "../Drawer";
-
+import animate from "./animate";
+import { DrawerContext } from "../Drawer1";
+import { easeExpOut } from "d3-ease";
+import { interpolateNumber } from "d3-interpolate";
 
 export default function configMatrix(c: DrawerContext) {
     const minVisibleScale = 0;
@@ -13,18 +14,23 @@ export default function configMatrix(c: DrawerContext) {
 
     return {
         after: update,
-        animate: (cb) => {
+        animate: cb => {
             if (c.updatable) {
-                animate(0, 1000, d3.easeExpOut, d3.interpolateNumber(minVisibleScale, maxVisibleScale),
+                animate(
+                    0,
+                    1000,
+                    easeExpOut,
+                    interpolateNumber(minVisibleScale, maxVisibleScale),
                     c.requireUpdate.bind(c),
                     v => {
                         c.setVisibleScale(v);
-                        update()
+                        update();
                     },
                     () => {
-                        cb();
+                        if (cb) cb();
                         c.subscribeMatrixChange(() => c.requireUpdate(update));
-                    });
+                    }
+                );
             }
         }
     };
@@ -33,8 +39,7 @@ export default function configMatrix(c: DrawerContext) {
         // __logger.log('matrix change', m.getZoomTransform())
         for (const d of c.allPainters) {
             d.matrix = c.getMatrix();
-            d.ptscale = c.getPtscale();
+            d.ptscale = c.ptscale;
         }
     }
 }
-

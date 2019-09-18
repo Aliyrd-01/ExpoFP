@@ -1,6 +1,9 @@
 import * as twgl from "twgl.js";
 import Sprite, { SpriteItem } from "./Sprite";
 import { dimColor } from "./common-glsl";
+import Painter from "./Painter";
+import settings from "../../../../tools/settings";
+import { CanvasDescriptor } from "../config/canvases";
 
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -38,8 +41,8 @@ export default class RectPainter implements Painter {
 
     private readonly groups: DrawerGroup[] = [];
     private readonly indexBufferPool: WebGLBuffer[] = [];
-    private readonly canvasToTexture = new Map<HTMLCanvasElement, WebGLTexture>();
     private readonly fallBackTexture: WebGLTexture;
+    private indexBuffersAreUint: boolean;
 
     // to be set externally
     public orderPriority: number;
@@ -143,6 +146,7 @@ export default class RectPainter implements Painter {
     }
 
     private populateBuffers() {
+        if (settings.debug) console.time("RectPainter.populateBuffers");
         const gl = this.gl;
 
         const centers: number[] = [];
@@ -173,6 +177,7 @@ export default class RectPainter implements Painter {
         }
 
         const canvases = sprite.generateSpriteCanvases();
+        const canvasIdToTexture = new Map<string, WebGLTexture>();
         // create texture per canvas
         for (const c of canvases) {
             const texture = gl.createTexture();
@@ -181,9 +186,12 @@ export default class RectPainter implements Painter {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
-            this.canvasToTexture.set(c, texture);
+            const canvas = c();
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+            canvasIdToTexture.set(canvas.id, texture);
         }
+
+        // eslint-disable-next-line
         {
             gl.bindTexture(gl.TEXTURE_2D, this.fallBackTexture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
@@ -191,7 +199,7 @@ export default class RectPainter implements Painter {
 
         for (let w of this.objects) {
             if (!w.spriteItem) continue;
-            w.texture = this.canvasToTexture.get(w.spriteItem.containerCanvas);
+            w.texture = canvasIdToTexture.get(w.spriteItem.containerCanvasId);
         }
 
         // __logger.log('aaa', this.objects.filter(x => x.texture).length);
@@ -213,20 +221,24 @@ export default class RectPainter implements Painter {
                 xp2 = dp[2] * scale,
                 yp2 = dp[3] * scale;
             // 4 vec2
+            // eslint-disable-next-line
             {
                 deltas.push(x1, y1, x2, y1, x1, y2, x2, y2);
             }
             // 4 vec2
+            // eslint-disable-next-line
             {
                 deltaPts.push(xp1, yp1, xp2, yp1, xp1, yp2, xp2, yp2);
             }
             // 4 vec2
+            // eslint-disable-next-line
             {
                 const angleInRadians = w.rotateRadians || 0;
                 const r = [Math.sin(angleInRadians), Math.cos(angleInRadians)];
                 rotates.push(...r, ...r, ...r, ...r);
             }
             // 4 vec2
+            // eslint-disable-next-line
             {
                 if (!w.spriteItem) {
                     texcoords.push(0, 0, 0, 0, 0, 0, 0, 0);
@@ -236,6 +248,7 @@ export default class RectPainter implements Painter {
                 }
             }
             // texfix 4 vec2
+            // eslint-disable-next-line
             {
                 let val: Vec2;
                 if (!w.spriteItem) {
@@ -251,6 +264,7 @@ export default class RectPainter implements Painter {
                 texfixes.push(...val, ...val, ...val, ...val);
             }
             // fixdelta 4 vec2
+            // eslint-disable-next-line
             {
                 let val: Vec2;
                 if (!w.spriteItem || w.texPosition === "center") {
@@ -263,6 +277,7 @@ export default class RectPainter implements Painter {
                 fixdeltas.push(...val, ...val, ...val, ...val);
             }
             // fixdeltapt 4 vec2
+            // eslint-disable-next-line
             {
                 let val: Vec2;
                 if (!w.spriteItem || w.texPosition === "center") {
@@ -276,6 +291,7 @@ export default class RectPainter implements Painter {
             }
 
             // fixdeltamaxpt 4 vec2
+            // eslint-disable-next-line
             {
                 let val: Vec2;
                 if (!w.spriteItem || w.texPosition === "center") {
@@ -301,6 +317,8 @@ export default class RectPainter implements Painter {
 
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
+
+        if (settings.debug) console.timeEnd("RectPainter.populateBuffers");
     }
 
     private populateColorBuffer() {
@@ -348,7 +366,7 @@ export default class RectPainter implements Painter {
 
             if (obj.texture && !currentGroup.texture) {
                 currentGroup.texture = obj.texture;
-                currentGroup.texsize = [obj.spriteItem.containerCanvas.width, obj.spriteItem.containerCanvas.height];
+                currentGroup.texsize = [obj.spriteItem.containerCanvasWidth, obj.spriteItem.containerCanvasHeight];
             }
 
             currentGroup.indices.push(obj.index);
@@ -357,8 +375,11 @@ export default class RectPainter implements Painter {
         const indexBuffers: WebGLBuffer[] = [];
         this.groups.length = 0;
 
+        this.indexBuffersAreUint = this.sortedObjects.length * 4 > 65535;
+        const ArType = this.indexBuffersAreUint ? Uint32Array : Uint16Array;
+
         for (let group of groups) {
-            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer(); //
+            const buffer = this.indexBufferPool.shift() || this.gl.createBuffer();
             indexBuffers.push(buffer);
 
             const realIndices = [];
@@ -368,7 +389,7 @@ export default class RectPainter implements Painter {
             }
 
             this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, buffer);
-            this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(realIndices), this.gl.STATIC_DRAW);
+            this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new ArType(realIndices), this.gl.DYNAMIC_DRAW);
 
             this.groups.push({
                 texture: group.texture,
@@ -393,7 +414,7 @@ export default class RectPainter implements Painter {
         this.gl.vertexAttribPointer(location, size, this.gl.FLOAT, false, 0, 0);
     }
 
-    preparePaint(){
+    preparePaint() {
         this.gl.useProgram(this.program);
         this.ensureBuffersAndGroupsInternal();
     }
@@ -443,7 +464,8 @@ export default class RectPainter implements Painter {
 
             twgl.setUniforms(this.programInfo, uniforms);
 
-            gl.drawElements(gl.TRIANGLES, group.numElements, gl.UNSIGNED_SHORT, 0);
+            // console.log("zzz", group.numElements, group.indexBufferIsUint);
+            gl.drawElements(gl.TRIANGLES, group.numElements, this.indexBuffersAreUint ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
         }
     }
 }
@@ -458,7 +480,7 @@ export interface DrawerObject {
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;
-    canvasTmp?: HTMLCanvasElement;
+    canvasTmp?: CanvasDescriptor;
     visible?: boolean;
     skipdim?: boolean;
     //order: number;

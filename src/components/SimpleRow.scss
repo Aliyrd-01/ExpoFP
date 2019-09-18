@@ -1,0 +1,25 @@
+.simple-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-decoration: none !important;
+    color: #333 !important;
+    $p: 1rem;
+
+    &__main {
+        padding: 0 $p 0;
+        height: 1.3125rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 500
+    }
+
+    &__sub {
+        font-size: 0.7rem;
+        color: #aaa;
+        padding: 0 0 0 $p;
+        height: 0.7rem;
+        margin: -2px 0;
+    }
+}
