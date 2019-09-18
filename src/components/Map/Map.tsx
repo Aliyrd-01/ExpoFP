@@ -1,5 +1,8 @@
 import classNames from "classnames";
+import { easeExpOut } from "d3-ease";
+import { interpolate } from "d3-interpolate";
 import { event as currentEvent, select } from "d3-selection";
+import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { m4 } from "twgl.js";
@@ -15,9 +18,6 @@ import { sizeCanvasToParentElement } from "./utils";
 // import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import { zoomIdentity, zoomTransform, ZoomTransform, zoom } from "d3-zoom";
-import { interpolate } from "d3-interpolate";
-import { easeExpOut } from "d3-ease";
 
 export default function Map() {
     let zoomAf: number;
@@ -140,6 +140,7 @@ export default function Map() {
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 // __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
+                //s.drawer.setZoomTransform(t);
                 else if (t.animate) setZoomTransformAnimated(t, 500, easeExpOut);
                 else setZoomTransformAnimated(t, 0, null);
                 s.animatePlease = false;
@@ -206,19 +207,19 @@ export default function Map() {
             zoomTo(nt);
         }
     }
-    
+
     function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc: (k: number) => number) {
         // animate from existing position to dest
         if (zoomAf) {
             // move to the last frame zoom transform
             cancelAnimationFrame(zoomAf);
-            s.drawer.setZoomTransform(zoomAfTransform);
+            // s.drawer.setZoomTransform(zoomAfTransform);
         }
         if (!duration) {
             s.drawer.setZoomTransform(t);
             return;
         }
-        const ct = s.drawer.getZoomTransform();
+        const ct = zoomAfTransform || s.drawer.getZoomTransform();
         const i = interpolate(ct, t);
         const start = performance.now();
 
@@ -231,6 +232,7 @@ export default function Map() {
                 zoomAf = requestAnimationFrame(animationStep);
             } else {
                 zoomAf = undefined;
+                zoomAfTransform = undefined;
                 logger.log("setZoomTransformAnimated ended", part);
             }
         }

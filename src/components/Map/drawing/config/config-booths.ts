@@ -13,8 +13,8 @@ import configBoothLabelsSpecial from "./config-booth-labels-special";
 
 export default function configBooths(context: DrawerContext) {
     const booths = boothStore.booths; //.filter(x => x.name === '4268');
-    // booths.splice(2740);//configBoothLabels, configBoothLabelsSpecial, configBoothBookmark, 
-    const configFuncs = [configBoothBg, configBoothBorder] as ((
+    // booths.splice(2740);//
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark, configBoothBorder] as ((
         DrawerContext,
         Booth
     ) => void | { unlock: () => void })[]; //configBoothType,

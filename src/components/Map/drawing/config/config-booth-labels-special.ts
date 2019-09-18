@@ -5,6 +5,7 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import { reaction } from "mobx";
+import { NumberObserver } from "./NumberObserver";
 
 const textFitters = new Map<number, TextFitter>();
 function cteateTextFitter(pixelRatio: number) {
@@ -31,7 +32,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     private readonly ids: string[];
     private previousVisibleId: string;
     private previousSkipDim: boolean;
-    public locked:boolean;
+    public locked: boolean;
 
     constructor(context: DrawerContext, booth: Booth) {
         super(context, booth, "booth-label", RectPainter, 130);
@@ -81,8 +82,15 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         this.update();
 
         if (context.updatable) {
+            const cru = () => context.requireUpdate(this.updateBound);
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-            reaction(()=> [booth.skipDim, context.ptscale] , () => context.requireUpdate(this.updateBound));
+            // reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
+            const obs = NumberObserver.singletonForObject("labels-special", () => 1 / context.ptscale);
+            this.steps.forEach(s => obs.observeValue(s.factor, cru));
+            reaction(() => booth.skipDim, cru);
+
+            // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
+            // reaction(() => [booth.skipDim, context.ptscale], () => context.requireUpdate(this.updateBound));
         }
     }
 
@@ -101,7 +109,6 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         const step = this.steps.find(s => s.factor < 1 / ptscale);
         const visibleId = this.getId(step ? step.factor.toString() : "Dot");
 
-
         if (visibleId !== this.previousVisibleId) {
             if (visibleId) this.painter.updateVisible(visibleId, true);
             if (this.previousVisibleId) this.painter.updateVisible(this.previousVisibleId, false);
@@ -117,4 +124,3 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         }
     }
 }
-

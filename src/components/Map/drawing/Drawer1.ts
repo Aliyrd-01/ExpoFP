@@ -10,7 +10,6 @@ export type Drawer = Pick<
     | "setVisibleRect"
     | "setZoomTransform"
     | "ptscale"
-    | "getPtscale"
     | "getSvgPxUnzoomedMatrix"
     | "getZoomTransform"
     | "getPxSvgMatrix"
@@ -25,7 +24,6 @@ export type Drawer = Pick<
 export type DrawerContext = Pick<
     DrawerImpl,
     | "ptscale"
-    | "getPtscale"
     | "pixelRatio"
     | "updatable"
     | "allPainters"

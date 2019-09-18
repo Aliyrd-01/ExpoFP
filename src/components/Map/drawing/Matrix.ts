@@ -3,6 +3,7 @@ import { m4 } from "twgl.js";
 import Rect from "../../../core/Rect";
 import Size from "../../../core/Size";
 import { svgHeight, svgWidth } from "../../../data/svg";
+import { observable } from "mobx";
 // import { observable, computed } from "mobx";
 
 export default class Matrix {
@@ -11,8 +12,7 @@ export default class Matrix {
     // browser px -> svg
     private pxSvgMatrix: Float32Array;
     // canvas point -> svg scale
-    //@observable private 
-    ptscaleVal: number;
+    @observable private ptscaleVal: number;
     // svg -> browser px matrix (unzoomed)
     private svgPxUnzoomedMatrix: Float32Array;
 
@@ -70,9 +70,9 @@ export default class Matrix {
     getMatrix() {
         return this.matrix;
     }
-    getPtscale() {
-        return this.ptscaleVal;
-    }
+    // getPtscale() {
+    //     return this.ptscaleVal;
+    // }
     // @computed({ keepAlive: true }) 
     get ptscale() {
         return this.ptscaleVal;
@@ -150,9 +150,9 @@ export default class Matrix {
 
         m4.multiply(this.svgPxUnzoomedMatrix, centerSvgMatrixWithoutVisibleScale, this.svgPxUnzoomedMatrix);
 
-
+        this.ptscaleVal = 1 / svgPxScale / zoomTransform.k;
         this.fireMatrixChange();
-        // this.ptscaleVal = 1 / svgPxScale / zoomTransform.k;
+        
 
         // if (this.prevPtscale !== this.ptscale) {
         //     this.firePtscaleChange();

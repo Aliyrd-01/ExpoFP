@@ -108,17 +108,15 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         this.update();
 
         if (context.updatable) {
-            // const cru = () => context.requireUpdate(this.updateBound);
+            const cru = () => context.requireUpdate(this.updateBound);
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-            reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
-            // const obs = NumberObserver.fromContext(context);
-            // this.factors.forEach(f => obs.observeValue(f, cru));
-            // reaction(() => booth.skipDim, cru);
+            // reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
+            const obs = NumberObserver.singletonForObject("labels", () => context.ptscale);
+            this.factors.forEach(f => obs.observeValue(f, cru));
+            reaction(() => booth.skipDim, cru);
         }
         // updates.push(this.updateBound);
     }
-
-    observeFactors(factors: number[]) {}
 
     calcFactors() {
         let lastFactor: number;
@@ -148,7 +146,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         // if (this.painter.alpha === 0) return;
         if (this.locked) return;
         let visiblePrefix: typeof prefixes[number] = null;
-        const ptscale = this.context.getPtscale();
+        const ptscale = this.context.ptscale;
         // const rectHeight = this.booth.rect.h * ptscale;
 
         for (let i = 0; i < prefixes.length; i++) {
@@ -156,6 +154,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             const f = this.factors[i];
             if (ptscale < f) visiblePrefix = p;
         }
+
+        // console.log('boothupdate');
 
         // visiblePrefix = "Dot";
 
@@ -194,5 +194,3 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         });
     }
 }
-
-

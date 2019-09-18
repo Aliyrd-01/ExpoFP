@@ -1,4 +1,4 @@
-import { reaction } from "mobx";
+import { reaction, when } from "mobx";
 import { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
@@ -86,7 +86,21 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
 
         if (context.updatable) {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
-            // reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
+            // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
+
+            reaction(
+                () => booth.bookmarked,
+                () => {
+                    context.requireUpdate(this.updateBound);
+                    if (booth.bookmarked) {
+                        const dispose = reaction(
+                            () => [booth.skipDim, context.ptscale],
+                            () => context.requireUpdate(this.updateBound)
+                        );
+                        when(() => !booth.bookmarked, () => dispose());
+                    }
+                }
+            );
         }
     }
 
