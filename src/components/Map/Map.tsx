@@ -21,6 +21,7 @@ import { easeExpOut } from "d3-ease";
 
 export default function Map() {
     let zoomAf: number;
+    let zoomAfTransform: ZoomTransform;
     // do not use useState unless really needed
     const el = useRef<HTMLCanvasElement>();
     // use mobx for everything
@@ -205,10 +206,14 @@ export default function Map() {
             zoomTo(nt);
         }
     }
-
+    
     function setZoomTransformAnimated(t: ZoomTransform, duration: number, easingFunc: (k: number) => number) {
         // animate from existing position to dest
-        if (zoomAf) cancelAnimationFrame(zoomAf);
+        if (zoomAf) {
+            // move to the last frame zoom transform
+            cancelAnimationFrame(zoomAf);
+            s.drawer.setZoomTransform(zoomAfTransform);
+        }
         if (!duration) {
             s.drawer.setZoomTransform(t);
             return;
@@ -225,9 +230,11 @@ export default function Map() {
             if (part !== 1) {
                 zoomAf = requestAnimationFrame(animationStep);
             } else {
+                zoomAf = undefined;
                 logger.log("setZoomTransformAnimated ended", part);
             }
         }
+        zoomAfTransform = t;
         animationStep();
     }
 
