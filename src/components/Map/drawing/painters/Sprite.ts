@@ -101,7 +101,7 @@ export default class Sprite {
                 canvas.height = ci.height;
             }
 
-            c.resetTransform();
+            c.setTransform(1, 0, 0, 1, 0, 0);
             c.clearRect(0, 0, canvas.width, canvas.height);
 
             for (const item of ci.items) {
