@@ -216,6 +216,7 @@ export default function Map() {
             // s.drawer.setZoomTransform(zoomAfTransform);
         }
         if (!duration) {
+            zoomAfTransform = undefined;
             s.drawer.setZoomTransform(t);
             return;
         }
