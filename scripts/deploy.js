@@ -1,4 +1,4 @@
-const { expoFromBranch, createShowDevHtml, fallBackExpo, reportVars } = require("./common");
+const { expoFromBranch, fallBackExpo, reportVars } = require("./common");
 const Confirm = require("prompt-confirm");
 const execa = require("execa");
 require("colors");
@@ -15,7 +15,7 @@ const live = process.argv[2] === "--live";
     }
     
     process.env.REACT_APP_EFP_EXPO = expo;
-    process.env.REACT_APP_DATA_URL = `https://${expo}.expofp.com/data`;
+    process.env.REACT_APP_DATA_URL = `/data`;
     process.env.REACT_APP_MODE = "deploy" + (live ? "-live" : "");
 
     reportVars();
@@ -30,7 +30,7 @@ const live = process.argv[2] === "--live";
 
     const p = await execa("react-scripts", ["build"], { stdio: "inherit" });
     if (p.exitCode !== 0) process.exit(p.exitCode);
-    createShowDevHtml();
+    // createShowDevHtml();
 
     const deployExpo = expo;
     console.log("Deploying dist to " + deployExpo);
