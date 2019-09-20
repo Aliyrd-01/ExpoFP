@@ -11,6 +11,7 @@ interface Data {
     categories: RawCategory[];
     reserveInstructions: string;
     sendLoginLinkUrl: string;
+    trackerUrl: string;
 }
 
 interface RawCategory {

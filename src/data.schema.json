@@ -26,6 +26,11 @@
             "type": "string",
             "description": "Google Analytics or Tag Manager ID"
         },
+        "trackerUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Endpoint URL to send user events. E.g. https://expofp.com/api/track?type=view-exhibitor&value=123"
+        },
         "reserveInstructions": {
             "type": "string"
         },
