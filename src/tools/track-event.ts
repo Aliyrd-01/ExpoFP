@@ -8,5 +8,5 @@ export default function trackEvent(type: "load", value?: any) {
     url += url.indexOf("?") === -1 ? "?" : "&";
     url += "type=" + encodeURIComponent(type);
     if (value !== undefined) url += "value=" + encodeURIComponent(value);
-    fetch(url);
+    fetch(url, {cache: "no-store"});
 }
