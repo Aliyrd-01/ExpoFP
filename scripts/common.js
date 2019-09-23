@@ -42,7 +42,7 @@ function reportVars() {
 module.exports = {
     expoFromBranch,
     // onMasterBranch,
-    fallBackExpo: "school",
+    fallBackExpo: "jtrade19",
     reportVars,
     // createShowDevHtml
 };

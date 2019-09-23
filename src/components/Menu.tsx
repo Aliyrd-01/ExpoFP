@@ -4,21 +4,28 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
 import data from "../data";
 import store, { categoryStore, exhibitorStore, uiState } from "../store";
+import { Category } from "../store/CategoryStore";
 import baseUrl from "../tools/base-data-url";
+import logger from "../tools/logger";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
-import { Category } from "../store/CategoryStore";
 
 const logoUrl = baseUrl + data.logo;
 
 window.setTimeout(function() {
-    const link = document.createElement("link");
-    link.href = logoUrl;
-    link.rel = "preload";
-    (link as any).as = "image";
-    document.head.appendChild(link);
-}, 4000);
+    const img = new Image();
+    img.onload = () => {
+        logger.log("Logo image loaded");
+    };
+    img.src = logoUrl;
+
+    // const link = document.createElement("link");
+    // link.href = logoUrl;
+    // link.rel = "preload";
+    // (link as any).as = "image";
+    // document.head.appendChild(link);
+}, 1500);
 
 function Menu() {
     const s = useLocalStore(() => ({

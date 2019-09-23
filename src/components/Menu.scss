@@ -45,11 +45,10 @@
     }
 }
 
-.expo-sync2020{
-     .menu__title {
+.expo-sync2020 {
+    .menu__title {
         padding-top: 0;
         padding-bottom: 0;
-        
 
         > img {
             max-height: 150px;
@@ -61,17 +60,19 @@
 /* END */
 .menu {
     background: #f1f1f1;
+    $p: 1rem;
     &__title {
         background: #fff;
         display: block;
-        padding: 2.5rem 1rem;
+        padding: 1.5 * $p $p;
         font-size: 2rem;
         font-weight: 100;
         text-align: center;
         margin-right: -3rem;
         img {
-            width: 220px;
-            max-height: 100px;
+            // width: 220px;
+            max-height: 7rem;
+            max-width: calc(100% - #{2 * $p});
             opacity: 0;
             transition: opacity 500ms;
         }
@@ -118,7 +119,7 @@
         // }
 
         .overlay-bottom &.-print {
-           display: none;
+            display: none;
         }
     }
 
