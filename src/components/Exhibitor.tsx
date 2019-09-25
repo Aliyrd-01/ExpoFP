@@ -4,7 +4,6 @@ import React, { MouseEvent, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
-import { Exhibitor } from "../store/ExhibitorStore";
 import logger from "../tools/logger";
 import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
@@ -54,6 +53,7 @@ function ExhibitorComponent() {
 
     return useObserver(() => {
         const exhibitor = s.exhibitor;
+        // if (!exhibitor) return null;
         const bar = (
             <>
                 <div className="exhibitor__bar">
@@ -258,4 +258,4 @@ function ExhibitorComponent() {
 }
 
 export default () =>
-    useObserver(() => <>{!uiState.menu && uiState.details instanceof Exhibitor ? <ExhibitorComponent /> : null}</>);
+    useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);

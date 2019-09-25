@@ -149,9 +149,13 @@ function showFps() {
     if (prevFps.length > 20) prevFps.shift();
     const avgFps = prevFps.reduce((sume, el) => sume + el, 0) / prevFps.length;
     const html = avgFps.toFixed(0);
+
     if (prevHtml !== html) {
-        document.getElementById("fps").innerHTML = html;
-        prevHtml = html;
+        const fpsElement = document.getElementById("fps");
+        if (fpsElement) {
+            fpsElement.innerHTML = html;
+            prevHtml = html;
+        }
     }
 }
 

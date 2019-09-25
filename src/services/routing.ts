@@ -61,7 +61,6 @@ function setTitle() {
 }
 
 function stateToUrl() {
-    if (disableStateToUrl) return;
     let queryRaw = "";
     const exhibitor = uiState.selectedExhibitor;
     const booth = uiState.selectedBooth;
@@ -86,15 +85,19 @@ function stateToUrl() {
         }
     }
 
+    // put it here for autorun to continue capturing required observables
+    if (disableStateToUrl) return;
+
     const newQuery = queryRaw ? "?" + encodeURIComponent(queryRaw) : "";
 
     if (history.location.search === newQuery) return;
 
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
-        // logger.log('history push', queryRaw);
+        // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         history.push(newQuery);
         sendGa();
     } else {
+        // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         // logger.log('history replace', queryRaw);
         history.replace(newQuery);
     }
