@@ -72,7 +72,7 @@ function Booth() {
                                 )}
                             </div>
                             {data.reserveInstructions && !b.onHold && (
-                                <span dangerouslySetInnerHTML={{ __html: data.reserveInstructions }} />
+                                <span dangerouslySetInnerHTML={{ __html: data.reserveInstructions }} className="booth__reserve-instructions" />
                             )}
 
                             {s.showBuy && (
