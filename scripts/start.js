@@ -1,8 +1,8 @@
-const { expoFromBranch, fallBackExpo, reportVars } = require("./common");
+const { specifiedExpo, fallBackExpo, reportVars } = require("./common");
 const execa = require("execa");
 
 (async () => {
-    const expo = expoFromBranch || fallBackExpo;
+    const expo = specifiedExpo || fallBackExpo;
 
     process.env.REACT_APP_EFP_EXPO = expo;
     process.env.REACT_APP_DATA_URL = `https://${expo}.expofp.com/data`;

@@ -1,15 +1,16 @@
-const git = require('git-rev-sync');
+const git = require("git-rev-sync");
 require("colors");
 const branch = git.branch();
 // const os = require("os");
-const dateFormat = require('dateformat');
-const username = require('username');
+const dateFormat = require("dateformat");
+const username = require("username");
+const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2));
 
 // const onMasterBranch = branch === "master";
 let expoFromBranch = branch.startsWith("expo-") ? branch.replace(/^expo-/, "") : null;
 
 function reportVars() {
-    process.env.REACT_APP_VERSION = `${git.long()} ${dateFormat("ddd mmm dd yyyy HH:MM:ss Z")} (${username.sync()})`
+    process.env.REACT_APP_VERSION = `${git.long()} ${dateFormat("ddd mmm dd yyyy HH:MM:ss Z")} (${username.sync()})`;
 
     console.log("REACT_APP_MODE", process.env.REACT_APP_MODE.yellow);
     console.log("REACT_APP_EFP_EXPO", process.env.REACT_APP_EFP_EXPO.yellow);
@@ -39,10 +40,14 @@ function reportVars() {
 //     }
 // }
 
+//console.dir(argv);
+
 module.exports = {
-    expoFromBranch,
+    specifiedExpo: ((argv.expo || expoFromBranch) || "").trim().toLowerCase(),
+    argv,
+    // expoFromCommandLine: argv.expo,
     // onMasterBranch,
     fallBackExpo: "aweusa2020",
-    reportVars,
+    reportVars
     // createShowDevHtml
 };
