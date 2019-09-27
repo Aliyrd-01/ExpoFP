@@ -66,6 +66,7 @@
         "prompt-confirm": "^2.0.4",
         "s3-deploy": "^1.4.0",
         "source-map-explorer": "^2.0.1",
+        "url-exists": "^1.0.3",
         "username": "^5.1.0"
     }
 }

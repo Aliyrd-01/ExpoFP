@@ -4,6 +4,8 @@ const execa = require("execa");
 require("colors");
 const live = !!argv.live;
 const dev = !!argv.dev;
+const util = require("util");
+const urlExists = util.promisify(require("url-exists"));
 
 if (!!live === !!dev) {
     console.error("You should specify either --dev or --live when deploying.".red);
@@ -26,6 +28,13 @@ if (!!live === !!dev) {
     process.env.REACT_APP_MODE = "deploy" + (live ? "-live" : "-dev");
 
     reportVars();
+
+    const expoCheckUrl = `https://${expo}.expofp.com`;
+    const exists = await urlExists(expoCheckUrl);
+    if (!exists) {
+        console.error("Won't deploy to non-existent expo: ".red + expoCheckUrl.red.bgWhite);
+        process.exit(3);
+    }
 
     if (live) {
         const prompt = new Confirm({
@@ -51,7 +60,16 @@ if (!!live === !!dev) {
         if (cleanup.exitCode !== 0) process.exit(cleanup.exitCode);
     }
 
-    const args = ["./build/**/!(*.map)", "--cwd", "./build", "--bucket", bucketAndPath, "--private", "--profile", "efp-deploy-fp"];
+    const args = [
+        "./build/**/!(*.map)",
+        "--cwd",
+        "./build",
+        "--bucket",
+        bucketAndPath,
+        "--private",
+        "--profile",
+        "efp-deploy-fp"
+    ];
     // invalidate
     args.push("--distId", "ETXR07B411G19", "--invalidate", `${path}/index*`);
 
