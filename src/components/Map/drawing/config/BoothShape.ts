@@ -8,10 +8,18 @@ const map = new Map<Booth, BoothShape>();
 export default class BoothShape {
     private readonly booth: Booth;
     @observable selectBgAnimationPart: number;
-
     constructor(booth: Booth) {
         this.booth = booth;
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, true);
+
+        animateProp(
+            () => booth.selected,
+            (t, timeSinceStart) => {
+                this.selectBgAnimationPart = easeQuadInOut(t);
+                if (timeSinceStart > 750 * 4) return false;
+            },
+            750,
+            true
+        );
     }
 
     static get(b: Booth) {
@@ -24,7 +32,12 @@ export default class BoothShape {
     }
 }
 
-function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, reversable: boolean) {
+function animateProp(
+    val: () => boolean,
+    setter: (t: number, timeSinceStart: number) => boolean | undefined,
+    duration: number,
+    reversable: boolean
+) {
     const func = reversable ? reversableT : plainT;
 
     reaction(
@@ -34,12 +47,13 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 let animationStart = performance.now();
                 const drawFrame = () => {
                     if (!val()) return;
-                    setter(func(animationStart, duration));
-                    window.requestAnimationFrame(drawFrame);
+                    const res = setter(func(animationStart, duration), performance.now() - animationStart);
+                    if (res === false) setter(0, 0);
+                    else window.requestAnimationFrame(drawFrame);
                 };
                 drawFrame();
             } else {
-                setter(0);
+                setter(0, 0);
             }
         },
         { fireImmediately: true }
