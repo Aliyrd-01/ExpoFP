@@ -77,7 +77,7 @@ export default class RootStore {
 
     @action clickBoothInList(booth: Booth) {
         this.uiState.hoveredBooth = null;
-        this.selectBooth(null);
+        this.selectBooth(booth);
         this.moveToList([booth]);
         this.showMap();
         // commit("setHoveredBooth", null);
