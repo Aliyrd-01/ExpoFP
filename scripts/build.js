@@ -1,4 +1,4 @@
-const { specifiedExpo, createShowDevHtml, fallBackExpo, reportVars } = require("./common");
+const { specifiedExpo, fallBackExpo, reportVars } = require("./common");
 const execa = require("execa");
 
 (async () => {
@@ -12,5 +12,4 @@ const execa = require("execa");
 
     const p = await execa("react-scripts", ["build"], { stdio: "inherit" });
     if (p.exitCode !== 0) process.exit(p.exitCode);
-    createShowDevHtml();
 })();

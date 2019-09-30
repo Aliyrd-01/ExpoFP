@@ -46,8 +46,12 @@ export default function initBooths(store: RootStore) {
         if (el.tagName === 'rect') {
             rect = el as SVGRectElement;
         } else {
-            rect = el.lastElementChild as SVGRectElement;
-            if (!rect || rect.tagName !== 'rect') continue;
+            // find any rect
+            rect = Array.from(el.children).find(x => x.tagName === 'rect') as SVGRectElement;
+            if (!rect) continue;
+            // // expect rect to be last child
+            // rect = el.lastElementChild as SVGRectElement;
+            // if (!rect || rect.tagName !== 'rect') continue;
         }
 
         const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
