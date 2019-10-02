@@ -23,7 +23,7 @@ export default class BoothStore {
 
     @computed({ keepAlive: true }) get borderWidth() {
         const ar = this.booths.filter((_, i) => i % 10 === 0).map(x => x.rect.w + x.rect.h);
-        return ar.reduce((a, b) => a + b) / ar.length / 50;
+        return ar.reduce((a, b) => a + b) / ar.length / 80;
     }
 
     constructor(rootStore: RootStore) {
