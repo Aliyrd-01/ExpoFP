@@ -4,6 +4,7 @@ const execa = require("execa");
 require("colors");
 const live = !!argv.live;
 const dev = !!argv.dev;
+const showBucket = !!argv['show-bucket'];
 const util = require("util");
 const urlExists = util.promisify(require("url-exists"));
 
@@ -29,14 +30,14 @@ if (!!live === !!dev) {
 
     reportVars();
 
-    const expoCheckUrl = `https://${expo}.expofp.com`;
+    const expoCheckUrl = `https://${expo}${showBucket ? ".show" : ""}.expofp.com`;
     const exists = await urlExists(expoCheckUrl);
     if (!exists) {
         console.error("Won't deploy to non-existent expo: ".red + expoCheckUrl.red.bgWhite);
         process.exit(3);
     }
 
-    if (live) {
+    if (live && !showBucket) {
         const prompt = new Confirm({
             message: `Are you sure want to deploy to live ${expo.toUpperCase().yellow}?`,
             default: false
@@ -51,7 +52,9 @@ if (!!live === !!dev) {
     const deployExpo = expo;
     console.log("Deploying dist to " + deployExpo);
     const path = `/expos/${deployExpo}/${!live ? "dev" : "live"}`;
-    const bucketAndPath = `efp-data${path}`;
+    const bucketName = showBucket ? "efp-data-show" : "efp-data";
+    const bucketAndPath = `${bucketName}${path}`;
+    const credentials = showBucket ? "efp-dev" : "efp-deploy-fp";
     //s3cmd del -r s3:////efp-data/expos/_template_for_new_event_/live
 
     if (deployExpo === "_template_for_new_event_") {
@@ -60,18 +63,9 @@ if (!!live === !!dev) {
         if (cleanup.exitCode !== 0) process.exit(cleanup.exitCode);
     }
 
-    const args = [
-        "./build/**/!(*.map)",
-        "--cwd",
-        "./build",
-        "--bucket",
-        bucketAndPath,
-        "--private",
-        "--profile",
-        "efp-deploy-fp"
-    ];
+    const args = ["./build/**/!(*.map)", "--cwd", "./build", "--bucket", bucketAndPath, "--private", "--profile", credentials];
     // invalidate
-    args.push("--distId", "ETXR07B411G19", "--invalidate", `${path}/index*`);
+    args.push("--distId", showBucket ? "E29FK8L1MN1CCC" : "ETXR07B411G19", "--invalidate", `${path}/index*`);
 
     const deploy = await execa("s3-deploy", args, { stdio: "inherit" });
 
