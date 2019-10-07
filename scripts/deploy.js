@@ -4,9 +4,12 @@ const execa = require("execa");
 require("colors");
 const live = !!argv.live;
 const dev = !!argv.dev;
-const showBucket = !!argv['show-bucket'];
+const showBucket = !!argv["show-bucket"];
 const util = require("util");
 const urlExists = util.promisify(require("url-exists"));
+const bucketName = showBucket ? "efp-data-show" : "efp-data";
+
+console.log("Destination bucket: ", bucketName.green);
 
 if (!!live === !!dev) {
     console.error("You should specify either --dev or --live when deploying.".red);
@@ -50,14 +53,14 @@ if (!!live === !!dev) {
     // createShowDevHtml();
 
     const deployExpo = expo;
-    console.log("Deploying dist to " + deployExpo);
+    console.log("Deploying dist to ", deployExpo.green);
     const path = `/expos/${deployExpo}/${!live ? "dev" : "live"}`;
-    const bucketName = showBucket ? "efp-data-show" : "efp-data";
     const bucketAndPath = `${bucketName}${path}`;
     const credentials = showBucket ? "efp-dev" : "efp-deploy-fp";
     //s3cmd del -r s3:////efp-data/expos/_template_for_new_event_/live
+    console.log("Credentials: ", credentials.green);
 
-    if (deployExpo === "_template_for_new_event_") {
+    if (deployExpo === "_template_for_new_event_" && !showBucket) {
         console.log("Cleaning up template dist");
         const cleanup = await execa("s3cmd", ["del", "-r", `s3:////${bucketAndPath}`], { stdio: "inherit" });
         if (cleanup.exitCode !== 0) process.exit(cleanup.exitCode);
