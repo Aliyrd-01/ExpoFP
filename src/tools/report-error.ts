@@ -8,7 +8,6 @@ export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId) return;
 
     timeoutId = window.setTimeout(async function () {
-
         const ipData = await getIpData();
 
         const language = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
@@ -22,6 +21,8 @@ export default function reportError(e: Partial<ErrorEvent>) {
             log: logger.messages.join("\n"),
             userAgent: navigator.userAgent,
             language,
+            group: "FP",
+            subject: "FP JS error: " + document.location.host,
             ...ipData
         };
 
