@@ -28,7 +28,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
 
         console.log("Sending error report", data);
 
-        const rawResponse = await fetch('https://expofp.com/api/report-fp-error', {
+        const rawResponse = await fetch('https://expofp.com/api/report-error', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
