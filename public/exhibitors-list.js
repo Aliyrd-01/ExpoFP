@@ -13,7 +13,7 @@
         }
     }
     if (!expo) {
-        console.error("Cannot find expo");
+        throw new Error("Cannot find expo for exhibitors list.");
     }
 
     var s = d.createElement("script");
