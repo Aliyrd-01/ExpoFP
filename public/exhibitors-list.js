@@ -20,8 +20,6 @@
     s.src = "https://expofp.com/js_dist/embed/exhibitors-list.min.js";
     s.async = 1;
 
-    console.log("Loading exhibitors list:", expo, m);
-
     s.onload = function() {
         exhibitorsList("#exhibitors-list", expo);
     };
