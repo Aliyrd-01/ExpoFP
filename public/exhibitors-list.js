@@ -5,7 +5,7 @@
     for (var i = 0; i < mm.length; i++) {
         var m = mm[i];
         var src = m.getAttribute("data-src") || m.src;
-        var ma = src.match(/^http(s?):\/\/([^.]+)\.expofp\.com/);
+        var ma = src.match(/^http(s?):\/\/([^.]+)\.expofp\.com\/exhibitors-list\.js/);
         console.log(src);
         if (ma) {
             expo = ma[2];
