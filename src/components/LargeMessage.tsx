@@ -38,12 +38,10 @@ export default function LargeMessage() {
             if (s.shouldShow) {
                 s.transitioning = true;
                 visibleTimeoutID = window.setTimeout(() => {
-                    // logger.log("Set visible");
                     s.visible = true;
                 }, 1);
             } else {
                 s.visible = false;
-                // s.transitioning = true;
                 visibleTimeoutID = window.setTimeout(() => {
                     s.transitioning = false;
                 }, 1000);

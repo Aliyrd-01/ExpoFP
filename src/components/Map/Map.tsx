@@ -133,42 +133,14 @@ export default function Map() {
     function init() {
         s.$canvas = select(el.current);
 
-        // el.current.addEventListener("touchstart", (e) => {
-        //     e.stopImmediatePropagation();
-
-        //     console.log('ttts', e.defaultPrevented)
-        // });
-        //s.$canvas = select(el.current);
-
-        // let messageTimeoutId: number;
-        // function scheduleMessage(message: string, intime: number) {
-        //     messageTimeoutId = window.setTimeout(() => {
-        //         uiState.largeMessage = message;
-        //         uiState.largeMessageLastSet = performance.now();
-        //     }, intime);
-        // }
-        // function cancelMessage() {
-        //     window.clearTimeout(messageTimeoutId);
-        // }
-
         s.zoom = zoom()
             .clickDistance(15)
             .interpolate(interpolate)
             .scaleExtent([0.5, 12])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .filter(function() {
-                // console.log(
-                //     "currentEvent2",
-                //     currentEvent,
-                //     currentEvent && currentEvent.type,
-                //     currentEvent && currentEvent.touches && currentEvent && currentEvent.touches.length //.sourceEvent,
-                //     // currentEvent.ctrlKey,
-                //     // currentEvent.metaKey,
-                //     // currentEvent.sourceEvent.ctrlKey,
-                //     // currentEvent.sourceEvent.metaKey
-                // );
-                // if (currentEvent && currentEvent.type === "touchstart") return false;
-                if (!isIframe || !currentEvent || (currentEvent.type !== "wheel" && currentEvent.type !== "touchstart"))
+                if (!isIframe || !currentEvent || currentEvent.type !== "wheel")
+                    // && currentEvent.type !== "touchstart"
                     return true;
 
                 const preventWheel = currentEvent.type === "wheel" && !currentEvent.ctrlKey && !currentEvent.metaKey;
@@ -179,8 +151,6 @@ export default function Map() {
                     //     scheduleMessage("Use two fingers to move", 500);
                     // } else
 
-                    // uiState.largeMessage = message;
-
                     if (isMac) {
                         uiState.largeMessage = "Use ⌘ + scroll to zoom";
                     } else {
@@ -188,30 +158,12 @@ export default function Map() {
                     }
                     uiState.largeMessageLastSet = performance.now();
                 }
-                // else {
-                //     cancelMessage();
-                // }
 
                 return !preventWheel;
-                // if (!se) return;
-                // const isWheel = se && se.type === "wheel";
-                // const ctrl = se.metaKey || se.ctrlKey;
-                // return !isWheel || ctrl;
             })
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                // console.log(
-                //     "currentEvent",
-                //     currentEvent.sourceEvent,
-                //     currentEvent.sourceEvent.ctrlKey,
-                //     currentEvent.sourceEvent.metaKey
-                // );
-                // if (isWheel && isIframe && !currentEvent.sourceEvent.ctrlKey &&!currentEvent.sourceEvent.metaKey) {
-                //     //currentEvent.sourceEvent.defaultPrevented = false;
-                //     return;
-                // }
-                // __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
                 //s.drawer.setZoomTransform(t);
                 else if (t.animate) setZoomTransformAnimated(t, 500, easeExpOut);
