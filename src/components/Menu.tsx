@@ -10,6 +10,7 @@ import logger from "../tools/logger";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
+import isIframe from "../utils/is-iframe";
 
 const logoUrl = baseUrl + data.logo;
 
@@ -43,7 +44,7 @@ function Menu() {
         }
     });
 
-    const barContent = (
+    const barContent = isIframe ? <div className="menu__bar -empty"></div> : (
         <div className="menu__bar">
             <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer">
                 <img
@@ -87,10 +88,12 @@ function Menu() {
                 backMode="none"
             >
                 <div className="menu__content">
-                    <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                        <i className="fas fa-home" /> Event&nbsp;Home&nbsp;
-                        <i className="fas fa-external-link" />
-                    </a>
+                    {!isIframe && (
+                        <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
+                            <i className="fas fa-home" /> Event&nbsp;Home&nbsp;
+                            <i className="fas fa-external-link" />
+                        </a>
+                    )}
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         <i className="fas fa-search" /> Search
                     </a>
