@@ -6,7 +6,7 @@ import logger from "../tools/logger";
 import { useInit } from "../utils/mobx";
 import "./LargeMessage.scss";
 
-const timeout = 2000;
+const timeout = 1000;
 
 export default function LargeMessage() {
     // const [visible, setVisible] = useState(false);
