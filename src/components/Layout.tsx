@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React, { Suspense, useLayoutEffect, useState } from "react";
 import data from "../data";
-import store from "../store";
+import store, { uiState } from "../store";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import Controls from "./Controls";
@@ -16,6 +16,7 @@ import settings from "../tools/settings";
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
+const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -63,6 +64,11 @@ export default observer(function Layout() {
                 {settings.debug ? (
                     <Suspense fallback={null}>
                         <Debug />
+                    </Suspense>
+                ) : null}
+                {uiState.largeMessage ? (
+                    <Suspense fallback={null}>
+                        <LargeMessage />
                     </Suspense>
                 ) : null}
                 <Pdf />

@@ -24,6 +24,16 @@ export function sizeCanvasToParentElement(canvas: HTMLCanvasElement) {
     }
 }
 
+export function sizeToParentElement(canvas:HTMLElement){
+    const bWidth = canvas.parentElement.clientWidth;
+    const bHeight = canvas.parentElement.clientHeight;
+
+    if (canvas.clientWidth !== bWidth || canvas.clientHeight !== bHeight) {
+        canvas.style.width = bWidth + "px";
+        canvas.style.height = bHeight + "px";
+    }
+}
+
 // let isWebGlSupportedVal: boolean;
 // export function isWebGlSupported() {
 //     if (typeof isWebGlSupportedVal === "undefined") {

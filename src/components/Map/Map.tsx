@@ -15,10 +15,10 @@ import getBoothIdFromClientXy from "./booth-by-xy";
 import createDrawer, { Drawer } from "./drawing/Drawer1";
 import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
-// import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
 import isIframe from "../../utils/is-iframe";
+import isMac from "../../utils/is-mac";
 
 //console.log('isIframe', isIframe)
 
@@ -133,16 +133,78 @@ export default function Map() {
     function init() {
         s.$canvas = select(el.current);
         //s.$canvas = select(el.current);
+
+        let messageTimeoutId: number;
+        function scheduleMessage(message: string, intime: number) {
+            messageTimeoutId = window.setTimeout(() => {
+                uiState.largeMessage = message;
+                uiState.largeMessageLastSet = performance.now();
+            }, intime);
+        }
+        function cancelMessage() {
+            window.clearTimeout(messageTimeoutId);
+        }
+
         s.zoom = zoom()
             .clickDistance(15)
             .interpolate(interpolate)
             .scaleExtent([0.5, 12])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
+            .filter(function() {
+                console.log(
+                    "currentEvent2",
+                    currentEvent,
+                    currentEvent && currentEvent.type,
+                    currentEvent && currentEvent.touches && currentEvent && currentEvent.touches.length //.sourceEvent,
+                    // currentEvent.ctrlKey,
+                    // currentEvent.metaKey,
+                    // currentEvent.sourceEvent.ctrlKey,
+                    // currentEvent.sourceEvent.metaKey
+                );
+                if (!isIframe || !currentEvent || (currentEvent.type !== "wheel" && currentEvent.type !== "touchstart"))
+                    return true;
+
+                //if (currentEvent.type === "touchstart") return false;
+
+                // otherwise show message
+                // const se = currentEvent.sourceEvent;
+                // const isWheel =
+
+                const preventWheel =
+                    (currentEvent.type === "wheel" && !currentEvent.ctrlKey && !currentEvent.metaKey) ||
+                    (currentEvent.type === "touchstart" && currentEvent.touches.length < 2);
+
+                if (preventWheel) {
+                    if (currentEvent.type === "touchstart") {
+                        scheduleMessage("Use two fingers to move", 500);
+                    } else if (isMac) {
+                        scheduleMessage("Use ⌘ + scroll to zoom", 1);
+                    } else {
+                        scheduleMessage("Use Ctrl + scroll to zoom", 1);
+                    }
+                } else {
+                    cancelMessage();
+                }
+
+                return !preventWheel;
+                // if (!se) return;
+                // const isWheel = se && se.type === "wheel";
+                // const ctrl = se.metaKey || se.ctrlKey;
+                // return !isWheel || ctrl;
+            })
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                console.log('currentEvent',currentEvent)
-                if (isWheel && isIframe && !currentEvent.sourceEvent.ctrlKey) return;
+                // console.log(
+                //     "currentEvent",
+                //     currentEvent.sourceEvent,
+                //     currentEvent.sourceEvent.ctrlKey,
+                //     currentEvent.sourceEvent.metaKey
+                // );
+                // if (isWheel && isIframe && !currentEvent.sourceEvent.ctrlKey &&!currentEvent.sourceEvent.metaKey) {
+                //     //currentEvent.sourceEvent.defaultPrevented = false;
+                //     return;
+                // }
                 // __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
                 //s.drawer.setZoomTransform(t);

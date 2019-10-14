@@ -27,6 +27,8 @@ export default class UIState {
     @observable menu = false;
     @observable searchFocused = false;
     @observable printingPdf = false;
+    @observable largeMessage = null as string;
+    @observable largeMessageLastSet = null as number;
     @observable.struct screenSize: ScreenSize;
     @observable desiredOverlaySize: OverlaySize;
     @observable overlayShowsAll = false;
