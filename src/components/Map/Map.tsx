@@ -18,6 +18,9 @@ import { sizeCanvasToParentElement } from "./utils";
 // import { overlayWidthRems, overlayMediumHeightRems } from '../sizes';
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import isIframe from "../../utils/is-iframe";
+
+//console.log('isIframe', isIframe)
 
 export default function Map() {
     let zoomAf: number;
@@ -138,6 +141,8 @@ export default function Map() {
             .on("zoom", () => {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
+                console.log('currentEvent',currentEvent)
+                if (isWheel && isIframe && !currentEvent.sourceEvent.ctrlKey) return;
                 // __logger.log('zoom', currentEvent, currentEvent.sourceEvent && currentEvent.sourceEvent.type);
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
                 //s.drawer.setZoomTransform(t);
