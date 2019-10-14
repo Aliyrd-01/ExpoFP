@@ -8,6 +8,7 @@ import { isWebGlSupported } from "../utils";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
 import LargeMessage from "./LargeMessage";
+// import TouchHover from "./TouchHover";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
@@ -20,6 +21,10 @@ const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
+
+// document.body.addEventListener("touchstart", x => {
+//     console.log("body touchstart")
+// });
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -70,6 +75,7 @@ export default observer(function Layout() {
                     </Suspense>
                 ) : null}
                 {isIframe && <LargeMessage />}
+                {/* {isIframe && <TouchHover />} */}
                 <Pdf />
                 <div id="fps" />
             </div>

@@ -132,18 +132,24 @@ export default function Map() {
 
     function init() {
         s.$canvas = select(el.current);
+
+        // el.current.addEventListener("touchstart", (e) => {
+        //     e.stopImmediatePropagation();
+
+        //     console.log('ttts', e.defaultPrevented)
+        // });
         //s.$canvas = select(el.current);
 
-        let messageTimeoutId: number;
-        function scheduleMessage(message: string, intime: number) {
-            messageTimeoutId = window.setTimeout(() => {
-                uiState.largeMessage = message;
-                uiState.largeMessageLastSet = performance.now();
-            }, intime);
-        }
-        function cancelMessage() {
-            window.clearTimeout(messageTimeoutId);
-        }
+        // let messageTimeoutId: number;
+        // function scheduleMessage(message: string, intime: number) {
+        //     messageTimeoutId = window.setTimeout(() => {
+        //         uiState.largeMessage = message;
+        //         uiState.largeMessageLastSet = performance.now();
+        //     }, intime);
+        // }
+        // function cancelMessage() {
+        //     window.clearTimeout(messageTimeoutId);
+        // }
 
         s.zoom = zoom()
             .clickDistance(15)
@@ -151,40 +157,40 @@ export default function Map() {
             .scaleExtent([0.5, 12])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .filter(function() {
-                console.log(
-                    "currentEvent2",
-                    currentEvent,
-                    currentEvent && currentEvent.type,
-                    currentEvent && currentEvent.touches && currentEvent && currentEvent.touches.length //.sourceEvent,
-                    // currentEvent.ctrlKey,
-                    // currentEvent.metaKey,
-                    // currentEvent.sourceEvent.ctrlKey,
-                    // currentEvent.sourceEvent.metaKey
-                );
+                // console.log(
+                //     "currentEvent2",
+                //     currentEvent,
+                //     currentEvent && currentEvent.type,
+                //     currentEvent && currentEvent.touches && currentEvent && currentEvent.touches.length //.sourceEvent,
+                //     // currentEvent.ctrlKey,
+                //     // currentEvent.metaKey,
+                //     // currentEvent.sourceEvent.ctrlKey,
+                //     // currentEvent.sourceEvent.metaKey
+                // );
+                // if (currentEvent && currentEvent.type === "touchstart") return false;
                 if (!isIframe || !currentEvent || (currentEvent.type !== "wheel" && currentEvent.type !== "touchstart"))
                     return true;
 
-                //if (currentEvent.type === "touchstart") return false;
-
-                // otherwise show message
-                // const se = currentEvent.sourceEvent;
-                // const isWheel =
-
-                const preventWheel =
-                    (currentEvent.type === "wheel" && !currentEvent.ctrlKey && !currentEvent.metaKey) ||
-                    (currentEvent.type === "touchstart" && currentEvent.touches.length < 2);
+                const preventWheel = currentEvent.type === "wheel" && !currentEvent.ctrlKey && !currentEvent.metaKey;
+                //||(currentEvent.type === "touchstart" && currentEvent.touches.length < 2);
 
                 if (preventWheel) {
-                    if (currentEvent.type === "touchstart") {
-                        scheduleMessage("Use two fingers to move", 500);
-                    } else if (isMac) {
-                        scheduleMessage("Use ⌘ + scroll to zoom", 1);
+                    // if (currentEvent.type === "touchstart") {
+                    //     scheduleMessage("Use two fingers to move", 500);
+                    // } else
+
+                    // uiState.largeMessage = message;
+
+                    if (isMac) {
+                        uiState.largeMessage = "Use ⌘ + scroll to zoom";
                     } else {
-                        scheduleMessage("Use Ctrl + scroll to zoom", 1);
+                        uiState.largeMessage = "Use Ctrl + scroll to zoom";
                     }
-                } else {
-                    cancelMessage();
+                    uiState.largeMessageLastSet = performance.now();
                 }
+                // else {
+                //     cancelMessage();
+                // }
 
                 return !preventWheel;
                 // if (!se) return;
