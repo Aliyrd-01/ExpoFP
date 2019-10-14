@@ -1,10 +1,13 @@
 import { observer } from "mobx-react-lite";
 import React, { Suspense, useLayoutEffect, useState } from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+import store from "../store";
 import logger from "../tools/logger";
+import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
+import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
+import LargeMessage from "./LargeMessage";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
@@ -12,11 +15,11 @@ import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
-import settings from "../tools/settings";
+
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
-const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
+// const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 export default observer(function Layout() {
     // const overlayPosition = "1";
@@ -66,11 +69,7 @@ export default observer(function Layout() {
                         <Debug />
                     </Suspense>
                 ) : null}
-                {uiState.largeMessage ? (
-                    <Suspense fallback={null}>
-                        <LargeMessage />
-                    </Suspense>
-                ) : null}
+                {isIframe && <LargeMessage />}
                 <Pdf />
                 <div id="fps" />
             </div>
