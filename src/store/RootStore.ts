@@ -21,7 +21,7 @@ export default class RootStore {
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
-        // if (data.hideCompanies) return;
+        if (data.hideCompanies) return;
         this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
     }
