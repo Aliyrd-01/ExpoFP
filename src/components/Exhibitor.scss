@@ -215,6 +215,9 @@
         line-height: 1em;
         opacity: 0;
         transition: opacity 200ms;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         .overlay-bar.scrolled & {
             opacity: 1;
         }

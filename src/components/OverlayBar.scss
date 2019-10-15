@@ -9,6 +9,7 @@
 
     &__slot {
         flex-grow: 1;
+        max-width: calc(100% - 3rem);
     }
 
     &__close {

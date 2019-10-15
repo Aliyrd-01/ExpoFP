@@ -66,10 +66,7 @@ function ExhibitorComponent() {
                     </a>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm}
-                    {exhibitor.booths.map(booth => (
-                        <span key={booth.id}>{booth.name}</span>
-                    ))}
+                    {data.boothTerm} {exhibitor.booths.map(b => b.name).join(", ")}
                 </div>
             </>
         );
@@ -257,5 +254,4 @@ function ExhibitorComponent() {
     }
 }
 
-export default () =>
-    useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
+export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
