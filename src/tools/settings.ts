@@ -23,7 +23,9 @@ if (process.env.REACT_APP_EFP_EXPO === "jtrade19") {
 }
 
 if (
-    (process.env.REACT_APP_EFP_EXPO === "aweusa2020" || process.env.REACT_APP_EFP_EXPO === "ktrade20") &&
+    (process.env.REACT_APP_EFP_EXPO === "aweusa2020" ||
+        process.env.REACT_APP_EFP_EXPO === "ktrade20" ||
+        process.env.REACT_APP_EFP_EXPO === "sydneybuildexpo") &&
     (process.env.REACT_APP_MODE === "deploy-dev" || process.env.REACT_APP_MODE === "start")
 ) {
     settings.borderless = true;
