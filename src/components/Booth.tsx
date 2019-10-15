@@ -41,8 +41,16 @@ function Booth() {
         let content: JSX.Element = null;
         if (s.regular) {
             const b = s.regular;
+
             const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
-            if (s.regular.exhibitors.length === 0) {
+
+            if (data.hideCompanies && b.reserved) {
+                content = (
+                    <div className="booth__content -reg">
+                        <div>Reserved</div>
+                    </div>
+                );
+            } else if (b.exhibitors.length === 0) {
                 content = (
                     <>
                         <div className="booth__content -reg">
@@ -72,7 +80,10 @@ function Booth() {
                                 )}
                             </div>
                             {data.reserveInstructions && !b.onHold && (
-                                <span dangerouslySetInnerHTML={{ __html: data.reserveInstructions }} className="booth__reserve-instructions" />
+                                <span
+                                    dangerouslySetInnerHTML={{ __html: data.reserveInstructions }}
+                                    className="booth__reserve-instructions"
+                                />
                             )}
 
                             {s.showBuy && (

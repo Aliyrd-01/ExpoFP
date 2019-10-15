@@ -22,6 +22,10 @@
         "logo": {
             "type": "string"
         },
+        "hideCompanies": {
+            "type": "boolean",
+            "description": "Show all booths as sold, but completely remove company details"
+        },
         "gtag": {
             "type": "string",
             "description": "Google Analytics or Tag Manager ID"
@@ -46,65 +50,68 @@
         "booths": {
             "type": "array",
             "items": {
-                "anyOf": [{
-                    "type": "object",
-                    "description": "Regular booth",
-                    "required": ["id", "name"],
-                    "additionalProperties": false,
-                    "properties": {
-                        "id": {
-                            "type": "number"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "exhibitors": {
-                            "type": "array",
-                            "items": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "description": "Regular booth",
+                        "required": ["id", "name"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
                                 "type": "number"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "exhibitors": {
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                }
+                            },
+                            "type": {
+                                "type": "string"
+                            },
+                            "price": {
+                                "type": "string"
+                            },
+                            "buyUrl": {
+                                "type": "string"
+                            },
+                            "reserveUrl": {
+                                "type": "string"
+                            },
+                            "onHold": {
+                                "type": "boolean"
                             }
-                        },
-                        "type": {
-                            "type": "string"
-                        },
-                        "price": {
-                            "type": "string"
-                        },
-                        "buyUrl": {
-                            "type": "string"
-                        },
-                        "reserveUrl": {
-                            "type": "string"
-                        },
-                        "onHold": {
-                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "description": "Special booth",
+                        "required": ["id", "name"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "number"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "special": {
+                                "type": "boolean",
+                                "description": "Always true"
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "HTML"
+                            }
                         }
                     }
-                }, {
-                    "type": "object",
-                    "description": "Special booth",
-                    "required": ["id", "name"],
-                    "additionalProperties": false,
-                    "properties": {
-                        "id": {
-                            "type": "number"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "special": {
-                            "type": "boolean",
-                            "description": "Always true"
-                        },
-                        "title": {
-                            "type": "string"
-                        },
-                        "description": {
-                            "type": "string",
-                            "description": "HTML"
-                        }
-                    }
-                }]
+                ]
             }
         },
         "exhibitors": {

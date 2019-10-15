@@ -254,4 +254,5 @@ function ExhibitorComponent() {
     }
 }
 
-export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
+export default () =>
+    useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor && !data.hideCompanies ? <ExhibitorComponent /> : null}</>);

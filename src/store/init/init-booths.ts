@@ -1,13 +1,13 @@
-import RootStore from '../RootStore';
-import logger from '../../tools/logger';
-import data from '../../data';
-import { generateUniqueSlug } from '../../tools/slug';
-import BoothStore, { Booth, SpecialBooth, RegularBooth } from '../BoothStore';
-import * as d3 from 'd3-selection';
-import svg from '../../data/svg';
-import { getNextId } from '../../tools/id';
-import Rect from '../../core/Rect';
-import { sortByName } from '../../utils';
+import RootStore from "../RootStore";
+import logger from "../../tools/logger";
+import data from "../../data";
+import { generateUniqueSlug } from "../../tools/slug";
+import BoothStore, { Booth, SpecialBooth, RegularBooth } from "../BoothStore";
+import * as d3 from "d3-selection";
+import svg from "../../data/svg";
+import { getNextId } from "../../tools/id";
+import Rect from "../../core/Rect";
+import { sortByName } from "../../utils";
 
 export default function initBooths(store: RootStore) {
     const { boothStore } = store;
@@ -37,17 +37,20 @@ export default function initBooths(store: RootStore) {
     }
 
     // sort booths of exhibitors
-    for(const e of store.exhibitorStore.exhibitors){
+    for (const e of store.exhibitorStore.exhibitors) {
         sortByName(e.booths);
     }
 
-    for (const el of d3.select(svg).selectAll('#Booths g[id^=b], #Booths rect[id^=b]').nodes() as (SVGRectElement | SVGPathElement)[]) {
+    for (const el of d3
+        .select(svg)
+        .selectAll("#Booths g[id^=b], #Booths rect[id^=b]")
+        .nodes() as (SVGRectElement | SVGPathElement)[]) {
         let rect: SVGRectElement;
-        if (el.tagName === 'rect') {
+        if (el.tagName === "rect") {
             rect = el as SVGRectElement;
         } else {
             // find any rect
-            rect = Array.from(el.children).find(x => x.tagName === 'rect') as SVGRectElement;
+            rect = Array.from(el.children).find(x => x.tagName === "rect") as SVGRectElement;
             if (!rect) continue;
             // // expect rect to be last child
             // rect = el.lastElementChild as SVGRectElement;
@@ -57,8 +60,8 @@ export default function initBooths(store: RootStore) {
         const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
 
         let booth = boothsByName.get(idInSvg) as MutableRequired<Booth>;
-        let boothReg = booth instanceof RegularBooth ? booth as MutableRequired<RegularBooth> : null;
-        let boothSpec = booth instanceof SpecialBooth ? booth as MutableRequired<SpecialBooth> : null;
+        let boothReg = booth instanceof RegularBooth ? (booth as MutableRequired<RegularBooth>) : null;
+        let boothSpec = booth instanceof SpecialBooth ? (booth as MutableRequired<SpecialBooth>) : null;
         if (!booth) {
             logger.error("SVG booth rect not found in __data:", idInSvg);
             // create fake booth
@@ -97,9 +100,10 @@ export default function initBooths(store: RootStore) {
                 if (mt) {
                     const rotate = parseFloat(mt[1]);
                     booth.rotate = (-rotate * Math.PI) / 180;
-                }
-                else {
-                    const mm = transform.match(/matrix\(\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*\)/);
+                } else {
+                    const mm = transform.match(
+                        /matrix\(\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*\)/
+                    );
                     if (mm) {
                         booth.rotate = Math.asin(-parseFloat(mm[2]));
                     }
@@ -107,26 +111,29 @@ export default function initBooths(store: RootStore) {
             }
             // ET: this is a fix for Illustrator re-save (it can have large rotates)
             const maxDegree = 45.5;
-            if (booth.rotate > maxDegree / 180 * Math.PI) {
-                booth.rotate = booth.rotate - 90 * Math.PI / 180;
+            if (booth.rotate > (maxDegree / 180) * Math.PI) {
+                booth.rotate = booth.rotate - (90 * Math.PI) / 180;
                 // also swap width and height of rect
                 booth.rect = booth.rect.getRotated90();
             }
         }
 
-        if (!booth.rotate && (booth.rect.h > booth.rect.w * 1.5) && booth.name.length > 5) {
-            booth.rotate = 90 * Math.PI / 180;
+        if (!booth.rotate && booth.rect.h > booth.rect.w * 1.5 && booth.name.length > 5) {
+            booth.rotate = (90 * Math.PI) / 180;
             booth.rect = booth.rect.getRotated90();
         }
 
-        if (el.tagName === 'g') {
+        if (el.tagName === "g") {
             booth.paths = [];
-            for (const kid of d3.select(el).selectAll('path, rect').nodes() as (SVGPathElement | SVGRectElement)[]) {
-                if (kid.tagName === 'path') {
+            for (const kid of d3
+                .select(el)
+                .selectAll("path, rect")
+                .nodes() as (SVGPathElement | SVGRectElement)[]) {
+                if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
-                    if (path.tagName !== 'path') continue;
+                    if (path.tagName !== "path") continue;
                     const color = path.style.fill;
-                    const d = parseInt(path.getAttribute('data-index'));
+                    const d = parseInt(path.getAttribute("data-index"));
                     if (!d) continue;
                     // const triangles = getTrianglesFromFpPaths(d);
                     const pi: PathInfo = {
@@ -143,14 +150,20 @@ export default function initBooths(store: RootStore) {
         if (!b.rect) {
             logger.error("__data booth not found in SVG:", b.name, b);
         } else {
-            (b['store'] as BoothStore) = boothStore;
+            (b["store"] as BoothStore) = boothStore;
             boothStore.booths.push(b as Booth);
         }
     }
+    // sort booths by name
+    boothStore.booths.sort(function(a, b) {
+        var x = a.slug;
+        var y = b.slug;
+        return x < y ? -1 : x > y ? 1 : 0;
+    });
 
     // dispose
     delete data.booths;
-    logger.log('initBooths', boothStore.booths.length);
+    logger.log("initBooths", boothStore.booths.length);
 }
 
 function fixCbre(b: Booth) {
@@ -168,8 +181,8 @@ function fixCbre(b: Booth) {
 }
 
 function getTrianglesFromFpPaths(index: number) {
-    const mesh = window['__fpPaths'][index];
-    // TODO: remove in future versions 
+    const mesh = window["__fpPaths"][index];
+    // TODO: remove in future versions
     for (const p of mesh.positions) {
         // a bug in svgMesh3d when normalize: false ?
         p[1] = Math.abs(p[1]);
@@ -177,11 +190,7 @@ function getTrianglesFromFpPaths(index: number) {
     }
     const pathTriangles = [];
     for (const c of mesh.cells) {
-        pathTriangles.push([
-            mesh.positions[c[0]],
-            mesh.positions[c[1]],
-            mesh.positions[c[2]],
-        ]);
+        pathTriangles.push([mesh.positions[c[0]], mesh.positions[c[1]], mesh.positions[c[2]]]);
     }
 
     return pathTriangles;

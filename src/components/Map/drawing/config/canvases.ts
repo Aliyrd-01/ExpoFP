@@ -1,4 +1,5 @@
 import { RegularBooth } from "../../../../store/BoothStore";
+import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -49,8 +50,12 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
     // const bs = b.special ? (b as SpecialBooth) : undefined;
     //const br = !b.special ? (b as RegularBooth) : undefined;
     // if (b.special === false) {
-    lines.push(...b.exhibitors.map(e => e.name));
-    if (!b.exhibitors.length) {
+
+    if (data.hideCompanies && b.reserved) {
+        lines.push("Reserved");
+    } else if (b.exhibitors.length) {
+        lines.push(...b.exhibitors.map(e => e.name));
+    } else {
         if (b.onHold) {
             lines.push("On Hold");
         } else {
@@ -58,6 +63,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
             if (b.price && b.price !== "0") lines.push(b.price);
         }
     }
+
     // }
 
     // if (fixBooth) lines.push(b.title);

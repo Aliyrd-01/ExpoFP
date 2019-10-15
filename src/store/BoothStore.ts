@@ -92,6 +92,10 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     @computed({ keepAlive: true }) get bookmarked() {
         return !!this.exhibitors.find(x => x.bookmarked);
     }
+
+    @computed({ keepAlive: true }) get reserved() {
+        return this.exhibitors.length > 0 || this.onHold;
+    }
 }
 
 export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {

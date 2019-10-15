@@ -9,7 +9,9 @@ import List from "./List";
 import "./Search.scss";
 // import logger from "../tools/logger";
 
-const placeHolder = `Search company, ${data.boothTerm.toLowerCase()} or category`;
+const placeHolder = data.hideCompanies
+    ? `Search ${data.boothTerm.toLowerCase()}`
+    : `Search company, ${data.boothTerm.toLowerCase()} or category`;
 
 function Search() {
     const el = useRef<HTMLDivElement>();

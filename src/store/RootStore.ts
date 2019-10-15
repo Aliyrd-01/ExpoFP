@@ -5,6 +5,7 @@ import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
+import data from "../data";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -20,6 +21,7 @@ export default class RootStore {
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
+        // if (data.hideCompanies) return;
         this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
     }
@@ -93,7 +95,7 @@ export default class RootStore {
             return;
         }
 
-        if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
+        if (booth instanceof RegularBooth && booth.exhibitors.length === 1 && !data.hideCompanies) {
             this.selectExhibitor(booth.exhibitors[0]);
         } else {
             this.selectBooth(booth);

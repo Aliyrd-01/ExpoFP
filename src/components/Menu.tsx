@@ -44,7 +44,9 @@ function Menu() {
         }
     });
 
-    const barContent = isIframe ? <div className="menu__bar -empty"></div> : (
+    const barContent = isIframe ? (
+        <div className="menu__bar -empty"></div>
+    ) : (
         <div className="menu__bar">
             <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer">
                 <img
@@ -97,13 +99,15 @@ function Menu() {
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         <i className="fas fa-search" /> Search
                     </a>
-                    <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
-                        <i className="fas fa-bookmark" />
-                        <span>Bookmarks ({exhibitorStore.bookmarked.length})</span>
-                        {exhibitorStore.bookmarked.length ? (
-                            <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
-                        ) : null}
-                    </a>
+                    {!data.hideCompanies && (
+                        <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
+                            <i className="fas fa-bookmark" />
+                            <span>Bookmarks ({exhibitorStore.bookmarked.length})</span>
+                            {exhibitorStore.bookmarked.length ? (
+                                <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
+                            ) : null}
+                        </a>
+                    )}
                     <a href="/#" className="menu__item -pdf" onClick={handlePdf}>
                         <i className="fas fa-file-pdf" /> Download PDF
                     </a>

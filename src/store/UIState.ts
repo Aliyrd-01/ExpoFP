@@ -4,6 +4,7 @@ import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
+import data from "../data";
 
 type ListType =
     | { type: "search"; text: string; focused: boolean }
@@ -88,7 +89,7 @@ export default class UIState {
         return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0;
     }
     @computed({ keepAlive: true }) get wsShown() {
-        return this.rootStore.exhibitorStore.advertised.length > 0;
+        return !data.hideCompanies && this.rootStore.exhibitorStore.advertised.length > 0;
     }
 
     @computed get wsDesktopPosition() {
@@ -132,7 +133,7 @@ export default class UIState {
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
 
-        if (!text) return exhibitorsArray;
+        if (!text) return data.hideCompanies ? boothsArray : exhibitorsArray;
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
             window.setTimeout(() => {
@@ -143,9 +144,12 @@ export default class UIState {
         let items: (ListItem)[] = [];
 
         // rulles here
-        const matchingExhibitors = exhibitorsArray.filter(
-            e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find(b => b.name.toLowerCase() === text)
-        );
+        const matchingExhibitors = data.hideCompanies
+            ? []
+            : exhibitorsArray.filter(
+                  e =>
+                      e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find(b => b.name.toLowerCase() === text)
+              );
         const matchingCategories = categoriesArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         const matchingBooths = boothsArray.filter(
             e =>

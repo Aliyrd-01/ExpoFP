@@ -12,6 +12,7 @@ interface Data {
     reserveInstructions: string;
     sendLoginLinkUrl: string;
     trackerUrl: string;
+    hideCompanies: boolean;
 }
 
 interface RawCategory {
