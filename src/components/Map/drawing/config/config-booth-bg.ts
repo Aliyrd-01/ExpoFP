@@ -2,6 +2,7 @@ import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
+import { boothStore } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
@@ -42,7 +43,10 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
             }
             this.pathsDefaultColors = Array.from(pathsColors);
         } else {
-            const p = Polygon4.fromRect(this.booth.rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
+            let rect = this.booth.rect;
+            if (settings.borderless) rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
+
+            const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
             for (const t of triangles) {
                 this.painter.addObject({

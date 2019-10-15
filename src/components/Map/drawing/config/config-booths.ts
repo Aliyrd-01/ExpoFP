@@ -14,10 +14,12 @@ import configBoothLabelsSpecial from "./config-booth-labels-special";
 export default function configBooths(context: DrawerContext) {
     const booths = boothStore.booths; //.filter(x => x.name === '4268');
     // booths.splice(2740);//
-    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark, configBoothBorder] as ((
+    // , configBoothBorder
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((
         DrawerContext,
         Booth
     ) => void | { unlock: () => void })[]; //configBoothType,
+    if (!settings.borderless) configFuncs.push(configBoothBorder);
 
     // const after = [];
     const lockedDrawers: { unlock: () => void }[] = [];
