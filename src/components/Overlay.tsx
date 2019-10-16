@@ -102,7 +102,7 @@ export default observer(function Overlay() {
             switch (uiState.overlayPosition) {
                 case "left":
                     s.width = uiState.overlayWidthPx + "px";
-                    s.top = "0";
+                    s.top = uiState.headerHeightPx + "px";
                     s.left = "0";
                     s.height = undefined;
                     setShowAll();

@@ -26,7 +26,7 @@ function Ws() {
                 padding: `0 ${uiState.wsPaddingPx}px`
             } as any;
 
-            if (uiState.wsPosition === "top") style.top = 0;
+            if (uiState.wsPosition === "top") style.top = uiState.headerHeightPx + "px";
             else style.bottom = 0;
             return style;
         }

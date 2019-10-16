@@ -60,6 +60,14 @@ export default class UIState {
 
     ///////////////////////////////////////////////////////////////////////////
     // positions
+    @computed get headerHeightRem(){
+        return 4;
+    }
+    
+    @computed get headerHeightPx(){
+        return remsToPixels(this.headerHeightRem);
+    }
+
     @computed get overlayPosition() {
         if (!this.screenSize || this.screenSize.width > 550) return "left";
         return "bottom";
@@ -101,7 +109,7 @@ export default class UIState {
     }
     // map
     @computed get mapVisibleTop() {
-        return this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0;
+        return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
     }
     @computed get mapVisibleBottom() {
         if (this.overlayLeft) {

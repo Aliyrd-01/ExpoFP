@@ -11,6 +11,7 @@ import LargeMessage from "./LargeMessage";
 // import TouchHover from "./TouchHover";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
+import Header from './Header';
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
 import Pdf from "./Pdf";
@@ -62,6 +63,7 @@ export default observer(function Layout() {
     return (
         <div className="layout">
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
+                <Header/>
                 <LogoOverlay />
                 <Ws />
                 <Controls />
