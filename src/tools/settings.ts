@@ -1,6 +1,9 @@
 import deepmerge from "deepmerge";
 
 let settings = {
+    // this is not replaced with const, so calls to settings.EXPO won't get replaced with const
+    // this is done for template to work
+    EXPO: process.env.REACT_APP_EFP_EXPO,
     debug:
         (localStorage.getItem("debug") ||
             window.location.host.startsWith("localhost") ||
@@ -18,10 +21,9 @@ let settings = {
     }
 };
 
-if (process.env.REACT_APP_EFP_EXPO === "jtrade19") {
+if (settings.EXPO === "jtrade19") {
     settings.colors.booths.selected = "#dc6533";
-}
-if (process.env.REACT_APP_EFP_EXPO === "ktrade20") {
+} else if (settings.EXPO === "ktrade20") {
     settings.borderless = true;
 }
 

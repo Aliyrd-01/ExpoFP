@@ -9,6 +9,7 @@ import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import settings from "../tools/settings";
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
@@ -227,7 +228,7 @@ function ExhibitorComponent() {
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
         if (!window.confirm(`Send login instructions to ${email} to edit profile?`)) return;
-        if (process.env.REACT_APP_EFP_EXPO === "expo") return;
+        if (settings.EXPO === "expo") return;
         const xhr = new XMLHttpRequest();
         xhr.open("POST", data.sendLoginLinkUrl);
         xhr.setRequestHeader("Content-Type", "application/json");

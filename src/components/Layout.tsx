@@ -56,12 +56,12 @@ export default observer(function Layout() {
     }, []);
 
     let freeOrDemo: JSX.Element = null;
-    if (process.env.REACT_APP_EFP_EXPO === "expo") freeOrDemo = <Demo />;
+    if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.free) freeOrDemo = <Free />;
 
     return (
         <div className="layout">
-            <div className={`layout__fixed expo-${process.env.REACT_APP_EFP_EXPO} overlay-${store.uiState.overlayPosition}`}>
+            <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <LogoOverlay />
                 <Ws />
                 <Controls />

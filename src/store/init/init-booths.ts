@@ -8,6 +8,7 @@ import svg from "../../data/svg";
 import { getNextId } from "../../tools/id";
 import Rect from "../../core/Rect";
 import { sortByName } from "../../utils";
+import settings from "../../tools/settings";
 
 export default function initBooths(store: RootStore) {
     const { boothStore } = store;
@@ -167,7 +168,7 @@ export default function initBooths(store: RootStore) {
 }
 
 function fixCbre(b: Booth) {
-    if (process.env.REACT_APP_EFP_EXPO === "cbresupplypartner") {
+    if (settings.EXPO === "cbresupplypartner") {
         if (b instanceof RegularBooth && !b.availColor && b.type) {
             if (b.type.indexOf("Premium A - 2m height restriction Passport") !== -1) (b.availColor as string) = "#939393";
             else if (b.type.indexOf("No free-standing") !== -1) (b.availColor as string) = "#BA3DC8";

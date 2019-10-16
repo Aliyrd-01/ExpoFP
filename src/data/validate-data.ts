@@ -5,7 +5,7 @@ import settings from "../tools/settings";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {
-    const EFP_EXPO = process.env.REACT_APP_EFP_EXPO;
+    const EFP_EXPO = settings.EXPO;
     // before data validation
     if (!data.exhibitors) data.exhibitors = [];
     if (!data.booths) data.booths = [];

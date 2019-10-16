@@ -5,6 +5,7 @@ import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import data from "../data";
+import settings from "../tools/settings";
 
 type ListType =
     | { type: "search"; text: string; focused: boolean }
@@ -93,7 +94,7 @@ export default class UIState {
     }
 
     @computed get wsDesktopPosition() {
-        return process.env.REACT_APP_EFP_EXPO === "cbresupplypartner" ? "bottom" : "top";
+        return settings.EXPO === "cbresupplypartner" ? "bottom" : "top";
     }
     @computed get wsPosition() {
         return this.overlayBottom ? "top" : this.wsDesktopPosition;

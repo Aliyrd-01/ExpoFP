@@ -4,9 +4,10 @@ import configDim from "./config-dim";
 import configCanvas from "./config-canvas";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
+import settings from "../../../../tools/settings";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
-if (process.env.REACT_APP_EFP_EXPO === "sydneybuildexpo") delayAnimations += 400;
+if (settings.EXPO === "sydneybuildexpo") delayAnimations += 400;
 
 export default function configAll(context: DrawerContext) {
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
