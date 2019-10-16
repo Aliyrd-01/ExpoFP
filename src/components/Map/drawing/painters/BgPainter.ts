@@ -4,13 +4,9 @@ import { dimColor } from "./common-glsl";
 import settings from "../../../../tools/settings";
 import Painter from "./Painter";
 import "../../../../tools/Color";
-import Rect from "../../../../core/Rect";
-import Polygon4 from "../../../../core/Polygon";
-import Matrix from "../Matrix";
 
 // console.log('coo', Color, settings, settings.colors)
 const bgColor = Color(settings.colors.base).vec4();
-const whiteColor = Color("#fff").vec4;
 
 export default class BgPainter implements Painter {
     public orderPriority: number;
@@ -21,8 +17,10 @@ export default class BgPainter implements Painter {
     private readonly positionBuffer: WebGLBuffer;
     private readonly colorLocation: number;
     private readonly colorBuffer: WebGLBuffer;
+    private positions: number[];
+    private colors: number[];
+    private dirty = true;
 
-    matrixObj: Matrix;
     dim = 0;
 
     constructor(gl: WebGLRenderingContext) {
@@ -35,20 +33,22 @@ export default class BgPainter implements Painter {
         this.positionBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
 
-        const r = Rect.fromCxcywh(0, 0, 2, 2);
-        const triangles = Polygon4.fromRect(r)
-            .toTriangles()
-            .flat()
-            .flat() as number[];
-
-        // this.ca
-        //console.log("triangles", triangles, triangles.length);
-
-        this.bufferFloat32Array(this.positionBuffer, triangles);
-        this.bufferFloat32Array(this.colorBuffer, [...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor]);
+        // this.bufferFloat32Array(this.positionBuffer, [-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+        // this.bufferFloat32Array(this.colorBuffer, [...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor]);
     }
 
-    preparePaint() {}
+    setObjects(positions: number[], colors: number[]) {
+        this.dirty = true;
+        this.positions = positions;
+        this.colors = colors;
+    }
+
+    preparePaint() {
+        if (!this.dirty) return;
+        this.bufferFloat32Array(this.positionBuffer, this.positions);
+        this.bufferFloat32Array(this.colorBuffer, this.colors);
+        this.dirty = false;
+    }
 
     paint() {
         const gl = this.gl;
