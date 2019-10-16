@@ -21,15 +21,18 @@ let settings = {
 if (process.env.REACT_APP_EFP_EXPO === "jtrade19") {
     settings.colors.booths.selected = "#dc6533";
 }
-
-if (
-    (process.env.REACT_APP_EFP_EXPO === "aweusa2020" ||
-        process.env.REACT_APP_EFP_EXPO === "ktrade20" ||
-        process.env.REACT_APP_EFP_EXPO === "sydneybuildexpo") &&
-    (process.env.REACT_APP_MODE === "deploy-dev" || process.env.REACT_APP_MODE === "start")
-) {
+if (process.env.REACT_APP_EFP_EXPO === "ktrade20") {
     settings.borderless = true;
 }
+
+// if (
+//     (process.env.REACT_APP_EFP_EXPO === "aweusa2020" ||
+//         process.env.REACT_APP_EFP_EXPO === "ktrade20" ||
+//         process.env.REACT_APP_EFP_EXPO === "sydneybuildexpo") &&
+//     (process.env.REACT_APP_MODE === "deploy-dev" || process.env.REACT_APP_MODE === "start")
+// ) {
+//     settings.borderless = true;
+// }
 
 settings = deepmerge(settings, window["__settings"] || {});
 export default settings;
