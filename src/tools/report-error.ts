@@ -5,6 +5,7 @@ let timeoutId: number;
 export default function reportError(e: Partial<ErrorEvent>) {
     logger.error('Handling error', e.error)
 
+    if (document.location.host.startsWith("localhost")) return;
     if (timeoutId) return;
 
     timeoutId = window.setTimeout(async function () {

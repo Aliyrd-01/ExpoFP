@@ -13,9 +13,11 @@ export default function validateData(data: Data) {
     if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
     if (EFP_EXPO === "ktrade20") data.hideCompanies = true;
+    if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
     if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
     data.hideCompanies = !!data.hideCompanies;
-    
+
+    // if (settings.debug && EFP_EXPO === "sydneybuildexpo") data.free = true;
 
     const validationEnabled = settings.debug || localStorage.getItem("validate") === "1";
 
@@ -86,5 +88,24 @@ export default function validateData(data: Data) {
         if (typeof exhibitor.email === "undefined") exhibitor.email = e.publicEmail;
 
         exhibitor.categories = exhibitor.categories || [];
+    }
+
+    // disable ads and featured for free plans
+    if (data.free) {
+        data.exhibitors.forEach(e => (e.featured = e.advertise = false));
+    }
+    // just this for make sure we won't screw up totally when forget to not hide smthn
+    // everything should work withouth this
+    if (data.hideCompanies) {
+        data.exhibitors = [];
+        data.booths
+            .filter(booth => !(booth as RawSpecialBooth).special)
+            .forEach(b => {
+                const br = b as RawRegularBooth;
+                if (br.exhibitors && br.exhibitors.length) {
+                    br.onHold = true;
+                    br.exhibitors = [];
+                }
+            });
     }
 }
