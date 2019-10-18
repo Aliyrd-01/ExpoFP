@@ -93,6 +93,10 @@ export default class Matrix {
         return this.visibleScale;
     }
 
+    getCanvasSize(){
+        return this.canvasSize;
+    }
+
     //
     // subscribe
     //

@@ -1,12 +1,10 @@
-import Color from "color";
 import * as twgl from "twgl.js";
-import { dimColor } from "./common-glsl";
-import settings from "../../../../tools/settings";
-import Painter from "./Painter";
 import "../../../../tools/Color";
+import { dimColor } from "./common-glsl";
+import Painter from "./Painter";
 
 // console.log('coo', Color, settings, settings.colors)
-const bgColor = Color(settings.colors.base).vec4();
+// const bgColor = Color(settings.colors.base).vec4();
 
 export default class BgPainter implements Painter {
     public orderPriority: number;

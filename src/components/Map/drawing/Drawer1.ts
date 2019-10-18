@@ -31,6 +31,8 @@ export type DrawerContext = Pick<
     | "requireUpdate"
     | "getVisibleScale"
     | "setVisibleScale"
+    | "getVisibleRect"
+    | "getCanvasSize"
     | "subscribeMatrixChange"
     | "getMatrix"
     // | "subscribePtscaleChange"
