@@ -8,6 +8,7 @@ import data from "../data";
 import settings from "../tools/settings";
 import Size from "../core/Size";
 import Rect from "../core/Rect";
+import { uiState } from ".";
 
 type ListType =
     | { type: "search"; text: string; focused: boolean }
@@ -141,11 +142,14 @@ export default class UIState {
     }
 
     // misc
-    @computed get shouldUseBackdrop() {
+    @computed({ keepAlive: true }) get shouldUseBackdrop() {
+        if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
         if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
-        const isWebkit = navigator.userAgent.indexOf("AppleWebKit") !== -1;
-        return isWebkit;
+        const ua = navigator.userAgent;
+        const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
+        const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+        return isSafari || (isWebkit && uiState.canvasSizePt.height * uiState.canvasSizePt.width < 3000000);
     }
 
     ///////////////////////////////////////////////////////////////////////////

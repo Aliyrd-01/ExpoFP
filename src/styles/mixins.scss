@@ -35,7 +35,10 @@ $overlay-height: 3.5rem;
     text-align: center;
     font-size: 1.3rem;
     text-decoration: none !important;
-    color: rgba(0,0,0,0.4)  !important;//#999999
+    color: rgba(0, 0, 0, 0.4) !important; //#999999
+    .-exhibitor-featured & {
+        color: #999999 !important;
+    }
 }
 
 @mixin like-anchor {

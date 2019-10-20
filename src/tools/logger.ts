@@ -39,7 +39,7 @@ class Logger {
 function callLogFunc(func, args) {
     try {
         func.apply(func, args);
-    } catch { }
+    } catch(e) { }
 }
 
 export default new Logger();

@@ -13,7 +13,7 @@ export const exhibitorStore = store.exhibitorStore;
 export const boothStore = store.boothStore;
 export const categoryStore = store.categoryStore;
 
-
+window["__store"] = store;
 
 // declare global {
 //     const store: typeof store1;
