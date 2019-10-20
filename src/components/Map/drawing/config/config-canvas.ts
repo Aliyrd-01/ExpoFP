@@ -16,16 +16,16 @@ export default function configCanvas(context: DrawerContext) {
         const vr = uiState.canvasVisibleRectPt;
         const cs = uiState.canvasSizePt;
 
-        context.requireUpdate(() => {
-            const whiteTriangles = Polygon4.fromRect(Rect.fromCxcywh(0, 0, 2, 2))
+        function update() {
+            const bigTriangles = Polygon4.fromRect(Rect.fromCxcywh(0, 0, 2, 2))
                 .toTriangles()
                 .flat()
                 .flat();
-            const whiteColors = Array(whiteTriangles.length / 2)
-                .fill(whiteColor)
+            const bigColors = Array(bigTriangles.length / 2)
+                .fill(context.updatable ? whiteColor : bgColor)
                 .flat()
                 .flat();
-            const whiteNodims = Array(whiteColors.length / 4).fill(1);
+            const bigNodims = Array(bigColors.length / 4).fill(1);
 
             const heightN = (vr.h / cs.height) * 2;
             const widthN = (vr.w / cs.width) * 2;
@@ -41,14 +41,16 @@ export default function configCanvas(context: DrawerContext) {
                 .fill(bgColor)
                 .flat()
                 .flat();
-                const bgNodims = Array(bgColors.length / 4).fill(0);
+            const bgNodims = Array(bgColors.length / 4).fill(0);
 
-            const allTriangles = [...whiteTriangles, ...bgTriangles];
-            const allColors = [...whiteColors, ...bgColors];
-            const allNodims = [...whiteNodims, ...bgNodims];
+            const allTriangles = [...bigTriangles, ...bgTriangles];
+            const allColors = [...bigColors, ...bgColors];
+            const allNodims = [...bigNodims, ...bgNodims];
 
             painter.setObjects(allTriangles, allColors, allNodims);
-        });
+        }
+        if (context.updatable) context.requireUpdate(update);
+        else update();
     }
 
     autorun(setObjects);
