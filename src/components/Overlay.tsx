@@ -24,9 +24,9 @@ export default observer(function Overlay() {
         startedTouch: undefined as Touch,
         touchDiff: undefined,
         currentTop: undefined,
-        backdropStarted: false,
+        // backdropStarted: false,
         get backdropClass() {
-            if (!this.backdropStarted || !uiState.shouldUseBackdrop) return "";
+            if (!uiState.canvasStarted || !uiState.shouldUseBackdrop) return "";
             return "-backdrop";
         },
         get noMove() {
@@ -161,18 +161,14 @@ export default observer(function Overlay() {
             s.currentTop = newTop;
         }
 
-        window.setTimeout(() => {
-            //const backdrop =  shouldUseBackdrop && uiState.overlayLeft && settings.EXPO === "aweusa2020";
-            s.backdropStarted = true;
-        }, 3000);
+        // window.setTimeout(() => {
+        //     //const backdrop =  shouldUseBackdrop && uiState.overlayLeft && settings.EXPO === "aweusa2020";
+        //     s.backdropStarted = true;
+        // }, 3000);
     }, [s]);
 
     return (
-        <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition}`}
-            id="overlay"
-            ref={el}
-        >
+        <div className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
             {s.noMove}
             <Menu />
             <Search />

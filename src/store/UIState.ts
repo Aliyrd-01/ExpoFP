@@ -42,6 +42,7 @@ export default class UIState {
     @observable devicePixelRatio = window.devicePixelRatio;
     previewExhibitor: Exhibitor = null;
     @observable wsStarted = false;
+    @observable canvasStarted = false;
 
     overlayMediumHeightRems = 10;
 
@@ -145,7 +146,7 @@ export default class UIState {
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
-        if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
+        // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
         const ua = navigator.userAgent;
         const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
         const isSafari = /^((?!chrome|android).)*safari/i.test(ua);

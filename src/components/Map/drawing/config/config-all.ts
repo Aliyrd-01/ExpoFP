@@ -1,10 +1,10 @@
+import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
-import configMatrix from "./config-matrix";
-import configDim from "./config-dim";
-import configCanvas from "./config-canvas";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
-import settings from "../../../../tools/settings";
+import configCanvas from "./config-canvas";
+import configDim from "./config-dim";
+import configMatrix from "./config-matrix";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 if (settings.EXPO === "sydneybuildexpo") delayAnimations += 400;
@@ -23,6 +23,7 @@ export default function configAll(context: DrawerContext) {
         if (context.updatable) {
             window.setTimeout(() => {
                 matrixAnimate(boothsAnimate);
+                // uiState.canvasStarted = true;
             }, delayAnimations);
         }
     };

@@ -3,6 +3,7 @@ import animate from "./animate";
 import { DrawerContext } from "../Drawer1";
 import { easeExpOut } from "d3-ease";
 import { interpolateNumber } from "d3-interpolate";
+import { uiState } from "../../../../store";
 
 export default function configMatrix(c: DrawerContext) {
     const minVisibleScale = 0;
@@ -29,6 +30,7 @@ export default function configMatrix(c: DrawerContext) {
                     () => {
                         if (cb) cb();
                         c.subscribeMatrixChange(() => c.requireUpdate(update));
+                        uiState.canvasStarted = true;
                     }
                 );
             }
