@@ -6,4 +6,8 @@ export default class Size {
         this.width = width;
         this.height = height;
     }
+
+    scale(s:number){
+        return new Size(this.width * s, this.height * s);
+    }
 }

@@ -1,12 +1,20 @@
 .overlay {
     position: fixed;
     bottom: 0;
-    background: #fff;
+   
+    // -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background-color: #fff;
+    transition: background-color 0.3s;
+    // backdrop-filter: saturate(180%) blur(20px);
     overflow: hidden;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
     &.medium.bottom,
     &.small.bottom {
         border-radius: 0.5rem 0.5rem 0 0;
+    }
+    &.-backdrop{
+        background-color: rgba(255,255,255,0.3);
+        backdrop-filter: saturate(180%) blur(20px);
     }
 
     @media print {

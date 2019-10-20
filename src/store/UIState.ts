@@ -6,13 +6,15 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import data from "../data";
 import settings from "../tools/settings";
+import Size from "../core/Size";
+import Rect from "../core/Rect";
 
 type ListType =
     | { type: "search"; text: string; focused: boolean }
     | { type: "bookmarks" }
     | { type: "category"; category: Category };
 export type OverlaySize = "full" | "medium" | "small";
-export type ScreenSize = { width: number; height: number };
+// export type ScreenSize = { width: number; height: number };
 export type ListItem = Booth | Exhibitor | Category;
 
 export default class UIState {
@@ -31,7 +33,7 @@ export default class UIState {
     @observable printingPdf = false;
     @observable largeMessage = null as string;
     @observable largeMessageLastSet = null as number;
-    @observable.struct screenSize: ScreenSize;
+    @observable.struct screenSize: Size;
     @observable desiredOverlaySize: OverlaySize;
     @observable overlayShowsAll = false;
     @observable centerMap = false;
@@ -60,11 +62,12 @@ export default class UIState {
 
     ///////////////////////////////////////////////////////////////////////////
     // positions
-    @computed get headerHeightRem(){
-        return 4;
+    @computed get headerHeightRem() {
+        return 0;
+        // return 4;
     }
-    
-    @computed get headerHeightPx(){
+
+    @computed get headerHeightPx() {
         return remsToPixels(this.headerHeightRem);
     }
 
@@ -97,6 +100,7 @@ export default class UIState {
     @computed get wsOccupiedHeightPx() {
         return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0;
     }
+
     @computed({ keepAlive: true }) get wsShown() {
         return !data.hideCompanies && this.rootStore.exhibitorStore.advertised.length > 0;
     }
@@ -107,6 +111,7 @@ export default class UIState {
     @computed get wsPosition() {
         return this.overlayBottom ? "top" : this.wsDesktopPosition;
     }
+
     // map
     @computed get mapVisibleTop() {
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
@@ -120,6 +125,29 @@ export default class UIState {
     @computed get mapVisibleLeft() {
         return this.overlayLeft ? this.overlayWidthPx : 0;
     }
+
+    // visible rect
+    @computed get canvasVisibleRectPx(): Rect {
+        const s = this.screenSize;
+        return Rect.fromX1y1x2y2(this.mapVisibleLeft, this.mapVisibleTop, s.width, s.height - this.mapVisibleBottom);
+    }
+
+    @computed get canvasVisibleRectPt(): Rect {
+        return this.canvasVisibleRectPx.scale(this.devicePixelRatio);
+    }
+
+    @computed get canvasSizePt(): Size {
+        return this.screenSize.scale(this.devicePixelRatio);
+    }
+
+    // misc
+    @computed get shouldUseBackdrop() {
+        if (this.overlayBottom) return false;
+        if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
+        const isWebkit = navigator.userAgent.indexOf("AppleWebKit") !== -1;
+        return isWebkit;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////

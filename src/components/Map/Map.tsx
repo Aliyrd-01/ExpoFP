@@ -36,9 +36,7 @@ export default function Map() {
         drawer: null as Drawer,
         prevBoothOver: null as Booth,
         get visibleRect() {
-            const w = uiState.screenSize.width;
-            const h = uiState.screenSize.height;
-            const rect = Rect.fromX1y1x2y2(uiState.mapVisibleLeft, uiState.mapVisibleTop, w, h - uiState.mapVisibleBottom);
+            const rect = uiState.canvasVisibleRectPx
             return rect.withPadding(rect.w * 0.05, rect.h * 0.05);
         }
     }));

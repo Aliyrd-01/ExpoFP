@@ -12,7 +12,7 @@ let settings = {
     borderless: false,
     // borderWidth: 1,
     colors: {
-        base: "#ebebeb",
+        // base: "#ebebeb",
         booths: {
             default: "#41b6e7",
             selected: "#fb3e59", //'#002cff',

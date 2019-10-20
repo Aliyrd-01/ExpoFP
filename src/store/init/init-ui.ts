@@ -3,6 +3,7 @@ import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import UIState from "../UIState";
 import { isWebGlSupported } from "../../utils";
+import Size from "../../core/Size";
 
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
@@ -44,6 +45,6 @@ export default function initUi(store: RootStore) {
 
 function updateScreenSize(uiState: UIState) {
     runInAction("uiState.screenSize", () => {
-        uiState.screenSize = { width: window.innerWidth, height: window.innerHeight };
+        uiState.screenSize = new Size(window.innerWidth, window.innerHeight);
     });
 }

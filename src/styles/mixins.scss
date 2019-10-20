@@ -35,7 +35,7 @@ $overlay-height: 3.5rem;
     text-align: center;
     font-size: 1.3rem;
     text-decoration: none !important;
-    color: #999999 !important;
+    color: rgba(0,0,0,0.4)  !important;//#999999
 }
 
 @mixin like-anchor {

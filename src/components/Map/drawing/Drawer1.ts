@@ -1,8 +1,8 @@
-import Matrix from "./Matrix";
-import configAll from "./config/config-all";
+import Size from "../../../core/Size";
 import logger from "../../../tools/logger";
 import settings from "../../../tools/settings";
-import Size from "../../../core/Size";
+import configAll from "./config/config-all";
+import Matrix from "./Matrix";
 import Painter from "./painters/Painter";
 
 export type Drawer = Pick<
@@ -31,8 +31,8 @@ export type DrawerContext = Pick<
     | "requireUpdate"
     | "getVisibleScale"
     | "setVisibleScale"
-    | "getVisibleRect"
-    | "getCanvasSize"
+    // | "getVisibleRect"
+    // | "getCanvasSize"
     | "subscribeMatrixChange"
     | "getMatrix"
     // | "subscribePtscaleChange"
@@ -171,7 +171,12 @@ function createGl(canvas: HTMLCanvasElement) {
         const ext = gl.getExtension("OES_element_index_uint");
         if (!ext) logger.warn("OES_element_index_uint not supported");
     }
-    logger.log("GL", gl.getParameter(gl.VERSION));
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+    const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+    logger.log("GPU vendor:", vendor);
+    logger.log("GPU renderer:", renderer);
+    logger.log("GL version:", gl.getParameter(gl.VERSION));
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);

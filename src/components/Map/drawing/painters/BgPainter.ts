@@ -15,8 +15,11 @@ export default class BgPainter implements Painter {
     private readonly positionBuffer: WebGLBuffer;
     private readonly colorLocation: number;
     private readonly colorBuffer: WebGLBuffer;
+    private readonly nodimLocation: number;
+    private readonly nodimBuffer: WebGLBuffer;
     private positions: number[];
     private colors: number[];
+    private nodims: number[];
     private dirty = true;
 
     dim = 0;
@@ -28,39 +31,47 @@ export default class BgPainter implements Painter {
 
         this.positionLocation = gl.getAttribLocation(this.program, "a_position");
         this.colorLocation = gl.getAttribLocation(this.program, "a_color");
+        this.nodimLocation = gl.getAttribLocation(this.program, "a_nodim");
         this.positionBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
+        this.nodimBuffer = gl.createBuffer();
 
         // this.bufferFloat32Array(this.positionBuffer, [-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
         // this.bufferFloat32Array(this.colorBuffer, [...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor]);
     }
 
-    setObjects(positions: number[], colors: number[]) {
+    setObjects(positions: number[], colors: number[], nodims: number[]) {
         this.dirty = true;
         this.positions = positions;
         this.colors = colors;
+        this.nodims = nodims;
     }
 
     preparePaint() {
-        if (!this.dirty) return;
+        this.gl.useProgram(this.program);
+        if (!this.dirty || !this.colors || !this.positions) return;
+        // console.log("bgRect3")
         this.bufferFloat32Array(this.positionBuffer, this.positions);
         this.bufferFloat32Array(this.colorBuffer, this.colors);
+        this.bufferFloat32Array(this.nodimBuffer, this.nodims);
         this.dirty = false;
     }
 
     paint() {
         const gl = this.gl;
-        gl.useProgram(this.program);
+        this.preparePaint();
+        if (!this.colors) return;
 
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
         this.enableBuffer(this.positionBuffer, this.positionLocation, 2);
+        this.enableBuffer(this.nodimBuffer, this.nodimLocation, 1);
 
         const uniforms = {
             u_dim: this.dim
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawArrays(gl.TRIANGLES, 0, this.positions.length/2);
     }
 
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
@@ -77,23 +88,27 @@ export default class BgPainter implements Painter {
 
 const vertexShaderSource = `attribute vec2 a_position;
 attribute vec4 a_color;
+attribute float a_nodim;
 varying vec4 v_color;
-varying float v_dim;
+varying float v_nodim;
+// varying float v_dim;
 
 void main() {
     gl_Position = vec4(a_position, 0, 1);
     v_color = a_color;
+    v_nodim = a_nodim;
 }`;
 
 const fragmentSharedSource = `precision mediump float;
 varying vec4 v_color;
+varying float v_nodim;
 uniform float u_dim; 
 
 ${dimColor}
 
 void main() {
     vec4 col = v_color; 
-    if (u_dim > 0.0) {
+    if (u_dim > 0.0 && v_nodim < 1.0) {
         col = dimColor(col, u_dim);
     }
     gl_FragColor = col;

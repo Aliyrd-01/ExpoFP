@@ -24,10 +24,11 @@ export default observer(function Overlay() {
         startedTouch: undefined as Touch,
         touchDiff: undefined,
         currentTop: undefined,
+        backdrop: false,
         get noMove() {
             logger.log("noMove populate");
             return uiState.overlayPosition === "left";
-        }
+        },
     }));
 
     // use useLayoutEffect for this thing to not jump
@@ -155,10 +156,18 @@ export default observer(function Overlay() {
             if (s.currentTop !== newTop && window.event) window.event.preventDefault();
             s.currentTop = newTop;
         }
+
+        
+        window.setTimeout(()=>{
+            //const backdrop =  shouldUseBackdrop && uiState.overlayLeft && settings.EXPO === "aweusa2020";
+            s.backdrop = uiState.shouldUseBackdrop;
+        }, 1000)
     }, [s]);
 
+    
+
     return (
-        <div className={`overlay ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
+        <div className={`overlay ${s.backdrop ? "-backdrop":""} ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
             {s.noMove}
             <Menu />
             <Search />

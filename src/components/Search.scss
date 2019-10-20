@@ -12,7 +12,7 @@
             width: 100%;
         }
         input::placeholder {
-            color: #bbb;
+            color: rgba(0,0,0,0.3);//#bbb;
         }
 
         input.fixed {

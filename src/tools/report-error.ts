@@ -27,7 +27,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
             ...ipData
         };
 
-        console.log("Sending error report", data);
+        logger.log("Sending error report", data);
 
         const rawResponse = await fetch('https://expofp.com/api/report-error', {
             method: 'POST',
