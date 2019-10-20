@@ -40,13 +40,13 @@ if (!!live === !!dev) {
         process.exit(3);
     }
 
-    if (live && !showBucket) {
-        const prompt = new Confirm({
-            message: `Are you sure want to deploy to live ${expo.toUpperCase().yellow}?`,
-            default: false
-        });
-        answer = await prompt.run();
-    }
+    // if (live && !showBucket) {
+    //     const prompt = new Confirm({
+    //         message: `Are you sure want to deploy to live ${expo.toUpperCase().yellow}?`,
+    //         default: false
+    //     });
+    //     answer = await prompt.run();
+    // }
 
     const p = await execa("react-scripts", ["build"], { stdio: "inherit" });
     if (p.exitCode !== 0) process.exit(p.exitCode);
