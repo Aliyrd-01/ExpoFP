@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import { uiState } from "../store";
 import { useAutorun } from "../utils/mobx";
 import "./OverlayParticles.scss";
+import browser from "../utils/browser";
 
 function OverlayParticles() {
     const [visible, setVisible] = useState(false);
     const [ParticlesClass, setParticlesClass] = useState();
     const [canShow, setCanShow] = useState(false);
 
-    useAutorun(() => setCanShow(uiState.overlayPosition === "left" && navigator.userAgent.indexOf("Edge/") === -1));
+    useAutorun(() => setCanShow(uiState.overlayPosition === "left" && browser.getEngine() !== "EdgeHTML"));
 
     // init ParticlesClass
     useEffect(() => {

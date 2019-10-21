@@ -1,14 +1,18 @@
 import { action, computed, observable } from "mobx";
+import { uiState } from ".";
+import Rect from "../core/Rect";
+import Size from "../core/Size";
+import data from "../data";
+import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
+import browser from "../utils/browser";
 import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
-import data from "../data";
-import settings from "../tools/settings";
-import Size from "../core/Size";
-import Rect from "../core/Rect";
-import { uiState } from ".";
+
+// logger.log("Browser", browser.getBrowser());
+//const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
 
 type ListType =
     | { type: "search"; text: string; focused: boolean }
@@ -147,10 +151,12 @@ export default class UIState {
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
-        const ua = navigator.userAgent;
-        const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
-        const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-        return isSafari || (isWebkit && uiState.canvasSizePt.height * uiState.canvasSizePt.width < 3000000);
+        // const ua = navigator.userAgent;
+        // const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
+        // const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+        const isSafari = browser.satisfies({ safari: ">=13" });
+        const isChrome = browser.satisfies({ chrome: ">=77" });
+        return isSafari || (isChrome && uiState.canvasSizePt.height * uiState.canvasSizePt.width < 3000000);
     }
 
     ///////////////////////////////////////////////////////////////////////////
