@@ -7,6 +7,16 @@
     "additionalProperties": false,
     "properties": {
         "free": {
+            "type": "boolean",
+            "description": "Obsolete. Now equals to noAds=true, noFetured=true, showFpAd=true"
+        },
+        "noAds": {
+            "type": "boolean"
+        },
+        "noFeatured": {
+            "type": "boolean"
+        },
+        "expoFpAd": {
             "type": "boolean"
         },
         "title": {

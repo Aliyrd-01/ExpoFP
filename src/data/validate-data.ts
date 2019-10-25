@@ -17,6 +17,12 @@ export default function validateData(data: Data) {
     if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
     data.hideCompanies = !!data.hideCompanies;
 
+    if (data["free"]) {
+        data.noAds = true;
+        data.noFeatured = true;
+        data.expoFpAd = true;
+    }
+
     // if (settings.debug && EFP_EXPO === "sydneybuildexpo") data.free = true;
 
     const validationEnabled = settings.debug || localStorage.getItem("validate") === "1";
@@ -91,8 +97,11 @@ export default function validateData(data: Data) {
     }
 
     // disable ads and featured for free plans
-    if (data.free) {
-        data.exhibitors.forEach(e => (e.featured = e.advertise = false));
+    if (data.noFeatured) {
+        data.exhibitors.forEach(e => (e.featured = false));
+    }
+    if (data.noAds) {
+        data.exhibitors.forEach(e => (e.advertise = false));
     }
     // just this for make sure we won't screw up totally when forget to not hide smthn
     // everything should work withouth this

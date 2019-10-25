@@ -1,5 +1,7 @@
 interface Data {
-    free: boolean;
+    noAds: boolean;
+    noFeatured: boolean;
+    expoFpAd: boolean;
     title: string;
     subtitle: string;
     homeUrl: string;

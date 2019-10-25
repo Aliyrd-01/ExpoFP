@@ -58,7 +58,7 @@ export default observer(function Layout() {
 
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
-    else if (data.free) freeOrDemo = <Free />;
+    else if (data.expoFpAd) freeOrDemo = <Free />;
 
     return (
         <div className="layout">
