@@ -62,7 +62,7 @@
     background: #f1f1f1;
     $p: 1rem;
 
-    &__bar.-empty{
+    &__bar.-empty {
         background: #fff;
         margin-right: -3rem;
         height: 3.5rem;
@@ -93,13 +93,14 @@
         color: #000 !important;
         text-decoration: none !important;
 
-        > i:nth-child(2) {
-            font-size: 0.7em;
-            color: #aaa;
-        }
+        // > i:nth-child(2) {
+        //     font-size: 0.7em;
+        //     color: #aaa;
+        // }
 
-        > i:first-child {
+        > i {
             color: #999;
+            font-size: 0.8rem;
             min-width: 1.7rem;
             text-align: center;
             padding-right: 0.5rem;
@@ -107,6 +108,10 @@
         &.-bookmarks {
             > span {
                 flex-grow: 1;
+                > span {
+                    color: #999;
+                    font-weight: normal;
+                }
             }
             > button {
                 padding: 0 0.4rem 0 0.4rem;

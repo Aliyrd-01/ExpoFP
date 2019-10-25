@@ -5,6 +5,7 @@ interface Data {
     title: string;
     subtitle: string;
     homeUrl: string;
+    registerUrl: string;
     logo: string;
     gtag: string;
     boothTerm: string;

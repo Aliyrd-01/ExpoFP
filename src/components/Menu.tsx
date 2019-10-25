@@ -92,24 +92,30 @@ function Menu() {
                 <div className="menu__content">
                     {!isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                            <i className="fas fa-home" /> Event&nbsp;Home&nbsp;
+                            Event&nbsp;Home&nbsp;
+                            <i className="fas fa-external-link" />
+                        </a>
+                    )}
+                    {!isIframe && !!data.registerUrl && (
+                        <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
+                             Register&nbsp;to&nbsp;Attend&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
                     <a href="/#" onClick={handleSearch} className="menu__item">
-                        <i className="fas fa-search" /> Search
+                        Search
                     </a>
                     {!data.hideCompanies && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
-                            <i className="fas fa-bookmark" />
-                            <span>Bookmarks ({exhibitorStore.bookmarked.length})</span>
+                          
+                            <span>Bookmarks <span>({exhibitorStore.bookmarked.length})</span></span>
                             {exhibitorStore.bookmarked.length ? (
                                 <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
                             ) : null}
                         </a>
                     )}
                     <a href="/#" className="menu__item -pdf" onClick={handlePdf}>
-                        <i className="fas fa-file-pdf" /> Download PDF
+                        Download PDF
                     </a>
                     {categories}
                 </div>

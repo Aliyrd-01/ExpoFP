@@ -16,6 +16,7 @@ export default function validateData(data: Data) {
     if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
     if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
     data.hideCompanies = !!data.hideCompanies;
+    //if (settings.debug) data.registerUrl = "http://google.com";
 
     if (data["free"]) {
         data.noAds = true;

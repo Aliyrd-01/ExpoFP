@@ -29,6 +29,10 @@
             "type": "string",
             "format": "uri"
         },
+        "registerUrl": {
+            "type": "string",
+            "format": "uri"
+        },
         "logo": {
             "type": "string"
         },
