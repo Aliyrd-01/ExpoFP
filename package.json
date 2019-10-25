@@ -32,7 +32,7 @@
     },
     "scripts": {
         "analyze": "source-map-explorer 'build/static/js/*.js'",
-        "start": "node ./scripts/start.js",
+        "dev": "node ./scripts/dev.js",
         "build": "node ./scripts/build.js",
         "deploy": "node ./scripts/deploy.js",
         "deploy-template": "node ./scripts/deploy.js --live --expo=_template_for_new_event_",
