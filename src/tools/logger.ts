@@ -14,7 +14,6 @@ class Logger {
         callLogFunc(console.error, args);
     }
 
-
     warn(...args) {
         this.push("WARN", args);
         callLogFunc(console.warn, args);
@@ -26,7 +25,16 @@ class Logger {
     }
 
     private push(level, args: any[]) {
-        const message = level + "\t" + new Date().toISOString() + "\t" + args.map(x => typeof x === "object" ? JSON.stringify(x): x).join("; ");
+        const argsMapped = args.map(x => {
+            if (typeof x === "object")
+                try {
+                    return JSON.stringify(x);
+                } catch (e) {
+                    return e.message;
+                }
+            return x;
+        });
+        const message = level + "\t" + new Date().toISOString() + "\t" + argsMapped.join("; ");
         this.messages.push(message);
         const max = 1000;
         if (this.messages.length > max) {
@@ -39,7 +47,7 @@ class Logger {
 function callLogFunc(func, args) {
     try {
         func.apply(func, args);
-    } catch(e) { }
+    } catch (e) {}
 }
 
 export default new Logger();
@@ -53,5 +61,3 @@ export default new Logger();
 // extendGlobal({
 //     __logger: logger1,
 // });
-
-
