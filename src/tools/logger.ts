@@ -26,7 +26,7 @@ class Logger {
     }
 
     private push(level, args: any[]) {
-        const message = level + "\t" + new Date().toISOString() + "\t" + args.join("; ");
+        const message = level + "\t" + new Date().toISOString() + "\t" + args.map(x => typeof x === "object" ? JSON.stringify(x): x).join("; ");
         this.messages.push(message);
         const max = 1000;
         if (this.messages.length > max) {
