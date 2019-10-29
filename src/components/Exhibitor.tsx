@@ -52,7 +52,7 @@ function ExhibitorComponent() {
         }
     );
 
-    return useObserver(() => {
+    // return useObserver(() => {
         const exhibitor = s.exhibitor;
         // if (!exhibitor) return null;
         const bar = (
@@ -218,7 +218,7 @@ function ExhibitorComponent() {
                 </div>
             </OverlayContent>
         );
-    });
+    // });
 
     function handleCategoryClick(c: Category) {
         store.selectCategory(c);
