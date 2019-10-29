@@ -10,7 +10,7 @@ import BoothDrawerBase from "./BoothDrawerBase";
 
 export default function configBoothBorder(context: DrawerContext, booth: Booth) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
-    if (booth.paths) return;
+    if (booth.paths && !booth.pathsWithRect) return;
     new BoothBorderDrawer(context, booth);
 }
 

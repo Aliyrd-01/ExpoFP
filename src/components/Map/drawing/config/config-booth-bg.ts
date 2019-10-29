@@ -25,6 +25,25 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
 
         // let triangles: Triangle[];
 
+
+        if (!booth.paths || booth.pathsWithRect){
+            let rect = this.booth.rect;
+            if (settings.borderless) rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
+
+            const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
+            const triangles = p.toTriangles();
+            for (const t of triangles) {
+                this.painter.addObject({
+                    id: this.getId("bg-def"),
+                    groupId: this.getId("bg"),
+                    p0: t[0],
+                    p1: t[1],
+                    p2: t[2]
+                    // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+                });
+            }
+        } 
+
         if (booth.paths) {
             const pathsColors = new Set<string>();
             for (var p of booth.paths) {
@@ -42,7 +61,10 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 }
             }
             this.pathsDefaultColors = Array.from(pathsColors);
-        } else {
+        } 
+        
+        
+        else {
             let rect = this.booth.rect;
             if (settings.borderless) rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
 

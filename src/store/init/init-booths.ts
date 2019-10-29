@@ -1,14 +1,14 @@
-import RootStore from "../RootStore";
-import logger from "../../tools/logger";
-import data from "../../data";
-import { generateUniqueSlug } from "../../tools/slug";
-import BoothStore, { Booth, SpecialBooth, RegularBooth } from "../BoothStore";
 import * as d3 from "d3-selection";
+import Rect from "../../core/Rect";
+import data from "../../data";
 import svg from "../../data/svg";
 import { getNextId } from "../../tools/id";
-import Rect from "../../core/Rect";
-import { sortByName } from "../../utils";
+import logger from "../../tools/logger";
 import settings from "../../tools/settings";
+import { generateUniqueSlug } from "../../tools/slug";
+import { sortByName } from "../../utils";
+import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
+import RootStore from "../RootStore";
 
 export default function initBooths(store: RootStore) {
     const { boothStore } = store;
@@ -47,11 +47,13 @@ export default function initBooths(store: RootStore) {
         .selectAll("#Booths g[id^=b], #Booths rect[id^=b]")
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
         let rect: SVGRectElement;
+        let pathsWithRect = false;
         if (el.tagName === "rect") {
             rect = el as SVGRectElement;
         } else {
             // find any rect
             rect = Array.from(el.children).find(x => x.tagName === "rect") as SVGRectElement;
+            pathsWithRect = rect === el.lastElementChild;
             if (!rect) continue;
             // // expect rect to be last child
             // rect = el.lastElementChild as SVGRectElement;
@@ -126,6 +128,10 @@ export default function initBooths(store: RootStore) {
 
         if (el.tagName === "g") {
             booth.paths = [];
+            booth.pathsWithRect = pathsWithRect;
+            if (pathsWithRect && settings.EXPO === "expo" && (booth.slug === "1745" || booth.slug === "1746")) {
+                booth.pathsWithRect = false;
+            }
             for (const kid of d3
                 .select(el)
                 .selectAll("path, rect")

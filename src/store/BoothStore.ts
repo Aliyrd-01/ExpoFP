@@ -40,6 +40,7 @@ export abstract class BoothBase {
     readonly noLabels: boolean;
     readonly rotate: number;
     readonly paths: PathInfo[];
+    readonly pathsWithRect: boolean;
     readonly slug: string;
     readonly error: boolean;
 
