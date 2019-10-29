@@ -1,12 +1,12 @@
 import { createBrowserHistory } from "history";
+import { autorun } from "mobx";
+import data from "../data";
+import store, { uiState } from "../store";
+import { Booth } from "../store/BoothStore";
+import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import gtag from "../tools/gtag";
-import { Booth } from "../store/BoothStore";
 import logger from "../tools/logger";
-import store, { uiState } from "../store";
-import { Category } from "../store/CategoryStore";
-import data from "../data";
-import { autorun } from "mobx";
 // import settings from '@/settings';
 
 const history = createBrowserHistory();

@@ -5,11 +5,11 @@ import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
+import settings from "../tools/settings";
 import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
-import settings from "../tools/settings";
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();

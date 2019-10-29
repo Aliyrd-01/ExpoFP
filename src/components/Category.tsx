@@ -1,9 +1,9 @@
-import React from "react";
 import { useObserver } from "mobx-react-lite";
+import React from "react";
 import store, { uiState } from "../store";
-import OverlayContent from "./OverlayContent";
-import List from "./List";
 import "./Category.scss";
+import List from "./List";
+import OverlayContent from "./OverlayContent";
 
 function Category() {
     return useObserver(() => {

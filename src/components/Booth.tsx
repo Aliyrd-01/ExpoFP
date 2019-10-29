@@ -2,7 +2,7 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
-import { BoothBase, RegularBooth, SpecialBooth } from "../store/BoothStore";
+import { RegularBooth, SpecialBooth } from "../store/BoothStore";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
