@@ -18,7 +18,7 @@ if (settings.EXPO === "eventtechlive2019" && svgWidth > 3000) {
     svgCenterX = center[0];
     svgCenterY = center[1];
     svgVisibleHeight = size[0] * 0.75;
-    svgVisibleWidth = size[1] * 0.75;
+    svgVisibleWidth = size[1];
     // alert(svgWidth);
 }
 
