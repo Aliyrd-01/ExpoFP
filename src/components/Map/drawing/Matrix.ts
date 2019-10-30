@@ -4,7 +4,22 @@ import Rect from "../../../core/Rect";
 import Size from "../../../core/Size";
 import { svgHeight, svgWidth } from "../../../data/svg";
 import { observable } from "mobx";
+import settings from "../../../tools/settings";
 // import { observable, computed } from "mobx";
+
+let svgVisibleWidth = svgWidth;
+let svgVisibleHeight = svgHeight;
+let svgCenterX = svgWidth / 2;
+let svgCenterY = svgHeight / 2;
+
+if (settings.EXPO === "thinksoft" || settings.EXPO === "eventtechlive2019") {
+    const center = [3424, 2149];
+    const size = [845, 799];
+    svgCenterX = center[0];
+    svgCenterY = center[1];
+    svgVisibleHeight = size[0];
+    svgVisibleWidth = size[1];
+}
 
 export default class Matrix {
     // svg -> -1..1
@@ -73,7 +88,7 @@ export default class Matrix {
     // getPtscale() {
     //     return this.ptscaleVal;
     // }
-    // @computed({ keepAlive: true }) 
+    // @computed({ keepAlive: true })
     get ptscale() {
         return this.ptscaleVal;
     }
@@ -120,7 +135,7 @@ export default class Matrix {
         const { zoomTransform, visibleRect, visibleScale, canvasSize } = this;
 
         //const visibleRectPt = visibleRect.scale(this.pixelRatio);
-        const svgPxScaleUnzoomed = Math.min(visibleRect.w / svgWidth, visibleRect.h / svgHeight);
+        const svgPxScaleUnzoomed = Math.min(visibleRect.w / svgVisibleWidth, visibleRect.h / svgVisibleHeight);
         const svgPxScale = svgPxScaleUnzoomed * visibleScale;
 
         // console.log('svgPxScaleUnzoomed', svgPxScaleUnzoomed, 'pixelRatio', this.pixelRatio,
@@ -137,7 +152,7 @@ export default class Matrix {
         m4.scale(centerSvgMatrix, [svgPxScaleUnzoomed, svgPxScaleUnzoomed, 1], centerSvgMatrix);
         const centerSvgMatrixWithoutVisibleScale = new Float32Array(centerSvgMatrix);
         m4.scale(centerSvgMatrix, [visibleScale, visibleScale, 1], centerSvgMatrix);
-        const moveToCenter = [-svgWidth / 2, -svgHeight / 2, 0];
+        const moveToCenter = [-svgCenterX, -svgCenterY, 0];
         m4.translate(centerSvgMatrix, moveToCenter, centerSvgMatrix);
         m4.translate(centerSvgMatrixWithoutVisibleScale, moveToCenter, centerSvgMatrixWithoutVisibleScale);
 
@@ -156,7 +171,6 @@ export default class Matrix {
 
         this.ptscaleVal = 1 / svgPxScale / zoomTransform.k;
         this.fireMatrixChange();
-        
 
         // if (this.prevPtscale !== this.ptscale) {
         //     this.firePtscaleChange();
