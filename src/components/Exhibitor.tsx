@@ -151,8 +151,7 @@ function ExhibitorComponent() {
                                             <div>
                                                 {exhibitor.city}
                                                 {!!(exhibitor.city && exhibitor.state) && <span>,</span>}
-                                                {exhibitor.state}
-                                                {exhibitor.zip}
+                                                {exhibitor.state} {exhibitor.zip}
                                             </div>
                                         )}
                                         {!!exhibitor.country && <div>{exhibitor.country}</div>}

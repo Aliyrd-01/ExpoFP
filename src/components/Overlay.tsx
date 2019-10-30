@@ -26,8 +26,15 @@ export default observer(function Overlay() {
         currentTop: undefined,
         // backdropStarted: false,
         get backdropClass() {
-            if (!uiState.canvasStarted || !uiState.shouldUseBackdrop) return "";
-            return "-backdrop";
+            let classes = "";
+            if (uiState.canvasStarted && uiState.shouldUseBackdrop && !uiState.dimmed) {
+                classes += " -backdrop";
+            }
+            if (uiState.dimmed) {
+                classes += " -no-transition";
+            }
+            return classes;
+            // if (!uiState.canvasStarted || !uiState.shouldUseBackdrop || uiState.dimmed) return "";
         },
         get noMove() {
             logger.log("noMove populate");
