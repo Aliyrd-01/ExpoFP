@@ -134,7 +134,7 @@ export default function Map() {
         s.zoom = zoom()
             .clickDistance(15)
             .interpolate(interpolate)
-            .scaleExtent([0.5, 12])
+            .scaleExtent([0.3, 12])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .filter(function() {
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")
