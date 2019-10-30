@@ -45,6 +45,7 @@ function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolea
     return transform;
 }
 
+// TODO: finish
 function zoomBoundBg(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolean) {
     // cannot use ptscale here, it has previous transform.k in it
     const svgPxMatrix = drawer.getSvgPxUnzoomedMatrix();
