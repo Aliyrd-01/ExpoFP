@@ -14,7 +14,7 @@ let svgCenterY = svgHeight / 2;
 
 if (settings.EXPO === "eventtechlive2019" && svgWidth > 3000) {
     const center = [3173, 1967];
-    const size = [1024, 873];
+    const size = [845, 799];
     svgCenterX = center[0];
     svgCenterY = center[1];
     svgVisibleHeight = size[0];
