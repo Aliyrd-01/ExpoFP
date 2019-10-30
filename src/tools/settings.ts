@@ -25,6 +25,8 @@ if (settings.EXPO === "jtrade19") {
     settings.colors.booths.selected = "#dc6533";
 } else if (settings.EXPO === "ktrade20") {
     settings.borderless = true;
+} else if (settings.EXPO === "eventtechlive2019") {
+    settings.borderless = true;
 }
 
 // if (
