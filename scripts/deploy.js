@@ -2,7 +2,7 @@ const { specifiedExpo, fallBackExpo, reportVars, argv } = require("./common");
 const Confirm = require("prompt-confirm");
 const execa = require("execa");
 require("colors");
-const live = !!argv.live;
+//const live = !!argv.live;
 const dev = !!argv.dev;
 const showBucket = !!argv["show-bucket"];
 const util = require("util");
@@ -11,10 +11,11 @@ const bucketName = showBucket ? "efp-data-show" : "efp-data";
 
 console.log("Destination bucket: ", bucketName.green);
 
-if (!!live === !!dev) {
-    console.error("You should specify either --dev or --live when deploying.".red);
-    process.exit(1);
-}
+const live = !dev;
+// if (!!live === !!dev) {
+//     console.error("You should specify either --dev or --live when deploying.".red);
+//     process.exit(1);
+// }
 
 (async () => {
     let expo = specifiedExpo;
@@ -29,7 +30,7 @@ if (!!live === !!dev) {
 
     process.env.REACT_APP_EFP_EXPO = expo;
     process.env.REACT_APP_DATA_URL = `/data`;
-    process.env.REACT_APP_MODE = "deploy" + (live ? "-live" : "-dev");
+    process.env.REACT_APP_MODE = "deploy" + (dev ? "-dev" : "");
 
     reportVars();
 
