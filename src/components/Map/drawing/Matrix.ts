@@ -1,9 +1,9 @@
 import { zoomIdentity, ZoomTransform } from "d3-zoom";
+import { observable } from "mobx";
 import { m4 } from "twgl.js";
 import Rect from "../../../core/Rect";
 import Size from "../../../core/Size";
 import { svgHeight, svgWidth } from "../../../data/svg";
-import { observable } from "mobx";
 import settings from "../../../tools/settings";
 // import { observable, computed } from "mobx";
 
@@ -12,7 +12,7 @@ let svgVisibleHeight = svgHeight;
 let svgCenterX = svgWidth / 2;
 let svgCenterY = svgHeight / 2;
 
-if (settings.EXPO === "thinksoft" || (settings.EXPO === "eventtechlive2019" && svgWidth > 3000)) {
+if (settings.EXPO === "eventtechlive2019" && svgWidth > 3000) {
     const center = [3424, 2149];
     const size = [845, 799];
     svgCenterX = center[0];
