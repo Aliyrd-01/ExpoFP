@@ -5,6 +5,7 @@ import Rect from "../../../core/Rect";
 import Size from "../../../core/Size";
 import { svgHeight, svgWidth } from "../../../data/svg";
 import settings from "../../../tools/settings";
+import logger from "../../../tools/logger";
 // import { observable, computed } from "mobx";
 
 let svgVisibleWidth = svgWidth;
@@ -19,6 +20,20 @@ if (settings.EXPO === "eventtechlive2019" && svgWidth > 3000) {
     svgCenterY = center[1];
     svgVisibleHeight = size[0] * 0.75;
     svgVisibleWidth = size[1];
+    // alert(svgWidth);
+}
+
+if (settings.EXPO === "latintyrepartsexpo") {
+    const k = 12000/8192;
+    const ky = 8920/6296;
+    const center = [5123, 3220];
+    const size = [1348, 888];
+    svgCenterX = center[0] * k;
+    svgCenterY = center[1] * ky;
+    svgVisibleHeight = size[0] * ky * 0.75;
+    svgVisibleWidth = size[1] * k;
+
+    logger.log('zz',svgWidth, svgHeight)
     // alert(svgWidth);
 }
 
