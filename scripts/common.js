@@ -43,7 +43,7 @@ function reportVars() {
 //console.dir(argv);
 
 module.exports = {
-    specifiedExpo: ((argv.expo || expoFromBranch) || "").trim().toLowerCase(),
+    specifiedExpo: ((argv.expo || expoFromBranch) || "").toString().trim().toLowerCase(),
     argv,
     // expoFromCommandLine: argv.expo,
     // onMasterBranch,
