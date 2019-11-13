@@ -66,6 +66,16 @@ if (settings.EXPO === "eventtechlive2019") {
     // svgCenterY = center[1];
     // svgVisibleHeight = size[0] * 0.75;
     // svgVisibleWidth = size[1];
+} else if (settings.EXPO === "latintyrepartsexpo") {
+    const k = 12000 / 8192;
+    const ky = 8920 / 6296;
+    const center = [5123, 3220];
+    const size = [1348, 888];
+    // svgCenterX = center[0] * k;
+    // svgCenterY = center[1] * ky;
+    // svgVisibleHeight = size[0] * ky * 0.75;
+    // svgVisibleWidth = size[1] * k;
+    svgArea = Rect.fromCxcywh(center[0] * k, center[1] * ky, size[0] * ky, size[1] * k);
 } else {
     svgArea = Rect.fromXywh(0, 0, svgWidth, svgHeight).withPadding(-svgWidth * 0.05, -svgHeight * 0.05);
 }

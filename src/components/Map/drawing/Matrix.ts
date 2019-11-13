@@ -4,22 +4,6 @@ import { m4 } from "twgl.js";
 import Rect from "../../../core/Rect";
 import Size from "../../../core/Size";
 import { svgArea } from "../../../data/svg";
-// import { observable, computed } from "mobx";
-
-// let svgVisibleWidth = svgWidth;
-// let svgVisibleHeight = svgHeight;
-// let svgCenterX = svgWidth / 2;
-// let svgCenterY = svgHeight / 2;
-
-// if (settings.EXPO === "eventtechlive20191" && svgWidth > 3000) {
-//     const center = [3173, 1987];
-//     const size = [1024, 873];
-//     svgCenterX = center[0];
-//     svgCenterY = center[1];
-//     svgVisibleHeight = size[0] * 0.75;
-//     svgVisibleWidth = size[1];
-//     // alert(svgWidth);
-// }
 
 export default class Matrix {
     // svg -> -1..1
