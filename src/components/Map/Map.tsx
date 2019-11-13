@@ -106,7 +106,7 @@ export default function Map() {
             if (rects.length === 0) return;
             const r = Rect.fromMultiple(rects);
             const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
-            const z = getTramsformToCenterSvgRect(r, uiState.canvasVisibleRectPx, Math.max(zoomScale, 3));
+            const z = getTramsformToCenterSvgRect(r, uiState.canvasVisibleRectPx, Math.max(zoomScale, 4));
             zoomTo(z);
 
             uiState.moveToBooths = null;
