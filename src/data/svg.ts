@@ -69,8 +69,8 @@ if (settings.EXPO === "eventtechlive2019") {
 } else if (settings.EXPO === "latintyrepartsexpo") {
     const k = 12000 / 8192;
     const ky = 8920 / 6296;
-    const center = [5123, 3220];
-    const size = [1348, 888];
+    const center = [4783, 3220];
+    const size = [2148, 888];
     // svgCenterX = center[0] * k;
     // svgCenterY = center[1] * ky;
     // svgVisibleHeight = size[0] * ky * 0.75;
