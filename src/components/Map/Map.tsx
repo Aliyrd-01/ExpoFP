@@ -34,11 +34,11 @@ export default function Map() {
         $canvas: null as d3.Selection<HTMLCanvasElement, unknown, null, undefined>,
         zoom: null as d3.ZoomBehavior<Element, unknown>,
         drawer: null as Drawer,
-        prevBoothOver: null as Booth,
-        get visibleRect() {
-            const rect = uiState.canvasVisibleRectPx
-            return rect.withPadding(rect.w * 0.05, rect.h * 0.05);
-        }
+        prevBoothOver: null as Booth
+        // get visibleRect() {
+        //     const rect = uiState.canvasVisibleRectPx
+        //     return  rect;//rect.withPadding(rect.w * 0.05, rect.h * 0.05);
+        // }
     }));
 
     // init
@@ -51,20 +51,20 @@ export default function Map() {
     );
 
     // useReaction(
-    //     () => s.visibleRect,
+    //     () => uiState.canvasVisibleRectPx,
     //     ()=>{
     //         if (!s.drawer) return;
-    //         const v = s.visibleRect;
+    //         const v = uiState.canvasVisibleRectPx;
     //         s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
     //         zoomBoundCurrent();
     //     }
     // );
 
     useReaction(
-        () => [s.visibleRect, s.drawer],
+        () => [uiState.canvasVisibleRectPx, s.drawer],
         () => {
             if (!s.drawer) return;
-            const v = s.visibleRect;
+            const v = uiState.canvasVisibleRectPx;
             logger.log("visibleRect change", v);
             s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
             // rezoom to make it fit bounds
@@ -106,7 +106,7 @@ export default function Map() {
             if (rects.length === 0) return;
             const r = Rect.fromMultiple(rects);
             const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
-            const z = getTramsformToCenterSvgRect(r, s.visibleRect, Math.max(zoomScale, 1.2));
+            const z = getTramsformToCenterSvgRect(r, uiState.canvasVisibleRectPx, Math.max(zoomScale, 3));
             zoomTo(z);
 
             uiState.moveToBooths = null;
@@ -174,11 +174,11 @@ export default function Map() {
             });
 
         configInertia(s.zoom);
-        //m.setVisibleRect(this.visibleRect);
+        //m.setVisibleRect(thiuiState.canvasVisibleRectPx);
         sizeCanvasToParentElement(el.current);
         s.drawer = createDrawer(el.current, true);
 
-        // s.drawer.setVisibleRect((s.visibleRect as Rect).scale(uiState.devicePixelRatio));
+        // s.drawer.setVisibleRect((uiState.canvasVisibleRectPx as Rect).scale(uiState.devicePixelRatio));
         s.drawer.setPixelRatio(uiState.devicePixelRatio);
         window.addEventListener("resize", () => {
             // __logger.log('canvas change', canvas);

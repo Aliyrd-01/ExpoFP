@@ -11,6 +11,7 @@ export type Drawer = Pick<
     | "setZoomTransform"
     | "ptscale"
     | "getSvgPxUnzoomedMatrix"
+    | "getSvgPxUnzoomedScale"
     | "getZoomTransform"
     | "getPxSvgMatrix"
     | "getVisibleRect"
@@ -55,7 +56,8 @@ export class DrawerImpl extends Matrix {
 
     constructor(canvas: HTMLCanvasElement, updatable: boolean) {
         super(new Size(canvas.width, canvas.height));
-        this.setVisibleScale(0.96);
+        // this.setVisibleScale(0.96);
+        this.setVisibleScale(1);
         this.canvas = canvas;
         this.updatable = updatable;
 

@@ -3,24 +3,23 @@ import { observable } from "mobx";
 import { m4 } from "twgl.js";
 import Rect from "../../../core/Rect";
 import Size from "../../../core/Size";
-import { svgHeight, svgWidth } from "../../../data/svg";
-import settings from "../../../tools/settings";
+import { svgArea } from "../../../data/svg";
 // import { observable, computed } from "mobx";
 
-let svgVisibleWidth = svgWidth;
-let svgVisibleHeight = svgHeight;
-let svgCenterX = svgWidth / 2;
-let svgCenterY = svgHeight / 2;
+// let svgVisibleWidth = svgWidth;
+// let svgVisibleHeight = svgHeight;
+// let svgCenterX = svgWidth / 2;
+// let svgCenterY = svgHeight / 2;
 
-if (settings.EXPO === "eventtechlive2019" && svgWidth > 3000) {
-    const center = [3173, 1987];
-    const size = [1024, 873];
-    svgCenterX = center[0];
-    svgCenterY = center[1];
-    svgVisibleHeight = size[0] * 0.75;
-    svgVisibleWidth = size[1];
-    // alert(svgWidth);
-}
+// if (settings.EXPO === "eventtechlive20191" && svgWidth > 3000) {
+//     const center = [3173, 1987];
+//     const size = [1024, 873];
+//     svgCenterX = center[0];
+//     svgCenterY = center[1];
+//     svgVisibleHeight = size[0] * 0.75;
+//     svgVisibleWidth = size[1];
+//     // alert(svgWidth);
+// }
 
 export default class Matrix {
     // svg -> -1..1
@@ -99,6 +98,9 @@ export default class Matrix {
     getSvgPxUnzoomedMatrix() {
         return this.svgPxUnzoomedMatrix;
     }
+    getSvgPxUnzoomedScale() {
+        return this.svgPxUnzoomedMatrix[0];
+    }
     getZoomTransform() {
         return this.zoomTransform;
     }
@@ -135,8 +137,10 @@ export default class Matrix {
         // dirty = false;
         const { zoomTransform, visibleRect, visibleScale, canvasSize } = this;
 
+        // console.log('visi', visibleScale)
+
         //const visibleRectPt = visibleRect.scale(this.pixelRatio);
-        const svgPxScaleUnzoomed = Math.min(visibleRect.w / svgVisibleWidth, visibleRect.h / svgVisibleHeight);
+        const svgPxScaleUnzoomed = Math.min(visibleRect.w / svgArea.w, visibleRect.h / svgArea.h);
         const svgPxScale = svgPxScaleUnzoomed * visibleScale;
 
         // console.log('svgPxScaleUnzoomed', svgPxScaleUnzoomed, 'pixelRatio', this.pixelRatio,
@@ -153,7 +157,7 @@ export default class Matrix {
         m4.scale(centerSvgMatrix, [svgPxScaleUnzoomed, svgPxScaleUnzoomed, 1], centerSvgMatrix);
         const centerSvgMatrixWithoutVisibleScale = new Float32Array(centerSvgMatrix);
         m4.scale(centerSvgMatrix, [visibleScale, visibleScale, 1], centerSvgMatrix);
-        const moveToCenter = [-svgCenterX, -svgCenterY, 0];
+        const moveToCenter = [-svgArea.cx, -svgArea.cy, 0];
         m4.translate(centerSvgMatrix, moveToCenter, centerSvgMatrix);
         m4.translate(centerSvgMatrixWithoutVisibleScale, moveToCenter, centerSvgMatrixWithoutVisibleScale);
 
