@@ -8,6 +8,7 @@
         "@types/react": "16.9.4",
         "@types/react-dom": "16.9.1",
         "array-flat-polyfill": "^1.0.1",
+        "aws-sdk": "^2.570.0",
         "bowser": "^2.7.0",
         "classnames": "^2.2.6",
         "color": "^3.1.2",
@@ -35,7 +36,8 @@
         "dev": "node ./scripts/dev.js",
         "build": "node ./scripts/build.js",
         "deploy": "node ./scripts/deploy.js",
-        "deploy-template": "node ./scripts/deploy.js --live --expo=_template_for_new_event_",
+        "deploy-template": "node ./scripts/deploy.js --expo=_template_for_new_event_",
+        "deploy-all": "node ./scripts/deploy-all.js",
         "test": "react-scripts test"
     },
     "eslintConfig": {

@@ -1,5 +1,5 @@
 const { specifiedExpo, fallBackExpo, reportVars, argv } = require("./common");
-const Confirm = require("prompt-confirm");
+// const Confirm = require("prompt-confirm");
 const execa = require("execa");
 require("colors");
 //const live = !!argv.live;
@@ -62,7 +62,7 @@ const live = !dev;
     console.log("Credentials: ", credentials.green);
 
     if (deployExpo === "_template_for_new_event_" && !showBucket) {
-        console.log("Cleaning up template dist");
+        console.log("Cleaning up dist", bucketAndPath);
         const cleanup = await execa("s3cmd", ["del", "-r", `s3:////${bucketAndPath}`], { stdio: "inherit" });
         if (cleanup.exitCode !== 0) process.exit(cleanup.exitCode);
     }
