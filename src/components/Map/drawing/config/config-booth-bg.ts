@@ -25,8 +25,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
 
         // let triangles: Triangle[];
 
-
-        if (!booth.paths || booth.pathsWithRect){
+        if (!booth.paths || booth.pathsWithRect) {
             let rect = this.booth.rect;
             if (settings.borderless) rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
 
@@ -42,7 +41,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                     // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                 });
             }
-        } 
+        }
 
         if (booth.paths) {
             const pathsColors = new Set<string>();
@@ -61,10 +60,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 }
             }
             this.pathsDefaultColors = Array.from(pathsColors);
-        } 
-        
-        
-        else {
+        } else {
             let rect = this.booth.rect;
             if (settings.borderless) rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
 
@@ -148,10 +144,14 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
-            defColor =
-                b.empty && !b.onHold
-                    ? b.availColor || settings.colors.booths.empty
-                    : b.soldColor || settings.colors.booths.default;
+            const settingsColors = settings.colors.booths;
+            if (b.onHold) {
+                defColor = b.holdColor || b.soldColor || settingsColors.default;
+            } else if (b.empty) {
+                defColor = b.availColor || settingsColors.empty;
+            } else {
+                defColor = b.soldColor || settingsColors.default;
+            }
         }
 
         if (defColor === "#aaaaaa") defColor = settings.colors.booths.empty;
