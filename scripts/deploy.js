@@ -34,7 +34,7 @@ const live = !dev;
 
     reportVars();
 
-    const expoCheckUrl = `https://${expo}${showBucket ? ".show" : ""}.expofp.com`;
+    const expoCheckUrl = `https://${expo}${showBucket ? ".show" : ""}.expofp.com/data/fp.svg.js`;
     const exists = await urlExists(expoCheckUrl);
     if (!exists) {
         console.error("Won't deploy to non-existent expo: ".red + expoCheckUrl.red.bgWhite);
@@ -69,7 +69,7 @@ const live = !dev;
 
     const args = ["./build/**/!(*.map)", "--cwd", "./build", "--bucket", bucketAndPath, "--private", "--profile", credentials];
     // invalidate
-    args.push("--distId", showBucket ? "E29FK8L1MN1CCC" : "ETXR07B411G19", "--invalidate", `${path}/index*`);
+    args.push("--distId", showBucket ? "E29FK8L1MN1CCC" : "ETXR07B411G19", "--invalidate", `${path}/index.html`);
 
     const deploy = await execa("s3-deploy", args, { stdio: "inherit" });
 
