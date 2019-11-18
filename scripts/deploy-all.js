@@ -52,6 +52,7 @@ const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
     console.log("Good:", good);
 
     for (const expo of good) {
+        // if (expo < 'mini') continue; // this is temp
         const p = await execa("yarn", ["deploy", `--expo=${expo}`], { stdio: "inherit" });
         if (p.exitCode !== 0) process.exit(p.exitCode);
     }
