@@ -1,14 +1,10 @@
 import deepmerge from "deepmerge";
 
+console.log("aaa", window["__efpEvent"]);
 let settings = {
     // this is not replaced with const, so calls to settings.EXPO won't get replaced with const
     // this is done for template to work
-    EXPO: process.env.REACT_APP_EFP_EXPO,
-    debug:
-        (localStorage.getItem("debug") ||
-            window.location.host.startsWith("localhost") ||
-            window.location.host.startsWith("dev")) &&
-        localStorage.getItem("debug") !== "0",
+    EXPO: window["__efpEvent"], //process.env.REACT_APP_EFP_EXPO,
     borderless: false,
     // borderWidth: 1,
     colors: {
@@ -25,7 +21,7 @@ if (settings.EXPO === "jtrade19") {
     settings.colors.booths.selected = "#dc6533";
 } else if (settings.EXPO === "ktrade20") {
     settings.borderless = true;
-} 
+}
 // else if (settings.EXPO === "eventtechlive2019") {
 //     settings.borderless = true;
 // }

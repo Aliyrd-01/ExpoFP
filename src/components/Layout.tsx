@@ -7,7 +7,7 @@ import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
-import Header from './Header';
+import Header from "./Header";
 import LargeMessage from "./LargeMessage";
 // import TouchHover from "./TouchHover";
 import "./Layout.scss";
@@ -17,6 +17,7 @@ import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
+import isDebug from "../utils/is-debug";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -63,7 +64,7 @@ export default observer(function Layout() {
     return (
         <div className="layout">
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
-                <Header/>
+                <Header />
                 <LogoOverlay />
                 <Ws />
                 <Controls />
@@ -71,7 +72,7 @@ export default observer(function Layout() {
                 <Overlay />
                 {fontsReady && isWebGlSupported && <Map />}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {settings.debug ? (
+                {isDebug ? (
                     <Suspense fallback={null}>
                         <Debug />
                     </Suspense>

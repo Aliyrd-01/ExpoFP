@@ -13,23 +13,35 @@ interface FloorPlanOptions {
 export class FloorPlan {
     constructor(options?: FloorPlanOptions) {
         const element = options.element || document.querySelector("expofp-floorplan");
-        const event = options.event || element.getAttribute("event") || element.getAttribute("data-event");
+        const event =
+            options.event ||
+            element.getAttribute("event") ||
+            element.getAttribute("data-event") ||
+            document.location.hostname.endsWith(".expofp.com")
+                ? document.location.hostname.replace(/expofp\.com$/, "")
+                : "eventtechlive2019";
+        window["__efpEvent"] = event;
+        console.log("aaa1", window["__efpEvent"]);
+
         const dataUrlBase = `https://${event}.expofp.com/data/`;
 
         // const dataUrl = dataUrlBase + "data.js";
 
         // lazy load floorplan and instantiate it here
-        logger.log("Instantiating ExpoFP floorplan", options.element);
+        logger.log("Instantiating ExpoFP floorplan", options.element, event);
 
         const dataUrl = dataUrlBase + "data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
-        prefetch(dataUrl);
-        prefetch(fpUrl);
-        prefetch("floorplan.js");
-        prefetch("vendors~floorplan.js");
+        preload(dataUrl);
+        preload(fpUrl);
+        preload("floorplan.js");
+        preload("vendors~floorplan.js");
 
         loadCss("vendor/fa/css/fontawesome-all.min.css");
+        loadCss("vendor/sanitize-css/sanitize.css");
+        loadCss("fonts/fonts.css");
+        loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css");
 
         (async function init() {
             await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
@@ -64,7 +76,7 @@ function loadCss(url: string) {
     document.head.appendChild(link);
 }
 
-function prefetch(url: string) {
+function preload(url: string) {
     const link = document.createElement("link");
     link.rel = "preload";
     link.href = goodUrl(url);

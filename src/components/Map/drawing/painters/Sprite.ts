@@ -1,6 +1,6 @@
 import Rect from "../../../../core/Rect";
 import debugCanvases from "../../../../tools/debugCanvases";
-import settings from "../../../../tools/settings";
+import isDebug from "../../../../utils/is-debug";
 import { CanvasDescriptor } from "../config/canvases";
 
 const maxHeight = 2000;
@@ -36,7 +36,7 @@ export default class Sprite {
     }
 
     generateSpriteCanvases(): (() => HTMLCanvasElement)[] {
-        if (settings.debug) console.time("sprite.generateSpriteCanvases");
+        if (isDebug) console.time("sprite.generateSpriteCanvases");
 
         // const containerCanvasItems = new Map<CanvasInfo, SpriteItemEx[]>();
 
@@ -88,7 +88,7 @@ export default class Sprite {
         // clear to free memory
         this.canvasToSpriteItem.clear();
 
-        if (settings.debug) console.timeEnd("sprite.generateSpriteCanvases");
+        if (isDebug) console.timeEnd("sprite.generateSpriteCanvases");
         const canvas = document.createElement("canvas");
         const c = canvas.getContext("2d");
 
@@ -113,7 +113,7 @@ export default class Sprite {
                 // item.containerCanvas = canvas;
             }
 
-            if (settings.debug) debugCanvases.push(canvas);
+            if (isDebug) debugCanvases.push(canvas);
             return canvas;
         });
     }

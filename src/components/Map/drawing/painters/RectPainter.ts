@@ -1,9 +1,9 @@
 import * as twgl from "twgl.js";
-import Sprite, { SpriteItem } from "./Sprite";
+import isDebug from "../../../../utils/is-debug";
+import { CanvasDescriptor } from "../config/canvases";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
-import settings from "../../../../tools/settings";
-import { CanvasDescriptor } from "../config/canvases";
+import Sprite, { SpriteItem } from "./Sprite";
 
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -146,7 +146,7 @@ export default class RectPainter implements Painter {
     }
 
     private populateBuffers() {
-        if (settings.debug) console.time("RectPainter.populateBuffers");
+        if (isDebug) console.time("RectPainter.populateBuffers");
         const gl = this.gl;
 
         const centers: number[] = [];
@@ -318,7 +318,7 @@ export default class RectPainter implements Painter {
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
 
-        if (settings.debug) console.timeEnd("RectPainter.populateBuffers");
+        if (isDebug) console.timeEnd("RectPainter.populateBuffers");
     }
 
     private populateColorBuffer() {

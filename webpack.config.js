@@ -94,6 +94,7 @@ if (isProd) {
         overlay: true,
         contentBase: "public"
     };
+    config.devtool = "cheap-module-source-map";
 }
 
 module.exports = config;

@@ -1,6 +1,6 @@
 import Size from "../../../core/Size";
 import logger from "../../../tools/logger";
-import settings from "../../../tools/settings";
+import isDebug from "../../../utils/is-debug";
 import configAll from "./config/config-all";
 import Matrix from "./Matrix";
 import Painter from "./painters/Painter";
@@ -143,7 +143,7 @@ let then = 0;
 let prevFps = [];
 let prevHtml = "";
 function showFps() {
-    if (!settings.debug) return;
+    if (!isDebug) return;
     const now = performance.now() * 0.001;
     const deltaTime = now - then;
     then = now;

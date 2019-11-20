@@ -2,6 +2,7 @@ import { easeLinear } from "d3-ease";
 import { interpolateNumber } from "d3-interpolate";
 import { boothStore } from "../../../../store";
 import settings from "../../../../tools/settings";
+import isDebug from "../../../../utils/is-debug";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import animate from "./animate";
@@ -26,14 +27,14 @@ export default function configBooths(context: DrawerContext) {
     for (const func of configFuncs) {
         //const drawer =
         const name = "config-func " + func.name;
-        if (settings.debug) console.time(name);
+        if (isDebug) console.time(name);
         for (const b of booths) {
             // const afterFunc =
             const dr = func(context, b);
             if (dr) lockedDrawers.push(dr);
             // if (afterFunc) after.push(afterFunc);
         }
-        if (settings.debug) console.timeEnd(name);
+        if (isDebug) console.timeEnd(name);
         // if (drawer) ar.push(drawer);
     }
 

@@ -2,6 +2,7 @@ import { validate } from "jsonschema"; // TODO: import and validate conditionall
 import schema from "../data.schema.json";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import isDebug from "../utils/is-debug";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {
@@ -16,7 +17,7 @@ export default function validateData(data: Data) {
     if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
     if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
     data.hideCompanies = !!data.hideCompanies;
-    //if (settings.debug) data.registerUrl = "http://google.com";
+    //if (isDebug) data.registerUrl = "http://google.com";
 
     if (data["free"]) {
         data.noAds = true;
@@ -24,9 +25,9 @@ export default function validateData(data: Data) {
         data.expoFpAd = true;
     }
 
-    // if (settings.debug && EFP_EXPO === "sydneybuildexpo") data.free = true;
+    // if (isDebug && EFP_EXPO === "sydneybuildexpo") data.free = true;
 
-    const validationEnabled = settings.debug || localStorage.getItem("validate") === "1";
+    const validationEnabled = isDebug || localStorage.getItem("validate") === "1";
 
     if (validationEnabled) {
         const res = validate(data, schema);
