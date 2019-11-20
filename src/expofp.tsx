@@ -4,6 +4,9 @@ import logger from "./tools/logger";
 import reportError from "./tools/report-error";
 
 const preloads = [];
+const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
+
+window["__webpack_public_path__"] = baseUrl;
 
 window.addEventListener("error", reportError);
 
@@ -71,8 +74,6 @@ ready(() => {
         new FloorPlan({ element });
     }
 });
-
-const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
 
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
