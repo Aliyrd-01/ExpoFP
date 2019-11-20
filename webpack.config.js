@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
@@ -6,15 +7,18 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const DashboardPlugin = require("webpack-dashboard/plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const git = require("git-rev-sync");
+const dateFormat = require("dateformat");
+const username = require("username");
 // const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
 
-const basePackageValues = {
-    name: "expofp",
-    main: "./expofp.js",
-    license: "UNLICENSED"
-};
+// const basePackageValues = {
+//     name: "expofp",
+//     main: "./expofp.js",
+//     license: "UNLICENSED"
+// };
 
-const versionsPackageFilename = __dirname + "/package.json";
+// const versionsPackageFilename = __dirname + "/package.json";
 
 const isProd = process.env.NODE_ENV === "production";
 if (!isProd) process.env.NODE_ENV = "development";
@@ -88,7 +92,13 @@ const config = {
         }),
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
         new CleanWebpackPlugin(),
-        new CopyPlugin([{ from: "public", to: "" }])
+        new CopyPlugin([{ from: "public", to: "" }]),
+        new webpack.BannerPlugin({
+            banner: `${require("./package.json").version} ${git.long()} ${dateFormat(
+                "ddd mmm dd yyyy HH:MM:ss Z"
+            )} (${username.sync()})`,
+            entryOnly: true
+        })
         // new GeneratePackageJsonPlugin(basePackageValues, versionsPackageFilename)
     ]
 };

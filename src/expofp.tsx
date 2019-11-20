@@ -10,7 +10,7 @@ const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src"
 //window["__webpack_public_path__"] = baseUrl;
 //console.log("__webpack_public_path__", baseUrl);
 
-console.log('pv', '1.0.11-beta.0');
+//console.log('pv', '1.0.11-0');
 
 window.addEventListener("error", reportError);
 
