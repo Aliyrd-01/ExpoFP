@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { uiState } from "../store";
+import browser from "../utils/browser";
 import { useAutorun } from "../utils/mobx";
 import "./OverlayParticles.scss";
-import browser from "../utils/browser";
 
 function OverlayParticles() {
     const [visible, setVisible] = useState(false);
@@ -17,9 +17,8 @@ function OverlayParticles() {
         // console.log("zz",1);
 
         if (canShow && !ParticlesClass) {
-            console.log("zz");
+            // console.log("zz");
             import(/* webpackChunkName: "particlesjs" */ "particlesjs").then(p => {
-                // console.log("zz", p, p.default, p.default.init);
                 setParticlesClass(p.default);
             });
             // waitFor(

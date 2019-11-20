@@ -57,7 +57,7 @@ export class FloorPlan {
 
 ready(() => {
     const floorplanDivs = document.querySelectorAll(".expofp-floorplan") as NodeListOf<HTMLDivElement>;
-    logger.log(floorplanDivs.length);
+    // logger.log(floorplanDivs.length);
     for (const element of floorplanDivs) {
         new FloorPlan({ element });
     }
