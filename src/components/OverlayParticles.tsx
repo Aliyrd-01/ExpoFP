@@ -14,8 +14,18 @@ function OverlayParticles() {
 
     // init ParticlesClass
     useEffect(() => {
+        // console.log("zz",1);
+
         if (canShow && !ParticlesClass) {
-            waitFor(() => window["Particles"], Particles => setParticlesClass(Particles));
+            console.log("zz");
+            import(/* webpackChunkName: "particlesjs" */ "particlesjs").then(p => {
+                // console.log("zz", p, p.default, p.default.init);
+                setParticlesClass(p.default);
+            });
+            // waitFor(
+            //     () => window["Particles"],
+            //     Particles => setParticlesClass(Particles)
+            // );
         }
     }, [canShow, ParticlesClass]);
 
@@ -41,20 +51,24 @@ function OverlayParticles() {
     }, [ParticlesClass, canShow]);
 
     if (!canShow) return null;
-    return <div><canvas className={`overlay-particles__canvas ${visible ? "-visible" : ""}`} /></div>;
+    return (
+        <div>
+            <canvas className={`overlay-particles__canvas ${visible ? "-visible" : ""}`} />
+        </div>
+    );
 }
 
 export default observer(OverlayParticles);
 
-function waitFor(func, callback) {
-    // const val = func();
-    const intervalId = window.setInterval(function() {
-        const val = func();
-        if (val) {
-            window.clearInterval(intervalId);
-            callback(val);
-        } else {
-            console.log("OverlayPartiles no Particles so far");
-        }
-    }, 500);
-}
+// function waitFor(func, callback) {
+//     // const val = func();
+//     const intervalId = window.setInterval(function() {
+//         const val = func();
+//         if (val) {
+//             window.clearInterval(intervalId);
+//             callback(val);
+//         } else {
+//             console.log("OverlayPartiles no Particles so far");
+//         }
+//     }, 500);
+// }

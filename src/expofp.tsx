@@ -43,10 +43,13 @@ export class FloorPlan {
         loadCss("fonts/fonts.css");
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css");
 
+        preloadFontAsDiv();
+
         (async function init() {
             await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
             logger.log("Data loaded", __fp, window["__data"]);
             const renderFp = await import(/* webpackChunkName: "floorplan" */ "./floorplan");
+            document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
             renderFp.default(element);
         })();
     }
@@ -91,4 +94,15 @@ async function loadJs(url: string) {
         scriptTag.onload = resolve;
         document.head.appendChild(scriptTag);
     });
+}
+
+function preloadFontAsDiv() {
+    const div = document.createElement("div");
+    div.setAttribute("style", "pointer-events: none; visibility: hidden");
+    for (const s of [300, 500]) {
+        const span = document.createElement("span");
+        span.setAttribute("style", `font-weight: ${s}; font-family: Oswald`);
+        div.appendChild(span);
+    }
+    document.body.appendChild(div);
 }
