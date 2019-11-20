@@ -70,7 +70,8 @@
     "scripts": {
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",
         "build": "cross-env NODE_ENV=production webpack",
-        "release": "yarn build && np"
+        "prepublishOnly": "yarn build",
+        "release": "np"
     },
     "np": {
         "tests": false
