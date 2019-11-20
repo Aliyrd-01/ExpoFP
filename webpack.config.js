@@ -96,8 +96,8 @@ const config = {
         new webpack.BannerPlugin({
             banner: `${require("./package.json").version} ${git.long()} ${dateFormat(
                 "ddd mmm dd yyyy HH:MM:ss Z"
-            )} (${username.sync()})`,
-            entryOnly: true
+            )} (${username.sync()})`
+            // entryOnly: true
         })
         // new GeneratePackageJsonPlugin(basePackageValues, versionsPackageFilename)
     ]
