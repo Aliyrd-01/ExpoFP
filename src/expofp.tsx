@@ -7,6 +7,7 @@ const preloads = [];
 const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
 
 window["__webpack_public_path__"] = baseUrl;
+console.log("__webpack_public_path__", baseUrl);
 
 window.addEventListener("error", reportError);
 
