@@ -3,6 +3,8 @@ import ready from "document-ready";
 import logger from "./tools/logger";
 import reportError from "./tools/report-error";
 
+const preloads = [];
+
 window.addEventListener("error", reportError);
 
 interface FloorPlanOptions {
@@ -33,10 +35,10 @@ export class FloorPlan {
         const dataUrl = dataUrlBase + "data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
-        preload(dataUrl);
-        preload(fpUrl);
-        preload("floorplan.js");
-        preload("vendors~floorplan.js");
+        preloadJs(dataUrl);
+        preloadJs(fpUrl);
+        preloadJs("floorplan.js");
+        preloadJs("vendors~floorplan.js");
 
         loadCss("vendor/fa/css/fontawesome-all.min.css");
         loadCss("vendor/sanitize-css/sanitize.css");
@@ -44,6 +46,13 @@ export class FloorPlan {
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css");
 
         preloadFontAsDiv();
+
+        preloadFont("vendor/fa/webfonts/fa-regular-400.woff2");
+        preloadFont("vendor/fa/webfonts/fa-solid-900.woff2");
+
+        // preloads.push(`<link rel="preload" href="${goodUrl("floorplan.js")}" as="script">`);
+
+        logger.log("Suggested preloads", preloads.join("\n"));
 
         (async function init() {
             await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
@@ -63,7 +72,7 @@ ready(() => {
     }
 });
 
-const baseUrl = (document.currentScript as HTMLScriptElement).src.replace(/expofp\.js.*$/, "");
+const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
 
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
@@ -77,14 +86,26 @@ function loadCss(url: string) {
     link.rel = "stylesheet";
     link.href = goodUrl(url);
     document.head.appendChild(link);
+    preloads.push(link.outerHTML.replace("stylesheet", "preload").replace(">", ' as="style">'));
 }
 
-function preload(url: string) {
+function preloadJs(url: string) {
     const link = document.createElement("link");
     link.rel = "preload";
     link.href = goodUrl(url);
     link.as = "script";
     document.head.appendChild(link);
+    preloads.push(link.outerHTML);
+}
+
+function preloadFont(url: string) {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.href = goodUrl(url);
+    link.as = "font";
+    link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+    preloads.push(link.outerHTML);
 }
 
 async function loadJs(url: string) {
@@ -93,6 +114,7 @@ async function loadJs(url: string) {
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
         document.head.appendChild(scriptTag);
+        preloads.push(scriptTag.outerHTML);
     });
 }
 
