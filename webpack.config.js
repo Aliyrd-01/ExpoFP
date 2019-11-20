@@ -23,6 +23,12 @@ const config = {
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx"]
     },
+    performance: {
+        maxAssetSize: 500000,
+        assetFilter: function(assetFilename) {
+            return assetFilename.endsWith(".js");
+        }
+    },
     module: {
         rules: [
             {
@@ -73,7 +79,6 @@ const config = {
         }),
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
         new CleanWebpackPlugin(),
-        new DashboardPlugin(),
         new CopyPlugin([{ from: "public", to: "" }])
     ]
 };
@@ -82,7 +87,9 @@ if (isProd) {
     config.optimization = {
         minimizer: [new TerserWebpackPlugin({ extractComments: false })]
     };
-    config.plugins.push(new BundleAnalyzerPlugin({ analyzerMode: "static" }));
+    config.plugins.push(
+        new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false, reportFilename: "../bundle-report.html" })
+    );
 } else {
     // for more information, see https://webpack.js.org/configuration/dev-server
     config.devServer = {
@@ -95,6 +102,7 @@ if (isProd) {
         contentBase: "public"
     };
     config.devtool = "cheap-module-source-map";
+    config.plugins.push(new DashboardPlugin());
 }
 
 module.exports = config;
