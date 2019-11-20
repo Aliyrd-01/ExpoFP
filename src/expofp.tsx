@@ -29,8 +29,6 @@ export class FloorPlan {
 
         const dataUrlBase = `https://${event}.expofp.com/data/`;
 
-        // const dataUrl = dataUrlBase + "data.js";
-
         // lazy load floorplan and instantiate it here
         logger.log("Instantiating ExpoFP floorplan", options.element, event);
 
