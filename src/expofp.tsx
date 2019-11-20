@@ -29,6 +29,8 @@ export class FloorPlan {
         prefetch("floorplan.js");
         prefetch("vendors~floorplan.js");
 
+        loadCss("vendor/fa/css/fontawesome-all.min.css");
+
         (async function init() {
             await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
             logger.log("Data loaded", __fp, window["__data"]);
@@ -46,19 +48,35 @@ ready(() => {
     }
 });
 
+const baseUrl = (document.currentScript as HTMLScriptElement).src.replace(/expofp\.js.*$/, "");
+
+function goodUrl(url: string) {
+    if (url.indexOf("://") === -1) {
+        return baseUrl + url;
+    }
+    return url;
+}
+
+function loadCss(url: string) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = goodUrl(url);
+    document.head.appendChild(link);
+}
+
 function prefetch(url: string) {
     const link = document.createElement("link");
     link.rel = "preload";
-    link.href = url;
+    link.href = goodUrl(url);
     link.as = "script";
-    document.body.appendChild(link);
+    document.head.appendChild(link);
 }
 
 async function loadJs(url: string) {
     return new Promise(function(resolve, reject) {
         const scriptTag = document.createElement("script");
-        scriptTag.src = url;
+        scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
-        document.body.appendChild(scriptTag);
+        document.head.appendChild(scriptTag);
     });
 }

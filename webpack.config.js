@@ -5,6 +5,7 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const DashboardPlugin = require("webpack-dashboard/plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const isProd = process.env.NODE_ENV === "production";
 if (!isProd) process.env.NODE_ENV = "development";
@@ -67,12 +68,13 @@ const config = {
     plugins: [
         new HtmlWebpackPlugin({
             title: "ExpoFP",
-            template: "public/index.html",
+            template: "src/index.html",
             inject: "head"
         }),
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
         new CleanWebpackPlugin(),
-        new DashboardPlugin()
+        new DashboardPlugin(),
+        new CopyPlugin([{ from: "public", to: "" }])
     ]
 };
 
@@ -89,7 +91,8 @@ if (isProd) {
         hot: true,
         compress: true,
         stats: "minimal",
-        overlay: true
+        overlay: true,
+        contentBase: "public"
     };
 }
 
