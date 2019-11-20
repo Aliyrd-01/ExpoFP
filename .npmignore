@@ -3,3 +3,5 @@ public
 tsconfig.json
 .prettierrc
 yarn.lock
+bundle-report.html
+.vscode
