@@ -5,3 +5,4 @@ tsconfig.json
 yarn.lock
 bundle-report.html
 .vscode
+scripts
