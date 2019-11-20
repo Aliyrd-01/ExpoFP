@@ -4733,11 +4733,6 @@ gaze@^1.0.0:
   dependencies:
     globule "^1.0.0"
 
-generate-package-json-webpack-plugin@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/generate-package-json-webpack-plugin/-/generate-package-json-webpack-plugin-1.0.1.tgz#34a2cdb41b1aca5d7ad15577f25a7ad8f85d3c7b"
-  integrity sha512-UYAnqJbxsoRhH9VqP0RbME2RHzG6SdCAoRqPpPeKcWHMmyWW0J1R0/tWjj3HmXvf+KcRy0QksIq2u8ir0YDV7Q==
-
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"

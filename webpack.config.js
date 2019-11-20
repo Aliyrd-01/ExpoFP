@@ -6,11 +6,10 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const DashboardPlugin = require("webpack-dashboard/plugin");
 const CopyPlugin = require("copy-webpack-plugin");
-const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
+// const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
 
 const basePackageValues = {
     name: "expofp",
-    version: "1.0.0",
     main: "./expofp.js",
     license: "UNLICENSED"
 };
@@ -89,8 +88,8 @@ const config = {
         }),
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
         new CleanWebpackPlugin(),
-        new CopyPlugin([{ from: "public", to: "" }]),
-        new GeneratePackageJsonPlugin(basePackageValues, versionsPackageFilename)
+        new CopyPlugin([{ from: "public", to: "" }])
+        // new GeneratePackageJsonPlugin(basePackageValues, versionsPackageFilename)
     ]
 };
 
