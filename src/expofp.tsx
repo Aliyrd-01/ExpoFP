@@ -7,11 +7,6 @@ import "./public-path.js";
 const preloads = [];
 const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
 
-//window["__webpack_public_path__"] = baseUrl;
-//console.log("__webpack_public_path__", baseUrl);
-
-//console.log('pv', '1.0.11-0');
-
 window.addEventListener("error", reportError);
 
 interface FloorPlanOptions {
