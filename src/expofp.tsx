@@ -22,7 +22,7 @@ export class FloorPlan {
             element.getAttribute("event") ||
             element.getAttribute("data-event") ||
             document.location.hostname.endsWith(".expofp.com")
-                ? document.location.hostname.replace(/expofp\.com$/, "")
+                ? document.location.hostname.replace(/\.expofp\.com$/, "")
                 : "eventtechlive2019";
         window["__efpEvent"] = event;
         console.log("aaa1", window["__efpEvent"]);
