@@ -4,6 +4,7 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const DashboardPlugin = require("webpack-dashboard/plugin");
 
 const isProd = process.env.NODE_ENV === "production";
 if (!isProd) process.env.NODE_ENV = "development";
@@ -70,7 +71,8 @@ const config = {
             inject: "head"
         }),
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
-        new CleanWebpackPlugin()
+        new CleanWebpackPlugin(),
+        new DashboardPlugin()
     ]
 };
 
