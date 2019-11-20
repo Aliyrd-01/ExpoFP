@@ -6,7 +6,7 @@ const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
 var cloudfront = new AWS.CloudFront({ apiVersion: "2019-03-26", credentials });
 
 // Purge URL example:
-// https://purge.jsdelivr.net/npm/expofp2@1/expofp.js
+// https://purge.jsdelivr.net/npm/expofp2@1/dist/*
 const publicPath = "https://cdn.jsdelivr.net/npm/expofp2@1/dist/";
 const expos = ["expo", "eventtechlive2019"];
 
