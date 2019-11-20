@@ -71,7 +71,7 @@
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",
         "build": "cross-env NODE_ENV=production webpack",
         "prepublishOnly": "yarn build",
-        "release": "np --any-branch"
+        "np": "np --any-branch"
     },
     "np": {
         "tests": false
