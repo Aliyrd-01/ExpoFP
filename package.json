@@ -1,6 +1,6 @@
 {
     "name": "efp-app",
-    "license": "UNLICENSED",
+    "private": true,
     "version": "1.0.1",
     "dependencies": {
         "@babel/core": "^7.7.2",
