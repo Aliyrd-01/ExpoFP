@@ -50,8 +50,6 @@ export class FloorPlan {
         preloadFont("vendor/fa/webfonts/fa-regular-400.woff2");
         preloadFont("vendor/fa/webfonts/fa-solid-900.woff2");
 
-        // preloads.push(`<link rel="preload" href="${goodUrl("floorplan.js")}" as="script">`);
-
         logger.log("Suggested preloads", preloads.join("\n"));
 
         (async function init() {
