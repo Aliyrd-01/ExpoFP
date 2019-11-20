@@ -6,7 +6,6 @@ export default class Line {
     y1: number;
     y2: number;
 
-
     constructor(x1: number, y1: number, x2: number, y2: number) {
         this.x1 = x1;
         this.y1 = y1;
@@ -40,12 +39,12 @@ export default class Line {
             // bottom
             new Line(r.x2, r.y2, r.x1, r.y2),
             // left
-            new Line(r.x1, r.y2, r.x1, r.y1),
-        ]
+            new Line(r.x1, r.y2, r.x1, r.y1)
+        ];
     }
 
     intersects(r: Rect | Line): boolean {
-        const swap = this.x1 > this.x2 || this.x1 === this.x2 && this.y2 < this.y1;
+        const swap = this.x1 > this.x2 || (this.x1 === this.x2 && this.y2 < this.y1);
         const x1 = swap ? this.x2 : this.x1;
         const x2 = swap ? this.x1 : this.x2;
         const y1 = swap ? this.y2 : this.y1;
@@ -58,7 +57,7 @@ export default class Line {
         // const y2 = Math.min(this.y2, r.y2);
         // return x2 >= x1 && y2 >= y1;
 
-        return (x2 >= r.x1 && x1 <= r.x2) && (y2 >= r.y1 && y1 <= r.y2);
+        return x2 >= r.x1 && x1 <= r.x2 && y2 >= r.y1 && y1 <= r.y2;
     }
 
     // equals(r: Rect) {
