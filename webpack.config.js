@@ -92,9 +92,7 @@ const config = {
             banner: `${require("./package.json").version} ${git.long()} ${dateFormat(
                 "ddd mmm dd yyyy HH:MM:ss Z"
             )} (${username.sync()})`
-            // entryOnly: true
         })
-        // new GeneratePackageJsonPlugin(basePackageValues, versionsPackageFilename)
     ]
 };
 
@@ -106,6 +104,10 @@ if (isProd) {
         new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false, reportFilename: "../bundle-report.html" })
     );
 } else {
+    config.optimization = {
+        minimize: true,
+        minimizer: [new TerserWebpackPlugin({ extractComments: false })]
+    };
     // for more information, see https://webpack.js.org/configuration/dev-server
     config.devServer = {
         port: 8080,
@@ -122,8 +124,8 @@ if (isProd) {
         new DashboardPlugin(),
         new HtmlWebpackPlugin({
             title: "ExpoFP",
-            template: "src/index.html",
-            inject: "head"
+            template: "src/index.html"
+            // inject: "head"
         })
     );
 }

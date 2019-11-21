@@ -152,6 +152,7 @@ export default observer(function Overlay() {
             }
             if (s.currentTop === newTop) return;
             const $el = select(el.current);
+            debugger
             $el.interrupt();
             if (transition) {
                 $el.transition()

@@ -54,7 +54,7 @@ export class FloorPlan {
 
         (async function init() {
             await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
-            logger.log("Data loaded", __fp, window["__data"]);
+            logger.log("Data loaded");
             const renderFp = await import(/* webpackChunkName: "floorplan" */ "./floorplan");
             document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
             renderFp.default(element);
