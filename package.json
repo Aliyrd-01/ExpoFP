@@ -1,7 +1,7 @@
 {
-    "name": "expofp2",
+    "name": "expofp",
     "license": "UNLICENSED",
-    "version": "1.0.14",
+    "version": "0.0.0",
     "main": "./dist/expofp.js",
     "devDependencies": {
         "@babel/core": "^7.7.2",

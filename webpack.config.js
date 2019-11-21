@@ -85,11 +85,6 @@ const config = {
         ]
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            title: "ExpoFP",
-            template: "src/index.html",
-            inject: "head"
-        }),
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
         new CleanWebpackPlugin(),
         new CopyPlugin([{ from: "public", to: "" }]),
@@ -122,7 +117,14 @@ if (isProd) {
         contentBase: "public"
     };
     config.devtool = "cheap-module-source-map";
-    config.plugins.push(new DashboardPlugin());
+    config.plugins.push(
+        new DashboardPlugin(),
+        new HtmlWebpackPlugin({
+            title: "ExpoFP",
+            template: "src/index.html",
+            inject: "head"
+        })
+    );
 }
 
 module.exports = config;
