@@ -7,7 +7,7 @@ var cloudfront = new AWS.CloudFront({ apiVersion: "2019-03-26", credentials });
 
 // Purge URL example:
 // https://purge.jsdelivr.net/npm/expofp2@1/dist/*
-const publicPath = "https://cdn.jsdelivr.net/npm/expofp@0.0.2/dist/";
+const publicPath = "https://cdn.jsdelivr.net/npm/expofp@0.0.3/dist/";
 const expos = ["expo", "eventtechlive2019"];
 
 console.log("Deploy to selected locations", publicPath, expos);
