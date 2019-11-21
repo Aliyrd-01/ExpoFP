@@ -92,22 +92,27 @@ const config = {
             banner: `${require("./package.json").version} ${git.long()} ${dateFormat(
                 "ddd mmm dd yyyy HH:MM:ss Z"
             )} (${username.sync()})`
+        }),
+        new HtmlWebpackPlugin({
+            title: "ExpoFP",
+            template: "src/index.html"
         })
     ]
 };
 
 if (isProd) {
     config.optimization = {
+        // sideEffects: false,
         minimizer: [new TerserWebpackPlugin({ extractComments: false })]
     };
     config.plugins.push(
         new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false, reportFilename: "../bundle-report.html" })
     );
 } else {
-    config.optimization = {
-        minimize: true,
-        minimizer: [new TerserWebpackPlugin({ extractComments: false })]
-    };
+    // config.optimization = {
+    //     minimize: true,
+    //     minimizer: [new TerserWebpackPlugin({ extractComments: false })]
+    // };
     // for more information, see https://webpack.js.org/configuration/dev-server
     config.devServer = {
         port: 8080,
@@ -120,14 +125,7 @@ if (isProd) {
         contentBase: "public"
     };
     config.devtool = "cheap-module-source-map";
-    config.plugins.push(
-        new DashboardPlugin(),
-        new HtmlWebpackPlugin({
-            title: "ExpoFP",
-            template: "src/index.html"
-            // inject: "head"
-        })
-    );
+    config.plugins.push(new DashboardPlugin());
 }
 
 module.exports = config;
