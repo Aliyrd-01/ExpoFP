@@ -1,7 +1,7 @@
 {
     "name": "expofp",
     "license": "UNLICENSED",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "main": "./dist/expofp.js",
     "devDependencies": {
         "@babel/core": "^7.7.2",
@@ -16,6 +16,7 @@
         "@typescript-eslint/eslint-plugin": "^2.7.0",
         "@typescript-eslint/parser": "^2.7.0",
         "array-flat-polyfill": "^1.0.1",
+        "aws-sdk": "^2.575.0",
         "babel-loader": "8.0.6",
         "babel-plugin-named-asset-import": "^0.3.4",
         "babel-preset-react-app": "^9.0.2",
@@ -29,6 +30,7 @@
         "cross-env": "^6.0.3",
         "css-loader": "^3.2.0",
         "d3": "^5.14.1",
+        "dateformat": "^3.0.3",
         "deepmerge": "^4.2.2",
         "document-ready": "^2.0.2",
         "eslint": "^6.6.0",
@@ -40,6 +42,7 @@
         "eslint-plugin-react": "7.16.0",
         "eslint-plugin-react-hooks": "^2.3.0",
         "fork-ts-checker-webpack-plugin": "^3.1.0",
+        "git-rev-sync": "^1.12.0",
         "global": "^4.4.0",
         "history": "^4.10.1",
         "html-webpack-plugin": "^3.2.0",
@@ -61,15 +64,12 @@
         "terser-webpack-plugin": "^2.2.1",
         "twgl.js": "^4.13.1",
         "typescript": "^3.7.2",
+        "username": "^5.1.0",
         "webpack": "^4.41.2",
         "webpack-bundle-analyzer": "^3.6.0",
         "webpack-cli": "^3.3.10",
         "webpack-dashboard": "^3.2.0",
-        "webpack-dev-server": "^3.9.0",
-        "aws-sdk": "^2.575.0",
-        "dateformat": "^3.0.3",
-        "git-rev-sync": "^1.12.0",
-        "username": "^5.1.0"
+        "webpack-dev-server": "^3.9.0"
     },
     "scripts": {
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",
