@@ -111,6 +111,7 @@ if (isProd) {
         port: 8080,
         open: true,
         hot: true,
+        host: "0.0.0.0",
         compress: true,
         stats: "minimal",
         overlay: true,
