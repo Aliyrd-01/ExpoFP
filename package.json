@@ -51,6 +51,7 @@
         "jspdf": "^1.5.3",
         "mobx": "^5.15.0",
         "mobx-react-lite": "^1.5.1",
+        "node-fetch": "^2.6.0",
         "node-sass": "^4.13.0",
         "np": "^5.1.3",
         "particlesjs": "^2.2.3",
@@ -77,6 +78,7 @@
         "build": "cross-env NODE_ENV=production webpack",
         "prepublishOnly": "yarn build",
         "np": "np",
+        "update-deploy-info": "node ./scripts/update-deploy-info.js",
         "deploy-index": "node ./scripts/deploy-index.js",
         "start": "serve dist"
     },

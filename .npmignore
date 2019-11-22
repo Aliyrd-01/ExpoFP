@@ -11,3 +11,4 @@ index.html
 *.ts
 *.tsx
 *.config.js
+*.cache.json

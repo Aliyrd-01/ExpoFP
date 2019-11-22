@@ -26,3 +26,4 @@ yarn-error.log*
 
 bundle-report.html
 bundle-report.prev.html
+*.cache.json
