@@ -17,10 +17,11 @@ async function main() {
     var minDaysUsedMs = new Date().getTime() - minDaysUsed * 1000 * 60 * 60 * 24;
     var minDate = new Date(minDaysUsedMs);
 
+    await require("./update-deploy-info");
     const cacheFile = __dirname + "/deploy-info.cache.json";
-    if (!fs.existsSync(cacheFile)) {
-        require("./update-deploy-info");
-    }
+    // if (!fs.existsSync(cacheFile)) {
+    //     require("./update-deploy-info");
+    // }
     const cache = JSON.parse(fs.readFileSync(cacheFile));
 
     for (const data of cache) {

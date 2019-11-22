@@ -10,7 +10,7 @@ async function main() {
     const cache = fs.existsSync(cacheFile) ? JSON.parse(fs.readFileSync(cacheFile)) : [];
 
     const expos = await getListOfExpos();
-    console.log("All expos", expos);
+    console.log("All expos", expos.join(" "));
 
     for (const expo of expos) {
         if (cache.find(x => x.expo === expo)) continue;
@@ -58,4 +58,4 @@ async function getListOfExpos() {
     return res;
 }
 
-main();
+module.exports = main();
