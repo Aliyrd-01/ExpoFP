@@ -79,7 +79,6 @@
         "prepublishOnly": "yarn build",
         "np": "np",
         "deploy": "node ./scripts/deploy.js",
-        "deploy-index": "node ./scripts/deploy-index.js",
         "start": "serve dist"
     },
     "np": {
