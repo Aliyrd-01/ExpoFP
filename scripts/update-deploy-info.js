@@ -1,25 +1,28 @@
 const AWS = require("aws-sdk");
 const fs = require("fs");
 const fetch = require("node-fetch");
+const async = require("async");
 
 // const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
 // const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
+const cacheFile = __dirname + "/deploy-info.cache.json";
 
 async function main() {
-    const cacheFile = __dirname + "/deploy-info.cache.json";
     const cache = fs.existsSync(cacheFile) ? JSON.parse(fs.readFileSync(cacheFile)) : [];
 
     const expos = await getListOfExpos();
     console.log("All expos", expos.join(" "));
 
-    for (const expo of expos) {
-        if (cache.find(x => x.expo === expo)) continue;
-        // if (cache.length > 20) break;
+    const missing = expos.filter(x => !cache.find(c => c.expo === x));
+    const functions = missing.map(expo => addExpoData.bind(this, cache, expo));
 
-        await addExpoData(cache, expo);
+    await async.parallelLimit(functions, 10);
+    // for (const expo of missing) {
+    //     //if (cache.find(x => x.expo === expo)) continue;
+    //     // if (cache.length > 20) break;
 
-        fs.writeFileSync(cacheFile, JSON.stringify(cache, null, "\t"));
-    }
+    //     await addExpoData(cache, expo);
+    // }
 }
 
 async function addExpoData(cache, expo) {
@@ -37,6 +40,7 @@ async function addExpoData(cache, expo) {
     }
     console.log(expo);
     cache.push(data);
+    fs.writeFileSync(cacheFile, JSON.stringify(cache, null, "\t"));
 }
 
 async function getListOfExpos() {
