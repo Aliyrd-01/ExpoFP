@@ -10,3 +10,4 @@ index.html
 *.html
 *.ts
 *.tsx
+*.config.js
