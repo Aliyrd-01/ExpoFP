@@ -10,7 +10,7 @@ function OverlayParticles() {
     const [ParticlesClass, setParticlesClass] = useState();
     const [canShow, setCanShow] = useState(false);
 
-    useAutorun(() => setCanShow(uiState.overlayPosition === "left" && browser.getEngine() !== "EdgeHTML"));
+    useAutorun(() => setCanShow(uiState.overlayPosition === "left" && browser.getEngine()?.name !== "EdgeHTML"));
 
     // init ParticlesClass
     useEffect(() => {

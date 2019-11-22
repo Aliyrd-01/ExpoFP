@@ -1,6 +1,6 @@
 import deepmerge from "deepmerge";
 
-console.log("aaa", window["__efpEvent"]);
+// console.log("aaa", window["__efpEvent"]);
 let settings = {
     // this is not replaced with const, so calls to settings.EXPO won't get replaced with const
     // this is done for template to work
