@@ -35,8 +35,8 @@ function Booth() {
         get reserveTitle() {
             return "Reserve";
         },
-        get reserveInstructionCombined() {
-            return ((data.reserveInstructions || "") + " " + (this.booth.description || "")).trim();
+        get descriptionCombined() {
+            return this.booth.description || data.reserveInstructions || "";
         }
     }));
 
@@ -83,9 +83,9 @@ function Booth() {
                                     </div>
                                 )}
                             </div>
-                            {s.reserveInstructionCombined && !b.onHold && (
+                            {s.descriptionCombined && !b.onHold && (
                                 <span
-                                    dangerouslySetInnerHTML={{ __html: s.reserveInstructionCombined }}
+                                    dangerouslySetInnerHTML={{ __html: s.descriptionCombined }}
                                     className="booth__reserve-instructions"
                                 />
                             )}

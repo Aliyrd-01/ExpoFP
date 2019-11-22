@@ -100,7 +100,7 @@
                             },
                             "description": {
                                 "type": "string",
-                                "description": "HTML"
+                                "description": "HTML, if set, overrides reserveInstructions"
                             }
                         }
                     },
