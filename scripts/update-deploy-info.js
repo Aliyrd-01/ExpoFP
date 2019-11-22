@@ -15,23 +15,28 @@ async function main() {
     for (const expo of expos) {
         if (cache.find(x => x.expo === expo)) continue;
         // if (cache.length > 20) break;
-        const data = { expo };
-        {
-            const res = await fetch(`https://${expo}.expofp.com/data/fp.svg.js`, { method: "HEAD" });
-            const date = new Date(res.headers.get("last-modified"));
-            data.dataLastModified = date;
-        }
-        {
-            const res = await fetch(`https://${expo}.expofp.com/index.html`);
-            const text = await res.text();
-            const m = text.match(/https:\/\/cdn\.jsdelivr\.net\/npm\/expofp@([^/]+)\/dist\/expofp.js/);
-            data.npmVersion = m ? m[1] : null;
-        }
-        console.log(expo);
-        cache.push(data);
+
+        await addExpoData(cache, expo);
 
         fs.writeFileSync(cacheFile, JSON.stringify(cache, null, "\t"));
     }
+}
+
+async function addExpoData(cache, expo) {
+    const data = { expo };
+    {
+        const res = await fetch(`https://${expo}.expofp.com/data/fp.svg.js`, { method: "HEAD" });
+        const date = new Date(res.headers.get("last-modified"));
+        data.dataLastModified = date;
+    }
+    {
+        const res = await fetch(`https://${expo}.expofp.com/index.html`);
+        const text = await res.text();
+        const m = text.match(/https:\/\/cdn\.jsdelivr\.net\/npm\/expofp@([^/]+)\/dist\/expofp.js/);
+        data.npmVersion = m ? m[1] : null;
+    }
+    console.log(expo);
+    cache.push(data);
 }
 
 async function getListOfExpos() {
