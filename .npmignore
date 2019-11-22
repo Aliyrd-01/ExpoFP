@@ -7,3 +7,6 @@ bundle-report.html
 .vscode
 scripts
 index.html
+*.html
+*.ts
+*.tsx
