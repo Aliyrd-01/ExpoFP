@@ -21,7 +21,6 @@ async function main() {
             const date = new Date(res.headers.get("last-modified"));
             data.dataLastModified = date;
         }
-        //https://cdn.jsdelivr.net/npm/expofp@0.1.6/dist/expofp.js
         {
             const res = await fetch(`https://${expo}.expofp.com/index.html`);
             const text = await res.text();
