@@ -7,7 +7,7 @@ const alpha = "0.1.14"; //require("./package.json").version;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "_template_for_new_event"];
-const alphas = ["expo"];
+const alphas = ["expo", "thinksoft"];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
 const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
@@ -29,7 +29,8 @@ async function main() {
 
         let requiredNpmVersion;
 
-        if (betas.indexOf(data.expo) !== -1) requiredNpmVersion = beta;
+        if (data.expo === "demo") requiredNpmVersion = null;
+        else if (betas.indexOf(data.expo) !== -1) requiredNpmVersion = beta;
         else if (alphas.indexOf(data.expo) !== -1) requiredNpmVersion = alpha;
         else if (data.dataLastModified < minDate) requiredNpmVersion = null;
         else requiredNpmVersion = stable;
