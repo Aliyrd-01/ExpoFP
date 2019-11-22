@@ -3,10 +3,10 @@ const AWS = require("aws-sdk");
 
 const stable = null;
 const beta = "0.1.7";
-const alpha = "0.1.7";//require("./package.json").version;
+const alpha = "0.1.7"; //require("./package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020"];
+const betas = ["eventtechlive2020", "_template_for_new_event"];
 const alphas = ["expo"];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
@@ -27,9 +27,10 @@ async function main() {
         if (data.dataLastModified) data.dataLastModified = new Date(data.dataLastModified);
 
         let requiredNpmVersion;
-        if (data.dataLastModified < minDate) requiredNpmVersion = null;
-        else if (betas.indexOf(data.expo) !== -1) requiredNpmVersion = beta;
+
+        if (betas.indexOf(data.expo) !== -1) requiredNpmVersion = beta;
         else if (alphas.indexOf(data.expo) !== -1) requiredNpmVersion = alpha;
+        else if (data.dataLastModified < minDate) requiredNpmVersion = null;
         else requiredNpmVersion = stable;
 
         data.requiredNpmVersion = requiredNpmVersion;
