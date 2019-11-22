@@ -43,6 +43,7 @@ export abstract class BoothBase {
     readonly pathsWithRect: boolean;
     readonly slug: string;
     readonly error: boolean;
+    readonly description: string;
 
     @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;
@@ -102,6 +103,6 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
 
 export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {
     readonly title: string;
-    readonly description: string;
+    // readonly description: string;
     readonly color: string; // comes from svg or data.js
 }

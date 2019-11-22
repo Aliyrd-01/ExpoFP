@@ -97,6 +97,10 @@
                             },
                             "onHold": {
                                 "type": "boolean"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "HTML"
                             }
                         }
                     },
