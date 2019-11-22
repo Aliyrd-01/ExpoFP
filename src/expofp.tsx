@@ -25,6 +25,7 @@ export class FloorPlan {
                 ? document.location.hostname.replace(/\.expofp\.com$/, "")
                 : "eventtechlive2019";
         window["__efpEvent"] = event;
+        window["__efpBaseUrl"] = baseUrl;
         // console.log("aaa1", window["__efpEvent"]);
 
         const dataUrlBase = `https://${event}.expofp.com/data/`;

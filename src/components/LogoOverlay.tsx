@@ -17,9 +17,10 @@ export default function LogoOverlay() {
         }
     }));
 
+    const bu = window["__efpBaseUrl"];
     return useObserver(() => (
         <a href="https://expofp.com/" target="_blank" className="logo-overlay" style={s.style} rel="noopener noreferrer">
-            <img src="expofp-overlay.png" alt="Made with ExpoFP" />
+            <img src={bu + "expofp-overlay.png"} alt="Made with ExpoFP" />
         </a>
     ));
 }
