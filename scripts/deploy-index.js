@@ -8,7 +8,7 @@ var cloudfront = new AWS.CloudFront({ apiVersion: "2019-03-26", credentials });
 // Purge URL example:
 // https://purge.jsdelivr.net/npm/expofp2@1/dist/*
 const publicPath = "https://cdn.jsdelivr.net/npm/expofp@0.0.4/dist/";
-const expos = null; //["eventtechlive2020"];
+const expos = "_template_for_new_event_"; //["eventtechlive2020"];
 const except = ["demo", "jtrade19", "_template_for_new_event_"];
 
 console.log("Deploy to selected locations", publicPath, expos);
@@ -19,7 +19,6 @@ const template = fs.readFileSync(__dirname + "/template.html", "utf8");
     const taken = expos || (await getGoodExpos());
     console.log("Taken:", taken);
 
-    return;
     const invalidates = [];
     for (const expoName of taken) {
         console.log("Processing", expoName);
@@ -39,7 +38,7 @@ const template = fs.readFileSync(__dirname + "/template.html", "utf8");
         invalidates.push(`/${fileName}`);
     }
 
-    console.log("Doing invalidation...");
+    console.log("Doing invalidation...", invalidates);
 
     const params = {
         DistributionId: "ETXR07B411G19",
