@@ -82,8 +82,7 @@
         "start": "serve dist"
     },
     "np": {
-        "tests": false,
-        "yarn": false
+        "tests": false
     },
     "babel": {
         "presets": [
