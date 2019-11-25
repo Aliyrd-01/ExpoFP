@@ -1,8 +1,9 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
+const async = require("async");
 
-const stable = "0.1.18";
-const beta = "0.1.18";
+const stable = "0.1.19";
+const beta = "0.1.19";
 const alpha = beta; //require("./package.json").version;
 const minDaysUsed = 30;
 
@@ -47,6 +48,8 @@ async function main() {
             });
         }
     }
+
+    await async.parallelLimit(functions, 10);
 
     doInvalidates();
     // console.log(cache);
