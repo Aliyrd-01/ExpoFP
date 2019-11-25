@@ -90,7 +90,7 @@ export default function initBooths(store: RootStore) {
         } else {
             boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
         }
-        booth.description = booth.description || el.getAttribute("data-description"); // || '<b>Or do this</b>';
+        booth.description = booth.description;// || el.getAttribute("data-description"); // || '<b>Or do this</b>';
 
         const transform = rect.getAttribute("transform");
         if (transform) {
