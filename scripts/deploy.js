@@ -1,12 +1,12 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
 
-const stable = "0.1.14";
-const beta = "0.1.14";
-const alpha = "0.1.14"; //require("./package.json").version;
+const stable = "0.1.18";
+const beta = "0.1.18";
+const alpha = beta; //require("./package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "_template_for_new_event"];
+const betas = ["eventtechlive2020", "_template_for_new_event", ""];
 const alphas = ["expo", "thinksoft"];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
@@ -24,6 +24,8 @@ async function main() {
     // }
     const cache = JSON.parse(fs.readFileSync(cacheFile));
 
+    const functions = [];
+
     for (const data of cache) {
         if (data.dataLastModified) data.dataLastModified = new Date(data.dataLastModified);
 
@@ -38,12 +40,14 @@ async function main() {
         data.requiredNpmVersion = requiredNpmVersion;
 
         if (data.requiredNpmVersion && data.requiredNpmVersion !== data.npmVersion) {
-            // do update
-            await updateIndex(data.expo, data.requiredNpmVersion);
-            data.npmVersion = data.requiredNpmVersion;
-            fs.writeFileSync(cacheFile, JSON.stringify(cache, null, "\t"));
+            functions.push(async () => {
+                await updateIndex(data.expo, data.requiredNpmVersion);
+                data.npmVersion = data.requiredNpmVersion;
+                fs.writeFileSync(cacheFile, JSON.stringify(cache, null, "\t"));
+            });
         }
     }
+
     doInvalidates();
     // console.log(cache);
 }
