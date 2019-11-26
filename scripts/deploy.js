@@ -7,7 +7,7 @@ const beta = "0.1.21";
 const alpha = beta; //require("./package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "_template_for_new_event", "eventscase"];
+const betas = ["eventtechlive2020", "_template_for_new_event_", "eventscase"];
 const alphas = ["expo", "thinksoft"];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
@@ -28,7 +28,7 @@ async function main() {
     const functions = [];
 
     for (const data of cache) {
-        if (data.dataLastModified) data.dataLastModified = new Date(data.dataLastModified);
+        if (data.dataLastModified && data.expo !== '_template_for_new_event_') data.dataLastModified = new Date(data.dataLastModified);
 
         let requiredNpmVersion;
 
