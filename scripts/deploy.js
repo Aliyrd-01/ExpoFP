@@ -3,11 +3,11 @@ const AWS = require("aws-sdk");
 const async = require("async");
 
 const stable = "0.1.19";
-const beta = "0.1.19";
+const beta = "0.1.20";
 const alpha = beta; //require("./package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "_template_for_new_event", ""];
+const betas = ["eventtechlive2020", "_template_for_new_event", "eventscase"];
 const alphas = ["expo", "thinksoft"];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });

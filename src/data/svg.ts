@@ -58,7 +58,7 @@ let svgArea: Rect;
 // let svgCenterX = svgWidth / 2;
 // let svgCenterY = svgHeight / 2;
 
-if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020") {
+if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
     const center = [3173, 1987];
     const size = [1024, 873];
     svgArea = Rect.fromCxcywh(center[0], center[1], size[0], size[1]);
