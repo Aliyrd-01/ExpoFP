@@ -7,8 +7,8 @@ const beta = "0.1.21";
 const alpha = beta; //require("./package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "_template_for_new_event_", "eventscase"];
-const alphas = ["expo", "thinksoft"];
+const betas = ["eventtechlive2020", "_template_for_new_event_", "eventscase", "expo"];
+const alphas = ["thinksoft"];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
 const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
@@ -28,7 +28,8 @@ async function main() {
     const functions = [];
 
     for (const data of cache) {
-        if (data.dataLastModified && data.expo !== '_template_for_new_event_') data.dataLastModified = new Date(data.dataLastModified);
+        if (data.dataLastModified && data.expo !== "_template_for_new_event_")
+            data.dataLastModified = new Date(data.dataLastModified);
 
         let requiredNpmVersion;
 
