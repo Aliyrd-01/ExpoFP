@@ -13,6 +13,7 @@ import OverlayContent from "./OverlayContent";
 import isIframe from "../utils/is-iframe";
 
 const logoUrl = baseUrl + data.logo;
+logger.log("Logo url: ", logoUrl);
 
 window.setTimeout(function() {
     const img = new Image();
@@ -98,7 +99,7 @@ function Menu() {
                     )}
                     {!isIframe && !!data.registerUrl && (
                         <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                             Register&nbsp;to&nbsp;Attend&nbsp;
+                            Register&nbsp;to&nbsp;Attend&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
@@ -107,8 +108,9 @@ function Menu() {
                     </a>
                     {!data.hideCompanies && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
-                          
-                            <span>Bookmarks <span>({exhibitorStore.bookmarked.length})</span></span>
+                            <span>
+                                Bookmarks <span>({exhibitorStore.bookmarked.length})</span>
+                            </span>
                             {exhibitorStore.bookmarked.length ? (
                                 <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
                             ) : null}

@@ -21,14 +21,14 @@ export class FloorPlan {
             options.event ||
             element.getAttribute("event") ||
             element.getAttribute("data-event") ||
-            document.location.hostname.endsWith(".expofp.com")
+            (document.location.hostname.endsWith(".expofp.com")
                 ? document.location.hostname.replace(/\.expofp\.com$/, "")
-                : process.env.EFP_DEFAULT_EXPO;
+                : process.env.EFP_DEFAULT_EXPO);
         window["__efpEvent"] = event;
         window["__efpBaseUrl"] = baseUrl;
         // console.log("aaa1", window["__efpEvent"]);
 
-        const dataUrlBase = `https://${event}.expofp.com/data/`;
+        const dataUrlBase = element.getAttribute("data-data-url") || `https://${event}.expofp.com/data/`;
 
         // lazy load floorplan and instantiate it here
         logger.log("Instantiating ExpoFP floorplan", options.element, event);
