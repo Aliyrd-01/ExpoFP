@@ -53,6 +53,10 @@ const config = {
                 exclude: /node_modules/
             },
             {
+                test: /\.txt$/i,
+                use: "raw-loader"
+            },
+            {
                 test: /\.s[ac]ss$/i,
                 use: [
                     {
