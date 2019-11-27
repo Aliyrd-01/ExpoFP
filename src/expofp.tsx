@@ -23,7 +23,7 @@ export class FloorPlan {
             element.getAttribute("data-event") ||
             document.location.hostname.endsWith(".expofp.com")
                 ? document.location.hostname.replace(/\.expofp\.com$/, "")
-                : "expo";
+                : process.env.EFP_DEFAULT_EXPO;
         window["__efpEvent"] = event;
         window["__efpBaseUrl"] = baseUrl;
         // console.log("aaa1", window["__efpEvent"]);

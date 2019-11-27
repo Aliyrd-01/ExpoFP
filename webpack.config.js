@@ -10,6 +10,9 @@ const CopyPlugin = require("copy-webpack-plugin");
 const git = require("git-rev-sync");
 const dateFormat = require("dateformat");
 const username = require("username");
+const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2));
+
+const defaultExpo = process.env.EFP_DEFAULT_EXPO || argv["expo"] || "eventscase";
 // const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
 
 // const basePackageValues = {
@@ -96,6 +99,9 @@ const config = {
         new HtmlWebpackPlugin({
             title: "ExpoFP",
             template: "src/index.html"
+        }),
+        new webpack.DefinePlugin({
+            "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo)
         })
     ]
 };
