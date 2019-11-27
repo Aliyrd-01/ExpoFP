@@ -4,7 +4,7 @@ const async = require("async");
 
 const stable = "0.1.19";
 const beta = "0.1.21";
-const alpha = "0.1.22"; //require("./package.json").version;
+const alpha = "0.1.23"; //require("./package.json").version;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "_template_for_new_event_", "eventscase", "expo"];
