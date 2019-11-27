@@ -140,6 +140,7 @@ export async function generatePdf() {
 }
 
 // USE THIS: https://github.com/MrRio/jsPDF/blob/master/fontconverter/fontconverter.html
+// or same from rawgit website
 
 (function(jsPDFAPI) {
     var font =
