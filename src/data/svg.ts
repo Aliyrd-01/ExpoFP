@@ -53,12 +53,14 @@ const svgHeight = viewBox.baseVal.height as number;
 
 let svgArea: Rect;
 
-// let svgVisibleWidth = svgWidth;
-// let svgVisibleHeight = svgHeight;
-// let svgCenterX = svgWidth / 2;
-// let svgCenterY = svgHeight / 2;
+const viewboxRect = d3
+    .select(svg)
+    .select("rect#VIEWBOX")
+    .node() as SVGRectElement;
 
-if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
+if (viewboxRect) {
+    svgArea = Rect.fromSvgRectElement(viewboxRect);
+} else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
     const center = [3173, 1987];
     const size = [1024, 873];
     svgArea = Rect.fromCxcywh(center[0], center[1], size[0], size[1]);

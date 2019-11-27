@@ -53,7 +53,7 @@ export default function initBooths(store: RootStore) {
         } else {
             // find any rect
             rect = Array.from(el.children).find(x => x.tagName === "rect") as SVGRectElement;
-            pathsWithRect = rect === el.lastElementChild;
+            pathsWithRect = rect === el.firstElementChild;
             if (!rect) continue;
             // // expect rect to be last child
             // rect = el.lastElementChild as SVGRectElement;
@@ -90,7 +90,7 @@ export default function initBooths(store: RootStore) {
         } else {
             boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
         }
-        booth.description = booth.description;// || el.getAttribute("data-description"); // || '<b>Or do this</b>';
+        //booth.description = boothSpec.description;// || el.getAttribute("data-description"); // || '<b>Or do this</b>';
 
         const transform = rect.getAttribute("transform");
         if (transform) {
