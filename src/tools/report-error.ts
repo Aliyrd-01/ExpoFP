@@ -18,7 +18,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
             filename: e.filename,
             lineno: e.lineno,
             colno: e.colno,
-            stack: e.error.stack,
+            stack: e.error?.stack,
             log: logger.messages.join("\n"),
             userAgent: navigator.userAgent,
             language,
