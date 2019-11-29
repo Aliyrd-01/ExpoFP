@@ -2,9 +2,9 @@ const fs = require("fs");
 const AWS = require("aws-sdk");
 const async = require("async");
 
-const stable = "0.1.27";
-const beta = "0.1.27";
-const alpha = "0.1.27"; //require("./package.json").version;
+const stable = "0.1.28";
+const beta = "0.1.28";
+const alpha = "0.1.28"; //require("./package.json").version;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "_template_for_new_event_", "eventscase", "expo"];
