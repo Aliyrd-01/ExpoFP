@@ -60,6 +60,7 @@ const viewboxRect = d3
 
 if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
+    viewboxRect.remove();
 } else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
     const center = [3173, 1987];
     const size = [1024, 873];
