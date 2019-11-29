@@ -63,6 +63,8 @@ function createSlackMessage(data) {
     const blocksData = JSON.parse(JSON.stringify(data));
     delete blocksData.subject;
     delete blocksData.message;
+    delete blocksData.stack;
+    delete blocksData.log;
     const blocks = [];
     blocks.push({
         type: "section",
