@@ -3,15 +3,15 @@ import logger from "./logger";
 let timeoutId: number;
 
 export default function reportError(e: Partial<ErrorEvent>) {
-    logger.error('Handling error', e.error)
+    logger.error("Handling error", e.error);
 
     if (document.location.host.startsWith("localhost")) return;
     if (timeoutId) return;
 
-    timeoutId = window.setTimeout(async function () {
+    timeoutId = window.setTimeout(async function() {
         const ipData = await getIpData();
 
-        const language = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
+        const language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
         const data = {
             host: document.location.host,
             message: e.message,
@@ -29,33 +29,103 @@ export default function reportError(e: Partial<ErrorEvent>) {
 
         logger.log("Sending error report", data);
 
-        const rawResponse = await fetch('https://expofp.com/api/report-error', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+        await Promise.all([sendEmailMessage(data), sendSlackMessage(data)]);
+    }, 2000);
+}
+
+async function sendEmailMessage(data) {
+    const rawResponse = await fetch("https://expofp.com/api/report-error", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    logger.log("Reporter response: ", await rawResponse.text());
+}
+
+async function sendSlackMessage(data) {
+    const slackObj = createSlackMessage(data);
+    const rawResponse = await fetch("https://msg.expofp.com/v1/post-message/" + window.location.hostname, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(slackObj)
+    });
+    logger.log("Slack reporter response: ", await rawResponse.text());
+}
+
+// sendSlackMessage({
+//     subject: "123",
+//     someData: "123",
+//     someData2: "123"
+// });
+
+function createSlackMessage(data) {
+    const blocksData = JSON.parse(JSON.stringify(data));
+    delete blocksData.subject;
+    delete blocksData.message;
+    const blocks = [];
+    blocks.push({
+        type: "section",
+        text: {
+            type: "mrkdwn",
+            text: `:warning:* ${data.subject}*`
+        }
+    });
+    blocks.push({
+        type: "section",
+        text: {
+            type: "plain_text",
+            text: data.message
+        }
+    });
+    blocks.push({
+        type: "divider"
+    });
+
+    for (const key of Object.keys(blocksData)) {
+        blocks.push({
+            type: "section",
+            text: {
+                type: "mrkdwn",
+                text: `*${key}*`
+            }
         });
 
-        logger.log('Reporter response: ', await rawResponse.text());
-    }, 2000);
+        blocks.push({
+            type: "section",
+            text: {
+                type: "plain_text",
+                text: (blocksData[key] || "undefined").toString()
+            }
+        });
+    }
+
+    const res = {
+        channel: "#fp-errors",
+        username: "error-reporter-bot",
+        type: "mrkdwn",
+        text: data.subject,
+        blocks: blocks
+    };
+    return res;
 }
 
 async function getIpData() {
     try {
-        const ipInfoRequest = await fetch('https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg');
+        const ipInfoRequest = await fetch("https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg");
         const ipInfo = await ipInfoRequest.json();
 
-        logger.log('ipify', ipInfo, ipInfoRequest);
+        logger.log("ipify", ipInfo, ipInfoRequest);
 
         if (ipInfoRequest.ok) {
             return {
                 ip: ipInfo.ip,
                 ...ipInfo.location
-            }
+            };
         } else {
             return { ip: ipInfo.messages };
         }
-    }
-    catch (e) {
+    } catch (e) {
         logger.error(e);
         return { ip: e.message };
     }
