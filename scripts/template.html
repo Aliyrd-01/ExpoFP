@@ -10,7 +10,9 @@
             if (window.navigator.userAgent.indexOf("Trident/") !== -1) {
                 alert("Your are using old unsupported Internet Explorer browser.\nPlease upgrade to view this page properly.");
             }
-            window.addEventListener("error", (e) => console.warn("Error message", e.message));
+            window.addEventListener("error", function(e) {
+                console.warn("Error message", e.message);
+            });
         </script>
         <style>
             html {
