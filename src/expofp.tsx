@@ -82,6 +82,7 @@ function loadCss(url: string) {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = goodUrl(url);
+    link.crossOrigin = "anonymous";
     document.head.appendChild(link);
     preloads.push(link.outerHTML.replace("stylesheet", "preload").replace(">", ' as="style">'));
 }
@@ -91,6 +92,7 @@ function preloadJs(url: string) {
     link.rel = "preload";
     link.href = goodUrl(url);
     link.as = "script";
+    link.crossOrigin = "anonymous";
     document.head.appendChild(link);
     preloads.push(link.outerHTML);
 }
@@ -110,6 +112,7 @@ async function loadJs(url: string) {
         const scriptTag = document.createElement("script");
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
+        scriptTag.crossOrigin = "anonymous";
         document.head.appendChild(scriptTag);
         preloads.push(scriptTag.outerHTML);
     });

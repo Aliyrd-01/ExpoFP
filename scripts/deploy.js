@@ -8,7 +8,7 @@ const alpha = "0.1.31"; //require("./package.json").version;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "_template_for_new_event_", "eventscase", "expo"];
-const alphas = ["thinksoft", "expo", "_template_for_new_event_"];
+const alphas = ["thinksoft", "expo"];//anonymous
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
 const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
