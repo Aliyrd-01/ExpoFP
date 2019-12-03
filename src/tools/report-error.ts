@@ -20,7 +20,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
             userAgent: navigator.userAgent,
             language,
             group: "FP",
-            subject: "FP JS error: " + document.location.host,
+            subject: "FP JS error: " + document.location.host + " in " + ipData.country,
             ...ipData
         };
 
@@ -76,30 +76,30 @@ function createSlackMessage(data) {
         type: "section",
         text: {
             type: "plain_text",
-            text: data.message
+            text: data.message + " → " + (data.stack || '').split("\n")[0]
         }
     });
-    blocks.push({
-        type: "divider"
-    });
+    // blocks.push({
+    //     type: "divider"
+    // });
 
-    for (const key of Object.keys(blocksData)) {
-        blocks.push({
-            type: "section",
-            text: {
-                type: "mrkdwn",
-                text: `*${key}*`
-            }
-        });
+    // for (const key of Object.keys(blocksData)) {
+    //     blocks.push({
+    //         type: "section",
+    //         text: {
+    //             type: "mrkdwn",
+    //             text: `*${key}*`
+    //         }
+    //     });
 
-        blocks.push({
-            type: "section",
-            text: {
-                type: "plain_text",
-                text: (blocksData[key] || "undefined").toString()
-            }
-        });
-    }
+    //     blocks.push({
+    //         type: "section",
+    //         text: {
+    //             type: "plain_text",
+    //             text: (blocksData[key] || "undefined").toString()
+    //         }
+    //     });
+    // }
 
     const res = {
         channel: "#fp-errors",

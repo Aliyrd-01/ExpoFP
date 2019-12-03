@@ -92,7 +92,7 @@ function preloadJs(url: string) {
     link.rel = "preload";
     link.href = goodUrl(url);
     link.as = "script";
-    link.crossOrigin = "anonymous";
+    if (process.env.NODE_ENV === "production") link.crossOrigin = "anonymous";
     document.head.appendChild(link);
     preloads.push(link.outerHTML);
 }
@@ -112,7 +112,7 @@ async function loadJs(url: string) {
         const scriptTag = document.createElement("script");
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
-        scriptTag.crossOrigin = "anonymous";
+        if (process.env.NODE_ENV === "production") scriptTag.crossOrigin = "anonymous";
         document.head.appendChild(scriptTag);
         preloads.push(scriptTag.outerHTML);
     });
