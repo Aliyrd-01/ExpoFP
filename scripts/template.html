@@ -10,9 +10,6 @@
             if (window.navigator.userAgent.indexOf("Trident/") !== -1) {
                 alert("Your are using old unsupported Internet Explorer browser.\nPlease upgrade to view this page properly.");
             }
-            window.addEventListener("error", function(e) {
-                console.warn("Error message", e.message);
-            });
         </script>
         <style>
             html {
@@ -105,19 +102,14 @@
                 }
             }
         </style>
-        <link rel="preload" href="https://%EXPO_NAME%.expofp.com/data/data.js" as="script" crossorigin="anonymous" />
-        <link rel="preload" href="https://%EXPO_NAME%.expofp.com/data/fp.svg.js" as="script" crossorigin="anonymous" />
-        <link rel="preload" href="%PUBLIC_PATH%floorplan.js" as="script" crossorigin="anonymous" />
-        <link rel="preload" href="%PUBLIC_PATH%vendors~floorplan.js" as="script" crossorigin="anonymous" />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/css/fontawesome-all.min.css" as="style" crossorigin="anonymous" />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/sanitize-css/sanitize.css" as="style" crossorigin="anonymous" />
-        <link rel="preload" href="%PUBLIC_PATH%fonts/fonts.css" as="style" crossorigin="anonymous" />
-        <link
-            rel="preload"
-            href="%PUBLIC_PATH%vendor/perfect-scrollbar/css/perfect-scrollbar.css"
-            as="style"
-            crossorigin="anonymous"
-        />
+        <link rel="preload" href="https://%EXPO_NAME%.expofp.com/data/data.js" as="script" />
+        <link rel="preload" href="https://%EXPO_NAME%.expofp.com/data/fp.svg.js" as="script" />
+        <link rel="preload" href="%PUBLIC_PATH%floorplan.js" as="script" />
+        <link rel="preload" href="%PUBLIC_PATH%vendors~floorplan.js" as="script" />
+        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/css/fontawesome-all.min.css" as="style" />
+        <link rel="preload" href="%PUBLIC_PATH%vendor/sanitize-css/sanitize.css" as="style" />
+        <link rel="preload" href="%PUBLIC_PATH%fonts/fonts.css" as="style" />
+        <link rel="preload" href="%PUBLIC_PATH%vendor/perfect-scrollbar/css/perfect-scrollbar.css" as="style" />
         <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-regular-400.woff2" as="font" crossorigin="anonymous" />
         <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-solid-900.woff2" as="font" crossorigin="anonymous" />
     </head>
