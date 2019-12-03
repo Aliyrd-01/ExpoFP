@@ -3,9 +3,6 @@ import logger from "./logger";
 let timeoutId: number;
 
 export default function reportError(e: Partial<ErrorEvent>) {
-    logger.error("Handling error", e.error);
-
-    if (document.location.host.startsWith("localhost")) return;
     if (timeoutId) return;
 
     timeoutId = window.setTimeout(async function() {
@@ -27,13 +24,14 @@ export default function reportError(e: Partial<ErrorEvent>) {
             ...ipData
         };
 
-        logger.log("Sending error report", data);
+        logger.info("Sending error report", data);
 
         await Promise.all([sendEmailMessage(data), sendSlackMessage(data)]);
     }, 2000);
 }
 
 async function sendEmailMessage(data) {
+    if (process.env.NODE_ENV !== "production") return;
     const rawResponse = await fetch("https://expofp.com/api/report-error", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,6 +42,7 @@ async function sendEmailMessage(data) {
 }
 
 async function sendSlackMessage(data) {
+    if (process.env.NODE_ENV !== "production") return;
     const slackObj = createSlackMessage(data);
     const rawResponse = await fetch("https://msg.expofp.com/v1/post-message/" + window.location.hostname, {
         method: "POST",
