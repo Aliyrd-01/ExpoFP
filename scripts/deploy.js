@@ -9,6 +9,7 @@ const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "_template_for_new_event_", "eventscase", "expo"];
 const alphas = ["thinksoft", "expo"];//anonymous
+const force = alphas;
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
 const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
@@ -41,7 +42,7 @@ async function main() {
 
         data.requiredNpmVersion = requiredNpmVersion;
 
-        if (data.requiredNpmVersion && data.requiredNpmVersion !== data.npmVersion) {
+        if (data.requiredNpmVersion && (data.requiredNpmVersion !== data.npmVersion || force.indexOf(data.expo) !== -1) ) {
             functions.push(async () => {
                 await updateIndex(data.expo, data.requiredNpmVersion);
                 data.npmVersion = data.requiredNpmVersion;
