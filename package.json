@@ -83,6 +83,7 @@
         "create-package": "node ./scripts/create-package.js",
         "prepublishOnly": "yarn build",
         "np": "np",
+        "npd": "np patch && yarn deploy",
         "deploy": "node ./scripts/deploy.js",
         "start": "serve dist"
     },
