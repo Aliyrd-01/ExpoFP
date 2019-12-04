@@ -39,6 +39,10 @@ export function shuffle<T>(array: T[]) {
     return array;
 }
 
+export function sleep(ms) {
+    return new Promise<void>(resolve => setTimeout(resolve, ms));
+  }
+
 // let isWebGlSupportedVal: boolean;
 // export function isWebGlSupported() {
 //     if (typeof isWebGlSupportedVal === "undefined") {

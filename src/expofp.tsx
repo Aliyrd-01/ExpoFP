@@ -3,6 +3,7 @@ import ready from "document-ready";
 import logger from "./tools/logger";
 import reportError from "./tools/report-error";
 import "./public-path.js";
+import { sleep } from "./utils";
 
 const preloads = [];
 const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
@@ -55,6 +56,11 @@ export class FloorPlan {
 
         (async function init() {
             await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
+            let fpVersion = 0;
+            while (window['__fpPending'] && !window['__fp']){
+                await sleep(2000);
+                await loadJs(fpUrl + `?v=${++fpVersion}`);
+            }
             logger.log("Data loaded");
             const renderFp = await import(/* webpackChunkName: "floorplan" */ "./floorplan");
             document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
