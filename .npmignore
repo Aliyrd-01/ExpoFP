@@ -12,3 +12,5 @@ index.html
 *.tsx
 *.config.js
 *.cache.json
+docs
+_site
