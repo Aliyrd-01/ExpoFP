@@ -62,7 +62,7 @@ const pendingInvalidates = [];
 async function updateIndex(expo, version) {
     console.log("Updating", expo, version);
 
-    const publicPath = `https://cdn.jsdelivr.net/npm/expofp@${version}/dist/`;
+    const publicPath = `https://${expo}.expofp.com/npm/expofp@${version}/dist/`; //https://cdn.jsdelivr.net
     const template = fs.readFileSync(__dirname + "/template.html", "utf8");
     const html = template.replace(/%PUBLIC_PATH%/g, publicPath).replace(/%EXPO_NAME%/g, expo);
     const fileName = `expos/${expo}/live/index.html`;
