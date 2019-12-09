@@ -15,6 +15,7 @@ export default function validateData(data: Data) {
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
     //  if (EFP_EXPO === "ktrade20") data.hideCompanies = true;
     if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
+    if (EFP_EXPO === "miblive2020") data.hideCompanies = true;
     if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
     data.hideCompanies = !!data.hideCompanies;
     //if (isDebug) data.registerUrl = "http://google.com";
