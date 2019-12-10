@@ -1,10 +1,10 @@
 ---
 layout: page
-title: data.js schema
+title: data.js Schema
 permalink: /schema/
-nav_order: 100
+nav_order: 150
 ---
 
-# JSON API Reference
+# data.js Schema
 
- [View data.js JSON schema](data.schema.json){: .btn .fs-5 .mb-4 .mb-md-0 }
+ [View data.js JSON schema](data.schema.json){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 }

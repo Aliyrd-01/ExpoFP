@@ -35,7 +35,7 @@ const config = {
         path: resolve(__dirname, "dist"),
         filename: "[name].js",
         library: "ExpoFP",
-        crossOriginLoading: "anonymous"
+        crossOriginLoading: isProd ? "anonymous" : false
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx"]

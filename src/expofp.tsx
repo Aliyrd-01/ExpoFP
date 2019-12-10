@@ -57,7 +57,7 @@ export class FloorPlan {
         (async function init() {
             await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
-            while (window['__fpPending'] && !window['__fp']){
+            while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);
                 await loadJs(fpUrl + `?v=${++fpVersion}`);
             }
@@ -88,7 +88,7 @@ function loadCss(url: string) {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = goodUrl(url);
-    link.crossOrigin = "anonymous";
+    if (process.env.NODE_ENV === "production") link.crossOrigin = "anonymous";
     document.head.appendChild(link);
     preloads.push(link.outerHTML.replace("stylesheet", "preload").replace(">", ' as="style">'));
 }
@@ -108,7 +108,7 @@ function preloadFont(url: string) {
     link.rel = "preload";
     link.href = goodUrl(url);
     link.as = "font";
-    link.crossOrigin = "anonymous";
+    if (process.env.NODE_ENV === "production") link.crossOrigin = "anonymous";
     document.head.appendChild(link);
     preloads.push(link.outerHTML);
 }
