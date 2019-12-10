@@ -13,6 +13,14 @@ export default function validateData(data: Data) {
     if (!data.categories) data.categories = [];
     if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
+
+    // temporary workaround for invalid data.js
+    if (data.exhibitors.length > 0){
+        for (const booth of data.booths) {
+            delete booth['reserved'];
+        }
+    }
+
     // if (EFP_EXPO === "miblive2020") {
     //     data.booths
     //         .filter((b: any) => b.special !== true)
