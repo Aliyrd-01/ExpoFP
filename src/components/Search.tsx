@@ -2,16 +2,12 @@ import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { FocusEvent, KeyboardEvent, useEffect, useRef } from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { uiState, exhibitorStore } from "../store";
 import { useAutorun } from "../utils/mobx";
 import OverlayContent from "./OverlayContent";
 import List from "./List";
 import "./Search.scss";
 // import logger from "../tools/logger";
-
-const placeHolder = data.hideCompanies
-    ? `Search ${data.boothTerm.toLowerCase()}`
-    : `Search company, ${data.boothTerm.toLowerCase()} or category`;
 
 function Search() {
     const el = useRef<HTMLDivElement>();
@@ -32,6 +28,11 @@ function Search() {
         },
         get backMode() {
             return this.text ? "back" : "menu";
+        },
+        get placeHolder() {
+            return exhibitorStore.exhibitors.length === 0
+                ? `Search ${data.boothTerm.toLowerCase()}`
+                : `Search company, ${data.boothTerm.toLowerCase()} or category`;
         }
     }));
 
@@ -75,14 +76,14 @@ function Search() {
 
     return useObserver(() => {
         const fakeInput = s.hideRealInput ? (
-            <input type="search" placeholder={placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
+            <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
         ) : null;
         const bar = (
             <div className="search__bar" ref={el}>
                 <input
                     type="search"
                     className={classNames({ fixed: s.hideRealInput })}
-                    placeholder={placeHolder}
+                    placeholder={s.placeHolder}
                     value={s.text}
                     onChange={setText}
                     onKeyDown={handleKeydown}

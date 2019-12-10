@@ -36,10 +36,6 @@
         "logo": {
             "type": "string"
         },
-        "hideCompanies": {
-            "type": "boolean",
-            "description": "Show all booths as sold, but completely remove company details"
-        },
         "gtag": {
             "type": "string",
             "description": "Google Analytics or Tag Manager ID"
@@ -67,8 +63,8 @@
                 "anyOf": [
                     {
                         "type": "object",
-                        "description": "Regular booth",
-                        "required": ["id", "name"],
+                        "description": "Regular booth (with exhibitor)",
+                        "required": ["id", "name", "exhibitors"],
                         "additionalProperties": false,
                         "properties": {
                             "id": {
@@ -82,6 +78,41 @@
                                 "items": {
                                     "type": "number"
                                 }
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "description": "Regular booth (without exhibitor, unavailable for reserve because `onHold` or `reserved` is set)",
+                        "required": ["id", "name"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "number"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "onHold": {
+                                "type": "boolean"
+                            },
+                            "reserved": {
+                                "type": "boolean",
+                                "description": "Show booth as reserved (hide company from it)"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "description": "Regular booth (without exhibitor, available for reserve)",
+                        "required": ["id", "name"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "number"
+                            },
+                            "name": {
+                                "type": "string"
                             },
                             "type": {
                                 "type": "string"
@@ -94,9 +125,6 @@
                             },
                             "reserveUrl": {
                                 "type": "string"
-                            },
-                            "onHold": {
-                                "type": "boolean"
                             },
                             "description": {
                                 "type": "string",

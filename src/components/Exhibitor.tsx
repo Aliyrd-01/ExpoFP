@@ -255,4 +255,4 @@ function ExhibitorComponent() {
 }
 
 export default () =>
-    useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor && !data.hideCompanies ? <ExhibitorComponent /> : null}</>);
+    useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);

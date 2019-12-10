@@ -5,7 +5,6 @@ import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
-import data from "../data";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     function handleClick(e: MouseEvent) {
@@ -52,4 +51,4 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
     ));
 };
 
-export default !data.hideCompanies ? ExhibitorRow : "div";
+export default ExhibitorRow;

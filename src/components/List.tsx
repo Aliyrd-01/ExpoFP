@@ -1,6 +1,5 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import data from "../data";
 import { uiState } from "../store";
 import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
@@ -30,7 +29,7 @@ export default function List() {
 
     function mapItem(item: Booth | Category | Exhibitor, index: number) {
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
-        if (item instanceof Exhibitor && !data.hideCompanies) {
+        if (item instanceof Exhibitor) {
             return <ExhibitorRow exhibitor={item} key={`e${item.id}`} className={cls} />;
         } else if (item instanceof BoothBase) {
             return <BoothRow booth={item} key={`b${item.id}`} className={cls} />;

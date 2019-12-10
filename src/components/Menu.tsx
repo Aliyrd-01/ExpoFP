@@ -7,10 +7,10 @@ import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import baseUrl from "../tools/base-data-url";
 import logger from "../tools/logger";
+import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
-import isIframe from "../utils/is-iframe";
 
 const logoUrl = baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -106,7 +106,7 @@ function Menu() {
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         Search
                     </a>
-                    {!data.hideCompanies && (
+                    {exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
                                 Bookmarks <span>({exhibitorStore.bookmarked.length})</span>

@@ -2,7 +2,6 @@ import { action, computed, observable } from "mobx";
 import { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
-import data from "../data";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import browser from "../utils/browser";
@@ -108,7 +107,7 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get wsShown() {
-        return !data.hideCompanies && this.rootStore.exhibitorStore.advertised.length > 0;
+        return this.rootStore.exhibitorStore.advertised.length > 0;
     }
 
     @computed get wsDesktopPosition() {
@@ -170,7 +169,7 @@ export default class UIState {
         );
     }
 
-    @computed get searchItems(): (ListItem)[] {
+    @computed get searchItems(): ListItem[] {
         if (this.list.type !== "search") return [];
         let text = this.list.text.trim().toLowerCase() as string;
         // let words = text.split(/\s+/).filter(x => x);
@@ -181,7 +180,7 @@ export default class UIState {
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
 
-        if (!text) return data.hideCompanies ? boothsArray : exhibitorsArray;
+        if (!text) return exhibitorsArray.length === 0 ? boothsArray : exhibitorsArray;
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
             window.setTimeout(() => {
@@ -189,15 +188,12 @@ export default class UIState {
             }, 1000);
         }
 
-        let items: (ListItem)[] = [];
+        let items: ListItem[] = [];
 
         // rulles here
-        const matchingExhibitors = data.hideCompanies
-            ? []
-            : exhibitorsArray.filter(
-                  e =>
-                      e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find(b => b.name.toLowerCase() === text)
-              );
+        const matchingExhibitors = exhibitorsArray.filter(
+            e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find(b => b.name.toLowerCase() === text)
+        );
         const matchingCategories = categoriesArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         const matchingBooths = boothsArray.filter(
             e =>
@@ -212,7 +208,7 @@ export default class UIState {
         return items;
     }
 
-    @computed get listItems(): (ListItem)[] {
+    @computed get listItems(): ListItem[] {
         switch (this.list.type) {
             case "search":
                 return this.searchItems;

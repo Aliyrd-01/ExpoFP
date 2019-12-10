@@ -48,7 +48,7 @@ function Booth() {
 
             const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
-            if (data.hideCompanies && b.reserved) {
+            if (b.reserved) {
                 content = (
                     <div className="booth__content -reg">
                         <div>Reserved</div>

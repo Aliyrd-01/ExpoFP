@@ -2,8 +2,8 @@ const fs = require("fs");
 const AWS = require("aws-sdk");
 const async = require("async");
 
-const stable = "0.1.47  ";
-const beta = stable;//"0.1.44";
+const stable = "0.1.47";
+const beta = "0.2.0";
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 

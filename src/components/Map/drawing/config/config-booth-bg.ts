@@ -145,12 +145,13 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
             const settingsColors = settings.colors.booths;
+            if (b.name === "H26" || b.name === "H22") debugger;
             if (b.onHold) {
                 defColor = b.holdColor || b.soldColor || settingsColors.default;
-            } else if (b.empty) {
-                defColor = b.availColor || settingsColors.empty;
-            } else {
+            } else if (b.exhibitors.length || b.reserved) {
                 defColor = b.soldColor || settingsColors.default;
+            } else {
+                defColor = b.availColor || settingsColors.empty;
             }
         }
 
