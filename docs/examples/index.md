@@ -1,7 +1,10 @@
 ---
 title: Examples
-nav_order: 20
+nav_order: 0
 has_children: true
+permalink: /
 ---
 
-# Examples
+# Integration Examples
+
+Explore the list of integration examples.

@@ -2,12 +2,13 @@
 layout: default
 title: Home
 nav_order: 0
-permalink: /
+permalink: /homeold
+nav_exclude: true
 has_children: true
 ---
 
 
-# Code
+See 
 {: .no_toc }
 
 ## Table of contents
