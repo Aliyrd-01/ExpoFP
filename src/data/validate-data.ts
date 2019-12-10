@@ -13,15 +13,15 @@ export default function validateData(data: Data) {
     if (!data.categories) data.categories = [];
     if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
-    if (EFP_EXPO === "miblive2020") {
-        data.booths
-            .filter((b: any) => b.special !== true)
-            .forEach((b: any) => {
-                b.reserved = true;
-                delete b.exhibitors;
-            });
-        data.exhibitors = [];
-    }
+    // if (EFP_EXPO === "miblive2020") {
+    //     data.booths
+    //         .filter((b: any) => b.special !== true)
+    //         .forEach((b: any) => {
+    //             b.reserved = true;
+    //             delete b.exhibitors;
+    //         });
+    //     data.exhibitors = [];
+    // }
     //  if (EFP_EXPO === "ktrade20") data.hideCompanies = true;
     // if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
     // if (EFP_EXPO === "miblive2020") data.hideCompanies = true;
