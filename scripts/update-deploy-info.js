@@ -16,7 +16,7 @@ async function main() {
     const missing = expos.filter(x => !cache.find(c => c.expo === x));
     const functions = missing.map(expo => addExpoData.bind(this, cache, expo));
 
-    await async.parallelLimit(functions, 10);
+    await async.parallelLimit(functions, 20);
     // for (const expo of missing) {
     //     //if (cache.find(x => x.expo === expo)) continue;
     //     // if (cache.length > 20) break;

@@ -2,14 +2,14 @@ const fs = require("fs");
 const AWS = require("aws-sdk");
 const async = require("async");
 
-const stable = "0.1.47";
+const stable = "0.2.1";
 const beta = "0.2.1";
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "eventscase", "expo", "confexdev"];
-const alphas = ["thinksoft", "expo"];//anonymous
-const force = alphas;
+const alphas = ["thinksoft", "expo"]; //anonymous
+const force = [...alphas, "kjf2020booths"];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
 const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
@@ -42,7 +42,7 @@ async function main() {
 
         data.requiredNpmVersion = requiredNpmVersion;
 
-        if (data.requiredNpmVersion && (data.requiredNpmVersion !== data.npmVersion || force.indexOf(data.expo) !== -1) ) {
+        if (data.requiredNpmVersion && (data.requiredNpmVersion !== data.npmVersion || force.indexOf(data.expo) !== -1)) {
             functions.push(async () => {
                 await updateIndex(data.expo, data.requiredNpmVersion);
                 data.npmVersion = data.requiredNpmVersion;
@@ -51,7 +51,7 @@ async function main() {
         }
     }
 
-    await async.parallelLimit(functions, 10);
+    await async.parallelLimit(functions, 20);
 
     doInvalidates();
     // console.log(cache);
