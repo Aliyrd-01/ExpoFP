@@ -95,7 +95,10 @@ const config = {
     plugins: [
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
         new CleanWebpackPlugin(),
-        new CopyPlugin([{ from: "public", to: "" }, { from: "src/data.schema.json", to: "../docs" }]),
+        new CopyPlugin([
+            { from: "public", to: "" },
+            { from: "src/data.schema.json", to: "../docs" }
+        ]),
         new webpack.BannerPlugin({
             banner: `${require("./package.json").version} ${git.long()} ${dateFormat(
                 "ddd mmm dd yyyy HH:MM:ss Z"
@@ -133,7 +136,11 @@ if (isProd) {
         compress: true,
         stats: "minimal",
         overlay: true,
-        contentBase: "public"
+        contentBase: "public",
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, HEAD"
+        }
     };
     config.devtool = "cheap-module-source-map";
     config.plugins.push(new DashboardPlugin());
