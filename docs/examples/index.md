@@ -5,6 +5,6 @@ has_children: true
 permalink: /
 ---
 
-# Integration Examples
+# Examples
 
-Explore the list of integration examples.
+Explore the list of integration examples
