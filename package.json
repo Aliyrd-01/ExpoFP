@@ -85,7 +85,8 @@
         "np": "np",
         "npd": "np patch && yarn deploy",
         "deploy": "node ./scripts/deploy.js",
-        "start": "serve dist"
+        "start": "serve dist",
+        "docs": "cd docs && bundle exec jekyll serve"
     },
     "np": {
         "tests": false
