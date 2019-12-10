@@ -3,11 +3,11 @@ const AWS = require("aws-sdk");
 const async = require("async");
 
 const stable = "0.1.47";
-const beta = "0.2.0";
+const beta = "0.2.1";
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "eventscase", "expo"];
+const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "eventscase", "expo", "confexdev"];
 const alphas = ["thinksoft", "expo"];//anonymous
 const force = alphas;
 
