@@ -83,7 +83,7 @@
                     },
                     {
                         "type": "object",
-                        "description": "Regular booth (without exhibitor, unavailable for reserve because `onHold` or `reserved` is set)",
+                        "description": "Regular booth (without exhibitor, unavailable for reserve because `status` is not empty)",
                         "required": ["id", "name"],
                         "additionalProperties": false,
                         "properties": {

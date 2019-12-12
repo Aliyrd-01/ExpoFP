@@ -20,10 +20,10 @@ function Booth() {
             return this.booth instanceof SpecialBooth ? this.booth : null;
         },
         get showReserve() {
-            return this.regular && !this.regular.onHold && (this.regular.price === "0" || !!this.regular.reserveUrl);
+            return this.regular && (this.regular.price === "0" || !!this.regular.reserveUrl);
         },
         get showBuy() {
-            return this.regular && !this.regular.onHold && this.regular.buyUrl && this.regular.price !== "0";
+            return this.regular && this.regular.buyUrl && this.regular.price !== "0";
         },
         get title() {
             if (this.special) {
@@ -48,7 +48,13 @@ function Booth() {
 
             const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
-            if (b.reserved) {
+            if (b.onHold) {
+                content = (
+                    <div className="booth__content -reg">
+                        <div>On Hold</div>
+                    </div>
+                );
+            } else if (b.reserved) {
                 content = (
                     <div className="booth__content -reg">
                         <div>Reserved</div>
@@ -58,24 +64,22 @@ function Booth() {
                 content = (
                     <>
                         <div className="booth__content -reg">
-                            {b.onHold && <div>On Hold</div>}
-
                             <div className="booth__infos">
-                                {b.type && !b.onHold && (
+                                {b.type && (
                                     <div className="booth__info">
                                         <i className="fas fa-cube" />
                                         <div className="booth__info-title">{data.boothTerm} Type</div>
                                         <div className="booth__info-val">{b.type}</div>
                                     </div>
                                 )}
-                                {b.size && !b.onHold && (
+                                {b.size && (
                                     <div className="booth__info">
                                         <i className="fas fa-expand-alt" />
                                         <div className="booth__info-title">Size</div>
                                         <div className="booth__info-val">{b.size}</div>
                                     </div>
                                 )}
-                                {b.price && !b.onHold && b.price !== "0" && (
+                                {b.price && b.price !== "0" && (
                                     <div className="booth__info">
                                         <i className="fas fa-tag" />
                                         <div className="booth__info-title">Price</div>
@@ -83,7 +87,7 @@ function Booth() {
                                     </div>
                                 )}
                             </div>
-                            {s.descriptionCombined && !b.onHold && (
+                            {s.descriptionCombined && (
                                 <span
                                     dangerouslySetInnerHTML={{ __html: s.descriptionCombined }}
                                     className="booth__reserve-instructions"
@@ -105,7 +109,6 @@ function Booth() {
                                 </div>
                             )}
                         </div>
-                        {exhibitors}
                     </>
                 );
             } else {

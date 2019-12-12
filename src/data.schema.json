@@ -93,8 +93,9 @@
                             "name": {
                                 "type": "string"
                             },
-                            "onHold": {
-                                "type": "boolean"
+                            "status": {
+                                "type": "string",
+                                "enum": ["onhold", "reserved"]
                             },
                             "reserved": {
                                 "type": "boolean",

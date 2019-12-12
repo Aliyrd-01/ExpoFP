@@ -35,8 +35,8 @@ interface RawRegularBooth extends RawBoothBase {
     buyUrl: string;
     reserveUrl: string;
     type: string;
-    onHold: boolean;
-    reserved: boolean;
+    // onHold: boolean;
+    // reserved: boolean;
     exhibitors: number[];
 }
 
