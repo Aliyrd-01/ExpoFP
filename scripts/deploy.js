@@ -2,14 +2,14 @@ const fs = require("fs");
 const AWS = require("aws-sdk");
 const async = require("async");
 
-const stable = "0.2.3";
-const beta = "0.2.3";
+const stable = "0.3.0";
+const beta = stable;
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "eventscase", "expo", "confexdev"];
-const alphas = ["thinksoft", "expo"]; //anonymous
-const force = [...alphas, "kjf2020booths"];
+const alphas = ["thinksoft", "expo"]; 
+const force = [...alphas];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
 const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });

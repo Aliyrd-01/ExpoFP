@@ -86,7 +86,7 @@ export default function initBooths(store: RootStore) {
             boothReg.holdColor = el.getAttribute("data-hold-color") || boothReg.holdColor;
             boothReg.size = el.getAttribute("data-size") || boothReg.size;
             boothReg.type = el.getAttribute("data-type") || boothReg.type; //|| el.getAttribute("data-booth-type")
-            boothReg.price = el.getAttribute("data-price") || boothReg.price;
+            boothReg.price = boothReg.price; //el.getAttribute("data-price") || 
         } else {
             boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
         }
