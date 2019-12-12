@@ -83,7 +83,7 @@
                     },
                     {
                         "type": "object",
-                        "description": "Regular booth (without exhibitor, unavailable for reserve because `status` is not empty)",
+                        "description": "Regular booth (without exhibitor, unavailable for reserve because `onHold` or `reserved` is set)",
                         "required": ["id", "name"],
                         "additionalProperties": false,
                         "properties": {
@@ -93,8 +93,9 @@
                             "name": {
                                 "type": "string"
                             },
-                            "onHold": {
-                                "type": "boolean"
+                            "status": {
+                                "type": "string",
+                                "enum": ["onhold", "reserved"]
                             },
                             "reserved": {
                                 "type": "boolean",
