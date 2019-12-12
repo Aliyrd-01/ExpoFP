@@ -1,14 +1,15 @@
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const async = require("async");
+const fetch = require("node-fetch");
 
-const stable = "0.4.0";
+const stable = require("../package.json").version; //"0.4.0";
 const beta = stable;
-const alpha = require("../package.json").version;
+const alpha = stable;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "eventscase", "expo", "confexdev"];
-const alphas = ["thinksoft", "expo"]; 
+const alphas = ["thinksoft", "expo"];
 const force = [...alphas];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
@@ -16,6 +17,7 @@ const s3 = new AWS.S3({ apiVersion: "2006-03-01", credentials });
 const cloudfront = new AWS.CloudFront({ apiVersion: "2019-03-26", credentials });
 
 async function main() {
+    await checkVersions();
     var minDaysUsedMs = new Date().getTime() - minDaysUsed * 1000 * 60 * 60 * 24;
     var minDate = new Date(minDaysUsedMs);
 
@@ -94,6 +96,16 @@ async function doInvalidates() {
     };
     await cloudfront.createInvalidation(params).promise();
     pendingInvalidates.length = 0;
+}
+
+async function checkVersions() {
+    const version = [stable, alpha, beta];
+    for (const v of version) {
+        const url = `https://cdn.jsdelivr.net/npm/expofp@${v}/dist/expofp.js`;
+        const data = await fetch(url, { method: "HEAD" });
+        console.log(url, data.status);
+        if (data.status !== 200) throw new Error("Version doesn't exist in CDN: " + v);
+    }
 }
 
 main();
