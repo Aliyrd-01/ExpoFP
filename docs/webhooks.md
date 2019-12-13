@@ -35,7 +35,7 @@ Example payload:
 ```
 
 
-# exhibitor_upgraded
+<!-- # exhibitor_upgraded
 
 Example payload:
 
@@ -44,4 +44,4 @@ Example payload:
     "type": "exhibitor_upgraded",
     "exhibitorId": 123
 }
-```
+``` -->
