@@ -50,6 +50,8 @@ d3.select(svg)
 const viewBox = (svg as any).viewBox;
 const svgWidth = viewBox.baseVal.width as number;
 const svgHeight = viewBox.baseVal.height as number;
+const svgViewBoxX = viewBox.baseVal.x as number;
+const svgViewBoxY = viewBox.baseVal.y as number;
 
 let svgArea: Rect;
 
@@ -80,7 +82,7 @@ if (viewboxRect) {
     // svgVisibleWidth = size[1] * k;
     svgArea = Rect.fromCxcywh(center[0] * k, center[1] * ky, size[0] * ky, size[1] * k);
 } else {
-    svgArea = Rect.fromXywh(0, 0, svgWidth, svgHeight).withPadding(-svgWidth * 0.05, -svgHeight * 0.05);
+    svgArea = Rect.fromXywh(svgViewBoxX, svgViewBoxY, svgWidth, svgHeight).withPadding(-svgWidth * 0.05, -svgHeight * 0.05);
 }
 
 export { svgArea };
