@@ -7,5 +7,5 @@ permalink: /
 
 # Examples
 
-Explore the list of integration examples.
-View HTML source code to get implementation details.
+<!-- Explore the list of integration examples.
+View HTML source code to get implementation details. -->
