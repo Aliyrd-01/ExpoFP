@@ -1,7 +1,7 @@
 ---
 layout: page
 title: data.js Schema
-permalink: /schema/
+permalink: /schema
 nav_order: 150
 ---
 
