@@ -5,7 +5,7 @@ color_scheme: "dark"
 title: ExpoFP.com Developer
 email: support@expofp.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Interactive floor plans.
+  ExpoFP.com Interactive Floor Plans
 
 logo: https://expofp.com/template/img/site-header-logo.png
 footer_content: © 2020 <a href='http://expofp.com/'>ExpoFP.com</a> • <a href='https://expofp.com/#contact'>Support</a>
