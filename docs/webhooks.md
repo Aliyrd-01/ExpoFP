@@ -16,7 +16,7 @@ nav_order: 120
 
 ---
 
-ExpoFP webhooks is a simple way to get notified when event occurred on ExpoFP.com.
+ExpoFP webhooks are a simple way to get notified when event occurred on ExpoFP.com.
 
 [Configure webhooks](https://expofp.com/client/profile){: .btn  }
 
