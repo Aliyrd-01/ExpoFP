@@ -30,6 +30,7 @@ export class FloorPlan {
         window["__efpBaseUrl"] = baseUrl;
 
         const shadowContainer = document.createElement("div");
+        element.appendChild(shadowContainer);
         const useShadow = !!shadowContainer.attachShadow && localStorage.getItem("noShadowDom") !== "1";
         let container: HTMLDivElement | ShadowRoot;
 
@@ -69,15 +70,16 @@ export class FloorPlan {
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
 
         const fontPromises = [
-            loadFont("Font Awesome 5 Brands", "url(vendor/fa/webfonts/fa-brands-400.woff2)", {
+            // quotes are necessary for Firefox
+            loadFont("'Font Awesome 5 Brands'", "url('vendor/fa/webfonts/fa-brands-400.woff2')", {
                 weight: "normal",
                 style: "normal"
             }),
-            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-light-300.woff2)", { weight: 300, style: "normal" }),
-            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-regular-400.woff2)", { weight: 400, style: "normal" }),
-            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-solid-900.woff2)", { weight: 900, style: "normal" }),
-            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-300.woff2)", { weight: 300 }),
-            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-500.woff2)", { weight: 500 })
+            loadFont("'Font Awesome 5 Pro'", "url('vendor/fa/webfonts/fa-light-300.woff2')", { weight: 300, style: "normal" }),
+            loadFont("'Font Awesome 5 Pro'", "url('vendor/fa/webfonts/fa-regular-400.woff2')", { weight: 400, style: "normal" }),
+            loadFont("'Font Awesome 5 Pro'", "url('vendor/fa/webfonts/fa-solid-900.woff2')", { weight: 900, style: "normal" }),
+            loadFont("Oswald", "url('fonts/oswald-v17-cyrillic_latin-300.woff2')", { weight: 300 }),
+            loadFont("Oswald", "url('fonts/oswald-v17-cyrillic_latin-500.woff2')", { weight: 500 })
         ];
 
         let handledStyleElements = 0;
@@ -102,10 +104,10 @@ export class FloorPlan {
             // TODO: legacy, remove in 1/1/2021
             document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
             // remove all kids (loaders)
-            while (element.lastChild) {
-                element.removeChild(element.lastChild);
+            while (element.firstChild && element.firstChild !== shadowContainer) {
+                element.removeChild(element.firstChild);
             }
-            element.appendChild(shadowContainer);
+
             renderFp.default(fpContainer);
         })();
     }
