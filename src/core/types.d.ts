@@ -4,3 +4,5 @@ type Vec4 = [number, number, number, number];
 type Triangle = [Vec2, Vec2, Vec2];
 
 type MutableRequired<T> = { -readonly [P in keyof T]-?: T[P] }; 
+
+declare module "*.txt";

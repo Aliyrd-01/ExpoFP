@@ -57,7 +57,7 @@
         "node-fetch": "^2.6.0",
         "node-sass": "^4.13.0",
         "np": "^5.1.3",
-        "particlesjs": "^2.2.3",
+        "particlesjs": "git+https://github.com/evgenyt1/particles.js.git",
         "perfect-scrollbar": "^1.4.0",
         "raw-loader": "^4.0.0",
         "react": "^16.12.0",

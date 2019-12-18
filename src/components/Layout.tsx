@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
-import React, { Suspense, useLayoutEffect, useState } from "react";
+import React, { Suspense } from "react";
 import data from "../data";
 import store from "../store";
-import logger from "../tools/logger";
 import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
+import isDebug from "../utils/is-debug";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
 import Header from "./Header";
@@ -17,7 +17,6 @@ import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
-import isDebug from "../utils/is-debug";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -29,34 +28,6 @@ const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug")
 // });
 
 export default observer(function Layout() {
-    // const overlayPosition = "1";
-    // const store = useLocalStore(() => ({
-    //     overlayPosition: 1,
-    //     inc() {
-    //         store.overlayPosition += 1;
-    //     }
-    // }));
-    const [fontsReady, setFontsReady] = useState(false);
-    // const [Demo, setDemo] = useState(null);
-
-    // use useLayoutEffect because it seems that f.ready worked bad otherwise
-    useLayoutEffect(() => {
-        let set = false;
-        function doSet(cause) {
-            if (set) return;
-            set = true;
-            logger.log("fontsReady", cause);
-            setFontsReady(true);
-        }
-
-        window.setTimeout(doSet.bind(window, "timeout"), 5000);
-        window.addEventListener("load", doSet.bind(window, "load"));
-        const f = document["fonts"];
-        // never seen when next line worked, but anyway
-        if (f && f.addEventListener) f.addEventListener("onloadingdone", doSet.bind(window, "onloadingdone"));
-        if (f && f.ready) f.ready.then(doSet.bind(window, "ready"));
-    }, []);
-
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
@@ -70,7 +41,7 @@ export default observer(function Layout() {
                 <Controls />
                 {/*<Areas />*/}
                 <Overlay />
-                {fontsReady && isWebGlSupported && <Map />}
+                {isWebGlSupported && <Map />}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
                 {isDebug ? (
                     <Suspense fallback={null}>

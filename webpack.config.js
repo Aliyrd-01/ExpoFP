@@ -61,28 +61,14 @@ const config = {
                 test: /\.s[ac]ss$/i,
                 use: [
                     {
-                        loader: "style-loader"
-                        // options: {
-                        //   insert: function insertAtTop(element) {
-                        //     // eslint-disable-next-line no-underscore-dangle
-                        //     window._efpAddStyle = element;
-                        //     // var parent = document.querySelector("head");
-                        //     //
-                        //     // var lastInsertedElement =
-                        //     //   window._lastElementInsertedByStyleLoader;
-
-                        //     // if (!lastInsertedElement) {
-                        //     //   parent.insertBefore(element, parent.firstChild);
-                        //     // } else if (lastInsertedElement.nextSibling) {
-                        //     //   parent.insertBefore(element, lastInsertedElement.nextSibling);
-                        //     // } else {
-                        //     //   parent.appendChild(element);
-                        //     // }
-
-                        //     // // eslint-disable-next-line no-underscore-dangle
-                        //     // window._lastElementInsertedByStyleLoader = element;
-                        //   }
-                        // }
+                        loader: "style-loader",
+                        options: {
+                            insert: function insertStyle(element) {
+                                window['__efpStyleElements'].push(element);
+                                var event = new CustomEvent("__efpStyleLoad");
+                                window.dispatchEvent(event);
+                            }
+                        }
                     },
                     // Translates CSS into CommonJS
                     "css-loader",
@@ -129,7 +115,7 @@ if (isProd) {
         port: 8080,
         open: true,
         hot: true,
-        //host: "0.0.0.0",
+        host: "0.0.0.0",
         compress: true,
         stats: "minimal",
         overlay: true,

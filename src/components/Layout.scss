@@ -10,17 +10,10 @@
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
     -webkit-tap-highlight-color: transparent;
 }
-html,
-body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    @media (max-width: 820px) and (min-width: 500px) and (orientation: portrait) {
-        font-size: 13px;
-    }
-}
+
 .layout {
+    box-sizing: border-box;
+
     &__fixed {
         position: fixed;
         top: 0;

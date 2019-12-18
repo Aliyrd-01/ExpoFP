@@ -5,19 +5,20 @@ import reportError from "./tools/report-error";
 import "./public-path.js";
 import { sleep } from "./utils";
 
-const preloads = [];
 const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
 
 window.addEventListener("error", reportError);
+window["__efpStyleElements"] = [];
 
 interface FloorPlanOptions {
     element?: HTMLDivElement;
     event?: string;
+    dataUrl?: string;
 }
 
 export class FloorPlan {
     constructor(options?: FloorPlanOptions) {
-        const element = options.element || document.querySelector("expofp-floorplan");
+        const element = options.element || document.querySelector(".expofp-floorplan");
         const event =
             options.event ||
             element.getAttribute("event") ||
@@ -27,9 +28,29 @@ export class FloorPlan {
                 : process.env.EFP_DEFAULT_EXPO);
         window["__efpEvent"] = event;
         window["__efpBaseUrl"] = baseUrl;
-        // console.log("aaa1", window["__efpEvent"]);
 
-        const dataUrlBase = element.getAttribute("data-data-url") || `https://${event}.expofp.com/data/`;
+        const useShadow = !!element.attachShadow && localStorage.getItem("noShadowDom") !== "1";
+        let container: HTMLDivElement | ShadowRoot;
+
+        if (useShadow) {
+            container = element.attachShadow({ mode: "open" });
+            const containerObj = container as any;
+            const docObj = document as any;
+
+            containerObj.createElement = (...args) => docObj.createElement(...args);
+            containerObj.createElementNS = (...args) => docObj.createElementNS(...args);
+            containerObj.createTextNode = (...args) => docObj.createTextNode(...args);
+        } else {
+            container = element;
+        }
+
+        const fpContainer = document.createElement("div");
+        container.appendChild(fpContainer);
+        if (useShadow) {
+            Object.defineProperty(fpContainer, "ownerDocument", { value: container });
+        }
+
+        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${event}.expofp.com/data/`;
 
         // lazy load floorplan and instantiate it here
         logger.log("Instantiating ExpoFP floorplan", options.element, event);
@@ -42,29 +63,46 @@ export class FloorPlan {
         preloadJs("floorplan.js");
         preloadJs("vendors~floorplan.js");
 
-        loadCss("vendor/fa/css/fontawesome-all.min.css");
-        loadCss("vendor/sanitize-css/sanitize.css");
-        loadCss("fonts/fonts.css");
-        loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css");
+        loadCss("vendor/fa/css/fontawesome-all.min.css", container);
+        loadCss("vendor/sanitize-css/sanitize.css", container);
+        loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
 
-        preloadFontAsDiv();
+        const fontPromises = [
+            loadFont("Font Awesome 5 Brands", "url(vendor/fa/webfonts/fa-brands-400.woff2)", {
+                weight: "normal",
+                style: "normal"
+            }),
+            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-light-300.woff2)", { weight: 300, style: "normal" }),
+            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-regular-400.woff2)", { weight: 400, style: "normal" }),
+            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-solid-900.woff2)", { weight: 900, style: "normal" }),
+            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-300.woff2)", { weight: 300 }),
+            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-500.woff2)", { weight: 500 })
+        ];
 
-        preloadFont("vendor/fa/webfonts/fa-regular-400.woff2");
-        preloadFont("vendor/fa/webfonts/fa-solid-900.woff2");
-
-        logger.log("Suggested preloads", preloads.join("\n"));
+        let handledStyleElements = 0;
+        window.addEventListener("__efpStyleLoad", function(e: Event) {
+            const elements = window["__efpStyleElements"] as HTMLStyleElement[];
+            while (handledStyleElements < elements.length) {
+                const el = elements[handledStyleElements];
+                console.log(el.outerHTML);
+                // const clone = el.cloneNode(true);
+                // debugger
+                container.appendChild(el);
+                handledStyleElements++;
+            }
+        });
 
         (async function init() {
-            await Promise.all([loadJs(dataUrl), loadJs(fpUrl)]);
+            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
-            while (window['__fpPending'] && !window['__fp']){
+            while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);
                 await loadJs(fpUrl + `?v=${++fpVersion}`);
             }
             logger.log("Data loaded");
             const renderFp = await import(/* webpackChunkName: "floorplan" */ "./floorplan");
             document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
-            renderFp.default(element);
+            renderFp.default(fpContainer);
         })();
     }
 }
@@ -84,13 +122,12 @@ function goodUrl(url: string) {
     return url;
 }
 
-function loadCss(url: string) {
+function loadCss(url: string, appendTo: Element | ShadowRoot) {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = goodUrl(url);
     link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-    preloads.push(link.outerHTML.replace("stylesheet", "preload").replace(">", ' as="style">'));
+    appendTo.appendChild(link);
 }
 
 function preloadJs(url: string) {
@@ -100,17 +137,6 @@ function preloadJs(url: string) {
     link.as = "script";
     if (process.env.NODE_ENV === "production") link.crossOrigin = "anonymous";
     document.head.appendChild(link);
-    preloads.push(link.outerHTML);
-}
-
-function preloadFont(url: string) {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.href = goodUrl(url);
-    link.as = "font";
-    link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-    preloads.push(link.outerHTML);
 }
 
 async function loadJs(url: string) {
@@ -118,19 +144,16 @@ async function loadJs(url: string) {
         const scriptTag = document.createElement("script");
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
+        logger.log("Injecting script:", scriptTag.src);
         if (process.env.NODE_ENV === "production") scriptTag.crossOrigin = "anonymous";
         document.head.appendChild(scriptTag);
-        preloads.push(scriptTag.outerHTML);
     });
 }
 
-function preloadFontAsDiv() {
-    const div = document.createElement("div");
-    div.setAttribute("style", "pointer-events: none; visibility: hidden");
-    for (const s of [300, 500]) {
-        const span = document.createElement("span");
-        span.setAttribute("style", `font-weight: ${s}; font-family: Oswald`);
-        div.appendChild(span);
-    }
-    document.body.appendChild(div);
+declare const FontFace: any;
+async function loadFont(f, c, d) {
+    const ff = new FontFace(f, c, d);
+    const documentFonts = document["fonts"] as any;
+    documentFonts.add(ff);
+    return ff.load();
 }

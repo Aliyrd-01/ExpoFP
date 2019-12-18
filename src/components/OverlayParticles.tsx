@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { uiState } from "../store";
 import browser from "../utils/browser";
 import { useAutorun } from "../utils/mobx";
@@ -9,6 +9,7 @@ function OverlayParticles() {
     const [visible, setVisible] = useState(false);
     const [ParticlesClass, setParticlesClass] = useState();
     const [canShow, setCanShow] = useState(false);
+    const canvas = useRef();
 
     useAutorun(() => setCanShow(uiState.overlayPosition === "left" && browser.getEngine()?.name !== "EdgeHTML"));
 
@@ -32,7 +33,7 @@ function OverlayParticles() {
     useEffect(() => {
         if (ParticlesClass && canShow) {
             const particles = ParticlesClass.init({
-                selector: ".overlay-particles__canvas",
+                selector: canvas.current,
                 maxParticles: 50,
                 speed: 0.4,
                 sizeVariations: 4,
@@ -52,7 +53,7 @@ function OverlayParticles() {
     if (!canShow) return null;
     return (
         <div>
-            <canvas className={`overlay-particles__canvas ${visible ? "-visible" : ""}`} />
+            <canvas className={`overlay-particles__canvas ${visible ? "-visible" : ""}`} ref={canvas} />
         </div>
     );
 }

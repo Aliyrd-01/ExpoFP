@@ -71,6 +71,8 @@ export default observer(function Overlay() {
             s.touchDiff = s.startedTouch.clientY - rt.clientY;
             logger.log("TouchMove", s.touchDiff);
             setHeight();
+            // doesn't allow to pass event further to HTML
+            if (uiState.desiredOverlaySize !== "full") e.preventDefault();
         }
 
         function handleTouchEnd(e: TouchEvent) {
@@ -128,8 +130,7 @@ export default observer(function Overlay() {
         }
 
         function setShowAll() {
-            const all =
-                uiState.overlayPosition === "left" || getTopForBottomPosition("full") === el.current.getBoundingClientRect().top;
+            const all = uiState.overlayPosition === "left" || getTopForBottomPosition("full") + "px" === el.current.style.top;
             uiState.overlayShowsAll = all;
         }
 

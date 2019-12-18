@@ -13,7 +13,8 @@ import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 
 const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5));
-logger.log("List n:", n);
+logger.log("List n1:", n);
+
 
 export default function List() {
     const s = useLocalStore(() => ({
