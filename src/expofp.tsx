@@ -29,11 +29,12 @@ export class FloorPlan {
         window["__efpEvent"] = event;
         window["__efpBaseUrl"] = baseUrl;
 
-        const useShadow = !!element.attachShadow && localStorage.getItem("noShadowDom") !== "1";
+        const shadowContainer = document.createElement("div");
+        const useShadow = !!shadowContainer.attachShadow && localStorage.getItem("noShadowDom") !== "1";
         let container: HTMLDivElement | ShadowRoot;
 
         if (useShadow) {
-            container = element.attachShadow({ mode: "open" });
+            container = shadowContainer.attachShadow({ mode: "open" });
             const containerObj = container as any;
             const docObj = document as any;
 
@@ -41,7 +42,7 @@ export class FloorPlan {
             containerObj.createElementNS = (...args) => docObj.createElementNS(...args);
             containerObj.createTextNode = (...args) => docObj.createTextNode(...args);
         } else {
-            container = element;
+            container = shadowContainer;
         }
 
         const fpContainer = document.createElement("div");
@@ -84,9 +85,6 @@ export class FloorPlan {
             const elements = window["__efpStyleElements"] as HTMLStyleElement[];
             while (handledStyleElements < elements.length) {
                 const el = elements[handledStyleElements];
-                console.log(el.outerHTML);
-                // const clone = el.cloneNode(true);
-                // debugger
                 container.appendChild(el);
                 handledStyleElements++;
             }
@@ -101,7 +99,13 @@ export class FloorPlan {
             }
             logger.log("Data loaded");
             const renderFp = await import(/* webpackChunkName: "floorplan" */ "./floorplan");
+            // TODO: legacy, remove in 1/1/2021
             document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
+            // remove all kids (loaders)
+            while (element.lastChild) {
+                element.removeChild(element.lastChild);
+            }
+            element.appendChild(shadowContainer);
             renderFp.default(fpContainer);
         })();
     }
