@@ -2,7 +2,7 @@ import jsPDF from "jspdf";
 import slugify from "slugify";
 import createDrawer from "../components/Map/drawing/Drawer1";
 import data from "../data";
-import { svgSize } from "../data/svg";
+import { svgViewBox } from "../data/svg";
 import debugCanvases from "./debugCanvases";
 import pdfFontBold from "./pdf-open-sans-bold.txt";
 import pdfFontNormal from "./pdf-open-sans-normal.txt";
@@ -15,7 +15,7 @@ export async function generatePdf() {
     const format = "Tabloid";
 
     //const titleFontSizePercentOfWidth = 0.05;
-    const orientation = svgSize.width / svgSize.height > 1.2 ? "landscape" : "portrait";
+    const orientation = svgViewBox.w / svgViewBox.h > 1.2 ? "landscape" : "portrait";
     const doc = new jsPDF({ format, orientation });
     const anyDoc = doc as any; // convenience
     const width = Math.ceil(doc.internal.pageSize.getWidth());
@@ -74,12 +74,12 @@ export async function generatePdf() {
     const blockHeight = heightLeft;
     const blockWidth = width - imgPadding * 2;
 
-    const yRatio = blockHeight / svgSize.height;
-    const xRatio = blockWidth / svgSize.width;
+    const yRatio = blockHeight / svgViewBox.h;
+    const xRatio = blockWidth / svgViewBox.w;
     const ratio = Math.min(yRatio, xRatio);
 
-    const imageWidth = svgSize.width * ratio;
-    const imageHeight = svgSize.height * ratio;
+    const imageWidth = svgViewBox.w * ratio;
+    const imageHeight = svgViewBox.h * ratio;
 
     const cx = width / 2;
     const cy = occupied + imgPadding + blockHeight / 2;
