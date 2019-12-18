@@ -47,8 +47,7 @@ d3.select(svg)
     });
 
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
-let svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
-// svgViewBox = Rect.fromXywh(1390, 1000, 825, 395);
+const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
 let svgArea: Rect;
 
@@ -59,7 +58,6 @@ const viewboxRect = d3
 
 if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
-    // svgArea = Rect.fromXywh(1390, 1000, 824, 395);
     viewboxRect.remove();
 } else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
     const center = [3173, 1987];
