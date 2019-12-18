@@ -91,6 +91,9 @@ function Menu() {
                 backMode="none"
             >
                 <div className="menu__content">
+                    <a href="/#" onClick={handleSearch} className="menu__item">
+                        Search
+                    </a>
                     {!isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             Event&nbsp;Home&nbsp;
@@ -103,9 +106,6 @@ function Menu() {
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    <a href="/#" onClick={handleSearch} className="menu__item">
-                        Search
-                    </a>
                     {exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
