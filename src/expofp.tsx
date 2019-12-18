@@ -36,6 +36,7 @@ export class FloorPlan {
 
         const dataUrl = dataUrlBase + "data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
+        //const fpUrl = dataUrlBase + "svg-history/fp.20191215-144400.svg.js";
 
         preloadJs(dataUrl);
         preloadJs(fpUrl);

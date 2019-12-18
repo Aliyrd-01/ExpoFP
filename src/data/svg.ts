@@ -1,8 +1,7 @@
-import logger from "../tools/logger";
 import * as d3 from "d3-selection";
-import settings from "../tools/settings";
 import Rect from "../core/Rect";
-import Size from "../core/Size";
+import logger from "../tools/logger";
+import settings from "../tools/settings";
 
 function parseSvg(text: string) {
     const parser = new DOMParser();
@@ -47,11 +46,9 @@ d3.select(svg)
         el.style.fill = classFill.get(el.className.baseVal);
     });
 
-const viewBox = (svg as any).viewBox;
-const svgWidth = viewBox.baseVal.width as number;
-const svgHeight = viewBox.baseVal.height as number;
-const svgViewBoxX = viewBox.baseVal.x as number;
-const svgViewBoxY = viewBox.baseVal.y as number;
+const viewBoxBaseVal = (svg as any).viewBox.baseVal;
+let svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
+// svgViewBox = Rect.fromXywh(1390, 1000, 825, 395);
 
 let svgArea: Rect;
 
@@ -62,6 +59,7 @@ const viewboxRect = d3
 
 if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
+    // svgArea = Rect.fromXywh(1390, 1000, 824, 395);
     viewboxRect.remove();
 } else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
     const center = [3173, 1987];
@@ -82,15 +80,17 @@ if (viewboxRect) {
     // svgVisibleWidth = size[1] * k;
     svgArea = Rect.fromCxcywh(center[0] * k, center[1] * ky, size[0] * ky, size[1] * k);
 } else {
-    svgArea = Rect.fromXywh(svgViewBoxX, svgViewBoxY, svgWidth, svgHeight).withPadding(-svgWidth * 0.05, -svgHeight * 0.05);
+    svgArea = svgViewBox.withPadding(-svgViewBox.w * 0.05, -svgViewBox.h * 0.05);
 }
 
-export { svgArea };
-export const svgSize = new Size(svgWidth, svgHeight);
+logger.log("svgArea", svgArea, "svgViewBox", svgViewBox);
+
+export { svgArea, svgViewBox };
+// export const svgSize = new Size(svgViewBox.w, svgViewBox.h);
 // export let svgVisibleWidth;
 
-d3.select(svg).attr("width", svgWidth);
-d3.select(svg).attr("height", svgHeight);
+d3.select(svg).attr("width", svgViewBox.w);
+d3.select(svg).attr("height", svgViewBox.h);
 
 window["__svg"] = svg;
 

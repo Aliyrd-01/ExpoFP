@@ -1,5 +1,5 @@
 import { zoomIdentity, ZoomTransform } from "d3-zoom";
-import { svgArea, svgSize } from "../../data/svg";
+import { svgArea, svgViewBox } from "../../data/svg";
 import { Drawer } from "./drawing/Drawer1";
 // import { MatrixReadonly } from "./drawing/Matrix";
 
@@ -50,12 +50,12 @@ export function getMinZoomLevel(drawer: Drawer) {
     let vRectPx = drawer.getVisibleRect().scale(1 / drawer.pixelRatio);
     const svgPxScale = drawer.getSvgPxUnzoomedScale(); // when transform.k == 1
     // const scale = svgPxMatrix[0];
-    const svgSizePx = svgSize.scale(svgPxScale);
+    const svgViewBoxPx = svgViewBox.scale(svgPxScale);
     const svgAreaPx = svgArea.scale(svgPxScale);
     // if svg area fits
 
-    const ratioX = vRectPx.w / svgSizePx.width;
-    const ratioY = vRectPx.h / svgSizePx.height;
+    const ratioX = vRectPx.w / svgViewBoxPx.w;
+    const ratioY = vRectPx.h / svgViewBoxPx.h;
     const minRatio = Math.max(ratioX, ratioY);
 
     const aratioX = vRectPx.w / svgAreaPx.w;
@@ -69,7 +69,7 @@ export function getMinZoomLevel(drawer: Drawer) {
 }
 
 function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolean) {
-    const limitToSvg = svgArea.w < svgSize.width;
+    const limitToSvg = svgArea.w < svgViewBox.w;
 
     // https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati
     const svgPxScale = drawer.getSvgPxUnzoomedScale();
@@ -77,7 +77,7 @@ function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolea
     // console.log("kk", minK, transform.k);
     const k = limitToSvg ? Math.max(minK, transform.k) : transform.k;
 
-    const svgSizePx = svgSize.scale(svgPxScale);
+    const svgViewBoxPx = svgViewBox.scale(svgPxScale);
 
     // const svgHeightUnscaled = svgHeight * scale;
     // const svgWidthUnscaled = svgWidth * scale;
@@ -88,11 +88,11 @@ function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolea
     const cy = vRect.cy; // / 2;
     const cx = vRect.cx; // screenSize.width / 2;
 
-    const svgHeightScaled = svgSizePx.height * k;
-    const svgWidthScaled = svgSizePx.width * k;
+    const svgHeightScaled = svgViewBoxPx.h * k;
+    const svgWidthScaled = svgViewBoxPx.w * k;
     //const svgCenterYScaled = svgCenterY * k;
-    const svgCenterYShiftScaled = (svgSize.height / 2 - svgArea.cy) * k * svgPxScale;
-    const svgCenterXShiftScaled = (svgSize.width / 2 - svgArea.cx) * k * svgPxScale;
+    const svgCenterYShiftScaled = (svgViewBox.cy - svgArea.cy) * k * svgPxScale;
+    const svgCenterXShiftScaled = (svgViewBox.cx - svgArea.cx) * k * svgPxScale;
 
     // const maxDeltaYBot = vRect
 
@@ -158,6 +158,7 @@ function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolea
     if (y !== transform.y || x !== transform.x || k !== transform.k) {
         return zoomIdentity.translate(x, y).scale(k); // { x, y, k: transform.k };
     }
+
     return transform;
 }
 
