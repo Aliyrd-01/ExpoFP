@@ -77,28 +77,28 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     readonly buyUrl: string;
     readonly reserveUrl: string;
     readonly type: string;
-    readonly onHold: boolean;
+    readonly status: "onhold" | "reserved";
+    readonly price: string;
+    // readonly onHold: boolean;
+    // readonly reserved: boolean;
 
     // populated
     readonly size: string; // comes from svg or data.js
-    readonly price: string; // comes from svg or data.js
     readonly availColor: string; // comes from svg or data.js
     readonly soldColor: string; // comes from svg or data.js
     readonly holdColor: string; // comes from svg or data.js
+    readonly onHold: boolean; // comes from status
+    readonly reserved: boolean; // comes from status
 
     readonly exhibitors: Exhibitor[];
-
-    @computed({ keepAlive: true }) get empty() {
-        return this.exhibitors.length === 0;
-    }
 
     @computed({ keepAlive: true }) get bookmarked() {
         return !!this.exhibitors.find(x => x.bookmarked);
     }
 
-    @computed({ keepAlive: true }) get reserved() {
-        return this.exhibitors.length > 0 || this.onHold;
-    }
+    // @computed({ keepAlive: true }) get reserved() {
+    //     return this.exhibitors.length > 0 || this.onHold;
+    // }
 }
 
 export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {

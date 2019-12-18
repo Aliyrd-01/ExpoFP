@@ -1,7 +1,7 @@
 {
     "name": "expofp",
     "license": "UNLICENSED",
-    "version": "0.1.47",
+    "version": "0.4.2",
     "main": "./dist/expofp.js",
     "devDependencies": {
         "@babel/core": "^7.7.4",
@@ -85,7 +85,8 @@
         "np": "np",
         "npd": "np patch && yarn deploy",
         "deploy": "node ./scripts/deploy.js",
-        "start": "serve dist"
+        "start": "serve dist",
+        "docs": "cd docs && bundle exec jekyll serve"
     },
     "np": {
         "tests": false

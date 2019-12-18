@@ -147,10 +147,10 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
             const settingsColors = settings.colors.booths;
             if (b.onHold) {
                 defColor = b.holdColor || b.soldColor || settingsColors.default;
-            } else if (b.empty) {
-                defColor = b.availColor || settingsColors.empty;
-            } else {
+            } else if (b.exhibitors.length || b.reserved) {
                 defColor = b.soldColor || settingsColors.default;
+            } else {
+                defColor = b.availColor || settingsColors.empty;
             }
         }
 

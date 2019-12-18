@@ -13,3 +13,5 @@ index.html
 *.config.js
 *.cache.json
 _OLD_*
+docs
+_site

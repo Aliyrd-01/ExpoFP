@@ -16,7 +16,7 @@ async function main() {
     const missing = expos.filter(x => !cache.find(c => c.expo === x));
     const functions = missing.map(expo => addExpoData.bind(this, cache, expo));
 
-    await async.parallelLimit(functions, 10);
+    await async.parallelLimit(functions, 20);
     // for (const expo of missing) {
     //     //if (cache.find(x => x.expo === expo)) continue;
     //     // if (cache.length > 20) break;
@@ -28,9 +28,11 @@ async function main() {
 async function addExpoData(cache, expo) {
     const data = { expo };
     {
-        const res = await fetch(`https://${expo}.expofp.com/data/fp.svg.js`, { method: "HEAD" });
-        const date = new Date(res.headers.get("last-modified"));
-        data.dataLastModified = date;
+        const resSvg = await fetch(`https://${expo}.expofp.com/data/fp.svg.js`, { method: "HEAD" });
+        const dateSvg = new Date(resSvg.headers.get("last-modified"));
+        const resData = await fetch(`https://${expo}.expofp.com/data/data.js`, { method: "HEAD" });
+        const dateData = new Date(resData.headers.get("last-modified"));
+        data.dataLastModified = Math.max(dateSvg, dateData);
     }
     {
         const res = await fetch(`https://${expo}.expofp.com/index.html`);

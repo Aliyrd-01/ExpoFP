@@ -15,7 +15,7 @@ interface Data {
     reserveInstructions: string;
     sendLoginLinkUrl: string;
     trackerUrl: string;
-    hideCompanies: boolean;
+    // hideCompanies: boolean;
 }
 
 interface RawCategory {
@@ -35,7 +35,8 @@ interface RawRegularBooth extends RawBoothBase {
     buyUrl: string;
     reserveUrl: string;
     type: string;
-    onHold: boolean;
+    // onHold: boolean;
+    // reserved: boolean;
     exhibitors: number[];
 }
 

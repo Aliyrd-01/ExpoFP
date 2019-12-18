@@ -1,5 +1,4 @@
 import { RegularBooth } from "../../../../store/BoothStore";
-import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -51,17 +50,15 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
     //const br = !b.special ? (b as RegularBooth) : undefined;
     // if (b.special === false) {
 
-    if (data.hideCompanies && b.reserved) {
+    if (b.onHold) {
+        lines.push("On Hold");
+    } else if (b.reserved) {
         lines.push("Reserved");
     } else if (b.exhibitors.length) {
         lines.push(...b.exhibitors.map(e => e.name));
     } else {
-        if (b.onHold) {
-            lines.push("On Hold");
-        } else {
-            if (b.size) lines.push(b.size);
-            if (b.price && b.price !== "0") lines.push(b.price);
-        }
+        if (b.size) lines.push(b.size);
+        if (b.price && b.price !== "0") lines.push(b.price);
     }
 
     // }

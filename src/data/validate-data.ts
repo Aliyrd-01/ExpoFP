@@ -13,11 +13,28 @@ export default function validateData(data: Data) {
     if (!data.categories) data.categories = [];
     if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
+
+    // temporary workaround for invalid data.js
+    if (data.exhibitors.length > 0){
+        for (const booth of data.booths) {
+            delete booth['reserved'];
+        }
+    }
+
+    // if (EFP_EXPO === "miblive2020") {
+    //     data.booths
+    //         .filter((b: any) => b.special !== true)
+    //         .forEach((b: any) => {
+    //             b.reserved = true;
+    //             delete b.exhibitors;
+    //         });
+    //     data.exhibitors = [];
+    // }
     //  if (EFP_EXPO === "ktrade20") data.hideCompanies = true;
-    if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
-    if (EFP_EXPO === "miblive2020") data.hideCompanies = true;
-    if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
-    data.hideCompanies = !!data.hideCompanies;
+    // if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
+    // if (EFP_EXPO === "miblive2020") data.hideCompanies = true;
+    // if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
+    // data.hideCompanies = !!data.hideCompanies;
     //if (isDebug) data.registerUrl = "http://google.com";
 
     if (data["free"]) {
@@ -84,7 +101,7 @@ export default function validateData(data: Data) {
         // booth.special = !!booth.special;
         if (!(booth as RawSpecialBooth).special) {
             const regBooth = booth as RawRegularBooth;
-            if (typeof regBooth.onHold === "undefined") regBooth.onHold = b.isOnHold;
+            if (typeof regBooth['onHold'] === "undefined") regBooth['onHold'] = b.isOnHold;
             if (typeof regBooth.availColor === "undefined") regBooth.availColor = b.availableColor;
             if (typeof regBooth.type === "undefined") regBooth.type = b.boothTypeName;
             regBooth.exhibitors = regBooth.exhibitors || [];
@@ -105,19 +122,5 @@ export default function validateData(data: Data) {
     }
     if (data.noAds) {
         data.exhibitors.forEach(e => (e.advertise = false));
-    }
-    // just this for make sure we won't screw up totally when forget to not hide smthn
-    // everything should work withouth this
-    if (data.hideCompanies) {
-        data.exhibitors = [];
-        data.booths
-            .filter(booth => !(booth as RawSpecialBooth).special)
-            .forEach(b => {
-                const br = b as RawRegularBooth;
-                if (br.exhibitors && br.exhibitors.length) {
-                    br.onHold = true;
-                    br.exhibitors = [];
-                }
-            });
     }
 }

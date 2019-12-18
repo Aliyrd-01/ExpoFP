@@ -1,11 +1,10 @@
 import { action } from "mobx";
-import BoothStore, { Booth, RegularBooth, BoothBase } from "./BoothStore";
+import logger from "../tools/logger";
+import { isWebGlSupported } from "../utils";
+import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
-import logger from "../tools/logger";
-import { isWebGlSupported } from "../utils";
-import data from "../data";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -21,7 +20,7 @@ export default class RootStore {
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
-        if (data.hideCompanies) return;
+        // if (data.hideCompanies) return;
         this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
     }
@@ -95,7 +94,7 @@ export default class RootStore {
             return;
         }
 
-        if (booth instanceof RegularBooth && booth.exhibitors.length === 1 && !data.hideCompanies) {
+        if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
             this.selectExhibitor(booth.exhibitors[0]);
         } else {
             this.selectBooth(booth);
