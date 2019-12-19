@@ -11,6 +11,7 @@ const git = require("git-rev-sync");
 const dateFormat = require("dateformat");
 const username = require("username");
 const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2));
+const FontFaceObserver = require("fontfaceobserver");
 
 const defaultExpo = process.env.EFP_EXPO || argv["expo"] || "eventscase";
 // const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
@@ -42,7 +43,7 @@ const config = {
     },
     performance: {
         maxAssetSize: 500000,
-        assetFilter: function(assetFilename) {
+        assetFilter: function (assetFilename) {
             return assetFilename.endsWith(".js");
         }
     },
@@ -81,10 +82,7 @@ const config = {
     plugins: [
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
         new CleanWebpackPlugin(),
-        new CopyPlugin([
-            { from: "public", to: "" },
-            { from: "src/data.schema.json", to: "../docs" }
-        ]),
+
         new webpack.BannerPlugin({
             banner: `${require("./package.json").version} ${git.long()} ${dateFormat(
                 "ddd mmm dd yyyy HH:MM:ss Z"
@@ -106,7 +104,11 @@ if (isProd) {
         minimizer: [new TerserWebpackPlugin({ extractComments: false })]
     };
     config.plugins.push(
-        new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false, reportFilename: "../bundle-report.html" })
+        new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false, reportFilename: "../bundle-report.html" }),
+        new CopyPlugin([
+            { from: "public", to: "" },
+            { from: "src/data.schema.json", to: "../docs" }
+        ])
     );
 } else {
     // config.optimization = {
@@ -118,7 +120,7 @@ if (isProd) {
         port: 8080,
         open: true,
         hot: true,
-        host: "0.0.0.0",
+        host: process.platform === "win32" ? "localhost" : "0.0.0.0",
         compress: true,
         stats: "minimal",
         overlay: true,

@@ -4,6 +4,8 @@ import logger from "./tools/logger";
 import reportError from "./tools/report-error";
 import "./public-path.js";
 import { sleep } from "./utils";
+import browser from './utils/browser';
+import FontFaceObserver from "fontfaceobserver";
 
 const baseUrl = (document.currentScript as HTMLScriptElement).getAttribute("src").replace(/expofp\.js.*$/, "");
 
@@ -31,7 +33,7 @@ export class FloorPlan {
 
         const shadowContainer = document.createElement("div");
         element.appendChild(shadowContainer);
-        const useShadow = !!shadowContainer.attachShadow && localStorage.getItem("noShadowDom") !== "1";
+        const useShadow = false;//!!shadowContainer.attachShadow && localStorage.getItem("noShadowDom") !== "1";
         let container: HTMLDivElement | ShadowRoot;
 
         if (useShadow) {
@@ -72,19 +74,19 @@ export class FloorPlan {
 
         const fontPromises = [
             // quotes are necessary for Firefox
-            loadFont("'Font Awesome 5 Brands'", "url('vendor/fa/webfonts/fa-brands-400.woff2')", {
+            loadFont("Font Awesome 5 Brands", "url(vendor/fa/webfonts/fa-brands-400.woff2)", {
                 weight: "normal",
                 style: "normal"
             }),
-            loadFont("'Font Awesome 5 Pro'", "url('vendor/fa/webfonts/fa-light-300.woff2')", { weight: 300, style: "normal" }),
-            loadFont("'Font Awesome 5 Pro'", "url('vendor/fa/webfonts/fa-regular-400.woff2')", { weight: 400, style: "normal" }),
-            loadFont("'Font Awesome 5 Pro'", "url('vendor/fa/webfonts/fa-solid-900.woff2')", { weight: 900, style: "normal" }),
-            loadFont("Oswald", "url('fonts/oswald-v17-cyrillic_latin-300.woff2')", { weight: 300 }),
-            loadFont("Oswald", "url('fonts/oswald-v17-cyrillic_latin-500.woff2')", { weight: 500 })
+            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-light-300.woff2)", { weight: 300, style: "normal" }),
+            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-regular-400.woff2)", { weight: 400, style: "normal" }),
+            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-solid-900.woff2)", { weight: 900, style: "normal" }),
+            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-300.woff2)", { weight: 300 }),
+            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-500.woff2)", { weight: 500 })
         ];
 
         let handledStyleElements = 0;
-        window.addEventListener("__efpStyleLoad", function(e: Event) {
+        window.addEventListener("__efpStyleLoad", function (e: Event) {
             const elements = window["__efpStyleElements"] as HTMLStyleElement[];
             while (handledStyleElements < elements.length) {
                 const el = elements[handledStyleElements];
@@ -94,7 +96,7 @@ export class FloorPlan {
         });
 
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(fpUrl)]);
+            await Promise.all([ loadJs(dataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);
@@ -147,7 +149,7 @@ function preloadJs(url: string) {
 }
 
 async function loadJs(url: string) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         const scriptTag = document.createElement("script");
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
@@ -158,9 +160,28 @@ async function loadJs(url: string) {
 }
 
 declare const FontFace: any;
-async function loadFont(f, c, d) {
+async function loadFont(f: string, c, d) {
+    if (f.indexOf(" ") !== -1 && browser.getEngine()?.name === "Gecko") {
+        f = `'${f}'`;
+    }
+    injectFontFace(f, c);
+    const ffo = new FontFaceObserver(f,d);
+    return ffo.load();
     const ff = new FontFace(f, c, d);
     const documentFonts = document["fonts"] as any;
     documentFonts.add(ff);
+    console.log('zzz', ff.family, browser.getEngine())
     return ff.load();
+}
+
+function injectFontFace(f, u){
+    var newStyle = document.createElement('style');
+newStyle.appendChild(document.createTextNode("\
+@font-face {\
+    font-family: " + f + ";\
+    src: " + u + " format('woff2');\
+}\
+"));
+
+document.head.appendChild(newStyle);
 }
