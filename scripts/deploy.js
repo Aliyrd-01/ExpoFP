@@ -4,12 +4,12 @@ const async = require("async");
 const fetch = require("node-fetch");
 
 const stable = "0.4.3";
-const beta = stable;//require("../package.json").version;
-const alpha = stable;//require("../package.json").version;
+const beta = stable; //require("../package.json").version;
+const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "eventscase", "expo", "confexdev"];
-const alphas = ["thinksoft", "expo"];
+const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "expo"];
+const alphas = ["thinksoft", "expo", "eventscase", "confexdev"];
 const force = [...alphas];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
