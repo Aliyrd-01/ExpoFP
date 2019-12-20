@@ -1,8 +1,8 @@
 import "array-flat-polyfill";
 import ready from "document-ready";
+import "./public-path.js";
 import logger from "./tools/logger";
 import reportError from "./tools/report-error";
-import "./public-path.js";
 import { sleep } from "./utils";
 import browser from "./utils/browser";
 
@@ -14,21 +14,34 @@ window["__efpStyleElements"] = [];
 
 interface FloorPlanOptions {
     element?: HTMLDivElement;
-    event?: string;
+    eventId?: string;
     dataUrl?: string;
+    noOverlay?: boolean;
+    onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
+}
+
+interface FloorPlanBooth {
+    id: number;
+    name: string;
+}
+
+interface FloorPlanBoothClickEvent {
+    target: FloorPlanBooth;
 }
 
 export class FloorPlan {
     constructor(options?: FloorPlanOptions) {
-        const element = options.element || document.querySelector(".expofp-floorplan");
-        const event =
-            options.event ||
-            element.getAttribute("event") ||
-            element.getAttribute("data-event") ||
+        const element = options.element;
+        if (element["__expofp"]) throw new Error("Element already in use");
+        element["__expofp"] = this;
+        const eventId =
+            options.eventId ||
+            element.getAttribute("data-event-id") ||
+            element.getAttribute("data-event") || // legacy remove 2020-12-12
             (document.location.hostname.endsWith(".expofp.com")
                 ? document.location.hostname.replace(/\.expofp\.com$/, "")
                 : process.env.EFP_DEFAULT_EXPO);
-        window["__efpEvent"] = event;
+        window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
 
         const shadowContainer = document.createElement("div");
@@ -53,14 +66,13 @@ export class FloorPlan {
             Object.defineProperty(fpContainer, "ownerDocument", { value: container });
         }
 
-        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${event}.expofp.com/data/`;
+        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${eventId}.expofp.com/data/`;
 
         // lazy load floorplan and instantiate it here
-        logger.log("Instantiating ExpoFP floorplan", options.element, event);
+        logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
-        //const fpUrl = dataUrlBase + "svg-history/fp.20191215-144400.svg.js";
 
         preloadJs(dataUrl);
         preloadJs(fpUrl);
@@ -72,15 +84,12 @@ export class FloorPlan {
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
         // loadCss("fonts/fonts.css", container);
 
-        loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2", {
-            weight: "normal",
-            style: "normal"
-        });
+        loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
 
         const fontPromises = [
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300, style: "normal" }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400, style: "normal" }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900, style: "normal" }),
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
         ];
@@ -118,7 +127,6 @@ export class FloorPlan {
 
 ready(() => {
     const floorplanDivs = document.querySelectorAll(".expofp-floorplan") as NodeListOf<HTMLDivElement>;
-    // logger.log(floorplanDivs.length);
     for (const element of floorplanDivs) {
         new FloorPlan({ element });
     }
@@ -160,8 +168,9 @@ async function loadJs(url: string) {
 }
 
 declare const FontFace: any;
-async function loadFont(family: string, url: string, d) {
+async function loadFont(family: string, url: string, d?) {
     url = goodUrl(url);
+    d = { style: "normal", weight: "normal", ...(d || {}) };
     const src = `url("${url}")`;
     if (!window["FontFace"]) {
         if (!family.startsWith("Font Awesome")) {
@@ -183,8 +192,7 @@ function injectFontFace(fontFamily: string, src: string, d) {
     const newStyle = document.createElement("style");
     newStyle.appendChild(
         document.createTextNode(
-            `@font-face { font-family: ${fontFamily}; font-weight: ${d.weight}; font-style: ${d.style ||
-                "normal"}; src: ${src} format('woff2'); }`
+            `@font-face { font-family: ${fontFamily}; font-weight: ${d.weight}; font-style: ${d.style}; src: ${src} format('woff2'); }`
         )
     );
     document.head.appendChild(newStyle);
