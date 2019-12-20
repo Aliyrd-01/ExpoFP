@@ -3,9 +3,9 @@ const AWS = require("aws-sdk");
 const async = require("async");
 const fetch = require("node-fetch");
 
-const stable = require("../package.json").version; //"0.4.0";
-const beta = stable;
-const alpha = stable;
+const stable = "0.4.3";
+const beta = require("../package.json").version;
+const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
 const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "eventscase", "expo", "confexdev"];
