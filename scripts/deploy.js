@@ -99,7 +99,7 @@ async function doInvalidates() {
 }
 
 async function checkVersions() {
-    const version = [stable, alpha, beta];
+    const version = [stable, beta, alpha];
     for (const v of version) {
         const url = `https://cdn.jsdelivr.net/npm/expofp@${v}/dist/expofp.js`;
         const data = await fetch(url, { method: "HEAD" });
