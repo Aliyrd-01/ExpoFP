@@ -72,17 +72,17 @@ export class FloorPlan {
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
         // loadCss("fonts/fonts.css", container);
 
-        loadFont("Font Awesome 5 Brands", "url(vendor/fa/webfonts/fa-brands-400.woff2)", {
+        loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2", {
             weight: "normal",
             style: "normal"
         });
 
         const fontPromises = [
-            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-light-300.woff2)", { weight: 300, style: "normal" }),
-            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-regular-400.woff2)", { weight: 400, style: "normal" }),
-            loadFont("Font Awesome 5 Pro", "url(vendor/fa/webfonts/fa-solid-900.woff2)", { weight: 900, style: "normal" }),
-            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-300.woff2)", { weight: 300 }),
-            loadFont("Oswald", "url(fonts/oswald-v17-cyrillic_latin-500.woff2)", { weight: 500 })
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300, style: "normal" }),
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400, style: "normal" }),
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900, style: "normal" }),
+            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
+            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
         ];
 
         let handledStyleElements = 0;
@@ -160,29 +160,31 @@ async function loadJs(url: string) {
 }
 
 declare const FontFace: any;
-async function loadFont(f: string, c, d) {
+async function loadFont(family: string, url: string, d) {
+    url = goodUrl(url);
+    const src = `url("${url}")`;
     if (!window["FontFace"]) {
-        if (!f.startsWith("Font Awesome")) {
-            injectFontFace(f, c, d);
+        if (!family.startsWith("Font Awesome")) {
+            injectFontFace(family, src, d);
         }
         return Promise.resolve();
     }
 
-    if (f.indexOf(" ") !== -1 && browser.getEngine()?.name === "Gecko") {
-        f = `'${f}'`;
+    if (family.indexOf(" ") !== -1 && browser.getEngine()?.name === "Gecko") {
+        family = `'${family}'`;
     }
-    const ff = new FontFace(f, c, d);
+    const ff = new FontFace(family, src, d);
     const documentFonts = document["fonts"] as any;
     documentFonts.add(ff);
     return ff.load();
 }
 
-function injectFontFace(f, c, d) {
+function injectFontFace(fontFamily: string, src: string, d) {
     const newStyle = document.createElement("style");
     newStyle.appendChild(
         document.createTextNode(
-            `@font-face { font-family: ${f}; font-weight: ${d.weight}; font-style: ${d.style ||
-                "normal"}; src: ${c} format('woff2'); }`
+            `@font-face { font-family: ${fontFamily}; font-weight: ${d.weight}; font-style: ${d.style ||
+                "normal"}; src: ${src} format('woff2'); }`
         )
     );
     document.head.appendChild(newStyle);
