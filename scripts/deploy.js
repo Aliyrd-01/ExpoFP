@@ -4,7 +4,7 @@ const async = require("async");
 const fetch = require("node-fetch");
 
 const stable = "0.4.3";
-const beta = stable; //require("../package.json").version;
+const beta = require("../package.json").version;
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
