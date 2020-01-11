@@ -11,7 +11,7 @@ logo: https://expofp.com/template/img/site-header-logo.png
 footer_content: © 2020 <a href='http://expofp.com/'>ExpoFP.com</a> • <a href='https://expofp.com/#contact'>Support</a>
 
 runtime_url:
-  production: https://cdn.jsdelivr.net/npm/expofp/dist/expofp.js
+  production: https://cdn.jsdelivr.net/npm/expofp@2.0.0-4/dist/expofp.js
   development: http://localhost:8080/expofp.js
 
 # aux_links:
