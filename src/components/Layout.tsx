@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React, { Suspense } from "react";
 import data from "../data";
-import store from "../store";
+import store, { uiState } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
 import isDebug from "../utils/is-debug";
@@ -40,7 +40,7 @@ export default observer(function Layout() {
                 <Ws />
                 <Controls />
                 {/*<Areas />*/}
-                <Overlay />
+                {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
                 {isDebug ? (

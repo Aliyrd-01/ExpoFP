@@ -1,8 +1,13 @@
-import { configure, autorun } from 'mobx';
-import RootStore from './RootStore';
-import init from './init';
+import { configure } from "mobx";
+// import FloorPlanReady from "../floorplan.ready";
+import init from "./init";
+import RootStore from "./RootStore";
 
 configure({ computedRequiresReaction: true });
+
+// export default function createStore(fp: FloorPlanReady) {
+//     window["__store"] = store;
+// }
 
 const store = new RootStore();
 init(store);
@@ -21,7 +26,7 @@ window["__store"] = store;
 
 // extendGlobal({ store: store1 });
 
-autorun(()=>{
-    // console.log('debug store', uiState.previewExhibitor);
-    // console.log('aaaa', uiState.listItems.length, uiState.listItems)
-})
+// autorun(()=>{
+//     // console.log('debug store', uiState.previewExhibitor);
+//     // console.log('aaaa', uiState.listItems.length, uiState.listItems)
+// })

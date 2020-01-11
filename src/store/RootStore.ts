@@ -5,14 +5,17 @@ import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
+import FloorPlanReady from "../floorplan.ready";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
     readonly exhibitorStore: ExhibitorStore;
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
+    fp: FloorPlanReady;
 
     constructor() {
+        // this.fp = fp;
         this.categoryStore = new CategoryStore(this);
         this.exhibitorStore = new ExhibitorStore(this);
         this.boothStore = new BoothStore(this);
@@ -94,6 +97,13 @@ export default class RootStore {
             return;
         }
 
+        if (this.uiState.onBoothClick) {
+            const e: FloorPlanBoothClickEvent = {
+                target: booth
+            };
+            this.uiState.onBoothClick(e);
+        }
+
         if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
             this.selectExhibitor(booth.exhibitors[0]);
         } else {
@@ -134,7 +144,8 @@ export default class RootStore {
         // if (getters.overlayPosition === "bottom") commit("setOverlaySize", "full");
     }
     @action toggleMapOverlay() {
-        if (this.uiState.overlayPosition === "bottom" && this.uiState.overlaySize === "full") this.uiState.desiredOverlaySize = "medium";
+        if (this.uiState.overlayPosition === "bottom" && this.uiState.overlaySize === "full")
+            this.uiState.desiredOverlaySize = "medium";
         else if (this.uiState.overlayPosition === "bottom" && this.uiState.overlaySize !== "full")
             this.uiState.desiredOverlaySize = "full";
         // if (getters.overlayPosition === "bottom" && state.overlaySize === "full") commit("setOverlaySize", "medium");
@@ -158,7 +169,7 @@ export default class RootStore {
         this.moveToList([exhibitor]);
         // dispatch("moveToList", exhibitorsToItems([state.exhibitors[id]]));
     }
-    @action changeActiveListIndex(delta: 1 | 0| -1) {
+    @action changeActiveListIndex(delta: 1 | 0 | -1) {
         let newVal = this.uiState.activeListIndex + delta;
         newVal = Math.max(0, Math.min(this.uiState.listItems.length - 1, newVal));
         this.uiState.activeListIndex = newVal;
@@ -168,11 +179,11 @@ export default class RootStore {
         const item = this.uiState.listItems[this.uiState.activeListIndex];
         if (!item) return;
         logger.log("Opening", item);
-        if (item instanceof Exhibitor){
+        if (item instanceof Exhibitor) {
             this.clickExhibitor(item);
-        } else if (item instanceof Category){
+        } else if (item instanceof Category) {
             this.clickCategory(item);
-        } else if (item instanceof BoothBase){
+        } else if (item instanceof BoothBase) {
             this.clickBoothInList(item);
         }
         // switch (item.type) {

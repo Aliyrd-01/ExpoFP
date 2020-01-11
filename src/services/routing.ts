@@ -10,6 +10,7 @@ import logger from "../tools/logger";
 // import settings from '@/settings';
 
 const history = createBrowserHistory();
+const pathname = window.location.pathname;
 
 let disableStateToUrl = false;
 let savedSelectedExhibitor: Exhibitor | null = null;
@@ -22,6 +23,18 @@ history.listen((location, action) => {
         dispatchFromUrl();
     }
 });
+
+function getHistoryUrl(search: string) {
+    return pathname + search;
+}
+
+function historyPush(search: string) {
+    history.push(getHistoryUrl(search));
+}
+
+function historyReplace(search: string) {
+    history.replace(getHistoryUrl(search));
+}
 
 function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
@@ -94,12 +107,12 @@ function stateToUrl() {
 
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
         // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
-        history.push(newQuery);
+        historyPush(newQuery);
         sendGa();
     } else {
         // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         // logger.log('history replace', queryRaw);
-        history.replace(newQuery);
+        historyReplace(newQuery);
     }
 
     savedSelectedExhibitor = exhibitor;
@@ -110,28 +123,28 @@ const locationSearch = history.location.search;
 
 // preview fix
 if (locationSearch.startsWith("?preview=")) {
-    history.replace("?");
+    historyReplace("?");
 }
 // go to bookmarks when receive thouse
 if (locationSearch.startsWith("?b=")) {
-    history.replace("?bookmarks");
+    historyReplace("?bookmarks");
 }
 
 if (locationSearch.startsWith("?ba=")) {
     const url = new URL(window.location.href);
     const ba = parseInt(url.searchParams.get("ba"));
     const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
-    if (exhibitor) history.replace("?" + exhibitor.slug);
-    else history.replace("?bookmarks");
+    if (exhibitor) historyReplace("?" + exhibitor.slug);
+    else historyReplace("?bookmarks");
 }
 
 // facebook fix
 if (locationSearch.startsWith("?fbclid")) {
-    history.replace("?");
+    historyReplace("?");
 }
 
 if (uiState.previewExhibitor) {
-    history.replace("?" + uiState.previewExhibitor.slug);
+    historyReplace("?" + uiState.previewExhibitor.slug);
 }
 
 dispatchFromUrl();

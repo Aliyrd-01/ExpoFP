@@ -53,6 +53,14 @@ export default class UIState {
         this.rootStore = rootStore;
     }
 
+    get noOverlay() {
+        return this.rootStore.fp.noOverlay;
+    }
+
+    get onBoothClick() {
+        return this.rootStore.fp.onBoothClick;
+    }
+
     @computed({ keepAlive: true }) get selectedExhibitor() {
         return this.details instanceof Exhibitor ? this.details : null;
     }
@@ -91,7 +99,7 @@ export default class UIState {
         return this.overlayPosition === "left";
     }
     @computed get overlayWidthPx() {
-        return this.overlayLeft ? remsToPixels(23.5) : remsToPixels(this.screenSize.width);
+        return this.noOverlay ? 0 : this.overlayLeft ? remsToPixels(23.5) : remsToPixels(this.screenSize.width);
     }
     @computed get wsWidthPx() {
         return this.overlayLeft ? this.screenSize.width - this.overlayWidthPx : this.screenSize.width;

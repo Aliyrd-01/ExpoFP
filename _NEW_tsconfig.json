@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "jsx": "preserve",
+        "moduleResolution": "node",
+        "strict": true,
+        "noEmit": true,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "strictNullChecks": false,
+        "resolveJsonModule": true,
+        "emitDecoratorMetadata": true,
+        "lib": ["es6", "dom"],
+        "types": ["reflect-metadata"]
+    },
+    "include": ["src"]
+}

@@ -12,7 +12,6 @@ const dateFormat = require("dateformat");
 const username = require("username");
 const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2));
 
-const defaultExpo = process.env.EFP_EXPO || argv["expo"] || "eventscase";
 // const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
 
 // const basePackageValues = {
@@ -25,6 +24,8 @@ const defaultExpo = process.env.EFP_EXPO || argv["expo"] || "eventscase";
 
 const isProd = process.env.NODE_ENV === "production";
 if (!isProd) process.env.NODE_ENV = "development";
+
+const defaultExpo = process.env.EFP_EXPO || argv["expo"] || isProd ? "expo" : "eventscase";
 
 const config = {
     mode: isProd ? "production" : "development",
@@ -42,7 +43,7 @@ const config = {
     },
     performance: {
         maxAssetSize: 500000,
-        assetFilter: function (assetFilename) {
+        assetFilter: function(assetFilename) {
             return assetFilename.endsWith(".js");
         }
     },
@@ -64,7 +65,7 @@ const config = {
                         loader: "style-loader",
                         options: {
                             insert: function insertStyle(element) {
-                                window['__efpStyleElements'].push(element);
+                                window["__efpStyleElements"].push(element);
                                 var event = new CustomEvent("__efpStyleLoad");
                                 window.dispatchEvent(event);
                             }
@@ -106,7 +107,9 @@ if (isProd) {
         new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false, reportFilename: "../bundle-report.html" }),
         new CopyPlugin([
             { from: "public", to: "" },
-            { from: "src/data.schema.json", to: "../docs" }
+            { from: "src/public.d.ts", to: "index.d.ts" },
+            { from: "src/data.schema.json", to: "../docs" },
+            { from: "src/public.d.ts", to: "../docs/typings.d.ts" }
         ])
     );
 } else {
