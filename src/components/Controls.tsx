@@ -1,11 +1,13 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import { uiState } from "../store";
+import { useUiState } from "../tools/use";
+// import { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import "./Controls.scss";
 
 export default function Controls() {
+    const uiState = useUiState();
     const s = useLocalStore(() => ({
         get className() {
             return classNames({ controls: true, "-ready": uiState.wsStarted });

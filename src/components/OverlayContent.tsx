@@ -1,12 +1,13 @@
 import { observer } from "mobx-react-lite";
 import PerfectScrollbar from "perfect-scrollbar";
 import React, { ReactNode, useEffect, useRef, useState, useLayoutEffect } from "react";
-import { uiState } from "../store";
+// import { uiState } from "../store";
 import isScrollUgly from "../utils/is-scroll-ugly";
 import OverlayBar from "./OverlayBar";
 import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
+import { useUiState } from "../tools/use";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
@@ -17,6 +18,7 @@ const OverlayContent: React.FC<{
     onBack?: () => void;
     onClose: () => void;
 }> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
+    const uiState = useUiState();
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
 

@@ -1,7 +1,7 @@
 import Color from "color";
 import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
-import { boothStore } from "../../../../store";
+// import { boothStore } from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
@@ -20,7 +20,7 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;
-        const width = boothStore.borderWidth;
+        const width = context.fp.store.boothStore.borderWidth;
 
         const triangles: Triangle[] = [];
 

@@ -4,25 +4,32 @@ import { interpolate } from "d3-interpolate";
 import { event as currentEvent, select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
-import store, { uiState } from "../../store";
+// import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
+import { useStore, useUiState, useFp } from "../../tools/use";
+import isIframe from "../../utils/is-iframe";
+import isMac from "../../utils/is-mac";
 import { useReaction } from "../../utils/mobx";
-import getBoothIdFromClientXy from "./booth-by-xy";
+import createBoothIdFromClientXyFunc from "./booth-by-xy";
 import createDrawer, { Drawer } from "./drawing/Drawer1";
 import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import isIframe from "../../utils/is-iframe";
-import isMac from "../../utils/is-mac";
 
 //console.log('isIframe', isIframe)
 
 export default function Map() {
+    const store = useStore();
+    const uiState = useUiState();
+    const fp = useFp();
+
+    const boothIdByXy = useMemo(()=> createBoothIdFromClientXyFunc(store.boothStore.booths), [store]);
+
     let zoomAf: number;
     let zoomAfTransform: ZoomTransform;
     // do not use useState unless really needed
@@ -176,7 +183,7 @@ export default function Map() {
         configInertia(s.zoom);
         //m.setVisibleRect(thiuiState.canvasVisibleRectPx);
         sizeCanvasToParentElement(el.current);
-        s.drawer = createDrawer(el.current, true);
+        s.drawer = createDrawer(fp, el.current, true);
 
         // s.drawer.setVisibleRect((uiState.canvasVisibleRectPx as Rect).scale(uiState.devicePixelRatio));
         s.drawer.setPixelRatio(uiState.devicePixelRatio);
@@ -196,7 +203,7 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        const b = boothIdByXy(e.clientX, e.clientY, s.drawer);
         // console.log("handleMouseMoveAndOver", b);
         raiseBoothOver(b);
     }
@@ -210,7 +217,7 @@ export default function Map() {
             store.showMap();
         }
         // if (!this.props.onBoothClick) return;
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        const b = boothIdByXy(e.clientX, e.clientY, s.drawer);
         logger.log("click", b);
         store.clickBooth(b);
     }

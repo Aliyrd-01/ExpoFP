@@ -1,4 +1,4 @@
-import { action } from "mobx";
+import { action, configure } from "mobx";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
@@ -7,15 +7,17 @@ import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
 import FloorPlanReady from "../floorplan.ready";
 
+configure({ computedRequiresReaction: true });
+
 export default class RootStore {
     readonly categoryStore: CategoryStore;
     readonly exhibitorStore: ExhibitorStore;
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
-    fp: FloorPlanReady;
+    readonly fp: FloorPlanReady;
 
-    constructor() {
-        // this.fp = fp;
+    constructor(fp: FloorPlanReady) {
+        this.fp = fp;
         this.categoryStore = new CategoryStore(this);
         this.exhibitorStore = new ExhibitorStore(this);
         this.boothStore = new BoothStore(this);

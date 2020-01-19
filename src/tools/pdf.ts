@@ -3,13 +3,14 @@ import slugify from "slugify";
 import createDrawer from "../components/Map/drawing/Drawer1";
 import data from "../data";
 import { svgViewBox } from "../data/svg";
+import FloorPlanReady from "../floorplan.ready";
 import debugCanvases from "./debugCanvases";
 import pdfFontBold from "./pdf-open-sans-bold.txt";
 import pdfFontNormal from "./pdf-open-sans-normal.txt";
 
 const jsPDFAPI = jsPDF["API"];
 
-export async function generatePdf() {
+export async function generatePdf(fp: FloorPlanReady) {
     const dpi = 72;
     const printerPpi = 300;
     const format = "Tabloid";
@@ -94,7 +95,7 @@ export async function generatePdf() {
 
     debugCanvases.push(canvas);
 
-    const drawer = createDrawer(canvas, false);
+    const drawer = createDrawer(fp, canvas, false);
     drawer.setVisibleScale(1);
     drawer.setPixelRatio(2.5);
     // drawer.resetCanvasSize();

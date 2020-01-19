@@ -3,7 +3,7 @@ import { VisibilityProperty } from "csstype";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
 import data from "../data";
-import store, { categoryStore, exhibitorStore, uiState } from "../store";
+// import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import baseUrl from "../tools/base-data-url";
 import logger from "../tools/logger";
@@ -11,6 +11,7 @@ import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
+import { useUiState, useCategoryStore, useExhibitorStore, useStore } from "../tools/use";
 
 const logoUrl = baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -35,6 +36,11 @@ function Menu() {
         shown: false,
         shownTimeout: undefined as number
     }));
+
+    const store = useStore();
+    const uiState = useUiState();
+    const categoryStore = useCategoryStore();
+    const exhibitorStore = useExhibitorStore();
 
     useAutorun(() => {
         if (!uiState.menu) {
@@ -169,4 +175,8 @@ function Menu() {
     }
 }
 
-export default () => useObserver(() => <>{uiState.menu ? <Menu /> : null}</>);
+export default () =>
+    useObserver(() => {
+        const uiState = useUiState();
+        return <>{uiState.menu ? <Menu /> : null}</>;
+    });

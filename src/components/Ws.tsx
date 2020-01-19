@@ -2,13 +2,20 @@ import { reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import store, { exhibitorStore, uiState } from "../store";
+// import store, { exhibitorStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { remsToPixels, shuffle } from "../utils";
 import { useInit } from "../utils/mobx";
 import "./Ws.scss";
+import { useStore, useUiState, useExhibitorStore } from "../tools/use";
+// import { uiState } from "../store";
 
 function Ws() {
+    const store = useStore();
+    const uiState = useUiState();
+    // const categoryStore = useCategoryStore();
+    const exhibitorStore = useExhibitorStore();
+
     const s = useLocalStore(() => ({
         el: null as HTMLElement,
         all: [] as Exhibitor[],
@@ -120,4 +127,4 @@ function Ws() {
     }
 }
 
-export default () => useObserver(() => <>{uiState.wsShown ? <Ws /> : null}</>);
+export default () => useObserver(() => <>{useUiState().wsShown ? <Ws /> : null}</>);

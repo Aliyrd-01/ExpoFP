@@ -1,11 +1,12 @@
 // import { allDrawers, requireUpdate } from "./draw";
-import animate from "./animate";
-import { DrawerContext } from "../Drawer1";
 import { easeExpOut } from "d3-ease";
 import { interpolateNumber } from "d3-interpolate";
-import { uiState } from "../../../../store";
+import { DrawerContext } from "../Drawer1";
+import animate from "./animate";
+// import { uiState } from "../../../../store";
 
 export default function configMatrix(c: DrawerContext) {
+    const uiState = c.fp.store.uiState;
     const minVisibleScale = 0;
     const maxVisibleScale = c.getVisibleScale();
 

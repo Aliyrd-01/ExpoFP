@@ -1,11 +1,14 @@
 import { useObserver } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
-import { uiState } from "../store";
+// import { uiState } from "../store";
+import { useFp, useUiState } from "../tools/use";
 import { isWebGlSupported } from "../utils";
 import "./Pdf.scss";
 
 function Pdf() {
     const [visible, setVisible] = useState(false);
+    const fp = useFp();
+    const uiState = useUiState();
 
     useEffect(() => {
         // print pdf
@@ -15,7 +18,7 @@ function Pdf() {
 
         window.setTimeout(async () => {
             const { generatePdf } = await import(/* webpackChunkName: "tools-pdf" */ "../tools/pdf");
-            await generatePdf();
+            await generatePdf(fp);
 
             window.setTimeout(() => {
                 setVisible(false);
@@ -24,7 +27,7 @@ function Pdf() {
                 }, 300);
             }, 2000);
         }, 300);
-    }, []);
+    }, [fp, uiState]);
 
     return (
         <div className={`pdf ${visible ? "-visible" : null}`}>
@@ -33,4 +36,8 @@ function Pdf() {
     );
 }
 
-export default () => useObserver(() => uiState.printingPdf && isWebGlSupported && <Pdf />);
+export default () =>
+    useObserver(() => {
+        const uiState = useUiState();
+        return uiState.printingPdf && isWebGlSupported && <Pdf />;
+    });

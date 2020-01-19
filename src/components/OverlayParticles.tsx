@@ -1,15 +1,17 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState, useRef } from "react";
-import { uiState } from "../store";
+// import { uiState } from "../store";
 import browser from "../utils/browser";
 import { useAutorun } from "../utils/mobx";
 import "./OverlayParticles.scss";
+import { useUiState } from "../tools/use";
 
 function OverlayParticles() {
     const [visible, setVisible] = useState(false);
     const [ParticlesClass, setParticlesClass] = useState();
     const [canShow, setCanShow] = useState(false);
     const canvas = useRef();
+    const uiState = useUiState();
 
     useAutorun(() => setCanShow(uiState.overlayPosition === "left" && browser.getEngine()?.name !== "EdgeHTML"));
 

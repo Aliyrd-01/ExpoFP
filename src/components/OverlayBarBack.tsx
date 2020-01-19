@@ -1,8 +1,9 @@
 import classNames from "classnames";
 import React, { MouseEvent, useEffect, useState } from "react";
-import store from "../store";
+import { useUiState } from "../tools/use";
+// import store from "../store";
 import "./OverlayBarBack.scss";
-const { uiState } = store;
+// const { uiState } = store;
 
 type BackMode = "back" | "menu" | "none";
 
@@ -10,6 +11,8 @@ const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ 
     const showBack = backMode === "back";
     const [nextShowBack, setNextShowBack] = useState<boolean>(showBack);
     const animationEnded = nextShowBack === showBack;
+
+    const uiState = useUiState();
 
     useEffect(() => {
         // set nextShowBack after initial render

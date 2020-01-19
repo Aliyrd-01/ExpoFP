@@ -1,11 +1,15 @@
 import React from "react";
 import { useObserver } from "mobx-react-lite";
-import store, { uiState, exhibitorStore } from "../store";
+// import store, { uiState, exhibitorStore } from "../store";
 import OverlayContent from "./OverlayContent";
 import List from "./List";
 import "./Bookmarks.scss";
+import { useExhibitorStore, useUiState, useStore } from "../tools/use";
 
 function Bookmarks() {
+    const exhibitorStore = useExhibitorStore();
+    const store = useStore();
+
     return useObserver(() => {
         const bar = (
             <div className="bar">
@@ -25,4 +29,9 @@ function Bookmarks() {
     }
 }
 
-export default () => useObserver(() => !uiState.details && uiState.list.type === "bookmarks" && <Bookmarks />);
+export default () =>
+    useObserver(() => {
+        const uiState = useUiState();
+
+        return !uiState.details && uiState.list.type === "bookmarks" && <Bookmarks />;
+    });

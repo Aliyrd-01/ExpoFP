@@ -1,13 +1,15 @@
 import React from "react";
 import "./Free.scss";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import { uiState } from "../store";
+// import { uiState } from "../store";
 import { useInit } from "../utils/mobx";
 import classNames from "classnames";
+import { useUiState } from "../tools/use";
 
 const key = "free-dismissed5";
 
 export default function Free() {
+    const uiState = useUiState();
     const s = useLocalStore(() => ({
         hidden: true,
         get top() {

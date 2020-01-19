@@ -1,10 +1,13 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
-import store, { uiState } from "../store";
+// import store, { uiState } from "../store";
 import debugCanvases from "../tools/debugCanvases";
+import { useStore, useUiState } from "../tools/use";
 import "./Debug.scss";
 
 function Debug() {
+    const store = useStore();
+
     const canvases = debugCanvases.map(item => (
         <div className="debug__canvas" key={item.toDataURL()}>
             {item.width}x{item.height}={item.width * item.height}
@@ -21,4 +24,8 @@ function Debug() {
     );
 }
 
-export default () => useObserver(() => <>{uiState.list.type === "search" && uiState.list.text === "q1" ? <Debug /> : null}</>);
+export default () =>
+    useObserver(() => {
+        const uiState = useUiState();
+        return <>{uiState.list.type === "search" && uiState.list.text === "q1" ? <Debug /> : null}</>;
+    });

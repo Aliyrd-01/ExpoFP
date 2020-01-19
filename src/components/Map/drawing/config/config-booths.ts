@@ -1,6 +1,6 @@
 import { easeLinear } from "d3-ease";
 import { interpolateNumber } from "d3-interpolate";
-import { boothStore } from "../../../../store";
+// import { boothStore } from "../../../../store";
 import settings from "../../../../tools/settings";
 import isDebug from "../../../../utils/is-debug";
 import { DrawerContext } from "../Drawer1";
@@ -13,7 +13,7 @@ import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
 
 export default function configBooths(context: DrawerContext) {
-    const booths = boothStore.booths; //.filter(x => x.name === '4268');
+    const booths = context.fp.store.boothStore.booths; //.filter(x => x.name === '4268');
     // booths.splice(2740);//
     // , configBoothBorder
     const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((

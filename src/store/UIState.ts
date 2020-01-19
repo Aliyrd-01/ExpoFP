@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { uiState } from ".";
+// import { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import settings from "../tools/settings";
@@ -163,7 +163,7 @@ export default class UIState {
         // const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
         const isSafari = browser.satisfies({ safari: ">=13" });
         const isChrome = browser.satisfies({ chrome: ">=77" });
-        return isSafari || (isChrome && uiState.canvasSizePt.height * uiState.canvasSizePt.width < 3000000);
+        return isSafari || (isChrome && this.canvasSizePt.height * this.canvasSizePt.width < 3000000);
     }
 
     ///////////////////////////////////////////////////////////////////////////

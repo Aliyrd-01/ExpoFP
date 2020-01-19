@@ -2,7 +2,7 @@ import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
-import { boothStore } from "../../../../store";
+// import { boothStore } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
@@ -24,6 +24,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
         super(context, booth, "booth-bg", TrianglePainter, 110);
 
         // let triangles: Triangle[];
+        const boothStore = context.fp.store.boothStore;
 
         if (!booth.paths || booth.pathsWithRect) {
             let rect = this.booth.rect;

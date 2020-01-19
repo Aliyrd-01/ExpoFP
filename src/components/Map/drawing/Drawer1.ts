@@ -4,6 +4,7 @@ import isDebug from "../../../utils/is-debug";
 import configAll from "./config/config-all";
 import Matrix from "./Matrix";
 import Painter from "./painters/Painter";
+import FloorPlanReady from "../../../floorplan.ready";
 
 export type Drawer = Pick<
     DrawerImpl,
@@ -24,6 +25,7 @@ export type Drawer = Pick<
 
 export type DrawerContext = Pick<
     DrawerImpl,
+    | "fp"
     | "ptscale"
     | "pixelRatio"
     | "updatable"
@@ -39,8 +41,8 @@ export type DrawerContext = Pick<
     // | "subscribePtscaleChange"
 >;
 
-export default function createDrawer(canvas: HTMLCanvasElement, updatable: boolean) {
-    return new DrawerImpl(canvas, updatable) as Drawer;
+export default function createDrawer(fp: FloorPlanReady, canvas: HTMLCanvasElement, updatable: boolean) {
+    return new DrawerImpl(fp, canvas, updatable) as Drawer;
 }
 
 export class DrawerImpl extends Matrix {
@@ -50,13 +52,15 @@ export class DrawerImpl extends Matrix {
     private readonly paintersByType = new Map<string, Painter>();
     readonly allPainters: Painter[] = [];
     readonly updatable: boolean;
+    readonly fp: FloorPlanReady;
     private prepared: boolean;
     private gl: WebGLRenderingContext;
     private readonly drawBound: () => void;
 
-    constructor(canvas: HTMLCanvasElement, updatable: boolean) {
+    constructor(fp: FloorPlanReady, canvas: HTMLCanvasElement, updatable: boolean) {
         super(new Size(canvas.width, canvas.height));
         // this.setVisibleScale(0.96);
+        this.fp = fp;
         this.setVisibleScale(1);
         this.canvas = canvas;
         this.updatable = updatable;

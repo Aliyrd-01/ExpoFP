@@ -2,15 +2,22 @@ import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { FocusEvent, KeyboardEvent, useEffect, useRef } from "react";
 import data from "../data";
-import store, { uiState, exhibitorStore } from "../store";
+import { useExhibitorStore, useStore, useUiState } from "../tools/use";
+// import store, { uiState, exhibitorStore } from "../store";
 import { useAutorun } from "../utils/mobx";
-import OverlayContent from "./OverlayContent";
 import List from "./List";
+import OverlayContent from "./OverlayContent";
 import "./Search.scss";
+// import { uiState } from "../store";
 // import logger from "../tools/logger";
 
 function Search() {
     const el = useRef<HTMLDivElement>();
+
+    const store = useStore();
+    const uiState = useUiState();
+    // const categoryStore = useCategoryStore();
+    const exhibitorStore = useExhibitorStore();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
@@ -161,4 +168,7 @@ function Search() {
 }
 
 export default () =>
-    useObserver(() => <>{!uiState.details && !uiState.menu && uiState.list.type === "search" ? <Search /> : null}</>);
+    useObserver(() => {
+        const uiState = useUiState();
+        return <>{!uiState.details && !uiState.menu && uiState.list.type === "search" ? <Search /> : null}</>;
+    });

@@ -2,16 +2,19 @@ import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useRef } from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+// import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import { useStore, useUiState } from "../tools/use";
 import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 
 function ExhibitorComponent() {
+    const store = useStore();
+    const uiState = useUiState();
     const el = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         collapsed: true,
@@ -255,4 +258,7 @@ function ExhibitorComponent() {
 }
 
 export default () =>
-    useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
+    useObserver(() => {
+        const uiState = useUiState();
+        return <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>;
+    });

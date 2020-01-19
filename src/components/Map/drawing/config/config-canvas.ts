@@ -2,7 +2,7 @@ import Color from "color";
 import { autorun } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
-import { uiState } from "../../../../store";
+// import { uiState } from "../../../../store";
 import { DrawerContext } from "../Drawer1";
 import BgPainter from "../painters/BgPainter";
 
@@ -13,6 +13,7 @@ export default function configCanvas(context: DrawerContext) {
     const painter = context.requirePainter("canvas", BgPainter, 5);
 
     function setObjects() {
+        const uiState = context.fp.store.uiState;
         const vr = uiState.canvasVisibleRectPt;
         const cs = uiState.canvasSizePt;
 

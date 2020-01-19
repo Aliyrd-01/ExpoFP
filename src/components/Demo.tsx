@@ -1,13 +1,16 @@
-import React from "react";
-import "./Demo.scss";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import { uiState } from "../store";
-import { useInit } from "../utils/mobx";
 import classNames from "classnames";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import React from "react";
+import { useUiState } from "../tools/use";
+// import { uiState } from "../store";
+import { useInit } from "../utils/mobx";
+import "./Demo.scss";
 
 const key = "note-dismissed5";
 
 export default function Demo() {
+    const uiState = useUiState();
+
     const s = useLocalStore(() => ({
         hidden: true,
         get top() {

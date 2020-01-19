@@ -1,14 +1,18 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+// import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
+import { useUiState, useStore } from "../tools/use";
 
 function Booth() {
     // return <div>adsa</div>;
+    const uiState = useUiState();
+    const store = useStore();
+
     const s = useLocalStore(() => ({
         get booth() {
             return uiState.selectedBooth;
@@ -131,4 +135,8 @@ function Booth() {
     });
 }
 
-export default () => useObserver(() => (!uiState.menu && uiState.selectedBooth ? <Booth /> : null));
+export default () =>
+    useObserver(() => {
+        const uiState = useUiState();
+        return !uiState.menu && uiState.selectedBooth ? <Booth /> : null;
+    });

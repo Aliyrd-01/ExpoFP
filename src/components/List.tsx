@@ -1,10 +1,11 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { uiState } from "../store";
+// import { uiState } from "../store";
 import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import logger from "../tools/logger";
+import { useUiState } from "../tools/use";
 import { remsToPixels } from "../utils";
 import BoothRow from "./BoothRow";
 import CategoryRow from "./CategoryRow";
@@ -14,8 +15,9 @@ import "./List.scss";
 const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5));
 logger.log("List n1:", n);
 
-
 export default function List() {
+    const uiState = useUiState();
+
     const s = useLocalStore(() => ({
         get items() {
             if (uiState.overlayShowsAll || uiState.listItems.length <= n) return uiState.listItems;

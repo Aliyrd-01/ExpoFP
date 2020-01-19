@@ -1,5 +1,5 @@
 import { reaction } from "mobx";
-import { boothStore } from "../../../../store";
+// import { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
@@ -90,7 +90,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio);
         // this.detailsHeight = detailsCanvas.height;
 
-        const pad = boothStore.borderWidth / 2;
+        const pad = context.fp.store.boothStore.borderWidth / 2;
 
         this.painter.addObject({
             id: this.getId("Details"),

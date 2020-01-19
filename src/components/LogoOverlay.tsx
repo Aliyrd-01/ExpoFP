@@ -1,10 +1,12 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import { uiState } from "../store";
+import { useUiState } from "../tools/use";
+// import { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import "./LogoOverlay.scss";
 
 export default function LogoOverlay() {
+    const uiState = useUiState();
     const s = useLocalStore(() => ({
         get style() {
             const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
