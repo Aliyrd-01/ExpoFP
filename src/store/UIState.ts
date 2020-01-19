@@ -161,6 +161,10 @@ export default class UIState {
         // const ua = navigator.userAgent;
         // const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
         // const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+        const isAndroid = browser.getOSName() === "Android";
+        // TODO: test
+        if (isAndroid) return false;
+
         const isSafari = browser.satisfies({ safari: ">=13" });
         const isChrome = browser.satisfies({ chrome: ">=77" });
         return isSafari || (isChrome && this.canvasSizePt.height * this.canvasSizePt.width < 3000000);
