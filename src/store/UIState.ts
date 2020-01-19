@@ -161,7 +161,7 @@ export default class UIState {
         // const ua = navigator.userAgent;
         // const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
         // const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-        const isAndroid = browser.getOSName() === "Android";
+        const isAndroid = browser.getOSName(true) === "android";
         // TODO: test
         if (isAndroid) return false;
 
