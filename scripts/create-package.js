@@ -23,6 +23,7 @@ async function main() {
 
         text = text.replace(/https:\/\/cdn\.jsdelivr\.net\/npm\/expofp@([^/]+)\/dist\//g, "");
         text = text.replace(/https:\/\/[^\.]+\.expofp\.com\/npm\/expofp@([^/]+)\/dist\//g, "");
+        text = text.replace(/crossorigin="anonymous"/g, "");
         text = text.replace(/https:\/\/[^\.]+\.expofp\.com\/data\//g, "data/");
         text = text.replace(/( class="expofp-floorplan")/g, '$1 data-data-url="data/"');
         fs.writeFileSync(__dirname + "/../dist/index.html", text);

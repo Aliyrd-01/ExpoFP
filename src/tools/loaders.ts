@@ -1,6 +1,10 @@
 import browser from "../utils/browser";
-import logger from "./logger";
 import baseUrl from "./base-url";
+import logger from "./logger";
+
+function allowAnonymous(url) {
+    return !url.startsWith("file:///");
+}
 
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
@@ -13,7 +17,8 @@ export function loadCss(url: string, appendTo: Element | ShadowRoot) {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = goodUrl(url);
-    link.crossOrigin = "anonymous";
+
+    if (allowAnonymous(link.href)) link.crossOrigin = "anonymous";
     appendTo.appendChild(link);
 }
 
@@ -22,7 +27,7 @@ export function preloadJs(url: string) {
     link.rel = "preload";
     link.href = goodUrl(url);
     link.as = "script";
-    if (process.env.NODE_ENV === "production") link.crossOrigin = "anonymous";
+    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
     document.head.appendChild(link);
 }
 
@@ -32,7 +37,7 @@ export async function loadJs(url: string) {
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
         logger.log("Injecting script:", scriptTag.src);
-        if (process.env.NODE_ENV === "production") scriptTag.crossOrigin = "anonymous";
+        if (process.env.NODE_ENV === "production" && allowAnonymous(scriptTag.src)) scriptTag.crossOrigin = "anonymous";
         document.head.appendChild(scriptTag);
     });
 }
