@@ -84,7 +84,8 @@ export default function initBooths(store: RootStore) {
             boothReg.availColor = el.getAttribute("data-avail-color") || boothReg.availColor;
             boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
             boothReg.holdColor = el.getAttribute("data-hold-color") || boothReg.holdColor;
-            boothReg.size = el.getAttribute("data-size") || boothReg.size;
+            // svg size is legacy, TODO: remove data-size attribute at 01-01-2022
+            boothReg.size = boothReg.size || el.getAttribute("data-size");
             boothReg.type = el.getAttribute("data-type") || boothReg.type; //|| el.getAttribute("data-booth-type")
             //boothReg.price = boothReg.price; //el.getAttribute("data-price") ||
 
