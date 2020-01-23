@@ -38,7 +38,7 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
         addTriangles(r.cx + r.w / 2, r.cy, width, r.h + width);
 
         for (const t of triangles) {
-            this.painter.addObject({
+            this.painter.tryAddObject({
                 id: this.getId("border"),
                 p0: t[0],
                 p1: t[1],

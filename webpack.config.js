@@ -25,7 +25,7 @@ const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2
 const isProd = process.env.NODE_ENV === "production";
 if (!isProd) process.env.NODE_ENV = "development";
 
-const defaultExpo = process.env.EFP_EXPO || argv["expo"] || isProd ? "expo" : "eventscase";
+const defaultExpo = process.env.EFP_EXPO || argv["expo"] || isProd ? "expo" : "confexdev";
 
 const config = {
     mode: isProd ? "production" : "development",
