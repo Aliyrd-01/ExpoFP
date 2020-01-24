@@ -7,6 +7,7 @@ import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
 import { useUiState, useStore } from "../tools/use";
+import BoothAdmin from "./BoothAdmin";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -127,8 +128,14 @@ function Booth() {
             );
         }
 
+        let adminContent: JSX.Element = null;
+        if (uiState.showAdminUi && s.regular) {
+            adminContent = <BoothAdmin booth={s.booth as RegularBooth} />;
+        }
+
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
+                {adminContent}
                 {content}
             </OverlayContent>
         );

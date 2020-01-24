@@ -145,6 +145,11 @@ export default function startRouting(store: RootStore) {
         historyReplace("?");
     }
 
+    // admin api fix
+    if (locationSearch.startsWith("?ea81h")){
+        historyReplace("?");
+    }
+
     if (uiState.previewExhibitor) {
         historyReplace("?" + uiState.previewExhibitor.slug);
     }

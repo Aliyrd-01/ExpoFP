@@ -8,6 +8,7 @@ import initStore from "./store/init";
 import RootStore from "./store/RootStore";
 // import store from "./store";
 import trackEvent from "./tools/track-event";
+import { AdminService } from "./services/AdminService";
 
 trackEvent("load");
 // initStore(store);
@@ -20,20 +21,24 @@ export const FpContext = React.createContext<FloorPlanReady>(null);
 
 export default class FloorPlanReady extends FloorPlanLoader {
     public readonly store: RootStore;
+    public readonly adminService: AdminService;
     // constructor(options: FloorPlanOptions) {
     //     super(options);
     // }
     protected init(): void {
-        // TODO: initialize the store here
         const store = new RootStore(this);
         window["__store"] = store;
-        initStore(store);
-
-        // store.fp = this;
         const self = this as MutableRequired<FloorPlanReady>;
         self.store = store;
+        if (window.location.search.startsWith("?ea81h")) {
+            import(/* webpackChunkName: "admin" */ "./services/AdminService").then(x => {
+                self.adminService = x.default(this);
+            });
+        }
+
+        // init all
+        initStore(store);
         routing(store);
-        // store to be initialized there already
 
         ReactDOM.render(
             <FpContext.Provider value={this}>
@@ -53,31 +58,22 @@ export default class FloorPlanReady extends FloorPlanLoader {
 }
 
 /*
-initialization sequence
-create fp
-create store, init store (pass fp there)
-create routing service (pass store)
-create logger (pass fp)
 
-fp.logger
-fp.router
+fp is a service container
+
 fp.store
-fp.uiState
+fp.router
+fp.adminService -> should be non-empty when token provided (give it is valid)
+fp.
 
+if there's something that affects UI -> it should be part of store
 
-fp is a container then - it initializes all
-fp has some settings - used by store
+so let's go from UI to bottom
+Booth -> should have a list of exhibitors -> taken from store
+Booth should have 
 
+actions that modify store in transaction -> should be part of store
 
-all actions are on rootstore level
-uistate contains derivatives from fp (like copmuted things, etc)
-fp itselves serves as a public API
-
-components can const {uiState} = useFloorplan();
-
-
-transition to this:
-replace global imports of store with useStore, useUIState
 
 
 */

@@ -46,6 +46,7 @@ export default class UIState {
     previewExhibitor: Exhibitor = null;
     @observable wsStarted = false;
     @observable canvasStarted = false;
+    @observable showAdminUi = false;
 
     overlayMediumHeightRems = 10;
 
@@ -72,6 +73,10 @@ export default class UIState {
     @computed({ keepAlive: true }) get selectedCategory() {
         return this.list.type === "category" ? this.list.category : null;
     }
+
+    // @computed({ keepAlive: true }) get showAdminUi() {
+    //     return true;
+    // }
 
     ///////////////////////////////////////////////////////////////////////////
     // positions

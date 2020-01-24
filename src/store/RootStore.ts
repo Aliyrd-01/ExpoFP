@@ -1,11 +1,11 @@
 import { action, configure } from "mobx";
+import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
-import FloorPlanReady from "../floorplan.ready";
 
 configure({ computedRequiresReaction: true });
 
@@ -14,6 +14,7 @@ export default class RootStore {
     readonly exhibitorStore: ExhibitorStore;
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
+    // readonly apiStore: ApiStore;
     readonly fp: FloorPlanReady;
 
     constructor(fp: FloorPlanReady) {
@@ -22,6 +23,7 @@ export default class RootStore {
         this.exhibitorStore = new ExhibitorStore(this);
         this.boothStore = new BoothStore(this);
         this.uiState = new UIState(this);
+        // this.apiStore = new ApiStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
@@ -199,5 +201,9 @@ export default class RootStore {
         //         dispatch("clickBoothInList", item.obj.id);
         //         break;
         // }
+    }
+
+    @action setApiToken(token: string) {
+        // validate api token asynchronously
     }
 }
