@@ -7,11 +7,10 @@ import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import { useStore, useUiState } from "../tools/use";
-import { useReaction, useAutorun } from "../utils/mobx";
+import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
-import ExhibitorAdmin from "./ExhibitorAdmin";
 
 function ExhibitorComponent() {
     const store = useStore();

@@ -3,11 +3,11 @@ import React from "react";
 import data from "../data";
 // import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
+import { useStore, useUiState } from "../tools/use";
+import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
-import { useUiState, useStore } from "../tools/use";
-import { useAutorun } from "../utils/mobx";
 
 function Booth() {
     // return <div>adsa</div>;
