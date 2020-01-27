@@ -11,6 +11,7 @@ import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import ExhibitorAdmin from "./ExhibitorAdmin";
 
 function ExhibitorComponent() {
     const store = useStore();
@@ -81,6 +82,11 @@ function ExhibitorComponent() {
             bookmarked: exhibitor.bookmarked
         });
 
+        let adminContent: JSX.Element = null;
+        if (uiState.showAdminUi) {
+            adminContent = <ExhibitorAdmin exhibitor={s.exhibitor} />;
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -89,6 +95,7 @@ function ExhibitorComponent() {
                 particles={exhibitor.featured}
                 bar={bar}
             >
+                {adminContent}
                 <div className="exhibitor__details">
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map(booth => (

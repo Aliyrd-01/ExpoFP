@@ -1,26 +1,48 @@
 import FloorPlanReady from "../floorplan.ready";
+import logger from "../tools/logger";
 
-const storageKey = "apiToken";
-
-export default function createAdminServiceIfNeeded(fp: FloorPlanReady): AdminService {
-    // check the URL, if there's a token - return AdminService
-    const authMatch = window.location.search.match(/ea81h(.+)97ab537/);
-    const token = authMatch ? authMatch[1] : sessionStorage.getItem(storageKey);
-    if (!token) return null;
-    sessionStorage.setItem(storageKey, token);
-    fp.store.uiState.showAdminUi = true;
-
-    return new AdminService(fp, token);
-}
-
-export class AdminService {
+export default class AdminService {
+    private eventId: number;
     constructor(private readonly fp: FloorPlanReady, private readonly token: string) {}
 
-    async setBoothExhibitors(id: number, ids: number[]) {
-        // call api
+    async ensureEventId() {
+        if (this.eventId) return;
+        type Res = [{ id: number; key: string }];
+        const events = await this.callApi<Res>("list-events");
+        this.eventId = events.find(x => x.key === this.fp.eventId)?.id;
+        logger.log("Server event id:", this.eventId);
     }
 
-    private async callApi<T>(method: string, payload: any): Promise<T> {
-        return null;
+    async setBoothExhibitors(name: string, exhibitors: number[]): Promise<void> {
+        await this.ensureEventId();
+        await this.callApi<void>("set-booth-exhibitors", {
+            eventId: this.eventId,
+            name,
+            exhibitors
+        });
+    }
+
+    private async callApi<T>(method: string, payload: any = {}): Promise<T> {
+        const realToken = this.token
+            .split("")
+            .reverse()
+            .join("");
+
+        payload.token = realToken;
+
+        const res = await fetch(`https://expofp.com/api/v1/${method}`, {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+
+        const text = await res.text();
+        if (!text) return null;
+        let result = JSON.parse(text);
+
+        logger.log("API call", res, method, result);
+        return result;
     }
 }
+
+// interface

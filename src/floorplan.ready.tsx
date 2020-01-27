@@ -8,7 +8,8 @@ import initStore from "./store/init";
 import RootStore from "./store/RootStore";
 // import store from "./store";
 import trackEvent from "./tools/track-event";
-import { AdminService } from "./services/AdminService";
+import AdminService from "./services/AdminService";
+import loadAdminServiceIfNeeded from "./services/AdminService.loader";
 
 trackEvent("load");
 // initStore(store);
@@ -30,11 +31,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         window["__store"] = store;
         const self = this as MutableRequired<FloorPlanReady>;
         self.store = store;
-        if (window.location.search.startsWith("?ea81h")) {
-            import(/* webpackChunkName: "admin" */ "./services/AdminService").then(x => {
-                self.adminService = x.default(this);
-            });
-        }
+        loadAdminServiceIfNeeded(this).then(x => (self.adminService = x));
 
         // init all
         initStore(store);

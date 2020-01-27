@@ -1,20 +1,34 @@
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import React from "react";
+import { useObserver } from "mobx-react-lite";
+import React, { ChangeEvent } from "react";
+import { RegularBooth } from "../store/BoothStore";
+import { useAdminService, useExhibitorStore } from "../tools/use";
+import AdminBox from "./AdminBox";
 import "./BoothAdmin.scss";
-import { Booth, RegularBooth } from "../store/BoothStore";
 
 const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
+    const exhibitorStore = useExhibitorStore();
+    const adminService = useAdminService();
+    const exhibitorOptions = exhibitorStore.exhibitors.map(x => (
+        <option value={x.id} key={x.id}>
+            {x.name}
+        </option>
+    ));
+
+    async function handleExhibitorChange(e: ChangeEvent<HTMLSelectElement>) {
+        const exhibitorId = e.target.value ? parseInt(e.target.value) : null;
+        const exhibitor = exhibitorId ? exhibitorStore.exhibitorById.get(exhibitorId) : null;
+        await adminService.setBoothExhibitors(booth.name, [exhibitorId]);
+        alert(`Exhibitor set for booth ${booth.name}:  ${exhibitor?.name || "Empty"}`);
+    }
+
     return useObserver(() => {
         return (
-            <div className="booth-admin">
-                <div className="booth-admin__title">Re-booking</div>
-                <label>Set exhibitor:</label>
-
-                <select>
-                    <option></option>
-                    <option>Exhibitor 1231231212312123121231212312123121231212312</option>
+            <AdminBox className="booth-admin">
+                <select onChange={handleExhibitorChange}>
+                    <option>Select exhibitor</option>
+                    {exhibitorOptions}
                 </select>
-            </div>
+            </AdminBox>
         );
     });
 };

@@ -17,6 +17,14 @@ export function useExhibitorStore() {
     return useStore().exhibitorStore;
 }
 
+export function useBoothStore() {
+    return useStore().boothStore;
+}
+
 export function useCategoryStore() {
     return useStore().categoryStore;
+}
+
+export function useAdminService() {
+    return useFp().adminService;
 }

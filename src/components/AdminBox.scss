@@ -1,0 +1,14 @@
+.admin-box {
+    background: #fff380;
+    margin: 0 0 1rem;
+    padding: 1rem;
+    &__title {
+        // font-size: 0.8rem;
+        // font-weight: 200;
+        // color: #777;
+        margin-bottom: 0.5rem;
+    }
+    > label {
+        display: block;
+    }
+}

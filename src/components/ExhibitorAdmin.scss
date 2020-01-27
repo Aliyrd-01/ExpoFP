@@ -1,0 +1,9 @@
+@import "../styles/import.scss";
+
+.exhibitor-admin {
+    button {
+        @include button;
+        margin: 1rem auto 0;
+        display: block;
+    }
+}
