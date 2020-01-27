@@ -13,13 +13,6 @@ const username = require("username");
 const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2));
 
 // const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
-
-// const basePackageValues = {
-//     name: "expofp",
-//     main: "./expofp.js",
-//     license: "UNLICENSED"
-// };
-
 // const versionsPackageFilename = __dirname + "/package.json";
 
 const isProd = process.env.NODE_ENV === "production";
@@ -110,7 +103,7 @@ if (isProd) {
             { from: "src/public.d.ts", to: "index.d.ts" },
             { from: "src/data.schema.json", to: "../docs" },
             { from: "src/public.d.ts", to: "../docs/typings.d.ts" }
-        ])
+        ]),
     );
 } else {
     // config.optimization = {

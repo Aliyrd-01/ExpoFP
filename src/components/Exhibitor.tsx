@@ -7,7 +7,7 @@ import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import { useStore, useUiState } from "../tools/use";
-import { useReaction } from "../utils/mobx";
+import { useReaction, useAutorun } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
@@ -45,7 +45,8 @@ function ExhibitorComponent() {
         },
         get sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
-        }
+        },
+        adminContent: null
     }));
 
     useReaction(
@@ -55,6 +56,15 @@ function ExhibitorComponent() {
             s.collapsed = true;
         }
     );
+
+    useAutorun(async () => {
+        if (uiState.showAdminUi) {
+            const ExhibitorAdmin = await (await import(/* webpackChunkName: "admin" */ "./ExhibitorAdmin")).default;
+            s.adminContent = <ExhibitorAdmin exhibitor={s.exhibitor} />;
+        } else {
+            s.adminContent = null;
+        }
+    });
 
     return useObserver(() => {
         const exhibitor = s.exhibitor;
@@ -82,10 +92,10 @@ function ExhibitorComponent() {
             bookmarked: exhibitor.bookmarked
         });
 
-        let adminContent: JSX.Element = null;
-        if (uiState.showAdminUi) {
-            adminContent = <ExhibitorAdmin exhibitor={s.exhibitor} />;
-        }
+        // let adminContent: JSX.Element = null;
+        // if (uiState.showAdminUi) {
+        //     adminContent = <ExhibitorAdmin exhibitor={s.exhibitor} />;
+        // }
 
         return (
             <OverlayContent
@@ -95,7 +105,7 @@ function ExhibitorComponent() {
                 particles={exhibitor.featured}
                 bar={bar}
             >
-                {adminContent}
+                {s.adminContent}
                 <div className="exhibitor__details">
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map(booth => (

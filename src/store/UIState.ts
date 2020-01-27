@@ -46,7 +46,7 @@ export default class UIState {
     previewExhibitor: Exhibitor = null;
     @observable wsStarted = false;
     @observable canvasStarted = false;
-    @observable showAdminUi = true;
+    @observable showAdminUi = false;
 
     overlayMediumHeightRems = 10;
 

@@ -7,7 +7,7 @@ import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
 import { useUiState, useStore } from "../tools/use";
-import BoothAdmin from "./BoothAdmin";
+import { useAutorun } from "../utils/mobx";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -42,8 +42,19 @@ function Booth() {
         },
         get descriptionCombined() {
             return this.booth.description || data.reserveInstructions || "";
-        }
+        },
+
+        adminContent: null
     }));
+
+    useAutorun(async () => {
+        if (uiState.showAdminUi && s.regular) {
+            const BoothAdmin = await (await import(/* webpackChunkName: "admin" */ "./BoothAdmin")).default;
+            s.adminContent = <BoothAdmin booth={s.booth as RegularBooth} />;
+        } else {
+            s.adminContent = null;
+        }
+    });
 
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
@@ -128,14 +139,14 @@ function Booth() {
             );
         }
 
-        let adminContent: JSX.Element = null;
-        if (uiState.showAdminUi && s.regular) {
-            adminContent = <BoothAdmin booth={s.booth as RegularBooth} />;
-        }
+        // let adminContent: JSX.Element = null;
+        // if (uiState.showAdminUi && s.regular) {
+        //     adminContent = <BoothAdmin booth={s.booth as RegularBooth} />;
+        // }
 
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
-                {adminContent}
+                {s.adminContent}
                 {content}
             </OverlayContent>
         );
