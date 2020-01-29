@@ -1,6 +1,7 @@
 import { zoomIdentity, ZoomTransform } from "d3-zoom";
 import { svgArea, svgViewBox } from "../../data/svg";
-import { Drawer } from "./drawing/Drawer1";
+// import { Drawer } from "./drawing/Drawer1";
+import Matrix from "../../drawing/Matrix";
 // import { MatrixReadonly } from "./drawing/Matrix";
 
 // function zoomBoundOld(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolean) {
@@ -46,7 +47,7 @@ import { Drawer } from "./drawing/Drawer1";
 
 // minzoomlevel
 
-export function getMinZoomLevel(drawer: Drawer) {
+export function getMinZoomLevel(drawer: Matrix) {
     let vRectPx = drawer.getVisibleRect().scale(1 / drawer.pixelRatio);
     const svgPxScale = drawer.getSvgPxUnzoomedScale(); // when transform.k == 1
     // const scale = svgPxMatrix[0];
@@ -68,7 +69,7 @@ export function getMinZoomLevel(drawer: Drawer) {
     // const svgWidthUnscaled = svgWidth * scale;
 }
 
-function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolean) {
+function zoomBound(drawer: Matrix, transform: ZoomTransform, forAutoMove: boolean) {
     const limitToSvg = svgArea.w < svgViewBox.w;
 
     // https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati

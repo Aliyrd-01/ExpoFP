@@ -1,8 +1,13 @@
+import { zoomIdentity } from "d3-zoom";
 import jsPDF from "jspdf";
 import slugify from "slugify";
-import createDrawer from "../components/Map/drawing/Drawer1";
+import Rect from "../core/Rect";
+import Size from "../core/Size";
+//import createDrawer from "../components/Map/drawing/Drawer1";
 import data from "../data";
 import { svgViewBox } from "../data/svg";
+import DrawerAdapter from "../drawing/DrawerAdapter";
+import Matrix from "../drawing/Matrix";
 import FloorPlanReady from "../floorplan.ready";
 import debugCanvases from "./debugCanvases";
 import pdfFontBold from "./pdf-open-sans-bold.txt";
@@ -95,11 +100,19 @@ export async function generatePdf(fp: FloorPlanReady) {
 
     debugCanvases.push(canvas);
 
-    const drawer = createDrawer(fp, canvas, false);
-    drawer.setVisibleScale(1);
-    drawer.setPixelRatio(2.5);
-    // drawer.resetCanvasSize();
-    drawer.draw();
+    const matrix = new Matrix(
+        new Size(canvas.width, canvas.height),
+        Rect.fromXywh(0, 0, canvas.width, canvas.height),
+        1,
+        zoomIdentity,
+        2.5
+    );
+    const drawer = new DrawerAdapter(fp, canvas, matrix); //createDrawer(fp, canvas, false);
+    drawer.dispose();
+    // drawer.setVisibleScale(1);
+    // drawer.setPixelRatio(2.5);
+    // // drawer.resetCanvasSize();
+    // drawer.draw();
 
     doc.addImage(canvas, "JPEG", left, top, imageWidth, imageHeight);
 

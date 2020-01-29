@@ -1,9 +1,10 @@
 import { m4 } from "twgl.js";
-import { Drawer } from "./drawing/Drawer1";
+// import { Drawer } from "./drawing/Drawer1";
 import { Booth } from "../../store/BoothStore";
 import Rect from "../../core/Rect";
 // import { boothStore } from "../../store";
 import logger from "../../tools/logger";
+import Matrix from "../../drawing/Matrix";
 // import { getPxSvgMatrix } from "./matrix";
 
 // export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): Booth {
@@ -46,7 +47,7 @@ export default function createBoothByIdFromClientXyFunc(booths: Booth[]) {
     logger.log("hover segmentToRects", segmentToRects);
 
     let prevSegment: Rect;
-    return function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {
+    return function getLastBoothsFromClientXy(x: number, y: number, drawer: Matrix): Booth {
         var pxSvgMatrix = drawer.getPxSvgMatrix();
         const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);
         const xs = xys[0],

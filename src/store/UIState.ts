@@ -145,16 +145,16 @@ export default class UIState {
     }
 
     // visible rect
-    @computed get canvasVisibleRectPx(): Rect {
+    @computed({ keepAlive: true }) get canvasVisibleRectPx(): Rect {
         const s = this.screenSize;
         return Rect.fromX1y1x2y2(this.mapVisibleLeft, this.mapVisibleTop, s.width, s.height - this.mapVisibleBottom);
     }
 
-    @computed get canvasVisibleRectPt(): Rect {
+    @computed({ keepAlive: true }) get canvasVisibleRectPt(): Rect {
         return this.canvasVisibleRectPx.scale(this.devicePixelRatio);
     }
 
-    @computed get canvasSizePt(): Size {
+    @computed({ keepAlive: true }) get canvasSizePt(): Size {
         return this.screenSize.scale(this.devicePixelRatio);
     }
 
@@ -182,7 +182,7 @@ export default class UIState {
     @computed get dimmed() {
         return (
             this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
-            this.listItems.find(x => !(x instanceof Exhibitor))
+            !!this.listItems.find(x => !(x instanceof Exhibitor))
         );
     }
 

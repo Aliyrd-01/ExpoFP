@@ -1,23 +1,26 @@
 import classNames from "classnames";
 import { easeExpOut } from "d3-ease";
-import { interpolate } from "d3-interpolate";
+import { interpolate, interpolateNumber } from "d3-interpolate";
 import { event as currentEvent, select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
+import DrawerAdapter from "../../drawing/DrawerAdapter";
+import Matrix from "../../drawing/Matrix";
 // import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
-import { useStore, useUiState, useFp } from "../../tools/use";
+import { useFp, useStore, useUiState } from "../../tools/use";
+import animate from "../../utils/animate";
 import isIframe from "../../utils/is-iframe";
 import isMac from "../../utils/is-mac";
 import { useReaction } from "../../utils/mobx";
 import createBoothIdFromClientXyFunc from "./booth-by-xy";
-import createDrawer, { Drawer } from "./drawing/Drawer1";
+// import createDrawer, { Drawer } from "./drawing/Drawer1";
 import "./Map.scss";
-import { sizeCanvasToParentElement } from "./utils";
+import { sizeToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
 
@@ -28,7 +31,7 @@ export default function Map() {
     const uiState = useUiState();
     const fp = useFp();
 
-    const boothIdByXy = useMemo(()=> createBoothIdFromClientXyFunc(store.boothStore.booths), [store]);
+    const boothIdByXy = useMemo(() => createBoothIdFromClientXyFunc(store.boothStore.booths), [store]);
 
     let zoomAf: number;
     let zoomAfTransform: ZoomTransform;
@@ -40,7 +43,8 @@ export default function Map() {
         moving: false,
         $canvas: null as d3.Selection<HTMLCanvasElement, unknown, null, undefined>,
         zoom: null as d3.ZoomBehavior<Element, unknown>,
-        drawer: null as Drawer,
+        drawer: null as DrawerAdapter,
+        matrix: null as Matrix,
         prevBoothOver: null as Booth
         // get visibleRect() {
         //     const rect = uiState.canvasVisibleRectPx
@@ -53,33 +57,41 @@ export default function Map() {
     useReaction(
         () => uiState.devicePixelRatio,
         () => {
-            s.drawer.setPixelRatio(uiState.devicePixelRatio);
+            s.matrix.setPixelRatio(uiState.devicePixelRatio);
+            zoomBoundCurrent();
+        }
+    );
+    useReaction(
+        () => uiState.canvasVisibleRectPt,
+        () => {
+            s.matrix.setVisibleRect(uiState.canvasVisibleRectPt);
+            zoomBoundCurrent();
         }
     );
 
     // useReaction(
     //     () => uiState.canvasVisibleRectPx,
     //     ()=>{
-    //         if (!s.drawer) return;
+    //         if (!s.matrix) return;
     //         const v = uiState.canvasVisibleRectPx;
-    //         s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
+    //         s.matrix.setVisibleRect(v.scale(uiState.devicePixelRatio));
     //         zoomBoundCurrent();
     //     }
     // );
 
-    useReaction(
-        () => [uiState.canvasVisibleRectPx, s.drawer],
-        () => {
-            if (!s.drawer) return;
-            const v = uiState.canvasVisibleRectPx;
-            logger.log("visibleRect change", v);
-            s.drawer.setVisibleRect(v.scale(uiState.devicePixelRatio));
-            // rezoom to make it fit bounds
-            // this.$canvas.call(this.zoom.transform, zoomTransform(this.$canvas.node()));
-            zoomBoundCurrent();
-        },
-        { fireImmediately: true }
-    );
+    // useReaction(
+    //     () => [uiState.canvasVisibleRectPt, s.matrix],
+    //     () => {
+    //         if (!s.matrix) return;
+    //         const v = uiState.canvasVisibleRectPx;
+    //         logger.log("visibleRect change", v);
+    //         s.matrix.setVisibleRect(v.scale(uiState.devicePixelRatio));
+    //         // rezoom to make it fit bounds
+    //         // this.$canvas.call(this.zoom.transform, zoomTransform(this.$canvas.node()));
+    //         zoomBoundCurrent();
+    //     },
+    //     { fireImmediately: true }
+    // );
 
     useReaction(
         () => uiState.centerMap,
@@ -137,12 +149,27 @@ export default function Map() {
 
     function init() {
         s.$canvas = select(el.current);
+        s.matrix = new Matrix(uiState.canvasSizePt, uiState.canvasVisibleRectPt, 0, zoomIdentity, uiState.devicePixelRatio);
+
+        window.setTimeout(() => {
+            animate(
+                0,
+                1000,
+                easeExpOut,
+                interpolateNumber(0, 1),
+                window.requestAnimationFrame,
+                v => s.matrix.setVisibleScale(v),
+                () => {
+                    uiState.canvasStarted = true;
+                }
+            );
+        }, 400);
 
         s.zoom = zoom()
             .clickDistance(15)
             .interpolate(interpolate)
             .scaleExtent([0.1, 12])
-            .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
+            .constrain((transform, extent, translateExtent) => zoomBound(s.matrix, transform, false))
             .filter(function() {
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")
                     // && currentEvent.type !== "touchstart"
@@ -170,7 +197,7 @@ export default function Map() {
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
-                //s.drawer.setZoomTransform(t);
+                //s.matrix.setZoomTransform(t);
                 else if (t.animate) setZoomTransformAnimated(t, 500, easeExpOut);
                 else setZoomTransformAnimated(t, 0, null);
                 s.animatePlease = false;
@@ -182,15 +209,17 @@ export default function Map() {
 
         configInertia(s.zoom);
         //m.setVisibleRect(thiuiState.canvasVisibleRectPx);
-        sizeCanvasToParentElement(el.current);
-        s.drawer = createDrawer(fp, el.current, true);
+        sizeToParentElement(el.current);
+        // s.matrix = new Matrix(new Size(el.current.width, el.current.height).scale(uiState.devicePixelRatio));
+        s.drawer = new DrawerAdapter(fp, el.current, s.matrix);
 
-        // s.drawer.setVisibleRect((uiState.canvasVisibleRectPx as Rect).scale(uiState.devicePixelRatio));
-        s.drawer.setPixelRatio(uiState.devicePixelRatio);
+        // s.matrix.setVisibleRect((uiState.canvasVisibleRectPx as Rect).scale(uiState.devicePixelRatio));
+        s.matrix.setPixelRatio(uiState.devicePixelRatio);
         window.addEventListener("resize", () => {
             // __logger.log('canvas change', canvas);
-            sizeCanvasToParentElement(el.current);
-            s.drawer.resetCanvasSize();
+            sizeToParentElement(el.current);
+            // Below commented, because now we will use ResizeObserver
+            // s.drawer.resetCanvasSize();
         });
         setZoomTransformAnimated(zoomIdentity, 0, null);
         s.$canvas.call(s.zoom as any);
@@ -203,7 +232,7 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
-        const b = boothIdByXy(e.clientX, e.clientY, s.drawer);
+        const b = boothIdByXy(e.clientX, e.clientY, s.matrix);
         // console.log("handleMouseMoveAndOver", b);
         raiseBoothOver(b);
     }
@@ -217,7 +246,7 @@ export default function Map() {
             store.showMap();
         }
         // if (!this.props.onBoothClick) return;
-        const b = boothIdByXy(e.clientX, e.clientY, s.drawer);
+        const b = boothIdByXy(e.clientX, e.clientY, s.matrix);
         logger.log("click", b);
         store.clickBooth(b);
     }
@@ -231,7 +260,7 @@ export default function Map() {
 
     function zoomBoundCurrent() {
         const ct = zoomTransform(s.$canvas.node());
-        const nt = zoomBound(s.drawer, ct, false);
+        const nt = zoomBound(s.matrix, ct, false);
         if (nt !== ct) {
             // __logger.log('fixed bounds', ct, nt)
             zoomTo(nt);
@@ -243,14 +272,14 @@ export default function Map() {
         if (zoomAf) {
             // move to the last frame zoom transform
             cancelAnimationFrame(zoomAf);
-            // s.drawer.setZoomTransform(zoomAfTransform);
+            // s.matrix.setZoomTransform(zoomAfTransform);
         }
         if (!duration) {
             zoomAfTransform = undefined;
-            s.drawer.setZoomTransform(t);
+            s.matrix.setZoomTransform(t);
             return;
         }
-        const ct = zoomAfTransform || s.drawer.getZoomTransform();
+        const ct = zoomAfTransform || s.matrix.getZoomTransform();
         const i = interpolate(ct, t);
         const start = performance.now();
 
@@ -258,7 +287,7 @@ export default function Map() {
             const part = Math.min(1, (performance.now() - start) / duration);
             const easedPart = easingFunc ? easingFunc(part) : part;
             const val = i(easedPart);
-            s.drawer.setZoomTransform(val);
+            s.matrix.setZoomTransform(val);
             if (part !== 1) {
                 zoomAf = requestAnimationFrame(animationStep);
             } else {
@@ -276,7 +305,7 @@ export default function Map() {
 
         const targetRect = vRect.withPadding((vRect.w * minPaddingPercent) / 100, (vRect.h * minPaddingPercent) / 100);
 
-        const svgPxMatrix = s.drawer.getSvgPxUnzoomedMatrix();
+        const svgPxMatrix = s.matrix.getSvgPxUnzoomedMatrix();
 
         const xy1 = m4.transformPoint(svgPxMatrix, [svgRect.x1, svgRect.y1, 1], null);
         const x1 = xy1[0],
@@ -294,6 +323,6 @@ export default function Map() {
         const diffX = targetRect.cx - bSvgRect.cx * zoom;
         const diffY = targetRect.cy - bSvgRect.cy * zoom;
         const t = zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
-        return zoomBound(s.drawer, t, true);
+        return zoomBound(s.matrix, t, true);
     }
 }
