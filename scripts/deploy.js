@@ -4,11 +4,12 @@ const async = require("async");
 const fetch = require("node-fetch");
 
 const stable = "0.4.3";
+const updateToBeta = "2.0.0-4";
 const beta = require("../package.json").version;
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "expo"];
+const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_"];
 const alphas = ["thinksoft", "expo", "eventscase", "confexdev"];
 const force = [...alphas];
 
@@ -38,7 +39,7 @@ async function main() {
 
         if (data.expo === "demo") requiredNpmVersion = null;
         else if (alphas.indexOf(data.expo) !== -1) requiredNpmVersion = alpha;
-        else if (betas.indexOf(data.expo) !== -1) requiredNpmVersion = beta;
+        else if (betas.indexOf(data.expo) !== -1 || data.npmVersion === updateToBeta) requiredNpmVersion = beta;
         else if (data.dataLastModified < minDate) requiredNpmVersion = null;
         else requiredNpmVersion = stable;
 
