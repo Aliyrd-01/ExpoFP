@@ -20,7 +20,7 @@ function Booth() {
             return this.booth instanceof SpecialBooth ? this.booth : null;
         },
         get showReserve() {
-            return this.regular && (this.regular.price === "0" || !!this.regular.reserveUrl);
+            return this.regular && ((this.regular.price === "0" && !!this.regular.buyUrl) || !!this.regular.reserveUrl);
         },
         get showBuy() {
             return this.regular && this.regular.buyUrl && this.regular.price !== "0";
