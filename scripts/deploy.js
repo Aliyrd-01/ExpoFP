@@ -9,7 +9,7 @@ const beta = require("../package.json").version;
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_"];
+const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "birdstrike2020"];
 const alphas = ["thinksoft", "expo", "eventscase", "confexdev"];
 const force = [...alphas];
 
