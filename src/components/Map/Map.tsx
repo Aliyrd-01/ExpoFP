@@ -149,7 +149,14 @@ export default function Map() {
 
     function init() {
         s.$canvas = select(el.current);
-        s.matrix = new Matrix(uiState.canvasSizePt, uiState.canvasVisibleRectPt, 0, zoomIdentity, uiState.devicePixelRatio);
+        s.matrix = new Matrix(
+            uiState.canvasSizePt,
+            uiState.canvasVisibleRectPt,
+            0,
+            fp.svg.svgArea,
+            zoomIdentity,
+            uiState.devicePixelRatio
+        );
 
         window.setTimeout(() => {
             animate(
@@ -169,7 +176,7 @@ export default function Map() {
             .clickDistance(15)
             .interpolate(interpolate)
             .scaleExtent([0.1, 12])
-            .constrain((transform, extent, translateExtent) => zoomBound(s.matrix, transform, false))
+            .constrain((transform, extent, translateExtent) => zoomBound(fp.svg, s.matrix, transform, false))
             .filter(function() {
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")
                     // && currentEvent.type !== "touchstart"
@@ -260,7 +267,7 @@ export default function Map() {
 
     function zoomBoundCurrent() {
         const ct = zoomTransform(s.$canvas.node());
-        const nt = zoomBound(s.matrix, ct, false);
+        const nt = zoomBound(fp.svg, s.matrix, ct, false);
         if (nt !== ct) {
             // __logger.log('fixed bounds', ct, nt)
             zoomTo(nt);
@@ -323,6 +330,6 @@ export default function Map() {
         const diffX = targetRect.cx - bSvgRect.cx * zoom;
         const diffY = targetRect.cy - bSvgRect.cy * zoom;
         const t = zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
-        return zoomBound(s.matrix, t, true);
+        return zoomBound(fp.svg, s.matrix, t, true);
     }
 }

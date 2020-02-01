@@ -18,6 +18,16 @@ interface Data {
     // hideCompanies: boolean;
 }
 
+interface SvgLegacy {
+    xml: string;
+    paths: { [id: string]: any };
+    pending: boolean;
+    // populated
+    svgElement: SVGElement;
+    svgArea: Rect;
+    svgViewBox: Rect;
+}
+
 interface RawCategory {
     id: number;
     name: string;
@@ -94,5 +104,5 @@ interface PathInfo {
     color: string;
 }
 
-const __fp: string;
-const __fpPaths: { [id: string]: any };
+// const __fp: string;
+// const __fpPaths: { [id: string]: any };

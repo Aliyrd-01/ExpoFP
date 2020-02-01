@@ -5,6 +5,10 @@ export function useFp() {
     return useContext(FpContext);
 }
 
+export function useData() {
+    return useFp().data;
+}
+
 export function useStore() {
     return useFp().store;
 }

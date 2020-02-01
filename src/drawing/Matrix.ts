@@ -3,7 +3,7 @@ import { observable, runInAction } from "mobx";
 import { m4 } from "twgl.js";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
-import { svgArea } from "../data/svg";
+// import { svgArea } from "../data/svg";
 
 export default class Matrix {
     // svg -> -1..1
@@ -19,6 +19,7 @@ export default class Matrix {
         private canvasSize: Size,
         private visibleRect: Rect,
         private visibleScale: number,
+        private svgArea: Rect,
         private zoomTransform: ZoomTransform,
         public pixelRatio: number
     ) {
@@ -104,7 +105,7 @@ export default class Matrix {
         // console.log('visi', visibleScale)
 
         //const visibleRectPt = visibleRect.scale(this.pixelRatio);
-        const svgPxScaleUnzoomed = Math.min(visibleRect.w / svgArea.w, visibleRect.h / svgArea.h);
+        const svgPxScaleUnzoomed = Math.min(visibleRect.w / this.svgArea.w, visibleRect.h / this.svgArea.h);
         const svgPxScale = svgPxScaleUnzoomed * visibleScale;
 
         // console.log('svgPxScaleUnzoomed', svgPxScaleUnzoomed, 'pixelRatio', this.pixelRatio,
@@ -121,7 +122,7 @@ export default class Matrix {
         m4.scale(centerSvgMatrix, [svgPxScaleUnzoomed, svgPxScaleUnzoomed, 1], centerSvgMatrix);
         const centerSvgMatrixWithoutVisibleScale = new Float32Array(centerSvgMatrix);
         m4.scale(centerSvgMatrix, [visibleScale, visibleScale, 1], centerSvgMatrix);
-        const moveToCenter = [-svgArea.cx, -svgArea.cy, 0];
+        const moveToCenter = [-this.svgArea.cx, -this.svgArea.cy, 0];
         m4.translate(centerSvgMatrix, moveToCenter, centerSvgMatrix);
         m4.translate(centerSvgMatrixWithoutVisibleScale, moveToCenter, centerSvgMatrixWithoutVisibleScale);
 

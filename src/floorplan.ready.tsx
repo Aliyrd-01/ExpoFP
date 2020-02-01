@@ -2,40 +2,36 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
-// import initStore from "./store/init";
+import AdminService from "./services/AdminService";
+import loadAdminServiceIfNeeded from "./services/AdminService.loader";
+import EventTracker from "./services/EventTracker";
 import routing from "./services/routing";
 import initStore from "./store/init";
 import RootStore from "./store/RootStore";
-// import store from "./store";
-import trackEvent from "./tools/track-event";
-import AdminService from "./services/AdminService";
-import loadAdminServiceIfNeeded from "./services/AdminService.loader";
-
-trackEvent("load");
-// initStore(store);
-
-// export default function renderFloorPlan(el: Element) {
-//     ReactDOM.render(<Layout />, el);
-// }
+import { initGtag } from "./tools/gtag";
+import populateLegacySvg from "./tools/legacySvg";
+import validateAndFixData from "./tools/validate-and-fix-data";
 
 export const FpContext = React.createContext<FloorPlanReady>(null);
 
 export default class FloorPlanReady extends FloorPlanLoader {
     public readonly store: RootStore;
     public readonly adminService: AdminService;
-    // constructor(options: FloorPlanOptions) {
-    //     super(options);
-    // }
+    public readonly eventTracker: EventTracker;
+
     protected init(): void {
-        const store = new RootStore(this);
-        window["__store"] = store;
+        validateAndFixData(this.data, this.eventId);
         const self = this as MutableRequired<FloorPlanReady>;
-        self.store = store;
+        self.eventTracker = new EventTracker(this.data.trackerUrl);
+        window["__store"] = self.store = new RootStore(this);
+        initGtag(this.data.gtag);
+        populateLegacySvg(this.svg, this.eventId);
+
         loadAdminServiceIfNeeded(this).then(x => (self.adminService = x));
 
         // init all
-        initStore(store);
-        routing(store);
+        initStore(self.store);
+        routing(this);
 
         ReactDOM.render(
             <FpContext.Provider value={this}>
@@ -46,31 +42,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         this.resolveReady();
     }
 
-    //onBoothClick: (e: FloorPlanBoothClickEvent) => void;
-
     selectBooth(name: string) {
         throw new Error("Not implemented");
         // use store to find this booth (if store is ready)
     }
 }
-
-/*
-
-fp is a service container
-
-fp.store
-fp.router
-fp.adminService -> should be non-empty when token provided (give it is valid)
-fp.
-
-if there's something that affects UI -> it should be part of store
-
-so let's go from UI to bottom
-Booth -> should have a list of exhibitors -> taken from store
-Booth should have 
-
-actions that modify store in transaction -> should be part of store
-
-
-
-*/

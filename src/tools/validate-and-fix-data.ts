@@ -1,27 +1,25 @@
 import { validate } from "jsonschema"; // TODO: import and validate conditionally
 import schema from "../data.schema.json";
-import logger from "../tools/logger";
-import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
+import logger from "./logger";
 // import baseUrl from "./base-data-url";
 
-export default function validateData(data: Data) {
-    const EFP_EXPO = settings.EXPO;
+export default function validateData(data: Data, eventId: string) {
     // before data validation
     if (!data.exhibitors) data.exhibitors = [];
     if (!data.booths) data.booths = [];
     if (!data.categories) data.categories = [];
-    if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
-    if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
+    if (!data.gtag && eventId === "jtrade19") data.gtag = "UA-134602409-3";
+    if (!data.gtag && eventId === "expo") data.gtag = "UA-134602409-2";
 
     // temporary workaround for invalid data.js
-    if (data.exhibitors.length > 0){
+    if (data.exhibitors.length > 0) {
         for (const booth of data.booths) {
-            delete booth['reserved'];
+            delete booth["reserved"];
         }
     }
 
-    // if (EFP_EXPO === "miblive2020") {
+    // if (eventId === "miblive2020") {
     //     data.booths
     //         .filter((b: any) => b.special !== true)
     //         .forEach((b: any) => {
@@ -30,9 +28,9 @@ export default function validateData(data: Data) {
     //         });
     //     data.exhibitors = [];
     // }
-    //  if (EFP_EXPO === "ktrade20") data.hideCompanies = true;
-    // if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
-    // if (EFP_EXPO === "miblive2020") data.hideCompanies = true;
+    //  if (eventId === "ktrade20") data.hideCompanies = true;
+    // if (eventId === "sbexpo") data.hideCompanies = true;
+    // if (eventId === "miblive2020") data.hideCompanies = true;
     // if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
     // data.hideCompanies = !!data.hideCompanies;
     //if (isDebug) data.registerUrl = "http://google.com";
@@ -43,7 +41,7 @@ export default function validateData(data: Data) {
         data.expoFpAd = true;
     }
 
-    // if (isDebug && EFP_EXPO === "sydneybuildexpo") data.free = true;
+    // if (isDebug && eventId === "sydneybuildexpo") data.free = true;
 
     const validationEnabled = isDebug || localStorage.getItem("validate") === "1";
 
@@ -83,13 +81,13 @@ export default function validateData(data: Data) {
     }
 
     // some data fixes (expo-specific will be removed)
-    if (!data.logo && EFP_EXPO === "expo") data.logo = "../logo.svg";
-    if (!data.logo) data.logo = "../" + EFP_EXPO + "-logo.png";
-    if (!data.homeUrl && EFP_EXPO === "jtrade19") data.homeUrl = "https://www.jtrade.co.uk/";
+    if (!data.logo && eventId === "expo") data.logo = "../logo.svg";
+    if (!data.logo) data.logo = "../" + eventId + "-logo.png";
+    if (!data.homeUrl && eventId === "jtrade19") data.homeUrl = "https://www.jtrade.co.uk/";
     // this is permanent
     if (!data.homeUrl) data.homeUrl = "https://expofp.com/";
     if (!data.boothTerm) data.boothTerm = "Booth";
-    if (EFP_EXPO === "expo") {
+    if (eventId === "expo") {
         const expoExpoAds = [2567, 2704, 2681, 2592, 2740, 2709, 2482, 2609, 2734, 2696, 2840, 2566, 2736];
         data.exhibitors.filter(x => x.logo && expoExpoAds.indexOf(x.id) !== -1).forEach(x => (x.advertise = true));
     }
@@ -101,7 +99,7 @@ export default function validateData(data: Data) {
         // booth.special = !!booth.special;
         if (!(booth as RawSpecialBooth).special) {
             const regBooth = booth as RawRegularBooth;
-            if (typeof regBooth['onHold'] === "undefined") regBooth['onHold'] = b.isOnHold;
+            if (typeof regBooth["onHold"] === "undefined") regBooth["onHold"] = b.isOnHold;
             if (typeof regBooth.availColor === "undefined") regBooth.availColor = b.availableColor;
             if (typeof regBooth.type === "undefined") regBooth.type = b.boothTypeName;
             regBooth.exhibitors = regBooth.exhibitors || [];

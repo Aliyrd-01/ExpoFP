@@ -2,7 +2,7 @@ import { observable, reaction, runInAction } from "mobx";
 import Rect from "../../core/Rect";
 import Size from "../../core/Size";
 import logger from "../../tools/logger";
-import { Drawer, DrawerUpdatables } from "../DrawerInterfaces";
+import { Drawer, DrawerUpdatables, DrawerLayer } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
 import Painter from "./Painter";
 
@@ -26,7 +26,13 @@ export default class DrawerImpl implements Drawer, DrawerUpdatables {
 
     public readonly allPainters: Painter[] = [];
 
-    constructor(private canvas: HTMLCanvasElement, private pixelRatio: number, u: DrawerUpdatables) {
+    constructor(
+        private canvas: HTMLCanvasElement,
+        private pixelRatio: number,
+        u: DrawerUpdatables,
+        public layers: DrawerLayer[],
+        public svgLegacy: SvgLegacy
+    ) {
         this.setUpdatables(u);
         this.gl = createGl(canvas);
         this.drawBound = this.draw.bind(this);

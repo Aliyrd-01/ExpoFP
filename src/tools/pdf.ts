@@ -4,8 +4,8 @@ import slugify from "slugify";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 //import createDrawer from "../components/Map/drawing/Drawer1";
-import data from "../data";
-import { svgViewBox } from "../data/svg";
+// import data from "../data";
+// import { svgViewBox } from "../data/svg";
 import DrawerAdapter from "../drawing/DrawerAdapter";
 import Matrix from "../drawing/Matrix";
 import FloorPlanReady from "../floorplan.ready";
@@ -19,6 +19,8 @@ export async function generatePdf(fp: FloorPlanReady) {
     const dpi = 72;
     const printerPpi = 300;
     const format = "Tabloid";
+    const data = fp.data;
+    const { svgViewBox, svgArea } = fp.svg;
 
     //const titleFontSizePercentOfWidth = 0.05;
     const orientation = svgViewBox.w / svgViewBox.h > 1.2 ? "landscape" : "portrait";
@@ -104,6 +106,7 @@ export async function generatePdf(fp: FloorPlanReady) {
         new Size(canvas.width, canvas.height),
         Rect.fromXywh(0, 0, canvas.width, canvas.height),
         1,
+        svgArea,
         zoomIdentity,
         2.5
     );

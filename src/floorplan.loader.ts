@@ -1,5 +1,5 @@
 import baseUrl from "./tools/base-url";
-import { loadCss, loadFont, loadJs, preloadJs } from "./tools/loaders";
+import { loadCss, loadFont, loadJson, preloadJs, preloadJson } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import useShadow from "./utils/use-shadow";
@@ -17,6 +17,8 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    svg: SvgLegacy;
+    data: Data;
 
     protected resolveReady: () => void;
 
@@ -84,11 +86,11 @@ export default class FloorPlanLoader implements FloorPlan {
         // lazy load floorplan and instantiate it here
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
-        const dataUrl = dataUrlBase + "data.js";
-        const fpUrl = dataUrlBase + "fp.svg.js";
+        const dataUrl = dataUrlBase + "data.json";
+        const fpUrl = dataUrlBase + "fp.json";
 
-        preloadJs(dataUrl);
-        preloadJs(fpUrl);
+        preloadJson(dataUrl);
+        preloadJson(fpUrl);
         preloadJs("floorplan.js");
         preloadJs("vendors~floorplan.js");
 
@@ -119,11 +121,19 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(fpUrl)]);
+            await Promise.all([
+                ...fontPromises,
+                (async function() {
+                    self.data = await loadJson<Data>(dataUrl);
+                })(),
+                (async function() {
+                    self.svg = await loadJson<SvgLegacy>(fpUrl);
+                })()
+            ]);
             let fpVersion = 0;
-            while (window["__fpPending"] && !window["__fp"]) {
+            while (self.svg.pending) {
                 await sleep(2000);
-                await loadJs(fpUrl + `?v=${++fpVersion}`);
+                self.svg = await loadJson<SvgLegacy>(fpUrl + `?v=${++fpVersion}`);
             }
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");

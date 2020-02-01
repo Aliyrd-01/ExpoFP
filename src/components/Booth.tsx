@@ -1,9 +1,8 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import data from "../data";
 // import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
-import { useStore, useUiState } from "../tools/use";
+import { useData, useStore, useUiState } from "../tools/use";
 import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
@@ -13,6 +12,7 @@ function Booth() {
     // return <div>adsa</div>;
     const uiState = useUiState();
     const store = useStore();
+    const data = useData();
 
     const s = useLocalStore(() => ({
         get booth() {

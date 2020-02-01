@@ -14,4 +14,21 @@ interface DrawerUpdatables {
     dimmed: boolean;
 }
 
-interface DrawerBgLayer {}
+interface DrawerLayer {
+    shapes: DrawerShape[];
+}
+
+interface DrawerRectShape {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    fill: string;
+}
+
+interface DrawerPathShape {
+    meshIndex: number;
+    fill: string;
+}
+
+type DrawerShape = DrawerRectShape | DrawerPathShape;

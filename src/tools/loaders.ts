@@ -1,6 +1,5 @@
 import browser from "../utils/browser";
 import baseUrl from "./base-url";
-import logger from "./logger";
 
 function allowAnonymous(url) {
     return !url.startsWith("file:///");
@@ -31,15 +30,29 @@ export function preloadJs(url: string) {
     document.head.appendChild(link);
 }
 
-export async function loadJs(url: string) {
-    return new Promise(function(resolve, reject) {
-        const scriptTag = document.createElement("script");
-        scriptTag.src = goodUrl(url);
-        scriptTag.onload = resolve;
-        logger.log("Injecting script:", scriptTag.src);
-        if (process.env.NODE_ENV === "production" && allowAnonymous(scriptTag.src)) scriptTag.crossOrigin = "anonymous";
-        document.head.appendChild(scriptTag);
-    });
+export function preloadJson(url: string) {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.href = goodUrl(url);
+    link.as = "fetch";
+    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+}
+
+// export async function loadJs(url: string) {
+//     return new Promise(function(resolve, reject) {
+//         const scriptTag = document.createElement("script");
+//         scriptTag.src = goodUrl(url);
+//         scriptTag.onload = resolve;
+//         logger.log("Injecting script:", scriptTag.src);
+//         if (process.env.NODE_ENV === "production" && allowAnonymous(scriptTag.src)) scriptTag.crossOrigin = "anonymous";
+//         document.head.appendChild(scriptTag);
+//     });
+// }
+
+export async function loadJson<T>(url: string) {
+    const response = await fetch(goodUrl(url));
+    return (await response.json()) as T;
 }
 
 declare const FontFace: any;

@@ -1,7 +1,6 @@
 import React from "react";
-import data from "../data";
 import { Booth } from "../store/BoothStore";
-import { useStore, useUiState } from "../tools/use";
+import { useData, useStore, useUiState } from "../tools/use";
 // import store, { uiState } from "../store";
 import "./BoothRow.scss";
 import SimpleRow from "./SimpleRow";
@@ -12,6 +11,7 @@ const BoothRow: React.FC<{
 }> = ({ booth, className }) => {
     const store = useStore();
     const uiState = useUiState();
+    const data = useData();
 
     return (
         <SimpleRow

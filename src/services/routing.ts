@@ -1,16 +1,17 @@
 import { createBrowserHistory } from "history";
 import { autorun } from "mobx";
-import data from "../data";
+import FloorPlanReady from "../floorplan.ready";
 // import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import RootStore from "../store/RootStore";
 import gtag from "../tools/gtag";
 import logger from "../tools/logger";
 
-export default function startRouting(store: RootStore) {
+export default function startRouting(fp: FloorPlanReady) {
+    const store = fp.store;
     const uiState = store.uiState;
+    const data = fp.data;
     const history = createBrowserHistory();
     const pathname = window.location.pathname;
 
@@ -146,7 +147,7 @@ export default function startRouting(store: RootStore) {
     }
 
     // admin api fix
-    if (locationSearch.startsWith("?ea81h")){
+    if (locationSearch.startsWith("?ea81h")) {
         historyReplace("?");
     }
 

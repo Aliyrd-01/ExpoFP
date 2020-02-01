@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React, { Suspense } from "react";
-import data from "../data";
-import { useFp, useStore, useUiState } from "../tools/use";
+
+import { useFp, useStore, useUiState, useData } from "../tools/use";
 // import store, { uiState } from "../store";
 //import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
@@ -24,6 +24,7 @@ const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug")
 export default observer(function Layout() {
     const store = useStore();
     const uiState = useUiState();
+    const data = useData();
     const fp = useFp();
 
     let freeOrDemo: JSX.Element = null;

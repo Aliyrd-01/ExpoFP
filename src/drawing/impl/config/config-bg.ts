@@ -1,7 +1,7 @@
 import Color from "color";
 import { select } from "d3-selection";
 import Rect from "../../../core/Rect";
-import svg from "../../../data/svg";
+// import svg from "../../../data/svg";
 import DrawerImpl from "../DrawerImpl";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
@@ -11,7 +11,7 @@ export default function configBg(context: DrawerImpl) {
     let drawerSeq = 0;
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
-    const bgElements = select(svg)
+    const bgElements = select(context.svgLegacy.svgElement) //context.fp... svg.SVGElement)
         .select("#BG")
         .selectAll("path, rect")
         .nodes() as SVGElement[];
@@ -35,7 +35,7 @@ export default function configBg(context: DrawerImpl) {
         const d = parseInt(svgPath.getAttribute("data-index"));
         const color = Color(svgPath.style.fill).vec4();
 
-        const mesh = __fpPaths[d];
+        const mesh = context.svgLegacy.paths[d];
 
         // TODO: remove in future versions
         for (const p of mesh.positions) {
@@ -80,5 +80,5 @@ export default function configBg(context: DrawerImpl) {
     return () => {};
 }
 
-declare const __fp: string;
-declare const __fpPaths: { [id: string]: any };
+// declare const __fp: string;
+// declare const __fpPaths: { [id: string]: any };

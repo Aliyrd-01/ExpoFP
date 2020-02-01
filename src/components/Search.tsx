@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { FocusEvent, KeyboardEvent, useEffect, useRef } from "react";
-import data from "../data";
-import { useExhibitorStore, useStore, useUiState } from "../tools/use";
+
+import { useExhibitorStore, useStore, useUiState, useData } from "../tools/use";
 // import store, { uiState, exhibitorStore } from "../store";
 import { useAutorun } from "../utils/mobx";
 import List from "./List";
@@ -16,6 +16,7 @@ function Search() {
 
     const store = useStore();
     const uiState = useUiState();
+    const data = useData();
     // const categoryStore = useCategoryStore();
     const exhibitorStore = useExhibitorStore();
 

@@ -1,7 +1,5 @@
 import * as d3 from "d3-selection";
 import Rect from "../../core/Rect";
-import data from "../../data";
-import svg from "../../data/svg";
 import { getNextId } from "../../tools/id";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
@@ -13,6 +11,8 @@ import RootStore from "../RootStore";
 export default function initBooths(store: RootStore) {
     const { boothStore } = store;
     const boothsByName = new Map<string, Booth>();
+    const data = store.fp.data;
+    const svg = store.fp.svg;
 
     const booths: MutableRequired<Booth>[] = [];
 
@@ -43,7 +43,7 @@ export default function initBooths(store: RootStore) {
     }
 
     for (const el of d3
-        .select(svg)
+        .select(svg.svgElement)
         .selectAll("#Booths g[id^=b], #Booths rect[id^=b]")
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
         let rect: SVGRectElement;
@@ -153,7 +153,7 @@ export default function initBooths(store: RootStore) {
                     if (!d) continue;
                     // const triangles = getTrianglesFromFpPaths(d);
                     const pi: PathInfo = {
-                        triangles: getTrianglesFromFpPaths(d),
+                        triangles: getTrianglesFromFpPaths(svg, d),
                         color
                     };
                     booth.paths.push(pi);
@@ -196,8 +196,8 @@ function fixCbre(b: Booth) {
     }
 }
 
-function getTrianglesFromFpPaths(index: number) {
-    const mesh = window["__fpPaths"][index];
+function getTrianglesFromFpPaths(svgLegacy: SvgLegacy, index: number) {
+    const mesh = svgLegacy.paths[index];
     // TODO: remove in future versions
     for (const p of mesh.positions) {
         // a bug in svgMesh3d when normalize: false ?

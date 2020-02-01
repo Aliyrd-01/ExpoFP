@@ -1,21 +1,20 @@
-import RootStore from '../RootStore';
-import logger from '../../tools/logger';
-import data from '../../data';
-import ExhibitorStore, { Exhibitor } from '../ExhibitorStore';
-import { generateUniqueSlug } from '../../tools/slug';
-import baseUrl from "../../tools/base-data-url";
-import { autorun } from 'mobx';
+import RootStore from "../RootStore";
+import logger from "../../tools/logger";
+// import data from '../../data';
+import ExhibitorStore, { Exhibitor } from "../ExhibitorStore";
+import { generateUniqueSlug } from "../../tools/slug";
+import { autorun } from "mobx";
 import previewExhibitor from "../../utils/preview-exhibitor";
 
 export default function initExhibitors(store: RootStore) {
-
-    if (previewExhibitor){
+    const data = store.fp.data;
+    if (previewExhibitor) {
         const i = data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
         if (i !== -1) data.exhibitors.splice(i, 1, previewExhibitor);
         else data.exhibitors.push(previewExhibitor);
     }
 
-    data.exhibitors.sort(function (a: RawExhibitor, b: RawExhibitor) {
+    data.exhibitors.sort(function(a: RawExhibitor, b: RawExhibitor) {
         var x = (a.featured ? "0" : "1") + a.name.toLowerCase();
         var y = (b.featured ? "0" : "1") + b.name.toLowerCase();
         return x < y ? -1 : x > y ? 1 : 0;
@@ -29,7 +28,7 @@ export default function initExhibitors(store: RootStore) {
 
         e.slug = generateUniqueSlug(e.name);
 
-        if (e.logo) e.logo = baseUrl + e.logo;
+        if (e.logo) e.logo = store.fp.dataUrl + e.logo;
         e.categories = [];
         e.booths = [];
         for (const c of raw.categories || []) {
@@ -38,13 +37,13 @@ export default function initExhibitors(store: RootStore) {
             ca.exhibitors.push(e as Exhibitor);
         }
 
-        (e['store'] as ExhibitorStore) = exhibitorStore;
+        (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
     }
 
     // dispose
     delete data.exhibitors;
-    logger.log('initExhibitors', exhibitorStore.exhibitors.length);
+    logger.log("initExhibitors", exhibitorStore.exhibitors.length);
 
     initBookmarked(exhibitorStore);
 }
@@ -88,4 +87,3 @@ function saveToLocalStorage(ar: number[]) {
     // debugger
     localStorage.setItem("bookmarked", JSON.stringify(ar));
 }
-

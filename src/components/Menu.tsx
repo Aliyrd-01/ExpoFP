@@ -2,33 +2,16 @@ import copyToClipboard from "copy-to-clipboard";
 import { VisibilityProperty } from "csstype";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
-import data from "../data";
+
 // import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import { Category } from "../store/CategoryStore";
-import baseUrl from "../tools/base-data-url";
+// import baseUrl from "../tools/base-data-url";
 import logger from "../tools/logger";
 import isIframe from "../utils/is-iframe";
-import { useAutorun } from "../utils/mobx";
+import { useAutorun, useInit } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
-import { useUiState, useCategoryStore, useExhibitorStore, useStore } from "../tools/use";
-
-const logoUrl = baseUrl + data.logo;
-logger.log("Logo url: ", logoUrl);
-
-window.setTimeout(function() {
-    const img = new Image();
-    img.onload = () => {
-        logger.log("Logo image loaded");
-    };
-    img.src = logoUrl;
-
-    // const link = document.createElement("link");
-    // link.href = logoUrl;
-    // link.rel = "preload";
-    // (link as any).as = "image";
-    // document.head.appendChild(link);
-}, 1500);
+import { useUiState, useCategoryStore, useExhibitorStore, useStore, useData, useFp } from "../tools/use";
 
 function Menu() {
     const s = useLocalStore(() => ({
@@ -39,8 +22,24 @@ function Menu() {
 
     const store = useStore();
     const uiState = useUiState();
+    const fp = useFp();
     const categoryStore = useCategoryStore();
     const exhibitorStore = useExhibitorStore();
+    const data = useData();
+
+    const logoUrl = fp.dataUrl + data.logo;
+
+    useInit(() => {
+        logger.log("Logo url: ", logoUrl);
+
+        window.setTimeout(function() {
+            const img = new Image();
+            img.onload = () => {
+                logger.log("Logo image loaded");
+            };
+            img.src = logoUrl;
+        }, 1500);
+    });
 
     useAutorun(() => {
         if (!uiState.menu) {
