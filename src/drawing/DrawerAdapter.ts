@@ -9,24 +9,23 @@ export default class DrawerAdapter {
     private impl: Drawer;
     private readonly disposers: (() => void)[] = [];
     public readonly drawn: Promise<void>;
+    private disposed: boolean;
 
     constructor(private fp: FloorPlanReady, canvas: HTMLCanvasElement, private m: Matrix) {
         // this.impl = new DrawerImpl(canvas, m.pixelRatio, this.getUpdatables(), this.createLayers(), fp.svg);
 
-        this.disposers.push(
-            autorun(() => {
-                if (this.impl) this.impl.setUpdatables(this.getUpdatables());
-            })
-        );
-
-        // (async function() {
-        //     const fpMeshUrl =
-
-        // })().then();
         this.drawn = new Promise(async resolve => {
             const meshUrl = fp.dataUrl + "fp.mesh.json";
-            this.impl = await createDrawerImpl(canvas, m.pixelRatio, this.getUpdatables(), fp.svg, meshUrl);
-            resolve();
+            this.impl = await createDrawerImpl(canvas, m.pixelRatio, fp.svg, meshUrl);
+            if (this.disposed) this.impl.dispose();
+            else {
+                this.disposers.push(
+                    autorun(() => {
+                        if (!this.disposed) this.impl.setUpdatables(this.getUpdatables());
+                    })
+                );
+                resolve();
+            }
         });
     }
 
@@ -59,20 +58,15 @@ export default class DrawerAdapter {
     }
 
     dispose() {
+        this.disposed = true;
         this.disposers.forEach(x => x());
-        this.impl.dispose();
+        if (this.impl) this.impl.dispose();
     }
 }
 
-async function createDrawerImpl(
-    canvas: HTMLCanvasElement,
-    pixelRatio: number,
-    updatables: DrawerUpdatables,
-    svg: SvgJson,
-    meshUrl: string
-) {
+async function createDrawerImpl(canvas: HTMLCanvasElement, pixelRatio: number, svg: SvgJson, meshUrl: string) {
     // load meshes json
     const mesh = await loadJson<SvgMeshJson>(meshUrl);
 
-    return new DrawerImpl(canvas, pixelRatio, updatables, svg, mesh);
+    return new DrawerImpl(canvas, pixelRatio, svg, mesh);
 }

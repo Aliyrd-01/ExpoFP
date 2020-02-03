@@ -12,7 +12,7 @@ export default class DrawerImpl implements Drawer, DrawerUpdatables {
     private requestedFrame: number;
     private readonly updateQueue = new Set<() => void>();
     private readonly paintersByType = new Map<string, Painter>();
-    // private prepared: boolean;
+    private drawing: boolean;
 
     private readonly drawBound: () => void;
     private readonly disposers: (() => void)[] = [];
@@ -26,36 +26,9 @@ export default class DrawerImpl implements Drawer, DrawerUpdatables {
 
     public readonly allPainters: Painter[] = [];
 
-    constructor(
-        private canvas: HTMLCanvasElement,
-        private pixelRatio: number,
-        u: DrawerUpdatables,
-        public svg: SvgJson,
-        public mesh: SvgMeshJson
-    ) {
-        this.setUpdatables(u);
+    constructor(private canvas: HTMLCanvasElement, private pixelRatio: number, public svg: SvgJson, public mesh: SvgMeshJson) {
         this.gl = createGl(canvas);
         this.drawBound = this.draw.bind(this);
-
-        // init all layers and all
-        this.disposers.push(configAll(this));
-
-        for (var d of this.allPainters) {
-            d.preparePaint();
-        }
-
-        this.draw();
-
-        // do all autoruns here
-        this.disposers.push(
-            reaction(
-                () => this.canvasSizePt,
-                () => {
-                    this.requireCanvasSizing = true;
-                    this.requireRedraw();
-                }
-            )
-        );
     }
 
     dispose() {
@@ -70,6 +43,29 @@ export default class DrawerImpl implements Drawer, DrawerUpdatables {
             this.canvasVisibleRectPt = u.canvasVisibleRectPt;
             this.canvasSizePt = u.canvasSizePt;
         });
+
+        if (!this.drawing) {
+            this.drawing = true;
+            this.draw();
+
+            // init all layers and all
+            this.disposers.push(configAll(this));
+
+            for (var d of this.allPainters) {
+                d.preparePaint();
+            }
+
+            // do all autoruns here
+            this.disposers.push(
+                reaction(
+                    () => this.canvasSizePt,
+                    () => {
+                        this.requireCanvasSizing = true;
+                        this.requireRedraw();
+                    }
+                )
+            );
+        }
     }
 
     // called by consumer when it resizes things

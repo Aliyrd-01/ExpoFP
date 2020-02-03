@@ -59,7 +59,7 @@ export default function initBooths(store: RootStore) {
 
         booth.rect = Rect.fromSvgJsonRect(sb.rect);
         booth.rotate = sb.rotate;
-        booth.noLabels = booth.noLabels;
+        booth.noLabels = sb.noLabels;
 
         if (boothReg) {
             boothReg.availColor = sb.availColor || boothReg.availColor;
