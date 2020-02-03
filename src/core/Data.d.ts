@@ -18,15 +18,15 @@ interface Data {
     // hideCompanies: boolean;
 }
 
-interface SvgLegacy {
-    xml: string;
-    paths: { [id: string]: any };
-    pending: boolean;
-    // populated
-    svgElement: SVGElement;
-    svgArea: Rect;
-    svgViewBox: Rect;
-}
+// interface SvgLegacy {
+//     xml: string;
+//     paths: { [id: string]: any };
+//     pending: boolean;
+//     // populated
+//     svgElement: SVGElement;
+//     svgArea: Rect;
+//     svgViewBox: Rect;
+// }
 
 interface RawCategory {
     id: number;

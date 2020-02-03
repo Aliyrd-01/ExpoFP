@@ -14,21 +14,21 @@ interface DrawerUpdatables {
     dimmed: boolean;
 }
 
-interface DrawerLayer {
-    shapes: DrawerShape[];
-}
+// interface DrawerLayer {
+//     shapes: DrawerShape[];
+// }
 
-interface DrawerRectShape {
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-    fill: string;
-}
+// interface DrawerRectShape {
+//     x1: number;
+//     y1: number;
+//     x2: number;
+//     y2: number;
+//     fill: string;
+// }
 
-interface DrawerPathShape {
-    meshIndex: number;
-    fill: string;
-}
+// interface DrawerPathShape {
+//     meshIndex: number;
+//     fill: string;
+// }
 
-type DrawerShape = DrawerRectShape | DrawerPathShape;
+// type DrawerShape = DrawerRectShape | DrawerPathShape;

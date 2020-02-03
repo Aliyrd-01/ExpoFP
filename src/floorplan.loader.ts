@@ -3,6 +3,7 @@ import { loadCss, loadFont, loadJson, preloadJs, preloadJson } from "./tools/loa
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import useShadow from "./utils/use-shadow";
+import Rect from "./core/Rect";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -17,7 +18,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
-    svg: SvgLegacy;
+    svg: SvgJson;
     data: Data;
 
     protected resolveReady: () => void;
@@ -127,14 +128,16 @@ export default class FloorPlanLoader implements FloorPlan {
                     self.data = await loadJson<Data>(dataUrl);
                 })(),
                 (async function() {
-                    self.svg = await loadJson<SvgLegacy>(fpUrl);
+                    self.svg = await loadJson<SvgJson>(fpUrl);
                 })()
             ]);
             let fpVersion = 0;
             while (self.svg.pending) {
-                await sleep(2000);
-                self.svg = await loadJson<SvgLegacy>(fpUrl + `?v=${++fpVersion}`);
+                await sleep(1500);
+                self.svg = await loadJson<SvgJson>(fpUrl + `?v=${++fpVersion}`);
             }
+            self.svg.area = Rect.fromSvgJsonRect(self.svg.area);
+            self.svg.viewBox = Rect.fromSvgJsonRect(self.svg.viewBox);
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
             // TODO: legacy, remove in 1/1/2021

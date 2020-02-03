@@ -153,7 +153,7 @@ export default function Map() {
             uiState.canvasSizePt,
             uiState.canvasVisibleRectPt,
             0,
-            fp.svg.svgArea,
+            fp.svg.area as Rect,
             zoomIdentity,
             uiState.devicePixelRatio
         );

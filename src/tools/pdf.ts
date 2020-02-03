@@ -20,10 +20,11 @@ export async function generatePdf(fp: FloorPlanReady) {
     const printerPpi = 300;
     const format = "Tabloid";
     const data = fp.data;
-    const { svgViewBox, svgArea } = fp.svg;
+    const viewBox = fp.svg.viewBox as Rect;
+    const area = fp.svg.area as Rect;
 
     //const titleFontSizePercentOfWidth = 0.05;
-    const orientation = svgViewBox.w / svgViewBox.h > 1.2 ? "landscape" : "portrait";
+    const orientation = viewBox.w / viewBox.h > 1.2 ? "landscape" : "portrait";
     const doc = new jsPDF({ format, orientation });
     const anyDoc = doc as any; // convenience
     const width = Math.ceil(doc.internal.pageSize.getWidth());
@@ -82,12 +83,12 @@ export async function generatePdf(fp: FloorPlanReady) {
     const blockHeight = heightLeft;
     const blockWidth = width - imgPadding * 2;
 
-    const yRatio = blockHeight / svgViewBox.h;
-    const xRatio = blockWidth / svgViewBox.w;
+    const yRatio = blockHeight / viewBox.h;
+    const xRatio = blockWidth / viewBox.w;
     const ratio = Math.min(yRatio, xRatio);
 
-    const imageWidth = svgViewBox.w * ratio;
-    const imageHeight = svgViewBox.h * ratio;
+    const imageWidth = viewBox.w * ratio;
+    const imageHeight = viewBox.h * ratio;
 
     const cx = width / 2;
     const cy = occupied + imgPadding + blockHeight / 2;
@@ -106,11 +107,12 @@ export async function generatePdf(fp: FloorPlanReady) {
         new Size(canvas.width, canvas.height),
         Rect.fromXywh(0, 0, canvas.width, canvas.height),
         1,
-        svgArea,
+        area,
         zoomIdentity,
         2.5
     );
     const drawer = new DrawerAdapter(fp, canvas, matrix); //createDrawer(fp, canvas, false);
+    await drawer.drawn;
     drawer.dispose();
     // drawer.setVisibleScale(1);
     // drawer.setPixelRatio(2.5);

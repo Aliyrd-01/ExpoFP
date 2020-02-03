@@ -9,7 +9,6 @@ import routing from "./services/routing";
 import initStore from "./store/init";
 import RootStore from "./store/RootStore";
 import { initGtag } from "./tools/gtag";
-import populateLegacySvg from "./tools/legacySvg";
 import validateAndFixData from "./tools/validate-and-fix-data";
 
 export const FpContext = React.createContext<FloorPlanReady>(null);
@@ -25,7 +24,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         self.eventTracker = new EventTracker(this.data.trackerUrl);
         window["__store"] = self.store = new RootStore(this);
         initGtag(this.data.gtag);
-        populateLegacySvg(this.svg, this.eventId);
+        // populateLegacySvg(this.svg, this.eventId);
 
         loadAdminServiceIfNeeded(this).then(x => (self.adminService = x));
 
