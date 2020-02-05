@@ -30,7 +30,7 @@ export default class DrawerAdapter {
             else {
                 this.disposers.push(
                     autorun(() => {
-                        if (!this.disposed) this.impl.setUpdatables(this.getUpdatables());
+                        if (!this.disposed) this.setUpdatables(); // this.impl.setUpdatables(this.getUpdatables());
                     })
                 );
                 resolve();
@@ -89,17 +89,34 @@ export default class DrawerAdapter {
         });
     }
 
-    private getUpdatables(): DrawerUpdatables {
+    private previousUpdatables: DrawerUpdatables;
+
+    private setUpdatables() {
         const uiState = this.fp.store.uiState;
-        return {
+        const res = {
             matrix: this.m.matrix,
             ptscale: this.m.ptscale,
             canvasVisibleRectPt: uiState.canvasVisibleRectPt,
             canvasSizePt: uiState.canvasSizePt,
             dimmed: uiState.dimmed
-            // selectedBooths: Array.from(uiState.selectedBooths),
-            // boothExhibitors: {}
         };
+
+        if (this.previousUpdatables) {
+            for (const key of Object.keys(res)) {
+                if (this.previousUpdatables[key] === res[key]) {
+                    delete res[key];
+                }
+            }
+            Object.assign(this.previousUpdatables, res);
+        } else {
+            this.previousUpdatables = { ...res };
+        }
+
+        // logger.log("Setting updatables", Object.keys(res), res);
+
+        this.impl.setUpdatables(res);
+
+        return res;
     }
 
     dispose() {

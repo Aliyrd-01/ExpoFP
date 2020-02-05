@@ -44,7 +44,6 @@ export default class DrawerImpl implements Drawer {
 
         // const state: BoothStateProvider = observable({
 
-
         // });
 
         this.booths.forEach(b => {
@@ -68,10 +67,10 @@ export default class DrawerImpl implements Drawer {
     setUpdatables(u: DrawerUpdatables) {
         runInAction("setUpdatables", () => {
             // console.log("setUpdatables", this.matrix === u.matrix);
-            this.matrix = u.matrix;
-            this.ptscale = u.ptscale;
-            this.canvasVisibleRectPt = u.canvasVisibleRectPt;
-            this.canvasSizePt = u.canvasSizePt;
+            if (u.matrix !== undefined) this.matrix = u.matrix;
+            if (u.ptscale !== undefined) this.ptscale = u.ptscale;
+            if (u.canvasVisibleRectPt !== undefined) this.canvasVisibleRectPt = u.canvasVisibleRectPt;
+            if (u.canvasSizePt !== undefined) this.canvasSizePt = u.canvasSizePt;
             // this.selectedBooths = new Set(u.selectedBooths);
             // this.boothExhibitors = new Map(Object.entries(u.boothExhibitors));
         });
