@@ -1,10 +1,11 @@
 import { autorun } from "mobx";
+import { Booth, RegularBooth, SpecialBooth } from "../core/Booth";
+import Rect from "../core/Rect";
 import FloorPlanReady from "../floorplan.ready";
-import { Drawer, DrawerUpdatables, DrawerConfig } from "./DrawerInterfaces";
+import { loadJson } from "../tools/loaders";
+import { Drawer, DrawerConfig, DrawerUpdatables } from "./DrawerInterfaces";
 import DrawerImpl from "./impl/DrawerImpl";
 import Matrix from "./Matrix";
-import { loadJson } from "../tools/loaders";
-import { Booth } from "../core/Booth";
 // import { RegularBooth, SpecialBooth } from "../store/BoothStore";
 
 export default class DrawerAdapter {
@@ -60,33 +61,32 @@ export default class DrawerAdapter {
     }
 
     private getBooths(): Booth[] {
-        return this.fp.store.boothStore.booths;
-        // return this.fp.store.boothStore.booths.map(b => {
-        //     const common = {
-        //         name: b.name,
-        //         rect: b.rect,
-        //         noLabels: b.noLabels,
-        //         rotate: b.rotate,
-        //         paths: b.paths,
-        //         pathsWithRect: b.pathsWithRect,
-        //         error: b.error
-        //     };
+        return this.fp.store.boothStore.booths.map(x => {
+            const json = JSON.stringify(x);
+            const obj = JSON.parse(json);
+            let booth: Booth;
+            if (obj.special) {
+                booth = new SpecialBooth();
+            } else {
+                booth = new RegularBooth();
+            }
 
-        //     if (b instanceof RegularBooth) {
-        //         return {
-        //             ...common,
-        //             exhibitors: [],
-        //             size: b.size,
-        //             availColor: b.availColor
-        //         };
-        //     } else if (b instanceof SpecialBooth) {
-        //         return {
-        //             ...common,
-        //             special: true,
-        //             color: b.color
-        //         };
-        //     }
-        // });
+            Object.assign(booth, obj);
+            Object.setPrototypeOf(booth.rect, Rect.prototype);
+
+            // const booth = Object.setPrototypeOf(obj, obj.special ? SpecialBooth.prototype : RegularBooth.prototype) as Booth;
+            // Object.setPrototypeOf(booth.rect, Rect.prototype);
+            booth.state = x.state;
+
+            // console.log("b", booth.state, x.state);
+            // debugger;
+            // if (booth instanceof RegularBooth) {
+            //     console.log("bbb", booth.state, x.state);
+            //     console.log(booth.exhibitorIds);
+            // }
+
+            return booth;
+        });
     }
 
     private getUpdatables(): DrawerUpdatables {
@@ -96,9 +96,9 @@ export default class DrawerAdapter {
             ptscale: this.m.ptscale,
             canvasVisibleRectPt: uiState.canvasVisibleRectPt,
             canvasSizePt: uiState.canvasSizePt,
-            dimmed: uiState.dimmed,
+            dimmed: uiState.dimmed
             // selectedBooths: Array.from(uiState.selectedBooths),
-            boothExhibitors: {}
+            // boothExhibitors: {}
         };
     }
 

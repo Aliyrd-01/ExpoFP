@@ -5,7 +5,7 @@ import logger from "../../tools/logger";
 import { Drawer, DrawerUpdatables, DrawerConfig } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
 import Painter from "./Painter";
-import { Booth, SpecialBooth, RegularBooth } from "../../core/Booth";
+import { Booth, SpecialBooth, RegularBooth, BoothStateProvider } from "../../core/Booth";
 
 export default class DrawerImpl implements Drawer {
     private readonly gl: WebGLRenderingContext;
@@ -27,7 +27,7 @@ export default class DrawerImpl implements Drawer {
     @observable canvasSizePt: Size;
     @observable dimmed: boolean;
     // @observable.ref selectedBooths: Set<string>;
-    @observable.ref boothExhibitors: Map<string, string[]>;
+    // @observable.ref boothExhibitors: Map<string, string[]>;
 
     public readonly allPainters: Painter[] = [];
 
@@ -42,11 +42,16 @@ export default class DrawerImpl implements Drawer {
         this.gl = createGl(canvas);
         this.drawBound = this.draw.bind(this);
 
+        // const state: BoothStateProvider = observable({
+
+
+        // });
+
         this.booths.forEach(b => {
             Object.setPrototypeOf(b, b.special === true ? SpecialBooth.prototype : RegularBooth.prototype);
             // TODO:
-            //b.state = 
-        })
+            //b.state =
+        });
 
         // this.booths = booths.map(b => {
         //     if (b.special === undefined) {
@@ -68,7 +73,7 @@ export default class DrawerImpl implements Drawer {
             this.canvasVisibleRectPt = u.canvasVisibleRectPt;
             this.canvasSizePt = u.canvasSizePt;
             // this.selectedBooths = new Set(u.selectedBooths);
-            this.boothExhibitors = new Map(Object.entries(u.boothExhibitors));
+            // this.boothExhibitors = new Map(Object.entries(u.boothExhibitors));
         });
 
         if (!this.drawing) {
