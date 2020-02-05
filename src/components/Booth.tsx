@@ -62,7 +62,7 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitorsObj.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (
@@ -76,7 +76,7 @@ function Booth() {
                         <div>Reserved</div>
                     </div>
                 );
-            } else if (b.exhibitors.length === 0) {
+            } else if (b.exhibitorIds.length === 0) {
                 content = (
                     <>
                         <div className="booth__content -reg">

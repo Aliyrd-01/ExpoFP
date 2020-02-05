@@ -1,13 +1,13 @@
-import { Booth, RegularBooth, SpecialBooth } from "../../core/Booth";
+import { observable } from "mobx";
+import { Booth, BoothStateProvider, RegularBooth, SpecialBooth } from "../../core/Booth";
 import Rect from "../../core/Rect";
 import { getNextId } from "../../tools/id";
 import logger from "../../tools/logger";
 import { generateUniqueSlug } from "../../tools/slug";
-import { sortByName } from "../../utils";
 import RootStore from "../RootStore";
 
 export default function initBooths(store: RootStore) {
-    const { boothStore, uiState } = store;
+    const { boothStore, uiState, exhibitorStore } = store;
     const boothsByName = new Map<string, Booth>();
     const data = store.fp.data;
     const svg = store.fp.svg;
@@ -20,16 +20,31 @@ export default function initBooths(store: RootStore) {
     //     }
     // };
 
-    for (const raw of data.booths || []) {
-        if (raw.special === undefined) {
-            const rawRegular = raw as RawRegularBooth;
-            boothStore.boothExhibitors.set(rawRegular.name, rawRegular.exhibitors);
-            delete rawRegular.exhibitors;
+    const stateProvider: BoothStateProvider = observable({
+        get listBoothNames() {
+            return boothSetToNameSet(uiState.listBooths);
+        },
+        get hoveredBoothNames() {
+            return boothSetToNameSet(uiState.hoveredBooths);
+        },
+        get selectedBoothNames() {
+            return boothSetToNameSet(uiState.selectedBooths);
+        },
+        get bookmarkedBoothNames() {
+            return exhibitorStore.bookmarkedBoothNames;
+        },
+        get exhibitorIdsByBoothNameMap() {
+            return exhibitorStore.exhibitorIdsByBoothNameMap;
+        },
+        get exhibitorByIdMap() {
+            return exhibitorStore.exhibitorByIdMap;
         }
+    });
 
+    for (const raw of data.booths || []) {
         const Class = raw.special === true ? SpecialBooth : RegularBooth;
         const b = Object.setPrototypeOf(raw, Class.prototype) as MutableRequired<Booth>;
-        b.state = uiState;
+        b.state = stateProvider;
         //const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         //Object.assign(b, raw);
 
@@ -49,8 +64,6 @@ export default function initBooths(store: RootStore) {
         booths.push(b);
     }
 
-    
-
     for (const sb of svg.booths) {
         let booth = boothsByName.get(sb.name) as MutableRequired<Booth>;
         let boothReg = booth instanceof RegularBooth ? (booth as MutableRequired<RegularBooth>) : null;
@@ -63,7 +76,7 @@ export default function initBooths(store: RootStore) {
             booth.name = sb.name.toUpperCase();
             booth.slug = generateUniqueSlug(sb.name);
             booth.error = true;
-            booth.exhibitors = [];
+            booth.exhibitorIds = [];
             boothsByName.set(sb.name, booth as Booth);
             booths.push(booth);
         }
@@ -98,7 +111,7 @@ export default function initBooths(store: RootStore) {
             boothStore.booths.push(b as Booth);
         }
     }
-    
+
     // sort booths by name
     boothStore.booths.sort(function(a, b) {
         const x = a.slug;
@@ -145,3 +158,6 @@ export default function initBooths(store: RootStore) {
 
 //     return pathTriangles;
 // }
+function boothSetToNameSet(set: Set<Booth>) {
+    return new Set(Array.from(set).map(x => x.name));
+}

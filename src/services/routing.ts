@@ -137,7 +137,7 @@ export default function startRouting(fp: FloorPlanReady) {
     if (locationSearch.startsWith("?ba=")) {
         const url = new URL(window.location.href);
         const ba = parseInt(url.searchParams.get("ba"));
-        const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
+        const exhibitor = store.exhibitorStore.exhibitorByIdMap.get(ba);
         if (exhibitor) historyReplace("?" + exhibitor.slug);
         else historyReplace("?bookmarks");
     }

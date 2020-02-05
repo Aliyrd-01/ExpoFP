@@ -17,12 +17,12 @@ const ExhibitorAdmin: React.FC<{ exhibitor: Exhibitor }> = ({ exhibitor }) => {
     const adminService = useAdminService();
 
     async function handleRemoveClick(booth: RegularBooth) {
-        const newBoothExhibitors = booth.exhibitorsObj.filter(x => x !== exhibitor).map(x => x.id);
+        const newBoothExhibitors = booth.exhibitors.filter(x => x !== exhibitor).map(x => x.id);
         if (!window.confirm(`Are you sure want to remove "${exhibitor.name}" from ${booth.name}?`)) {
             return;
         }
         await adminService.setBoothExhibitors(booth.name, newBoothExhibitors);
-        removeElementFromArray(booth.exhibitors, exhibitor.id);
+        removeElementFromArray(booth.exhibitorIds, exhibitor.id);
         removeElementFromArray(exhibitor.booths, booth);
         alert(`${booth.name} removed from ${exhibitor.name}`);
     }

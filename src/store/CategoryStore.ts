@@ -7,7 +7,7 @@ export default class CategoryStore {
     private readonly rootStore: RootStore;
 
     readonly categories: Category[] = [];
-    @computed({keepAlive: true}) get categoryById() {
+    @computed({keepAlive: true}) get categoryByIdMap() {
         return new Map<number, Category>(this.categories.map(c => [c.id, c]));
     }
 

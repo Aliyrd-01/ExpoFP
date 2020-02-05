@@ -56,7 +56,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
         lines.push("On Hold");
     } else if (b.reserved) {
         lines.push("Reserved");
-    } else if (b.exhibitors.length) {
+    } else if (b.exhibitorIds.length) {
         // lines.push(...b.exhibitors.map(e => e.name));
     } else {
         if (b.size) lines.push(b.size);

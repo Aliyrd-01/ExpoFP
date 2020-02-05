@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { Booth, BoothBase, BoothStateProvider, RegularBooth } from "../core/Booth";
+import { Booth, BoothBase, RegularBooth } from "../core/Booth";
 // import { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
@@ -22,7 +22,7 @@ export type OverlaySize = "full" | "medium" | "small";
 // export type ScreenSize = { width: number; height: number };
 export type ListItem = Booth | Exhibitor | Category;
 
-export default class UIState implements BoothStateProvider {
+export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
@@ -231,7 +231,7 @@ export default class UIState implements BoothStateProvider {
             case "search":
                 return this.searchItems;
             case "bookmarks":
-                return this.rootStore.exhibitorStore.bookmarkedObj;
+                return this.rootStore.exhibitorStore.bookmarked;
             case "category":
                 return this.list.category.exhibitors;
         }
@@ -239,46 +239,50 @@ export default class UIState implements BoothStateProvider {
     }
 
     @computed({ keepAlive: true }) get listBooths() {
-        const arr: string[] = [];
+        const arr: Booth[] = [];
         this.listItems.forEach(item => {
             if (item instanceof Exhibitor) {
-                arr.push(...item.booths.map(x => x.name));
+                arr.push(...item.booths);
             } else if (item instanceof BoothBase) {
-                arr.push((item as Booth).name);
+                arr.push(item as Booth);
             }
         });
         return new Set(arr);
     }
+
+    // @computed({ keepAlive: true }) get listBoothNames() {
+    //     return new Set(Array.from(this.listBooths).map(x => x.name));
+    // }
     // @computed get listBoothsIdsSet() {
     //     return new Set(getters.listBoothsIds);
     // }
     @computed({ keepAlive: true }) get selectedBooths() {
-        let arr: string[];
-        if (this.selectedExhibitor) arr = this.selectedExhibitor.booths.map(x => x.name);
-        else if (this.selectedBooth) arr = [this.selectedBooth.name];
+        let arr: Booth[];
+        if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
+        else if (this.selectedBooth) arr = [this.selectedBooth];
         return new Set(arr);
     }
     // @computed get selectedBoothIdsSet() {
     //     return new Set(getters.selectedBoothIds);
     // }
     @computed({ keepAlive: true }) get hoveredBooths() {
-        let arr: string[];
-        if (this.hoveredBooth) arr = [this.hoveredBooth.name];
-        else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths.map(x => x.name);
+        let arr: Booth[];
+        if (this.hoveredBooth) arr = [this.hoveredBooth];
+        else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths;
         return new Set(arr);
     }
 
-    @computed({ keepAlive: true }) get bookmarkedBooths() {
-        return this.rootStore.exhibitorStore.bookmarkedBooths;
-    }
+    // @computed({ keepAlive: true }) get bookmarkedBoothNames() {
+    //     return this.rootStore.exhibitorStore.bookmarkedBoothNames;
+    // }
 
-    @computed({ keepAlive: true }) get boothExhibitors() {
-        return this.rootStore.boothStore.boothExhibitors;
-    }
+    // @computed({ keepAlive: true }) get boothExhibitorIds() {
+    //     return this.rootStore.boothStore.boothExhibitorIdsMap;
+    // }
 
-    @computed({ keepAlive: true }) get exhibitorById() {
-        return this.rootStore.exhibitorStore.exhibitorById;
-    }
+    // @computed({ keepAlive: true }) get exhibitorById() {
+    //     return this.rootStore.exhibitorStore.exhibitorByIdMap;
+    // }
 
     ///////////////////////////////////////////////////////////////////////////
 

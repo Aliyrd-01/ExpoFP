@@ -3,12 +3,12 @@ import Rect from "./Rect";
 import { Exhibitor } from "../store/ExhibitorStore";
 
 export interface BoothStateProvider {
-    listBooths: Set<string>;
-    hoveredBooths: Set<string>;
-    selectedBooths: Set<string>;
-    bookmarkedBooths: Set<string>;
-    boothExhibitors: Map<string, number[]>;
-    exhibitorById: Map<number, Exhibitor>;
+    listBoothNames: Set<string>;
+    hoveredBoothNames: Set<string>;
+    selectedBoothNames: Set<string>;
+    bookmarkedBoothNames: Set<string>;
+    exhibitorIdsByBoothNameMap: Map<string, number[]>;
+    exhibitorByIdMap: Map<number, Exhibitor>;
 }
 
 export abstract class BoothBase {
@@ -27,15 +27,15 @@ export abstract class BoothBase {
     readonly description: string;
 
     @computed({ keepAlive: true }) private get inList() {
-        return this.state.listBooths.has(this.name);
+        return this.state.listBoothNames.has(this.name);
     }
 
     @computed({ keepAlive: true }) get hover() {
-        return this.state.hoveredBooths.has(this.name);
+        return this.state.hoveredBoothNames.has(this.name);
     }
 
     @computed({ keepAlive: true }) get selected() {
-        return this.state.selectedBooths.has(this.name);
+        return this.state.selectedBoothNames.has(this.name);
     }
 
     @computed({ keepAlive: true }) get skipDim() {
@@ -67,16 +67,16 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
         return this.status === "reserved";
     }
 
-    @computed({ keepAlive: true }) get exhibitors(): number[] {
-        return this.state.boothExhibitors[this.name] || [];
+    @computed({ keepAlive: true }) get exhibitorIds(): number[] {
+        return this.state.exhibitorIdsByBoothNameMap[this.name] || [];
     }
 
-    @computed({ keepAlive: true }) get exhibitorsObj(): Exhibitor[] {
-        return this.exhibitors.map(x => this.state.exhibitorById.get(x));
+    @computed({ keepAlive: true }) get exhibitors(): Exhibitor[] {
+        return this.exhibitorIds.map(x => this.state.exhibitorByIdMap.get(x));
     }
 
     @computed({ keepAlive: true }) get bookmarked() {
-        return this.state.bookmarkedBooths.has(this.name);
+        return this.state.bookmarkedBoothNames.has(this.name);
     }
 }
 

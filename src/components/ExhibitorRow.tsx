@@ -1,17 +1,17 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
+import { RegularBooth } from "../core/Booth";
 // import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
+import { useStore, useUiState } from "../tools/use";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
-import { useStore, useUiState, useExhibitorStore } from "../tools/use";
-import { RegularBooth } from "../core/Booth";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     const store = useStore();
     const uiState = useUiState();
-    const exhibitorStore = useExhibitorStore();
+    // const exhibitorStore = useExhibitorStore();
 
     function handleClick(e: MouseEvent) {
         e.preventDefault();

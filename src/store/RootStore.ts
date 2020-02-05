@@ -109,8 +109,8 @@ export default class RootStore {
             this.uiState.onBoothClick(e);
         }
 
-        if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
-            const ex = this.exhibitorStore.exhibitorById.get(booth.exhibitors[0]);
+        if (booth instanceof RegularBooth && booth.exhibitorIds.length === 1) {
+            const ex = this.exhibitorStore.exhibitorByIdMap.get(booth.exhibitorIds[0]);
             this.selectExhibitor(ex);
         } else {
             this.selectBooth(booth);
@@ -177,7 +177,7 @@ export default class RootStore {
     }
 
     @action toggleExhibitorBookmark(exhibitor: Exhibitor) {
-        const bookmarked = this.exhibitorStore.bookmarked;
+        const bookmarked = this.exhibitorStore.bookmarkedIds;
         if (exhibitor.bookmarked) {
             bookmarked.delete(exhibitor.id);
         } else {

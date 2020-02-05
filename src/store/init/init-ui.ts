@@ -9,7 +9,7 @@ export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
     updateScreenSize(uiState);
     window.addEventListener("resize", () => updateScreenSize(uiState));
-    if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
+    if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorByIdMap.get(previewExhibitor.id);
     // uiState.previewExhibitor = previewExhibitor;
 
     // monitor devicePixelRatio changes

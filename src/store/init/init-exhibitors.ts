@@ -1,10 +1,10 @@
-import RootStore from "../RootStore";
+import { autorun } from "mobx";
 import logger from "../../tools/logger";
+import { generateUniqueSlug } from "../../tools/slug";
+import previewExhibitor from "../../utils/preview-exhibitor";
 // import data from '../../data';
 import ExhibitorStore, { Exhibitor } from "../ExhibitorStore";
-import { generateUniqueSlug } from "../../tools/slug";
-import { autorun } from "mobx";
-import previewExhibitor from "../../utils/preview-exhibitor";
+import RootStore from "../RootStore";
 
 export default function initExhibitors(store: RootStore) {
     const data = store.fp.data;
@@ -32,7 +32,7 @@ export default function initExhibitors(store: RootStore) {
         e.categories = [];
         // e.booths = [];
         for (const c of raw.categories || []) {
-            const ca = store.categoryStore.categoryById.get(c);
+            const ca = store.categoryStore.categoryByIdMap.get(c);
             e.categories.push(ca);
             ca.exhibitors.push(e as Exhibitor);
         }
@@ -44,6 +44,13 @@ export default function initExhibitors(store: RootStore) {
     // dispose
     delete data.exhibitors;
     logger.log("initExhibitors", exhibitorStore.exhibitors.length);
+
+    for (const b of data.booths) {
+        if (b.special) continue;
+        const bb = b as RawRegularBooth;
+        exhibitorStore.exhibitorIdsByBoothNameMap.set(bb.name, bb.exhibitors);
+        delete bb.exhibitors;
+    }
 
     initBookmarked(exhibitorStore);
 }
@@ -71,7 +78,7 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
     exhibitorStore.replaceBookmarked(bookmarkedAr);
 
     autorun(() => {
-        saveToLocalStorage(Array.from(exhibitorStore.bookmarked));
+        saveToLocalStorage(Array.from(exhibitorStore.bookmarkedIds));
     });
 }
 

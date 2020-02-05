@@ -34,9 +34,6 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
 
         const borderWidth = context.config.borderWidth;
 
-        // let triangles: Triangle[];
-        // const boothStore = context.fp.store.boothStore;
-
         if (!booth.paths || booth.pathsWithRect) {
             let rect = this.booth.rect;
             //if (settings.borderless)
@@ -164,7 +161,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
             // const settingsColors = settings.colors.booths;
             if (b.onHold) {
                 defColor = b.holdColor || b.soldColor || COLOR_DEFAULT;
-            } else if (b.exhibitors.length || b.reserved) {
+            } else if (b.exhibitorIds.length || b.reserved) {
                 defColor = b.soldColor || COLOR_DEFAULT;
             } else {
                 defColor = b.availColor || COLOR_EMPTY;

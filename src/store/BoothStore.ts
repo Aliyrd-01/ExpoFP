@@ -1,7 +1,7 @@
 // import { observable } from 'mobx';
-import { computed, observable } from "mobx";
-import RootStore from "./RootStore";
+import { computed } from "mobx";
 import { Booth } from "../core/Booth";
+import RootStore from "./RootStore";
 
 // interface BoothState {
 //     hover: boolean;
@@ -16,17 +16,12 @@ import { Booth } from "../core/Booth";
 export default class BoothStore {
     readonly rootStore: RootStore;
     readonly booths: Booth[] = [];
-    @observable readonly boothExhibitors = new Map<string, number[]>();
 
-    // @computed({ keepAlive: true }) get boothExhibitors(){
-
-    // } 
-
-    @computed({ keepAlive: true }) get boothById() {
+    @computed({ keepAlive: true }) get boothByIdMap() {
         return new Map<number, Booth>(this.booths.map(c => [c.id, c]));
     }
 
-    @computed({ keepAlive: true }) get boothByName() {
+    @computed({ keepAlive: true }) get boothByNameMap() {
         return new Map<string, Booth>(this.booths.map(c => [c.name, c]));
     }
 

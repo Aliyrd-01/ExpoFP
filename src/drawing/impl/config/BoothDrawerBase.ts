@@ -12,6 +12,7 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
     protected readonly context: DrawerImpl;
     public readonly updateBound: () => void;
     private readonly getIdMap = new Map<string, string>();
+    private autoupdateDispose: () => void;
 
     constructor(
         context: DrawerImpl,
@@ -37,19 +38,19 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
     //     return store.getBoothState(this.booth);
     // }
 
-    protected subscribeToBoothChange() {}
+    // protected subscribeToBoothChange() {}
 
     update() {}
 
     dispose() {
-        throw new Error("Not implemented");
+        if (this.autoupdateDispose) this.autoupdateDispose();
     }
 
     startAutoupdate() {
         let initial = true;
 
         // console.log("autorun1");
-        autorun(
+        this.autoupdateDispose = autorun(
             reaction => {
                 this.update();
                 //if (!this.context.updatable) reaction.dispose();

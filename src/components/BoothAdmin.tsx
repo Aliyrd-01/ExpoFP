@@ -17,7 +17,7 @@ const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
 
     async function handleExhibitorChange(e: ChangeEvent<HTMLSelectElement>) {
         const exhibitorId = e.target.value ? parseInt(e.target.value) : null;
-        const exhibitor = exhibitorId ? exhibitorStore.exhibitorById.get(exhibitorId) : null;
+        const exhibitor = exhibitorId ? exhibitorStore.exhibitorByIdMap.get(exhibitorId) : null;
         await adminService.setBoothExhibitors(booth.name, [exhibitorId]);
         alert(`Exhibitor set for booth ${booth.name}:  ${exhibitor?.name || "Empty"}`);
     }

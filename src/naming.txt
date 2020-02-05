@@ -1,0 +1,16 @@
+boothNamesByExhibitorIdMap
+
+
+Maps should end with `Map` and have XxxByYyyMap form.
+Sets as Arrays may skip `Set` suffix.
+
+
+Objects parts should be fully specified:
+E.g. when property return array of Booth objects:
+GOOD:   boothNames
+BAD:    booths
+
+
+It is OK to skip full names in cases like this:
+GOOD:   boothByNameMap
+BAD:    boothByBoothNameMap
