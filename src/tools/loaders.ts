@@ -35,7 +35,8 @@ export function preloadJson(url: string) {
     link.rel = "preload";
     link.href = goodUrl(url);
     link.as = "fetch";
-    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
+    // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href))
+    link.crossOrigin = "anonymous";
     document.head.appendChild(link);
 }
 

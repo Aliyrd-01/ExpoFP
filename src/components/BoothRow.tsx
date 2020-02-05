@@ -1,5 +1,6 @@
 import React from "react";
-import { Booth } from "../store/BoothStore";
+import { Booth } from "../core/Booth";
+// import { Booth } from "../store/BoothStore";
 import { useData, useStore, useUiState } from "../tools/use";
 // import store, { uiState } from "../store";
 import "./BoothRow.scss";

@@ -2,6 +2,7 @@ import Color from "color";
 // import svg from "../../../data/svg";
 import DrawerImpl from "../DrawerImpl";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
+import { meshToTrianglePainterObjects } from "./util";
 
 // THIS SHOULD WORK AS IS, BUT WE NEED TO REMOVE ANY REFENCES TO SVG
 export default function configBg(context: DrawerImpl) {
@@ -39,22 +40,7 @@ export default function configBg(context: DrawerImpl) {
         const color = Color(path.fill).vec4();
 
         const mesh = context.mesh[path.meshIndex];
-
-        // TODO: remove in future versions
-        for (const p of mesh.positions) {
-            // a bug in svgMesh3d when normalize: false ?
-            p[1] = Math.abs(p[1]);
-            p.length = 2;
-        }
-
-        for (const c of mesh.cells) {
-            addObject({
-                p0: mesh.positions[c[0]],
-                p1: mesh.positions[c[1]],
-                p2: mesh.positions[c[2]],
-                color
-            });
-        }
+        meshToTrianglePainterObjects(mesh, color).forEach(x => addObject(x));
     }
 
     // function addPath(svgPath: SVGPathElement) {

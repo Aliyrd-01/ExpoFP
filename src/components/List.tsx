@@ -1,7 +1,8 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect } from "react";
+import { Booth, BoothBase } from "../core/Booth";
 // import { uiState } from "../store";
-import { Booth, BoothBase } from "../store/BoothStore";
+// import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import logger from "../tools/logger";

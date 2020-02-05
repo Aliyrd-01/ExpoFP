@@ -1,7 +1,7 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
+import { RegularBooth, SpecialBooth } from "../core/Booth";
 // import store, { uiState } from "../store";
-import { RegularBooth, SpecialBooth } from "../store/BoothStore";
 import { useData, useStore, useUiState } from "../tools/use";
 import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
@@ -62,7 +62,7 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitorsObj.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (

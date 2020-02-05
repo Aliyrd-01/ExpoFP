@@ -1,8 +1,9 @@
 import { createBrowserHistory } from "history";
 import { autorun } from "mobx";
+import { Booth } from "../core/Booth";
 import FloorPlanReady from "../floorplan.ready";
 // import store, { uiState } from "../store";
-import { Booth } from "../store/BoothStore";
+// import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import gtag from "../tools/gtag";

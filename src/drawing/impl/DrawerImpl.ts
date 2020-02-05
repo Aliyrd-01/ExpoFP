@@ -2,11 +2,12 @@ import { observable, reaction, runInAction } from "mobx";
 import Rect from "../../core/Rect";
 import Size from "../../core/Size";
 import logger from "../../tools/logger";
-import { Drawer, DrawerUpdatables } from "../DrawerInterfaces";
+import { Drawer, DrawerUpdatables, DrawerConfig } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
 import Painter from "./Painter";
+import { Booth, SpecialBooth, RegularBooth } from "../../core/Booth";
 
-export default class DrawerImpl implements Drawer, DrawerUpdatables {
+export default class DrawerImpl implements Drawer {
     private readonly gl: WebGLRenderingContext;
     private requireCanvasSizing = true;
     private requestedFrame: number;
@@ -17,18 +18,42 @@ export default class DrawerImpl implements Drawer, DrawerUpdatables {
     private readonly drawBound: () => void;
     private readonly disposers: (() => void)[] = [];
 
+    // booths: DrawerBoothImpl[];
+
     // updatables
-    @observable matrix: Float32Array;
+    @observable.ref matrix: Float32Array;
     @observable ptscale: number;
     @observable canvasVisibleRectPt: Rect;
     @observable canvasSizePt: Size;
     @observable dimmed: boolean;
+    // @observable.ref selectedBooths: Set<string>;
+    @observable.ref boothExhibitors: Map<string, string[]>;
 
     public readonly allPainters: Painter[] = [];
 
-    constructor(private canvas: HTMLCanvasElement, private pixelRatio: number, public svg: SvgJson, public mesh: SvgMeshJson) {
+    constructor(
+        private readonly canvas: HTMLCanvasElement,
+        private readonly pixelRatio: number,
+        public readonly config: DrawerConfig,
+        public readonly svg: SvgJson,
+        public readonly mesh: SvgMeshJson,
+        public readonly booths: Booth[]
+    ) {
         this.gl = createGl(canvas);
         this.drawBound = this.draw.bind(this);
+
+        this.booths.forEach(b => {
+            Object.setPrototypeOf(b, b.special === true ? SpecialBooth.prototype : RegularBooth.prototype);
+            // TODO:
+            //b.state = 
+        })
+
+        // this.booths = booths.map(b => {
+        //     if (b.special === undefined) {
+        //         return Object.setPrototypeOf(b, DrawerRegularBoothImpl.prototype) as DrawerRegularBoothImpl;
+        //     }
+        //     return Object.setPrototypeOf(b, DrawerSpecialBoothImpl.prototype) as DrawerSpecialBoothImpl;
+        // });
     }
 
     dispose() {
@@ -42,6 +67,8 @@ export default class DrawerImpl implements Drawer, DrawerUpdatables {
             this.ptscale = u.ptscale;
             this.canvasVisibleRectPt = u.canvasVisibleRectPt;
             this.canvasSizePt = u.canvasSizePt;
+            // this.selectedBooths = new Set(u.selectedBooths);
+            this.boothExhibitors = new Map(Object.entries(u.boothExhibitors));
         });
 
         if (!this.drawing) {

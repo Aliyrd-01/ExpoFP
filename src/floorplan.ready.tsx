@@ -17,6 +17,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     public readonly store: RootStore;
     public readonly adminService: AdminService;
     public readonly eventTracker: EventTracker;
+    public readonly borderless: boolean = false;
 
     protected init(): void {
         validateAndFixData(this.data, this.eventId);
@@ -24,7 +25,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         self.eventTracker = new EventTracker(this.data.trackerUrl);
         window["__store"] = self.store = new RootStore(this);
         initGtag(this.data.gtag);
-        // populateLegacySvg(this.svg, this.eventId);
+        self.borderless = this.eventId === "ktrade20";  
 
         loadAdminServiceIfNeeded(this).then(x => (self.adminService = x));
 

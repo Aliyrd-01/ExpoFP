@@ -1,6 +1,7 @@
 import { useObserver } from "mobx-react-lite";
 import React, { ChangeEvent } from "react";
-import { RegularBooth } from "../store/BoothStore";
+import { RegularBooth } from "../core/Booth";
+// import { RegularBooth } from "../store/BoothStore";
 import { useAdminService, useExhibitorStore } from "../tools/use";
 import AdminBox from "./AdminBox";
 import "./BoothAdmin.scss";

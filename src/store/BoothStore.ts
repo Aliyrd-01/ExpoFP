@@ -1,8 +1,7 @@
 // import { observable } from 'mobx';
-import { computed } from "mobx";
-import Rect from "../core/Rect";
-import { Exhibitor } from "./ExhibitorStore";
+import { computed, observable } from "mobx";
 import RootStore from "./RootStore";
+import { Booth } from "../core/Booth";
 
 // interface BoothState {
 //     hover: boolean;
@@ -17,8 +16,18 @@ import RootStore from "./RootStore";
 export default class BoothStore {
     readonly rootStore: RootStore;
     readonly booths: Booth[] = [];
+    @observable readonly boothExhibitors = new Map<string, number[]>();
+
+    // @computed({ keepAlive: true }) get boothExhibitors(){
+
+    // } 
+
     @computed({ keepAlive: true }) get boothById() {
         return new Map<number, Booth>(this.booths.map(c => [c.id, c]));
+    }
+
+    @computed({ keepAlive: true }) get boothByName() {
+        return new Map<string, Booth>(this.booths.map(c => [c.name, c]));
     }
 
     @computed({ keepAlive: true }) get borderWidth() {
@@ -31,78 +40,79 @@ export default class BoothStore {
     }
 }
 
-export abstract class BoothBase {
-    protected readonly store: BoothStore;
-    readonly id: number;
-    readonly name: string;
-    readonly title: string;
-    readonly rect: Rect;
-    readonly noLabels: boolean;
-    readonly rotate: number;
-    readonly paths: PathInfo[];
-    readonly pathsWithRect: boolean;
-    readonly slug: string;
-    readonly error: boolean;
-    readonly description: string;
+// export abstract class BoothBase {
+//     protected readonly store: BoothStore;
+//     readonly id: number;
+//     readonly name: string;
+//     readonly title: string;
+//     readonly rect: Rect;
+//     readonly noLabels: boolean;
+//     readonly rotate: number;
+//     readonly paths: SvgPathShape[];
+//     //readonly paths: PathInfo[];
+//     readonly pathsWithRect: boolean;
+//     readonly slug: string;
+//     readonly error: boolean;
+//     readonly description: string;
 
-    @computed({ keepAlive: true }) private get uiState() {
-        return this.store.rootStore.uiState;
-    }
+//     @computed({ keepAlive: true }) private get uiState() {
+//         return this.store.rootStore.uiState;
+//     }
 
-    @computed({ keepAlive: true }) private get inList() {
-        return this.uiState.listBooths.has((this as unknown) as Booth);
-    }
+//     @computed({ keepAlive: true }) private get inList() {
+//         return this.uiState.listBooths.has((this as unknown) as Booth);
+//     }
 
-    @computed({ keepAlive: true }) get hover() {
-        return this.uiState.hoveredBooths.has((this as unknown) as Booth);
-    }
+//     @computed({ keepAlive: true }) get hover() {
+//         return this.uiState.hoveredBooths.has((this as unknown) as Booth);
+//     }
 
-    @computed({ keepAlive: true }) get selected() {
-        return this.uiState.selectedBooths.has((this as unknown) as Booth);
-    }
+//     @computed({ keepAlive: true }) get selected() {
+//         return this.uiState.selectedBooths.has((this as unknown) as Booth);
+//     }
 
-    @computed({ keepAlive: true }) get skipDim() {
-        return this.inList || this.selected;
-    }
+//     @computed({ keepAlive: true }) get skipDim() {
+//         return this.inList || this.selected;
+//     }
 
-    // // skipDim: boolean;
-    // empty: boolean;
-    // //onhold: boolean;
-    // bookmarked: boolean;
-}
+//     // // skipDim: boolean;
+//     // empty: boolean;
+//     // //onhold: boolean;
+//     // bookmarked: boolean;
+// }
 
-export type Booth = RegularBooth | SpecialBooth;
+// export type Booth = RegularBooth | SpecialBooth;
 
-export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "exhibitors"> {
-    readonly buyUrl: string;
-    readonly reserveUrl: string;
-    readonly type: string;
-    readonly status: "onhold" | "reserved";
-    readonly price: string;
-    // readonly onHold: boolean;
-    // readonly reserved: boolean;
+// export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "exhibitors"> {
+//     readonly buyUrl: string;
+//     readonly reserveUrl: string;
+//     readonly type: string;
+//     readonly status: "onhold" | "reserved";
+//     readonly price: string;
+//     // readonly onHold: boolean;
+//     // readonly reserved: boolean;
 
-    // populated
-    readonly size: string; // comes from svg or data.js
-    readonly availColor: string; // comes from svg or data.js
-    readonly soldColor: string; // comes from svg or data.js
-    readonly holdColor: string; // comes from svg or data.js
-    readonly onHold: boolean; // comes from status
-    readonly reserved: boolean; // comes from status
+//     // populated
+//     readonly size: string; // comes from svg or data.js
+//     readonly availColor: string; // comes from svg or data.js
+//     readonly soldColor: string; // comes from svg or data.js
+//     readonly holdColor: string; // comes from svg or data.js
+//     readonly onHold: boolean; // comes from status
+//     readonly reserved: boolean; // comes from status
 
-    readonly exhibitors: Exhibitor[];
+//     readonly exhibitors: Exhibitor[];
 
-    @computed({ keepAlive: true }) get bookmarked() {
-        return !!this.exhibitors.find(x => x.bookmarked);
-    }
+//     @computed({ keepAlive: true }) get bookmarked() {
+//         return !!this.exhibitors.find(x => x.bookmarked);
+//     }
 
-    // @computed({ keepAlive: true }) get reserved() {
-    //     return this.exhibitors.length > 0 || this.onHold;
-    // }
-}
+//     // @computed({ keepAlive: true }) get reserved() {
+//     //     return this.exhibitors.length > 0 || this.onHold;
+//     // }
+// }
 
-export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {
-    readonly title: string;
-    // readonly description: string;
-    readonly color: string; // comes from svg or data.js
-}
+// export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {
+//     readonly title: string;
+//     // readonly description: string;
+//     readonly color: string; // comes from svg or data.js
+// }

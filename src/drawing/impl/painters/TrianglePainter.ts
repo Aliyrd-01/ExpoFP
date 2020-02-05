@@ -51,6 +51,7 @@ export default class TrianglePainter implements Painter {
 
     tryAddObject(item: TrianglePainterObject) {
         if (this.objects.length >= this.maxObjects) return false;
+        // if (item.id)console.log("Added", item.id)
         this.objectsIndices.set(item, this.objects.length);
         this.objects.push(item);
         item.skipdim = !!item.skipdim;

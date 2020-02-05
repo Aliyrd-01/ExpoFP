@@ -17,6 +17,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly element: HTMLDivElement;
     readonly eventId: string;
     readonly dataUrl: string;
+    readonly meshUrl: string;
     readonly noOverlay: boolean;
     svg: SvgJson;
     data: Data;
@@ -89,9 +90,11 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const dataUrl = dataUrlBase + "data.json";
         const fpUrl = dataUrlBase + "fp.json";
+        this.meshUrl = dataUrlBase + "fp.mesh.json";
 
         preloadJson(dataUrl);
         preloadJson(fpUrl);
+        preloadJson(this.meshUrl);
         preloadJs("floorplan.js");
         preloadJs("vendors~floorplan.js");
 

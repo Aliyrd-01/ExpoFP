@@ -5,12 +5,14 @@ import React, { MouseEvent, useEffect, useRef } from "react";
 import { Exhibitor } from "../store/ExhibitorStore";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
-import { useStore, useUiState } from "../tools/use";
+import { useStore, useUiState, useExhibitorStore } from "../tools/use";
+import { RegularBooth } from "../core/Booth";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     const store = useStore();
     const uiState = useUiState();
-    
+    const exhibitorStore = useExhibitorStore();
+
     function handleClick(e: MouseEvent) {
         e.preventDefault();
         store.clickExhibitor(exhibitor);
@@ -20,7 +22,14 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         e.preventDefault();
         e.stopPropagation();
         if (document.activeElement) (document.activeElement as HTMLDivElement).blur();
-        exhibitor.bookmarked = !exhibitor.bookmarked;
+        store.toggleExhibitorBookmark(exhibitor);
+        // if (exhibitor.bookmarked) {
+        //     exhibitorStore.bookmarked.delete(exhibitor.id);
+        // } else {
+        //     exhibitorStore.bookmarked.add(exhibitor.id);
+        // }
+
+        //exhibitor.bookmarked = !exhibitor.bookmarked;
     }
 
     const div = useRef();
@@ -47,8 +56,8 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 <BookmarkSvg />
             </div>
             <div className="exhibitor-row__booth">
-                {exhibitor.booths.map(booth => (
-                    <div key={booth.id}>{booth.name}</div>
+                {exhibitor.booths.map((booth: RegularBooth) => (
+                    <div key={booth.name}>{booth.name}</div>
                 ))}
             </div>
         </a>

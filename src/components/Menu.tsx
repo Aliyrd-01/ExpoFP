@@ -114,9 +114,9 @@ function Menu() {
                     {exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
-                                Bookmarks <span>({exhibitorStore.bookmarked.length})</span>
+                                Bookmarks <span>({exhibitorStore.bookmarkedObj.length})</span>
                             </span>
-                            {exhibitorStore.bookmarked.length ? (
+                            {exhibitorStore.bookmarkedObj.length ? (
                                 <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
                             ) : null}
                         </a>
@@ -135,7 +135,7 @@ function Menu() {
         e.preventDefault();
         (e.target as HTMLButtonElement).blur();
         const loc = window.location;
-        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map(x => x.id).join("|");
+        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarkedObj.map(x => x.id).join("|");
         copyToClipboard(url);
         alert("Link copied to clipboard.\nOpen it on another device to import bookmarks.");
     }

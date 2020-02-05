@@ -1,11 +1,12 @@
 import { action, computed, observable } from "mobx";
+import { Booth, BoothBase, BoothStateProvider, RegularBooth } from "../core/Booth";
 // import { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
-import settings from "../tools/settings";
+// import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import browser from "../utils/browser";
-import { Booth, BoothBase, RegularBooth } from "./BoothStore";
+// import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
@@ -21,7 +22,7 @@ export type OverlaySize = "full" | "medium" | "small";
 // export type ScreenSize = { width: number; height: number };
 export type ListItem = Booth | Exhibitor | Category;
 
-export default class UIState {
+export default class UIState implements BoothStateProvider {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
@@ -124,7 +125,7 @@ export default class UIState {
     }
 
     @computed get wsDesktopPosition() {
-        return settings.EXPO === "cbresupplypartner" ? "bottom" : "top";
+        return "top"; //settings.EXPO === "cbresupplypartner" ? "bottom" : "top";
     }
     @computed get wsPosition() {
         return this.overlayBottom ? "top" : this.wsDesktopPosition;
@@ -230,7 +231,7 @@ export default class UIState {
             case "search":
                 return this.searchItems;
             case "bookmarks":
-                return this.rootStore.exhibitorStore.bookmarked;
+                return this.rootStore.exhibitorStore.bookmarkedObj;
             case "category":
                 return this.list.category.exhibitors;
         }
@@ -238,12 +239,12 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get listBooths() {
-        const arr = [] as Booth[];
+        const arr: string[] = [];
         this.listItems.forEach(item => {
             if (item instanceof Exhibitor) {
-                arr.push(...item.booths);
+                arr.push(...item.booths.map(x => x.name));
             } else if (item instanceof BoothBase) {
-                arr.push(item as Booth);
+                arr.push((item as Booth).name);
             }
         });
         return new Set(arr);
@@ -252,19 +253,31 @@ export default class UIState {
     //     return new Set(getters.listBoothsIds);
     // }
     @computed({ keepAlive: true }) get selectedBooths() {
-        let arr: Booth[];
-        if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
-        else if (this.selectedBooth) arr = [this.selectedBooth];
+        let arr: string[];
+        if (this.selectedExhibitor) arr = this.selectedExhibitor.booths.map(x => x.name);
+        else if (this.selectedBooth) arr = [this.selectedBooth.name];
         return new Set(arr);
     }
     // @computed get selectedBoothIdsSet() {
     //     return new Set(getters.selectedBoothIds);
     // }
     @computed({ keepAlive: true }) get hoveredBooths() {
-        let arr: Booth[];
-        if (this.hoveredBooth) arr = [this.hoveredBooth];
-        else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths;
+        let arr: string[];
+        if (this.hoveredBooth) arr = [this.hoveredBooth.name];
+        else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths.map(x => x.name);
         return new Set(arr);
+    }
+
+    @computed({ keepAlive: true }) get bookmarkedBooths() {
+        return this.rootStore.exhibitorStore.bookmarkedBooths;
+    }
+
+    @computed({ keepAlive: true }) get boothExhibitors() {
+        return this.rootStore.boothStore.boothExhibitors;
+    }
+
+    @computed({ keepAlive: true }) get exhibitorById() {
+        return this.rootStore.exhibitorStore.exhibitorById;
     }
 
     ///////////////////////////////////////////////////////////////////////////

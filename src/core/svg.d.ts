@@ -15,7 +15,8 @@ interface SvgBooth {
     name: string;
     rotate: number;
     rect: SvgRect;
-    shapes: SvgShape[];
+    pathsWithRect: boolean;
+    paths: SvgPathShape[];
     noLabels: boolean;
     availColor: string;
     soldColor: string;

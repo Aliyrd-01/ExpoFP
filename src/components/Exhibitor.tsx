@@ -4,14 +4,15 @@ import React, { MouseEvent, useRef } from "react";
 // import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
-import settings from "../tools/settings";
-import { useStore, useUiState, useData } from "../tools/use";
+// import settings from "../tools/settings";
+import { useData, useStore, useUiState, useFp } from "../tools/use";
 import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 
 function ExhibitorComponent() {
+    const fp = useFp();
     const store = useStore();
     const data = useData();
     const uiState = useUiState();
@@ -246,7 +247,7 @@ function ExhibitorComponent() {
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
         if (!window.confirm(`Send login instructions to ${email} to edit profile?`)) return;
-        if (settings.EXPO === "expo") return;
+        if (fp.eventId === "demo") return;
         const xhr = new XMLHttpRequest();
         xhr.open("POST", data.sendLoginLinkUrl);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -269,7 +270,8 @@ function ExhibitorComponent() {
 
     function bookmark(e: MouseEvent) {
         e.preventDefault();
-        s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
+        store.toggleExhibitorBookmark(s.exhibitor);
+        // s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
     }
 }
 

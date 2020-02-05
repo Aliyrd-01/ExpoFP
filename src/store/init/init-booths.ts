@@ -1,44 +1,55 @@
+import { Booth, RegularBooth, SpecialBooth } from "../../core/Booth";
 import Rect from "../../core/Rect";
 import { getNextId } from "../../tools/id";
 import logger from "../../tools/logger";
 import { generateUniqueSlug } from "../../tools/slug";
 import { sortByName } from "../../utils";
-import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import RootStore from "../RootStore";
 
 export default function initBooths(store: RootStore) {
-    const { boothStore } = store;
+    const { boothStore, uiState } = store;
     const boothsByName = new Map<string, Booth>();
     const data = store.fp.data;
     const svg = store.fp.svg;
 
     const booths: MutableRequired<Booth>[] = [];
+    // const stateProvider: BoothStateProvider = {
+    //     @observable.ref get listBooths(){
+
+    //     return uiState.listBooths
+    //     }
+    // };
 
     for (const raw of data.booths || []) {
-        const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
-        Object.assign(b, raw);
-
-        b.slug = generateUniqueSlug(b.name);
-        boothsByName.set(b.name.toLowerCase(), b as Booth);
-        // fixCbre(b as Booth);
-
-        if (b instanceof RegularBooth) {
-            const boothReg = b as MutableRequired<RegularBooth>;
-            boothReg.exhibitors = [];
-            for (const exhibitorId of (raw as RawRegularBooth).exhibitors) {
-                const exhibitor = store.exhibitorStore.exhibitorById.get(exhibitorId);
-                boothReg.exhibitors.push(exhibitor);
-                exhibitor.booths.push(boothReg as RegularBooth);
-            }
+        if (raw.special === undefined) {
+            const rawRegular = raw as RawRegularBooth;
+            boothStore.boothExhibitors.set(rawRegular.name, rawRegular.exhibitors);
+            delete rawRegular.exhibitors;
         }
+
+        const Class = raw.special === true ? SpecialBooth : RegularBooth;
+        const b = Object.setPrototypeOf(raw, Class.prototype) as MutableRequired<Booth>;
+        b.state = uiState;
+        //const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
+        //Object.assign(b, raw);
+
+        (b as MutableRequired<Booth>).slug = generateUniqueSlug(b.name);
+        boothsByName.set(b.name.toLowerCase(), b as Booth);
+
+        // if (b instanceof RegularBooth) {
+        //     const boothReg = b as MutableRequired<RegularBooth>;
+        //     boothReg.exhibitors = [];
+        //     for (const exhibitorId of (raw as RawRegularBooth).exhibitors) {
+        //         const exhibitor = store.exhibitorStore.exhibitorById.get(exhibitorId);
+        //         boothReg.exhibitors.push(exhibitor);
+        //         exhibitor.booths.push(boothReg as RegularBooth);
+        //     }
+        // }
 
         booths.push(b);
     }
 
-    // sort booths of exhibitors
-    for (const e of store.exhibitorStore.exhibitors) {
-        sortByName(e.booths);
-    }
+    
 
     for (const sb of svg.booths) {
         let booth = boothsByName.get(sb.name) as MutableRequired<Booth>;
@@ -57,6 +68,7 @@ export default function initBooths(store: RootStore) {
             booths.push(booth);
         }
 
+        booth.paths = sb.paths;
         booth.rect = Rect.fromSvgJsonRect(sb.rect);
         booth.rotate = sb.rotate;
         booth.noLabels = sb.noLabels;
@@ -67,11 +79,11 @@ export default function initBooths(store: RootStore) {
             boothReg.holdColor = sb.holdColor || boothReg.holdColor;
             boothReg.type = sb.type || boothReg.type;
 
-            if (boothReg.status === "reserved") {
-                boothReg.reserved = true;
-            } else if (boothReg.status === "onhold") {
-                boothReg.onHold = true;
-            }
+            // if (boothReg.status === "reserved") {
+            //     boothReg.reserved = true;
+            // } else if (boothReg.status === "onhold") {
+            //     boothReg.onHold = true;
+            // }
             //if (boothReg.reserved && boothReg.onHold) boothReg.reserved = false;
         } else {
             boothSpec.color = sb.color || boothSpec.color;
@@ -82,16 +94,22 @@ export default function initBooths(store: RootStore) {
         if (!b.rect) {
             logger.error("__data booth not found in SVG:", b.name, b);
         } else {
-            (b["store"] as BoothStore) = boothStore;
+            //(b["store"] as BoothStore) = boothStore;
             boothStore.booths.push(b as Booth);
         }
     }
+    
     // sort booths by name
     boothStore.booths.sort(function(a, b) {
-        var x = a.slug;
-        var y = b.slug;
+        const x = a.slug;
+        const y = b.slug;
         return x < y ? -1 : x > y ? 1 : 0;
     });
+
+    // // sort booths of exhibitors
+    // for (const e of store.exhibitorStore.exhibitors) {
+    //     sortByName(e.booths);
+    // }
 
     // dispose
     delete data.booths;

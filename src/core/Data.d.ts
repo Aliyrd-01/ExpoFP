@@ -18,16 +18,6 @@ interface Data {
     // hideCompanies: boolean;
 }
 
-// interface SvgLegacy {
-//     xml: string;
-//     paths: { [id: string]: any };
-//     pending: boolean;
-//     // populated
-//     svgElement: SVGElement;
-//     svgArea: Rect;
-//     svgViewBox: Rect;
-// }
-
 interface RawCategory {
     id: number;
     name: string;
@@ -45,9 +35,7 @@ interface RawRegularBooth extends RawBoothBase {
     buyUrl: string;
     reserveUrl: string;
     type: string;
-    // onHold: boolean;
-    // reserved: boolean;
-    exhibitors: number[];
+    special: undefined;
 }
 
 interface RawSpecialBooth extends RawBoothBase {

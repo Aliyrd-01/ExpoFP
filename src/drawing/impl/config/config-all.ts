@@ -1,7 +1,7 @@
 import DrawerImpl from "../DrawerImpl";
 // import settings from "../../../../tools/settings";
 import configBg from "./config-bg";
-// import configBooths from "./config-booths";
+import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
 import configMatrix from "./config-matrix";
@@ -13,7 +13,13 @@ import configMatrix from "./config-matrix";
 export default function configAll(context: DrawerImpl): () => void {
     // const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
 
-    const disposers = [configDim(context), configCanvas(context), configBg(context), configMatrix(context)];
+    const disposers = [
+        configDim(context),
+        configCanvas(context),
+        configBg(context),
+        configMatrix(context),
+        configBooths(context)
+    ];
 
     return () => disposers.forEach(x => x());
 

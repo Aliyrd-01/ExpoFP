@@ -13,7 +13,7 @@ function Bookmarks() {
     return useObserver(() => {
         const bar = (
             <div className="bar">
-                Bookmarks&nbsp;<span>({exhibitorStore.bookmarked.length})</span>
+                Bookmarks&nbsp;<span>({exhibitorStore.bookmarked.size})</span>
             </div>
         );
 

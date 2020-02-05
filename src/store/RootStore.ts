@@ -1,8 +1,9 @@
 import { action, configure } from "mobx";
+import { Booth, RegularBooth, BoothBase } from "../core/Booth";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
-import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
+import BoothStore from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
@@ -109,7 +110,8 @@ export default class RootStore {
         }
 
         if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
-            this.selectExhibitor(booth.exhibitors[0]);
+            const ex = this.exhibitorStore.exhibitorById.get(booth.exhibitors[0]);
+            this.selectExhibitor(ex);
         } else {
             this.selectBooth(booth);
         }
@@ -173,6 +175,16 @@ export default class RootStore {
         this.moveToList([exhibitor]);
         // dispatch("moveToList", exhibitorsToItems([state.exhibitors[id]]));
     }
+
+    @action toggleExhibitorBookmark(exhibitor: Exhibitor) {
+        const bookmarked = this.exhibitorStore.bookmarked;
+        if (exhibitor.bookmarked) {
+            bookmarked.delete(exhibitor.id);
+        } else {
+            bookmarked.add(exhibitor.id);
+        }
+    }
+
     @action changeActiveListIndex(delta: 1 | 0 | -1) {
         let newVal = this.uiState.activeListIndex + delta;
         newVal = Math.max(0, Math.min(this.uiState.listItems.length - 1, newVal));

@@ -30,7 +30,7 @@ export default function initExhibitors(store: RootStore) {
 
         if (e.logo) e.logo = store.fp.dataUrl + e.logo;
         e.categories = [];
-        e.booths = [];
+        // e.booths = [];
         for (const c of raw.categories || []) {
             const ca = store.categoryStore.categoryById.get(c);
             e.categories.push(ca);
@@ -71,7 +71,7 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
     exhibitorStore.replaceBookmarked(bookmarkedAr);
 
     autorun(() => {
-        saveToLocalStorage(exhibitorStore.bookmarked.map(x => x.id));
+        saveToLocalStorage(Array.from(exhibitorStore.bookmarked));
     });
 }
 
