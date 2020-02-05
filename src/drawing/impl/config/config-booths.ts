@@ -2,8 +2,8 @@ import isDebug from "../../../utils/is-debug";
 import DrawerImpl from "../DrawerImpl";
 // import animate from "./animate";
 import configBoothBg from "./config-booth-bg";
-// import configBoothBookmark from "./config-booth-bookmark";
-// import configBoothBorder from "./config-booth-border";
+import configBoothBookmark from "./config-booth-bookmark";
+import configBoothBorder from "./config-booth-border";
 // import configBoothLabels from "./config-booth-labels";
 // import configBoothLabelsSpecial from "./config-booth-labels-special";
 
@@ -11,9 +11,9 @@ export default function configBooths(context: DrawerImpl) {
     const booths = context.booths; //.filter(x => x.name === '4268');
 
     //, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark
-    const configFuncs = [configBoothBg] as ((DrawerContext, Booth) => () => void)[]; //configBoothType,
-    //if (!settings.borderless)
-    // configFuncs.push(configBoothBorder);
+    const configFuncs = [configBoothBg, configBoothBookmark] as ((DrawerContext, Booth) => () => void)[]; //configBoothType,
+
+    if (context.config.borderWidth > 0) configFuncs.push(configBoothBorder);
 
     // const after = [];
     // const lockedDrawers: { unlock: () => void }[] = [];

@@ -33,7 +33,7 @@ export default class DrawerImpl implements Drawer {
 
     constructor(
         private readonly canvas: HTMLCanvasElement,
-        private readonly pixelRatio: number,
+        public readonly pixelRatio: number,
         public readonly config: DrawerConfig,
         public readonly svg: SvgJson,
         public readonly mesh: SvgMeshJson,
