@@ -4,7 +4,8 @@ import browser from "../../utils/browser";
 import isWorker from "../../utils/is-worker";
 // import {SvgJson} from '../../core/svg';
 
-const ctx: DedicatedWorkerGlobalScope = (global as unknown) as DedicatedWorkerGlobalScope;
+// eslint-disable-next-line
+const ctx: DedicatedWorkerGlobalScope = (self as WorkerGlobalScope) as DedicatedWorkerGlobalScope;
 // export const D = new Drawer(null, null, null, null, null, null);
 
 // async function createDrawerImpl(

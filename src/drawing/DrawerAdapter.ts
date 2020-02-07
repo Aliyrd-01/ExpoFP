@@ -3,7 +3,14 @@ import { Booth } from "../core/Booth";
 import FloorPlanReady from "../floorplan.ready";
 import ExhibitorStore from "../store/ExhibitorStore";
 import UIState from "../store/UIState";
-import { BoothStateSeriazable as BoothStateSerializable, Drawer, DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "./DrawerInterfaces";
+// import PseudoWorker from "./PseudoWorker";
+import {
+    BoothStateSeriazable as BoothStateSerializable,
+    Drawer,
+    DrawerConfig,
+    DrawerUpdatables,
+    DrawerWorkerMessage
+} from "./DrawerInterfaces";
 import Matrix from "./Matrix";
 
 export default class DrawerAdapter {
@@ -143,10 +150,10 @@ export default class DrawerAdapter {
 //     // return new DrawerImpl(canvas, pixelRatio, config, svg, mesh, booths);
 // }
 
-const worker = new Worker("drawer.js");
+let worker = new Worker("drawer.js");
+worker.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
 const proxies = new Set<DrawerImplProxy>();
 let idSeq = 0;
-worker.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
 
 class DrawerImplProxy implements Drawer {
     private id = idSeq++;
@@ -184,7 +191,12 @@ class DrawerImplProxy implements Drawer {
         }
         if (ev.data.type === "drawn") this.drawnResolve();
     }
-    postMessage(message: DrawerWorkerMessage, transfer?: Transferable[]) {
+    async postMessage(message: DrawerWorkerMessage, transfer?: Transferable[]) {
+        // if (!worker) {
+        //     // const WorkerConstructor = PseudoWorker as any;
+        //     worker = new Worker("drawer.js");
+        //     worker.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
+        // }
         // console.log("posting message", message.type, message);
         worker.postMessage(message, transfer);
     }
