@@ -161,6 +161,7 @@ export default class UIState {
 
     // misc
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
+        // return false;
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;

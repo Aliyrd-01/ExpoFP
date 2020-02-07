@@ -24,7 +24,7 @@ const config = {
     mode: isProd ? "production" : "development",
     entry: {
         expofp: "./src/expofp.tsx",
-        drawer: "./src/drawing/impl/drawer.ts"
+        "drawer-worker": "./src/drawing/impl/drawer.ts"
     },
     output: {
         path: resolve(__dirname, "dist"),

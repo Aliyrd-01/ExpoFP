@@ -3,14 +3,9 @@ import { Booth } from "../core/Booth";
 import FloorPlanReady from "../floorplan.ready";
 import ExhibitorStore from "../store/ExhibitorStore";
 import UIState from "../store/UIState";
+import DrawerImplProxy from "./DrawerImplProxy";
 // import PseudoWorker from "./PseudoWorker";
-import {
-    BoothStateSeriazable as BoothStateSerializable,
-    Drawer,
-    DrawerConfig,
-    DrawerUpdatables,
-    DrawerWorkerMessage
-} from "./DrawerInterfaces";
+import { BoothStateSeriazable as BoothStateSerializable, DrawerConfig, DrawerUpdatables } from "./DrawerInterfaces";
 import Matrix from "./Matrix";
 
 export default class DrawerAdapter {
@@ -26,14 +21,13 @@ export default class DrawerAdapter {
 
         this.impl = new DrawerImplProxy(canvas, m.pixelRatio, this.getDrawerConfig(), fp.svg, fp.meshUrl, this.getBooths());
         this.drawn = this.impl.drawn;
-        // if (this.disposed) this.impl.dispose();
-        // else {
+      
         this.disposers.push(
             autorun(() => {
                 if (!this.disposed) this.setUpdatables();
             })
         );
-        // }
+   
     }
 
     // private createLayers(): DrawerLayer[] {
@@ -150,76 +144,34 @@ export default class DrawerAdapter {
 //     // return new DrawerImpl(canvas, pixelRatio, config, svg, mesh, booths);
 // }
 
-let worker = new Worker("drawer.js");
-worker.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
-const proxies = new Set<DrawerImplProxy>();
-let idSeq = 0;
+// class WorkerAdapter {
+//     // private readonly worker: Worker;
+//     constructor(postMessage: (message: any, transfer?: Transferable[]) => void, onmessage: (ev: MessageEvent) => void) {
+//         const allowWorker = true;
+//         if (allowWorker) {
+//             this.worker = new Worker("drawer.js");
+//             this.worker.onmessage = onmessage;
+//             this.postMessage = this.worker.postMessage.bind(this.worker);
+//         } else {
+//         }
+//     }
+//     postMessage: (message: any, transfer?: Transferable[]) => void;
+// }
 
-class DrawerImplProxy implements Drawer {
-    private id = idSeq++;
-    private drawnResolve: () => void;
-    private created: boolean;
-    public readonly drawn: Promise<void>;
-    public readonly updatablesQueue: DrawerUpdatables[] = [];
+// async function ensureWorker() {
+//     if (worker) return;
+//     const allowWorker = true;
+//     if (allowWorker) {
+//         const ww = new Worker("drawer.js");
+//         worker = new WorkerAdapter();
 
-    constructor(
-        canvas: HTMLCanvasElement,
-        pixelRatio: number,
-        config: DrawerConfig,
-        svg: SvgJson,
-        meshUrl: string,
-        booths: Booth[]
-    ) {
-        this.drawn = new Promise(r => (this.drawnResolve = r));
+//         this.worker.onmessage = onmessage;
+//         this.postMessage = this.worker.postMessage.bind(this.worker);
+//     } else {
+//     }
+// }
 
-        const workerCanvas = canvas.transferControlToOffscreen();
-        this.postMessage(
-            {
-                type: "create",
-                id: this.id,
-                params: [workerCanvas, pixelRatio, config, svg, meshUrl, booths] as any
-            },
-            [(workerCanvas as any) as Transferable]
-        );
-        proxies.add(this);
-    }
-    onmessage(ev: MessageEvent) {
-        if (ev.data.id !== this.id) return;
-        if (ev.data.type === "created") {
-            this.created = true;
-            this.setUpdatables();
-        }
-        if (ev.data.type === "drawn") this.drawnResolve();
-    }
-    async postMessage(message: DrawerWorkerMessage, transfer?: Transferable[]) {
-        // if (!worker) {
-        //     // const WorkerConstructor = PseudoWorker as any;
-        //     worker = new Worker("drawer.js");
-        //     worker.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
-        // }
-        // console.log("posting message", message.type, message);
-        worker.postMessage(message, transfer);
-    }
-    setUpdatables(u?: DrawerUpdatables) {
-        if (u) this.updatablesQueue.push(u);
-        if (!this.created) return;
-        for (const u2 of this.updatablesQueue) {
-            this.postMessage({
-                type: "setUpdatables",
-                id: this.id,
-                params: [u2]
-            });
-        }
-        this.updatablesQueue.length = 0;
-    }
-    dispose() {
-        this.postMessage({
-            type: "dispose",
-            id: this.id
-        });
-        proxies.delete(this);
-    }
-}
+// = new WorkerAdapter(ev => proxies.forEach(p => p.onmessage(ev)));
 
 class BoothStateSeriazableComputed implements BoothStateSerializable {
     constructor(private uiState: UIState, private exhibitorStore: ExhibitorStore) {}

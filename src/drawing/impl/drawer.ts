@@ -24,7 +24,7 @@ const all = new Map<number, DrawerImpl>();
 const drawnIds = new Set<number>();
 const subscribers: ((message: any) => void)[] = [];
 
-export function subscribeToMessages(postMessagBack: (message: any) => void) {
+export function subscribeToMessages(postMessagBack: (message: DrawerWorkerMessage) => void) {
     subscribers.push(postMessagBack);
 }
 function postMessageBack(message: any) {

@@ -96,9 +96,9 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
             );
 
             if (partEased > 0.02) {
-                currentInertialAf = window.requestAnimationFrame(doStep);
+                currentInertialAf = requestAnimationFrame(doStep);
             }
         }
-        currentInertialAf = window.requestAnimationFrame(doStep);
+        currentInertialAf = requestAnimationFrame(doStep);
     }
 }

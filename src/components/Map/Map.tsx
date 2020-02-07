@@ -239,7 +239,7 @@ export default function Map() {
                     1000,
                     easeExpOut,
                     interpolateNumber(0, 1),
-                    window.requestAnimationFrame,
+                    requestAnimationFrame,
                     v => {
                         //el.current.style.opacity = v.toString();
                         s.matrix.setVisibleScale(v);

@@ -207,9 +207,9 @@ function createGl(canvas: HTMLCanvasElement | OffscreenCanvas) {
     const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
     const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
     const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-    logger.log("GPU vendor:", vendor);
-    logger.log("GPU renderer:", renderer);
-    logger.log("GL version:", gl.getParameter(gl.VERSION));
+    console.log("GPU vendor:", vendor);
+    console.log("GPU renderer:", renderer);
+    console.log("GL version:", gl.getParameter(gl.VERSION));
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
