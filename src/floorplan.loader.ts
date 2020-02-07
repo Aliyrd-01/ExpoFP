@@ -1,5 +1,5 @@
 import baseUrl from "./tools/base-url";
-import { loadCss, loadFont, loadJson, preloadJs, preloadJson } from "./tools/loaders";
+import { loadCss, loadFont, loadJson, preloadJs, preloadJson, preloadFont } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import useShadow from "./utils/use-shadow";
@@ -97,6 +97,8 @@ export default class FloorPlanLoader implements FloorPlan {
         preloadJson(this.meshUrl);
         preloadJs("floorplan.js");
         preloadJs("vendors~floorplan.js");
+        preloadFont("fonts/oswald-v17-cyrillic_latin-300.woff2");
+        preloadFont("fonts/oswald-v17-cyrillic_latin-500.woff2");
 
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
@@ -108,9 +110,9 @@ export default class FloorPlanLoader implements FloorPlan {
         const fontPromises = [
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
-            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
-            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 })
+            // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
+            // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
         ];
 
         let handledStyleElements = 0;

@@ -153,25 +153,25 @@ export default function Map() {
         s.matrix = new Matrix(
             uiState.canvasSizePt,
             uiState.canvasVisibleRectPt,
-            0,
+            0.001,
             fp.svg.area as Rect,
             zoomIdentity,
             uiState.devicePixelRatio
         );
 
-        window.setTimeout(() => {
-            animate(
-                0,
-                1000,
-                easeExpOut,
-                interpolateNumber(0, 1),
-                window.requestAnimationFrame,
-                v => s.matrix.setVisibleScale(v),
-                () => {
-                    uiState.canvasStarted = true;
-                }
-            );
-        }, 400);
+        // window.setTimeout(() => {
+        //     animate(
+        //         0,
+        //         1000,
+        //         easeExpOut,
+        //         interpolateNumber(0, 1),
+        //         window.requestAnimationFrame,
+        //         v => s.matrix.setVisibleScale(v),
+        //         () => {
+        //             uiState.canvasStarted = true;
+        //         }
+        //     );
+        // }, 400);
 
         s.zoom = zoom()
             .clickDistance(15)
@@ -231,6 +231,25 @@ export default function Map() {
         });
         setZoomTransformAnimated(zoomIdentity, 0, null);
         s.$canvas.call(s.zoom as any);
+
+        s.drawer.drawn.then(() => {
+            window.setTimeout(() => {
+                animate(
+                    0,
+                    1000,
+                    easeExpOut,
+                    interpolateNumber(0, 1),
+                    window.requestAnimationFrame,
+                    v => {
+                        //el.current.style.opacity = v.toString();
+                        s.matrix.setVisibleScale(v);
+                    },
+                    () => {
+                        uiState.canvasStarted = true;
+                    }
+                );
+            }, 50);
+        });
     }
 
     function raiseBoothOver(b: Booth) {
@@ -246,7 +265,7 @@ export default function Map() {
     }
 
     function handleMouseOut(e) {
-        raiseBoothOver(undefined);
+        raiseBoothOver(null);
     }
 
     function handleClick(e: React.MouseEvent) {

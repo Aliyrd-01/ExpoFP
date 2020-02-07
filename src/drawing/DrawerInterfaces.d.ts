@@ -20,3 +20,29 @@ interface DrawerUpdatables extends BoothStateSeriazable {
 }
 
 type BoothStateSeriazable = Serializable<Omit<BoothStateProvider, "exhibitorByIdMap">>;
+
+// interface DrawerWorkerMessageBase {
+//     type: string;
+//     id: number;
+//     params: any[];
+// }
+
+interface DrawerWorkerCreateMessage {
+    type: "create";
+    id: number;
+    params: [HTMLCanvasElement | OffscreenCanvas, number, DrawerConfig, SvgJson, string, Booth[]];
+}
+
+interface DrawerWorkerSetUpdatablesMessage {
+    type: "setUpdatables";
+    id: number;
+    params: [DrawerUpdatables];
+}
+
+interface DrawerWorkerDisposeMessage {
+    type: "dispose";
+    id: number;
+    params?: undefined
+}
+
+type DrawerWorkerMessage = DrawerWorkerCreateMessage | DrawerWorkerSetUpdatablesMessage | DrawerWorkerDisposeMessage;

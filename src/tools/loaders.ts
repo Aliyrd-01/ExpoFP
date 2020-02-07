@@ -30,6 +30,15 @@ export function preloadJs(url: string) {
     document.head.appendChild(link);
 }
 
+export function preloadFont(url: string) {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.href = goodUrl(url);
+    link.as = "font";
+    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+}
+
 export function preloadJson(url: string) {
     const link = document.createElement("link");
     link.rel = "preload";
@@ -54,6 +63,16 @@ export function preloadJson(url: string) {
 export async function loadJson<T>(url: string) {
     const response = await fetch(goodUrl(url));
     return (await response.json()) as T;
+}
+
+const mapJsonCache = new Map<string, any>();
+export async function loadJsonCached<T>(url: string) {
+    let data = mapJsonCache.get(url);
+    if (!data) {
+        data = await loadJson(url);
+        mapJsonCache.set(url, data);
+    }
+    return data;
 }
 
 declare const FontFace: any;

@@ -1,16 +1,13 @@
-import { autorun, computed } from "mobx";
-import { Booth, RegularBooth, SpecialBooth } from "../core/Booth";
-import Rect from "../core/Rect";
+import { autorun, computed, toJS } from "mobx";
+import { Booth } from "../core/Booth";
 import FloorPlanReady from "../floorplan.ready";
 import ExhibitorStore from "../store/ExhibitorStore";
 import UIState from "../store/UIState";
-import { loadJson } from "../tools/loaders";
-import { BoothStateSeriazable as BoothStateSerializable, Drawer, DrawerConfig, DrawerUpdatables } from "./DrawerInterfaces";
-import DrawerImpl from "./impl/DrawerImpl";
+import { BoothStateSeriazable as BoothStateSerializable, Drawer, DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "./DrawerInterfaces";
 import Matrix from "./Matrix";
 
 export default class DrawerAdapter {
-    private impl: Drawer;
+    private impl: DrawerImplProxy;
     private readonly disposers: (() => void)[] = [];
     public readonly drawn: Promise<void>;
     private disposed: boolean;
@@ -20,25 +17,16 @@ export default class DrawerAdapter {
         // this.impl = new DrawerImpl(canvas, m.pixelRatio, this.getUpdatables(), this.createLayers(), fp.svg);
         this.boothState = new BoothStateSeriazableComputed(fp.store.uiState, fp.store.exhibitorStore);
 
-        this.drawn = new Promise(async resolve => {
-            this.impl = await createDrawerImpl(
-                canvas,
-                m.pixelRatio,
-                this.getDrawerConfig(),
-                fp.svg,
-                fp.meshUrl,
-                this.getBooths()
-            );
-            if (this.disposed) this.impl.dispose();
-            else {
-                this.disposers.push(
-                    autorun(() => {
-                        if (!this.disposed) this.setUpdatables(); // this.impl.setUpdatables(this.getUpdatables());
-                    })
-                );
-                resolve();
-            }
-        });
+        this.impl = new DrawerImplProxy(canvas, m.pixelRatio, this.getDrawerConfig(), fp.svg, fp.meshUrl, this.getBooths());
+        this.drawn = this.impl.drawn;
+        // if (this.disposed) this.impl.dispose();
+        // else {
+        this.disposers.push(
+            autorun(() => {
+                if (!this.disposed) this.setUpdatables();
+            })
+        );
+        // }
     }
 
     // private createLayers(): DrawerLayer[] {
@@ -63,32 +51,34 @@ export default class DrawerAdapter {
         };
     }
 
-    private getBooths(): Booth[] {
+    private getBooths(): any[] {
         return this.fp.store.boothStore.booths.map(x => {
             const json = JSON.stringify(x);
             const obj = JSON.parse(json);
-            let booth: Booth;
-            if (obj.special) {
-                booth = new SpecialBooth();
-            } else {
-                booth = new RegularBooth();
-            }
-
-            Object.assign(booth, obj);
-            Object.setPrototypeOf(booth.rect, Rect.prototype);
-
-            // const booth = Object.setPrototypeOf(obj, obj.special ? SpecialBooth.prototype : RegularBooth.prototype) as Booth;
-            // Object.setPrototypeOf(booth.rect, Rect.prototype);
-            // booth.state = x.state;
-
-            // console.log("b", booth.state, x.state);
-            // debugger;
-            // if (booth instanceof RegularBooth) {
-            //     console.log("bbb", booth.state, x.state);
-            //     console.log(booth.exhibitorIds);
+            delete obj.state;
+            return obj;
+            // let booth: Booth;
+            // if (obj.special) {
+            //     booth = new SpecialBooth();
+            // } else {
+            //     booth = new RegularBooth();
             // }
 
-            return booth;
+            // Object.assign(booth, obj);
+            // Object.setPrototypeOf(booth.rect, Rect.prototype);
+
+            // // const booth = Object.setPrototypeOf(obj, obj.special ? SpecialBooth.prototype : RegularBooth.prototype) as Booth;
+            // // Object.setPrototypeOf(booth.rect, Rect.prototype);
+            // // booth.state = x.state;
+
+            // // console.log("b", booth.state, x.state);
+            // // debugger;
+            // // if (booth instanceof RegularBooth) {
+            // //     console.log("bbb", booth.state, x.state);
+            // //     console.log(booth.exhibitorIds);
+            // // }
+
+            // return booth;
         });
     }
 
@@ -127,7 +117,7 @@ export default class DrawerAdapter {
 
         this.impl.setUpdatables(res);
 
-        return res;
+        // return res;
     }
 
     dispose() {
@@ -137,18 +127,86 @@ export default class DrawerAdapter {
     }
 }
 
-async function createDrawerImpl(
-    canvas: HTMLCanvasElement,
-    pixelRatio: number,
-    config: DrawerConfig,
-    svg: SvgJson,
-    meshUrl: string,
-    booths: Booth[]
-) {
-    // load meshes json
-    const mesh = await loadJson<SvgMeshJson>(meshUrl);
+// async function createDrawerImpl(
+//     canvas: HTMLCanvasElement,
+//     pixelRatio: number,
+//     config: DrawerConfig,
+//     svg: SvgJson,
+//     meshUrl: string,
+//     booths: Booth[]
+// ) {
+//     const w = new Worker("drawer.js");
+//     w.postMessage("message1");
+//     // load meshes json
+//     // const mesh = await loadJson<SvgMeshJson>(meshUrl);
 
-    return new DrawerImpl(canvas, pixelRatio, config, svg, mesh, booths);
+//     // return new DrawerImpl(canvas, pixelRatio, config, svg, mesh, booths);
+// }
+
+const worker = new Worker("drawer.js");
+const proxies = new Set<DrawerImplProxy>();
+let idSeq = 0;
+worker.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
+
+class DrawerImplProxy implements Drawer {
+    private id = idSeq++;
+    private drawnResolve: () => void;
+    private created: boolean;
+    public readonly drawn: Promise<void>;
+    public readonly updatablesQueue: DrawerUpdatables[] = [];
+
+    constructor(
+        canvas: HTMLCanvasElement,
+        pixelRatio: number,
+        config: DrawerConfig,
+        svg: SvgJson,
+        meshUrl: string,
+        booths: Booth[]
+    ) {
+        this.drawn = new Promise(r => (this.drawnResolve = r));
+
+        const workerCanvas = canvas.transferControlToOffscreen();
+        this.postMessage(
+            {
+                type: "create",
+                id: this.id,
+                params: [workerCanvas, pixelRatio, config, svg, meshUrl, booths] as any
+            },
+            [(workerCanvas as any) as Transferable]
+        );
+        proxies.add(this);
+    }
+    onmessage(ev: MessageEvent) {
+        if (ev.data.id !== this.id) return;
+        if (ev.data.type === "created") {
+            this.created = true;
+            this.setUpdatables();
+        }
+        if (ev.data.type === "drawn") this.drawnResolve();
+    }
+    postMessage(message: DrawerWorkerMessage, transfer?: Transferable[]) {
+        // console.log("posting message", message.type, message);
+        worker.postMessage(message, transfer);
+    }
+    setUpdatables(u?: DrawerUpdatables) {
+        if (u) this.updatablesQueue.push(u);
+        if (!this.created) return;
+        for (const u2 of this.updatablesQueue) {
+            this.postMessage({
+                type: "setUpdatables",
+                id: this.id,
+                params: [u2]
+            });
+        }
+        this.updatablesQueue.length = 0;
+    }
+    dispose() {
+        this.postMessage({
+            type: "dispose",
+            id: this.id
+        });
+        proxies.delete(this);
+    }
 }
 
 class BoothStateSeriazableComputed implements BoothStateSerializable {
@@ -166,7 +224,7 @@ class BoothStateSeriazableComputed implements BoothStateSerializable {
         return Array.from(this.exhibitorStore.bookmarkedBoothNames);
     }
     @computed({ keepAlive: true }) get exhibitorIdsByBoothNameMap() {
-        return Array.from(this.exhibitorStore.exhibitorIdsByBoothNameMap);
+        return Array.from(this.exhibitorStore.exhibitorIdsByBoothNameMap).map(k => [k[0], toJS(k[1])] as [string, number[]]);
     }
     // @computed({ keepAlive: true }) get exhibitorByIdMap() {
     //     return this.exhibitorStore.exhibitorByIdMap;

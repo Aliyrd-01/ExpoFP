@@ -1,11 +1,11 @@
 import { observable, reaction, runInAction } from "mobx";
+import { Booth, BoothStateProvider, RegularBooth, SpecialBooth } from "../../core/Booth";
 import Rect from "../../core/Rect";
 import Size from "../../core/Size";
 import logger from "../../tools/logger";
-import { Drawer, DrawerUpdatables, DrawerConfig, BoothStateSeriazable } from "../DrawerInterfaces";
+import { BoothStateSeriazable, Drawer, DrawerConfig, DrawerUpdatables } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
 import Painter from "./Painter";
-import { Booth, SpecialBooth, RegularBooth, BoothStateProvider } from "../../core/Booth";
 
 export default class DrawerImpl implements Drawer, BoothStateProvider {
     private readonly gl: WebGLRenderingContext;
@@ -35,7 +35,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     public readonly allPainters: Painter[] = [];
 
     constructor(
-        private readonly canvas: HTMLCanvasElement,
+        private readonly canvas: HTMLCanvasElement | OffscreenCanvas,
         public readonly pixelRatio: number,
         public readonly config: DrawerConfig,
         public readonly svg: SvgJson,
@@ -51,6 +51,8 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
 
         this.booths.forEach(b => {
             Object.setPrototypeOf(b, b.special === true ? SpecialBooth.prototype : RegularBooth.prototype);
+            Object.setPrototypeOf(b.rect, Rect.prototype);
+
             b.state = this;
         });
 
@@ -71,8 +73,14 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
             // console.log("setUpdatables", this.matrix === u.matrix);
             if (u.matrix !== undefined) this.matrix = u.matrix;
             if (u.ptscale !== undefined) this.ptscale = u.ptscale;
-            if (u.canvasVisibleRectPt !== undefined) this.canvasVisibleRectPt = u.canvasVisibleRectPt;
-            if (u.canvasSizePt !== undefined) this.canvasSizePt = u.canvasSizePt;
+            if (u.canvasVisibleRectPt !== undefined) {
+                Object.setPrototypeOf(u.canvasVisibleRectPt, Rect.prototype);
+                this.canvasVisibleRectPt = u.canvasVisibleRectPt;
+            }
+            if (u.canvasSizePt !== undefined) {
+                Object.setPrototypeOf(u.canvasSizePt, Size.prototype);
+                this.canvasSizePt = u.canvasSizePt;
+            }
             for (const a of [
                 "listBoothNames",
                 "hoveredBoothNames",
@@ -140,7 +148,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     // }
 
     private requireRedraw() {
-        if (!this.requestedFrame) this.requestedFrame = window.requestAnimationFrame(this.drawBound);
+        if (!this.requestedFrame) this.requestedFrame = requestAnimationFrame(this.drawBound);
     }
 
     private draw() {
@@ -186,12 +194,12 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     }
 }
 
-function createGl(canvas: HTMLCanvasElement) {
+function createGl(canvas: HTMLCanvasElement | OffscreenCanvas) {
     // throw new Error('aaa')
     const options = {};
     let gl = canvas.getContext("webgl2", options) as WebGLRenderingContext;
     if (!gl) {
-        gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
+        gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl" as any, options) as any);
         if (!gl) return;
         const ext = gl.getExtension("OES_element_index_uint");
         if (!ext) logger.warn("OES_element_index_uint not supported");

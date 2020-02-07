@@ -23,13 +23,15 @@ const defaultExpo = process.env.EFP_EXPO || argv["expo"] || isProd ? "expo" : "c
 const config = {
     mode: isProd ? "production" : "development",
     entry: {
-        expofp: "./src/expofp.tsx"
+        expofp: "./src/expofp.tsx",
+        drawer: "./src/drawing/impl/drawer.ts"
     },
     output: {
         path: resolve(__dirname, "dist"),
         filename: "[name].js",
         library: "ExpoFP",
-        crossOriginLoading: isProd ? "anonymous" : false
+        crossOriginLoading: isProd ? "anonymous" : false,
+        globalObject: 'this'
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx"]

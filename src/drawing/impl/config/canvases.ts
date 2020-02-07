@@ -1,14 +1,15 @@
 import { RegularBooth } from "../../../core/Booth";
+import isWorker from "../../../utils/is-worker";
 
 // import { RegularBooth } from "../../../store/BoothStore";
 
-const canvas = document.createElement("canvas");
+const canvas = isWorker ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
 export interface CanvasDescriptor {
     width: number;
     height: number;
-    draw(c: CanvasRenderingContext2D): void;
+    draw(c: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D): void;
 }
 
 let prevMeasureFont: string;
@@ -195,7 +196,7 @@ export function getFont(px: number, weight: number = 500) {
         weight +
         " " +
         px +
-        'px Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        'px Oswald, Arial, sans-serif'
     );
 }
 

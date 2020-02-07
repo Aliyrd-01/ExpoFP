@@ -1,6 +1,7 @@
 import Rect from "../../../core/Rect";
 import debugCanvases from "../../../tools/debugCanvases";
 import isDebug from "../../../utils/is-debug";
+import isWorker from "../../../utils/is-worker";
 import { CanvasDescriptor } from "../config/canvases";
 
 const maxHeight = 2000;
@@ -11,6 +12,10 @@ type ContainerCanvasInfo = {
     height: number;
     items: SpriteItemEx[];
 };
+
+interface OffscreenCanvasWithId extends OffscreenCanvas {
+    id: string;
+}
 
 export default class Sprite {
     private readonly canvasToSpriteItem = new Map<CanvasDescriptor, SpriteItemEx>();
@@ -35,7 +40,7 @@ export default class Sprite {
         return item;
     }
 
-    generateSpriteCanvases(): (() => HTMLCanvasElement)[] {
+    generateSpriteCanvases(): (() => HTMLCanvasElement | OffscreenCanvasWithId)[] {
         if (isDebug) console.time("sprite.generateSpriteCanvases");
 
         // const containerCanvasItems = new Map<CanvasInfo, SpriteItemEx[]>();
@@ -89,7 +94,7 @@ export default class Sprite {
         this.canvasToSpriteItem.clear();
 
         if (isDebug) console.timeEnd("sprite.generateSpriteCanvases");
-        const canvas = document.createElement("canvas");
+        const canvas = isWorker ? (new OffscreenCanvas(1, 1) as OffscreenCanvasWithId) : document.createElement("canvas");
         const c = canvas.getContext("2d");
 
         // we're reusing same canvas

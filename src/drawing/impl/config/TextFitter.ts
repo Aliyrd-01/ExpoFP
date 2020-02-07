@@ -1,3 +1,5 @@
+import isWorker from "../../../utils/is-worker";
+
 export interface TextFitData {
     factor: number;
     fontSize: number;
@@ -9,14 +11,14 @@ export default class TextFitter {
     private readonly maxMultilineFontSize: number;
     private readonly baseFontSize: number;
     private readonly fontSizes: number[];
-    private readonly ctx: CanvasRenderingContext2D;
+    private readonly ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
     private readonly spaceWidth: number;
 
     // pass fontsizes and maxmulti as multiplied on devicePixelRation here
     constructor(fontFunc: (number) => string, fontSizes: number[], maxMultilineFontSize: number) {
         this.baseFontSize = this.maxMultilineFontSize = maxMultilineFontSize;
         this.fontSizes = fontSizes;
-        const canvas = document.createElement("canvas");
+        const canvas = isWorker ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.textAlign = "center";
         this.ctx.textBaseline = "alphabetic";
@@ -141,10 +143,7 @@ function lineIndicesToLines(lineSet, words) {
 
 function selectBestLines(lineSets, blocks, spaceWidth) {
     const vars = lineSets.map(ll => {
-        const widths = ll.map(
-            line => line.map(i => blocks[i]).reduce((a, v, i) => a + (i > 0 ? spaceWidth : 0) + v),
-            0
-        );
+        const widths = ll.map(line => line.map(i => blocks[i]).reduce((a, v, i) => a + (i > 0 ? spaceWidth : 0) + v), 0);
 
         const dd = standardDeviation(widths);
         return { ll, dd };
