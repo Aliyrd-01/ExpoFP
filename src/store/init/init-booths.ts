@@ -76,9 +76,10 @@ export default function initBooths(store: RootStore) {
             booth.name = sb.name.toUpperCase();
             booth.slug = generateUniqueSlug(sb.name);
             booth.error = true;
-            booth.exhibitorIds = [];
+            // booth.exhibitorIds = [];
             boothsByName.set(sb.name, booth as Booth);
             booths.push(booth);
+            booth.state = stateProvider;
         }
 
         booth.paths = sb.paths;

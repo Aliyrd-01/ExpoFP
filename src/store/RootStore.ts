@@ -7,6 +7,7 @@ import BoothStore from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
+// import BoothState from "./BoothStateProvider";
 
 configure({ computedRequiresReaction: true });
 
@@ -17,6 +18,7 @@ export default class RootStore {
     readonly uiState: UIState;
     // readonly apiStore: ApiStore;
     readonly fp: FloorPlanReady;
+    // readonly boothState: BoothState;
 
     constructor(fp: FloorPlanReady) {
         this.fp = fp;
@@ -24,6 +26,7 @@ export default class RootStore {
         this.exhibitorStore = new ExhibitorStore(this);
         this.boothStore = new BoothStore(this);
         this.uiState = new UIState(this);
+        // this.boothState = new BoothState(this.uiState, this.exhibitorStore);
         // this.apiStore = new ApiStore(this);
     }
 

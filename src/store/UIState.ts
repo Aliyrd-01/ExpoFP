@@ -262,6 +262,13 @@ export default class UIState {
         else if (this.selectedBooth) arr = [this.selectedBooth];
         return new Set(arr);
     }
+
+    @computed({ keepAlive: true }) get selectedBoothNames() {
+        let arr: Booth[];
+        if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
+        else if (this.selectedBooth) arr = [this.selectedBooth];
+        return new Set(arr);
+    }
     // @computed get selectedBoothIdsSet() {
     //     return new Set(getters.selectedBoothIds);
     // }

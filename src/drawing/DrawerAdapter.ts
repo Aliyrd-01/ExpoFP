@@ -1,21 +1,24 @@
-import { autorun } from "mobx";
+import { autorun, computed } from "mobx";
 import { Booth, RegularBooth, SpecialBooth } from "../core/Booth";
 import Rect from "../core/Rect";
 import FloorPlanReady from "../floorplan.ready";
+import ExhibitorStore from "../store/ExhibitorStore";
+import UIState from "../store/UIState";
 import { loadJson } from "../tools/loaders";
-import { Drawer, DrawerConfig, DrawerUpdatables } from "./DrawerInterfaces";
+import { BoothStateSeriazable as BoothStateSerializable, Drawer, DrawerConfig, DrawerUpdatables } from "./DrawerInterfaces";
 import DrawerImpl from "./impl/DrawerImpl";
 import Matrix from "./Matrix";
-// import { RegularBooth, SpecialBooth } from "../store/BoothStore";
 
 export default class DrawerAdapter {
     private impl: Drawer;
     private readonly disposers: (() => void)[] = [];
     public readonly drawn: Promise<void>;
     private disposed: boolean;
+    private boothState: BoothStateSerializable;
 
     constructor(private fp: FloorPlanReady, canvas: HTMLCanvasElement, private m: Matrix) {
         // this.impl = new DrawerImpl(canvas, m.pixelRatio, this.getUpdatables(), this.createLayers(), fp.svg);
+        this.boothState = new BoothStateSeriazableComputed(fp.store.uiState, fp.store.exhibitorStore);
 
         this.drawn = new Promise(async resolve => {
             this.impl = await createDrawerImpl(
@@ -76,7 +79,7 @@ export default class DrawerAdapter {
 
             // const booth = Object.setPrototypeOf(obj, obj.special ? SpecialBooth.prototype : RegularBooth.prototype) as Booth;
             // Object.setPrototypeOf(booth.rect, Rect.prototype);
-            booth.state = x.state;
+            // booth.state = x.state;
 
             // console.log("b", booth.state, x.state);
             // debugger;
@@ -92,15 +95,23 @@ export default class DrawerAdapter {
     private previousUpdatables: DrawerUpdatables;
 
     private setUpdatables() {
-        const uiState = this.fp.store.uiState;
-        const res = {
+        const { uiState } = this.fp.store;
+        const bs = this.boothState;
+        const res: DrawerUpdatables = {
             matrix: this.m.matrix,
             ptscale: this.m.ptscale,
             canvasVisibleRectPt: uiState.canvasVisibleRectPt,
             canvasSizePt: uiState.canvasSizePt,
-            dimmed: uiState.dimmed
+            dimmed: uiState.dimmed,
+            listBoothNames: bs.listBoothNames,
+            hoveredBoothNames: bs.hoveredBoothNames,
+            selectedBoothNames: bs.selectedBoothNames,
+            bookmarkedBoothNames: bs.bookmarkedBoothNames,
+            exhibitorIdsByBoothNameMap: bs.exhibitorIdsByBoothNameMap
         };
 
+        // debugger;
+        // delete same
         if (this.previousUpdatables) {
             for (const key of Object.keys(res)) {
                 if (this.previousUpdatables[key] === res[key]) {
@@ -138,4 +149,30 @@ async function createDrawerImpl(
     const mesh = await loadJson<SvgMeshJson>(meshUrl);
 
     return new DrawerImpl(canvas, pixelRatio, config, svg, mesh, booths);
+}
+
+class BoothStateSeriazableComputed implements BoothStateSerializable {
+    constructor(private uiState: UIState, private exhibitorStore: ExhibitorStore) {}
+    @computed({ keepAlive: true }) get listBoothNames() {
+        return boothSetToNames(this.uiState.listBooths);
+    }
+    @computed({ keepAlive: true }) get hoveredBoothNames() {
+        return boothSetToNames(this.uiState.hoveredBooths);
+    }
+    @computed({ keepAlive: true }) get selectedBoothNames() {
+        return boothSetToNames(this.uiState.selectedBooths);
+    }
+    @computed({ keepAlive: true }) get bookmarkedBoothNames() {
+        return Array.from(this.exhibitorStore.bookmarkedBoothNames);
+    }
+    @computed({ keepAlive: true }) get exhibitorIdsByBoothNameMap() {
+        return Array.from(this.exhibitorStore.exhibitorIdsByBoothNameMap);
+    }
+    // @computed({ keepAlive: true }) get exhibitorByIdMap() {
+    //     return this.exhibitorStore.exhibitorByIdMap;
+    // }
+}
+
+function boothSetToNames(set: Set<Booth>) {
+    return Array.from(set).map(x => x.name);
 }

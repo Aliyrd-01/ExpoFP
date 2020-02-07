@@ -2,12 +2,12 @@ import { observable, reaction, runInAction } from "mobx";
 import Rect from "../../core/Rect";
 import Size from "../../core/Size";
 import logger from "../../tools/logger";
-import { Drawer, DrawerUpdatables, DrawerConfig } from "../DrawerInterfaces";
+import { Drawer, DrawerUpdatables, DrawerConfig, BoothStateSeriazable } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
 import Painter from "./Painter";
 import { Booth, SpecialBooth, RegularBooth, BoothStateProvider } from "../../core/Booth";
 
-export default class DrawerImpl implements Drawer {
+export default class DrawerImpl implements Drawer, BoothStateProvider {
     private readonly gl: WebGLRenderingContext;
     private requireCanvasSizing = true;
     private requestedFrame: number;
@@ -26,8 +26,11 @@ export default class DrawerImpl implements Drawer {
     @observable canvasVisibleRectPt: Rect;
     @observable canvasSizePt: Size;
     @observable dimmed: boolean;
-    // @observable.ref selectedBooths: Set<string>;
-    // @observable.ref boothExhibitors: Map<string, string[]>;
+    @observable.ref listBoothNames: Set<string>;
+    @observable.ref hoveredBoothNames: Set<string>;
+    @observable.ref selectedBoothNames: Set<string>;
+    @observable.ref bookmarkedBoothNames: Set<string>;
+    @observable.ref exhibitorIdsByBoothNameMap: Map<string, number[]>;
 
     public readonly allPainters: Painter[] = [];
 
@@ -48,8 +51,7 @@ export default class DrawerImpl implements Drawer {
 
         this.booths.forEach(b => {
             Object.setPrototypeOf(b, b.special === true ? SpecialBooth.prototype : RegularBooth.prototype);
-            // TODO:
-            //b.state =
+            b.state = this;
         });
 
         // this.booths = booths.map(b => {
@@ -71,12 +73,29 @@ export default class DrawerImpl implements Drawer {
             if (u.ptscale !== undefined) this.ptscale = u.ptscale;
             if (u.canvasVisibleRectPt !== undefined) this.canvasVisibleRectPt = u.canvasVisibleRectPt;
             if (u.canvasSizePt !== undefined) this.canvasSizePt = u.canvasSizePt;
-            // this.selectedBooths = new Set(u.selectedBooths);
-            // this.boothExhibitors = new Map(Object.entries(u.boothExhibitors));
+            for (const a of [
+                "listBoothNames",
+                "hoveredBoothNames",
+                "selectedBoothNames",
+                "bookmarkedBoothNames",
+                "exhibitorIdsByBoothNameMap"
+            ] as (keyof BoothStateSeriazable)[]) {
+                const val = u[a];
+                if (val !== undefined) {
+                    const Class = a.endsWith("Map") ? Map : (Set as any);
+                    this[a] = new Class(val);
+                }
+            }
         });
 
         if (!this.drawing) {
             this.drawing = true;
+
+            // this.booths.forEach(b => {
+            //     console.log(b.state.exhibitorIdsByBoothNameMap);
+            //     debugger;
+            // });
+
             this.draw();
 
             // init all layers and all
@@ -124,7 +143,7 @@ export default class DrawerImpl implements Drawer {
         if (!this.requestedFrame) this.requestedFrame = window.requestAnimationFrame(this.drawBound);
     }
 
-    public draw() {
+    private draw() {
         if (this.requireCanvasSizing) this.setCanvasSize();
         // if (!this.prepared) this.prepare();
         //showFps();

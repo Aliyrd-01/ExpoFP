@@ -2,13 +2,15 @@ import { computed, observable } from "mobx";
 import Rect from "./Rect";
 import { Exhibitor } from "../store/ExhibitorStore";
 
+// TODO: remove Exhibitor from here, or make it part of core
+
 export interface BoothStateProvider {
     listBoothNames: Set<string>;
     hoveredBoothNames: Set<string>;
     selectedBoothNames: Set<string>;
     bookmarkedBoothNames: Set<string>;
     exhibitorIdsByBoothNameMap: Map<string, number[]>;
-    exhibitorByIdMap: Map<number, Exhibitor>;
+    exhibitorByIdMap?: Map<number, Exhibitor>;
 }
 
 export abstract class BoothBase {

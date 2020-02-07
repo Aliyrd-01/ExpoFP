@@ -1,5 +1,6 @@
 import Rect from "../core/Rect";
 import Size from "../core/Size";
+import { BoothStateProvider } from "../core/Booth";
 
 interface Drawer {
     setUpdatables(m: DrawerUpdatables): void;
@@ -10,13 +11,12 @@ interface DrawerConfig {
     borderWidth: number;
 }
 
-interface DrawerUpdatables {
+interface DrawerUpdatables extends BoothStateSeriazable {
     matrix: Float32Array;
     ptscale: number;
     canvasVisibleRectPt: Rect;
     canvasSizePt: Size;
     dimmed: boolean;
-    // selectedBooths: Iterable<string>;
-    // boothExhibitors: { [name: string]: number[] };
 }
 
+type BoothStateSeriazable = Serializable<Omit<BoothStateProvider, "exhibitorByIdMap">>;
