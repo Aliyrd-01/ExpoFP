@@ -4,7 +4,6 @@ import FloorPlanReady from "../floorplan.ready";
 import ExhibitorStore from "../store/ExhibitorStore";
 import UIState from "../store/UIState";
 import DrawerImplProxy from "./DrawerImplProxy";
-// import PseudoWorker from "./PseudoWorker";
 import { BoothStateSeriazable as BoothStateSerializable, DrawerConfig, DrawerUpdatables } from "./DrawerInterfaces";
 import Matrix from "./Matrix";
 
@@ -16,36 +15,18 @@ export default class DrawerAdapter {
     private boothState: BoothStateSerializable;
 
     constructor(private fp: FloorPlanReady, canvas: HTMLCanvasElement, private m: Matrix) {
-        // this.impl = new DrawerImpl(canvas, m.pixelRatio, this.getUpdatables(), this.createLayers(), fp.svg);
         this.boothState = new BoothStateSeriazableComputed(fp.store.uiState, fp.store.exhibitorStore);
 
         this.impl = new DrawerImplProxy(canvas, m.pixelRatio, this.getDrawerConfig(), fp.svg, fp.meshUrl, this.getBooths());
         this.drawn = this.impl.drawn;
-      
+
         this.disposers.push(
             autorun(() => {
                 if (!this.disposed) this.setUpdatables();
             })
         );
-   
     }
 
-    // private createLayers(): DrawerLayer[] {
-    //     // const bgElements = select(this.fp.svg.svgElement)
-    //     //     .select("#BG")
-    //     //     .selectAll("path, rect")
-    //     //     .nodes() as SVGElement[];
-
-    //     // for (const el of bgElements) {
-    //     //     if (el.tagName === "path") {
-    //     //         addPath(el as SVGPathElement);
-    //     //     } else if (el.tagName === "rect") {
-    //     //         addRect(el as SVGRectElement);
-    //     //     }
-    //     // }
-
-    //     return [];
-    // }
     private getDrawerConfig(): DrawerConfig {
         return {
             borderWidth: this.fp.store.boothStore.borderWidth
@@ -58,28 +39,6 @@ export default class DrawerAdapter {
             const obj = JSON.parse(json);
             delete obj.state;
             return obj;
-            // let booth: Booth;
-            // if (obj.special) {
-            //     booth = new SpecialBooth();
-            // } else {
-            //     booth = new RegularBooth();
-            // }
-
-            // Object.assign(booth, obj);
-            // Object.setPrototypeOf(booth.rect, Rect.prototype);
-
-            // // const booth = Object.setPrototypeOf(obj, obj.special ? SpecialBooth.prototype : RegularBooth.prototype) as Booth;
-            // // Object.setPrototypeOf(booth.rect, Rect.prototype);
-            // // booth.state = x.state;
-
-            // // console.log("b", booth.state, x.state);
-            // // debugger;
-            // // if (booth instanceof RegularBooth) {
-            // //     console.log("bbb", booth.state, x.state);
-            // //     console.log(booth.exhibitorIds);
-            // // }
-
-            // return booth;
         });
     }
 
@@ -101,7 +60,25 @@ export default class DrawerAdapter {
             exhibitorIdsByBoothNameMap: bs.exhibitorIdsByBoothNameMap
         };
 
-        // debugger;
+        // const r = {};
+        // const p = this.previousUpdatables;
+
+        // function setVal(key: keyof DrawerUpdatables, val: any) {
+        //     if (!p || val !== p[key]) {
+        //         r[key] = val;
+        //     }
+        // }
+        // setVal("matrix", this.m.matrix);
+        // setVal("ptscale", this.m.ptscale);
+        // setVal("canvasVisibleRectPt", uiState.canvasVisibleRectPt);
+        // setVal("canvasSizePt", uiState.canvasSizePt);
+        // setVal("dimmed", uiState.dimmed);
+        // setVal("listBoothNames", bs.listBoothNames);
+        // setVal("hoveredBoothNames", bs.hoveredBoothNames);
+        // setVal("selectedBoothNames", bs.selectedBoothNames);
+        // setVal("bookmarkedBoothNames", bs.bookmarkedBoothNames);
+        // setVal("exhibitorIdsByBoothNameMap", bs.exhibitorIdsByBoothNameMap);
+
         // delete same
         if (this.previousUpdatables) {
             for (const key of Object.keys(res)) {
@@ -114,11 +91,7 @@ export default class DrawerAdapter {
             this.previousUpdatables = { ...res };
         }
 
-        // logger.log("Setting updatables", Object.keys(res), res);
-
         this.impl.setUpdatables(res);
-
-        // return res;
     }
 
     dispose() {
@@ -127,51 +100,6 @@ export default class DrawerAdapter {
         if (this.impl) this.impl.dispose();
     }
 }
-
-// async function createDrawerImpl(
-//     canvas: HTMLCanvasElement,
-//     pixelRatio: number,
-//     config: DrawerConfig,
-//     svg: SvgJson,
-//     meshUrl: string,
-//     booths: Booth[]
-// ) {
-//     const w = new Worker("drawer.js");
-//     w.postMessage("message1");
-//     // load meshes json
-//     // const mesh = await loadJson<SvgMeshJson>(meshUrl);
-
-//     // return new DrawerImpl(canvas, pixelRatio, config, svg, mesh, booths);
-// }
-
-// class WorkerAdapter {
-//     // private readonly worker: Worker;
-//     constructor(postMessage: (message: any, transfer?: Transferable[]) => void, onmessage: (ev: MessageEvent) => void) {
-//         const allowWorker = true;
-//         if (allowWorker) {
-//             this.worker = new Worker("drawer.js");
-//             this.worker.onmessage = onmessage;
-//             this.postMessage = this.worker.postMessage.bind(this.worker);
-//         } else {
-//         }
-//     }
-//     postMessage: (message: any, transfer?: Transferable[]) => void;
-// }
-
-// async function ensureWorker() {
-//     if (worker) return;
-//     const allowWorker = true;
-//     if (allowWorker) {
-//         const ww = new Worker("drawer.js");
-//         worker = new WorkerAdapter();
-
-//         this.worker.onmessage = onmessage;
-//         this.postMessage = this.worker.postMessage.bind(this.worker);
-//     } else {
-//     }
-// }
-
-// = new WorkerAdapter(ev => proxies.forEach(p => p.onmessage(ev)));
 
 class BoothStateSeriazableComputed implements BoothStateSerializable {
     constructor(private uiState: UIState, private exhibitorStore: ExhibitorStore) {}
