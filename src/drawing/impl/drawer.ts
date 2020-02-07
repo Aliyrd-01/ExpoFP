@@ -4,8 +4,6 @@ import browser from "../../utils/browser";
 import isWorker from "../../utils/is-worker";
 // import {SvgJson} from '../../core/svg';
 
-// eslint-disable-next-line
-const ctx: DedicatedWorkerGlobalScope = (self as WorkerGlobalScope) as DedicatedWorkerGlobalScope;
 // export const D = new Drawer(null, null, null, null, null, null);
 
 // async function createDrawerImpl(
@@ -24,8 +22,16 @@ const ctx: DedicatedWorkerGlobalScope = (self as WorkerGlobalScope) as Dedicated
 
 const all = new Map<number, DrawerImpl>();
 const drawnIds = new Set<number>();
+const subscribers: ((message: any) => void)[] = [];
 
-ctx.onmessage = async function(e) {
+export function subscribeToMessages(postMessagBack: (message: any) => void) {
+    subscribers.push(postMessagBack);
+}
+function postMessageBack(message: any) {
+    subscribers.forEach(s => s(message));
+}
+
+export async function postMessage(e: MessageEvent) {
     if (!e.data?.type) return;
     // console.log("Drawer worker", e.data?.type, e);
     const m = e.data as DrawerWorkerMessage;
@@ -45,7 +51,7 @@ ctx.onmessage = async function(e) {
             await Promise.all(fontPromisses);
             const drawer = new DrawerImpl(p[0] as HTMLCanvasElement, p[1], p[2], p[3], mesh, p[5]);
             all.set(id, drawer);
-            ctx.postMessage({ type: "created", id });
+            postMessageBack({ type: "created", id });
             break;
         case "setUpdatables":
             {
@@ -53,7 +59,7 @@ ctx.onmessage = async function(e) {
                 dr.setUpdatables(p[0] as DrawerUpdatables);
                 if (!drawnIds.has(id)) {
                     drawnIds.add(id);
-                    ctx.postMessage({ type: "drawn", id });
+                    postMessageBack({ type: "drawn", id });
                 }
             }
             break;
@@ -64,8 +70,17 @@ ctx.onmessage = async function(e) {
             }
             break;
     }
-};
+}
 
+if (isWorker) {
+    // eslint-disable-next-line
+    const ctx: DedicatedWorkerGlobalScope = self as any;
+    ctx.onmessage = postMessage;
+    subscribeToMessages(m => ctx.postMessage(m));
+}
+
+///////////////////////////////////////////////////
+// Helper functions
 async function loadJson<T>(url: string) {
     const response = await fetch(url);
     return (await response.json()) as T;
@@ -99,7 +114,8 @@ export async function loadFont(family: string, url: string, d?) {
         family = `'${family}'`;
     }
     const ff = new FontFace(family, src, d);
-    const documentFonts = isWorker ? ctx["fonts"] : (document["fonts"] as any);
+    // eslint-disable-next-line
+    const documentFonts = isWorker ? self["fonts"] : (document["fonts"] as any);
     documentFonts.add(ff);
     return ff.load();
 }
