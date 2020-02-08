@@ -1,11 +1,9 @@
 import { Booth } from "../core/Booth";
 import { Drawer, DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "./DrawerInterfaces";
-import { sleep } from "../utils";
 
 let idSeq = 0;
 const proxies = new Set<DrawerImplProxy>();
 const allowWorker = typeof OffscreenCanvas != "undefined";
-// alert(allowWorker);
 
 export default class DrawerImplProxy implements Drawer {
     private id = idSeq++;
@@ -41,16 +39,6 @@ export default class DrawerImplProxy implements Drawer {
         }
         if (ev.data.type === "drawn") this.drawnResolve();
     }
-    // async postMessage(message: DrawerWorkerMessage, transfer?: Transferable[]) {
-    //     ensureWorker();
-    //     // if (!worker) {
-    //     //     // const WorkerConstructor = PseudoWorker as any;
-    //     //     worker = new Worker("drawer.js");
-    //     //     worker.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
-    //     // }
-    //     // console.log("posting message", message.type, message);
-    //     worker.postMessage(message, transfer);
-    // }
     setUpdatables(u?: DrawerUpdatables) {
         if (u) this.updatablesQueue.push(u);
         if (!this.created) return;
@@ -76,7 +64,6 @@ let postMessageImpl: (message: any, transfer?: Transferable[]) => Promise<void> 
 async function postMessage(message: DrawerWorkerMessage, transfer?: Transferable[]) {
     if (!postMessageImpl) {
         if (allowWorker) {
-            // await sleep(90000);
             const ww = new Worker("drawer-worker.js");
             ww.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
             postMessageImpl = ww.postMessage.bind(ww);
