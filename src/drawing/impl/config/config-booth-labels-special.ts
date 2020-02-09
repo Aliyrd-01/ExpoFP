@@ -81,7 +81,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         this.startAutoupdate();
         this.update();
 
-        const obs = NumberObserver.singletonForObject("labels-special" + context.config.pixelRatio, () => context.ptscale);
+        const obs = NumberObserver.singletonForObject("labels-special" + context.config.pixelRatio, () => 1 / context.ptscale);
         this.steps.forEach(s =>
             obs.observeValue(s.factor, () => {
                 this.ptscaleAfterObserver = context.ptscale;
