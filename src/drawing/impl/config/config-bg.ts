@@ -4,7 +4,6 @@ import DrawerImpl from "../DrawerImpl";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import { meshToTrianglePainterObjects } from "./util";
 
-// THIS SHOULD WORK AS IS, BUT WE NEED TO REMOVE ANY REFENCES TO SVG
 export default function configBg(context: DrawerImpl) {
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;

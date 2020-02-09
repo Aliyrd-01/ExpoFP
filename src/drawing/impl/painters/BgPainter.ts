@@ -1,5 +1,4 @@
 import * as twgl from "twgl.js";
-import "../../../tools/Color";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 
@@ -71,7 +70,7 @@ export default class BgPainter implements Painter {
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);
-        gl.drawArrays(gl.TRIANGLES, 0, this.positions.length/2);
+        gl.drawArrays(gl.TRIANGLES, 0, this.positions.length / 2);
     }
 
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {

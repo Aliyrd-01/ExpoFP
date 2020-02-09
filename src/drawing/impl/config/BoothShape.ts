@@ -7,11 +7,11 @@ const map = new Map<Booth, BoothShape>();
 
 // shared booth object with its lifecycle
 export default class BoothShape {
-    private readonly booth: Booth;
+    // private readonly booth: Booth;
     @observable selectBgAnimationPart: number;
 
     constructor(booth: Booth) {
-        this.booth = booth;
+        // this.booth = booth;
         animateProp(
             () => booth.selected,
             t => (this.selectBgAnimationPart = easeQuadInOut(t)),

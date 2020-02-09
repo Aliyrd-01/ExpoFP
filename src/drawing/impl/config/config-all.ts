@@ -1,3 +1,4 @@
+import "../../../tools/Color";
 import DrawerImpl from "../DrawerImpl";
 // import settings from "../../../../tools/settings";
 import configBg from "./config-bg";
