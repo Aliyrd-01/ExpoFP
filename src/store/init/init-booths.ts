@@ -69,6 +69,7 @@ export default function initBooths(store: RootStore) {
         booth.rect = Rect.fromSvgJsonRect(sb.rect);
         booth.rotate = sb.rotate;
         booth.noLabels = sb.noLabels;
+        booth.pathsWithRect = sb.pathsWithRect;
 
         if (boothReg) {
             boothReg.availColor = sb.availColor || boothReg.availColor;
@@ -109,6 +110,7 @@ export default function initBooths(store: RootStore) {
     // }
 
     // dispose
+    delete svg.booths;
     delete data.booths;
     logger.log("initBooths", boothStore.booths.length);
 }

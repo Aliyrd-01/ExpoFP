@@ -51,6 +51,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                     // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                 });
             }
+            // if (booth.pathsWithRect) debugger
         }
 
         if (booth.paths) {
@@ -60,6 +61,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 const colored = !!p.fill;
                 if (colored) pathsColors.add(p.fill);
                 const triangles = meshToTrianglePainterObjects(context.config.mesh[p.meshIndex]);
+                // if (triangles.length === 0) debugger
                 for (const t of triangles) {
                     t.id = colored ? this.getId("bg-" + p.fill) : this.getId("bg-def");
                     t.groupId = this.getId("bg");

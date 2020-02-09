@@ -18,7 +18,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly element: HTMLDivElement;
     readonly eventId: string;
     readonly dataUrl: string;
-    readonly meshUrl: string;
+    meshUrl: string;
     readonly noOverlay: boolean;
     svg: SvgJson;
     data: Data;
@@ -141,6 +141,9 @@ export default class FloorPlanLoader implements FloorPlan {
             while (self.svg.pending) {
                 await sleep(1500);
                 self.svg = await loadJson<SvgJson>(fpUrl + `?v=${++fpVersion}`);
+            }
+            if (fpVersion) {
+                self.meshUrl += `?v=${fpVersion}`;
             }
             self.svg.area = Rect.fromSvgJsonRect(self.svg.area);
             self.svg.viewBox = Rect.fromSvgJsonRect(self.svg.viewBox);
