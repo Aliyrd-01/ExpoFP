@@ -77,6 +77,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     setUpdatables(u: DrawerUpdatables) {
         runInAction("setUpdatables", () => {
             // console.log("setUpdatables", this.matrix === u.matrix);
+            if (u.dimmed !== undefined) this.dimmed = u.dimmed;
             if (u.matrix !== undefined) this.matrix = u.matrix;
             if (u.ptscale !== undefined) this.ptscale = u.ptscale;
             if (u.canvasVisibleRectPt !== undefined) {
