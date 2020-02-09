@@ -1,11 +1,16 @@
 import { observable, reaction, runInAction } from "mobx";
-import { Booth, BoothStateProvider, RegularBooth, SpecialBooth } from "../../core/Booth";
+import { BoothStateProvider, RegularBooth, SpecialBooth } from "../../core/Booth";
 import Rect from "../../core/Rect";
 import Size from "../../core/Size";
 import logger from "../../tools/logger";
 import { BoothStateSeriazable, Drawer, DrawerConfig, DrawerUpdatables } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
 import Painter from "./Painter";
+
+export interface DrawerImplConfig extends Omit<DrawerConfig, "meshUrl" | "canvas" | "__efpDebug"> {
+    canvas: OffscreenCanvas | HTMLCanvasElement;
+    mesh: SvgMeshJson;
+}
 
 export default class DrawerImpl implements Drawer, BoothStateProvider {
     private readonly gl: WebGLRenderingContext;
@@ -35,21 +40,22 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     public readonly allPainters: Painter[] = [];
 
     constructor(
-        private readonly canvas: HTMLCanvasElement | OffscreenCanvas,
-        public readonly pixelRatio: number,
-        public readonly config: DrawerConfig,
-        public readonly svg: SvgJson,
-        public readonly mesh: SvgMeshJson,
-        public readonly booths: Booth[]
+        // private readonly canvas: HTMLCanvasElement | OffscreenCanvas,
+        // public readonly pixelRatio: number,
+        // public readonly config: DrawerConfig,
+        // public readonly svg: SvgJson,
+        // public readonly mesh: SvgMeshJson,
+        // public readonly booths: Booth[]
+        public config: DrawerImplConfig
     ) {
-        this.gl = createGl(canvas);
+        this.gl = createGl(config.canvas);
         this.drawBound = this.draw.bind(this);
 
         // const state: BoothStateProvider = observable({
 
         // });
 
-        this.booths.forEach(b => {
+        config.booths.forEach(b => {
             Object.setPrototypeOf(b, b.special === true ? SpecialBooth.prototype : RegularBooth.prototype);
             Object.setPrototypeOf(b.rect, Rect.prototype);
 
@@ -129,8 +135,8 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     // called by consumer when it resizes things
     private setCanvasSize() {
         const size = this.canvasSizePt; //.scale(this.pixelRatio);
-        this.canvas.width = size.width;
-        this.canvas.height = size.height;
+        this.config.canvas.width = size.width;
+        this.config.canvas.height = size.height;
         this.gl.viewport(0, 0, size.width, size.height);
         this.requireCanvasSizing = false;
     }

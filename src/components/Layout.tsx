@@ -5,7 +5,7 @@ import { useFp, useStore, useUiState, useData } from "../tools/use";
 // import store, { uiState } from "../store";
 //import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
-import isDebug from "../utils/is-debug";
+// import isDebug from "../utils/is-debug";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
 import Header from "./Header";
@@ -42,7 +42,7 @@ export default observer(function Layout() {
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {isDebug ? (
+                {__efpDebug ? (
                     <Suspense fallback={null}>
                         <Debug />
                     </Suspense>

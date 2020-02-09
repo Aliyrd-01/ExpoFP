@@ -9,7 +9,7 @@ export default function configBg(context: DrawerImpl) {
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
 
-    const bgLayer = context.svg.layers[0];
+    const bgLayer = context.config.svg.layers[0];
 
     for (const shape of bgLayer.shapes) {
         if ((shape as SvgPathShape).meshIndex !== undefined) addPath(shape as SvgPathShape);
@@ -39,7 +39,7 @@ export default function configBg(context: DrawerImpl) {
     function addPath(path: SvgPathShape) {
         const color = Color(path.fill).vec4();
 
-        const mesh = context.mesh[path.meshIndex];
+        const mesh = context.config.mesh[path.meshIndex];
         meshToTrianglePainterObjects(mesh, color).forEach(x => addObject(x));
     }
 

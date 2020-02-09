@@ -17,7 +17,17 @@ export default class DrawerAdapter {
     constructor(private fp: FloorPlanReady, canvas: HTMLCanvasElement, private m: Matrix) {
         this.boothState = new BoothStateSeriazableComputed(fp.store.uiState, fp.store.exhibitorStore);
 
-        this.impl = new DrawerImplProxy(canvas, m.pixelRatio, this.getDrawerConfig(), fp.svg, fp.meshUrl, this.getBooths());
+        const config: DrawerConfig = {
+            canvas,
+            pixelRatio: m.pixelRatio,
+            borderWidth: this.fp.store.boothStore.borderWidth,
+            svg: fp.svg,
+            meshUrl: fp.meshUrl,
+            booths: this.getBooths(),
+            __efpDebug
+        };
+
+        this.impl = new DrawerImplProxy(config);
         this.drawn = this.impl.drawn;
 
         this.disposers.push(
@@ -25,12 +35,6 @@ export default class DrawerAdapter {
                 if (!this.disposed) this.setUpdatables();
             })
         );
-    }
-
-    private getDrawerConfig(): DrawerConfig {
-        return {
-            borderWidth: this.fp.store.boothStore.borderWidth
-        };
     }
 
     private getBooths(): any[] {

@@ -1,4 +1,4 @@
-import isDebug from "../../../utils/is-debug";
+// import __efpDebug from "../../../utils/is-debug";
 import DrawerImpl from "../DrawerImpl";
 // import animate from "./animate";
 import configBoothBg from "./config-booth-bg";
@@ -8,7 +8,7 @@ import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
 
 export default function configBooths(context: DrawerImpl) {
-    const booths = context.booths; //.filter(x => x.name === '4268');
+    const booths = context.config.booths; //.filter(x => x.name === '4268');
 
     const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((
         DrawerContext,
@@ -23,7 +23,7 @@ export default function configBooths(context: DrawerImpl) {
     for (const func of configFuncs) {
         //const drawer =
         const name = "config-func " + func.name;
-        if (isDebug) console.time(name);
+        if (__efpDebug) console.time(name);
         for (const b of booths) {
             // const afterFunc =
             //const dr =
@@ -31,7 +31,7 @@ export default function configBooths(context: DrawerImpl) {
             // if (dr) lockedDrawers.push(dr);
             // if (afterFunc) after.push(afterFunc);
         }
-        if (isDebug) console.timeEnd(name);
+        if (__efpDebug) console.timeEnd(name);
         // if (drawer) ar.push(drawer);
     }
 

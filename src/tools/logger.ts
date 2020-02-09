@@ -1,11 +1,11 @@
-import isDebug from "../utils/is-debug";
+// import isDebug from "../utils/is-debug";
 
 class Logger {
     public readonly messages: string[] = [];
 
     log(...args) {
         this.push("DEBUG", args);
-        if (!isDebug) return;
+        if (!__efpDebug) return;
         callLogFunc(console.log, args);
     }
 

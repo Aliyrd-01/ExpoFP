@@ -8,7 +8,14 @@ interface Drawer {
 }
 
 interface DrawerConfig {
+    canvas: HTMLCanvasElement,
+    pixelRatio: number,
+    // config: DrawerConfig,
+    svg: SvgJson,
+    meshUrl: string,
+    booths: Booth[]
     borderWidth: number;
+    __efpDebug: boolean;
 }
 
 interface DrawerUpdatables extends BoothStateSeriazable {
@@ -30,7 +37,7 @@ type BoothStateSeriazable = Serializable<Omit<BoothStateProvider, "exhibitorById
 interface DrawerWorkerCreateMessage {
     type: "create";
     id: number;
-    params: [HTMLCanvasElement | OffscreenCanvas, number, DrawerConfig, SvgJson, string, Booth[]];
+    params: [DrawerConfig];
 }
 
 interface DrawerWorkerSetUpdatablesMessage {

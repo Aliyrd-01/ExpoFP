@@ -1,6 +1,6 @@
 import Rect from "../../../core/Rect";
 import debugCanvases from "../../../tools/debugCanvases";
-import isDebug from "../../../utils/is-debug";
+// import __efpDebug from "../../../utils/is-debug";
 import isWorker from "../../../utils/is-worker";
 import { CanvasDescriptor } from "../config/canvases";
 
@@ -41,7 +41,7 @@ export default class Sprite {
     }
 
     generateSpriteCanvases(): (() => HTMLCanvasElement | OffscreenCanvasWithId)[] {
-        if (isDebug) console.time("sprite.generateSpriteCanvases");
+        if (__efpDebug) console.time("sprite.generateSpriteCanvases");
 
         // const containerCanvasItems = new Map<CanvasInfo, SpriteItemEx[]>();
 
@@ -93,7 +93,7 @@ export default class Sprite {
         // clear to free memory
         this.canvasToSpriteItem.clear();
 
-        if (isDebug) console.timeEnd("sprite.generateSpriteCanvases");
+        if (__efpDebug) console.timeEnd("sprite.generateSpriteCanvases");
         const canvas = isWorker ? (new OffscreenCanvas(1, 1) as OffscreenCanvasWithId) : document.createElement("canvas");
         const c = canvas.getContext("2d");
 
@@ -118,7 +118,7 @@ export default class Sprite {
                 // item.containerCanvas = canvas;
             }
 
-            if (isDebug) debugCanvases.push(canvas);
+            if (__efpDebug) debugCanvases.push(canvas);
             return canvas;
         });
     }

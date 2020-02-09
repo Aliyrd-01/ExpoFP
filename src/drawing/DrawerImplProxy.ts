@@ -1,4 +1,3 @@
-import { Booth } from "../core/Booth";
 import { Drawer, DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "./DrawerInterfaces";
 
 let idSeq = 0;
@@ -11,21 +10,15 @@ export default class DrawerImplProxy implements Drawer {
     private created: boolean;
     public readonly drawn: Promise<void>;
     public readonly updatablesQueue: DrawerUpdatables[] = [];
-    constructor(
-        canvas: HTMLCanvasElement,
-        pixelRatio: number,
-        config: DrawerConfig,
-        svg: SvgJson,
-        meshUrl: string,
-        booths: Booth[]
-    ) {
+    constructor(public config: DrawerConfig) {
         this.drawn = new Promise(r => (this.drawnResolve = r));
-        const workerCanvas = allowWorker ? canvas.transferControlToOffscreen() : canvas;
+        const workerCanvas = allowWorker ? this.config.canvas.transferControlToOffscreen() : this.config.canvas;
+        const creatConfig = { ...config, canvas: workerCanvas };
         postMessage(
             {
                 type: "create",
                 id: this.id,
-                params: [workerCanvas, pixelRatio, config, svg, meshUrl, booths] as any
+                params: [creatConfig] as any
             },
             [(workerCanvas as any) as Transferable]
         );

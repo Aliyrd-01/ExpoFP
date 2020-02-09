@@ -42,7 +42,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         r = r.withPadding(r.w * 0.05, r.h * 0.05);
         const text = this.booth.title || this.booth.name;
 
-        this.steps = cteateTextFitter(context.pixelRatio).getStepsForRect(text, r.w, r.h);
+        this.steps = cteateTextFitter(context.config.pixelRatio).getStepsForRect(text, r.w, r.h);
         this.ids = [];
 
         for (const s of this.steps) {
@@ -61,7 +61,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             this.ids.push(id);
         }
 
-        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio);
+        const dotCanvas = createCircleCanvas(1.5, context.config.pixelRatio);
         const dotW = dotCanvas.width / 2;
         const dotH = dotCanvas.width / 2;
         const dotId = this.getId("Dot");
@@ -81,7 +81,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         this.startAutoupdate();
         this.update();
 
-        const obs = NumberObserver.singletonForObject("labels-special" + context.pixelRatio, () => context.ptscale);
+        const obs = NumberObserver.singletonForObject("labels-special" + context.config.pixelRatio, () => context.ptscale);
         this.steps.forEach(s =>
             obs.observeValue(s.factor, () => {
                 this.ptscaleAfterObserver = context.ptscale;
@@ -92,7 +92,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         //     const cru = () => context.requireUpdate(this.updateBound);
         //     // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
         //     // reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
-        //     const obs = NumberObserver.singletonForObject("labels-special" + context.pixelRatio, () => 1 / context.ptscale);
+        //     const obs = NumberObserver.singletonForObject("labels-special" + context.config.pixelRatio, () => 1 / context.ptscale);
         //     this.steps.forEach(s => obs.observeValue(s.factor, cru));
         //     reaction(() => booth.skipDim, cru);
 

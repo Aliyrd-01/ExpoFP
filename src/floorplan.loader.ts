@@ -1,3 +1,4 @@
+import "./tools/debug";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJson, preloadJs, preloadJson, preloadFont } from "./tools/loaders";
 import logger from "./tools/logger";

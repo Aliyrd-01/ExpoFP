@@ -59,7 +59,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 // const color = Color(p.color).vec4();
                 const colored = !!p.fill;
                 if (colored) pathsColors.add(p.fill);
-                const triangles = meshToTrianglePainterObjects(context.mesh[p.meshIndex]);
+                const triangles = meshToTrianglePainterObjects(context.config.mesh[p.meshIndex]);
                 for (const t of triangles) {
                     t.id = colored ? this.getId("bg-" + p.fill) : this.getId("bg-def");
                     t.groupId = this.getId("bg");

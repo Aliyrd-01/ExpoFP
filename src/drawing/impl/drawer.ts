@@ -1,7 +1,7 @@
-import { DrawerUpdatables, DrawerWorkerMessage } from "../DrawerInterfaces";
-import DrawerImpl from "./DrawerImpl";
 import browser from "../../utils/browser";
 import isWorker from "../../utils/is-worker";
+import { DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "../DrawerInterfaces";
+import DrawerImpl from "./DrawerImpl";
 // import {SvgJson} from '../../core/svg';
 
 // export const D = new Drawer(null, null, null, null, null, null);
@@ -41,15 +41,19 @@ export async function postMessage(e: MessageEvent) {
 
     switch (type) {
         case "create":
-            // const url = p[4];
-            // console.log("url", url);
+            const config = p[0] as DrawerConfig;
+            self["__efpDebug"] = config.__efpDebug; // eslint-disable-line no-restricted-globals
+
             const fontPromisses = [
                 loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
                 loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
             ];
-            const mesh = await loadJsonCached<SvgMeshJson>(p[4]);
+            const mesh = await loadJsonCached<SvgMeshJson>(config.meshUrl);
+            const implConfig = { ...config, mesh };
+
+            delete implConfig.meshUrl;
             await Promise.all(fontPromisses);
-            const drawer = new DrawerImpl(p[0] as HTMLCanvasElement, p[1], p[2], p[3], mesh, p[5]);
+            const drawer = new DrawerImpl(implConfig);
             all.set(id, drawer);
             postMessageBack({ type: "created", id });
             break;

@@ -1,5 +1,5 @@
 import * as twgl from "twgl.js";
-import isDebug from "../../../utils/is-debug";
+// import __efpDebug from "../../../utils/is-debug";
 import { CanvasDescriptor } from "../config/canvases";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
@@ -146,7 +146,7 @@ export default class RectPainter implements Painter {
     }
 
     private populateBuffers() {
-        if (isDebug) console.time("RectPainter.populateBuffers");
+        if (__efpDebug) console.time("RectPainter.populateBuffers");
         const gl = this.gl;
 
         const centers: number[] = [];
@@ -318,7 +318,7 @@ export default class RectPainter implements Painter {
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
 
-        if (isDebug) console.timeEnd("RectPainter.populateBuffers");
+        if (__efpDebug) console.timeEnd("RectPainter.populateBuffers");
     }
 
     private populateColorBuffer() {

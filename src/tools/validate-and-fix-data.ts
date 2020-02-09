@@ -1,6 +1,6 @@
 import { validate } from "jsonschema"; // TODO: import and validate conditionally
 import schema from "../data.schema.json";
-import isDebug from "../utils/is-debug";
+// import isDebug from "../utils/is-debug";
 import logger from "./logger";
 // import baseUrl from "./base-data-url";
 
@@ -43,7 +43,7 @@ export default function validateData(data: Data, eventId: string) {
 
     // if (isDebug && eventId === "sydneybuildexpo") data.free = true;
 
-    const validationEnabled = isDebug || localStorage.getItem("validate") === "1";
+    const validationEnabled = __efpDebug || localStorage.getItem("validate") === "1";
 
     if (validationEnabled) {
         const res = validate(data, schema);
