@@ -41,6 +41,7 @@ export default class Matrix {
     }
 
     setCanvasSize(size: Size) {
+        console.log("zzza", size);
         this.canvasSize = size;
         this.calcAll();
     }

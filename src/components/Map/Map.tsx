@@ -24,6 +24,7 @@ import "./Map.scss";
 import { sizeToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import { autorun, reaction } from "mobx";
 
 //console.log('isIframe', isIframe)
 
@@ -157,6 +158,18 @@ export default function Map() {
             fp.svg.area as Rect,
             zoomIdentity,
             uiState.devicePixelRatio
+        );
+        reaction(
+            () => uiState.canvasSizePt,
+            () => {
+                s.matrix.setCanvasSize(uiState.canvasSizePt);
+            }
+        );
+        reaction(
+            () => uiState.canvasVisibleRectPt,
+            () => {
+                s.matrix.setVisibleRect(uiState.canvasVisibleRectPt);
+            }
         );
 
         // window.setTimeout(() => {

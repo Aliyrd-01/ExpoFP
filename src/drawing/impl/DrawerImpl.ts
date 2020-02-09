@@ -124,6 +124,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
                 reaction(
                     () => this.canvasSizePt,
                     () => {
+                        console.log("zzz", this.canvasSizePt)
                         this.requireCanvasSizing = true;
                         this.requireRedraw();
                     }
