@@ -160,14 +160,9 @@ export default function Map() {
             uiState.devicePixelRatio
         );
         reaction(
-            () => uiState.canvasSizePt,
+            () => [uiState.canvasSizePt, uiState.canvasVisibleRectPt],
             () => {
                 s.matrix.setCanvasSize(uiState.canvasSizePt);
-            }
-        );
-        reaction(
-            () => uiState.canvasVisibleRectPt,
-            () => {
                 s.matrix.setVisibleRect(uiState.canvasVisibleRectPt);
             }
         );
