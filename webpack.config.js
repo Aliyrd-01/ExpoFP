@@ -86,8 +86,9 @@ async function createConfig() {
                 )} (${username.sync()})`
             }),
             new HtmlWebpackPlugin({
-                title: "ExpoFP",
-                template: "src/index.html"
+                title: "Floor Plan",
+                template: "src/index.html",
+                excludeChunks: ["drawer-worker"]
             }),
             new webpack.DefinePlugin({
                 "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo)

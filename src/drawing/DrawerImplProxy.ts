@@ -2,7 +2,7 @@ import { Drawer, DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "./D
 
 let idSeq = 0;
 const proxies = new Set<DrawerImplProxy>();
-const allowWorker = typeof OffscreenCanvas != "undefined" && localStorage.getItem("disable-worker") !== "1";
+const allowWorker = typeof OffscreenCanvas !== "undefined" && localStorage.getItem("disable-worker") !== "1";
 
 export default class DrawerImplProxy implements Drawer {
     private id = idSeq++;
