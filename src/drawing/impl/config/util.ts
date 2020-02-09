@@ -1,6 +1,9 @@
 import { TrianglePainterObject } from "../painters/TrianglePainter";
 
 export function meshToTrianglePainterObjects(mesh: SvgMesh, color?: Vec4): TrianglePainterObject[] {
+    // if (!mesh.positions){
+    //     debugger
+    // }
     // TODO: remove in future versions
     for (const p of mesh.positions) {
         // a bug in svgMesh3d when normalize: false ?
