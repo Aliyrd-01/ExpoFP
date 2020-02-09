@@ -1,5 +1,5 @@
 import browser from "../../utils/browser";
-import isWorker from "../../utils/is-worker";
+import isWorker from "../../utils/in-worker";
 import { DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "../DrawerInterfaces";
 import DrawerImpl from "./DrawerImpl";
 // import {SvgJson} from '../../core/svg';

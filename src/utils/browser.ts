@@ -1,4 +1,4 @@
-// import isWorker from "./is-worker";
+import inWorker from "./in-worker";
 // import * as Bowser from "bowser";
 import logger from "../tools/logger";
 const ua = (global as any).navigator.userAgent;
@@ -73,7 +73,9 @@ const browser = {
     isEdgeHtml,
     isGecko
 };
-logger.log("Browser", ua, browser);
+if (!inWorker) {
+    logger.log("Browser", ua, browser);
+}
 
 export default browser;
 // const res = {

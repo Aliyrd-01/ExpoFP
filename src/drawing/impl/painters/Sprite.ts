@@ -1,7 +1,5 @@
 import Rect from "../../../core/Rect";
 import debugCanvases from "../../../tools/debugCanvases";
-// import __efpDebug from "../../../utils/is-debug";
-import isWorker from "../../../utils/is-worker";
 import { CanvasDescriptor } from "../config/canvases";
 
 const maxHeight = 2000;
@@ -94,7 +92,10 @@ export default class Sprite {
         this.canvasToSpriteItem.clear();
 
         if (__efpDebug) console.timeEnd("sprite.generateSpriteCanvases");
-        const canvas = isWorker ? (new OffscreenCanvas(1, 1) as OffscreenCanvasWithId) : document.createElement("canvas");
+        const canvas =
+            typeof OffscreenCanvas !== "undefined"
+                ? (new OffscreenCanvas(1, 1) as OffscreenCanvasWithId)
+                : document.createElement("canvas");
         const c = canvas.getContext("2d");
 
         // we're reusing same canvas

@@ -1,9 +1,6 @@
 import { RegularBooth } from "../../../core/Booth";
-import isWorker from "../../../utils/is-worker";
 
-// import { RegularBooth } from "../../../store/BoothStore";
-
-const canvas = isWorker ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
+const canvas = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
 export interface CanvasDescriptor {
@@ -192,12 +189,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number) {
 }
 
 export function getFont(px: number, weight: number = 500) {
-    return (
-        weight +
-        " " +
-        px +
-        'px Oswald, Arial, sans-serif'
-    );
+    return weight + " " + px + "px Oswald, Arial, sans-serif";
 }
 
 export function createMultilineTextCanvas(lines: string[], inputWidth: number, fontSize: number) {

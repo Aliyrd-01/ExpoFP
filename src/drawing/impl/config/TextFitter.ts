@@ -1,5 +1,3 @@
-import isWorker from "../../../utils/is-worker";
-
 export interface TextFitData {
     factor: number;
     fontSize: number;
@@ -18,7 +16,7 @@ export default class TextFitter {
     constructor(fontFunc: (number) => string, fontSizes: number[], maxMultilineFontSize: number) {
         this.baseFontSize = this.maxMultilineFontSize = maxMultilineFontSize;
         this.fontSizes = fontSizes;
-        const canvas = isWorker ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
+        const canvas = typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(1, 1) : document.createElement("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.textAlign = "center";
         this.ctx.textBaseline = "alphabetic";
