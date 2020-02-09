@@ -555,7 +555,7 @@ void main() {
 
 // https://gamedev.stackexchange.com/questions/59797/glsl-shader-change-hue-saturation-brightness
 // https://github.com/jamieowen/glsl-blend/blob/master/_temp/conversion/desaturate.glsl
-const fragmentSharedSource = `precision mediump float;
+const fragmentSharedSource = `precision highp float;
 varying vec2 v_texcoord;
 varying vec4 v_color;
 uniform sampler2D u_texture;

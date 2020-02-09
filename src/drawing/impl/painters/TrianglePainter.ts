@@ -255,7 +255,7 @@ void main() {
     v_dim = a_skipdim > 0.0 ? 0.0 : u_dim;
 }`;
 
-const fragmentSharedSource = `precision mediump float;
+const fragmentSharedSource = `precision highp float;
 varying vec4 v_color;
 varying float v_dim; 
 uniform float u_alpha;

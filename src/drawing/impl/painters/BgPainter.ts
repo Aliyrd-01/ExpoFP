@@ -98,7 +98,7 @@ void main() {
     v_nodim = a_nodim;
 }`;
 
-const fragmentSharedSource = `precision mediump float;
+const fragmentSharedSource = `precision highp float;
 varying vec4 v_color;
 varying float v_nodim;
 uniform float u_dim; 
