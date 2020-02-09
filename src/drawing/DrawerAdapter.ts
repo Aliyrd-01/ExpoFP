@@ -43,12 +43,15 @@ export default class DrawerAdapter {
 
     private getBooths(): any[] {
         return this.fp.store.boothStore.booths.map(x => {
-            const json = JSON.stringify(x);
+            const json = JSON.stringify(x, (k, v) => {
+                if (k === "state") return undefined;
+                return v;
+            });
             const obj = JSON.parse(json);
             if (x instanceof RegularBooth) {
                 obj.exhibitorIds = toJS(x.exhibitorIds);
             }
-            delete obj.state;
+            // delete obj.state;
             return obj;
         });
     }

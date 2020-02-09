@@ -1,10 +1,12 @@
-import { observable } from "mobx";
+import { computed } from "mobx";
 import { Booth, BoothStateProvider, RegularBooth, SpecialBooth } from "../../core/Booth";
 import Rect from "../../core/Rect";
 import { getNextId } from "../../tools/id";
 import logger from "../../tools/logger";
 import { generateUniqueSlug } from "../../tools/slug";
+import ExhibitorStore from "../ExhibitorStore";
 import RootStore from "../RootStore";
+import UIState from "../UIState";
 
 export default function initBooths(store: RootStore) {
     const { boothStore, uiState, exhibitorStore } = store;
@@ -20,26 +22,7 @@ export default function initBooths(store: RootStore) {
     //     }
     // };
 
-    const stateProvider: BoothStateProvider = observable({
-        get listBoothNames() {
-            return boothSetToNameSet(uiState.listBooths);
-        },
-        get hoveredBoothNames() {
-            return boothSetToNameSet(uiState.hoveredBooths);
-        },
-        get selectedBoothNames() {
-            return boothSetToNameSet(uiState.selectedBooths);
-        },
-        get bookmarkedBoothNames() {
-            return exhibitorStore.bookmarkedBoothNames;
-        },
-        get exhibitorIdsByBoothNameMap() {
-            return exhibitorStore.exhibitorIdsByBoothNameMap;
-        },
-        get exhibitorByIdMap() {
-            return exhibitorStore.exhibitorByIdMap;
-        }
-    });
+    const stateProvider: BoothStateProvider = new InitBoothStateProvider(uiState, exhibitorStore);
 
     for (const raw of data.booths || []) {
         const Class = raw.special === true ? SpecialBooth : RegularBooth;
@@ -159,6 +142,29 @@ export default function initBooths(store: RootStore) {
 
 //     return pathTriangles;
 // }
+
+class InitBoothStateProvider implements BoothStateProvider {
+    constructor(private uiState: UIState, private exhibitorStore: ExhibitorStore) {}
+    @computed({ keepAlive: true }) get listBoothNames() {
+        return boothSetToNameSet(this.uiState.listBooths);
+    }
+    @computed({ keepAlive: true }) get hoveredBoothNames() {
+        return boothSetToNameSet(this.uiState.hoveredBooths);
+    }
+    @computed({ keepAlive: true }) get selectedBoothNames() {
+        return boothSetToNameSet(this.uiState.selectedBooths);
+    }
+    @computed({ keepAlive: true }) get bookmarkedBoothNames() {
+        return this.exhibitorStore.bookmarkedBoothNames;
+    }
+    @computed({ keepAlive: true }) get exhibitorIdsByBoothNameMap() {
+        return this.exhibitorStore.exhibitorIdsByBoothNameMap;
+    }
+    @computed({ keepAlive: true }) get exhibitorByIdMap() {
+        return this.exhibitorStore.exhibitorByIdMap;
+    }
+}
+
 function boothSetToNameSet(set: Set<Booth>) {
     return new Set(Array.from(set).map(x => x.name));
 }
