@@ -54,6 +54,7 @@ export async function postMessage(e: MessageEvent) {
 
             delete implConfig.meshUrl;
             await Promise.all(fontPromisses);
+
             const drawer = new DrawerImpl(implConfig);
             all.set(id, drawer);
             postMessageBack({ type: "created", id });

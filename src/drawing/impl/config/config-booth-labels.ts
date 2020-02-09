@@ -44,9 +44,10 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         super(context, booth, "booth-label", RectPainter, 130);
         // this.locked = context.updatable;
 
+        const config = context.config;
         const r = this.booth.rect;
 
-        const dotCanvas = createCircleCanvas(1.5, context.config.pixelRatio);
+        const dotCanvas = createCircleCanvas(1.5, config.pixelRatio);
         const dotW = dotCanvas.width / 2;
         const dotH = dotCanvas.width / 2;
 
@@ -66,9 +67,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         this.addLabel(12, "M");
         this.addLabel(14, "L");
 
-        const detailsCanvas = createDetailsCanvas(booth, context.config.pixelRatio);
+        const detailsCanvas = createDetailsCanvas(booth, config.exhibitorNames, config.pixelRatio);
 
-        const pad = context.config.borderWidth / 2;
+        const pad = config.borderWidth / 2;
 
         this.painter.addObject({
             id: this.getId("Details"),
@@ -76,7 +77,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             center: [r.cx, r.cy],
             deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
             deltaPts: [3, 3, -1, -1],
-            scalePts: context.config.pixelRatio,
+            scalePts: config.pixelRatio,
             canvasTmp: detailsCanvas,
             texPosition: "lefttop",
             visible: false
@@ -89,7 +90,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         // if (context.updatable) {
         //     const cru = () => context.requireUpdate(this.updateBound);
-        const obs = NumberObserver.singletonForObject("labels" + context.config.pixelRatio, () => context.ptscale);
+        const obs = NumberObserver.singletonForObject("labels" + config.pixelRatio, () => context.ptscale);
         this.factors.forEach(f =>
             obs.observeValue(f, () => {
                 this.ptscaleAfterObserver = context.ptscale;

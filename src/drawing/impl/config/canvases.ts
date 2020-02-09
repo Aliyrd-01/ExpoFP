@@ -43,7 +43,11 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
     };
 }
 
-export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): CanvasDescriptor {
+export function createDetailsCanvas(
+    b: RegularBooth,
+    exhibitorNames: Record<number, string>,
+    pixelRatio: number
+): CanvasDescriptor {
     //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
@@ -55,7 +59,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
     } else if (b.reserved) {
         lines.push("Reserved");
     } else if (b.exhibitorIds.length) {
-        // lines.push(...b.exhibitors.map(e => e.name));
+        lines.push(...b.exhibitorIds.map(e => exhibitorNames[e]));
     } else {
         if (b.size) lines.push(b.size);
         if (b.price && b.price !== "0") lines.push(b.price);

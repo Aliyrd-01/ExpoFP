@@ -1,5 +1,5 @@
 import { autorun, computed, toJS } from "mobx";
-import { Booth } from "../core/Booth";
+import { Booth, RegularBooth } from "../core/Booth";
 import FloorPlanReady from "../floorplan.ready";
 import ExhibitorStore from "../store/ExhibitorStore";
 import UIState from "../store/UIState";
@@ -24,6 +24,10 @@ export default class DrawerAdapter {
             svg: fp.svg,
             meshUrl: fp.meshUrl,
             booths: this.getBooths(),
+            exhibitorNames: this.fp.store.exhibitorStore.exhibitors.reduce((map, x) => {
+                map[x.id] = x.name;
+                return map;
+            }, {} as Record<number, string>),
             __efpDebug
         };
 
@@ -41,6 +45,9 @@ export default class DrawerAdapter {
         return this.fp.store.boothStore.booths.map(x => {
             const json = JSON.stringify(x);
             const obj = JSON.parse(json);
+            if (x instanceof RegularBooth) {
+                obj.exhibitorIds = toJS(x.exhibitorIds);
+            }
             delete obj.state;
             return obj;
         });

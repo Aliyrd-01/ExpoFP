@@ -34,7 +34,7 @@ doSetup(() => {
         /constructor/i.test(global["HTMLElement"]) ||
         (function(p) {
             return p.toString() === "[object SafariRemoteNotification]";
-        })(!window["safari"] || (typeof safari !== "undefined" && safari.pushNotification));
+        })(!global["safari"] || (typeof safari !== "undefined" && safari.pushNotification));
 });
 
 doSetup(() => {

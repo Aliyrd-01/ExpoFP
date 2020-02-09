@@ -15,6 +15,7 @@ interface DrawerConfig {
     meshUrl: string,
     booths: Booth[]
     borderWidth: number;
+    exhibitorNames: Record<number, string>,
     __efpDebug: boolean;
 }
 

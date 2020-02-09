@@ -70,7 +70,7 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     }
 
     @computed({ keepAlive: true }) get exhibitorIds(): number[] {
-        return this.state.exhibitorIdsByBoothNameMap[this.name] || [];
+        return this.state.exhibitorIdsByBoothNameMap.get(this.name) || [];
     }
 
     @computed({ keepAlive: true }) get exhibitors(): Exhibitor[] {
