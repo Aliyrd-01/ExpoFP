@@ -42,6 +42,7 @@ export async function postMessage(e: MessageEvent) {
     switch (type) {
         case "create":
             const config = p[0] as DrawerConfig;
+            // debugger;
             self["__efpDebug"] = config.__efpDebug; // eslint-disable-line no-restricted-globals
 
             const fontPromisses = [
@@ -107,14 +108,7 @@ export async function loadFont(family: string, url: string, d?) {
     d = { style: "normal", weight: "normal", ...(d || {}) };
     const src = `url("${url}")`;
 
-    // if (!window["FontFace"]) {
-    //     if (!family.startsWith("Font Awesome")) {
-    //         injectFontFace(family, src, d);
-    //     }
-    //     return Promise.resolve();
-    // }
-
-    if (family.indexOf(" ") !== -1 && browser.getEngine()?.name === "Gecko") {
+    if (family.indexOf(" ") !== -1 && browser.isGecko) {
         family = `'${family}'`;
     }
     const ff = new FontFace(family, src, d);
@@ -123,31 +117,3 @@ export async function loadFont(family: string, url: string, d?) {
     documentFonts.add(ff);
     return ff.load();
 }
-// interface CreateData {
-//     type: "create";
-//     params: {
-//         canvas: OffscreenCanvas | HTMLCanvasElement;
-//         pixelRatio: number;
-//         config: DrawerConfig;
-//         svg: SvgJson;
-//         mesh: SvgMeshJson;
-//         booths: Booth[];
-//     };
-// }
-
-// interface SetUpdatablesData {
-//     type: "setUpdatables";
-//     params: DrawerUpdatables;
-// }
-
-// type Data = CreateData: SetUpdatablesData;
-
-/*
-Messages to worker
-    create
-    dispose
-    setUpdatables
-
-Message back:
-    created
-*/

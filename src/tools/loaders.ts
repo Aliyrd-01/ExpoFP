@@ -87,7 +87,7 @@ export async function loadFont(family: string, url: string, d?) {
         return Promise.resolve();
     }
 
-    if (family.indexOf(" ") !== -1 && browser.getEngine()?.name === "Gecko") {
+    if (family.indexOf(" ") !== -1 && browser.isGecko) {
         family = `'${family}'`;
     }
     const ff = new FontFace(family, src, d);
