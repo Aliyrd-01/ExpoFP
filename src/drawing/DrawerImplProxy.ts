@@ -1,8 +1,10 @@
 import { Drawer, DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "./DrawerInterfaces";
+import browser from "../utils/browser";
 
 let idSeq = 0;
 const proxies = new Set<DrawerImplProxy>();
-const allowWorker = typeof OffscreenCanvas !== "undefined" && localStorage.getItem("disable-worker") !== "1";
+const allowWorker =
+    !browser.isAndroid && typeof OffscreenCanvas !== "undefined" && localStorage.getItem("disable-worker") !== "1";
 
 export default class DrawerImplProxy implements Drawer {
     private id = idSeq++;

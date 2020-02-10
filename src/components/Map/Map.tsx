@@ -3,6 +3,7 @@ import { easeExpOut } from "d3-ease";
 import { interpolate, interpolateNumber } from "d3-interpolate";
 import { event as currentEvent, select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
+import { reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useMemo, useRef } from "react";
 import { m4 } from "twgl.js";
@@ -24,7 +25,6 @@ import "./Map.scss";
 import { sizeToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import { autorun, reaction } from "mobx";
 
 //console.log('isIframe', isIframe)
 
