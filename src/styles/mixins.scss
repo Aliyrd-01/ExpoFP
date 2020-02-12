@@ -78,6 +78,10 @@ $overlay-height: 3.5rem;
     &:active {
         background: #2285af;
     }
+    // &[disabled] {
+    //     opacity: 0.5;
+    //     cursor: default;
+    // }
 
     .overlay.bottom & {
         width: 100%;

@@ -1,11 +1,52 @@
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
+import { sortByName } from "../utils";
+
+export interface AdminExhibitorInfo {
+    id: number;
+    name: string;
+}
+
+export interface AdminBoothFields {
+    adminNotes: string;
+}
+
+export interface AdminBooth extends AdminBoothFields {
+    name: string;
+    exhibitors: number[];
+}
 
 export default class AdminService {
     private eventId: number;
     constructor(private readonly fp: FloorPlanReady, private readonly token: string) {}
 
-    async ensureEventId() {
+    async listExhibitors() {
+        await this.ensureEventId();
+        const ar = await this.callApi<AdminExhibitorInfo[]>("list-exhibitors", {
+            eventId: this.eventId
+        });
+        sortByName(ar);
+        return ar;
+    }
+
+    async getBooth(name: string) {
+        await this.ensureEventId();
+        return await this.callApi<AdminBooth>("get-booth", {
+            eventId: this.eventId,
+            name
+        });
+    }
+
+    async updateBooth(name: string, fields: AdminBoothFields) {
+        await this.ensureEventId();
+        await this.callApi<void>("update-booth", {
+            eventId: this.eventId,
+            name,
+            ...fields
+        });
+    }
+
+    private async ensureEventId() {
         if (this.eventId) return;
         type Res = [{ id: number; key: string }];
         const events = await this.callApi<Res>("list-events");

@@ -1,5 +1,19 @@
+@import "../styles/import.scss";
+
 .booth-admin {
+    color: #000;
     > select {
         max-width: 100%;
+        min-height: 2rem;
+    }
+    > textarea {
+        width: 100%;
+        min-height: 7rem;
+        margin-top: 0.5rem;
+    }
+    > button {
+        @include button;
+        margin: 0.5rem auto 0;
+        display: block;
     }
 }

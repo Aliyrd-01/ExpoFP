@@ -59,8 +59,12 @@ function ExhibitorComponent() {
 
     useAutorun(async () => {
         if (uiState.showAdminUi) {
-            const ExhibitorAdmin = await (await import(/* webpackChunkName: "admin" */ "./ExhibitorAdmin")).default;
-            s.adminContent = <ExhibitorAdmin exhibitor={s.exhibitor} />;
+            // to be memoized by mobx
+            const booths = s.exhibitor.booths;
+            const BoothAdmin = await (await import(/* webpackChunkName: "admin" */ "./BoothAdmin")).default;
+
+            s.adminContent = booths.map(b => <BoothAdmin booth={b} key={b.id} />);
+            //<BoothAdmin exhibitor={s.exhibitor} />;
         } else {
             s.adminContent = null;
         }
