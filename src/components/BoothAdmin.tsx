@@ -6,17 +6,12 @@ import { AdminExhibitorInfo } from "../services/AdminService";
 import { useAdminService } from "../tools/use";
 import AdminBox from "./AdminBox";
 import "./BoothAdmin.scss";
+import { useAutorun } from "../utils/mobx";
+import logger from "../tools/logger";
 
 const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
     // const exhibitorStore = useExhibitorStore();
     const adminService = useAdminService();
-    // const notesTextarea = useRef<HTMLTextAreaElement>();
-    // const exhibitorSelect = useRef<HTMLSelectElement>();
-    // const exhibitorOptions = exhibitorStore.exhibitors.map(x => (
-    //     <option value={x.id} key={x.id}>
-    //         {x.name}
-    //     </option>
-    // ));
 
     const s = useLocalStore(() => ({
         loading: true,
@@ -32,33 +27,31 @@ const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
     }));
 
     useEffect(() => {
-        console.log("zzz", booth);
+        logger.log("Init BoothAdmin of ", booth.name);
+        s.saving = false;
         s.loading = true;
         s.exhibitors = [];
-        // s.adminNotes = s.originalAdminNotes = "";
-        // s.originalExhibitorId = s.exhibitorId = booth.exhibitors.map(x => x.id)[0] || null;
-        let disposed = false;
+
         (async function init() {
             s.exhibitors = await adminService.listExhibitors();
             const b = await adminService.getBooth(booth.name);
-            if (disposed) return;
             s.originalExhibitorId = s.exhibitorId = b.exhibitors[0] || null;
             s.originalAdminNotes = s.adminNotes = b.adminNotes || "";
             s.loading = false;
         })();
-        return () => {
-            disposed = true;
-        };
     }, [booth]);
 
     async function handleSave() {
         s.saving = true;
         if (s.adminNotes !== s.originalAdminNotes) await adminService.updateBooth(booth.name, { adminNotes: s.adminNotes });
-        if (s.exhibitorId !== s.originalExhibitorId)
-            await adminService.setBoothExhibitors(booth.name, s.exhibitorId ? [s.exhibitorId] : []);
+        const exhibitorChanged = s.exhibitorId !== s.originalExhibitorId;
+        if (exhibitorChanged) await adminService.setBoothExhibitors(booth.name, s.exhibitorId ? [s.exhibitorId] : []);
         s.originalAdminNotes = s.adminNotes;
         s.originalExhibitorId = s.exhibitorId;
         s.saving = false;
+        if (exhibitorChanged) {
+            // set exhibitors in store
+        }
         alert("Changes saved");
     }
 
@@ -91,7 +84,6 @@ const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
                         onChange={handleAdminNotesChange}
                         value={s.adminNotes}
                     ></textarea>
-                    {/* className={s.dirty ? "" : "-disabled"}  */}
                     {s.dirty ? (
                         <button onClick={handleSave} disabled={s.saving}>
                             {s.saving ? "Saving..." : `Save ${booth.name}`}

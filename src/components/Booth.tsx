@@ -50,7 +50,7 @@ function Booth() {
     useAutorun(async () => {
         if (uiState.showAdminUi && s.regular) {
             const BoothAdmin = await (await import(/* webpackChunkName: "admin" */ "./BoothAdmin")).default;
-            s.adminContent = <BoothAdmin booth={s.booth as RegularBooth} />;
+            s.adminContent = <BoothAdmin booth={s.booth as RegularBooth} key={s.booth.name} />;
         } else {
             s.adminContent = null;
         }
