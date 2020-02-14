@@ -49,6 +49,11 @@ export default class TrianglePainter implements Painter {
                 : Math.floor(Math.pow(2, 256) / 3);
     }
 
+    dispose() {
+        [this.posBuffer, this.colorBuffer, this.skipdimBuffer, this.indexBuffer].forEach(x => this.gl.deleteBuffer(x));
+        this.gl.deleteProgram(this.program);
+    }
+
     tryAddObject(item: TrianglePainterObject) {
         if (this.objects.length >= this.maxObjects) return false;
         // if (item.id)console.log("Added", item.id)

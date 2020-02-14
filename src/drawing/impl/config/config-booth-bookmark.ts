@@ -1,4 +1,5 @@
 import { Booth, RegularBooth } from "../../../core/Booth";
+import noop from "../../../utils/noop";
 import DrawerImpl from "../DrawerImpl";
 // import { boothStore } from "../../../../store";
 import RectPainter from "../painters/RectPainter";
@@ -6,8 +7,9 @@ import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from "./canvases";
 
 export default function configBoothBookmark(context: DrawerImpl, booth: Booth) {
-    if (!(booth instanceof RegularBooth)) return;
-    new BoothBookmarkDrawer(context, booth);
+    if (!(booth instanceof RegularBooth)) return noop;
+    const drawer = new BoothBookmarkDrawer(context, booth);
+    return drawer.dispose.bind(drawer);
 }
 
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {

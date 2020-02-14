@@ -1,16 +1,16 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import React from "react";
 import { RegularBooth } from "../core/Booth";
 import { AdminExhibitorInfo } from "../services/AdminService";
+import logger from "../tools/logger";
 // import { RegularBooth } from "../store/BoothStore";
-import { useAdminService } from "../tools/use";
+import { useAdminService, useStore } from "../tools/use";
+import { useInit } from "../utils/mobx";
 import AdminBox from "./AdminBox";
 import "./BoothAdmin.scss";
-import { useAutorun } from "../utils/mobx";
-import logger from "../tools/logger";
 
 const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
-    // const exhibitorStore = useExhibitorStore();
+    const store = useStore();
     const adminService = useAdminService();
 
     const s = useLocalStore(() => ({
@@ -26,7 +26,7 @@ const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
         }
     }));
 
-    useEffect(() => {
+    useInit(() => {
         logger.log("Init BoothAdmin of ", booth.name);
         s.saving = false;
         s.loading = true;
@@ -39,18 +39,19 @@ const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
             s.originalAdminNotes = s.adminNotes = b.adminNotes || "";
             s.loading = false;
         })();
-    }, [booth]);
+    });
 
     async function handleSave() {
         s.saving = true;
         if (s.adminNotes !== s.originalAdminNotes) await adminService.updateBooth(booth.name, { adminNotes: s.adminNotes });
         const exhibitorChanged = s.exhibitorId !== s.originalExhibitorId;
-        if (exhibitorChanged) await adminService.setBoothExhibitors(booth.name, s.exhibitorId ? [s.exhibitorId] : []);
+        const exhibitorIds = s.exhibitorId ? [s.exhibitorId] : [];
+        // if (exhibitorChanged) await adminService.setBoothExhibitors(booth.name, exhibitorIds);
         s.originalAdminNotes = s.adminNotes;
         s.originalExhibitorId = s.exhibitorId;
         s.saving = false;
         if (exhibitorChanged) {
-            // set exhibitors in store
+            store.setBoothExhibitors(booth.name, exhibitorIds);
         }
         alert("Changes saved");
     }

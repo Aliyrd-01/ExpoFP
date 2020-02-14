@@ -5,7 +5,7 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-// const DashboardPlugin = require("webpack-dashboard/plugin");
+const DashboardPlugin = require("webpack-dashboard/plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const git = require("git-rev-sync");
 const dateFormat = require("dateformat");
@@ -132,7 +132,7 @@ async function createConfig() {
             }
         };
         config.devtool = "cheap-module-source-map";
-        //config.plugins.push(new DashboardPlugin());
+        config.plugins.push(new DashboardPlugin());
     }
     return config;
 }

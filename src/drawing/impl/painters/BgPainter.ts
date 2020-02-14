@@ -39,6 +39,13 @@ export default class BgPainter implements Painter {
         // this.bufferFloat32Array(this.colorBuffer, [...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor, ...bgColor]);
     }
 
+    dispose() {
+        this.gl.deleteBuffer(this.positionBuffer);
+        this.gl.deleteBuffer(this.colorBuffer);
+        this.gl.deleteBuffer(this.nodimBuffer);
+        this.gl.deleteProgram(this.program);
+    }
+
     setObjects(positions: number[], colors: number[], nodims: number[]) {
         this.dirty = true;
         this.positions = positions;

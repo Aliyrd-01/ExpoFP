@@ -6,6 +6,7 @@ import configBoothBookmark from "./config-booth-bookmark";
 import configBoothBorder from "./config-booth-border";
 import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
+import logger from "../../../tools/logger";
 
 export default function configBooths(context: DrawerImpl) {
     const booths = context.config.booths; //.filter(x => x.name === '4268');
@@ -27,7 +28,9 @@ export default function configBooths(context: DrawerImpl) {
         for (const b of booths) {
             // const afterFunc =
             //const dr =
-            disposers.push(func(context, b));
+            const disposer = func(context, b);
+            if (!disposer) logger.warn("Null disposer:", name);
+            disposers.push(disposer);
             // if (dr) lockedDrawers.push(dr);
             // if (afterFunc) after.push(afterFunc);
         }

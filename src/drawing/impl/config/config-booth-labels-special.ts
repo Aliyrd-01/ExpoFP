@@ -1,5 +1,6 @@
 import { observable } from "mobx";
 import { Booth, SpecialBooth } from "../../../core/Booth";
+import noop from "../../../utils/noop";
 import DrawerImpl from "../DrawerImpl";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
@@ -22,9 +23,10 @@ function cteateTextFitter(pixelRatio: number) {
 }
 
 export default function configBoothLabelsSpecial(context: DrawerImpl, booth: Booth) {
-    if (!(booth instanceof SpecialBooth) || booth.noLabels) return;
-    if (booth.noLabels) return;
-    return new BoothLabelSpecialDrawer(context, booth);
+    if (!(booth instanceof SpecialBooth) || booth.noLabels) return noop;
+    if (booth.noLabels) return noop;
+    const dr = new BoothLabelSpecialDrawer(context, booth);
+    return dr.dispose.bind(dr);
 }
 
 class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {

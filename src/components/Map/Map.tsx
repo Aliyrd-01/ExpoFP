@@ -228,6 +228,14 @@ export default function Map() {
         sizeToParentElement(el.current);
         // s.matrix = new Matrix(new Size(el.current.width, el.current.height).scale(uiState.devicePixelRatio));
         s.drawer = new DrawerAdapter(fp, el.current, s.matrix);
+        reaction(
+            () => [Array.from(fp.store.exhibitorStore.exhibitorIdsByBoothNameMap)],
+            () => {
+                logger.log("Recreating Drawer");
+                s.drawer.dispose();
+                s.drawer = new DrawerAdapter(fp, el.current, s.matrix);
+            }
+        );
 
         // s.matrix.setVisibleRect((uiState.canvasVisibleRectPx as Rect).scale(uiState.devicePixelRatio));
         s.matrix.setPixelRatio(uiState.devicePixelRatio);

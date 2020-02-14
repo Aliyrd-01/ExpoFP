@@ -5,7 +5,7 @@ import Size from "../../core/Size";
 import logger from "../../tools/logger";
 import { BoothStateSeriazable, Drawer, DrawerConfig, DrawerUpdatables } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
-import Painter from "./Painter";
+import Painter from "./painters/Painter";
 
 export interface DrawerImplConfig extends Omit<DrawerConfig, "meshUrl" | "canvas" | "__efpDebug"> {
     canvas: OffscreenCanvas | HTMLCanvasElement;
@@ -72,6 +72,10 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
 
     dispose() {
         this.disposers.forEach(x => x());
+        this.allPainters.forEach(p => p.dispose());
+        // const looseContextExt = this.gl.getExtension("WEBGL_lose_context");
+        // if (!looseContextExt) logger.warn("No WEBGL_lose_context");
+        // else looseContextExt.loseContext();
     }
 
     setUpdatables(u: DrawerUpdatables) {

@@ -80,6 +80,24 @@ export default class RectPainter implements Painter {
         this.fallBackTexture = gl.createTexture();
     }
 
+    dispose() {
+        [
+            this.centerBuffer,
+            this.deltaBuffer,
+            this.deltaptBuffer,
+            this.colorBuffer,
+            this.skipdimBuffer,
+            this.rotateBuffer,
+            this.texfixBuffer,
+            this.fixdeltaBuffer,
+            this.fixdeltaptBuffer,
+            this.fixdeltamaxptBuffer,
+            ...this.indexBufferPool
+        ].forEach(x => this.gl.deleteBuffer(x));
+        this.gl.deleteTexture(this.fallBackTexture);
+        this.gl.deleteProgram(this.program);
+    }
+
     addObject(obj: DrawerObject) {
         const item = obj as DrawerObjectEx;
         if (typeof item.visible === "undefined") item.visible = true;

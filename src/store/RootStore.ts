@@ -217,8 +217,11 @@ export default class RootStore {
         //         break;
         // }
     }
-
-    @action setApiToken(token: string) {
-        // validate api token asynchronously
+    @action setBoothExhibitors(boothName: string, exhibitorIds: number[]) {
+        this.exhibitorStore.exhibitorIdsByBoothNameMap.set(boothName, exhibitorIds);
     }
+
+    // @action setApiToken(token: string) {
+    //     // validate api token asynchronously
+    // }
 }

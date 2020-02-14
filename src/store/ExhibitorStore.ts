@@ -13,6 +13,16 @@ export default class ExhibitorStore {
     @observable bookmarkedIds = new Set<number>();
     @observable readonly exhibitorIdsByBoothNameMap = new Map<string, number[]>();
 
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+        // reaction(
+        //     () => [Array.from(this.exhibitorIdsByBoothNameMap)],
+        //     () => {
+        //         // console.log("zzz", this.exhibitorIdsByBoothNameMap);
+        //     }
+        // );
+    }
+
     @computed({ keepAlive: true }) get bookmarked() {
         return Array.from(this.bookmarkedIds).map(b => this.exhibitorByIdMap.get(b));
     }
@@ -64,10 +74,6 @@ export default class ExhibitorStore {
         // for (const e of ar) {
         //     e.bookmarked = true;
         // }
-    }
-
-    constructor(rootStore: RootStore) {
-        this.rootStore = rootStore;
     }
 }
 
