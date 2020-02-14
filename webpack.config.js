@@ -20,7 +20,7 @@ async function createConfig() {
     const isProd = process.env.NODE_ENV === "production";
     if (!isProd) process.env.NODE_ENV = "development";
 
-    const defaultExpo = process.env.EFP_EXPO || argv["expo"] || isProd ? "expo" : "confexdev";
+    const defaultExpo = process.env.EFP_EXPO || argv["expo"] || isProd ? "expo" : "confex20";
 
     const config = {
         mode: isProd ? "production" : "development",
