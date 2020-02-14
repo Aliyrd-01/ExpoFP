@@ -233,7 +233,7 @@ export default function Map() {
             () => {
                 logger.log("Recreating Drawer");
                 s.drawer.dispose();
-                s.drawer = new DrawerAdapter(fp, el.current, s.matrix);
+                // s.drawer = new DrawerAdapter(fp, el.current, s.matrix);
             }
         );
 

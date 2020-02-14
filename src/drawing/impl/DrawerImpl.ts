@@ -22,6 +22,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
 
     private readonly drawBound: () => void;
     private readonly disposers: (() => void)[] = [];
+    // private disposed = false;
 
     // booths: DrawerBoothImpl[];
 
@@ -71,6 +72,8 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     }
 
     dispose() {
+        // this.disposed = true;
+        cancelAnimationFrame(this.requestedFrame);
         this.disposers.forEach(x => x());
         this.allPainters.forEach(p => p.dispose());
         // const looseContextExt = this.gl.getExtension("WEBGL_lose_context");
@@ -183,6 +186,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     }
 
     requireUpdate(func: () => void): void {
+        logger.log("zzz requireUpdate");
         if (func) this.updateQueue.add(func);
         this.requireRedraw();
     }

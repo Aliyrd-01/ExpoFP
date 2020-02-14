@@ -11,7 +11,12 @@ import logger from "../../../tools/logger";
 export default function configBooths(context: DrawerImpl) {
     const booths = context.config.booths; //.filter(x => x.name === '4268');
 
-    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((
+    const configFuncs = [
+        configBoothBg, 
+        // configBoothLabels, 
+        // configBoothLabelsSpecial, 
+        // configBoothBookmark
+    ] as ((
         DrawerContext,
         Booth
     ) => () => void)[]; //configBoothType,

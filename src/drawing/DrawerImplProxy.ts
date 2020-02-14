@@ -6,6 +6,8 @@ const proxies = new Set<DrawerImplProxy>();
 const allowWorker =
     !browser.isAndroid && typeof OffscreenCanvas !== "undefined" && localStorage.getItem("disable-worker") !== "1";
 
+let offscreenCanvas: OffscreenCanvas;
+
 export default class DrawerImplProxy implements Drawer {
     private id = idSeq++;
     private drawnResolve: () => void;
@@ -14,7 +16,12 @@ export default class DrawerImplProxy implements Drawer {
     public readonly updatablesQueue: DrawerUpdatables[] = [];
     constructor(public config: DrawerConfig) {
         this.drawn = new Promise(r => (this.drawnResolve = r));
-        const workerCanvas = allowWorker ? this.config.canvas.transferControlToOffscreen() : this.config.canvas;
+
+        const workerCanvas = allowWorker
+            ? offscreenCanvas
+                ? offscreenCanvas
+                : (offscreenCanvas = this.config.canvas.transferControlToOffscreen())
+            : this.config.canvas;
         const creatConfig = { ...config, canvas: workerCanvas };
         postMessage(
             {
