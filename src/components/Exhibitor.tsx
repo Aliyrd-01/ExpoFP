@@ -58,7 +58,7 @@ function ExhibitorComponent() {
     );
 
     useAutorun(async () => {
-        if (uiState.showAdminUi) {
+        if (uiState.showAdminUi && s.exhibitor) {
             // to be memoized by mobx
             const booths = s.exhibitor.booths;
             const BoothAdmin = await (await import(/* webpackChunkName: "admin" */ "./BoothAdmin")).default;
