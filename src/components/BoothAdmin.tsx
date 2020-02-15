@@ -46,7 +46,7 @@ const BoothAdmin: React.FC<{ booth: RegularBooth }> = ({ booth }) => {
         if (s.adminNotes !== s.originalAdminNotes) await adminService.updateBooth(booth.name, { adminNotes: s.adminNotes });
         const exhibitorChanged = s.exhibitorId !== s.originalExhibitorId;
         const exhibitorIds = s.exhibitorId ? [s.exhibitorId] : [];
-        // if (exhibitorChanged) await adminService.setBoothExhibitors(booth.name, exhibitorIds);
+        if (exhibitorChanged) await adminService.setBoothExhibitors(booth.name, exhibitorIds);
         s.originalAdminNotes = s.adminNotes;
         s.originalExhibitorId = s.exhibitorId;
         s.saving = false;
