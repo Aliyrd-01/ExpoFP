@@ -1,10 +1,9 @@
-import TrianglePainter from "../painters/TrianglePainter";
-import Painter from "../painters/Painter";
 import { autorun } from "mobx";
-import BoothShape from "./BoothShape";
-import DrawerImpl from "../DrawerImpl";
 import { Booth } from "../../../core/Booth";
-import logger from "../../../tools/logger";
+import DrawerImpl from "../DrawerImpl";
+import Painter from "../painters/Painter";
+import TrianglePainter from "../painters/TrianglePainter";
+import BoothShape from "./BoothShape";
 
 export default abstract class BoothDrawerBase<T extends Painter | TrianglePainter> {
     protected readonly booth: Booth;
@@ -45,7 +44,7 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
 
     dispose() {
         if (this.autoupdateDispose) this.autoupdateDispose();
-        logger.log("zzz dispsoed");
+        // logger.log("zzz dispsoed");
     }
 
     startAutoupdate() {
@@ -59,7 +58,7 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
             },
             {
                 scheduler: run => {
-                    console.log("zzz, startAutoupdate");
+                    // console.log("zzz, startAutoupdate");
                     if (initial) {
                         run();
                         initial = false;

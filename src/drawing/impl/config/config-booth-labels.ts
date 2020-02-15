@@ -5,7 +5,7 @@ import DrawerImpl from "../DrawerImpl";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createDetailsCanvas, createLabelCanvas } from "./canvases";
-import { NumberObserver } from "./NumberObserver";
+import observeNumbers from "./observeNumbers";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
@@ -83,19 +83,32 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false
         });
 
+        // this.ptscaleAfterObserver = context.ptscale;
         this.calcFactors();
 
-        this.startAutoupdate();
         // this.update();
 
         // if (context.updatable) {
         //     const cru = () => context.requireUpdate(this.updateBound);
-        const obs = NumberObserver.singletonForObject("labels" + config.pixelRatio, () => context.ptscale);
-        this.factors.forEach(f =>
-            obs.observeValue(f, () => {
+        // this.ptscaleAfterObserver = context.ptscale;
+        observeNumbers(
+            () => context.ptscale,
+            [context, "labels"],
+            this.factors,
+            () => {
                 this.ptscaleAfterObserver = context.ptscale;
-            })
+            }
         );
+
+        this.startAutoupdate();
+
+        // const a = () => context.ptscale;
+        // const obs = NumberObserver.singletonForObject("labels" + config.pixelRatio + "_" + context.id, () => context.ptscale);
+        // this.factors.forEach(f =>
+        //     obs.observeValue(f, () => {
+        //         this.ptscaleAfterObserver = context.ptscale;
+        //     })
+        // );
         //reaction(() => booth.skipDim, cru);
         // }
         // updates.push(this.updateBound);
@@ -116,6 +129,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         // Details are show at:
         this.factors.push(lastFactor / 1.8);
+
+        // debugger;
     }
 
     // unlock() {
@@ -126,9 +141,11 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     @observable ptscaleAfterObserver;
 
     update() {
+        // console.log("zzz update");
         // if (this.locked) return;
         let visiblePrefix: typeof prefixes[number] = null;
         const ptscale = this.ptscaleAfterObserver;
+        if (!ptscale) console.error("ptscale undefined");
 
         for (let i = 0; i < prefixes.length; i++) {
             const p = prefixes[i];
@@ -143,6 +160,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         }
 
         const newSkipDim = this.booth.skipDim;
+        console.log("zzz update2", newSkipDim, visiblePrefix);
         if (newSkipDim !== this.previousSkipDim) {
             for (const p of prefixes) {
                 this.painter.updateSkipdim(this.getId(p), newSkipDim);

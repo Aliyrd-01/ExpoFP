@@ -12,6 +12,8 @@ export interface DrawerImplConfig extends Omit<DrawerConfig, "meshUrl" | "canvas
     mesh: SvgMeshJson;
 }
 
+// let seq = 0;
+
 export default class DrawerImpl implements Drawer, BoothStateProvider {
     private readonly gl: WebGLRenderingContext;
     private requireCanvasSizing = true;
@@ -22,6 +24,8 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
 
     private readonly drawBound: () => void;
     private readonly disposers: (() => void)[] = [];
+
+    // readonly id = seq++;
     // private disposed = false;
 
     // booths: DrawerBoothImpl[];
@@ -186,7 +190,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
     }
 
     requireUpdate(func: () => void): void {
-        logger.log("zzz requireUpdate");
+        // logger.log("zzz requireUpdate");
         if (func) this.updateQueue.add(func);
         this.requireRedraw();
     }

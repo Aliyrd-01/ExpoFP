@@ -11,12 +11,7 @@ import logger from "../../../tools/logger";
 export default function configBooths(context: DrawerImpl) {
     const booths = context.config.booths; //.filter(x => x.name === '4268');
 
-    const configFuncs = [
-        configBoothBg, 
-        // configBoothLabels, 
-        // configBoothLabelsSpecial, 
-        // configBoothBookmark
-    ] as ((
+    const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((
         DrawerContext,
         Booth
     ) => () => void)[]; //configBoothType,
@@ -32,7 +27,7 @@ export default function configBooths(context: DrawerImpl) {
         if (__efpDebug) console.time(name);
         for (const b of booths) {
             // const afterFunc =
-            //const dr =
+            // if (b.name !== "D01C") continue;
             const disposer = func(context, b);
             if (!disposer) logger.warn("Null disposer:", name);
             disposers.push(disposer);

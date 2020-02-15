@@ -21,11 +21,12 @@ if (!isWebGlSupported) {
 }
 
 export function shuffle<T>(array: T[]) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    var currentIndex = array.length,
+        temporaryValue,
+        randomIndex;
 
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
-
         // Pick a remaining element...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
@@ -41,7 +42,21 @@ export function shuffle<T>(array: T[]) {
 
 export function sleep(ms) {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
-  }
+}
+
+// export function shallowEqual(a: Record<string, any>, b: Record<string, any>) {
+//     for (var key in a) {
+//         if (!(key in b) || a[key] !== b[key]) {
+//             return false;
+//         }
+//     }
+//     for (var key in b) {
+//         if (!(key in a) || a[key] !== b[key]) {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
 
 // let isWebGlSupportedVal: boolean;
 // export function isWebGlSupported() {

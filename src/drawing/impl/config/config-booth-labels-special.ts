@@ -5,7 +5,7 @@ import DrawerImpl from "../DrawerImpl";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
-import { NumberObserver } from "./NumberObserver";
+import observeNumbers from "./observeNumbers";
 import TextFitter, { TextFitData } from "./TextFitter";
 
 const textFitters = new Map<number, TextFitter>();
@@ -34,6 +34,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     private readonly ids: string[];
     private previousVisibleId: string;
     private previousSkipDim: boolean;
+    private readonly disposeNumberObserver: () => void;
     // public locked: boolean;
 
     constructor(context: DrawerImpl, booth: Booth) {
@@ -80,15 +81,26 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
 
         this.ids.push(dotId);
 
-        this.startAutoupdate();
-        this.update();
+        
+        // this.update();
 
-        const obs = NumberObserver.singletonForObject("labels-special" + context.config.pixelRatio, () => 1 / context.ptscale);
-        this.steps.forEach(s =>
-            obs.observeValue(s.factor, () => {
+        this.disposeNumberObserver = observeNumbers(
+            () => 1 / context.ptscale,
+            [context, "labels-special"],
+            this.steps.map(x => x.factor),
+            () => {
                 this.ptscaleAfterObserver = context.ptscale;
-            })
+            }
         );
+
+        this.startAutoupdate();
+
+        // const obs = NumberObserver.singletonForObject("labels-special" + context.config.pixelRatio, () => 1 / context.ptscale);
+        // this.steps.forEach(s =>
+        //     obs.observeValue(s.factor, () => {
+        //         this.ptscaleAfterObserver = context.ptscale;
+        //     })
+        // );
 
         // if (context.updatable) {
         //     const cru = () => context.requireUpdate(this.updateBound);
@@ -101,6 +113,11 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         //     // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
         //     // reaction(() => [booth.skipDim, context.ptscale], () => context.requireUpdate(this.updateBound));
         // }
+    }
+
+    dispose() {
+        super.dispose();
+        this.disposeNumberObserver();
     }
 
     // unlock() {
