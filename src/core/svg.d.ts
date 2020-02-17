@@ -22,7 +22,7 @@ interface SvgBooth {
     soldColor: string;
     holdColor: string;
     color: string;
-    type:string;
+    type: string;
 }
 
 interface SvgLayer {
