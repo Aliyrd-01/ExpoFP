@@ -160,7 +160,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         }
 
         const newSkipDim = this.booth.skipDim;
-        console.log("zzz update2", newSkipDim, visiblePrefix);
+        // console.log("zzz update2", newSkipDim, visiblePrefix);
         if (newSkipDim !== this.previousSkipDim) {
             for (const p of prefixes) {
                 this.painter.updateSkipdim(this.getId(p), newSkipDim);

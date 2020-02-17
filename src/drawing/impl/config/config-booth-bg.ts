@@ -76,22 +76,23 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 }
             }
             this.pathsDefaultColors = Array.from(pathsColors);
-        } else {
-            let rect = this.booth.rect;
-            // if (borderWidth === 0) rect = rect.withPadding(borderWidth / 2, borderWidth / 2);
+        } 
+        // else {
+        //     let rect = this.booth.rect;
+        //     // if (borderWidth === 0) rect = rect.withPadding(borderWidth / 2, borderWidth / 2);
 
-            const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
-            const triangles = p.toTriangles();
-            for (const t of triangles) {
-                this.painter.tryAddObject({
-                    id: this.getId("bg-def"),
-                    groupId: this.getId("bg"),
-                    p0: t[0],
-                    p1: t[1],
-                    p2: t[2]
-                    // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
-                });
-            }
+        //     const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
+        //     const triangles = p.toTriangles();
+        //     for (const t of triangles) {
+        //         this.painter.tryAddObject({
+        //             id: this.getId("bg-def"),
+        //             groupId: this.getId("bg"),
+        //             p0: t[0],
+        //             p1: t[1],
+        //             p2: t[2]
+        //             // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+        //         });
+        //     }
         }
 
         //const c = getBoothColor(this.booth);
