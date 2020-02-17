@@ -121,6 +121,9 @@
                             "price": {
                                 "type": "string"
                             },
+                            "size": {
+                                "type": "string"
+                            },
                             "buyUrl": {
                                 "type": "string"
                             },

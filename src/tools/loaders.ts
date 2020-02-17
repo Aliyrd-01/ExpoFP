@@ -90,7 +90,15 @@ export async function loadFont(family: string, url: string, d?) {
     if (family.indexOf(" ") !== -1 && browser.isGecko) {
         family = `'${family}'`;
     }
-    const ff = new FontFace(family, src, d);
+
+    // this is primarily for ios12, it throws error when family is not correctly formatted
+    let ff: any;
+    try {
+        ff = new FontFace(family, src, d);
+    } catch {
+        ff = new FontFace(`'${family}'`, src, d);
+    }
+    
     const documentFonts = document["fonts"] as any;
     documentFonts.add(ff);
     return ff.load();
