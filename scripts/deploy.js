@@ -5,12 +5,12 @@ const fetch = require("node-fetch");
 
 const stable = "0.4.3";
 const updateToBeta = "0.4.3";
-const beta = require("../package.json").version;
+const beta = "2.0.1";
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "expo"];
-const alphas = ["thinksoft", "expo", "eventscase", "confex20"];
+const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "demo"];
+const alphas = ["thinksoft", "confex20"];
 const force = [...alphas];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
@@ -24,9 +24,6 @@ async function main() {
 
     await require("./update-deploy-info");
     const cacheFile = __dirname + "/deploy-info.cache.json";
-    // if (!fs.existsSync(cacheFile)) {
-    //     require("./update-deploy-info");
-    // }
     const cache = JSON.parse(fs.readFileSync(cacheFile));
 
     const functions = [];
