@@ -1,7 +1,7 @@
 {
     "name": "expofp",
     "license": "UNLICENSED",
-    "version": "2.1.0-13",
+    "version": "2.1.0-14",
     "main": "./dist/expofp.js",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
@@ -98,7 +98,15 @@
         "tests": false
     },
     "babel": {
-        "presets": [["react-app", { "flow": false, "typescript": true }]],
+        "presets": [
+            [
+                "react-app",
+                {
+                    "flow": false,
+                    "typescript": true
+                }
+            ]
+        ],
         "plugins": [
             "@babel/plugin-proposal-optional-chaining"
         ]
