@@ -1,3 +1,4 @@
+import { loadJsonCached } from "../../tools/loaders";
 import browser from "../../utils/browser";
 import isWorker from "../../utils/in-worker";
 import { DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "../DrawerInterfaces";
@@ -87,20 +88,20 @@ if (isWorker) {
 
 ///////////////////////////////////////////////////
 // Helper functions
-async function loadJson<T>(url: string) {
-    const response = await fetch(url, { credentials: "same-origin" });
-    return (await response.json()) as T;
-}
+// async function loadJson<T>(url: string) {
+//     const response = await fetch(url, { credentials: "same-origin" });
+//     return (await response.json()) as T;
+// }
 
-const mapJsonCache = new Map<string, any>();
-async function loadJsonCached<T>(url: string) {
-    let data = mapJsonCache.get(url);
-    if (!data) {
-        data = await loadJson(url);
-        mapJsonCache.set(url, data);
-    }
-    return data;
-}
+// const mapJsonCache = new Map<string, any>();
+// async function loadJsonCached<T>(url: string) {
+//     let data = mapJsonCache.get(url);
+//     if (!data) {
+//         data = await loadJson(url);
+//         mapJsonCache.set(url, data);
+//     }
+//     return data;
+// }
 
 declare const FontFace: any;
 export async function loadFont(family: string, url: string, d?) {

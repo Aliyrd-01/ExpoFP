@@ -21,14 +21,14 @@ export function loadCss(url: string, appendTo: Element | ShadowRoot) {
     appendTo.appendChild(link);
 }
 
-export function preloadJs(url: string) {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.href = goodUrl(url);
-    link.as = "script";
-    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-}
+// export function preloadJs(url: string) {
+//     const link = document.createElement("link");
+//     link.rel = "preload";
+//     link.href = goodUrl(url);
+//     link.as = "script";
+//     if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
+//     document.head.appendChild(link);
+// }
 
 export function preloadFont(url: string) {
     const link = document.createElement("link");
@@ -39,15 +39,15 @@ export function preloadFont(url: string) {
     document.head.appendChild(link);
 }
 
-export function preloadJson(url: string) {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.href = goodUrl(url);
-    link.as = "fetch";
-    // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href))
-    link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-}
+// export function preloadJson(url: string) {
+//     const link = document.createElement("link");
+//     link.rel = "preload";
+//     link.href = goodUrl(url);
+//     link.as = "fetch";
+//     // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href))
+//     link.crossOrigin = "anonymous";
+//     document.head.appendChild(link);
+// }
 
 // export async function loadJs(url: string) {
 //     return new Promise(function(resolve, reject) {
@@ -61,7 +61,7 @@ export function preloadJson(url: string) {
 // }
 
 export async function loadJson<T>(url: string) {
-    const response = await fetch(goodUrl(url), {credentials: 'same-origin'});
+    const response = await fetch(goodUrl(url), { credentials: "same-origin" });
     return (await response.json()) as T;
 }
 
@@ -98,13 +98,13 @@ export async function loadFont(family: string, url: string, d?) {
     } catch {
         ff = new FontFace(`'${family}'`, src, d);
     }
-    
+
     const documentFonts = document["fonts"] as any;
     documentFonts.add(ff);
     return ff.load();
 }
 
-export function injectFontFace(fontFamily: string, src: string, d) {
+function injectFontFace(fontFamily: string, src: string, d) {
     const newStyle = document.createElement("style");
     newStyle.appendChild(
         document.createTextNode(

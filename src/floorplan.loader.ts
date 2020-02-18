@@ -1,7 +1,7 @@
 import Rect from "./core/Rect";
 import baseUrl from "./tools/base-url";
 import "./tools/debug";
-import { loadCss, loadJson } from "./tools/loaders";
+import { loadCss, loadJson, loadJsonCached } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import useShadow from "./utils/use-shadow";
@@ -128,6 +128,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
+            loadJsonCached<any>(self.meshUrl);
             const fprPromise = import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
             await Promise.all([
                 // ...fontPromises,
@@ -145,7 +146,9 @@ export default class FloorPlanLoader implements FloorPlan {
             }
             if (fpVersion) {
                 self.meshUrl += `?v=${fpVersion}`;
+                loadJsonCached<any>(self.meshUrl);
             }
+
             self.svg.area = Rect.fromSvgJsonRect(self.svg.area);
             self.svg.viewBox = Rect.fromSvgJsonRect(self.svg.viewBox);
             logger.log("Data loaded");
