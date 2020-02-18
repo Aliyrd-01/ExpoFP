@@ -2,6 +2,7 @@ import { observable, reaction, runInAction } from "mobx";
 import { BoothStateProvider, RegularBooth, SpecialBooth } from "../../core/Booth";
 import Rect from "../../core/Rect";
 import Size from "../../core/Size";
+import isDebug from "../../tools/debug";
 import logger from "../../tools/logger";
 import { BoothStateSeriazable, Drawer, DrawerConfig, DrawerUpdatables } from "../DrawerInterfaces";
 import configAll from "./config/config-all";
@@ -108,7 +109,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
             ] as (keyof BoothStateSeriazable)[]) {
                 const val = u[a];
                 if (val !== undefined) {
-                    const Class = a.endsWith("Map") ? Map : (Set as any);
+                    const Class = (a as string).endsWith("Map") ? Map : (Set as any);
                     this[a] = new Class(val);
                 }
             }
@@ -171,6 +172,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
 
     private draw() {
         if (this.requireCanvasSizing) this.setCanvasSize();
+        if (isDebug) this.measureFps();
         // if (!this.prepared) this.prepare();
         //showFps();
         //benchFrames++;
@@ -210,6 +212,34 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
             this.allPainters.sort((a, b) => a.orderPriority - b.orderPriority);
         }
         return d;
+    }
+
+    then = 0;
+    prevFps = [];
+    // prevAvgFps = 0;
+    @observable fps: number;
+    measureFps() {
+        const now = performance.now() * 0.001;
+        const deltaTime = now - this.then;
+        this.then = now;
+        const roundTo = 2;
+        const fps = Math.round(1 / deltaTime / roundTo) * roundTo;
+        this.prevFps.push(fps);
+        if (this.prevFps.length > 20) this.prevFps.shift();
+        this.fps = Math.round(this.prevFps.reduce((sume, el) => sume + el, 0) / this.prevFps.length);
+
+        // if (this.prevAvgFps !== avgFps) {
+        //     console.log("FPS", avgFps);
+        //     this.prevAvgFps = avgFps;
+        //     // const html = avgFps.toFixed(0);
+
+        //     // const fpsElement = document.getElementsByClassName("layout__fps")[0];
+        //     // debugger
+        //     // if (fpsElement) {
+        //     //     fpsElement.innerHTML = html;
+        //     // }
+        // }
+        console.log("FPS", this.fps);
     }
 }
 

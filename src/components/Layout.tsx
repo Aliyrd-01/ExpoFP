@@ -50,7 +50,7 @@ export default observer(function Layout() {
                 {isIframe && <LargeMessage />}
                 {/* {isIframe && <TouchHover />} */}
                 <Pdf />
-                <div id="fps" />
+                <div className="layout__fps" />
             </div>
         </div>
     );

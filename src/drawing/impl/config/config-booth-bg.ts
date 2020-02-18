@@ -76,7 +76,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 }
             }
             this.pathsDefaultColors = Array.from(pathsColors);
-        } 
+        }
         // else {
         //     let rect = this.booth.rect;
         //     // if (borderWidth === 0) rect = rect.withPadding(borderWidth / 2, borderWidth / 2);
@@ -93,7 +93,7 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
         //             // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
         //         });
         //     }
-        }
+        // }
 
         //const c = getBoothColor(this.booth);
         // for (const t of triangles) {
