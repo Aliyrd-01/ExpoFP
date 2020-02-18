@@ -65,14 +65,14 @@ export async function loadJson<T>(url: string) {
     return (await response.json()) as T;
 }
 
-const mapJsonCache = new Map<string, any>();
+const mapJsonCache = new Map<string, Promise<any>>();
 export async function loadJsonCached<T>(url: string) {
     let data = mapJsonCache.get(url);
     if (!data) {
-        data = await loadJson(url);
-        mapJsonCache.set(url, data);
+        const prom = loadJson(url);
+        mapJsonCache.set(url, prom);
     }
-    return data;
+    return await data;
 }
 
 declare const FontFace: any;
