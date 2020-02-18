@@ -1,7 +1,7 @@
 import Rect from "./core/Rect";
 import baseUrl from "./tools/base-url";
 import "./tools/debug";
-import { loadCss, loadJson, loadJsonCached } from "./tools/loaders";
+import { loadCss, loadJson, loadJsonCached, loadFont } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import useShadow from "./utils/use-shadow";
@@ -104,17 +104,16 @@ export default class FloorPlanLoader implements FloorPlan {
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
-        // loadCss("fonts/fonts.css", container);
 
-        // loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
+        loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
 
-        // const fontPromises = [
-        //     loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
-        //     loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
-        //     loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 })
-        //     // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
-        //     // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
-        // ];
+        const fontPromises = [
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 })
+            // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
+            // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
+        ];
 
         let handledStyleElements = 0;
         window.addEventListener("__efpStyleLoad", function(e: Event) {
@@ -131,7 +130,7 @@ export default class FloorPlanLoader implements FloorPlan {
             loadJsonCached<any>(self.meshUrl);
             const fprPromise = import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
             await Promise.all([
-                // ...fontPromises,
+                ...fontPromises,
                 (async function() {
                     self.data = await loadJson<Data>(dataUrl);
                 })(),
