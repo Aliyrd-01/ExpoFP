@@ -44,7 +44,7 @@ async function main() {
 
         if (data.requiredNpmVersion && (data.requiredNpmVersion !== data.npmVersion || force.indexOf(data.expo) !== -1)) {
             functions.push(async () => {
-                await updateIndex(data.expo, data.requiredNpmVersion);
+                await updateIndex(data.expo, data.requiredNpmVersion, data.npmVersion);
                 data.npmVersion = data.requiredNpmVersion;
                 fs.writeFileSync(cacheFile, JSON.stringify(cache, null, "\t"));
             });
@@ -59,8 +59,8 @@ async function main() {
 
 const pendingInvalidates = [];
 
-async function updateIndex(expo, version) {
-    console.log("Updating", expo, version);
+async function updateIndex(expo, version, oldVersion) {
+    console.log(`Updating ${expo} ${oldVersion} => ${version}`);
 
     const publicPath = `https://${expo}.expofp.com/npm/expofp@${version}/dist/`; //https://cdn.jsdelivr.net
     const template = fs.readFileSync(__dirname + "/template.html", "utf8");
