@@ -1,10 +1,10 @@
-import "./tools/debug";
+import Rect from "./core/Rect";
 import baseUrl from "./tools/base-url";
-import { loadCss, loadFont, loadJson, preloadJs, preloadJson, preloadFont } from "./tools/loaders";
+import "./tools/debug";
+import { loadCss, loadFont, loadJson } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import useShadow from "./utils/use-shadow";
-import Rect from "./core/Rect";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -95,11 +95,11 @@ export default class FloorPlanLoader implements FloorPlan {
 
         // preloadJson(dataUrl);
         // preloadJson(fpUrl);
-        preloadJson(this.meshUrl);
-        preloadJs("floorplan.js");
-        preloadJs("vendors~floorplan.js");
-        preloadFont("fonts/oswald-v17-cyrillic_latin-300.woff2");
-        preloadFont("fonts/oswald-v17-cyrillic_latin-500.woff2");
+        // preloadJson(this.meshUrl);
+        // preloadJs("floorplan.js");
+        // preloadJs("vendors~floorplan.js");
+        // preloadFont("fonts/oswald-v17-cyrillic_latin-300.woff2");
+        // preloadFont("fonts/oswald-v17-cyrillic_latin-500.woff2");
 
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
@@ -128,6 +128,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
+            const fprPromise = import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
             await Promise.all([
                 ...fontPromises,
                 (async function() {
@@ -148,7 +149,7 @@ export default class FloorPlanLoader implements FloorPlan {
             self.svg.area = Rect.fromSvgJsonRect(self.svg.area);
             self.svg.viewBox = Rect.fromSvgJsonRect(self.svg.viewBox);
             logger.log("Data loaded");
-            const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
+            const { default: FloorPlanReady } = await fprPromise;
             // TODO: legacy, remove in 1/1/2021
             document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
             // remove all kids (loaders)

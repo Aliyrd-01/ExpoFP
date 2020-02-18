@@ -1,4 +1,5 @@
 // import __efpDebug from "../../../utils/is-debug";
+import logger from "../../../tools/logger";
 import DrawerImpl from "../DrawerImpl";
 // import animate from "./animate";
 import configBoothBg from "./config-booth-bg";
@@ -6,7 +7,6 @@ import configBoothBookmark from "./config-booth-bookmark";
 import configBoothBorder from "./config-booth-border";
 import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
-import logger from "../../../tools/logger";
 
 export default function configBooths(context: DrawerImpl) {
     const booths = context.config.booths; //.filter(x => x.name === '4268');
