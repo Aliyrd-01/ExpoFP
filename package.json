@@ -98,9 +98,7 @@
         "tests": false
     },
     "babel": {
-        "presets": [
-            "react-app"
-        ],
+        "presets": [["react-app", { "flow": false, "typescript": true }]],
         "plugins": [
             "@babel/plugin-proposal-optional-chaining"
         ]
@@ -115,6 +113,7 @@
         "last 3 iOS versions",
         "last 3 Firefox versions",
         "last 3 FirefoxAndroid versions",
-        "last 2 Edge versions"
+        "last 2 Edge versions",
+        "edge 18"
     ]
 }

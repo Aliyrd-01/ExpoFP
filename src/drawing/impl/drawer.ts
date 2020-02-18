@@ -104,7 +104,7 @@ async function loadJsonCached<T>(url: string) {
 
 declare const FontFace: any;
 export async function loadFont(family: string, url: string, d?) {
-    if (typeof FontFace === undefined) return;
+    if (typeof FontFace === "undefined") return;
     // url = goodUrl(url);
     d = { style: "normal", weight: "normal", ...(d || {}) };
     const src = `url("${url}")`;
