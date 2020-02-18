@@ -1,7 +1,7 @@
 {
     "name": "expofp",
     "license": "UNLICENSED",
-    "version": "2.1.0-21",
+    "version": "2.1.0-22",
     "main": "./dist/expofp.js",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/",
