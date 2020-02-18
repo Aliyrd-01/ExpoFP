@@ -12,6 +12,7 @@ import FloorPlanReady from "../floorplan.ready";
 import debugCanvases from "./debugCanvases";
 import pdfFontBold from "./pdf-open-sans-bold.txt";
 import pdfFontNormal from "./pdf-open-sans-normal.txt";
+import { sleep } from "../utils";
 
 const jsPDFAPI = jsPDF["API"];
 
@@ -113,6 +114,8 @@ export async function generatePdf(fp: FloorPlanReady) {
     );
     const drawer = new DrawerAdapter(fp, canvas, matrix); //createDrawer(fp, canvas, false);
     await drawer.drawn;
+    // wait for next tick for image to be applied onto canvas? TODO: research
+    await sleep(1);
     drawer.dispose();
     // drawer.setVisibleScale(1);
     // drawer.setPixelRatio(2.5);
