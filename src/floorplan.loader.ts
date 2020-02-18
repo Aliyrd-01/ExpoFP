@@ -93,8 +93,8 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.json";
         this.meshUrl = dataUrlBase + "fp.mesh.json";
 
-        preloadJson(dataUrl);
-        preloadJson(fpUrl);
+        // preloadJson(dataUrl);
+        // preloadJson(fpUrl);
         preloadJson(this.meshUrl);
         preloadJs("floorplan.js");
         preloadJs("vendors~floorplan.js");

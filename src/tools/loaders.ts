@@ -61,7 +61,7 @@ export function preloadJson(url: string) {
 // }
 
 export async function loadJson<T>(url: string) {
-    const response = await fetch(goodUrl(url), { credentials: "omit" });
+    const response = await fetch(goodUrl(url), {credentials: 'same-origin'});
     return (await response.json()) as T;
 }
 
@@ -98,7 +98,7 @@ export async function loadFont(family: string, url: string, d?) {
     } catch {
         ff = new FontFace(`'${family}'`, src, d);
     }
-
+    
     const documentFonts = document["fonts"] as any;
     documentFonts.add(ff);
     return ff.load();
