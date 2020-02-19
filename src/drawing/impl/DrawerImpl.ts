@@ -17,6 +17,7 @@ export interface DrawerImplConfig extends Omit<DrawerConfig, "meshUrl" | "canvas
 
 export default class DrawerImpl implements Drawer, BoothStateProvider {
     private readonly gl: WebGLRenderingContext;
+    private readonly useFinish: boolean;
     private requireCanvasSizing = true;
     private requestedFrame: number;
     private readonly updateQueue = new Set<() => void>();
@@ -54,7 +55,12 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
         // public readonly booths: Booth[]
         public config: DrawerImplConfig
     ) {
-        this.gl = createGl(config.canvas);
+        const { gl, vendor } = createGl(config.canvas);
+        this.gl = gl;
+        // using finish() only for slow Intel GPUs
+        // in future we will need to remove this
+        this.useFinish = vendor.startsWith("Intel");
+        if (this.useFinish) logger.log("useFinish", this.useFinish);
         this.drawBound = this.draw.bind(this);
 
         // const state: BoothStateProvider = observable({
@@ -188,6 +194,11 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
         for (var d of this.allPainters) {
             d.paint();
         }
+
+        console.time("finish");
+        if (this.useFinish) this.gl.finish();
+        console.timeEnd("finish");
+
         //this.requireRedraw();
     }
 
@@ -254,7 +265,7 @@ function createGl(canvas: HTMLCanvasElement | OffscreenCanvas) {
         if (!ext) logger.warn("OES_element_index_uint not supported");
     }
     const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
-    const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+    const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) as string;
     const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
     logger.log("GPU renderer:", renderer);
     logger.log("GPU vendor:", vendor);
@@ -266,5 +277,5 @@ function createGl(canvas: HTMLCanvasElement | OffscreenCanvas) {
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
     // gl.colorMask(true, true, true, false);
-    return gl;
+    return { gl, vendor };
 }
