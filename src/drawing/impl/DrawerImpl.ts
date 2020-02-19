@@ -195,10 +195,7 @@ export default class DrawerImpl implements Drawer, BoothStateProvider {
             d.paint();
         }
 
-        console.time("finish");
         if (this.useFinish) this.gl.finish();
-        console.timeEnd("finish");
-
         //this.requireRedraw();
     }
 
