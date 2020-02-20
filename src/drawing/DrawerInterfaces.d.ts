@@ -14,6 +14,7 @@ interface DrawerConfig {
     svg: SvgJson,
     meshUrl: string,
     booths: Booth[]
+    borderColor: string;
     borderWidth: number;
     exhibitorNames: Record<number, string>,
     __efpDebug: boolean;

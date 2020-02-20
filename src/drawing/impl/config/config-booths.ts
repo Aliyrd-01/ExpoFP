@@ -16,7 +16,7 @@ export default function configBooths(context: DrawerImpl) {
         Booth
     ) => () => void)[]; //configBoothType,
 
-    if (context.config.borderWidth > 0) configFuncs.push(configBoothBorder);
+    if (context.config.borderWidth > 0 && context.config.borderColor) configFuncs.push(configBoothBorder);
 
     // const after = [];
     // const lockedDrawers: { unlock: () => void }[] = [];

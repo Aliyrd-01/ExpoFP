@@ -26,8 +26,13 @@ export default class BoothStore {
     }
 
     @computed({ keepAlive: true }) get borderWidth() {
+        // if (this.rootStore.fp.eventId === "confex20") return 0;
         const ar = this.booths.filter((_, i) => i % 10 === 0).map(x => x.rect.w + x.rect.h);
         return ar.reduce((a, b) => a + b) / ar.length / 80;
+    }
+    @computed({ keepAlive: true }) get borderColor() {
+        if (this.rootStore.fp.eventId === "confex20") return "";
+        return "#fff";
     }
 
     constructor(rootStore: RootStore) {

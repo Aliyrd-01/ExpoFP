@@ -21,6 +21,7 @@ export default class DrawerAdapter {
             canvas,
             pixelRatio: m.pixelRatio,
             borderWidth: this.fp.store.boothStore.borderWidth,
+            borderColor: this.fp.store.boothStore.borderColor,
             svg: fp.svg,
             meshUrl: fp.meshUrl,
             booths: this.getBooths(),

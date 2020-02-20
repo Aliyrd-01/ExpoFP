@@ -17,7 +17,6 @@ import DrawerImpl from "./DrawerImpl";
 // ) {
 //     // load meshes json
 //     const mesh = await loadJson<SvgMeshJson>(meshUrl);
-
 //     return new DrawerImpl(canvas, pixelRatio, config, svg, mesh, booths);
 // }
 
