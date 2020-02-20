@@ -82,9 +82,11 @@ function getLinesSizes(blocks, spaceWidth, maxLines) {
     while ((lineWidths = getLineWidthsForMaxWidth(width, blocks, spaceWidth)) && lineWidths.length <= maxLines) {
         if (prevLines !== lineWidths.length) {
             // here we'll come starting with prevLines == 1 and lineWidths.length >= 2
-            res[prevLines - 1] = prevLongestLine;
+            for (let i = prevLines; i < lineWidths.length; i++) {
+                res[i - 1] = prevLongestLine;
+            }
         }
-
+        
         prevLines = lineWidths.length;
         prevLongestLine = Math.max(...lineWidths);
         width = prevLongestLine - 1;
@@ -135,7 +137,12 @@ function standardDeviation(array) {
 }
 
 function lineIndicesToLines(lineSet, words) {
-    return lineSet.map(line => line.map(i => words[i]).reduce((a, v, i) => a + (i > 0 ? " " : "") + v), "");
+    try {
+        return lineSet.map(line => line.map(i => words[i]).reduce((a, v, i) => a + (i > 0 ? " " : "") + v), "");
+    } catch (e) {
+        console.log("zzzz", lineSet, words);
+        throw e;
+    }
     // ["line1", "line2"]
 }
 
