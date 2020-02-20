@@ -62,18 +62,7 @@ export default class ExhibitorStore {
     }
 
     @action replaceBookmarked(ids: number[]) {
-        //this.bookmarked.clear();
-        this.bookmarkedIds = new Set(ids);
-        // //const current = new Set(this.bookmarked);
-        // const ar = ids.map(x => this.exhibitorById.get(x)).filter(x => x);
-        // const set = new Set(ar);
-        // const toRemove = this.bookmarked.filter(e => !set.has(e));
-        // for (const e of toRemove) {
-        //     e.bookmarked = false;
-        // }
-        // for (const e of ar) {
-        //     e.bookmarked = true;
-        // }
+        this.bookmarkedIds = new Set(ids.filter(x => this.bookmarkedIds.has(x)));
     }
 }
 
