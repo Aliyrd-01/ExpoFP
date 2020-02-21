@@ -30,6 +30,7 @@ export default class TrianglePainter implements Painter {
     public ptscale: number;
     public alpha = 1;
     public dim = 0;
+    private readonly maxObjects = Math.floor(65535 / 3)
     // private readonly maxObjects = Math.floor(65545 / 3);
 
     constructor(gl: WebGLRenderingContext) {
@@ -43,15 +44,31 @@ export default class TrianglePainter implements Painter {
         this.colorBuffer = gl.createBuffer();
         this.skipdimBuffer = gl.createBuffer();
         this.indexBuffer = gl.createBuffer();
+
+        // this.maxObjects =
+        //     typeof WebGL2RenderingContext === "undefined" && gl.getSupportedExtensions().indexOf("OES_element_index_uint") === -1
+        //         ? Math.floor(65535 / 3)
+        //         : Math.floor(Math.pow(2, 256) / 3);
     }
 
-    addObject(item: TrianglePainterObject) {
+    tryAddObject(item: TrianglePainterObject) {
+        if (this.objects.length >= this.maxObjects) return false;
+        // if (item.id)console.log("Added", item.id)
         this.objectsIndices.set(item, this.objects.length);
         this.objects.push(item);
         item.skipdim = !!item.skipdim;
         this.addToId(item, item.id);
         this.addToId(item, item.groupId);
+        return true;
     }
+
+    // addObject(item: TrianglePainterObject) {
+    //     this.objectsIndices.set(item, this.objects.length);
+    //     this.objects.push(item);
+    //     item.skipdim = !!item.skipdim;
+    //     this.addToId(item, item.id);
+    //     this.addToId(item, item.groupId);
+    // }
 
     private addToId(item: TrianglePainterObject, id: string) {
         if (id) {

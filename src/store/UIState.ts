@@ -163,6 +163,8 @@ export default class UIState {
         // const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
         const isSafari = browser.satisfies({ safari: ">=13" });
         const isChrome = browser.satisfies({ chrome: ">=77" });
+        var isAndroid = /(android)/i.test(navigator.userAgent);
+        if (isAndroid) return false;
         return isSafari || (isChrome && uiState.canvasSizePt.height * uiState.canvasSizePt.width < 3000000);
     }
 

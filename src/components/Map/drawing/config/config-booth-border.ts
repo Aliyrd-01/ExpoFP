@@ -6,10 +6,12 @@ import { Booth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
 import BoothDrawerBase from "./BoothDrawerBase";
+import settings from "../../../../tools/settings";
 // import { boothStore } from '../../../../store';
 
 export default function configBoothBorder(context: DrawerContext, booth: Booth) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
+    if (settings.EXPO === "confex20") return;
     if (booth.paths && !booth.pathsWithRect) return;
     new BoothBorderDrawer(context, booth);
 }
@@ -38,7 +40,7 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
         addTriangles(r.cx + r.w / 2, r.cy, width, r.h + width);
 
         for (const t of triangles) {
-            this.painter.addObject({
+            this.painter.tryAddObject({
                 id: this.getId("border"),
                 p0: t[0],
                 p1: t[1],
