@@ -5,12 +5,12 @@ const fetch = require("node-fetch");
 
 const stable = "2.0.1";
 // const updateToBeta = "0.4.3";
-const beta = "2.0.1";
+const beta = "2.0.2";
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "demo"];
-const alphas = ["thinksoft", "confex20", "confex21", "sydneybuildexpo"];
+const betas = ["eventtechlive2020", "miblive2020", "confex20", "_template_for_new_event_", "demo"];
+const alphas = ["thinksoft", "confex21", "sydneybuildexpo"];
 const force = [...alphas];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
@@ -61,10 +61,12 @@ async function main() {
 const pendingInvalidates = [];
 
 async function updateIndex(expo, version, oldVersion) {
-    console.log(`Updating ${expo} ${oldVersion} => ${version}`);
+    const oldStable = version.startsWith("2.0.");
+    const templateFile = oldStable ? "template.oldstable.html" : "template.html";
+    console.log(`Updating ${expo} ${oldVersion} => ${version} with ${templateFile}`);
 
     const publicPath = `https://${expo}.expofp.com/npm/expofp@${version}/dist/`; //https://cdn.jsdelivr.net
-    const template = fs.readFileSync(__dirname + "/template.html", "utf8");
+    const template = fs.readFileSync(__dirname + "/" + templateFile, "utf8");
     const html = template.replace(/%PUBLIC_PATH%/g, publicPath).replace(/%EXPO_NAME%/g, expo);
     const fileName = `expos/${expo}/live/index.html`;
     const bucketParams = {
