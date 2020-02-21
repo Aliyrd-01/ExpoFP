@@ -31,7 +31,7 @@ export default class BoothStore {
         return ar.reduce((a, b) => a + b) / ar.length / 80;
     }
     @computed({ keepAlive: true }) get borderColor() {
-        if (this.rootStore.fp.eventId === "confex20") return "";
+        if (["confex20", "confex21"].indexOf(this.rootStore.fp.eventId) !== -1) return "";
         return "#fff";
     }
 
