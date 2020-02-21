@@ -1,5 +1,4 @@
-import { loadJsonCached } from "../../tools/loaders";
-import browser from "../../utils/browser";
+import { loadFont, loadJsonCached } from "../../tools/loaders";
 import isWorker from "../../utils/in-worker";
 import { DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "../DrawerInterfaces";
 import DrawerImpl from "./DrawerImpl";
@@ -102,19 +101,19 @@ if (isWorker) {
 //     return data;
 // }
 
-declare const FontFace: any;
-export async function loadFont(family: string, url: string, d?) {
-    if (typeof FontFace === "undefined") return;
-    // url = goodUrl(url);
-    d = { style: "normal", weight: "normal", ...(d || {}) };
-    const src = `url("${url}")`;
+// declare const FontFace: any;
+// export async function loadFont(family: string, url: string, d?) {
+//     if (typeof FontFace === "undefined") return;
+//     // url = goodUrl(url);
+//     d = { style: "normal", weight: "normal", ...(d || {}) };
+//     const src = `url("${url}")`;
 
-    if (family.indexOf(" ") !== -1 && browser.isGecko) {
-        family = `'${family}'`;
-    }
-    const ff = new FontFace(family, src, d);
-    // eslint-disable-next-line
-    const documentFonts = isWorker ? self["fonts"] : (document["fonts"] as any);
-    documentFonts.add(ff);
-    return ff.load();
-}
+//     if (family.indexOf(" ") !== -1 && browser.isGecko) {
+//         family = `'${family}'`;
+//     }
+//     const ff = new FontFace(family, src, d);
+//     // eslint-disable-next-line
+//     const documentFonts = isWorker ? self["fonts"] : (document["fonts"] as any);
+//     documentFonts.add(ff);
+//     return ff.load();
+// }
