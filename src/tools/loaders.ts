@@ -44,7 +44,7 @@ export function preloadImage(url: string) {
     link.rel = "preload";
     link.as = "image";
     link.href = url;
-    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
+    // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
     document.head.appendChild(link);
 }
 

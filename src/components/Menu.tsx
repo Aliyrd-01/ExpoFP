@@ -45,7 +45,7 @@ function Menu() {
                     onError={() => (s.logoVisibility = "hidden")}
                     style={{ visibility: s.logoVisibility }}
                     alt=""
-                    crossOrigin="anonymous"
+                    // crossOrigin="anonymous"
                 />
             </a>
         </div>
