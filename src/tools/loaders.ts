@@ -1,9 +1,9 @@
 import browser from "../utils/browser";
 import baseUrl from "./base-url";
 
-function allowAnonymous(url) {
-    return !url.startsWith("file:///");
-}
+// function allowAnonymous(url) {
+//     return !url.startsWith("file:///");
+// }
 
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
@@ -17,7 +17,7 @@ export function loadCss(url: string, appendTo: Element | ShadowRoot) {
     link.rel = "stylesheet";
     link.href = goodUrl(url);
 
-    if (allowAnonymous(link.href)) link.crossOrigin = "anonymous";
+    // if (allowAnonymous(link.href)) link.crossOrigin = "anonymous";
     appendTo.appendChild(link);
 }
 
@@ -30,14 +30,15 @@ export function loadCss(url: string, appendTo: Element | ShadowRoot) {
 //     document.head.appendChild(link);
 // }
 
-export function preloadFont(url: string) {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.href = goodUrl(url);
-    link.as = "font";
-    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-}
+// export function preloadFont(url: string, anon: boolean) {
+//     const link = document.createElement("link");
+//     link.rel = "preload";
+//     link.href = goodUrl(url);
+//     link.as = "font";
+//     // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href))
+//     if (anon && allowAnonymous(link.href))link.crossOrigin = "anonymous";
+//     document.head.appendChild(link);
+// }
 
 export function preloadImage(url: string) {
     const link = document.createElement("link");
