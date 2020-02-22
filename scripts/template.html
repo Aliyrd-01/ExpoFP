@@ -131,6 +131,22 @@
         <link rel="preload" href="%PUBLIC_PATH%fonts/oswald-v17-cyrillic_latin-300.woff2" as="font" crossorigin="anonymous" />
     </head>
     <body>
+        <script>
+            (function(d) {
+                // Safari has bug in JSON preload
+                if (!window.safari)
+                    ["data.json", "fp.json", "fp.mesh.json"].forEach(f => {
+                        const el = d.createElement("link");
+                        Object.assign(el, {
+                            rel: "preload",
+                            as: "fetch",
+                            crossOrigin: "anonymous", // because will be loaded with fetch/same-origin
+                            href: "https://%EXPO_NAME%.expofp.com/data/" + f
+                        });
+                        d.head.appendChild(el);
+                    });
+            })(document);
+        </script>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div class="expofp-floorplan" data-event-id="%EXPO_NAME%">
             <div class="lds-grid">
@@ -147,20 +163,4 @@
         </div>
         <script src="%PUBLIC_PATH%expofp.js"></script>
     </body>
-    <script>
-        (function(d) {
-            // Safari has bug in JSON preload
-            if (!window.safari)
-                ["data.json", "fp.json", "fp.mesh.json"].forEach(f => {
-                    const el = d.createElement("link");
-                    Object.assign(el, {
-                        rel: "preload",
-                        as: "fetch",
-                        crossOrigin: "anonymous", // because will be loaded with fetch/same-origin
-                        href: "https://%EXPO_NAME%.expofp.com/data/" + f
-                    });
-                    d.head.appendChild(el);
-                });
-        })(document);
-    </script>
 </html>
