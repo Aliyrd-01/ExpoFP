@@ -152,7 +152,7 @@ export default class FloorPlanLoader implements FloorPlan {
             }
 
             self.logoUrl = dataUrlBase + self.data.logo;
-            preloadImage(self.logoUrl);
+            window.setTimeout(() => preloadImage(self.logoUrl), 2500);
 
             self.svg.area = Rect.fromSvgJsonRect(self.svg.area);
             self.svg.viewBox = Rect.fromSvgJsonRect(self.svg.viewBox);

@@ -153,6 +153,7 @@
     </body>
     <script>
         (function(d) {
+            // Safari has bug in JSON preload
             if (!window.safari)
                 ["data.json", "fp.json", "fp.mesh.json"].forEach(f => {
                     const el = d.createElement("link");
