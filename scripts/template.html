@@ -122,15 +122,11 @@
         <link rel="preload" href="%PUBLIC_PATH%vendors~drawer~floorplan.js" as="script" />
         <link rel="preload" href="%PUBLIC_PATH%vendor/fa/css/fontawesome-all.min.css" as="style" />
         <link rel="preload" href="%PUBLIC_PATH%vendor/sanitize-css/sanitize.css" as="style" />
-        <link
-            rel="preload"
-            href="%PUBLIC_PATH%vendor/perfect-scrollbar/css/perfect-scrollbar.css"
-            as="style"
-           
-        />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-regular-400.woff2" as="font" />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-solid-900.woff2" as="font" />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-light-300.woff2" as="font" />
+        <link rel="preload" href="%PUBLIC_PATH%vendor/perfect-scrollbar/css/perfect-scrollbar.css" as="style" />
+        <!-- Fonts are anonymous because those will be loaded with FontFace -->
+        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-regular-400.woff2" as="font" crossorigin="anonymous" />
+        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-solid-900.woff2" as="font" crossorigin="anonymous" />
+        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-light-300.woff2" as="font" crossorigin="anonymous" />
         <link rel="preload" href="%PUBLIC_PATH%fonts/oswald-v17-cyrillic_latin-500.woff2" as="font" crossorigin="anonymous" />
         <link rel="preload" href="%PUBLIC_PATH%fonts/oswald-v17-cyrillic_latin-300.woff2" as="font" crossorigin="anonymous" />
     </head>
@@ -160,7 +156,7 @@
                     Object.assign(el, {
                         rel: "preload",
                         as: "fetch",
-                        crossOrigin: "anonymous",
+                        crossOrigin: "anonymous", // because will be loaded with fetch/same-origin
                         href: "https://%EXPO_NAME%.expofp.com/data/" + f
                     });
                     d.head.appendChild(el);
