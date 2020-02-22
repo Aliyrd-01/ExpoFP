@@ -1,4 +1,5 @@
 import { Drawer, DrawerConfig, DrawerUpdatables, DrawerWorkerMessage } from "./DrawerInterfaces";
+import importDrawer from "./impl/import-drawer";
 
 let idSeq = 0;
 const proxies = new Set<DrawerImplProxy>();
@@ -69,7 +70,7 @@ async function postMessage(message: DrawerWorkerMessage, transfer?: Transferable
             ww.onmessage = ev => proxies.forEach(p => p.onmessage(ev));
             postMessageImpl = ww.postMessage.bind(ww);
         } else {
-            const { subscribeToMessages, postMessage } = await import(/* webpackChunkName: "drawer" */ "./impl/drawer");
+            const { subscribeToMessages, postMessage } = await importDrawer();
             postMessageImpl = data => postMessage({ data } as MessageEvent);
             subscribeToMessages((data: DrawerWorkerMessage) => proxies.forEach(p => p.onmessage({ data } as MessageEvent)));
         }

@@ -2,16 +2,15 @@ import copyToClipboard from "copy-to-clipboard";
 import { VisibilityProperty } from "csstype";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
-
 // import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import { Category } from "../store/CategoryStore";
-// import baseUrl from "../tools/base-data-url";
-import logger from "../tools/logger";
+import { useCategoryStore, useData, useExhibitorStore, useFp, useStore, useUiState } from "../tools/use";
 import isIframe from "../utils/is-iframe";
-import { useAutorun, useInit } from "../utils/mobx";
+import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
-import { useUiState, useCategoryStore, useExhibitorStore, useStore, useData, useFp } from "../tools/use";
+
+// const preloadedLogos = new Set<string>();
 
 function Menu() {
     const s = useLocalStore(() => ({
@@ -26,20 +25,6 @@ function Menu() {
     const categoryStore = useCategoryStore();
     const exhibitorStore = useExhibitorStore();
     const data = useData();
-
-    const logoUrl = fp.dataUrl + data.logo;
-
-    useInit(() => {
-        logger.log("Logo url: ", logoUrl);
-
-        window.setTimeout(function() {
-            const img = new Image();
-            img.onload = () => {
-                logger.log("Logo image loaded");
-            };
-            img.src = logoUrl;
-        }, 1500);
-    });
 
     useAutorun(() => {
         if (!uiState.menu) {
@@ -56,10 +41,11 @@ function Menu() {
         <div className="menu__bar">
             <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer">
                 <img
-                    src={logoUrl}
+                    src={fp.logoUrl}
                     onError={() => (s.logoVisibility = "hidden")}
                     style={{ visibility: s.logoVisibility }}
                     alt=""
+                    crossOrigin="anonymous"
                 />
             </a>
         </div>

@@ -1,10 +1,11 @@
 import Rect from "./core/Rect";
 import baseUrl from "./tools/base-url";
 import "./tools/debug";
-import { loadCss, loadJson, loadJsonCached, loadFont } from "./tools/loaders";
+import { loadCss, loadJson, loadJsonCached, loadFont, preloadImage } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import useShadow from "./utils/use-shadow";
+import importDrawer from "./drawing/impl/import-drawer";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -19,6 +20,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     meshUrl: string;
+    logoUrl: string;
     readonly noOverlay: boolean;
     svg: SvgJson;
     data: Data;
@@ -100,6 +102,7 @@ export default class FloorPlanLoader implements FloorPlan {
         // preloadJs("vendors~floorplan.js");
         // preloadFont("fonts/oswald-v17-cyrillic_latin-300.woff2");
         // preloadFont("fonts/oswald-v17-cyrillic_latin-500.woff2");
+        importDrawer();
 
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
@@ -147,6 +150,9 @@ export default class FloorPlanLoader implements FloorPlan {
                 self.meshUrl += `?v=${fpVersion}`;
                 loadJsonCached<any>(self.meshUrl);
             }
+
+            self.logoUrl = dataUrlBase + self.data.logo;
+            preloadImage(self.logoUrl);
 
             self.svg.area = Rect.fromSvgJsonRect(self.svg.area);
             self.svg.viewBox = Rect.fromSvgJsonRect(self.svg.viewBox);

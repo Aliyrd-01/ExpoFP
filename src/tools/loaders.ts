@@ -39,6 +39,15 @@ export function preloadFont(url: string) {
     document.head.appendChild(link);
 }
 
+export function preloadImage(url: string) {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = url;
+    if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+}
+
 // export function preloadJson(url: string) {
 //     const link = document.createElement("link");
 //     link.rel = "preload";
