@@ -32,7 +32,7 @@ async function createConfig() {
             path: resolve(__dirname, "dist"),
             filename: "[name].js",
             library: "ExpoFP",
-            crossOriginLoading: isProd ? "anonymous" : false,
+            crossOriginLoading: isProd ? "use-credentials" : false,
             globalObject: "this"
         },
         resolve: {
