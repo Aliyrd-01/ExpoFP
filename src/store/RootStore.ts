@@ -126,10 +126,20 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
-    @action clickExhibitor(exhibitor: Exhibitor) {
+    @action clickExhibitor2(exhibitor: Exhibitor) {
         this.selectExhibitor(exhibitor);
         this.moveToExhibitor(exhibitor);
         this.showMap();
+        // dispatch("selectExhibitor", id);
+        // dispatch("moveToExhibitor", id);
+        // dispatch("showMap");
+    }
+
+    @action clickExhibitor(exhibitor: Exhibitor) {
+        window.setTimeout(() => {
+            this.clickExhibitor2(exhibitor);
+        }, 100);
+
         // dispatch("selectExhibitor", id);
         // dispatch("moveToExhibitor", id);
         // dispatch("showMap");
@@ -162,10 +172,12 @@ export default class RootStore {
                 booths.push(item);
             }
         });
+        console.log("zzz", booths);
         this.uiState.moveToBooths = booths;
         // commit("setMoveToBooths", booths);
     }
     @action moveToExhibitor(exhibitor: Exhibitor) {
+        // alert(exhibitor.id);
         this.moveToList([exhibitor]);
         // dispatch("moveToList", exhibitorsToItems([state.exhibitors[id]]));
     }
