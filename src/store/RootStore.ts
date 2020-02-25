@@ -43,6 +43,7 @@ export default class RootStore {
     }
 
     @action selectNone() {
+        if (window['__resett']) window['__resett']();
         this.uiState.details = null;
     }
 
@@ -52,18 +53,21 @@ export default class RootStore {
     }
 
     @action selectCategory(category: Category) {
+        if (window['__resett']) window['__resett']();
         this.uiState.details = null;
         this.uiState.list = { type: "category", category };
         this.uiState.desiredOverlaySize = "full";
     }
 
     @action selectSearch(text?: string) {
+        if (window['__resett']) window['__resett']();
         this.uiState.details = null;
         this.uiState.list = { type: "search", text: text || "", focused: false };
         this.uiState.activeListIndex = -1;
     }
 
     @action clickBookmarks() {
+        if (window['__resett']) window['__resett']();
         this.uiState.menu = false;
         this.selectBookmarks();
         this.moveToList();
@@ -75,6 +79,7 @@ export default class RootStore {
     }
 
     @action clickCategory(category: Category) {
+        if (window['__resett']) window['__resett']();
         this.uiState.menu = false;
         this.selectCategory(category);
         this.moveToList();
@@ -90,6 +95,7 @@ export default class RootStore {
     }
 
     @action clickBoothInList(booth: Booth) {
+        if (window['__resett']) window['__resett']();
         this.uiState.hoveredBooth = null;
         this.selectBooth(booth);
         this.moveToList([booth]);

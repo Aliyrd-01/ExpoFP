@@ -96,7 +96,7 @@ function Menu() {
             >
                 <div className="menu__content">
                     <a href="/#" onClick={handleSearch} className="menu__item">
-                        Search
+                        Search<sup>1</sup>
                     </a>
                     {!uiState.kiosk && !isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">

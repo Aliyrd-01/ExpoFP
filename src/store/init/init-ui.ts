@@ -43,15 +43,16 @@ export default function initUi(store: RootStore) {
 
     if (uiState.kiosk) {
         var time;
-        window.onload = resetTimer;
-        document.onload = resetTimer;
-        document.onmousemove = resetTimer;
-        document.onmousedown = resetTimer; // touchscreen presses
-        document.ontouchstart = resetTimer;
-        document.onclick = resetTimer; // touchpad clicks
-        document.onkeypress = resetTimer;
-        document.addEventListener("scroll", resetTimer, true); // improved; see comments
-
+        // window.onload = resetTimer;
+        // document.onload = resetTimer;
+        // document.onmousemove = resetTimer;
+        // document.onmousedown = resetTimer; // touchscreen presses
+        // document.ontouchstart = resetTimer;
+        // document.onclick = resetTimer; // touchpad clicks
+        // document.onkeypress = resetTimer;
+        // document.addEventListener("scroll", resetTimer, true); // improved; see comments
+        window['__resett'] = resetTimer;
+        resetTimer();
         function logout() {
             store.reset();
             // alert("You are now logged out.");
@@ -61,7 +62,7 @@ export default function initUi(store: RootStore) {
         function resetTimer() {
             console.log("zzz2", "reset timer");
             clearTimeout(time);
-            time = setTimeout(logout, 30000);
+            time = setTimeout(logout, 5000);
         }
     }
 

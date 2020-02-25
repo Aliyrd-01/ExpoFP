@@ -160,6 +160,7 @@ export default function Map() {
                 return !preventWheel;
             })
             .on("zoom", () => {
+                if (window['__resett']) window['__resett']();
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
@@ -206,6 +207,7 @@ export default function Map() {
     }
 
     function handleClick(e: React.MouseEvent) {
+        if (window['__resett']) window['__resett']();
         if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
             store.showMap();
         }
