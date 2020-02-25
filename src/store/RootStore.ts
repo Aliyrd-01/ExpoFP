@@ -6,6 +6,7 @@ import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
 import FloorPlanReady from "../floorplan.ready";
+import browser from "../utils/browser";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -145,9 +146,12 @@ export default class RootStore {
     }
 
     @action clickExhibitor(exhibitor: Exhibitor) {
-        window.setTimeout(() => {
-            this.clickExhibitor2(exhibitor);
-        }, 400);
+        window.setTimeout(
+            () => {
+                this.clickExhibitor2(exhibitor);
+            },
+            navigator.userAgent.indexOf("android") > -1 ? 400 : 50
+        );
 
         // dispatch("selectExhibitor", id);
         // dispatch("moveToExhibitor", id);
