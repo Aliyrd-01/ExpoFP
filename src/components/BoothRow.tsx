@@ -21,7 +21,7 @@ const BoothRow: React.FC<{
         />
     );
     function handleClick() {
-        store.clickBoothInList(booth);
+        store.clickBoothInList2(booth);
     }
 
     function handleMouseOver() {
