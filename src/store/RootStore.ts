@@ -46,7 +46,7 @@ export default class RootStore {
             this.selectSearch("");
             // this.moveToList();
             this.uiState.centerMap = true;
-        }, 600);
+        }, 1000);
     }
 
     @action selectNone() {
