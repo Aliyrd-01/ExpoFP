@@ -22,6 +22,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
     const div = useRef();
 
     useEffect(() => {
+        if (!div.current) return;
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
@@ -39,9 +40,11 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             <div className="exhibitor-row__lines">
                 {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
             </div>
-            <div className="exhibitor-row__bookmark" onClick={handleBookmark} title="Toggle bookmark" ref={div}>
-                <BookmarkSvg />
-            </div>
+            {uiState.kiosk ? null : (
+                <div className="exhibitor-row__bookmark" onClick={handleBookmark} title="Toggle bookmark" ref={div}>
+                    <BookmarkSvg />
+                </div>
+            )}
             <div className="exhibitor-row__booth">
                 {exhibitor.booths.map(booth => (
                     <div key={booth.id}>{booth.name}</div>

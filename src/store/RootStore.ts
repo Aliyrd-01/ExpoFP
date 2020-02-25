@@ -32,6 +32,15 @@ export default class RootStore {
         this.uiState.details = booth;
     }
 
+    @action reset() {
+        const el = window["__searchi"] as HTMLInputElement;
+        if (el) el.blur();
+        window.setTimeout(() => {
+            this.selectSearch("");
+            this.moveToList();
+        }, 400);
+    }
+
     @action selectNone() {
         this.uiState.details = null;
     }
@@ -138,7 +147,7 @@ export default class RootStore {
     @action clickExhibitor(exhibitor: Exhibitor) {
         window.setTimeout(() => {
             this.clickExhibitor2(exhibitor);
-        }, 100);
+        }, 400);
 
         // dispatch("selectExhibitor", id);
         // dispatch("moveToExhibitor", id);

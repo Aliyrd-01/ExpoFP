@@ -45,11 +45,15 @@ function Menu() {
         }
     });
 
+    function handleClick(e) {
+        if (uiState.kiosk) return e.preventDefault();
+    }
+
     const barContent = isIframe ? (
         <div className="menu__bar -empty"></div>
     ) : (
         <div className="menu__bar">
-            <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer">
+            <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
                 <img
                     src={logoUrl}
                     onError={() => (s.logoVisibility = "hidden")}
@@ -94,19 +98,19 @@ function Menu() {
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         Search
                     </a>
-                    {!isIframe && (
+                    {!uiState.kiosk && !isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             Event&nbsp;Home&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {!isIframe && !!data.registerUrl && (
+                    {!uiState.kiosk && !isIframe && !!data.registerUrl && (
                         <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             Register&nbsp;to&nbsp;Attend&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {exhibitorStore.exhibitors.length > 0 && (
+                    {!uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
                                 Bookmarks <span>({exhibitorStore.bookmarked.length})</span>
@@ -116,9 +120,11 @@ function Menu() {
                             ) : null}
                         </a>
                     )}
-                    <a href="/#" className="menu__item -pdf" onClick={handlePdf}>
-                        Download PDF
-                    </a>
+                    {!uiState.kiosk && (
+                        <a href="/#" className="menu__item -pdf" onClick={handlePdf}>
+                            Download PDF
+                        </a>
+                    )}
                     {categories}
                 </div>
             </OverlayContent>

@@ -46,6 +46,7 @@ export default class UIState {
     previewExhibitor: Exhibitor = null;
     @observable wsStarted = false;
     @observable canvasStarted = false;
+    @observable kiosk = false;
 
     overlayMediumHeightRems = 10;
 

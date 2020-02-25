@@ -114,6 +114,8 @@ export default function validateData(data: Data) {
         if (typeof exhibitor.email === "undefined") exhibitor.email = e.publicEmail;
 
         exhibitor.categories = exhibitor.categories || [];
+
+        if (exhibitor.logo) exhibitor.logo = exhibitor.logo.replace(/\?.+/, '');
     }
 
     // disable ads and featured for free plans

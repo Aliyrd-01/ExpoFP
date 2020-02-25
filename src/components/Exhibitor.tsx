@@ -23,6 +23,7 @@ function ExhibitorComponent() {
             return this.exhibitor.website ? this.exhibitor.website.replace(/^(http(s?):\/\/)([^/]+)(\/)?$/i, "$3") : "";
         },
         get anySocial() {
+            if (uiState.kiosk) return false;
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
                 s => this.exhibitor[s]
             );
@@ -52,6 +53,10 @@ function ExhibitorComponent() {
         }
     );
 
+    function handleClick(e) {
+        if (uiState.kiosk) return e.preventDefault();
+    }
+
     return useObserver(() => {
         const exhibitor = s.exhibitor;
         // if (!exhibitor) return null;
@@ -62,9 +67,11 @@ function ExhibitorComponent() {
                         <span>{exhibitor.name}</span>
                         {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                     </span>
-                    <a href="/" onClick={bookmark} className="exhibitor__bar-bk">
-                        <BookmarkSvg />
-                    </a>
+                    {uiState.kiosk ? null : (
+                        <a href="/" onClick={bookmark} className="exhibitor__bar-bk">
+                            <BookmarkSvg />
+                        </a>
+                    )}
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
                     {data.boothTerm} {exhibitor.booths.map(b => b.name).join(", ")}
@@ -162,7 +169,9 @@ function ExhibitorComponent() {
                                 <div>
                                     <i className="fas fa-phone" />
                                     <div>
-                                        <a href={"tel:" + exhibitor.phone1}>{exhibitor.phone1}</a>
+                                        <a href={"tel:" + exhibitor.phone1} onClick={handleClick}>
+                                            {exhibitor.phone1}
+                                        </a>
                                     </div>
                                 </div>
                             )}
@@ -170,7 +179,12 @@ function ExhibitorComponent() {
                                 <div>
                                     <i className="fas fa-globe" />
                                     <div>
-                                        <a href={exhibitor.website} target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            href={exhibitor.website}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={handleClick}
+                                        >
                                             {s.websiteTrimmed}
                                         </a>
                                     </div>
@@ -180,7 +194,12 @@ function ExhibitorComponent() {
                                 <div v-if="exhibitor.email">
                                     <i className="fas fa-at" />
                                     <div>
-                                        <a href={"mailto:" + exhibitor.email} target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            href={"mailto:" + exhibitor.email}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={handleClick}
+                                        >
                                             {exhibitor.email}
                                         </a>
                                     </div>
@@ -224,6 +243,8 @@ function ExhibitorComponent() {
     }
 
     function sendLoginLink(e: MouseEvent<HTMLButtonElement>) {
+        if (uiState.kiosk) return e.preventDefault();
+
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
         if (!window.confirm(`Send login instructions to ${email} to edit profile?`)) return;
@@ -254,5 +275,4 @@ function ExhibitorComponent() {
     }
 }
 
-export default () =>
-    useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
+export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);

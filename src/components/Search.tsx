@@ -62,6 +62,12 @@ function Search() {
         return () => window.clearInterval(intervalId);
     }, [s]);
 
+    useEffect(()=> {
+        if (el.current){
+            window['__searchi'] = el.current;
+        }
+    }, [el.current])
+
     // useEffect(() => {
     //     const setPosition = () => {
     //         // if (!el.current.tagName) return;

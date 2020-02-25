@@ -1,5 +1,5 @@
 import { reaction, when } from "mobx";
-import { boothStore } from "../../../../store";
+import { boothStore, uiState } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
@@ -7,7 +7,7 @@ import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from "./canvases";
 
 export default function configBoothBookmark(context: DrawerContext, booth: Booth) {
-    if (!(booth instanceof RegularBooth)) return;
+    if (uiState.kiosk || !(booth instanceof RegularBooth)) return;
     new BoothBookmarkDrawer(context, booth);
 }
 
@@ -97,7 +97,10 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                             () => [booth.skipDim, context.ptscale],
                             () => context.requireUpdate(this.updateBound)
                         );
-                        when(() => !booth.bookmarked, () => dispose());
+                        when(
+                            () => !booth.bookmarked,
+                            () => dispose()
+                        );
                     }
                 }
             );
