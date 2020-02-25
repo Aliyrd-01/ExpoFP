@@ -46,7 +46,7 @@ export default class RootStore {
             this.selectSearch("");
             // this.moveToList();
             this.uiState.centerMap = true;
-        }, navigator.userAgent.toLowerCase().indexOf("android") !== -1 ? 600: 50);
+        }, 600);
     }
 
     @action selectNone() {
