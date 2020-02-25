@@ -5,11 +5,11 @@ const fetch = require("node-fetch");
 
 const stable = "2.0.1";
 // const updateToBeta = "0.4.3";
-const beta = "2.0.3";
+const beta = "2.0.4";
 const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["eventtechlive2020", "miblive2020", "confex20", "_template_for_new_event_", "demo"];
+const betas = ["confex20", "demo"];
 const alphas = ["thinksoft", "confex21", "sydneybuildexpo"];
 const force = [...alphas];
 
