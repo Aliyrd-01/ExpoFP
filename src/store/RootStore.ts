@@ -150,7 +150,8 @@ export default class RootStore {
             () => {
                 this.clickExhibitor2(exhibitor);
             },
-            navigator.userAgent.indexOf("android") > -1 ? 400 : 50
+            400
+            // navigator.userAgent.indexOf("android") > -1 ? 400 : 50
         );
 
         // dispatch("selectExhibitor", id);
