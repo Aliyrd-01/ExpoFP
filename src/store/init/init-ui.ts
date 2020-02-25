@@ -62,7 +62,7 @@ export default function initUi(store: RootStore) {
         function resetTimer() {
             console.log("zzz2", "reset timer");
             clearTimeout(time);
-            time = setTimeout(logout, 5000);
+            time = setTimeout(logout, 30000);
         }
     }
 
