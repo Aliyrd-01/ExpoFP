@@ -163,7 +163,7 @@ export default class RootStore {
             () => {
                 this.clickExhibitor2(exhibitor);
             },
-            400
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 700 : 50
             // navigator.userAgent.indexOf("android") > -1 ? 400 : 50
         );
 
