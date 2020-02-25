@@ -240,7 +240,7 @@ export default class RootStore {
         } else if (item instanceof Category) {
             this.clickCategory(item);
         } else if (item instanceof BoothBase) {
-            this.clickBoothInList(item);
+            this.clickBoothInList2(item);
         }
         // switch (item.type) {
         //     case "exhibitor":
