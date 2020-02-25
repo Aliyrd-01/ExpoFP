@@ -113,6 +113,23 @@ export default class RootStore {
         // dispatch("moveToList", boothsToItems([booth]));
         // dispatch("showMap", id);
     }
+
+    @action clickBoothInList2(booth: Booth) {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.hoveredBooth = null;
+        this.selectBooth(booth);
+        window.setTimeout(() => {
+            this.moveToList([booth]);
+            this.showMap();
+        }, 400);
+
+        // commit("setHoveredBooth", null);
+        // dispatch("selectBooth", id);
+        // // const booth = state.booths[id];
+        // dispatch("moveToList", boothsToItems([booth]));
+        // dispatch("showMap", id);
+    }
+
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
         if (!booth) {
@@ -163,7 +180,7 @@ export default class RootStore {
             () => {
                 this.clickExhibitor2(exhibitor);
             },
-            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 700 : 50
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             // navigator.userAgent.indexOf("android") > -1 ? 400 : 50
         );
 
