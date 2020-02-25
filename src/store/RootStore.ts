@@ -44,8 +44,9 @@ export default class RootStore {
             (el.querySelector("input[type=search]") as any).blur();
         window.setTimeout(() => {
             this.selectSearch("");
-            this.moveToList();
-        }, 400);
+            // this.moveToList();
+            this.uiState.centerMap = true;
+        }, navigator.userAgent.toLowerCase().indexOf("android") !== -1 ? 600: 50);
     }
 
     @action selectNone() {
