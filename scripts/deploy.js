@@ -1,3 +1,6 @@
+console.log("Wont deploy from here");
+return;
+
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const async = require("async");
