@@ -118,10 +118,13 @@ export default class RootStore {
         if (window["__resett"]) window["__resett"]();
         this.uiState.hoveredBooth = null;
         this.selectBooth(booth);
-        window.setTimeout(() => {
-            this.moveToList([booth]);
-            this.showMap();
-        }, 400);
+        window.setTimeout(
+            () => {
+                this.moveToList([booth]);
+                this.showMap();
+            },
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+        );
 
         // commit("setHoveredBooth", null);
         // dispatch("selectBooth", id);
