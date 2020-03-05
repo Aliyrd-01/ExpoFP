@@ -139,7 +139,7 @@ if (locationSearch.startsWith("?ba=")) {
 }
 
 // facebook and google  fix
-if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga") || /^\?\S{1,10}=/i.test(locationSearch)) {
+if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga") || /^\?\S{1,10}(=|%3D)/i.test(locationSearch)) {
     historyReplace("?");
 }
 
