@@ -138,8 +138,8 @@ if (locationSearch.startsWith("?ba=")) {
     else historyReplace("?bookmarks");
 }
 
-// facebook fix
-if (locationSearch.startsWith("?fbclid")) {
+// facebook and google  fix
+if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga")) {
     historyReplace("?");
 }
 
