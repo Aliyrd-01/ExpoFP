@@ -3,6 +3,7 @@ import { computed } from "mobx";
 import Rect from "../core/Rect";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
+import settings from "../tools/settings";
 
 // interface BoothState {
 //     hover: boolean;
@@ -21,7 +22,9 @@ export default class BoothStore {
         return new Map<number, Booth>(this.booths.map(c => [c.id, c]));
     }
 
-    @computed({ keepAlive: true }) get borderWidth() {
+    @computed({ keepAlive: true }) get borderWidth() {        
+        if (settings.EXPO === "groomexpo")
+            return 0.4;
         const ar = this.booths.filter((_, i) => i % 10 === 0).map(x => x.rect.w + x.rect.h);
         return ar.reduce((a, b) => a + b) / ar.length / 80;
     }
