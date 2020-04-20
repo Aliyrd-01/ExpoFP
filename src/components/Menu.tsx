@@ -121,7 +121,7 @@ function Menu() {
                         </a>
                     )}
                     {!uiState.kiosk && (
-                        <a href="/#" className="menu__item -pdf" onClick={handlePdf}>
+                        <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
                             Download PDF
                         </a>
                     )}
