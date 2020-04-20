@@ -26,6 +26,7 @@ export class Category {
     readonly id: number;
     readonly name: string;
     readonly slug: string;
+    readonly sponsorship: boolean;
 
     readonly exhibitors: Exhibitor[];
     // populated
