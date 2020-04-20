@@ -42,6 +42,8 @@ function dispatchFromUrl() {
     const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug);
     if (slug === "bookmarks") {
         store.selectBookmarks();
+    } else if (slug === "-pdf") {
+        store.uiState.printingPdf = true;
     } else if (booth) {
         store.selectBooth(booth);
     } else {
