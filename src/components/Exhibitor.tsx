@@ -116,7 +116,7 @@ function ExhibitorComponent() {
                                     e.preventDefault();
                                     handleCategoryClick(c);
                                 }}
-                                className="exhibitor__categories-cat"
+                                className={c.sponsorship ? "exhibitor__categories-sponsorship" : "exhibitor__categories-cat"}
                             >
                                 {c.name}
                             </a>

@@ -21,6 +21,7 @@ interface Data {
 interface RawCategory {
     id: number;
     name: string;
+    sponsorship: boolean;
 }
 
 type RawBooth = RawRegularBooth | RawSpecialBooth;
