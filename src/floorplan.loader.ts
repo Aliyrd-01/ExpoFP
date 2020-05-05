@@ -104,11 +104,11 @@ export default class FloorPlanLoader implements FloorPlan {
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
-            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
+            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
         ];
 
         let handledStyleElements = 0;
-        window.addEventListener("__efpStyleLoad", function(e: Event) {
+        window.addEventListener("__efpStyleLoad", function (e: Event) {
             const elements = window["__efpStyleElements"] as HTMLStyleElement[];
             while (handledStyleElements < elements.length) {
                 const el = elements[handledStyleElements];
@@ -125,10 +125,15 @@ export default class FloorPlanLoader implements FloorPlan {
                 await sleep(2000);
                 await loadJs(fpUrl + `?v=${++fpVersion}`);
             }
+            const data = window["__data"] as Data;
+            if (data.locale) {
+                // TODO: load required locale data
+            }
+
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
             // TODO: legacy, remove in 1/1/2021
-            document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
+            document.querySelectorAll(".expofp-floorplan-loader").forEach((x) => x.remove());
             // remove all kids (loaders)
             while (element.firstChild && element.firstChild !== shadowContainer) {
                 element.removeChild(element.firstChild);
