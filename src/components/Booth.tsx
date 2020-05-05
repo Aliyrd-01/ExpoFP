@@ -3,6 +3,7 @@ import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
+import { t } from "../utils/i18n";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
@@ -33,11 +34,11 @@ function Booth() {
             }
         },
         get reserveTitle() {
-            return "Reserve";
+            return t("Reserve");
         },
         get descriptionCombined() {
             return this.booth.description || data.reserveInstructions || "";
-        }
+        },
     }));
 
     return useObserver(() => {
@@ -46,18 +47,18 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (
                     <div className="booth__content -reg">
-                        <div>On Hold</div>
+                        <div>{t("On Hold")}</div>
                     </div>
                 );
             } else if (b.reserved) {
                 content = (
                     <div className="booth__content -reg">
-                        <div>Reserved</div>
+                        <div>{t("Reserved")}</div>
                     </div>
                 );
             } else if (b.exhibitors.length === 0) {
@@ -68,21 +69,23 @@ function Booth() {
                                 {b.type && (
                                     <div className="booth__info">
                                         <i className="fas fa-cube" />
-                                        <div className="booth__info-title">{data.boothTerm} Type</div>
+                                        <div className="booth__info-title">
+                                            {t("{{boothTerm}} Type", { boothTerm: data.boothTerm })} Type
+                                        </div>
                                         <div className="booth__info-val">{b.type}</div>
                                     </div>
                                 )}
                                 {b.size && (
                                     <div className="booth__info">
                                         <i className="fas fa-expand-alt" />
-                                        <div className="booth__info-title">Size</div>
+                                        <div className="booth__info-title">{t("Size")}</div>
                                         <div className="booth__info-val">{b.size}</div>
                                     </div>
                                 )}
                                 {b.price && b.price !== "0" && (
                                     <div className="booth__info">
                                         <i className="fas fa-tag" />
-                                        <div className="booth__info-title">Price</div>
+                                        <div className="booth__info-title">{t("Price")}</div>
                                         <div className="booth__info-val">{b.price}</div>
                                     </div>
                                 )}
@@ -97,7 +100,7 @@ function Booth() {
                             {s.showBuy && (
                                 <div className="booth__buy">
                                     <a href={b.buyUrl} rel="noopener">
-                                        Buy
+                                        {t("Buy")}
                                     </a>
                                 </div>
                             )}

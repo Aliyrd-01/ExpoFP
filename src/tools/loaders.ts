@@ -1,6 +1,6 @@
 import browser from "../utils/browser";
-import logger from "./logger";
 import baseUrl from "./base-url";
+import logger from "./logger";
 
 function allowAnonymous(url) {
     return !url.startsWith("file:///");
@@ -11,6 +11,11 @@ function goodUrl(url: string) {
         return baseUrl + url;
     }
     return url;
+}
+
+export async function loadJson<T>(url: string) {
+    const response = await fetch(goodUrl(url), { credentials: "same-origin" });
+    return (await response.json()) as T;
 }
 
 export function loadCss(url: string, appendTo: Element | ShadowRoot) {
@@ -31,7 +36,7 @@ export function preloadJs(url: string) {
 }
 
 export async function loadJs(url: string) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         const scriptTag = document.createElement("script");
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;

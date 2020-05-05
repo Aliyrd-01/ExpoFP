@@ -1,4 +1,5 @@
 import { RegularBooth } from "../../../../store/BoothStore";
+import { t } from "../../../../utils/i18n";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -39,7 +40,7 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
 
             c.fillStyle = "#fff";
             c.fillText(text, width / 2, height - (vPad / 2) * pixelRatio);
-        }
+        },
     };
 }
 
@@ -51,11 +52,11 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
     // if (b.special === false) {
 
     if (b.onHold) {
-        lines.push("On Hold");
+        lines.push(t("On Hold"));
     } else if (b.reserved) {
-        lines.push("Reserved");
+        lines.push(t("Reserved"));
     } else if (b.exhibitors.length) {
-        lines.push(...b.exhibitors.map(e => e.name));
+        lines.push(...b.exhibitors.map((e) => e.name));
     } else {
         if (b.size) lines.push(b.size);
         if (b.price && b.price !== "0") lines.push(b.price);
@@ -81,7 +82,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
     const mainLineWidth = measureText(boothFont, mainLine); // c.measureText(mainLine).width;
-    const companiesWidth = lines.map(x => measureText(detailFont, x));
+    const companiesWidth = lines.map((x) => measureText(detailFont, x));
     const maxTextWidth = Math.max(mainLineWidth, ...companiesWidth);
 
     const width = maxTextWidth + 2;
@@ -108,7 +109,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
                 c.fillText(line, 0, nextLine);
                 nextLine += detailFontSize + 1 * pixelRatio;
             }
-        }
+        },
     };
 }
 
@@ -132,7 +133,7 @@ export function createCircleCanvas(radius: number, pixelRatio: number): CanvasDe
                 c.beginPath();
                 c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
                 c.fill();
-            }
+            },
         };
 
         circleCanvasCache.set(key, res);
@@ -179,7 +180,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number) {
                 c.lineTo(0, 0);
                 c.fill();
                 c.stroke();
-            }
+            },
         };
         bookmarkCanvasCache.set(key, res);
         // cleanup
@@ -224,7 +225,7 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
                 c.fillStyle = "#fff";
                 c.fillText(lines[i], width / 2, startFrom + lineHeight * (i + 1));
             }
-        }
+        },
     };
 }
 

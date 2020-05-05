@@ -3,6 +3,7 @@ import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
 import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
+import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
 
@@ -30,7 +31,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         <a
             className={`exhibitor-row ${className} ${classNames({
                 bookmarked: exhibitor.bookmarked,
-                featured: exhibitor.featured
+                featured: exhibitor.featured,
             })}`}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}
@@ -41,12 +42,12 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
             </div>
             {uiState.kiosk ? null : (
-                <div className="exhibitor-row__bookmark" onClick={handleBookmark} title="Toggle bookmark" ref={div}>
+                <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
                     <BookmarkSvg />
                 </div>
             )}
             <div className="exhibitor-row__booth">
-                {exhibitor.booths.map(booth => (
+                {exhibitor.booths.map((booth) => (
                     <div key={booth.id}>{booth.name}</div>
                 ))}
             </div>

@@ -1,15 +1,16 @@
-import React from "react";
 import { useObserver } from "mobx-react-lite";
-import store, { uiState, exhibitorStore } from "../store";
-import OverlayContent from "./OverlayContent";
-import List from "./List";
+import React from "react";
+import store, { exhibitorStore, uiState } from "../store";
+import { t } from "../utils/i18n";
 import "./Bookmarks.scss";
+import List from "./List";
+import OverlayContent from "./OverlayContent";
 
 function Bookmarks() {
     return useObserver(() => {
         const bar = (
             <div className="bar">
-                Bookmarks&nbsp;<span>({exhibitorStore.bookmarked.length})</span>
+                {t("Bookmarks")}&nbsp;<span>({exhibitorStore.bookmarked.length})</span>
             </div>
         );
 

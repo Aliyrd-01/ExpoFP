@@ -1,9 +1,10 @@
-import React from "react";
-import "./Demo.scss";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import { uiState } from "../store";
-import { useInit } from "../utils/mobx";
 import classNames from "classnames";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import React from "react";
+import { uiState } from "../store";
+import { t } from "../utils/i18n";
+import { useInit } from "../utils/mobx";
+import "./Demo.scss";
 
 const key = "note-dismissed5";
 
@@ -17,9 +18,9 @@ export default function Demo() {
             return classNames({
                 demo: true,
                 top: this.top,
-                hidden: this.hidden
+                hidden: this.hidden,
             });
-        }
+        },
     }));
 
     useInit(() => {
@@ -34,14 +35,14 @@ export default function Demo() {
             <section>
                 <div className="demo__message">
                     <span>
-                        Get your free floor plan at&nbsp;
+                        {t("Get your free floor plan at")}&nbsp;
                         <a href="https://expofp.com/" target="_blank" rel="noopener noreferrer">
                             ExpoFP.com
                         </a>
                     </span>
                 </div>
                 <a href="/" onClick={dismiss} className="demo__dismiss">
-                    Dismiss
+                    {t("Dismiss")}
                 </a>
             </section>
         </div>

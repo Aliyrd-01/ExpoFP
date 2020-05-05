@@ -7,6 +7,7 @@ import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import baseUrl from "../tools/base-data-url";
 import logger from "../tools/logger";
+import { t } from "../utils/i18n";
 import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
@@ -15,7 +16,7 @@ import OverlayContent from "./OverlayContent";
 const logoUrl = baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
 
-window.setTimeout(function() {
+window.setTimeout(function () {
     const img = new Image();
     img.onload = () => {
         logger.log("Logo image loaded");
@@ -33,7 +34,7 @@ function Menu() {
     const s = useLocalStore(() => ({
         logoVisibility: "visible" as VisibilityProperty,
         shown: false,
-        shownTimeout: undefined as number
+        shownTimeout: undefined as number,
     }));
 
     useAutorun(() => {
@@ -66,8 +67,8 @@ function Menu() {
 
     const categories = categoryStore.categories.length ? (
         <>
-            <div className="menu__item">Categories</div>
-            {categoryStore.categories.map(c => (
+            <div className="menu__item">{t("Categories")}</div>
+            {categoryStore.categories.map((c) => (
                 <a
                     className="menu__cat"
                     href={`?${encodeURIComponent(c.slug)}`}
@@ -96,33 +97,35 @@ function Menu() {
             >
                 <div className="menu__content">
                     <a href="/#" onClick={handleSearch} className="menu__item">
-                        Search<sup>3</sup>
+                        {t("Search")}
+                        <sup>3</sup>
+                        <sup>3</sup>
                     </a>
                     {!uiState.kiosk && !isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                            Event&nbsp;Home&nbsp;
+                            {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
                     {!uiState.kiosk && !isIframe && !!data.registerUrl && (
                         <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                            Register&nbsp;to&nbsp;Attend&nbsp;
+                            {t("Register to Attend").replace(/ /g, "\u00A0")}&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
                     {!uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
-                                Bookmarks <span>({exhibitorStore.bookmarked.length})</span>
+                                {t("Bookmarks")} <span>({exhibitorStore.bookmarked.length})</span>
                             </span>
                             {exhibitorStore.bookmarked.length ? (
-                                <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
+                                <button onClick={shareBookmarks} className="fas fa-share-square" title={t("Share bookmarks")} />
                             ) : null}
                         </a>
                     )}
                     {!uiState.kiosk && (
                         <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
-                            Download PDF
+                            {t("Download PDF")}
                         </a>
                     )}
                     {categories}
@@ -136,9 +139,9 @@ function Menu() {
         e.preventDefault();
         (e.target as HTMLButtonElement).blur();
         const loc = window.location;
-        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map(x => x.id).join("|");
+        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map((x) => x.id).join("|");
         copyToClipboard(url);
-        alert("Link copied to clipboard.\nOpen it on another device to import bookmarks.");
+        alert(t("Link copied to clipboard.\nOpen it on another device to import bookmarks."));
     }
 
     function close() {
@@ -146,7 +149,7 @@ function Menu() {
     }
 
     function numOfExhibitors(id: number) {
-        return exhibitorStore.exhibitors.filter(e => e.categories.find(c => c.id === id)).length;
+        return exhibitorStore.exhibitors.filter((e) => e.categories.find((c) => c.id === id)).length;
     }
 
     function handleSearch(e: MouseEvent) {
