@@ -9,6 +9,7 @@ interface Data {
     logo: string;
     gtag: string;
     boothTerm: string;
+    locale: string;
     booths: RawBooth[];
     exhibitors: RawExhibitor[];
     categories: RawCategory[];

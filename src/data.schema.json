@@ -57,6 +57,10 @@
             "type": "string",
             "description": "Booth term (typically 'booth' or 'stand')"
         },
+        "locale": {
+            "type": "string",
+            "description": "Locale to choose translation resouce file"
+        },
         "booths": {
             "type": "array",
             "items": {
