@@ -4,6 +4,7 @@ import React from "react";
 import { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import "./Controls.scss";
+import { t } from "../utils/i18n";
 
 export default function Controls() {
     const s = useLocalStore(() => ({
@@ -20,8 +21,8 @@ export default function Controls() {
 
     return useObserver(() => (
         <div className={s.className} style={s.style}>
-            <button className="fa fa-plus" title="Zoom In" onClick={zoom.bind(window, 1)}></button>
-            <button className="fa fa-minus" title="Zoom Out" onClick={zoom.bind(window, -1)}></button>
+            <button className="fa fa-plus" title={t("Zoom In")} onClick={zoom.bind(window, 1)}></button>
+            <button className="fa fa-minus" title={t("Zoom Out")} onClick={zoom.bind(window, -1)}></button>
         </div>
     ));
 

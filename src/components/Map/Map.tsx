@@ -19,6 +19,7 @@ import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
 import isIframe from "../../utils/is-iframe";
 import isMac from "../../utils/is-mac";
+import { t } from "../../utils/i18n";
 
 //console.log('isIframe', isIframe)
 
@@ -136,7 +137,7 @@ export default function Map() {
             .interpolate(interpolate)
             .scaleExtent([0.1, 12])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
-            .filter(function() {
+            .filter(function () {
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")
                     // && currentEvent.type !== "touchstart"
                     return true;
@@ -150,9 +151,9 @@ export default function Map() {
                     // } else
 
                     if (isMac) {
-                        uiState.largeMessage = "Use ⌘ + scroll to zoom";
+                        uiState.largeMessage = t("Use {{keyCode}} + scroll to zoom", { keyCode: "⌘" });
                     } else {
-                        uiState.largeMessage = "Use Ctrl + scroll to zoom";
+                        uiState.largeMessage = t("Use {{keyCode}} + scroll to zoom", { keyCode: "Ctrl" });
                     }
                     uiState.largeMessageLastSet = performance.now();
                 }

@@ -5,6 +5,7 @@ import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
+import { t } from "../utils/i18n";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     function handleClick(e: MouseEvent) {
@@ -41,7 +42,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
             </div>
             {uiState.kiosk ? null : (
-                <div className="exhibitor-row__bookmark" onClick={handleBookmark} title="Toggle bookmark" ref={div}>
+                <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
                     <BookmarkSvg />
                 </div>
             )}

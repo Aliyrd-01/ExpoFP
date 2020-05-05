@@ -1,4 +1,5 @@
 import { RegularBooth } from "../../../../store/BoothStore";
+import { t } from "../../../../utils/i18n";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -51,9 +52,9 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
     // if (b.special === false) {
 
     if (b.onHold) {
-        lines.push("On Hold");
+        lines.push(t("On Hold"));
     } else if (b.reserved) {
-        lines.push("Reserved");
+        lines.push(t("Reserved"));
     } else if (b.exhibitors.length) {
         lines.push(...b.exhibitors.map(e => e.name));
     } else {

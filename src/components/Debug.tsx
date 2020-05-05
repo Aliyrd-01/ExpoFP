@@ -3,6 +3,7 @@ import React from "react";
 import store, { uiState } from "../store";
 import debugCanvases from "../tools/debugCanvases";
 import "./Debug.scss";
+import { t } from "../utils/i18n";
 
 function Debug() {
     const canvases = debugCanvases.map(item => (
@@ -15,7 +16,7 @@ function Debug() {
 
     return (
         <div className="debug">
-            <button onClick={() => store.selectSearch("")}>Close</button>
+            <button onClick={() => store.selectSearch("")}>{t("Close")}</button>
             {canvases}
         </div>
     );

@@ -7,6 +7,7 @@ import { useAutorun } from "../utils/mobx";
 import OverlayContent from "./OverlayContent";
 import List from "./List";
 import "./Search.scss";
+import { t } from "../utils/i18n";
 // import logger from "../tools/logger";
 
 function Search() {
@@ -31,8 +32,8 @@ function Search() {
         },
         get placeHolder() {
             return exhibitorStore.exhibitors.length === 0
-                ? `Search ${data.boothTerm.toLowerCase()}`
-                : `Search company, ${data.boothTerm.toLowerCase()} or category`;
+                ? t("Search {boothTerm}", { boothTerm: data.boothTerm.toLowerCase() })
+                : t("Search company, {{boothTerm}} or category", { boothTerm: data.boothTerm.toLowerCase() });
         }
     }));
 
@@ -62,8 +63,8 @@ function Search() {
         return () => window.clearInterval(intervalId);
     }, [s]);
 
-    useEffect(()=> {
-        if (el.current){
+    useEffect(() => {
+        if (el.current) {
             window['__searchi'] = el.current;
         }
     }, [el.current])

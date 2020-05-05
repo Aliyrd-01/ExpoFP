@@ -10,6 +10,7 @@ import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import { t } from "../utils/i18n";
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
@@ -143,7 +144,7 @@ function ExhibitorComponent() {
                     {s.anyAddress ? <div className="exhibitor__sep" /> : null}
                     {s.showEdit ? (
                         <div className="exhibitor__edit">
-                            <button className="far fa-pencil" title="Edit" onClick={sendLoginLink} />
+                            <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
                         </div>
                     ) : null}
                     {s.anyAddress && (
@@ -247,22 +248,22 @@ function ExhibitorComponent() {
 
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
-        if (!window.confirm(`Send login instructions to ${email} to edit profile?`)) return;
+        if (!window.confirm(t("Send login instructions to {{email}} to edit profile?", {email}))) return;
         if (settings.EXPO === "expo") return;
         const xhr = new XMLHttpRequest();
         xhr.open("POST", data.sendLoginLinkUrl);
         xhr.setRequestHeader("Content-Type", "application/json");
         function er() {
-            alert("Error sending login instructions.");
+            alert(t("Error sending login instructions"));
         }
-        xhr.onload = function(e) {
+        xhr.onload = function (e) {
             if (this.status !== 200) {
                 er();
                 return;
             }
-            alert(`A link to edit profile was sent to ${email}.`);
+            alert(t("A link to edit profile was sent to {{email}}", { email }));
         };
-        xhr.onerror = function(e) {
+        xhr.onerror = function (e) {
             logger.error("Error", e);
             er();
         };

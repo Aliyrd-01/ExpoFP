@@ -11,11 +11,12 @@ import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
+import { t } from "../utils/i18n";
 
 const logoUrl = baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
 
-window.setTimeout(function() {
+window.setTimeout(function () {
     const img = new Image();
     img.onload = () => {
         logger.log("Logo image loaded");
@@ -52,21 +53,21 @@ function Menu() {
     const barContent = isIframe ? (
         <div className="menu__bar -empty"></div>
     ) : (
-        <div className="menu__bar">
-            <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
-                <img
-                    src={logoUrl}
-                    onError={() => (s.logoVisibility = "hidden")}
-                    style={{ visibility: s.logoVisibility }}
-                    alt=""
-                />
-            </a>
-        </div>
-    );
+            <div className="menu__bar">
+                <a className="menu__title" href={data.homeUrl} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
+                    <img
+                        src={logoUrl}
+                        onError={() => (s.logoVisibility = "hidden")}
+                        style={{ visibility: s.logoVisibility }}
+                        alt=""
+                    />
+                </a>
+            </div>
+        );
 
     const categories = categoryStore.categories.length ? (
         <>
-            <div className="menu__item">Categories</div>
+            <div className="menu__item">{t("Categories")}</div>
             {categoryStore.categories.map(c => (
                 <a
                     className="menu__cat"
@@ -96,7 +97,7 @@ function Menu() {
             >
                 <div className="menu__content">
                     <a href="/#" onClick={handleSearch} className="menu__item">
-                        Search<sup>3</sup>
+                        {t("Search")}<sup>3</sup>
                     </a>
                     {!uiState.kiosk && !isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
@@ -106,23 +107,23 @@ function Menu() {
                     )}
                     {!uiState.kiosk && !isIframe && !!data.registerUrl && (
                         <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                            Register&nbsp;to&nbsp;Attend&nbsp;
+                            {t("Register to Attend")}
                             <i className="fas fa-external-link" />
                         </a>
                     )}
                     {!uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
-                                Bookmarks <span>({exhibitorStore.bookmarked.length})</span>
+                                {t("Bookmarks")} <span>({exhibitorStore.bookmarked.length})</span>
                             </span>
                             {exhibitorStore.bookmarked.length ? (
-                                <button onClick={shareBookmarks} className="fas fa-share-square" title="Share bookmarks" />
+                                <button onClick={shareBookmarks} className="fas fa-share-square" title={t("Share bookmarks")} />
                             ) : null}
                         </a>
                     )}
                     {!uiState.kiosk && (
                         <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
-                            Download PDF
+                            {t("Download PDF")}
                         </a>
                     )}
                     {categories}
@@ -138,7 +139,7 @@ function Menu() {
         const loc = window.location;
         const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map(x => x.id).join("|");
         copyToClipboard(url);
-        alert("Link copied to clipboard.\nOpen it on another device to import bookmarks.");
+        alert(t("Link copied to clipboard"));
     }
 
     function close() {

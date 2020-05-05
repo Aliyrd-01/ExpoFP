@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { uiState } from "../store";
 import { isWebGlSupported } from "../utils";
 import "./Pdf.scss";
+import { t } from "../utils/i18n";
 
 function Pdf() {
     const [visible, setVisible] = useState(false);
@@ -28,7 +29,7 @@ function Pdf() {
 
     return (
         <div className={`pdf ${visible ? "-visible" : null}`}>
-            <div className="pdf__text">Preparing PDF...</div>
+            <div className="pdf__text">{t("Preparing PDF")}...</div>
         </div>
     );
 }
