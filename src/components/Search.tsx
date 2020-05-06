@@ -2,12 +2,12 @@ import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { FocusEvent, KeyboardEvent, useEffect, useRef } from "react";
 import data from "../data";
-import store, { uiState, exhibitorStore } from "../store";
-import { useAutorun } from "../utils/mobx";
-import OverlayContent from "./OverlayContent";
-import List from "./List";
-import "./Search.scss";
+import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
+import { useAutorun } from "../utils/mobx";
+import List from "./List";
+import OverlayContent from "./OverlayContent";
+import "./Search.scss";
 // import logger from "../tools/logger";
 
 function Search() {
@@ -32,9 +32,9 @@ function Search() {
         },
         get placeHolder() {
             return exhibitorStore.exhibitors.length === 0
-                ? t("Search {boothTerm}", { boothTerm: data.boothTerm.toLowerCase() })
+                ? t("Search {{boothTerm}}", { boothTerm: data.boothTerm.toLowerCase() })
                 : t("Search company, {{boothTerm}} or category", { boothTerm: data.boothTerm.toLowerCase() });
-        }
+        },
     }));
 
     function getInput(): HTMLInputElement {
@@ -65,9 +65,9 @@ function Search() {
 
     useEffect(() => {
         if (el.current) {
-            window['__searchi'] = el.current;
+            window["__searchi"] = el.current;
         }
-    }, [el.current])
+    }, [el.current]);
 
     // useEffect(() => {
     //     const setPosition = () => {
@@ -115,7 +115,7 @@ function Search() {
         uiState.list = {
             type: "search",
             text,
-            focused: document.activeElement === getInput()
+            focused: document.activeElement === getInput(),
         };
     }
 

@@ -3,10 +3,10 @@ import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
+import { t } from "../utils/i18n";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
-import { t } from "../utils/i18n";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -38,7 +38,7 @@ function Booth() {
         },
         get descriptionCombined() {
             return this.booth.description || data.reserveInstructions || "";
-        }
+        },
     }));
 
     return useObserver(() => {
@@ -47,7 +47,7 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (
@@ -69,7 +69,9 @@ function Booth() {
                                 {b.type && (
                                     <div className="booth__info">
                                         <i className="fas fa-cube" />
-                                        <div className="booth__info-title">{t("Booth Type", { boothTerm: data.boothTerm })} Type</div>
+                                        <div className="booth__info-title">
+                                            {t("{{boothTerm}} Type", { boothTerm: data.boothTerm })} Type
+                                        </div>
                                         <div className="booth__info-val">{b.type}</div>
                                     </div>
                                 )}
@@ -98,7 +100,7 @@ function Booth() {
                             {s.showBuy && (
                                 <div className="booth__buy">
                                     <a href={b.buyUrl} rel="noopener">
-                                        Buy
+                                        {t("Buy")}
                                     </a>
                                 </div>
                             )}

@@ -2,8 +2,8 @@ import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs, preloadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
-import useShadow from "./utils/use-shadow";
 import { initI18n } from "./utils/i18n";
+import useShadow from "./utils/use-shadow";
 
 function nr() {
     throw new Error("FloorPlan not ready");

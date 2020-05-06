@@ -3,9 +3,9 @@ import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
 import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
+import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
-import { t } from "../utils/i18n";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     function handleClick(e: MouseEvent) {
@@ -31,7 +31,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         <a
             className={`exhibitor-row ${className} ${classNames({
                 bookmarked: exhibitor.bookmarked,
-                featured: exhibitor.featured
+                featured: exhibitor.featured,
             })}`}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}
@@ -47,7 +47,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 </div>
             )}
             <div className="exhibitor-row__booth">
-                {exhibitor.booths.map(booth => (
+                {exhibitor.booths.map((booth) => (
                     <div key={booth.id}>{booth.name}</div>
                 ))}
             </div>

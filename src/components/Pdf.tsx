@@ -2,8 +2,8 @@ import { useObserver } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { uiState } from "../store";
 import { isWebGlSupported } from "../utils";
-import "./Pdf.scss";
 import { t } from "../utils/i18n";
+import "./Pdf.scss";
 
 function Pdf() {
     const [visible, setVisible] = useState(false);

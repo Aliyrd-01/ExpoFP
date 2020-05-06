@@ -3,8 +3,8 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { uiState } from "../store";
 import { remsToPixels } from "../utils";
-import "./Controls.scss";
 import { t } from "../utils/i18n";
+import "./Controls.scss";
 
 export default function Controls() {
     const s = useLocalStore(() => ({
@@ -14,9 +14,9 @@ export default function Controls() {
         get style() {
             return {
                 left: uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
-                top: uiState.mapVisibleTop + remsToPixels(0.7) + "px"
+                top: uiState.mapVisibleTop + remsToPixels(0.7) + "px",
             };
-        }
+        },
     }));
 
     return useObserver(() => (

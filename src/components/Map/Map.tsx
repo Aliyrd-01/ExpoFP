@@ -10,6 +10,9 @@ import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
+import { t } from "../../utils/i18n";
+import isIframe from "../../utils/is-iframe";
+import isMac from "../../utils/is-mac";
 import { useReaction } from "../../utils/mobx";
 import getBoothIdFromClientXy from "./booth-by-xy";
 import createDrawer, { Drawer } from "./drawing/Drawer1";
@@ -17,9 +20,6 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import isIframe from "../../utils/is-iframe";
-import isMac from "../../utils/is-mac";
-import { t } from "../../utils/i18n";
 
 //console.log('isIframe', isIframe)
 
@@ -35,7 +35,7 @@ export default function Map() {
         $canvas: null as d3.Selection<HTMLCanvasElement, unknown, null, undefined>,
         zoom: null as d3.ZoomBehavior<Element, unknown>,
         drawer: null as Drawer,
-        prevBoothOver: null as Booth
+        prevBoothOver: null as Booth,
         // get visibleRect() {
         //     const rect = uiState.canvasVisibleRectPx
         //     return  rect;//rect.withPadding(rect.w * 0.05, rect.h * 0.05);
@@ -103,7 +103,7 @@ export default function Map() {
             //this.handledMoveToExhibitor = uiState.moveToBooths;
             logger.log("watched moveToBooths", uiState.moveToBooths);
             // // ask map to move to this exhibitor
-            const rects = uiState.moveToBooths.map(b => b.rect) as Rect[];
+            const rects = uiState.moveToBooths.map((b) => b.rect) as Rect[];
             if (rects.length === 0) return;
             const r = Rect.fromMultiple(rects);
             const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
@@ -150,18 +150,14 @@ export default function Map() {
                     //     scheduleMessage("Use two fingers to move", 500);
                     // } else
 
-                    if (isMac) {
-                        uiState.largeMessage = t("Use {{keyCode}} + scroll to zoom", { keyCode: "⌘" });
-                    } else {
-                        uiState.largeMessage = t("Use {{keyCode}} + scroll to zoom", { keyCode: "Ctrl" });
-                    }
+                    uiState.largeMessage = t("Use {{keyCode}} + scroll to zoom", { keyCode: isMac ? "⌘" : "Ctrl" });
                     uiState.largeMessageLastSet = performance.now();
                 }
 
                 return !preventWheel;
             })
             .on("zoom", () => {
-                if (window['__resett']) window['__resett']();
+                if (window["__resett"]) window["__resett"]();
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
@@ -208,7 +204,7 @@ export default function Map() {
     }
 
     function handleClick(e: React.MouseEvent) {
-        if (window['__resett']) window['__resett']();
+        if (window["__resett"]) window["__resett"]();
         if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
             store.showMap();
         }
