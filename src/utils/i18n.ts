@@ -2,7 +2,7 @@ import i18next, { TFunction } from "i18next";
 import { loadJson } from "../tools/loaders";
 import isDebug from "./is-debug";
 
-export let initI18n = async (locale: string): Promise<TFunction> => {
+export const initI18n = async (locale: string): Promise<TFunction> => {
     let resources = {};
     if (locale !== "en") resources[locale] = { translation: await loadJson(`/locales/${locale}.json`) };
 
@@ -13,4 +13,4 @@ export let initI18n = async (locale: string): Promise<TFunction> => {
     });
 };
 
-export let t = (template: string, options?: any) => i18next.t(template, options);
+export const t = (template: string, options?: any) => i18next.t(template, options);
