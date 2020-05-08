@@ -2,6 +2,7 @@ import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs, preloadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
+import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
 
 function nr() {
@@ -126,9 +127,7 @@ export default class FloorPlanLoader implements FloorPlan {
                 await loadJs(fpUrl + `?v=${++fpVersion}`);
             }
             const data = window["__data"] as Data;
-            if (data.locale) {
-                // TODO: load required locale data
-            }
+            await initI18n(data.locale || "en");
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");

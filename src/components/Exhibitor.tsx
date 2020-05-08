@@ -6,6 +6,7 @@ import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import { t } from "../utils/i18n";
 import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
@@ -25,11 +26,11 @@ function ExhibitorComponent() {
         get anySocial() {
             if (uiState.kiosk) return false;
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
-                s => this.exhibitor[s]
+                (s) => this.exhibitor[s]
             );
         },
         get anyAddress() {
-            return !!["address", "address2", "phone1", "website", "email"].find(s => this.exhibitor[s]);
+            return !!["address", "address2", "phone1", "website", "email"].find((s) => this.exhibitor[s]);
         },
         get disableCollapse() {
             return (
@@ -42,7 +43,7 @@ function ExhibitorComponent() {
         },
         get sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
-        }
+        },
     }));
 
     useReaction(
@@ -74,7 +75,7 @@ function ExhibitorComponent() {
                     )}
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm} {exhibitor.booths.map(b => b.name).join(", ")}
+                    {data.boothTerm} {exhibitor.booths.map((b) => b.name).join(", ")}
                 </div>
             </>
         );
@@ -82,8 +83,10 @@ function ExhibitorComponent() {
         const cls = classNames({
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
-            bookmarked: exhibitor.bookmarked
+            bookmarked: exhibitor.bookmarked,
         });
+
+        const rrr = (e) => {};
 
         return (
             <OverlayContent
@@ -95,11 +98,11 @@ function ExhibitorComponent() {
             >
                 <div className="exhibitor__details">
                     <div className="exhibitor__categories">
-                        {exhibitor.booths.map(booth => (
+                        {exhibitor.booths.map((booth) => (
                             <a
                                 href={`?${exhibitor.slug}`}
                                 key={booth.id}
-                                onClick={e => {
+                                onClick={(e) => {
                                     e.preventDefault();
                                     store.toggleMapOverlay();
                                 }}
@@ -108,11 +111,11 @@ function ExhibitorComponent() {
                                 {data.boothTerm} {booth.name}
                             </a>
                         ))}
-                        {exhibitor.categories.map(c => (
+                        {exhibitor.categories.map((c) => (
                             <a
                                 href={"?" + encodeURIComponent(c.slug)}
                                 key={c.id}
-                                onClick={e => {
+                                onClick={(e) => {
                                     e.preventDefault();
                                     handleCategoryClick(c);
                                 }}
@@ -143,7 +146,7 @@ function ExhibitorComponent() {
                     {s.anyAddress ? <div className="exhibitor__sep" /> : null}
                     {s.showEdit ? (
                         <div className="exhibitor__edit">
-                            <button className="far fa-pencil" title="Edit" onClick={sendLoginLink} />
+                            <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
                         </div>
                     ) : null}
                     {s.anyAddress && (
@@ -247,22 +250,22 @@ function ExhibitorComponent() {
 
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
-        if (!window.confirm(`Send login instructions to ${email} to edit profile?`)) return;
+        if (!window.confirm(t("Send login instructions to {{email}} to edit profile?", { email }))) return;
         if (settings.EXPO === "expo") return;
         const xhr = new XMLHttpRequest();
         xhr.open("POST", data.sendLoginLinkUrl);
         xhr.setRequestHeader("Content-Type", "application/json");
         function er() {
-            alert("Error sending login instructions.");
+            alert(t("Error sending login instructions."));
         }
-        xhr.onload = function(e) {
+        xhr.onload = function (e) {
             if (this.status !== 200) {
                 er();
                 return;
             }
-            alert(`A link to edit profile was sent to ${email}.`);
+            alert(t("A link to edit profile was sent to {{email}}.", { email }));
         };
-        xhr.onerror = function(e) {
+        xhr.onerror = function (e) {
             logger.error("Error", e);
             er();
         };
