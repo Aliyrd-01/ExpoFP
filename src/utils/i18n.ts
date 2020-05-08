@@ -4,7 +4,7 @@ import isDebug from "./is-debug";
 
 export const initI18n = async (locale: string): Promise<TFunction> => {
     let resources = {};
-    if (locale !== "en") resources[locale] = { translation: await loadJson(`/locales/${locale}.json`) };
+    if (locale !== "en") resources[locale] = { translation: await loadJson(`locales/${locale}.json`) };
 
     return await i18next.init({
         resources,
