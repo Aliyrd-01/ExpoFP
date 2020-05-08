@@ -263,7 +263,7 @@ function ExhibitorComponent() {
                 er();
                 return;
             }
-            alert(t("A link to edit profile was sent to {{email}}", { email }));
+            alert(t("A link to edit profile was sent to {{email}}.", { email }));
         };
         xhr.onerror = function (e) {
             logger.error("Error", e);
