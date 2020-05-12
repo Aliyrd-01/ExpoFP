@@ -1,9 +1,10 @@
-import React from "react";
-import "./Free.scss";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import { uiState } from "../store";
-import { useInit } from "../utils/mobx";
 import classNames from "classnames";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import React from "react";
+import { uiState } from "../store";
+import { t } from "../utils/i18n";
+import { useInit } from "../utils/mobx";
+import "./Free.scss";
 
 const key = "free-dismissed5";
 
@@ -18,9 +19,9 @@ export default function Free() {
                 free: true,
                 top: this.top,
                 bottom: !this.top,
-                hidden: this.hidden
+                hidden: this.hidden,
             });
-        }
+        },
     }));
 
     useInit(() => {
@@ -35,14 +36,14 @@ export default function Free() {
             <section>
                 <div className="free__message">
                     <span>
-                        This is a FREE floor plan. {s.top && <br />} Create yours at &nbsp;
+                        {t("This is a FREE floor plan.")} {s.top && <br />} {t("Create yours at")} &nbsp;
                         <a href="https://expofp.com/" target="_blank" rel="noopener noreferrer">
                             ExpoFP.com
                         </a>
                     </span>
                 </div>
                 <a href="/" onClick={dismiss} className="free__dismiss">
-                    Dismiss
+                    {t("Dismiss")}
                 </a>
             </section>
         </div>
