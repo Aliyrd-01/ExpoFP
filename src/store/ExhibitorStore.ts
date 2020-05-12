@@ -69,4 +69,6 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];
+
+    checkVideoChatUrl: string;
 }

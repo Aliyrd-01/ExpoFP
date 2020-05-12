@@ -42,9 +42,29 @@ function ExhibitorComponent() {
         },
         get sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
-        }
+        },
+        get showVidoChatButton()
+        {
+            return !!this.exhibitor.checkVideoChatUrl;
+        },
+        joinVideoChatUrl: null
     }));
 
+    const checkVideoChat = async (url: string) => {
+        try {
+            const response = await fetch(url);
+            const result = await response.json();
+            if (result !== "false") {
+                s.joinVideoChatUrl = result;
+            } else {
+                s.joinVideoChatUrl = null;
+            }
+        } catch (e) {
+            console.warn(e);
+        }
+    };
+    if (s.showVidoChatButton) checkVideoChat(s.exhibitor.checkVideoChatUrl);
+    
     useReaction(
         () => s.exhibitor,
         () => {
@@ -233,6 +253,14 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
+                    {s.showVidoChatButton && !!s.joinVideoChatUrl? (
+                            <div className="exhibitor__videoChat">
+                                <a href={s.joinVideoChatUrl} target="_blank" className={`${!!s.joinVideoChatUrl ? "": "passive"}`}>
+                                    Join Video Chat
+                                </a>
+                            </div>
+                        ): null
+                    }
                 </div>
             </OverlayContent>
         );

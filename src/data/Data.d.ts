@@ -86,6 +86,8 @@ interface RawExhibitor {
     email: string; // new
     privateEmail: string;
 
+    checkVideoChatUrl: string;
+
     //populated
     logo: string;
     categories: number[];
