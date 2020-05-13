@@ -61,6 +61,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly youtube: string;
     readonly email: string;
     readonly privateEmail: string;
+    readonly checkVideoChatUrl: string;
 
     //populated
     readonly logo: string;
@@ -69,6 +70,4 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];
-
-    checkVideoChatUrl: string;
 }

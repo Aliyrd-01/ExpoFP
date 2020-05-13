@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, useRef } from "react";
+import React, {useEffect, MouseEvent, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
@@ -44,27 +44,30 @@ function ExhibitorComponent() {
         get sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
-        get showVidoChatButton()
-        {
-            return !!this.exhibitor.checkVideoChatUrl;
-        },
         joinVideoChatUrl: null
     }));
 
-    const checkVideoChat = async (url: string) => {
-        try {
-            const response = await fetch(url);
-            const result = await response.json();
-            if (result !== "false") {
-                s.joinVideoChatUrl = result;
-            } else {
-                s.joinVideoChatUrl = null;
+    useEffect(() => {
+        const checkVideoChat = async (url: string) => {
+            try {
+                const response = await fetch(url);
+                console.log("response ", response)
+                if (response.status === 200) {
+                    const result = await response.json();
+                    s.joinVideoChatUrl = result;
+                }
+                else{
+                    s.joinVideoChatUrl = null;
+                }
+            } catch (e) {
+                logger.error(e);
             }
-        } catch (e) {
-            console.warn(e);
-        }
-    };
-    if (s.showVidoChatButton) checkVideoChat(s.exhibitor.checkVideoChatUrl);
+        };
+        if (!!s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
+        return () => {
+            s.joinVideoChatUrl = null;
+          };
+      });
     
     useReaction(
         () => s.exhibitor,
@@ -256,10 +259,10 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    {s.showVidoChatButton && !!s.joinVideoChatUrl? (
-                            <div className="exhibitor__videoChat">
-                                <a href={s.joinVideoChatUrl} target="_blank" className={`${!!s.joinVideoChatUrl ? "": "passive"}`}>
-                                    Join Video Chat
+                    {!!s.joinVideoChatUrl? (
+                            <div className="exhibitor__video-chat">
+                                <a href={s.joinVideoChatUrl} target="_blank">
+                                    {t("Join Video Chat")}
                                 </a>
                             </div>
                         ): null

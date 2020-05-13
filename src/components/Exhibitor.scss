@@ -258,7 +258,7 @@
         }
     }
 
-    &__videoChat{
+    &__video-chat{
         text-align: center;
         margin: 2rem 0;
 
@@ -280,9 +280,6 @@
             &:active {
                 background: #2285af;
             }
-        }
-        .passive {
-            background: #878787;
         }
     }
 }
