@@ -48,10 +48,11 @@ function ExhibitorComponent() {
     }));
     
     useEffect(() => {
+        const abortController = new AbortController();
         const checkVideoChat = async (url: string) => {
             try {
                 s.joinVideoChatUrl = null;
-                const response = await fetch(url);
+                const response = await fetch(url, {signal: abortController.signal});
                 if (response.status === 200) {
                     const result = await response.json();
                     s.joinVideoChatUrl = result;
@@ -61,6 +62,9 @@ function ExhibitorComponent() {
             }
         };
         if (!!s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
+        return function cancel() {
+            abortController.abort()
+          }
       }, [s.exhibitor]);
     
     useReaction(
