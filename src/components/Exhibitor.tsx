@@ -62,7 +62,7 @@ function ExhibitorComponent() {
             }
         };
         if (!!s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
-        return function cancel() {
+        return () => {
             abortController.abort()
           }
       }, [s.exhibitor]);
