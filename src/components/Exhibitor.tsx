@@ -46,7 +46,7 @@ function ExhibitorComponent() {
         },
         joinVideoChatUrl: null
     }));
-
+    
     useEffect(() => {
         const checkVideoChat = async (url: string) => {
             try {
@@ -64,9 +64,6 @@ function ExhibitorComponent() {
             }
         };
         if (!!s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
-        return () => {
-            s.joinVideoChatUrl = null;
-          };
       });
     
     useReaction(
