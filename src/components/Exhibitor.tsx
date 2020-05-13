@@ -50,21 +50,18 @@ function ExhibitorComponent() {
     useEffect(() => {
         const checkVideoChat = async (url: string) => {
             try {
+                s.joinVideoChatUrl = null;
                 const response = await fetch(url);
-                console.log("response ", response)
                 if (response.status === 200) {
                     const result = await response.json();
                     s.joinVideoChatUrl = result;
-                }
-                else{
-                    s.joinVideoChatUrl = null;
                 }
             } catch (e) {
                 logger.error(e);
             }
         };
         if (!!s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
-      });
+      }, [s.exhibitor]);
     
     useReaction(
         () => s.exhibitor,
