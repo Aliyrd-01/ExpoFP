@@ -158,6 +158,7 @@ export default class UIState {
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
+        if (this.selectedExhibitor?.gallery) return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
         // const ua = navigator.userAgent;
         // const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
@@ -176,7 +177,7 @@ export default class UIState {
     @computed get dimmed() {
         return (
             this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
-            this.listItems.find(x => !(x instanceof Exhibitor))
+            this.listItems.find((x) => !(x instanceof Exhibitor))
         );
     }
 
@@ -203,12 +204,12 @@ export default class UIState {
 
         // rulles here
         const matchingExhibitors = exhibitorsArray.filter(
-            e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find(b => b.name.toLowerCase() === text)
+            (e) => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find((b) => b.name.toLowerCase() === text)
         );
-        const matchingCategories = categoriesArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
+        const matchingCategories = categoriesArray.filter((e) => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         const matchingBooths = boothsArray.filter(
-            e =>
-                (!(e instanceof RegularBooth) || !matchingExhibitors.find(x => x.booths.indexOf(e) !== -1)) &&
+            (e) =>
+                (!(e instanceof RegularBooth) || !matchingExhibitors.find((x) => x.booths.indexOf(e) !== -1)) &&
                 e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
         );
 
@@ -233,7 +234,7 @@ export default class UIState {
 
     @computed({ keepAlive: true }) get listBooths() {
         const arr = [] as Booth[];
-        this.listItems.forEach(item => {
+        this.listItems.forEach((item) => {
             if (item instanceof Exhibitor) {
                 arr.push(...item.booths);
             } else if (item instanceof BoothBase) {

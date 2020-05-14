@@ -64,6 +64,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     //populated
     readonly logo: string;
+    readonly gallery: string[];
     readonly slug: string;
     @observable bookmarked: boolean;
 

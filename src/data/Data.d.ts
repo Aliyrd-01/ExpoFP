@@ -7,6 +7,7 @@ interface Data {
     homeUrl: string;
     registerUrl: string;
     logo: string;
+    gallery: string[];
     gtag: string;
     boothTerm: string;
     locale: string;
@@ -88,6 +89,7 @@ interface RawExhibitor {
 
     //populated
     logo: string;
+    gallery: string[];
     categories: number[];
 }
 

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, useRef } from "react";
+import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
@@ -11,6 +11,8 @@ import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+
+const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
@@ -141,6 +143,13 @@ function ExhibitorComponent() {
                                     onClick={() => (s.collapsed = false)}
                                 />
                             ) : null}
+                        </div>
+                    ) : null}
+                    {exhibitor.gallery ? (
+                        <div className="exhibitor__slider">
+                            <Suspense fallback={null}>
+                                <ImageSlider images={exhibitor.gallery} />
+                            </Suspense>
                         </div>
                     ) : null}
                     {s.anyAddress ? <div className="exhibitor__sep" /> : null}
