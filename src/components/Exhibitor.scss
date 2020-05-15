@@ -262,7 +262,7 @@
         text-align: center;
         margin: 2rem 0;
 
-        > a {
+        > .video-chat-btn {
             border: none;
             text-decoration: none;
             display: inline-block;
@@ -277,8 +277,8 @@
             align-items: center;
             justify-content: center;
 
-            &:active {
-                background: #2285af;
+            &:disabled {
+                background: #c6c6c6;
             }
         }
     }

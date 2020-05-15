@@ -257,14 +257,17 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    {!!s.joinVideoChatUrl? (
-                            <div className="exhibitor__video-chat">
-                                <a href={s.joinVideoChatUrl} target="_blank">
-                                    {t("Join Video Chat")}
-                                </a>
-                            </div>
-                        ): null
-                    }
+                    <div className="exhibitor__video-chat">
+                        {!!s.joinVideoChatUrl ? (
+                            <a href={s.joinVideoChatUrl} target="_blank" className="video-chat-btn">
+                                {t("Join Video Chat")}
+                            </a>
+                        ) : (
+                            <button disabled className="video-chat-btn">
+                                {t("Join Video Chat")}
+                            </button>
+                        )}
+                    </div>
                 </div>
             </OverlayContent>
         );
