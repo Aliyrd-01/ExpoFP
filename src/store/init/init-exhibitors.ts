@@ -1,16 +1,15 @@
-import RootStore from '../RootStore';
-import logger from '../../tools/logger';
-import data from '../../data';
-import ExhibitorStore, { Exhibitor } from '../ExhibitorStore';
-import { generateUniqueSlug } from '../../tools/slug';
+import { autorun } from "mobx";
+import data from "../../data";
 import baseUrl from "../../tools/base-data-url";
-import { autorun } from 'mobx';
+import logger from "../../tools/logger";
+import { generateUniqueSlug } from "../../tools/slug";
 import previewExhibitor from "../../utils/preview-exhibitor";
+import ExhibitorStore, { Exhibitor } from "../ExhibitorStore";
+import RootStore from "../RootStore";
 
 export default function initExhibitors(store: RootStore) {
-
-    if (previewExhibitor){
-        const i = data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
+    if (previewExhibitor) {
+        const i = data.exhibitors.findIndex((e) => e.id === previewExhibitor.id);
         if (i !== -1) data.exhibitors.splice(i, 1, previewExhibitor);
         else data.exhibitors.push(previewExhibitor);
     }
@@ -30,6 +29,7 @@ export default function initExhibitors(store: RootStore) {
         e.slug = generateUniqueSlug(e.name);
 
         if (e.logo) e.logo = baseUrl + e.logo;
+        if (e.gallery) e.gallery = e.gallery.map((url) => baseUrl + url);
         e.categories = [];
         e.booths = [];
         for (const c of raw.categories || []) {
@@ -38,13 +38,13 @@ export default function initExhibitors(store: RootStore) {
             ca.exhibitors.push(e as Exhibitor);
         }
 
-        (e['store'] as ExhibitorStore) = exhibitorStore;
+        (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
     }
 
     // dispose
     delete data.exhibitors;
-    logger.log('initExhibitors', exhibitorStore.exhibitors.length);
+    logger.log("initExhibitors", exhibitorStore.exhibitors.length);
 
     initBookmarked(exhibitorStore);
 }
@@ -59,8 +59,8 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
     if (combined) {
         bookmarkedAr = combined
             .split("|")
-            .map(x => parseInt(x))
-            .filter(x => x);
+            .map((x) => parseInt(x))
+            .filter((x) => x);
 
         const append = !!ca;
         if (append) bookmarkedAr.push(...getFromLocalStorage());
@@ -72,7 +72,7 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
     exhibitorStore.replaceBookmarked(bookmarkedAr);
 
     autorun(() => {
-        saveToLocalStorage(exhibitorStore.bookmarked.map(x => x.id));
+        saveToLocalStorage(exhibitorStore.bookmarked.map((x) => x.id));
     });
 }
 
@@ -88,4 +88,3 @@ function saveToLocalStorage(ar: number[]) {
     // debugger
     localStorage.setItem("bookmarked", JSON.stringify(ar));
 }
-
