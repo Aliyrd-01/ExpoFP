@@ -45,7 +45,7 @@ export const containSlide = {
 const basicNav = {
     position: "absolute",
     top: "50%",
-    translate: "0 -50%",
+    transform: "translate(0, -50%)",
     padding: "50px 20px",
     cursor: "pointer",
     outline: "none",

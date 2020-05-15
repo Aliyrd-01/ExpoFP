@@ -199,6 +199,12 @@
                     "logo": {
                         "type": "string"
                     },
+                    "gallery": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "address": {
                         "type": "string"
                     },
