@@ -8,6 +8,8 @@ import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
 
+export const OverlayContentContext = React.createContext<() => void>(null);
+
 const OverlayContent: React.FC<{
     bar: ReactNode;
     className?: string;
@@ -19,6 +21,8 @@ const OverlayContent: React.FC<{
 }> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
+    const [updateFunc, setUpdate] = useState<() => void>();
+
 
     useLayoutEffect(() => {
         const sel = scrollable.current;
@@ -36,15 +40,14 @@ const OverlayContent: React.FC<{
             update = setScrolled;
             sel.addEventListener("scroll", setScrolled);
         }
+        setUpdate(update);
 
         window.addEventListener("resize", update);
-        document.body.addEventListener("scrollable-content-changed", update);
         const observer = new MutationObserver(update);
         observer.observe(sel, { childList: true, subtree: true });
 
         return () => {
             window.removeEventListener("resize", update);
-            document.body.removeEventListener("scrollable-content-changed", update);
             observer.disconnect();
         };
     }, [scrollable]);
@@ -57,19 +60,23 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     return (
-        <div className={`overlay-content ${className || ""}`} id="overlay-content">
-            {particles ? <OverlayParticles /> : null}
-            {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
-            <OverlayBar scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>
-                {bar}
-            </OverlayBar>
+        <OverlayContentContext.Provider value={updateFunc}>
+            <div className={`overlay-content ${className || ""}`} id="overlay-content">
+                {particles ? <OverlayParticles /> : null}
+                {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
+                <OverlayBar scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>
+                    {bar}
+                </OverlayBar>
 
-            <div className="overlay-content__scrollable" ref={scrollable}>
-                {children}
-                {/* FIX PART - make chrome start handling click events and correctly draw content (not sure why) */}
-                <div style={{ visibility: "hidden", pointerEvents: "none", height: 0, position: "absolute", bottom: 0 }}></div>
+                <div className="overlay-content__scrollable" ref={scrollable}>
+                    {children}
+                    {/* FIX PART - make chrome start handling click events and correctly draw content (not sure why) */}
+                    <div
+                        style={{ visibility: "hidden", pointerEvents: "none", height: 0, position: "absolute", bottom: 0 }}
+                    ></div>
+                </div>
             </div>
-        </div>
+        </OverlayContentContext.Provider>
     );
 };
 
