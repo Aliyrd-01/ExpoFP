@@ -38,11 +38,13 @@ const OverlayContent: React.FC<{
         }
 
         window.addEventListener("resize", update);
+        document.body.addEventListener("scrollable-content-changed", update);
         const observer = new MutationObserver(update);
         observer.observe(sel, { childList: true, subtree: true });
 
         return () => {
             window.removeEventListener("resize", update);
+            document.body.removeEventListener("scrollable-content-changed", update);
             observer.disconnect();
         };
     }, [scrollable]);

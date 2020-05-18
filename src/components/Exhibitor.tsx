@@ -90,6 +90,13 @@ function ExhibitorComponent() {
 
         const rrr = (e) => {};
 
+        const expandDescription = () => {
+            s.collapsed = false;
+            setTimeout(() => {
+                document.body.dispatchEvent(new Event("scrollable-content-changed"));
+            });
+        };
+
         return (
             <OverlayContent
                 className={cls}
@@ -140,7 +147,7 @@ function ExhibitorComponent() {
                                 <span
                                     className="exhibitor__description-html"
                                     dangerouslySetInnerHTML={{ __html: exhibitor.description }}
-                                    onClick={() => (s.collapsed = false)}
+                                    onClick={expandDescription}
                                 />
                             ) : null}
                         </div>
