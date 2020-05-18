@@ -88,8 +88,6 @@ function ExhibitorComponent() {
             bookmarked: exhibitor.bookmarked,
         });
 
-        const rrr = (e) => {};
-
         const expandDescription = () => {
             s.collapsed = false;
             setTimeout(() => {
