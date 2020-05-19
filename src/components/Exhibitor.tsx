@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, Suspense, useRef, useContext, useState } from "react";
+import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
@@ -10,17 +10,15 @@ import { t } from "../utils/i18n";
 import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
-import OverlayContent, { OverlayContentContext } from "./OverlayContent";
+import OverlayContent from "./OverlayContent";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
-    // const [updateOverlayContent, setupdateOverlayContent] = useState<() => void>(null);
-    const updateOverlayContext = useContext(OverlayContentContext);
     const s = useLocalStore(() => ({
         collapsed: true,
-        updateOverlayContent: null as ()=>void,
+        updateOverlayContent: null as () => void,
 
         get exhibitor() {
             return uiState.selectedExhibitor;
@@ -93,13 +91,12 @@ function ExhibitorComponent() {
 
         const expandDescription = () => {
             s.collapsed = false;
-            // render
-            s.collapsed1 = false;
-            // render
-            setTimeout(s.updateOverlayContent);
+            setTimeout(() => {
+                if (s.updateOverlayContent) {
+                    s.updateOverlayContent();
+                }
+            });
         };
-
-        const [el, setEl] = useState(null);
 
         return (
             <OverlayContent
@@ -108,9 +105,9 @@ function ExhibitorComponent() {
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
-                onUpdateFuncSet={(f) => s.updateOverlayContent = f}
+                onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
-                <div className="exhibitor__details" ref={(el) => setEl(el)}>
+                <div className="exhibitor__details">
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map((booth) => (
                             <a
