@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, Suspense, useRef, useContext } from "react";
+import React, { MouseEvent, Suspense, useRef, useContext, useState } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
@@ -16,9 +16,11 @@ const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
+    // const [updateOverlayContent, setupdateOverlayContent] = useState<() => void>(null);
     const updateOverlayContext = useContext(OverlayContentContext);
     const s = useLocalStore(() => ({
         collapsed: true,
+        updateOverlayContent: null as ()=>void,
 
         get exhibitor() {
             return uiState.selectedExhibitor;
@@ -94,8 +96,10 @@ function ExhibitorComponent() {
             // render
             s.collapsed1 = false;
             // render
-            setTimeout(updateOverlayContext);
+            setTimeout(s.updateOverlayContent);
         };
+
+        const [el, setEl] = useState(null);
 
         return (
             <OverlayContent
@@ -104,8 +108,9 @@ function ExhibitorComponent() {
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
+                onUpdateFuncSet={(f) => s.updateOverlayContent = f}
             >
-                <div className="exhibitor__details">
+                <div className="exhibitor__details" ref={(el) => setEl(el)}>
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map((booth) => (
                             <a

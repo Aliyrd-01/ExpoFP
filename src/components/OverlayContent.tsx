@@ -18,11 +18,11 @@ const OverlayContent: React.FC<{
     hideClose?: boolean;
     onBack?: () => void;
     onClose: () => void;
-}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
+    onUpdateFuncSet?: (s: () => void) => void;
+}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
     const [updateFunc, setUpdate] = useState<() => void>();
-
 
     useLayoutEffect(() => {
         const sel = scrollable.current;
@@ -40,7 +40,8 @@ const OverlayContent: React.FC<{
             update = setScrolled;
             sel.addEventListener("scroll", setScrolled);
         }
-        setUpdate(update);
+        onUpdateFuncSet(update);
+        // setUpdate(update);
 
         window.addEventListener("resize", update);
         const observer = new MutationObserver(update);
