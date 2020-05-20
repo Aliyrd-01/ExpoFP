@@ -47,7 +47,7 @@ class ImageSlider extends React.Component<Props, State> {
         showNavs: true,
         showBullets: true,
         bgColor: "black",
-        useGPURender: true,
+        useGPURender: false,
         navStyle: 1,
         fillMode: FillMode.cover,
         isFullScreen: false,
@@ -90,6 +90,33 @@ class ImageSlider extends React.Component<Props, State> {
     componentDidMount = () => document.addEventListener("keydown", this.onKeyDown);
 
     componentWillUnmount = () => document.removeEventListener("keydown", this.onKeyDown);
+
+    componentDidUpdate = (newProps: Props) => {
+        if (newProps.images[0] == this.props.images[0]) return;
+
+        this.setState(
+            new State(
+                0,
+                false,
+                styles.getImageSlide(
+                    this.getImageUrl(0),
+                    this.props.slideDuration,
+                    0,
+                    this.props.useGPURender,
+                    newProps.isFullScreen ? FillMode.contain : this.props.fillMode
+                ),
+                styles.getImageSlide(
+                    this.getImageUrl(1),
+                    this.props.slideDuration,
+                    1,
+                    this.props.useGPURender,
+                    newProps.isFullScreen ? FillMode.contain : this.props.fillMode
+                ),
+                null,
+                newProps.isFullScreen
+            )
+        );
+    };
 
     onKeyDown = (e: KeyboardEvent) => {
         if (this.state.isFullScreen && e.keyCode === 27) this.onFullScreenChanged();
@@ -289,6 +316,7 @@ class ImageSlider extends React.Component<Props, State> {
                 <div className={data.ClassNameRoot} style={assignObjects(rootStyle, this.props.style)}>
                     <div style={styles.getSubContainer(this.props.width, "100%")}>
                         <div
+                            onClick={() => (!this.state.isFullScreen ? this.onFullScreenChanged() : null)}
                             style={styles.ImageSlider}
                             onTouchStart={(e) => this.onTouchStart(e)}
                             onTouchEnd={(e) => this.onTouchEnd(e)}
