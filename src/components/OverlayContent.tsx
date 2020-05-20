@@ -8,8 +8,6 @@ import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
 
-export const OverlayContentContext = React.createContext<() => void>(null);
-
 const OverlayContent: React.FC<{
     bar: ReactNode;
     className?: string;

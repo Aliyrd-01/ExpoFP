@@ -91,11 +91,7 @@ function ExhibitorComponent() {
 
         const expandDescription = () => {
             s.collapsed = false;
-            setTimeout(() => {
-                if (s.updateOverlayContent) {
-                    s.updateOverlayContent();
-                }
-            });
+            setTimeout(s.updateOverlayContent);
         };
 
         return (
