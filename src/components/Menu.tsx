@@ -98,8 +98,6 @@ function Menu() {
                 <div className="menu__content">
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         {t("Search")}
-                        <sup>3</sup>
-                        <sup>3</sup>
                     </a>
                     {!uiState.kiosk && !isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
