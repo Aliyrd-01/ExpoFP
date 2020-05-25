@@ -1,0 +1,29 @@
+name: Deploy CI
+
+on:
+  push:
+    branches: [ features/Implement-CI-for-floorplan ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: yarn run build+deploy
+    env:
+        CI: true
+        NODE_ENV: production
+        AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AwsSecretAccessKey }}
+        AWS_FOLDER_NAME: ${GITHUB_REF##*/}
