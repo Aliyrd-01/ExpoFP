@@ -2,7 +2,8 @@ name: Deploy CI
 
 on:
   push:
-    branches: [ features/Implement-CI-for-floorplan ]
+    branches: 
+      - features/Implement-CI-for-floorplan
 
 jobs:
   build:
@@ -20,6 +21,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+    - run: yarn install
     - run: yarn run build+deploy
     env:
         CI: true
