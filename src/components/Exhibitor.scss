@@ -46,7 +46,7 @@
         }
 
         &-sponsorship {
-            background: #FF8C00;
+            background: #ff8c00;
             &:hover {
                 background: #e87f00;
             }
@@ -79,7 +79,8 @@
 
         // height: 75px;
     }
-    &__description {
+    &__description,
+    &__slider {
         margin: 1rem;
         font-size: 0.9rem;
 

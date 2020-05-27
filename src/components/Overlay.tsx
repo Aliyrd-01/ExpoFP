@@ -39,7 +39,7 @@ export default observer(function Overlay() {
         get noMove() {
             logger.log("noMove populate");
             return uiState.overlayPosition === "left";
-        }
+        },
     }));
 
     // use useLayoutEffect for this thing to not jump
@@ -66,7 +66,7 @@ export default observer(function Overlay() {
         function handleTouchMove(e: TouchEvent) {
             if (s.noMove) return;
             if (!s.startedTouch) return;
-            const rt = Array.from(e.changedTouches).filter(x => x.identifier === s.startedTouch.identifier)[0];
+            const rt = Array.from(e.changedTouches).filter((x) => x.identifier === s.startedTouch.identifier)[0];
             if (!rt) return;
             s.touchDiff = s.startedTouch.clientY - rt.clientY;
             logger.log("TouchMove", s.touchDiff);
@@ -78,7 +78,7 @@ export default observer(function Overlay() {
         function handleTouchEnd(e: TouchEvent) {
             if (s.noMove) return;
             if (!s.startedTouch) return;
-            const rt = Array.from(e.changedTouches).filter(x => x.identifier === s.startedTouch.identifier)[0];
+            const rt = Array.from(e.changedTouches).filter((x) => x.identifier === s.startedTouch.identifier)[0];
             if (!rt) return;
             let diff = s.startedTouch.clientY - rt.clientY;
             // if (this.negateMove) diff = -diff;

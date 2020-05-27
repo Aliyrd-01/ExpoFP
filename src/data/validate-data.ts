@@ -15,9 +15,9 @@ export default function validateData(data: Data) {
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
 
     // temporary workaround for invalid data.js
-    if (data.exhibitors.length > 0){
+    if (data.exhibitors.length > 0) {
         for (const booth of data.booths) {
-            delete booth['reserved'];
+            delete booth["reserved"];
         }
     }
 
@@ -78,7 +78,7 @@ export default function validateData(data: Data) {
                     }
                 }
             }
-            errors.forEach(e => logger.warn(e));
+            errors.forEach((e) => logger.warn(e));
         }
     }
 
@@ -91,7 +91,7 @@ export default function validateData(data: Data) {
     if (!data.boothTerm) data.boothTerm = "Booth";
     if (EFP_EXPO === "expo") {
         const expoExpoAds = [2567, 2704, 2681, 2592, 2740, 2709, 2482, 2609, 2734, 2696, 2840, 2566, 2736];
-        data.exhibitors.filter(x => x.logo && expoExpoAds.indexOf(x.id) !== -1).forEach(x => (x.advertise = true));
+        data.exhibitors.filter((x) => x.logo && expoExpoAds.indexOf(x.id) !== -1).forEach((x) => (x.advertise = true));
     }
 
     // convert obsolete fields and fix false/empty strings/arrays
@@ -101,7 +101,7 @@ export default function validateData(data: Data) {
         // booth.special = !!booth.special;
         if (!(booth as RawSpecialBooth).special) {
             const regBooth = booth as RawRegularBooth;
-            if (typeof regBooth['onHold'] === "undefined") regBooth['onHold'] = b.isOnHold;
+            if (typeof regBooth["onHold"] === "undefined") regBooth["onHold"] = b.isOnHold;
             if (typeof regBooth.availColor === "undefined") regBooth.availColor = b.availableColor;
             if (typeof regBooth.type === "undefined") regBooth.type = b.boothTypeName;
             regBooth.exhibitors = regBooth.exhibitors || [];
@@ -115,14 +115,15 @@ export default function validateData(data: Data) {
 
         exhibitor.categories = exhibitor.categories || [];
 
-        if (exhibitor.logo) exhibitor.logo = exhibitor.logo.replace(/\?.+/, '');
+        if (exhibitor.logo) exhibitor.logo = exhibitor.logo.replace(/\?.+/, "");
+        if (exhibitor.gallery) exhibitor.gallery = exhibitor.gallery.map((g) => g.replace(/\?.+/, ""));
     }
 
     // disable ads and featured for free plans
     if (data.noFeatured) {
-        data.exhibitors.forEach(e => (e.featured = false));
+        data.exhibitors.forEach((e) => (e.featured = false));
     }
     if (data.noAds) {
-        data.exhibitors.forEach(e => (e.advertise = false));
+        data.exhibitors.forEach((e) => (e.advertise = false));
     }
 }

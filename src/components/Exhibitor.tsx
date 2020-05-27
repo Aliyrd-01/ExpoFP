@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, {useEffect, MouseEvent, useRef } from "react";
+import React, { useEffect, MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
@@ -12,10 +12,13 @@ import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 
+const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
+
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         collapsed: true,
+        updateOverlayContent: null as () => void,
 
         get exhibitor() {
             return uiState.selectedExhibitor;
@@ -107,7 +110,10 @@ function ExhibitorComponent() {
             bookmarked: exhibitor.bookmarked,
         });
 
-        const rrr = (e) => {};
+        const expandDescription = () => {
+            s.collapsed = false;
+            setTimeout(s.updateOverlayContent);
+        };
 
         return (
             <OverlayContent
@@ -116,6 +122,7 @@ function ExhibitorComponent() {
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
+                onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
                 <div className="exhibitor__details">
                     <div className="exhibitor__categories">
@@ -159,9 +166,16 @@ function ExhibitorComponent() {
                                 <span
                                     className="exhibitor__description-html"
                                     dangerouslySetInnerHTML={{ __html: exhibitor.description }}
-                                    onClick={() => (s.collapsed = false)}
+                                    onClick={expandDescription}
                                 />
                             ) : null}
+                        </div>
+                    ) : null}
+                    {exhibitor.gallery ? (
+                        <div className="exhibitor__slider">
+                            <Suspense fallback={null}>
+                                <ImageSlider images={exhibitor.gallery} />
+                            </Suspense>
                         </div>
                     ) : null}
                     {s.anyAddress ? <div className="exhibitor__sep" /> : null}

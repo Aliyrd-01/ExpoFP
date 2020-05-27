@@ -10,6 +10,7 @@ export const initI18n = async (locale: string): Promise<TFunction> => {
         resources,
         lng: locale,
         debug: isDebug,
+        keySeparator: false,
     });
 };
 

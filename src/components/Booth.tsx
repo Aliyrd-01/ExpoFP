@@ -70,7 +70,7 @@ function Booth() {
                                     <div className="booth__info">
                                         <i className="fas fa-cube" />
                                         <div className="booth__info-title">
-                                            {t("{{boothTerm}} Type", { boothTerm: data.boothTerm })} Type
+                                            {t("{{boothTerm}} Type", { boothTerm: data.boothTerm })}
                                         </div>
                                         <div className="booth__info-val">{b.type}</div>
                                     </div>
