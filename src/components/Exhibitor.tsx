@@ -56,15 +56,12 @@ function ExhibitorComponent() {
             try {
                 s.joinVideoChatUrl = null;
                 const response = await fetch(url, {signal: abortController.signal});
-                if (response.status === 200) {
-                    const result = await response.json();
-                    s.joinVideoChatUrl = result;
-                }
+                s.joinVideoChatUrl = await response.json();
             } catch (e) {
                 logger.error(e);
             }
         };
-        if (!!s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
+        if (s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
         return () => {
             abortController.abort()
           }
@@ -272,7 +269,7 @@ function ExhibitorComponent() {
                         </div>
                     )}
                     <div className="exhibitor__video-chat">
-                        {!!s.joinVideoChatUrl ? (
+                        {s.joinVideoChatUrl ? (
                             <a href={s.joinVideoChatUrl} target="_blank" className="video-chat-btn">
                                 {t("Join Video Chat")}
                             </a>
