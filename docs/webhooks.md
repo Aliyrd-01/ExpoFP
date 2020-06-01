@@ -20,7 +20,7 @@ ExpoFP webhooks are a simple way to get notified when event occurred on ExpoFP.c
 
 [Configure webhooks](https://expofp.com/client/profile){: .btn  }
 
-When configured, ExpoFP will perform `HTTP POST` requests when booth is ordered via buy/reserve page to the webhook URL with JSON payload.
+When configured, ExpoFP will perform `HTTP POST` requests to the webhook URL with JSON payload.
 You can use one of helper online tools to see coming data from webhooks. E.g. <https://postb.in/> or <https://requestbin.com/>
 
 # booth_reserved
@@ -30,8 +30,7 @@ Example payload:
 ```json
 {
     "type": "booth_reserved",
-    "exhibitorId": 123,
-    "eventId": 1290
+    "exhibitorId": 123
 }
 ```
 
@@ -43,7 +42,6 @@ Example payload:
 ```json
 {
     "type": "exhibitor_upgraded",
-    "exhibitorId": 123,
-    "eventId": 1290
+    "exhibitorId": 123
 }
 ``` -->

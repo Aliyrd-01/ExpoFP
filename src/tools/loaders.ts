@@ -1,9 +1,6 @@
 import browser from "../utils/browser";
 import baseUrl from "./base-url";
-
-// function allowAnonymous(url) {
-//     return !url.startsWith("file:///");
-// }
+import logger from "./logger";
 
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
@@ -12,77 +9,26 @@ function goodUrl(url: string) {
     return url;
 }
 
-export function loadCss(url: string, appendTo: Element | ShadowRoot) {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = goodUrl(url);
-
-    // if (allowAnonymous(link.href)) link.crossOrigin = "anonymous";
-    appendTo.appendChild(link);
-}
-
-// export function preloadJs(url: string) {
-//     const link = document.createElement("link");
-//     link.rel = "preload";
-//     link.href = goodUrl(url);
-//     link.as = "script";
-//     if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
-//     document.head.appendChild(link);
-// }
-
-// export function preloadFont(url: string, anon: boolean) {
-//     const link = document.createElement("link");
-//     link.rel = "preload";
-//     link.href = goodUrl(url);
-//     link.as = "font";
-//     // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href))
-//     if (anon && allowAnonymous(link.href))link.crossOrigin = "anonymous";
-//     document.head.appendChild(link);
-// }
-
-export function preloadImage(url: string) {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "image";
-    link.href = url;
-    // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href)) link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-}
-
-// export function preloadJson(url: string) {
-//     const link = document.createElement("link");
-//     link.rel = "preload";
-//     link.href = goodUrl(url);
-//     link.as = "fetch";
-//     // if (process.env.NODE_ENV === "production" && allowAnonymous(link.href))
-//     link.crossOrigin = "anonymous";
-//     document.head.appendChild(link);
-// }
-
-// export async function loadJs(url: string) {
-//     return new Promise(function(resolve, reject) {
-//         const scriptTag = document.createElement("script");
-//         scriptTag.src = goodUrl(url);
-//         scriptTag.onload = resolve;
-//         logger.log("Injecting script:", scriptTag.src);
-//         if (process.env.NODE_ENV === "production" && allowAnonymous(scriptTag.src)) scriptTag.crossOrigin = "anonymous";
-//         document.head.appendChild(scriptTag);
-//     });
-// }
-
 export async function loadJson<T>(url: string) {
     const response = await fetch(goodUrl(url), { credentials: "same-origin" });
     return (await response.json()) as T;
 }
 
-const mapJsonCache = new Map<string, Promise<any>>();
-export async function loadJsonCached<T>(url: string) {
-    let data = mapJsonCache.get(url);
-    if (!data) {
-        const prom = loadJson(url);
-        mapJsonCache.set(url, prom);
-    }
-    return await data;
+export function loadCss(url: string, appendTo: Element | ShadowRoot) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = goodUrl(url);
+    appendTo.appendChild(link);
+}
+
+export async function loadJs(url: string) {
+    return new Promise(function (resolve, reject) {
+        const scriptTag = document.createElement("script");
+        scriptTag.src = goodUrl(url);
+        scriptTag.onload = resolve;
+        logger.log("Injecting script:", scriptTag.src);
+        document.head.appendChild(scriptTag);
+    });
 }
 
 declare const FontFace: any;
@@ -97,7 +43,7 @@ export async function loadFont(family: string, url: string, d?) {
         return Promise.resolve();
     }
 
-    if (family.indexOf(" ") !== -1 && browser.isGecko) {
+    if (family.indexOf(" ") !== -1 && browser.getEngine()?.name === "Gecko") {
         family = `'${family}'`;
     }
 
@@ -114,7 +60,7 @@ export async function loadFont(family: string, url: string, d?) {
     return ff.load();
 }
 
-function injectFontFace(fontFamily: string, src: string, d) {
+export function injectFontFace(fontFamily: string, src: string, d) {
     const newStyle = document.createElement("style");
     newStyle.appendChild(
         document.createTextNode(

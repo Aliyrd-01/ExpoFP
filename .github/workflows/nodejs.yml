@@ -1,14 +1,18 @@
 name: Deploy CI
 
-on:
-  push:
-    branches: 
-      - features/Implement-CI-for-floorplan
+# Trigger on any push
+on: push
+
+# Trigger on push to specific branches
+# push:
+#     branches:
+#       - oldstable
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
 
     strategy:
       matrix:
@@ -16,16 +20,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Extract branch name
+      shell: bash
+      run: echo "::set-env name=AWS_FOLDER_NAME::$(echo ${GITHUB_REF#refs/heads/})"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
     - run: yarn install
     - run: yarn run build+deploy
     env:
         CI: true
-        NODE_ENV: production
         AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AwsSecretAccessKey }}
-        AWS_FOLDER_NAME: ${GITHUB_REF##*/}
+        CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AwsCloudFrontDistributionID }}

@@ -1,24 +1,17 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { FocusEvent, KeyboardEvent, useEffect, useRef } from "react";
-
-import { useExhibitorStore, useStore, useUiState, useData } from "../tools/use";
-// import store, { uiState, exhibitorStore } from "../store";
+import data from "../data";
+import store, { exhibitorStore, uiState } from "../store";
+import { t } from "../utils/i18n";
 import { useAutorun } from "../utils/mobx";
 import List from "./List";
 import OverlayContent from "./OverlayContent";
 import "./Search.scss";
-// import { uiState } from "../store";
 // import logger from "../tools/logger";
 
 function Search() {
     const el = useRef<HTMLDivElement>();
-
-    const store = useStore();
-    const uiState = useUiState();
-    const data = useData();
-    // const categoryStore = useCategoryStore();
-    const exhibitorStore = useExhibitorStore();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
@@ -39,9 +32,9 @@ function Search() {
         },
         get placeHolder() {
             return exhibitorStore.exhibitors.length === 0
-                ? `Search ${data.boothTerm.toLowerCase()}`
-                : `Search company, ${data.boothTerm.toLowerCase()} or category`;
-        }
+                ? t("Search {{boothTerm}}", { boothTerm: data.boothTerm.toLowerCase() })
+                : t("Search company, {{boothTerm}} or category", { boothTerm: data.boothTerm.toLowerCase() });
+        },
     }));
 
     function getInput(): HTMLInputElement {
@@ -69,6 +62,12 @@ function Search() {
         const intervalId = window.setInterval(setTop, 50);
         return () => window.clearInterval(intervalId);
     }, [s]);
+
+    useEffect(() => {
+        if (el.current) {
+            window["__searchi"] = el.current;
+        }
+    }, [el.current]);
 
     // useEffect(() => {
     //     const setPosition = () => {
@@ -116,7 +115,7 @@ function Search() {
         uiState.list = {
             type: "search",
             text,
-            focused: document.activeElement === getInput()
+            focused: document.activeElement === getInput(),
         };
     }
 
@@ -169,7 +168,4 @@ function Search() {
 }
 
 export default () =>
-    useObserver(() => {
-        const uiState = useUiState();
-        return <>{!uiState.details && !uiState.menu && uiState.list.type === "search" ? <Search /> : null}</>;
-    });
+    useObserver(() => <>{!uiState.details && !uiState.menu && uiState.list.type === "search" ? <Search /> : null}</>);

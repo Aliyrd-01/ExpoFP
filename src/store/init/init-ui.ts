@@ -9,7 +9,7 @@ export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
     updateScreenSize(uiState);
     window.addEventListener("resize", () => updateScreenSize(uiState));
-    if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorByIdMap.get(previewExhibitor.id);
+    if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
     // uiState.previewExhibitor = previewExhibitor;
 
     // monitor devicePixelRatio changes
@@ -38,9 +38,46 @@ export default function initUi(store: RootStore) {
 
     if (!uiState.wsShown) uiState.wsStarted = true;
 
-    // autorun(()=>{
-    //     console.log('hoveredBooth', uiState.hoveredBooth);
-    // })
+    const storageKey = "kiosk";
+    uiState.kiosk = localStorage.getItem(storageKey) === "1";
+
+    if (uiState.kiosk) {
+        var time;
+        // window.onload = resetTimer;
+        // document.onload = resetTimer;
+        // document.onmousemove = resetTimer;
+        // document.onmousedown = resetTimer; // touchscreen presses
+        // document.ontouchstart = resetTimer;
+        // document.onclick = resetTimer; // touchpad clicks
+        // document.onkeypress = resetTimer;
+        // document.addEventListener("scroll", resetTimer, true); // improved; see comments
+        window['__resett'] = resetTimer;
+        resetTimer();
+        function logout() {
+            store.reset();
+            // alert("You are now logged out.");
+            //location.href = 'logout.html'
+        }
+
+        function resetTimer() {
+            console.log("zzz2", "reset timer");
+            clearTimeout(time);
+            time = setTimeout(logout, 30000);
+        }
+    }
+
+    autorun(() => {
+        const l = uiState.list;
+        if (l.type === "search") {
+            if (l.text === "kkiosk") {
+                localStorage.setItem(storageKey, "1");
+                uiState.kiosk = true;
+            } else if (l.text === "nokkiosk") {
+                localStorage.removeItem(storageKey);
+                uiState.kiosk = false;
+            }
+        }
+    });
 }
 
 function updateScreenSize(uiState: UIState) {

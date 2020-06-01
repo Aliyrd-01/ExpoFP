@@ -1,13 +1,10 @@
 import classNames from "classnames";
 import { observer } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
-import { useUiState } from "../tools/use";
-// import { uiState } from "../store";
+import { uiState } from "../store";
 import "./OverlayGrip.scss";
 
 function OverlayGrip() {
-    const uiState = useUiState();
-
     function classes() {
         return classNames({
             "overlay-grip": true,

@@ -1,20 +1,20 @@
 import { autorun } from "mobx";
+import data from "../../data";
+import baseUrl from "../../tools/base-data-url";
 import logger from "../../tools/logger";
 import { generateUniqueSlug } from "../../tools/slug";
 import previewExhibitor from "../../utils/preview-exhibitor";
-// import data from '../../data';
 import ExhibitorStore, { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
 
 export default function initExhibitors(store: RootStore) {
-    const data = store.fp.data;
     if (previewExhibitor) {
-        const i = data.exhibitors.findIndex(e => e.id === previewExhibitor.id);
+        const i = data.exhibitors.findIndex((e) => e.id === previewExhibitor.id);
         if (i !== -1) data.exhibitors.splice(i, 1, previewExhibitor);
         else data.exhibitors.push(previewExhibitor);
     }
 
-    data.exhibitors.sort(function(a: RawExhibitor, b: RawExhibitor) {
+    data.exhibitors.sort(function (a: RawExhibitor, b: RawExhibitor) {
         var x = (a.featured ? "0" : "1") + a.name.toLowerCase();
         var y = (b.featured ? "0" : "1") + b.name.toLowerCase();
         return x < y ? -1 : x > y ? 1 : 0;
@@ -28,11 +28,12 @@ export default function initExhibitors(store: RootStore) {
 
         e.slug = generateUniqueSlug(e.name);
 
-        if (e.logo) e.logo = store.fp.dataUrl + e.logo;
+        if (e.logo) e.logo = baseUrl + e.logo;
+        if (e.gallery) e.gallery = e.gallery.map((url) => baseUrl + url);
         e.categories = [];
-        // e.booths = [];
+        e.booths = [];
         for (const c of raw.categories || []) {
-            const ca = store.categoryStore.categoryByIdMap.get(c);
+            const ca = store.categoryStore.categoryById.get(c);
             e.categories.push(ca);
             ca.exhibitors.push(e as Exhibitor);
         }
@@ -44,13 +45,6 @@ export default function initExhibitors(store: RootStore) {
     // dispose
     delete data.exhibitors;
     logger.log("initExhibitors", exhibitorStore.exhibitors.length);
-
-    for (const b of data.booths) {
-        if (b.special) continue;
-        const bb = b as RawRegularBooth;
-        exhibitorStore.exhibitorIdsByBoothNameMap.set(bb.name, bb.exhibitors);
-        delete bb.exhibitors;
-    }
 
     initBookmarked(exhibitorStore);
 }
@@ -65,8 +59,8 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
     if (combined) {
         bookmarkedAr = combined
             .split("|")
-            .map(x => parseInt(x))
-            .filter(x => x);
+            .map((x) => parseInt(x))
+            .filter((x) => x);
 
         const append = !!ca;
         if (append) bookmarkedAr.push(...getFromLocalStorage());
@@ -78,7 +72,7 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
     exhibitorStore.replaceBookmarked(bookmarkedAr);
 
     autorun(() => {
-        saveToLocalStorage(Array.from(exhibitorStore.bookmarkedIds));
+        saveToLocalStorage(exhibitorStore.bookmarked.map((x) => x.id));
     });
 }
 

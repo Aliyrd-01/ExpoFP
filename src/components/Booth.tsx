@@ -1,19 +1,15 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import { RegularBooth, SpecialBooth } from "../core/Booth";
-// import store, { uiState } from "../store";
-import { useData, useStore, useUiState } from "../tools/use";
-import { useAutorun } from "../utils/mobx";
+import data from "../data";
+import store, { uiState } from "../store";
+import { RegularBooth, SpecialBooth } from "../store/BoothStore";
+import { t } from "../utils/i18n";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
 
 function Booth() {
     // return <div>adsa</div>;
-    const uiState = useUiState();
-    const store = useStore();
-    const data = useData();
-
     const s = useLocalStore(() => ({
         get booth() {
             return uiState.selectedBooth;
@@ -38,23 +34,12 @@ function Booth() {
             }
         },
         get reserveTitle() {
-            return "Reserve";
+            return t("Reserve");
         },
         get descriptionCombined() {
             return this.booth.description || data.reserveInstructions || "";
         },
-
-        adminContent: null
     }));
-
-    useAutorun(async () => {
-        if (uiState.showAdminUi && s.regular) {
-            const BoothAdmin = await (await import(/* webpackChunkName: "admin" */ "./BoothAdmin")).default;
-            s.adminContent = <BoothAdmin booth={s.booth as RegularBooth} key={s.booth.name} />;
-        } else {
-            s.adminContent = null;
-        }
-    });
 
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
@@ -62,21 +47,21 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors.map(x => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (
                     <div className="booth__content -reg">
-                        <div>On Hold</div>
+                        <div>{t("On Hold")}</div>
                     </div>
                 );
             } else if (b.reserved) {
                 content = (
                     <div className="booth__content -reg">
-                        <div>Reserved</div>
+                        <div>{t("Reserved")}</div>
                     </div>
                 );
-            } else if (b.exhibitorIds.length === 0) {
+            } else if (b.exhibitors.length === 0) {
                 content = (
                     <>
                         <div className="booth__content -reg">
@@ -84,21 +69,23 @@ function Booth() {
                                 {b.type && (
                                     <div className="booth__info">
                                         <i className="fas fa-cube" />
-                                        <div className="booth__info-title">{data.boothTerm} Type</div>
+                                        <div className="booth__info-title">
+                                            {t("{{boothTerm}} Type", { boothTerm: data.boothTerm })}
+                                        </div>
                                         <div className="booth__info-val">{b.type}</div>
                                     </div>
                                 )}
                                 {b.size && (
                                     <div className="booth__info">
                                         <i className="fas fa-expand-alt" />
-                                        <div className="booth__info-title">Size</div>
+                                        <div className="booth__info-title">{t("Size")}</div>
                                         <div className="booth__info-val">{b.size}</div>
                                     </div>
                                 )}
                                 {b.price && b.price !== "0" && (
                                     <div className="booth__info">
                                         <i className="fas fa-tag" />
-                                        <div className="booth__info-title">Price</div>
+                                        <div className="booth__info-title">{t("Price")}</div>
                                         <div className="booth__info-val">{b.price}</div>
                                     </div>
                                 )}
@@ -113,7 +100,7 @@ function Booth() {
                             {s.showBuy && (
                                 <div className="booth__buy">
                                     <a href={b.buyUrl} rel="noopener">
-                                        Buy
+                                        {t("Buy")}
                                     </a>
                                 </div>
                             )}
@@ -139,22 +126,12 @@ function Booth() {
             );
         }
 
-        // let adminContent: JSX.Element = null;
-        // if (uiState.showAdminUi && s.regular) {
-        //     adminContent = <BoothAdmin booth={s.booth as RegularBooth} />;
-        // }
-
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
-                {s.adminContent}
                 {content}
             </OverlayContent>
         );
     });
 }
 
-export default () =>
-    useObserver(() => {
-        const uiState = useUiState();
-        return !uiState.menu && uiState.selectedBooth ? <Booth /> : null;
-    });
+export default () => useObserver(() => (!uiState.menu && uiState.selectedBooth ? <Booth /> : null));

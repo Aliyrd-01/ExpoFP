@@ -3,10 +3,9 @@ import { select } from "d3-selection";
 import { autorun } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
 import React, { useLayoutEffect, useRef } from "react";
-// import store from "../store";
-import UIState, { OverlaySize } from "../store/UIState";
+import store from "../store";
+import { OverlaySize } from "../store/UIState";
 import logger from "../tools/logger";
-import { useUiState } from "../tools/use";
 import { remsToPixels } from "../utils";
 import Bookmarks from "./Bookmarks";
 import Booth from "./Booth";
@@ -15,10 +14,9 @@ import Exhibitor from "./Exhibitor";
 import Menu from "./Menu";
 import "./Overlay.scss";
 import Search from "./Search";
-// const { uiState } = store;
+const { uiState } = store;
 
 export default observer(function Overlay() {
-    const uiState = useUiState();
     // const overlayPosition = "1";
     const el = useRef<HTMLDivElement>(null);
 
@@ -41,7 +39,7 @@ export default observer(function Overlay() {
         get noMove() {
             logger.log("noMove populate");
             return uiState.overlayPosition === "left";
-        }
+        },
     }));
 
     // use useLayoutEffect for this thing to not jump
@@ -68,7 +66,7 @@ export default observer(function Overlay() {
         function handleTouchMove(e: TouchEvent) {
             if (s.noMove) return;
             if (!s.startedTouch) return;
-            const rt = Array.from(e.changedTouches).filter(x => x.identifier === s.startedTouch.identifier)[0];
+            const rt = Array.from(e.changedTouches).filter((x) => x.identifier === s.startedTouch.identifier)[0];
             if (!rt) return;
             s.touchDiff = s.startedTouch.clientY - rt.clientY;
             logger.log("TouchMove", s.touchDiff);
@@ -80,12 +78,12 @@ export default observer(function Overlay() {
         function handleTouchEnd(e: TouchEvent) {
             if (s.noMove) return;
             if (!s.startedTouch) return;
-            const rt = Array.from(e.changedTouches).filter(x => x.identifier === s.startedTouch.identifier)[0];
+            const rt = Array.from(e.changedTouches).filter((x) => x.identifier === s.startedTouch.identifier)[0];
             if (!rt) return;
             let diff = s.startedTouch.clientY - rt.clientY;
             // if (this.negateMove) diff = -diff;
-            const current = getTopForBottomPosition(uiState, uiState.overlaySize);
-            const medium = getTopForBottomPosition(uiState, "medium");
+            const current = getTopForBottomPosition(uiState.overlaySize);
+            const medium = getTopForBottomPosition("medium");
             let newSize = uiState.overlaySize;
             if (diff < 0) {
                 if (uiState.overlaySize === "medium" || current + diff > medium) newSize = "small";
@@ -132,8 +130,7 @@ export default observer(function Overlay() {
         }
 
         function setShowAll() {
-            const all =
-                uiState.overlayPosition === "left" || getTopForBottomPosition(uiState, "full") + "px" === el.current.style.top;
+            const all = uiState.overlayPosition === "left" || getTopForBottomPosition("full") + "px" === el.current.style.top;
             uiState.overlayShowsAll = all;
         }
 
@@ -142,13 +139,13 @@ export default observer(function Overlay() {
             // let's animate when no touch in progress
             if (uiState.overlayPosition === "left") return;
 
-            let newTop = getTopForBottomPosition(uiState, uiState.overlaySize);
+            let newTop = getTopForBottomPosition(uiState.overlaySize);
 
             let transition = true;
             if (s.touchDiff !== undefined) {
                 newTop -= s.touchDiff;
-                const maxTop = getTopForBottomPosition(uiState, "small");
-                const minTop = getTopForBottomPosition(uiState, "full");
+                const maxTop = getTopForBottomPosition("small");
+                const minTop = getTopForBottomPosition("full");
                 newTop = Math.min(Math.max(newTop, minTop), maxTop);
                 transition = false;
             } else if (s.currentTop === undefined) {
@@ -176,7 +173,7 @@ export default observer(function Overlay() {
         //     //const backdrop =  shouldUseBackdrop && uiState.overlayLeft && settings.EXPO === "aweusa2020";
         //     s.backdropStarted = true;
         // }, 3000);
-    }, [s, uiState]);
+    }, [s]);
 
     return (
         <div className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
@@ -193,7 +190,7 @@ export default observer(function Overlay() {
 
 const miniSizeRems = 3.5;
 const paddingRems = 2;
-function getTopForBottomPosition(uiState: UIState, size: OverlaySize): number {
+function getTopForBottomPosition(size: OverlaySize): number {
     // const containerHeight = el.parentElement.getBoundingClientRect().height;
     switch (size) {
         case "full":

@@ -114,16 +114,18 @@
                 }
             }
         </style>
-        <link rel="preload" href="%PUBLIC_PATH%expofp.js" as="script" />
+        <link rel="preload" href="https://%EXPO_NAME%.expofp.com/data/data.js" as="script" crossorigin="anonymous" />
+        <link rel="preload" href="https://%EXPO_NAME%.expofp.com/data/fp.svg.js" as="script" crossorigin="anonymous" />
         <link rel="preload" href="%PUBLIC_PATH%floorplan.js" as="script" />
         <link rel="preload" href="%PUBLIC_PATH%vendors~floorplan.js" as="script" />
-        <link rel="preload" href="%PUBLIC_PATH%drawer.js" as="script" />
-        <link rel="preload" href="%PUBLIC_PATH%vendors~drawer.js" as="script" />
-        <link rel="preload" href="%PUBLIC_PATH%vendors~drawer~floorplan.js" as="script" />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/css/fontawesome-all.min.css" as="style" />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/sanitize-css/sanitize.css" as="style" />
-        <link rel="preload" href="%PUBLIC_PATH%vendor/perfect-scrollbar/css/perfect-scrollbar.css" as="style" />
-        <!-- Fonts are anonymous because those will be loaded with FontFace -->
+        <link rel="preload" href="%PUBLIC_PATH%vendor/fa/css/fontawesome-all.min.css" as="style" crossorigin="anonymous" />
+        <link rel="preload" href="%PUBLIC_PATH%vendor/sanitize-css/sanitize.css" as="style" crossorigin="anonymous" />
+        <link
+            rel="preload"
+            href="%PUBLIC_PATH%vendor/perfect-scrollbar/css/perfect-scrollbar.css"
+            as="style"
+            crossorigin="anonymous"
+        />
         <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-regular-400.woff2" as="font" crossorigin="anonymous" />
         <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-solid-900.woff2" as="font" crossorigin="anonymous" />
         <link rel="preload" href="%PUBLIC_PATH%vendor/fa/webfonts/fa-light-300.woff2" as="font" crossorigin="anonymous" />
@@ -131,22 +133,6 @@
         <link rel="preload" href="%PUBLIC_PATH%fonts/oswald-v17-cyrillic_latin-300.woff2" as="font" crossorigin="anonymous" />
     </head>
     <body>
-        <script>
-            (function(d) {
-                // Safari has bug in JSON preload
-                if (!window.safari)
-                    ["data.json", "fp.json", "fp.mesh.json"].forEach(f => {
-                        const el = d.createElement("link");
-                        Object.assign(el, {
-                            rel: "preload",
-                            as: "fetch",
-                            crossOrigin: "anonymous", // because will be loaded with fetch/same-origin
-                            href: "https://%EXPO_NAME%.expofp.com/data/" + f
-                        });
-                        d.head.appendChild(el);
-                    });
-            })(document);
-        </script>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div class="expofp-floorplan" data-event-id="%EXPO_NAME%">
             <div class="lds-grid">
@@ -161,6 +147,6 @@
                 <div></div>
             </div>
         </div>
-        <script src="%PUBLIC_PATH%expofp.js"></script>
+        <script src="%PUBLIC_PATH%expofp.js" crossorigin="anonymous"></script>
     </body>
 </html>

@@ -1,31 +1,21 @@
-import { zoomIdentity } from "d3-zoom";
 import jsPDF from "jspdf";
 import slugify from "slugify";
-import Rect from "../core/Rect";
-import Size from "../core/Size";
-//import createDrawer from "../components/Map/drawing/Drawer1";
-// import data from "../data";
-// import { svgViewBox } from "../data/svg";
-import DrawerAdapter from "../drawing/DrawerAdapter";
-import Matrix from "../drawing/Matrix";
-import FloorPlanReady from "../floorplan.ready";
+import createDrawer from "../components/Map/drawing/Drawer1";
+import data from "../data";
+import { svgViewBox } from "../data/svg";
 import debugCanvases from "./debugCanvases";
 import pdfFontBold from "./pdf-open-sans-bold.txt";
 import pdfFontNormal from "./pdf-open-sans-normal.txt";
-import { sleep } from "../utils";
 
 const jsPDFAPI = jsPDF["API"];
 
-export async function generatePdf(fp: FloorPlanReady) {
+export async function generatePdf() {
     const dpi = 72;
     const printerPpi = 300;
     const format = "Tabloid";
-    const data = fp.data;
-    const viewBox = fp.svg.viewBox as Rect;
-    const area = fp.svg.area as Rect;
 
     //const titleFontSizePercentOfWidth = 0.05;
-    const orientation = viewBox.w / viewBox.h > 1.2 ? "landscape" : "portrait";
+    const orientation = svgViewBox.w / svgViewBox.h > 1.2 ? "landscape" : "portrait";
     const doc = new jsPDF({ format, orientation });
     const anyDoc = doc as any; // convenience
     const width = Math.ceil(doc.internal.pageSize.getWidth());
@@ -84,12 +74,12 @@ export async function generatePdf(fp: FloorPlanReady) {
     const blockHeight = heightLeft;
     const blockWidth = width - imgPadding * 2;
 
-    const yRatio = blockHeight / viewBox.h;
-    const xRatio = blockWidth / viewBox.w;
+    const yRatio = blockHeight / svgViewBox.h;
+    const xRatio = blockWidth / svgViewBox.w;
     const ratio = Math.min(yRatio, xRatio);
 
-    const imageWidth = viewBox.w * ratio;
-    const imageHeight = viewBox.h * ratio;
+    const imageWidth = svgViewBox.w * ratio;
+    const imageHeight = svgViewBox.h * ratio;
 
     const cx = width / 2;
     const cy = occupied + imgPadding + blockHeight / 2;
@@ -104,23 +94,11 @@ export async function generatePdf(fp: FloorPlanReady) {
 
     debugCanvases.push(canvas);
 
-    const matrix = new Matrix(
-        new Size(canvas.width, canvas.height),
-        Rect.fromXywh(0, 0, canvas.width, canvas.height),
-        1,
-        area,
-        zoomIdentity,
-        2.5
-    );
-    const drawer = new DrawerAdapter(fp, canvas, matrix); //createDrawer(fp, canvas, false);
-    await drawer.drawn;
-    // wait for next tick for image to be applied onto canvas? TODO: research
-    await sleep(100);
-    drawer.dispose();
-    // drawer.setVisibleScale(1);
-    // drawer.setPixelRatio(2.5);
-    // // drawer.resetCanvasSize();
-    // drawer.draw();
+    const drawer = createDrawer(canvas, false);
+    drawer.setVisibleScale(1);
+    drawer.setPixelRatio(2.5);
+    // drawer.resetCanvasSize();
+    drawer.draw();
 
     doc.addImage(canvas, "JPEG", left, top, imageWidth, imageHeight);
 

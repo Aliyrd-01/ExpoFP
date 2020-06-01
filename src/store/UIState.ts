@@ -1,12 +1,11 @@
 import { action, computed, observable } from "mobx";
-import { Booth, BoothBase, RegularBooth } from "../core/Booth";
-// import { uiState } from ".";
+import { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
-// import settings from "../tools/settings";
+import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import browser from "../utils/browser";
-// import { Booth, BoothBase, RegularBooth } from "./BoothStore";
+import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
@@ -47,7 +46,7 @@ export default class UIState {
     previewExhibitor: Exhibitor = null;
     @observable wsStarted = false;
     @observable canvasStarted = false;
-    @observable showAdminUi = false;
+    @observable kiosk = false;
 
     overlayMediumHeightRems = 10;
 
@@ -74,10 +73,6 @@ export default class UIState {
     @computed({ keepAlive: true }) get selectedCategory() {
         return this.list.type === "category" ? this.list.category : null;
     }
-
-    // @computed({ keepAlive: true }) get showAdminUi() {
-    //     return true;
-    // }
 
     ///////////////////////////////////////////////////////////////////////////
     // positions
@@ -125,7 +120,7 @@ export default class UIState {
     }
 
     @computed get wsDesktopPosition() {
-        return "top"; //settings.EXPO === "cbresupplypartner" ? "bottom" : "top";
+        return settings.EXPO === "cbresupplypartner" ? "bottom" : "top";
     }
     @computed get wsPosition() {
         return this.overlayBottom ? "top" : this.wsDesktopPosition;
@@ -146,35 +141,33 @@ export default class UIState {
     }
 
     // visible rect
-    @computed({ keepAlive: true }) get canvasVisibleRectPx(): Rect {
+    @computed get canvasVisibleRectPx(): Rect {
         const s = this.screenSize;
         return Rect.fromX1y1x2y2(this.mapVisibleLeft, this.mapVisibleTop, s.width, s.height - this.mapVisibleBottom);
     }
 
-    @computed({ keepAlive: true }) get canvasVisibleRectPt(): Rect {
+    @computed get canvasVisibleRectPt(): Rect {
         return this.canvasVisibleRectPx.scale(this.devicePixelRatio);
     }
 
-    @computed({ keepAlive: true }) get canvasSizePt(): Size {
+    @computed get canvasSizePt(): Size {
         return this.screenSize.scale(this.devicePixelRatio);
     }
 
     // misc
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
-        // return false;
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
+        if (this.selectedExhibitor?.gallery) return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
         // const ua = navigator.userAgent;
         // const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
         // const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-        // const isAndroid = browser.getOSName(true) === "android";
-        // TODO: test
-        if (browser.isAndroid) return false;
-
-        const isSafari = browser.safariVersion >= 13; //({ safari: ">=13" });
-        const isChrome = browser.chromeVersion >= 77; //({ chrome: ">=77" });
-        return isSafari || (isChrome && this.canvasSizePt.height * this.canvasSizePt.width < 3000000);
+        const isSafari = browser.satisfies({ safari: ">=13" });
+        const isChrome = browser.satisfies({ chrome: ">=77" });
+        var isAndroid = /(android)/i.test(navigator.userAgent);
+        if (isAndroid) return false;
+        return isSafari || (isChrome && uiState.canvasSizePt.height * uiState.canvasSizePt.width < 3000000);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -184,7 +177,7 @@ export default class UIState {
     @computed get dimmed() {
         return (
             this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
-            !!this.listItems.find(x => !(x instanceof Exhibitor))
+            this.listItems.find((x) => !(x instanceof Exhibitor))
         );
     }
 
@@ -211,12 +204,12 @@ export default class UIState {
 
         // rulles here
         const matchingExhibitors = exhibitorsArray.filter(
-            e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find(b => b.name.toLowerCase() === text)
+            (e) => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find((b) => b.name.toLowerCase() === text)
         );
-        const matchingCategories = categoriesArray.filter(e => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
+        const matchingCategories = categoriesArray.filter((e) => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
         const matchingBooths = boothsArray.filter(
-            e =>
-                (!(e instanceof RegularBooth) || !matchingExhibitors.find(x => x.booths.indexOf(e) !== -1)) &&
+            (e) =>
+                (!(e instanceof RegularBooth) || !matchingExhibitors.find((x) => x.booths.indexOf(e) !== -1)) &&
                 e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
         );
 
@@ -240,8 +233,8 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get listBooths() {
-        const arr: Booth[] = [];
-        this.listItems.forEach(item => {
+        const arr = [] as Booth[];
+        this.listItems.forEach((item) => {
             if (item instanceof Exhibitor) {
                 arr.push(...item.booths);
             } else if (item instanceof BoothBase) {
@@ -250,21 +243,10 @@ export default class UIState {
         });
         return new Set(arr);
     }
-
-    // @computed({ keepAlive: true }) get listBoothNames() {
-    //     return new Set(Array.from(this.listBooths).map(x => x.name));
-    // }
     // @computed get listBoothsIdsSet() {
     //     return new Set(getters.listBoothsIds);
     // }
     @computed({ keepAlive: true }) get selectedBooths() {
-        let arr: Booth[];
-        if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
-        else if (this.selectedBooth) arr = [this.selectedBooth];
-        return new Set(arr);
-    }
-
-    @computed({ keepAlive: true }) get selectedBoothNames() {
         let arr: Booth[];
         if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
         else if (this.selectedBooth) arr = [this.selectedBooth];
@@ -279,18 +261,6 @@ export default class UIState {
         else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths;
         return new Set(arr);
     }
-
-    // @computed({ keepAlive: true }) get bookmarkedBoothNames() {
-    //     return this.rootStore.exhibitorStore.bookmarkedBoothNames;
-    // }
-
-    // @computed({ keepAlive: true }) get boothExhibitorIds() {
-    //     return this.rootStore.boothStore.boothExhibitorIdsMap;
-    // }
-
-    // @computed({ keepAlive: true }) get exhibitorById() {
-    //     return this.rootStore.exhibitorStore.exhibitorByIdMap;
-    // }
 
     ///////////////////////////////////////////////////////////////////////////
 

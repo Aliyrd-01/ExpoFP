@@ -1,14 +1,12 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
-// import store, { uiState } from "../store";
+import store, { uiState } from "../store";
 import debugCanvases from "../tools/debugCanvases";
-import { useStore, useUiState } from "../tools/use";
+import { t } from "../utils/i18n";
 import "./Debug.scss";
 
 function Debug() {
-    const store = useStore();
-
-    const canvases = debugCanvases.map(item => (
+    const canvases = debugCanvases.map((item) => (
         <div className="debug__canvas" key={item.toDataURL()}>
             {item.width}x{item.height}={item.width * item.height}
             <br />
@@ -18,14 +16,10 @@ function Debug() {
 
     return (
         <div className="debug">
-            <button onClick={() => store.selectSearch("")}>Close</button>
+            <button onClick={() => store.selectSearch("")}>{t("Close")}</button>
             {canvases}
         </div>
     );
 }
 
-export default () =>
-    useObserver(() => {
-        const uiState = useUiState();
-        return <>{uiState.list.type === "search" && uiState.list.text === "q1" ? <Debug /> : null}</>;
-    });
+export default () => useObserver(() => <>{uiState.list.type === "search" && uiState.list.text === "q1" ? <Debug /> : null}</>);

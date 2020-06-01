@@ -1,3 +1,4 @@
+:host,
 :root {
     --error-color: red;
     --color: #34a1e6;
@@ -22,14 +23,6 @@
         bottom: 0;
         overflow: hidden;
     }
-    &__fps {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        font-size: 10px;
-        z-index: 999;
-        pointer-events: none;
-    }
 }
 a {
     color: var(--link-color);
@@ -43,6 +36,13 @@ a:visited {
     text-decoration: underline;
 }
 
+#fps {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 10px;
+    z-index: 999;
+}
 .fa-phone {
     transform: scaleX(-1);
 }

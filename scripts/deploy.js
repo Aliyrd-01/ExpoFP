@@ -1,16 +1,19 @@
+console.log("Wont deploy from here");
+return;
+
 const fs = require("fs");
 const AWS = require("aws-sdk");
 const async = require("async");
 const fetch = require("node-fetch");
 
-const stable = "2.0.1";
-// const updateToBeta = "0.4.3";
-const beta = "2.0.20";
-const alpha = beta; //require("../package.json").version;
+const stable = "0.4.3";
+const updateToBeta = "2.0.0";
+const beta = require("../package.json").version;
+const alpha = require("../package.json").version;
 const minDaysUsed = 30;
 
-const betas = ["confex20", "demo"];
-const alphas = ["thinksoft", "confex21", "sydneybuildexpo"];
+const betas = ["eventtechlive2020", "miblive2020", "_template_for_new_event_", "birdstrike2020"];
+const alphas = ["thinksoft", "expo", "eventscase", "confexdev"];
 const force = [...alphas];
 
 const credentials = new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" });
@@ -24,6 +27,9 @@ async function main() {
 
     await require("./update-deploy-info");
     const cacheFile = __dirname + "/deploy-info.cache.json";
+    // if (!fs.existsSync(cacheFile)) {
+    //     require("./update-deploy-info");
+    // }
     const cache = JSON.parse(fs.readFileSync(cacheFile));
 
     const functions = [];
@@ -36,8 +42,7 @@ async function main() {
 
         if (data.expo === "demo") requiredNpmVersion = null;
         else if (alphas.indexOf(data.expo) !== -1) requiredNpmVersion = alpha;
-        else if (betas.indexOf(data.expo) !== -1) requiredNpmVersion = beta;
-        //|| data.npmVersion === updateToBeta
+        else if (betas.indexOf(data.expo) !== -1 || data.npmVersion === updateToBeta) requiredNpmVersion = beta;
         else if (data.dataLastModified < minDate) requiredNpmVersion = null;
         else requiredNpmVersion = stable;
 
@@ -45,7 +50,7 @@ async function main() {
 
         if (data.requiredNpmVersion && (data.requiredNpmVersion !== data.npmVersion || force.indexOf(data.expo) !== -1)) {
             functions.push(async () => {
-                await updateIndex(data.expo, data.requiredNpmVersion, data.npmVersion);
+                await updateIndex(data.expo, data.requiredNpmVersion);
                 data.npmVersion = data.requiredNpmVersion;
                 fs.writeFileSync(cacheFile, JSON.stringify(cache, null, "\t"));
             });
@@ -60,13 +65,11 @@ async function main() {
 
 const pendingInvalidates = [];
 
-async function updateIndex(expo, version, oldVersion) {
-    const oldStable = version.startsWith("2.0.");
-    const templateFile = oldStable ? "template.oldstable.html" : "template.html";
-    console.log(`Updating ${expo} ${oldVersion} => ${version} with ${templateFile}`);
+async function updateIndex(expo, version) {
+    console.log("Updating", expo, version);
 
     const publicPath = `https://${expo}.expofp.com/npm/expofp@${version}/dist/`; //https://cdn.jsdelivr.net
-    const template = fs.readFileSync(__dirname + "/" + templateFile, "utf8");
+    const template = fs.readFileSync(__dirname + "/template.html", "utf8");
     const html = template.replace(/%PUBLIC_PATH%/g, publicPath).replace(/%EXPO_NAME%/g, expo);
     const fileName = `expos/${expo}/live/index.html`;
     const bucketParams = {

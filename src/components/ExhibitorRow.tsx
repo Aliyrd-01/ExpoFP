@@ -1,18 +1,13 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
-import { RegularBooth } from "../core/Booth";
-// import store, { uiState } from "../store";
+import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
-import { useStore, useUiState } from "../tools/use";
+import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
-    const store = useStore();
-    const uiState = useUiState();
-    // const exhibitorStore = useExhibitorStore();
-
     function handleClick(e: MouseEvent) {
         e.preventDefault();
         store.clickExhibitor(exhibitor);
@@ -22,19 +17,13 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         e.preventDefault();
         e.stopPropagation();
         if (document.activeElement) (document.activeElement as HTMLDivElement).blur();
-        store.toggleExhibitorBookmark(exhibitor);
-        // if (exhibitor.bookmarked) {
-        //     exhibitorStore.bookmarked.delete(exhibitor.id);
-        // } else {
-        //     exhibitorStore.bookmarked.add(exhibitor.id);
-        // }
-
-        //exhibitor.bookmarked = !exhibitor.bookmarked;
+        exhibitor.bookmarked = !exhibitor.bookmarked;
     }
 
     const div = useRef();
 
     useEffect(() => {
+        if (!div.current) return;
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
@@ -42,7 +31,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         <a
             className={`exhibitor-row ${className} ${classNames({
                 bookmarked: exhibitor.bookmarked,
-                featured: exhibitor.featured
+                featured: exhibitor.featured,
             })}`}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}
@@ -52,12 +41,14 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             <div className="exhibitor-row__lines">
                 {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
             </div>
-            <div className="exhibitor-row__bookmark" onClick={handleBookmark} title="Toggle bookmark" ref={div}>
-                <BookmarkSvg />
-            </div>
+            {uiState.kiosk ? null : (
+                <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
+                    <BookmarkSvg />
+                </div>
+            )}
             <div className="exhibitor-row__booth">
-                {exhibitor.booths.map((booth: RegularBooth) => (
-                    <div key={booth.name}>{booth.name}</div>
+                {exhibitor.booths.map((booth) => (
+                    <div key={booth.id}>{booth.name}</div>
                 ))}
             </div>
         </a>

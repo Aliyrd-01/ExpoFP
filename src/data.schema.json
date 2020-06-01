@@ -57,6 +57,10 @@
             "type": "string",
             "description": "Booth term (typically 'booth' or 'stand')"
         },
+        "locale": {
+            "type": "string",
+            "description": "Locale to choose translation resouce file"
+        },
         "booths": {
             "type": "array",
             "items": {
@@ -195,6 +199,12 @@
                     "logo": {
                         "type": "string"
                     },
+                    "gallery": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "address": {
                         "type": "string"
                     },
@@ -271,6 +281,9 @@
                     },
                     "name": {
                         "type": "string"
+                    },
+                    "sponsorship": {
+                        "type": "boolean"
                     }
                 }
             }

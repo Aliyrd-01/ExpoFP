@@ -1,19 +1,14 @@
 import React from "react";
-import { Booth } from "../core/Booth";
-// import { Booth } from "../store/BoothStore";
-import { useData, useStore, useUiState } from "../tools/use";
-// import store, { uiState } from "../store";
-import "./BoothRow.scss";
+import { Booth } from "../store/BoothStore";
 import SimpleRow from "./SimpleRow";
+import data from "../data";
+import store, { uiState } from "../store";
+import './BoothRow.scss'
 
 const BoothRow: React.FC<{
     booth: Booth;
     className: string;
-}> = ({ booth, className }) => {
-    const store = useStore();
-    const uiState = useUiState();
-    const data = useData();
-
+}> = ({ booth, className}) => {
     return (
         <SimpleRow
             className={className}
@@ -26,7 +21,7 @@ const BoothRow: React.FC<{
         />
     );
     function handleClick() {
-        store.clickBoothInList(booth);
+        store.clickBoothInList2(booth);
     }
 
     function handleMouseOver() {

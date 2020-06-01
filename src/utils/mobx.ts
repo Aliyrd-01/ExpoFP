@@ -1,5 +1,5 @@
-import { autorun, IAutorunOptions, IReactionOptions, IReactionPublic, reaction } from "mobx";
-import { EffectCallback, useEffect } from "react";
+import { useEffect, EffectCallback } from "react";
+import { autorun, IReactionPublic, IAutorunOptions, reaction, IReactionOptions } from "mobx";
 
 export function useAutorun(view: (r: IReactionPublic) => any, opts?: IAutorunOptions) {
     return useEffect(
@@ -21,6 +21,6 @@ export function useReaction<T>(
     );
 }
 
-export function useInit(effect: EffectCallback) {
+export function useInit(effect: EffectCallback){
     return useEffect(effect, []);
 }

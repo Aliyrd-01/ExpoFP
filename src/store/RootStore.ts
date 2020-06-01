@@ -1,33 +1,26 @@
-import { action, configure } from "mobx";
-import { Booth, RegularBooth, BoothBase } from "../core/Booth";
-import FloorPlanReady from "../floorplan.ready";
+import { action } from "mobx";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
-import BoothStore from "./BoothStore";
+import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
-// import BoothState from "./BoothStateProvider";
-
-configure({ computedRequiresReaction: true });
+import FloorPlanReady from "../floorplan.ready";
+import browser from "../utils/browser";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
     readonly exhibitorStore: ExhibitorStore;
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
-    // readonly apiStore: ApiStore;
-    readonly fp: FloorPlanReady;
-    // readonly boothState: BoothState;
+    fp: FloorPlanReady;
 
-    constructor(fp: FloorPlanReady) {
-        this.fp = fp;
+    constructor() {
+        // this.fp = fp;
         this.categoryStore = new CategoryStore(this);
         this.exhibitorStore = new ExhibitorStore(this);
         this.boothStore = new BoothStore(this);
         this.uiState = new UIState(this);
-        // this.boothState = new BoothState(this.uiState, this.exhibitorStore);
-        // this.apiStore = new ApiStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
@@ -40,7 +33,24 @@ export default class RootStore {
         this.uiState.details = booth;
     }
 
+    @action reset() {
+        const el = window["__searchi"] as HTMLDivElement;
+        if (
+            el &&
+            el.querySelector &&
+            el.querySelector("input[type=search]") &&
+            (el.querySelector("input[type=search]") as any).blur
+        )
+            (el.querySelector("input[type=search]") as any).blur();
+        window.setTimeout(() => {
+            this.selectSearch("");
+            // this.moveToList();
+            this.uiState.centerMap = true;
+        }, 1000);
+    }
+
     @action selectNone() {
+        if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
     }
 
@@ -50,18 +60,21 @@ export default class RootStore {
     }
 
     @action selectCategory(category: Category) {
+        if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
         this.uiState.list = { type: "category", category };
         this.uiState.desiredOverlaySize = "full";
     }
 
     @action selectSearch(text?: string) {
+        if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
         this.uiState.list = { type: "search", text: text || "", focused: false };
         this.uiState.activeListIndex = -1;
     }
 
     @action clickBookmarks() {
+        if (window["__resett"]) window["__resett"]();
         this.uiState.menu = false;
         this.selectBookmarks();
         this.moveToList();
@@ -73,6 +86,7 @@ export default class RootStore {
     }
 
     @action clickCategory(category: Category) {
+        if (window["__resett"]) window["__resett"]();
         this.uiState.menu = false;
         this.selectCategory(category);
         this.moveToList();
@@ -88,6 +102,7 @@ export default class RootStore {
     }
 
     @action clickBoothInList(booth: Booth) {
+        if (window["__resett"]) window["__resett"]();
         this.uiState.hoveredBooth = null;
         this.selectBooth(booth);
         this.moveToList([booth]);
@@ -98,6 +113,26 @@ export default class RootStore {
         // dispatch("moveToList", boothsToItems([booth]));
         // dispatch("showMap", id);
     }
+
+    @action clickBoothInList2(booth: Booth) {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.hoveredBooth = null;
+        this.selectBooth(booth);
+        window.setTimeout(
+            () => {
+                this.moveToList([booth]);
+                this.showMap();
+            },
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+        );
+
+        // commit("setHoveredBooth", null);
+        // dispatch("selectBooth", id);
+        // // const booth = state.booths[id];
+        // dispatch("moveToList", boothsToItems([booth]));
+        // dispatch("showMap", id);
+    }
+
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
         if (!booth) {
@@ -112,9 +147,8 @@ export default class RootStore {
             this.uiState.onBoothClick(e);
         }
 
-        if (booth instanceof RegularBooth && booth.exhibitorIds.length === 1) {
-            const ex = this.exhibitorStore.exhibitorByIdMap.get(booth.exhibitorIds[0]);
-            this.selectExhibitor(ex);
+        if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
+            this.selectExhibitor(booth.exhibitors[0]);
         } else {
             this.selectBooth(booth);
         }
@@ -135,10 +169,24 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
-    @action clickExhibitor(exhibitor: Exhibitor) {
+    @action clickExhibitor2(exhibitor: Exhibitor) {
         this.selectExhibitor(exhibitor);
         this.moveToExhibitor(exhibitor);
         this.showMap();
+        // dispatch("selectExhibitor", id);
+        // dispatch("moveToExhibitor", id);
+        // dispatch("showMap");
+    }
+
+    @action clickExhibitor(exhibitor: Exhibitor) {
+        window.setTimeout(
+            () => {
+                this.clickExhibitor2(exhibitor);
+            },
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+            // navigator.userAgent.indexOf("android") > -1 ? 400 : 50
+        );
+
         // dispatch("selectExhibitor", id);
         // dispatch("moveToExhibitor", id);
         // dispatch("showMap");
@@ -171,23 +219,15 @@ export default class RootStore {
                 booths.push(item);
             }
         });
+        console.log("zzz", booths);
         this.uiState.moveToBooths = booths;
         // commit("setMoveToBooths", booths);
     }
     @action moveToExhibitor(exhibitor: Exhibitor) {
+        // alert(exhibitor.id);
         this.moveToList([exhibitor]);
         // dispatch("moveToList", exhibitorsToItems([state.exhibitors[id]]));
     }
-
-    @action toggleExhibitorBookmark(exhibitor: Exhibitor) {
-        const bookmarked = this.exhibitorStore.bookmarkedIds;
-        if (exhibitor.bookmarked) {
-            bookmarked.delete(exhibitor.id);
-        } else {
-            bookmarked.add(exhibitor.id);
-        }
-    }
-
     @action changeActiveListIndex(delta: 1 | 0 | -1) {
         let newVal = this.uiState.activeListIndex + delta;
         newVal = Math.max(0, Math.min(this.uiState.listItems.length - 1, newVal));
@@ -203,7 +243,7 @@ export default class RootStore {
         } else if (item instanceof Category) {
             this.clickCategory(item);
         } else if (item instanceof BoothBase) {
-            this.clickBoothInList(item);
+            this.clickBoothInList2(item);
         }
         // switch (item.type) {
         //     case "exhibitor":
@@ -217,11 +257,4 @@ export default class RootStore {
         //         break;
         // }
     }
-    @action setBoothExhibitors(boothName: string, exhibitorIds: number[]) {
-        this.exhibitorStore.exhibitorIdsByBoothNameMap.set(boothName, exhibitorIds);
-    }
-
-    // @action setApiToken(token: string) {
-    //     // validate api token asynchronously
-    // }
 }

@@ -1,13 +1,13 @@
 // import { observable } from 'mobx';
+import RootStore from "./RootStore";
 import { computed } from "mobx";
 import { Exhibitor } from "./ExhibitorStore";
-import RootStore from "./RootStore";
 
 export default class CategoryStore {
     private readonly rootStore: RootStore;
 
     readonly categories: Category[] = [];
-    @computed({keepAlive: true}) get categoryByIdMap() {
+    @computed({keepAlive: true}) get categoryById() {
         return new Map<number, Category>(this.categories.map(c => [c.id, c]));
     }
 
@@ -26,6 +26,7 @@ export class Category {
     readonly id: number;
     readonly name: string;
     readonly slug: string;
+    readonly sponsorship: boolean;
 
     readonly exhibitors: Exhibitor[];
     // populated

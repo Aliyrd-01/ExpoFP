@@ -1,13 +1,13 @@
-import CategoryStore, { Category } from "../CategoryStore";
-import RootStore from "../RootStore";
-import { generateUniqueSlug } from "../../tools/slug";
-// import data from '../../data';
-import logger from "../../tools/logger";
-import { sortByName } from "../../utils";
+import CategoryStore, { Category } from '../CategoryStore';
+import RootStore from '../RootStore';
+import { generateUniqueSlug } from '../../tools/slug';
+import data from '../../data';
+import logger from '../../tools/logger';
+import { sortByName } from '../../utils';
+
 
 export default function initCategories(store: RootStore) {
     const { categoryStore } = store;
-    const data = store.fp.data;
 
     sortByName(data.categories);
 
@@ -16,7 +16,7 @@ export default function initCategories(store: RootStore) {
         Object.assign(c, b);
         c.exhibitors = [];
         c.slug = generateUniqueSlug(c.name);
-        (c["store"] as CategoryStore) = categoryStore;
+        (c['store'] as CategoryStore) = categoryStore;
         categoryStore.categories.push(c as Category);
     }
 
@@ -24,5 +24,5 @@ export default function initCategories(store: RootStore) {
 
     // dispose
     delete data.categories;
-    logger.log("initCategories", categoryStore.categories.length);
+    logger.log('initCategories', categoryStore.categories.length);
 }

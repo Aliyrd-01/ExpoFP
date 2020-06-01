@@ -15,3 +15,18 @@ ready(() => {
 });
 
 export const FloorPlan = FloorPlanLoader;
+
+
+/*
+floorplan loader
+    requires all resources
+
+floorplan ready
+    in context
+    has reference to store
+    store has reference to fp
+    observable props (part of store)
+
+init store somehow with 
+
+*/

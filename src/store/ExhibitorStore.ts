@@ -1,60 +1,18 @@
 // import { observable } from 'mobx';
-// import { RegularBooth } from "./BoothStore";
-import { action, computed, observable } from "mobx";
-import { RegularBooth } from "../core/Booth";
-import { sortByName } from "../utils";
-import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
+import { Category } from "./CategoryStore";
+import { RegularBooth } from "./BoothStore";
+import { computed, observable, action } from "mobx";
 
 export default class ExhibitorStore {
-    public readonly rootStore: RootStore;
+    private readonly rootStore: RootStore;
     readonly exhibitors: Exhibitor[] = [];
-
-    @observable bookmarkedIds = new Set<number>();
-    @observable readonly exhibitorIdsByBoothNameMap = new Map<string, number[]>();
-
-    constructor(rootStore: RootStore) {
-        this.rootStore = rootStore;
-        // reaction(
-        //     () => [Array.from(this.exhibitorIdsByBoothNameMap)],
-        //     () => {
-        //         // console.log("zzz", this.exhibitorIdsByBoothNameMap);
-        //     }
-        // );
-    }
-
-    @computed({ keepAlive: true }) get bookmarked() {
-        return Array.from(this.bookmarkedIds).map(b => this.exhibitorByIdMap.get(b));
-    }
-
-    @computed({ keepAlive: true }) get bookmarkedBoothNames() {
-        const bb = new Set<string>();
-
-        this.bookmarked.forEach(ex => {
-            for (const b of ex.booths) {
-                bb.add(b.name);
-            }
-        });
-        return bb;
-    }
-
-    @computed({ keepAlive: true }) get exhibitorByIdMap() {
+    @computed({ keepAlive: true }) get exhibitorById() {
         return new Map<number, Exhibitor>(this.exhibitors.map(c => [c.id, c]));
     }
 
-    @computed({ keepAlive: true }) get boothNamesByExhibitorIdMap() {
-        const res = new Map<number, string[]>();
-        this.exhibitorIdsByBoothNameMap.forEach((v, k) => {
-            v.forEach(exhibitorId => {
-                let ar = res.get(exhibitorId);
-                if (!ar) {
-                    ar = [];
-                    res.set(exhibitorId, ar);
-                }
-                ar.push(k);
-            });
-        });
-        return res;
+    @computed get bookmarked() {
+        return this.exhibitors.filter(x => x.bookmarked);
     }
 
     @computed({ keepAlive: true }) get advertised() {
@@ -62,7 +20,20 @@ export default class ExhibitorStore {
     }
 
     @action replaceBookmarked(ids: number[]) {
-        this.bookmarkedIds = new Set(ids.filter(x => this.bookmarkedIds.has(x)));
+        //const current = new Set(this.bookmarked);
+        const ar = ids.map(x => this.exhibitorById.get(x)).filter(x => x);
+        const set = new Set(ar);
+        const toRemove = this.bookmarked.filter(e => !set.has(e));
+        for (const e of toRemove) {
+            e.bookmarked = false;
+        }
+        for (const e of ar) {
+            e.bookmarked = true;
+        }
+    }
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
     }
 }
 
@@ -93,22 +64,10 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     //populated
     readonly logo: string;
+    readonly gallery: string[];
     readonly slug: string;
+    @observable bookmarked: boolean;
 
-    @computed({ keepAlive: true }) get bookmarked() {
-        return this.store.bookmarkedIds.has(this.id);
-    }
-
-    @computed({ keepAlive: true }) get booths() {
-        const boothStore = this.store.rootStore.boothStore;
-
-        const ar = (this.store.boothNamesByExhibitorIdMap.get(this.id) || []).map(
-            name => boothStore.boothByNameMap.get(name) as RegularBooth
-        );
-        sortByName(ar);
-        return ar;
-    }
-
-    // readonly booths: RegularBooth[];
+    readonly booths: RegularBooth[];
     readonly categories: Category[];
 }

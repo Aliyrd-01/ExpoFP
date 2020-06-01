@@ -1,13 +1,12 @@
 import { observer } from "mobx-react-lite";
 import PerfectScrollbar from "perfect-scrollbar";
-import React, { ReactNode, useEffect, useRef, useState, useLayoutEffect } from "react";
-// import { uiState } from "../store";
+import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { uiState } from "../store";
 import isScrollUgly from "../utils/is-scroll-ugly";
 import OverlayBar from "./OverlayBar";
 import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
-import { useUiState } from "../tools/use";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
@@ -17,8 +16,8 @@ const OverlayContent: React.FC<{
     hideClose?: boolean;
     onBack?: () => void;
     onClose: () => void;
-}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children }) => {
-    const uiState = useUiState();
+    onUpdateFuncSet?: (s: () => void) => void;
+}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
 
@@ -38,6 +37,7 @@ const OverlayContent: React.FC<{
             update = setScrolled;
             sel.addEventListener("scroll", setScrolled);
         }
+        if (onUpdateFuncSet) onUpdateFuncSet(update);
 
         window.addEventListener("resize", update);
         const observer = new MutationObserver(update);
@@ -45,6 +45,7 @@ const OverlayContent: React.FC<{
 
         return () => {
             window.removeEventListener("resize", update);
+            if (onUpdateFuncSet) onUpdateFuncSet(null);
             observer.disconnect();
         };
     }, [scrollable]);

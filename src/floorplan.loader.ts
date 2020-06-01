@@ -1,11 +1,9 @@
-import Rect from "./core/Rect";
 import baseUrl from "./tools/base-url";
-import "./tools/debug";
-import { loadCss, loadJson, loadJsonCached, loadFont, preloadImage } from "./tools/loaders";
+import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
+import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
-import importDrawer from "./drawing/impl/import-drawer";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -19,11 +17,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly element: HTMLDivElement;
     readonly eventId: string;
     readonly dataUrl: string;
-    meshUrl: string;
-    logoUrl: string;
     readonly noOverlay: boolean;
-    svg: SvgJson;
-    data: Data;
 
     protected resolveReady: () => void;
 
@@ -91,35 +85,26 @@ export default class FloorPlanLoader implements FloorPlan {
         // lazy load floorplan and instantiate it here
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
-        const dataUrl = dataUrlBase + "data.json";
-        const fpUrl = dataUrlBase + "fp.json";
-        this.meshUrl = dataUrlBase + "fp.mesh.json";
-
-        // preloadJson(dataUrl);
-        // preloadJson(fpUrl);
-        // preloadJson(this.meshUrl);
-        // preloadJs("floorplan.js");
-        // preloadJs("vendors~floorplan.js");
-        // preloadFont("fonts/oswald-v17-cyrillic_latin-300.woff2");
-        // preloadFont("fonts/oswald-v17-cyrillic_latin-500.woff2");
-        importDrawer();
+        const dataUrl = dataUrlBase + "data.js";
+        const fpUrl = dataUrlBase + "fp.svg.js";
 
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
+        // loadCss("fonts/fonts.css", container);
 
         loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
 
         const fontPromises = [
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 })
-            // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
-            // loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 })
+            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
+            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
+            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
         ];
 
         let handledStyleElements = 0;
-        window.addEventListener("__efpStyleLoad", function(e: Event) {
+        window.addEventListener("__efpStyleLoad", function (e: Event) {
             const elements = window["__efpStyleElements"] as HTMLStyleElement[];
             while (handledStyleElements < elements.length) {
                 const el = elements[handledStyleElements];
@@ -130,36 +115,19 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            loadJsonCached<any>(self.meshUrl);
-            const fprPromise = import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
-            await Promise.all([
-                ...fontPromises,
-                (async function() {
-                    self.data = await loadJson<Data>(dataUrl);
-                })(),
-                (async function() {
-                    self.svg = await loadJson<SvgJson>(fpUrl);
-                })()
-            ]);
+            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
-            while (self.svg.pending) {
-                await sleep(1500);
-                self.svg = await loadJson<SvgJson>(fpUrl + `?v=${++fpVersion}`);
+            while (window["__fpPending"] && !window["__fp"]) {
+                await sleep(2000);
+                await loadJs(fpUrl + `?v=${++fpVersion}`);
             }
-            if (fpVersion) {
-                self.meshUrl += `?v=${fpVersion}`;
-                loadJsonCached<any>(self.meshUrl);
-            }
+            const data = window["__data"] as Data;
+            await initI18n(data.locale || "en");
 
-            self.logoUrl = dataUrlBase + self.data.logo;
-            window.setTimeout(() => preloadImage(self.logoUrl), 2500);
-
-            self.svg.area = Rect.fromSvgJsonRect(self.svg.area);
-            self.svg.viewBox = Rect.fromSvgJsonRect(self.svg.viewBox);
             logger.log("Data loaded");
-            const { default: FloorPlanReady } = await fprPromise;
+            const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
             // TODO: legacy, remove in 1/1/2021
-            document.querySelectorAll(".expofp-floorplan-loader").forEach(x => x.remove());
+            document.querySelectorAll(".expofp-floorplan-loader").forEach((x) => x.remove());
             // remove all kids (loaders)
             while (element.firstChild && element.firstChild !== shadowContainer) {
                 element.removeChild(element.firstChild);

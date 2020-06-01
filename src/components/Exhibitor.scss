@@ -45,6 +45,13 @@
             }
         }
 
+        &-sponsorship {
+            background: #ff8c00;
+            &:hover {
+                background: #e87f00;
+            }
+        }
+
         &-booth {
             background: #fb3e59;
             &:hover {
@@ -72,7 +79,8 @@
 
         // height: 75px;
     }
-    &__description {
+    &__description,
+    &__slider {
         margin: 1rem;
         font-size: 0.9rem;
 

@@ -1,24 +1,24 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, useRef } from "react";
-// import store, { uiState } from "../store";
+import React, { MouseEvent, Suspense, useRef } from "react";
+import data from "../data";
+import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
-// import settings from "../tools/settings";
-import { useData, useStore, useUiState, useFp } from "../tools/use";
-import { useAutorun, useReaction } from "../utils/mobx";
+import settings from "../tools/settings";
+import { t } from "../utils/i18n";
+import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 
+const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
+
 function ExhibitorComponent() {
-    const fp = useFp();
-    const store = useStore();
-    const data = useData();
-    const uiState = useUiState();
     const el = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         collapsed: true,
+        updateOverlayContent: null as () => void,
 
         get exhibitor() {
             return uiState.selectedExhibitor;
@@ -27,12 +27,13 @@ function ExhibitorComponent() {
             return this.exhibitor.website ? this.exhibitor.website.replace(/^(http(s?):\/\/)([^/]+)(\/)?$/i, "$3") : "";
         },
         get anySocial() {
+            if (uiState.kiosk) return false;
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
-                s => this.exhibitor[s]
+                (s) => this.exhibitor[s]
             );
         },
         get anyAddress() {
-            return !!["address", "address2", "phone1", "website", "email"].find(s => this.exhibitor[s]);
+            return !!["address", "address2", "phone1", "website", "email"].find((s) => this.exhibitor[s]);
         },
         get disableCollapse() {
             return (
@@ -46,7 +47,6 @@ function ExhibitorComponent() {
         get sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
-        adminContent: null
     }));
 
     useReaction(
@@ -57,18 +57,9 @@ function ExhibitorComponent() {
         }
     );
 
-    useAutorun(async () => {
-        if (uiState.showAdminUi && s.exhibitor) {
-            // to be memoized by mobx
-            const booths = s.exhibitor.booths;
-            const BoothAdmin = await (await import(/* webpackChunkName: "admin" */ "./BoothAdmin")).default;
-
-            s.adminContent = booths.map(b => <BoothAdmin booth={b} key={b.id} />);
-            //<BoothAdmin exhibitor={s.exhibitor} />;
-        } else {
-            s.adminContent = null;
-        }
-    });
+    function handleClick(e) {
+        if (uiState.kiosk) return e.preventDefault();
+    }
 
     return useObserver(() => {
         const exhibitor = s.exhibitor;
@@ -80,12 +71,14 @@ function ExhibitorComponent() {
                         <span>{exhibitor.name}</span>
                         {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                     </span>
-                    <a href="/" onClick={bookmark} className="exhibitor__bar-bk">
-                        <BookmarkSvg />
-                    </a>
+                    {uiState.kiosk ? null : (
+                        <a href="/" onClick={bookmark} className="exhibitor__bar-bk">
+                            <BookmarkSvg />
+                        </a>
+                    )}
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm} {exhibitor.booths.map(b => b.name).join(", ")}
+                    {data.boothTerm} {exhibitor.booths.map((b) => b.name).join(", ")}
                 </div>
             </>
         );
@@ -93,13 +86,13 @@ function ExhibitorComponent() {
         const cls = classNames({
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
-            bookmarked: exhibitor.bookmarked
+            bookmarked: exhibitor.bookmarked,
         });
 
-        // let adminContent: JSX.Element = null;
-        // if (uiState.showAdminUi) {
-        //     adminContent = <ExhibitorAdmin exhibitor={s.exhibitor} />;
-        // }
+        const expandDescription = () => {
+            s.collapsed = false;
+            setTimeout(s.updateOverlayContent);
+        };
 
         return (
             <OverlayContent
@@ -108,15 +101,15 @@ function ExhibitorComponent() {
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
+                onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
-                {s.adminContent}
                 <div className="exhibitor__details">
                     <div className="exhibitor__categories">
-                        {exhibitor.booths.map(booth => (
+                        {exhibitor.booths.map((booth) => (
                             <a
                                 href={`?${exhibitor.slug}`}
                                 key={booth.id}
-                                onClick={e => {
+                                onClick={(e) => {
                                     e.preventDefault();
                                     store.toggleMapOverlay();
                                 }}
@@ -125,15 +118,15 @@ function ExhibitorComponent() {
                                 {data.boothTerm} {booth.name}
                             </a>
                         ))}
-                        {exhibitor.categories.map(c => (
+                        {exhibitor.categories.map((c) => (
                             <a
                                 href={"?" + encodeURIComponent(c.slug)}
                                 key={c.id}
-                                onClick={e => {
+                                onClick={(e) => {
                                     e.preventDefault();
                                     handleCategoryClick(c);
                                 }}
-                                className="exhibitor__categories-cat"
+                                className={c.sponsorship ? "exhibitor__categories-sponsorship" : "exhibitor__categories-cat"}
                             >
                                 {c.name}
                             </a>
@@ -152,15 +145,22 @@ function ExhibitorComponent() {
                                 <span
                                     className="exhibitor__description-html"
                                     dangerouslySetInnerHTML={{ __html: exhibitor.description }}
-                                    onClick={() => (s.collapsed = false)}
+                                    onClick={expandDescription}
                                 />
                             ) : null}
+                        </div>
+                    ) : null}
+                    {exhibitor.gallery ? (
+                        <div className="exhibitor__slider">
+                            <Suspense fallback={null}>
+                                <ImageSlider images={exhibitor.gallery} />
+                            </Suspense>
                         </div>
                     ) : null}
                     {s.anyAddress ? <div className="exhibitor__sep" /> : null}
                     {s.showEdit ? (
                         <div className="exhibitor__edit">
-                            <button className="far fa-pencil" title="Edit" onClick={sendLoginLink} />
+                            <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
                         </div>
                     ) : null}
                     {s.anyAddress && (
@@ -186,7 +186,9 @@ function ExhibitorComponent() {
                                 <div>
                                     <i className="fas fa-phone" />
                                     <div>
-                                        <a href={"tel:" + exhibitor.phone1}>{exhibitor.phone1}</a>
+                                        <a href={"tel:" + exhibitor.phone1} onClick={handleClick}>
+                                            {exhibitor.phone1}
+                                        </a>
                                     </div>
                                 </div>
                             )}
@@ -194,7 +196,12 @@ function ExhibitorComponent() {
                                 <div>
                                     <i className="fas fa-globe" />
                                     <div>
-                                        <a href={exhibitor.website} target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            href={exhibitor.website}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={handleClick}
+                                        >
                                             {s.websiteTrimmed}
                                         </a>
                                     </div>
@@ -204,7 +211,12 @@ function ExhibitorComponent() {
                                 <div v-if="exhibitor.email">
                                     <i className="fas fa-at" />
                                     <div>
-                                        <a href={"mailto:" + exhibitor.email} target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            href={"mailto:" + exhibitor.email}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={handleClick}
+                                        >
                                             {exhibitor.email}
                                         </a>
                                     </div>
@@ -248,24 +260,26 @@ function ExhibitorComponent() {
     }
 
     function sendLoginLink(e: MouseEvent<HTMLButtonElement>) {
+        if (uiState.kiosk) return e.preventDefault();
+
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
-        if (!window.confirm(`Send login instructions to ${email} to edit profile?`)) return;
-        if (fp.eventId === "demo") return;
+        if (!window.confirm(t("Send login instructions to {{email}} to edit profile?", { email }))) return;
+        if (settings.EXPO === "expo") return;
         const xhr = new XMLHttpRequest();
         xhr.open("POST", data.sendLoginLinkUrl);
         xhr.setRequestHeader("Content-Type", "application/json");
         function er() {
-            alert("Error sending login instructions.");
+            alert(t("Error sending login instructions."));
         }
-        xhr.onload = function(e) {
+        xhr.onload = function (e) {
             if (this.status !== 200) {
                 er();
                 return;
             }
-            alert(`A link to edit profile was sent to ${email}.`);
+            alert(t("A link to edit profile was sent to {{email}}.", { email }));
         };
-        xhr.onerror = function(e) {
+        xhr.onerror = function (e) {
             logger.error("Error", e);
             er();
         };
@@ -274,13 +288,8 @@ function ExhibitorComponent() {
 
     function bookmark(e: MouseEvent) {
         e.preventDefault();
-        store.toggleExhibitorBookmark(s.exhibitor);
-        // s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
+        s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
     }
 }
 
-export default () =>
-    useObserver(() => {
-        const uiState = useUiState();
-        return <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>;
-    });
+export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
