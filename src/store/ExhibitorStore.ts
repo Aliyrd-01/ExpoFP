@@ -8,22 +8,22 @@ export default class ExhibitorStore {
     private readonly rootStore: RootStore;
     readonly exhibitors: Exhibitor[] = [];
     @computed({ keepAlive: true }) get exhibitorById() {
-        return new Map<number, Exhibitor>(this.exhibitors.map(c => [c.id, c]));
+        return new Map<number, Exhibitor>(this.exhibitors.map((c) => [c.id, c]));
     }
 
     @computed get bookmarked() {
-        return this.exhibitors.filter(x => x.bookmarked);
+        return this.exhibitors.filter((x) => x.bookmarked);
     }
 
     @computed({ keepAlive: true }) get advertised() {
-        return this.exhibitors.filter(x => x.advertise && x.logo);
+        return this.exhibitors.filter((x) => x.advertise && x.logo);
     }
 
     @action replaceBookmarked(ids: number[]) {
         //const current = new Set(this.bookmarked);
-        const ar = ids.map(x => this.exhibitorById.get(x)).filter(x => x);
+        const ar = ids.map((x) => this.exhibitorById.get(x)).filter((x) => x);
         const set = new Set(ar);
-        const toRemove = this.bookmarked.filter(e => !set.has(e));
+        const toRemove = this.bookmarked.filter((e) => !set.has(e));
         for (const e of toRemove) {
             e.bookmarked = false;
         }
@@ -70,4 +70,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];
+
+    readonly customButtonTitle: string;
+    readonly customButtonUrl: string;
 }

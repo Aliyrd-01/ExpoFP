@@ -258,4 +258,25 @@
             display: block;
         }
     }
+
+    &__custom-btn-area {
+        text-align: center;
+        margin: 2rem 0;
+
+        > a {
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            background: #41b6e7;
+            padding: 0.7rem 1rem;
+            min-width: 10rem;
+            color: #fff !important;
+            text-decoration: none !important;
+            transition: background-color 200ms;
+            border-radius: 2px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
 }
