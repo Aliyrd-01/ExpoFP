@@ -1,3 +1,4 @@
+@import "../styles/import.scss";
 
 .booth {
     &__bar {
@@ -26,7 +27,7 @@
     //     display: flex;
     //     margin: 0 -1rem;
     //     padding: 0 $im;
-    //     background: #fff; 
+    //     background: #fff;
     // }
 
     &__info {
@@ -73,7 +74,6 @@
             /* grid-column-end: 2; */
             grid-row: 2;
             /* grid-row-end: 2; */
-
             /* text-transform: uppercase; */
             /* font-weight: 500; */
             font-size: 1rem;
@@ -84,40 +84,10 @@
     }
 
     &__buy {
-        text-align: center;
-        margin: 2rem 0;
-
-        > a {
-            border: none;
-            text-decoration: none;
-            display: inline-block;
-            background: #41b6e7;
-            padding: 0.7rem 1rem;
-            min-width: 10rem;
-            color: #fff !important;
-            text-decoration: none !important;
-            transition: background-color 200ms;
-            border-radius: 2px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-
-            &:hover {
-                background: #2f99c7;
-            }
-            &:active {
-                background: #2285af;
-            }
-
-            .overlay.bottom & {
-                width: 100%;
-                min-height: 3rem;
-                font-size: 1.2rem;
-            }
-        }
+        @include button;
     }
 
-    &__reserve-instructions{
+    &__reserve-instructions {
         line-height: 1.4em;
     }
 }
