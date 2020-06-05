@@ -250,6 +250,13 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
+                    {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (
+                        <div className="exhibitor__custom-btn-area">
+                            <a href={exhibitor.customButtonUrl} target="_blank" rel="noopener noreferrer">
+                                {exhibitor.customButtonTitle}
+                            </a>
+                        </div>
+                    )}
                 </div>
             </OverlayContent>
         );
