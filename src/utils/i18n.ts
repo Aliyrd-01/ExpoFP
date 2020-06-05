@@ -1,6 +1,5 @@
 import i18next, { TFunction } from "i18next";
 import { loadJson } from "../tools/loaders";
-import isDebug from "./is-debug";
 
 export const initI18n = async (locale: string): Promise<TFunction> => {
     let resources = {};
@@ -9,8 +8,10 @@ export const initI18n = async (locale: string): Promise<TFunction> => {
     return await i18next.init({
         resources,
         lng: locale,
-        debug: isDebug,
         keySeparator: false,
+        saveMissing: locale !== "en",
+        missingKeyHandler: (lng, ns, key, fallbackValue) =>
+            console.debug(`i18n missing key. '${locale}:${key}', fallback to '${fallbackValue}'`),
     });
 };
 
