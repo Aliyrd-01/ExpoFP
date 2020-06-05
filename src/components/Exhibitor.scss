@@ -176,11 +176,8 @@
             }
             &[href] {
                 display: block;
-                color: var(--link-color);
-
-                &:hover {
-                    color: var(--link-color-hover);
-                }
+                color: #adadad;
+               
             }
         }
     }
