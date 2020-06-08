@@ -1,13 +1,13 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, Suspense, useRef } from "react";
+import React, { MouseEvent, Suspense, useRef, useEffect } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
-import { useReaction, useInit } from "../utils/mobx";
+import { useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
@@ -50,9 +50,9 @@ function ExhibitorComponent() {
         },
     }));
 
-    useInit(() => {
+    useEffect(() => {
         trackEvent("exview", s.exhibitor.id);
-    });
+    }, [s.exhibitor.id]);
 
     useReaction(
         () => s.exhibitor,
