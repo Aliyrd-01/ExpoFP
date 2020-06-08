@@ -7,7 +7,7 @@ import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
-import { useReaction } from "../utils/mobx";
+import { useReaction, useAutorun } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
@@ -50,11 +50,7 @@ function ExhibitorComponent() {
         },
     }));
 
-    useReaction(
-        () => s.exhibitor,
-        () => trackEvent("exview", s.exhibitor.id),
-        { fireImmediately: true }
-    );
+    useAutorun(() => trackEvent("exview", s.exhibitor.id));
 
     useReaction(
         () => s.exhibitor,
