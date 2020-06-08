@@ -50,7 +50,7 @@ function ExhibitorComponent() {
         },
     }));
 
-    useAutorun(() => trackEvent("exview", s.exhibitor.id));
+    useAutorun(() => (s.exhibitor ? trackEvent("exview", s.exhibitor.id) : null));
 
     useReaction(
         () => s.exhibitor,
