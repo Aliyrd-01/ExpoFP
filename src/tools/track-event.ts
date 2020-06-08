@@ -1,7 +1,7 @@
 import data from "../data";
 import logger from "./logger";
 
-export default function trackEvent(type: "load", value?: any) {
+export default function trackEvent(type: "load" | "exview", value?: any) {
     logger.log("trackEvent", type, value);
     if (!data.trackerUrl) return;
     if (process.env.NODE_ENV !== "production") return;

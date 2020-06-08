@@ -79,7 +79,9 @@ export default class FloorPlanLoader implements FloorPlan {
         }
         this.renderTarget = fpContainer;
 
-        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${eventId}.expofp.com/data/`;
+        //const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${eventId}.expofp.com/data/`;
+        const dataUrlBase = `https://efp-data-dev.s3.amazonaws.com/expos/${eventId}/data/`;
+
         this.dataUrl = dataUrlBase;
 
         // lazy load floorplan and instantiate it here
