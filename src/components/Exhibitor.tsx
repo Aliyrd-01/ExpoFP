@@ -50,9 +50,11 @@ function ExhibitorComponent() {
         },
     }));
 
-    useEffect(() => {
-        trackEvent("exview", s.exhibitor.id);
-    }, [s.exhibitor.id]);
+    useReaction(
+        () => s.exhibitor,
+        () => trackEvent("exview", s.exhibitor.id),
+        { fireImmediately: true }
+    );
 
     useReaction(
         () => s.exhibitor,
