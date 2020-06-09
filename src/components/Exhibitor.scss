@@ -256,8 +256,7 @@
         }
     }
 
-
-    &__video-chat{
+    &__video-chat {
         text-align: center;
         margin: 2rem 0;
 
@@ -269,6 +268,7 @@
             }
         }
     }
+
     &__custom-btn-area {
         @include button;
     }
