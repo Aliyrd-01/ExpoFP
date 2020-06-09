@@ -138,13 +138,6 @@ export default function Map() {
             .scaleExtent([0.1, 12])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .filter(function () {
-                // EFP-294 Disable "Use ctrl+scroll" to zoom (message and fade, but still lock scroll) - ebpomlondon2020
-                if (window["__efpEvent"] === "ebpomlondon2020") {
-                    if (currentEvent.type === "wheel" && (currentEvent.ctrlKey || currentEvent.metaKey)) {
-                        return false;
-                    }
-                }
-
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")
                     // && currentEvent.type !== "touchstart"
                     return true;
@@ -157,8 +150,11 @@ export default function Map() {
                     //     scheduleMessage("Use two fingers to move", 500);
                     // } else
 
-                    uiState.largeMessage = t("Use {{keyCode}} + scroll to zoom", { keyCode: isMac ? "⌘" : "Ctrl" });
-                    uiState.largeMessageLastSet = performance.now();
+                    // EFP-294 Disable "Use ctrl+scroll" to zoom (message and fade, but still lock scroll) - ebpomlondon2020
+                    if (window["__efpEvent"] !== "ebpomlondon2020") {
+                        uiState.largeMessage = t("Use {{keyCode}} + scroll to zoom", { keyCode: isMac ? "⌘" : "Ctrl" });
+                        uiState.largeMessageLastSet = performance.now();
+                    }
                 }
 
                 return !preventWheel;
