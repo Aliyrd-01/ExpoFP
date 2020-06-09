@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "commonjs",
+        "jsx": "preserve",
+        "moduleResolution": "node",
+        "strict": true,
+        "noEmit": true,
+        "allowJs": true,
+        "skipLibCheck": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "strictNullChecks": false,
+        "resolveJsonModule": true,
+
+    },
+}
