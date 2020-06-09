@@ -1,7 +1,7 @@
-import glob from "glob";
-import fs from "fs";
-import path from "path";
 import chalk from "chalk";
+import fs from "fs";
+import glob from "glob";
+import path from "path";
 
 const srcFiles = glob.sync("../src/**/*.{ts,tsx}");
 const regex = /\Wt\("([^"]+)/g;
