@@ -3,8 +3,6 @@ import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 
-console.log("i18n-find");
-
 const srcFiles = glob.sync("../src/**/*.{ts,tsx}");
 const regex = /\Wt\("([^"]+)/g;
 
