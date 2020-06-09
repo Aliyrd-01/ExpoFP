@@ -11,6 +11,8 @@ const git = require("git-rev-sync");
 const dateFormat = require("dateformat");
 const username = require("username");
 const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2));
+const S3Plugin = require('webpack-s3-plugin');
+const AWS = require("aws-sdk");
 
 // const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
 
@@ -134,6 +136,33 @@ if (isProd) {
     };
     config.devtool = "cheap-module-source-map";
     config.plugins.push(new DashboardPlugin());
+}
+
+if (process.env.AWS_DEPLOY === "true") {
+    let options = {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    };
+    if (!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY)) {
+        options = {
+            credentials: new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" }),
+        };
+    }
+    let forlderName = !process.env.AWS_FOLDER_NAME ? "packages/default" : "packages/" + process.env.AWS_FOLDER_NAME;
+    let plugin = new S3Plugin({
+        s3Options: options,
+        s3UploadOptions: {
+            Bucket: "efp-data/" + forlderName,
+        }
+    });
+    if (process.env.CLOUDFRONT_DISTRIBUTION_ID) {
+        plugin.cloudfrontInvalidateOptions = {
+            DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
+            Items: [`/${forlderName}/*`]
+        };
+    }
+    
+    config.plugins.push(plugin);
 }
 
 module.exports = config;

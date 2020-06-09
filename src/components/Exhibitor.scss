@@ -176,11 +176,8 @@
             }
             &[href] {
                 display: block;
-                color: var(--link-color);
-
-                &:hover {
-                    color: var(--link-color-hover);
-                }
+                color: #adadad;
+               
             }
         }
     }
@@ -264,23 +261,13 @@
         margin: 2rem 0;
 
         > .video-chat-btn {
-            border: none;
-            text-decoration: none;
-            display: inline-block;
-            background: #41b6e7;
-            padding: 0.7rem 1rem;
-            min-width: 10rem;
-            color: #fff !important;
-            text-decoration: none !important;
-            transition: background-color 200ms;
-            border-radius: 2px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            @include button;
 
             &:disabled {
                 background: #c6c6c6;
             }
         }
+    &__custom-btn-area {
+        @include button;
     }
 }

@@ -1,7 +1,7 @@
 {
     "name": "expofp",
     "license": "UNLICENSED",
-    "version": "2.0.24-1",
+    "version": "2.0.28",
     "main": "./dist/expofp.js",
     "devDependencies": {
         "@babel/core": "^7.7.4",
@@ -76,11 +76,13 @@
         "webpack-bundle-analyzer": "^3.6.0",
         "webpack-cli": "^3.3.10",
         "webpack-dashboard": "^3.2.0",
-        "webpack-dev-server": "^3.9.0"
+        "webpack-dev-server": "^3.9.0",
+        "webpack-s3-plugin": "^1.0.3"
     },
     "scripts": {
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",
         "build": "cross-env NODE_ENV=production webpack",
+        "build+deploy": "cross-env AWS_DEPLOY=true yarn build",
         "create-package": "node ./scripts/create-package.js",
         "prepublishOnly": "yarn build",
         "np": "np",

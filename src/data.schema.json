@@ -234,6 +234,12 @@
                         "type": "string",
                         "description": "Presentation of private email of exhibitor - with hidden characters in it - hard to guess"
                     },
+                    "customButtonTitle": {
+                        "type": "string"
+                    },
+                    "customButtonUrl": {
+                        "type": "string"
+                    },
                     "website": {
                         "type": "string",
                         "format": "uri"

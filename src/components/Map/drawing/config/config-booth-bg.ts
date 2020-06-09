@@ -7,8 +7,8 @@ import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore"
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 // import { getBoothState } from "./config-booths";
-import TrianglePainter from "../painters/TrianglePainter";
-import BoothDrawerBase from "./BoothDrawerBase";
+import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
+import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 
 // let picked = 0;
 export default function configBoothBg(context: DrawerContext, booth: Booth) {
@@ -17,28 +17,31 @@ export default function configBoothBg(context: DrawerContext, booth: Booth) {
     new BoothBgDrawer(context, booth);
 }
 
-class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
+let seq = 0;
+
+class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     private readonly pathsDefaultColors: string[];
+    private readonly painters: TrianglePainter[] = [];
 
     constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, "booth-bg", TrianglePainter, 110);
+        super(context, booth);
 
         // let triangles: Triangle[];
 
         if (!booth.paths || booth.pathsWithRect) {
             let rect = this.booth.rect;
-            //if (settings.borderless) 
+            //if (settings.borderless)
             rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
 
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
             for (const t of triangles) {
-                this.painter.tryAddObject({
+                this.addObject({
                     id: this.getId("bg-def"),
                     groupId: this.getId("bg"),
                     p0: t[0],
                     p1: t[1],
-                    p2: t[2]
+                    p2: t[2],
                     // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                 });
             }
@@ -51,66 +54,57 @@ class BoothBgDrawer extends BoothDrawerBase<TrianglePainter> {
                 const colored = !!p.color;
                 if (colored) pathsColors.add(p.color);
                 for (const t of p.triangles) {
-                    this.painter.tryAddObject({
+                    this.addObject({
                         id: colored ? this.getId("bg-" + p.color) : this.getId("bg-def"),
                         groupId: this.getId("bg"),
                         p0: t[0],
                         p1: t[1],
-                        p2: t[2]
+                        p2: t[2],
                     });
                 }
             }
             this.pathsDefaultColors = Array.from(pathsColors);
         } else {
             let rect = this.booth.rect;
-            //if (!settings.borderless) 
+            //if (!settings.borderless)
             rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
 
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
             for (const t of triangles) {
-                this.painter.tryAddObject({
+                this.addObject({
                     id: this.getId("bg-def"),
                     groupId: this.getId("bg"),
                     p0: t[0],
                     p1: t[1],
-                    p2: t[2]
+                    p2: t[2],
                     // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                 });
             }
         }
 
-        //const c = getBoothColor(this.booth);
-        // for (const t of triangles) {
-        //     this.drawer.addObject({
-        //         id: this.getId("bg-def"),
-        //         groupId: this.getId("bg"),
-        //         p0: t[0],
-        //         p1: t[1],
-        //         p2: t[2],
-        //         // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
-        //     });
-        // }
-
-        // this.update();
-
-        // if (context.updatable) {
-        //     reaction(() => [booth.hover, booth.skipDim, booth.selected], () => context.requireUpdate(this.updateBound));
-        //     // store.watchBoothState(booth.id, () => context.requireUpdate(this.updateBound), "hover", "skipDim");
-        // }
         this.startAutoupdate();
+    }
+
+    addObject(item: TrianglePainterObject) {
+        let painter = this.context.requirePainter("booth-bg" + seq, TrianglePainter, 110);
+        while (!painter || !painter.tryAddObject(item)) {
+            painter = this.context.requirePainter("booth-bg" + ++seq, TrianglePainter, 110);            
+        }
+
+        if (this.painters.indexOf(painter) == -1) this.painters.push(painter);
     }
 
     update() {
         const s = this.booth; //this.getBoothState();
         const c = this.getBoothColor();
 
-        this.painter.updateColor(this.getId("bg-def"), c.vec4());
-        this.painter.updateSkipdim(this.getId("bg"), s.skipDim);
+        this.painters.forEach((p) => p.updateColor(this.getId("bg-def"), c.vec4()));
+        this.painters.forEach((p) => p.updateSkipdim(this.getId("bg"), s.skipDim));
 
         for (const color of this.pathsDefaultColors || []) {
             const newColor = this.getBoothPathColor(color);
-            this.painter.updateColor(this.getId("bg-" + color), newColor.vec4());
+            this.painters.forEach((p) => p.updateColor(this.getId("bg-" + color), newColor.vec4()));
         }
     }
 

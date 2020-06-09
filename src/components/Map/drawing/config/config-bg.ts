@@ -1,9 +1,9 @@
 import Color from "color";
-import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
-import { DrawerContext } from "../Drawer1";
-import svg from "../../../../data/svg";
-import Rect from "../../../../core/Rect";
 import { select } from "d3-selection";
+import Rect from "../../../../core/Rect";
+import svg from "../../../../data/svg";
+import { DrawerContext } from "../Drawer1";
+import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
 export default function configBg(context: DrawerContext) {
     let drawer: TrianglePainter = null;
@@ -70,7 +70,7 @@ export default function configBg(context: DrawerContext) {
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter("bg" + drawerSeq++, TrianglePainter, 10);
+            drawer = context.requirePainter("bg" + drawerSeq++, TrianglePainter, 10);            
         }
     }
 

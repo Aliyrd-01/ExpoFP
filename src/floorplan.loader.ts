@@ -1,5 +1,5 @@
 import baseUrl from "./tools/base-url";
-import { loadCss, loadFont, loadJs, preloadJs } from "./tools/loaders";
+import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
@@ -87,11 +87,6 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const dataUrl = dataUrlBase + "data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
-
-        preloadJs(dataUrl);
-        preloadJs(fpUrl);
-        preloadJs("floorplan.js");
-        preloadJs("vendors~floorplan.js");
 
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);

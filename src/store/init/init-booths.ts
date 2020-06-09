@@ -42,17 +42,17 @@ export default function initBooths(store: RootStore) {
         sortByName(e.booths);
     }
 
-    for (const el of d3
-        .select(svg)
-        .selectAll("#Booths g[id^=b], #Booths rect[id^=b]")
-        .nodes() as (SVGRectElement | SVGPathElement)[]) {
+    for (const el of d3.select(svg).selectAll("#Booths g[id^=b], #Booths rect[id^=b]").nodes() as (
+        | SVGRectElement
+        | SVGPathElement
+    )[]) {
         let rect: SVGRectElement;
         let pathsWithRect = false;
         if (el.tagName === "rect") {
             rect = el as SVGRectElement;
         } else {
             // find any rect
-            rect = Array.from(el.children).find(x => x.tagName === "rect") as SVGRectElement;
+            rect = Array.from(el.children).find((x) => x.tagName === "rect") as SVGRectElement;
             pathsWithRect = rect === el.firstElementChild;
             if (!rect) continue;
             // // expect rect to be last child
@@ -85,7 +85,7 @@ export default function initBooths(store: RootStore) {
             boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
             boothReg.holdColor = el.getAttribute("data-hold-color") || boothReg.holdColor;
             // svg size is legacy, TODO: remove data-size attribute at 01-01-2022
-            boothReg.size = boothReg.size || el.getAttribute("data-size");
+            boothReg.size = settings.dimensionless ? null : (boothReg.size || el.getAttribute("data-size"));
             boothReg.type = el.getAttribute("data-type") || boothReg.type; //|| el.getAttribute("data-booth-type")
             //boothReg.price = boothReg.price; //el.getAttribute("data-price") ||
 
@@ -142,10 +142,7 @@ export default function initBooths(store: RootStore) {
             if (pathsWithRect && settings.EXPO === "expo" && (booth.slug === "1745" || booth.slug === "1746")) {
                 booth.pathsWithRect = false;
             }
-            for (const kid of d3
-                .select(el)
-                .selectAll("path, rect")
-                .nodes() as (SVGPathElement | SVGRectElement)[]) {
+            for (const kid of d3.select(el).selectAll("path, rect").nodes() as (SVGPathElement | SVGRectElement)[]) {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
@@ -155,7 +152,7 @@ export default function initBooths(store: RootStore) {
                     // const triangles = getTrianglesFromFpPaths(d);
                     const pi: PathInfo = {
                         triangles: getTrianglesFromFpPaths(d),
-                        color
+                        color,
                     };
                     booth.paths.push(pi);
                 }
@@ -172,7 +169,7 @@ export default function initBooths(store: RootStore) {
         }
     }
     // sort booths by name
-    boothStore.booths.sort(function(a, b) {
+    boothStore.booths.sort(function (a, b) {
         var x = a.slug;
         var y = b.slug;
         return x < y ? -1 : x > y ? 1 : 0;
