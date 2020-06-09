@@ -28,7 +28,7 @@ for (const file of localeFiles) {
     }
     for (const key of srcKeys) {
         if (!localeKeys.has(key)) {
-            console.log("Missing key", chalk.cyan(chalk.bold(key)), "in", chalk.magenta(path.basename(file)));
+            console.log(chalk.redBright("!Missing key"), chalk.cyan(chalk.bold(key)), "in", chalk.magenta(path.basename(file)));
         }
     }
 }
