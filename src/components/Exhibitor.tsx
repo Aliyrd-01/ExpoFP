@@ -274,9 +274,9 @@ function ExhibitorComponent() {
                                 {t("Join Video Chat")}
                             </a>
                         ) : (
-                            <button disabled className="video-chat-btn">
+                            <a className="video-chat-btn disabled">
                                 {t("Join Video Chat")}
-                            </button>
+                            </a>
                         )}
                     </div>
                     {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (

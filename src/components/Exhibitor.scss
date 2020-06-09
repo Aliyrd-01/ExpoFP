@@ -256,17 +256,19 @@
         }
     }
 
+
     &__video-chat{
         text-align: center;
         margin: 2rem 0;
 
-        > .video-chat-btn {
-            @include button;
+        @include button;
 
-            &:disabled {
+        > .video-chat-btn {
+            &.disabled {
                 background: #c6c6c6;
             }
         }
+    }
     &__custom-btn-area {
         @include button;
     }
