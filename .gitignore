@@ -2,6 +2,7 @@
 
 # dependencies
 **/nclude-dependencies
+Gemfile.lock
 /node_modules
 /.pnp
 .pnp.js
