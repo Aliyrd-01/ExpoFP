@@ -268,7 +268,8 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    <div className="exhibitor__video-chat">
+                    {s.exhibitor.checkVideoChatUrl &&
+                        <div className="exhibitor__video-chat">
                         {s.joinVideoChatUrl ? (
                             <a href={s.joinVideoChatUrl} target="_blank" className="video-chat-btn">
                                 {t("Join Video Chat")}
@@ -279,6 +280,7 @@ function ExhibitorComponent() {
                             </a>
                         )}
                     </div>
+                    }
                     {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (
                         <div className="exhibitor__custom-btn-area">
                             <a href={exhibitor.customButtonUrl} target="_blank" rel="noopener noreferrer">
