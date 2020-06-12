@@ -1,4 +1,3 @@
-exclude: [vendor]
 remote_theme: evgenyt1/just-the-docs
 
 color_scheme: "dark"
