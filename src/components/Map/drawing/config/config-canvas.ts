@@ -6,7 +6,7 @@ import { uiState } from "../../../../store";
 import { DrawerContext } from "../Drawer1";
 import BgPainter from "../painters/BgPainter";
 
-const bgColor = Color("#f3f7fb").vec4() as Vec4;
+const bgColor = Color("#ebebeb").vec4() as Vec4;
 const whiteColor = Color("#fff").vec4() as Vec4;
 
 export default function configCanvas(context: DrawerContext) {
