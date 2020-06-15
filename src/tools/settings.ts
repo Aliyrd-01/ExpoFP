@@ -9,7 +9,7 @@ let settings = {
     // borderWidth: 1,
     dimensionless: false,
     colors: {
-        // base: "#ebebeb",
+        // base: "#f3f7fb",
         booths: {
             default: "#41b6e7",
             selected: "#fb3e59", //'#002cff',

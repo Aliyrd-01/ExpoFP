@@ -31,7 +31,7 @@ export async function generatePdf() {
         doc.setFontSize(mmToPt(subTitleFontSize)).setFont("OpenSans-Regular");
     };
 
-    doc.setFillColor("#EBEBEB");
+    doc.setFillColor("#f3f7fb");
     doc.rect(0, 0, width, height, "f");
 
     let occupied = 0;
