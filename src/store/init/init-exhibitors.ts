@@ -30,6 +30,7 @@ export default function initExhibitors(store: RootStore) {
 
         if (e.logo) e.logo = baseUrl + e.logo;
         if (e.gallery) e.gallery = e.gallery.map((url) => baseUrl + url);
+        if (e.leadingImageUrl) e.leadingImageUrl = baseUrl + e.leadingImageUrl;
         e.categories = [];
         e.booths = [];
         for (const c of raw.categories || []) {

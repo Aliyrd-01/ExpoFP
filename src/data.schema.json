@@ -240,6 +240,12 @@
                     "customButtonUrl": {
                         "type": "string"
                     },
+                    "leadingImageUrl": {
+                        "type": "string"
+                    },
+                    "leadingImageLink": {
+                        "type": "string"
+                    },
                     "website": {
                         "type": "string",
                         "format": "uri"
