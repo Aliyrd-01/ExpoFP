@@ -273,10 +273,15 @@
     }
 
     &__leading-image-container {
-        margin: 0 1rem 1rem 1rem;
+        margin: 0 0 1rem 0;
+    }
+
+    &__leading-image-container > a {
+        display: block;
     }
 
     &__leading-image {
+        display: block;
         width: 100%;
         background: #fff;
     }

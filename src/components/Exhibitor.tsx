@@ -123,12 +123,12 @@ function ExhibitorComponent() {
             >
                 {exhibitor.leadingImageUrl ? (
                     <div className="exhibitor__leading-image-container">
-                        {exhibitor.leadingImageLink ? (
-                            <a href={exhibitor.leadingImageLink} target="_blank" rel="noopener noreferrer">
-                                <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image"></img>
+                        {exhibitor.leadingImageLinkUrl ? (
+                            <a href={exhibitor.leadingImageLinkUrl} target="_blank" rel="noopener noreferrer">
+                                <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
                             </a>
                         ) : (
-                            <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image"></img>
+                            <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
                         )}
                     </div>
                 ) : null}

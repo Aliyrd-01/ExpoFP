@@ -115,9 +115,9 @@ export default function validateData(data: Data) {
 
         exhibitor.categories = exhibitor.categories || [];
 
-        if (exhibitor.logo) exhibitor.logo = exhibitor.logo.replace(/\?.+/, "");
-        if (exhibitor.gallery) exhibitor.gallery = exhibitor.gallery.map((g) => g.replace(/\?.+/, ""));
-        if (exhibitor.leadingImageUrl) exhibitor.leadingImageUrl = exhibitor.leadingImageUrl.replace(/\?.+/, "");
+        // if (exhibitor.logo) exhibitor.logo = exhibitor.logo.replace(/\?.+/, "");
+        // if (exhibitor.gallery) exhibitor.gallery = exhibitor.gallery.map((g) => g.replace(/\?.+/, ""));
+        // if (exhibitor.leadingImageUrl) exhibitor.leadingImageUrl = exhibitor.leadingImageUrl.replace(/\?.+/, "");
     }
 
     // disable ads and featured for free plans
