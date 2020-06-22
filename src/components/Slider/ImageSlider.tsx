@@ -92,7 +92,7 @@ class ImageSlider extends React.Component<Props, State> {
     componentWillUnmount = () => document.removeEventListener("keydown", this.onKeyDown);
 
     componentDidUpdate = (newProps: Props) => {
-        if (newProps.images[0] == this.props.images[0]) return;
+        if (newProps.images[0] === this.props.images[0]) return;
 
         this.setState(
             new State(
@@ -120,8 +120,8 @@ class ImageSlider extends React.Component<Props, State> {
 
     onKeyDown = (e: KeyboardEvent) => {
         if (this.state.isFullScreen && e.keyCode === 27) this.onFullScreenChanged();
-        else if (e.keyCode == 39) this.onClickNav(true);
-        else if (e.keyCode == 37) this.onClickNav(false);
+        else if (e.keyCode === 39) this.onClickNav(true);
+        else if (e.keyCode === 37) this.onClickNav(false);
     };
 
     getImageUrl = (idx: number) => (this.props.images[idx] ? this.props.images[idx] : "");

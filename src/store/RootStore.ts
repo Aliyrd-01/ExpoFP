@@ -6,7 +6,6 @@ import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import UIState, { ListItem } from "./UIState";
 import FloorPlanReady from "../floorplan.ready";
-import browser from "../utils/browser";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;

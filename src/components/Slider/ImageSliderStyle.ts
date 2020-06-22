@@ -131,7 +131,7 @@ export default {
             {
                 overflow: "hidden",
                 transition: `${duration}s`,
-                backgroundImage: `url(${url})`,
+                backgroundImage: `url("${url}")`,
                 transform: isGpuRender ? `translate3d(${idx * 100}%, 0px, 0px)` : `translate(${idx * 100}%, 0px)`,
             },
             fillMode === FillMode.cover ? {} : containSlide

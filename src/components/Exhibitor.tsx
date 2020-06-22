@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useEffect, MouseEvent, Suspense, useRef } from "react";
+import React, { MouseEvent, Suspense, useEffect, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
@@ -47,15 +47,15 @@ function ExhibitorComponent() {
         get sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
-        joinVideoChatUrl: null
+        joinVideoChatUrl: null,
     }));
-    
+
     useEffect(() => {
         const abortController = new AbortController();
         const checkVideoChat = async (url: string) => {
             try {
                 s.joinVideoChatUrl = null;
-                const response = await fetch(url, {signal: abortController.signal});
+                const response = await fetch(url, { signal: abortController.signal });
                 s.joinVideoChatUrl = await response.json();
             } catch (e) {
                 logger.error(e);
@@ -63,10 +63,10 @@ function ExhibitorComponent() {
         };
         if (s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
         return () => {
-            abortController.abort()
-          }
-      }, [s.exhibitor]);
-    
+            abortController.abort();
+        };
+    }, [s.exhibitor]);
+
     useReaction(
         () => s.exhibitor,
         () => {
@@ -268,19 +268,17 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    {s.exhibitor.checkVideoChatUrl &&
+                    {s.exhibitor.checkVideoChatUrl && (
                         <div className="exhibitor__video-chat">
-                        {s.joinVideoChatUrl ? (
-                            <a href={s.joinVideoChatUrl} target="_blank" className="video-chat-btn">
-                                {t("Join Video Chat")}
-                            </a>
-                        ) : (
-                            <a className="video-chat-btn disabled">
-                                {t("Join Video Chat")}
-                            </a>
-                        )}
-                    </div>
-                    }
+                            {s.joinVideoChatUrl ? (
+                                <a href={s.joinVideoChatUrl} target="_blank" className="video-chat-btn">
+                                    {t("Join Video Chat")}
+                                </a>
+                            ) : (
+                                <a className="video-chat-btn disabled">{t("Join Video Chat")}</a>
+                            )}
+                        </div>
+                    )}
                     {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (
                         <div className="exhibitor__custom-btn-area">
                             <a href={exhibitor.customButtonUrl} target="_blank" rel="noopener noreferrer">

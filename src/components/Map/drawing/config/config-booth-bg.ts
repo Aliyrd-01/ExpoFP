@@ -89,10 +89,10 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     addObject(item: TrianglePainterObject) {
         let painter = this.context.requirePainter("booth-bg" + seq, TrianglePainter, 110);
         while (!painter || !painter.tryAddObject(item)) {
-            painter = this.context.requirePainter("booth-bg" + ++seq, TrianglePainter, 110);            
+            painter = this.context.requirePainter("booth-bg" + ++seq, TrianglePainter, 110);
         }
 
-        if (this.painters.indexOf(painter) == -1) this.painters.push(painter);
+        if (this.painters.indexOf(painter) === -1) this.painters.push(painter);
     }
 
     update() {
