@@ -274,10 +274,7 @@
 
     &__leading-image-container {
         margin: 0 0 1rem 0;
-    }
-
-    &__leading-image-container {
-        a {
+        > a {
             display: block;
         }
     }
