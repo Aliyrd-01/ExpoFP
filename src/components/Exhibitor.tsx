@@ -121,6 +121,18 @@ function ExhibitorComponent() {
                 bar={bar}
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
+                {exhibitor.leadingImageUrl ? (
+                    <div className="exhibitor__leading-image-container">
+                        {exhibitor.leadingImageLinkUrl ? (
+                            <a href={exhibitor.leadingImageLinkUrl} target="_blank" rel="noopener noreferrer">
+                                <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
+                            </a>
+                        ) : (
+                            <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
+                        )}
+                    </div>
+                ) : null}
+
                 <div className="exhibitor__details">
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map((booth) => (

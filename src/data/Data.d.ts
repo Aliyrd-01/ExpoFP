@@ -92,6 +92,7 @@ interface RawExhibitor {
     logo: string;
     gallery: string[];
     categories: number[];
+    leadingImageUrl: string;
 }
 
 interface PathInfo {

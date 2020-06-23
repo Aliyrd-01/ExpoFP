@@ -177,7 +177,6 @@
             &[href] {
                 display: block;
                 color: #adadad;
-               
             }
         }
     }
@@ -271,5 +270,18 @@
 
     &__custom-btn-area {
         @include button;
+    }
+
+    &__leading-image-container {
+        margin: 0 0 1rem 0;
+        > a {
+            display: block;
+        }
+    }
+
+    &__leading-image {
+        display: block;
+        width: 100%;
+        background: #fff;
     }
 }
