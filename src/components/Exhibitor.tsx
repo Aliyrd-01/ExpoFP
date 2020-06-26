@@ -65,7 +65,7 @@ function ExhibitorComponent() {
         return () => {
             abortController.abort();
         };
-    }, [s.exhibitor]);
+    }, [s.exhibitor, s.joinVideoChatUrl]);
 
     useReaction(
         () => s.exhibitor,
@@ -283,11 +283,11 @@ function ExhibitorComponent() {
                     {s.exhibitor.checkVideoChatUrl && (
                         <div className="exhibitor__video-chat">
                             {s.joinVideoChatUrl ? (
-                                <a href={s.joinVideoChatUrl} target="_blank" className="video-chat-btn">
+                                <a href={s.joinVideoChatUrl} target="_blank" rel="noopener noreferrer" className="video-chat-btn">
                                     {t("Join Video Chat")}
                                 </a>
                             ) : (
-                                <a className="video-chat-btn disabled">{t("Join Video Chat")}</a>
+                                <button className="video-chat-btn disabled">{t("Join Video Chat")}</button>
                             )}
                         </div>
                     )}

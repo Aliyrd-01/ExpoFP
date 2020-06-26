@@ -48,7 +48,7 @@ const OverlayContent: React.FC<{
             if (onUpdateFuncSet) onUpdateFuncSet(null);
             observer.disconnect();
         };
-    }, [scrollable]);
+    }, [scrollable, onUpdateFuncSet]);
 
     useEffect(() => {
         if (uiState.overlaySize !== "full" && scrollable.current.scrollTop !== 0) {
