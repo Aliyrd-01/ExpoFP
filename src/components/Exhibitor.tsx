@@ -47,25 +47,7 @@ function ExhibitorComponent() {
         get sendLinkEmail() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
-        joinVideoChatUrl: null,
     }));
-
-    useEffect(() => {
-        const abortController = new AbortController();
-        const checkVideoChat = async (url: string) => {
-            try {
-                s.joinVideoChatUrl = null;
-                const response = await fetch(url, { signal: abortController.signal });
-                s.joinVideoChatUrl = await response.json();
-            } catch (e) {
-                logger.error(e);
-            }
-        };
-        if (s.exhibitor.checkVideoChatUrl) checkVideoChat(s.exhibitor.checkVideoChatUrl);
-        return () => {
-            abortController.abort();
-        };
-    }, [s.exhibitor, s.joinVideoChatUrl]);
 
     useReaction(
         () => s.exhibitor,
@@ -278,17 +260,6 @@ function ExhibitorComponent() {
                             <a href={exhibitor.youtube} target="_blank" rel="noopener noreferrer">
                                 <i className="fab fa-youtube" />
                             </a>
-                        </div>
-                    )}
-                    {s.exhibitor.checkVideoChatUrl && (
-                        <div className="exhibitor__video-chat">
-                            {s.joinVideoChatUrl ? (
-                                <a href={s.joinVideoChatUrl} target="_blank" rel="noopener noreferrer" className="video-chat-btn">
-                                    {t("Join Video Chat")}
-                                </a>
-                            ) : (
-                                <button className="video-chat-btn disabled">{t("Join Video Chat")}</button>
-                            )}
                         </div>
                     )}
                     {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (

@@ -277,10 +277,6 @@
                     "youtube": {
                         "type": "string",
                         "format": "uri"
-                    },
-                    "checkVideoChatUrl": {
-                        "type": "string",
-                        "format": "uri"
                     }
                 }
             }
