@@ -67,7 +67,7 @@ function Search() {
         if (el.current) {
             window["__searchi"] = el.current;
         }
-    }, [el.current]);
+    }, [el]);
 
     // useEffect(() => {
     //     const setPosition = () => {
