@@ -162,6 +162,14 @@ function ExhibitorComponent() {
                             ) : null}
                         </div>
                     ) : null}
+                    {/* {exhibitor.youtubeVideoUrl ? (
+                    <div>
+                        <iframe src={exhibitor.youtubeVideoUrl} frameBorder="0" data-allow="encrypted-media; autoplay; fullscreen" width="100%" allowFullScreen></iframe>
+                    </div>
+                    ): null}                     */}
+                    <div>
+                        <iframe src="https://www.youtube.com/embed/tnGaCZZ5Z28" frameBorder="0" data-allow="encrypted-media; autoplay; fullscreen" width="100%" allowFullScreen></iframe>
+                    </div>
                     {exhibitor.gallery ? (
                         <div className="exhibitor__slider">
                             <Suspense fallback={null}>
