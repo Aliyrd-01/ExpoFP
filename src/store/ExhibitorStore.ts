@@ -65,7 +65,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly customButtonUrl: string;
     readonly leadingImageUrl: string;
     readonly leadingImageLinkUrl: string;
-    readonly youtubeVideoUrl: string;
+    readonly videoUrl: string;
 
     //populated
     readonly logo: string;

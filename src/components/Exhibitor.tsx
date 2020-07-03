@@ -162,10 +162,10 @@ function ExhibitorComponent() {
                             ) : null}
                         </div>
                     ) : null}
-                    {exhibitor.youtubeVideoUrl ? (
+                    {exhibitor.videoUrl ? (
                         <div className="exhibitor__video">
                             <iframe
-                                src={exhibitor.youtubeVideoUrl}
+                                src={exhibitor.videoUrl}
                                 frameBorder="0"
                                 data-allow="encrypted-media; autoplay; fullscreen"
                                 allowFullScreen

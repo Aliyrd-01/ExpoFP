@@ -278,7 +278,7 @@
                         "type": "string",
                         "format": "uri"
                     },
-                    "youtubeVideoUrl": {
+                    "videoUrl": {
                         "type": "string",
                         "format": "uri"
                     }

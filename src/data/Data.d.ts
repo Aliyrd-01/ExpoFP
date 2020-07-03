@@ -92,7 +92,7 @@ interface RawExhibitor {
     gallery: string[];
     categories: number[];
     leadingImageUrl: string;
-    youtubeVideoUrl: string
+    videoUrl: string
 }
 
 interface PathInfo {
