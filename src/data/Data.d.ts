@@ -86,7 +86,7 @@ interface RawExhibitor {
     youtube: string;
     email: string; // new
     privateEmail: string;
-    
+
     //populated
     logo: string;
     gallery: string[];
