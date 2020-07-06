@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, Suspense, useEffect, useRef } from "react";
+import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
@@ -160,6 +160,17 @@ function ExhibitorComponent() {
                                     onClick={expandDescription}
                                 />
                             ) : null}
+                        </div>
+                    ) : null}
+                    {exhibitor.videoUrl ? (
+                        <div className="exhibitor__video">
+                            <iframe
+                                src={exhibitor.videoUrl}
+                                frameBorder="0"
+                                data-allow="encrypted-media; autoplay; fullscreen"
+                                title="Exhibitor Video"
+                                allowFullScreen
+                            ></iframe>
                         </div>
                     ) : null}
                     {exhibitor.gallery ? (
