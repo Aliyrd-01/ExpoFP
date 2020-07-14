@@ -22,6 +22,11 @@ export function loadCss(url: string, appendTo: Element | ShadowRoot) {
 }
 
 export async function loadJs(url: string) {
+    url =
+        document.referrer && document.referrer.indexOf("expo/designer") > -1 && url.indexOf("?") === -1
+            ? `${url}?v=${new Date().getMilliseconds()}`
+            : url;
+
     return new Promise(function (resolve, reject) {
         const scriptTag = document.createElement("script");
         scriptTag.src = goodUrl(url);
