@@ -22,7 +22,7 @@ export default function configCanvas(context: DrawerContext) {
                 .flat()
                 .flat();
             const bigColors = Array(bigTriangles.length / 2)
-                .fill(context.updatable ? whiteColor : bgColor)
+                .fill(context.updatable ? bgColor : whiteColor)
                 .flat()
                 .flat();
             const bigNodims = Array(bigColors.length / 4).fill(1);
