@@ -234,6 +234,18 @@
                         "type": "string",
                         "description": "Presentation of private email of exhibitor - with hidden characters in it - hard to guess"
                     },
+                    "customButtonTitle": {
+                        "type": "string"
+                    },
+                    "customButtonUrl": {
+                        "type": "string"
+                    },
+                    "leadingImageUrl": {
+                        "type": "string"
+                    },
+                    "leadingImageLinkUrl": {
+                        "type": "string"
+                    },
                     "website": {
                         "type": "string",
                         "format": "uri"
@@ -263,6 +275,10 @@
                         "format": "uri"
                     },
                     "youtube": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "videoUrl": {
                         "type": "string",
                         "format": "uri"
                     }

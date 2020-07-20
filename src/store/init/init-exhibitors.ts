@@ -28,9 +28,9 @@ export default function initExhibitors(store: RootStore) {
 
         e.slug = generateUniqueSlug(e.name);
 
-        if (e.logo) e.logo = baseUrl + e.logo;
-        if (e.gallery) e.gallery = e.gallery.map((url) => baseUrl + url);
-        if (e.leadingImageUrl) e.leadingImageUrl = baseUrl + e.leadingImageUrl;
+        e.logo = addBaseUrl(e.logo);
+        if (e.gallery) e.gallery = e.gallery.map((url) => addBaseUrl(url));
+        e.leadingImageUrl = addBaseUrl(e.leadingImageUrl);
         e.categories = [];
         e.booths = [];
         for (const c of raw.categories || []) {
@@ -88,4 +88,9 @@ function saveToLocalStorage(ar: number[]) {
     // const unique = Array.from(new Set(dest));
     // debugger
     localStorage.setItem("bookmarked", JSON.stringify(ar));
+}
+
+function addBaseUrl(url: string) {
+    if (url && url.indexOf("://") === -1) return baseUrl + url;
+    else return url;
 }
