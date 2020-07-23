@@ -1,7 +1,7 @@
 import browser from "../utils/browser";
+import isFromDesigner from "../utils/is-from-designer";
 import baseUrl from "./base-url";
 import logger from "./logger";
-
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
         return baseUrl + url;
@@ -22,10 +22,7 @@ export function loadCss(url: string, appendTo: Element | ShadowRoot) {
 }
 
 export async function loadJs(url: string) {
-    url =
-        document.referrer && document.referrer.indexOf("expo/designer") > -1 && url.indexOf("?") === -1
-            ? `${url}?v=${new Date().getMilliseconds()}`
-            : url;
+    url = isFromDesigner && url.indexOf("?") === -1 ? `${url}?v=${new Date().getMilliseconds()}` : url;
 
     return new Promise(function (resolve, reject) {
         const scriptTag = document.createElement("script");
