@@ -3,6 +3,7 @@ import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
+import isFromDesigner from "./utils/is-from-designer";
 import useShadow from "./utils/use-shadow";
 
 function nr() {
@@ -86,7 +87,9 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
-        const fpUrl = dataUrlBase + "fp.svg.js";
+        const fpUrl = isFromDesigner
+            ? `https://efp-data.s3.amazonaws.com/expos/${eventId}/data/fp.svg.js`
+            : dataUrlBase + "fp.svg.js";
 
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
