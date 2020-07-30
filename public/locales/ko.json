@@ -14,7 +14,7 @@
     "Close": "닫기",
     "Search {{boothTerm}}": "{{boothTerm}} 검색",
     "Search company, {{boothTerm}} or category": "회사, {{boothTerm}} 또는 카테고리 검색",
-    "Admin notes for {{name}}": "{{name}}에 대한 관리자 메모",
+    "Admin notes for {{name}}": "{{name}} 에 대한 관리자 메모",
     "{{boothTerm}} Type": "{{boothTerm}} 타입",
     "Size": "크기",
     "Price": "가격",
@@ -34,5 +34,6 @@
     "Create yours at": "다음에서 본인의 것을 만드세요 - ",
     "Buy": "구입",
     "Made with ExpoFP": "ExpoFP로 제작",
-    "Join Video Chat": "영상 채팅 참여"
+    "Join Video Chat": "영상 채팅 참여",
+    "Category": "범주"
 }
