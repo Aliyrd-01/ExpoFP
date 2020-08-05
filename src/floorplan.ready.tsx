@@ -6,8 +6,11 @@ import FloorPlanLoader from "./floorplan.loader";
 import "./services/routing";
 import store from "./store";
 import trackEvent from "./tools/track-event";
+import { GaEventActions, sendEventToGa } from "./tools/gtag";
 
 trackEvent("load");
+sendEventToGa(GaEventActions.Load, window["__efpEvent"]);
+
 // initStore(store);
 
 // export default function renderFloorPlan(el: Element) {

@@ -12,6 +12,7 @@ import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -50,7 +51,12 @@ function ExhibitorComponent() {
         },
     }));
 
-    useAutorun(() => (s.exhibitor ? trackEvent("exview", s.exhibitor.id) : null));
+    useAutorun(() => {
+        if (s.exhibitor) {
+            trackEvent("exview", s.exhibitor.id);
+            sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
+        }
+    });
 
     useReaction(
         () => s.exhibitor,
@@ -62,6 +68,14 @@ function ExhibitorComponent() {
 
     function handleClick(e) {
         if (uiState.kiosk) return e.preventDefault();
+    }
+
+    function customButtonClick(e) {
+        var label = s.exhibitor.customButtonTitle;
+        if (s.exhibitor.customButtonUrl) {
+            label = label + " " + s.exhibitor.customButtonUrl;
+        }
+        sendEventToGa(GaEventActions.ClickExhibitorButton, label);
     }
 
     return useObserver(() => {
@@ -278,7 +292,12 @@ function ExhibitorComponent() {
                     )}
                     {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (
                         <div className="exhibitor__custom-btn-area">
-                            <a href={exhibitor.customButtonUrl} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.customButtonUrl}
+                                onClick={customButtonClick}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 {exhibitor.customButtonTitle}
                             </a>
                         </div>
