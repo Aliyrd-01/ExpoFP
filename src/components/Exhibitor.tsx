@@ -6,8 +6,9 @@ import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
-import { useReaction } from "../utils/mobx";
+import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
@@ -48,6 +49,8 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
+
+    useAutorun(() => (s.exhibitor ? trackEvent("exview", s.exhibitor.id) : null));
 
     useReaction(
         () => s.exhibitor,
