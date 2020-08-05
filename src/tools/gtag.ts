@@ -2,8 +2,21 @@ import data from "../data";
 
 window["dataLayer"] = window["dataLayer"] || [];
 
-export default function gtag(...args:any[]) {
+export default function gtag(...args: any[]) {
     window["dataLayer"].push(arguments);
+}
+
+export enum GaEventActions {
+    Load = "Load floor plan",
+    ViewExhibitor = "View exhibitor",
+    ClickExhibitorButton = "Click exhibitor button",
+}
+
+export function sendEventToGa(action: GaEventActions, label: string) {
+    gtag("event", action, {
+        event_category: "floorplan",
+        event_label: label,
+    });
 }
 
 if (data.gtag) {
@@ -17,9 +30,7 @@ if (data.gtag) {
 
     // initial view
     gtag("js", new Date());
-    gtag("config", data.gtag);
+    gtag("config", data.gtag, { transport_type: "beacon" });
 }
 
 window["gtag"] = gtag;
-
-
