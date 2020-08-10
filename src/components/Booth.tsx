@@ -7,6 +7,8 @@ import { t } from "../utils/i18n";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
+import { useAutorun } from "../utils/mobx";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -40,6 +42,12 @@ function Booth() {
             return this.booth.description || data.reserveInstructions || "";
         },
     }));
+
+    useAutorun(() => {
+        if (s.booth) {
+            sendEventToGa(`FP Booth: ${s.booth.name}`, GaEventActions.ViewBooth, s.booth.name);
+        }
+    });
 
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
