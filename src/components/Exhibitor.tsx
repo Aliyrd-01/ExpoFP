@@ -54,7 +54,7 @@ function ExhibitorComponent() {
     useAutorun(() => {
         if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
+            sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, GaEventActions.ViewExhibitor, s.exhibitor.name);
         }
     });
 
@@ -66,16 +66,21 @@ function ExhibitorComponent() {
         }
     );
 
-    function handleClick(e) {
+    function handleClick(e: any, action: GaEventActions, label: string) {
+        itemClick(action, label);
         if (uiState.kiosk) return e.preventDefault();
     }
 
-    function customButtonClick(e) {
+    function customButtonClick() {
         var label = s.exhibitor.customButtonTitle;
         if (s.exhibitor.customButtonUrl) {
             label = label + " " + s.exhibitor.customButtonUrl;
         }
-        sendEventToGa(GaEventActions.ClickExhibitorButton, label);
+        sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, GaEventActions.ClickCustomButton, label);
+    }
+
+    function itemClick(action: GaEventActions, label: string) {
+        sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, action, label);
     }
 
     return useObserver(() => {
@@ -191,7 +196,7 @@ function ExhibitorComponent() {
                         </div>
                     ) : null}
                     {exhibitor.gallery ? (
-                        <div className="exhibitor__slider">
+                        <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery, "gallery")}>
                             <Suspense fallback={null}>
                                 <ImageSlider images={exhibitor.gallery} />
                             </Suspense>
@@ -226,7 +231,10 @@ function ExhibitorComponent() {
                                 <div>
                                     <i className="fas fa-phone" />
                                     <div>
-                                        <a href={"tel:" + exhibitor.phone1} onClick={handleClick}>
+                                        <a
+                                            href={"tel:" + exhibitor.phone1}
+                                            onClick={(e) => handleClick(e, GaEventActions.ClickOnPhone, exhibitor.phone1)}
+                                        >
                                             {exhibitor.phone1}
                                         </a>
                                     </div>
@@ -240,7 +248,7 @@ function ExhibitorComponent() {
                                             href={exhibitor.website}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            onClick={handleClick}
+                                            onClick={(e) => handleClick(e, GaEventActions.ClickOnWebsite, exhibitor.website)}
                                         >
                                             {s.websiteTrimmed}
                                         </a>
@@ -255,7 +263,7 @@ function ExhibitorComponent() {
                                             href={"mailto:" + exhibitor.email}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            onClick={handleClick}
+                                            onClick={(e) => handleClick(e, GaEventActions.ClickOnEmail, exhibitor.email)}
                                         >
                                             {exhibitor.email}
                                         </a>
@@ -267,25 +275,60 @@ function ExhibitorComponent() {
                     {s.anySocial && <div className="exhibitor__sep" />}
                     {s.anySocial && (
                         <div className="exhibitor__social">
-                            <a href={exhibitor.facebook} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.facebook}
+                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.facebook)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <i className="fab fa-facebook" />
                             </a>
-                            <a href={exhibitor.instagram} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.instagram}
+                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.instagram)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <i className="fab fa-instagram" />
                             </a>
-                            <a href={exhibitor.linkedin} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.linkedin}
+                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.linkedin)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <i className="fab fa-linkedin" />
                             </a>
-                            <a href={exhibitor.twitter} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.twitter}
+                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.twitter)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <i className="fab fa-twitter" />
                             </a>
-                            <a href={exhibitor.googlePlus} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.googlePlus}
+                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.googlePlus)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <i className="fab fa-google-plus" />
                             </a>
-                            <a href={exhibitor.xing} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.xing}
+                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.xing)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <i className="fab fa-xing" />
                             </a>
-                            <a href={exhibitor.youtube} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={exhibitor.youtube}
+                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.youtube)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 <i className="fab fa-youtube" />
                             </a>
                         </div>

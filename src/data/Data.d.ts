@@ -10,6 +10,7 @@ interface Data {
     gallery: string[];
     gtag: string;
     boothTerm: string;
+    exhibitorTerm: string;
     locale: string;
     booths: RawBooth[];
     exhibitors: RawExhibitor[];
@@ -92,7 +93,7 @@ interface RawExhibitor {
     gallery: string[];
     categories: number[];
     leadingImageUrl: string;
-    videoUrl: string
+    videoUrl: string;
 }
 
 interface PathInfo {
