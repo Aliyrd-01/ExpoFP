@@ -4,6 +4,7 @@ import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
+import configImg from "./config-img";
 import configMatrix from "./config-matrix";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
@@ -14,6 +15,7 @@ export default function configAll(context: DrawerContext) {
     configDim(context);
     configCanvas(context);
     configBg(context);
+    configImg(context);
     const boothsAnimate = configBooths(context)
 
     matrixAfter();
