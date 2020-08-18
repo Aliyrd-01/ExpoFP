@@ -18,7 +18,7 @@ export default function configImg(context: DrawerContext) {
 
         var img = new Image();
         img.onload = () => {
-            addObject({                
+            addObject({
                 center: [x + width / 2, y + height / 2],
                 deltaPts: [-width / 2, -height / 2, width / 2, height / 2],
                 canvasTmp: createImageCanvas(width, height, img),
@@ -29,7 +29,7 @@ export default function configImg(context: DrawerContext) {
     });
 
     function addObject(item: DrawerObject) {
-        if (!painter) painter = context.requirePainter("image", RectPainter, 5);
+        if (!painter) painter = context.requirePainter("image", RectPainter, 120);
         painter.addObject(item);
     }
 }
@@ -39,7 +39,7 @@ function createImageCanvas(width: number, height: number, image: HTMLImageElemen
         width,
         height,
         draw(c: CanvasRenderingContext2D) {
-            c.drawImage(image, 0, 0);
+            c.drawImage(image, 0, 0, width, height);
         },
     };
 }
