@@ -71,10 +71,10 @@ function ExhibitorComponent() {
         if (uiState.kiosk) return e.preventDefault();
     }
 
-    function customButtonClick() {
-        var label = s.exhibitor.customButtonTitle;
-        if (s.exhibitor.customButtonUrl) {
-            label = label + " " + s.exhibitor.customButtonUrl;
+    function customButtonClick(title: string, url: string) {
+        let label = title;
+        if (url) {
+            label = label + " " + url;
         }
         sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, GaEventActions.ClickCustomButton, label);
     }
@@ -115,6 +115,19 @@ function ExhibitorComponent() {
             s.collapsed = false;
             setTimeout(s.updateOverlayContent);
         };
+
+        const customButtons = [];
+        function addCustomButton(title: string, url: string) {
+            if (!!title && !!url) {
+                customButtons.push({
+                    title,
+                    url,
+                });
+            }
+        }
+        addCustomButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl);
+        addCustomButton(exhibitor.customButton2Title, exhibitor.customButton2Url);
+        addCustomButton(exhibitor.customButton3Title, exhibitor.customButton3Url);
 
         return (
             <OverlayContent
@@ -333,18 +346,18 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (
+                    {customButtons.map((item) => (
                         <div className="exhibitor__custom-btn-area">
                             <a
-                                href={exhibitor.customButtonUrl}
-                                onClick={customButtonClick}
+                                href={item.url}
+                                onClick={(_) => customButtonClick(item.title, item.url)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                {exhibitor.customButtonTitle}
+                                {item.title}
                             </a>
                         </div>
-                    )}
+                    ))}
                 </div>
             </OverlayContent>
         );

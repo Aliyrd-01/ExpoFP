@@ -240,6 +240,18 @@
                     "customButtonUrl": {
                         "type": "string"
                     },
+                    "customButton2Title": {
+                        "type": "string"
+                    },
+                    "customButton2Url": {
+                        "type": "string"
+                    },
+                    "customButton3Title": {
+                        "type": "string"
+                    },
+                    "customButton3Url": {
+                        "type": "string"
+                    },
                     "leadingImageUrl": {
                         "type": "string"
                     },
