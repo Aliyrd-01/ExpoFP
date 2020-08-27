@@ -117,17 +117,18 @@ function ExhibitorComponent() {
         };
 
         const customButtons = [];
-        function addCustomButton(title: string, url: string) {
+        function addCustomButton(title: string, url: string, key: number) {
             if (!!title && !!url) {
                 customButtons.push({
                     title,
                     url,
+                    key,
                 });
             }
         }
-        addCustomButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl);
-        addCustomButton(exhibitor.customButton2Title, exhibitor.customButton2Url);
-        addCustomButton(exhibitor.customButton3Title, exhibitor.customButton3Url);
+        addCustomButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl, 1);
+        addCustomButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2);
+        addCustomButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3);
 
         return (
             <OverlayContent
@@ -347,7 +348,7 @@ function ExhibitorComponent() {
                         </div>
                     )}
                     {customButtons.map((item) => (
-                        <div className="exhibitor__custom-btn-area">
+                        <div className="exhibitor__custom-btn-area" key={item.key}>
                             <a
                                 href={item.url}
                                 onClick={(_) => customButtonClick(item.title, item.url)}
