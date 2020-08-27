@@ -54,7 +54,13 @@ function ExhibitorComponent() {
     useAutorun(() => {
         if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, GaEventActions.ViewExhibitor, s.exhibitor.name);
+            const filterText = uiState.list.type === "search" ? uiState.list.text : "",
+                name = s.exhibitor.name,
+                gaCategory = `FP Exhibitor: ${name}`;
+            if (filterText) {
+                sendEventToGa(gaCategory, GaEventActions.Search, name);
+            }
+            sendEventToGa(gaCategory, GaEventActions.View, name);
         }
     });
 
