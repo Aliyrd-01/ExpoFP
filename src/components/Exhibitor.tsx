@@ -116,19 +116,16 @@ function ExhibitorComponent() {
             setTimeout(s.updateOverlayContent);
         };
 
-        const customButtons = [];
-        function addCustomButton(title: string, url: string, key: number) {
-            if (!!title && !!url) {
-                customButtons.push({
-                    title,
-                    url,
-                    key,
-                });
-            }
+        function renderButton(title: string, url: string) {
+            if (!title || !url) return null;
+            return (
+                <div className="exhibitor__custom-btn-area">
+                    <a href={url} onClick={(_) => customButtonClick(title, url)} target="_blank" rel="noopener noreferrer">
+                        {title}
+                    </a>
+                </div>
+            );
         }
-        addCustomButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl, 1);
-        addCustomButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2);
-        addCustomButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3);
 
         return (
             <OverlayContent
@@ -347,18 +344,9 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    {customButtons.map((item) => (
-                        <div className="exhibitor__custom-btn-area" key={item.key}>
-                            <a
-                                href={item.url}
-                                onClick={(_) => customButtonClick(item.title, item.url)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {item.title}
-                            </a>
-                        </div>
-                    ))}
+                    {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
+                    {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url)}
+                    {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url)}
                 </div>
             </OverlayContent>
         );
