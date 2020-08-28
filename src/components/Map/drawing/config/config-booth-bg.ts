@@ -112,9 +112,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         // for white always return white
         const s = this.booth; //store.getBoothState(this.booth);
         let colorInfo = Color(defaultColor).hsl();
-        if (colorInfo.lightness() > 90) {
-            return colorInfo;
-        }
+        let lightness = colorInfo.lightness();
+        if (lightness > 90 || lightness < 30) return colorInfo;
 
         if (s.selected) {
             const selColor = Color(settings.colors.booths.selected).hsl();

@@ -11,11 +11,7 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 function Category() {
     useAutorun(() => {
         if (uiState.selectedCategory && uiState.selectedCategory.name) {
-            sendEventToGa(
-                `FP Category: ${uiState.selectedCategory.name}`,
-                GaEventActions.ViewCategory,
-                uiState.selectedCategory.name
-            );
+            sendEventToGa(`FP Category`, GaEventActions.View, uiState.selectedCategory.name);
         }
     });
 

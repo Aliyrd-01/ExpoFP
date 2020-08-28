@@ -1,14 +1,18 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { FocusEvent, KeyboardEvent, useEffect, useRef } from "react";
+import React, { FocusEvent, KeyboardEvent, useEffect, useRef, useCallback } from "react";
 import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
 import { useAutorun } from "../utils/mobx";
 import List from "./List";
 import OverlayContent from "./OverlayContent";
+import debounce from "../tools/debounce";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import "./Search.scss";
 // import logger from "../tools/logger";
+
+const DEBOUNCE_DELAY_MS = 2000;
 
 function Search() {
     const el = useRef<HTMLDivElement>();
@@ -81,6 +85,15 @@ function Search() {
     //     return () => window.clearInterval(intervalId);
     // }, [s]);
 
+    const debouncedChange = useCallback(
+        debounce(() => {
+            if (s.text) {
+                sendEventToGa(`FP`, GaEventActions.Search, s.text);
+            }
+        }, DEBOUNCE_DELAY_MS),
+        [s]
+    );
+
     return useObserver(() => {
         const fakeInput = s.hideRealInput ? (
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
@@ -92,7 +105,7 @@ function Search() {
                     className={classNames({ fixed: s.hideRealInput })}
                     placeholder={s.placeHolder}
                     value={s.text}
-                    onChange={setText}
+                    onChange={handleChange}
                     onKeyDown={handleKeydown}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -107,6 +120,11 @@ function Search() {
             </OverlayContent>
         );
     });
+
+    function handleChange() {
+        setText();
+        debouncedChange();
+    }
 
     function setText() {
         const text = getInput().value;
