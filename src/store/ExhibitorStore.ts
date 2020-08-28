@@ -63,6 +63,10 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly privateEmail: string;
     readonly customButtonTitle: string;
     readonly customButtonUrl: string;
+    readonly customButton2Title: string;
+    readonly customButton2Url: string;
+    readonly customButton3Title: string;
+    readonly customButton3Url: string;
     readonly leadingImageUrl: string;
     readonly leadingImageLinkUrl: string;
     readonly videoUrl: string;

@@ -112,6 +112,17 @@ function ExhibitorComponent() {
             setTimeout(s.updateOverlayContent);
         };
 
+        function renderButton(title: string, url: string) {
+            if (!title || !url) return null;
+            return (
+                <div className="exhibitor__custom-btn-area">
+                    <a href={url} onClick={(_) => customButtonClick(title, url)} target="_blank" rel="noopener noreferrer">
+                        {title}
+                    </a>
+                </div>
+            );
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -329,18 +340,9 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    {!!exhibitor.customButtonTitle && !!exhibitor.customButtonUrl && (
-                        <div className="exhibitor__custom-btn-area">
-                            <a
-                                href={exhibitor.customButtonUrl}
-                                onClick={customButtonClick}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {exhibitor.customButtonTitle}
-                            </a>
-                        </div>
-                    )}
+                    {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
+                    {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url)}
+                    {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url)}
                 </div>
             </OverlayContent>
         );
