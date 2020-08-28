@@ -74,7 +74,7 @@ function ExhibitorComponent() {
     function customButtonClick(title: string, url: string) {
         let label = title;
         if (url) {
-            label = label + " " + url;
+            label += " " + url;
         }
         sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, GaEventActions.ClickCustomButton, label);
     }
