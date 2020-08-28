@@ -116,7 +116,7 @@ function ExhibitorComponent() {
             if (!title || !url) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <a href={url} onClick={(_) => customButtonClick(title, url)} target="_blank" rel="noopener noreferrer">
+                    <a href={url} onClick={customButtonClick} target="_blank" rel="noopener noreferrer">
                         {title}
                     </a>
                 </div>
