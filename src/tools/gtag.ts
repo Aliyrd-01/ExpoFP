@@ -8,22 +8,26 @@ export default function gtag(...args: any[]) {
 
 export enum GaEventActions {
     Load = "Load floor plan",
-    ViewExhibitor = "View exhibitor",
-    ViewBooth = `View booth`,
+    View = "View",
+    Search = "Search",
     ClickCustomButton = "Click custom button",
-    ViewCategory = `View category`,
     ViewVideo = "View video",
     ViewGallery = "View gallery",
-    ClickOnPhone = "Click phone",
-    ClickOnEmail = "Click email",
-    ClickOnWebsite = "Click website",
-    ClickSocialLink = "Click social link",
+    ClickPhone = "Click phone",
+    ClickEmail = "Click email",
+    ClickWebsite = "Click website",
+
+    ClickFacebook = "Click Facebook",
+    ClickInstagaram = "Click Instagram",
+    ClickLinkedin = "Click Linkedin",
+    ClickTwitter = "Click Twitter",
+    ClickGooglePlus = "Click Google Plus",
+    ClickXing = "Click Xing",
+    ClickYoutube = "Click Youtube",
 }
 
 export function sendEventToGa(category: string, action: GaEventActions, label: string) {
-    let actionTitle: string = <string>action;
-    if (action === GaEventActions.ViewBooth) actionTitle = `View`;
-    else if (action === GaEventActions.ViewExhibitor) actionTitle = `View`;
+    let actionTitle: string = action as string;
     gtag("event", actionTitle, {
         event_category: category,
         event_label: label,
