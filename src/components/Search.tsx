@@ -12,6 +12,8 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import "./Search.scss";
 // import logger from "../tools/logger";
 
+const DEBOUNCE_DELAY_MS = 2000;
+
 function Search() {
     const el = useRef<HTMLDivElement>();
 
@@ -86,9 +88,9 @@ function Search() {
     const debouncedChange = useCallback(
         debounce(() => {
             if (s.text) {
-                sendEventToGa(`FP Expo: ${window["__efpEvent"]}`, GaEventActions.SearchFilter, s.text);
+                sendEventToGa(`FP`, GaEventActions.Search, s.text);
             }
-        }, 2000),
+        }, DEBOUNCE_DELAY_MS),
         [s]
     );
 

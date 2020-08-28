@@ -11,13 +11,7 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 function Category() {
     useAutorun(() => {
         if (uiState.selectedCategory && uiState.selectedCategory.name) {
-            const filterText = uiState.list.type === "search" ? uiState.list.text : "",
-                name = uiState.selectedCategory.name,
-                gaCategory = `FP Category: ${name}`;
-            if (filterText) {
-                sendEventToGa(gaCategory, GaEventActions.Search, name);
-            }
-            sendEventToGa(gaCategory, GaEventActions.View, name);
+            sendEventToGa(`FP Category`, GaEventActions.View, uiState.selectedCategory.name);
         }
     });
 

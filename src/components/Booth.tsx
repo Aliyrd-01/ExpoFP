@@ -45,13 +45,7 @@ function Booth() {
 
     useAutorun(() => {
         if (s.booth) {
-            const filterText = uiState.list.type === "search" ? uiState.list.text : "",
-                name = s.booth.name,
-                gaCategory = `FP Booth: ${name}`;
-            if (filterText) {
-                sendEventToGa(gaCategory, GaEventActions.Search, name);
-            }
-            sendEventToGa(gaCategory, GaEventActions.View, name);
+            sendEventToGa(`FP Booth`, GaEventActions.View, s.booth.name);
         }
     });
 

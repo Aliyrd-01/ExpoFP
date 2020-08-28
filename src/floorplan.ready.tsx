@@ -9,7 +9,7 @@ import trackEvent from "./tools/track-event";
 import { GaEventActions, sendEventToGa } from "./tools/gtag";
 
 trackEvent("load");
-sendEventToGa(`FP Expo: ${window["__efpEvent"]}`, GaEventActions.Load, window["__efpEvent"]);
+sendEventToGa(`FP`, GaEventActions.Load, ``);
 
 // initStore(store);
 

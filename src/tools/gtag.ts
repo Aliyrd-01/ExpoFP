@@ -8,16 +8,22 @@ export default function gtag(...args: any[]) {
 
 export enum GaEventActions {
     Load = "Load floor plan",
-    View = "View", // View exhibitor, booth, category
-    Search = "Search", // Search exhibitor, booth, category (click on exhibitor/booth when filter is set)
+    View = "View",
+    Search = "Search",
     ClickCustomButton = "Click custom button",
     ViewVideo = "View video",
     ViewGallery = "View gallery",
-    ClickOnPhone = "Click phone",
-    ClickOnEmail = "Click email",
-    ClickOnWebsite = "Click website",
-    ClickSocialLink = "Click social link",
-    SearchFilter = "Search filter",
+    ClickPhone = "Click phone",
+    ClickEmail = "Click email",
+    ClickWebsite = "Click website",
+
+    ClickFacebook = "Click Facebook",
+    ClickInstagaram = "Click Instagram",
+    ClickLinkedin = "Click Linkedin",
+    ClickTwitter = "Click Twitter",
+    ClickGooglePlus = "Click Google Plus",
+    ClickXing = "Click Xing",
+    ClickYoutube = "Click Youtube",
 }
 
 export function sendEventToGa(category: string, action: GaEventActions, label: string) {

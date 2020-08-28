@@ -54,13 +54,7 @@ function ExhibitorComponent() {
     useAutorun(() => {
         if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
-            const filterText = uiState.list.type === "search" ? uiState.list.text : "",
-                name = s.exhibitor.name,
-                gaCategory = `FP Exhibitor: ${name}`;
-            if (filterText) {
-                sendEventToGa(gaCategory, GaEventActions.Search, name);
-            }
-            sendEventToGa(gaCategory, GaEventActions.View, name);
+            sendEventToGa(`FP Exhibitor`, GaEventActions.View, s.exhibitor.name);
         }
     });
 
@@ -72,21 +66,17 @@ function ExhibitorComponent() {
         }
     );
 
-    function handleClick(e: any, action: GaEventActions, label: string) {
-        itemClick(action, label);
+    function handleClick(e: any, action: GaEventActions) {
+        itemClick(action);
         if (uiState.kiosk) return e.preventDefault();
     }
 
     function customButtonClick() {
-        var label = s.exhibitor.customButtonTitle;
-        if (s.exhibitor.customButtonUrl) {
-            label = label + " " + s.exhibitor.customButtonUrl;
-        }
-        sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, GaEventActions.ClickCustomButton, label);
+        sendEventToGa(`FP Exhibitor`, GaEventActions.ClickCustomButton, s.exhibitor.name);
     }
 
-    function itemClick(action: GaEventActions, label: string) {
-        sendEventToGa(`FP Exhibitor: ${s.exhibitor.name}`, action, label);
+    function itemClick(action: GaEventActions) {
+        sendEventToGa(`FP Exhibitor`, action, s.exhibitor.name);
     }
 
     return useObserver(() => {
@@ -202,7 +192,7 @@ function ExhibitorComponent() {
                         </div>
                     ) : null}
                     {exhibitor.gallery ? (
-                        <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery, "gallery")}>
+                        <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                             <Suspense fallback={null}>
                                 <ImageSlider images={exhibitor.gallery} />
                             </Suspense>
@@ -239,7 +229,7 @@ function ExhibitorComponent() {
                                     <div>
                                         <a
                                             href={"tel:" + exhibitor.phone1}
-                                            onClick={(e) => handleClick(e, GaEventActions.ClickOnPhone, exhibitor.phone1)}
+                                            onClick={(e) => handleClick(e, GaEventActions.ClickPhone)}
                                         >
                                             {exhibitor.phone1}
                                         </a>
@@ -254,7 +244,7 @@ function ExhibitorComponent() {
                                             href={exhibitor.website}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            onClick={(e) => handleClick(e, GaEventActions.ClickOnWebsite, exhibitor.website)}
+                                            onClick={(e) => handleClick(e, GaEventActions.ClickWebsite)}
                                         >
                                             {s.websiteTrimmed}
                                         </a>
@@ -269,7 +259,7 @@ function ExhibitorComponent() {
                                             href={"mailto:" + exhibitor.email}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            onClick={(e) => handleClick(e, GaEventActions.ClickOnEmail, exhibitor.email)}
+                                            onClick={(e) => handleClick(e, GaEventActions.ClickEmail)}
                                         >
                                             {exhibitor.email}
                                         </a>
@@ -283,7 +273,7 @@ function ExhibitorComponent() {
                         <div className="exhibitor__social">
                             <a
                                 href={exhibitor.facebook}
-                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.facebook)}
+                                onClick={() => itemClick(GaEventActions.ClickFacebook)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -291,7 +281,7 @@ function ExhibitorComponent() {
                             </a>
                             <a
                                 href={exhibitor.instagram}
-                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.instagram)}
+                                onClick={() => itemClick(GaEventActions.ClickInstagaram)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -299,7 +289,7 @@ function ExhibitorComponent() {
                             </a>
                             <a
                                 href={exhibitor.linkedin}
-                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.linkedin)}
+                                onClick={() => itemClick(GaEventActions.ClickLinkedin)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -307,7 +297,7 @@ function ExhibitorComponent() {
                             </a>
                             <a
                                 href={exhibitor.twitter}
-                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.twitter)}
+                                onClick={() => itemClick(GaEventActions.ClickTwitter)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -315,7 +305,7 @@ function ExhibitorComponent() {
                             </a>
                             <a
                                 href={exhibitor.googlePlus}
-                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.googlePlus)}
+                                onClick={() => itemClick(GaEventActions.ClickGooglePlus)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -323,7 +313,7 @@ function ExhibitorComponent() {
                             </a>
                             <a
                                 href={exhibitor.xing}
-                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.xing)}
+                                onClick={() => itemClick(GaEventActions.ClickXing)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -331,7 +321,7 @@ function ExhibitorComponent() {
                             </a>
                             <a
                                 href={exhibitor.youtube}
-                                onClick={() => itemClick(GaEventActions.ClickSocialLink, exhibitor.youtube)}
+                                onClick={() => itemClick(GaEventActions.ClickYoutube)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
