@@ -11,6 +11,7 @@ import debounce from "../tools/debounce";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import "./Search.scss";
 // import logger from "../tools/logger";
+import * as YouAreHere from "../utils/yah";
 
 const DEBOUNCE_DELAY_MS = 2000;
 
@@ -137,6 +138,30 @@ function Search() {
         };
     }
 
+    function hanleCustomCommand(text: string) {
+        if (text.startsWith(`${YouAreHere.yahKey}`)) {
+            const commandValue = text.substr(YouAreHere.yahKey.length).trim();
+            if (commandValue[1] === undefined) {
+                const yah = YouAreHere.getYah();
+                alert(`"You are here" coordinantes: ${yah[0]} ${yah[1]}, scale ${yah[2]}`);
+            } else if (commandValue === "none") {
+                YouAreHere.removeYah();
+                window.location.replace(window.location.origin);
+            }
+            else if (commandValue.split(",").length == 2 || commandValue.split(",").length == 3) {
+                const yahValues = commandValue.split(",");
+                const yahX = parseFloat(yahValues[0].trim());
+                const yahY = parseFloat(yahValues[1].trim());
+                let scale = 1;
+                if (commandValue.split(",").length == 3) scale = parseFloat(yahValues[2].trim());
+                if (!!yahX && !!yahY) {
+                    YouAreHere.setYah(yahX, yahY, scale);
+                    window.location.replace(window.location.origin);
+                }
+            }
+        }
+    }
+
     function handleFocus() {
         uiState.searchFocused = true;
     }
@@ -159,6 +184,7 @@ function Search() {
             case "Enter":
                 e.preventDefault();
                 store.openActiveListItem();
+                hanleCustomCommand(getInput().value);
                 return;
         }
         if (delta) {
