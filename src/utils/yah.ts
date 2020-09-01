@@ -11,6 +11,6 @@ export function removeYah(){
 export function getYah(): [number, number, number]{
     if (localStorage.getItem(yahKey)){
         const yahValues = localStorage.getItem(yahKey).split(",");
-        if (yahValues.length == 3) return [parseFloat(yahValues[0]), parseFloat(yahValues[1]), parseFloat(yahValues[2])];
+        if (yahValues.length === 3) return [parseFloat(yahValues[0]), parseFloat(yahValues[1]), parseFloat(yahValues[2])];
     }
 };
