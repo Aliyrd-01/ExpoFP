@@ -5,6 +5,7 @@ import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
 import configMatrix from "./config-matrix";
+import configYah from "./config-yah";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 if (settings.EXPO === "sydneybuildexpo") delayAnimations += 400;
@@ -15,7 +16,7 @@ export default function configAll(context: DrawerContext) {
     configCanvas(context);
     configBg(context);
     const boothsAnimate = configBooths(context)
-
+    configYah(context);
     matrixAfter();
 
     return function() {
