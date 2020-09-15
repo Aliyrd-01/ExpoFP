@@ -128,11 +128,9 @@ export default class FloorPlanLoader implements FloorPlan {
             }
             const data = window["__data"] as Data;
 
-            let language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
-            if (language) language = language.split("-")[0];
-            language = _locales.find((x) => x === language);
-
-            await initI18n(language || data.locale || "en");
+            const navLanguage = (navigator.languages && navigator.languages[0]) || navigator.language;
+            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
+            await initI18n(navLocale || data.locale || "en");
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
