@@ -128,7 +128,7 @@ export default class FloorPlanLoader implements FloorPlan {
             }
             const data = window["__data"] as Data;
 
-            const navLanguage = (navigator.languages && navigator.languages[0]) || navigator.language;
+            const navLanguage = navigator.languages?.[0] || navigator.language;
             const navLocale = _locales.find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
 
