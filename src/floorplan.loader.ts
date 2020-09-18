@@ -5,6 +5,7 @@ import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isFromDesigner from "./utils/is-from-designer";
 import useShadow from "./utils/use-shadow";
+import _locales from "../public/locales/_locales";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -80,7 +81,7 @@ export default class FloorPlanLoader implements FloorPlan {
         }
         this.renderTarget = fpContainer;
 
-        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${eventId}.expofp.com/data/`;        
+        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${eventId}.expofp.com/data/`;
 
         this.dataUrl = dataUrlBase;
 
@@ -126,7 +127,10 @@ export default class FloorPlanLoader implements FloorPlan {
                 await loadJs(fpUrl + `?v=${++fpVersion}`);
             }
             const data = window["__data"] as Data;
-            await initI18n(data.locale || "en");
+
+            const navLanguage = navigator.languages?.[0] || navigator.language;
+            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
+            await initI18n(navLocale || data.locale || "en");
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
