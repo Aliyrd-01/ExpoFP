@@ -128,11 +128,11 @@ if (locationSearch.startsWith("?preview=")) {
     historyReplace("?");
 }
 // go to bookmarks when receive thouse
-if (locationSearch.startsWith("?b=")) {
+else if (locationSearch.startsWith("?b=")) {
     historyReplace("?bookmarks");
 }
 
-if (locationSearch.startsWith("?ba=")) {
+else if (locationSearch.startsWith("?ba=")) {
     const url = new URL(window.location.href);
     const ba = parseInt(url.searchParams.get("ba"));
     const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
@@ -141,7 +141,7 @@ if (locationSearch.startsWith("?ba=")) {
 }
 
 // facebook and google  fix
-if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga") || /^\?\S{1,10}(=|%3D)/i.test(locationSearch)) {
+else if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga") || /^\?\S{1,10}(=|%3D)/i.test(locationSearch)) {
     historyReplace("?");
 }
 
