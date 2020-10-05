@@ -61,7 +61,7 @@
             "type": "string",
             "description": "Locale to choose translation resouce file"
         },
-        "dimensionless" {
+        "dimensionless": {
             "type": "boolean",
             "description": "Hide booth size"
         },
