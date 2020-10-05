@@ -38,7 +38,6 @@ export default function validateData(data: Data) {
     //if (isDebug) data.registerUrl = "http://google.com";
 
     if (data["free"]) {
-        data.noAds = true;
         data.noFeatured = true;
         data.expoFpAd = true;
     }
@@ -123,8 +122,5 @@ export default function validateData(data: Data) {
     // disable ads and featured for free plans
     if (data.noFeatured) {
         data.exhibitors.forEach((e) => (e.featured = false));
-    }
-    if (data.noAds) {
-        data.exhibitors.forEach((e) => (e.advertise = false));
     }
 }

@@ -86,7 +86,7 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     // readonly reserved: boolean;
 
     // populated
-    readonly size: string; // comes from svg or data.js
+    readonly size: string; // comes from svg or data.js shown when data.dimensionless is true
     readonly availColor: string; // comes from svg or data.js
     readonly soldColor: string; // comes from svg or data.js
     readonly holdColor: string; // comes from svg or data.js

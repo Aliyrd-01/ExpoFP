@@ -1,5 +1,4 @@
 interface Data {
-    noAds: boolean;
     noFeatured: boolean;
     expoFpAd: boolean;
     title: string;
@@ -19,6 +18,7 @@ interface Data {
     sendLoginLinkUrl: string;
     trackerUrl: string;
     // hideCompanies: boolean;
+    dimensionless: boolean;
 }
 
 interface RawCategory {
