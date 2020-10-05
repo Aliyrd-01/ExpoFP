@@ -8,10 +8,7 @@
     "properties": {
         "free": {
             "type": "boolean",
-            "description": "Obsolete. Now equals to noAds=true, noFetured=true, showFpAd=true"
-        },
-        "noAds": {
-            "type": "boolean"
+            "description": "Obsolete. Now equals to noFetured=true, showFpAd=true"
         },
         "noFeatured": {
             "type": "boolean"

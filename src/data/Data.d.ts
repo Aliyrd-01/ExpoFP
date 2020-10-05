@@ -1,5 +1,4 @@
 interface Data {
-    noAds: boolean;
     noFeatured: boolean;
     expoFpAd: boolean;
     title: string;
