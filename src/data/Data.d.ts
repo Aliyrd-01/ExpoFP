@@ -19,6 +19,7 @@ interface Data {
     sendLoginLinkUrl: string;
     trackerUrl: string;
     // hideCompanies: boolean;
+    dimensionless: boolean;
 }
 
 interface RawCategory {
