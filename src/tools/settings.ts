@@ -7,7 +7,6 @@ let settings = {
     EXPO: window["__efpEvent"], //process.env.REACT_APP_EFP_EXPO,
     borderless: false,
     // borderWidth: 1,
-    dimensionless: false,
     colors: {
         // base: "#ebebeb",
         booths: {
@@ -22,9 +21,7 @@ if (settings.EXPO === "jtrade19") {
     settings.colors.booths.selected = "#dc6533";
 } else if (settings.EXPO === "ktrade20") {
     settings.borderless = true;
-} else if (settings.EXPO === "tsu") {
-    settings.dimensionless = true;
-}
+
 // else if (settings.EXPO === "eventtechlive2019") {
 //     settings.borderless = true;
 // }
