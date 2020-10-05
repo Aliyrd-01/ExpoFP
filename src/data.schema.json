@@ -48,7 +48,7 @@
         "sendLoginLinkUrl": {
             "type": "string",
             "format": "uri",
-            "description": "Endpoint URL to send intructions to exhibitors to edi   t their data. Should accept `{id: number}` JSON payloads."
+            "description": "Endpoint URL to send intructions to exhibitors to edit their data. Should accept `{id: number}` JSON payloads."
         },
         "boothTerm": {
             "type": "string",
