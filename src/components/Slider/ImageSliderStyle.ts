@@ -53,8 +53,11 @@ const basicNav = {
 };
 const bulletContainer = {
     position: "absolute",
-    left: "50%",
     bottom: "15px",
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%"
 };
 const bulletSize = 15;
 const bulletMargin = 3;
@@ -67,6 +70,7 @@ const basicBullet = {
     border: `2px solid ${fillColor}`,
     width: `${bulletSize}px`,
     height: `${bulletSize}px`,
+    marginTop: `${bulletMargin}px`,
     marginLeft: `${bulletMargin}px`,
     marginRight: `${bulletMargin}px`,
 };
@@ -102,7 +106,7 @@ export default {
     NavLeft: assignObjects(basic, basicNav, { left: 0 }),
     NavRight: assignObjects(basic, basicNav, { right: 0 }),
     BulletContainer: (bulletLength) =>
-        assignObjects(basic, bulletContainer, { marginLeft: `-${(bulletLength * (bulletSize + bulletMargin * 2)) / 2}px` }),
+        assignObjects(basic, bulletContainer),
     BulletNormal: assignObjects(basic, basicBullet),
     BulletActive: assignObjects(basic, basicBullet, { background: fillColor }),
 
