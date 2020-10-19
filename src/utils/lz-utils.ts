@@ -1,7 +1,7 @@
 import LZString from "lz-string";
 
 function compress(s: string){
-    const a: number[] = LZString.compressToUint8Array(s) as any;
+    const a = LZString.compressToUint8Array(s);
     return btoa(String.fromCharCode(...a))
         .replace(/\+/g, "-")
         .replace(/\//g, "_")
