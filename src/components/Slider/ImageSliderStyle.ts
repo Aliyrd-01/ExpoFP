@@ -73,6 +73,7 @@ const basicBullet = {
     marginTop: `${bulletMargin}px`,
     marginLeft: `${bulletMargin}px`,
     marginRight: `${bulletMargin}px`,
+    boxShadow: "2px 2px 2px 2px rgba(0,0,0,0.1)"
 };
 
 const fullScreenSubContainer = {
