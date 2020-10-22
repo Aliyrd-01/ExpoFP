@@ -5,16 +5,13 @@ import svg from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
-export default function configBg(context: DrawerContext) {
+export default function configBg(context: DrawerContext, layerID: string, painterOrderPriority: number) {
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
     // const drawer: TrianglePainter = context.requirePainter("bg", TrianglePainter, 10);
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
-    const bgElements = select(svg)
-        .select("#BG")
-        .selectAll("path, rect")
-        .nodes() as SVGElement[];
+    const bgElements = select(svg).select(`#${layerID}`).selectAll("path, rect").nodes() as SVGElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") {
@@ -39,12 +36,11 @@ export default function configBg(context: DrawerContext) {
         }
 
         for (const c of mesh.cells) {
-            
             addObject({
                 p0: mesh.positions[c[0]],
                 p1: mesh.positions[c[1]],
                 p2: mesh.positions[c[2]],
-                color
+                color,
             });
         }
     }
@@ -58,19 +54,19 @@ export default function configBg(context: DrawerContext) {
             p0: [r.x1, r.y1],
             p1: [r.x2, r.y1],
             p2: [r.x1, r.y2],
-            color
+            color,
         });
         addObject({
             p1: [r.x2, r.y1],
             p2: [r.x1, r.y2],
             p0: [r.x2, r.y2],
-            color
+            color,
         });
     }
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter("bg" + drawerSeq++, TrianglePainter, 10);            
+            drawer = context.requirePainter(layerID + drawerSeq++, TrianglePainter, painterOrderPriority);
         }
     }
 
@@ -80,7 +76,5 @@ export default function configBg(context: DrawerContext) {
     // drawer.alpha = 0.5;
 }
 
-
-
-declare  const __fp: string;
+declare const __fp: string;
 declare const __fpPaths: { [id: string]: any };

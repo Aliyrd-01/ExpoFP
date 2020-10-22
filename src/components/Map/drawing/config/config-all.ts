@@ -14,12 +14,13 @@ export default function configAll(context: DrawerContext) {
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
-    configBg(context);
-    const boothsAnimate = configBooths(context)
+    configBg(context, "BG", 10);
+    const boothsAnimate = configBooths(context);
+    configBg(context, "FG", 155);
     configYah(context);
     matrixAfter();
 
-    return function() {
+    return function () {
         // to be running when all painters prepared
         if (context.updatable) {
             window.setTimeout(() => {
