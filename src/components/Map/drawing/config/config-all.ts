@@ -1,3 +1,5 @@
+import { select } from "d3-selection";
+import svg from "../../../../data/svg";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import configBg from "./config-bg";
@@ -14,12 +16,25 @@ export default function configAll(context: DrawerContext) {
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
-    configBg(context);
-    const boothsAnimate = configBooths(context)
+
+    let boothsAnimate = null;
+    let basePriority = 6;
+    select(svg)
+        .selectAll("svg > g[data-layer]")
+        .nodes()
+        .map((n: any) => n.getAttribute("id"))
+        .forEach((layerName) => {
+            if (layerName == "Booths") {
+                basePriority = 151;
+                boothsAnimate = configBooths(context);
+            } else configBg(context, layerName, basePriority);
+            basePriority += 1;
+        });
+
     configYah(context);
     matrixAfter();
 
-    return function() {
+    return function () {
         // to be running when all painters prepared
         if (context.updatable) {
             window.setTimeout(() => {
