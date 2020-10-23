@@ -104,6 +104,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                     }
                 }
             );
+            setTimeout(() => context.requireUpdate(this.updateBound), 1000);
         }
     }
 
