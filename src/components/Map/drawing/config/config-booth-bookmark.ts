@@ -6,7 +6,7 @@ import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from "./canvases";
 
-export default function configBoothBookmark(context: DrawerContext, booth: Booth) {    
+export default function configBoothBookmark(context: DrawerContext, booth: Booth) {
     if (uiState.kiosk || !(booth instanceof RegularBooth)) return;
     return new BoothBookmarkDrawer(context, booth);
 }
@@ -32,11 +32,11 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                 0,
                 -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding,
                 -bookmarkCanvasXL.lineWidth - bookmarkCanvasXL.padding,
-                0
+                0,
             ],
             canvasTmp: bookmarkCanvasXL,
             texPosition: "righttop",
-            visible: false
+            visible: false,
         });
 
         this.painter.addObject({
@@ -48,11 +48,11 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                 0,
                 -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
                 -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
-                0
+                0,
             ],
             canvasTmp: bookmarkCanvasL,
             texPosition: "righttop",
-            visible: false
+            visible: false,
         });
 
         this.painter.addObject({
@@ -64,11 +64,11 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                 0,
                 -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
                 -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
-                0
+                0,
             ],
             canvasTmp: bookmarkCanvasM,
             texPosition: "righttop",
-            visible: false
+            visible: false,
         });
 
         this.painter.addObject({
@@ -80,13 +80,14 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                 -bookmarkCanvasM.width / 2,
                 -bookmarkCanvasM.height / 2,
                 bookmarkCanvasM.width / 2,
-                bookmarkCanvasM.height / 2
+                bookmarkCanvasM.height / 2,
             ],
             canvasTmp: bookmarkCanvasM,
             texPosition: "center",
-            visible: false
+            visible: false,
         });
 
+        this.update();
         if (context.updatable) {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
@@ -112,12 +113,13 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
 
     private prevVisible: boolean = false;
 
-    unlock() {        
+    unlock() {
         this.locked = false;
         this.update();
     }
 
-    update() {        
+    update() {
+        if (this.locked) return;
         const { bookmarked, skipDim } = this.booth as RegularBooth;
         if (!bookmarked && !this.prevVisible) return;
         this.prevVisible = bookmarked;
@@ -141,7 +143,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             }
         }
 
-        ["XL", "L", "M", "S"].forEach(x => {
+        ["XL", "L", "M", "S"].forEach((x) => {
             this.painter.updateVisible(this.getId(x), x === view);
             this.painter.updateSkipdim(this.getId(x), skipDim);
         });
