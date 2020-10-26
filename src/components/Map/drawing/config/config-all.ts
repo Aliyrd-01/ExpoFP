@@ -20,7 +20,7 @@ export default function configAll(context: DrawerContext) {
     let boothsAnimate = null;
     let basePriority = 6;
     (select(svg).selectAll("svg > g[data-layer]").nodes() as SVGElement[])
-        .map((n: any) => n.getAttribute("id"))
+        .map((n) => n.getAttribute("id"))
         .forEach((layerName) => {
             if (layerName == "Booths") {
                 basePriority = 151;
