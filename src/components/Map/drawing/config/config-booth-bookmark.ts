@@ -6,14 +6,17 @@ import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from "./canvases";
 
-export default function configBoothBookmark(context: DrawerContext, booth: Booth) {
+export default function configBoothBookmark(context: DrawerContext, booth: Booth) {    
     if (uiState.kiosk || !(booth instanceof RegularBooth)) return;
-    new BoothBookmarkDrawer(context, booth);
+    return new BoothBookmarkDrawer(context, booth);
 }
 
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
+    public locked: boolean;
+
     constructor(context: DrawerContext, booth: RegularBooth) {
         super(context, booth, "booth-bookmark", RectPainter, 140);
+        this.locked = context.updatable;
         const r = this.booth.rect.withPadding(boothStore.borderWidth / 2);
 
         const bookmarkCanvasXL = createBookmarkCanvas(11, context.pixelRatio);
@@ -104,13 +107,17 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                     }
                 }
             );
-            setTimeout(() => context.requireUpdate(this.updateBound), 1000);
         }
     }
 
     private prevVisible: boolean = false;
 
-    update() {
+    unlock() {        
+        this.locked = false;
+        this.update();
+    }
+
+    update() {        
         const { bookmarked, skipDim } = this.booth as RegularBooth;
         if (!bookmarked && !this.prevVisible) return;
         this.prevVisible = bookmarked;
