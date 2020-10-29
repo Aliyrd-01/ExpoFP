@@ -126,7 +126,16 @@ export async function generatePdf() {
     //     //width, height, padding, titleFontSize, fontList: doc.getFontList(), imageWidth, imageHeight, canvasWidth: canvas.width
     // });
 
-    doc.save(slugify(data.title, { remove: /[*+~.()'"!:@]/g, lower: true }) + ".pdf");
+    {
+        const supportsTouch = "ontouchstart" in window || navigator.msMaxTouchPoints;
+        if (supportsTouch) {
+            const blob = doc.output("blob");
+            window.open(URL.createObjectURL(blob), "_blank");
+        } else {
+            // Not works on some mobile devices
+            doc.save(slugify(data.title, { remove: /[*+~.()'"!:@]/g, lower: true }) + ".pdf");
+        }
+    }
 
     function mmToPt(mm: number) {
         return (mm / 25.4) * dpi;
@@ -144,9 +153,9 @@ export async function generatePdf() {
 // USE THIS: https://github.com/MrRio/jsPDF/blob/master/fontconverter/fontconverter.html
 // or same from rawgit website
 
-(function(jsPDFAPI) {
+(function (jsPDFAPI) {
     var font = pdfFontBold;
-    var callAddFont = function() {
+    var callAddFont = function () {
         //@ts-ignore
         this.addFileToVFS("OpenSans-Bold-bold.ttf", font);
         //@ts-ignore
@@ -155,10 +164,10 @@ export async function generatePdf() {
     jsPDFAPI.events.push(["addFonts", callAddFont]);
 })(jsPDFAPI);
 
-(function(jsPDFAPI) {
+(function (jsPDFAPI) {
     var font = pdfFontNormal;
 
-    var callAddFont = function() {
+    var callAddFont = function () {
         //@ts-ignore
         this.addFileToVFS("OpenSans-Regular-normal.ttf", font);
         //@ts-ignore
