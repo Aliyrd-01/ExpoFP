@@ -128,9 +128,8 @@
         @include clearfix;
     }
     &__description-html {
-        word-break: break-all;
+        overflow-wrap: break-word;
     }
-
     &__sep {
         margin: 1rem;
         border-top: dotted 1px #ddd;
