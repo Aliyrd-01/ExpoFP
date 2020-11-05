@@ -11,7 +11,7 @@ export default class BoothShape {
 
     constructor(booth: Booth) {
         this.booth = booth;
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 100, true);
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 8, true);
     }
 
     static get(b: Booth) {
