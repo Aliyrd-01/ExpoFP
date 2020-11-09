@@ -6,6 +6,7 @@ import { generateUniqueSlug } from "../../tools/slug";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import ExhibitorStore, { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
+import settings from "../../tools/settings";
 
 export default function initExhibitors(store: RootStore) {
     if (previewExhibitor) {
@@ -78,7 +79,8 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
 }
 
 function getFromLocalStorage() {
-    const ls = localStorage.getItem("bookmarked");
+    let ls = localStorage.getItem(`${settings.EXPO}-bookmarked`);
+    if (!ls) ls = localStorage.getItem("bookmarked");
     return ls ? (JSON.parse(ls) as number[]) : [];
 }
 
@@ -87,7 +89,7 @@ function saveToLocalStorage(ar: number[]) {
     // const dest = [...ar, ...(append ? getFromLocalStorage() : [])];
     // const unique = Array.from(new Set(dest));
     // debugger
-    localStorage.setItem("bookmarked", JSON.stringify(ar));
+    localStorage.setItem(`${settings.EXPO}-bookmarked`, JSON.stringify(ar));
 }
 
 function addBaseUrl(url: string) {
