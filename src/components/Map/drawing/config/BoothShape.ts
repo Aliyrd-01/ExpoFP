@@ -11,8 +11,7 @@ export default class BoothShape {
 
     constructor(booth: Booth) {
         this.booth = booth;
-        var bgRed = (t) => (this.selectBgAnimationPart = easeQuadIn(t));
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 8, true, bgRed);
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 8, true);
     }
 
     static get(b: Booth) {
@@ -25,7 +24,7 @@ export default class BoothShape {
     }
 }
 
-function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, final: (t: number) => void) {
+function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean) {
     const func = reversable ? reversableT : plainT;
 
     reaction(
@@ -37,8 +36,6 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 const drawFrame = () => {
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
-
-                       final(reversableT(performance.now(), 7));
                        return;
                     }
                     setter(func(animationStart, duration));

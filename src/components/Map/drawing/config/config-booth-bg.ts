@@ -155,8 +155,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     }
 
     @computed get selectedColorInterpolateFunc() {
-        const color0 = "#000";
-        const color1 = settings.colors.booths.selected;
+        /// "#dc6533"
+        const color0 = settings.colors.booths.selected /*"#000"*/;
+        const color1 = "#000"; // settings.colors.booths.selected;
         return colorInterpolate([color0, color1]);
     }
 
