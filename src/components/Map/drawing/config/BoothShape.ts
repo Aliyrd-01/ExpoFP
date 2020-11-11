@@ -1,4 +1,4 @@
-import { easeQuadInOut, easeQuadIn } from "d3-ease";
+import { easeQuadInOut } from "d3-ease";
 import { observable, reaction } from "mobx";
 import { Booth } from "../../../../store/BoothStore";
 
