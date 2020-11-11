@@ -1,8 +1,13 @@
 import { RegularBooth } from "../../../../store/BoothStore";
+import settings from "../../../../tools/settings";
 import { t } from "../../../../utils/i18n";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
+
+let fillStyle = "#fff";
+if(settings.EXPO === "tqs2021")
+    fillStyle = "#000"
 
 export interface CanvasDescriptor {
     width: number;
@@ -38,7 +43,7 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
             // c.fillStyle = "#000";
             // c.fillRect(0,0,canvas.width, canvas.height);
 
-            c.fillStyle = "#fff";
+            c.fillStyle = fillStyle;
             c.fillText(text, width / 2, height - (vPad / 2) * pixelRatio);
         },
     };
@@ -94,7 +99,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
         draw(c) {
             let nextLine = boothFontSize;
 
-            c.fillStyle = "#fff";
+            c.fillStyle = fillStyle;
             c.textAlign = "start";
             c.textBaseline = "alphabetic";
             c.font = boothFont;
@@ -103,7 +108,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
             nextLine += boothFontSize + boothPadding;
 
             c.font = detailFont;
-            c.fillStyle = "#fff";
+            c.fillStyle = fillStyle;
 
             for (const line of lines) {
                 c.fillText(line, 0, nextLine);
@@ -129,7 +134,7 @@ export function createCircleCanvas(radius: number, pixelRatio: number): CanvasDe
             height: size,
             // padding,
             draw(c) {
-                c.fillStyle = "#fff";
+                c.fillStyle = fillStyle;
                 c.beginPath();
                 c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
                 c.fill();
@@ -167,7 +172,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number) {
             draw(c) {
                 c.translate(padding, padding);
                 c.fillStyle = "#e64839";
-                c.strokeStyle = "#fff";
+                c.strokeStyle = fillStyle;
                 c.lineWidth = lineWidth;
 
                 c.beginPath();
@@ -222,7 +227,7 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
             for (let i = 0; i < lines.length; i++) {
                 // c.fillStyle = "#aaa";
                 // c.fillRect(0, startFrom + lineHeight * i, width, lineHeight);
-                c.fillStyle = "#fff";
+                c.fillStyle = fillStyle;
                 c.fillText(lines[i], width / 2, startFrom + lineHeight * (i + 1));
             }
         },
