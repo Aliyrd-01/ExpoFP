@@ -37,7 +37,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
                         setter(0);
-                       return;
+                        return;
                     }
                     setter(func(animationStart, duration));
                     window.requestAnimationFrame(drawFrame);
