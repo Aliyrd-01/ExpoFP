@@ -36,6 +36,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 const drawFrame = () => {
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
+                        setter(0);
                        return;
                     }
                     setter(func(animationStart, duration));
