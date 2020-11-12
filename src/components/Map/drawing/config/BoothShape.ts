@@ -24,10 +24,10 @@ export default class BoothShape {
     }
 }
 
-function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, resetToStartPoint: boolean = false) {
+function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, resetToStartPoint: boolean) {
     const func = reversable ? reversableT : plainT;
     if (resetToStartPoint) {
-        iterations = iterations % 2 == 0 ? iterations : iterations + 1;
+        iterations = iterations % 2 === 0 ? iterations : iterations + 1;
     }
 
     reaction(
