@@ -11,7 +11,7 @@ export default class BoothShape {
 
     constructor(booth: Booth) {
         this.booth = booth;
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1200, 4, true, true);
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1500, 6, true, true);
     }
 
     static get(b: Booth) {
@@ -67,6 +67,6 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         // partN is -1000 to 999.(9)
         const tN = partN / 2000;
         // tN = [-1, 1)
-        return 1 - Math.abs(tN);
+        return Math.abs(tN) - 1;
     }
 }
