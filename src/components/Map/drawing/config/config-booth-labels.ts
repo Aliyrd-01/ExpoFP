@@ -1,6 +1,7 @@
 import { reaction } from "mobx";
 import { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
+import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
@@ -10,6 +11,9 @@ import { NumberObserver } from "./NumberObserver";
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
 // const dotH = dotCanvas.canvas.width / 2;
+
+let fillStyle = "#fff";
+if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
 const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
 
@@ -67,7 +71,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const r = this.booth.rect;
 
-        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio);
+        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio, fillStyle);
         const dotW = dotCanvas.width / 2;
         const dotH = dotCanvas.width / 2;
 
@@ -79,7 +83,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             deltaPts: [-dotW, -dotH, dotW, dotH],
             canvasTmp: dotCanvas,
             texPosition: "center",
-            visible: false
+            visible: false,
         });
 
         this.addLabel(7, "XS");
@@ -87,7 +91,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         this.addLabel(12, "M");
         this.addLabel(14, "L");
 
-        const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio);
+        const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio, fillStyle);
         // this.detailsHeight = detailsCanvas.height;
 
         const pad = boothStore.borderWidth / 2;
@@ -101,7 +105,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             scalePts: context.pixelRatio,
             canvasTmp: detailsCanvas,
             texPosition: "lefttop",
-            visible: false
+            visible: false,
         });
 
         this.calcFactors();
@@ -112,7 +116,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
             const obs = NumberObserver.singletonForObject("labels", () => context.ptscale);
-            this.factors.forEach(f => obs.observeValue(f, cru));
+            this.factors.forEach((f) => obs.observeValue(f, cru));
             reaction(() => booth.skipDim, cru);
         }
         // updates.push(this.updateBound);
@@ -178,7 +182,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio);
+        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, fillStyle);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
@@ -190,7 +194,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
             texPosition: "center",
-            visible: false
+            visible: false,
         });
     }
 }

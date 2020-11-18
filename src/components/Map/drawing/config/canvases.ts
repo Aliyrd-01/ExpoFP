@@ -1,13 +1,8 @@
 import { RegularBooth } from "../../../../store/BoothStore";
-import settings from "../../../../tools/settings";
 import { t } from "../../../../utils/i18n";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
-
-let fillStyle = "#fff";
-if(settings.EXPO === "tqs2021")
-    fillStyle = "#000"
 
 export interface CanvasDescriptor {
     width: number;
@@ -21,7 +16,7 @@ function measureText(font: string, text: string) {
     return ctx.measureText(text).width;
 }
 
-export function createLabelCanvas(text: string, fontSize: number, pixelRatio: number): CanvasDescriptor {
+export function createLabelCanvas(text: string, fontSize: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
     text = text.replace(/^_/, "");
     fontSize *= pixelRatio;
     // const canvas = document.createElement("canvas");
@@ -43,13 +38,13 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
             // c.fillStyle = "#000";
             // c.fillRect(0,0,canvas.width, canvas.height);
 
-            c.fillStyle = fillStyle;
+            c.fillStyle = color;
             c.fillText(text, width / 2, height - (vPad / 2) * pixelRatio);
         },
     };
 }
 
-export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): CanvasDescriptor {
+export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
     //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
@@ -99,7 +94,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
         draw(c) {
             let nextLine = boothFontSize;
 
-            c.fillStyle = fillStyle;
+            c.fillStyle = color;
             c.textAlign = "start";
             c.textBaseline = "alphabetic";
             c.font = boothFont;
@@ -108,7 +103,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
             nextLine += boothFontSize + boothPadding;
 
             c.font = detailFont;
-            c.fillStyle = fillStyle;
+            c.fillStyle = color;
 
             for (const line of lines) {
                 c.fillText(line, 0, nextLine);
@@ -119,7 +114,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number): Canvas
 }
 
 const circleCanvasCache = new Map<string, CanvasDescriptor>();
-export function createCircleCanvas(radius: number, pixelRatio: number): CanvasDescriptor {
+export function createCircleCanvas(radius: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
     const key = radius + " " + pixelRatio;
     let res = circleCanvasCache.get(key);
 
@@ -134,7 +129,7 @@ export function createCircleCanvas(radius: number, pixelRatio: number): CanvasDe
             height: size,
             // padding,
             draw(c) {
-                c.fillStyle = fillStyle;
+                c.fillStyle = color;
                 c.beginPath();
                 c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
                 c.fill();
@@ -149,7 +144,7 @@ export function createCircleCanvas(radius: number, pixelRatio: number): CanvasDe
 }
 
 const bookmarkCanvasCache = new Map<string, CanvasDescriptor & { lineWidth: number; padding: number }>();
-export function createBookmarkCanvas(widthPx: number, pixelRatio: number) {
+export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color: string = "#fff") {
     const key = widthPx + " " + pixelRatio;
     let res = bookmarkCanvasCache.get(key);
     if (!res) {
@@ -172,7 +167,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number) {
             draw(c) {
                 c.translate(padding, padding);
                 c.fillStyle = "#e64839";
-                c.strokeStyle = fillStyle;
+                c.strokeStyle = color;
                 c.lineWidth = lineWidth;
 
                 c.beginPath();
@@ -203,7 +198,7 @@ export function getFont(px: number, weight: number = 500) {
     );
 }
 
-export function createMultilineTextCanvas(lines: string[], inputWidth: number, fontSize: number) {
+export function createMultilineTextCanvas(lines: string[], inputWidth: number, fontSize: number, color: string = "#fff") {
     // const canvas = document.createElement("canvas");
     const padding = fontSize * 0.5;
     const lineHeight = fontSize;
@@ -227,7 +222,7 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
             for (let i = 0; i < lines.length; i++) {
                 // c.fillStyle = "#aaa";
                 // c.fillRect(0, startFrom + lineHeight * i, width, lineHeight);
-                c.fillStyle = fillStyle;
+                c.fillStyle = color;
                 c.fillText(lines[i], width / 2, startFrom + lineHeight * (i + 1));
             }
         },

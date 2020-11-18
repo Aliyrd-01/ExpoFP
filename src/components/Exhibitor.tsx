@@ -37,9 +37,15 @@ function ExhibitorComponent() {
         get anyAddress() {
             return !!["address", "address2", "phone1", "website", "email"].find((s) => this.exhibitor[s]);
         },
+        get anyMedia() {
+            return !!this.exhibitor.videoUrl || !!(this.exhibitor.gallery && this.exhibitor.gallery.length);
+        },
+        get anyButtons() {
+            return !!(this.exhibitor.customButtonTitle || this.exhibitor.customButton2Title || this.exhibitor.customButton3Title);
+        },
         get disableCollapse() {
             return (
-                (!this.anySocial && !this.anyAddress) ||
+                (!this.anySocial && !this.anyAddress && !this.anyMedia && !this.anyButtons) ||
                 (uiState.overlayPosition === "left" && (this.exhibitor.description || "").length < 800)
             );
         },
