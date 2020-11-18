@@ -11,7 +11,8 @@ export default class BoothShape {
 
     constructor(booth: Booth) {
         this.booth = booth;
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1500, 6, true, true);
+        var bgSelected = (t) => (this.selectBgAnimationPart = easeQuadInOut(t));
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 7, true, true);
     }
 
     static get(b: Booth) {
@@ -26,8 +27,9 @@ export default class BoothShape {
 
 function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, resetToStartPoint: boolean) {
     const func = reversable ? reversableT : plainT;
-    if (resetToStartPoint) {
-        iterations = iterations % 2 === 0 ? iterations : iterations + 1;
+
+    if (iterations % 2 === 0 && resetToStartPoint) {
+        iterations = iterations + 1;
     }
 
     reaction(
@@ -39,7 +41,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 const drawFrame = () => {
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
-                        return;
+                       return;
                     }
                     setter(func(animationStart, duration));
                     window.requestAnimationFrame(drawFrame);
@@ -65,7 +67,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         // part will be 0 - 1999.(9)
         const partN = part - length;
         // partN is -1000 to 999.(9)
-        const tN = partN / 2000;
+        const tN = partN / 1000;
         // tN = [-1, 1)
         return Math.abs(tN) - 1;
     }
