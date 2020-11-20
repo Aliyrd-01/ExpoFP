@@ -29,7 +29,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
     const func = reversable ? reversableT : plainT;
 
     if (iterations % 2 === 0 && resetToStartPoint) {
-        iterations = iterations ++;
+        iterations ++;
     }
 
     reaction(
