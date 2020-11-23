@@ -34,3 +34,4 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AwsSecretAccessKey }}
         CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AwsCloudFrontDistributionID }}
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
