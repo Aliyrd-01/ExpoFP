@@ -17,35 +17,35 @@ export default function configCanvas(context: DrawerContext) {
         const cs = uiState.canvasSizePt;
 
         function update() {
-            const bigTriangles = Polygon4.fromRect(Rect.fromCxcywh(0, 0, 2, 2))
-                .toTriangles()
-                .flat()
-                .flat();
+            const bigTriangles = Polygon4.fromRect(Rect.fromCxcywh(0, 0, 2, 2)).toTriangles().flat().flat();
             const bigColors = Array(bigTriangles.length / 2)
-                .fill(context.updatable ? bgColor : whiteColor)
+                .fill(context.updatable ? whiteColor : bgColor)
                 .flat()
                 .flat();
             const bigNodims = Array(bigColors.length / 4).fill(1);
 
-            const heightN = (vr.h / cs.height) * 2;
-            const widthN = (vr.w / cs.width) * 2;
-            const xN = (vr.x1 / cs.width) * 2 - 1;
-            const yN = ((cs.height - vr.y2) / cs.height) * 2 - 1;
-            const bgRect = Rect.fromXywh(xN, yN, widthN, heightN);
+            let allTriangles = bigTriangles;
+            let allColors = bigColors;
+            let allNodims = bigNodims;
 
-            const bgTriangles = Polygon4.fromRect(bgRect)
-                .toTriangles()
-                .flat()
-                .flat();
-            const bgColors = Array(bgTriangles.length / 2)
-                .fill(bgColor)
-                .flat()
-                .flat();
-            const bgNodims = Array(bgColors.length / 4).fill(0);
+            if (context.updatable) {
+                const heightN = (vr.h / cs.height) * 2;
+                const widthN = (vr.w / cs.width) * 2;
+                const xN = (vr.x1 / cs.width) * 2 - 1;
+                const yN = ((cs.height - vr.y2) / cs.height) * 2 - 1;
+                const bgRect = Rect.fromXywh(xN, yN, widthN, heightN);
 
-            const allTriangles = [...bigTriangles, ...bgTriangles];
-            const allColors = [...bigColors, ...bgColors];
-            const allNodims = [...bigNodims, ...bgNodims];
+                const bgTriangles = Polygon4.fromRect(bgRect).toTriangles().flat().flat();
+                const bgColors = Array(bgTriangles.length / 2)
+                    .fill(bgColor)
+                    .flat()
+                    .flat();
+                const bgNodims = Array(bgColors.length / 4).fill(0);
+
+                allTriangles = [...bigTriangles, ...bgTriangles];
+                allColors = [...bigColors, ...bgColors];
+                allNodims = [...bigNodims, ...bgNodims];
+            }
 
             painter.setObjects(allTriangles, allColors, allNodims);
         }
