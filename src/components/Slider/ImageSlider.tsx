@@ -317,7 +317,7 @@ class ImageSlider extends React.Component<Props, State> {
     };
 
     render() {
-        let height = this.state.isFullScreen ? "80%" : this.state.height || this.props.height;
+        let height = this.state.isFullScreen ? "95%" : this.state.height || this.props.height;
         const rootStyle = styles.getRootContainer(this.props.width, height, this.props.bgColor, this.state.isFullScreen);
         const imageLength = this.props.images.length;
         const leftNav = !isTouch && this.props.showNavs ? this.renderNav().left : null;
