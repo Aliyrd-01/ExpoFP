@@ -57,7 +57,7 @@ const bulletContainer = {
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "center",
-    width: "100%"
+    width: "100%",
 };
 const bulletSize = 15;
 const bulletMargin = 3;
@@ -73,7 +73,7 @@ const basicBullet = {
     marginTop: `${bulletMargin}px`,
     marginLeft: `${bulletMargin}px`,
     marginRight: `${bulletMargin}px`,
-    boxShadow: "2px 2px 2px 2px rgba(0,0,0,0.1)"
+    boxShadow: "2px 2px 2px 2px rgba(0,0,0,0.1)",
 };
 
 const fullScreenSubContainer = {
@@ -102,12 +102,11 @@ export default {
     FullScreenIcon: (isFullScreen: boolean) =>
         FullScreenIcon(isFullScreen, assignObjects(fullScreenIcon(isFullScreen ? 1.5 : 1), { fill: fillColor })),
 
-    ImageSlider: assignObjects(basic, basicRootContainer),
+    ImageSlider: (isFullScreen: boolean) => assignObjects(basic, basicRootContainer, isFullScreen ? null : { cursor: "pointer" }),
 
     NavLeft: assignObjects(basic, basicNav, { left: 0 }),
     NavRight: assignObjects(basic, basicNav, { right: 0 }),
-    BulletContainer: (bulletLength) =>
-        assignObjects(basic, bulletContainer),
+    BulletContainer: (bulletLength) => assignObjects(basic, bulletContainer),
     BulletNormal: assignObjects(basic, basicBullet),
     BulletActive: assignObjects(basic, basicBullet, { background: fillColor }),
 
