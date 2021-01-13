@@ -149,8 +149,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             }
         }
 
-        if (defColor === "#aaaaaa") defColor = settings.colors.booths.empty;
-        else if (defColor === "#666" || defColor === "#666666") defColor = "rgba(0,0,0,0.172)";
+        //if (defColor === "#aaaaaa") defColor = settings.colors.booths.empty;
+        if (defColor === "#666" || defColor === "#666666") defColor = "rgba(0,0,0,0.172)";
         return defColor;
     }
 
