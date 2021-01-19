@@ -13,6 +13,7 @@ import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import { FillMode } from "./Slider/ImageSliderData";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -213,7 +214,7 @@ function ExhibitorComponent() {
                     {exhibitor.gallery ? (
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                             <Suspense fallback={null}>
-                                <ImageSlider images={exhibitor.gallery} />
+                                <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
                             </Suspense>
                         </div>
                     ) : null}
