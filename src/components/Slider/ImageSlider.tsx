@@ -53,7 +53,7 @@ class ImageSlider extends React.Component<Props, State> {
         bgColor: "black",
         useGPURender: false,
         navStyle: 1,
-        fillMode: FillMode.cover,
+        fillMode: FillMode.contain,
         isFullScreen: false,
         hideFullScreenIcon: false,
 
@@ -132,7 +132,7 @@ class ImageSlider extends React.Component<Props, State> {
     };
 
     updateRatio = (url: string) => {
-        if (this.props.fillMode === FillMode.contain) {
+        if (this.props.fillMode === FillMode.contain && !this.state.isFullScreen) {
             ImagePreLoader.load(url).then((image) => {
                 this.setState({
                     ...this.state,
@@ -252,22 +252,25 @@ class ImageSlider extends React.Component<Props, State> {
             () => {
                 // animation slides
                 setTimeout(() => {
-                    this.setState({
-                        currentSlideStyle: styles.getImageSlide(
-                            currentUrl,
-                            this.props.slideDuration,
-                            currentOffetX,
-                            this.props.useGPURender,
-                            this.state.isFullScreen ? FillMode.contain : this.props.fillMode
-                        ),
-                        nextSlideStyle: styles.getImageSlide(
-                            nextUrl,
-                            this.props.slideDuration,
-                            0,
-                            this.props.useGPURender,
-                            this.state.isFullScreen ? FillMode.contain : this.props.fillMode
-                        ),
-                    });
+                    this.setState(
+                        {
+                            currentSlideStyle: styles.getImageSlide(
+                                currentUrl,
+                                this.props.slideDuration,
+                                currentOffetX,
+                                this.props.useGPURender,
+                                this.state.isFullScreen ? FillMode.contain : this.props.fillMode
+                            ),
+                            nextSlideStyle: styles.getImageSlide(
+                                nextUrl,
+                                this.props.slideDuration,
+                                0,
+                                this.props.useGPURender,
+                                this.state.isFullScreen ? FillMode.contain : this.props.fillMode
+                            ),
+                        },
+                        () => this.updateRatio(nextUrl)
+                    );
                 }, 50);
 
                 ImagePreLoader.load(this.getImageUrl(idx + 2));
@@ -296,24 +299,29 @@ class ImageSlider extends React.Component<Props, State> {
         let isFullScreen = !this.state.isFullScreen;
         let { currentSlideStyle, nextSlideStyle } = this.state;
 
-        this.setState({
-            ...this.state,
-            currentSlideStyle: styles.getImageSlide(
-                this.getImageUrl(this.state.idx),
-                0,
-                currentSlideStyle.idx,
-                this.props.useGPURender,
-                isFullScreen ? FillMode.contain : this.props.fillMode
-            ),
-            nextSlideStyle: styles.getImageSlide(
-                this.getImageUrl(this.state.idx),
-                0,
-                nextSlideStyle.idx,
-                this.props.useGPURender,
-                isFullScreen ? FillMode.contain : this.props.fillMode
-            ),
-            isFullScreen,
-        });
+        this.setState(
+            {
+                ...this.state,
+                currentSlideStyle: styles.getImageSlide(
+                    this.getImageUrl(this.state.idx),
+                    0,
+                    currentSlideStyle.idx,
+                    this.props.useGPURender,
+                    isFullScreen ? FillMode.contain : this.props.fillMode
+                ),
+                nextSlideStyle: styles.getImageSlide(
+                    this.getImageUrl(this.state.idx),
+                    0,
+                    nextSlideStyle.idx,
+                    this.props.useGPURender,
+                    isFullScreen ? FillMode.contain : this.props.fillMode
+                ),
+                isFullScreen,
+            },
+            () => {
+                if (!isFullScreen) this.updateRatio(this.getImageUrl(this.state.idx));
+            }
+        );
     };
 
     render() {

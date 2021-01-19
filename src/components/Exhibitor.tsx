@@ -13,7 +13,6 @@ import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
-import { FillMode } from "./Slider/ImageSliderData";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -147,11 +146,7 @@ function ExhibitorComponent() {
                             </a>
                         ) : (
                             <Suspense fallback={null}>
-                                <ImageSlider
-                                    hideFullScreenIcon={true}
-                                    fillMode={FillMode.contain}
-                                    images={[exhibitor.leadingImageUrl]}
-                                />
+                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
                             </Suspense>
                         )}
                     </div>
