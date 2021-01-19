@@ -36,7 +36,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
     } else if (!!hasColoredPath) {
         iterations++;
     }
-    
+
     reaction(
         val,
         () => {
@@ -79,8 +79,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         //  console.log(part);
         const tN = partN / 1000;
         // tN = [-1, 1)
-        const val = Math.abs(Math.abs(tN) - .75) / .75;
-        console.log(val);
+        const val = Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
         return val;
     }
 }
