@@ -158,7 +158,11 @@ export default class UIState {
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
-        if (this.selectedExhibitor?.gallery) return false;
+        if (
+            this.selectedExhibitor?.gallery ||
+            (this.selectedExhibitor?.leadingImageUrl && !this.selectedExhibitor?.leadingImageLinkUrl)
+        )
+            return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
         // const ua = navigator.userAgent;
         // const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;
