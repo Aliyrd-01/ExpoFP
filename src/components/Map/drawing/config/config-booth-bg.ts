@@ -119,6 +119,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             const selColor = Color(settings.colors.booths.selected).hsl();
             // console.log('zzz', defaultColor, settings.colors.booths.selected, selColor.hue())
             const startLightness = selColor.lightness();
+            console.log("startLightness=" + startLightness);
             const curLightness = startLightness * this.shape.selectBgAnimationPart;
 
             colorInfo = colorInfo.hue(selColor.hue()).lightness(curLightness);

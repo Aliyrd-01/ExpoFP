@@ -29,7 +29,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
     const func = reversable ? reversableT : plainT;
 
     if (iterations % 2 === 0 && resetToStartPoint) {
-        iterations ++;
+        iterations++;
     }
 
     reaction(
@@ -41,7 +41,8 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 const drawFrame = () => {
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
-                       return;
+                        setter(1);
+                        return;
                     }
                     setter(func(animationStart, duration));
                     window.requestAnimationFrame(drawFrame);
@@ -64,11 +65,15 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
     function reversableT(start: number, length: number): number {
         const now = performance.now();
         const part = (now - start) % (length * 2);
+
         // part will be 0 - 1999.(9)
         const partN = part - length;
         // partN is -1000 to 999.(9)
+      //  console.log(part);
         const tN = partN / 1000;
         // tN = [-1, 1)
-        return Math.abs(tN) - 1;
+        const val = Math.abs(Math.abs(tN) - .75) / .75;
+        console.log(val);
+        return val;
     }
 }
