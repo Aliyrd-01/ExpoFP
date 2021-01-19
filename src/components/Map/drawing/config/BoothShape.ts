@@ -28,15 +28,15 @@ export default class BoothShape {
 function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, resetToStartPoint: boolean, booth: Booth) {
     const func = reversable ? reversableT : plainT;
 
+    const b = booth as RegularBooth;
+    const hasColoredPath = b?.paths?.length && !!b.paths[0].color;
+
     if (iterations % 2 === 0 && resetToStartPoint) {
         iterations++;
+    } else if (!!hasColoredPath) {
+        iterations++;
     }
-    const b = booth as RegularBooth;
-    const hasColoredPath = b?.paths?.length && !! b.paths[0].color;
-    if (hasColoredPath) {
-        iterations --;
-    }
-
+    
     reaction(
         val,
         () => {
