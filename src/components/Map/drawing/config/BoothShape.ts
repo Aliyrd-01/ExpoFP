@@ -1,6 +1,6 @@
 import { easeQuadInOut } from "d3-ease";
 import { observable, reaction } from "mobx";
-import { Booth } from "../../../../store/BoothStore";
+import { Booth, RegularBooth } from "../../../../store/BoothStore";
 
 const map = new Map<Booth, BoothShape>();
 
@@ -12,7 +12,7 @@ export default class BoothShape {
     constructor(booth: Booth) {
         this.booth = booth;
         var bgSelected = (t) => (this.selectBgAnimationPart = easeQuadInOut(t));
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 7, true, true);
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 7, true, true, booth);
     }
 
     static get(b: Booth) {
@@ -25,11 +25,16 @@ export default class BoothShape {
     }
 }
 
-function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, resetToStartPoint: boolean) {
+function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, resetToStartPoint: boolean, booth: Booth) {
     const func = reversable ? reversableT : plainT;
 
     if (iterations % 2 === 0 && resetToStartPoint) {
         iterations++;
+    }
+    const b = booth as RegularBooth;
+    const hasColoredPath = b?.paths?.length && !! b.paths[0].color;
+    if (hasColoredPath) {
+        iterations --;
     }
 
     reaction(
@@ -41,7 +46,9 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 const drawFrame = () => {
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
-                        setter(1);
+                        if (!hasColoredPath) {
+                            setter(1);
+                        }
                         return;
                     }
                     setter(func(animationStart, duration));
@@ -58,7 +65,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
     function plainT(start: number, length: number): number {
         const now = performance.now();
         const part = (now - start) % length;
-        // part will be 0 - 999.(9)
+        // part will be 0 - duration(almost)
         return part / 1000;
     }
 
@@ -66,10 +73,10 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         const now = performance.now();
         const part = (now - start) % (length * 2);
 
-        // part will be 0 - 1999.(9)
+        // part will be 0 - duration almost
         const partN = part - length;
         // partN is -1000 to 999.(9)
-      //  console.log(part);
+        //  console.log(part);
         const tN = partN / 1000;
         // tN = [-1, 1)
         const val = Math.abs(Math.abs(tN) - .75) / .75;
