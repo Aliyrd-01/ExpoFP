@@ -51,7 +51,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                         }
                         return;
                     }
-                    setter(func(animationStart, duration));
+                    setter(func(animationStart, duration, hasColoredPath));
                     window.requestAnimationFrame(drawFrame);
                 };
                 drawFrame();
@@ -62,24 +62,23 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         { fireImmediately: true }
     );
 
-    function plainT(start: number, length: number): number {
+    function plainT(start: number, length: number, colored: boolean = false): number {
         const now = performance.now();
         const part = (now - start) % length;
         // part will be 0 - duration(almost)
         return part / 1000;
     }
 
-    function reversableT(start: number, length: number): number {
+    function reversableT(start: number, length: number, colored: boolean = false): number {
         const now = performance.now();
         const part = (now - start) % (length * 2);
 
         // part will be 0 - duration almost
         const partN = part - length;
-        // partN is -1000 to 999.(9)
-        //  console.log(part);
+        // partN is -duration to + duration (almost) in ms
         const tN = partN / 1000;
-        // tN = [-1, 1)
-        const val = Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
+        // tN = [-duration, duration) in sec
+        const val = !colored ? Math.abs(Math.abs(tN) - length / 1000) / (length / 1000) : Math.abs(-Math.abs(tN) + length / 1000) / (length / 1000);
         return val;
     }
 }

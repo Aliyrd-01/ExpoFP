@@ -55,7 +55,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                 if (colored) pathsColors.add(p.color);
                 for (const t of p.triangles) {
                     this.addObject({
-                        id: colored ? this.getId("bg-" + p.color) : this.getId("bg-def"),
+                        id: colored  ? this.getId("bg-" + p.color) : this.getId("bg-def"),
                         groupId: this.getId("bg"),
                         p0: t[0],
                         p1: t[1],
@@ -119,7 +119,6 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             const selColor = Color(settings.colors.booths.selected).hsl();
             // console.log('zzz', defaultColor, settings.colors.booths.selected, selColor.hue())
             const startLightness = selColor.lightness();
-            console.log("startLightness=" + startLightness);
             const curLightness = startLightness * this.shape.selectBgAnimationPart;
 
             colorInfo = colorInfo.hue(selColor.hue()).lightness(curLightness);
