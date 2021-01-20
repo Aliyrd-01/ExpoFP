@@ -48,7 +48,7 @@ export async function generatePdf() {
         doc.setFont("OpenSans-Regular");
         doc.setFontSize(mmToPt(subTitleFontSize));
 
-        const subtitleLines = doc.splitTextToSize(data.subtitle, headerWidth);
+        const subtitleLines = doc.splitTextToSize(data.subtitle || "", headerWidth);
         const subtitleLinesHeight = subtitleLines.length * ptToMm(doc.getLineHeight());
 
         const totalHeight = headerPadding * 2 + titleLinesHeight + subtitleLinesHeight;
