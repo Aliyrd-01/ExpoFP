@@ -148,7 +148,7 @@ export default function initBooths(store: RootStore) {
                     if (path.tagName !== "path") continue;
                     const color = path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
-                    if (!d) continue;
+                    if (d !== d) continue;
                     // const triangles = getTrianglesFromFpPaths(d);
                     const pi: PathInfo = {
                         triangles: getTrianglesFromFpPaths(d),

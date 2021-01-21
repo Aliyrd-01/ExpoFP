@@ -4,6 +4,7 @@ import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
@@ -12,7 +13,7 @@ import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
-import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import { FillMode } from "./Slider/ImageSliderData";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -139,13 +140,15 @@ function ExhibitorComponent() {
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
                 {exhibitor.leadingImageUrl ? (
-                    <div className="exhibitor__leading-image-container">
+                    <div className="exhibitor__leading-image-container exhibitor__slider">
                         {exhibitor.leadingImageLinkUrl ? (
                             <a href={exhibitor.leadingImageLinkUrl} target="_blank" rel="noopener noreferrer">
                                 <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
                             </a>
                         ) : (
-                            <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
+                            <Suspense fallback={null}>
+                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                            </Suspense>
                         )}
                     </div>
                 ) : null}
@@ -211,7 +214,7 @@ function ExhibitorComponent() {
                     {exhibitor.gallery ? (
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                             <Suspense fallback={null}>
-                                <ImageSlider images={exhibitor.gallery} />
+                                <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
                             </Suspense>
                         </div>
                     ) : null}

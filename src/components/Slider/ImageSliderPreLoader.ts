@@ -1,31 +1,28 @@
-const ImageSliderPreLoader = (() => {
-    const loadedUrl = {};
-    const loadQueue = [];
-    const loaderCount = 3;
-    const loaderPool = new Array(loaderCount).fill(0).map((e) => new Image());
+class ImageSliderPreLoader {
+    cache: HTMLImageElement[] = [];
 
-    return {
-        load: (url: string) => {
-            if (!url || loadedUrl[url]) {
-                return;
-            }
+    public load = (url: string): Promise<HTMLImageElement> => {
+        return new Promise<HTMLImageElement>((resolve, reject) => {
+            if (!url) resolve(null);
 
-            if (loaderPool.length === 0) {
-                loadQueue.push(url);
+            var image = this.cache.filter((i) => i.src === url)[0];
+
+            if (image) {
+                resolve(image);
             } else {
-                const imageLoader = loaderPool.shift();
-                imageLoader.src = url;
-                imageLoader.onload = () => {
-                    loadedUrl[url] = true;
-                    if (loadQueue.length > 0) {
-                        imageLoader.src = loadQueue.shift();
-                    } else {
-                        loaderPool.push(imageLoader);
-                    }
+                image = new Image();
+                image.src = url;
+                image.onload = () => {
+                    if (this.cache.length > 10) this.cache.shift();
+                    this.cache.push(image);
+                    resolve(image);
+                };
+                image.onerror = (e) => {
+                    reject(e);
                 };
             }
-        },
+        });
     };
-})();
+}
 
-export default ImageSliderPreLoader;
+export default new ImageSliderPreLoader();
