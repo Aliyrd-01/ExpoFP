@@ -1,6 +1,6 @@
-import { easeQuadInOut } from "d3-ease";
-import { observable, reaction } from "mobx";
-import { Booth, RegularBooth } from "../../../../store/BoothStore";
+import {easeQuadInOut} from "d3-ease";
+import {observable, reaction} from "mobx";
+import {Booth, RegularBooth} from "../../../../store/BoothStore";
 
 const map = new Map<Booth, BoothShape>();
 
@@ -33,8 +33,6 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
 
     if (iterations % 2 === 0 && resetToStartPoint) {
         iterations++;
-    } else if (!!hasColoredPath) {
-        iterations++;
     }
 
     reaction(
@@ -59,7 +57,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 setter(0);
             }
         },
-        { fireImmediately: true }
+        {fireImmediately: true}
     );
 
     function plainT(start: number, length: number, colored: boolean = false): number {
@@ -77,8 +75,8 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         const partN = part - length;
         // partN is -duration to + duration (almost) in ms
         const tN = partN / 1000;
-        // tN = [-duration, duration) in sec
-        const val = !colored ? Math.abs(Math.abs(tN) - length / 1000) / (length / 1000) : Math.abs(-Math.abs(tN) + length / 1000) / (length / 1000);
+        // tN = [-duration, duration] in sec
+        const val = Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
         return val;
     }
 }
