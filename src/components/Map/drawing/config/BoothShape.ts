@@ -1,6 +1,6 @@
 import {easeQuadInOut} from "d3-ease";
 import {observable, reaction} from "mobx";
-import {Booth, RegularBooth} from "../../../../store/BoothStore";
+import {Booth} from "../../../../store/BoothStore";
 
 const map = new Map<Booth, BoothShape>();
 
@@ -12,7 +12,7 @@ export default class BoothShape {
     constructor(booth: Booth) {
         this.booth = booth;
         var bgSelected = (t) => (this.selectBgAnimationPart = easeQuadInOut(t));
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 750, 7, true, true, booth);
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1000, 7, true);
     }
 
     static get(b: Booth) {
@@ -25,13 +25,10 @@ export default class BoothShape {
     }
 }
 
-function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean, resetToStartPoint: boolean, booth: Booth) {
+function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean) {
     const func = reversable ? reversableT : plainT;
 
-    const b = booth as RegularBooth;
-    const hasColoredPath = b?.paths?.length && !!b.paths[0].color;
-
-    if (iterations % 2 === 0 && resetToStartPoint) {
+    if (iterations % 2 === 0) {
         iterations++;
     }
 
@@ -44,12 +41,11 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 const drawFrame = () => {
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
-                        if (!hasColoredPath) {
-                            setter(1);
-                        }
+                        // explicitly complete with the final color, without this call-animation ends not exactly at final color( (~0.98.. or ~0.99..)
+                        setter(1);
                         return;
                     }
-                    setter(func(animationStart, duration, hasColoredPath));
+                    setter(func(animationStart, duration));
                     window.requestAnimationFrame(drawFrame);
                 };
                 drawFrame();
@@ -67,7 +63,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         return part / 1000;
     }
 
-    function reversableT(start: number, length: number, colored: boolean = false): number {
+    function reversableT(start: number, length: number): number {
         const now = performance.now();
         const part = (now - start) % (length * 2);
 
@@ -76,7 +72,8 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         // partN is -duration to + duration (almost) in ms
         const tN = partN / 1000;
         // tN = [-duration, duration] in sec
-        const val = Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
-        return val;
+
+        // length/1000 will be = 1 only then length is 1000 ms; if duration will have changes, this formula reflects it
+        return Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
     }
 }
