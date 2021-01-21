@@ -12,14 +12,7 @@ export default class BoothShape {
     constructor(booth: Booth) {
         this.booth = booth;
         var bgSelected = (t) => (this.selectBgAnimationPart = easeQuadInOut(t));
-        animateProp(
-            () => booth.selected,
-            (t) => (this.selectBgAnimationPart = easeQuadInOut(t)),
-            750,
-            7,
-            true,
-            true
-        );
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1000, 8, true);
     }
 
     static get(b: Booth) {
@@ -32,17 +25,10 @@ export default class BoothShape {
     }
 }
 
-function animateProp(
-    val: () => boolean,
-    setter: (t: number) => void,
-    duration: number,
-    iterations: number,
-    reversable: boolean,
-    resetToStartPoint: boolean
-) {
+function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean) {
     const func = reversable ? reversableT : plainT;
 
-    if (iterations % 2 === 0 && resetToStartPoint) {
+    if (iterations % 2 === 1) {
         iterations++;
     }
 
@@ -55,6 +41,8 @@ function animateProp(
                 const drawFrame = () => {
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
+                        // explicitly complete with the final color, without this call-animation ends not exactly at final color( (~0.98.. or ~0.99..)
+                        setter(1);
                         return;
                     }
                     setter(func(animationStart, duration));
@@ -71,18 +59,21 @@ function animateProp(
     function plainT(start: number, length: number): number {
         const now = performance.now();
         const part = (now - start) % length;
-        // part will be 0 - 999.(9)
+        // part will be 0 - duration(almost)
         return part / 1000;
     }
 
     function reversableT(start: number, length: number): number {
         const now = performance.now();
         const part = (now - start) % (length * 2);
-        // part will be 0 - 1999.(9)
+
+        // part will be 0 - duration almost
         const partN = part - length;
-        // partN is -1000 to 999.(9)
+        // partN is -duration to + duration (almost) in ms
         const tN = partN / 1000;
-        // tN = [-1, 1)
-        return Math.abs(Math.abs(tN) - 1);
+        // tN = [-duration, duration] in sec
+
+        // length/1000 will be = 1 only then length is 1000 ms; if duration will have changes, this formula reflects it
+        return 1 - Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
     }
 }
