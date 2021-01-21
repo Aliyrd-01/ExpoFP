@@ -56,7 +56,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         {fireImmediately: true}
     );
 
-    function plainT(start: number, length: number, colored: boolean = false): number {
+    function plainT(start: number, length: number): number {
         const now = performance.now();
         const part = (now - start) % length;
         // part will be 0 - duration(almost)
