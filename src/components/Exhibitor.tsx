@@ -233,7 +233,6 @@ function ExhibitorComponent() {
                                 <div>
                                     <i className="fas fa-map-marker"/>
                                     <div>
-                                        {!!(exhibitor.name) && (<div className="exhibitor__leading-name">{exhibitor.name?.toUpperCase()}</div>)}
                                         {exhibitor.address?.toUpperCase()}
                                         {!!exhibitor.address2 && <div>{exhibitor.address2?.toUpperCase()}</div>}
                                         {!!(exhibitor.city || exhibitor.state || exhibitor.zip) && (
