@@ -1,19 +1,19 @@
 import classNames from "classnames";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, Suspense, useRef } from "react";
+import {useLocalStore, useObserver} from "mobx-react-lite";
+import React, {MouseEvent, Suspense, useRef} from "react";
 import data from "../data";
-import store, { uiState } from "../store";
-import { Category } from "../store/CategoryStore";
-import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import store, {uiState} from "../store";
+import {Category} from "../store/CategoryStore";
+import {GaEventActions, sendEventToGa} from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
-import { t } from "../utils/i18n";
-import { useAutorun, useReaction } from "../utils/mobx";
+import {t} from "../utils/i18n";
+import {useAutorun, useReaction} from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
-import { FillMode } from "./Slider/ImageSliderData";
+import {FillMode} from "./Slider/ImageSliderData";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -94,11 +94,11 @@ function ExhibitorComponent() {
                 <div className="exhibitor__bar">
                     <span onClick={() => store.toggleMapOverlay()}>
                         <span>{exhibitor.name}</span>
-                        {exhibitor.featured ? <i className="fas fa-gem" /> : null}
+                        {exhibitor.featured ? <i className="fas fa-gem"/> : null}
                     </span>
                     {uiState.kiosk ? null : (
                         <a href="/" onClick={bookmark} className="exhibitor__bar-bk">
-                            <BookmarkSvg />
+                            <BookmarkSvg/>
                         </a>
                     )}
                 </div>
@@ -143,11 +143,11 @@ function ExhibitorComponent() {
                     <div className="exhibitor__leading-image-container exhibitor__slider">
                         {exhibitor.leadingImageLinkUrl ? (
                             <a href={exhibitor.leadingImageLinkUrl} target="_blank" rel="noopener noreferrer">
-                                <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
+                                <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt=""/>
                             </a>
                         ) : (
                             <Suspense fallback={null}>
-                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]}/>
                             </Suspense>
                         )}
                     </div>
@@ -184,17 +184,20 @@ function ExhibitorComponent() {
                     </div>
                     {exhibitor.description || exhibitor.logo ? (
                         <div
-                            className={classNames({ exhibitor__description: true, collapsed: s.collapsed && !s.disableCollapse })}
+                            className={classNames({
+                                exhibitor__description: true,
+                                collapsed: s.collapsed && !s.disableCollapse
+                            })}
                         >
                             {exhibitor.logo ? (
                                 <div className="exhibitor__logo-container" v-if="exhibitor.logo">
-                                    <img src={exhibitor.logo} className="exhibitor__logo" alt={exhibitor.name} />
+                                    <img src={exhibitor.logo} className="exhibitor__logo" alt={exhibitor.name}/>
                                 </div>
                             ) : null}
                             {exhibitor.description ? (
                                 <span
                                     className="exhibitor__description-html"
-                                    dangerouslySetInnerHTML={{ __html: exhibitor.description }}
+                                    dangerouslySetInnerHTML={{__html: exhibitor.description}}
                                     onClick={expandDescription}
                                 />
                             ) : null}
@@ -214,38 +217,39 @@ function ExhibitorComponent() {
                     {exhibitor.gallery ? (
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                             <Suspense fallback={null}>
-                                <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
+                                <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery}/>
                             </Suspense>
                         </div>
                     ) : null}
-                    {s.anyAddress ? <div className="exhibitor__sep" /> : null}
+                    {s.anyAddress ? <div className="exhibitor__sep"/> : null}
                     {s.showEdit ? (
                         <div className="exhibitor__edit">
-                            <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
+                            <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink}/>
                         </div>
                     ) : null}
                     {s.anyAddress && (
                         <div className="exhibitor__meta">
                             {!!(exhibitor.address || exhibitor.address2) && (
                                 <div>
-                                    <i className="fas fa-map-marker" />
+                                    <i className="fas fa-map-marker"/>
                                     <div>
-                                        {exhibitor.address}
-                                        {!!exhibitor.address2 && <div>{exhibitor.address2}</div>}
+                                        {!!(exhibitor.name) && (<div className="exhibitor__leading-name">{exhibitor.name?.toUpperCase()}</div>)}
+                                        {exhibitor.address?.toUpperCase()}
+                                        {!!exhibitor.address2 && <div>{exhibitor.address2?.toUpperCase()}</div>}
                                         {!!(exhibitor.city || exhibitor.state || exhibitor.zip) && (
                                             <div>
-                                                {exhibitor.city}
-                                                {!!(exhibitor.city && exhibitor.state) && <span>,</span>}
-                                                {exhibitor.state} {exhibitor.zip}
+                                                {exhibitor.city?.toUpperCase()}
+                                                {!!(exhibitor.city && exhibitor.state) && (<span>&nbsp;</span>)}
+                                                {exhibitor.state?.toUpperCase()} &nbsp;{exhibitor.zip}
                                             </div>
                                         )}
-                                        {!!exhibitor.country && <div>{exhibitor.country}</div>}
+                                        {!!exhibitor.country && <div>{exhibitor.country?.toUpperCase()}</div>}
                                     </div>
                                 </div>
                             )}
                             {!!exhibitor.phone1 && (
                                 <div>
-                                    <i className="fas fa-phone" />
+                                    <i className="fas fa-phone"/>
                                     <div>
                                         <a
                                             href={"tel:" + exhibitor.phone1}
@@ -258,7 +262,7 @@ function ExhibitorComponent() {
                             )}
                             {!!exhibitor.website && (
                                 <div>
-                                    <i className="fas fa-globe" />
+                                    <i className="fas fa-globe"/>
                                     <div>
                                         <a
                                             href={exhibitor.website}
@@ -273,7 +277,7 @@ function ExhibitorComponent() {
                             )}
                             {!!exhibitor.email && (
                                 <div v-if="exhibitor.email">
-                                    <i className="fas fa-at" />
+                                    <i className="fas fa-at"/>
                                     <div>
                                         <a
                                             href={"mailto:" + exhibitor.email}
@@ -288,7 +292,7 @@ function ExhibitorComponent() {
                             )}
                         </div>
                     )}
-                    {s.anySocial && <div className="exhibitor__sep" />}
+                    {s.anySocial && <div className="exhibitor__sep"/>}
                     {s.anySocial && (
                         <div className="exhibitor__social">
                             <a
@@ -297,7 +301,7 @@ function ExhibitorComponent() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <i className="fab fa-facebook" />
+                                <i className="fab fa-facebook"/>
                             </a>
                             <a
                                 href={exhibitor.instagram}
@@ -305,7 +309,7 @@ function ExhibitorComponent() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <i className="fab fa-instagram" />
+                                <i className="fab fa-instagram"/>
                             </a>
                             <a
                                 href={exhibitor.linkedin}
@@ -313,7 +317,7 @@ function ExhibitorComponent() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <i className="fab fa-linkedin" />
+                                <i className="fab fa-linkedin"/>
                             </a>
                             <a
                                 href={exhibitor.twitter}
@@ -321,7 +325,7 @@ function ExhibitorComponent() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <i className="fab fa-twitter" />
+                                <i className="fab fa-twitter"/>
                             </a>
                             <a
                                 href={exhibitor.googlePlus}
@@ -329,7 +333,7 @@ function ExhibitorComponent() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <i className="fab fa-google-plus" />
+                                <i className="fab fa-google-plus"/>
                             </a>
                             <a
                                 href={exhibitor.xing}
@@ -337,7 +341,7 @@ function ExhibitorComponent() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <i className="fab fa-xing" />
+                                <i className="fab fa-xing"/>
                             </a>
                             <a
                                 href={exhibitor.youtube}
@@ -345,7 +349,7 @@ function ExhibitorComponent() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <i className="fab fa-youtube" />
+                                <i className="fab fa-youtube"/>
                             </a>
                         </div>
                     )}
@@ -366,26 +370,28 @@ function ExhibitorComponent() {
 
         (e.target as HTMLDivElement).blur();
         const email = s.sendLinkEmail;
-        if (!window.confirm(t("Send login instructions to {{email}} to edit profile?", { email }))) return;
+        if (!window.confirm(t("Send login instructions to {{email}} to edit profile?", {email}))) return;
         if (settings.EXPO === "expo") return;
         const xhr = new XMLHttpRequest();
         xhr.open("POST", data.sendLoginLinkUrl);
         xhr.setRequestHeader("Content-Type", "application/json");
+
         function er() {
             alert(t("Error sending login instructions."));
         }
+
         xhr.onload = function (e) {
             if (this.status !== 200) {
                 er();
                 return;
             }
-            alert(t("A link to edit profile was sent to {{email}}.", { email }));
+            alert(t("A link to edit profile was sent to {{email}}.", {email}));
         };
         xhr.onerror = function (e) {
             logger.error("Error", e);
             er();
         };
-        xhr.send(JSON.stringify({ id: s.exhibitor.id }));
+        xhr.send(JSON.stringify({id: s.exhibitor.id}));
     }
 
     function bookmark(e: MouseEvent) {
@@ -394,4 +400,5 @@ function ExhibitorComponent() {
     }
 }
 
-export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
+export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ?
+    <ExhibitorComponent/> : null}</>);
