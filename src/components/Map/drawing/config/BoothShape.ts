@@ -12,7 +12,7 @@ export default class BoothShape {
     constructor(booth: Booth) {
         this.booth = booth;
         var bgSelected = (t) => (this.selectBgAnimationPart = easeQuadInOut(t));
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1000, 7, true);
+        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1000, 8, true);
     }
 
     static get(b: Booth) {
@@ -28,7 +28,7 @@ export default class BoothShape {
 function animateProp(val: () => boolean, setter: (t: number) => void, duration: number, iterations: number, reversable: boolean) {
     const func = reversable ? reversableT : plainT;
 
-    if (iterations % 2 === 0) {
+    if (iterations % 2 === 1) {
         iterations++;
     }
 
@@ -42,7 +42,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
                         // explicitly complete with the final color, without this call-animation ends not exactly at final color( (~0.98.. or ~0.99..)
-                        setter(1);
+                        setter(0);
                         return;
                     }
                     setter(func(animationStart, duration));
