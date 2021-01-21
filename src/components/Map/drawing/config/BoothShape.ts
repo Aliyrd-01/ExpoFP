@@ -1,6 +1,6 @@
-import {easeQuadInOut} from "d3-ease";
-import {observable, reaction} from "mobx";
-import {Booth} from "../../../../store/BoothStore";
+import { easeQuadInOut } from "d3-ease";
+import { observable, reaction } from "mobx";
+import { Booth } from "../../../../store/BoothStore";
 
 const map = new Map<Booth, BoothShape>();
 
@@ -53,7 +53,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                 setter(0);
             }
         },
-        {fireImmediately: true}
+        { fireImmediately: true }
     );
 
     function plainT(start: number, length: number): number {
