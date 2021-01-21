@@ -42,7 +42,7 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
                     if (!val()) return;
                     if (performance.now() >= maxTime) {
                         // explicitly complete with the final color, without this call-animation ends not exactly at final color( (~0.98.. or ~0.99..)
-                        setter(0);
+                        setter(1);
                         return;
                     }
                     setter(func(animationStart, duration));
@@ -74,6 +74,6 @@ function animateProp(val: () => boolean, setter: (t: number) => void, duration: 
         // tN = [-duration, duration] in sec
 
         // length/1000 will be = 1 only then length is 1000 ms; if duration will have changes, this formula reflects it
-        return Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
+        return 1 - Math.abs(Math.abs(tN) - length / 1000) / (length / 1000);
     }
 }
