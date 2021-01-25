@@ -232,17 +232,18 @@ function ExhibitorComponent() {
                             {!!(exhibitor.address || exhibitor.address2) && (
                                 <div>
                                     <i className="fas fa-map-marker" />
-                                    <div>
-                                        {exhibitor.address?.toUpperCase()}
-                                        {!!exhibitor.address2 && <div>{exhibitor.address2?.toUpperCase()}</div>}
+                                    <div className="exhibitor__address">
+                                        {exhibitor.address}
+                                        {!!exhibitor.address2 && <div>{exhibitor.address2}</div>}
                                         {!!(exhibitor.city || exhibitor.state || exhibitor.zip) && (
                                             <div>
-                                                {exhibitor.city?.toUpperCase()}
-                                                {!!(exhibitor.city && exhibitor.state) && (<span>&nbsp;</span>)}
-                                                {exhibitor.state?.toUpperCase()} &nbsp;{exhibitor.zip}
+                                                {exhibitor.city}
+                                                {!!(exhibitor.city && exhibitor.state) && <span> </span>}
+                                                {exhibitor.state}
+                                                {!!(exhibitor.state && exhibitor.zip) && <span> &nbsp;</span>}{exhibitor.zip}
                                             </div>
                                         )}
-                                        {!!exhibitor.country && <div>{exhibitor.country?.toUpperCase()}</div>}
+                                        {!!exhibitor.country && <div>{exhibitor.country}</div>}
                                     </div>
                                 </div>
                             )}
