@@ -146,10 +146,10 @@ function ExhibitorComponent() {
                                 <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
                             </a>
                         ) : (
-                            <Suspense fallback={null}>
-                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
-                            </Suspense>
-                        )}
+                                <Suspense fallback={null}>
+                                    <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                </Suspense>
+                            )}
                     </div>
                 ) : null}
 
@@ -184,7 +184,10 @@ function ExhibitorComponent() {
                     </div>
                     {exhibitor.description || exhibitor.logo ? (
                         <div
-                            className={classNames({ exhibitor__description: true, collapsed: s.collapsed && !s.disableCollapse })}
+                            className={classNames({
+                                exhibitor__description: true,
+                                collapsed: s.collapsed && !s.disableCollapse
+                            })}
                         >
                             {exhibitor.logo ? (
                                 <div className="exhibitor__logo-container" v-if="exhibitor.logo">
@@ -229,14 +232,15 @@ function ExhibitorComponent() {
                             {!!(exhibitor.address || exhibitor.address2) && (
                                 <div>
                                     <i className="fas fa-map-marker" />
-                                    <div>
+                                    <div className="exhibitor__address">
                                         {exhibitor.address}
                                         {!!exhibitor.address2 && <div>{exhibitor.address2}</div>}
                                         {!!(exhibitor.city || exhibitor.state || exhibitor.zip) && (
                                             <div>
                                                 {exhibitor.city}
-                                                {!!(exhibitor.city && exhibitor.state) && <span>,</span>}
-                                                {exhibitor.state} {exhibitor.zip}
+                                                {!!(exhibitor.city && exhibitor.state) && <span> </span>}
+                                                {exhibitor.state}
+                                                {!!(exhibitor.state && exhibitor.zip) && <span> &nbsp;</span>}{exhibitor.zip}
                                             </div>
                                         )}
                                         {!!exhibitor.country && <div>{exhibitor.country}</div>}
@@ -371,9 +375,11 @@ function ExhibitorComponent() {
         const xhr = new XMLHttpRequest();
         xhr.open("POST", data.sendLoginLinkUrl);
         xhr.setRequestHeader("Content-Type", "application/json");
+
         function er() {
             alert(t("Error sending login instructions."));
         }
+
         xhr.onload = function (e) {
             if (this.status !== 200) {
                 er();
@@ -394,4 +400,5 @@ function ExhibitorComponent() {
     }
 }
 
-export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);
+export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ?
+    <ExhibitorComponent /> : null}</>);
