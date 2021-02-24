@@ -75,19 +75,27 @@ function Booth() {
                 let reserveUrl = b.reserveUrl;
 
                 if (buyUrl && buyUrl.indexOf("&type") === -1 && b.type) {
-                    buyUrl += "&type=" + b.type;
+                    if (buyUrl.indexOf("?booth=") !== -1) {
+                        buyUrl += "?type=" + encodeURIComponent(b.type);
+                    } else {
+                        buyUrl += "&type=" + encodeURIComponent(b.type);
+                    }
                 }
 
                 if (buyUrl && buyUrl.indexOf("&price") === -1 && b.price) {
-                    buyUrl += "&price=" + b.price;
+                    buyUrl += "&price=" + encodeURIComponent(b.price);
                 }
 
                 if (reserveUrl && reserveUrl.indexOf("&type") === -1 && b.type) {
-                    reserveUrl += "&type=" + b.type;
+                    if (reserveUrl.indexOf("?booth=") !== -1) {
+                        reserveUrl += "?type=" + encodeURIComponent(b.type);
+                    } else {
+                        reserveUrl += "&type=" + encodeURIComponent(b.type);
+                    }
                 }
 
                 if (reserveUrl && reserveUrl.indexOf("&price") === -1 && b.price) {
-                    reserveUrl += "&price=" + b.price;
+                    reserveUrl += "&price=" + encodeURIComponent(b.price);
                 }
 
                 content = (
