@@ -70,29 +70,49 @@ function Booth() {
                     </div>
                 );
             } else if (b.exhibitors.length === 0) {
+
+                let buyUrl = b.buyUrl;
+                let reserveUrl = b.reserveUrl;
+
+                if (buyUrl && buyUrl.indexOf("&type") === -1 && b.type) {
+                    buyUrl += "&type=" + b.type;
+                }
+
+                if (buyUrl && buyUrl.indexOf("&price") === -1 && b.price) {
+                    buyUrl += "&price=" + b.price;
+                }
+
+                if (reserveUrl && reserveUrl.indexOf("&type") === -1 && b.type) {
+                    reserveUrl += "&type=" + b.type;
+                }
+
+                if (reserveUrl && reserveUrl.indexOf("&price") === -1 && b.price) {
+                    reserveUrl += "&price=" + b.price;
+                }
+
                 content = (
                     <>
                         <div className="booth__content -reg">
                             <div className="booth__infos">
                                 {b.type && (
                                     <div className="booth__info">
-                                        <i className="fas fa-cube" />
+                                        <i className="fas fa-cube"/>
                                         <div className="booth__info-title">
-                                            {t("{{boothTerm}} Type", { boothTerm: data.boothTerm })}
+                                            {t("{{boothTerm}} Type", {boothTerm: data.boothTerm})}
                                         </div>
                                         <div className="booth__info-val">{b.type}</div>
                                     </div>
                                 )}
                                 {b.size && (
                                     <div className="booth__info">
-                                        <i className="fas fa-expand-alt" />
+                                        <i className="fas fa-expand-alt"/>
                                         <div className="booth__info-title">{t("Size")}</div>
                                         <div className="booth__info-val">{b.size}</div>
                                     </div>
                                 )}
                                 {b.price && b.price !== "0" && (
                                     <div className="booth__info">
-                                        <i className="fas fa-tag" />
+                                        <i className="fas fa-tag"/>
                                         <div className="booth__info-title">{t("Price")}</div>
                                         <div className="booth__info-val">{b.price}</div>
                                     </div>
@@ -100,21 +120,22 @@ function Booth() {
                             </div>
                             {s.descriptionCombined && (
                                 <span
-                                    dangerouslySetInnerHTML={{ __html: s.descriptionCombined }}
+                                    dangerouslySetInnerHTML={{__html: s.descriptionCombined}}
                                     className="booth__reserve-instructions"
                                 />
                             )}
 
+
                             {s.showBuy && (
                                 <div className="booth__buy">
-                                    <a href={b.buyUrl} rel="noopener">
+                                    <a href={buyUrl} rel="noopener">
                                         {t("Buy")}
                                     </a>
                                 </div>
                             )}
                             {s.showReserve && (
                                 <div className="booth__buy">
-                                    <a href={b.reserveUrl || b.buyUrl} rel="noopener">
+                                    <a href={reserveUrl || buyUrl} rel="noopener">
                                         {s.reserveTitle}
                                     </a>
                                 </div>
