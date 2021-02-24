@@ -70,32 +70,36 @@ function Booth() {
                     </div>
                 );
             } else if (b.exhibitors.length === 0) {
+                let reserveUrl: URL;
+                let buyUrl: URL;
+                try {
+                    reserveUrl = new URL(b.reserveUrl);
+                } catch {
+                }
 
-                let buyUrl = b.buyUrl;
-                let reserveUrl = b.reserveUrl;
+                try {
+                    buyUrl = new URL(b.buyUrl);
+                } catch {
+                }
 
-                if (buyUrl && buyUrl.indexOf("&type") === -1 && b.type) {
-                    if (buyUrl.indexOf("?booth=") !== -1) {
-                        buyUrl += "?type=" + encodeURIComponent(b.type);
-                    } else {
-                        buyUrl += "&type=" + encodeURIComponent(b.type);
+                if (b.buyUrl) {
+                    if (!buyUrl.searchParams.has('type') && b.type) {
+                        buyUrl.searchParams.append('type', b.type);
+                    }
+
+                    if (!buyUrl.searchParams.has('price') && b.price) {
+                        buyUrl.searchParams.append('price', b.price);
                     }
                 }
 
-                if (buyUrl && buyUrl.indexOf("&price") === -1 && b.price) {
-                    buyUrl += "&price=" + encodeURIComponent(b.price);
-                }
-
-                if (reserveUrl && reserveUrl.indexOf("&type") === -1 && b.type) {
-                    if (reserveUrl.indexOf("?booth=") !== -1) {
-                        reserveUrl += "?type=" + encodeURIComponent(b.type);
-                    } else {
-                        reserveUrl += "&type=" + encodeURIComponent(b.type);
+                if (b.reserveUrl) {
+                    if (!reserveUrl.searchParams.has('type') && b.type) {
+                        reserveUrl.searchParams.append('type', b.type);
                     }
-                }
 
-                if (reserveUrl && reserveUrl.indexOf("&price") === -1 && b.price) {
-                    reserveUrl += "&price=" + encodeURIComponent(b.price);
+                    if (!reserveUrl.searchParams.has('price') && b.price) {
+                        reserveUrl.searchParams.append('price', b.price);
+                    }
                 }
 
                 content = (
@@ -136,14 +140,14 @@ function Booth() {
 
                             {s.showBuy && (
                                 <div className="booth__buy">
-                                    <a href={buyUrl} rel="noopener">
+                                    <a href={buyUrl?.href} rel="noopener">
                                         {t("Buy")}
                                     </a>
                                 </div>
                             )}
                             {s.showReserve && (
                                 <div className="booth__buy">
-                                    <a href={reserveUrl || buyUrl} rel="noopener">
+                                    <a href={reserveUrl?.href || buyUrl?.href} rel="noopener">
                                         {s.reserveTitle}
                                     </a>
                                 </div>
