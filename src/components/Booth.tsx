@@ -70,37 +70,26 @@ function Booth() {
                     </div>
                 );
             } else if (b.exhibitors.length === 0) {
-                let reserveUrl: URL;
-                let buyUrl: URL;
-                try {
-                    reserveUrl = new URL(b.reserveUrl);
-                } catch {
-                }
 
-                try {
-                    buyUrl = new URL(b.buyUrl);
-                } catch {
-                }
+                const makeUrl = href => {
+                    if (href) {
+                        const url = new URL(href);
 
-                if (b.buyUrl) {
-                    if (!buyUrl.searchParams.has('type') && b.type) {
-                        buyUrl.searchParams.append('type', b.type);
-                    }
+                        if (!url.searchParams.has('type') && b.type) {
+                            url.searchParams.append('type', b.type);
+                        }
 
-                    if (!buyUrl.searchParams.has('price') && b.price) {
-                        buyUrl.searchParams.append('price', b.price);
+                        if (!url.searchParams.has('price') && b.price) {
+                            url.searchParams.append('price', b.price);
+                        }
+                        return url;
+                    } else {
+                        return null;
                     }
                 }
 
-                if (b.reserveUrl) {
-                    if (!reserveUrl.searchParams.has('type') && b.type) {
-                        reserveUrl.searchParams.append('type', b.type);
-                    }
-
-                    if (!reserveUrl.searchParams.has('price') && b.price) {
-                        reserveUrl.searchParams.append('price', b.price);
-                    }
-                }
+                const buyUrl = makeUrl(b.buyUrl);
+                const reserveUrl = makeUrl(b.reserveUrl);
 
                 content = (
                     <>
