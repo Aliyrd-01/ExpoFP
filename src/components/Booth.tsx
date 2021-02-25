@@ -70,29 +70,50 @@ function Booth() {
                     </div>
                 );
             } else if (b.exhibitors.length === 0) {
+
+                const makeUrl = href => {
+                    if (href) {
+                        const url = new URL(href);
+
+                        if (!url.searchParams.has('type') && b.type) {
+                            url.searchParams.append('type', b.type);
+                        }
+
+                        if (!url.searchParams.has('price') && b.price) {
+                            url.searchParams.append('price', b.price);
+                        }
+                        return url;
+                    } else {
+                        return null;
+                    }
+                }
+
+                const buyUrl = makeUrl(b.buyUrl);
+                const reserveUrl = makeUrl(b.reserveUrl);
+
                 content = (
                     <>
                         <div className="booth__content -reg">
                             <div className="booth__infos">
                                 {b.type && (
                                     <div className="booth__info">
-                                        <i className="fas fa-cube" />
+                                        <i className="fas fa-cube"/>
                                         <div className="booth__info-title">
-                                            {t("{{boothTerm}} Type", { boothTerm: data.boothTerm })}
+                                            {t("{{boothTerm}} Type", {boothTerm: data.boothTerm})}
                                         </div>
                                         <div className="booth__info-val">{b.type}</div>
                                     </div>
                                 )}
                                 {b.size && (
                                     <div className="booth__info">
-                                        <i className="fas fa-expand-alt" />
+                                        <i className="fas fa-expand-alt"/>
                                         <div className="booth__info-title">{t("Size")}</div>
                                         <div className="booth__info-val">{b.size}</div>
                                     </div>
                                 )}
                                 {b.price && b.price !== "0" && (
                                     <div className="booth__info">
-                                        <i className="fas fa-tag" />
+                                        <i className="fas fa-tag"/>
                                         <div className="booth__info-title">{t("Price")}</div>
                                         <div className="booth__info-val">{b.price}</div>
                                     </div>
@@ -100,21 +121,22 @@ function Booth() {
                             </div>
                             {s.descriptionCombined && (
                                 <span
-                                    dangerouslySetInnerHTML={{ __html: s.descriptionCombined }}
+                                    dangerouslySetInnerHTML={{__html: s.descriptionCombined}}
                                     className="booth__reserve-instructions"
                                 />
                             )}
 
+
                             {s.showBuy && (
                                 <div className="booth__buy">
-                                    <a href={b.buyUrl} rel="noopener">
+                                    <a href={buyUrl?.href} rel="noopener">
                                         {t("Buy")}
                                     </a>
                                 </div>
                             )}
                             {s.showReserve && (
                                 <div className="booth__buy">
-                                    <a href={b.reserveUrl || b.buyUrl} rel="noopener">
+                                    <a href={reserveUrl?.href || buyUrl?.href} rel="noopener">
                                         {s.reserveTitle}
                                     </a>
                                 </div>
