@@ -36,7 +36,8 @@ class State {
         public startTouchPoint: { x: number; y: number },
         public isFullScreen: boolean,
         public height: number = null
-    ) {}
+    ) {
+    }
 }
 
 let isTouch = isTouchDevice();
@@ -57,10 +58,14 @@ class ImageSlider extends React.Component<Props, State> {
         isFullScreen: false,
         hideFullScreenIcon: false,
 
-        onClickNav: () => {},
-        onClickBullets: () => {},
-        onStartSlide: () => {},
-        onCompleteSlide: () => {},
+        onClickNav: () => {
+        },
+        onClickBullets: () => {
+        },
+        onStartSlide: () => {
+        },
+        onCompleteSlide: () => {
+        }
     };
 
     constructor(props: Props) {
@@ -72,14 +77,14 @@ class ImageSlider extends React.Component<Props, State> {
             0,
             false,
             styles.getImageSlide(
-                this.getImageUrl(0),
+                this.getImageUrl(0, false),
                 this.props.slideDuration,
                 0,
                 this.props.useGPURender,
                 props.isFullScreen ? FillMode.contain : this.props.fillMode
             ),
             styles.getImageSlide(
-                this.getImageUrl(1),
+                this.getImageUrl(1, false),
                 this.props.slideDuration,
                 1,
                 this.props.useGPURender,
@@ -89,8 +94,8 @@ class ImageSlider extends React.Component<Props, State> {
             props.isFullScreen
         );
 
-        ImagePreLoader.load(this.getImageUrl(2));
-        this.updateRatio(this.getImageUrl(0));
+        ImagePreLoader.load(this.getImageUrl(2, false));
+        this.updateRatio(this.getImageUrl(0, false));
     }
 
     componentDidMount = () => document.addEventListener("keydown", this.onKeyDown);
@@ -105,14 +110,14 @@ class ImageSlider extends React.Component<Props, State> {
                 0,
                 false,
                 styles.getImageSlide(
-                    this.getImageUrl(0),
+                    this.getImageUrl(0, newProps.isFullScreen),
                     this.props.slideDuration,
                     0,
                     this.props.useGPURender,
                     newProps.isFullScreen ? FillMode.contain : this.props.fillMode
                 ),
                 styles.getImageSlide(
-                    this.getImageUrl(1),
+                    this.getImageUrl(1, newProps.isFullScreen),
                     this.props.slideDuration,
                     1,
                     this.props.useGPURender,
@@ -121,7 +126,7 @@ class ImageSlider extends React.Component<Props, State> {
                 null,
                 newProps.isFullScreen
             ),
-            () => this.updateRatio(this.getImageUrl(0))
+            () => this.updateRatio(this.getImageUrl(0, newProps.isFullScreen))
         );
     };
 
@@ -136,13 +141,24 @@ class ImageSlider extends React.Component<Props, State> {
             ImagePreLoader.load(url).then((image) => {
                 this.setState({
                     ...this.state,
-                    height: (image.height * this.rootContainer.clientWidth) / image.width,
+                    height: (image.height * this.rootContainer.clientWidth) / image.width
                 });
             });
         }
     };
 
-    getImageUrl = (idx: number) => (this.props.images[idx] ? this.props.images[idx] : "");
+    getImageUrl = (idx: number, isFullScreen: boolean) => {
+
+        let img = this.props.images[idx];
+        if (img && isFullScreen) {
+            let paths = img.split("/");
+            paths[paths.length - 1] = "original-" + paths[paths.length - 1];
+            let originalPath = paths.join("/");
+
+            return (originalPath ? originalPath : "");
+        }
+        return (this.props.images[idx] ? this.props.images[idx] : "");
+    };
 
     isCanSlide = (idx: number) => idx !== this.state.idx && !this.state.sliding;
 
@@ -170,7 +186,10 @@ class ImageSlider extends React.Component<Props, State> {
     };
 
     onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-        this.setState({ ...this.state, startTouchPoint: { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY } });
+        this.setState({
+            ...this.state,
+            startTouchPoint: { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY }
+        });
     };
 
     onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
@@ -204,7 +223,7 @@ class ImageSlider extends React.Component<Props, State> {
             <button type="button" style={styles.NavRight} onClick={() => this.onClickNav(true)}>
                 {styles.ImageNavArrowRight(this.state.isFullScreen)}
             </button>
-        ) : null,
+        ) : null
     });
 
     renderBullets = (length: number, idx: number) => {
@@ -225,8 +244,8 @@ class ImageSlider extends React.Component<Props, State> {
 
     slide = (idx: number) => {
         const toNext = idx > this.state.idx;
-        const currentUrl = this.getImageUrl(this.state.idx);
-        const nextUrl = this.getImageUrl(idx);
+        const currentUrl = this.getImageUrl(this.state.idx, false);
+        const nextUrl = this.getImageUrl(idx, false);
         const nextReadyX = toNext ? 1 : -1;
         const currentOffetX = toNext ? -1 : 1;
 
@@ -247,7 +266,7 @@ class ImageSlider extends React.Component<Props, State> {
                     nextReadyX,
                     this.props.useGPURender,
                     this.state.isFullScreen ? FillMode.contain : this.props.fillMode
-                ),
+                )
             },
             () => {
                 // animation slides
@@ -267,13 +286,13 @@ class ImageSlider extends React.Component<Props, State> {
                                 0,
                                 this.props.useGPURender,
                                 this.state.isFullScreen ? FillMode.contain : this.props.fillMode
-                            ),
+                            )
                         },
                         () => this.updateRatio(nextUrl)
                     );
                 }, 50);
 
-                ImagePreLoader.load(this.getImageUrl(idx + 2));
+                ImagePreLoader.load(this.getImageUrl(idx + 2, false));
             }
         );
 
@@ -283,13 +302,13 @@ class ImageSlider extends React.Component<Props, State> {
     onSlideEnd = () => {
         this.setState({
             currentSlideStyle: styles.getImageSlide(
-                this.getImageUrl(this.state.idx),
+                this.getImageUrl(this.state.idx, false),
                 0,
                 0,
                 this.props.useGPURender,
                 this.state.isFullScreen ? FillMode.contain : this.props.fillMode
             ),
-            sliding: false,
+            sliding: false
         });
 
         this.props.onCompleteSlide(this.state.idx + 1);
@@ -303,23 +322,23 @@ class ImageSlider extends React.Component<Props, State> {
             {
                 ...this.state,
                 currentSlideStyle: styles.getImageSlide(
-                    this.getImageUrl(this.state.idx),
+                    this.getImageUrl(this.state.idx, isFullScreen),
                     0,
                     currentSlideStyle.idx,
                     this.props.useGPURender,
                     isFullScreen ? FillMode.contain : this.props.fillMode
                 ),
                 nextSlideStyle: styles.getImageSlide(
-                    this.getImageUrl(this.state.idx),
+                    this.getImageUrl(this.state.idx, isFullScreen),
                     0,
                     nextSlideStyle.idx,
                     this.props.useGPURender,
                     isFullScreen ? FillMode.contain : this.props.fillMode
                 ),
-                isFullScreen,
+                isFullScreen
             },
             () => {
-                if (!isFullScreen) this.updateRatio(this.getImageUrl(this.state.idx));
+                if (!isFullScreen) this.updateRatio(this.getImageUrl(this.state.idx, false));
             }
         );
     };
