@@ -153,11 +153,14 @@ class ImageSlider extends React.Component<Props, State> {
         if (img && isFullScreen) {
             let paths = img.split("/");
             paths[paths.length - 1] = "original-" + paths[paths.length - 1];
+            let exists = this.props.images.find(im => im.indexOf(paths[paths.length - 1]) !== -1);
             let originalPath = paths.join("/");
 
-            return (originalPath ? originalPath : "");
+           return exists? (  originalPath ? originalPath : "") : (this.props.images[idx] ? this.props.images[idx] : "");
+
         }
-        return (this.props.images[idx] ? this.props.images[idx] : "");
+
+     else  return (this.props.images[idx] ? this.props.images[idx] : "");
     };
 
     isCanSlide = (idx: number) => idx !== this.state.idx && !this.state.sliding;
