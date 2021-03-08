@@ -44,7 +44,7 @@ let isTouch = isTouchDevice();
 
 class ImageSlider extends React.Component<Props, State> {
     rootContainer: HTMLDivElement;
-
+    originalImagesExists: boolean = true;
     public static defaultProps = {
         width: "100%",
         height: "250px",
@@ -93,7 +93,7 @@ class ImageSlider extends React.Component<Props, State> {
             null,
             props.isFullScreen
         );
-
+        ImagePreLoader.load(this.getImageUrl(0, true)).catch(() => this.originalImagesExists = false);
         ImagePreLoader.load(this.getImageUrl(2, false));
         this.updateRatio(this.getImageUrl(0, false));
     }
@@ -148,19 +148,30 @@ class ImageSlider extends React.Component<Props, State> {
     };
 
     getImageUrl = (idx: number, isFullScreen: boolean) => {
+        if (isFullScreen) {
+            const originalPath = this.originalImageFromTumb(this.props.images[idx]);
+            return this.originalImagesExists? (originalPath || "") : (this.props.images[idx] || "");
+         } else {
+            return this.props.images[idx] || "";
+         }
+    };
 
-        let img = this.props.images[idx];
-        if (img && isFullScreen) {
-            let paths = img.split("/");
-            paths[paths.length - 1] = "original-" + paths[paths.length - 1];
-            let exists = this.props.images.find(im => im.indexOf(paths[paths.length - 1]) !== -1);
-            let originalPath = paths.join("/");
-
-           return exists? (  originalPath ? originalPath : "") : (this.props.images[idx] ? this.props.images[idx] : "");
-
+    originalImageFromTumb= (tumb) => {
+        console.log(tumb);
+        let paths = tumb.split("/");
+        const fileName = paths[paths.length - 1];
+        if (fileName.indexOf("original-") === -1) {
+            paths[paths.length - 1] = "original-" + fileName;
         }
 
-     else  return (this.props.images[idx] ? this.props.images[idx] : "");
+        return paths.join("/");
+    }
+
+     checkImage= (imageSrc, good, bad) => {
+        var img = new Image();
+        img.onload = good;
+        img.onerror = bad;
+        img.src = imageSrc;
     };
 
     isCanSlide = (idx: number) => idx !== this.state.idx && !this.state.sliding;
@@ -247,8 +258,8 @@ class ImageSlider extends React.Component<Props, State> {
 
     slide = (idx: number) => {
         const toNext = idx > this.state.idx;
-        const currentUrl = this.getImageUrl(this.state.idx, false);
-        const nextUrl = this.getImageUrl(idx, false);
+        const currentUrl = this.getImageUrl(this.state.idx, this.state.isFullScreen);
+        const nextUrl = this.getImageUrl(idx, this.state.isFullScreen);
         const nextReadyX = toNext ? 1 : -1;
         const currentOffetX = toNext ? -1 : 1;
 
@@ -341,7 +352,7 @@ class ImageSlider extends React.Component<Props, State> {
                 isFullScreen
             },
             () => {
-                if (!isFullScreen) this.updateRatio(this.getImageUrl(this.state.idx, false));
+                if (!isFullScreen) this.updateRatio(this.getImageUrl(this.state.idx, !isFullScreen));
             }
         );
     };
