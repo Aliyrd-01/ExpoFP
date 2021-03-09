@@ -150,14 +150,13 @@ class ImageSlider extends React.Component<Props, State> {
     getImageUrl = (idx: number, isFullScreen: boolean) => {
         if (isFullScreen) {
             const originalPath = this.originalImageFromTumb(this.props.images[idx]);
-            return this.originalImagesExists? (originalPath || "") : (this.props.images[idx] || "");
-         } else {
+            return this.originalImagesExists ? (originalPath || "") : (this.props.images[idx] || "");
+        } else {
             return this.props.images[idx] || "";
-         }
+        }
     };
 
-    originalImageFromTumb= (tumb) => {
-        console.log(tumb);
+    originalImageFromTumb = (tumb) => {
         let paths = tumb.split("/");
         const fileName = paths[paths.length - 1];
         if (fileName.indexOf("original-") === -1) {
@@ -166,13 +165,6 @@ class ImageSlider extends React.Component<Props, State> {
 
         return paths.join("/");
     }
-
-     checkImage= (imageSrc, good, bad) => {
-        var img = new Image();
-        img.onload = good;
-        img.onerror = bad;
-        img.src = imageSrc;
-    };
 
     isCanSlide = (idx: number) => idx !== this.state.idx && !this.state.sliding;
 
