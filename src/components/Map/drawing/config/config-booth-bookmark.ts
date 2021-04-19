@@ -22,6 +22,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         const bookmarkCanvasXL = createBookmarkCanvas(11, context.pixelRatio);
         const bookmarkCanvasL = createBookmarkCanvas(8, context.pixelRatio);
         const bookmarkCanvasM = createBookmarkCanvas(6, context.pixelRatio);
+        const bookmarkCanvasS = createBookmarkCanvas(6, context.pixelRatio);
 
         this.painter.addObject({
             id: this.getId("XL"),
@@ -75,15 +76,15 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             id: this.getId("S"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [
-                -bookmarkCanvasM.width / 2,
-                -bookmarkCanvasM.height / 2,
-                bookmarkCanvasM.width / 2,
-                bookmarkCanvasM.height / 2,
+                0,
+                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                0,
+                0,
             ],
-            canvasTmp: bookmarkCanvasM,
-            texPosition: "center",
+            canvasTmp: bookmarkCanvasS,
+            texPosition: "righttop",
             visible: false,
         });
 
