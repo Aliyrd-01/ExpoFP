@@ -79,7 +79,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [
                 0,
-                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                -bookmarkCanvasS.lineWidth - bookmarkCanvasS.padding,
                 0,
                 0,
             ],
