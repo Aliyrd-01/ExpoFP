@@ -14,6 +14,10 @@ export default function configBoothBookmark(context: DrawerContext, booth: Booth
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
     public locked: boolean;
 
+    draw() {
+        
+    }
+
     constructor(context: DrawerContext, booth: RegularBooth) {
         super(context, booth, "booth-bookmark", RectPainter, 140);
         this.locked = context.updatable;
@@ -55,7 +59,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
-
+        
         this.painter.addObject({
             id: this.getId("M"),
             rotateRadians: booth.rotate,
@@ -71,7 +75,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
-
+        
         this.painter.addObject({
             id: this.getId("S"),
             rotateRadians: booth.rotate,
@@ -80,19 +84,20 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             deltaPts: [
                 0,
                 -bookmarkCanvasS.lineWidth - bookmarkCanvasS.padding,
-                0,
+                bookmarkCanvasS.lineWidth,
                 0,
             ],
             canvasTmp: bookmarkCanvasS,
             texPosition: "righttop",
             visible: false,
         });
-
+        
         this.update();
         if (context.updatable) {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
-
+            this.context.subscribeMatrixChange(() => context.requireUpdate(this.updateBound));
+            
             reaction(
                 () => booth.bookmarked,
                 () => {
@@ -133,6 +138,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         if (bookmarked) {
             const widthPx = this.booth.rect.w / ptscale / this.context.pixelRatio;
             const heightPx = this.booth.rect.h / ptscale / this.context.pixelRatio;
+            
             if (widthPx > 50 && heightPx > 50) {
                 view = "XL";
             } else if (widthPx > 25 && heightPx > 25) {
