@@ -14,10 +14,6 @@ export default function configBoothBookmark(context: DrawerContext, booth: Booth
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
     public locked: boolean;
 
-    draw() {
-        
-    }
-
     constructor(context: DrawerContext, booth: RegularBooth) {
         super(context, booth, "booth-bookmark", RectPainter, 140);
         this.locked = context.updatable;
@@ -43,7 +39,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
-
         this.painter.addObject({
             id: this.getId("L"),
             rotateRadians: booth.rotate,
@@ -59,7 +54,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
-        
         this.painter.addObject({
             id: this.getId("M"),
             rotateRadians: booth.rotate,
@@ -75,7 +69,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
-        
         this.painter.addObject({
             id: this.getId("S"),
             rotateRadians: booth.rotate,
@@ -97,7 +90,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
             this.context.subscribeMatrixChange(() => context.requireUpdate(this.updateBound));
-            
             reaction(
                 () => booth.bookmarked,
                 () => {
