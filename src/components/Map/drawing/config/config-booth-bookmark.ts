@@ -22,7 +22,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         const bookmarkCanvasXL = createBookmarkCanvas(11, context.pixelRatio);
         const bookmarkCanvasL = createBookmarkCanvas(8, context.pixelRatio);
         const bookmarkCanvasM = createBookmarkCanvas(6, context.pixelRatio);
-        const bookmarkCanvasS = createBookmarkCanvas(6, context.pixelRatio);
 
         this.painter.addObject({
             id: this.getId("XL"),
@@ -39,6 +38,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
+
         this.painter.addObject({
             id: this.getId("L"),
             rotateRadians: booth.rotate,
@@ -54,6 +54,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
+
         this.painter.addObject({
             id: this.getId("M"),
             rotateRadians: booth.rotate,
@@ -61,27 +62,28 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [
                 0,
-                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
-                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                -bookmarkCanvasM.lineWidth - bookmarkCanvasM.padding,
+                -bookmarkCanvasM.lineWidth - bookmarkCanvasM.padding,
                 0,
             ],
             canvasTmp: bookmarkCanvasM,
             texPosition: "righttop",
             visible: false,
         });
+
         this.painter.addObject({
             id: this.getId("S"),
             rotateRadians: booth.rotate,
             center: [r.cx, r.cy],
-            deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
+            // deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [
-                0,
-                -bookmarkCanvasS.lineWidth - bookmarkCanvasS.padding,
-                bookmarkCanvasS.lineWidth,
-                0,
+                -bookmarkCanvasM.width / 2,
+                -bookmarkCanvasM.height / 2,
+                bookmarkCanvasM.width / 2,
+                bookmarkCanvasM.height / 2,
             ],
-            canvasTmp: bookmarkCanvasS,
-            texPosition: "righttop",
+            canvasTmp: bookmarkCanvasM,
+            texPosition: "center",
             visible: false,
         });
 
@@ -89,26 +91,23 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         if (context.updatable) {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
-            function addBookmarkListeners(updateFunc: () => void) {
-                if (booth.bookmarked) {
-                    const dispose = reaction(
-                        () => [booth.skipDim, context.ptscale],
-                        () => context.requireUpdate(updateFunc)
-                    );
-                    when(
-                        () => !booth.bookmarked,
-                        () => dispose()
-                    );
-                }
-            }
-            
-            addBookmarkListeners(this.updateBound);
+           
             reaction(
-                () => [booth.bookmarked],
+                () => booth.bookmarked,
                 () => {
                     context.requireUpdate(this.updateBound);
-                    addBookmarkListeners(this.updateBound);
-                }
+                    if (booth.bookmarked) {
+                        const dispose = reaction(
+                            () => [booth.skipDim, context.ptscale],
+                            () => context.requireUpdate(this.updateBound)
+                        );
+                        when(
+                            () => !booth.bookmarked,
+                            () => dispose()
+                        );
+                    }
+                }, 
+                { fireImmediately: booth.bookmarked }
             );
         }
     }
