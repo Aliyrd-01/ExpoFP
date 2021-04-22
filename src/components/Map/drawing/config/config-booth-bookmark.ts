@@ -84,26 +84,30 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "righttop",
             visible: false,
         });
-        
+
         this.update();
         if (context.updatable) {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
-            this.context.subscribeMatrixChange(() => context.requireUpdate(this.updateBound));
+            function addBookmarkListeners(updateFunc: () => void) {
+                if (booth.bookmarked) {
+                    const dispose = reaction(
+                        () => [booth.skipDim, context.ptscale],
+                        () => context.requireUpdate(updateFunc)
+                    );
+                    when(
+                        () => !booth.bookmarked,
+                        () => dispose()
+                    );
+                }
+            }
+            
+            addBookmarkListeners(this.updateBound);
             reaction(
-                () => booth.bookmarked,
+                () => [booth.bookmarked],
                 () => {
                     context.requireUpdate(this.updateBound);
-                    if (booth.bookmarked) {
-                        const dispose = reaction(
-                            () => [booth.skipDim, context.ptscale],
-                            () => context.requireUpdate(this.updateBound)
-                        );
-                        when(
-                            () => !booth.bookmarked,
-                            () => dispose()
-                        );
-                    }
+                    addBookmarkListeners(this.updateBound);
                 }
             );
         }
@@ -130,7 +134,6 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         if (bookmarked) {
             const widthPx = this.booth.rect.w / ptscale / this.context.pixelRatio;
             const heightPx = this.booth.rect.h / ptscale / this.context.pixelRatio;
-            
             if (widthPx > 50 && heightPx > 50) {
                 view = "XL";
             } else if (widthPx > 25 && heightPx > 25) {
