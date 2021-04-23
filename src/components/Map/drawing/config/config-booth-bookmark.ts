@@ -62,8 +62,8 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
             deltas: [-r.w / 2, -r.h / 2, r.w / 2, r.h / 2],
             deltaPts: [
                 0,
-                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
-                -bookmarkCanvasL.lineWidth - bookmarkCanvasL.padding,
+                -bookmarkCanvasM.lineWidth - bookmarkCanvasM.padding,
+                -bookmarkCanvasM.lineWidth - bookmarkCanvasM.padding,
                 0,
             ],
             canvasTmp: bookmarkCanvasM,
@@ -91,7 +91,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         if (context.updatable) {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
-
+           
             reaction(
                 () => booth.bookmarked,
                 () => {
@@ -106,7 +106,8 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                             () => dispose()
                         );
                     }
-                }
+                }, 
+                { fireImmediately: booth.bookmarked }
             );
         }
     }
