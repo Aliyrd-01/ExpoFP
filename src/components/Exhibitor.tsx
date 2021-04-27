@@ -240,7 +240,7 @@ function ExhibitorComponent() {
                                                 {exhibitor.city}
                                                 {!!(exhibitor.city && exhibitor.state) && <span> </span>}
                                                 {exhibitor.state}
-                                                {!!(exhibitor.state && exhibitor.zip) && <span> &nbsp;</span>}{exhibitor.zip}
+                                                {!!(exhibitor.state && exhibitor.zip) && <span>&nbsp;</span>} {exhibitor.zip}
                                             </div>
                                         )}
                                         {!!exhibitor.country && <div>{exhibitor.country}</div>}
