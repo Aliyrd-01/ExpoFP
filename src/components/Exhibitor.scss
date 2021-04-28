@@ -129,6 +129,10 @@
     }
     &__description-html {
         overflow-wrap: break-word;
+        ol, ul {
+            padding-inline-start: 20px;
+            display: grid;
+        }
     }
     &__sep {
         margin: 1rem;
