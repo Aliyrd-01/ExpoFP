@@ -26,7 +26,7 @@ function Booth() {
             return this.regular && ((this.regular.price === "0" && !!this.regular.buyUrl) || !!this.regular.reserveUrl);
         },
         get showBuy() {
-            return this.regular && this.regular.buyUrl && this.regular.price !== "0";
+            return this.regular && this.regular.buyUrl && this.regular.price && this.regular.price !== "0";
         },
         get title() {
             if (this.special) {
