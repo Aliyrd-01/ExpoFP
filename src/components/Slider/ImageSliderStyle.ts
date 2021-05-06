@@ -92,15 +92,15 @@ const fullScreenIcon = (scale: number) => ({
 
 export default {
     ImageNavArrowLeft: (isFullScreen: boolean) =>
-        ImageNavArrowLeft(assignObjects({ height: isFullScreen ? "100px" : "50px" }, { fill: fillColor })),
+        ImageNavArrowLeft({ height: isFullScreen ? "100px" : "50px" }),
 
     ImageNavArrowRight: (isFullScreen: boolean) =>
-        ImageNavArrowRight(assignObjects({ height: isFullScreen ? "100px" : "50px" }, { fill: fillColor })),
+        ImageNavArrowRight({ height: isFullScreen ? "100px" : "50px" }),
 
     FullScreenContainer: (isFullScreen: boolean) => (isFullScreen ? fullScreenContainer : {}),
 
     FullScreenIcon: (isFullScreen: boolean) =>
-        FullScreenIcon(isFullScreen, assignObjects(fullScreenIcon(isFullScreen ? 1.5 : 1), { fill: fillColor })),
+        FullScreenIcon(isFullScreen, fullScreenIcon(isFullScreen ? 1.5 : 1)),
 
     ImageSlider: (isFullScreen: boolean) => assignObjects(basic, basicRootContainer, isFullScreen ? null : { cursor: "pointer" }),
 
