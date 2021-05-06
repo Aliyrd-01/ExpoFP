@@ -11,8 +11,14 @@ export default class BoothShape {
 
     constructor(booth: Booth) {
         this.booth = booth;
-        var bgSelected = (t) => (this.selectBgAnimationPart = easeQuadInOut(t));
-        animateProp(() => booth.selected, t => (this.selectBgAnimationPart = easeQuadInOut(t)), 1000, 8, true);
+        //var bgSelected = (t) => (this.selectBgAnimationPart = easeQuadInOut(t));
+        animateProp(
+            () => booth.selected,
+            (t) => (this.selectBgAnimationPart = easeQuadInOut(t)),
+            1000,
+            8,
+            true
+        );
     }
 
     static get(b: Booth) {
