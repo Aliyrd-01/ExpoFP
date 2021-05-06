@@ -15,11 +15,12 @@ export default function configCanvas(context: DrawerContext) {
     function setObjects() {
         const vr = uiState.canvasVisibleRectPt;
         const cs = uiState.canvasSizePt;
+        const useBackdrop = uiState.shouldUseBackdrop;
 
         function update() {
             const bigTriangles = Polygon4.fromRect(Rect.fromCxcywh(0, 0, 2, 2)).toTriangles().flat().flat();
             const bigColors = Array(bigTriangles.length / 2)
-                .fill(context.updatable ? whiteColor : bgColor)
+                .fill(context.updatable && useBackdrop ? whiteColor : bgColor)
                 .flat()
                 .flat();
             const bigNodims = Array(bigColors.length / 4).fill(1);
