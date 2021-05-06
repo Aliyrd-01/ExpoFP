@@ -125,6 +125,13 @@
             mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
         }
 
+        .image-slider-full-screen-container svg {
+            fill: "#FFFFFF";
+            &:hover {
+                fill: gray;
+            }
+        }
+
         @include clearfix;
     }
     &__description-html {
