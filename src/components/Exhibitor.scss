@@ -111,6 +111,13 @@
             }
         }
 
+        .exhibitor__description-html {
+            ol, ul {
+                padding-inline-start: 20px;
+                display: grid;
+            }
+        }
+
         &.collapsed > .exhibitor__description-html {
             cursor: pointer;
             &:hover {
