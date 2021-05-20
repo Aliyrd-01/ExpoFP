@@ -101,7 +101,7 @@ export default class Rect {
     }
 
     withPadding(x: number, y: number = x) {
-        if (this.w < x * 2 || this.h < y * 2) return null;
+        if (this.w < x * 2 || this.h < y * 2) return this;
         return Rect.fromCxcywh(this.cx, this.cy, this.w - x * 2, this.h - y * 2);
     }
 
