@@ -91,6 +91,7 @@ interface RawExhibitor {
     //populated
     logo: string;
     gallery: string[];
+    marketMaterials: MarketMaterial[];
     categories: number[];
     leadingImageUrl: string;
     videoUrl: string;
@@ -99,6 +100,11 @@ interface RawExhibitor {
 interface PathInfo {
     triangles: Triangle[];
     color: string;
+}
+
+interface MarketMaterial {
+    fileName: string;
+    path: string;
 }
 
 const __fp: string;

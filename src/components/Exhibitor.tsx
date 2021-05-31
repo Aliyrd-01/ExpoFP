@@ -146,10 +146,10 @@ function ExhibitorComponent() {
                                 <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
                             </a>
                         ) : (
-                                <Suspense fallback={null}>
-                                    <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
-                                </Suspense>
-                            )}
+                            <Suspense fallback={null}>
+                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                            </Suspense>
+                        )}
                     </div>
                 ) : null}
 
@@ -186,7 +186,7 @@ function ExhibitorComponent() {
                         <div
                             className={classNames({
                                 exhibitor__description: true,
-                                collapsed: s.collapsed && !s.disableCollapse
+                                collapsed: s.collapsed && !s.disableCollapse,
                             })}
                         >
                             {exhibitor.logo ? (
@@ -219,6 +219,17 @@ function ExhibitorComponent() {
                             <Suspense fallback={null}>
                                 <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
                             </Suspense>
+                        </div>
+                    ) : null}
+                    {exhibitor.marketMaterials ? (
+                        <div className="exhibitor__market-materials">
+                            {exhibitor.marketMaterials.map((marketMaterial) => {
+                                return (
+                                    <a href={marketMaterial.path} target="_blank" rel="noopener noreferrer">
+                                        {marketMaterial.fileName}
+                                    </a>
+                                );
+                            })}
                         </div>
                     ) : null}
                     {s.anyAddress ? <div className="exhibitor__sep" /> : null}
@@ -400,5 +411,4 @@ function ExhibitorComponent() {
     }
 }
 
-export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ?
-    <ExhibitorComponent /> : null}</>);
+export default () => useObserver(() => <>{!uiState.menu && uiState.selectedExhibitor ? <ExhibitorComponent /> : null}</>);

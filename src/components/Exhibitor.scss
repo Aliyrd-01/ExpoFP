@@ -134,6 +134,9 @@
 
         @include clearfix;
     }
+    &__market-materials {
+        margin: 1rem;
+    }
     &__description-html {
         overflow-wrap: break-word;
         ol, ul {
