@@ -225,7 +225,12 @@ function ExhibitorComponent() {
                         <div className="exhibitor__market-materials">
                             {exhibitor.marketMaterials.map((marketMaterial) => {
                                 return (
-                                    <a href={marketMaterial.path} target="_blank" rel="noopener noreferrer">
+                                    <a
+                                        href={marketMaterial.path}
+                                        key={marketMaterial.path}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         {marketMaterial.fileName}
                                     </a>
                                 );
