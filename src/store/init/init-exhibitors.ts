@@ -26,7 +26,6 @@ export default function initExhibitors(store: RootStore) {
     for (const raw of data.exhibitors || []) {
         const e = new Exhibitor() as MutableRequired<Exhibitor>;
         Object.assign(e, raw);
-
         e.slug = generateUniqueSlug(e.name);
 
         e.logo = addBaseUrl(e.logo);
@@ -40,18 +39,12 @@ export default function initExhibitors(store: RootStore) {
         e.leadingImageUrl = addBaseUrl(e.leadingImageUrl);
         e.categories = [];
         e.booths = [];
-        for (const c of raw.categories || []) {
-            const ca = store.categoryStore.categoryById.get(c);
-            e.categories.push(ca);
-            ca.exhibitors.push(e as Exhibitor);
-        }
 
         (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
     }
 
     // dispose
-    delete data.exhibitors;
     logger.log("initExhibitors", exhibitorStore.exhibitors.length);
 
     initBookmarked(exhibitorStore);
