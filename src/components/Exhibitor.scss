@@ -136,6 +136,9 @@
     }
     &__market-materials {
         margin: 1rem;
+        div {
+            word-break: break-all
+        }
     }
     &__description-html {
         overflow-wrap: break-word;
