@@ -290,6 +290,7 @@
 
     &__custom-btn-area {
         @include button;
+        margin: 2rem 1rem;
     }
 
     &__leading-image-container {
