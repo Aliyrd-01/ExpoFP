@@ -4,10 +4,11 @@ import { generateUniqueSlug } from '../../tools/slug';
 import data from '../../data';
 import logger from '../../tools/logger';
 import { sortByName } from '../../utils';
+import { Exhibitor } from '../ExhibitorStore';
 
 
 export default function initCategories(store: RootStore) {
-    const { categoryStore } = store;
+    const { categoryStore, exhibitorStore } = store;
 
     sortByName(data.categories);
 
@@ -16,6 +17,13 @@ export default function initCategories(store: RootStore) {
         Object.assign(c, b);
         c.exhibitors = [];
         c.slug = generateUniqueSlug(c.name);
+        for (const e of data.exhibitors || []) {
+            if (e.categories.filter(ec => ec === b.id)[0]) {
+                const ex = exhibitorStore.exhibitorById.get(e.id);
+                ex.categories.push(c as Category)
+                c.exhibitors.push(ex);
+            }        
+        }
         (c['store'] as CategoryStore) = categoryStore;
         categoryStore.categories.push(c as Category);
     }
@@ -24,5 +32,6 @@ export default function initCategories(store: RootStore) {
 
     // dispose
     delete data.categories;
+    delete data.exhibitors;
     logger.log('initCategories', categoryStore.categories.length);
 }
