@@ -39,7 +39,9 @@ export default class TextFitter {
             const sBlocks = blocks.map(b => b * factor);
             const sSpaceWidth = this.spaceWidth * factor;
 
-            const widths = getLinesSizes(sBlocks, sSpaceWidth, fontSize > this.maxMultilineFontSize ? 1 : Infinity);
+            const widths = getLinesSizes(sBlocks, sSpaceWidth, fontSize > this.maxMultilineFontSize ? 1 : Infinity).filter(
+                (w) => w
+            );
 
             for (let i = 0; i < widths.length; i++) {
                 const w = widths[i];
