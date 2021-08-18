@@ -56,7 +56,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
     } else if (b.reserved) {
         lines.push(t("Reserved"));
     } else if (b.exhibitors.length) {
-        lines.push(...b.exhibitors.map((e) => e.name));
+        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b)=> a > b ? 1 : -1));
     } else {
         if (b.size) lines.push(b.size);
         if (b.price && b.price !== "0") lines.push(b.price);
