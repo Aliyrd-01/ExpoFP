@@ -57,6 +57,9 @@ export default class TextFitter {
 
                 const lineSetsPossible = getPossibleLineSetsForWidth(w, rows, sBlocks, sSpaceWidth);
                 const lineSetBest = selectBestLines(lineSetsPossible, sBlocks, sSpaceWidth);
+
+                if (!lineSetBest) continue;
+                
                 const lines = lineIndicesToLines(lineSetBest, words);
 
                 res.push({
