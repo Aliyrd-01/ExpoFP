@@ -19,17 +19,17 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
 
-    select(svg)
-        .select<SVGAElement>("svg > [data-layer='WF']")
-        .node()
-        .childNodes.forEach((node: any) => {
-            lines.push(
-                new Line(
-                    { x: parseFloat(node.attributes.x1.value), y: parseFloat(node.attributes.y1.value) },
-                    { x: parseFloat(node.attributes.x2.value), y: parseFloat(node.attributes.y2.value) }
-                )
-            );
-        });
+    var layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
+    if (!layer) return;
+
+    layer.childNodes.forEach((node: any) => {
+        lines.push(
+            new Line(
+                { x: parseFloat(node.attributes.x1.value), y: parseFloat(node.attributes.y1.value) },
+                { x: parseFloat(node.attributes.x2.value), y: parseFloat(node.attributes.y2.value) }
+            )
+        );
+    });
 
     function addRect(point: Point) {
         const r = Rect.fromXywh(point.x - size, point.y - size, 2 * size, 2 * size);
