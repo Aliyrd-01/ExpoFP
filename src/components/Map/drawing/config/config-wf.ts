@@ -31,7 +31,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
     });
 
-    function addRect(point: Point) {
+    let addRect = (point: Point) => {
         const r = Rect.fromXywh(point.x - size, point.y - size, 2 * size, 2 * size);
 
         addObject({
@@ -46,13 +46,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             p0: [r.x2, r.y2],
             color,
         });
-    }
+    };
 
-    function addObject(item: TrianglePainterObject) {
+    let addObject = (item: TrianglePainterObject) => {
         while (!drawer || !drawer.tryAddObject(item)) {
             drawer = context.requirePainter("WF" + drawerSeq++, TrianglePainter, painterOrderPriority);
         }
-    }
+    };
 
     setTimeout(() => {
         let booths: Set<Booth> = new Set(boothStore.booths.filter((b) => b.name == "6" || b.name == "56"));
@@ -71,5 +71,5 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
 
         points.forEach((p) => addRect(p));
-    }, 100);
+    }, 0);
 }
