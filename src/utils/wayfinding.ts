@@ -1,5 +1,5 @@
-let path = require("ngraph.path");
-let createGraph = require("ngraph.graph");
+const path = require("ngraph.path");
+const createGraph = require("ngraph.graph");
 
 export class Point {
     constructor(public x: number, public y: number) {}
@@ -13,13 +13,15 @@ export class Rectangle {
     constructor(public p0: Point, public p1: Point, public p2: Point, public p3: Point) {}
 }
 
-let distance = (from: Point, to: Point): number => {
+const lineLength = (p1: Point, p2: Point): number => Math.round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)));
+
+const distance = (from: Point, to: Point): number => {
     let dx = from.x - to.x;
     let dy = from.y - to.y;
     return Math.sqrt(dx * dx + dy * dy);
 };
 
-let minDistanceLineEnds = (line1: Line, line2: Line) => {
+const minDistanceLineEnds = (line1: Line, line2: Line) => {
     return Math.min(
         distance(line1.p0, line2.p0),
         distance(line1.p0, line2.p1),
@@ -28,7 +30,7 @@ let minDistanceLineEnds = (line1: Line, line2: Line) => {
     );
 };
 
-let linesIntersection = (line1: Line, line2: Line) => {
+const linesIntersection = (line1: Line, line2: Line) => {
     let denominator: number,
         a: number,
         b: number,
@@ -61,7 +63,7 @@ let linesIntersection = (line1: Line, line2: Line) => {
     return result;
 };
 
-let lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
+const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     let points: Point[] = [];
 
     let res = linesIntersection(line, { p0: rect.p0, p1: rect.p1 });
@@ -79,7 +81,35 @@ let lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     return points;
 };
 
-export let getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectangle): Point[] => {
+export const subLines = (lines: Line[]): Line[] => {
+    let subLines = [];
+
+    let lastIntersectPoint: Point = null;
+
+    for (let i = 0; i < lines.length; i++) {
+        lastIntersectPoint = lines[i].p0;
+
+        for (let j = 0; j < lines.length; j++) {
+            if (i === j) continue;
+
+            let intersect = linesIntersection(lines[i], lines[j]);
+            if (!intersect.onLine1 || !intersect.onLine2) continue;
+
+            let len = lineLength(lastIntersectPoint, intersect.point);
+            if (len < 0.1) continue;
+
+            subLines.push(new Line(lastIntersectPoint, intersect.point));
+            lastIntersectPoint = intersect.point;
+        }
+
+        let len = lineLength(lastIntersectPoint, lines[i].p1);
+        if (len > 0.1) subLines.push(new Line(lastIntersectPoint, lines[i].p1));
+    }
+
+    return subLines;
+};
+
+export const getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectangle): Point[] => {
     let nodes: { intersections: Point[] }[] = [];
 
     let startNodes: Point[] = [];

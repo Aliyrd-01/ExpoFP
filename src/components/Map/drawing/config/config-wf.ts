@@ -1,22 +1,44 @@
 import Color from "color";
 import { select } from "d3-selection";
-import Polygon4 from "../../../../core/Polygon";
-import Rect from "../../../../core/Rect";
 import svg from "../../../../data/svg";
 import { boothStore } from "../../../../store";
-import { getWayPoints, Line, Point } from "../../../../utils/wayfinding";
+import { Line, Point, subLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
-import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
-import { Booth } from "./../../../../store/BoothStore";
-import { Rectangle } from "./../../../../utils/wayfinding";
+import RectPainter from "../painters/RectPainter";
 
-const size = boothStore.borderWidth * 2;
-const color = Color("black").vec4();
+const size = boothStore.borderWidth;
+
+const lineCenter = (line: Line) => new Point((line.p0.x + line.p1.x) / 2, (line.p0.y + line.p1.y) / 2);
+
+const round = (number: number, digits: number = 9) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
+
+const lineLength = (p1: Point, p2: Point): number => round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)), 2);
+
+const getDirection = (centerPoint: Point, startPoint: Point, endPoint: Point): number => {
+    return (startPoint.x - centerPoint.x) * (endPoint.y - centerPoint.y) -
+        (startPoint.y - centerPoint.y) * (endPoint.x - centerPoint.x) <
+        0
+        ? -1
+        : 1;
+};
+
+const lineAngle = (startPoint: Point, endPoint: Point): number => {
+    let p1 = { x: startPoint.x + 100000, y: startPoint.y };
+
+    let a = lineLength(p1, startPoint);
+    let b = lineLength(endPoint, startPoint);
+    let c = lineLength(p1, endPoint);
+    let cos = (Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)) / (2 * a * b);
+
+    let direction = getDirection(startPoint, p1, endPoint);
+
+    return direction * round((Math.acos(cos > 1 ? 1 : cos) * 180) / Math.PI, 3);
+};
 
 let lines: Line[] = [];
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
-    let drawer: TrianglePainter = null;
+    let drawer: RectPainter = null;
     let drawerSeq = 0;
 
     var layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
@@ -31,45 +53,21 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
     });
 
-    let addRect = (point: Point) => {
-        const r = Rect.fromXywh(point.x - size, point.y - size, 2 * size, 2 * size);
+    lines = subLines(lines);
 
-        addObject({
-            p0: [r.x1, r.y1],
-            p1: [r.x2, r.y1],
-            p2: [r.x1, r.y2],
+    drawer = context.requirePainter("WF" + drawerSeq++, RectPainter, painterOrderPriority);
+
+    lines.forEach((line, i) => {
+        const center = lineCenter(line);
+        const length = lineLength(line.p0, line.p1);
+        var color = Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4();
+
+        drawer.addObject({
+            id: `${line.p0.x}_${line.p0.y}_${line.p1.x}_${line.p1.y}`,
+            center: [center.x, center.y],
             color,
+            deltas: [-length / 2, -size / 2, length / 2, size / 2],
+            rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180           
         });
-        addObject({
-            p1: [r.x2, r.y1],
-            p2: [r.x1, r.y2],
-            p0: [r.x2, r.y2],
-            color,
-        });
-    };
-
-    let addObject = (item: TrianglePainterObject) => {
-        while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter("WF" + drawerSeq++, TrianglePainter, painterOrderPriority);
-        }
-    };
-
-    setTimeout(() => {
-        let booths: Set<Booth> = new Set(boothStore.booths.filter((b) => b.name == "6" || b.name == "56"));
-
-        let iterator = booths.values();
-        let from = iterator.next().value;
-        let to = iterator.next().value;
-
-        const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
-        const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
-
-        let points = getWayPoints(
-            lines,
-            new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
-            new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4))
-        );
-
-        points.forEach((p) => addRect(p));
-    }, 0);
+    });
 }
