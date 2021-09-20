@@ -33,7 +33,7 @@ const linesIntersection = (line1: Line, line2: Line) => {
         };
 
     denominator = (line2.p1.y - line2.p0.y) * (line1.p1.x - line1.p0.x) - (line2.p1.x - line2.p0.x) * (line1.p1.y - line1.p0.y);
-    if (denominator == 0) return result;
+    if (denominator === 0) return result;
 
     a = line1.p0.y - line2.p0.y;
     b = line1.p0.x - line2.p0.x;
