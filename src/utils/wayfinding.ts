@@ -15,20 +15,10 @@ export class Rectangle {
 
 const lineLength = (p1: Point, p2: Point): number => Math.round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)));
 
-const distance = (from: Point, to: Point): number => {
-    let dx = from.x - to.x;
-    let dy = from.y - to.y;
-    return Math.sqrt(dx * dx + dy * dy);
-};
+const dist = (p1: Point, p2: Point): number => Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
 
-const minDistanceLineEnds = (line1: Line, line2: Line) => {
-    return Math.min(
-        distance(line1.p0, line2.p0),
-        distance(line1.p0, line2.p1),
-        distance(line1.p1, line2.p0),
-        distance(line1.p1, line2.p1)
-    );
-};
+const minDistanceLineEnds = (l1: Line, l2: Line) =>
+    Math.min(dist(l1.p0, l2.p0), dist(l1.p0, l2.p1), dist(l1.p1, l2.p0), dist(l1.p1, l2.p1));
 
 const linesIntersection = (line1: Line, line2: Line) => {
     let denominator: number,
@@ -43,7 +33,7 @@ const linesIntersection = (line1: Line, line2: Line) => {
         };
 
     denominator = (line2.p1.y - line2.p0.y) * (line1.p1.x - line1.p0.x) - (line2.p1.x - line2.p0.x) * (line1.p1.y - line1.p0.y);
-    if (denominator === 0) return result;
+    if (denominator == 0) return result;
 
     a = line1.p0.y - line2.p0.y;
     b = line1.p0.x - line2.p0.x;
@@ -82,28 +72,28 @@ const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
 };
 
 export const subLines = (lines: Line[]): Line[] => {
-    let subLines = [];
-
-    let lastIntersectPoint: Point = null;
+    const subLines = [];
+    let linePoints: Point[] = [];
 
     for (let i = 0; i < lines.length; i++) {
-        lastIntersectPoint = lines[i].p0;
+        linePoints = [lines[i].p0, lines[i].p1];
 
         for (let j = 0; j < lines.length; j++) {
             if (i === j) continue;
 
             let intersect = linesIntersection(lines[i], lines[j]);
             if (!intersect.onLine1 || !intersect.onLine2) continue;
-
-            let len = lineLength(lastIntersectPoint, intersect.point);
-            if (len < 0.1) continue;
-
-            subLines.push(new Line(lastIntersectPoint, intersect.point));
-            lastIntersectPoint = intersect.point;
+            linePoints.push(intersect.point);
         }
 
-        let len = lineLength(lastIntersectPoint, lines[i].p1);
-        if (len > 0.1) subLines.push(new Line(lastIntersectPoint, lines[i].p1));
+        linePoints = linePoints.sort((p0, p1) => lineLength(lines[i].p0, p0) - lineLength(lines[i].p0, p1));
+
+        let points: Point[] = [];
+        linePoints.forEach((point) =>
+            !points.filter((p) => point.x === p.x && point.y === p.y).length ? points.push(point) : null
+        );
+
+        for (let k = 1; k < points.length; k++) subLines.push(new Line(points[k - 1], points[k]));
     }
 
     return subLines;
@@ -145,7 +135,7 @@ export const getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectang
                     graph.addLink(
                         `${node.intersections[i].x}_${node.intersections[i].y}`,
                         `${node.intersections[j].x}_${node.intersections[j].y}`,
-                        { distance: distance(node.intersections[i], node.intersections[j]) }
+                        { distance: dist(node.intersections[i], node.intersections[j]) }
                     );
                 }
             }
@@ -173,10 +163,10 @@ export const getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectang
     for (let i = 0; i < paths.length; i++) {
         const points: Point[] = paths[i];
 
-        var dist = 0;
-        for (let j = 0; j < points.length - 1; j++) dist += distance(points[j], points[j + 1]);
+        var d = 0;
+        for (let j = 0; j < points.length - 1; j++) d += dist(points[j], points[j + 1]);
 
-        distances.push(dist);
+        distances.push(d);
     }
 
     return paths[distances.indexOf(Math.min(...distances))];

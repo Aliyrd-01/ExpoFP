@@ -1,14 +1,15 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { boothStore, uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import settings from "../tools/settings";
 import { t } from "../utils/i18n";
+import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
-import { useAutorun } from "../utils/mobx";
-import { GaEventActions, sendEventToGa } from "../tools/gtag";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -52,6 +53,29 @@ function Booth() {
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
+
+        const wayfinding =
+            settings.EXPO == "wayfinding" ? (
+                <div>
+                    <select
+                        value={uiState.destination?.name || ""}
+                        onChange={(e) => (uiState.destination = boothStore.booths.filter((b) => b.name == e.target.value)[0])}
+                        style={{ margin: 5, width: "98%", padding: 6, border: "1px #e3e3e3 solid" }}
+                    >
+                        <option value="" disabled selected>
+                            Find way to...
+                        </option>
+                        {boothStore.booths.map((booth) =>
+                            booth.id == s.booth.id ? null : (
+                                <option key={booth.id} value={booth.name}>
+                                    {booth.name}
+                                </option>
+                            )
+                        )}
+                    </select>
+                </div>
+            ) : null;
+
         if (s.regular) {
             const b = s.regular;
 
@@ -96,6 +120,7 @@ function Booth() {
                     <>
                         <div className="booth__content -reg">
                             <div className="booth__infos">
+                                {wayfinding}
                                 {b.type && (
                                     <div className="booth__info">
                                         <i className="fas fa-cube" />
@@ -150,6 +175,7 @@ function Booth() {
         } else {
             content = (
                 <div className="booth__content -spec">
+                    {wayfinding}
                     {!!s.special.description}
                     <div className="booth__desc" dangerouslySetInnerHTML={{ __html: s.special.description }} />
                 </div>

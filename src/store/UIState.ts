@@ -26,6 +26,7 @@ export default class UIState {
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
     @observable.ref details: Booth | Exhibitor = null;
+    @observable.ref destination: Booth = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
@@ -67,6 +68,10 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get selectedBooth() {
+        return this.details instanceof BoothBase ? this.details : null;
+    }
+
+    @computed({ keepAlive: true }) get destinationBooth() {
         return this.details instanceof BoothBase ? this.details : null;
     }
 
