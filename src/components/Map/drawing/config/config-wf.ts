@@ -8,8 +8,8 @@ import { getWayPoints, Line, Point, Rectangle, subLines } from "../../../../util
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 
-const size = boothStore.borderWidth / 5;
-const color = Color("black").vec4();
+const size = boothStore.borderWidth;
+const color = Color("magenta").vec4();
 const ids: string[] = [];
 
 const lineCenter = (line: Line) => new Point((line.p0.x + line.p1.x) / 2, (line.p0.y + line.p1.y) / 2);

@@ -54,27 +54,26 @@ function Booth() {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
 
-        const wayfinding =
-            settings.EXPO === "wayfinding" ? (
-                <div>
-                    <select
-                        value={uiState.destination?.name || ""}
-                        onChange={(e) => (uiState.destination = boothStore.booths.filter((b) => b.name === e.target.value)[0])}
-                        style={{ margin: 5, width: "98%", padding: 6, border: "1px #e3e3e3 solid" }}
-                    >
-                        <option value="" disabled selected>
-                            Find way to...
-                        </option>
-                        {boothStore.booths.map((booth) =>
-                            booth.id === s.booth.id ? null : (
-                                <option key={booth.id} value={booth.name}>
-                                    {booth.name}
-                                </option>
-                            )
-                        )}
-                    </select>
-                </div>
-            ) : null;
+        const wayfinding = (settings.EXPO as string).startsWith("wayfinding") ? (
+            <div>
+                <select
+                    value={uiState.destination?.name || ""}
+                    onChange={(e) => (uiState.destination = boothStore.booths.filter((b) => b.name === e.target.value)[0])}
+                    style={{ margin: 5, width: "98%", padding: 6, border: "1px #e3e3e3 solid" }}
+                >
+                    <option value="" disabled selected>
+                        Find way to...
+                    </option>
+                    {boothStore.booths.map((booth) =>
+                        booth.id === s.booth.id ? null : (
+                            <option key={booth.id} value={booth.name}>
+                                {booth.name}
+                            </option>
+                        )
+                    )}
+                </select>
+            </div>
+        ) : null;
 
         if (s.regular) {
             const b = s.regular;
