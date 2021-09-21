@@ -8,13 +8,16 @@ import { getWayPoints, Line, Point, Rectangle, subLines } from "../../../../util
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 
-const size = boothStore.borderWidth;
-const color = Color("magenta").vec4();
+const strokeWidth = boothStore.borderWidth;
+const color = Color("#30AFEB").vec4();
+let lines: Line[] = [];
 const ids: string[] = [];
 
-const lineCenter = (line: Line) => new Point((line.p0.x + line.p1.x) / 2, (line.p0.y + line.p1.y) / 2);
+//#region Geometry calculations
 
 const round = (number: number, digits: number = 9) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
+
+const lineCenter = (line: Line) => new Point((line.p0.x + line.p1.x) / 2, (line.p0.y + line.p1.y) / 2);
 
 const lineLength = (p1: Point, p2: Point): number => round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)), 2);
 
@@ -39,9 +42,11 @@ const lineAngle = (startPoint: Point, endPoint: Point): number => {
     return direction * round((Math.acos(cos > 1 ? 1 : cos) * 180) / Math.PI, 3);
 };
 
+//#endregion
+
 const lineId = (p0: Point, p1: Point): string => `${p0.x}_${p0.y}_${p1.x}_${p1.y}`;
 
-let lines: Line[] = [];
+const pointId = (p: Point): string => `${p.x}_${p.y}`;
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
     let drawer: RectPainter = null;
@@ -71,7 +76,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             id: lineId(line.p0, line.p1),
             center: [center.x, center.y],
             color: color,
-            deltas: [-length / 2, -size, length / 2, size],
+            deltas: [-length / 2, -strokeWidth, length / 2, strokeWidth],
             rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
             visible: false,
         });

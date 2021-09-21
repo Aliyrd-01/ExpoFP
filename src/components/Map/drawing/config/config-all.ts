@@ -32,7 +32,7 @@ export default function configAll(context: DrawerContext) {
             basePriority += 1;
         });
 
-    configWf(context, 149);
+    configWf(context, ++basePriority);
 
     configYah(context);
     matrixAfter();
