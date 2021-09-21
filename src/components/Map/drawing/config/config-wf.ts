@@ -7,10 +7,11 @@ import { boothStore, uiState } from "../../../../store";
 import { getWayPoints, Line, Point, Rectangle, subLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
+import { createCircleCanvas } from "./canvases";
 
-const strokeWidth = boothStore.borderWidth;
-const color = Color("#30AFEB").vec4();
-let lines: Line[] = [];
+const strokeWidth = boothStore.borderWidth / 2;
+const color = Color("#30AFEB");
+
 const ids: string[] = [];
 
 //#region Geometry calculations
@@ -55,6 +56,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     var layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
     if (!layer) return;
 
+    let lines: Line[] = [];
     layer.childNodes.forEach((node: any) => {
         lines.push(
             new Line(
@@ -64,20 +66,35 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
     });
 
-    lines = subLines(lines);
+    let sl = subLines(lines);
 
     drawer = context.requirePainter("WF" + drawerSeq++, RectPainter, painterOrderPriority);
 
-    lines.forEach((line, i) => {
+    sl.lines.forEach((line, i) => {
         const center = lineCenter(line);
         const length = lineLength(line.p0, line.p1);
+        const delta = length / 2 + strokeWidth;
 
         drawer.addObject({
             id: lineId(line.p0, line.p1),
             center: [center.x, center.y],
-            color: color,
-            deltas: [-length / 2, -strokeWidth, length / 2, strokeWidth],
+            color: color.vec4(),
+            deltas: [-delta, -strokeWidth, delta, strokeWidth],
             rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
+            visible: false,
+        });
+    });
+
+    let dotCanvas = createCircleCanvas(strokeWidth * 8, context.pixelRatio, "#fff", color.hex());
+
+    sl.lineEnds.forEach((lineEnd) => {
+        drawer.addObject({
+            id: pointId(lineEnd),
+            center: [lineEnd.x, lineEnd.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [-dotCanvas.width / 2, -dotCanvas.width / 2, dotCanvas.width, dotCanvas.width],
+            canvasTmp: dotCanvas,
+            texPosition: "lefttop",
             visible: false,
         });
     });
@@ -97,7 +114,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
 
         let points = getWayPoints(
-            lines,
+            sl.lines,
             new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
             new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4))
         );
@@ -107,6 +124,15 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             const cp = points[index];
             let id = lineId(cp, pp);
             if (!drawer.getObject(id)) id = lineId(pp, cp);
+
+            drawer.updateVisible(id, true);
+            ids.push(id);
+
+            // Points ids
+            id = pointId(pp);
+            if (!drawer.getObject(id)) id = pointId(cp);
+
+            if (!drawer.getObject(id)) continue;
 
             drawer.updateVisible(id, true);
             ids.push(id);

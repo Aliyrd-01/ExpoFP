@@ -56,7 +56,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
     } else if (b.reserved) {
         lines.push(t("Reserved"));
     } else if (b.exhibitors.length) {
-        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b)=> a > b ? 1 : -1));
+        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } else {
         if (b.size) lines.push(b.size);
         if (b.price && b.price !== "0") lines.push(b.price);
@@ -114,7 +114,12 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
 }
 
 const circleCanvasCache = new Map<string, CanvasDescriptor>();
-export function createCircleCanvas(radius: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+export function createCircleCanvas(
+    radius: number,
+    pixelRatio: number,
+    color: string = "#fff",
+    stroke: string = null
+): CanvasDescriptor {
     const key = radius + " " + pixelRatio;
     let res = circleCanvasCache.get(key);
 
@@ -129,9 +134,15 @@ export function createCircleCanvas(radius: number, pixelRatio: number, color: st
             height: size,
             // padding,
             draw(c) {
-                c.fillStyle = color;
+                c.fillStyle = stroke || color;
                 c.beginPath();
                 c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
+                c.fill();
+
+                if (!stroke) return;
+                c.fillStyle = color;
+                c.beginPath();
+                c.arc(size / 2, size / 2, (radius * pixelRatio) / 2, 0, 2 * Math.PI);
                 c.fill();
             },
         };

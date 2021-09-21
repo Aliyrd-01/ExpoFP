@@ -91,8 +91,13 @@ const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     //return points;
 };
 
-export const subLines = (lines: Line[]): Line[] => {
-    const subLines = [];
+const samePoint = (p1: Point, p2: Point): boolean => p1.x === p2.x && p1.y === p2.y;
+
+export const subLines = (lines: Line[]): { lines: Line[]; intersections: Point[]; lineEnds: Point[] } => {
+    const subLines: Line[] = [];
+    const intersections: Point[] = [];
+    const lineEnds: Point[] = [];
+
     let linePoints: Point[] = [];
 
     for (let i = 0; i < lines.length; i++) {
@@ -104,19 +109,23 @@ export const subLines = (lines: Line[]): Line[] => {
             let intersect = linesIntersection(lines[i], lines[j]);
             if (!intersect.onLine1 || !intersect.onLine2) continue;
             linePoints.push(intersect.point);
+            intersections.push(intersect.point);
         }
 
         linePoints = linePoints.sort((p0, p1) => lineLength(lines[i].p0, p0) - lineLength(lines[i].p0, p1));
 
         let points: Point[] = [];
-        linePoints.forEach((point) =>
-            !points.filter((p) => point.x === p.x && point.y === p.y).length ? points.push(point) : null
-        );
+        linePoints.forEach((point) => (!points.filter((p) => samePoint(point, p)).length ? points.push(point) : null));
 
         for (let k = 1; k < points.length; k++) subLines.push(new Line(points[k - 1], points[k]));
     }
 
-    return subLines;
+    subLines.forEach((sl) => {
+        if (!intersections.filter((i) => samePoint(sl.p0, i)).length) lineEnds.push(sl.p0);
+        if (!intersections.filter((i) => samePoint(sl.p1, i)).length) lineEnds.push(sl.p1);
+    });
+
+    return { lines: subLines, intersections, lineEnds };
 };
 
 export const getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectangle): Point[] => {
