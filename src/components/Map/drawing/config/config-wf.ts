@@ -9,7 +9,7 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { createCircleCanvas } from "./canvases";
 
-const strokeWidth = boothStore.borderWidth / 2;
+const strokeWidth = boothStore.borderWidth * 1.2;
 const color = Color("#30AFEB");
 
 const ids: string[] = [];
@@ -85,7 +85,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         });
     });
 
-    let dotCanvas = createCircleCanvas(strokeWidth * 8, context.pixelRatio, "#fff", color.hex());
+    let dotCanvas = createCircleCanvas(strokeWidth * 4, context.pixelRatio, "#fff", color.hex());
 
     sl.lineEnds.forEach((lineEnd) => {
         drawer.addObject({
