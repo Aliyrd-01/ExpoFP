@@ -9,6 +9,7 @@ import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
+import Route from "./RouteStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -25,7 +26,7 @@ export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
-    @observable.ref details: Booth | Exhibitor = null;
+    @observable.ref details: Booth | Exhibitor | Route = null;
     @observable.ref destination: Booth = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
@@ -71,8 +72,8 @@ export default class UIState {
         return this.details instanceof BoothBase ? this.details : null;
     }
 
-    @computed({ keepAlive: true }) get destinationBooth() {
-        return this.details instanceof BoothBase ? this.details : null;
+    @computed({ keepAlive: true }) get selectedRoute() {
+        return this.details instanceof Route ? this.details : null;
     }
 
     @computed({ keepAlive: true }) get selectedCategory() {

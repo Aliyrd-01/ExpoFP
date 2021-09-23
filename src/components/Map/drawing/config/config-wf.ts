@@ -4,7 +4,7 @@ import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import svg from "../../../../data/svg";
 import { boothStore, uiState } from "../../../../store";
-import { getWayPoints, Line, Point, Rectangle, subLines } from "../../../../utils/wayfinding";
+import { buildWays, getWayPoints, Line, Point, Rectangle, subLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { createCircleCanvas } from "./canvases";
@@ -66,7 +66,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
     });
 
-    let sl = subLines(lines);
+    const boothsRects = boothStore.booths.map((b) => {
+        const p1 = Polygon4.fromRect(b.rect).rotate(b.rotate, b.rect.cx, b.rect.cy);
+        return new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
+    });
+
+    let sl = subLines(lines.concat(buildWays(lines, boothsRects, []) || []));
 
     drawer = context.requirePainter("WF" + drawerSeq++, RectPainter, painterOrderPriority);
 
@@ -99,16 +104,14 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         });
     });
 
-    const updateDestination = () => {
+    const update = () => {
         ids.forEach((id) => drawer.updateVisible(id, false));
 
-        let from = uiState.selectedBooth;
-        let to = uiState.destination;
+        if (!uiState.selectedRoute) return;
 
-        if (!from || !to) {
-            if (uiState.destination) uiState.destination = null;
-            return;
-        }
+        let { from, to } = uiState.selectedRoute;
+
+        if (!from || !to) return;
 
         const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
         const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
@@ -140,12 +143,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     };
 
     reaction(
-        () => uiState.selectedBooth,
-        () => updateDestination()
-    );
-
-    reaction(
-        () => uiState.destination,
-        () => updateDestination()
+        () => uiState.selectedRoute,
+        () => update()
     );
 }

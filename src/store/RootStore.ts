@@ -1,11 +1,12 @@
 import { action } from "mobx";
+import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
+import Route from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
-import FloorPlanReady from "../floorplan.ready";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -30,6 +31,11 @@ export default class RootStore {
 
     @action selectBooth(booth: Booth) {
         this.uiState.details = booth;
+    }
+
+    @action selectRoute(route: Route) {
+        this.uiState.details = route;
+        if (route.from && route.to) this.moveToList([route.from, route.to]);
     }
 
     @action reset() {
@@ -141,7 +147,7 @@ export default class RootStore {
 
         if (this.uiState.onBoothClick) {
             const e: FloorPlanBoothClickEvent = {
-                target: booth
+                target: booth,
             };
             this.uiState.onBoothClick(e);
         }
@@ -166,6 +172,13 @@ export default class RootStore {
         //     dispatch("selectBooth", id);
         // }
         // dispatch("showMap", id);
+    }
+
+    @action clickRoute(route: Route) {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.menu = null;
+        this.selectRoute(route);
+        //this.showMap();
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
@@ -211,7 +224,7 @@ export default class RootStore {
         // take only to booths and exhibitors, ignore categories
         items = items || this.uiState.listItems;
         const booths = [];
-        items.forEach(item => {
+        items.forEach((item) => {
             if (item instanceof Exhibitor) {
                 booths.push(...item.booths);
             } else if (item instanceof BoothBase) {

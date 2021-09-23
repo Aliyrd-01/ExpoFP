@@ -15,12 +15,10 @@ export class Rectangle {
 
 const lineLength = (p1: Point, p2: Point): number => Math.round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)));
 
-const dist = (p1: Point, p2: Point): number => Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
-
-const minDistanceLineEnds = (l1: Line, l2: Line) =>
-    Math.min(dist(l1.p0, l2.p0), dist(l1.p0, l2.p1), dist(l1.p1, l2.p0), dist(l1.p1, l2.p1));
-
 const linesIntersection = (line1: Line, line2: Line) => {
+    const minDistanceLineEnds = (l1: Line, l2: Line) =>
+        Math.min(lineLength(l1.p0, l2.p0), lineLength(l1.p0, l2.p1), lineLength(l1.p1, l2.p0), lineLength(l1.p1, l2.p1));
+
     let denominator: number,
         a: number,
         b: number,
@@ -58,7 +56,7 @@ const triangleArea = (p1: Point, p2: Point, p3: Point): number => {
     return Math.abs(a);
 };
 
-const pointInsideRectangle = (p: Point, rect: Rectangle): boolean => {
+const pointInsideRectangle = (p: Point, rect: Rectangle): Point => {
     let rArea = lineLength(rect.p0, rect.p1) * lineLength(rect.p1, rect.p2);
     let sAreas =
         triangleArea(p, rect.p0, rect.p1) +
@@ -66,32 +64,97 @@ const pointInsideRectangle = (p: Point, rect: Rectangle): boolean => {
         triangleArea(p, rect.p2, rect.p3) +
         triangleArea(p, rect.p3, rect.p0);
 
-    return rArea >= sAreas;
+    return rArea >= sAreas ? p : null;
 };
 
 const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
-    if (pointInsideRectangle(line.p0, rect)) return [line.p0];
-    if (pointInsideRectangle(line.p1, rect)) return [line.p1];
-    return [];
+    let points: Point[] = [];
 
-    // let points: Point[] = [];
+    let res = linesIntersection(line, { p0: rect.p0, p1: rect.p1 });
+    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
 
-    // let res = linesIntersection(line, { p0: rect.p0, p1: rect.p1 });
-    // if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
+    res = linesIntersection(line, { p0: rect.p1, p1: rect.p2 });
+    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
 
-    // res = linesIntersection(line, { p0: rect.p1, p1: rect.p2 });
-    // if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
+    res = linesIntersection(line, { p0: rect.p2, p1: rect.p3 });
+    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
 
-    // res = linesIntersection(line, { p0: rect.p2, p1: rect.p3 });
-    // if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
+    res = linesIntersection(line, { p0: rect.p0, p1: rect.p3 });
+    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
 
-    // res = linesIntersection(line, { p0: rect.p0, p1: rect.p3 });
-    // if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
-
-    //return points;
+    return points;
 };
 
+const lineCenter = (p1: Point, p2: Point): Point => new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+
 const samePoint = (p1: Point, p2: Point): boolean => p1.x === p2.x && p1.y === p2.y;
+
+const perpendicularToLine = (point: Point, start: Point, end: Point): { p: Point; isInside: boolean } => {
+    const k =
+        ((end.y - start.y) * (point.x - start.x) - (end.x - start.x) * (point.y - start.y)) /
+        (Math.pow(end.y - start.y, 2) + Math.pow(end.x - start.x, 2));
+
+    let p = new Point(point.x - k * (end.y - start.y), point.y + k * (end.x - start.x));
+
+    return {
+        p,
+        isInside:
+            p.x >= Math.min(start.x, end.x) &&
+            p.x <= Math.max(start.x, end.x) &&
+            p.y >= Math.min(start.y, end.y) &&
+            p.y <= Math.max(start.y, end.y),
+    };
+};
+
+export const buildWays = (lines: Line[], rects: Rectangle[], other: Rectangle[] = []): Line[] => {
+    const blockers = rects.concat(other);
+
+    let anyInter = blockers.filter((r) => lines.filter((l) => lineRectangleIntersections(l, r).length).length);
+    if (anyInter.length) return null;
+
+    const ways: Line[] = [];
+
+    for (let i = 0; i < rects.length; i++) {
+        const rect = rects[i];
+
+        let perdendiculars: Line[] = [];
+
+        let rectCenters = [
+            lineCenter(rect.p0, rect.p1),
+            lineCenter(rect.p1, rect.p2),
+            lineCenter(rect.p2, rect.p3),
+            lineCenter(rect.p3, rect.p0),
+        ];
+
+        for (let j = 0; j < rectCenters.length; j++) {
+            const center = rectCenters[j];
+
+            for (let k = 0; k < lines.length; k++) {
+                const line = lines[k];
+
+                let perpendicular = perpendicularToLine(center, line.p0, line.p1);
+                if (!perpendicular.isInside) continue;
+
+                let pLine = new Line(center, perpendicular.p);
+
+                let rectIntersections = blockers.filter((r) => {
+                    let p = lineRectangleIntersections(pLine, r);
+                    return p.length > 0 && !(p.length === 1 && samePoint(center, p[0]));
+                });
+
+                let linesIntersections = lines.filter((l) => {
+                    let r = linesIntersection(pLine, l);
+                    return r.onLine1 && r.onLine2;
+                });
+
+                if (!rectIntersections.length && linesIntersections.length < 2) perdendiculars.push(pLine);
+            }
+        }
+
+        ways.push(...perdendiculars);
+    }
+    return ways;
+};
 
 export const subLines = (lines: Line[]): { lines: Line[]; intersections: Point[]; lineEnds: Point[] } => {
     const subLines: Line[] = [];
@@ -137,8 +200,14 @@ export const getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectang
     for (let i = 0; i < lines.length; i++) {
         nodes.push({ intersections: [] });
 
-        let startIntersections = lineRectangleIntersections(lines[i], fromRect);
-        let endIntersections = lineRectangleIntersections(lines[i], toRect);
+        let startIntersections = [
+            pointInsideRectangle(lines[i].p0, fromRect),
+            pointInsideRectangle(lines[i].p1, fromRect),
+        ].filter((p) => p);
+
+        let endIntersections = [pointInsideRectangle(lines[i].p0, toRect), pointInsideRectangle(lines[i].p1, toRect)].filter(
+            (p) => p
+        );
 
         startNodes.push(...startIntersections);
         endNodes.push(...endIntersections);
@@ -164,7 +233,7 @@ export const getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectang
                     graph.addLink(
                         `${node.intersections[i].x}_${node.intersections[i].y}`,
                         `${node.intersections[j].x}_${node.intersections[j].y}`,
-                        { distance: dist(node.intersections[i], node.intersections[j]) }
+                        { distance: lineLength(node.intersections[i], node.intersections[j]) }
                     );
                 }
             }
@@ -195,7 +264,7 @@ export const getWayPoints = (lines: Line[], fromRect: Rectangle, toRect: Rectang
         const points: Point[] = paths[i];
 
         var d = 0;
-        for (let j = 0; j < points.length - 1; j++) d += dist(points[j], points[j + 1]);
+        for (let j = 0; j < points.length - 1; j++) d += lineLength(points[j], points[j + 1]);
 
         distances.push(d);
     }

@@ -87,6 +87,14 @@
         @include button;
     }
 
+    &__directions {
+        @include button;
+        margin: 0.5rem 0;
+        > button {
+            cursor: pointer;
+        }
+    }
+
     &__reserve-instructions {
         line-height: 1.4em;
     }
