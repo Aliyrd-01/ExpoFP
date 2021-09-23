@@ -134,15 +134,21 @@ export function createCircleCanvas(
             height: size,
             // padding,
             draw(c) {
-                c.fillStyle = stroke || color;
+                c.fillStyle = color;
                 c.beginPath();
                 c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
                 c.fill();
 
                 if (!stroke) return;
+
+                c.fillStyle = stroke;
+                c.beginPath();
+                c.arc(size / 2, size / 2, 0.75 * (radius * pixelRatio), 0, 2 * Math.PI);
+                c.fill();
+
                 c.fillStyle = color;
                 c.beginPath();
-                c.arc(size / 2, size / 2, (radius * pixelRatio) / 2, 0, 2 * Math.PI);
+                c.arc(size / 2, size / 2, 0.4 * (radius * pixelRatio), 0, 2 * Math.PI);
                 c.fill();
             },
         };
