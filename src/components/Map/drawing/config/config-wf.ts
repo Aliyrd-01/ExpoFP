@@ -4,59 +4,53 @@ import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import svg from "../../../../data/svg";
 import { boothStore, uiState } from "../../../../store";
-import { buildWays, getWayPoints, Line, Point, Rectangle, subLines } from "../../../../utils/wayfinding";
+import {
+    getGraphPoints,
+    Line,
+    lineAngle,
+    lineCenter,
+    lineId,
+    lineLength,
+    Point,
+    pointId,
+    Rectangle,
+} from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
+import { buildGraph } from "./../../../../utils/wayfinding";
 import { createCircleCanvas } from "./canvases";
 
 const strokeWidth = boothStore.borderWidth * 1.2;
-const color = Color("#30AFEB");
+const fromColor = Color("#30AFEB");
+const toColor = Color("#FF9E2C");
 
 const ids: string[] = [];
 
-//#region Geometry calculations
+const interpolateColors = (color1, color2, steps) => {
+    const interpolateColor = (color1, color2, factor = 0.5) => {
+        var result = color1.slice();
+        for (var i = 0; i < 3; i++) result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+        return result;
+    };
 
-const round = (number: number, digits: number = 9) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
+    var stepFactor = 1 / (steps - 1),
+        interpolatedColorArray = [];
 
-const lineCenter = (line: Line) => new Point((line.p0.x + line.p1.x) / 2, (line.p0.y + line.p1.y) / 2);
+    color1 = color1.match(/\d+/g).map(Number);
+    color2 = color2.match(/\d+/g).map(Number);
 
-const lineLength = (p1: Point, p2: Point): number => round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)), 2);
+    for (var i = 0; i < steps; i++) interpolatedColorArray.push(interpolateColor(color1, color2, stepFactor * i));
 
-const getDirection = (centerPoint: Point, startPoint: Point, endPoint: Point): number => {
-    return (startPoint.x - centerPoint.x) * (endPoint.y - centerPoint.y) -
-        (startPoint.y - centerPoint.y) * (endPoint.x - centerPoint.x) <
-        0
-        ? -1
-        : 1;
+    return interpolatedColorArray;
 };
-
-const lineAngle = (startPoint: Point, endPoint: Point): number => {
-    let p1 = { x: startPoint.x + 100000, y: startPoint.y };
-
-    let a = lineLength(p1, startPoint);
-    let b = lineLength(endPoint, startPoint);
-    let c = lineLength(p1, endPoint);
-    let cos = (Math.pow(a, 2) + Math.pow(b, 2) - Math.pow(c, 2)) / (2 * a * b);
-
-    let direction = getDirection(startPoint, p1, endPoint);
-
-    return direction * round((Math.acos(cos > 1 ? 1 : cos) * 180) / Math.PI, 3);
-};
-
-//#endregion
-
-const lineId = (p0: Point, p1: Point): string => `${p0.x}_${p0.y}_${p1.x}_${p1.y}`;
-
-const pointId = (p: Point): string => `${p.x}_${p.y}`;
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
-    let drawer: RectPainter = null;
     let drawerSeq = 0;
 
-    var layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
+    const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
     if (!layer) return;
 
-    let lines: Line[] = [];
+    const lines: Line[] = [];
     layer.childNodes.forEach((node: any) => {
         lines.push(
             new Line(
@@ -71,34 +65,45 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         return new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     });
 
-    let sl = subLines(lines.concat(buildWays(lines, boothsRects, []) || []));
+    const drawer = context.requirePainter("WF" + drawerSeq++, RectPainter, painterOrderPriority);
 
-    drawer = context.requirePainter("WF" + drawerSeq++, RectPainter, painterOrderPriority);
+    const dotCanvas1 = createCircleCanvas(strokeWidth * 4, context.pixelRatio, "#fff", fromColor.hex());
+    const dotCanvas2 = createCircleCanvas(strokeWidth * 3.8, context.pixelRatio, "#fff", toColor.hex());
+
+    const sl = buildGraph(lines, boothsRects, []);
 
     sl.lines.forEach((line, i) => {
-        const center = lineCenter(line);
+        const center = lineCenter(line.p0, line.p1);
         const length = lineLength(line.p0, line.p1);
         const delta = length / 2 + strokeWidth;
 
         drawer.addObject({
             id: lineId(line.p0, line.p1),
             center: [center.x, center.y],
-            color: color.vec4(),
+            color: fromColor.vec4(),
             deltas: [-delta, -strokeWidth, delta, strokeWidth],
             rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
             visible: false,
         });
     });
 
-    let dotCanvas = createCircleCanvas(strokeWidth * 4, context.pixelRatio, "#fff", color.hex());
-
     sl.lineEnds.forEach((lineEnd) => {
         drawer.addObject({
-            id: pointId(lineEnd),
+            id: "f_" + pointId(lineEnd),
             center: [lineEnd.x, lineEnd.y],
             deltas: [0, 0, 0, 0],
-            deltaPts: [-dotCanvas.width / 2, -dotCanvas.width / 2, dotCanvas.width, dotCanvas.width],
-            canvasTmp: dotCanvas,
+            deltaPts: [-dotCanvas1.width / 2, -dotCanvas1.width / 2, dotCanvas1.width, dotCanvas1.width],
+            canvasTmp: dotCanvas1,
+            texPosition: "lefttop",
+            visible: false,
+        });
+
+        drawer.addObject({
+            id: "t_" + pointId(lineEnd),
+            center: [lineEnd.x, lineEnd.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [-dotCanvas2.width / 2, -dotCanvas2.width / 2, dotCanvas2.width, dotCanvas2.width],
+            canvasTmp: dotCanvas2,
             texPosition: "lefttop",
             visible: false,
         });
@@ -109,35 +114,48 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         if (!uiState.selectedRoute) return;
 
-        let { from, to } = uiState.selectedRoute;
+        const { from, to } = uiState.selectedRoute;
 
         if (!from || !to) return;
 
         const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
         const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
 
-        let points = getWayPoints(
-            sl.lines,
+        const points = getGraphPoints(
             new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
             new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4))
         );
+        let id: string = null;
 
-        for (let index = 1; index < points.length; index++) {
-            const pp = points[index - 1];
+        const t = toColor.rgb().color;
+        const f = fromColor.rgb().color;
+
+        const colors = interpolateColors(`rgb(${t[0]},${t[1]},${t[2]})`, `rgb(${f[0]},${f[1]},${f[2]})`, points.length - 1);
+
+        for (let index = 0; index < points.length; index++) {
             const cp = points[index];
-            let id = lineId(cp, pp);
+
+            let prefix = null;
+            if (index === 0) prefix = "t_";
+            else if (index === points.length - 1) prefix = "f_";
+
+            id = prefix + pointId(cp);
+            if (prefix && drawer.getObject(id)) {
+                drawer.updateVisible(id, true);
+                ids.push(id);
+            }
+
+            if (index === 0) continue;
+
+            // Lines
+            const pp = points[index - 1];
+
+            id = lineId(cp, pp);
             if (!drawer.getObject(id)) id = lineId(pp, cp);
 
             drawer.updateVisible(id, true);
-            ids.push(id);
+            drawer.updateColor(id, Color(colors[index - 1]).vec4());
 
-            // Points ids
-            id = pointId(pp);
-            if (!drawer.getObject(id)) id = pointId(cp);
-
-            if (!drawer.getObject(id)) continue;
-
-            drawer.updateVisible(id, true);
             ids.push(id);
         }
     };

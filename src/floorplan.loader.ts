@@ -1,3 +1,4 @@
+import _locales from "../public/locales/_locales";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -5,7 +6,6 @@ import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isFromDesigner from "./utils/is-from-designer";
 import useShadow from "./utils/use-shadow";
-import _locales from "../public/locales/_locales";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -31,6 +31,10 @@ export default class FloorPlanLoader implements FloorPlan {
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
     selectBooth(name: string) {
+        nr();
+    }
+
+    selectRoute(from: string, to: string): void {
         nr();
     }
 

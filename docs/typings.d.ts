@@ -9,6 +9,8 @@ class FloorPlan {
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
     selectBooth(name: string): void;
+
+    // selectRoute(from: string, to: string): void;
 }
 
 interface FloorPlanOptions {

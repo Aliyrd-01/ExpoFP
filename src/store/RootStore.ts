@@ -140,6 +140,12 @@ export default class RootStore {
 
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
+
+        if (this.uiState.selectedRoute && !this.uiState.noOverlay) {
+            if (booth) this.selectRoute(new Route(null, booth));
+            return;
+        }
+
         if (!booth) {
             this.uiState.details = null;
             return;
