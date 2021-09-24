@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width"
-    />
-  </head>
-  <body>
-    <div id="floorplan">Loading...</div>
-    <script
-      src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      document.onload = () => {
-        var fp = new ExpoFP.FloorPlan({
-          element: document.querySelector("#floorplan"),
-          eventId: "wayfinding",
-          noOverlay: true
-        });
-        
-        
-          //fp.selectBooth("24");
-        
-        
-      };
-    </script>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width" />
+    </head>
+    <body>
+        <div id="floorplan">Loading...</div>
+        <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
+        <script>
+            window.floorplan = new ExpoFP.FloorPlan({
+                element: document.querySelector("#floorplan"),
+                eventId: "wayfinding",
+                noOverlay: true,
+                onBoothClick: e => {
+                    window.flutter_inappwebview?.callHandler('myHandlerName', e.target.name);
+                }
+            });
+			
+			function selectRoute(from, to){
+				window.floorplan?.selectRoute(from, to);
+			}
+			
+			function selectBooth(name){
+				window.floorplan?.selectBooth(name);
+			}
+			
+			setTimeout(()=> selectRoute("5","56"), 2000);
+			//setTimeout(()=> selectBooth("24"), 2000);
+			
+        </script>
+    </body>
 </html>
