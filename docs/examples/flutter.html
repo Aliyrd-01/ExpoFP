@@ -18,15 +18,12 @@
         var fp = new ExpoFP.FloorPlan({
           element: document.querySelector("#floorplan"),
           eventId: "rodion2",
-          noOverlay: true,
-          onBoothClick: (e) => {
-            window.Print.postMessage(`Booth clicked: ${e.target.name}`);
-          }
+          noOverlay: true
         });
         
-        setTimeout(()=>{
+        
           fp.selectBooth("24");
-        },2000);
+        
         
       };
     </script>
