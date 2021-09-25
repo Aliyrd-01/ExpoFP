@@ -9,11 +9,14 @@ function Wayfinding() {
     return useObserver(() => {
         const bar = <div className="bar">{t("Directions")}</div>;
 
-        const options = boothStore.booths.map((booth) => (
-            <option key={booth.id} value={booth.name}>
-                {booth.name}
-            </option>
-        ));
+        const options = (except: string) =>
+            boothStore.booths
+                .filter((b) => b.name !== except)
+                .map((booth) => (
+                    <option key={booth.id} value={booth.name}>
+                        {booth.name}
+                    </option>
+                ));
 
         const onClick = (name: string, isFrom: boolean = true) => {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];
@@ -31,7 +34,7 @@ function Wayfinding() {
                     style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
                 >
                     <option value="">Direction from ...</option>
-                    {options}
+                    {options(uiState.selectedRoute.to?.name)}
                 </select>
                 <select
                     value={uiState.selectedRoute.to?.name || ""}
@@ -39,7 +42,7 @@ function Wayfinding() {
                     style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
                 >
                     <option value="">Direction to ...</option>
-                    {options}
+                    {options(uiState.selectedRoute.from?.name)}
                 </select>
             </OverlayContent>
         );

@@ -5,6 +5,7 @@ import Polygon4 from "../../../../core/Polygon";
 import svg from "../../../../data/svg";
 import { boothStore, uiState } from "../../../../store";
 import {
+    buildGraph,
     getGraphPoints,
     Line,
     lineAngle,
@@ -17,14 +18,15 @@ import {
 } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { buildGraph } from "./../../../../utils/wayfinding";
 import { createCircleCanvas } from "./canvases";
 
-const strokeWidth = boothStore.borderWidth * 1.2;
+const strokeWidth = boothStore.borderWidth * 2;
 const fromColor = Color("#30AFEB");
 const toColor = Color("#FF9E2C");
 
 const ids: string[] = [];
+
+const isDebug = false;
 
 const interpolateColors = (color1, color2, steps) => {
     const interpolateColor = (color1, color2, factor = 0.5) => {
@@ -54,8 +56,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     layer.childNodes.forEach((node: any) => {
         lines.push(
             new Line(
-                { x: parseFloat(node.attributes.x1.value), y: parseFloat(node.attributes.y1.value) },
-                { x: parseFloat(node.attributes.x2.value), y: parseFloat(node.attributes.y2.value) }
+                new Point(parseFloat(node.attributes.x1.value), parseFloat(node.attributes.y1.value)),
+                new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value))
             )
         );
     });
@@ -83,7 +85,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             color: fromColor.vec4(),
             deltas: [-delta, -strokeWidth, delta, strokeWidth],
             rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
-            visible: false,
+            visible: isDebug,
         });
     });
 
@@ -95,7 +97,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             deltaPts: [-dotCanvas1.width / 2, -dotCanvas1.width / 2, dotCanvas1.width, dotCanvas1.width],
             canvasTmp: dotCanvas1,
             texPosition: "lefttop",
-            visible: false,
+            visible: isDebug,
         });
 
         drawer.addObject({

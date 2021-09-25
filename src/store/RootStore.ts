@@ -35,7 +35,10 @@ export default class RootStore {
 
     @action selectRoute(route: Route) {
         this.uiState.details = route;
-        if (route.from && route.to) this.moveToList([route.from, route.to]);
+        if (route.from && route.to) {
+            this.moveToList([route.from]);
+            this.showMap();
+        }
     }
 
     @action reset() {
@@ -141,8 +144,7 @@ export default class RootStore {
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
 
-        if (this.uiState.selectedRoute && !this.uiState.noOverlay) {
-            if (booth) this.selectRoute(new Route(null, booth));
+        if (this.uiState.selectedRoute && !booth) {
             return;
         }
 

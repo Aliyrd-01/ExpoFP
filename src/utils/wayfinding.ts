@@ -29,15 +29,15 @@ export type Sublines = { lines: Line[]; intersections: Point[]; lineEnds: Point[
 
 export const lineCenter = (p1: Point, p2: Point): Point => new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
 
-export const lineId = (p0: Point, p1: Point): string => `${p0.x}_${p0.y}_${p1.x}_${p1.y}`;
+export const lineId = (p0: Point, p1: Point): string =>
+    `${p0.x.toFixed(0)}_${p0.y.toFixed(0)}_${p1.x.toFixed(0)}_${p1.y.toFixed(0)}`;
 
-export const pointId = (p: Point): string => `${p.x}_${p.y}`;
+export const pointId = (p: Point): string => `${p.x.toFixed(0)}_${p.y.toFixed(0)}`;
 
-export const lineLength = (p1: Point, p2: Point): number =>
-    Math.round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)));
+export const lineLength = (p1: Point, p2: Point): number => round(Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)));
 
 export const lineAngle = (startPoint: Point, endPoint: Point): number => {
-    const p1 = { x: startPoint.x + 100000, y: startPoint.y };
+    const p1 = new Point(startPoint.x + 100000, startPoint.y);
 
     const a = lineLength(p1, startPoint);
     const b = lineLength(endPoint, startPoint);
@@ -49,9 +49,9 @@ export const lineAngle = (startPoint: Point, endPoint: Point): number => {
     return direction * round((Math.acos(cos > 1 ? 1 : cos) * 180) / Math.PI);
 };
 
-const round = (number: number, digits: number = 2) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
+const round = (number: number, digits: number = 3) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
 
-const samePoint = (p1: Point, p2: Point): boolean => p1.x === p2.x && p1.y === p2.y;
+const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) < 0.05;
 
 const getDirection = (centerPoint: Point, startPoint: Point, endPoint: Point): number => {
     return (startPoint.x - centerPoint.x) * (endPoint.y - centerPoint.y) -
@@ -61,17 +61,17 @@ const getDirection = (centerPoint: Point, startPoint: Point, endPoint: Point): n
         : 1;
 };
 
-const linesIntersection = (line1: Line, line2: Line) => {
-    const minDistanceLineEnds = (l1: Line, l2: Line) =>
-        Math.min(lineLength(l1.p0, l2.p0), lineLength(l1.p0, l2.p1), lineLength(l1.p1, l2.p0), lineLength(l1.p1, l2.p1));
+const minDistanceLineEnds = (l1: Line, l2: Line) =>
+    Math.min(lineLength(l1.p0, l2.p0), lineLength(l1.p0, l2.p1), lineLength(l1.p1, l2.p0), lineLength(l1.p1, l2.p1));
 
+const linesIntersection = (line1: Line, line2: Line) => {
     let denominator: number,
         a: number,
         b: number,
         numerator1: number,
         numerator2: number,
         result = {
-            point: new Point(null, null),
+            point: null,
             onLine1: false,
             onLine2: false,
         };
@@ -83,8 +83,8 @@ const linesIntersection = (line1: Line, line2: Line) => {
     b = line1.p0.x - line2.p0.x;
     numerator1 = (line2.p1.x - line2.p0.x) * a - (line2.p1.y - line2.p0.y) * b;
     numerator2 = (line1.p1.x - line1.p0.x) * a - (line1.p1.y - line1.p0.y) * b;
-    a = numerator1 / denominator;
-    b = numerator2 / denominator;
+    a = round(numerator1 / denominator, 3);
+    b = round(numerator2 / denominator, 3);
 
     result.point = new Point(line1.p0.x + a * (line1.p1.x - line1.p0.x), line1.p0.y + a * (line1.p1.y - line1.p0.y));
 
@@ -107,23 +107,23 @@ const pointInsideRectangle = (p: Point, rect: Rectangle): Point => {
         triangleArea(p, rect.p2, rect.p3) +
         triangleArea(p, rect.p3, rect.p0);
 
-    return rArea >= sAreas ? p : null;
+    return Math.abs(rArea - sAreas) < rArea * 0.01 ? p : null;
 };
 
 const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     const points: Point[] = [];
 
-    let res = linesIntersection(line, { p0: rect.p0, p1: rect.p1 });
-    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
+    let res = linesIntersection(line, new Line(rect.p0, rect.p1));
+    if (res.onLine1 && res.onLine2) points.push(new Point(res.point.x, res.point.y));
 
-    res = linesIntersection(line, { p0: rect.p1, p1: rect.p2 });
-    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
+    res = linesIntersection(line, new Line(rect.p1, rect.p2));
+    if (res.onLine1 && res.onLine2) points.push(new Point(res.point.x, res.point.y));
 
-    res = linesIntersection(line, { p0: rect.p2, p1: rect.p3 });
-    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
+    res = linesIntersection(line, new Line(rect.p2, rect.p3));
+    if (res.onLine1 && res.onLine2) points.push(new Point(res.point.x, res.point.y));
 
-    res = linesIntersection(line, { p0: rect.p0, p1: rect.p3 });
-    if (res.onLine1 && res.onLine2) points.push({ x: res.point.x, y: res.point.y });
+    res = linesIntersection(line, new Line(rect.p0, rect.p3));
+    if (res.onLine1 && res.onLine2) points.push(new Point(res.point.x, res.point.y));
 
     return points;
 };
@@ -281,7 +281,9 @@ export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle): Point[] 
             try {
                 const p = pathFinder.find(pointId(from[i]), pointId(to[j]));
                 if (p.length) paths.push(p.map((p) => new Point(parseFloat(p.id.split("_")[0]), parseFloat(p.id.split("_")[1]))));
-            } catch {}
+            } catch (e) {
+                console.warn(e);
+            }
         }
     }
 
