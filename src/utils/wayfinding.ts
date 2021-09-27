@@ -1,3 +1,5 @@
+import settings from "../tools/settings";
+import { auSublines } from "./autumndair";
 const path = require("ngraph.path");
 const createGraph = require("ngraph.graph");
 
@@ -235,7 +237,8 @@ let pathFinder: any = null;
 let sublines: Sublines = null;
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
-    sublines = subLines(lines.concat(buildWays(lines, rects, other) || []));
+    if (settings.EXPO === "autumnfair") sublines = auSublines;
+    else sublines = subLines(lines.concat(buildWays(lines, rects, other) || []));
 
     const graph = createGraph();
 

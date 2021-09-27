@@ -26,13 +26,13 @@ export default function configAll(context: DrawerContext) {
         .map((n) => n.getAttribute("id"))
         .forEach((layerName) => {
             if (layerName === "Booths") {
-                basePriority = 151;
                 boothsAnimate = configBooths(context);
+                basePriority = 153;
             } else configBg(context, layerName, basePriority);
             basePriority += 1;
         });
 
-    configWf(context, ++basePriority);
+    configWf(context, 152);
 
     configYah(context);
     matrixAfter();

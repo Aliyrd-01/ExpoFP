@@ -4,6 +4,7 @@ import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import svg from "../../../../data/svg";
 import { boothStore, uiState } from "../../../../store";
+import settings from "../../../../tools/settings";
 import {
     buildGraph,
     getGraphPoints,
@@ -20,9 +21,19 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { createCircleCanvas } from "./canvases";
 
-const strokeWidth = boothStore.borderWidth * 2;
-const fromColor = Color("#30AFEB");
-const toColor = Color("#FF9E2C");
+const strokeWidth = boothStore.borderWidth * 2.5;
+
+let capFrom = Color("#30AFEB");
+let capTo = Color("#FF9E2C");
+
+let lineFrom = capFrom;
+let lineTo = capTo;
+
+if (settings.EXPO === "autumnfair") {
+    lineTo = lineFrom = Color("#36F9ED");
+    capFrom = Color("#454545");
+    capTo = Color("#26E1D6");
+}
 
 const ids: string[] = [];
 
@@ -69,8 +80,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const drawer = context.requirePainter("WF" + drawerSeq++, RectPainter, painterOrderPriority);
 
-    const dotCanvas1 = createCircleCanvas(strokeWidth * 4, context.pixelRatio, "#fff", fromColor.hex());
-    const dotCanvas2 = createCircleCanvas(strokeWidth * 3.8, context.pixelRatio, "#fff", toColor.hex());
+    const dotCanvas1 = createCircleCanvas(strokeWidth * 2.5, context.pixelRatio, "#fff", capFrom.hex());
+    const dotCanvas2 = createCircleCanvas(strokeWidth * 2.3, context.pixelRatio, "#fff", capTo.hex());
 
     const sl = buildGraph(lines, boothsRects, []);
 
@@ -82,7 +93,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         drawer.addObject({
             id: lineId(line.p0, line.p1),
             center: [center.x, center.y],
-            color: fromColor.vec4(),
+            color: lineFrom.vec4(),
             deltas: [-delta, -strokeWidth, delta, strokeWidth],
             rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
             visible: isDebug,
@@ -129,8 +140,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
         let id: string = null;
 
-        const t = toColor.rgb().color;
-        const f = fromColor.rgb().color;
+        const t = lineTo.rgb().color;
+        const f = lineFrom.rgb().color;
 
         const colors = interpolateColors(`rgb(${t[0]},${t[1]},${t[2]})`, `rgb(${f[0]},${f[1]},${f[2]})`, points.length - 1);
 
@@ -166,4 +177,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         () => uiState.selectedRoute,
         () => update()
     );
+
+    if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) update();
 }

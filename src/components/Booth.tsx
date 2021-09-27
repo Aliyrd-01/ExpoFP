@@ -159,12 +159,10 @@ function Booth() {
 
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
-                <div className="booth__directions">
-                    <button onClick={() => store.clickRoute(new Route(null, s.booth))}>
-                        Directions
-                    </button>
-                </div>
                 {content}
+                <div className="booth__directions">
+                    <button onClick={() => store.clickRoute(new Route(null, s.booth))}>Directions</button>
+                </div>
             </OverlayContent>
         );
     });
