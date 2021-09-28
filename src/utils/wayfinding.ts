@@ -85,8 +85,8 @@ const linesIntersection = (line1: Line, line2: Line) => {
     b = line1.p0.x - line2.p0.x;
     numerator1 = (line2.p1.x - line2.p0.x) * a - (line2.p1.y - line2.p0.y) * b;
     numerator2 = (line1.p1.x - line1.p0.x) * a - (line1.p1.y - line1.p0.y) * b;
-    a = round(numerator1 / denominator, 3);
-    b = round(numerator2 / denominator, 3);
+    a = round(numerator1 / denominator, 6);
+    b = round(numerator2 / denominator, 6);
 
     result.point = new Point(line1.p0.x + a * (line1.p1.x - line1.p0.x), line1.p0.y + a * (line1.p1.y - line1.p0.y));
 
