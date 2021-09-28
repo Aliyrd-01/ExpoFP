@@ -1,6 +1,6 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
-import store, { boothStore, exhibitorStore, uiState } from "../store";
+import store, { boothStore, uiState } from "../store";
 import Route from "../store/RouteStore";
 import { t } from "../utils/i18n";
 import OverlayContent from "./OverlayContent";
@@ -9,37 +9,14 @@ function Wayfinding() {
     return useObserver(() => {
         const bar = <div className="bar">{t("Directions")}</div>;
 
-        // console.info(
-        //     exhibitorStore.exhibitors.map((e) => {
-        //         return {
-        //             id: e.slug,
-        //             name: e.name,
-        //             booths: e.booths.map((b) => {
-        //                 return {
-        //                     id: b.slug,
-        //                     name: b.name,
-        //                 };
-        //             }),
-        //         };
-        //     })
-        // );
-
         const options = (except: string) => {
-            let opts = [];
-
-            exhibitorStore.exhibitors.forEach((exh) =>
-                opts.push(
-                    ...exh.booths
-                        .filter((b) => b.name !== except)
-                        .map((booth) => (
-                            <option key={`${exh.id} + ${booth.id}`} value={booth.name}>
-                                {exh.name} - {booth.name}
-                            </option>
-                        ))
-                )
-            );
-
-            return opts;
+            return boothStore.booths
+                .filter((b) => b.name !== except)
+                .map((booth) => (
+                    <option key={`${booth.id}`} value={booth.name}>
+                        {booth.name}
+                    </option>
+                ));
         };
 
         const onClick = (name: string, isFrom: boolean = true) => {

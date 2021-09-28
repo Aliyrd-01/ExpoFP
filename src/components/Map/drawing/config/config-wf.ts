@@ -37,7 +37,7 @@ if (settings.EXPO === "autumnfair") {
 
 const ids: string[] = [];
 
-const isDebug = false;
+const isDebug = true;
 
 const interpolateColors = (color1, color2, steps) => {
     const interpolateColor = (color1, color2, factor = 0.5) => {

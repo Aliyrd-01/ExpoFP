@@ -1,5 +1,3 @@
-import settings from "../tools/settings";
-import { auSublines } from "./autumndair";
 const path = require("ngraph.path");
 const createGraph = require("ngraph.graph");
 
@@ -63,8 +61,10 @@ const getDirection = (centerPoint: Point, startPoint: Point, endPoint: Point): n
         : 1;
 };
 
-const minDistanceLineEnds = (l1: Line, l2: Line) =>
-    Math.min(lineLength(l1.p0, l2.p0), lineLength(l1.p0, l2.p1), lineLength(l1.p1, l2.p0), lineLength(l1.p1, l2.p1));
+const minDistanceLineEnds = (l1: Line, p: Point) => Math.min(lineLength(l1.p0, p), lineLength(l1.p1, p));
+
+const triangleArea = (p1: Point, p2: Point, p3: Point): number =>
+    Math.abs(0.5 * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)));
 
 const linesIntersection = (line1: Line, line2: Line) => {
     let denominator: number,
@@ -93,13 +93,15 @@ const linesIntersection = (line1: Line, line2: Line) => {
     if (a >= 0 && a <= 1) result.onLine1 = true;
     if (b >= 0 && b <= 1) result.onLine2 = true;
 
-    if ((!result.onLine1 || !result.onLine2) && minDistanceLineEnds(line1, line2) <= 2) result.onLine1 = result.onLine2 = true;
+    if (
+        (!result.onLine1 || !result.onLine2) &&
+        ((result.onLine1 && minDistanceLineEnds(line2, result.point) <= 0.1) ||
+            (result.onLine2 && minDistanceLineEnds(line1, result.point) <= 0.1))
+    )
+        result.onLine1 = result.onLine2 = true;
 
     return result;
 };
-
-const triangleArea = (p1: Point, p2: Point, p3: Point): number =>
-    Math.abs(0.5 * (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)));
 
 const pointInsideRectangle = (p: Point, rect: Rectangle): Point => {
     const rArea = lineLength(rect.p0, rect.p1) * lineLength(rect.p1, rect.p2);
@@ -147,55 +149,70 @@ const perpendicularToLine = (point: Point, start: Point, end: Point): { p: Point
     };
 };
 
-const buildWays = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Line[] => {
+const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number = 100): Line[] => {
     const blockers = rects.concat(other);
 
-    const anyInter = blockers.filter((r) => lines.filter((l) => lineRectangleIntersections(l, r).length).length);
-    if (anyInter.length) return null;
-
-    const ways: Line[] = [];
+    const perpendiculars: Line[] = [];
 
     for (let i = 0; i < rects.length; i++) {
         const rect = rects[i];
 
-        const perdendiculars: Line[] = [];
+        const line_13 = new Line(lineCenter(rect.p0, rect.p1), lineCenter(rect.p2, rect.p3));
+        const line_24 = new Line(lineCenter(rect.p1, rect.p2), lineCenter(rect.p3, rect.p0));
 
-        const rectCenters = [
-            lineCenter(rect.p0, rect.p1),
-            lineCenter(rect.p1, rect.p2),
-            lineCenter(rect.p2, rect.p3),
-            lineCenter(rect.p3, rect.p0),
-        ];
+        let minLengths: number[] = [10000000, 10000000, 10000000, 10000000];
+        let minLlines: Point[] = [null, null, null, null];
 
-        for (let j = 0; j < rectCenters.length; j++) {
-            const center = rectCenters[j];
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
 
-            for (let k = 0; k < lines.length; k++) {
-                const line = lines[k];
+            const inter_13 = linesIntersection(line_13, line);
+            if (inter_13.onLine2) {
+                const l1 = lineLength(line_13.p0, inter_13.point);
+                const l3 = lineLength(line_13.p1, inter_13.point);
 
-                const perpendicular = perpendicularToLine(center, line.p0, line.p1);
-                if (!perpendicular.isInside) continue;
+                if (l1 && l1 < l3 && l1 < minLengths[0] && l1 < maxLength) {
+                    minLengths[0] = l1;
+                    minLlines[0] = inter_13.point;
+                } else if (l3 && l3 < l1 && l3 < minLengths[2] && l3 < maxLength) {
+                    minLengths[2] = l3;
+                    minLlines[2] = inter_13.point;
+                }
+            }
 
-                const pLine = new Line(center, perpendicular.p);
+            const inter_24 = linesIntersection(line_24, line);
+            if (inter_24.onLine2) {
+                const l2 = lineLength(line_24.p0, inter_24.point);
+                const l4 = lineLength(line_24.p1, inter_24.point);
 
-                const rectIntersections = blockers.filter((r) => {
-                    const p = lineRectangleIntersections(pLine, r);
-                    return p.length > 0 && !(p.length === 1 && samePoint(center, p[0]));
-                });
-
-                const linesIntersections = lines.filter((l) => {
-                    const r = linesIntersection(pLine, l);
-                    return r.onLine1 && r.onLine2;
-                });
-
-                if (!rectIntersections.length && linesIntersections.length < 2) perdendiculars.push(pLine);
+                if (l2 && l2 < l4 && l2 < minLengths[1] && l2 < maxLength) {
+                    minLengths[1] = l2;
+                    minLlines[1] = inter_24.point;
+                } else if (l4 && l4 < l2 && l4 < minLengths[3] && l4 < maxLength) {
+                    minLengths[3] = l4;
+                    minLlines[3] = inter_24.point;
+                }
             }
         }
 
-        ways.push(...perdendiculars);
+        if (minLlines[0]) {
+            const l = new Line(line_13.p0, minLlines[0]);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+        }
+        if (minLlines[2]) {
+            const l = new Line(line_13.p1, minLlines[2]);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+        }
+        if (minLlines[1]) {
+            const l = new Line(line_24.p0, minLlines[1]);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+        }
+        if (minLlines[3]) {
+            const l = new Line(line_24.p1, minLlines[3]);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+        }
     }
-
-    return ways;
+    return perpendiculars;
 };
 
 const subLines = (lines: Line[]): Sublines => {
@@ -237,8 +254,13 @@ let pathFinder: any = null;
 let sublines: Sublines = null;
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
-    if (settings.EXPO === "autumnfair") sublines = auSublines;
-    else sublines = subLines(lines.concat(buildWays(lines, rects, other) || []));
+    const perpendiculars = buildPerpendiculars(lines, rects, other);
+    console.info(`Perpendiculars created: ${perpendiculars.length}`);
+
+    sublines = subLines(lines.concat(perpendiculars));
+    console.info(
+        `Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${sublines.lineEnds.length}`
+    );
 
     const graph = createGraph();
 
