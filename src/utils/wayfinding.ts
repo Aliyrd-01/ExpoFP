@@ -51,7 +51,7 @@ export const lineAngle = (startPoint: Point, endPoint: Point): number => {
 
 const round = (number: number, digits: number = 3) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
 
-const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) < 0.05;
+const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) < 0.1;
 
 const getDirection = (centerPoint: Point, startPoint: Point, endPoint: Point): number => {
     return (startPoint.x - centerPoint.x) * (endPoint.y - centerPoint.y) -
