@@ -30,6 +30,8 @@ export default class FloorPlanLoader implements FloorPlan {
     // options
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
+    onLoaded: () => void;
+
     selectBooth(name: string) {
         nr();
     }
@@ -43,6 +45,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.noOverlay = !!options.noOverlay;
 
         this.onBoothClick = options.onBoothClick;
+        this.onLoaded = options.onLoaded;
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;
         });

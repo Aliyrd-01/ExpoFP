@@ -33,6 +33,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.renderTarget
         );
         this.resolveReady();
+        if (this.onLoaded) this.onLoaded();
     }
 
     //onBoothClick: (e: FloorPlanBoothClickEvent) => void;
