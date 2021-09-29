@@ -9,6 +9,20 @@ function Wayfinding() {
     return useObserver(() => {
         const bar = <div className="bar">{t("Directions")}</div>;
 
+        // console.info(
+        //     exhibitorStore.exhibitors.map((e) => {
+        //         return {
+        //             id: e.slug,
+        //             booths: e.booths.map((b) => {
+        //                 return {
+        //                     id: b.slug,
+        //                     name: b.name,
+        //                 };
+        //             }),
+        //         };
+        //     })
+        // );
+
         const options = (except: string) => {
             return boothStore.booths
                 .filter((b) => b.name !== except)
