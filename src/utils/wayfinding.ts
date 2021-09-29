@@ -149,7 +149,7 @@ const perpendicularToLine = (point: Point, start: Point, end: Point): { p: Point
     };
 };
 
-const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number = 100): Line[] => {
+const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number = 300): Line[] => {
     const blockers = rects.concat(other);
 
     const perpendiculars: Line[] = [];
@@ -254,18 +254,26 @@ let pathFinder: any = null;
 let sublines: Sublines = null;
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
+    let t0 = performance.now();
     const perpendiculars = buildPerpendiculars(lines, rects, other);
-    console.info(`Perpendiculars created: ${perpendiculars.length}`);
+    let t1 = performance.now();
 
+    console.info(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
+
+    t0 = performance.now();
     sublines = subLines(lines.concat(perpendiculars));
+    t1 = performance.now();
     console.info(
-        `Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${sublines.lineEnds.length}`
+        `Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
+            sublines.lineEnds.length
+        }} ~ ${t1 - t0}ms.`
     );
 
     const graph = createGraph();
 
-    sublines.lineEnds.concat(sublines.intersections).forEach((point) => graph.addNode(pointId(point)));
+    //sublines.lineEnds.concat(sublines.intersections).forEach((point) => graph.addNode(pointId(point)));
 
+    t0 = performance.now();
     sublines.intersections.forEach((intersect) => {
         sublines.lines.forEach((line) => {
             if (samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) {
@@ -275,6 +283,8 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
             }
         });
     });
+    t1 = performance.now();
+    console.info(`Graph created.  ~ ${t1 - t0}ms.`);
 
     pathFinder = path.aStar(graph, {
         distance(fromNode, toNode, link) {
