@@ -6,11 +6,11 @@
     </head>
     <body>
         <div id="floorplan">Loading...</div>
-        <script src="https://autumnfair.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
+        <script src="https://waydinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
         <script>
             window.floorplan = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
-                eventId: "autumnfair",
+                eventId: "waydinding",
                 noOverlay: true,
                 onBoothClick: e => {
                     window.flutter_inappwebview?.callHandler('onBoothClick', e.target.name);
