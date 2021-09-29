@@ -13,6 +13,7 @@ function Wayfinding() {
         //     exhibitorStore.exhibitors.map((e) => {
         //         return {
         //             id: e.slug,
+        //             name: e.name,
         //             booths: e.booths.map((b) => {
         //                 return {
         //                     id: b.slug,

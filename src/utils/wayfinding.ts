@@ -266,7 +266,7 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
     console.info(
         `Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
             sublines.lineEnds.length
-        }} ~ ${t1 - t0}ms.`
+        } ~ ${t1 - t0}ms.`
     );
 
     const graph = createGraph();
