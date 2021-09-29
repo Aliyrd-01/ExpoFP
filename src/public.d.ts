@@ -19,6 +19,7 @@ interface FloorPlanOptions {
     dataUrl?: string;
     noOverlay?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
+    onLoaded?: () => void;
 }
 
 interface FloorPlanBooth {
