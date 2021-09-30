@@ -34,19 +34,24 @@ function Wayfinding() {
                 ));
         };
 
-        const onClick = (name: string, isFrom: boolean = true) => {
+        const onSelectionClick = (name: string, isFrom: boolean = true) => {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];
-            const { from, to } = uiState.selectedRoute;
+            const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
-            if (isFrom) store.selectRoute(new Route(booth || null, to));
-            else store.selectRoute(new Route(from, booth || null));
+            if (isFrom) store.selectRoute(new Route(booth || null, to, exceptUnaccessible));
+            else store.selectRoute(new Route(from, booth || null, exceptUnaccessible));
+        };
+
+        const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
+            const { from, to } = uiState.selectedRoute;
+            store.selectRoute(new Route(from, to, exceptUnaccessible));
         };
 
         return (
             <OverlayContent bar={bar} backMode="back" onBack={() => store.selectSearch()} onClose={() => store.selectNone()}>
                 <select
                     value={uiState.selectedRoute.from?.name || ""}
-                    onChange={(e) => onClick(e.target.value, true)}
+                    onChange={(e) => onSelectionClick(e.target.value, true)}
                     style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
                 >
                     <option value="">Direction from ...</option>
@@ -54,12 +59,23 @@ function Wayfinding() {
                 </select>
                 <select
                     value={uiState.selectedRoute.to?.name || ""}
-                    onChange={(e) => onClick(e.target.value, false)}
+                    onChange={(e) => onSelectionClick(e.target.value, false)}
                     style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
                 >
                     <option value="">Direction to ...</option>
                     {options(uiState.selectedRoute.from?.name)}
                 </select>
+
+                <div style={{ margin: 10 }}>
+                    <input
+                        id="exceptUnaccessible"
+                        type="checkbox"
+                        checked={uiState.selectedRoute.exceptUnaccessible}
+                        onChange={(e) => onExceptUnaccessible(e.target.checked)}
+                    ></input>
+                    &nbsp;&nbsp;
+                    <label htmlFor="exceptUnaccessible">Only accessible ways</label>
+                </div>
             </OverlayContent>
         );
     });

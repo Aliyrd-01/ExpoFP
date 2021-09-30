@@ -161,7 +161,13 @@ function Booth() {
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
                 <div className="booth__directions">
-                    <button onClick={() => store.clickRoute(new Route(null, s.booth))}>Directions</button>
+                    <button
+                        onClick={() =>
+                            store.clickRoute(new Route(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false))
+                        }
+                    >
+                        Directions
+                    </button>
                 </div>
             </OverlayContent>
         );

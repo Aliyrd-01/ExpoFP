@@ -36,7 +36,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(from: string, to: string): void {
+    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
         nr();
     }
 

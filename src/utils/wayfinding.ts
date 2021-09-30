@@ -9,7 +9,7 @@ export class Point {
 }
 
 export class Line {
-    constructor(public p0: Point, public p1: Point) {}
+    constructor(public p0: Point, public p1: Point, public unaccessible: boolean = false, public unidirection: boolean = false) {}
 }
 
 export class Rectangle {
@@ -239,7 +239,8 @@ const subLines = (lines: Line[]): Sublines => {
         const points: Point[] = [];
         linePoints.forEach((point) => (!points.filter((p) => samePoint(point, p)).length ? points.push(point) : null));
 
-        for (let k = 1; k < points.length; k++) subLines.push(new Line(points[k - 1], points[k]));
+        for (let k = 1; k < points.length; k++)
+            subLines.push(new Line(points[k - 1], points[k], lines[i].unaccessible, lines[i].unidirection));
     }
 
     subLines.forEach((sl) => {
@@ -250,7 +251,6 @@ const subLines = (lines: Line[]): Sublines => {
     return { lines: subLines, intersections, lineEnds };
 };
 
-let pathFinder: any = null;
 let sublines: Sublines = null;
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
@@ -258,44 +258,21 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
     const perpendiculars = buildPerpendiculars(lines, rects, other);
     let t1 = performance.now();
 
-    console.info(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
+    console.debug(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
 
     t0 = performance.now();
     sublines = subLines(lines.concat(perpendiculars));
     t1 = performance.now();
-    console.info(
+    console.debug(
         `Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
             sublines.lineEnds.length
-        } ~ ${t1 - t0}ms.`
+        }} ~ ${t1 - t0}ms.`
     );
-
-    const graph = createGraph();
-
-    //sublines.lineEnds.concat(sublines.intersections).forEach((point) => graph.addNode(pointId(point)));
-
-    t0 = performance.now();
-    sublines.intersections.forEach((intersect) => {
-        sublines.lines.forEach((line) => {
-            if (samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) {
-                graph.addLink(pointId(line.p0), pointId(line.p1), {
-                    distance: lineLength(line.p0, line.p1),
-                });
-            }
-        });
-    });
-    t1 = performance.now();
-    console.info(`Graph created.  ~ ${t1 - t0}ms.`);
-
-    pathFinder = path.aStar(graph, {
-        distance(fromNode, toNode, link) {
-            return link.data.distance;
-        },
-    });
 
     return sublines;
 };
 
-export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle): Point[] => {
+export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnAccessible: boolean = false): Point[] => {
     const from: Point[] = [];
     const to: Point[] = [];
 
@@ -308,6 +285,34 @@ export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle): Point[] 
         if (f) from.push(f);
         if (t) to.push(t);
     }
+
+    const graph = createGraph();
+
+    const t0 = performance.now();
+    sublines.intersections.forEach((intersect) => {
+        sublines.lines.forEach((line) => {
+            if ((samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) && (!exceptUnAccessible || !line.unaccessible)) {
+                graph.addLink(pointId(line.p0), pointId(line.p1), {
+                    distance: lineLength(line.p0, line.p1),
+                });
+
+                if (!line.unidirection)
+                    graph.addLink(pointId(line.p1), pointId(line.p0), {
+                        distance: lineLength(line.p1, line.p0),
+                    });
+            }
+        });
+    });
+
+    let pathFinder = path.aStar(graph, {
+        oriented: true,
+        distance(fromNode, toNode, link) {
+            return link.data.distance;
+        },
+    });
+
+    const t1 = performance.now();
+    console.debug(`Graph created. ~ ${t1 - t0}ms.`);
 
     const paths: Point[][] = [];
 

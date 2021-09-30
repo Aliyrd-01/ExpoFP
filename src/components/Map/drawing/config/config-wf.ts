@@ -68,7 +68,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         lines.push(
             new Line(
                 new Point(parseFloat(node.attributes.x1.value), parseFloat(node.attributes.y1.value)),
-                new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value))
+                new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value)),
+                node.getAttribute("data-way-unaccessible") === "true" || false,
+                node.getAttribute("data-way-unidirection") === "true" || false
             )
         );
     });
@@ -127,7 +129,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         if (!uiState.selectedRoute) return;
 
-        const { from, to } = uiState.selectedRoute;
+        const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
         if (!from || !to) return;
 
@@ -136,7 +138,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         const points = getGraphPoints(
             new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
-            new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4))
+            new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
+            exceptUnaccessible
         );
         let id: string = null;
 

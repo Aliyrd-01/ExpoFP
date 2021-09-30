@@ -10,7 +10,7 @@ class FloorPlan {
 
     selectBooth(name: string): void;
 
-    selectRoute(from: string, to: string): void;
+    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }
 
 interface FloorPlanOptions {

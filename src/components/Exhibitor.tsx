@@ -373,7 +373,15 @@ function ExhibitorComponent() {
                         </div>
                     )}
                     <div className="exhibitor__directions">
-                        <button onClick={() => store.selectRoute(new Route(null, exhibitor.booths[0]))}>Directions</button>
+                        <button
+                            onClick={() =>
+                                store.selectRoute(
+                                    new Route(null, exhibitor.booths[0], uiState.selectedRoute?.exceptUnaccessible || false)
+                                )
+                            }
+                        >
+                            Directions
+                        </button>
                     </div>
                     {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
                     {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url)}
