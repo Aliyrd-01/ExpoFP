@@ -252,6 +252,39 @@ const subLines = (lines: Line[]): Sublines => {
 };
 
 let sublines: Sublines = null;
+let pathFinder = { finder: null, oriented: false, exceptUnAccessible: false };
+
+const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
+    const graph = createGraph();
+    const t0 = performance.now();
+
+    sublines.intersections.forEach((intersect) => {
+        sublines.lines.forEach((line) => {
+            if ((samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) && (!exceptUnAccessible || !line.unaccessible)) {
+                graph.addLink(pointId(line.p0), pointId(line.p1), {
+                    distance: lineLength(line.p0, line.p1),
+                });
+
+                if (oriented && !line.unidirection)
+                    graph.addLink(pointId(line.p1), pointId(line.p0), {
+                        distance: lineLength(line.p1, line.p0),
+                    });
+            }
+        });
+    });
+
+    pathFinder.oriented = oriented;
+    pathFinder.exceptUnAccessible = exceptUnAccessible;
+    pathFinder.finder = path.aStar(graph, {
+        oriented,
+        distance(fromNode, toNode, link) {
+            return link.data.distance;
+        },
+    });
+
+    const t1 = performance.now();
+    console.debug(`Graph created. ~ ${t1 - t0}ms.`);
+};
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
     let t0 = performance.now();
@@ -269,10 +302,14 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
         }} ~ ${t1 - t0}ms.`
     );
 
+    buildPathFinder(lines.filter((l) => l.unidirection).length > 0, false);
+
     return sublines;
 };
 
 export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnAccessible: boolean = false): Point[] => {
+    if (pathFinder.exceptUnAccessible !== exceptUnAccessible) buildPathFinder(pathFinder.oriented, exceptUnAccessible);
+
     const from: Point[] = [];
     const to: Point[] = [];
 
@@ -286,40 +323,12 @@ export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnA
         if (t) to.push(t);
     }
 
-    const graph = createGraph();
-
-    const t0 = performance.now();
-    sublines.intersections.forEach((intersect) => {
-        sublines.lines.forEach((line) => {
-            if ((samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) && (!exceptUnAccessible || !line.unaccessible)) {
-                graph.addLink(pointId(line.p0), pointId(line.p1), {
-                    distance: lineLength(line.p0, line.p1),
-                });
-
-                if (!line.unidirection)
-                    graph.addLink(pointId(line.p1), pointId(line.p0), {
-                        distance: lineLength(line.p1, line.p0),
-                    });
-            }
-        });
-    });
-
-    let pathFinder = path.aStar(graph, {
-        oriented: true,
-        distance(fromNode, toNode, link) {
-            return link.data.distance;
-        },
-    });
-
-    const t1 = performance.now();
-    console.debug(`Graph created. ~ ${t1 - t0}ms.`);
-
     const paths: Point[][] = [];
 
     for (let i = 0; i < from.length; i++) {
         for (let j = 0; j < to.length; j++) {
             try {
-                const p = pathFinder.find(pointId(from[i]), pointId(to[j]));
+                const p = pathFinder.finder.find(pointId(from[i]), pointId(to[j]));
                 if (p.length) paths.push(p.map((p) => new Point(parseFloat(p.id.split("_")[0]), parseFloat(p.id.split("_")[1]))));
             } catch (e) {
                 console.warn(e);
