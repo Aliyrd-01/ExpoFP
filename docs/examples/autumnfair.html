@@ -13,13 +13,14 @@
                 eventId: "wayfinding",
                 noOverlay: true,
                 onBoothClick: e => {
-                    window.flutter_inappwebview?.callHandler('onBoothClick', e.target.name);
-		    window.messageHandler?.postMessage(e.target.name);
+		    window.onBoothClickHandler?.postMessage(e.target.name);
                 },
                 onFpConfigured: () => {
+		    window.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
                     console.info("FLOOR PLAN CONFIGURED");
                 },
                 onDirection: (e) => {
+		    window.onDirectionHandler?.postMessage(e);
                     console.info("NEW DIRECTION", e);
                 }
             });
