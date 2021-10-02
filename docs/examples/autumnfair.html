@@ -20,7 +20,8 @@
                     console.info("FLOOR PLAN CONFIGURED");
                 },
                 onDirection: (e) => {
-		    window.onDirectionHandler?.postMessage(JSON.stringify(e));
+		    window.onDirectionHandler?.postMessage("onDirectionHandler");
+		    //window.onDirectionHandler?.postMessage(JSON.stringify(e));
                     console.info("NEW DIRECTION", e);
                 }
             });
