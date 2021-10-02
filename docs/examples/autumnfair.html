@@ -15,6 +15,12 @@
                 onBoothClick: e => {
                     window.flutter_inappwebview?.callHandler('onBoothClick', e.target.name);
 		    window.messageHandler?.postMessage(e.target.name);
+                },
+                onFpConfigured: () => {
+                    console.info("FLOOR PLAN CONFIGURED");
+                },
+                onDirection: (e) => {
+                    console.info("NEW DIRECTION", e);
                 }
             });
 			
