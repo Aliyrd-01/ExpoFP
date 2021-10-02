@@ -3,7 +3,7 @@ import { select } from "d3-selection";
 import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import svg from "../../../../data/svg";
-import { boothStore, uiState } from "../../../../store";
+import store, { boothStore, uiState } from "../../../../store";
 import settings from "../../../../tools/settings";
 import {
     buildGraph,
@@ -147,6 +147,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         const f = lineFrom.rgb().color;
 
         const colors = interpolateColors(`rgb(${t[0]},${t[1]},${t[2]})`, `rgb(${f[0]},${f[1]},${f[2]})`, points.length - 1);
+        let distance: number = 0;
 
         for (let index = 0; index < points.length; index++) {
             const cp = points[index];
@@ -173,7 +174,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             drawer.updateColor(id, Color(colors[index - 1]).vec4());
 
             ids.push(id);
+
+            distance += lineLength(cp, pp);
         }
+        distance = Math.round(distance / 10);
+
+        store.fp.onDirection({ from, to, distance: `${distance}${svg.getAttribute("units")}`, time: Math.round(distance / 1.4) });
     };
 
     reaction(

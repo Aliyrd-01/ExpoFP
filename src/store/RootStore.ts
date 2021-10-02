@@ -186,6 +186,15 @@ export default class RootStore {
         if (window["__resett"]) window["__resett"]();
         this.uiState.menu = null;
         this.selectRoute(route);
+        if (this.uiState.onDirection) {
+            const e: FloorPlanDeirectionEvent = {
+                from: undefined,
+                to: undefined,
+                distance: "",
+                time: 0,
+            };
+            this.uiState.onDirection(e);
+        }
         //this.showMap();
     }
 

@@ -27,7 +27,6 @@ export default class UIState {
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
     @observable.ref details: Booth | Exhibitor | Route = null;
-    @observable.ref destination: Booth = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
@@ -62,6 +61,10 @@ export default class UIState {
 
     get onBoothClick() {
         return this.rootStore.fp.onBoothClick;
+    }
+
+    get onDirection() {
+        return this.rootStore.fp.onDirection;
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {

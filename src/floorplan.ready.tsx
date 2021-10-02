@@ -33,10 +33,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.renderTarget
         );
         this.resolveReady();
-        if (this.onLoaded) this.onLoaded();
     }
-
-    //onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
     selectBooth(name: string) {
         const booth = store.boothStore.booths.find((b) => b.name === name);
