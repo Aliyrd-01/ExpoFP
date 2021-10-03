@@ -179,7 +179,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         }
         distance = Math.round(distance / 10);
 
-        store.fp.onDirection({ from, to, distance: `${distance}${svg.getAttribute("units")}`, time: Math.round(distance / 1.4) });
+        store.fp.onDirection({
+            from: { id: from.id, name: from.name },
+            to: { id: to.id, name: to.name },
+            distance: `${distance}${svg.getAttribute("units")}`,
+            time: Math.round(distance / 1.4),
+        });
     };
 
     reaction(
