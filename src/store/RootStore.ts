@@ -31,12 +31,13 @@ export default class RootStore {
 
     @action selectBooth(booth: Booth) {
         this.uiState.details = booth;
+        this.moveToList([booth]);
     }
 
     @action selectRoute(route: Route) {
         this.uiState.details = route;
         if (route.from && route.to) {
-            this.moveToList([route.from]);
+            this.moveToList([route.from, route.to]);
             this.showMap();
         }
     }
