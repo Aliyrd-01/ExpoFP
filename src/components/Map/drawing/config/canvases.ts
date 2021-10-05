@@ -1,5 +1,6 @@
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
+import { Booth } from "./../../../../store/BoothStore";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -16,8 +17,10 @@ function measureText(font: string, text: string) {
     return ctx.measureText(text).width;
 }
 
-export function createLabelCanvas(text: string, fontSize: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
-    text = text.replace(/^_/, "");
+export function createLabelCanvas(b: Booth, fontSize: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+    if (b instanceof RegularBooth && b.exhibitors.length) return createDetailsCanvas(b, pixelRatio, color);
+
+    const text = b.name.replace(/^_/, "");
     fontSize *= pixelRatio;
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
@@ -68,8 +71,8 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
 
     const boothFontSize = 14 * pixelRatio;
     const detailFontSize = 14 * pixelRatio;
-    const boothFont = getFont(boothFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
+    const boothFont = getFont(boothFontSize, 300);
+    const detailFont = getFont(detailFontSize, 500);
     const boothPadding = 1 * pixelRatio;
 
     let mainLine = b.name;
@@ -94,14 +97,6 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
         draw(c) {
             let nextLine = boothFontSize;
 
-            c.fillStyle = color;
-            c.textAlign = "start";
-            c.textBaseline = "alphabetic";
-            c.font = boothFont;
-
-            c.fillText(mainLine, 0, nextLine);
-            nextLine += boothFontSize + boothPadding;
-
             c.font = detailFont;
             c.fillStyle = color;
 
@@ -109,6 +104,14 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
                 c.fillText(line, 0, nextLine);
                 nextLine += detailFontSize + 1 * pixelRatio;
             }
+
+            c.fillStyle = color;
+            c.textAlign = "start";
+            c.textBaseline = "alphabetic";
+            c.font = boothFont;
+
+            c.fillText(mainLine, 0, nextLine);
+            nextLine += boothFontSize + boothPadding;
         },
     };
 }
