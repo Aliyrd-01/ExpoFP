@@ -1,8 +1,8 @@
+import { autorun } from "mobx";
 import { Booth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
-import TrianglePainter from "../painters/TrianglePainter";
 import Painter from "../painters/Painter";
-import { autorun } from "mobx";
+import TrianglePainter from "../painters/TrianglePainter";
 import BoothShape from "./BoothShape";
 
 export abstract class BoothDrawerBaseWithoutPainter {
@@ -32,7 +32,7 @@ export abstract class BoothDrawerBaseWithoutPainter {
 
     update() {}
 
-    startAutoupdate() {
+    startAutoupdate() {        
         let initial = true;
 
         // console.log("autorun1");

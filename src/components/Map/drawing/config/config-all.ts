@@ -6,6 +6,7 @@ import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
+import configImg from "./config-img";
 import configMatrix from "./config-matrix";
 import configWf from "./config-wf";
 import configYah from "./config-yah";
@@ -17,6 +18,7 @@ export default function configAll(context: DrawerContext) {
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
+    //-configImg(context);
 
     let boothsAnimate = null;
     let basePriority = 6;
