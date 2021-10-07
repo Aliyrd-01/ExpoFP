@@ -36,9 +36,15 @@ export default class RootStore {
 
     @action selectRoute(route: Route) {
         this.uiState.details = route;
-        if (route.from && route.to) {
-            this.moveToList([route.from, route.to]);
-            this.showMap();
+        let list = [];
+
+        if (route.from && route.to) this.showMap();
+
+        if (route.from) list.push(route.from);
+        if (route.to) list.push(route.to);
+
+        if (list.length) {
+            this.moveToList(list);
         }
     }
 

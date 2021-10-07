@@ -263,6 +263,10 @@ export default class UIState {
         let arr: Booth[];
         if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
         else if (this.selectedBooth) arr = [this.selectedBooth];
+
+        if (this.selectedRoute?.from && !this.selectedRoute?.to) arr = [this.selectedRoute.from];
+        else if (!this.selectedRoute?.from && this.selectedRoute?.to) arr = [this.selectedRoute.to];
+
         return new Set(arr);
     }
     // @computed get selectedBoothIdsSet() {
