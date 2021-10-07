@@ -5,6 +5,7 @@ import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
 import Route from "../store/RouteStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
@@ -160,15 +161,17 @@ function Booth() {
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
-                <div className="booth__directions">
-                    <button
-                        onClick={() =>
-                            store.clickRoute(new Route(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false))
-                        }
-                    >
-                        Directions
-                    </button>
-                </div>
+                {settings.wayfinding && (
+                    <div className="booth__directions">
+                        <button
+                            onClick={() =>
+                                store.clickRoute(new Route(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false))
+                            }
+                        >
+                            Directions
+                        </button>
+                    </div>
+                )}
             </OverlayContent>
         );
     });

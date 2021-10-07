@@ -4,7 +4,6 @@ import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import svg from "../../../../data/svg";
 import store, { boothStore, uiState } from "../../../../store";
-import settings from "../../../../tools/settings";
 import {
     buildGraph,
     getGraphPoints,
@@ -29,11 +28,11 @@ let capTo = Color("#FF9E2C");
 let lineFrom = capFrom;
 let lineTo = capTo;
 
-if (settings.EXPO === "autumnfair") {
-    lineTo = lineFrom = Color("#36F9ED");
-    capFrom = Color("#454545");
-    capTo = Color("#26E1D6");
-}
+// if (settings.EXPO === "autumnfair") {
+//     lineTo = lineFrom = Color("#36F9ED");
+//     capFrom = Color("#454545");
+//     capTo = Color("#26E1D6");
+// }
 
 const linesIds: string[] = [];
 const capsIds: string[] = [];
