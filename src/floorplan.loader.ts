@@ -34,7 +34,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onDirection: (e: FloorPlanDeirectionEvent) => void;
 
-    selectBooth(name: string) {
+    selectBooth(name: string | string[]) {
         nr();
     }
 

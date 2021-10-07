@@ -35,7 +35,8 @@ if (settings.EXPO === "autumnfair") {
     capTo = Color("#26E1D6");
 }
 
-const ids: string[] = [];
+const linesIds: string[] = [];
+const capsIds: string[] = [];
 
 const isDebug = false;
 
@@ -58,8 +59,6 @@ const interpolateColors = (color1, color2, steps) => {
 };
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
-    let drawerSeq = 0;
-
     const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
     if (!layer) return;
 
@@ -80,7 +79,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         return new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     });
 
-    const drawer = context.requirePainter("WF" + drawerSeq++, RectPainter, painterOrderPriority);
+    const linesDrawer = context.requirePainter("WF_lines", RectPainter, painterOrderPriority - 20);
+    const capsDrawer = context.requirePainter("WF_caps", RectPainter, painterOrderPriority);
 
     const dotCanvas1 = createCircleCanvas(strokeWidth * 2.5, context.pixelRatio, "#fff", capFrom.hex());
     const dotCanvas2 = createCircleCanvas(strokeWidth * 2.3, context.pixelRatio, "#fff", capTo.hex());
@@ -92,7 +92,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         const length = lineLength(line.p0, line.p1);
         const delta = length / 2 + strokeWidth;
 
-        drawer.addObject({
+        linesDrawer.addObject({
             id: lineId(line.p0, line.p1),
             center: [center.x, center.y],
             color: lineFrom.vec4(),
@@ -103,7 +103,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     });
 
     sl.lineEnds.forEach((lineEnd) => {
-        drawer.addObject({
+        capsDrawer.addObject({
             id: "f_" + pointId(lineEnd),
             center: [lineEnd.x, lineEnd.y],
             deltas: [0, 0, 0, 0],
@@ -113,7 +113,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             visible: isDebug,
         });
 
-        drawer.addObject({
+        capsDrawer.addObject({
             id: "t_" + pointId(lineEnd),
             center: [lineEnd.x, lineEnd.y],
             deltas: [0, 0, 0, 0],
@@ -125,7 +125,15 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     });
 
     const update = () => {
-        ids.forEach((id) => drawer.updateVisible(id, false));
+        linesIds.forEach((id) => {
+            linesDrawer.updateVisible(id, false);
+            linesDrawer.updateSkipdim(id, false);
+        });
+
+        capsIds.forEach((id) => {
+            capsDrawer.updateVisible(id, false);
+            capsDrawer.updateSkipdim(id, false);
+        });
 
         if (!uiState.selectedRoute) return;
 
@@ -151,32 +159,34 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         for (let index = 0; index < points.length; index++) {
             const cp = points[index];
+            const pp = points[index - 1];
+
+            if (pp) {
+                // Lines
+                id = lineId(cp, pp);
+                if (!linesDrawer.getObject(id)) id = lineId(pp, cp);
+
+                linesDrawer.updateVisible(id, true);
+                linesDrawer.updateColor(id, Color(colors[index - 1]).vec4());
+                linesDrawer.updateSkipdim(id, true);
+                linesIds.push(id);
+
+                distance += lineLength(cp, pp);
+            }
 
             let prefix = null;
+
             if (index === 0) prefix = "t_";
             else if (index === points.length - 1) prefix = "f_";
 
             id = prefix + pointId(cp);
-            if (prefix && drawer.getObject(id)) {
-                drawer.updateVisible(id, true);
-                ids.push(id);
+            if (prefix && capsDrawer.getObject(id)) {
+                capsDrawer.updateVisible(id, true);
+                capsDrawer.updateSkipdim(id, true);
+                capsIds.push(id);
             }
-
-            if (index === 0) continue;
-
-            // Lines
-            const pp = points[index - 1];
-
-            id = lineId(cp, pp);
-            if (!drawer.getObject(id)) id = lineId(pp, cp);
-
-            drawer.updateVisible(id, true);
-            drawer.updateColor(id, Color(colors[index - 1]).vec4());
-
-            ids.push(id);
-
-            distance += lineLength(cp, pp);
         }
+
         distance = Math.round(distance / 10);
 
         if (store.fp.onDirection)

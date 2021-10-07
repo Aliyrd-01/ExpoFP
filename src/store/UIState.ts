@@ -234,6 +234,8 @@ export default class UIState {
     }
 
     @computed get listItems(): ListItem[] {
+        if (this.details instanceof Route && this.details.from && this.details.to) return [this.details.from, this.details.to];
+
         switch (this.list.type) {
             case "search":
                 return this.searchItems;
@@ -260,12 +262,12 @@ export default class UIState {
     //     return new Set(getters.listBoothsIds);
     // }
     @computed({ keepAlive: true }) get selectedBooths() {
-        let arr: Booth[];
+        let arr: Booth[] = [];
         if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
         else if (this.selectedBooth) arr = [this.selectedBooth];
 
-        if (this.selectedRoute?.from && !this.selectedRoute?.to) arr = [this.selectedRoute.from];
-        else if (!this.selectedRoute?.from && this.selectedRoute?.to) arr = [this.selectedRoute.to];
+        if (this.selectedRoute?.from) arr.push(this.selectedRoute.from);
+        if (this.selectedRoute?.to) arr.push(this.selectedRoute.to);
 
         return new Set(arr);
     }

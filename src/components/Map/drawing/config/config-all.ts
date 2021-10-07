@@ -6,7 +6,6 @@ import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
-import configImg from "./config-img";
 import configMatrix from "./config-matrix";
 import configWf from "./config-wf";
 import configYah from "./config-yah";

@@ -29,9 +29,10 @@ export default class RootStore {
         this.uiState.details = exhibitor;
     }
 
-    @action selectBooth(booth: Booth) {
-        this.uiState.details = booth;
-        this.moveToList([booth]);
+    @action selectBooth(booth: Booth | Booth[]) {
+        let b = Array.isArray(booth) ? booth : [booth];
+        this.uiState.details = b[0];
+        this.moveToList(b);
     }
 
     @action selectRoute(route: Route) {
