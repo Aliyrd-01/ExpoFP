@@ -5,6 +5,7 @@ import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
+import Route from "../store/RouteStore";
 import gtag from "../tools/gtag";
 import logger from "../tools/logger";
 // import settings from '@/settings';
@@ -40,7 +41,12 @@ function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
     disableStateToUrl = true;
     const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug);
-    if (slug === "bookmarks") {
+    if (slug.startsWith("route")) {
+        const parts = slug.split(":");
+        const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2]) || null;
+        const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1]) || null;
+        store.selectRoute(new Route(from, to));        
+    } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
@@ -79,8 +85,14 @@ function stateToUrl() {
     let queryRaw = "";
     const exhibitor = uiState.selectedExhibitor;
     const booth = uiState.selectedBooth;
+    const route = uiState.selectedRoute;
 
-    if (exhibitor) {
+    if (route) {
+        const from = route.from ? `:${route.from.slug}` : "";
+        const to = route.to ? `:${route.to.slug}` : "";
+
+        queryRaw = `route${to}${from}`;
+    } else if (exhibitor) {
         queryRaw = exhibitor.slug;
     } else if (booth) {
         queryRaw = booth.slug;
@@ -130,9 +142,7 @@ if (locationSearch.startsWith("?preview=")) {
 // go to bookmarks when receive thouse
 else if (locationSearch.startsWith("?b=")) {
     historyReplace("?bookmarks");
-}
-
-else if (locationSearch.startsWith("?ba=")) {
+} else if (locationSearch.startsWith("?ba=")) {
     const url = new URL(window.location.href);
     const ba = parseInt(url.searchParams.get("ba"));
     const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
@@ -141,7 +151,11 @@ else if (locationSearch.startsWith("?ba=")) {
 }
 
 // facebook and google  fix
-else if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga") || /^\?\S{1,10}(=|%3D)/i.test(locationSearch)) {
+else if (
+    locationSearch.startsWith("?fbclid") ||
+    locationSearch.startsWith("?_ga") ||
+    /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
+) {
     historyReplace("?");
 }
 
@@ -161,7 +175,7 @@ function sendGa() {
     timeout = window.setTimeout(() => {
         gtag("config", data.gtag, {
             page_title: document.title,
-            page_path: window.location.pathname + window.location.search
+            page_path: window.location.pathname + window.location.search,
         });
     }, 1000);
 }

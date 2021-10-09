@@ -14,6 +14,7 @@ import Exhibitor from "./Exhibitor";
 import Menu from "./Menu";
 import "./Overlay.scss";
 import Search from "./Search";
+import Wayfinding from "./Wayfinding";
 const { uiState } = store;
 
 export default observer(function Overlay() {
@@ -184,6 +185,7 @@ export default observer(function Overlay() {
             <Booth />
             <Bookmarks />
             <Category />
+            <Wayfinding />
         </div>
     );
 });

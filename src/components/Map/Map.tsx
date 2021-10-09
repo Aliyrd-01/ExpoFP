@@ -188,6 +188,8 @@ export default function Map() {
         });
         setZoomTransformAnimated(zoomIdentity, 0, null);
         s.$canvas.call(s.zoom as any);
+
+        if (store.fp.onFpConfigured) store.fp?.onFpConfigured();
     }
 
     function raiseBoothOver(b: Booth) {

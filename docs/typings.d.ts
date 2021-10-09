@@ -8,7 +8,9 @@ class FloorPlan {
     readonly noOverlay: boolean;
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
-    selectBooth(name: string): void;
+    selectBooth(name: string | string[]): void;
+
+    // selectRoute(from: string, to: string): void;
 }
 
 interface FloorPlanOptions {

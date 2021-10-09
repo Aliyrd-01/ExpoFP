@@ -138,12 +138,13 @@
         margin: 1rem;
         font-size: 0.9rem;
         div {
-            word-break: break-all
+            word-break: break-all;
         }
     }
     &__description-html {
         overflow-wrap: break-word;
-        ol, ul {
+        ol,
+        ul {
             padding-inline-start: 20px;
             display: grid;
         }
@@ -286,6 +287,13 @@
             &.disabled {
                 background: #c6c6c6;
             }
+        }
+    }
+
+    &__directions {
+        @include button;
+        > button {
+            cursor: pointer;
         }
     }
 

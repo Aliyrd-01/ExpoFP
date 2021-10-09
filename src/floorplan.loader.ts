@@ -1,3 +1,4 @@
+import _locales from "../public/locales/_locales";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -5,7 +6,6 @@ import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isFromDesigner from "./utils/is-from-designer";
 import useShadow from "./utils/use-shadow";
-import _locales from "../public/locales/_locales";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -30,7 +30,15 @@ export default class FloorPlanLoader implements FloorPlan {
     // options
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
-    selectBooth(name: string) {
+    onFpConfigured: () => void;
+
+    onDirection: (e: FloorPlanDeirectionEvent) => void;
+
+    selectBooth(name: string | string[]) {
+        nr();
+    }
+
+    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
         nr();
     }
 
@@ -39,6 +47,8 @@ export default class FloorPlanLoader implements FloorPlan {
         this.noOverlay = !!options.noOverlay;
 
         this.onBoothClick = options.onBoothClick;
+        this.onFpConfigured = options.onFpConfigured;
+        this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;
         });

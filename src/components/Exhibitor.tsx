@@ -4,6 +4,7 @@ import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
+import Route from "../store/RouteStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
@@ -369,6 +370,19 @@ function ExhibitorComponent() {
                             >
                                 <i className="fab fa-youtube" />
                             </a>
+                        </div>
+                    )}
+                    {settings.wayfinding && (
+                        <div className="exhibitor__directions">
+                            <button
+                                onClick={() =>
+                                    store.selectRoute(
+                                        new Route(null, exhibitor.booths[0], uiState.selectedRoute?.exceptUnaccessible || false)
+                                    )
+                                }
+                            >
+                                Directions
+                            </button>
                         </div>
                     )}
                     {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}

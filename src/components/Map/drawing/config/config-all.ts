@@ -7,6 +7,7 @@ import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
 import configMatrix from "./config-matrix";
+import configWf from "./config-wf";
 import configYah from "./config-yah";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
@@ -16,18 +17,23 @@ export default function configAll(context: DrawerContext) {
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
+    //-configImg(context);
 
     let boothsAnimate = null;
     let basePriority = 6;
-    (select(svg).selectAll<SVGAElement,unknown>("svg > g[id]").nodes())
+    select(svg)
+        .selectAll<SVGAElement, unknown>("svg > g[id]")
+        .nodes()
         .map((n) => n.getAttribute("id"))
         .forEach((layerName) => {
             if (layerName === "Booths") {
-                basePriority = 151;
                 boothsAnimate = configBooths(context);
+                basePriority = 153;
             } else configBg(context, layerName, basePriority);
             basePriority += 1;
         });
+
+    configWf(context, 152);
 
     configYah(context);
     matrixAfter();

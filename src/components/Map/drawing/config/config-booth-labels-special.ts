@@ -35,7 +35,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     public locked: boolean;
 
     constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, "booth-label", RectPainter, 130);
+        super(context, booth, "booth-label", RectPainter, 149);
         this.locked = context.updatable;
         // initDrawer(this.drawer);
 

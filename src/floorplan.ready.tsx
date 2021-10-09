@@ -5,8 +5,9 @@ import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
 import "./services/routing";
 import store from "./store";
-import trackEvent from "./tools/track-event";
+import Route from "./store/RouteStore";
 import { GaEventActions, sendEventToGa } from "./tools/gtag";
+import trackEvent from "./tools/track-event";
 
 trackEvent("load");
 sendEventToGa(`FP`, GaEventActions.Load, ``);
@@ -34,10 +35,14 @@ export default class FloorPlanReady extends FloorPlanLoader {
         this.resolveReady();
     }
 
-    //onBoothClick: (e: FloorPlanBoothClickEvent) => void;
+    selectBooth(name: string | string[]) {
+        const booth = store.boothStore.booths.filter((b) => name.indexOf(b.name) > -1);
+        store.selectBooth(booth);
+    }
 
-    selectBooth(name: string) {
-        throw new Error("Not implemented");
-        // use store to find this booth (if store is ready)
+    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
+        const bFrom = store.boothStore.booths.find((b) => b.name === from) || null;
+        const bTo = store.boothStore.booths.find((b) => b.name === to) || null;
+        store.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
     }
 }
