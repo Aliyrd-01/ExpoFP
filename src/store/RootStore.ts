@@ -36,7 +36,6 @@ export default class RootStore {
     }
 
     @action selectRoute(route: Route) {
-        this.uiState.details = route;
         let list = [];
 
         if (route.from && route.to) this.showMap();
@@ -44,9 +43,15 @@ export default class RootStore {
         if (route.from) list.push(route.from);
         if (route.to) list.push(route.to);
 
-        if (list.length) {
-            this.moveToList(list);
-        }
+        if (list.length)
+            window.setTimeout(() => {
+                this.moveToList(list);
+                this.uiState.details = route;
+            }, 200);
+    }
+
+    @action selectCurrentPosition(point: { x: number; y: number }) {
+        this.uiState.position = point;
     }
 
     @action reset() {
@@ -195,9 +200,10 @@ export default class RootStore {
         this.uiState.menu = null;
         this.selectRoute(route);
         if (this.uiState.onDirection) {
-            const e: FloorPlanDeirectionEvent = {
+            const e: FloorPlanDirectionEvent = {
                 from: undefined,
                 to: undefined,
+                points: [],
                 distance: "",
                 time: 0,
             };

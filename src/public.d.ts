@@ -11,9 +11,11 @@ class FloorPlan {
 
     onFpConfigured: () => void;
 
-    onDirection: (e: FloorPlanDeirectionEvent) => void;
+    onDirection: (e: FloorPlanDirectionEvent) => void;
 
     selectBooth(name: string): void;
+
+    selectCurrentPosition(point: { x: number; y: number }): void;
 
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }
@@ -25,7 +27,7 @@ interface FloorPlanOptions {
     noOverlay?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onFpConfigured?: () => void;
-    onDirection?: (e: FloorPlanDeirectionEvent) => void;
+    onDirection?: (e: FloorPlanDirectionEvent) => void;
 }
 
 interface FloorPlanBooth {
@@ -37,9 +39,10 @@ interface FloorPlanBoothClickEvent {
     target: FloorPlanBooth;
 }
 
-interface FloorPlanDeirectionEvent {
+interface FloorPlanDirectionEvent {
     from: FloorPlanBooth;
     to: FloorPlanBooth;
+    points: { x: number; y: number }[];
     distance: string;
     time: number;
 }

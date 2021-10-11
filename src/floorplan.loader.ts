@@ -32,13 +32,17 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onFpConfigured: () => void;
 
-    onDirection: (e: FloorPlanDeirectionEvent) => void;
+    onDirection: (e: FloorPlanDirectionEvent) => void;
 
     selectBooth(name: string | string[]) {
         nr();
     }
 
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
+        nr();
+    }
+
+    selectCurrentPosition(point: { x: number; y: number }): void {
         nr();
     }
 

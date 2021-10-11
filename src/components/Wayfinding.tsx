@@ -1,6 +1,6 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
-import store, { boothStore, uiState } from "../store";
+import store, { boothStore, exhibitorStore, uiState } from "../store";
 import Route from "../store/RouteStore";
 import { t } from "../utils/i18n";
 import OverlayContent from "./OverlayContent";
@@ -9,30 +9,29 @@ function Wayfinding() {
     return useObserver(() => {
         const bar = <div className="bar">{t("Directions")}</div>;
 
-        // console.info(
-        //     exhibitorStore.exhibitors.map((e) => {
-        //         return {
-        //             id: e.slug,
-        //             name: e.name,
-        //             booths: e.booths.map((b) => {
-        //                 return {
-        //                     id: b.slug,
-        //                     name: b.name,
-        //                 };
-        //             }),
-        //         };
-        //     })
-        // );
-
         const options = (except: string) => {
-            return boothStore.booths
-                .filter((b) => b.name !== except)
-                .map((booth) => (
-                    <option key={`${booth.id}`} value={booth.name}>
-                        {booth.name}
-                    </option>
-                ));
+            const o = [];
+            exhibitorStore.exhibitors.forEach((e) =>
+                o.push(
+                    ...e.booths.map((booth) => (
+                        <option key={`${e.id}${booth.id}`} value={booth.name}>
+                            {e.name} - {booth.name}
+                        </option>
+                    ))
+                )
+            );
+            return o;
         };
+
+        // const options = (except: string) => {
+        //     return boothStore.booths
+        //         .filter((b) => b.name !== except)
+        //         .map((booth) => (
+        //             <option key={`${booth.id}`} value={booth.name}>
+        //                 {booth.name}
+        //             </option>
+        //         ));
+        // };
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];

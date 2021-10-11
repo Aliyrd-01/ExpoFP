@@ -30,7 +30,7 @@ export default class UIState {
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
-
+    @observable.ref position = null;
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
     @observable menu = false;
@@ -77,6 +77,10 @@ export default class UIState {
 
     @computed({ keepAlive: true }) get selectedRoute() {
         return this.details instanceof Route ? this.details : null;
+    }
+
+    @computed({ keepAlive: true }) get currentPosition() {
+        return this.position;
     }
 
     @computed({ keepAlive: true }) get selectedCategory() {

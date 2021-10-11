@@ -10,6 +10,7 @@ export default class RectPainter implements Painter {
     private buffersInitialized = true;
     private groupsDirty = true;
     private colorsDirty = true;
+    private centersDirty = true;
     private skipdimDirty = true;
 
     private readonly programInfo: any;
@@ -123,6 +124,14 @@ export default class RectPainter implements Painter {
         }
     }
 
+    updateCenter(id: string, center: Vec2) {
+        const obj = this.objectsById.get(id);
+        if (!obj.center || obj.center[0] !== center[0] || obj.center[1] !== center[1]) {
+            this.objectsById.get(id).center = center;
+            this.centersDirty = true;
+        }
+    }
+
     private ensureBuffersAndGroupsInternal() {
         if (this.buffersInitialized) {
             this.populateBuffers();
@@ -132,6 +141,11 @@ export default class RectPainter implements Painter {
         if (this.groupsDirty || resortObect) {
             this.populateGroups(resortObect);
             this.groupsDirty = false;
+        }
+
+        if (this.centersDirty) {
+            this.populateCenterBuffer();
+            this.centersDirty = false;
         }
 
         if (this.colorsDirty) {
@@ -149,7 +163,7 @@ export default class RectPainter implements Painter {
         if (isDebug) console.time("RectPainter.populateBuffers");
         const gl = this.gl;
 
-        const centers: number[] = [];
+        //const centers: number[] = [];
         const deltas: number[] = [];
         const deltaPts: number[] = [];
         const rotates: number[] = [];
@@ -207,7 +221,7 @@ export default class RectPainter implements Painter {
         for (let i = 0; i < this.objects.length; i++) {
             const w = this.objects[i];
             // 4 vec2
-            centers.push(...w.center, ...w.center, ...w.center, ...w.center);
+            // centers.push(...w.center, ...w.center, ...w.center, ...w.center);
             // preare points x1, y1, ... xp1, yp1
             const d = w.deltas || [0, 0, 0, 0];
             const x1 = d[0],
@@ -306,7 +320,7 @@ export default class RectPainter implements Painter {
             }
         }
 
-        this.bufferFloat32Array(this.centerBuffer, centers);
+        // this.bufferFloat32Array(this.centerBuffer, centers);
         this.bufferFloat32Array(this.deltaBuffer, deltas);
         this.bufferFloat32Array(this.deltaptBuffer, deltaPts);
         this.bufferFloat32Array(this.rotateBuffer, rotates);
@@ -315,10 +329,21 @@ export default class RectPainter implements Painter {
         this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
         this.bufferFloat32Array(this.fixdeltamaxptBuffer, fixdeltamaxpts);
 
+        this.populateCenterBuffer();
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
 
         if (isDebug) console.timeEnd("RectPainter.populateBuffers");
+    }
+
+    private populateCenterBuffer() {
+        const centers: number[] = [];
+        for (const w of this.objects) {
+            // const c = w.color || [0, 0, 0, 0];
+            centers.push(...w.center, ...w.center, ...w.center, ...w.center);
+        }
+
+        this.bufferFloat32Array(this.centerBuffer, centers);
     }
 
     private populateColorBuffer() {
@@ -396,7 +421,7 @@ export default class RectPainter implements Painter {
                 indexBuffer: buffer,
                 numElements: realIndices.length,
                 texsize: group.texsize,
-                rotated: group.rotated
+                rotated: group.rotated,
             });
         }
 
@@ -443,7 +468,7 @@ export default class RectPainter implements Painter {
                 u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
                 u_dim: this.dim,
-                u_alpha: this.alpha
+                u_alpha: this.alpha,
             } as any;
 
             if (group.texture) {

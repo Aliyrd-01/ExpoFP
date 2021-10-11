@@ -45,4 +45,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         const bTo = store.boothStore.booths.find((b) => b.name === to) || null;
         store.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
     }
+
+    selectCurrentPosition(point: { x: number; y: number }): void {
+        store.selectCurrentPosition(point);
+    }
 }
