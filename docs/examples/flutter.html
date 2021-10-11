@@ -6,24 +6,41 @@
     </head>
     <body>
         <div id="floorplan">Loading...</div>
-        <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
+        <script src="https://autumnfair.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
         <script>
-            window.floorplan = new ExpoFP.FloorPlan({
+            let interval = null;
+            let counter = 0;
+
+            let resetAnimation = () => {
+                fp.currentPosition(null);
+                if (interval) interval = clearInterval(interval);
+                counter = 0;
+            };
+
+            let fp = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
                 eventId: "wayfinding",
-                noOverlay: true,
-                onBoothClick: e => {
-                    window.flutter_inappwebview?.callHandler('onBoothClick', e.target.name);
-                }
+                noOverlay: false,
+                onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
+                onDirection: (e) => {
+                    resetAnimation();
+
+                    let points = e.points;
+                    if (!points) return;
+                    let step = points.length - 1;
+
+                    interval = setInterval(() => {
+                        if (step == -1) {
+                            step = points.length - 1;
+                            counter++;
+                            if (counter == 2) resetAnimation();
+                        } else {
+                            fp.currentPosition({ x: points[step].x, y: points[step].y });
+                            step--;
+                        }
+                    }, 50);
+                },
             });
-			
-			function selectRoute(from, to){
-				window.floorplan?.selectRoute(from, to);
-			}
-			
-			function selectBooth(name){
-				window.floorplan?.selectBooth(name);
-			}		
         </script>
     </body>
 </html>
