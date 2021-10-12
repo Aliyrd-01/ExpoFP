@@ -381,7 +381,7 @@ function ExhibitorComponent() {
                                     )
                                 }
                             >
-                                Directions
+                                {t("Directions")}
                             </button>
                         </div>
                     )}
@@ -409,7 +409,7 @@ function ExhibitorComponent() {
         xhr.setRequestHeader("Content-Type", "application/json");
 
         function er() {
-            alert(t("Error sending login instructions."));
+            alert(t("Error sending login instructions"));
         }
 
         xhr.onload = function (e) {
@@ -417,7 +417,7 @@ function ExhibitorComponent() {
                 er();
                 return;
             }
-            alert(t("A link to edit profile was sent to {{email}}.", { email }));
+            alert(t("A link to edit profile was sent to {{email}}", { email }));
         };
         xhr.onerror = function (e) {
             logger.error("Error", e);

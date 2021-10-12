@@ -53,7 +53,7 @@ function Wayfinding() {
                     onChange={(e) => onSelectionClick(e.target.value, true)}
                     style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
                 >
-                    <option value="">Direction from ...</option>
+                    <option value=""> </option>
                     {options(uiState.selectedRoute.to?.name)}
                 </select>
                 <select
@@ -61,7 +61,7 @@ function Wayfinding() {
                     onChange={(e) => onSelectionClick(e.target.value, false)}
                     style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
                 >
-                    <option value="">Direction to ...</option>
+                    <option value=""> </option>
                     {options(uiState.selectedRoute.from?.name)}
                 </select>
 

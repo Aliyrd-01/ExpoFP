@@ -168,7 +168,7 @@ function Booth() {
                                 store.clickRoute(new Route(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false))
                             }
                         >
-                            Directions
+                            {t("Directions")}
                         </button>
                     </div>
                 )}
