@@ -54,6 +54,10 @@
             "type": "string",
             "description": "Booth term (typically 'booth' or 'stand')"
         },
+        "reserveButtonTerm": {
+            "type": "string",
+            "description": "Term for Reserve button"
+        },
         "locale": {
             "type": "string",
             "description": "Locale to choose translation resouce file"
