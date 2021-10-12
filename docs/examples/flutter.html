@@ -6,13 +6,13 @@
     </head>
     <body>
         <div id="floorplan">Loading...</div>
-        <script src="https://autumnfair.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
+        <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
         <script>
             let interval = null;
             let counter = 0;
 
             let resetAnimation = () => {
-                fp.currentPosition(null);
+                fp.selectCurrentPosition(null);
                 if (interval) interval = clearInterval(interval);
                 counter = 0;
             };
@@ -26,7 +26,9 @@
                     resetAnimation();
 
                     let points = e.points;
+
                     if (!points) return;
+
                     let step = points.length - 1;
 
                     interval = setInterval(() => {
@@ -35,7 +37,7 @@
                             counter++;
                             if (counter == 2) resetAnimation();
                         } else {
-                            fp.currentPosition({ x: points[step].x, y: points[step].y });
+                            fp.selectCurrentPosition({ x: points[step].x, y: points[step].y });
                             step--;
                         }
                     }, 50);
