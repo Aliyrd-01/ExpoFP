@@ -84,7 +84,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const dotCanvas1 = createCircleCanvas(strokeWidth * 2.5, context.pixelRatio, "#fff", capFrom.hex());
     const dotCanvas2 = createCircleCanvas(strokeWidth * 2.3, context.pixelRatio, "#fff", capTo.hex());
-    const cpCanvas = createCircleCanvas(strokeWidth * 3, context.pixelRatio, "#ff0000");
+    const cpCanvas = createCircleCanvas(strokeWidth * 3, context.pixelRatio, "#0000ff");
 
     const sl = buildGraph(lines, boothsRects, []);
 
