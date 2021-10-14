@@ -22,7 +22,7 @@ export default function Controls() {
     return useObserver(() => (
         <div className={s.className} style={s.style}>
             <button className="fa fa-plus" title={t("Zoom In")} onClick={zoom.bind(window, 1)}></button>
-            <button className="fa fa-minus" title={t("Zoom Out")} onClick={zoom.bind(window, -1)}></button>
+            <button className="fa fa-minus" title={t("Zoom Out")} onClick={zoom.bind(window, -1)}></button>            
         </div>
     ));
 

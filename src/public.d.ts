@@ -15,7 +15,7 @@ class FloorPlan {
 
     selectBooth(name: string): void;
 
-    selectCurrentPosition(point: { x: number; y: number }): void;
+    selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void;
 
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }

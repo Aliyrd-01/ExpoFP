@@ -1,4 +1,5 @@
 import { action } from "mobx";
+import Rect from "../core/Rect";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -50,8 +51,9 @@ export default class RootStore {
             }, 200);
     }
 
-    @action selectCurrentPosition(point: { x: number; y: number }) {
+    @action selectCurrentPosition(point: { x: number; y: number }, focus: boolean) {
         this.uiState.position = point;
+        if (focus) this.uiState.moveToRect = Rect.fromCxcywh(point.x, point.y, 100, 100);
     }
 
     @action reset() {
@@ -116,6 +118,12 @@ export default class RootStore {
         // dispatch("selectCategory", id);
         // dispatch("moveToList");
         // dispatch("showMap", id);
+    }
+
+    @action clickFloor(floor) {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.moveToRect = floor.rect;
+        this.showMap();
     }
 
     @action clickSeminars() {

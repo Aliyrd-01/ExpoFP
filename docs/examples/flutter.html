@@ -7,40 +7,20 @@
     <body>
         <div id="floorplan">Loading...</div>
         <script src="http://localhost:8080/expofp.js" crossorigin="anonymous"></script>
+        <!-- <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script> -->
         <script>
-            let interval = null;
-            let counter = 0;
-
-            let resetAnimation = () => {
-                fp.selectCurrentPosition(null);
-                if (interval) interval = clearInterval(interval);
-                counter = 0;
-            };
-
             let fp = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
                 eventId: "wayfinding",
                 noOverlay: false,
                 onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
+                onFpConfigured: () => fp.selectRoute("1512", "1205"),
                 onDirection: (e) => {
-                    resetAnimation();
-
-                    let points = e.points;
-
-                    if (!points) return;
-
-                    let step = points.length - 1;
-
-                    interval = setInterval(() => {
-                        if (step == -1) {
-                            step = points.length - 1;
-                            counter++;
-                            if (counter == 2) resetAnimation();
-                        } else {
-                            fp.selectCurrentPosition({ x: points[step].x, y: points[step].y });
-                            step--;
-                        }
-                    }, 50);
+                    if (!e.points || !e.points.length) fp.selectCurrentPosition(null, false);
+                    else {
+                        let middlePoint = e.points[Math.floor(e.points.length / 2)];
+                        fp.selectCurrentPosition(middlePoint, true);
+                    }
                 },
             });
         </script>

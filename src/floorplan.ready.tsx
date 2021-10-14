@@ -46,7 +46,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
     }
 
-    selectCurrentPosition(point: { x: number; y: number }): void {
-        store.selectCurrentPosition(point);
+    selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void {
+        store.selectCurrentPosition(point, focus);
     }
 }
