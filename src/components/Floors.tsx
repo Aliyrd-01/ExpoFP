@@ -4,10 +4,9 @@ import React from "react";
 import { floors } from "../data/svg";
 import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
-import { t } from "../utils/i18n";
 import "./Floors.scss";
 
-export default function Controls() {
+export default function Floors() {
     const s = useLocalStore(() => ({
         get className() {
             return classNames({ levels: true, "-ready": uiState.wsStarted && floors.length });
@@ -22,12 +21,13 @@ export default function Controls() {
 
     return useObserver(() => (
         <div className={s.className} style={s.style}>
-            <div className="item header">{t("Floors")}</div>
-            {floors.map((f) => (
-                <div className="item" key={f.name} onClick={() => store.clickFloor(f)}>
-                    {f.name}
-                </div>
-            ))}
+            {floors
+                .sort((f1, f2) => f1.name[0].toUpperCase().localeCompare(f2.name[0].toUpperCase()))
+                .map((f) => (
+                    <div className="item" key={f.name} onClick={() => store.clickFloor(f)} title={f.name}>
+                        {f.name[0].toUpperCase()}
+                    </div>
+                ))}
         </div>
     ));
 }
