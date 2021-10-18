@@ -10,6 +10,7 @@ class FloorPlan {
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
     onDirection: (e: FloorPlanDirectionEvent) => void;
     selectBooth(name: string | string[]): void;
+    selectExhibitor(name: string | string[]): void;
     selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void;
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }

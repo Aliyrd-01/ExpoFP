@@ -38,6 +38,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    selectExhibitor(name: string | string[]) {
+        nr();
+    }
+
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
         nr();
     }
