@@ -36,13 +36,14 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectBooth(name: string | string[]) {
-        const booth = store.boothStore.booths.filter((b) => name.indexOf(b.name) > -1);
-        store.selectBooth(booth);
+        const booths = store.boothStore.booths.filter((b) => name.indexOf(b.name) > -1 || b.externalId == name);
+        store.selectBooth(booths);
+        store.moveToList([...booths]);
     }
 
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
-        const bFrom = store.boothStore.booths.find((b) => b.name === from) || null;
-        const bTo = store.boothStore.booths.find((b) => b.name === to) || null;
+        const bFrom = store.boothStore.booths.find((b) => b.name === from || b.externalId === from) || null;
+        const bTo = store.boothStore.booths.find((b) => b.name === to || b.externalId === to) || null;
         store.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
     }
 

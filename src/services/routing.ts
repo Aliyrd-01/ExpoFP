@@ -40,12 +40,12 @@ function historyReplace(search: string) {
 function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
     disableStateToUrl = true;
-    const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug);
+    const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
     if (slug.startsWith("route")) {
         const parts = slug.split(":");
-        const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2]) || null;
-        const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1]) || null;
-        store.selectRoute(new Route(from, to));        
+        const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
+        const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
+        store.selectRoute(new Route(from, to));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "-pdf") {
@@ -53,7 +53,7 @@ function dispatchFromUrl() {
     } else if (booth) {
         store.selectBooth(booth);
     } else {
-        const exhibitor = store.exhibitorStore.exhibitors.find((x: Exhibitor) => x.slug === slug);
+        const exhibitor = store.exhibitorStore.exhibitors.find((x: Exhibitor) => x.slug === slug || x.externalId === slug);
         if (exhibitor) store.selectExhibitor(exhibitor);
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
