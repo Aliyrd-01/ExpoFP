@@ -220,15 +220,18 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         }
     };
 
-    reaction(
-        () => uiState.selectedRoute,
-        () => updateRoute()
-    );
+    if (context.updatable) {
+        reaction(
+            () => uiState.selectedRoute,
+            () => context.requireUpdate(updateRoute)
+        );
 
-    reaction(
-        () => uiState.currentPosition,
-        () => updateCurrentPosition()
-    );
+        reaction(
+            () => uiState.position,
+            () => context.requireUpdate(updateCurrentPosition)
+        );
 
-    if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) updateRoute();
+        updateRoute();
+        updateCurrentPosition();
+    }
 }
