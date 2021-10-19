@@ -13,9 +13,9 @@ class FloorPlan {
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
 
-    selectBooth(name: string): void;
+    selectBooth(nameOrExternalId: string): void;
 
-    selectExhibitor(name: string): void;
+    selectExhibitor(nameOrExternalId: string): void;
 
     selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void;
 
