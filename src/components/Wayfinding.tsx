@@ -9,17 +9,32 @@ function Wayfinding() {
     return useObserver(() => {
         const bar = <div className="bar">{t("Directions")}</div>;
 
+        const boothsIDs = [];
         const options = (except: string) => {
             const o = [];
-            exhibitorStore.exhibitors.forEach((e) =>
+            exhibitorStore.exhibitors.forEach((e) => {
+                boothsIDs.push(...e.booths.map((b) => b.id));
                 o.push(
-                    ...e.booths.map((booth) => (
-                        <option key={`${e.id}${booth.id}`} value={booth.name}>
-                            {e.name} - {booth.name}
+                    ...e.booths
+                        .filter((b) => b.name != except)
+                        .map((booth) => (
+                            <option key={`${e.id}${booth.id}`} value={booth.name}>
+                                {e.name} - {booth.name}
+                            </option>
+                        ))
+                );
+            });
+
+            boothStore.booths
+                .filter((booth) => boothsIDs.indexOf(booth.id) == -1 && booth.name !== except)
+                .forEach((booth) => {
+                    o.push(
+                        <option key={`${booth.id}`} value={booth.name}>
+                            {booth.name}
                         </option>
-                    ))
-                )
-            );
+                    );
+                });
+
             return o;
         };
 

@@ -28,12 +28,6 @@ let capTo = Color("#FF9E2C");
 let lineFrom = capFrom;
 let lineTo = capTo;
 
-// if (settings.EXPO === "autumnfair") {
-//     lineTo = lineFrom = Color("#36F9ED");
-//     capFrom = Color("#454545");
-//     capTo = Color("#26E1D6");
-// }
-
 const linesIds: string[] = [];
 const capsIds: string[] = [];
 
@@ -80,7 +74,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const linesDrawer = context.requirePainter("WF_lines", RectPainter, painterOrderPriority - 20);
     const capsDrawer = context.requirePainter("WF_caps", RectPainter, painterOrderPriority);
-    const currentPosition = context.requirePainter("wF_cp", RectPainter, painterOrderPriority + 1);
+    const currentPositionDrawer = context.requirePainter("wF_cp", RectPainter, painterOrderPriority + 1);
 
     const dotCanvas1 = createCircleCanvas(strokeWidth * 2.5, context.pixelRatio, "#fff", capFrom.hex());
     const dotCanvas2 = createCircleCanvas(strokeWidth * 2.3, context.pixelRatio, "#fff", capTo.hex());
@@ -125,7 +119,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         });
     });
 
-    currentPosition.addObject({
+    currentPositionDrawer.addObject({
         id: "currentLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
@@ -135,7 +129,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    currentPosition.updateSkipdim("currentLocation", true);
+    currentPositionDrawer.updateSkipdim("currentLocation", true);
 
     const updateRoute = () => {
         linesIds.forEach((id) => {
@@ -216,13 +210,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             });
     };
 
-    const updateCurrectPosition = () => {
+    const updateCurrentPosition = () => {
         let position = uiState.currentPosition;
         if (position?.x && position?.y) {
-            currentPosition.updateVisible("currentLocation", true);
-            currentPosition.updateCenter("currentLocation", [position.x, position.y]);
+            currentPositionDrawer.updateVisible("currentLocation", true);
+            currentPositionDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
-            currentPosition.updateVisible("currentLocation", false);
+            currentPositionDrawer.updateVisible("currentLocation", false);
         }
     };
 
@@ -232,8 +226,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     );
 
     reaction(
-        () => uiState.position,
-        () => updateCurrectPosition()
+        () => uiState.currentPosition,
+        () => updateCurrentPosition()
     );
 
     if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) updateRoute();
