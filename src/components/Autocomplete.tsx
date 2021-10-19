@@ -9,14 +9,18 @@ export interface AutocompleteProps {
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => {
     const [filteredOptions, setFilteredOptions] = useState([]);
-    const [activeOptionIndex, setActiveOptionIndex] = useState(0);
+    const [activeOptionIndex, setActiveOptionIndex] = useState(null);
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
     const [input, setInput] = useState("");
+
+    const getActiveOptionIndex = (value) => {
+        return options.findIndex((option) => option === value);
+    };
 
     const onClickOption = (event) => {
         setFilteredOptions([]);
         setInput(event.target.innerText);
-        setActiveOptionIndex(0);
+        setActiveOptionIndex(getActiveOptionIndex(event.target.innerText));
         setShowOptionsDropdown(false);
     };
 
@@ -30,15 +34,17 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => 
 
         setInput(event.target.value);
         setFilteredOptions(unlinked);
-        setActiveOptionIndex(0);
+        setActiveOptionIndex(null);
     };
 
     const showOptions = (optionsList) => {
         return (
             <ul>
                 {optionsList.map((option, index) => {
+                    let activeClass;
+                    if (index === activeOptionIndex) activeClass = "is-active";
                     return (
-                        <li key={option} onClick={onClickOption}>
+                        <li key={option} className={activeClass} onClick={onClickOption}>
                             {option}
                         </li>
                     );
