@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import classNames from "classnames";
+import useOutsideClick from "../utils/useOutsideClick";
 import "./Autocomplete.scss";
 
 export interface AutocompleteProps {
@@ -8,10 +9,15 @@ export interface AutocompleteProps {
 }
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => {
+    const ref = useRef();
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [activeOptionIndex, setActiveOptionIndex] = useState(null);
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
     const [input, setInput] = useState("");
+
+    useOutsideClick(ref, () => {
+        if (showOptionsDropdown) setShowOptionsDropdown(false);
+    });
 
     const getActiveOptionIndex = (value) => {
         return options.findIndex((option) => option === value);
@@ -55,7 +61,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => 
 
     return (
         <>
-            <div className={classNames("autocomplete", { "is-open": showOptionsDropdown })}>
+            <div ref={ref} className={classNames("autocomplete", { "is-open": showOptionsDropdown })}>
                 <input
                     className={"autocomplete__input"}
                     type="text"
