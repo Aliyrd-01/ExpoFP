@@ -1,0 +1,12 @@
+@use "sass:math";
+
+$overlay-height: 3.5rem;
+
+// Rem settings
+$rem-baseline: 16;
+$rem-baseline-px: 16px;
+$rem-fallback: false;
+$rem-px-only: false;
+
+// Colors
+$color-lightgray: #e4e4e4;
