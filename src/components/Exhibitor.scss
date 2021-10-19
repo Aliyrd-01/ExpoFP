@@ -10,6 +10,7 @@
 .overlay-content.-exhibitor-featured {
     background: #230762;
     color: #fff;
+
     .exhibitor__bar,
     .exhibitor__meta {
         color: #fff;
@@ -151,6 +152,7 @@
 
     &__description-html {
         overflow-wrap: break-word;
+
         ol, ul {
             padding-inline-start: 20px;
             display: grid;
