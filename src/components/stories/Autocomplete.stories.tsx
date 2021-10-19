@@ -16,4 +16,7 @@ const Template: Story<AutocompleteProps> = (args) => {
 };
 
 export const Base = Template.bind({});
-Base.args = {};
+Base.args = {
+    placeholder: "Select Direction from",
+    options: ["one1", "one2", "one3", "two1"],
+};
