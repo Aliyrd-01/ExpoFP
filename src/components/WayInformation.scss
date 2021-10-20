@@ -1,0 +1,23 @@
+.wayInformation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: rem(25px 0);
+
+    &__item {
+        span {
+            display: flex;
+            padding-bottom: rem(5px);
+            font-size: rem(14px);
+            color: $color-gray;
+            font-weight: 500;
+        }
+        strong {
+            font-size: rem(18px);
+            color: $color-black;
+            font-weight: 600;
+        }
+    }
+}
