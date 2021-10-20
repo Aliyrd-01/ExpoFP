@@ -14,7 +14,7 @@ export class Line {
         public p1: Point,
         public unaccessible: boolean = false,
         public unidirection: boolean = false,
-        public hidden: boolean = false
+        public virtual: boolean = false
     ) {}
 }
 
@@ -232,7 +232,7 @@ const subLines = (lines: Line[]): Sublines => {
         linePoints.forEach((point) => (!points.filter((p) => samePoint(point, p)).length ? points.push(point) : null));
 
         for (let k = 1; k < points.length; k++)
-            subLines.push(new Line(points[k - 1], points[k], lines[i].unaccessible, lines[i].unidirection, lines[i].hidden));
+            subLines.push(new Line(points[k - 1], points[k], lines[i].unaccessible, lines[i].unidirection, lines[i].virtual));
     }
 
     subLines.forEach((sl) => {
@@ -280,7 +280,11 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
     let t0 = performance.now();
-    const perpendiculars = buildPerpendiculars(lines, rects, other);
+    const perpendiculars = buildPerpendiculars(
+        lines.filter((l) => !l.virtual),
+        rects,
+        other
+    );
     let t1 = performance.now();
 
     console.debug(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);

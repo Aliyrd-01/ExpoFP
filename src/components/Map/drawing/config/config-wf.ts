@@ -63,7 +63,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value)),
                 node.getAttribute("data-way-unaccessible") === "true" || false,
                 node.getAttribute("data-way-unidirection") === "true" || false,
-                node.getAttribute("data-way-hidden") === "true" || false
+                node.getAttribute("data-way-virtual") === "true" || false
             )
         );
     });
