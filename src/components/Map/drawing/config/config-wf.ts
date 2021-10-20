@@ -28,12 +28,6 @@ let capTo = Color("#FF9E2C");
 let lineFrom = capFrom;
 let lineTo = capTo;
 
-// if (settings.EXPO === "autumnfair") {
-//     lineTo = lineFrom = Color("#36F9ED");
-//     capFrom = Color("#454545");
-//     capTo = Color("#26E1D6");
-// }
-
 const linesIds: string[] = [];
 const capsIds: string[] = [];
 
@@ -68,7 +62,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 new Point(parseFloat(node.attributes.x1.value), parseFloat(node.attributes.y1.value)),
                 new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value)),
                 node.getAttribute("data-way-unaccessible") === "true" || false,
-                node.getAttribute("data-way-unidirection") === "true" || false
+                node.getAttribute("data-way-unidirection") === "true" || false,
+                node.getAttribute("data-way-hidden") === "true" || false
             )
         );
     });
@@ -80,7 +75,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const linesDrawer = context.requirePainter("WF_lines", RectPainter, painterOrderPriority - 20);
     const capsDrawer = context.requirePainter("WF_caps", RectPainter, painterOrderPriority);
-    const currentPosition = context.requirePainter("wF_cp", RectPainter, painterOrderPriority + 1);
+    const currentPositionDrawer = context.requirePainter("wF_cp", RectPainter, painterOrderPriority + 1);
 
     const dotCanvas1 = createCircleCanvas(strokeWidth * 2.5, context.pixelRatio, "#fff", capFrom.hex());
     const dotCanvas2 = createCircleCanvas(strokeWidth * 2.3, context.pixelRatio, "#fff", capTo.hex());
@@ -88,20 +83,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const sl = buildGraph(lines, boothsRects, []);
 
-    sl.lines.forEach((line, i) => {
-        const center = lineCenter(line.p0, line.p1);
-        const length = lineLength(line.p0, line.p1);
-        const delta = length / 2 + strokeWidth;
+    sl.lines
+        .filter((l) => !l.hidden)
+        .forEach((line, i) => {
+            const center = lineCenter(line.p0, line.p1);
+            const length = lineLength(line.p0, line.p1);
+            const delta = length / 2 + strokeWidth;
 
-        linesDrawer.addObject({
-            id: lineId(line.p0, line.p1),
-            center: [center.x, center.y],
-            color: lineFrom.vec4(),
-            deltas: [-delta, -strokeWidth, delta, strokeWidth],
-            rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
-            visible: isDebug,
+            linesDrawer.addObject({
+                id: lineId(line.p0, line.p1),
+                center: [center.x, center.y],
+                color: lineFrom.vec4(),
+                deltas: [-delta, -strokeWidth, delta, strokeWidth],
+                rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
+                visible: isDebug,
+            });
         });
-    });
 
     sl.lineEnds.forEach((lineEnd) => {
         capsDrawer.addObject({
@@ -125,7 +122,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         });
     });
 
-    currentPosition.addObject({
+    currentPositionDrawer.addObject({
         id: "currentLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
@@ -135,7 +132,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    currentPosition.updateSkipdim("currentLocation", true);
+    currentPositionDrawer.updateSkipdim("currentLocation", true);
 
     const updateRoute = () => {
         linesIds.forEach((id) => {
@@ -182,12 +179,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     id = lineId(cp, pp);
                     if (!linesDrawer.getObject(id)) id = lineId(pp, cp);
 
-                    linesDrawer.updateVisible(id, true);
-                    linesDrawer.updateColor(id, Color(colors[index - 1]).vec4());
-                    linesDrawer.updateSkipdim(id, true);
-                    linesIds.push(id);
-
-                    distance += lineLength(cp, pp);
+                    if (linesDrawer.getObject(id)) {
+                        linesDrawer.updateVisible(id, true);
+                        linesDrawer.updateColor(id, Color(colors[index - 1]).vec4());
+                        linesDrawer.updateSkipdim(id, true);
+                        linesIds.push(id);
+                        distance += lineLength(cp, pp);
+                    }
                 }
 
                 let prefix = null;
@@ -216,25 +214,28 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             });
     };
 
-    const updateCurrectPosition = () => {
+    const updateCurrentPosition = () => {
         let position = uiState.currentPosition;
         if (position?.x && position?.y) {
-            currentPosition.updateVisible("currentLocation", true);
-            currentPosition.updateCenter("currentLocation", [position.x, position.y]);
+            currentPositionDrawer.updateVisible("currentLocation", true);
+            currentPositionDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
-            currentPosition.updateVisible("currentLocation", false);
+            currentPositionDrawer.updateVisible("currentLocation", false);
         }
     };
 
-    reaction(
-        () => uiState.selectedRoute,
-        () => updateRoute()
-    );
+    if (context.updatable) {
+        reaction(
+            () => uiState.selectedRoute,
+            () => context.requireUpdate(updateRoute)
+        );
 
-    reaction(
-        () => uiState.position,
-        () => updateCurrectPosition()
-    );
+        reaction(
+            () => uiState.position,
+            () => context.requireUpdate(updateCurrentPosition)
+        );
 
-    if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) updateRoute();
+        updateRoute();
+        updateCurrentPosition();
+    }
 }
