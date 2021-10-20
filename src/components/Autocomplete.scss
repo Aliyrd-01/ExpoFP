@@ -1,6 +1,10 @@
 .autocomplete {
     $this: &;
+    position: relative;
 
+    &:before {
+        content: "";
+    }
     &__input {
         width: 100%;
         height: rem(50px);

@@ -36,10 +36,10 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => 
 
     const onChange = (event) => {
         const userInput = event.target.value;
-        const unlinked = options.filter((option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1);
+        const result = options.filter((option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1);
 
         setInput(event.target.value);
-        setFilteredOptions(unlinked);
+        setFilteredOptions(result);
         setActiveOptionIndex(null);
     };
 
