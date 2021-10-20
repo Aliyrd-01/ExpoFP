@@ -40,9 +40,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.selectBooth(booth);
     }
 
-    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
-        const bFrom = store.boothStore.booths.find((b) => b.name === from) || null;
-        const bTo = store.boothStore.booths.find((b) => b.name === to) || null;
+    selectRoute(
+        from: string | { x: number; y: number },
+        to: string | { x: number; y: number },
+        exceptUnaccessible: boolean
+    ): void {
+        const bFrom = store.boothStore.booths.find((b) => b.name === from) || (from as any);
+        const bTo = store.boothStore.booths.find((b) => b.name === to) || (to as any);
         store.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
     }
 
