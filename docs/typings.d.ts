@@ -11,7 +11,11 @@ class FloorPlan {
     onDirection: (e: FloorPlanDirectionEvent) => void;
     selectBooth(name: string | string[]): void;
     selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void;
-    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
+    selectRoute(
+        from: string | { x: number; y: number },
+        to: string | { x: number; y: number },
+        exceptUnaccessible: boolean
+    ): void;
 }
 
 interface FloorPlanOptions {

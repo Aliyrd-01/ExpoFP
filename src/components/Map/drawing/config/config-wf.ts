@@ -62,7 +62,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 new Point(parseFloat(node.attributes.x1.value), parseFloat(node.attributes.y1.value)),
                 new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value)),
                 node.getAttribute("data-way-unaccessible") === "true" || false,
-                node.getAttribute("data-way-unidirection") === "true" || false
+                node.getAttribute("data-way-unidirection") === "true" || false,
+                node.getAttribute("data-way-virtual") === "true" || false
             )
         );
     });
@@ -82,20 +83,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const sl = buildGraph(lines, boothsRects, []);
 
-    sl.lines.forEach((line, i) => {
-        const center = lineCenter(line.p0, line.p1);
-        const length = lineLength(line.p0, line.p1);
-        const delta = length / 2 + strokeWidth;
+    sl.lines
+        .filter((l) => !l.hidden)
+        .forEach((line, i) => {
+            const center = lineCenter(line.p0, line.p1);
+            const length = lineLength(line.p0, line.p1);
+            const delta = length / 2 + strokeWidth;
 
-        linesDrawer.addObject({
-            id: lineId(line.p0, line.p1),
-            center: [center.x, center.y],
-            color: lineFrom.vec4(),
-            deltas: [-delta, -strokeWidth, delta, strokeWidth],
-            rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
-            visible: isDebug,
+            linesDrawer.addObject({
+                id: lineId(line.p0, line.p1),
+                center: [center.x, center.y],
+                color: lineFrom.vec4(),
+                deltas: [-delta, -strokeWidth, delta, strokeWidth],
+                rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
+                visible: isDebug,
+            });
         });
-    });
 
     sl.lineEnds.forEach((lineEnd) => {
         capsDrawer.addObject({
@@ -176,12 +179,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     id = lineId(cp, pp);
                     if (!linesDrawer.getObject(id)) id = lineId(pp, cp);
 
-                    linesDrawer.updateVisible(id, true);
-                    linesDrawer.updateColor(id, Color(colors[index - 1]).vec4());
-                    linesDrawer.updateSkipdim(id, true);
-                    linesIds.push(id);
-
-                    distance += lineLength(cp, pp);
+                    if (linesDrawer.getObject(id)) {
+                        linesDrawer.updateVisible(id, true);
+                        linesDrawer.updateColor(id, Color(colors[index - 1]).vec4());
+                        linesDrawer.updateSkipdim(id, true);
+                        linesIds.push(id);
+                        distance += lineLength(cp, pp);
+                    }
                 }
 
                 let prefix = null;
