@@ -33,7 +33,7 @@ const capsIds: string[] = [];
 
 const isDebug = false;
 
-const interpolateColors = (color1, color2, steps) => {
+function interpolateColors(color1, color2, steps) {
     const interpolateColor = (color1, color2, factor = 0.5) => {
         var result = color1.slice();
         for (var i = 0; i < 3; i++) result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
@@ -49,23 +49,60 @@ const interpolateColors = (color1, color2, steps) => {
     for (var i = 0; i < steps; i++) interpolatedColorArray.push(interpolateColor(color1, color2, stepFactor * i));
 
     return interpolatedColorArray;
-};
+}
+
+function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean): Line[] {
+    return d
+        .split(/[a-zA-Z]/g)
+        .filter((p) => p.length)
+        .map((part, i, array) => {
+            let pp: string[];
+            let p: string[];
+
+            if (i === 0) {
+                if (d.endsWith("Z")) {
+                    pp = array[array.length - 1].split(",");
+                    p = array[i].split(",");
+                } else return null;
+            } else {
+                pp = array[i - 1].split(",");
+                p = array[i].split(",");
+            }
+
+            return new Line(
+                new Point(parseFloat(pp[0]), parseFloat(pp[1])),
+                new Point(parseFloat(p[0]), parseFloat(p[1])),
+                unacc,
+                uni,
+                virt
+            );
+        })
+        .filter((l) => l);
+}
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
     const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
     if (!layer) return;
 
+    const units = svg.getAttribute("units");
+
     const lines: Line[] = [];
     layer.childNodes.forEach((node: any) => {
-        lines.push(
-            new Line(
-                new Point(parseFloat(node.attributes.x1.value), parseFloat(node.attributes.y1.value)),
-                new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value)),
-                node.getAttribute("data-way-unaccessible") === "true" || false,
-                node.getAttribute("data-way-unidirection") === "true" || false,
-                node.getAttribute("data-way-virtual") === "true" || false
-            )
-        );
+        const unacc = node.getAttribute("data-way-unaccessible") === "true" || false;
+        const uni = node.getAttribute("data-way-unidirection") === "true" || false;
+        const virt = node.getAttribute("data-way-virtual") === "true" || false;
+
+        if (node.attributes.x1)
+            lines.push(
+                new Line(
+                    new Point(parseFloat(node.attributes.x1.value), parseFloat(node.attributes.y1.value)),
+                    new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value)),
+                    unacc,
+                    uni,
+                    virt
+                )
+            );
+        else if (node.attributes.d) lines.push(...parseDAttribute(node.attributes.d.value, unacc, uni, virt));
     });
 
     const boothsRects = boothStore.booths.map((b) => {
@@ -81,11 +118,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const dotCanvas2 = createCircleCanvas(strokeWidth * 2.3, context.pixelRatio, "#fff", capTo.hex());
     const cpCanvas = createCircleCanvas(strokeWidth * 3, context.pixelRatio, "#0000ff");
 
-    const sl = buildGraph(lines, boothsRects, []);
+    const sl = buildGraph(lines, boothsRects, [], units === "m" ? 300 : 300);
 
     sl.lines
-        .filter((l) => !l.hidden)
-        .forEach((line, i) => {
+        .filter((l) => !l.virtual)
+        .forEach((line) => {
             const center = lineCenter(line.p0, line.p1);
             const length = lineLength(line.p0, line.p1);
             const delta = length / 2 + strokeWidth;
@@ -134,7 +171,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     currentPositionDrawer.updateSkipdim("currentLocation", true);
 
-    const updateRoute = () => {
+    function updateRoute() {
         linesIds.forEach((id) => {
             linesDrawer.updateVisible(id, false);
             linesDrawer.updateSkipdim(id, false);
@@ -209,12 +246,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 from: from ? { id: from.id, name: from.name } : null,
                 to: to ? { id: to.id, name: to.name } : null,
                 points,
-                distance: `${distance}${svg.getAttribute("units")}`,
+                distance: `${distance}${units}`,
                 time: Math.round(distance / 1.4),
             });
-    };
+    }
 
-    const updateCurrentPosition = () => {
+    function updateCurrentPosition() {
         let position = uiState.currentPosition;
         if (position?.x && position?.y) {
             currentPositionDrawer.updateVisible("currentLocation", true);
@@ -222,7 +259,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         } else {
             currentPositionDrawer.updateVisible("currentLocation", false);
         }
-    };
+    }
 
     if (context.updatable) {
         reaction(
