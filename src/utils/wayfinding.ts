@@ -149,6 +149,8 @@ const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle
     for (let i = 0; i < rects.length; i++) {
         const rect = rects[i];
 
+        if (lines.filter((l) => lineRectangleIntersections(l, rect).length).length) continue;
+
         const line_13 = new Line(lineCenter(rect.p0, rect.p1), lineCenter(rect.p2, rect.p3));
         const line_24 = new Line(lineCenter(rect.p1, rect.p2), lineCenter(rect.p3, rect.p0));
 
