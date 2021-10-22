@@ -14,7 +14,8 @@ export class Line {
         public p1: Point,
         public unaccessible: boolean = false,
         public unidirection: boolean = false,
-        public virtual: boolean = false
+        public virtual: boolean = false,
+        public ended: boolean = false
     ) {}
 }
 
@@ -141,13 +142,17 @@ const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     return points;
 };
 
-const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number = 300): Line[] => {
+const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Line[] => {
     const blockers = rects.concat(other);
+
+    lines = lines.filter((l) => !l.virtual);
 
     const perpendiculars: Line[] = [];
 
     for (let i = 0; i < rects.length; i++) {
         const rect = rects[i];
+
+        if (lines.filter((l) => lineRectangleIntersections(l, rect).length).length) continue;
 
         const line_13 = new Line(lineCenter(rect.p0, rect.p1), lineCenter(rect.p2, rect.p3));
         const line_24 = new Line(lineCenter(rect.p1, rect.p2), lineCenter(rect.p3, rect.p0));
@@ -204,6 +209,9 @@ const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle
             if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
     }
+
+    perpendiculars.forEach((p) => (p.ended = true));
+
     return perpendiculars;
 };
 
@@ -220,8 +228,14 @@ const subLines = (lines: Line[]): Sublines => {
         for (let j = 0; j < lines.length; j++) {
             if (i === j) continue;
 
-            const intersect = linesIntersection(lines[i], lines[j]);
-            if (!intersect.onLine1 || !intersect.onLine2) continue;
+            const intersect = linesIntersection(lines[i], lines[j]); // TODO: Виртуальные линии не могут пересекаться не на концах. Подумать.
+            if (
+                !intersect.onLine1 ||
+                !intersect.onLine2 ||
+                (lines[i].ended && lines[j].virtual) ||
+                (lines[i].virtual && lines[j].ended)
+            )
+                continue;
             linePoints.push(intersect.point);
             if (!intersections.filter((i) => samePoint(i, intersect.point)).length) intersections.push(intersect.point);
         }
@@ -278,13 +292,9 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     console.debug(`Graph created. ~ ${t1 - t0}ms.`);
 };
 
-export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
+export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
     let t0 = performance.now();
-    const perpendiculars = buildPerpendiculars(
-        lines.filter((l) => !l.virtual),
-        rects,
-        other
-    );
+    const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
     let t1 = performance.now();
 
     console.debug(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);

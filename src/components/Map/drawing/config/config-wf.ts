@@ -55,6 +55,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
     if (!layer) return;
 
+    const units = svg.getAttribute("units");
+
     const lines: Line[] = [];
     layer.childNodes.forEach((node: any) => {
         lines.push(
@@ -81,10 +83,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const dotCanvas2 = createCircleCanvas(strokeWidth * 2.3, context.pixelRatio, "#fff", capTo.hex());
     const cpCanvas = createCircleCanvas(strokeWidth * 3, context.pixelRatio, "#0000ff");
 
-    const sl = buildGraph(lines, boothsRects, []);
+    const sl = buildGraph(lines, boothsRects, [], units === "m" ? 300 : 300);
 
     sl.lines
-        .filter((l) => !l.hidden)
+        .filter((l) => !l.virtual)
         .forEach((line, i) => {
             const center = lineCenter(line.p0, line.p1);
             const length = lineLength(line.p0, line.p1);
@@ -209,7 +211,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 from: from ? { id: from.id, name: from.name } : null,
                 to: to ? { id: to.id, name: to.name } : null,
                 points,
-                distance: `${distance}${svg.getAttribute("units")}`,
+                distance: `${distance}${units}`,
                 time: Math.round(distance / 1.4),
             });
     };
