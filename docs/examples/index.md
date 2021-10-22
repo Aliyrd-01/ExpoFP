@@ -10,6 +10,6 @@ permalink: /
 <!-- Explore the list of integration examples.
 View HTML source code to get implementation details. -->
 
-[Example Android(Java) Application](https://github.com/expofp/expofp-java-example)
+<!-- [Example Java Application for Android](https://github.com/expofp/expofp-java-example)
 
-[Example Android(Flutter) Application](https://github.com/expofp/expofp-flutter-example)
+[Example Flutter Application for Android and IOS](https://github.com/expofp/expofp-flutter-example) -->
