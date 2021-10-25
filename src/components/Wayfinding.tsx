@@ -16,7 +16,7 @@ function Wayfinding() {
                 boothsIDs.push(...e.booths.map((b) => b.id));
                 o.push(
                     ...e.booths
-                        .filter((b) => b.name != except)
+                        .filter((b) => b.name !== except)
                         .map((booth) => (
                             <option key={`${e.id}${booth.id}`} value={booth.name}>
                                 {e.name} - {booth.name}
@@ -26,7 +26,7 @@ function Wayfinding() {
             });
 
             boothStore.booths
-                .filter((booth) => boothsIDs.indexOf(booth.id) == -1 && booth.name !== except)
+                .filter((booth) => boothsIDs.indexOf(booth.id) === -1 && booth.name !== except)
                 .forEach((booth) => {
                     o.push(
                         <option key={`${booth.id}`} value={booth.name}>
