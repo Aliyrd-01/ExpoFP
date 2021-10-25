@@ -4,6 +4,13 @@
 
     &:before {
         content: "";
+        position: absolute;
+        top: rem(22px);
+        right: 15px;
+        width: 11px;
+        height: 6px;
+        background: url("../assets//icons/arrow-down.svg");
+        pointer-events: none;
     }
     &__input {
         width: 100%;
