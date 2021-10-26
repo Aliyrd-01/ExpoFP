@@ -22,7 +22,7 @@ export default class BoothStore {
         return new Map<number, Booth>(this.booths.map(c => [c.id, c]));
     }
 
-    @computed({ keepAlive: true }) get borderWidth() {        
+    @computed({ keepAlive: true }) get borderWidth() {
         if (settings.EXPO === "groomexpo")
             return 0.4;
         const ar = this.booths.filter((_, i) => i % 10 === 0).map(x => x.rect.w + x.rect.h);
@@ -38,6 +38,7 @@ export abstract class BoothBase {
     protected readonly store: BoothStore;
     readonly id: number;
     readonly name: string;
+    readonly externalId: string;
     readonly title: string;
     readonly rect: Rect;
     readonly noLabels: boolean;
@@ -105,7 +106,6 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
 }
 
 export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {
-    readonly title: string;
     // readonly description: string;
     readonly color: string; // comes from svg or data.js
 }

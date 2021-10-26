@@ -9,7 +9,14 @@ export class Point {
 }
 
 export class Line {
-    constructor(public p0: Point, public p1: Point, public unaccessible: boolean = false, public unidirection: boolean = false) {}
+    constructor(
+        public p0: Point,
+        public p1: Point,
+        public unaccessible: boolean = false,
+        public unidirection: boolean = false,
+        public virtual: boolean = false,
+        public ended: boolean = false
+    ) {}
 }
 
 export class Rectangle {
@@ -52,6 +59,9 @@ export const lineAngle = (startPoint: Point, endPoint: Point): number => {
 const round = (number: number, digits: number = 3) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
 
 const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) < 0.1;
+
+export const sameLine = (l1: Line, l2: Line): boolean =>
+    (samePoint(l1.p0, l2.p0) && samePoint(l1.p1, l2.p1)) || (samePoint(l1.p0, l2.p1) && samePoint(l1.p1, l2.p0));
 
 const getDirection = (centerPoint: Point, startPoint: Point, endPoint: Point): number => {
     return (startPoint.x - centerPoint.x) * (endPoint.y - centerPoint.y) -
@@ -132,30 +142,17 @@ const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     return points;
 };
 
-const perpendicularToLine = (point: Point, start: Point, end: Point): { p: Point; isInside: boolean } => {
-    const k =
-        ((end.y - start.y) * (point.x - start.x) - (end.x - start.x) * (point.y - start.y)) /
-        (Math.pow(end.y - start.y, 2) + Math.pow(end.x - start.x, 2));
-
-    const p = new Point(point.x - k * (end.y - start.y), point.y + k * (end.x - start.x));
-
-    return {
-        p,
-        isInside:
-            p.x >= Math.min(start.x, end.x) &&
-            p.x <= Math.max(start.x, end.x) &&
-            p.y >= Math.min(start.y, end.y) &&
-            p.y <= Math.max(start.y, end.y),
-    };
-};
-
-const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number = 300): Line[] => {
+const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Line[] => {
     const blockers = rects.concat(other);
+
+    lines = lines.filter((l) => !l.virtual);
 
     const perpendiculars: Line[] = [];
 
     for (let i = 0; i < rects.length; i++) {
         const rect = rects[i];
+
+        if (lines.filter((l) => lineRectangleIntersections(l, rect).length).length) continue;
 
         const line_13 = new Line(lineCenter(rect.p0, rect.p1), lineCenter(rect.p2, rect.p3));
         const line_24 = new Line(lineCenter(rect.p1, rect.p2), lineCenter(rect.p3, rect.p0));
@@ -197,21 +194,24 @@ const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle
 
         if (minLlines[0]) {
             const l = new Line(line_13.p0, minLlines[0]);
-            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
         if (minLlines[2]) {
             const l = new Line(line_13.p1, minLlines[2]);
-            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
         if (minLlines[1]) {
             const l = new Line(line_24.p0, minLlines[1]);
-            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
         if (minLlines[3]) {
             const l = new Line(line_24.p1, minLlines[3]);
-            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 1)) perpendiculars.push(l);
+            if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
     }
+
+    perpendiculars.forEach((p) => (p.ended = true));
+
     return perpendiculars;
 };
 
@@ -228,8 +228,14 @@ const subLines = (lines: Line[]): Sublines => {
         for (let j = 0; j < lines.length; j++) {
             if (i === j) continue;
 
-            const intersect = linesIntersection(lines[i], lines[j]);
-            if (!intersect.onLine1 || !intersect.onLine2) continue;
+            const intersect = linesIntersection(lines[i], lines[j]); // TODO: Виртуальные линии не могут пересекаться не на концах. Подумать.
+            if (
+                !intersect.onLine1 ||
+                !intersect.onLine2 ||
+                (lines[i].ended && lines[j].virtual) ||
+                (lines[i].virtual && lines[j].ended)
+            )
+                continue;
             linePoints.push(intersect.point);
             if (!intersections.filter((i) => samePoint(i, intersect.point)).length) intersections.push(intersect.point);
         }
@@ -240,7 +246,7 @@ const subLines = (lines: Line[]): Sublines => {
         linePoints.forEach((point) => (!points.filter((p) => samePoint(point, p)).length ? points.push(point) : null));
 
         for (let k = 1; k < points.length; k++)
-            subLines.push(new Line(points[k - 1], points[k], lines[i].unaccessible, lines[i].unidirection));
+            subLines.push(new Line(points[k - 1], points[k], lines[i].unaccessible, lines[i].unidirection, lines[i].virtual));
     }
 
     subLines.forEach((sl) => {
@@ -286,9 +292,9 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     console.debug(`Graph created. ~ ${t1 - t0}ms.`);
 };
 
-export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
+export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
     let t0 = performance.now();
-    const perpendiculars = buildPerpendiculars(lines, rects, other);
+    const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
     let t1 = performance.now();
 
     console.debug(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
