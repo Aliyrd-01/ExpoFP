@@ -74,6 +74,9 @@
                             "name": {
                                 "type": "string"
                             },
+                            "externalId": {
+                                "type": "string"
+                            },
                             "exhibitors": {
                                 "type": "array",
                                 "items": {
@@ -92,6 +95,9 @@
                                 "type": "number"
                             },
                             "name": {
+                                "type": "string"
+                            },
+                            "externalId": {
                                 "type": "string"
                             },
                             "status": {
@@ -134,6 +140,9 @@
                             "description": {
                                 "type": "string",
                                 "description": "HTML, if set, overrides reserveInstructions"
+                            },
+                            "externalId": {
+                                "type": "string"
                             }
                         }
                     },
@@ -159,6 +168,9 @@
                             "description": {
                                 "type": "string",
                                 "description": "HTML"
+                            },
+                            "externalId": {
+                                "type": "string"
                             }
                         }
                     }
@@ -176,6 +188,9 @@
                         "type": "number"
                     },
                     "name": {
+                        "type": "string"
+                    },
+                    "externalId": {
                         "type": "string"
                     },
                     "categories": {

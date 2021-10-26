@@ -9,7 +9,8 @@ class FloorPlan {
     onFpConfigured: () => void;
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
     onDirection: (e: FloorPlanDirectionEvent) => void;
-    selectBooth(name: string | string[]): void;
+    selectBooth(nameOrExternalId: string | string[]): void;
+    selectExhibitor(nameOrExternalId: string | string[]): void;
     selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void;
     selectRoute(
         from: string | { x: number; y: number },

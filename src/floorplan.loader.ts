@@ -34,7 +34,11 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
 
-    selectBooth(name: string | string[]) {
+    selectBooth(nameOrExternalId: string | string[]) {
+        nr();
+    }
+
+    selectExhibitor(nameOrExternalId: string | string[]) {
         nr();
     }
 

@@ -35,9 +35,17 @@ export default class FloorPlanReady extends FloorPlanLoader {
         this.resolveReady();
     }
 
-    selectBooth(name: string | string[]) {
-        const booth = store.boothStore.booths.filter((b) => name.indexOf(b.name) > -1);
-        store.selectBooth(booth);
+    selectBooth(nameOrExternalId: string | string[]) {
+        const booths = store.boothStore.booths.filter((b) => nameOrExternalId.indexOf(b.name) > -1 || nameOrExternalId.indexOf(b.externalId) > -1);
+        store.selectBooth(booths);
+    }
+
+    selectExhibitor(nameOrExternalId: string | string[]) {
+        const exhibitors = store.exhibitorStore.exhibitors.filter((exh) => nameOrExternalId.indexOf(exh.name) > -1 || nameOrExternalId.indexOf(exh.externalId) > -1);
+        if(exhibitors && exhibitors.length > 0){
+            store.selectExhibitor(exhibitors[0]);
+            store.moveToList([exhibitors[0]]);
+        }
     }
 
     selectRoute(
