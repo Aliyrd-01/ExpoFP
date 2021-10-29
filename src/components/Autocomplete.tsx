@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
 import classNames from "classnames";
+import React, { useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import "./Autocomplete.scss";
 
@@ -32,8 +32,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     );
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
 
-    // NEED FIX
-    //useOnClickOutside(refAutocomplete, () => setShowOptionsDropdown(false));
+    useOnClickOutside(refAutocomplete, () => setShowOptionsDropdown(false));
 
     const changeValue = (value = "") => {
         setInput(value);

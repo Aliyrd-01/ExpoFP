@@ -3,10 +3,10 @@ import React from "react";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import Route from "../store/RouteStore";
 import { t } from "../utils/i18n";
-import "./Wayfinding.scss";
-import OverlayContent from "./OverlayContent";
 import Autocomplete from "./Autocomplete";
 import Checkbox from "./Checkbox";
+import OverlayContent from "./OverlayContent";
+import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
 
 function Wayfinding() {
@@ -15,7 +15,7 @@ function Wayfinding() {
         const boothsIDs = [];
 
         const options = (except: string) => {
-            const optionsList = [];
+            const optionsList = [{ value: "", label: "" }];
 
             exhibitorStore.exhibitors.forEach((e) => {
                 boothsIDs.push(...e.booths.map((b) => b.id));
@@ -85,27 +85,27 @@ function Wayfinding() {
                 <div className="wayFindingForm">
                     <div className="wayFindingForm__icons">
                         <div className="wayFindingForm__icons-item">
-                            <img src="./icons/to.svg" alt="To" />
+                            <img src="./icons/from.svg" alt="From" />
                         </div>
                         <div className="wayFindingForm__icons-item">
-                            <img src="./icons/from.svg" alt="From" />
+                            <img src="./icons/to.svg" alt="To" />
                         </div>
                     </div>
                     <div className="wayFindingForm__controls">
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
-                                placeholder="Select to"
-                                options={options(uiState.selectedRoute.to?.name)}
-                                value={uiState.selectedRoute.from?.name || ""}
-                                onChange={(value) => onSelectionClick(value, true)}
-                            />
-                        </div>
-                        <div className="formGroup" style={{ marginBottom: 20 }}>
-                            <Autocomplete
                                 placeholder="Select from"
                                 options={options(uiState.selectedRoute.from?.name)}
                                 value={uiState.selectedRoute.to?.name || ""}
                                 onChange={(value) => onSelectionClick(value, false)}
+                            />
+                        </div>
+                        <div className="formGroup" style={{ marginBottom: 20 }}>
+                            <Autocomplete
+                                placeholder="Select to"
+                                options={options(uiState.selectedRoute.to?.name)}
+                                value={uiState.selectedRoute.from?.name || ""}
+                                onChange={(value) => onSelectionClick(value, true)}
                             />
                         </div>
                         <div className="formGroup" style={{ marginBottom: 10 }}>
