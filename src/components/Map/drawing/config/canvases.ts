@@ -114,12 +114,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
 }
 
 const circleCanvasCache = new Map<string, CanvasDescriptor>();
-export function createCircleCanvas(
-    radius: number,
-    pixelRatio: number,
-    color: string = "#fff",
-    stroke: string = null
-): CanvasDescriptor {
+export function createCircleCanvas(radius: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
     const key = radius + " " + pixelRatio;
     let res = circleCanvasCache.get(key);
 
@@ -137,18 +132,6 @@ export function createCircleCanvas(
                 c.fillStyle = color;
                 c.beginPath();
                 c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
-                c.fill();
-
-                if (!stroke) return;
-
-                c.fillStyle = stroke;
-                c.beginPath();
-                c.arc(size / 2, size / 2, 0.75 * (radius * pixelRatio), 0, 2 * Math.PI);
-                c.fill();
-
-                c.fillStyle = color;
-                c.beginPath();
-                c.arc(size / 2, size / 2, 0.4 * (radius * pixelRatio), 0, 2 * Math.PI);
                 c.fill();
             },
         };
@@ -204,6 +187,90 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
         setTimeout(() => bookmarkCanvasCache.delete(key), 5000);
     }
     return res;
+}
+
+export function createCurrentCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 0.4): CanvasDescriptor {
+    return {
+        width: 90 * scale,
+        height: 70 * scale,
+
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.scale(scale, scale);
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.moveTo(60.0, 12.0);
+            ctx.lineTo(60.0, 57.0);
+            ctx.lineTo(90.0, 34.5);
+            ctx.fill();
+
+            // #path817
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(67.0, 22.0);
+            ctx.lineTo(67.0, 47.0);
+            ctx.lineTo(85.0, 34.5);
+            ctx.fill();
+
+            // #path819
+            ctx.beginPath();
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.moveTo(35.0, 0.0);
+            ctx.bezierCurveTo(54.3, 0.0, 70.0, 15.6, 70.0, 35.0);
+            ctx.bezierCurveTo(70.0, 54.3, 54.3, 70.0, 35.0, 70.0);
+            ctx.bezierCurveTo(15.6, 70.0, 0.0, 54.3, 0.0, 35.0);
+            ctx.bezierCurveTo(0.0, 15.6, 15.6, 0.0, 35.0, 0.0);
+            ctx.fill();
+
+            // #path821
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(35.0, 6.5);
+            ctx.bezierCurveTo(50.7, 6.5, 63.5, 19.2, 63.5, 35.0);
+            ctx.bezierCurveTo(63.5, 50.7, 50.7, 63.5, 35.0, 63.5);
+            ctx.bezierCurveTo(19.2, 63.5, 6.5, 50.7, 6.5, 35.0);
+            ctx.bezierCurveTo(6.5, 19.2, 19.2, 6.5, 35.0, 6.5);
+            ctx.fill();
+        },
+    };
+}
+
+export function createTargetCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 0.5): CanvasDescriptor {
+    return {
+        width: 70 * scale,
+        height: 100 * scale,
+        // padding,
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.scale(scale, scale);
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.moveTo(32.6, 97.8);
+            ctx.bezierCurveTo(24.4, 81.5, 0.0, 57.0, 0.0, 32.6);
+            ctx.bezierCurveTo(0.0, 14.6, 14.6, 0.0, 32.6, 0.0);
+            ctx.bezierCurveTo(50.5, 0.0, 65.2, 14.6, 65.2, 32.6);
+            ctx.bezierCurveTo(65.2, 57.0, 40.7, 81.5, 32.6, 97.8);
+            ctx.fill();
+
+            // #path1440
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(32.6, 91.1);
+            ctx.bezierCurveTo(25.2, 76.3, 3.1, 54.2, 3.1, 32.1);
+            ctx.bezierCurveTo(3.1, 15.9, 16.3, 2.6, 32.6, 2.6);
+            ctx.bezierCurveTo(48.8, 2.6, 62.0, 15.9, 62.0, 32.1);
+            ctx.bezierCurveTo(62.0, 54.2, 39.9, 76.3, 32.6, 91.1);
+            ctx.fill();
+
+            // #path1442
+            ctx.beginPath();
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.moveTo(16.2, 32.6);
+            ctx.bezierCurveTo(16.2, 41.6, 23.5, 48.9, 32.5, 48.9);
+            ctx.bezierCurveTo(41.5, 48.9, 48.8, 41.6, 48.8, 32.6);
+            ctx.bezierCurveTo(48.8, 23.6, 41.5, 16.3, 32.5, 16.3);
+            ctx.bezierCurveTo(23.5, 16.3, 16.2, 23.6, 16.2, 32.6);
+            ctx.fill();
+        },
+    };
 }
 
 export function getFont(px: number, weight: number = 500) {

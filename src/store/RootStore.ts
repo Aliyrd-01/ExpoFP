@@ -43,9 +43,6 @@ export default class RootStore {
 
         if (route.from) list.push(route.from);
         if (route.to) list.push(route.to);
-
-        console.info(route);
-        
         if (list.length)
             window.setTimeout(() => {
                 this.moveToList(list);
