@@ -1,3 +1,5 @@
+@import "../styles/helpers.scss";
+
 .checkbox {
     display: inline-flex;
 
@@ -18,7 +20,7 @@
             &:before {
                 content: "";
                 position: absolute;
-                top: 0;
+                top: 2px;
                 left: 0;
                 width: rem(18px);
                 height: rem(18px);
@@ -28,7 +30,7 @@
             &:after {
                 content: "";
                 position: absolute;
-                top: 1px;
+                top: 3px;
                 left: 1px;
                 width: rem(16px);
                 height: rem(16px);

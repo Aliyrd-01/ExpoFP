@@ -7,7 +7,7 @@ import "./OverlayParticles.scss";
 
 function OverlayParticles() {
     const [visible, setVisible] = useState(false);
-    const [ParticlesClass, setParticlesClass] = useState();
+    const [ParticlesClass, setParticlesClass] = useState<any>();
     const [canShow, setCanShow] = useState(false);
     const canvas = useRef();
 
@@ -19,7 +19,7 @@ function OverlayParticles() {
 
         if (canShow && !ParticlesClass) {
             // console.log("zz");
-            import(/* webpackChunkName: "particlesjs" */ "particlesjs").then(p => {
+            import(/* webpackChunkName: "particlesjs" */ "particlesjs").then((p) => {
                 setParticlesClass(p.default);
             });
             // waitFor(
@@ -38,7 +38,7 @@ function OverlayParticles() {
                 speed: 0.4,
                 sizeVariations: 4,
                 color: "#557988",
-                connectParticles: true
+                connectParticles: true,
             });
             setVisible(true);
 

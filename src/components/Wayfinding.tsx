@@ -3,50 +3,43 @@ import React from "react";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import Route from "../store/RouteStore";
 import { t } from "../utils/i18n";
+import "./Wayfinding.scss";
 import OverlayContent from "./OverlayContent";
+import Autocomplete from "./Autocomplete";
+import Checkbox from "./Checkbox";
+import WayInformation from "./WayInformation";
 
 function Wayfinding() {
     return useObserver(() => {
         const bar = <div className="bar">{t("Directions")}</div>;
-
         const boothsIDs = [];
+
         const options = (except: string) => {
-            const o = [];
+            const optionsList = [];
+
             exhibitorStore.exhibitors.forEach((e) => {
                 boothsIDs.push(...e.booths.map((b) => b.id));
-                o.push(
+                optionsList.push(
                     ...e.booths
                         .filter((b) => b.name !== except)
-                        .map((booth) => (
-                            <option key={`${e.id}${booth.id}`} value={booth.name}>
-                                {e.name} - {booth.name}
-                            </option>
-                        ))
+                        .map((booth) => ({
+                            value: booth.name,
+                            label: e.name + " - " + booth.name,
+                        }))
                 );
             });
 
             boothStore.booths
                 .filter((booth) => boothsIDs.indexOf(booth.id) === -1 && booth.name !== except)
                 .forEach((booth) => {
-                    o.push(
-                        <option key={`${booth.id}`} value={booth.name}>
-                            {booth.name}
-                        </option>
-                    );
+                    optionsList.push({
+                        value: booth.name,
+                        label: booth.name,
+                    });
                 });
 
-            return o;
+            return optionsList;
         };
-
-        // const options = (except: string) => {
-        //     return boothStore.booths
-        //         .filter((b) => b.name !== except)
-        //         .map((booth) => (
-        //             <option key={`${booth.id}`} value={booth.name}>
-        //                 {booth.name}
-        //             </option>
-        //         ));
-        // };
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];
@@ -61,34 +54,74 @@ function Wayfinding() {
             store.selectRoute(new Route(from, to, exceptUnaccessible));
         };
 
+        const exampleDistanceData = 400;
+        const getWayInformation = (distance, stepsPerMinute = 110) => {
+            const data = [];
+            const minutes = Math.round(distance / stepsPerMinute);
+            let est = new Date();
+            est.setMinutes(est.getMinutes() + minutes);
+            const estTotal = est.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+            data.push(
+                {
+                    title: "Travel time",
+                    text: minutes + " min",
+                },
+                {
+                    title: "Distance",
+                    text: distance + " m",
+                },
+                {
+                    title: "Est arrival",
+                    text: estTotal,
+                }
+            );
+
+            return data;
+        };
+
         return (
             <OverlayContent bar={bar} backMode="back" onBack={() => store.selectSearch()} onClose={() => store.selectNone()}>
-                <select
-                    value={uiState.selectedRoute.from?.name || ""}
-                    onChange={(e) => onSelectionClick(e.target.value, true)}
-                    style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
-                >
-                    <option value=""> </option>
-                    {options(uiState.selectedRoute.to?.name)}
-                </select>
-                <select
-                    value={uiState.selectedRoute.to?.name || ""}
-                    onChange={(e) => onSelectionClick(e.target.value, false)}
-                    style={{ margin: 5, width: "96%", padding: 6, border: "1px #e3e3e3 solid" }}
-                >
-                    <option value=""> </option>
-                    {options(uiState.selectedRoute.from?.name)}
-                </select>
-
-                <div style={{ margin: 10 }}>
-                    <input
-                        id="exceptUnaccessible"
-                        type="checkbox"
-                        checked={uiState.selectedRoute.exceptUnaccessible}
-                        onChange={(e) => onExceptUnaccessible(e.target.checked)}
-                    ></input>
-                    &nbsp;&nbsp;
-                    <label htmlFor="exceptUnaccessible">Only accessible ways</label>
+                <div className="wayFindingForm">
+                    <div className="wayFindingForm__icons">
+                        <div className="wayFindingForm__icons-item">
+                            <img src="./icons/to.svg" alt="To" />
+                        </div>
+                        <div className="wayFindingForm__icons-item">
+                            <img src="./icons/from.svg" alt="From" />
+                        </div>
+                    </div>
+                    <div className="wayFindingForm__controls">
+                        <div className="formGroup" style={{ marginBottom: 10 }}>
+                            <Autocomplete
+                                placeholder="Select to"
+                                options={options(uiState.selectedRoute.to?.name)}
+                                value={uiState.selectedRoute.from?.name || ""}
+                                onChange={(value) => onSelectionClick(value, true)}
+                            />
+                        </div>
+                        <div className="formGroup" style={{ marginBottom: 20 }}>
+                            <Autocomplete
+                                placeholder="Select from"
+                                options={options(uiState.selectedRoute.from?.name)}
+                                value={uiState.selectedRoute.to?.name || ""}
+                                onChange={(value) => onSelectionClick(value, false)}
+                            />
+                        </div>
+                        <div className="formGroup" style={{ marginBottom: 10 }}>
+                            <Checkbox
+                                name="exceptUnaccessible"
+                                label="Only accessible ways"
+                                value={uiState.selectedRoute.exceptUnaccessible}
+                                onChange={(value) => onExceptUnaccessible(value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="wayInformationContainer">
+                    {uiState.selectedRoute.from?.name && uiState.selectedRoute.to?.name ? (
+                        <WayInformation items={getWayInformation(exampleDistanceData)} />
+                    ) : null}
                 </div>
             </OverlayContent>
         );

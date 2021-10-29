@@ -12,7 +12,7 @@ module.exports = {
                 {
                     loader: "sass-loader",
                     options: {
-                        prependData: `@import "@/styles/storybook.helpers.scss";`,
+                        prependData: `@import "@/styles/helpers.scss";`,
                     },
                 },
             ],

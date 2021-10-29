@@ -11,6 +11,7 @@ import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
+import Button from "./Button";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -162,14 +163,13 @@ function Booth() {
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
                 {settings.wayfinding && (
-                    <div className="booth__directions">
-                        <button
+                    <div className="exhibitor__directions" style={{ padding: 15 }}>
+                        <Button
+                            text={t("Directions")}
                             onClick={() =>
                                 store.clickRoute(new Route(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false))
                             }
-                        >
-                            {t("Directions")}
-                        </button>
+                        />
                     </div>
                 )}
             </OverlayContent>

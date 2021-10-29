@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import classNames from "classnames";
-import useOutsideClick from "../utils/useOutsideClick";
+import useOnClickOutside from "../utils/useOnClickOutside";
 import "./Autocomplete.scss";
 
 export interface OptionObject {
@@ -9,7 +9,7 @@ export interface OptionObject {
 }
 export interface AutocompleteProps {
     placeholder: string;
-    options: (number | string)[] | OptionObject[];
+    options: string[] | (OptionObject | any)[];
     value?: string;
     onChange: (value: string) => void;
 }
@@ -32,7 +32,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     );
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
 
-    //useOutsideClick(refAutocomplete, () => setShowOptionsDropdown(false));
+    // NEED FIX
+    //useOnClickOutside(refAutocomplete, () => setShowOptionsDropdown(false));
 
     const changeValue = (value = "") => {
         setInput(value);

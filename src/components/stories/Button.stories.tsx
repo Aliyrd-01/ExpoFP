@@ -8,9 +8,13 @@ export default {
 } as Meta;
 
 const Template: Story<ButtonProps> = (args) => {
+    const clicked = () => {
+        alert("Clicked");
+    };
+
     return (
         <>
-            <Button {...args} />
+            <Button {...args} onClick={clicked} />
         </>
     );
 };
@@ -18,4 +22,5 @@ const Template: Story<ButtonProps> = (args) => {
 export const Base = Template.bind({});
 Base.args = {
     text: "Text",
+    disabled: false,
 };
