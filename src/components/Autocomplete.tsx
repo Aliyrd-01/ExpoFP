@@ -1,44 +1,70 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import classNames from "classnames";
 import useOutsideClick from "../utils/useOutsideClick";
 import "./Autocomplete.scss";
 
+export interface OptionObject {
+    value: string;
+    label: string;
+}
 export interface AutocompleteProps {
     placeholder: string;
-    options: Array<string>;
+    options: (number | string)[] | OptionObject[];
+    value?: string;
+    onChange: (value: string) => void;
 }
 
-const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => {
-    const ref = useRef();
+const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value, onChange }) => {
+    const isArrayOfObjects = (array) => {
+        return Array.isArray(array) && array.some((el) => typeof el === "object") ? true : false;
+    };
+
+    const getActiveOptionIndexByValue = (value, isObject = false) => {
+        return isObject ? options.findIndex((option) => option.value === value) : options.findIndex((option) => option === value);
+    };
+
+    const refAutocomplete = useRef(null);
     const [filteredOptions, setFilteredOptions] = useState([]);
-    const [activeOptionIndex, setActiveOptionIndex] = useState(null);
+    const [input, setInput] = useState(value || "");
+    const [objectsMode, setObjectsMode] = useState(isArrayOfObjects(options));
+    const [activeOptionIndex, setActiveOptionIndex] = useState(
+        objectsMode ? getActiveOptionIndexByValue(value, true) : getActiveOptionIndexByValue(value) || null
+    );
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
-    const [input, setInput] = useState("");
 
-    useOutsideClick(ref, () => {
-        if (showOptionsDropdown) setShowOptionsDropdown(false);
-    });
+    //useOutsideClick(refAutocomplete, () => setShowOptionsDropdown(false));
 
-    const getActiveOptionIndexByValue = (value) => {
-        return options.findIndex((option) => option === value);
+    const changeValue = (value = "") => {
+        setInput(value);
+        onChange(value);
     };
 
     const onClickOption = (event) => {
         setFilteredOptions([]);
-        setInput(event.target.innerText);
-        setActiveOptionIndex(getActiveOptionIndexByValue(event.target.innerText));
+        if (objectsMode) {
+            const dataValue = event.target.getAttribute("data-value");
+            changeValue(dataValue);
+            setActiveOptionIndex(getActiveOptionIndexByValue(dataValue, true));
+        } else {
+            changeValue(event.target.innerText);
+            setActiveOptionIndex(getActiveOptionIndexByValue(event.target.innerText));
+        }
         setShowOptionsDropdown(false);
     };
 
     const onKeyDown = (event) => {
         if (event.keyCode === 13) {
+            if (!input) return;
             if (filteredOptions.length) {
-                const nextActiveIndex = getActiveOptionIndexByValue(filteredOptions[activeOptionIndex]);
+                const nextActiveIndex = getActiveOptionIndexByValue(
+                    filteredOptions[activeOptionIndex],
+                    objectsMode ? true : false
+                );
+                changeValue(objectsMode ? options[nextActiveIndex]["value"] : options[nextActiveIndex]);
                 setActiveOptionIndex(nextActiveIndex);
-                setInput(options[nextActiveIndex]);
             } else {
+                changeValue(objectsMode ? options[activeOptionIndex]["value"] : options[activeOptionIndex]);
                 setActiveOptionIndex(activeOptionIndex);
-                setInput(options[activeOptionIndex]);
             }
             setShowOptionsDropdown(false);
         } else if (event.keyCode === 38) {
@@ -53,9 +79,11 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => 
         setShowOptionsDropdown(true);
     };
 
-    const onChange = (event) => {
+    const onInputChange = (event) => {
         const userInput = event.target.value;
-        const result = options.filter((option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1);
+        let result = [];
+        if (objectsMode) result = options.filter((option) => option.label.toLowerCase().indexOf(userInput.toLowerCase()) > -1);
+        else result = options.filter((option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1);
 
         setInput(event.target.value);
         setFilteredOptions(result.length ? result : options);
@@ -69,11 +97,18 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => 
                 {allOptions.map((option, index) => {
                     let activeClass;
                     if (index === activeOptionIndex) activeClass = "is-active";
-                    return (
-                        <li key={option} className={activeClass} onClick={onClickOption}>
-                            {option}
-                        </li>
-                    );
+                    if (objectsMode)
+                        return (
+                            <li key={index} className={activeClass} data-value={option.value} onClick={onClickOption}>
+                                {option.label}
+                            </li>
+                        );
+                    else
+                        return (
+                            <li key={index} className={activeClass} onClick={onClickOption}>
+                                {option}
+                            </li>
+                        );
                 })}
             </ul>
         );
@@ -81,17 +116,19 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options }) => 
 
     return (
         <>
-            <div ref={ref} className={classNames("autocomplete", { "is-open": showOptionsDropdown })}>
-                <input
-                    className={"autocomplete__input"}
-                    type="text"
-                    onChange={onChange}
-                    onFocus={onFocus}
-                    onKeyDown={onKeyDown}
-                    value={input}
-                    placeholder={placeholder}
-                />
-                <div className="autocomplete__options">{showOptions()}</div>
+            <div ref={refAutocomplete} className={classNames("autocomplete", { "is-open": showOptionsDropdown })}>
+                <div className={"autocomplete__inner"}>
+                    <input
+                        className="autocomplete__input"
+                        type="text"
+                        onChange={onInputChange}
+                        onFocus={onFocus}
+                        onKeyDown={onKeyDown}
+                        value={input}
+                        placeholder={placeholder}
+                    />
+                    <div className="autocomplete__options">{showOptions()}</div>
+                </div>
             </div>
         </>
     );

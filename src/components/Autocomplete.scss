@@ -1,10 +1,15 @@
+@import "../styles/helpers.scss";
+$input-height: 50px;
+
 .autocomplete {
     $this: &;
     position: relative;
+    min-height: rem($input-height);
 
     &:before {
         content: "";
         position: absolute;
+        z-index: 10;
         top: rem(22px);
         right: 15px;
         width: 11px;
@@ -14,8 +19,9 @@
     }
     &__input {
         width: 100%;
-        height: rem(50px);
+        height: rem($input-height);
         padding: rem(0 15px);
+        background: $color-white;
         border: 1px solid $color-lightgray;
         border-radius: 3px;
         outline: none;
@@ -23,8 +29,12 @@
         font-weight: 600;
     }
     &.is-open {
-        box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.1);
+        z-index: 15;
 
+        #{$this}__inner {
+            max-height: unset;
+            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.1);
+        }
         #{$this}__input {
             border-bottom-right-radius: 0;
             border-bottom-left-radius: 0;
@@ -33,6 +43,13 @@
             visibility: visible;
             opacity: 1;
         }
+    }
+    &__inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-height: rem($input-height);
     }
     &__options {
         visibility: hidden;
