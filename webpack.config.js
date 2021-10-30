@@ -11,7 +11,7 @@ const git = require("git-rev-sync");
 const dateFormat = require("dateformat");
 const username = require("username");
 const argv = require("minimist")(process.argv.splice(process.execArgv.length + 2));
-const S3Plugin = require('webpack-s3-plugin');
+const S3Plugin = require("webpack-s3-plugin");
 const AWS = require("aws-sdk");
 
 // const GeneratePackageJsonPlugin = require("generate-package-json-webpack-plugin");
@@ -32,33 +32,39 @@ const defaultExpo = process.env.EFP_EXPO || argv["expo"] || (isProd ? "expo" : "
 const config = {
     mode: isProd ? "production" : "development",
     entry: {
-        expofp: "./src/expofp.tsx"
+        expofp: "./src/expofp.tsx",
     },
     output: {
         path: resolve(__dirname, "dist"),
         filename: "[name].js",
         library: "ExpoFP",
-        crossOriginLoading: isProd ? "anonymous" : false
+        crossOriginLoading: isProd ? "anonymous" : false,
     },
     resolve: {
-        extensions: [".js", ".jsx", ".ts", ".tsx"]
+        extensions: [".js", ".jsx", ".ts", ".tsx"],
     },
     performance: {
         maxAssetSize: 500000,
-        assetFilter: function(assetFilename) {
+        assetFilter: function (assetFilename) {
             return assetFilename.endsWith(".js");
-        }
+        },
     },
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
                 use: "babel-loader",
-                exclude: /node_modules/
+                exclude: /node_modules/,
             },
             {
                 test: /\.txt$/i,
-                use: "raw-loader"
+                use: "raw-loader",
+            },
+            {
+                test: /\.svg/,
+                use: {
+                    loader: "svg-url-loader",
+                },
             },
             {
                 test: /\.s[ac]ss$/i,
@@ -70,16 +76,16 @@ const config = {
                                 window["__efpStyleElements"].push(element);
                                 var event = new CustomEvent("__efpStyleLoad");
                                 window.dispatchEvent(event);
-                            }
-                        }
+                            },
+                        },
                     },
                     // Translates CSS into CommonJS
                     "css-loader",
                     // Compiles Sass to CSS
-                    "sass-loader"
-                ]
-            }
-        ]
+                    "sass-loader",
+                ],
+            },
+        ],
     },
     plugins: [
         new ForkTsCheckerWebpackPlugin({ eslint: true, async: false }),
@@ -88,22 +94,22 @@ const config = {
         new webpack.BannerPlugin({
             banner: `${require("./package.json").version} ${git.long()} ${dateFormat(
                 "ddd mmm dd yyyy HH:MM:ss Z"
-            )} (${username.sync()})`
+            )} (${username.sync()})`,
         }),
         new HtmlWebpackPlugin({
             title: "ExpoFP",
-            template: "src/index.html"
+            template: "src/index.html",
         }),
         new webpack.DefinePlugin({
-            "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo)
-        })
-    ]
+            "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo),
+        }),
+    ],
 };
 
 if (isProd) {
     config.optimization = {
         // sideEffects: false,
-        minimizer: [new TerserWebpackPlugin({ extractComments: false })]
+        minimizer: [new TerserWebpackPlugin({ extractComments: false })],
     };
     config.plugins.push(
         new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false, reportFilename: "../bundle-report.html" }),
@@ -111,7 +117,7 @@ if (isProd) {
             { from: "public", to: "" },
             { from: "src/public.d.ts", to: "index.d.ts" },
             { from: "src/data.schema.json", to: "../docs" },
-            { from: "src/public.d.ts", to: "../docs/typings.d.ts" }
+            { from: "src/public.d.ts", to: "../docs/typings.d.ts" },
         ])
     );
 } else {
@@ -131,8 +137,8 @@ if (isProd) {
         contentBase: "public",
         headers: {
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, HEAD"
-        }
+            "Access-Control-Allow-Methods": "GET, HEAD",
+        },
     };
     config.devtool = "cheap-module-source-map";
     config.plugins.push(new DashboardPlugin());
@@ -141,7 +147,7 @@ if (isProd) {
 if (process.env.AWS_DEPLOY === "true") {
     let options = {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     };
     if (!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY)) {
         options = {
@@ -153,15 +159,15 @@ if (process.env.AWS_DEPLOY === "true") {
         s3Options: options,
         s3UploadOptions: {
             Bucket: "efp-data/" + forlderName,
-        }
+        },
     });
     if (process.env.CLOUDFRONT_DISTRIBUTION_ID) {
         plugin.cloudfrontInvalidateOptions = {
             DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-            Items: [`/${forlderName}/*`]
+            Items: [`/${forlderName}/*`],
         };
     }
-    
+
     config.plugins.push(plugin);
 }
 

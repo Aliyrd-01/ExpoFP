@@ -15,6 +15,7 @@ import BookmarkSvg from "./BookmarkSvg";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import { FillMode } from "./Slider/ImageSliderData";
+import Button from "./Button";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -183,6 +184,18 @@ function ExhibitorComponent() {
                             </a>
                         ))}
                     </div>
+                    {settings.wayfinding && (
+                        <div className="exhibitor__directions" style={{ padding: 15 }}>
+                            <Button
+                                text={t("Directions")}
+                                onClick={() =>
+                                    store.selectRoute(
+                                        new Route(null, exhibitor.booths[0], uiState.selectedRoute?.exceptUnaccessible || false)
+                                    )
+                                }
+                            />
+                        </div>
+                    )}
                     {exhibitor.description || exhibitor.logo ? (
                         <div
                             className={classNames({
@@ -370,19 +383,6 @@ function ExhibitorComponent() {
                             >
                                 <i className="fab fa-youtube" />
                             </a>
-                        </div>
-                    )}
-                    {settings.wayfinding && (
-                        <div className="exhibitor__directions">
-                            <button
-                                onClick={() =>
-                                    store.selectRoute(
-                                        new Route(null, exhibitor.booths[0], uiState.selectedRoute?.exceptUnaccessible || false)
-                                    )
-                                }
-                            >
-                                {t("Directions")}
-                            </button>
                         </div>
                     )}
                     {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
