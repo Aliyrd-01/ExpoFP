@@ -68,10 +68,11 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             }
             setShowOptionsDropdown(false);
         } else if (event.keyCode === 38) {
-            if (activeOptionIndex === 0) return;
+            if (!showOptionsDropdown || activeOptionIndex === 0) return;
             setActiveOptionIndex(activeOptionIndex - 1);
         } else if (event.keyCode === 40) {
-            activeOptionIndex !== null ? setActiveOptionIndex(activeOptionIndex + 1) : setActiveOptionIndex(0);
+            if (!showOptionsDropdown) setShowOptionsDropdown(true);
+            else activeOptionIndex !== null ? setActiveOptionIndex(activeOptionIndex + 1) : setActiveOptionIndex(0);
         }
     };
 
