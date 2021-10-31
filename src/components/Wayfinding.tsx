@@ -45,6 +45,8 @@ function Wayfinding() {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];
             const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
+            console.info(booth, from, to);
+
             if (isFrom) store.selectRoute(new Route(booth || null, to, exceptUnaccessible));
             else store.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
@@ -95,17 +97,17 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
                                 placeholder="Select from"
-                                options={options(uiState.selectedRoute.from?.name)}
-                                value={uiState.selectedRoute.to?.name || ""}
-                                onChange={(value) => onSelectionClick(value, false)}
+                                options={options(uiState.selectedRoute.to?.name)}
+                                value={uiState.selectedRoute.from?.name || ""}
+                                onChange={(value) => onSelectionClick(value, true)}
                             />
                         </div>
                         <div className="formGroup" style={{ marginBottom: 20 }}>
                             <Autocomplete
                                 placeholder="Select to"
-                                options={options(uiState.selectedRoute.to?.name)}
-                                value={uiState.selectedRoute.from?.name || ""}
-                                onChange={(value) => onSelectionClick(value, true)}
+                                options={options(uiState.selectedRoute.from?.name)}
+                                value={uiState.selectedRoute.to?.name || ""}
+                                onChange={(value) => onSelectionClick(value, false)}
                             />
                         </div>
                         <div className="formGroup" style={{ marginBottom: 10 }}>
