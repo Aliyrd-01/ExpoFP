@@ -7,7 +7,6 @@ import Autocomplete from "./Autocomplete";
 import Checkbox from "./Checkbox";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
-import WayInformation from "./WayInformation";
 
 function Wayfinding() {
     return useObserver(() => {
@@ -120,11 +119,11 @@ function Wayfinding() {
                         </div>
                     </div>
                 </div>
-                <div className="wayInformationContainer">
+                {/* <div className="wayInformationContainer">
                     {uiState.selectedRoute.from?.name && uiState.selectedRoute.to?.name ? (
                         <WayInformation items={getWayInformation(exampleDistanceData)} />
                     ) : null}
-                </div>
+                </div> */}
             </OverlayContent>
         );
     });

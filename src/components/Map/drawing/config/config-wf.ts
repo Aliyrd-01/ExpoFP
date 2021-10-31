@@ -2,6 +2,7 @@ import Color from "color";
 import { select } from "d3-selection";
 import { reaction } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
+import Rect from "../../../../core/Rect";
 import svg from "../../../../data/svg";
 import store, { boothStore, uiState } from "../../../../store";
 import {
@@ -220,8 +221,16 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             const rotation =
                 (-1 * lineAngle(routePoints[routePoints.length - 1], routePoints[routePoints.length - 2]) * Math.PI) / 180;
             locationsDrawer.updateRotation("currentLocation", rotation);
-
             locationsDrawer.updateVisible("currentLocation", true);
+
+            let { x1, x2, y1, y2 } = Rect.fromMultiple([uiState.selectedRoute.from.rect, uiState.selectedRoute.to.rect]);
+            routePoints.forEach((p) => {
+                if (p.x < x1) x1 = p.x;
+                if (p.x > x2) x2 = p.x;
+                if (p.y < y1) y1 = p.y;
+                if (p.y > y2) y2 = p.y;
+            });
+            uiState.moveToRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
         } else {
             locationsDrawer.updateVisible("currentLocation", false);
             locationsDrawer.updateVisible("destinationLocation", false);
