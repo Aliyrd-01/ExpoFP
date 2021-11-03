@@ -5,7 +5,7 @@ import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import Route from "../store/RouteStore";
+import { Route } from "../store/RouteStore";
 import gtag from "../tools/gtag";
 import logger from "../tools/logger";
 // import settings from '@/settings';
@@ -45,7 +45,7 @@ function dispatchFromUrl() {
         const parts = slug.split(":");
         const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
         const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
-        store.selectRoute(new Route(from, to));
+        store.routeStore.selectRoute(new Route(from, to, false));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "-pdf") {
@@ -85,7 +85,7 @@ function stateToUrl() {
     let queryRaw = "";
     const exhibitor = uiState.selectedExhibitor;
     const booth = uiState.selectedBooth;
-    const route = uiState.selectedRoute;
+    const route = store.routeStore.currentRoute;
 
     if (route) {
         const from = route.from ? `:${route.from.slug}` : "";

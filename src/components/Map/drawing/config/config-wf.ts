@@ -78,8 +78,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
     if (!layer) return;
 
-    const units = svg.getAttribute("units");
-
     const lines: Line[] = [];
     layer.childNodes.forEach((node: any) => {
         const unacc = node.getAttribute("data-way-unaccessible") === "true" || false;
@@ -110,7 +108,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, mainColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, mainColor.hex());
 
-    const sl = buildGraph(lines, boothsRects, [], units === "m" ? 300 : 300);
+    const sl = buildGraph(lines, boothsRects, [], 300);
 
     sl.lines
         .filter((l) => !l.virtual)
@@ -178,13 +176,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         let from = null;
         let to = null;
-        let distance: number = 0;
 
         routePoints = [];
 
-        if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
-            from = uiState.selectedRoute.from;
-            to = uiState.selectedRoute.to;
+        if (store.routeStore.route?.from && store.routeStore.route?.to) {
+            from = store.routeStore.route.from;
+            to = store.routeStore.route.to;
 
             const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
             const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
@@ -192,23 +189,20 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             routePoints = getGraphPoints(
                 new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
                 new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                uiState.selectedRoute.exceptUnaccessible
+                store.routeStore.route.exceptUnaccessible
             );
-
-            let distance: number = 0;
 
             for (let index = 1; index < routePoints.length; index++) {
                 const cp = routePoints[index];
                 const pp = routePoints[index - 1];
 
                 const id = getlineIdByPoints(cp, pp);
-                linesDrawer.updateVisible(id, true);
-                linesDrawer.updateSkipdim(id, true);
-                visibleLinesIds.push(id);
-                distance += lineLength(cp, pp);
+                if (id) {
+                    linesDrawer.updateVisible(id, true);
+                    linesDrawer.updateSkipdim(id, true);
+                    visibleLinesIds.push(id);
+                }
             }
-
-            distance = Math.round(distance / 10);
 
             locationsDrawer.updateCenter("destinationLocation", [routePoints[0].x, routePoints[0].y]);
             locationsDrawer.updateVisible("destinationLocation", true);
@@ -223,7 +217,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             locationsDrawer.updateRotation("currentLocation", rotation);
             locationsDrawer.updateVisible("currentLocation", true);
 
-            let { x1, x2, y1, y2 } = Rect.fromMultiple([uiState.selectedRoute.from.rect, uiState.selectedRoute.to.rect]);
+            let { x1, x2, y1, y2 } = Rect.fromMultiple([store.routeStore.route.from.rect, store.routeStore.route.to.rect]);
             routePoints.forEach((p) => {
                 if (p.x < x1) x1 = p.x;
                 if (p.x > x2) x2 = p.x;
@@ -236,19 +230,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             locationsDrawer.updateVisible("destinationLocation", false);
         }
 
-        if (store.fp.onDirection)
-            store.fp.onDirection({
-                from: from ? { id: from.id, name: from.name } : null,
-                to: to ? { id: to.id, name: to.name } : null,
-                points: routePoints,
-                distance: `${distance}${units}`,
-                time: Math.round(distance / 1.4),
-            });
+        if (routePoints?.length) store.routeStore.updateRoutePoints(routePoints);
     }
 
     function updateCurrentPosition() {
-        let position = uiState.currentPosition;
-        if (position?.x && position?.y) {
+        let position = store.routeStore.currentPosition;
+        if (position) {
             locationsDrawer.updateVisible("currentLocation", true);
             locationsDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else locationsDrawer.updateVisible("currentLocation", false);
@@ -288,12 +275,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     if (context.updatable) {
         reaction(
-            () => uiState.selectedRoute,
+            () => store.routeStore.route,
             () => context.requireUpdate(updateRoute)
         );
 
         reaction(
-            () => uiState.position,
+            () => store.routeStore.position,
             () => context.requireUpdate(updateCurrentPosition)
         );
 

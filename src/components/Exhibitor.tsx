@@ -4,7 +4,6 @@ import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
-import Route from "../store/RouteStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
@@ -12,10 +11,10 @@ import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
 import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
+import Button from "./Button";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import { FillMode } from "./Slider/ImageSliderData";
-import Button from "./Button";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -189,8 +188,10 @@ function ExhibitorComponent() {
                             <Button
                                 text={t("Directions")}
                                 onClick={() =>
-                                    store.selectRoute(
-                                        new Route(null, exhibitor.booths[0], uiState.selectedRoute?.exceptUnaccessible || false)
+                                    store.routeStore.clickRoute(
+                                        null,
+                                        exhibitor.booths[0],
+                                        store.routeStore.route?.exceptUnaccessible || false
                                     )
                                 }
                             />

@@ -9,7 +9,7 @@ import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
-import Route from "./RouteStore";
+import { Route } from "./RouteStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -30,7 +30,6 @@ export default class UIState {
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
-    @observable.ref position = null;
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
     @observable moveToRect: Rect = null;
@@ -74,14 +73,6 @@ export default class UIState {
 
     @computed({ keepAlive: true }) get selectedBooth() {
         return this.details instanceof BoothBase ? this.details : null;
-    }
-
-    @computed({ keepAlive: true }) get selectedRoute() {
-        return this.details instanceof Route ? this.details : null;
-    }
-
-    @computed({ keepAlive: true }) get currentPosition() {
-        return this.position;
     }
 
     @computed({ keepAlive: true }) get selectedCategory() {
@@ -271,8 +262,10 @@ export default class UIState {
         if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
         else if (this.selectedBooth) arr = [this.selectedBooth];
 
-        if (this.selectedRoute?.from) arr.push(this.selectedRoute.from);
-        if (this.selectedRoute?.to) arr.push(this.selectedRoute.to);
+        const { currentRoute } = this.rootStore.routeStore;
+
+        if (currentRoute?.from) arr.push(currentRoute.from);
+        if (currentRoute?.to) arr.push(currentRoute.to);
 
         return new Set(arr);
     }

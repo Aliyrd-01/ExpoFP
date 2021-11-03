@@ -1,12 +1,14 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
+import svg from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
-import Route from "../store/RouteStore";
+import { Route } from "../store/RouteStore";
 import { t } from "../utils/i18n";
 import Autocomplete from "./Autocomplete";
 import Checkbox from "./Checkbox";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
+import WayInformation from "./WayInformation";
 
 function Wayfinding() {
     return useObserver(() => {
@@ -42,35 +44,33 @@ function Wayfinding() {
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];
-            const { from, to, exceptUnaccessible } = uiState.selectedRoute;
+            const { from, to, exceptUnaccessible } = store.routeStore.currentRoute;
 
-            console.info(booth, from, to);
-
-            if (isFrom) store.selectRoute(new Route(booth || null, to, exceptUnaccessible));
-            else store.selectRoute(new Route(from, booth || null, exceptUnaccessible));
+            if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to, exceptUnaccessible));
+            else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
 
         const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
-            const { from, to } = uiState.selectedRoute;
-            store.selectRoute(new Route(from, to, exceptUnaccessible));
+            const { from, to } = store.routeStore.currentRoute;
+            store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
         };
 
-        const exampleDistanceData = 400;
-        const getWayInformation = (distance, stepsPerMinute = 110) => {
+        const getWayInformation = (distance) => {
             const data = [];
-            const minutes = Math.round(distance / stepsPerMinute);
+            const units = svg.getAttribute("units");
+            const seconds = Math.round(distance / (units === "m" ? 1.4 : 4.2));
             let est = new Date();
-            est.setMinutes(est.getMinutes() + minutes);
+            est.setMinutes(est.getMinutes() + seconds / 60);
             const estTotal = est.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
             data.push(
                 {
                     title: "Travel time",
-                    text: minutes + " min",
+                    text: `~ ${Math.round(seconds / 60)} min`,
                 },
                 {
                     title: "Distance",
-                    text: distance + " m",
+                    text: distance + ` ${units}`,
                 },
                 {
                     title: "Est arrival",
@@ -82,7 +82,18 @@ function Wayfinding() {
         };
 
         return (
-            <OverlayContent bar={bar} backMode="back" onBack={() => store.selectSearch()} onClose={() => store.selectNone()}>
+            <OverlayContent
+                bar={bar}
+                backMode="back"
+                onBack={() => {
+                    store.routeStore.selectRoute(null);
+                    store.selectSearch();
+                }}
+                onClose={() => {
+                    store.routeStore.selectRoute(null);
+                    store.selectNone();
+                }}
+            >
                 <div className="wayFindingForm">
                     <div className="wayFindingForm__icons">
                         <div className="wayFindingForm__icons-item">
@@ -96,16 +107,16 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
                                 placeholder="Select from"
-                                options={options(uiState.selectedRoute.to?.name)}
-                                value={uiState.selectedRoute.from?.name || ""}
+                                options={options(store.routeStore.currentRoute.to?.name)}
+                                value={store.routeStore.currentRoute.from?.name || ""}
                                 onChange={(value) => onSelectionClick(value, true)}
                             />
                         </div>
                         <div className="formGroup" style={{ marginBottom: 20 }}>
                             <Autocomplete
                                 placeholder="Select to"
-                                options={options(uiState.selectedRoute.from?.name)}
-                                value={uiState.selectedRoute.to?.name || ""}
+                                options={options(store.routeStore.currentRoute.from?.name)}
+                                value={store.routeStore.currentRoute.to?.name || ""}
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
                         </div>
@@ -113,20 +124,20 @@ function Wayfinding() {
                             <Checkbox
                                 name="exceptUnaccessible"
                                 label="Only accessible ways"
-                                value={uiState.selectedRoute.exceptUnaccessible}
+                                value={store.routeStore.currentRoute.exceptUnaccessible}
                                 onChange={(value) => onExceptUnaccessible(value)}
                             />
                         </div>
                     </div>
                 </div>
-                {/* <div className="wayInformationContainer">
-                    {uiState.selectedRoute.from?.name && uiState.selectedRoute.to?.name ? (
-                        <WayInformation items={getWayInformation(exampleDistanceData)} />
+                <div className="wayInformationContainer">
+                    {store.routeStore.routeDistance ? (
+                        <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
                     ) : null}
-                </div> */}
+                </div>
             </OverlayContent>
         );
     });
 }
 
-export default () => useObserver(() => !uiState.menu && uiState.selectedRoute && <Wayfinding />);
+export default () => useObserver(() => !uiState.menu && store.routeStore.currentRoute && <Wayfinding />);
