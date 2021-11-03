@@ -10,7 +10,7 @@ import RootStore from "./RootStore";
 export default class RouteStore {
     rootStore: RootStore;
     @observable routePoints: Point[] = [];
-    @observable.ref position: CurrentPosition = null;
+    @observable currentPosition: CurrentPosition = null;
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
@@ -47,7 +47,7 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
-        this.position = point;
+        this.currentPosition = point;
         if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(point.x, point.y, 100, 100);
     }
 
@@ -83,11 +83,7 @@ export default class RouteStore {
                 });
             }, 100);
         return distance;
-    }
-
-    @computed({ keepAlive: true }) get currentPosition() {
-        return this.position;
-    }
+    }   
 }
 
 export class Route {
