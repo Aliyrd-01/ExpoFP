@@ -10,7 +10,7 @@ import RootStore from "./RootStore";
 export default class RouteStore {
     rootStore: RootStore;
     @observable routePoints: Point[] = [];
-    @observable position = null;
+    @observable.ref position: CurrentPosition = null;
     @observable.ref route: Route = null;
 
     constructor(rootStore: RootStore) {
@@ -62,7 +62,7 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get routeDistance() {
-        const { from, to } = this.currentRoute;
+        const { from, to } = this.route;
         const routePoints = this.routePoints;
 
         const units = svg.getAttribute("units");
@@ -79,14 +79,15 @@ export default class RouteStore {
         distance = distance / 10.0;
 
         if (store.fp.onDirection)
-            store.fp.onDirection({
-                from: from ? { id: from.id, name: from.name } : null,
-                to: to ? { id: to.id, name: to.name } : null,
-                points: routePoints,
-                distance: `${distance}${units}`,
-                time: Math.round(distance / 1.4),
-            });
-
+            setTimeout(() => {
+                store.fp.onDirection({
+                    from: from ? { id: from.id, name: from.name } : null,
+                    to: to ? { id: to.id, name: to.name } : null,
+                    points: routePoints,
+                    distance: `${distance}${units}`,
+                    time: Math.round(distance / 1.4),
+                });
+            }, 100);
         return distance;
     }
 

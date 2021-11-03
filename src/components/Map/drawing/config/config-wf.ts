@@ -275,12 +275,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     if (context.updatable) {
         reaction(
-            () => store.routeStore.route,
+            () => store.routeStore.currentRoute,
             () => context.requireUpdate(updateRoute)
         );
 
         reaction(
-            () => store.routeStore.position,
+            () => store.routeStore.currentPosition,
             () => context.requireUpdate(updateCurrentPosition)
         );
 

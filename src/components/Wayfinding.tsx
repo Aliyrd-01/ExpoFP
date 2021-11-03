@@ -70,7 +70,7 @@ function Wayfinding() {
                 },
                 {
                     title: "Distance",
-                    text: distance + ` ${units}`,
+                    text: Math.round(distance) + ` ${units}`,
                 },
                 {
                     title: "Est arrival",
