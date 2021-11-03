@@ -166,7 +166,7 @@ function Booth() {
                         <Button
                             text={t("Directions")}
                             onClick={() =>
-                                store.routeStore.clickRoute(null, s.booth, store.routeStore.route?.exceptUnaccessible || false)
+                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false)
                             }
                         />
                     </div>

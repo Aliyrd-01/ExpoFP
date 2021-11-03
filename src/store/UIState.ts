@@ -79,6 +79,10 @@ export default class UIState {
         return this.list.type === "category" ? this.list.category : null;
     }
 
+    @computed({ keepAlive: true }) get selectedRoute() {
+        return this.details instanceof Route ? this.details : null;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // positions
     @computed get headerHeightRem() {
@@ -262,10 +266,10 @@ export default class UIState {
         if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
         else if (this.selectedBooth) arr = [this.selectedBooth];
 
-        const { currentRoute } = this.rootStore.routeStore;
+        const route = this.selectedRoute;
 
-        if (currentRoute?.from) arr.push(currentRoute.from);
-        if (currentRoute?.to) arr.push(currentRoute.to);
+        if (route?.from) arr.push(route.from);
+        if (route?.to) arr.push(route.to);
 
         return new Set(arr);
     }

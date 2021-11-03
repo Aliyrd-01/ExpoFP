@@ -85,7 +85,7 @@ function stateToUrl() {
     let queryRaw = "";
     const exhibitor = uiState.selectedExhibitor;
     const booth = uiState.selectedBooth;
-    const route = store.routeStore.currentRoute;
+    const route = uiState.selectedRoute;
 
     if (route) {
         const from = route.from ? `:${route.from.slug}` : "";

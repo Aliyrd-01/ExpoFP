@@ -55,7 +55,7 @@ export default class RootStore {
 
     @action selectNone() {
         if (window["__resett"]) window["__resett"]();
-        this.uiState.details = null;            
+        this.uiState.details = null;
     }
 
     @action selectBookmarks() {
@@ -146,7 +146,7 @@ export default class RootStore {
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
 
-        if (this.routeStore.route && !booth) {
+        if (this.uiState.selectedRoute && !booth) {
             return;
         }
 

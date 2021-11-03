@@ -44,14 +44,14 @@ function Wayfinding() {
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];
-            const { from, to, exceptUnaccessible } = store.routeStore.currentRoute;
+            const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
             if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to, exceptUnaccessible));
             else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
 
         const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
-            const { from, to } = store.routeStore.currentRoute;
+            const { from, to } = uiState.selectedRoute;
             store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
         };
 
@@ -107,16 +107,16 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
                                 placeholder="Select from"
-                                options={options(store.routeStore.currentRoute.to?.name)}
-                                value={store.routeStore.currentRoute.from?.name || ""}
+                                options={options(uiState.selectedRoute.to?.name)}
+                                value={uiState.selectedRoute.from?.name || ""}
                                 onChange={(value) => onSelectionClick(value, true)}
                             />
                         </div>
                         <div className="formGroup" style={{ marginBottom: 20 }}>
                             <Autocomplete
                                 placeholder="Select to"
-                                options={options(store.routeStore.currentRoute.from?.name)}
-                                value={store.routeStore.currentRoute.to?.name || ""}
+                                options={options(uiState.selectedRoute.from?.name)}
+                                value={uiState.selectedRoute.to?.name || ""}
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
                         </div>
@@ -124,7 +124,7 @@ function Wayfinding() {
                             <Checkbox
                                 name="exceptUnaccessible"
                                 label="Only accessible ways"
-                                value={store.routeStore.currentRoute.exceptUnaccessible}
+                                value={uiState.selectedRoute.exceptUnaccessible}
                                 onChange={(value) => onExceptUnaccessible(value)}
                             />
                         </div>
@@ -140,4 +140,4 @@ function Wayfinding() {
     });
 }
 
-export default () => useObserver(() => !uiState.menu && store.routeStore.currentRoute && <Wayfinding />);
+export default () => useObserver(() => !uiState.menu && uiState.selectedRoute && <Wayfinding />);

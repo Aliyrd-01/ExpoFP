@@ -191,7 +191,7 @@ function ExhibitorComponent() {
                                     store.routeStore.clickRoute(
                                         null,
                                         exhibitor.booths[0],
-                                        store.routeStore.route?.exceptUnaccessible || false
+                                        uiState.selectedRoute?.exceptUnaccessible || false
                                     )
                                 }
                             />

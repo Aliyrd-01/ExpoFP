@@ -179,9 +179,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         routePoints = [];
 
-        if (store.routeStore.route?.from && store.routeStore.route?.to) {
-            from = store.routeStore.route.from;
-            to = store.routeStore.route.to;
+        if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
+            from = uiState.selectedRoute.from;
+            to = uiState.selectedRoute.to;
 
             const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
             const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
@@ -189,7 +189,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             routePoints = getGraphPoints(
                 new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
                 new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                store.routeStore.route.exceptUnaccessible
+                uiState.selectedRoute.exceptUnaccessible
             );
 
             for (let index = 1; index < routePoints.length; index++) {
@@ -217,7 +217,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             locationsDrawer.updateRotation("currentLocation", rotation);
             locationsDrawer.updateVisible("currentLocation", true);
 
-            let { x1, x2, y1, y2 } = Rect.fromMultiple([store.routeStore.route.from.rect, store.routeStore.route.to.rect]);
+            let { x1, x2, y1, y2 } = Rect.fromMultiple([uiState.selectedRoute.from.rect, uiState.selectedRoute.to.rect]);
             routePoints.forEach((p) => {
                 if (p.x < x1) x1 = p.x;
                 if (p.x > x2) x2 = p.x;
@@ -275,7 +275,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     if (context.updatable) {
         reaction(
-            () => store.routeStore.currentRoute,
+            () => uiState.selectedRoute,
             () => context.requireUpdate(updateRoute)
         );
 

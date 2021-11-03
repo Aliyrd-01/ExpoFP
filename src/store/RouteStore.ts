@@ -11,8 +11,6 @@ export default class RouteStore {
     rootStore: RootStore;
     @observable routePoints: Point[] = [];
     @observable.ref position: CurrentPosition = null;
-    @observable.ref route: Route = null;
-
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
@@ -27,7 +25,7 @@ export default class RouteStore {
 
         setTimeout(() => {
             this.rootStore.moveToList(list);
-            uiState.details = this.route = route;
+            uiState.details = route;
         }, 200);
     }
 
@@ -57,12 +55,8 @@ export default class RouteStore {
         this.routePoints = routePoints;
     }
 
-    @computed({ keepAlive: true }) get currentRoute() {
-        return this.route;
-    }
-
     @computed({ keepAlive: true }) get routeDistance() {
-        const { from, to } = this.route;
+        const { from, to } = uiState.selectedRoute;
         const routePoints = this.routePoints;
 
         const units = svg.getAttribute("units");
