@@ -15,23 +15,21 @@ function Wayfinding() {
         const bar = <div className="bar">{t("Directions")}</div>;
         const boothsIDs = [];
 
-        const options = (except: string) => {
-            const optionsList = [{ value: "", label: "" }];
+        const options = () => {
+            const optionsList = [];
 
             exhibitorStore.exhibitors.forEach((e) => {
                 boothsIDs.push(...e.booths.map((b) => b.id));
                 optionsList.push(
-                    ...e.booths
-                        .filter((b) => b.name !== except)
-                        .map((booth) => ({
-                            value: booth.name,
-                            label: e.name + " - " + booth.name,
-                        }))
+                    ...e.booths.map((booth) => ({
+                        value: booth.name,
+                        label: e.name + " - " + booth.name,
+                    }))
                 );
             });
 
             boothStore.booths
-                .filter((booth) => boothsIDs.indexOf(booth.id) === -1 && booth.name !== except)
+                .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
                 .forEach((booth) => {
                     optionsList.push({
                         value: booth.name,
@@ -81,6 +79,8 @@ function Wayfinding() {
             return data;
         };
 
+        const opts = options();
+
         return (
             <OverlayContent
                 bar={bar}
@@ -107,7 +107,7 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
                                 placeholder="Select from"
-                                options={options(uiState.selectedRoute.to?.name)}
+                                options={opts}
                                 value={uiState.selectedRoute.from?.name || ""}
                                 onChange={(value) => onSelectionClick(value, true)}
                             />
@@ -115,7 +115,7 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 20 }}>
                             <Autocomplete
                                 placeholder="Select to"
-                                options={options(uiState.selectedRoute.from?.name)}
+                                options={opts}
                                 value={uiState.selectedRoute.to?.name || ""}
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
