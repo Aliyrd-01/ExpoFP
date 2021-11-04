@@ -61,12 +61,6 @@ const config = {
                 use: "raw-loader",
             },
             {
-                test: /\.svg/,
-                use: {
-                    loader: "svg-url-loader",
-                },
-            },
-            {
                 test: /\.s[ac]ss$/i,
                 use: [
                     {
