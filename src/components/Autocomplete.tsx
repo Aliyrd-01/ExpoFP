@@ -4,7 +4,7 @@ import useOnClickOutside from "../utils/useOnClickOutside";
 import "./Autocomplete.scss";
 
 export interface OptionObject {
-    value: string;
+    value: string; // unique
     label: string;
 }
 export interface AutocompleteProps {
@@ -34,8 +34,11 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
 
     useOnClickOutside(refAutocomplete, () => setShowOptionsDropdown(false));
 
-    const changeValue = (value = "") => {
-        setInput(value);
+    const changeValue = (value = "", isObjectMode = false) => {
+        if (isObjectMode) {
+            const activeOption = options[getActiveOptionIndexByValue(value, true)];
+            setInput(activeOption.label);
+        } else setInput(value);
         onChange(value);
     };
 
@@ -43,7 +46,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
         setFilteredOptions([]);
         if (objectsMode) {
             const dataValue = event.target.getAttribute("data-value");
-            changeValue(dataValue);
+            changeValue(dataValue, true);
             setActiveOptionIndex(getActiveOptionIndexByValue(dataValue, true));
         } else {
             changeValue(event.target.innerText);
