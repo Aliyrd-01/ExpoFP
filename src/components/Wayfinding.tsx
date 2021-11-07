@@ -64,7 +64,7 @@ function Wayfinding() {
             data.push(
                 {
                     title: "Travel time",
-                    text: `~ ${Math.round(seconds / 60)} min`,
+                    text: seconds >= 60 ? `~ ${Math.round(seconds / 60)} min` : "< 1 min",
                 },
                 {
                     title: "Distance",

@@ -4,6 +4,7 @@ import React from "react";
 import { floors } from "../data/svg";
 import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
+import { lineLength } from "../utils/wayfinding";
 import "./Floors.scss";
 
 export default function Floors() {
@@ -22,7 +23,11 @@ export default function Floors() {
     return useObserver(() => (
         <div className={s.className} style={s.style}>
             {floors
-                .sort((f1, f2) => f1.name[0].toUpperCase().localeCompare(f2.name[0].toUpperCase()))
+                .sort(
+                    (f1, f2) =>
+                        lineLength({ x: f1.rect.cx, y: f1.rect.cy }, { x: 0, y: 0 }) -
+                        lineLength({ x: f2.rect.cx, y: f2.rect.cy }, { x: 0, y: 0 })
+                )
                 .map((f) => (
                     <div className="item" key={f.name} onClick={() => store.clickFloor(f)} title={f.name}>
                         {f.name[0].toUpperCase()}

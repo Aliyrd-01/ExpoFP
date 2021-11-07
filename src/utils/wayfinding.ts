@@ -215,6 +215,16 @@ const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle
     return perpendiculars;
 };
 
+// Возвращаем true если пересечени корректное
+const checkVirtualIntersection = (line1: Line, line2: Line, intersection: any) => {
+    if (!line1.virtual && !line2.virtual) return true;
+    if ((line1.ended && line2.virtual) || (line1.virtual && line2.ended)) return false;
+    if (line1.virtual && (samePoint(line1.p0, intersection) || samePoint(line1.p1, intersection))) return true;
+    if (line2.virtual && (samePoint(line2.p0, intersection) || samePoint(line2.p1, intersection))) return true;
+
+    return false;
+};
+
 const subLines = (lines: Line[]): Sublines => {
     const subLines: Line[] = [];
     const intersections: Point[] = [];
@@ -228,13 +238,8 @@ const subLines = (lines: Line[]): Sublines => {
         for (let j = 0; j < lines.length; j++) {
             if (i === j) continue;
 
-            const intersect = linesIntersection(lines[i], lines[j]); // TODO: Виртуальные линии не могут пересекаться не на концах. Подумать.
-            if (
-                !intersect.onLine1 ||
-                !intersect.onLine2 ||
-                (lines[i].ended && lines[j].virtual) ||
-                (lines[i].virtual && lines[j].ended)
-            )
+            const intersect = linesIntersection(lines[i], lines[j]);
+            if (!intersect.onLine1 || !intersect.onLine2 || !checkVirtualIntersection(lines[i], lines[j], intersect.point))
                 continue;
             linePoints.push(intersect.point);
             if (!intersections.filter((i) => samePoint(i, intersect.point)).length) intersections.push(intersect.point);
