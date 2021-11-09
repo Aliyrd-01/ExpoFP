@@ -27,6 +27,25 @@
             display: flex;
             align-items: center;
             height: 50px;
+
+            &.is-from {
+                &:before {
+                    content: "";
+                    width: 18px;
+                    height: 18px;
+                    background: url("../../public/icons/from.svg");
+                    background-size: cover;
+                }
+            }
+            &.is-to {
+                &:before {
+                    content: "";
+                    width: 18px;
+                    height: 23px;
+                    background: url("../../public/icons/to.svg");
+                    background-size: cover;
+                }
+            }
         }
     }
     &__controls {
