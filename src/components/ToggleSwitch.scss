@@ -1,3 +1,4 @@
+@import "../styles/helpers.scss";
 $switchWidth: 36px;
 $switchHeight: 20px;
 
@@ -16,10 +17,11 @@ $switchHeight: 20px;
             &:before {
                 content: "";
                 position: absolute;
-                top: 0;
+                top: 2px;
                 left: 0;
                 width: $switchWidth;
                 height: $switchHeight;
+                background: $color-white;
                 border: 1px solid $color-lightgray;
                 border-radius: 30px;
                 cursor: pointer;
@@ -28,7 +30,7 @@ $switchHeight: 20px;
             &:after {
                 content: "";
                 position: absolute;
-                top: 3px;
+                top: 5px;
                 left: 3px;
                 width: 14px;
                 height: 14px;

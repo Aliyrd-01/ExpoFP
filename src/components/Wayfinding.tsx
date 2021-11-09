@@ -5,7 +5,7 @@ import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
 import { t } from "../utils/i18n";
 import Autocomplete from "./Autocomplete";
-import Checkbox from "./Checkbox";
+import ToggleSwitch from "./ToggleSwitch";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
@@ -117,7 +117,7 @@ function Wayfinding() {
                             />
                         </div>
                         <div className="formGroup" style={{ marginBottom: 10 }}>
-                            <Checkbox
+                            <ToggleSwitch
                                 name="exceptUnaccessible"
                                 label="Only accessible ways"
                                 value={uiState.selectedRoute.exceptUnaccessible}
