@@ -20,10 +20,8 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { createCurrentCanvas, createTargetCanvas } from "./canvases";
 
-console.info(boothStore.borderWidth);
-
 const strokeWidth = Math.min(3, boothStore.borderWidth * 2.5);
-const mainColor = Color("#c01d80");
+const mainColor = Color("#bc237d");
 
 const visibleLinesIds: string[] = [];
 let routePoints: Point[] = [];

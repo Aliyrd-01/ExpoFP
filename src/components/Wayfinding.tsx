@@ -3,6 +3,7 @@ import React from "react";
 import svg from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
+import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import Autocomplete from "./Autocomplete";
 import ToggleSwitch from "./ToggleSwitch";
@@ -64,7 +65,7 @@ function Wayfinding() {
             data.push(
                 {
                     title: "Travel time",
-                    text: seconds >= 60 ? `~ ${Math.round(seconds / 60)} min` : "< 1 min",
+                    text: `~ ${Math.round(seconds / 60)} min`,
                 },
                 {
                     title: "Distance",
@@ -78,8 +79,6 @@ function Wayfinding() {
 
             return data;
         };
-
-        const opts = options();
 
         return (
             <OverlayContent
@@ -103,7 +102,7 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
                                 placeholder="Select from"
-                                options={opts}
+                                options={options()}
                                 value={uiState.selectedRoute.from?.name || ""}
                                 onChange={(value) => onSelectionClick(value, true)}
                             />
@@ -111,7 +110,7 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 20 }}>
                             <Autocomplete
                                 placeholder="Select to"
-                                options={opts}
+                                options={options()}
                                 value={uiState.selectedRoute.to?.name || ""}
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
@@ -119,7 +118,7 @@ function Wayfinding() {
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <ToggleSwitch
                                 name="exceptUnaccessible"
-                                label="Only accessible ways"
+                                label="Accessible"
                                 value={uiState.selectedRoute.exceptUnaccessible}
                                 onChange={(value) => onExceptUnaccessible(value)}
                             />
@@ -127,7 +126,7 @@ function Wayfinding() {
                     </div>
                 </div>
                 <div className="wayInformationContainer">
-                    {store.routeStore.routeDistance ? (
+                    {settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
                         <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
                     ) : null}
                 </div>
