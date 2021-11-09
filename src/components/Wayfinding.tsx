@@ -94,14 +94,14 @@ function Wayfinding() {
                 }}
             >
                 <div className="wayFindingForm">
-                    <div className="wayFindingForm__icons">
+                    {/* <div className="wayFindingForm__icons">
                         <div className="wayFindingForm__icons-item">
-                            <img src="./icons/from.svg" alt="From" />
+                           From <img src="./icons/from.svg" alt="From" />
                         </div>
                         <div className="wayFindingForm__icons-item">
                             <img src="./icons/to.svg" alt="To" />
                         </div>
-                    </div>
+                    </div> */}
                     <div className="wayFindingForm__controls">
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete

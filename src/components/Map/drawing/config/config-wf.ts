@@ -21,7 +21,7 @@ import RectPainter from "../painters/RectPainter";
 import { createCurrentCanvas, createTargetCanvas } from "./canvases";
 
 const strokeWidth = Math.min(3, boothStore.borderWidth * 2.5);
-const mainColor = Color("#4097fe");
+const mainColor = Color("#bc237d");
 
 const visibleLinesIds: string[] = [];
 let routePoints: Point[] = [];
