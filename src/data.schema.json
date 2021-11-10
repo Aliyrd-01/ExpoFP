@@ -58,6 +58,26 @@
             "type": "string",
             "description": "Locale to choose translation resouce file"
         },
+        "hideEventHomeLink": {
+            "type": "string",
+            "description": "Hide the 'Event Home' link"
+        },
+        "hideRegisterToAttendLink": {
+            "type": "string",
+            "description": "Hide the 'Register to Attend' link"
+        },
+        "hideBookmarksLink": {
+            "type": "string",
+            "description": "Hide the 'Bookmarks' link"
+        },
+        "hideDownloadPdfLink": {
+            "type": "string",
+            "description": "Hide the 'Download PDF' link"
+        },
+        "hideCategoriesLink": {
+            "type": "string",
+            "description": "Hide the 'Categories' link"
+        },
         "booths": {
             "type": "array",
             "items": {
