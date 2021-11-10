@@ -57,16 +57,17 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
 
     const onKeyDown = (event) => {
         if (event.keyCode === 13) {
-            if (!input) return;
             if (filteredOptions.length) {
                 const nextActiveIndex = getActiveOptionIndexByValue(
                     filteredOptions[activeOptionIndex],
                     objectsMode ? true : false
                 );
-                changeValue(objectsMode ? options[nextActiveIndex]["value"] : options[nextActiveIndex]);
+                if (objectsMode) changeValue(options[nextActiveIndex]["value"], true);
+                else changeValue(options[nextActiveIndex]);
                 setActiveOptionIndex(nextActiveIndex);
             } else {
-                changeValue(objectsMode ? options[activeOptionIndex]["value"] : options[activeOptionIndex]);
+                if (objectsMode) changeValue(options[activeOptionIndex]["value"], true);
+                else changeValue(options[activeOptionIndex]);
                 setActiveOptionIndex(activeOptionIndex);
             }
             setShowOptionsDropdown(false);

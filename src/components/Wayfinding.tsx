@@ -6,7 +6,7 @@ import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import Autocomplete from "./Autocomplete";
-import Checkbox from "./Checkbox";
+import ToggleSwitch from "./ToggleSwitch";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
@@ -94,14 +94,10 @@ function Wayfinding() {
                 }}
             >
                 <div className="wayFindingForm">
-                    {/* <div className="wayFindingForm__icons">
-                        <div className="wayFindingForm__icons-item">
-                           From <img src="./icons/from.svg" alt="From" />
-                        </div>
-                        <div className="wayFindingForm__icons-item">
-                            <img src="./icons/to.svg" alt="To" />
-                        </div>
-                    </div> */}
+                    <div className="wayFindingForm__icons">
+                        <div className="wayFindingForm__icons-item is-from"></div>
+                        <div className="wayFindingForm__icons-item is-to"></div>
+                    </div>
                     <div className="wayFindingForm__controls">
                         <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
@@ -120,7 +116,7 @@ function Wayfinding() {
                             />
                         </div>
                         <div className="formGroup" style={{ marginBottom: 10 }}>
-                            <Checkbox
+                            <ToggleSwitch
                                 name="exceptUnaccessible"
                                 label="Accessible"
                                 value={uiState.selectedRoute.exceptUnaccessible}

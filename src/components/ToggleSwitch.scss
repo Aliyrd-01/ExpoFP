@@ -1,0 +1,63 @@
+@import "../styles/helpers.scss";
+$switchWidth: 36px;
+$switchHeight: 20px;
+
+.toggleSwitch {
+    min-height: $switchHeight;
+
+    input[type="checkbox"] {
+        display: none;
+
+        & + label {
+            position: relative;
+            user-select: none;
+            display: inline-block;
+            border-radius: 50%;
+
+            &:before {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 0;
+                width: $switchWidth;
+                height: $switchHeight;
+                background: $color-white;
+                border: 1px solid $color-lightgray;
+                border-radius: 30px;
+                cursor: pointer;
+                transition: background 0.3s ease-in-out;
+            }
+            &:after {
+                content: "";
+                position: absolute;
+                top: 5px;
+                left: 3px;
+                width: 14px;
+                height: 14px;
+                background: #d0d0d0;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: left 0.3s cubic-bezier(0.5, 1.5, 0.5, 1);
+            }
+            span {
+                display: flex;
+                padding-left: 45px;
+                font-size: rem(16px);
+                color: $color-black;
+                cursor: pointer;
+                user-select: none;
+            }
+        }
+        &:checked {
+            & + label {
+                &:before {
+                    border-color: $color-primary;
+                }
+                &:after {
+                    left: 18px;
+                    background: $color-primary;
+                }
+            }
+        }
+    }
+}
