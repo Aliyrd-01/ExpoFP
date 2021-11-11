@@ -16,7 +16,7 @@ class FloorPlan {
         from: string | { x: number; y: number },
         to: string | { x: number; y: number },
         exceptUnaccessible: boolean
-    ): void;
+    ): void;    
 }
 
 interface FloorPlanOptions {

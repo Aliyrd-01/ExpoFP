@@ -38,7 +38,7 @@ function Booth() {
             }
         },
         get reserveTitle() {
-            return t("Reserve");
+            return data.reserveButtonTerm || t("Reserve");
         },
         get descriptionCombined() {
             return this.booth.description || data.reserveInstructions || "";
