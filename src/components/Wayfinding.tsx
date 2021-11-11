@@ -6,14 +6,14 @@ import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import Autocomplete from "./Autocomplete";
-import ToggleSwitch from "./ToggleSwitch";
 import OverlayContent from "./OverlayContent";
+import ToggleSwitch from "./ToggleSwitch";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
 
 function Wayfinding() {
     return useObserver(() => {
-        const bar = <div className="bar">{t("Directions")}</div>;
+        const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
         const boothsIDs = [];
 
         const options = () => {
@@ -65,7 +65,7 @@ function Wayfinding() {
             data.push(
                 {
                     title: "Travel time",
-                    text: `~ ${Math.round(seconds / 60)} min`,
+                    text: seconds < 60 ? "< 1 min" : `~ ${Math.round(seconds / 60)} min`,
                 },
                 {
                     title: "Distance",
@@ -83,7 +83,7 @@ function Wayfinding() {
         return (
             <OverlayContent
                 bar={bar}
-                backMode="back"
+                backMode="none"
                 onBack={() => {
                     store.routeStore.selectRoute(null);
                     store.selectSearch();

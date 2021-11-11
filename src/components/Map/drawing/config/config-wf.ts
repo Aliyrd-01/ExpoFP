@@ -230,7 +230,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             locationsDrawer.updateVisible("destinationLocation", false);
         }
 
-        if (routePoints?.length) store.routeStore.updateRoutePoints(routePoints);
+        store.routeStore.updateRoutePoints(routePoints);
     }
 
     function updateCurrentPosition() {
