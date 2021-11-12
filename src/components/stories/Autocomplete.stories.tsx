@@ -31,7 +31,8 @@ arrayOfObjects.args = {
     options: [
         {
             value: "3102",
-            label: "Event Engine - 3102",
+            label:
+                "Event Engine - 3102 Event Engine - 3102 Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102",
         },
         {
             value: "1403",

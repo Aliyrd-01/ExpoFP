@@ -20,7 +20,7 @@ $input-height: 50px;
     &__input {
         width: 100%;
         height: rem($input-height);
-        padding: rem(0 15px);
+        padding: rem(0 35px 0 15px);
         background: $color-white;
         border: 1px solid $color-lightgray;
         border-radius: 2px;
