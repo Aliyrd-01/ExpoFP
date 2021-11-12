@@ -1,5 +1,14 @@
 $overlay-height: 3.5rem;
 
+// responsive
+$grid-breakpoints: (
+    xs: 0,
+    sm: 480px,
+    md: 768px,
+    lg: 998px,
+    xl: 1100px,
+);
+
 // Rem settings
 $rem-baseline: 16;
 $rem-baseline-px: 16px;
