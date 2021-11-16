@@ -318,17 +318,14 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
                 sublines.lineEnds.length
             }} ~ ${t1 - t0}ms.`
         );
-
-        console.info(sublines);
     }
-
-    buildPathFinder(lines.filter((l) => l.unidirection).length > 0, false);
 
     return sublines;
 };
 
 export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnAccessible: boolean = false): Point[] => {
-    if (pathFinder.exceptUnAccessible !== exceptUnAccessible) buildPathFinder(pathFinder.oriented, exceptUnAccessible);
+    if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible)
+        buildPathFinder(pathFinder.oriented, exceptUnAccessible);
 
     const from: Point[] = [];
     const to: Point[] = [];
