@@ -1,6 +1,3 @@
-import settings from "../tools/settings";
-import { mets_sublines } from "./metstrade";
-
 const path = require("ngraph.path");
 const createGraph = require("ngraph.graph");
 
@@ -301,7 +298,7 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
 };
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
-    if (settings.EXPO === "metstrade") sublines = mets_sublines as any;
+    if (window["__wfData"]) sublines = window["__wfData"];
     else {
         let t0 = performance.now();
         const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
