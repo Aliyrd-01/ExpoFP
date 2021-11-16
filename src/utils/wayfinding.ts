@@ -1,3 +1,6 @@
+import settings from "../tools/settings";
+import { mets_sublines } from "./metstrade";
+
 const path = require("ngraph.path");
 const createGraph = require("ngraph.graph");
 
@@ -294,24 +297,30 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     });
 
     const t1 = performance.now();
-    console.debug(`Graph created. ~ ${t1 - t0}ms.`);
+    console.debug(`WF. Graph created. ~ ${t1 - t0}ms.`);
 };
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
-    let t0 = performance.now();
-    const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
-    let t1 = performance.now();
+    if (settings.EXPO === "metstrade") sublines = mets_sublines as any;
+    else {
+        let t0 = performance.now();
+        const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
+        let t1 = performance.now();
 
-    console.debug(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
+        console.debug(`WF. Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
 
-    t0 = performance.now();
-    sublines = subLines(lines.concat(perpendiculars));
-    t1 = performance.now();
-    console.debug(
-        `Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
-            sublines.lineEnds.length
-        }} ~ ${t1 - t0}ms.`
-    );
+        t0 = performance.now();
+        sublines = subLines(lines.concat(perpendiculars));
+        t1 = performance.now();
+
+        console.debug(
+            `WF. Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
+                sublines.lineEnds.length
+            }} ~ ${t1 - t0}ms.`
+        );
+
+        console.info(sublines);
+    }
 
     buildPathFinder(lines.filter((l) => l.unidirection).length > 0, false);
 
