@@ -1,4 +1,4 @@
-import { action, computed, observable } from "mobx";
+import { action, observable } from "mobx";
 import store from ".";
 import Rect from "../core/Rect";
 import svg from "../data/svg";
@@ -10,6 +10,7 @@ import RootStore from "./RootStore";
 export default class RouteStore {
     rootStore: RootStore;
     @observable routePoints: Point[] = [];
+    @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -52,17 +53,14 @@ export default class RouteStore {
     }
 
     @action updateRoutePoints(routePoints: Point[]) {
-        this.routePoints = routePoints;
-    }
+        if (!routePoints?.length && !this.routePoints.length) return;
 
-    @computed({ keepAlive: true }) get routeDistance() {
-        const { from, to } = uiState.selectedRoute;
-        const routePoints = this.routePoints;
+        this.routePoints = routePoints;
+
+        const route = uiState.selectedRoute;
 
         const units = svg.getAttribute("units");
         let distance = 0;
-
-        if (!routePoints?.length) return distance;
 
         routePoints.forEach((element, index) => {
             if (index === 0) return;
@@ -70,20 +68,21 @@ export default class RouteStore {
             distance += lineLength(prevElement, element);
         });
 
-        distance = distance / 10.0;
+        distance = Math.round(distance / 10.0);
 
         if (store.fp.onDirection)
             setTimeout(() => {
                 store.fp.onDirection({
-                    from: from ? { id: from.id, name: from.name } : null,
-                    to: to ? { id: to.id, name: to.name } : null,
+                    from: route?.from ? { id: route.from.id, name: route.from.name } : null,
+                    to: route?.to ? { id: route.to.id, name: route.to.name } : null,
                     points: routePoints,
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
                 });
             }, 100);
-        return distance;
-    }   
+
+        this.routeDistance = distance;
+    }
 }
 
 export class Route {
