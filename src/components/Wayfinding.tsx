@@ -10,6 +10,7 @@ import ToggleSwitch from "./ToggleSwitch";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
+import data from "../data";
 
 function Wayfinding() {
     return useObserver(() => {
@@ -55,14 +56,14 @@ function Wayfinding() {
         };
 
         const getWayInformation = (distance) => {
-            const data = [];
+            const info = [];
             const units = svg.getAttribute("units");
             const seconds = Math.round(distance / (units === "m" ? 1.4 : 4.2));
             let est = new Date();
             est.setMinutes(est.getMinutes() + seconds / 60);
             const estTotal = est.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-            data.push(
+            info.push(
                 {
                     title: "Travel time",
                     text: `~ ${Math.round(seconds / 60)} min`,
@@ -77,7 +78,7 @@ function Wayfinding() {
                 }
             );
 
-            return data;
+            return info;
         };
 
         return (
@@ -126,7 +127,7 @@ function Wayfinding() {
                     </div>
                 </div>
                 <div className="wayInformationContainer">
-                    {settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
+                    {!data.hideWayInformation && settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
                         <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
                     ) : null}
                 </div>
