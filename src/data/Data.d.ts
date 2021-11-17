@@ -19,11 +19,11 @@ interface Data {
     trackerUrl: string;
     // hideCompanies: boolean;
     dimensionless: boolean;
-    hideCategoriesLink: string;
-    hideEventHomeLink: string;
-    hideRegisterToAttendLink: string;
-    hideDownloadPdfLink: string;
-    hideBookmarksLink: string;
+    hideCategoriesLink: boolean;
+    hideEventHomeLink: boolean;
+    hideRegisterToAttendLink: boolean;
+    hideDownloadPdfLink: boolean;
+    hideBookmarksLink: boolean;
 }
 
 interface RawCategory {

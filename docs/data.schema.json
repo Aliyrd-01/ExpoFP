@@ -59,23 +59,23 @@
             "description": "Locale to choose translation resouce file"
         },
         "hideEventHomeLink": {
-            "type": "string",
+            "type": "boolean",
             "description": "Hide the 'Event Home' link"
         },
         "hideRegisterToAttendLink": {
-            "type": "string",
+            "type": "boolean",
             "description": "Hide the 'Register to Attend' link"
         },
         "hideBookmarksLink": {
-            "type": "string",
+            "type": "boolean",
             "description": "Hide the 'Bookmarks' link"
         },
         "hideDownloadPdfLink": {
-            "type": "string",
+            "type": "boolean",
             "description": "Hide the 'Download PDF' link"
         },
         "hideCategoriesLink": {
-            "type": "string",
+            "type": "boolean",
             "description": "Hide the 'Categories' link"
         },
         "booths": {
