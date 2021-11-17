@@ -298,24 +298,26 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
 };
 
 export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
-    if (window["__wfData"]) sublines = window["__wfData"];
-    else {
-        let t0 = performance.now();
-        const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
-        let t1 = performance.now();
-
-        console.debug(`WF. Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
-
-        t0 = performance.now();
-        sublines = subLines(lines.concat(perpendiculars));
-        t1 = performance.now();
-
-        console.debug(
-            `WF. Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
-                sublines.lineEnds.length
-            }} ~ ${t1 - t0}ms.`
-        );
+    if (window["__wfData"]) {
+        sublines = window["__wfData"];
+        return sublines;
     }
+    
+    let t0 = performance.now();
+    const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
+    let t1 = performance.now();
+
+    console.debug(`WF. Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
+
+    t0 = performance.now();
+    sublines = subLines(lines.concat(perpendiculars));
+    t1 = performance.now();
+
+    console.debug(
+        `WF. Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
+            sublines.lineEnds.length
+        }} ~ ${t1 - t0}ms.`
+    );
 
     return sublines;
 };
