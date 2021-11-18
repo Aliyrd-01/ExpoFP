@@ -18,6 +18,7 @@ interface Data {
     reserveInstructions: string;
     sendLoginLinkUrl: string;
     trackerUrl: string;
+    hideWayInformation: boolean;
     // hideCompanies: boolean;
     dimensionless: boolean;
 }

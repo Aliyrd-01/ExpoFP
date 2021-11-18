@@ -62,6 +62,10 @@
             "type": "string",
             "description": "Locale to choose translation resouce file"
         },
+        "hideWayInformation": {
+            "type": "boolean",
+            "description": "Hide Way information"
+        },
         "booths": {
             "type": "array",
             "items": {
