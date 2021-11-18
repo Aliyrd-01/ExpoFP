@@ -62,6 +62,30 @@
             "type": "string",
             "description": "Locale to choose translation resouce file"
         },
+        "dimensionless": {
+            "type": "boolean",
+            "description": "Hide booth size"
+        },
+        "hideEventHomeLink": {
+            "type": "boolean",
+            "description": "Hide the 'Event Home' link"
+        },
+        "hideRegisterToAttendLink": {
+            "type": "boolean",
+            "description": "Hide the 'Register to Attend' link"
+        },
+        "hideBookmarksLink": {
+            "type": "boolean",
+            "description": "Hide the 'Bookmarks' link"
+        },
+        "hideDownloadPdfLink": {
+            "type": "boolean",
+            "description": "Hide the 'Download PDF' link"
+        },
+        "hideCategoriesLink": {
+            "type": "boolean",
+            "description": "Hide the 'Categories' link"
+        },
         "booths": {
             "type": "array",
             "items": {
