@@ -192,6 +192,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 uiState.selectedRoute.exceptUnaccessible
             );
 
+            if (routePoints.length < 2) return store.routeStore.updateRoutePoints(routePoints);
+
             for (let index = 1; index < routePoints.length; index++) {
                 const cp = routePoints[index];
                 const pp = routePoints[index - 1];
