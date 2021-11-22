@@ -234,7 +234,7 @@ export default class RootStore {
                 booths.push(item);
             }
         });
-        console.log("zzz", booths);
+        //console.log("zzz", booths);
         this.uiState.moveToBooths = booths;
         // commit("setMoveToBooths", booths);
     }
