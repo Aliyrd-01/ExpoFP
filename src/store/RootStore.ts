@@ -5,7 +5,7 @@ import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
-import { default as RouteStore } from "./RouteStore";
+import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 
 export default class RootStore {
