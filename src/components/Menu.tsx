@@ -99,19 +99,19 @@ function Menu() {
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         {t("Search")}
                     </a>
-                    {!uiState.kiosk && !isIframe && (
+                    {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {!uiState.kiosk && !isIframe && !!data.registerUrl && (
+                    {!data.hideRegisterToAttendLink && !uiState.kiosk && !isIframe && !!data.registerUrl && (
                         <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Register to Attend").replace(/ /g, "\u00A0")}&nbsp;
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {!uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
+                    {!data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
                                 {t("Bookmarks")} <span>({exhibitorStore.bookmarked.length})</span>
@@ -121,12 +121,13 @@ function Menu() {
                             ) : null}
                         </a>
                     )}
-                    {!uiState.kiosk && (
+                    {!data.hideDownloadPdfLink && !uiState.kiosk && (
                         <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
                             {t("Download PDF")}
                         </a>
                     )}
-                    {categories}
+
+                    {!data.hideCategoriesLink && categories}
                 </div>
             </OverlayContent>
         );
