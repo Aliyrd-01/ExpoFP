@@ -18,7 +18,6 @@
 
       const origFetch = window.fetch;
       window.fetch = async function (url) {
-        console.log(`fetch: ${url}`);
         if (!url.startsWith("http://") && !url.startsWith("https://") && (url.startsWith("file://") || getBaseUrl().startsWith("file://"))) {
           const result = await window.flutter_inappwebview?.callHandler("readFile",url);
           return {
@@ -53,12 +52,10 @@
       });
 
       function selectRoute(from, to, exceptUnAccessible) {
-        console.log(`function selectRoute('${from}', '${to}')`)
         window.floorplan?.selectRoute(from, to, exceptUnAccessible);
       }
 
       function selectBooth(name) {
-        console.log(`function selectBooth('${name}')`)
         window.floorplan?.selectBooth(name);
       }
 
