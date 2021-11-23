@@ -27,14 +27,6 @@
             },
           };
         }
-        else if(url.endsWith('data.js')){
-          const result = await window.flutter_inappwebview?.callHandler("readFile", 'data.js');
-          return {
-            text: async function () {
-              return result;
-            },
-          };
-        }
 
         return await origFetch(url);
       };
