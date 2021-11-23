@@ -76,10 +76,10 @@ function perpendicularToLine(point: Point, start: Point, end: Point): { p: Point
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
     const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
-    if (!layer) return;
 
     const lines: Line[] = [];
-    layer.childNodes.forEach((node: any) => {
+
+    (layer?.childNodes || []).forEach((node: any) => {
         const unacc = node.getAttribute("data-way-unaccessible") === "true" || false;
         const uni = node.getAttribute("data-way-unidirection") === "true" || false;
         const virt = node.getAttribute("data-way-virtual") === "true" || false;
@@ -242,8 +242,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             locationsDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else locationsDrawer.updateVisible("currentLocation", false);
 
-        if (!routePoints.length) return;
-
         const shortestrPerp = routePoints
             .map((p, i) => {
                 if (i === 0) return null;
@@ -260,13 +258,17 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             .filter((p) => p)
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        if (!shortestrPerp || shortestrPerp.l > 200) return;
+        locationsDrawer.updateCenter("currentLocation", [
+            shortestrPerp?.p?.x || position?.x || 0,
+            shortestrPerp?.p?.y || position?.y || 0,
+        ]);
 
-        locationsDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
         locationsDrawer.updateRotation(
             "currentLocation",
-            ((position.angle != null ? position.angle : shortestrPerp.angle) * Math.PI) / 180
+            ((position?.angle != null ? position?.angle : shortestrPerp?.angle || 0) * Math.PI) / 180
         );
+
+        if (!shortestrPerp || !routePoints.length) return;
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i; index--) {
             let pPoint = routePoints[index];
