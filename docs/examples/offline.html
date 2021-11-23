@@ -11,9 +11,15 @@
     <div id="floorplan">Loading...</div>
     <script src="expofp.js"></script>
     <script>
+      function getBaseUrl(){
+        const url = window.location.href;
+        return url.substring(0, url.lastIndexOf('/'));
+      }
+
       const origFetch = window.fetch;
       window.fetch = async function (url) {
-        if (!url.startsWith("http://") && !url.startsWith("https://") && (url.startsWith("file://") || window.location.href.startsWith("file://"))) {
+        console.log(`fetch: ${url}`);
+        if (!url.startsWith("http://") && !url.startsWith("https://") && (url.startsWith("file://") || getBaseUrl().startsWith("file://"))) {
           const result = await window.flutter_inappwebview?.callHandler("readFile",url);
           return {
             json: async function () {
@@ -21,12 +27,26 @@
             },
           };
         }
+        else if(url.endsWith('data.js')){
+          const result = await window.flutter_inappwebview?.callHandler("readFile", 'data.js');
+          return {
+            text: async function () {
+              return result;
+            },
+          };
+        }
 
         return await origFetch(url);
       };
 
+      function getElement(){
+        const element = document.querySelector("#floorplan");
+        element.setAttribute('data-data-url', `${getBaseUrl()}/data/`);
+        return element;
+      }
+
       window.floorplan = new ExpoFP.FloorPlan({
-        element: document.querySelector("#floorplan"),
+        element: getElement(),
         eventId: "wayfinding",
         noOverlay: true,
         onBoothClick: (e) => {
