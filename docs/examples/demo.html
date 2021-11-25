@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width" />
+    </head>
+    <body>
+        <div id="floorplan">Loading...</div>
+        <script src="https://demo.expofp.com/packages/master/expofp.js" crossorigin="anonymous"></script>
+        <script>
+            window.floorplan = new ExpoFP.FloorPlan({
+                element: document.querySelector("#floorplan"),
+                eventId: "demo",
+                noOverlay: true,
+                onBoothClick: e => {
+                    window.flutter_inappwebview?.callHandler('myHandlerName', e.target.name);
+                }
+            });
+			
+			function selectBooth(name){
+				window.floorplan?.selectBooth(name);
+			}
+        </script>
+    </body>
+</html>

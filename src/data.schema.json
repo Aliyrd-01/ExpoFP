@@ -54,9 +54,40 @@
             "type": "string",
             "description": "Booth term (typically 'booth' or 'stand')"
         },
+        "reserveButtonTerm": {
+            "type": "string",
+            "description": "Term for Reserve button"
+        },
         "locale": {
             "type": "string",
             "description": "Locale to choose translation resouce file"
+        },
+ 		"hideWayInformation": {
+            "type": "boolean",
+            "description": "Hide Way information"
+        },        "dimensionless": {
+            "type": "boolean",
+            "description": "Hide booth size"
+        },
+        "hideEventHomeLink": {
+            "type": "boolean",
+            "description": "Hide the 'Event Home' link"
+        },
+        "hideRegisterToAttendLink": {
+            "type": "boolean",
+            "description": "Hide the 'Register to Attend' link"
+        },
+        "hideBookmarksLink": {
+            "type": "boolean",
+            "description": "Hide the 'Bookmarks' link"
+        },
+        "hideDownloadPdfLink": {
+            "type": "boolean",
+            "description": "Hide the 'Download PDF' link"
+        },
+        "hideCategoriesLink": {
+            "type": "boolean",
+            "description": "Hide the 'Categories' link"
         },
         "booths": {
             "type": "array",
@@ -72,6 +103,9 @@
                                 "type": "number"
                             },
                             "name": {
+                                "type": "string"
+                            },
+                            "externalId": {
                                 "type": "string"
                             },
                             "exhibitors": {
@@ -92,6 +126,9 @@
                                 "type": "number"
                             },
                             "name": {
+                                "type": "string"
+                            },
+                            "externalId": {
                                 "type": "string"
                             },
                             "status": {
@@ -134,6 +171,9 @@
                             "description": {
                                 "type": "string",
                                 "description": "HTML, if set, overrides reserveInstructions"
+                            },
+                            "externalId": {
+                                "type": "string"
                             }
                         }
                     },
@@ -159,6 +199,9 @@
                             "description": {
                                 "type": "string",
                                 "description": "HTML"
+                            },
+                            "externalId": {
+                                "type": "string"
                             }
                         }
                     }
@@ -176,6 +219,9 @@
                         "type": "number"
                     },
                     "name": {
+                        "type": "string"
+                    },
+                    "externalId": {
                         "type": "string"
                     },
                     "categories": {

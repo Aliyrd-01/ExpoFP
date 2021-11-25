@@ -9,6 +9,7 @@ interface Data {
     gallery: string[];
     gtag: string;
     boothTerm: string;
+    reserveButtonTerm: string;
     exhibitorTerm: string;
     locale: string;
     booths: RawBooth[];
@@ -17,8 +18,14 @@ interface Data {
     reserveInstructions: string;
     sendLoginLinkUrl: string;
     trackerUrl: string;
+    hideWayInformation: boolean;
     // hideCompanies: boolean;
     dimensionless: boolean;
+    hideCategoriesLink: boolean;
+    hideEventHomeLink: boolean;
+    hideRegisterToAttendLink: boolean;
+    hideDownloadPdfLink: boolean;
+    hideBookmarksLink: boolean;
 }
 
 interface RawCategory {
@@ -55,6 +62,7 @@ interface RawBoothBase {
     id: number;
     name: string;
     title: string;
+    externalId: string;
     // special?: true;
     // rect: Rect;
     // noLabels: boolean;
@@ -67,6 +75,7 @@ interface RawBoothBase {
 interface RawExhibitor {
     id: number;
     name: string;
+    externalId: string; //new
     featured: boolean; //new
     advertise: boolean;
     description: string;

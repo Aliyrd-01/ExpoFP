@@ -11,15 +11,16 @@
         <script>
             let fp = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
-                eventId: "wayfinding",
+                eventId: "etldemo",
                 noOverlay: false,
                 onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
-                onFpConfigured: () => fp.selectRoute("1512", "1205"),
+                onFpConfigured: () => fp.selectRoute("1300", "Seminar Room-3"),
                 onDirection: (e) => {
-                    if (!e.points || !e.points.length) fp.selectCurrentPosition(null, false);
+                    if (!e.points || !e.points.length) {
+                    } // fp.selectCurrentPosition(null, false, 45);
                     else {
                         let middlePoint = e.points[Math.floor(e.points.length / 2)];
-                        fp.selectCurrentPosition(middlePoint, true);
+                        fp.selectCurrentPosition({ x: middlePoint.x + 75, y: middlePoint.y - 0 }, false);
                     }
                 },
             });

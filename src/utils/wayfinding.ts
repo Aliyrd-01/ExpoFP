@@ -14,7 +14,8 @@ export class Line {
         public p1: Point,
         public unaccessible: boolean = false,
         public unidirection: boolean = false,
-        public virtual: boolean = false
+        public virtual: boolean = false,
+        public ended: boolean = false
     ) {}
 }
 
@@ -141,8 +142,10 @@ const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     return points;
 };
 
-const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number = 300): Line[] => {
+const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Line[] => {
     const blockers = rects.concat(other);
+
+    lines = lines.filter((l) => !l.virtual);
 
     const perpendiculars: Line[] = [];
 
@@ -206,7 +209,20 @@ const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle
             if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
     }
+
+    perpendiculars.forEach((p) => (p.ended = true));
+
     return perpendiculars;
+};
+
+// Возвращаем true если пересечени корректное
+const checkVirtualIntersection = (line1: Line, line2: Line, intersection: any) => {
+    if (!line1.virtual && !line2.virtual) return true;
+    if ((line1.ended && line2.virtual) || (line1.virtual && line2.ended)) return false;
+    if (line1.virtual && (samePoint(line1.p0, intersection) || samePoint(line1.p1, intersection))) return true;
+    if (line2.virtual && (samePoint(line2.p0, intersection) || samePoint(line2.p1, intersection))) return true;
+
+    return false;
 };
 
 const subLines = (lines: Line[]): Sublines => {
@@ -223,7 +239,8 @@ const subLines = (lines: Line[]): Sublines => {
             if (i === j) continue;
 
             const intersect = linesIntersection(lines[i], lines[j]);
-            if (!intersect.onLine1 || !intersect.onLine2) continue;
+            if (!intersect.onLine1 || !intersect.onLine2 || !checkVirtualIntersection(lines[i], lines[j], intersect.point))
+                continue;
             linePoints.push(intersect.point);
             if (!intersections.filter((i) => samePoint(i, intersect.point)).length) intersections.push(intersect.point);
         }
@@ -277,36 +294,37 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     });
 
     const t1 = performance.now();
-    console.debug(`Graph created. ~ ${t1 - t0}ms.`);
+    console.debug(`WF. Graph created. ~ ${t1 - t0}ms.`);
 };
 
-export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]): Sublines => {
+export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
+    if (window["__wfData"]) {
+        sublines = window["__wfData"];
+        return sublines;
+    }
+    
     let t0 = performance.now();
-    const perpendiculars = buildPerpendiculars(
-        lines.filter((l) => !l.virtual),
-        rects,
-        other
-    );
+    const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
     let t1 = performance.now();
 
-    console.debug(`Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
+    console.debug(`WF. Perpendiculars created: ${perpendiculars.length} ~ ${t1 - t0}ms.`);
 
     t0 = performance.now();
     sublines = subLines(lines.concat(perpendiculars));
     t1 = performance.now();
+
     console.debug(
-        `Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
+        `WF. Sublines created. Lines: ${sublines.lines.length}, intersections: ${sublines.intersections.length}, lineEnds: ${
             sublines.lineEnds.length
         }} ~ ${t1 - t0}ms.`
     );
-
-    buildPathFinder(lines.filter((l) => l.unidirection).length > 0, false);
 
     return sublines;
 };
 
 export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnAccessible: boolean = false): Point[] => {
-    if (pathFinder.exceptUnAccessible !== exceptUnAccessible) buildPathFinder(pathFinder.oriented, exceptUnAccessible);
+    if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible)
+        buildPathFinder(pathFinder.oriented, exceptUnAccessible);
 
     const from: Point[] = [];
     const to: Point[] = [];

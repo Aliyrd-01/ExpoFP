@@ -1,0 +1,28 @@
+@import "../styles/helpers.scss";
+
+.wayInformation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 800px;
+    margin: 25px auto 0;
+    padding: rem(25px 15px);
+    border-top: 1px solid #e4e4e4;
+
+    &__item {
+        padding: rem(0 10px);
+
+        span {
+            display: flex;
+            padding-bottom: rem(5px);
+            font-size: rem(14px);
+            color: $color-gray;
+            font-weight: 500;
+        }
+        strong {
+            font-size: rem(18px);
+            color: $color-black;
+            font-weight: 600;
+        }
+    }
+}

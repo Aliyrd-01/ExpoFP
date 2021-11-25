@@ -3,12 +3,12 @@ import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
-import Route from "../store/RouteStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
+import Button from "./Button";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
 
@@ -38,7 +38,7 @@ function Booth() {
             }
         },
         get reserveTitle() {
-            return t("Reserve");
+            return data.reserveButtonTerm || t("Reserve");
         },
         get descriptionCombined() {
             return this.booth.description || data.reserveInstructions || "";
@@ -162,14 +162,13 @@ function Booth() {
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
                 {settings.wayfinding && (
-                    <div className="booth__directions">
-                        <button
+                    <div className="exhibitor__directions" style={{ padding: 15 }}>
+                        <Button
+                            text={t("Directions")}
                             onClick={() =>
-                                store.clickRoute(new Route(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false))
+                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false)
                             }
-                        >
-                            {t("Directions")}
-                        </button>
+                        />
                     </div>
                 )}
             </OverlayContent>

@@ -11,6 +11,7 @@ export default class RectPainter implements Painter {
     private groupsDirty = true;
     private colorsDirty = true;
     private centersDirty = true;
+    private rotateDirty = true;
     private skipdimDirty = true;
 
     private readonly programInfo: any;
@@ -132,6 +133,14 @@ export default class RectPainter implements Painter {
         }
     }
 
+    updateRotation(id: string, rotateRadians: number) {
+        const obj = this.objectsById.get(id);
+        if (!obj.rotateRadians || obj.rotateRadians[0] !== rotateRadians) {
+            this.objectsById.get(id).rotateRadians = rotateRadians;
+            this.rotateDirty = true;
+        }
+    }
+
     private ensureBuffersAndGroupsInternal() {
         if (this.buffersInitialized) {
             this.populateBuffers();
@@ -146,6 +155,11 @@ export default class RectPainter implements Painter {
         if (this.centersDirty) {
             this.populateCenterBuffer();
             this.centersDirty = false;
+        }
+
+        if (this.rotateDirty) {
+            this.populateRotateBuffer();
+            this.rotateDirty = false;
         }
 
         if (this.colorsDirty) {
@@ -346,6 +360,16 @@ export default class RectPainter implements Painter {
         this.bufferFloat32Array(this.centerBuffer, centers);
     }
 
+    private populateRotateBuffer() {
+        const rotations: number[] = [];
+        for (const w of this.objects) {
+            const angleInRadians = w.rotateRadians || 0;
+            const r = [Math.sin(angleInRadians), Math.cos(angleInRadians)];
+            rotations.push(...r, ...r, ...r, ...r);
+        }
+
+        this.bufferFloat32Array(this.rotateBuffer, rotations);
+    }
     private populateColorBuffer() {
         const colors: number[] = [];
         for (const w of this.objects) {

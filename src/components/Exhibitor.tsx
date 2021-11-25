@@ -4,7 +4,6 @@ import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
-import Route from "../store/RouteStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
@@ -12,6 +11,7 @@ import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
 import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
+import Button from "./Button";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import { FillMode } from "./Slider/ImageSliderData";
@@ -183,6 +183,20 @@ function ExhibitorComponent() {
                             </a>
                         ))}
                     </div>
+                    {settings.wayfinding && (
+                        <div className="exhibitor__directions" style={{ padding: 15 }}>
+                            <Button
+                                text={t("Directions")}
+                                onClick={() =>
+                                    store.routeStore.clickRoute(
+                                        null,
+                                        exhibitor.booths[0],
+                                        uiState.selectedRoute?.exceptUnaccessible || false
+                                    )
+                                }
+                            />
+                        </div>
+                    )}
                     {exhibitor.description || exhibitor.logo ? (
                         <div
                             className={classNames({
@@ -370,19 +384,6 @@ function ExhibitorComponent() {
                             >
                                 <i className="fab fa-youtube" />
                             </a>
-                        </div>
-                    )}
-                    {settings.wayfinding && (
-                        <div className="exhibitor__directions">
-                            <button
-                                onClick={() =>
-                                    store.selectRoute(
-                                        new Route(null, exhibitor.booths[0], uiState.selectedRoute?.exceptUnaccessible || false)
-                                    )
-                                }
-                            >
-                                {t("Directions")}
-                            </button>
                         </div>
                     )}
                     {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
