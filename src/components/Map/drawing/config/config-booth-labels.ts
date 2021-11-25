@@ -15,7 +15,7 @@ import { NumberObserver } from "./NumberObserver";
 let fillStyle = "#fff";
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
-const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
+const prefixes = ["Dot", /*"XS", "S", "M",*/ "L", "Details"] as const;
 
 // const updates = [];
 // let drawer: Painter;
@@ -86,9 +86,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false,
         });
 
-        this.addLabel(7, "XS");
-        this.addLabel(10, "S");
-        this.addLabel(12, "M");
+        //this.addLabel(7, "XS");
+        //this.addLabel(10, "S");
+        // this.addLabel(12, "M");
         this.addLabel(14, "L");
 
         const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio, fillStyle);
