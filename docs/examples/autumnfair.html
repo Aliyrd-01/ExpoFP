@@ -31,7 +31,11 @@
 			
 			function selectBooth(name){
 				window.floorplan?.selectBooth(name);
-			}		
+			}
+		
+			function setCurrentPosition(x, y, focus){
+				window.floorplan?.selectCurrentPosition({x: x, y: y}, focus);
+			}
         </script>
     </body>
 </html>
