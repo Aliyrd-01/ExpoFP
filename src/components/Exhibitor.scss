@@ -138,13 +138,12 @@
         margin: 1rem;
         font-size: 0.9rem;
         div {
-            word-break: break-all;
+            word-break: break-all
         }
     }
     &__description-html {
         overflow-wrap: break-word;
-        ol,
-        ul {
+        ol, ul {
             padding-inline-start: 20px;
             display: grid;
         }
@@ -209,7 +208,7 @@
         line-height: 1.5rem;
         color: #333;
         font-weight: 600;
-        padding-top: 1rem;
+        padding-top: 2rem;
         margin-left: 1rem;
         font-size: 1.1em;
         flex-grow: 1;
