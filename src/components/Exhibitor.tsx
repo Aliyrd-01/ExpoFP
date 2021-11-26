@@ -134,7 +134,7 @@ function ExhibitorComponent() {
             const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
             const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;
 
-            var result = descriptions.find((p) => p.startsWith(lang));
+            const result = descriptions.find((p) => p.startsWith(lang));
             if (result != null) {
                 return result.replace(lang, "");
             }
