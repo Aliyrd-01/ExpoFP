@@ -138,9 +138,9 @@ function ExhibitorComponent() {
 
             const result = descriptions.find((p) => p.startsWith(lang));
             if (result != null) {
-                return result.substring(0, 18);
+                return result.substring(18);
             } else if (descriptions[0].startsWith(`!*//||^^`) && descriptions[0].length > 18) {
-                return descriptions[0].substring(0, 18);
+                return descriptions[0].substring(18);
             }
 
             return descriptions[0];
