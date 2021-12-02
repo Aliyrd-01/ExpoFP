@@ -44,12 +44,18 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
     };
 }
 
-export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+export function createDetailsCanvas(
+    b: RegularBooth,
+    pixelRatio: number,
+    color: string = "#fff",
+    frontSize: number,
+    onlyMain: boolean
+): CanvasDescriptor {
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
 
-    const mainFontSize = 14 * pixelRatio;
-    const detailFontSize = 14 * pixelRatio;
+    const mainFontSize = frontSize;
+    const detailFontSize = frontSize;
 
     const mainFont = getFont(mainFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
@@ -100,6 +106,8 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
             c.font = detailFont;
 
             nextLine += pixelRatio;
+
+            if (onlyMain) return;
 
             for (const line of detailsLines) {
                 c.fillText(line, 0, nextLine);
