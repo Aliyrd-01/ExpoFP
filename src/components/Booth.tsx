@@ -162,12 +162,13 @@ function Booth() {
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
                 {settings.wayfinding && (
-                    <div className="exhibitor__directions" style={{ padding: 15 }}>
+                    <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
                         <Button
                             text={t("Directions")}
-                            onClick={() =>
-                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false)
-                            }
+                            onClick={() => {
+                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false);
+                                store.showOverlay();
+                            }}
                         />
                     </div>
                 )}

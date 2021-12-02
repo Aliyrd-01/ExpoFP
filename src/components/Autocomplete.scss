@@ -23,7 +23,6 @@ $input-height: 50px;
         padding: rem(0 35px 0 15px);
         background: $color-white;
         border: 1px solid $color-lightgray;
-        border-radius: 2px;
         outline: none;
         font-size: rem(16px);
         font-weight: 600;
@@ -54,7 +53,7 @@ $input-height: 50px;
     &__options {
         visibility: hidden;
         opacity: 0;
-        max-height: 50vh;
+        max-height: 45vh;
         overflow-y: auto;
         background: $color-white;
         border: 1px solid $color-lightgray;

@@ -50,6 +50,17 @@ function Wayfinding() {
             else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
 
+        const mobileFullOverlaySize = () => {
+            return uiState.overlaySize === "full" ? true : false;
+        };
+        const routeSelected = () => {
+            const { from, to } = uiState.selectedRoute;
+            return from && to ? true : false;
+        };
+        const mobileHideForm = () => {
+            return routeSelected() && !mobileFullOverlaySize() ? true : false;
+        };
+
         const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
             const { from, to } = uiState.selectedRoute;
             store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
@@ -94,38 +105,40 @@ function Wayfinding() {
                     store.selectNone();
                 }}
             >
-                <div className="wayFindingForm">
-                    <div className="wayFindingForm__icons">
-                        <div className="wayFindingForm__icons-item is-from"></div>
-                        <div className="wayFindingForm__icons-item is-to"></div>
+                {!mobileHideForm() ? (
+                    <div className="wayFindingForm" style={{ marginBottom: 10 }}>
+                        <div className="wayFindingForm__icons">
+                            <div className="wayFindingForm__icons-item is-from"></div>
+                            <div className="wayFindingForm__icons-item is-to"></div>
+                        </div>
+                        <div className="wayFindingForm__controls">
+                            <div className="formGroup" style={{ marginBottom: 10 }}>
+                                <Autocomplete
+                                    placeholder="Select from"
+                                    options={options()}
+                                    value={uiState.selectedRoute.from?.name || ""}
+                                    onChange={(value) => onSelectionClick(value, true)}
+                                />
+                            </div>
+                            <div className="formGroup" style={{ marginBottom: 20 }}>
+                                <Autocomplete
+                                    placeholder="Select to"
+                                    options={options()}
+                                    value={uiState.selectedRoute.to?.name || ""}
+                                    onChange={(value) => onSelectionClick(value, false)}
+                                />
+                            </div>
+                            <div className="formGroup" style={{ marginBottom: 10 }}>
+                                <ToggleSwitch
+                                    name="exceptUnaccessible"
+                                    label="Accessible"
+                                    value={uiState.selectedRoute.exceptUnaccessible}
+                                    onChange={(value) => onExceptUnaccessible(value)}
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div className="wayFindingForm__controls">
-                        <div className="formGroup" style={{ marginBottom: 10 }}>
-                            <Autocomplete
-                                placeholder="Select from"
-                                options={options()}
-                                value={uiState.selectedRoute.from?.name || ""}
-                                onChange={(value) => onSelectionClick(value, true)}
-                            />
-                        </div>
-                        <div className="formGroup" style={{ marginBottom: 20 }}>
-                            <Autocomplete
-                                placeholder="Select to"
-                                options={options()}
-                                value={uiState.selectedRoute.to?.name || ""}
-                                onChange={(value) => onSelectionClick(value, false)}
-                            />
-                        </div>
-                        <div className="formGroup" style={{ marginBottom: 10 }}>
-                            <ToggleSwitch
-                                name="exceptUnaccessible"
-                                label="Accessible"
-                                value={uiState.selectedRoute.exceptUnaccessible}
-                                onChange={(value) => onExceptUnaccessible(value)}
-                            />
-                        </div>
-                    </div>
-                </div>
+                ) : null}
                 <div className="wayInformationContainer">
                     {!data.hideWayInformation && settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
                         <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />

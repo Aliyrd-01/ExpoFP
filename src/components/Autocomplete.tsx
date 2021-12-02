@@ -134,7 +134,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
                         value={input}
                         placeholder={placeholder}
                     />
-                    <div className="autocomplete__options">{showOptions()}</div>
+                    {showOptionsDropdown ? <div className="autocomplete__options">{showOptions()}</div> : null}
                 </div>
             </div>
         </>
