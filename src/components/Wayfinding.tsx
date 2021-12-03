@@ -1,5 +1,6 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
+import data from "../data";
 import svg from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
@@ -10,7 +11,6 @@ import OverlayContent from "./OverlayContent";
 import ToggleSwitch from "./ToggleSwitch";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
-import data from "../data";
 
 function Wayfinding() {
     return useObserver(() => {
@@ -140,8 +140,15 @@ function Wayfinding() {
                     </div>
                 ) : null}
                 <div className="wayInformationContainer">
-                    {!data.hideWayInformation && settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
-                        <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
+                    {!data.hideWayInformation &&
+                    settings.EXPO !== "bloomberg" &&
+                    uiState.selectedRoute?.from &&
+                    uiState.selectedRoute.from ? (
+                        store.routeStore.routePoints.length ? (
+                            <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
+                        ) : (
+                            <div style={{ textAlign: "center", fontWeight: "bold" }}>Route not found</div>
+                        )
                     ) : null}
                 </div>
             </OverlayContent>
