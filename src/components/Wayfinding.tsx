@@ -1,5 +1,6 @@
 import { useObserver } from "mobx-react-lite";
 import React, { useState, useEffect } from "react";
+import data from "../data";
 import svg from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
@@ -10,7 +11,6 @@ import OverlayContent from "./OverlayContent";
 import ToggleSwitch from "./ToggleSwitch";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
-import data from "../data";
 
 function Wayfinding() {
     const routeSelected = () => {
@@ -29,14 +29,13 @@ function Wayfinding() {
     const [showForm, setShowForm] = useState(mobileShowForm());
 
     useEffect(() => {
-        if (navigator.userAgent.toLowerCase().indexOf("android") > -1) setShowForm(mobileShowForm());
-        else
-            window.setTimeout(
-                () => {
-                    setShowForm(mobileShowForm());
-                },
-                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
-            );
+        const timer = window.setTimeout(
+            () => {
+                setShowForm(mobileShowForm());
+            },
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+        );
+        return () => clearTimeout(timer);
     });
 
     return useObserver(() => {
@@ -159,8 +158,15 @@ function Wayfinding() {
             >
                 {!showForm ? wayFindingForm() : null}
                 <div className="wayInformationContainer">
-                    {!data.hideWayInformation && settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
-                        <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
+                    {!data.hideWayInformation &&
+                    settings.EXPO !== "bloomberg" &&
+                    uiState.selectedRoute?.from &&
+                    uiState.selectedRoute.from ? (
+                        store.routeStore.routePoints.length ? (
+                            <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
+                        ) : (
+                            <div style={{ textAlign: "center", fontWeight: "bold" }}>Route not found</div>
+                        )
                     ) : null}
                 </div>
             </OverlayContent>
