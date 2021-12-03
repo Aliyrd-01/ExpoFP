@@ -33,7 +33,7 @@ function Wayfinding() {
             () => {
                 setShowForm(mobileShowForm());
             },
-            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 0
         );
         return () => clearTimeout(timer);
     });
