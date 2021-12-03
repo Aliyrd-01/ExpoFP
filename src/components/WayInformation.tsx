@@ -5,6 +5,7 @@ import "./WayInformation.scss";
 export interface WayInformationItem {
     title: string;
     text: string;
+    accessible?: boolean;
 }
 export interface WayInformationProps {
     items: WayInformationItem[];

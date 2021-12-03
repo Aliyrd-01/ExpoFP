@@ -1,5 +1,5 @@
 import { useObserver } from "mobx-react-lite";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import svg from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
@@ -13,6 +13,32 @@ import WayInformation from "./WayInformation";
 import data from "../data";
 
 function Wayfinding() {
+    const routeSelected = () => {
+        const { from, to } = uiState.selectedRoute;
+        return from && to ? true : false;
+    };
+
+    const mobileFullOverlaySize = () => {
+        return uiState.overlaySize === "full" ? true : false;
+    };
+
+    const mobileShowForm = () => {
+        return routeSelected() && !mobileFullOverlaySize() ? true : false;
+    };
+
+    const [showForm, setShowForm] = useState(mobileShowForm());
+
+    useEffect(() => {
+        if (navigator.userAgent.toLowerCase().indexOf("android") > -1) setShowForm(mobileShowForm());
+        else
+            window.setTimeout(
+                () => {
+                    setShowForm(mobileShowForm());
+                },
+                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+            );
+    });
+
     return useObserver(() => {
         const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
         const boothsIDs = [];
@@ -50,17 +76,6 @@ function Wayfinding() {
             else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
 
-        const mobileFullOverlaySize = () => {
-            return uiState.overlaySize === "full" ? true : false;
-        };
-        const routeSelected = () => {
-            const { from, to } = uiState.selectedRoute;
-            return from && to ? true : false;
-        };
-        const mobileHideForm = () => {
-            return routeSelected() && !mobileFullOverlaySize() ? true : false;
-        };
-
         const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
             const { from, to } = uiState.selectedRoute;
             store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
@@ -92,6 +107,43 @@ function Wayfinding() {
             return info;
         };
 
+        const wayFindingForm = () => {
+            return (
+                <div className="wayFindingForm" style={{ marginBottom: 10 }}>
+                    <div className="wayFindingForm__icons">
+                        <div className="wayFindingForm__icons-item is-from"></div>
+                        <div className="wayFindingForm__icons-item is-to"></div>
+                    </div>
+                    <div className="wayFindingForm__controls">
+                        <div className="formGroup" style={{ marginBottom: 10 }}>
+                            <Autocomplete
+                                placeholder="Select from"
+                                options={options()}
+                                value={uiState.selectedRoute.from?.name || ""}
+                                onChange={(value) => onSelectionClick(value, true)}
+                            />
+                        </div>
+                        <div className="formGroup" style={{ marginBottom: 20 }}>
+                            <Autocomplete
+                                placeholder="Select to"
+                                options={options()}
+                                value={uiState.selectedRoute.to?.name || ""}
+                                onChange={(value) => onSelectionClick(value, false)}
+                            />
+                        </div>
+                        <div className="formGroup" style={{ marginBottom: 10 }}>
+                            <ToggleSwitch
+                                name="exceptUnaccessible"
+                                label="Accessible"
+                                value={uiState.selectedRoute.exceptUnaccessible}
+                                onChange={(value) => onExceptUnaccessible(value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         return (
             <OverlayContent
                 bar={bar}
@@ -105,40 +157,7 @@ function Wayfinding() {
                     store.selectNone();
                 }}
             >
-                {!mobileHideForm() ? (
-                    <div className="wayFindingForm" style={{ marginBottom: 10 }}>
-                        <div className="wayFindingForm__icons">
-                            <div className="wayFindingForm__icons-item is-from"></div>
-                            <div className="wayFindingForm__icons-item is-to"></div>
-                        </div>
-                        <div className="wayFindingForm__controls">
-                            <div className="formGroup" style={{ marginBottom: 10 }}>
-                                <Autocomplete
-                                    placeholder="Select from"
-                                    options={options()}
-                                    value={uiState.selectedRoute.from?.name || ""}
-                                    onChange={(value) => onSelectionClick(value, true)}
-                                />
-                            </div>
-                            <div className="formGroup" style={{ marginBottom: 20 }}>
-                                <Autocomplete
-                                    placeholder="Select to"
-                                    options={options()}
-                                    value={uiState.selectedRoute.to?.name || ""}
-                                    onChange={(value) => onSelectionClick(value, false)}
-                                />
-                            </div>
-                            <div className="formGroup" style={{ marginBottom: 10 }}>
-                                <ToggleSwitch
-                                    name="exceptUnaccessible"
-                                    label="Accessible"
-                                    value={uiState.selectedRoute.exceptUnaccessible}
-                                    onChange={(value) => onExceptUnaccessible(value)}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
+                {!showForm ? wayFindingForm() : null}
                 <div className="wayInformationContainer">
                     {!data.hideWayInformation && settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
                         <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
