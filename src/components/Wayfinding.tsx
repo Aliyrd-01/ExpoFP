@@ -1,5 +1,5 @@
 import { useObserver } from "mobx-react-lite";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import data from "../data";
 import svg from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
@@ -25,10 +25,6 @@ function Wayfinding() {
     const mobileShowForm = () => {
         return routeSelected() && !mobileFullOverlaySize() ? true : false;
     };
-
-    const [showForm, setShowForm] = useState(mobileShowForm());
-
-    useEffect(() => setShowForm(mobileShowForm()));
 
     return useObserver(() => {
         const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
@@ -148,7 +144,7 @@ function Wayfinding() {
                     store.selectNone();
                 }}
             >
-                {!showForm ? wayFindingForm() : null}
+                {!mobileShowForm() ? wayFindingForm() : null}
                 <div className="wayInformationContainer">
                     {!data.hideWayInformation &&
                     settings.EXPO !== "bloomberg" &&
