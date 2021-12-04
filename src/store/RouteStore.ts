@@ -19,7 +19,13 @@ export default class RouteStore {
     @action selectRoute(route: Route) {
         let list = [];
 
-        if (route?.from && route?.to) this.rootStore.showMap();
+        if (route?.from && route?.to)
+            window.setTimeout(
+                () => {
+                    this.rootStore.showMap();
+                },
+                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+            );
 
         if (route?.from) list.push(route.from);
         if (route?.to) list.push(route.to);

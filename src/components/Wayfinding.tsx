@@ -28,15 +28,7 @@ function Wayfinding() {
 
     const [showForm, setShowForm] = useState(mobileShowForm());
 
-    useEffect(() => {
-        const timer = window.setTimeout(
-            () => {
-                setShowForm(mobileShowForm());
-            },
-            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 0
-        );
-        return () => clearTimeout(timer);
-    });
+    useEffect(() => setShowForm(mobileShowForm()));
 
     return useObserver(() => {
         const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
