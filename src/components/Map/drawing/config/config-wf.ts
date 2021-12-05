@@ -5,28 +5,21 @@ import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
 import svg from "../../../../data/svg";
 import store, { boothStore, uiState } from "../../../../store";
-import {
-    buildGraph,
-    getGraphPoints,
-    Line,
-    lineAngle,
-    lineCenter,
-    lineId,
-    lineLength,
-    Point,
-    Rectangle,
-} from "../../../../utils/wayfinding";
+import { buildGraph, getGraphPoints, Line, lineAngle, lineLength, Point, Rectangle } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { createCurrentCanvas, createTargetCanvas } from "./canvases";
+import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
-const strokeWidth = Math.min(5, boothStore.borderWidth * 2.5);
-const mainColor = Color("#bc237d");
-
-const visibleLinesIds: string[] = [];
-let routePoints: Point[] = [];
+let visibleRoutePoints: Point[] = [];
+let maxVisibleIndex = 0;
 
 const isDebug = false;
+
+const pointsCount = 200;
+const minInterval = (boothStore.borderWidth < 5 ? 5 : boothStore.borderWidth) * 15;
+
+let colorFrom = Color("#30AFEB");
+let colorTo = Color("#FF9E2C");
 
 function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean): Line[] {
     return d
@@ -74,6 +67,13 @@ function perpendicularToLine(point: Point, start: Point, end: Point): { p: Point
     };
 }
 
+function shiftPoint(point: Point, length: number, angle: number): Point {
+    return {
+        x: point.x + length * Math.sin(((90 - angle) * Math.PI) / 180.0),
+        y: point.y + length * Math.sin((angle * Math.PI) / 180.0),
+    };
+}
+
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
     const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
 
@@ -102,30 +102,26 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         return new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     });
 
-    const linesDrawer = context.requirePainter("WF_lines", RectPainter, painterOrderPriority - 20);
+    const dotsDrawer = context.requirePainter("WF_dots", RectPainter, painterOrderPriority);
 
     const locationsDrawer = context.requirePainter("wF_locations", RectPainter, painterOrderPriority + 1);
-    const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, mainColor.hex());
-    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, mainColor.hex());
+    const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, colorFrom.hex());
+    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, colorTo.hex());
 
-    const sl = buildGraph(lines, boothsRects, [], 300);
+    buildGraph(lines, boothsRects, [], 300);
 
-    sl.lines
-        .filter((l) => !l.virtual)
-        .forEach((line) => {
-            const center = lineCenter(line.p0, line.p1);
-            const length = lineLength(line.p0, line.p1);
-            const delta = length / 2 + strokeWidth;
+    const dotCanvas = createCircleCanvas(minInterval / 12, context.pixelRatio, colorFrom.hex());
 
-            linesDrawer.addObject({
-                id: lineId(line.p0, line.p1),
-                center: [center.x, center.y],
-                color: mainColor.vec4(),
-                deltas: [-delta, -strokeWidth, delta, strokeWidth],
-                rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
-                visible: isDebug,
-            });
+    for (let i = 0; i < pointsCount; i++) {
+        dotsDrawer.addObject({
+            id: `Dot_${i.toString()}`,
+            center: [0, 0],
+            deltaPts: [-dotCanvas.width / 2, -dotCanvas.width / 2, dotCanvas.width, dotCanvas.width],
+            canvasTmp: dotCanvas,
+            texPosition: "lefttop",
+            visible: isDebug,
         });
+    }
 
     locationsDrawer.addObject({
         id: "destinationLocation",
@@ -160,24 +156,15 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     locationsDrawer.updateSkipdim("destinationLocation", true);
     locationsDrawer.updateSkipdim("currentLocation", true);
 
-    function getlineIdByPoints(p0: Point, p1: Point): string {
-        let id = lineId(p0, p1);
-        const obj = linesDrawer.getObject(id);
-        if (obj) return id;
-        id = lineId(p1, p0);
-        return linesDrawer.getObject(id) ? id : null;
-    }
-
     function updateRoute() {
-        visibleLinesIds.forEach((id) => {
-            linesDrawer.updateVisible(id, false);
-            linesDrawer.updateSkipdim(id, false);
-        });
+        for (let i = 0; i < maxVisibleIndex; i++) dotsDrawer.updateVisible(`Dot_${i}`, false);
+        maxVisibleIndex = 0;
 
         let from = null;
         let to = null;
 
-        routePoints = [];
+        let points = [];
+        visibleRoutePoints = [];
 
         if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
             from = uiState.selectedRoute.from;
@@ -186,41 +173,57 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
             const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
 
-            routePoints = getGraphPoints(
+            points = getGraphPoints(
                 new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
                 new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                uiState.selectedRoute.exceptUnaccessible
+                uiState.selectedRoute.exceptUnaccessible,
+                true
             );
 
-            if (routePoints.length < 2) return store.routeStore.updateRoutePoints(routePoints);
+            if (points.length < 2) return store.routeStore.updateRoutePoints(points);
 
-            for (let index = 1; index < routePoints.length; index++) {
-                const cp = routePoints[index];
-                const pp = routePoints[index - 1];
+            let index = 0;
 
-                const id = getlineIdByPoints(cp, pp);
-                if (id) {
-                    linesDrawer.updateVisible(id, true);
-                    linesDrawer.updateSkipdim(id, true);
-                    visibleLinesIds.push(id);
+            for (let i = 1; i < points.length; i++) {
+                const cp = points[i];
+                const pp = points[i - 1];
+
+                dotsDrawer.updateCenter(`Dot_${index}`, [cp.x, cp.y]);
+                dotsDrawer.updateVisible(`Dot_${index}`, true);
+                dotsDrawer.updateSkipdim(`Dot_${index}`, true);
+                visibleRoutePoints.push(cp);
+
+                index++;
+
+                const len = lineLength(cp, pp);
+                if (len < minInterval) continue;
+                const steps = Math.floor(len / minInterval);
+
+                for (let j = 0; j < steps; j++) {
+                    const p: Point = shiftPoint(pp, ((j + 1) * len) / steps, lineAngle(pp, cp));
+
+                    dotsDrawer.updateCenter(`Dot_${index}`, [p.x, p.y]);
+                    dotsDrawer.updateVisible(`Dot_${index}`, true);
+                    dotsDrawer.updateSkipdim(`Dot_${index}`, true);
+                    visibleRoutePoints.push(p);
+                    index++;
                 }
             }
 
-            locationsDrawer.updateCenter("destinationLocation", [routePoints[0].x, routePoints[0].y]);
+            maxVisibleIndex = index;
+            for (let i = pointsCount - 1; i > maxVisibleIndex; i--) dotsDrawer.updateVisible(`Dot_${i}`, false);
+
+            locationsDrawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
             locationsDrawer.updateVisible("destinationLocation", true);
 
-            locationsDrawer.updateCenter("currentLocation", [
-                routePoints[routePoints.length - 1].x,
-                routePoints[routePoints.length - 1].y,
-            ]);
+            locationsDrawer.updateCenter("currentLocation", [points[points.length - 1].x, points[points.length - 1].y]);
 
-            const rotation =
-                (-1 * lineAngle(routePoints[routePoints.length - 1], routePoints[routePoints.length - 2]) * Math.PI) / 180;
+            const rotation = (-1 * lineAngle(points[points.length - 1], points[points.length - 2]) * Math.PI) / 180;
             locationsDrawer.updateRotation("currentLocation", rotation);
             locationsDrawer.updateVisible("currentLocation", true);
 
             let { x1, x2, y1, y2 } = Rect.fromMultiple([uiState.selectedRoute.from.rect, uiState.selectedRoute.to.rect]);
-            routePoints.forEach((p) => {
+            points.forEach((p) => {
                 if (p.x < x1) x1 = p.x;
                 if (p.x > x2) x2 = p.x;
                 if (p.y < y1) y1 = p.y;
@@ -232,7 +235,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             locationsDrawer.updateVisible("destinationLocation", false);
         }
 
-        store.routeStore.updateRoutePoints(routePoints);
+        store.routeStore.updateRoutePoints(points);
     }
 
     function updateCurrentPosition() {
@@ -242,16 +245,16 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             locationsDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else locationsDrawer.updateVisible("currentLocation", false);
 
-        const shortestrPerp = routePoints
+        const shortestrPerp = visibleRoutePoints
             .map((p, i) => {
                 if (i === 0) return null;
-                let perp = perpendicularToLine(position, routePoints[i], routePoints[i - 1]);
+                let perp = perpendicularToLine(position, visibleRoutePoints[i], visibleRoutePoints[i - 1]);
                 if (!perp.isInside) return null;
 
                 return {
                     i,
                     p: perp.p,
-                    angle: -1 * lineAngle(routePoints[i], routePoints[i - 1]),
+                    angle: -1 * lineAngle(visibleRoutePoints[i], visibleRoutePoints[i - 1]),
                     l: lineLength(position, perp.p),
                 };
             })
@@ -268,12 +271,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             ((position?.angle != null ? position?.angle : shortestrPerp?.angle || 0) * Math.PI) / 180
         );
 
-        if (!shortestrPerp || !routePoints.length) return;
+        if (!shortestrPerp || !visibleRoutePoints.length) return;
 
-        for (let index = routePoints.length - 1; index > shortestrPerp.i; index--) {
-            let pPoint = routePoints[index];
-            let point = routePoints[index - 1];
-            linesDrawer.updateSkipdim(getlineIdByPoints(pPoint, point), false);
+        for (let index = visibleRoutePoints.length+1; index > shortestrPerp.i; index--) {           
+     
+            dotsDrawer.updateSkipdim(`Dot_${index}`, false);
         }
     }
 
