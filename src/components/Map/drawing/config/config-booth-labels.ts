@@ -91,7 +91,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         // this.addLabel(12, "XS", pad);
         // this.addLabel(12, "S", pad, false);
         // this.addLabel(13, "M", pad, false);
-        this.addLabel(14, "L", pad, true);
+        this.addLabel(18 * context.pixelRatio, "L", pad, true);
 
         const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio, fillStyle, 14 * context.pixelRatio, false);
         // this.detailsHeight = detailsCanvas.height;
