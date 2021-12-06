@@ -110,7 +110,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     buildGraph(lines, boothsRects, [], 300);
 
-    const dotCanvas = createCircleCanvas(minInterval / 12, context.pixelRatio, colorFrom.hex());
+    const dotCanvas = createCircleCanvas(Math.round(minInterval / 12), context.pixelRatio, colorFrom.hex());
 
     for (let i = 0; i < pointsCount; i++) {
         dotsDrawer.addObject({
@@ -273,8 +273,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         if (!shortestrPerp || !visibleRoutePoints.length) return;
 
-        for (let index = visibleRoutePoints.length+1; index > shortestrPerp.i; index--) {           
-     
+        for (let index = visibleRoutePoints.length + 1; index > shortestrPerp.i; index--) {
             dotsDrawer.updateSkipdim(`Dot_${index}`, false);
         }
     }
