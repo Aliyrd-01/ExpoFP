@@ -15,7 +15,7 @@ import { NumberObserver } from "./NumberObserver";
 let fillStyle = "#fff";
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
-const prefixes = ["Dot", /* "XS", "S", "M", */ "L", "Details"] as const;
+const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
 
 // const updates = [];
 // let drawer: Painter;
@@ -88,10 +88,10 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const pad = boothStore.borderWidth / 2;
 
-        // this.addLabel(12, "XS", pad);
-        // this.addLabel(12, "S", pad, false);
-        // this.addLabel(13, "M", pad, false);
-        this.addLabel(18 * context.pixelRatio, "L", pad, true);
+        this.addLabel(13 * context.pixelRatio, "XS", pad, true);
+        this.addLabel(14 * context.pixelRatio, "S", pad, true);
+        this.addLabel(15 * context.pixelRatio, "M", pad, true);
+        this.addLabel(16 * context.pixelRatio, "L", pad, false);
 
         const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio, fillStyle, 14 * context.pixelRatio, false);
         // this.detailsHeight = detailsCanvas.height;
@@ -128,8 +128,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         for (const p of prefixes.slice(0, prefixes.length - 1)) {
             const cr = this.painter.getObject(this.getId(p)).canvasTmp;
-            const xFactor = (r.w / cr.width) * 1.5; //Math.min(cr.height * 5, cr.width);
-            const yFactor = (r.h / cr.height) * 1.5;
+            const xFactor = (r.w / cr.width) * 1.4; //Math.min(cr.height * 5, cr.width);
+            const yFactor = (r.h / cr.height) * 1.4;
 
             lastFactor = Math.max(xFactor, yFactor);
             this.factors.push(lastFactor);
