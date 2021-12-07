@@ -193,7 +193,11 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
     return res;
 }
 
-export function createCurrentCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = pixelRatio * 0.4): CanvasDescriptor {
+export function createCurrentCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.4
+): CanvasDescriptor {
     return {
         width: 90 * scale,
         height: 70 * scale,
@@ -238,7 +242,29 @@ export function createCurrentCanvas(pixelRatio: number, color: string = "#c8248b
     };
 }
 
-export function createTargetCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = pixelRatio * 0.5): CanvasDescriptor {
+export function createTriangleCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 1): CanvasDescriptor {
+    const line = 5 * pixelRatio * scale;
+
+    return {
+        width: 2 * line,
+        height: 2 * line,
+
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(0, 0);
+            ctx.lineTo(2 * line, line);
+            ctx.lineTo(0, 2 * line);
+            ctx.fill();
+        },
+    };
+}
+
+export function createTargetCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.5
+): CanvasDescriptor {
     return {
         width: 70 * scale,
         height: 100 * scale,

@@ -16,10 +16,11 @@ let maxVisibleIndex = 0;
 const isDebug = false;
 
 const pointsCount = 200;
-const minInterval = (boothStore.borderWidth < 5 ? 5 : boothStore.borderWidth) * 15;
+const minInterval = (boothStore.borderWidth < 5 ? 5 : boothStore.borderWidth) * 5;
 
-let colorFrom = Color("#30AFEB");
-let colorTo = Color("#FF9E2C");
+let fromColor = Color("#30AFEB");
+let middleColor = Color("#98A78C");
+let toColor = Color("#FF9E2C");
 
 function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean): Line[] {
     return d
@@ -102,28 +103,26 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         return new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     });
 
-    const dotsDrawer = context.requirePainter("WF_dots", RectPainter, painterOrderPriority);
-
-    const locationsDrawer = context.requirePainter("wF_locations", RectPainter, painterOrderPriority + 1);
-    const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, colorFrom.hex());
-    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, colorTo.hex());
-
     buildGraph(lines, boothsRects, [], 300);
 
-    const dotCanvas = createCircleCanvas(Math.round(minInterval / 12), context.pixelRatio, colorFrom.hex());
+    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority);
+
+    const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
+    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
+    const pointsCanvas = createCircleCanvas(5, context.pixelRatio, fromColor.hex()); // createTriangleCanvas(context.pixelRatio, colorFrom.hex(), 1.5);
 
     for (let i = 0; i < pointsCount; i++) {
-        dotsDrawer.addObject({
+        wfDrawer.addObject({
             id: `Dot_${i.toString()}`,
             center: [0, 0],
-            deltaPts: [-dotCanvas.width / 2, -dotCanvas.width / 2, dotCanvas.width, dotCanvas.width],
-            canvasTmp: dotCanvas,
+            deltaPts: [-pointsCanvas.width / 2, -pointsCanvas.width / 2, pointsCanvas.width, pointsCanvas.width],
+            canvasTmp: pointsCanvas,
             texPosition: "lefttop",
             visible: isDebug,
         });
     }
 
-    locationsDrawer.addObject({
+    wfDrawer.addObject({
         id: "destinationLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
@@ -138,7 +137,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    locationsDrawer.addObject({
+    wfDrawer.addObject({
         id: "currentLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
@@ -153,11 +152,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    locationsDrawer.updateSkipdim("destinationLocation", true);
-    locationsDrawer.updateSkipdim("currentLocation", true);
+    wfDrawer.updateSkipdim("destinationLocation", true);
+    wfDrawer.updateSkipdim("currentLocation", true);
 
     function updateRoute() {
-        for (let i = 0; i < maxVisibleIndex; i++) dotsDrawer.updateVisible(`Dot_${i}`, false);
+        for (let i = 0; i < maxVisibleIndex; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
         maxVisibleIndex = 0;
 
         let from = null;
@@ -187,10 +186,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             for (let i = 1; i < points.length; i++) {
                 const cp = points[i];
                 const pp = points[i - 1];
+                const angle = -1 * lineAngle(cp, pp);
 
-                dotsDrawer.updateCenter(`Dot_${index}`, [cp.x, cp.y]);
-                dotsDrawer.updateVisible(`Dot_${index}`, true);
-                dotsDrawer.updateSkipdim(`Dot_${index}`, true);
+                wfDrawer.updateCenter(`Dot_${index}`, [cp.x, cp.y]);
+                wfDrawer.updateVisible(`Dot_${index}`, true);
+                wfDrawer.updateSkipdim(`Dot_${index}`, true);
+                wfDrawer.updateRotation(`Dot_${index}`, (angle * Math.PI) / 180);
                 visibleRoutePoints.push(cp);
 
                 index++;
@@ -202,25 +203,27 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 for (let j = 0; j < steps; j++) {
                     const p: Point = shiftPoint(pp, ((j + 1) * len) / steps, lineAngle(pp, cp));
 
-                    dotsDrawer.updateCenter(`Dot_${index}`, [p.x, p.y]);
-                    dotsDrawer.updateVisible(`Dot_${index}`, true);
-                    dotsDrawer.updateSkipdim(`Dot_${index}`, true);
+                    wfDrawer.updateCenter(`Dot_${index}`, [p.x, p.y]);
+                    wfDrawer.updateVisible(`Dot_${index}`, true);
+                    wfDrawer.updateSkipdim(`Dot_${index}`, true);
+                    wfDrawer.updateRotation(`Dot_${index}`, (angle * Math.PI) / 180);
+
                     visibleRoutePoints.push(p);
                     index++;
                 }
             }
 
             maxVisibleIndex = index;
-            for (let i = pointsCount - 1; i > maxVisibleIndex; i--) dotsDrawer.updateVisible(`Dot_${i}`, false);
+            for (let i = pointsCount - 1; i > maxVisibleIndex; i--) wfDrawer.updateVisible(`Dot_${i}`, false);
 
-            locationsDrawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
-            locationsDrawer.updateVisible("destinationLocation", true);
+            wfDrawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
+            wfDrawer.updateVisible("destinationLocation", true);
 
-            locationsDrawer.updateCenter("currentLocation", [points[points.length - 1].x, points[points.length - 1].y]);
+            wfDrawer.updateCenter("currentLocation", [points[points.length - 1].x, points[points.length - 1].y]);
 
             const rotation = (-1 * lineAngle(points[points.length - 1], points[points.length - 2]) * Math.PI) / 180;
-            locationsDrawer.updateRotation("currentLocation", rotation);
-            locationsDrawer.updateVisible("currentLocation", true);
+            wfDrawer.updateRotation("currentLocation", rotation);
+            wfDrawer.updateVisible("currentLocation", true);
 
             let { x1, x2, y1, y2 } = Rect.fromMultiple([uiState.selectedRoute.from.rect, uiState.selectedRoute.to.rect]);
             points.forEach((p) => {
@@ -231,8 +234,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             });
             uiState.moveToRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
         } else {
-            locationsDrawer.updateVisible("currentLocation", false);
-            locationsDrawer.updateVisible("destinationLocation", false);
+            wfDrawer.updateVisible("currentLocation", false);
+            wfDrawer.updateVisible("destinationLocation", false);
         }
 
         store.routeStore.updateRoutePoints(points);
@@ -241,9 +244,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     function updateCurrentPosition() {
         let position = store.routeStore.currentPosition;
         if (position) {
-            locationsDrawer.updateVisible("currentLocation", true);
-            locationsDrawer.updateCenter("currentLocation", [position.x, position.y]);
-        } else locationsDrawer.updateVisible("currentLocation", false);
+            wfDrawer.updateVisible("currentLocation", true);
+            wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
+        } else wfDrawer.updateVisible("currentLocation", false);
 
         const shortestrPerp = visibleRoutePoints
             .map((p, i) => {
@@ -261,12 +264,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             .filter((p) => p)
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        locationsDrawer.updateCenter("currentLocation", [
+        wfDrawer.updateCenter("currentLocation", [
             shortestrPerp?.p?.x || position?.x || 0,
             shortestrPerp?.p?.y || position?.y || 0,
         ]);
 
-        locationsDrawer.updateRotation(
+        wfDrawer.updateRotation(
             "currentLocation",
             ((position?.angle != null ? position?.angle : shortestrPerp?.angle || 0) * Math.PI) / 180
         );
@@ -274,11 +277,23 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (!shortestrPerp || !visibleRoutePoints.length) return;
 
         for (let index = visibleRoutePoints.length + 1; index > shortestrPerp.i; index--) {
-            dotsDrawer.updateSkipdim(`Dot_${index}`, false);
+            wfDrawer.updateSkipdim(`Dot_${index}`, false);
         }
     }
 
     if (context.updatable) {
+        let prevScale: number = null;
+        reaction(
+            () => context.ptscale,
+            () => {
+                let v = Math.round(context.ptscale * context.pixelRatio);
+                if (v === prevScale || v % 3 === 0) return;
+                if (v > 15) v = 15;
+                for (let i = 0; i < maxVisibleIndex; i++) wfDrawer.updateVisible(`Dot_${i}`, i % (v || 1) == 0);
+                prevScale = v;
+            }
+        );
+
         reaction(
             () => uiState.selectedRoute,
             () => context.requireUpdate(updateRoute)
