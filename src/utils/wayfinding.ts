@@ -302,7 +302,7 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
         sublines = window["__wfData"];
         return sublines;
     }
-    
+
     let t0 = performance.now();
     const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
     let t1 = performance.now();
@@ -322,7 +322,14 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
     return sublines;
 };
 
-export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnAccessible: boolean = false): Point[] => {
+export const getGraphPoints = (
+    fromRect: Rectangle,
+    toRect: Rectangle,
+    exceptUnAccessible: boolean = false,
+    simplified: boolean = false
+): Point[] => {
+    let t0 = performance.now();
+
     if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible)
         buildPathFinder(pathFinder.oriented, exceptUnAccessible);
 
@@ -340,6 +347,7 @@ export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnA
     }
 
     const paths: Point[][] = [];
+    let pts: Point[] = [];
 
     for (let i = 0; i < from.length; i++) {
         for (let j = 0; j < to.length; j++) {
@@ -352,15 +360,36 @@ export const getGraphPoints = (fromRect: Rectangle, toRect: Rectangle, exceptUnA
         }
     }
 
-    if (!paths.length) return [];
+    if (paths.length) {
+        var distances = [];
 
-    var distances = [];
+        for (let i = 0; i < paths.length; i++) {
+            var d = 0;
+            for (let j = 0; j < paths[i].length - 1; j++) d += lineLength(paths[i][j], paths[i][j + 1]);
+            distances.push(d);
+        }
 
-    for (let i = 0; i < paths.length; i++) {
-        var d = 0;
-        for (let j = 0; j < paths[i].length - 1; j++) d += lineLength(paths[i][j], paths[i][j + 1]);
-        distances.push(d);
+        const points = paths[distances.indexOf(Math.min(...distances))];
+
+        if (simplified) {
+            let angle = null;
+
+            for (let index = 1; index < points.length; index++) {
+                const pp = points[index - 1];
+                const cp = points[index];
+                let a = lineAngle(cp, pp);
+
+                if (angle == null || Math.abs(Math.abs(angle) - Math.abs(a)) > 5) {
+                    if (!pts.length || lineLength(pp, pts[pts.length - 1]) > 10) {
+                        pts.push(pp);
+                        angle = a;
+                    }
+                }
+            }
+            pts.push(points[points.length - 1]);
+        } else pts = points;
     }
 
-    return paths[distances.indexOf(Math.min(...distances))];
+    console.debug(`WF. Get graph points: ${pts.length} ~ ${performance.now() - t0}ms.`);
+    return pts;
 };

@@ -184,16 +184,19 @@ function ExhibitorComponent() {
                         ))}
                     </div>
                     {settings.wayfinding && (
-                        <div className="exhibitor__directions" style={{ padding: 15 }}>
+                        <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
                             <Button
                                 text={t("Directions")}
-                                onClick={() =>
-                                    store.routeStore.clickRoute(
-                                        null,
-                                        exhibitor.booths[0],
-                                        uiState.selectedRoute?.exceptUnaccessible || false
-                                    )
-                                }
+                                onClick={() => {
+                                    async function pushRoute() {
+                                        store.routeStore.clickRoute(
+                                            null,
+                                            exhibitor.booths[0],
+                                            uiState.selectedRoute?.exceptUnaccessible || false
+                                        );
+                                    }
+                                    pushRoute().then(() => setTimeout(() => store.showOverlay(), 300));
+                                }}
                             />
                         </div>
                     )}

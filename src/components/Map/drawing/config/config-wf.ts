@@ -5,28 +5,25 @@ import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
 import svg from "../../../../data/svg";
 import store, { boothStore, uiState } from "../../../../store";
-import {
-    buildGraph,
-    getGraphPoints,
-    Line,
-    lineAngle,
-    lineCenter,
-    lineId,
-    lineLength,
-    Point,
-    Rectangle,
-} from "../../../../utils/wayfinding";
+import { buildGraph, getGraphPoints, Line, lineAngle, lineLength, Point, Rectangle } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { createCurrentCanvas, createTargetCanvas } from "./canvases";
+import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createTriangleCanvas } from "./canvases";
 
-const strokeWidth = Math.min(3, boothStore.borderWidth * 2.5);
-const mainColor = Color("#bc237d");
-
-const visibleLinesIds: string[] = [];
-let routePoints: Point[] = [];
+let visibleRoutePoints: Point[] = [];
+let visibleCorners = 0;
+let visiblePoints = 0;
 
 const isDebug = false;
+
+const pointsCount = 170;
+const cornersPointsCount = 30;
+
+const minInterval = (boothStore.borderWidth < 5 ? 5 : boothStore.borderWidth) * 10;
+
+let fromColor = Color("#30AFEB");
+let middleColor = Color("#98A78C");
+let toColor = Color("#FF9E2C");
 
 function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean): Line[] {
     return d
@@ -74,6 +71,13 @@ function perpendicularToLine(point: Point, start: Point, end: Point): { p: Point
     };
 }
 
+function shiftPoint(point: Point, length: number, angle: number): Point {
+    return {
+        x: point.x + length * Math.sin(((90 - angle) * Math.PI) / 180.0),
+        y: point.y + length * Math.sin((angle * Math.PI) / 180.0),
+    };
+}
+
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
     const layer = select(svg).select<SVGAElement>("svg > [data-layer='WF']").node();
 
@@ -102,32 +106,44 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         return new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     });
 
-    const linesDrawer = context.requirePainter("WF_lines", RectPainter, painterOrderPriority - 20);
+    buildGraph(lines, boothsRects, [], 300);
 
-    const locationsDrawer = context.requirePainter("wF_locations", RectPainter, painterOrderPriority + 1);
-    const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, mainColor.hex());
-    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, mainColor.hex());
+    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority);
 
-    const sl = buildGraph(lines, boothsRects, [], 300);
+    const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
+    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
 
-    sl.lines
-        .filter((l) => !l.virtual)
-        .forEach((line) => {
-            const center = lineCenter(line.p0, line.p1);
-            const length = lineLength(line.p0, line.p1);
-            const delta = length / 2 + strokeWidth;
+    const cornerPointsCanvas = createCircleCanvas(5, context.pixelRatio, middleColor.hex());
+    const pointsCanvas = createTriangleCanvas(context.pixelRatio, fromColor.hex(), 1.4);
 
-            linesDrawer.addObject({
-                id: lineId(line.p0, line.p1),
-                center: [center.x, center.y],
-                color: mainColor.vec4(),
-                deltas: [-delta, -strokeWidth, delta, strokeWidth],
-                rotateRadians: (-1 * (lineAngle(line.p0, line.p1) * Math.PI)) / 180,
-                visible: isDebug,
-            });
+    for (let i = 0; i < cornersPointsCount; i++) {
+        wfDrawer.addObject({
+            id: `Dot_c_${i.toString()}`,
+            center: [0, 0],
+            deltaPts: [
+                -cornerPointsCanvas.width / 2,
+                -cornerPointsCanvas.width / 2,
+                cornerPointsCanvas.width,
+                cornerPointsCanvas.width,
+            ],
+            canvasTmp: cornerPointsCanvas,
+            texPosition: "lefttop",
+            visible: isDebug,
         });
+    }
 
-    locationsDrawer.addObject({
+    for (let i = cornersPointsCount; i < pointsCount; i++) {
+        wfDrawer.addObject({
+            id: `Dot_${i.toString()}`,
+            center: [0, 0],
+            deltaPts: [-pointsCanvas.width / 2, -pointsCanvas.width / 2, pointsCanvas.width, pointsCanvas.width],
+            canvasTmp: pointsCanvas,
+            texPosition: "lefttop",
+            visible: isDebug,
+        });
+    }
+
+    wfDrawer.addObject({
         id: "destinationLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
@@ -142,7 +158,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    locationsDrawer.addObject({
+    wfDrawer.addObject({
         id: "currentLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
@@ -157,27 +173,21 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    locationsDrawer.updateSkipdim("destinationLocation", true);
-    locationsDrawer.updateSkipdim("currentLocation", true);
-
-    function getlineIdByPoints(p0: Point, p1: Point): string {
-        let id = lineId(p0, p1);
-        const obj = linesDrawer.getObject(id);
-        if (obj) return id;
-        id = lineId(p1, p0);
-        return linesDrawer.getObject(id) ? id : null;
-    }
+    wfDrawer.updateSkipdim("destinationLocation", true);
+    wfDrawer.updateSkipdim("currentLocation", true);
 
     function updateRoute() {
-        visibleLinesIds.forEach((id) => {
-            linesDrawer.updateVisible(id, false);
-            linesDrawer.updateSkipdim(id, false);
-        });
+        for (let i = 0; i < visibleCorners; i++) wfDrawer.updateVisible(`Dot_c_${i}`, false);
+        for (let i = cornersPointsCount; i < cornersPointsCount + visiblePoints; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
+
+        visibleCorners = 0;
+        visiblePoints = 0;
 
         let from = null;
         let to = null;
 
-        routePoints = [];
+        let points = [];
+        visibleRoutePoints = [];
 
         if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
             from = uiState.selectedRoute.from;
@@ -186,41 +196,58 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
             const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
 
-            routePoints = getGraphPoints(
+            points = getGraphPoints(
                 new Rectangle(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
                 new Rectangle(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                uiState.selectedRoute.exceptUnaccessible
+                uiState.selectedRoute.exceptUnaccessible,
+                true
             );
 
-            if (routePoints.length < 2) return store.routeStore.updateRoutePoints(routePoints);
+            if (points.length < 2) return store.routeStore.updateRoutePoints(points);
 
-            for (let index = 1; index < routePoints.length; index++) {
-                const cp = routePoints[index];
-                const pp = routePoints[index - 1];
+            visibleCorners = points.length;
 
-                const id = getlineIdByPoints(cp, pp);
-                if (id) {
-                    linesDrawer.updateVisible(id, true);
-                    linesDrawer.updateSkipdim(id, true);
-                    visibleLinesIds.push(id);
+            for (let i = 1; i < points.length; i++) {
+                const cp = points[i];
+                const pp = points[i - 1];
+                const angle = -1 * lineAngle(cp, pp);
+
+                wfDrawer.updateCenter(`Dot_c_${i}`, [cp.x, cp.y]);
+                wfDrawer.updateVisible(`Dot_c_${i}`, true);
+                wfDrawer.updateSkipdim(`Dot_c_${i}`, true);
+                visibleRoutePoints.push(cp);
+
+                const len = lineLength(cp, pp);
+                if (len < minInterval) continue;
+                const steps = Math.floor(len / minInterval);
+
+                for (let j = 0; j < steps - 1; j++) {
+                    const p: Point = shiftPoint(pp, ((j + 1) * len) / steps, lineAngle(pp, cp));
+
+                    const index = cornersPointsCount + visiblePoints;
+                    wfDrawer.updateCenter(`Dot_${index}`, [p.x, p.y]);
+                    wfDrawer.updateVisible(`Dot_${index}`, true);
+                    wfDrawer.updateSkipdim(`Dot_${index}`, true);
+                    wfDrawer.updateRotation(`Dot_${index}`, (angle * Math.PI) / 180);
+                    visibleRoutePoints.push(p);
+                    visiblePoints++;
                 }
             }
 
-            locationsDrawer.updateCenter("destinationLocation", [routePoints[0].x, routePoints[0].y]);
-            locationsDrawer.updateVisible("destinationLocation", true);
+            for (let i = visibleCorners; i < cornersPointsCount; i++) wfDrawer.updateVisible(`Dot_c_${i}`, false);
+            for (let i = cornersPointsCount + visiblePoints; i < pointsCount; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
 
-            locationsDrawer.updateCenter("currentLocation", [
-                routePoints[routePoints.length - 1].x,
-                routePoints[routePoints.length - 1].y,
-            ]);
+            wfDrawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
+            wfDrawer.updateVisible("destinationLocation", true);
 
-            const rotation =
-                (-1 * lineAngle(routePoints[routePoints.length - 1], routePoints[routePoints.length - 2]) * Math.PI) / 180;
-            locationsDrawer.updateRotation("currentLocation", rotation);
-            locationsDrawer.updateVisible("currentLocation", true);
+            wfDrawer.updateCenter("currentLocation", [points[points.length - 1].x, points[points.length - 1].y]);
+
+            const rotation = (-1 * lineAngle(points[points.length - 1], points[points.length - 2]) * Math.PI) / 180;
+            wfDrawer.updateRotation("currentLocation", rotation);
+            wfDrawer.updateVisible("currentLocation", true);
 
             let { x1, x2, y1, y2 } = Rect.fromMultiple([uiState.selectedRoute.from.rect, uiState.selectedRoute.to.rect]);
-            routePoints.forEach((p) => {
+            points.forEach((p) => {
                 if (p.x < x1) x1 = p.x;
                 if (p.x > x2) x2 = p.x;
                 if (p.y < y1) y1 = p.y;
@@ -228,56 +255,69 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             });
             uiState.moveToRect = Rect.fromX1y1x2y2(x1, y1, x2, y2);
         } else {
-            locationsDrawer.updateVisible("currentLocation", false);
-            locationsDrawer.updateVisible("destinationLocation", false);
+            wfDrawer.updateVisible("currentLocation", false);
+            wfDrawer.updateVisible("destinationLocation", false);
         }
 
-        store.routeStore.updateRoutePoints(routePoints);
+        store.routeStore.updateRoutePoints(points);
     }
 
     function updateCurrentPosition() {
         let position = store.routeStore.currentPosition;
         if (position) {
-            locationsDrawer.updateVisible("currentLocation", true);
-            locationsDrawer.updateCenter("currentLocation", [position.x, position.y]);
-        } else locationsDrawer.updateVisible("currentLocation", false);
+            wfDrawer.updateVisible("currentLocation", true);
+            wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
+        } else wfDrawer.updateVisible("currentLocation", false);
 
-        const shortestrPerp = routePoints
+        const shortestrPerp = visibleRoutePoints
             .map((p, i) => {
                 if (i === 0) return null;
-                let perp = perpendicularToLine(position, routePoints[i], routePoints[i - 1]);
+                let perp = perpendicularToLine(position, visibleRoutePoints[i], visibleRoutePoints[i - 1]);
                 if (!perp.isInside) return null;
 
                 return {
                     i,
                     p: perp.p,
-                    angle: -1 * lineAngle(routePoints[i], routePoints[i - 1]),
+                    angle: -1 * lineAngle(visibleRoutePoints[i], visibleRoutePoints[i - 1]),
                     l: lineLength(position, perp.p),
                 };
             })
             .filter((p) => p)
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        locationsDrawer.updateCenter("currentLocation", [
+        wfDrawer.updateCenter("currentLocation", [
             shortestrPerp?.p?.x || position?.x || 0,
             shortestrPerp?.p?.y || position?.y || 0,
         ]);
 
-        locationsDrawer.updateRotation(
+        wfDrawer.updateRotation(
             "currentLocation",
             ((position?.angle != null ? position?.angle : shortestrPerp?.angle || 0) * Math.PI) / 180
         );
 
-        if (!shortestrPerp || !routePoints.length) return;
+        if (!shortestrPerp || !visibleRoutePoints.length) return;
 
-        for (let index = routePoints.length - 1; index > shortestrPerp.i; index--) {
-            let pPoint = routePoints[index];
-            let point = routePoints[index - 1];
-            linesDrawer.updateSkipdim(getlineIdByPoints(pPoint, point), false);
+        for (let index = visibleRoutePoints.length + 1; index > shortestrPerp.i; index--) {
+            wfDrawer.updateSkipdim(`Dot_${index}`, false);
         }
     }
 
     if (context.updatable) {
+        let prevScale: number = null;
+
+        reaction(
+            () => context.ptscale,
+            () => {
+                let v = Math.round((context.ptscale * context.pixelRatio) / 3);
+                if (v === prevScale || v % 3 === 0) return;
+                if (v > 15) v = 15;
+
+                for (let i = cornersPointsCount; i < visiblePoints + cornersPointsCount; i++)
+                    wfDrawer.updateVisible(`Dot_${i}`, i % (v || 1) === 0);
+                prevScale = v;
+            }
+        );
+
         reaction(
             () => uiState.selectedRoute,
             () => context.requireUpdate(updateRoute)

@@ -44,68 +44,72 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
     };
 }
 
-export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
-    //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
-    const lines = [];
-    // const bs = b.special ? (b as SpecialBooth) : undefined;
-    //const br = !b.special ? (b as RegularBooth) : undefined;
-    // if (b.special === false) {
+export function createDetailsCanvas(
+    b: RegularBooth,
+    pixelRatio: number,
+    color: string = "#fff",
+    frontSize: number,
+    onlyMain: boolean
+): CanvasDescriptor {
+    const mainLines: string[] = [];
+    const detailsLines: string[] = [];
+
+    const mainFontSize = frontSize;
+    const detailFontSize = frontSize;
+
+    const mainFont = getFont(mainFontSize, 500);
+    const detailFont = getFont(detailFontSize, 300);
 
     if (b.onHold) {
-        lines.push(t("On Hold"));
+        detailsLines.push(t("On Hold"));
+        mainLines.push(b.name);
     } else if (b.reserved) {
-        lines.push(t("Reserved"));
+        detailsLines.push(t("Reserved"));
+        mainLines.push(b.name);
     } else if (b.exhibitors.length) {
-        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+        mainLines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+        detailsLines.push(b.name);
     } else {
-        if (b.size) lines.push(b.size);
-        if (b.price && b.price !== "0") lines.push(b.price);
+        mainLines.push(b.name);
+        if (b.size) detailsLines.push(b.size);
+        if (b.price && b.price !== "0") detailsLines.push(b.price);
     }
 
-    // }
+    const mainLineWidth = mainLines.concat(detailsLines).map((x) => measureText(mainFont, x));
+    const detailsWidth = detailsLines.map((x) => measureText(detailFont, x));
 
-    // if (fixBooth) lines.push(b.title);
-
-    const boothFontSize = 14 * pixelRatio;
-    const detailFontSize = 14 * pixelRatio;
-    const boothFont = getFont(boothFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
-    const boothPadding = 1 * pixelRatio;
-
-    let mainLine = b.name;
-    // if (b.special === false || fixBooth) {
-    //     mainLine = b.name;
-    // } else if (b.special === true) {
-    //     mainLine = b.title || b.name;
-    // }
-
-    // const canvas = document.createElement("canvas");
-    // const c = canvas.getContext("2d");
-    const mainLineWidth = measureText(boothFont, mainLine); // c.measureText(mainLine).width;
-    const companiesWidth = lines.map((x) => measureText(detailFont, x));
-    const maxTextWidth = Math.max(mainLineWidth, ...companiesWidth);
+    const maxTextWidth = Math.max(...mainLineWidth, ...detailsWidth);
 
     const width = maxTextWidth + 2;
-    const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * pixelRatio + 4;
+
+    const height =
+        mainFontSize + mainLines.length * (mainFontSize + pixelRatio) + detailsLines.length * (detailFontSize + pixelRatio);
 
     return {
         width,
         height,
         draw(c) {
-            let nextLine = boothFontSize;
+            let nextLine = mainFontSize;
 
             c.fillStyle = color;
             c.textAlign = "start";
             c.textBaseline = "alphabetic";
-            c.font = boothFont;
 
-            c.fillText(mainLine, 0, nextLine);
-            nextLine += boothFontSize + boothPadding;
-
-            c.font = detailFont;
+            c.font = mainFont;
             c.fillStyle = color;
 
-            for (const line of lines) {
+            for (const line of mainLines) {
+                c.fillText(line, 0, nextLine);
+                nextLine += mainFontSize + 1 * pixelRatio;
+            }
+
+            c.font = detailFont;
+
+            nextLine += pixelRatio;
+
+            if (onlyMain) return;
+
+            for (const line of detailsLines) {
                 c.fillText(line, 0, nextLine);
                 nextLine += detailFontSize + 1 * pixelRatio;
             }
@@ -189,7 +193,11 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
     return res;
 }
 
-export function createCurrentCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 0.4): CanvasDescriptor {
+export function createCurrentCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.4
+): CanvasDescriptor {
     return {
         width: 90 * scale,
         height: 70 * scale,
@@ -234,7 +242,29 @@ export function createCurrentCanvas(pixelRatio: number, color: string = "#c8248b
     };
 }
 
-export function createTargetCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 0.5): CanvasDescriptor {
+export function createTriangleCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 1): CanvasDescriptor {
+    const line = 5 * pixelRatio * scale;
+
+    return {
+        width: 2 * line,
+        height: 2 * line,
+
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(0, 0);
+            ctx.lineTo(2 * line, line);
+            ctx.lineTo(0, 2 * line);
+            ctx.fill();
+        },
+    };
+}
+
+export function createTargetCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.5
+): CanvasDescriptor {
     return {
         width: 70 * scale,
         height: 100 * scale,

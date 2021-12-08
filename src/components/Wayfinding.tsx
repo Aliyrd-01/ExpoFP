@@ -1,5 +1,6 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
+import data from "../data";
 import svg from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
@@ -10,9 +11,21 @@ import OverlayContent from "./OverlayContent";
 import ToggleSwitch from "./ToggleSwitch";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
-import data from "../data";
 
 function Wayfinding() {
+    const routeSelected = () => {
+        const { from, to } = uiState.selectedRoute;
+        return from && to ? true : false;
+    };
+
+    const mobileFullOverlaySize = () => {
+        return uiState.overlaySize === "full" ? true : false;
+    };
+
+    const mobileShowForm = () => {
+        return routeSelected() && !mobileFullOverlaySize() ? true : false;
+    };
+
     return useObserver(() => {
         const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
         const boothsIDs = [];
@@ -81,20 +94,9 @@ function Wayfinding() {
             return info;
         };
 
-        return (
-            <OverlayContent
-                bar={bar}
-                backMode="none"
-                onBack={() => {
-                    store.routeStore.selectRoute(null);
-                    store.selectSearch();
-                }}
-                onClose={() => {
-                    store.routeStore.selectRoute(null);
-                    store.selectNone();
-                }}
-            >
-                <div className="wayFindingForm">
+        const wayFindingForm = () => {
+            return (
+                <div className="wayFindingForm" style={{ marginBottom: 10 }}>
                     <div className="wayFindingForm__icons">
                         <div className="wayFindingForm__icons-item is-from"></div>
                         <div className="wayFindingForm__icons-item is-to"></div>
@@ -126,9 +128,33 @@ function Wayfinding() {
                         </div>
                     </div>
                 </div>
+            );
+        };
+
+        return (
+            <OverlayContent
+                bar={bar}
+                backMode="none"
+                onBack={() => {
+                    store.routeStore.selectRoute(null);
+                    store.selectSearch();
+                }}
+                onClose={() => {
+                    store.routeStore.selectRoute(null);
+                    store.selectNone();
+                }}
+            >
+                {!mobileShowForm() ? wayFindingForm() : null}
                 <div className="wayInformationContainer">
-                    {!data.hideWayInformation && settings.EXPO !== "bloomberg" && store.routeStore.routeDistance ? (
-                        <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
+                    {!data.hideWayInformation &&
+                    settings.EXPO !== "bloomberg" &&
+                    uiState.selectedRoute?.from &&
+                    uiState.selectedRoute.from ? (
+                        store.routeStore.routePoints.length ? (
+                            <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
+                        ) : (
+                            <div style={{ textAlign: "center", fontWeight: "bold" }}>Route not found</div>
+                        )
                     ) : null}
                 </div>
             </OverlayContent>

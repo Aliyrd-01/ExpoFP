@@ -131,7 +131,7 @@ export default function initBooths(store: RootStore) {
             }
         }
 
-        if (!booth.rotate && booth.rect.h > booth.rect.w * 1.5 && (booth.title || booth.name).length > 5) {
+        if (!booth.rotate && booth.rect.h > booth.rect.w * 2.0 && (booth.title || booth.name).length > 5) {
             booth.rotate = (90 * Math.PI) / 180;
             booth.rect = booth.rect.getRotated90();
         }

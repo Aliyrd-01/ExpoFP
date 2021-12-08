@@ -126,15 +126,15 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             <div ref={refAutocomplete} className={classNames("autocomplete", { "is-open": showOptionsDropdown })}>
                 <div className={"autocomplete__inner"}>
                     <input
+                        type="search"
                         className="autocomplete__input"
-                        type="text"
                         onChange={onInputChange}
                         onFocus={onFocus}
                         onKeyDown={onKeyDown}
                         value={input}
                         placeholder={placeholder}
                     />
-                    <div className="autocomplete__options">{showOptions()}</div>
+                    {showOptionsDropdown ? <div className="autocomplete__options">{showOptions()}</div> : null}
                 </div>
             </div>
         </>

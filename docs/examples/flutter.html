@@ -18,7 +18,7 @@
                 onDirection: (e) => {
                     if (!e.points || !e.points.length) {
                     } // fp.selectCurrentPosition(null, false, 45);
-                    else {
+                    else {                        
                         let middlePoint = e.points[Math.floor(e.points.length / 2)];
                         fp.selectCurrentPosition({ x: middlePoint.x + 75, y: middlePoint.y - 0 }, false);
                     }

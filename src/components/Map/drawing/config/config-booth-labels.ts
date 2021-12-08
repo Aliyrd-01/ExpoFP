@@ -5,7 +5,7 @@ import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
-import { createCircleCanvas, createDetailsCanvas, createLabelCanvas } from "./canvases";
+import { createCircleCanvas, createDetailsCanvas } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
@@ -58,7 +58,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     // private readonly detailsHeight: number;
 
     constructor(context: DrawerContext, booth: RegularBooth) {
-        super(context, booth, "booth-label", RectPainter, 149);
+        super(context, booth, "booth-label", RectPainter, 160);
         this.locked = context.updatable;
         // initPainter(this.painter);
 
@@ -86,15 +86,15 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false,
         });
 
-        this.addLabel(7, "XS");
-        this.addLabel(10, "S");
-        this.addLabel(12, "M");
-        this.addLabel(14, "L");
-
-        const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio, fillStyle);
-        // this.detailsHeight = detailsCanvas.height;
-
         const pad = boothStore.borderWidth / 2;
+
+        this.addLabel(13 * context.pixelRatio, "XS", pad, true);
+        this.addLabel(14 * context.pixelRatio, "S", pad, true);
+        this.addLabel(15 * context.pixelRatio, "M", pad, true);
+        this.addLabel(16 * context.pixelRatio, "L", pad, false);
+
+        const detailsCanvas = createDetailsCanvas(booth, context.pixelRatio, fillStyle, 14 * context.pixelRatio, false);
+        // this.detailsHeight = detailsCanvas.height;
 
         this.painter.addObject({
             id: this.getId("Details"),
@@ -128,15 +128,15 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         for (const p of prefixes.slice(0, prefixes.length - 1)) {
             const cr = this.painter.getObject(this.getId(p)).canvasTmp;
-            const xFactor = r.w / cr.width; //Math.min(cr.height * 5, cr.width);
-            const yFactor = r.h / cr.height;
+            const xFactor = (r.w / cr.width) * 1.4; //Math.min(cr.height * 5, cr.width);
+            const yFactor = (r.h / cr.height) * 1.4;
 
-            lastFactor = Math.min(xFactor, yFactor);
+            lastFactor = Math.max(xFactor, yFactor);
             this.factors.push(lastFactor);
         }
 
         // Details are show at:
-        this.factors.push(lastFactor / 1.8);
+        this.factors.push(lastFactor / 3);
     }
 
     unlock() {
@@ -178,22 +178,26 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         }
     }
 
-    addLabel(fontSize: number, sizeName: string) {
+    addLabel(fontSize: number, sizeName: string, padding: number, short: boolean = true) {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, fillStyle);
-        const w = canvas.width / 2;
-        const h = canvas.height / 2;
+        const canvas = createDetailsCanvas(b as RegularBooth, this.context.pixelRatio, fillStyle, fontSize, short);
+        // const w = canvas.width / 2;
+        // const h = canvas.height / 2;
+
+        const pad = padding;
 
         this.painter.addObject({
             id: this.getId(sizeName),
             rotateRadians: this.booth.rotate,
+
             center: [r.cx, r.cy],
-            deltas: [0, 0, 0, 0],
-            deltaPts: [-w, -h, w, h],
+            deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
+            deltaPts: [3, 3, -1, -1],
+
             canvasTmp: canvas,
-            texPosition: "center",
+            texPosition: "lefttop",
             visible: false,
         });
     }
