@@ -8,15 +8,18 @@ import store, { boothStore, uiState } from "../../../../store";
 import { buildGraph, getGraphPoints, Line, lineAngle, lineLength, Point, Rectangle } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
+import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createTriangleCanvas } from "./canvases";
 
 let visibleRoutePoints: Point[] = [];
-let maxVisibleIndex = 0;
+let visibleCorners = 0;
+let visiblePoints = 0;
 
 const isDebug = false;
 
-const pointsCount = 200;
-const minInterval = (boothStore.borderWidth < 5 ? 5 : boothStore.borderWidth) * 5;
+const pointsCount = 170;
+const cornersPointsCount = 30;
+
+const minInterval = (boothStore.borderWidth < 5 ? 5 : boothStore.borderWidth) * 10;
 
 let fromColor = Color("#30AFEB");
 let middleColor = Color("#98A78C");
@@ -109,9 +112,27 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
-    const pointsCanvas = createCircleCanvas(5, context.pixelRatio, fromColor.hex()); // createTriangleCanvas(context.pixelRatio, colorFrom.hex(), 1.5);
 
-    for (let i = 0; i < pointsCount; i++) {
+    const cornerPointsCanvas = createCircleCanvas(5, context.pixelRatio, middleColor.hex());
+    const pointsCanvas = createTriangleCanvas(context.pixelRatio, fromColor.hex(), 1.4);
+
+    for (let i = 0; i < cornersPointsCount; i++) {
+        wfDrawer.addObject({
+            id: `Dot_c_${i.toString()}`,
+            center: [0, 0],
+            deltaPts: [
+                -cornerPointsCanvas.width / 2,
+                -cornerPointsCanvas.width / 2,
+                cornerPointsCanvas.width,
+                cornerPointsCanvas.width,
+            ],
+            canvasTmp: cornerPointsCanvas,
+            texPosition: "lefttop",
+            visible: isDebug,
+        });
+    }
+
+    for (let i = cornersPointsCount; i < pointsCount; i++) {
         wfDrawer.addObject({
             id: `Dot_${i.toString()}`,
             center: [0, 0],
@@ -156,8 +177,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("currentLocation", true);
 
     function updateRoute() {
-        for (let i = 0; i < maxVisibleIndex; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
-        maxVisibleIndex = 0;
+        for (let i = 0; i < visibleCorners; i++) wfDrawer.updateVisible(`Dot_c_${i}`, false);
+        for (let i = cornersPointsCount; i < cornersPointsCount + visiblePoints; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
+
+        visibleCorners = 0;
+        visiblePoints = 0;
 
         let from = null;
         let to = null;
@@ -181,40 +205,37 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
             if (points.length < 2) return store.routeStore.updateRoutePoints(points);
 
-            let index = 0;
+            visibleCorners = points.length;
 
             for (let i = 1; i < points.length; i++) {
                 const cp = points[i];
                 const pp = points[i - 1];
                 const angle = -1 * lineAngle(cp, pp);
 
-                wfDrawer.updateCenter(`Dot_${index}`, [cp.x, cp.y]);
-                wfDrawer.updateVisible(`Dot_${index}`, true);
-                wfDrawer.updateSkipdim(`Dot_${index}`, true);
-                wfDrawer.updateRotation(`Dot_${index}`, (angle * Math.PI) / 180);
+                wfDrawer.updateCenter(`Dot_c_${i}`, [cp.x, cp.y]);
+                wfDrawer.updateVisible(`Dot_c_${i}`, true);
+                wfDrawer.updateSkipdim(`Dot_c_${i}`, true);
                 visibleRoutePoints.push(cp);
-
-                index++;
 
                 const len = lineLength(cp, pp);
                 if (len < minInterval) continue;
                 const steps = Math.floor(len / minInterval);
 
-                for (let j = 0; j < steps; j++) {
+                for (let j = 0; j < steps - 1; j++) {
                     const p: Point = shiftPoint(pp, ((j + 1) * len) / steps, lineAngle(pp, cp));
 
+                    const index = cornersPointsCount + visiblePoints;
                     wfDrawer.updateCenter(`Dot_${index}`, [p.x, p.y]);
                     wfDrawer.updateVisible(`Dot_${index}`, true);
                     wfDrawer.updateSkipdim(`Dot_${index}`, true);
                     wfDrawer.updateRotation(`Dot_${index}`, (angle * Math.PI) / 180);
-
                     visibleRoutePoints.push(p);
-                    index++;
+                    visiblePoints++;
                 }
             }
 
-            maxVisibleIndex = index;
-            for (let i = pointsCount - 1; i > maxVisibleIndex; i--) wfDrawer.updateVisible(`Dot_${i}`, false);
+            for (let i = visibleCorners; i < cornersPointsCount; i++) wfDrawer.updateVisible(`Dot_c_${i}`, false);
+            for (let i = cornersPointsCount + visiblePoints; i < pointsCount; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
 
             wfDrawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
             wfDrawer.updateVisible("destinationLocation", true);
@@ -283,13 +304,16 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     if (context.updatable) {
         let prevScale: number = null;
+
         reaction(
             () => context.ptscale,
             () => {
-                let v = Math.round(context.ptscale * context.pixelRatio);
+                let v = Math.round((context.ptscale * context.pixelRatio) / 3);
                 if (v === prevScale || v % 3 === 0) return;
                 if (v > 15) v = 15;
-                for (let i = 0; i < maxVisibleIndex; i++) wfDrawer.updateVisible(`Dot_${i}`, i % (v || 1) == 0);
+
+                for (let i = cornersPointsCount; i < visiblePoints + cornersPointsCount; i++)
+                    wfDrawer.updateVisible(`Dot_${i}`, i % (v || 1) === 0);
                 prevScale = v;
             }
         );
