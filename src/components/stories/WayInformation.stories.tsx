@@ -31,4 +31,5 @@ Base.args = {
             text: "2:41pm",
         },
     ],
+    accessible: false,
 };

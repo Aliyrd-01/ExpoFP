@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-import store from "../store";
 import "./WayInformation.scss";
 
 export interface WayInformationItem {
@@ -10,11 +9,12 @@ export interface WayInformationItem {
 export interface WayInformationProps {
     items: WayInformationItem[];
     accessible?: boolean;
+    onClick?: () => void;
 }
 
-const WayInformation: React.FC<WayInformationProps> = ({ items, accessible }) =>
+const WayInformation: React.FC<WayInformationProps> = ({ items, accessible, onClick }) =>
     items?.length ? (
-        <div className="wayInformation">
+        <div className="wayInformation" onClick={onClick}>
             {items.map((item, index) => {
                 return (
                     <div
