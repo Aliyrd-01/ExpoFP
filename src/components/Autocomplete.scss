@@ -80,4 +80,8 @@ $input-height: 50px;
             }
         }
     }
+    &__empty {
+        padding: rem(10px 15px);
+        color: $color-darkgray;
+    }
 }

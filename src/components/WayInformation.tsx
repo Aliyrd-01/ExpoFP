@@ -14,7 +14,7 @@ export interface WayInformationProps {
 
 const WayInformation: React.FC<WayInformationProps> = ({ items, accessible }) =>
     items?.length ? (
-        <div className="wayInformation" onClick={() => store.showOverlay()}>
+        <div className="wayInformation">
             {items.map((item, index) => {
                 return (
                     <div
