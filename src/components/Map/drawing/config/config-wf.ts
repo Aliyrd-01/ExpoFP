@@ -15,13 +15,13 @@ let visibleTriangles: Point[] = [];
 
 const isDebug = false;
 
-const trianglesCount = 170;
-const cornersCount = 30;
+const trianglesCount = 250;
+const cornersCount = 50;
 
 const minInterval = (boothStore.borderWidth < 5 ? 5 : boothStore.borderWidth) * 10;
 
 let fromColor = Color("#30AFEB");
-let middleColor = fromColor;//Color("#98A78C");
+let middleColor = Color("#98A78C");
 let toColor = Color("#FF9E2C");
 
 function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean): RouteLine[] {
@@ -192,8 +192,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 uiState.selectedRoute.exceptUnaccessible
             );
 
-            //console.info(graphLines);
-
             if (graphLines.length < 1) return store.routeStore.updateRoutePoints(graphLines);
 
             for (let i = 0; i < graphLines.length; i++) {
@@ -305,9 +303,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         if (!shortestrPerp || !visibleCorners.length) return;
 
-        for (let index = visibleCorners.length + 1; index > shortestrPerp.i; index--) {
-            wfDrawer.updateSkipdim(`Dot_${index}`, false);
-        }
+        // for (let index = visibleCorners.length - 1; index >= shortestrPerp.i; index--)
+        //     wfDrawer.updateSkipdim(`Dot_c_${index}`, false);
     }
 
     if (context.updatable) {

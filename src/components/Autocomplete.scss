@@ -27,7 +27,7 @@ $input-height: 50px;
         font-size: rem(16px);
         font-weight: 600;
         border-radius: 0;
-        -webkit-appearance: none;
+        -webkit-appearance: none !important;
     }
     &.is-open {
         z-index: 15;
@@ -79,5 +79,9 @@ $input-height: 50px;
                 }
             }
         }
+    }
+    &__empty {
+        padding: rem(10px 15px);
+        color: $color-darkgray;
     }
 }

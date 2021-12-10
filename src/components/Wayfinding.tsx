@@ -151,7 +151,11 @@ function Wayfinding() {
                     uiState.selectedRoute?.from &&
                     uiState.selectedRoute.from ? (
                         store.routeStore.routeLines.length ? (
-                            <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
+                            <WayInformation
+                                items={getWayInformation(store.routeStore.routeDistance)}
+                                accessible={uiState.selectedRoute.exceptUnaccessible}
+                                onClick={() => store.showOverlay()}
+                            />
                         ) : (
                             <div style={{ textAlign: "center", fontWeight: "bold" }}>Route not found</div>
                         )

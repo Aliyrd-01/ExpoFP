@@ -49,7 +49,7 @@ interface Point {
 interface FloorPlanDirectionEvent {
     from: FloorPlanBooth;
     to: FloorPlanBooth;
-    lines: { p0: Point; p1: point }[];
+    lines: { p0: Point; p1: Point }[];
     distance: string;
     time: number;
 }

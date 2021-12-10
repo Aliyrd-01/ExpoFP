@@ -16,11 +16,13 @@
                 onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
                 onFpConfigured: () => fp.selectRoute("1300", "Seminar Room-3"),
                 onDirection: (e) => {
-                    if (!e.points || !e.points.length) {
+                    if (!e.lines || !e.lines.length) {
                     } // fp.selectCurrentPosition(null, false, 45);
-                    else {                        
-                        let middlePoint = e.points[Math.floor(e.points.length / 2)];
-                        fp.selectCurrentPosition({ x: middlePoint.x + 75, y: middlePoint.y - 0 }, false);
+                    else {
+                        let middleLine = e.lines[Math.floor(e.lines.length / 2)];
+                        const x = (middleLine.p0.x + middleLine.p1.x) / 2;
+                        const y = (middleLine.p0.y + middleLine.p1.y) / 2;
+                        fp.selectCurrentPosition({ x: x + 75, y: y - 0 }, false);
                     }
                 },
             });
