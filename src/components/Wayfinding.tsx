@@ -150,7 +150,7 @@ function Wayfinding() {
                     settings.EXPO !== "bloomberg" &&
                     uiState.selectedRoute?.from &&
                     uiState.selectedRoute.from ? (
-                        store.routeStore.routePoints.length ? (
+                        store.routeStore.routeLines.length ? (
                             <WayInformation items={getWayInformation(store.routeStore.routeDistance)} />
                         ) : (
                             <div style={{ textAlign: "center", fontWeight: "bold" }}>Route not found</div>

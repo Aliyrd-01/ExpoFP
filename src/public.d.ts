@@ -41,10 +41,15 @@ interface FloorPlanBoothClickEvent {
     target: FloorPlanBooth;
 }
 
+interface Point {
+    x: number;
+    y: number;
+}
+
 interface FloorPlanDirectionEvent {
     from: FloorPlanBooth;
     to: FloorPlanBooth;
-    points: { x: number; y: number }[];
+    lines: { p0: Point; p1: point }[];
     distance: string;
     time: number;
 }

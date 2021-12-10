@@ -2,14 +2,14 @@ import { action, observable } from "mobx";
 import store from ".";
 import Rect from "../core/Rect";
 import svg from "../data/svg";
-import { lineLength, Point } from "./../utils/wayfinding";
+import { Line, lineLength } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";
 
 export default class RouteStore {
     rootStore: RootStore;
-    @observable routePoints: Point[] = [];
+    @observable routeLines: Line[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
     constructor(rootStore: RootStore) {
@@ -44,7 +44,7 @@ export default class RouteStore {
             const e: FloorPlanDirectionEvent = {
                 from: undefined,
                 to: undefined,
-                points: [],
+                lines: [],
                 distance: "",
                 time: 0,
             };
@@ -58,21 +58,17 @@ export default class RouteStore {
         if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(point.x, point.y, 100, 100);
     }
 
-    @action updateRoutePoints(routePoints: Point[]) {
-        if (!routePoints?.length && !this.routePoints.length) return;
+    @action updateRoutePoints(routeLines: Line[]) {
+        if (!routeLines?.length && !this.routeLines.length) return;
 
-        this.routePoints = routePoints;
+        this.routeLines = routeLines;
 
         const route = uiState.selectedRoute;
 
         const units = svg.getAttribute("units");
         let distance = 0;
 
-        routePoints.forEach((element, index) => {
-            if (index === 0) return;
-            const prevElement = routePoints[index - 1];
-            distance += lineLength(prevElement, element);
-        });
+        routeLines.forEach((line) => (distance += lineLength(line.p0, line.p1)));
 
         distance = Math.round(distance / 10.0);
 
@@ -81,7 +77,7 @@ export default class RouteStore {
                 store.fp.onDirection({
                     from: route?.from ? { id: route.from.id, name: route.from.name } : null,
                     to: route?.to ? { id: route.to.id, name: route.to.name } : null,
-                    points: routePoints,
+                    lines: routeLines,
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
                 });
