@@ -271,7 +271,7 @@ const subLines = (lines: RouteLine[]): Sublines => {
 };
 
 let sublines: Sublines = null;
-let pathFinder = { finder: null, oriented: false, exceptUnAccessible: false };
+let pathFinder = { finder: null, oriented: true, exceptUnAccessible: false };
 
 const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     const graph = createGraph();
