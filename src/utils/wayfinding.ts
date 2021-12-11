@@ -389,10 +389,11 @@ export const getGraphLines = (fromRect: Rectangle, toRect: Rectangle, exceptUnAc
 
         let line = getLineByPoints(sublines.lines, pp, cp);
 
-        let l = new RouteLine(line.p0, line.p1, line.unaccessible, line.unidirection, line.virtual, line.ended);
+        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended);
+
         if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
-            l.p0 = line.p1;
-            l.p1 = line.p0;
+            l.p0 = pp;
+            l.p1 = cp;
         }
 
         const prevLine = lines[lines.length - 1];
