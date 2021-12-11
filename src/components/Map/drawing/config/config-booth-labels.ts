@@ -1,5 +1,5 @@
 import { reaction } from "mobx";
-import { boothStore } from "../../../../store";
+import { boothStore, uiState } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
@@ -15,7 +15,7 @@ import { NumberObserver } from "./NumberObserver";
 let fillStyle = "#fff";
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
-const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
+const prefixes = ["Dot", "PDF", "XS", "S", "M", "L", "Details"] as const;
 
 // const updates = [];
 // let drawer: Painter;
@@ -88,6 +88,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const pad = boothStore.borderWidth / 2;
 
+        this.addLabel(3 * context.pixelRatio, "PDF", pad, false);
         this.addLabel(12 * context.pixelRatio, "XS", pad, true);
         this.addLabel(12 * context.pixelRatio, "S", pad, true);
         this.addLabel(13 * context.pixelRatio, "M", pad, true);
@@ -157,6 +158,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             const p = prefixes[i];
             const f = this.factors[i];
             if (ptscale < f) visiblePrefix = p;
+            if (uiState.printingPdf && (visiblePrefix === "Dot" || visiblePrefix === "L")) visiblePrefix = "PDF";
+            else if (!uiState.printingPdf && visiblePrefix === "PDF") visiblePrefix = "Dot";
         }
 
         // console.log('boothupdate');
