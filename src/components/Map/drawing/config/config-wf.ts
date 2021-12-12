@@ -10,8 +10,15 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createTriangleCanvas } from "./canvases";
 
-let visibleCorners: Point[] = [];
-let visibleTriangles: Point[] = [];
+let visibleCorners: {
+    index: number;
+    point: Point;
+
+    triangles: {
+        index: number;
+        point: Point;
+    }[];
+}[] = [];
 
 const isDebug = false;
 
@@ -171,11 +178,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("currentLocation", true);
 
     function updateRoute() {
-        for (let i = 0; i < visibleCorners.length; i++) wfDrawer.updateVisible(`Dot_c_${i}`, false);
-        for (let i = cornersCount; i < cornersCount + visibleTriangles.length; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
+        visibleCorners.forEach((vc) => {
+            wfDrawer.updateVisible(`Dot_c_${vc.index}`, false);
+            vc.triangles.forEach((t) => wfDrawer.updateVisible(`Dot_${t.index}`, false));
+        });
 
         visibleCorners = [];
-        visibleTriangles = [];
 
         let graphLines: RouteLine[] = [];
 
@@ -194,6 +202,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
             if (graphLines.length < 1) return store.routeStore.updateRoutePoints(graphLines);
 
+            let visibleTriangles: number = 0;
+
             for (let i = 0; i < graphLines.length; i++) {
                 const pl = graphLines[i - 1];
                 const cl = graphLines[i];
@@ -201,12 +211,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 let corners = visibleCorners.length;
                 if (cl.virtual) continue;
 
-                if (pl?.virtual && !cl.virtual) visibleCorners.push(cl.p0);
-                visibleCorners.push(cl.p1);
+                if (pl?.virtual && !cl.virtual) visibleCorners.push({ index: i, point: cl.p0, triangles: [] });
+
+                visibleCorners.push({ index: i, point: cl.p1, triangles: [] });
 
                 for (let i = corners; i < visibleCorners.length; i++) {
                     let newCorner = visibleCorners[i];
-                    wfDrawer.updateCenter(`Dot_c_${i}`, [newCorner.x, newCorner.y]);
+                    wfDrawer.updateCenter(`Dot_c_${i}`, [newCorner.point.x, newCorner.point.y]);
                     wfDrawer.updateVisible(`Dot_c_${i}`, true);
                     wfDrawer.updateSkipdim(`Dot_c_${i}`, true);
                 }
@@ -217,21 +228,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 const steps = Math.floor(len / minInterval);
 
                 for (let j = 0; j < steps - 1; j++) {
-                    const p: Point = shiftPoint(cl.p0, ((j + 1) * len) / steps, lineAngle(cl.p0, cl.p1));
-                    const index = cornersCount + visibleTriangles.length;
+                    const point: Point = shiftPoint(cl.p0, ((j + 1) * len) / steps, lineAngle(cl.p0, cl.p1));
+                    const index = cornersCount + visibleTriangles;
 
-                    wfDrawer.updateCenter(`Dot_${index}`, [p.x, p.y]);
+                    wfDrawer.updateCenter(`Dot_${index}`, [point.x, point.y]);
                     wfDrawer.updateVisible(`Dot_${index}`, true);
                     wfDrawer.updateSkipdim(`Dot_${index}`, true);
                     wfDrawer.updateRotation(`Dot_${index}`, (-1 * lineAngle(cl.p1, cl.p0) * Math.PI) / 180);
-                    visibleTriangles.push(p);
+
+                    visibleCorners[visibleCorners.length - 1].triangles.push({ index, point });
+                    visibleTriangles++;
                 }
             }
 
             for (let i = visibleCorners.length + 1; i < cornersCount; i++) wfDrawer.updateVisible(`Dot_c_${i}`, false);
 
-            for (let i = cornersCount + visibleTriangles.length; i < trianglesCount; i++)
-                wfDrawer.updateVisible(`Dot_${i}`, false);
+            for (let i = cornersCount + visibleTriangles; i < trianglesCount; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
 
             wfDrawer.updateCenter("destinationLocation", [graphLines[0].p0.x, graphLines[0].p0.y]);
             wfDrawer.updateVisible("destinationLocation", true);
@@ -243,6 +255,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
             const rotation =
                 (-1 * lineAngle(graphLines[graphLines.length - 1].p1, graphLines[graphLines.length - 1].p0) * Math.PI) / 180;
+
             wfDrawer.updateRotation("currentLocation", rotation);
             wfDrawer.updateVisible("currentLocation", true);
 
@@ -278,13 +291,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         const shortestrPerp = visibleCorners
             .map((p, i) => {
                 if (i === 0) return null;
-                let perp = perpendicularToLine(position, visibleCorners[i], visibleCorners[i - 1]);
+                let perp = perpendicularToLine(position, visibleCorners[i].point, visibleCorners[i - 1].point);
                 if (!perp.isInside) return null;
 
                 return {
                     i,
                     p: perp.p,
-                    angle: -1 * lineAngle(visibleCorners[i], visibleCorners[i - 1]),
+                    angle: -1 * lineAngle(visibleCorners[i].point, visibleCorners[i - 1].point),
                     l: lineLength(position, perp.p),
                 };
             })
@@ -303,8 +316,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         if (!shortestrPerp || !visibleCorners.length) return;
 
-        // for (let index = visibleCorners.length - 1; index >= shortestrPerp.i; index--)
-        //     wfDrawer.updateSkipdim(`Dot_c_${index}`, false);
+        for (let index = visibleCorners.length - 1; index > shortestrPerp.i; index--) {
+            let corner = visibleCorners[index];
+            wfDrawer.updateSkipdim(`Dot_c_${corner.index}`, false);
+            corner.triangles.forEach((t) => wfDrawer.updateSkipdim(`Dot_${t.index}`, false));
+        }
     }
 
     if (context.updatable) {
@@ -317,8 +333,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (v === prevScale || v % 3 === 0) return;
                 if (v > 15) v = 15;
 
-                for (let i = cornersCount; i < visibleTriangles.length + cornersCount; i++)
-                    wfDrawer.updateVisible(`Dot_${i}`, i % (v || 1) === 0);
+                visibleCorners.forEach((corner) =>
+                    corner.triangles.forEach((t) => wfDrawer.updateVisible(`Dot_${t.index}`, t.index % (v || 1) === 0))
+                );
+
                 prevScale = v;
             }
         );
