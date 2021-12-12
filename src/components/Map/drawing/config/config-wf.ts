@@ -223,9 +223,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 }
 
                 const len = lineLength(cl.p0, cl.p1);
+                if (len / minInterval < 0.5) continue;
 
-                if (len < minInterval) continue;
-                const steps = Math.floor(len / minInterval);
+                let steps = Math.max(2, Math.floor(len / minInterval));
 
                 for (let j = 0; j < steps - 1; j++) {
                     const point: Point = shiftPoint(cl.p0, ((j + 1) * len) / steps, lineAngle(cl.p0, cl.p1));
