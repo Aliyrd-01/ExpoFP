@@ -310,10 +310,12 @@ function getLineByPoints(lines: RouteLine[], p0: Point, p1: Point): RouteLine {
 }
 
 export const buildGraph = (lines: RouteLine[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
-    if (window["__wfData"]) {
-        sublines = window["__wfData"];
-        return sublines;
-    }
+    try {
+        if (window["__wfData"]) {
+            sublines = window["__wfData"];
+            return sublines;
+        }
+    } catch {}
 
     let t0 = performance.now();
     const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
