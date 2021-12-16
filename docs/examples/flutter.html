@@ -22,7 +22,8 @@
                         let middleLine = e.lines[Math.floor(e.lines.length / 2)];
                         const x = (middleLine.p0.x + middleLine.p1.x) / 2;
                         const y = (middleLine.p0.y + middleLine.p1.y) / 2;
-                        fp.selectCurrentPosition({ x: x + 75, y: y - 0 }, false);
+
+                        setTimeout(() => fp.selectCurrentPosition({ x: x, y: y - 0 }, false), 200);
                     }
                 },
             });

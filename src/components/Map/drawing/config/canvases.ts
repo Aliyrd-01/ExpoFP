@@ -199,62 +199,30 @@ export function createCurrentCanvas(
     scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
     return {
-        width: 90 * scale,
+        width: 70 * scale,
         height: 70 * scale,
 
         draw(ctx) {
-            ctx.beginPath();
             ctx.scale(scale, scale);
-            ctx.fillStyle = "rgb(255, 255, 255)";
-            ctx.moveTo(60.0, 12.0);
-            ctx.lineTo(60.0, 57.0);
-            ctx.lineTo(90.0, 34.5);
+
+            // #path833
+            ctx.beginPath();
+            ctx.fillStyle = "#FFFFFF";
+            ctx.moveTo(0.0, 35.0);
+            ctx.bezierCurveTo(0.0, 54.329966, 15.670034, 70.0, 35.0, 70.0);
+            ctx.bezierCurveTo(54.329966, 70.0, 70.0, 54.329966, 70.0, 35.0);
+            ctx.bezierCurveTo(70.0, 15.670034, 54.329966, 0.0, 35.0, 0.0);
+            ctx.bezierCurveTo(15.670034, 0.0, 0.0, 15.670034, 0.0, 35.0);
             ctx.fill();
 
-            // #path817
+            // #path835
             ctx.beginPath();
             ctx.fillStyle = color;
-            ctx.moveTo(67.0, 22.0);
-            ctx.lineTo(67.0, 47.0);
-            ctx.lineTo(85.0, 34.5);
-            ctx.fill();
-
-            // #path819
-            ctx.beginPath();
-            ctx.fillStyle = "rgb(255, 255, 255)";
-            ctx.moveTo(35.0, 0.0);
-            ctx.bezierCurveTo(54.3, 0.0, 70.0, 15.6, 70.0, 35.0);
-            ctx.bezierCurveTo(70.0, 54.3, 54.3, 70.0, 35.0, 70.0);
-            ctx.bezierCurveTo(15.6, 70.0, 0.0, 54.3, 0.0, 35.0);
-            ctx.bezierCurveTo(0.0, 15.6, 15.6, 0.0, 35.0, 0.0);
-            ctx.fill();
-
-            // #path821
-            ctx.beginPath();
-            ctx.fillStyle = color;
-            ctx.moveTo(35.0, 6.5);
-            ctx.bezierCurveTo(50.7, 6.5, 63.5, 19.2, 63.5, 35.0);
-            ctx.bezierCurveTo(63.5, 50.7, 50.7, 63.5, 35.0, 63.5);
-            ctx.bezierCurveTo(19.2, 63.5, 6.5, 50.7, 6.5, 35.0);
-            ctx.bezierCurveTo(6.5, 19.2, 19.2, 6.5, 35.0, 6.5);
-            ctx.fill();
-        },
-    };
-}
-
-export function createTriangleCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 1): CanvasDescriptor {
-    const line = 5 * pixelRatio * scale;
-
-    return {
-        width: 2 * line,
-        height: 2 * line,
-
-        draw(ctx) {
-            ctx.beginPath();
-            ctx.fillStyle = color;
-            ctx.moveTo(0, 0);
-            ctx.lineTo(2 * line, line);
-            ctx.lineTo(0, 2 * line);
+            ctx.moveTo(10.0, 35.0);
+            ctx.bezierCurveTo(10.0, 48.807119, 21.192881, 60.0, 35.0, 60.0);
+            ctx.bezierCurveTo(48.807119, 60.0, 60.0, 48.807119, 60.0, 35.0);
+            ctx.bezierCurveTo(60.0, 21.192881, 48.807119, 10.0, 35.0, 10.0);
+            ctx.bezierCurveTo(21.192881, 10.0, 10.0, 21.192881, 10.0, 35.0);
             ctx.fill();
         },
     };

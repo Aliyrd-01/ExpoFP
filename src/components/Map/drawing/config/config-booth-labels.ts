@@ -5,7 +5,7 @@ import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
-import { createDetailsCanvas } from "./canvases";
+import { createCircleCanvas, createDetailsCanvas } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
@@ -15,7 +15,7 @@ import { NumberObserver } from "./NumberObserver";
 let fillStyle = "#fff";
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
-const prefixes = ["XS", "S", "M", "L"];
+const prefixes = ["Dot", "S", "M", "L", "XL"];
 
 // const updates = [];
 // let drawer: Painter;
@@ -71,11 +71,27 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const pad = boothStore.borderWidth / 2;
 
-        this.addLabel(12 * context.pixelRatio, "XS", pad, true);
-        this.addLabel(14 * context.pixelRatio, "S", pad, false);
-        this.addLabel(15 * context.pixelRatio, "M", pad, false);
-        this.addLabel(16 * context.pixelRatio, "L", pad, false);
-        //this.addLabel(12 * context.pixelRatio, "Details", pad, false);
+        const r = this.booth.rect;
+
+        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio, fillStyle);
+        const dotW = dotCanvas.width / 2;
+        const dotH = dotCanvas.width / 2;
+
+        this.painter.addObject({
+            id: this.getId("Dot"),
+            rotateRadians: booth.rotate,
+            center: [r.cx, r.cy],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [-dotW, -dotH, dotW, dotH],
+            canvasTmp: dotCanvas,
+            texPosition: "center",
+            visible: false,
+        });
+
+        this.addLabel(10 * context.pixelRatio, "S", pad / 8, true);
+        this.addLabel(11 * context.pixelRatio, "M", pad / 8, false);
+        this.addLabel(12 * context.pixelRatio, "L", pad, false);
+        this.addLabel(13 * context.pixelRatio, "XL", pad, false);
 
         this.calcFactors();
         this.update();
@@ -95,10 +111,11 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         let lastFactor: number;
         const r = this.booth.rect;
 
-        for (const p of prefixes.slice(0, prefixes.length)) {
+        for (const p of prefixes) {
             const cr = this.painter.getObject(this.getId(p)).canvasTmp;
-            const xFactor = r.w / cr.width; //Math.min(cr.height * 5, cr.width);
-            const yFactor = r.h / cr.height;
+
+            const xFactor = (r.w / cr.width) * 1.4; //Math.min(cr.height * 5, cr.width);
+            const yFactor = (r.h / cr.height) * 1.4;
 
             lastFactor = Math.max(xFactor, yFactor);
             this.factors.push(lastFactor);
@@ -114,13 +131,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     }
 
     update() {
-        // if (!canDraw) return;
-        // if (!canUpdate) return;
-        // if (this.painter.alpha === 0) return;
         if (this.locked) return;
-        let visiblePrefix: typeof prefixes[number] = "XS";
+        let visiblePrefix: typeof prefixes[number] = "S";
         const ptscale = this.context.ptscale;
-        // const rectHeight = this.booth.rect.h * ptscale;
 
         for (let i = 0; i < prefixes.length; i++) {
             const p = prefixes[i];
@@ -128,7 +141,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             if (ptscale < f) visiblePrefix = p;
         }
 
-        // visiblePrefix = "Dot";
+        //console.info(visiblePrefix);
 
         if (visiblePrefix !== this.previousVisiblePrefix) {
             if (visiblePrefix) this.painter.updateVisible(this.getId(visiblePrefix), true);
