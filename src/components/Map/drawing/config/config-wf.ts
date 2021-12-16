@@ -335,7 +335,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => context.ptscale,
             () => {
                 let s = Math.round(context.ptscale);
-                if (s === scale || s % 3 === 0) return;
+                if (s === scale || s % 4 === 0) return;
                 if (s > 15) s = 15;
                 scale = s;
                 drawLines(wfDrawer, s);                
