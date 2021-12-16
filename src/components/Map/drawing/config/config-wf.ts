@@ -14,7 +14,7 @@ import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./c
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
 let pointSize: number = null;
-let prevScale: number = null;
+let scale: number = null;
 
 const isDebug = false;
 
@@ -256,7 +256,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
             if (routeLines.length < 1) return store.routeStore.updateRoutePoints(routeLines);
 
-            drawLines(wfDrawer, prevScale || 1);
+            drawLines(wfDrawer, scale || 3);
 
             wfDrawer.updateVisible("sourceLocation", true);
             wfDrawer.updateCenter("sourceLocation", [
@@ -334,11 +334,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                let scale = Math.round(context.ptscale);
-                if (scale === prevScale || scale % 3 === 0) return;
-                if (scale > 15) scale = 15;
-                drawLines(wfDrawer, scale);
-                prevScale = scale;
+                let s = Math.round(context.ptscale);
+                if (s === scale || s % 3 === 0) return;
+                if (s > 15) s = 15;
+                scale = s;
+                drawLines(wfDrawer, s);                
             }
         );
 
