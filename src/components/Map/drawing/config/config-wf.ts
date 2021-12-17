@@ -170,7 +170,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
 
     const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
-    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex(), 0.4);
+    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
 
     pointSize = pointCanvas.width;
