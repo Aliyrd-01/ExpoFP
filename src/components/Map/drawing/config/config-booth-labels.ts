@@ -114,9 +114,18 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         for (const p of prefixes) {
             const cr = this.painter.getObject(this.getId(p)).canvasTmp;
+            let xFactor: number;
+            let yFactor: number;
 
-            const xFactor = (r.w / cr.width) * 1.4; //Math.min(cr.height * 5, cr.width);
-            const yFactor = (r.h / cr.height) * 1.4;
+            let exh = (this.booth as RegularBooth).exhibitors;
+            if (exh.length) {
+                let len = exh.sort((e1, e2) => e2.name.length - e1.name.length)[0].name.length;
+                xFactor = r.w / ((cr.width / len) * 4);
+                yFactor = 0;
+            } else {
+                xFactor = r.w / cr.width;
+                yFactor = r.h / cr.height;
+            }
 
             lastFactor = Math.max(xFactor, yFactor);
             this.factors.push(lastFactor);
@@ -142,7 +151,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             if (ptscale < f) visiblePrefix = p;
         }
 
-        if (uiState.printingPdf && visiblePrefix === "Dot") visiblePrefix = "PDF";
+        if (uiState.printingPdf && (visiblePrefix === "Dot" || visiblePrefix === "XL")) visiblePrefix = "PDF";
 
         //console.info(visiblePrefix);
 
