@@ -1,5 +1,5 @@
 import { reaction } from "mobx";
-import { boothStore } from "../../../../store";
+import { boothStore, uiState } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
@@ -88,6 +88,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false,
         });
 
+        this.addLabel(4 * context.pixelRatio, "PDF", pad / 8, true);
         this.addLabel(10 * context.pixelRatio, "S", pad / 8, true);
         this.addLabel(11 * context.pixelRatio, "M", pad / 8, false);
         this.addLabel(12 * context.pixelRatio, "L", pad, false);
@@ -140,6 +141,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             const f = this.factors[i];
             if (ptscale < f) visiblePrefix = p;
         }
+
+        if (uiState.printingPdf && visiblePrefix === "Dot") visiblePrefix = "PDF";
 
         //console.info(visiblePrefix);
 

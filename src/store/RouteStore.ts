@@ -1,4 +1,4 @@
-import { action, observable } from "mobx";
+import { action, computed, observable } from "mobx";
 import store from ".";
 import Rect from "../core/Rect";
 import svg from "../data/svg";
@@ -17,13 +17,13 @@ export default class RouteStore {
     }
 
     @action selectRoute(route: Route) {
+        if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
+
         let list = [];
 
         if (route?.from && route?.to)
             window.setTimeout(
-                () => {
-                    this.rootStore.showMap();
-                },
+                () => this.rootStore.showMap(),
                 navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             );
 
@@ -34,6 +34,17 @@ export default class RouteStore {
             this.rootStore.moveToList(list);
             uiState.details = route;
         }, 200);
+    }
+
+    @computed({ keepAlive: true }) get nearestBooth() {
+        if (!this.currentPosition) return null;
+        return (
+            this.rootStore.boothStore.booths.sort(
+                (b1, b2) =>
+                    lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
+                    lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+            )[0] || null
+        );
     }
 
     @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {
@@ -92,7 +103,5 @@ export class Route {
 }
 
 export class CurrentPosition {
-    public x: number;
-    public y: number;
-    public angle: number;
+    public constructor(public x: number, public y: number, public angle: number) {}
 }

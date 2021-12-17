@@ -239,7 +239,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     function updateRoute() {
         for (let i = 0; i < routePoints.length; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
 
-        routePoints = [];
+        routeLines = routePoints = [];
 
         if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
             let from = uiState.selectedRoute.from;
@@ -338,7 +338,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale || s % 4 === 0) return;
                 if (s > 15) s = 15;
                 scale = s;
-                drawLines(wfDrawer, s);                
+                drawLines(wfDrawer, s);
             }
         );
 
