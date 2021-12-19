@@ -117,17 +117,17 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             let xFactor: number;
             let yFactor: number;
 
-            let exh = (this.booth as RegularBooth).exhibitors;
+            let exh = (this.booth as RegularBooth).exhibitors.map((e) => e.name.replace(/ /g, "").length);
             if (exh.length) {
-                let len = exh.sort((e1, e2) => e2.name.length - e1.name.length)[0].name.length;
-                xFactor = r.w / ((cr.width / len) * 4);
-                yFactor = 0;
+                let len = exh.sort((e1, e2) => e2 - e1)[0];
+                xFactor = (r.w / cr.width) * (len / 4);
+                yFactor = (r.h / cr.height) * (exh.length + 1);
             } else {
                 xFactor = r.w / cr.width;
                 yFactor = r.h / cr.height;
             }
 
-            lastFactor = Math.max(xFactor, yFactor);
+            lastFactor = Math.min(xFactor, yFactor);
             this.factors.push(lastFactor);
         }
 
@@ -151,7 +151,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             if (ptscale < f) visiblePrefix = p;
         }
 
-        if (uiState.printingPdf && (visiblePrefix === "Dot" || visiblePrefix === "XL")) visiblePrefix = "PDF";
+        if (uiState.printingPdf && visiblePrefix === "Dot") visiblePrefix = "PDF";
 
         //console.info(visiblePrefix);
 
