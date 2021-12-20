@@ -79,7 +79,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
 
     routePoints = [];
 
-    const interval = pointSize * 1.5 * ptscale;
+    const interval = pointSize * ptscale;
 
     let lines = [];
     for (let i = 0; i < routeLines.length; i++) {
@@ -175,7 +175,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     pointSize = pointCanvas.width;
 
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < 500; i++) {
         wfDrawer.addObject({
             id: `Dot_${i.toString()}`,
             center: [0, 0],
@@ -338,8 +338,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                let s = Math.round(context.ptscale);
-                if (s === scale || s % 4 === 0) return;
+                let s = Math.round(context.ptscale) || 1;
+                if (s === scale) return;
                 if (s > 15) s = 15;
                 scale = s;
                 drawLines(wfDrawer, s);
