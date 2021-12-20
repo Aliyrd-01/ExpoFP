@@ -2,6 +2,7 @@ import { action, computed, observable } from "mobx";
 import store from ".";
 import Rect from "../core/Rect";
 import svg from "../data/svg";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { Line, lineLength } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
@@ -51,6 +52,7 @@ export default class RouteStore {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
         this.selectRoute(new Route(from, to, exceptUnaccessible));
+        sendEventToGa(`FP Wayfinding`, GaEventActions.ClickDirections, to.name);
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {
                 from: undefined,

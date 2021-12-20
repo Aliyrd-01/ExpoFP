@@ -89,10 +89,10 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         });
 
         this.addLabel(4 * context.pixelRatio, "PDF", pad / 8, true);
-        this.addLabel(10 * context.pixelRatio, "S", pad / 8, true);
-        this.addLabel(11 * context.pixelRatio, "M", pad / 8, false);
-        this.addLabel(12 * context.pixelRatio, "L", pad, false);
-        this.addLabel(13 * context.pixelRatio, "XL", pad, false);
+        this.addLabel(9 * context.pixelRatio, "S", pad / 8, true);
+        this.addLabel(10 * context.pixelRatio, "M", pad / 8, false);
+        this.addLabel(11 * context.pixelRatio, "L", pad, false);
+        this.addLabel(12 * context.pixelRatio, "XL", pad, false);
 
         this.calcFactors();
         this.update();
@@ -120,7 +120,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             let exh = (this.booth as RegularBooth).exhibitors.map((e) => e.name.replace(/ /g, "").length);
             if (exh.length) {
                 let len = exh.sort((e1, e2) => e2 - e1)[0];
-                xFactor = (r.w / cr.width) * (len / 4);
+                xFactor = (r.w / cr.width) * (len / 5);
                 yFactor = (r.h / cr.height) * (exh.length + 1);
             } else {
                 xFactor = r.w / cr.width;

@@ -79,7 +79,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
 
     routePoints = [];
 
-    const interval = pointSize * 2 * ptscale;
+    const interval = pointSize * 1.5 * ptscale;
 
     let lines = [];
     for (let i = 0; i < routeLines.length; i++) {
@@ -254,7 +254,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 uiState.selectedRoute.exceptUnaccessible
             );
 
-            if (routeLines.length < 1) return store.routeStore.updateRoutePoints(routeLines);
+            if (routeLines.length === 0) {
+                store.routeStore.updateRoutePoints(routeLines);
+                if (from.name !== to.name) throw new Error(`Route not found. From: ${from.name} to: ${to.name}`);
+                return;
+            }
 
             drawLines(wfDrawer, scale || 3);
 
