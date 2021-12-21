@@ -88,12 +88,14 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false,
         });
 
-        this.addLabel(4 * context.pixelRatio, "PDF", pad / 8, true);
-        this.addLabel(9 * context.pixelRatio, "S", pad / 8, true);
-        this.addLabel(10 * context.pixelRatio, "M", pad / 8, false);
-        this.addLabel(11 * context.pixelRatio, "L", pad, false);
-        this.addLabel(12 * context.pixelRatio, "XL", pad, false);
+        let exh = (this.booth as RegularBooth).exhibitors.length > 0;
 
+        this.addLabel(4 * context.pixelRatio, "PDF", pad / 8, true);
+        this.addLabel(exh ? 11 : 17 * context.pixelRatio, "S", pad / 8, true);
+        this.addLabel(exh ? 11 : 17 * context.pixelRatio, "M", pad / 8, false);
+        this.addLabel(exh ? 12 : 18 * context.pixelRatio, "L", pad, false);
+        this.addLabel(exh ? 13 : 19 * context.pixelRatio, "XL", pad, false);
+        
         this.calcFactors();
         this.update();
 

@@ -16,6 +16,7 @@ let routeLines: RouteLine[] = [];
 let pointSize: number = null;
 let scale: number = null;
 
+const totalPoints = 700;
 const isDebug = false;
 
 let fromColor = Color("#30AFEB");
@@ -79,7 +80,10 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
 
     routePoints = [];
 
-    const interval = pointSize * ptscale;
+    const totalLength = routeLines.map((rl) => lineLength(rl.p0, rl.p1)).reduce((a, b) => a + b, 0);
+
+    let interval = Math.round(pointSize * 2 * ptscale);
+    if (totalLength > totalPoints * interval) interval = 1.1 * (totalLength / totalPoints);
 
     let lines = [];
     for (let i = 0; i < routeLines.length; i++) {
@@ -175,7 +179,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     pointSize = pointCanvas.width;
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < totalPoints; i++) {
         wfDrawer.addObject({
             id: `Dot_${i.toString()}`,
             center: [0, 0],
@@ -338,9 +342,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                let s = Math.round(context.ptscale) || 1;
+                let s = Math.max(context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale), 0.3);
                 if (s === scale) return;
-                if (s > 15) s = 15;
                 scale = s;
                 drawLines(wfDrawer, s);
             }

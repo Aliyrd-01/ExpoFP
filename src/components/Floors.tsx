@@ -7,6 +7,12 @@ import { remsToPixels } from "../utils";
 import { lineLength } from "../utils/wayfinding";
 import "./Floors.scss";
 
+function parseName(name: string): string {
+    const parts = name.split(" ");
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    else return `${parts[0][0].toUpperCase()}${parts[1][0].toUpperCase()}`;
+}
+
 export default function Floors() {
     const s = useLocalStore(() => ({
         get className() {
@@ -30,7 +36,7 @@ export default function Floors() {
                 )
                 .map((f) => (
                     <div className="item" key={f.name} onClick={() => store.clickFloor(f)} title={f.name}>
-                        {f.name[0].toUpperCase()}
+                        {parseName(f.name)}
                     </div>
                 ))}
         </div>

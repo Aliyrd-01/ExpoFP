@@ -61,18 +61,20 @@ export function createDetailsCanvas(
     const detailFont = getFont(detailFontSize, 300);
 
     if (b.onHold) {
-        detailsLines.push(t("On Hold"));
         mainLines.push(b.name);
+        if (!onlyMain) detailsLines.push(t("On Hold"));
     } else if (b.reserved) {
-        detailsLines.push(t("Reserved"));
         mainLines.push(b.name);
+        if (!onlyMain) detailsLines.push(t("Reserved"));
     } else if (b.exhibitors.length) {
         mainLines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
-        detailsLines.push(b.name);
+        if (!onlyMain) detailsLines.push(b.name);
     } else {
         mainLines.push(b.name);
-        if (b.size) detailsLines.push(b.size);
-        if (b.price && b.price !== "0") detailsLines.push(b.price);
+        if (!onlyMain) {
+            if (b.size) detailsLines.push(b.size);
+            if (b.price && b.price !== "0") detailsLines.push(b.price);
+        }
     }
 
     const mainLineWidth = mainLines.concat(detailsLines).map((x) => measureText(mainFont, x));
