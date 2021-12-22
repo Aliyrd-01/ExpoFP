@@ -5,6 +5,8 @@ const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
 export interface CanvasDescriptor {
+    w?: number;
+    h?: number;
     width: number;
     height: number;
     draw(c: CanvasRenderingContext2D): void;
@@ -43,8 +45,76 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
         },
     };
 }
+export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+    //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
+    const lines = [];
+    // const bs = b.special ? (b as SpecialBooth) : undefined;
+    //const br = !b.special ? (b as RegularBooth) : undefined;
+    // if (b.special === false) {
 
-export function createDetailsCanvas(
+    if (b.onHold) {
+        lines.push(t("On Hold"));
+    } else if (b.reserved) {
+        lines.push(t("Reserved"));
+    } else if (b.exhibitors.length) {
+        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+    } else {
+        if (b.size) lines.push(b.size);
+        if (b.price && b.price !== "0") lines.push(b.price);
+    }
+
+    // }
+
+    // if (fixBooth) lines.push(b.title);
+
+    const boothFontSize = 14 * pixelRatio;
+    const detailFontSize = 14 * pixelRatio;
+    const boothFont = getFont(boothFontSize, 500);
+    const detailFont = getFont(detailFontSize, 300);
+    const boothPadding = 1 * pixelRatio;
+
+    let mainLine = b.name;
+    // if (b.special === false || fixBooth) {
+    //     mainLine = b.name;
+    // } else if (b.special === true) {
+    //     mainLine = b.title || b.name;
+    // }
+
+    // const canvas = document.createElement("canvas");
+    // const c = canvas.getContext("2d");
+    const mainLineWidth = measureText(boothFont, mainLine); // c.measureText(mainLine).width;
+    const companiesWidth = lines.map((x) => measureText(detailFont, x));
+    const maxTextWidth = Math.max(mainLineWidth, ...companiesWidth);
+
+    const width = maxTextWidth + 2;
+    const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * pixelRatio + 4;
+
+    return {
+        width,
+        height,
+        draw(c) {
+            let nextLine = boothFontSize;
+
+            c.fillStyle = color;
+            c.textAlign = "start";
+            c.textBaseline = "alphabetic";
+            c.font = boothFont;
+
+            c.fillText(mainLine, 0, nextLine);
+            nextLine += boothFontSize + boothPadding;
+
+            c.font = detailFont;
+            c.fillStyle = color;
+
+            for (const line of lines) {
+                c.fillText(line, 0, nextLine);
+                nextLine += detailFontSize + 1 * pixelRatio;
+            }
+        },
+    };
+}
+
+export function createExhibitorsDetailsCanvas(
     b: RegularBooth,
     pixelRatio: number,
     color: string = "#fff",
@@ -54,42 +124,35 @@ export function createDetailsCanvas(
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
 
-    const mainFontSize = frontSize;
-    const detailFontSize = frontSize;
+    const mainFontSize = frontSize * pixelRatio;
+    const detailFontSize = frontSize * pixelRatio;
 
     const mainFont = getFont(mainFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
 
-    if (b.onHold) {
-        mainLines.push(b.name);
-        if (!onlyMain) detailsLines.push(t("On Hold"));
-    } else if (b.reserved) {
-        mainLines.push(b.name);
-        if (!onlyMain) detailsLines.push(t("Reserved"));
-    } else if (b.exhibitors.length) {
-        mainLines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
-        if (!onlyMain) detailsLines.push(b.name);
-    } else {
-        mainLines.push(b.name);
-        if (!onlyMain) {
-            if (b.size) detailsLines.push(b.size);
-            if (b.price && b.price !== "0") detailsLines.push(b.price);
-        }
-    }
+    mainLines.push(...b.exhibitors.map((e) => e.name));
+    if (!onlyMain) detailsLines.push(b.name);
 
-    const mainLineWidth = mainLines.concat(detailsLines).map((x) => measureText(mainFont, x));
-    const detailsWidth = detailsLines.map((x) => measureText(detailFont, x));
+    const maxTextWidth = Math.max(
+        ...mainLines.map((x) => measureText(mainFont, x)),
+        ...detailsLines.map((x) => measureText(detailFont, x))
+    );
 
-    const maxTextWidth = Math.max(...mainLineWidth, ...detailsWidth);
-
-    const width = maxTextWidth + 2;
+    const w = Math.max(
+        ...mainLines.map((x) => measureText(mainFont, x.substring(0, 4))),
+        ...detailsLines.map((x) => measureText(mainFont, x.substring(0, 4)))
+    );
 
     const height =
-        mainFontSize + mainLines.length * (mainFontSize + pixelRatio) + detailsLines.length * (detailFontSize + pixelRatio);
+        mainFontSize * (mainLines.length + 1) +
+        detailFontSize * detailsLines.length +
+        pixelRatio * (mainLines.length + detailsLines.length - 1);
 
     return {
-        width,
+        width: maxTextWidth,
         height,
+        w,
+        h: onlyMain ? height / mainLines.length : null,
         draw(c) {
             let nextLine = mainFontSize;
 
@@ -102,18 +165,14 @@ export function createDetailsCanvas(
 
             for (const line of mainLines) {
                 c.fillText(line, 0, nextLine);
-                nextLine += mainFontSize + 1 * pixelRatio;
+                nextLine += mainFontSize + pixelRatio;
             }
 
             c.font = detailFont;
 
-            nextLine += pixelRatio;
-
-            if (onlyMain) return;
-
             for (const line of detailsLines) {
                 c.fillText(line, 0, nextLine);
-                nextLine += detailFontSize + 1 * pixelRatio;
+                nextLine += detailFontSize + pixelRatio;
             }
         },
     };

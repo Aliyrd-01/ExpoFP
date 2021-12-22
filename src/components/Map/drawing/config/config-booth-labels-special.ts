@@ -1,5 +1,4 @@
 import { reaction } from "mobx";
-import { uiState } from "../../../../store";
 import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
@@ -108,9 +107,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         const ptscale = this.context.ptscale;
         // find first with factor larger than this
         const step = this.steps.find((s) => s.factor < 1 / ptscale);
-        const visibleId = this.getId(
-            step ? step.factor.toString() : uiState.printingPdf ? this.steps[this.steps.length - 1].factor.toString() : "Dot"
-        );
+        const visibleId = this.getId(step ? step.factor.toString() : "Dot");
 
         if (visibleId !== this.previousVisibleId) {
             if (visibleId) this.painter.updateVisible(visibleId, true);
