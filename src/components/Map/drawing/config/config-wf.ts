@@ -82,7 +82,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
 
     const totalLength = routeLines.map((rl) => lineLength(rl.p0, rl.p1)).reduce((a, b) => a + b, 0);
 
-    let interval = Math.round(pointSize * 2 * ptscale);
+    let interval = Math.round(pointSize * 1.2 * ptscale);
     if (totalLength > totalPoints * interval) interval = 1.1 * (totalLength / totalPoints);
 
     let lines = [];
