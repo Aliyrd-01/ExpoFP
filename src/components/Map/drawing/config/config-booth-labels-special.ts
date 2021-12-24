@@ -2,6 +2,7 @@ import { reaction } from "mobx";
 import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
+import { uiState } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
@@ -106,8 +107,9 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // let visiblePrefix = "";
         const ptscale = this.context.ptscale;
         // find first with factor larger than this
-        const step = this.steps.find((s) => s.factor < 1 / ptscale);
-        const visibleId = this.getId(step ? step.factor.toString() : "Dot");
+        let step = this.steps.find((s) => s.factor < 1 / ptscale)?.factor.toString() || "Dot";
+        if (uiState.printingPdf && step === "Dot") step = this.steps[this.steps.length - 1].factor.toString();
+        let visibleId = this.getId(step);
 
         if (visibleId !== this.previousVisibleId) {
             if (visibleId) this.painter.updateVisible(visibleId, true);

@@ -115,7 +115,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             this.addExhibitorsLabel(14, "Details", pad, false);
         }
 
-        this.calcFactors();
+        this.calcFactors(exh.length > 0);
 
         this.update();
 
@@ -130,11 +130,11 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         // updates.push(this.updateBound);
     }
 
-    calcFactors() {
+    calcFactors(exh: boolean) {
         let lastFactor: number;
         const r = this.booth.rect;
 
-        for (const p of prefixes) {
+        for (const p of prefixes.slice(0, exh ? prefixes.length : prefixes.length - 1)) {
             const cr = this.painter.getObject(this.getId(p)).canvasTmp;
             const xFactor = r.w / (cr.w || cr.width);
             const yFactor = r.h / (cr.h || cr.height);
@@ -142,6 +142,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             lastFactor = Math.min(xFactor, yFactor);
             this.factors.push(lastFactor);
         }
+
+        // Details are show at:
+        if (!exh) this.factors.push(lastFactor / 1.8);
     }
 
     unlock() {
