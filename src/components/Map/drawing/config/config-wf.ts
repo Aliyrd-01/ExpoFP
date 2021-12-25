@@ -22,7 +22,7 @@ const isDebug = false;
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
 
-function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean): RouteLine[] {
+function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean, ended: boolean, weight: number): RouteLine[] {
     return d
         .split(/[a-zA-Z]/g)
         .filter((p) => p.length)
@@ -45,7 +45,9 @@ function parseDAttribute(d: string, unacc: boolean, uni: boolean, virt: boolean)
                 new Point(parseFloat(p[0]), parseFloat(p[1])),
                 unacc,
                 uni,
-                virt
+                virt,
+                ended,
+                weight
             );
         })
         .filter((l) => l);
@@ -148,6 +150,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         const unacc = node.getAttribute("data-way-unaccessible") === "true" || false;
         const uni = node.getAttribute("data-way-unidirection") === "true" || false;
         const virt = node.getAttribute("data-way-virtual") === "true" || false;
+        const weight = parseFloat(node.getAttribute("stroke-width") || "4");
 
         if (node.attributes.x1)
             lines.push(
@@ -156,10 +159,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     new Point(parseFloat(node.attributes.x2.value), parseFloat(node.attributes.y2.value)),
                     unacc,
                     uni,
-                    virt
+                    virt,
+                    false,
+                    weight
                 )
             );
-        else if (node.attributes.d) lines.push(...parseDAttribute(node.attributes.d.value, unacc, uni, virt));
+        else if (node.attributes.d) lines.push(...parseDAttribute(node.attributes.d.value, unacc, uni, virt, false, weight));
     });
 
     const boothsRects = boothStore.booths.map((b) => {
