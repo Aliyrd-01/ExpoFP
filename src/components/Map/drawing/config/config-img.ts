@@ -18,9 +18,10 @@ export default function configImg(context: DrawerContext, painterOrderPriority: 
 
         var img = new Image();
         img.onload = () => {
-            addObject({
+            addObject(`${x}${y}${width}${height}`, {
                 center: [x + width / 2, y + height / 2],
-                deltas: [-width / 2, -height / 2, width / 2, height / 2],
+                deltas: [0, 0, 0, 0],
+                deltaPts: [-width / 2, -height / 2, width / 2, height / 2],
                 canvasTmp: createImageCanvas(width, height, img),
                 visible: true,
                 texPosition: "center",
@@ -29,8 +30,8 @@ export default function configImg(context: DrawerContext, painterOrderPriority: 
         img.src = image.href.animVal;
     });
 
-    function addObject(item: DrawerObject) {
-        if (!painter) painter = context.requirePainter("image", RectPainter, painterOrderPriority);
+    function addObject(name: string, item: DrawerObject) {
+        if (!painter) painter = context.requirePainter(`image${name}`, RectPainter, painterOrderPriority);
         painter.addObject(item);
     }
 }
