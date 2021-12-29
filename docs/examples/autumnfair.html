@@ -15,15 +15,18 @@
                 onBoothClick: e => {
 		    window.onBoothClickHandler?.postMessage(e.target.name);
 		    window.webkit?.messageHandlers?.onBoothClickHandler?.postMessage(e.target.name);
+		    window.flutter_inappwebview?.callHandler("onBoothClick", e.target.name);
                 },
                 onFpConfigured: () => {
 		    window.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
 		    window.webkit?.messageHandlers?.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
+		    window.flutter_inappwebview?.callHandler("onFpConfigured", "FLOOR PLAN CONFIGURED");
                     console.info("FLOOR PLAN CONFIGURED");
                 },
                 onDirection: (e) => {
 		    window.onDirectionHandler?.postMessage(JSON.stringify(e));
 		    window.webkit?.messageHandlers?.onDirectionHandler?.postMessage(JSON.stringify(e));
+		    window.flutter_inappwebview?.callHandler("onDirection", JSON.stringify(e));
                     console.info("NEW DIRECTION", e);
                 }
             });
