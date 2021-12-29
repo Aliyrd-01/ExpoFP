@@ -23,7 +23,7 @@
                 },
                 onDirection: (e) => {
 		    window.onDirectionHandler?.postMessage(JSON.stringify(e));
-		    window.webkit?.messageHandlers?.onDirectionHandler?.postMessage(e);
+		    window.webkit?.messageHandlers?.onDirectionHandler?.postMessage(JSON.stringify(e));
                     console.info("NEW DIRECTION", e);
                 }
             });
