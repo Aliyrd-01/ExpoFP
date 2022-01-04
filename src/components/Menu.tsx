@@ -99,7 +99,7 @@ function Menu() {
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         {t("Search")}
                     </a>
-                    {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && (
+                    {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
                             <i className="fas fa-external-link" />
