@@ -112,7 +112,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             this.addExhibitorsLabel(10, "S", pad, true);
             this.addExhibitorsLabel(12, "M", pad, true);
             this.addExhibitorsLabel(14, "L", pad, true);
-            this.addExhibitorsLabel(14, "Details", pad, false);
+            this.addExhibitorsLabel(18, "Details", pad, false);
         }
 
         this.calcFactors(exh.length > 0);
