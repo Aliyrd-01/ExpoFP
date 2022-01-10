@@ -131,6 +131,18 @@ function ExhibitorComponent() {
             );
         }
 
+        function getDescription(description: String) {
+            const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
+            const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;
+
+            const result = descriptions.find((p) => p.startsWith(lang));
+            if (result != null) {
+                return result.replace(lang, "");
+            }
+
+            return descriptions[0];
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -215,7 +227,7 @@ function ExhibitorComponent() {
                             {exhibitor.description ? (
                                 <span
                                     className="exhibitor__description-html"
-                                    dangerouslySetInnerHTML={{ __html: exhibitor.description }}
+                                    dangerouslySetInnerHTML={{ __html: getDescription(exhibitor.description) }}
                                     onClick={expandDescription}
                                 />
                             ) : null}
