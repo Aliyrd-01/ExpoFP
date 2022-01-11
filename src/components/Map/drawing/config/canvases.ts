@@ -45,7 +45,12 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
         },
     };
 }
-export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+export function createDetailsCanvas(
+    b: RegularBooth,
+    pixelRatio: number,
+    color: string = "#fff",
+    fontSize: number
+): CanvasDescriptor {
     //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
@@ -67,8 +72,8 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
 
     // if (fixBooth) lines.push(b.title);
 
-    const boothFontSize = 14 * pixelRatio;
-    const detailFontSize = 14 * pixelRatio;
+    const boothFontSize = fontSize * pixelRatio;
+    const detailFontSize = fontSize * pixelRatio;
     const boothFont = getFont(boothFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
     const boothPadding = 1 * pixelRatio;

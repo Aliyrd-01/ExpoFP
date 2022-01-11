@@ -103,7 +103,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
                 deltaPts: [3, 3, -1, -1],
                 scalePts: context.pixelRatio,
-                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, fillStyle),
+                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, fillStyle, 18),
                 texPosition: "lefttop",
                 visible: false,
             });
