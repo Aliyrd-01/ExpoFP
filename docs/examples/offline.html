@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width"
+    />
+  </head>
+  <body>
+    <div id="floorplan">Loading...</div>
+    <script src="expofp.js"></script>
+    <script>
+      function getBaseUrl(){
+        const url = window.location.href;
+        return url.substring(0, url.lastIndexOf('/'));
+      }
+
+      const origFetch = window.fetch;
+      window.fetch = async function (url) {
+        if (!url.startsWith("http://") && !url.startsWith("https://") && (url.startsWith("file://") || getBaseUrl().startsWith("file://"))) {
+          const result = await window.flutter_inappwebview?.callHandler("readFile",url);
+          return {
+            json: async function () {
+              return JSON.parse(result);
+            },
+          };
+        }
+
+        return await origFetch(url);
+      };
+
+      function getElement(){
+        const element = document.querySelector("#floorplan");
+        element.setAttribute('data-data-url', `${getBaseUrl()}/data/`);
+        return element;
+      }
+
+      window.floorplan = new ExpoFP.FloorPlan({
+        element: getElement(),
+        eventId: "wayfinding",
+        noOverlay: true,
+        onBoothClick: (e) => {
+          window.flutter_inappwebview?.callHandler("onBoothClick", e.target.name);
+        },
+        onFpConfigured: () => {
+          window.flutter_inappwebview?.callHandler("onFpConfigured", "FLOOR PLAN CONFIGURED");
+        },
+        onDirection: (e) => {
+          window.flutter_inappwebview?.callHandler("onDirection", JSON.stringify(e));
+        },
+      });
+
+      function selectRoute(from, to, exceptUnAccessible) {
+        window.floorplan?.selectRoute(from, to, exceptUnAccessible);
+      }
+
+      function selectBooth(name) {
+        window.floorplan?.selectBooth(name);
+      }
+
+      function setCurrentPosition(x, y, focus) {
+        window.floorplan?.selectCurrentPosition({ x: x, y: y }, focus);
+      }
+    </script>
+  </body>
+</html>

@@ -6,6 +6,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId) return;
 
     timeoutId = window.setTimeout(async function () {
+
         //const ipData = await getIpData();
 
         const language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
@@ -33,7 +34,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
 
 async function sendEmailMessage(data) {
     if (process.env.NODE_ENV !== "production") return;
-    const rawResponse = await fetch("https://expofp.com/api/report-error", {
+    const rawResponse = await fetch("https://app.expofp.com/api/report-error", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
