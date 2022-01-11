@@ -149,9 +149,9 @@ export function createExhibitorsDetailsCanvas(
     );
 
     const height =
-        mainFontSize * (mainLines.length + 1) +
+        mainFontSize * mainLines.length +
         detailFontSize * detailsLines.length +
-        pixelRatio * (mainLines.length + detailsLines.length - 1);
+        pixelRatio * (mainLines.length + detailsLines.length);
 
     return {
         width: maxTextWidth,
