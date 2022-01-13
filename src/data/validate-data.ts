@@ -86,7 +86,6 @@ export default function validateData(data: Data) {
     if (!data.logo) data.logo = "../" + EFP_EXPO + "-logo.png";
     if (!data.homeUrl && EFP_EXPO === "jtrade19") data.homeUrl = "https://www.jtrade.co.uk/";
     // this is permanent
-    if (!data.homeUrl) data.homeUrl = "https://expofp.com/";
     if (!data.boothTerm) data.boothTerm = "Booth";
     if (EFP_EXPO === "expo") {
         const expoExpoAds = [2567, 2704, 2681, 2592, 2740, 2709, 2482, 2609, 2734, 2696, 2840, 2566, 2736];
