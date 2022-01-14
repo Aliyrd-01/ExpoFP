@@ -287,7 +287,6 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     sublines.intersections.forEach((intersect) => {
         sublines.lines.forEach((line) => {
             if ((samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) && (!exceptUnAccessible || !line.unaccessible)) {
-                
                 graph.addLink(pointId(line.p0), pointId(line.p1), {
                     distance: lineLength(line.p0, line.p1) / (line.weight || 4),
                 });
@@ -321,7 +320,6 @@ export const buildGraph = (lines: RouteLine[], rects: Rectangle[], other: Rectan
     try {
         if (window["__wfData"]) {
             sublines = window["__wfData"];
-            console.info(subLines);
             return sublines;
         }
     } catch {}
