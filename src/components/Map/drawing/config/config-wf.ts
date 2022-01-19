@@ -318,18 +318,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         const shortestrPerp = routePoints
             .map((p, i) => {
-                if (i === 0) return null;
-                let perp = perpendicularToLine(position, routePoints[i], routePoints[i - 1]);
-                if (!perp.isInside) return null;
-
                 return {
                     i,
-                    p: perp.p,
-                    angle: -1 * lineAngle(routePoints[i], routePoints[i - 1]),
-                    l: lineLength(position, perp.p),
+                    p,
+                    l: lineLength(position, p),
                 };
             })
-            .filter((p) => p)
             .sort((p1, p2) => p1.l - p2.l)[0];
 
         wfDrawer.updateCenter("currentLocation", [
@@ -351,6 +345,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
+                updateCurrentPosition();
             }
         );
 
