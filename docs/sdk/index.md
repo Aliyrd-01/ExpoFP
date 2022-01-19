@@ -1,7 +1,7 @@
 15 lines (11 sloc)  383 Bytes
    
 ---
-title: Examples
+title: SDK
 nav_order: 0
 has_children: true
 permalink: /
