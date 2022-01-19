@@ -131,12 +131,16 @@ function ExhibitorComponent() {
         }
 
         function getDescription(description: String) {
+            if (description == null) return "";
+
             const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
             const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;
 
             const result = descriptions.find((p) => p.startsWith(lang));
             if (result != null) {
-                return result.replace(lang, "");
+                return result.substring(18);
+            } else if (descriptions[0].startsWith(`!*//||^^`) && descriptions[0].length > 18) {
+                return descriptions[0].substring(18);
             }
 
             return descriptions[0];
