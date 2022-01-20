@@ -326,10 +326,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             })
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        wfDrawer.updateCenter("currentLocation", [
-            shortestrPerp?.p?.x || position?.x || 0,
-            shortestrPerp?.p?.y || position?.y || 0,
-        ]);
+        wfDrawer.updateCenter("currentLocation", [position?.x || 0, position?.y || 0]);
 
         if (!shortestrPerp || !routePoints.length) return;
 
