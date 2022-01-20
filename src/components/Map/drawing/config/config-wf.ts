@@ -309,12 +309,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             wfDrawer.updateSkipdim("sourceLocation", false);
             wfDrawer.updateSkipdim("currentLocation", true);
             wfDrawer.updateVisible("currentLocation", true);
-
             wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
             wfDrawer.updateVisible("currentLocation", false);
             wfDrawer.updateSkipdim("sourceLocation", true);
         }
+
+        if (!position || !routePoints.length) return;
 
         const shortestrPerp = routePoints
             .map((p, i) => {
@@ -326,9 +327,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             })
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        wfDrawer.updateCenter("currentLocation", [position?.x || 0, position?.y || 0]);
-
-        if (!shortestrPerp || !routePoints.length) return;
+        if (!shortestrPerp) return;
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
             wfDrawer.updateSkipdim(`Dot_${index}`, false);
