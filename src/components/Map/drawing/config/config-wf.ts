@@ -306,13 +306,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            wfDrawer.updateSkipdim("sourceLocation", false);
+            wfDrawer.updateVisible("sourceLocation", false);
             wfDrawer.updateSkipdim("currentLocation", true);
             wfDrawer.updateVisible("currentLocation", true);
             wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
             wfDrawer.updateVisible("currentLocation", false);
-            wfDrawer.updateSkipdim("sourceLocation", true);
+            wfDrawer.updateVisible("sourceLocation", true);
         }
 
         if (!position || !routePoints.length) return;
