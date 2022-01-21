@@ -414,7 +414,7 @@ export const getGraphLines = (
         const prevAngle = prevLine ? lineAngle(prevLine.p0, prevLine.p1) : null;
         const angle = lineAngle(l.p0, l.p1);
 
-        if (!prevLine || prevLine.virtual !== l.virtual || Math.abs(Math.abs(angle) - Math.abs(prevAngle)) > 5) lines.push(l);
+        if (!prevLine || prevLine.virtual !== l.virtual || Math.abs(angle - prevAngle) > 5) lines.push(l);
         else prevLine.p1 = l.p1;
     }
 
