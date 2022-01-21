@@ -1,15 +1,16 @@
-import { action, observable } from "mobx";
+import { action, computed, observable } from "mobx";
 import store from ".";
 import Rect from "../core/Rect";
 import svg from "../data/svg";
-import { lineLength, Point } from "./../utils/wayfinding";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import { Line, lineLength } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";
 
 export default class RouteStore {
     rootStore: RootStore;
-    @observable routePoints: Point[] = [];
+    @observable routeLines: Line[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
     constructor(rootStore: RootStore) {
@@ -17,13 +18,13 @@ export default class RouteStore {
     }
 
     @action selectRoute(route: Route) {
+        if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
+
         let list = [];
 
         if (route?.from && route?.to)
             window.setTimeout(
-                () => {
-                    this.rootStore.showMap();
-                },
+                () => this.rootStore.showMap(),
                 navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             );
 
@@ -36,15 +37,27 @@ export default class RouteStore {
         }, 200);
     }
 
+    @computed({ keepAlive: true }) get nearestBooth() {
+        if (!this.currentPosition) return null;
+        return (
+            this.rootStore.boothStore.booths.sort(
+                (b1, b2) =>
+                    lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
+                    lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+            )[0] || null
+        );
+    }
+
     @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
         this.selectRoute(new Route(from, to, exceptUnaccessible));
+        sendEventToGa(`FP Wayfinding`, GaEventActions.ClickDirections, to.name);
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {
                 from: undefined,
                 to: undefined,
-                points: [],
+                lines: [],
                 distance: "",
                 time: 0,
             };
@@ -58,21 +71,17 @@ export default class RouteStore {
         if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(point.x, point.y, 100, 100);
     }
 
-    @action updateRoutePoints(routePoints: Point[]) {
-        if (!routePoints?.length && !this.routePoints.length) return;
+    @action updateRoutePoints(routeLines: Line[]) {
+        if (!routeLines?.length && !this.routeLines.length) return;
 
-        this.routePoints = routePoints;
+        this.routeLines = routeLines;
 
         const route = uiState.selectedRoute;
 
         const units = svg.getAttribute("units");
         let distance = 0;
 
-        routePoints.forEach((element, index) => {
-            if (index === 0) return;
-            const prevElement = routePoints[index - 1];
-            distance += lineLength(prevElement, element);
-        });
+        routeLines.forEach((line) => (distance += lineLength(line.p0, line.p1)));
 
         distance = Math.round(distance / 10.0);
 
@@ -81,7 +90,7 @@ export default class RouteStore {
                 store.fp.onDirection({
                     from: route?.from ? { id: route.from.id, name: route.from.name } : null,
                     to: route?.to ? { id: route.to.id, name: route.to.name } : null,
-                    points: routePoints,
+                    lines: routeLines,
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
                 });
@@ -96,7 +105,5 @@ export class Route {
 }
 
 export class CurrentPosition {
-    public x: number;
-    public y: number;
-    public angle: number;
+    public constructor(public x: number, public y: number, public angle: number) {}
 }

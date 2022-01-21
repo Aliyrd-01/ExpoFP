@@ -5,8 +5,9 @@ let timeoutId: number;
 export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId) return;
 
-    timeoutId = window.setTimeout(async function() {
-        const ipData = await getIpData();
+    timeoutId = window.setTimeout(async function () {
+
+        //const ipData = await getIpData();
 
         const language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
         const data = {
@@ -20,8 +21,9 @@ export default function reportError(e: Partial<ErrorEvent>) {
             userAgent: navigator.userAgent,
             language,
             group: "FP",
-            subject: "FP JS error: " + document.location.host + " in " + ipData.country,
-            ...ipData
+            url: document.location,
+            subject: "FP JS error: " + document.location.host, // + " in " + ipData.country,
+            //...ipData
         };
 
         logger.info("Sending error report", data);
@@ -32,10 +34,10 @@ export default function reportError(e: Partial<ErrorEvent>) {
 
 async function sendEmailMessage(data) {
     if (process.env.NODE_ENV !== "production") return;
-    const rawResponse = await fetch("https://expofp.com/api/report-error", {
+    const rawResponse = await fetch("https://app.expofp.com/api/report-error", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
     });
 
     logger.log("Reporter response: ", await rawResponse.text());
@@ -47,7 +49,7 @@ async function sendSlackMessage(data) {
     const rawResponse = await fetch("https://msg.expofp.com/v1/post-message/" + window.location.hostname, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(slackObj)
+        body: JSON.stringify(slackObj),
     });
     logger.log("Slack reporter response: ", await rawResponse.text());
 }
@@ -69,15 +71,15 @@ function createSlackMessage(data) {
         type: "section",
         text: {
             type: "mrkdwn",
-            text: `:warning:* ${data.subject}*`
-        }
+            text: `:warning:* ${data.subject}*`,
+        },
     });
     blocks.push({
         type: "section",
         text: {
             type: "plain_text",
-            text: data.message + " → " + (data.stack || '').split("\n")[0]
-        }
+            text: data.message + " → " + (data.stack || "").split("\n")[0],
+        },
     });
     // blocks.push({
     //     type: "divider"
@@ -106,28 +108,28 @@ function createSlackMessage(data) {
         username: "error-reporter-bot",
         type: "mrkdwn",
         text: data.subject,
-        blocks: blocks
+        blocks: blocks,
     };
     return res;
 }
 
-async function getIpData() {
-    try {
-        const ipInfoRequest = await fetch("https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg");
-        const ipInfo = await ipInfoRequest.json();
+// async function getIpData() {
+//     try {
+//         const ipInfoRequest = await fetch("https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg");
+//         const ipInfo = await ipInfoRequest.json();
 
-        logger.log("ipify", ipInfo, ipInfoRequest);
+//         logger.log("ipify", ipInfo, ipInfoRequest);
 
-        if (ipInfoRequest.ok) {
-            return {
-                ip: ipInfo.ip,
-                ...ipInfo.location
-            };
-        } else {
-            return { ip: ipInfo.messages };
-        }
-    } catch (e) {
-        logger.error(e);
-        return { ip: e.message };
-    }
-}
+//         if (ipInfoRequest.ok) {
+//             return {
+//                 ip: ipInfo.ip,
+//                 ...ipInfo.location,
+//             };
+//         } else {
+//             return { ip: ipInfo.messages };
+//         }
+//     } catch (e) {
+//         logger.error(e);
+//         return { ip: e.message };
+//     }
+// }

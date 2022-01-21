@@ -33,6 +33,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
         objectsMode ? getActiveOptionIndexByValue(value, true) : getActiveOptionIndexByValue(value) || null
     );
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
+    const [searchValue, setSearchValue] = useState("");
 
     useOnClickOutside(refAutocomplete, () => setShowOptionsDropdown(false));
 
@@ -54,6 +55,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             changeValue(event.target.innerText);
             setActiveOptionIndex(getActiveOptionIndexByValue(event.target.innerText));
         }
+        setSearchValue("");
         setShowOptionsDropdown(false);
     };
 
@@ -87,38 +89,41 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     };
 
     const onInputChange = (event) => {
-        const userInput = event.target.value;
+        const searchText = event.target.value;
         let result = [];
-        if (objectsMode) result = options.filter((option) => option.label.toLowerCase().indexOf(userInput.toLowerCase()) > -1);
-        else result = options.filter((option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1);
+        if (objectsMode) result = options.filter((option) => option.label.toLowerCase().indexOf(searchText.toLowerCase()) > -1);
+        else result = options.filter((option) => option.toLowerCase().indexOf(searchText.toLowerCase()) > -1);
 
         setInput(event.target.value);
-        setFilteredOptions(result.length ? result : options);
+        setSearchValue(event.target.value);
+        setFilteredOptions(result.length ? result : []);
         setActiveOptionIndex(null);
     };
 
     const showOptions = () => {
         const allOptions = filteredOptions.length ? filteredOptions : options;
-        return (
-            <ul>
-                {allOptions.map((option, index) => {
-                    let activeClass;
-                    if (index === activeOptionIndex) activeClass = "is-active";
-                    if (objectsMode)
-                        return (
-                            <li key={index} className={activeClass} data-value={option.value} onClick={onClickOption}>
-                                {option.label}
-                            </li>
-                        );
-                    else
-                        return (
-                            <li key={index} className={activeClass} onClick={onClickOption}>
-                                {option}
-                            </li>
-                        );
-                })}
-            </ul>
-        );
+        if (searchValue && !filteredOptions.length) return <div className="autocomplete__empty">No options</div>;
+        else
+            return (
+                <ul>
+                    {allOptions.map((option, index) => {
+                        let activeClass;
+                        if (index === activeOptionIndex) activeClass = "is-active";
+                        if (objectsMode)
+                            return (
+                                <li key={index} className={activeClass} data-value={option.value} onClick={onClickOption}>
+                                    {option.label}
+                                </li>
+                            );
+                        else
+                            return (
+                                <li key={index} className={activeClass} onClick={onClickOption}>
+                                    {option}
+                                </li>
+                            );
+                    })}
+                </ul>
+            );
     };
 
     return (

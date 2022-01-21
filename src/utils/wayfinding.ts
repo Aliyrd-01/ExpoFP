@@ -9,14 +9,21 @@ export class Point {
 }
 
 export class Line {
+    constructor(public p0: Point, public p1: Point) {}
+}
+
+export class RouteLine extends Line {
     constructor(
         public p0: Point,
         public p1: Point,
-        public unaccessible: boolean = false,
-        public unidirection: boolean = false,
-        public virtual: boolean = false,
-        public ended: boolean = false
-    ) {}
+        public unaccessible: boolean,
+        public unidirection: boolean,
+        public virtual: boolean,
+        public ended: boolean,
+        public weight: number
+    ) {
+        super(p0, p1);
+    }
 }
 
 export class Rectangle {
@@ -32,7 +39,7 @@ export class Rectangle {
     }
 }
 
-export type Sublines = { lines: Line[]; intersections: Point[]; lineEnds: Point[] };
+export type Sublines = { lines: RouteLine[]; intersections: Point[]; lineEnds: Point[] };
 
 export const lineCenter = (p1: Point, p2: Point): Point => new Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
 
@@ -58,7 +65,7 @@ export const lineAngle = (startPoint: Point, endPoint: Point): number => {
 
 const round = (number: number, digits: number = 3) => Math.round(number * Math.pow(10, digits)) / Math.pow(10, digits);
 
-const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) < 0.1;
+const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) <= 1;
 
 export const sameLine = (l1: Line, l2: Line): boolean =>
     (samePoint(l1.p0, l2.p0) && samePoint(l1.p1, l2.p1)) || (samePoint(l1.p0, l2.p1) && samePoint(l1.p1, l2.p0));
@@ -142,12 +149,12 @@ const lineRectangleIntersections = (line: Line, rect: Rectangle): Point[] => {
     return points;
 };
 
-const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Line[] => {
+const buildPerpendiculars = (lines: RouteLine[], rects: Rectangle[], other: Rectangle[], maxLength: number): RouteLine[] => {
     const blockers = rects.concat(other);
 
     lines = lines.filter((l) => !l.virtual);
 
-    const perpendiculars: Line[] = [];
+    const perpendiculars: RouteLine[] = [];
 
     for (let i = 0; i < rects.length; i++) {
         const rect = rects[i];
@@ -193,30 +200,28 @@ const buildPerpendiculars = (lines: Line[], rects: Rectangle[], other: Rectangle
         }
 
         if (minLlines[0]) {
-            const l = new Line(line_13.p0, minLlines[0]);
+            const l = new RouteLine(line_13.p0, minLlines[0], false, false, false, true, 1);
             if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
         if (minLlines[2]) {
-            const l = new Line(line_13.p1, minLlines[2]);
+            const l = new RouteLine(line_13.p1, minLlines[2], false, false, false, true, 1);
             if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
         if (minLlines[1]) {
-            const l = new Line(line_24.p0, minLlines[1]);
+            const l = new RouteLine(line_24.p0, minLlines[1], false, false, false, true, 1);
             if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
         if (minLlines[3]) {
-            const l = new Line(line_24.p1, minLlines[3]);
+            const l = new RouteLine(line_24.p1, minLlines[3], false, false, false, true, 1);
             if (!blockers.find((b) => b !== rect && lineRectangleIntersections(l, b).length > 0)) perpendiculars.push(l);
         }
     }
-
-    perpendiculars.forEach((p) => (p.ended = true));
 
     return perpendiculars;
 };
 
 // Возвращаем true если пересечени корректное
-const checkVirtualIntersection = (line1: Line, line2: Line, intersection: any) => {
+const checkVirtualIntersection = (line1: RouteLine, line2: RouteLine, intersection: any) => {
     if (!line1.virtual && !line2.virtual) return true;
     if ((line1.ended && line2.virtual) || (line1.virtual && line2.ended)) return false;
     if (line1.virtual && (samePoint(line1.p0, intersection) || samePoint(line1.p1, intersection))) return true;
@@ -225,8 +230,8 @@ const checkVirtualIntersection = (line1: Line, line2: Line, intersection: any) =
     return false;
 };
 
-const subLines = (lines: Line[]): Sublines => {
-    const subLines: Line[] = [];
+const subLines = (lines: RouteLine[]): Sublines => {
+    const subLines: RouteLine[] = [];
     const intersections: Point[] = [];
     const lineEnds: Point[] = [];
 
@@ -251,7 +256,17 @@ const subLines = (lines: Line[]): Sublines => {
         linePoints.forEach((point) => (!points.filter((p) => samePoint(point, p)).length ? points.push(point) : null));
 
         for (let k = 1; k < points.length; k++)
-            subLines.push(new Line(points[k - 1], points[k], lines[i].unaccessible, lines[i].unidirection, lines[i].virtual));
+            subLines.push(
+                new RouteLine(
+                    points[k - 1],
+                    points[k],
+                    lines[i].unaccessible,
+                    lines[i].unidirection,
+                    lines[i].virtual,
+                    lines[i].ended,
+                    lines[i].weight
+                )
+            );
     }
 
     subLines.forEach((sl) => {
@@ -263,7 +278,7 @@ const subLines = (lines: Line[]): Sublines => {
 };
 
 let sublines: Sublines = null;
-let pathFinder = { finder: null, oriented: false, exceptUnAccessible: false };
+let pathFinder = { finder: null, oriented: true, exceptUnAccessible: false };
 
 const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     const graph = createGraph();
@@ -273,12 +288,12 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
         sublines.lines.forEach((line) => {
             if ((samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) && (!exceptUnAccessible || !line.unaccessible)) {
                 graph.addLink(pointId(line.p0), pointId(line.p1), {
-                    distance: lineLength(line.p0, line.p1),
+                    distance: lineLength(line.p0, line.p1) / (line.weight || 4),
                 });
 
                 if (oriented && !line.unidirection)
                     graph.addLink(pointId(line.p1), pointId(line.p0), {
-                        distance: lineLength(line.p1, line.p0),
+                        distance: lineLength(line.p1, line.p0) / (line.weight || 4),
                     });
             }
         });
@@ -297,11 +312,17 @@ const buildPathFinder = (oriented: boolean, exceptUnAccessible: boolean) => {
     console.debug(`WF. Graph created. ~ ${t1 - t0}ms.`);
 };
 
-export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
-    if (window["__wfData"]) {
-        sublines = window["__wfData"];
-        return sublines;
-    }
+function getLineByPoints(lines: RouteLine[], p0: Point, p1: Point): RouteLine {
+    return lines.filter((l) => sameLine(l, { p0, p1 }))[0];
+}
+
+export const buildGraph = (lines: RouteLine[], rects: Rectangle[], other: Rectangle[], maxLength: number): Sublines => {
+    try {
+        if (window["__wfData"]) {
+            sublines = window["__wfData"];
+            return sublines;
+        }
+    } catch {}
 
     let t0 = performance.now();
     const perpendiculars = buildPerpendiculars(lines, rects, other, maxLength);
@@ -322,15 +343,15 @@ export const buildGraph = (lines: Line[], rects: Rectangle[], other: Rectangle[]
     return sublines;
 };
 
-export const getGraphPoints = (
+export const getGraphLines = (
     fromRect: Rectangle,
     toRect: Rectangle,
     exceptUnAccessible: boolean = false,
-    simplified: boolean = false
-): Point[] => {
+    disableCache: boolean = false
+): RouteLine[] => {
     let t0 = performance.now();
 
-    if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible)
+    if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible || disableCache)
         buildPathFinder(pathFinder.oriented, exceptUnAccessible);
 
     const from: Point[] = [];
@@ -346,50 +367,57 @@ export const getGraphPoints = (
         if (t) to.push(t);
     }
 
-    const paths: Point[][] = [];
-    let pts: Point[] = [];
+    const routePoints: Point[][] = [];
 
     for (let i = 0; i < from.length; i++) {
         for (let j = 0; j < to.length; j++) {
             try {
                 const p = pathFinder.finder.find(pointId(from[i]), pointId(to[j]));
-                if (p.length) paths.push(p.map((p) => new Point(parseFloat(p.id.split("_")[0]), parseFloat(p.id.split("_")[1]))));
+                if (p.length)
+                    routePoints.push(p.map((p) => new Point(parseFloat(p.id.split("_")[0]), parseFloat(p.id.split("_")[1]))));
             } catch (e) {
                 console.warn(e);
             }
         }
     }
 
-    if (paths.length) {
-        var distances = [];
-
-        for (let i = 0; i < paths.length; i++) {
-            var d = 0;
-            for (let j = 0; j < paths[i].length - 1; j++) d += lineLength(paths[i][j], paths[i][j + 1]);
-            distances.push(d);
-        }
-
-        const points = paths[distances.indexOf(Math.min(...distances))];
-
-        if (simplified) {
-            let angle = null;
-
-            for (let index = 1; index < points.length; index++) {
-                const pp = points[index - 1];
-                const cp = points[index];
-                let a = lineAngle(cp, pp);
-
-                if (angle == null || Math.abs(Math.abs(angle) - Math.abs(a)) > 5) {
-                    if (!pts.length || lineLength(pp, pts[pts.length - 1]) > 10) {
-                        pts.push(pp);
-                        angle = a;
-                    }
-                }
-            }
-            pts.push(points[points.length - 1]);
-        } else pts = points;
+    if (!routePoints.length) {
+        console.debug(`WF. Get graph lines: 0 ~ ${performance.now() - t0}ms.`);
+        return [];
     }
 
-    console.debug(`WF. Get graph points: ${pts.length} ~ ${performance.now() - t0}ms.`);
-    return pts;
+    let lines: RouteLine[] = [];
+    var distances = [];
+
+    for (let i = 0; i < routePoints.length; i++) {
+        var d = 0;
+        for (let j = 0; j < routePoints[i].length - 1; j++) d += lineLength(routePoints[i][j], routePoints[i][j + 1]);
+        distances.push(d);
+    }
+
+    const points = routePoints[distances.indexOf(Math.min(...distances))];
+
+    for (let i = 1; i < points.length; i++) {
+        const pp = points[i - 1];
+        const cp = points[i];
+
+        let line = getLineByPoints(sublines.lines, pp, cp);
+
+        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
+
+        if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
+            l.p0 = pp;
+            l.p1 = cp;
+        }
+
+        const prevLine = lines[lines.length - 1];
+        const prevAngle = prevLine ? lineAngle(prevLine.p0, prevLine.p1) : null;
+        const angle = lineAngle(l.p0, l.p1);
+
+        if (!prevLine || prevLine.virtual !== l.virtual || Math.abs(angle - prevAngle) > 5) lines.push(l);
+        else prevLine.p1 = l.p1;
+    }
+
+    console.debug(`WF. Get graph lines: ${lines.length} ~ ${performance.now() - t0}ms.`);
+    return lines;
 };

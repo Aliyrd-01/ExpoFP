@@ -5,6 +5,8 @@ const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
 export interface CanvasDescriptor {
+    w?: number;
+    h?: number;
     width: number;
     height: number;
     draw(c: CanvasRenderingContext2D): void;
@@ -43,8 +45,81 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
         },
     };
 }
-
 export function createDetailsCanvas(
+    b: RegularBooth,
+    pixelRatio: number,
+    color: string = "#fff",
+    fontSize: number
+): CanvasDescriptor {
+    //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
+    const lines = [];
+    // const bs = b.special ? (b as SpecialBooth) : undefined;
+    //const br = !b.special ? (b as RegularBooth) : undefined;
+    // if (b.special === false) {
+
+    if (b.onHold) {
+        lines.push(t("On Hold"));
+    } else if (b.reserved) {
+        lines.push(t("Reserved"));
+    } else if (b.exhibitors.length) {
+        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+    } else {
+        if (b.size) lines.push(b.size);
+        if (b.price && b.price !== "0") lines.push(b.price);
+    }
+
+    // }
+
+    // if (fixBooth) lines.push(b.title);
+
+    const boothFontSize = fontSize * pixelRatio;
+    const detailFontSize = fontSize * pixelRatio;
+    const boothFont = getFont(boothFontSize, 500);
+    const detailFont = getFont(detailFontSize, 300);
+    const boothPadding = 1 * pixelRatio;
+
+    let mainLine = b.name;
+    // if (b.special === false || fixBooth) {
+    //     mainLine = b.name;
+    // } else if (b.special === true) {
+    //     mainLine = b.title || b.name;
+    // }
+
+    // const canvas = document.createElement("canvas");
+    // const c = canvas.getContext("2d");
+    const mainLineWidth = measureText(boothFont, mainLine); // c.measureText(mainLine).width;
+    const companiesWidth = lines.map((x) => measureText(detailFont, x));
+    const maxTextWidth = Math.max(mainLineWidth, ...companiesWidth);
+
+    const width = maxTextWidth + 2;
+    const height = boothFontSize + boothPadding + lines.length * detailFontSize + 3 * pixelRatio + 4;
+
+    return {
+        width,
+        height,
+        draw(c) {
+            let nextLine = boothFontSize;
+
+            c.fillStyle = color;
+            c.textAlign = "start";
+            c.textBaseline = "alphabetic";
+            c.font = boothFont;
+
+            c.fillText(mainLine, 0, nextLine);
+            nextLine += boothFontSize + boothPadding;
+
+            c.font = detailFont;
+            c.fillStyle = color;
+
+            for (const line of lines) {
+                c.fillText(line, 0, nextLine);
+                nextLine += detailFontSize + 1 * pixelRatio;
+            }
+        },
+    };
+}
+
+export function createExhibitorsDetailsCanvas(
     b: RegularBooth,
     pixelRatio: number,
     color: string = "#fff",
@@ -54,40 +129,35 @@ export function createDetailsCanvas(
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
 
-    const mainFontSize = frontSize;
-    const detailFontSize = frontSize;
+    const mainFontSize = frontSize * pixelRatio;
+    const detailFontSize = frontSize * pixelRatio;
 
     const mainFont = getFont(mainFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
 
-    if (b.onHold) {
-        detailsLines.push(t("On Hold"));
-        mainLines.push(b.name);
-    } else if (b.reserved) {
-        detailsLines.push(t("Reserved"));
-        mainLines.push(b.name);
-    } else if (b.exhibitors.length) {
-        mainLines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
-        detailsLines.push(b.name);
-    } else {
-        mainLines.push(b.name);
-        if (b.size) detailsLines.push(b.size);
-        if (b.price && b.price !== "0") detailsLines.push(b.price);
-    }
+    mainLines.push(...b.exhibitors.map((e) => e.name));
+    if (!onlyMain) detailsLines.push(b.name);
 
-    const mainLineWidth = mainLines.concat(detailsLines).map((x) => measureText(mainFont, x));
-    const detailsWidth = detailsLines.map((x) => measureText(detailFont, x));
+    const maxTextWidth = Math.max(
+        ...mainLines.map((x) => measureText(mainFont, x)),
+        ...detailsLines.map((x) => measureText(detailFont, x))
+    );
 
-    const maxTextWidth = Math.max(...mainLineWidth, ...detailsWidth);
-
-    const width = maxTextWidth + 2;
+    const w = Math.max(
+        ...mainLines.map((x) => measureText(mainFont, x.substring(0, 4))),
+        ...detailsLines.map((x) => measureText(mainFont, x.substring(0, 4)))
+    );
 
     const height =
-        mainFontSize + mainLines.length * (mainFontSize + pixelRatio) + detailsLines.length * (detailFontSize + pixelRatio);
+        mainFontSize * mainLines.length +
+        detailFontSize * detailsLines.length +
+        pixelRatio * (mainLines.length + detailsLines.length);
 
     return {
-        width,
+        width: maxTextWidth,
         height,
+        w,
+        h: onlyMain ? height / mainLines.length : null,
         draw(c) {
             let nextLine = mainFontSize;
 
@@ -100,18 +170,14 @@ export function createDetailsCanvas(
 
             for (const line of mainLines) {
                 c.fillText(line, 0, nextLine);
-                nextLine += mainFontSize + 1 * pixelRatio;
+                nextLine += mainFontSize + pixelRatio;
             }
 
             c.font = detailFont;
 
-            nextLine += pixelRatio;
-
-            if (onlyMain) return;
-
             for (const line of detailsLines) {
                 c.fillText(line, 0, nextLine);
-                nextLine += detailFontSize + 1 * pixelRatio;
+                nextLine += detailFontSize + pixelRatio;
             }
         },
     };
@@ -199,62 +265,30 @@ export function createCurrentCanvas(
     scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
     return {
-        width: 90 * scale,
+        width: 70 * scale,
         height: 70 * scale,
 
         draw(ctx) {
-            ctx.beginPath();
             ctx.scale(scale, scale);
-            ctx.fillStyle = "rgb(255, 255, 255)";
-            ctx.moveTo(60.0, 12.0);
-            ctx.lineTo(60.0, 57.0);
-            ctx.lineTo(90.0, 34.5);
+
+            // #path833
+            ctx.beginPath();
+            ctx.fillStyle = "#FFFFFF";
+            ctx.moveTo(0.0, 35.0);
+            ctx.bezierCurveTo(0.0, 54.329966, 15.670034, 70.0, 35.0, 70.0);
+            ctx.bezierCurveTo(54.329966, 70.0, 70.0, 54.329966, 70.0, 35.0);
+            ctx.bezierCurveTo(70.0, 15.670034, 54.329966, 0.0, 35.0, 0.0);
+            ctx.bezierCurveTo(15.670034, 0.0, 0.0, 15.670034, 0.0, 35.0);
             ctx.fill();
 
-            // #path817
+            // #path835
             ctx.beginPath();
             ctx.fillStyle = color;
-            ctx.moveTo(67.0, 22.0);
-            ctx.lineTo(67.0, 47.0);
-            ctx.lineTo(85.0, 34.5);
-            ctx.fill();
-
-            // #path819
-            ctx.beginPath();
-            ctx.fillStyle = "rgb(255, 255, 255)";
-            ctx.moveTo(35.0, 0.0);
-            ctx.bezierCurveTo(54.3, 0.0, 70.0, 15.6, 70.0, 35.0);
-            ctx.bezierCurveTo(70.0, 54.3, 54.3, 70.0, 35.0, 70.0);
-            ctx.bezierCurveTo(15.6, 70.0, 0.0, 54.3, 0.0, 35.0);
-            ctx.bezierCurveTo(0.0, 15.6, 15.6, 0.0, 35.0, 0.0);
-            ctx.fill();
-
-            // #path821
-            ctx.beginPath();
-            ctx.fillStyle = color;
-            ctx.moveTo(35.0, 6.5);
-            ctx.bezierCurveTo(50.7, 6.5, 63.5, 19.2, 63.5, 35.0);
-            ctx.bezierCurveTo(63.5, 50.7, 50.7, 63.5, 35.0, 63.5);
-            ctx.bezierCurveTo(19.2, 63.5, 6.5, 50.7, 6.5, 35.0);
-            ctx.bezierCurveTo(6.5, 19.2, 19.2, 6.5, 35.0, 6.5);
-            ctx.fill();
-        },
-    };
-}
-
-export function createTriangleCanvas(pixelRatio: number, color: string = "#c8248b", scale: number = 1): CanvasDescriptor {
-    const line = 5 * pixelRatio * scale;
-
-    return {
-        width: 2 * line,
-        height: 2 * line,
-
-        draw(ctx) {
-            ctx.beginPath();
-            ctx.fillStyle = color;
-            ctx.moveTo(0, 0);
-            ctx.lineTo(2 * line, line);
-            ctx.lineTo(0, 2 * line);
+            ctx.moveTo(10.0, 35.0);
+            ctx.bezierCurveTo(10.0, 48.807119, 21.192881, 60.0, 35.0, 60.0);
+            ctx.bezierCurveTo(48.807119, 60.0, 60.0, 48.807119, 60.0, 35.0);
+            ctx.bezierCurveTo(60.0, 21.192881, 48.807119, 10.0, 35.0, 10.0);
+            ctx.bezierCurveTo(21.192881, 10.0, 10.0, 21.192881, 10.0, 35.0);
             ctx.fill();
         },
     };

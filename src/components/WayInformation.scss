@@ -25,5 +25,25 @@
             color: $color-black;
             font-weight: 600;
         }
+        &.is-accessible {
+            strong {
+                position: relative;
+                display: flex;
+                //padding-left: rem(25px);
+                color: $color-primary;
+
+                // &:before {
+                //     content: "";
+                //     position: absolute;
+                //     z-index: 10;
+                //     top: 1px;
+                //     left: 0;
+                //     width: 18px;
+                //     height: 22px;
+                //     background: url("../../public/icons/accessible.svg");
+                //     pointer-events: none;
+                // }
+            }
+        }
     }
 }
