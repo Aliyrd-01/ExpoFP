@@ -311,8 +311,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             wfDrawer.updateVisible("currentLocation", true);
             wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
-            wfDrawer.updateVisible("currentLocation", false);
-            wfDrawer.updateVisible("sourceLocation", true);
+            wfDrawer.updateVisible("currentLocation", false);            
         }
 
         if (!position || !routePoints.length) return;
