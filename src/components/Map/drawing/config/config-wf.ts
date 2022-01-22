@@ -311,7 +311,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             wfDrawer.updateVisible("currentLocation", true);
             wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
-            wfDrawer.updateVisible("currentLocation", false);            
+            wfDrawer.updateVisible("currentLocation", false);
         }
 
         if (!position || !routePoints.length) return;
@@ -329,7 +329,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (!shortestrPerp) return;
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
-            wfDrawer.updateSkipdim(`Dot_${index}`, false);
+            wfDrawer.updateVisible(`Dot_${index}`, false);
     }
 
     if (context.updatable) {
