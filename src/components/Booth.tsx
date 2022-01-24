@@ -3,12 +3,14 @@ import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
+import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import settings from "../tools/settings";
 import { t } from "../utils/i18n";
+import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
+import Button from "./Button";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
-import { useAutorun } from "../utils/mobx";
-import { GaEventActions, sendEventToGa } from "../tools/gtag";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -159,6 +161,17 @@ function Booth() {
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
+                {settings.wayfinding && (
+                    <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
+                        <Button
+                            text={t("Directions")}
+                            onClick={() => {
+                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false);
+                                store.showOverlay();
+                            }}
+                        />
+                    </div>
+                )}
             </OverlayContent>
         );
     });

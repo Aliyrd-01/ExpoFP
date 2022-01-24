@@ -6,7 +6,8 @@ export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId) return;
 
     timeoutId = window.setTimeout(async function () {
-        const ipData = await getIpData();
+
+        //const ipData = await getIpData();
 
         const language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
         const data = {
@@ -20,8 +21,9 @@ export default function reportError(e: Partial<ErrorEvent>) {
             userAgent: navigator.userAgent,
             language,
             group: "FP",
-            subject: "FP JS error: " + document.location.host + " in " + ipData.country,
-            ...ipData,
+            url: document.location,
+            subject: "FP JS error: " + document.location.host, // + " in " + ipData.country,
+            //...ipData
         };
 
         logger.info("Sending error report", data);
@@ -111,23 +113,23 @@ function createSlackMessage(data) {
     return res;
 }
 
-async function getIpData() {
-    try {
-        const ipInfoRequest = await fetch("https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg");
-        const ipInfo = await ipInfoRequest.json();
+// async function getIpData() {
+//     try {
+//         const ipInfoRequest = await fetch("https://geo.ipify.org/api/v1?apiKey=at_3dMzE1vaZp2Kd8NxMV7HukiFFjutg");
+//         const ipInfo = await ipInfoRequest.json();
 
-        logger.log("ipify", ipInfo, ipInfoRequest);
+//         logger.log("ipify", ipInfo, ipInfoRequest);
 
-        if (ipInfoRequest.ok) {
-            return {
-                ip: ipInfo.ip,
-                ...ipInfo.location,
-            };
-        } else {
-            return { ip: ipInfo.messages };
-        }
-    } catch (e) {
-        logger.error(e);
-        return { ip: e.message };
-    }
-}
+//         if (ipInfoRequest.ok) {
+//             return {
+//                 ip: ipInfo.ip,
+//                 ...ipInfo.location,
+//             };
+//         } else {
+//             return { ip: ipInfo.messages };
+//         }
+//     } catch (e) {
+//         logger.error(e);
+//         return { ip: e.message };
+//     }
+// }

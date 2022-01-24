@@ -85,6 +85,18 @@
 
     &__buy {
         @include button;
+        margin: 2rem 0 0.5rem;
+        a {
+            width: 100%;
+        }
+    }
+
+    &__directions {
+        @include button;
+        margin: 0.5rem 0;
+        > button {
+            cursor: pointer;
+        }
     }
 
     &__reserve-instructions {

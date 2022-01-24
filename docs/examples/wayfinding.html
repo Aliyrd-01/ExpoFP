@@ -12,19 +12,21 @@ nav_order: 200
     </head>
     <body>
         <div id="floorplan">Loading...</div>
-        <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
+        <script src="http://localhost:8080/expofp.js" crossorigin="anonymous"></script>
         <script>
             var fp = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
-                eventId: "wayfinding",
+                eventId: "park-pobedy",
                 noOverlay: false,
                 onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
-                onFpConfigured: () => fp.selectRoute("1512", "1205"),
+                //onFpConfigured: () => fp.selectRoute("PHARMACY", "Hotel"),
                 onDirection: (e) => {
-                    if (!e.points || !e.points.length) fp.selectCurrentPosition(null);
+                    if (!e.lines || !e.lines.length) fp.selectCurrentPosition(null);
                     else {
-                        let middlePoint = e.points[Math.floor(e.points.length / 2)];
-                        fp.selectCurrentPosition(middlePoint);
+                        let middleLine = e.lines[Math.floor(e.lines.length / 2)];
+                        const x = (middleLine.p0.x + middleLine.p1.x) / 2;
+                        const y = (middleLine.p0.y + middleLine.p1.y) / 2;
+                        fp.selectCurrentPosition({ x: x, y: y }, false);
                     }
                 },
             });

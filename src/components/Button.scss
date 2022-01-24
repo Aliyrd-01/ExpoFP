@@ -1,0 +1,27 @@
+@import "../styles/helpers.scss";
+
+.button-s {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: rem(400px);
+    min-height: rem(43px);
+    padding: rem(10px 20px);
+    background: $color-primary;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+    color: $color-white;
+    font-size: rem(16px);
+    font-weight: 600;
+    transition: background 0.1s ease-in-out;
+
+    &:hover,
+    &:active {
+        background: $color-primaryLight;
+    }
+    &:disabled {
+        background: $color-gray;
+    }
+}

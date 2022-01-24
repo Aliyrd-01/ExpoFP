@@ -1,0 +1,87 @@
+@import "../styles/helpers.scss";
+$input-height: 50px;
+
+.autocomplete {
+    $this: &;
+    position: relative;
+    min-height: rem($input-height);
+
+    &:before {
+        content: "";
+        position: absolute;
+        z-index: 10;
+        top: rem(22px);
+        right: 15px;
+        width: 11px;
+        height: 6px;
+        background: url("../../public/icons/arrow-down.svg");
+        pointer-events: none;
+    }
+    &__input {
+        width: 100%;
+        height: rem($input-height);
+        padding: rem(0 35px 0 15px);
+        background: $color-white;
+        border: 1px solid $color-lightgray;
+        outline: none;
+        font-size: rem(16px);
+        font-weight: 600;
+        border-radius: 0;
+        -webkit-appearance: none !important;
+    }
+    &.is-open {
+        z-index: 15;
+
+        #{$this}__inner {
+            max-height: unset;
+            box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.1);
+        }
+        #{$this}__input {
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        #{$this}__options {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+    &__inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-height: rem($input-height);
+    }
+    &__options {
+        visibility: hidden;
+        opacity: 0;
+        max-height: 45vh;
+        overflow-y: auto;
+        background: $color-white;
+        border: 1px solid $color-lightgray;
+        border-top: 0;
+
+        & > ul {
+            list-style: none;
+            margin: 0;
+            padding: rem(5px 0);
+
+            li {
+                padding: rem(6px 15px);
+                color: $color-darkgray;
+                cursor: pointer;
+
+                &.is-active {
+                    background: $color-lightgray;
+                }
+                &:hover {
+                    background: $color-ultraLightgray;
+                }
+            }
+        }
+    }
+    &__empty {
+        padding: rem(10px 15px);
+        color: $color-darkgray;
+    }
+}

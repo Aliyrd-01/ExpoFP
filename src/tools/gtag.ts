@@ -24,6 +24,8 @@ export enum GaEventActions {
     ClickGooglePlus = "Click Google Plus",
     ClickXing = "Click Xing",
     ClickYoutube = "Click Youtube",
+
+    ClickDirections = "Click Directions",
 }
 
 export function sendEventToGa(category: string, action: GaEventActions, label: string) {

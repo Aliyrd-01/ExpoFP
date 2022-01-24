@@ -1,0 +1,28 @@
+$overlay-height: 3.5rem;
+
+// responsive
+$grid-breakpoints: (
+    xs: 0,
+    sm: 480px,
+    md: 768px,
+    lg: 998px,
+    xl: 1100px,
+);
+
+// Rem settings
+$rem-baseline: 16;
+$rem-baseline-px: 16px;
+$rem-fallback: false;
+$rem-px-only: false;
+
+// Colors
+$color-white: #ffffff;
+$color-black: #333333;
+// $color-primary: #5690ff;
+// $color-primaryLight: #6b9eff;
+$color-primary: #41b6e7;
+$color-primaryLight: #2f99c7;
+$color-gray: #949494;
+$color-darkgray: #5e5e5e;
+$color-lightgray: #e4e4e4;
+$color-ultraLightgray: #f2f2f2;

@@ -1,0 +1,12 @@
+@mixin overlay-bar-icon {
+    height: $overlay-height;
+    min-width: 3rem;
+    line-height: $overlay-height;
+    text-align: center;
+    font-size: 1.3rem;
+    text-decoration: none !important;
+    color: rgba(0, 0, 0, 0.4) !important; //#999999
+    .-exhibitor-featured & {
+        color: #999999 !important;
+    }
+}

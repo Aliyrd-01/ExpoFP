@@ -39,7 +39,7 @@ export default function configYah(context: DrawerContext) {
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter("yah" + drawerSeq++, TrianglePainter, 150);
+            drawer = context.requirePainter("yah" + drawerSeq++, TrianglePainter, 160);
         }
     }
 

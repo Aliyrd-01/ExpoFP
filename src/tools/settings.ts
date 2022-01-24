@@ -6,6 +6,7 @@ let settings = {
     // this is done for template to work
     EXPO: window["__efpEvent"], //process.env.REACT_APP_EFP_EXPO,
     borderless: false,
+    wayfinding: false,
     // borderWidth: 1,
     colors: {
         // base: "#ebebeb",

@@ -1,5 +1,5 @@
 import copyToClipboard from "copy-to-clipboard";
-import { VisibilityProperty } from "csstype";
+import * as CSS from "csstype";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
 import data from "../data";
@@ -32,7 +32,7 @@ window.setTimeout(function () {
 
 function Menu() {
     const s = useLocalStore(() => ({
-        logoVisibility: "visible" as VisibilityProperty,
+        logoVisibility: "visible" as CSS.Property.Visibility,
         shown: false,
         shownTimeout: undefined as number,
     }));
@@ -140,7 +140,7 @@ function Menu() {
         const loc = window.location;
         const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map((x) => x.id).join("|");
         copyToClipboard(url);
-        alert(t("Link copied to clipboard.\nOpen it on another device to import bookmarks."));
+        alert(t("Link copied to clipboard.Open it on another device to import bookmarks."));
     }
 
     function close() {

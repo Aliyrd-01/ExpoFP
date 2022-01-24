@@ -11,6 +11,7 @@ import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
 import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
+import Button from "./Button";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import { FillMode } from "./Slider/ImageSliderData";
@@ -198,6 +199,23 @@ function ExhibitorComponent() {
                             </a>
                         ))}
                     </div>
+                    {settings.wayfinding && (
+                        <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
+                            <Button
+                                text={t("Directions")}
+                                onClick={() => {
+                                    async function pushRoute() {
+                                        store.routeStore.clickRoute(
+                                            null,
+                                            exhibitor.booths[0],
+                                            uiState.selectedRoute?.exceptUnaccessible || false
+                                        );
+                                    }
+                                    pushRoute().then(() => setTimeout(() => store.showOverlay(), 300));
+                                }}
+                            />
+                        </div>
+                    )}
                     {exhibitor.description || exhibitor.logo ? (
                         <div
                             className={classNames({
@@ -411,7 +429,7 @@ function ExhibitorComponent() {
         xhr.setRequestHeader("Content-Type", "application/json");
 
         function er() {
-            alert(t("Error sending login instructions."));
+            alert(t("Error sending login instructions"));
         }
 
         xhr.onload = function (e) {
@@ -419,7 +437,7 @@ function ExhibitorComponent() {
                 er();
                 return;
             }
-            alert(t("A link to edit profile was sent to {{email}}.", { email }));
+            alert(t("A link to edit profile was sent to {{email}}", { email }));
         };
         xhr.onerror = function (e) {
             logger.error("Error", e);

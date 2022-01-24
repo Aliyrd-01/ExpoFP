@@ -1,11 +1,9 @@
-import CategoryStore, { Category } from '../CategoryStore';
-import RootStore from '../RootStore';
-import { generateUniqueSlug } from '../../tools/slug';
-import data from '../../data';
-import logger from '../../tools/logger';
-import { sortByName } from '../../utils';
-import { Exhibitor } from '../ExhibitorStore';
-
+import data from "../../data";
+import logger from "../../tools/logger";
+import { generateUniqueSlug } from "../../tools/slug";
+import { sortByName } from "../../utils";
+import CategoryStore, { Category } from "../CategoryStore";
+import RootStore from "../RootStore";
 
 export default function initCategories(store: RootStore) {
     const { categoryStore, exhibitorStore } = store;
@@ -18,13 +16,13 @@ export default function initCategories(store: RootStore) {
         c.exhibitors = [];
         c.slug = generateUniqueSlug(c.name);
         for (const e of data.exhibitors || []) {
-            if (e.categories.filter(ec => ec === b.id)[0]) {
+            if (e.categories.filter((ec) => ec === b.id)[0]) {
                 const ex = exhibitorStore.exhibitorById.get(e.id);
-                ex.categories.push(c as Category)
+                ex.categories.push(c as Category);
                 c.exhibitors.push(ex);
-            }        
+            }
         }
-        (c['store'] as CategoryStore) = categoryStore;
+        (c["store"] as CategoryStore) = categoryStore;
         categoryStore.categories.push(c as Category);
     }
 
@@ -33,5 +31,5 @@ export default function initCategories(store: RootStore) {
     // dispose
     delete data.categories;
     delete data.exhibitors;
-    logger.log('initCategories', categoryStore.categories.length);
+    logger.log("initCategories", categoryStore.categories.length);
 }

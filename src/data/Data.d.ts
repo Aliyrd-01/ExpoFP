@@ -18,6 +18,7 @@ interface Data {
     reserveInstructions: string;
     sendLoginLinkUrl: string;
     trackerUrl: string;
+    hideWayInformation: boolean;
     // hideCompanies: boolean;
     dimensionless: boolean;
     hideCategoriesLink: boolean;
@@ -61,6 +62,7 @@ interface RawBoothBase {
     id: number;
     name: string;
     title: string;
+    externalId: string;
     // special?: true;
     // rect: Rect;
     // noLabels: boolean;
@@ -73,6 +75,7 @@ interface RawBoothBase {
 interface RawExhibitor {
     id: number;
     name: string;
+    externalId: string; //new
     featured: boolean; //new
     advertise: boolean;
     description: string;

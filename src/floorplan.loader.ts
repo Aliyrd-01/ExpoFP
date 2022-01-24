@@ -1,3 +1,4 @@
+import _locales from "../public/locales/_locales";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -5,7 +6,6 @@ import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isFromDesigner from "./utils/is-from-designer";
 import useShadow from "./utils/use-shadow";
-import _locales from "../public/locales/_locales";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -30,7 +30,23 @@ export default class FloorPlanLoader implements FloorPlan {
     // options
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
-    selectBooth(name: string) {
+    onFpConfigured: () => void;
+
+    onDirection: (e: FloorPlanDirectionEvent) => void;
+
+    selectBooth(nameOrExternalId: string | string[]) {
+        nr();
+    }
+
+    selectExhibitor(nameOrExternalId: string | string[]) {
+        nr();
+    }
+
+    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
+        nr();
+    }
+
+    selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void {
         nr();
     }
 
@@ -39,6 +55,8 @@ export default class FloorPlanLoader implements FloorPlan {
         this.noOverlay = !!options.noOverlay;
 
         this.onBoothClick = options.onBoothClick;
+        this.onFpConfigured = options.onFpConfigured;
+        this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;
         });
@@ -89,6 +107,7 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
+        const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = isFromDesigner
             ? `https://efp-data.s3.amazonaws.com/expos/${eventId}/data/fp.svg.js`
             : dataUrlBase + "fp.svg.js";
@@ -120,7 +139,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(fpUrl)]);
+            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(wfDataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);

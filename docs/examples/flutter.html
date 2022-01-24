@@ -1,16 +1,32 @@
----
-title: Flutter App (IOS/Android)
-parent: Examples
-nav_order: 300
----
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta http-equiv="refresh" content="0; url=https://github.com/expofp/expofp-flutter-example" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width" />
     </head>
     <body>
-        <a href="https://github.com/expofp/expofp-flutter-example">See source code</a>
+        <div id="floorplan">Loading...</div>
+        <script src="http://localhost:8080/expofp.js" crossorigin="anonymous"></script>
+        <!-- <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script> -->
+        <script>
+            let fp = new ExpoFP.FloorPlan({
+                element: document.querySelector("#floorplan"),
+                eventId: "etldemo",
+                noOverlay: false,
+                onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
+                onFpConfigured: () => fp.selectRoute("1300", "Seminar Room-3"),
+                onDirection: (e) => {
+                    if (!e.lines || !e.lines.length) {
+                    } // fp.selectCurrentPosition(null, false, 45);
+                    else {
+                        let middleLine = e.lines[Math.floor(e.lines.length / 2)];
+                        const x = (middleLine.p0.x + middleLine.p1.x) / 2;
+                        const y = (middleLine.p0.y + middleLine.p1.y) / 2;
+
+                        setTimeout(() => fp.selectCurrentPosition({ x: x, y: y - 0 }, false), 200);
+                    }
+                },
+            });
+        </script>
     </body>
 </html>

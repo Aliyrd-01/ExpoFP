@@ -5,7 +5,7 @@ import settings from "../tools/settings";
 
 function parseSvg(text: string) {
     const parser = new DOMParser();
-    return (parser.parseFromString(text, "image/svg+xml").documentElement as any) as SVGElement;
+    return parser.parseFromString(text, "image/svg+xml").documentElement as any as SVGElement;
 }
 
 //if (typeof __fpBorderWidth === "undefined") window["__fpBorderWidth"] = 2;
@@ -27,7 +27,7 @@ if ((svg.firstChild as Element).tagName === "parsererror") {
 const classFill = new Map<string, string>();
 d3.select(svg)
     .selectAll("style")
-    .each(function() {
+    .each(function () {
         const css = (this as any).textContent as string;
         const r = /\.([a-z0-9.]+)\s*{[^}]*fill\s*:\s*([^};]+);[^}]*}/gi;
         let m: string[];
@@ -41,7 +41,7 @@ d3.select(svg)
 // set fill attrs for elements having class attrs
 d3.select(svg)
     .selectAll("*[class]")
-    .each(function() {
+    .each(function () {
         const el = this as SVGGraphicsElement;
         el.style.fill = classFill.get(el.className.baseVal);
     });
@@ -49,12 +49,19 @@ d3.select(svg)
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
+settings.wayfinding = d3.select(svg).select('[data-layer="WF"]>path').node() ? true : false;
+
 let svgArea: Rect;
 
-const viewboxRect = d3
-    .select(svg)
-    .select("rect#VIEWBOX")
-    .node() as SVGRectElement;
+const floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[]).map((f) => {
+    f.remove();
+    return {
+        name: f.dataset.floor,
+        rect: Rect.fromSvgRectElement(f),
+    };
+});
+
+const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 
 if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
@@ -83,7 +90,7 @@ if (viewboxRect) {
 
 logger.log("svgArea", svgArea, "svgViewBox", svgViewBox);
 
-export { svgArea, svgViewBox };
+export { svgArea, svgViewBox, floors };
 // export const svgSize = new Size(svgViewBox.w, svgViewBox.h);
 // export let svgVisibleWidth;
 

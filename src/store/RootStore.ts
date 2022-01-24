@@ -1,17 +1,19 @@
 import { action } from "mobx";
+import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
+import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
-import FloorPlanReady from "../floorplan.ready";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
     readonly exhibitorStore: ExhibitorStore;
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
+    readonly routeStore: RouteStore;
     fp: FloorPlanReady;
 
     constructor() {
@@ -19,6 +21,7 @@ export default class RootStore {
         this.categoryStore = new CategoryStore(this);
         this.exhibitorStore = new ExhibitorStore(this);
         this.boothStore = new BoothStore(this);
+        this.routeStore = new RouteStore(this);
         this.uiState = new UIState(this);
     }
 
@@ -28,8 +31,10 @@ export default class RootStore {
         this.uiState.details = exhibitor;
     }
 
-    @action selectBooth(booth: Booth) {
-        this.uiState.details = booth;
+    @action selectBooth(booth: Booth | Booth[]) {
+        let b = Array.isArray(booth) ? booth : [booth];
+        this.uiState.details = b[0];
+        this.moveToList(b);
     }
 
     @action reset() {
@@ -96,6 +101,12 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
+    @action clickFloor(floor) {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.moveToRect = floor.rect;
+        this.showMap();
+    }
+
     @action clickSeminars() {
         this.clickCategory(this.categoryStore.seminarsCategory);
     }
@@ -134,6 +145,9 @@ export default class RootStore {
 
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
+
+        if (this.uiState.selectedRoute?.from && this.uiState.selectedRoute?.to) return;
+
         if (!booth) {
             this.uiState.details = null;
             return;
@@ -141,7 +155,7 @@ export default class RootStore {
 
         if (this.uiState.onBoothClick) {
             const e: FloorPlanBoothClickEvent = {
-                target: booth
+                target: booth,
             };
             this.uiState.onBoothClick(e);
         }
@@ -211,14 +225,14 @@ export default class RootStore {
         // take only to booths and exhibitors, ignore categories
         items = items || this.uiState.listItems;
         const booths = [];
-        items.forEach(item => {
+        items.forEach((item) => {
             if (item instanceof Exhibitor) {
                 booths.push(...item.booths);
             } else if (item instanceof BoothBase) {
                 booths.push(item);
             }
         });
-        console.log("zzz", booths);
+        //console.log("zzz", booths);
         this.uiState.moveToBooths = booths;
         // commit("setMoveToBooths", booths);
     }

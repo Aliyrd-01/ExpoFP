@@ -9,6 +9,7 @@ import { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
+import { Route } from "./RouteStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -25,13 +26,13 @@ export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
-    @observable.ref details: Booth | Exhibitor = null;
+    @observable.ref details: Booth | Exhibitor | Route = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
-
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
+    @observable moveToRect: Rect = null;
     @observable menu = false;
     @observable searchFocused = false;
     @observable printingPdf = false;
@@ -62,6 +63,10 @@ export default class UIState {
         return this.rootStore.fp.onBoothClick;
     }
 
+    get onDirection() {
+        return this.rootStore.fp.onDirection;
+    }
+
     @computed({ keepAlive: true }) get selectedExhibitor() {
         return this.details instanceof Exhibitor ? this.details : null;
     }
@@ -72,6 +77,10 @@ export default class UIState {
 
     @computed({ keepAlive: true }) get selectedCategory() {
         return this.list.type === "category" ? this.list.category : null;
+    }
+
+    @computed({ keepAlive: true }) get selectedRoute() {
+        return this.details instanceof Route ? this.details : null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -225,6 +234,8 @@ export default class UIState {
     }
 
     @computed get listItems(): ListItem[] {
+        if (this.details instanceof Route && this.details.from && this.details.to) return [this.details.from, this.details.to];
+
         switch (this.list.type) {
             case "search":
                 return this.searchItems;
@@ -251,9 +262,15 @@ export default class UIState {
     //     return new Set(getters.listBoothsIds);
     // }
     @computed({ keepAlive: true }) get selectedBooths() {
-        let arr: Booth[];
+        let arr: Booth[] = [];
         if (this.selectedExhibitor) arr = this.selectedExhibitor.booths;
         else if (this.selectedBooth) arr = [this.selectedBooth];
+
+        const route = this.selectedRoute;
+
+        if (route?.from) arr.push(route.from);
+        if (route?.to) arr.push(route.to);
+
         return new Set(arr);
     }
     // @computed get selectedBoothIdsSet() {
