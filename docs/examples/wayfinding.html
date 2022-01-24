@@ -12,14 +12,14 @@ nav_order: 200
     </head>
     <body>
         <div id="floorplan">Loading...</div>
-        <script src="http://localhost:8080/expofp.js" crossorigin="anonymous"></script>
+        <script src="https://demo.expofp.com/packages/master/expofp.js" crossorigin="anonymous"></script>
         <script>
             var fp = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
-                eventId: "park-pobedy",
+                eventId: "demo",
                 noOverlay: false,
                 onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
-                //onFpConfigured: () => fp.selectRoute("PHARMACY", "Hotel"),
+                onFpConfigured: () => fp.selectRoute("554", "1207"),
                 onDirection: (e) => {
                     if (!e.lines || !e.lines.length) fp.selectCurrentPosition(null);
                     else {
