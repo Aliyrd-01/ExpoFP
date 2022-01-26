@@ -31,10 +31,10 @@ export default class RootStore {
         this.uiState.details = exhibitor;
     }
 
-    @action selectBooth(booth: Booth | Booth[]) {
+    @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
-        this.moveToList(b);
+        if (focus) this.moveToList(b);
     }
 
     @action reset() {
@@ -163,7 +163,7 @@ export default class RootStore {
         if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
             this.selectExhibitor(booth.exhibitors[0]);
         } else {
-            this.selectBooth(booth);
+            this.selectBooth(booth, false);
         }
         this.showMap();
         // commit("setMenu", false);
