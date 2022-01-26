@@ -144,8 +144,8 @@ export function createExhibitorsDetailsCanvas(
     );
 
     const w = Math.max(
-        ...mainLines.map((x) => measureText(mainFont, x.substring(0, 4))),
-        ...detailsLines.map((x) => measureText(mainFont, x.substring(0, 4)))
+        ...mainLines.map((x) => measureText(mainFont, x.substring(0, 4).replace(/[0-9]/g, "3").replace(/[A-Z]/gi, "A"))),
+        ...detailsLines.map((x) => measureText(detailFont, x.substring(0, 4).replace(/[0-9]/g, "3").replace(/[A-Z]/gi, "A")))
     );
 
     const height =
