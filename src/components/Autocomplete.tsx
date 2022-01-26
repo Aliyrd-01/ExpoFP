@@ -4,7 +4,7 @@ import useOnClickOutside from "../utils/useOnClickOutside";
 import "./Autocomplete.scss";
 
 export interface OptionObject {
-    value: string; // unique
+    value: string; // must be unique
     label: string;
 }
 export interface AutocompleteProps {
@@ -32,6 +32,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     const [activeOptionIndex, setActiveOptionIndex] = useState(
         objectsMode ? getActiveOptionIndexByValue(value, true) : getActiveOptionIndexByValue(value) || null
     );
+    const [focusOptionIndex, setFocusOptionIndex] = useState(activeOptionIndex);
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
@@ -42,6 +43,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             const activeOption = options[getActiveOptionIndexByValue(value, true)];
             setInput(activeOption.label);
         } else setInput(value);
+        setSearchValue("");
+        setFilteredOptions([]);
         onChange(value);
     };
 
@@ -56,6 +59,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             setActiveOptionIndex(getActiveOptionIndexByValue(event.target.innerText));
         }
         setSearchValue("");
+        setFocusOptionIndex(null);
         setShowOptionsDropdown(false);
     };
 
@@ -63,24 +67,33 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
         if (event.keyCode === 13) {
             if (filteredOptions.length) {
                 const nextActiveIndex = getActiveOptionIndexByValue(
-                    filteredOptions[activeOptionIndex],
+                    objectsMode ? filteredOptions[focusOptionIndex]["value"] : filteredOptions[focusOptionIndex],
                     objectsMode ? true : false
                 );
                 if (objectsMode) changeValue(options[nextActiveIndex]["value"], true);
                 else changeValue(options[nextActiveIndex]);
                 setActiveOptionIndex(nextActiveIndex);
+                setFocusOptionIndex(nextActiveIndex);
             } else {
-                if (objectsMode) changeValue(options[activeOptionIndex]["value"], true);
-                else changeValue(options[activeOptionIndex]);
-                setActiveOptionIndex(activeOptionIndex);
+                if (objectsMode) changeValue(options[focusOptionIndex]["value"], true);
+                else changeValue(options[focusOptionIndex]);
+                setActiveOptionIndex(focusOptionIndex);
             }
             setShowOptionsDropdown(false);
         } else if (event.keyCode === 38) {
-            if (!showOptionsDropdown || activeOptionIndex === 0) return;
-            setActiveOptionIndex(activeOptionIndex - 1);
+            if (!showOptionsDropdown || focusOptionIndex === 0) return;
+            setFocusOptionIndex(focusOptionIndex - 1);
         } else if (event.keyCode === 40) {
             if (!showOptionsDropdown) setShowOptionsDropdown(true);
-            else activeOptionIndex !== null ? setActiveOptionIndex(activeOptionIndex + 1) : setActiveOptionIndex(0);
+            else {
+                const nextFocus = focusOptionIndex + 1;
+                if (
+                    (options.length && nextFocus >= options.length) ||
+                    (filteredOptions.length && nextFocus >= filteredOptions.length)
+                )
+                    return false;
+                else focusOptionIndex !== null ? setFocusOptionIndex(nextFocus) : setFocusOptionIndex(0);
+            }
         }
     };
 
@@ -89,6 +102,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     };
 
     const onInputChange = (event) => {
+        setShowOptionsDropdown(true);
+        setFocusOptionIndex(0);
         const searchText = event.target.value;
         let result = [];
         if (objectsMode) result = options.filter((option) => option.label.toLowerCase().indexOf(searchText.toLowerCase()) > -1);
@@ -97,7 +112,6 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
         setInput(event.target.value);
         setSearchValue(event.target.value);
         setFilteredOptions(result.length ? result : []);
-        setActiveOptionIndex(null);
     };
 
     const showOptions = () => {
@@ -107,17 +121,18 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             return (
                 <ul>
                     {allOptions.map((option, index) => {
-                        let activeClass;
-                        if (index === activeOptionIndex) activeClass = "is-active";
+                        let currentClass;
+                        if (index === focusOptionIndex) currentClass = "is-focus";
+                        if (!filteredOptions.length && index === activeOptionIndex) currentClass = "is-active";
                         if (objectsMode)
                             return (
-                                <li key={index} className={activeClass} data-value={option.value} onClick={onClickOption}>
+                                <li key={index} className={currentClass} data-value={option.value} onClick={onClickOption}>
                                     {option.label}
                                 </li>
                             );
                         else
                             return (
-                                <li key={index} className={activeClass} onClick={onClickOption}>
+                                <li key={index} className={currentClass} onClick={onClickOption}>
                                     {option}
                                 </li>
                             );

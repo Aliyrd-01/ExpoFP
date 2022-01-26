@@ -8,7 +8,7 @@ export default {
 } as Meta;
 
 const Template: Story<AutocompleteProps> = (args) => {
-    const [value, setValue] = useState<string>("01.351");
+    const [value, setValue] = useState<string>("02");
     return (
         <>
             <Autocomplete {...args} onChange={setValue} value={value} />
@@ -22,7 +22,7 @@ const Template: Story<AutocompleteProps> = (args) => {
 export const arrayOfStrings = Template.bind({});
 arrayOfStrings.args = {
     placeholder: "Select Direction from",
-    options: ["one1", "one2", "01.351", "two1", "two2", "three1", "three2", "four", "four2", "five", "five2", "six", "six2"],
+    options: ["one1", "one2", "02", "two1", "two2", "three1", "three2", "four", "four2", "five", "five2", "six", "six2"],
 };
 
 export const arrayOfObjects = Template.bind({});
@@ -30,21 +30,28 @@ arrayOfObjects.args = {
     placeholder: "Select Direction from",
     options: [
         {
-            value: "3102",
-            label:
-                "Event Engine - 3102 Event Engine - 3102 Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102Event Engine - 3102",
+            value: "01",
+            label: "Event Engine - 01",
         },
         {
-            value: "1403",
-            label: "EventMobi - 1403",
+            value: "02",
+            label: "EventMobi - 02",
         },
         {
-            value: "01.351",
-            label: "Lumishore - 01.351",
+            value: "03",
+            label: "Lumishore - 03",
         },
         {
-            value: "01.351",
-            label: "Navico - 01.152",
+            value: "04",
+            label: "Navico - 04",
+        },
+        {
+            value: "05",
+            label: "Nabuus - 05",
+        },
+        {
+            value: "06",
+            label: "Namokq - 06",
         },
     ],
 };
