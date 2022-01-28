@@ -74,6 +74,9 @@ $input-height: 50px;
                 &.is-active {
                     background: $color-lightgray;
                 }
+                &.is-focus {
+                    background: $color-ultraLightgray;
+                }
                 &:hover {
                     background: $color-ultraLightgray;
                 }
