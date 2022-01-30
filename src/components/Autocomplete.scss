@@ -29,6 +29,16 @@ $input-height: 50px;
         border-radius: 0;
         -webkit-appearance: none !important;
     }
+    &__clear {
+        position: absolute;
+        z-index: 10;
+        top: rem(17px);
+        right: 32px;
+        width: 16px;
+        height: 16px;
+        background: url("../../public/icons/clear.svg") no-repeat center center;
+        cursor: pointer;
+    }
     &.is-open {
         z-index: 15;
 
@@ -43,6 +53,11 @@ $input-height: 50px;
         #{$this}__options {
             visibility: visible;
             opacity: 1;
+        }
+    }
+    &.with-clear {
+        #{$this}__input {
+            padding-right: rem(50px);
         }
     }
     &__inner {
