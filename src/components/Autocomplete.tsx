@@ -11,10 +11,11 @@ export interface AutocompleteProps {
     placeholder: string;
     options: string[] | (OptionObject | any)[];
     value?: string;
+    showClear?: boolean;
     onChange: (value: string) => void;
 }
 
-const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value, onChange }) => {
+const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value, showClear = false, onChange }) => {
     const isArrayOfObjects = (array) => {
         return Array.isArray(array) && array.some((el) => typeof el === "object") ? true : false;
     };
@@ -24,6 +25,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     };
 
     const refAutocomplete = useRef(null);
+    const refSearchInput = useRef(null);
     const [objectsMode] = useState(isArrayOfObjects(options));
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [input, setInput] = useState(
@@ -38,8 +40,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
 
     useOnClickOutside(refAutocomplete, () => setShowOptionsDropdown(false));
 
-    const changeValue = (value = "", isObjectMode = false) => {
-        if (isObjectMode) {
+    const changeValue = (value = "") => {
+        if (objectsMode && value) {
             const activeOption = options[getActiveOptionIndexByValue(value, true)];
             setInput(activeOption.label);
         } else setInput(value);
@@ -52,30 +54,49 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
         setFilteredOptions([]);
         if (objectsMode) {
             const dataValue = event.target.getAttribute("data-value");
-            changeValue(dataValue, true);
-            setActiveOptionIndex(getActiveOptionIndexByValue(dataValue, true));
+            const activeIndex = getActiveOptionIndexByValue(dataValue, true);
+            changeValue(dataValue);
+            setActiveOptionIndex(activeIndex);
+            setFocusOptionIndex(activeIndex);
         } else {
+            const activeIndex = getActiveOptionIndexByValue(event.target.innerText);
             changeValue(event.target.innerText);
-            setActiveOptionIndex(getActiveOptionIndexByValue(event.target.innerText));
+            setActiveOptionIndex(activeIndex);
+            setFocusOptionIndex(activeIndex);
         }
         setSearchValue("");
-        setFocusOptionIndex(null);
         setShowOptionsDropdown(false);
+    };
+
+    const clear = (setFocus = false) => {
+        changeValue("");
+        setActiveOptionIndex(null);
+        setFocusOptionIndex(null);
+        if (setFocus) refSearchInput.current.focus();
+    };
+
+    const onFocus = () => {
+        setShowOptionsDropdown(true);
+    };
+
+    const onBlur = () => {
+        if (!input && value) changeValue(value);
     };
 
     const onKeyDown = (event) => {
         if (event.keyCode === 13) {
+            if ((!input && focusOptionIndex === null) || (searchValue && focusOptionIndex === null)) return;
             if (filteredOptions.length) {
                 const nextActiveIndex = getActiveOptionIndexByValue(
                     objectsMode ? filteredOptions[focusOptionIndex]["value"] : filteredOptions[focusOptionIndex],
                     objectsMode ? true : false
                 );
-                if (objectsMode) changeValue(options[nextActiveIndex]["value"], true);
+                if (objectsMode) changeValue(options[nextActiveIndex]["value"]);
                 else changeValue(options[nextActiveIndex]);
                 setActiveOptionIndex(nextActiveIndex);
                 setFocusOptionIndex(nextActiveIndex);
             } else {
-                if (objectsMode) changeValue(options[focusOptionIndex]["value"], true);
+                if (objectsMode) changeValue(options[focusOptionIndex]["value"]);
                 else changeValue(options[focusOptionIndex]);
                 setActiveOptionIndex(focusOptionIndex);
             }
@@ -94,16 +115,16 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
                     return false;
                 else focusOptionIndex !== null ? setFocusOptionIndex(nextFocus) : setFocusOptionIndex(0);
             }
+        } else if (event.keyCode === 46) clear(true);
+        else if (event.keyCode === 27 && !searchValue) {
+            event.preventDefault();
+            setShowOptionsDropdown(false);
+            refSearchInput.current.blur();
         }
-    };
-
-    const onFocus = () => {
-        setShowOptionsDropdown(true);
     };
 
     const onInputChange = (event) => {
         setShowOptionsDropdown(true);
-        setFocusOptionIndex(0);
         const searchText = event.target.value;
         let result = [];
         if (objectsMode) result = options.filter((option) => option.label.toLowerCase().indexOf(searchText.toLowerCase()) > -1);
@@ -111,7 +132,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
 
         setInput(event.target.value);
         setSearchValue(event.target.value);
-        setFilteredOptions(result.length ? result : []);
+        setFocusOptionIndex(null);
+        setFilteredOptions(searchValue && result.length ? result : []);
     };
 
     const showOptions = () => {
@@ -140,20 +162,30 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
                 </ul>
             );
     };
-
     return (
         <>
-            <div ref={refAutocomplete} className={classNames("autocomplete", { "is-open": showOptionsDropdown })}>
+            <div
+                ref={refAutocomplete}
+                className={classNames("autocomplete", {
+                    "is-open": showOptionsDropdown,
+                    "with-clear": showOptionsDropdown && showClear,
+                })}
+            >
                 <div className={"autocomplete__inner"}>
                     <input
                         type="search"
                         className="autocomplete__input"
                         onChange={onInputChange}
                         onFocus={onFocus}
+                        onBlur={onBlur}
                         onKeyDown={onKeyDown}
                         value={input}
                         placeholder={placeholder}
+                        ref={refSearchInput}
                     />
+                    {showClear && showOptionsDropdown && input ? (
+                        <div className="autocomplete__clear" onClick={() => clear(true)}></div>
+                    ) : null}
                     {showOptionsDropdown ? <div className="autocomplete__options">{showOptions()}</div> : null}
                 </div>
             </div>
