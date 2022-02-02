@@ -1,9 +1,9 @@
 // import { observable } from 'mobx';
 import { computed } from "mobx";
 import Rect from "../core/Rect";
+import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
-import settings from "../tools/settings";
 
 // interface BoothState {
 //     hover: boolean;
@@ -19,13 +19,12 @@ export default class BoothStore {
     readonly rootStore: RootStore;
     readonly booths: Booth[] = [];
     @computed({ keepAlive: true }) get boothById() {
-        return new Map<number, Booth>(this.booths.map(c => [c.id, c]));
+        return new Map<number, Booth>(this.booths.map((c) => [c.id, c]));
     }
 
     @computed({ keepAlive: true }) get borderWidth() {
-        if (settings.EXPO === "groomexpo")
-            return 0.4;
-        const ar = this.booths.filter((_, i) => i % 10 === 0).map(x => x.rect.w + x.rect.h);
+        if (settings.EXPO === "groomexpo") return 0.4;
+        const ar = this.booths.map((x) => x.rect.w + x.rect.h);
         return ar.reduce((a, b) => a + b) / ar.length / 80;
     }
 
@@ -54,15 +53,15 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) private get inList() {
-        return this.uiState.listBooths.has((this as unknown) as Booth);
+        return this.uiState.listBooths.has(this as unknown as Booth);
     }
 
     @computed({ keepAlive: true }) get hover() {
-        return this.uiState.hoveredBooths.has((this as unknown) as Booth);
+        return this.uiState.hoveredBooths.has(this as unknown as Booth);
     }
 
     @computed({ keepAlive: true }) get selected() {
-        return this.uiState.selectedBooths.has((this as unknown) as Booth);
+        return this.uiState.selectedBooths.has(this as unknown as Booth);
     }
 
     @computed({ keepAlive: true }) get skipDim() {
@@ -97,7 +96,7 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     readonly exhibitors: Exhibitor[];
 
     @computed({ keepAlive: true }) get bookmarked() {
-        return !!this.exhibitors.find(x => x.bookmarked);
+        return !!this.exhibitors.find((x) => x.bookmarked);
     }
 
     // @computed({ keepAlive: true }) get reserved() {

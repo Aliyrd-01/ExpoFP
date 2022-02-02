@@ -1,9 +1,9 @@
 import { action, computed, observable } from "mobx";
+import { Line, lineLength } from "simple-geometry";
 import store from ".";
 import Rect from "../core/Rect";
 import svg from "../data/svg";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
-import { Line, lineLength } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";

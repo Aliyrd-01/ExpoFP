@@ -59,6 +59,7 @@
         "html-webpack-plugin": "^3.2.0",
         "i18next": "^19.4.4",
         "jsonschema": "^1.2.5",
+        "simple-geometry":"^1.0.5",
         "jspdf": "^1.5.3",
         "lz-string": "^1.4.4",
         "mobx": "^5.15.0",
