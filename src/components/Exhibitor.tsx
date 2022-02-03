@@ -207,7 +207,7 @@ function ExhibitorComponent() {
                                     async function pushRoute() {
                                         store.routeStore.clickRoute(
                                             null,
-                                            exhibitor.booths[0],
+                                            store.routeStore.tempToBooth || exhibitor.booths[0],
                                             uiState.selectedRoute?.exceptUnaccessible || false
                                         );
                                     }

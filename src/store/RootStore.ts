@@ -151,7 +151,7 @@ export default class RootStore {
         if (!booth) {
             this.uiState.details = null;
             return;
-        }
+        } else this.routeStore.tempToBooth = booth;
 
         if (this.uiState.onBoothClick) {
             const e: FloorPlanBoothClickEvent = {

@@ -13,6 +13,7 @@ export default class RouteStore {
     @observable routeLines: Line[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
+    @observable tempToBooth: Booth = null;
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
@@ -29,7 +30,10 @@ export default class RouteStore {
             );
 
         if (route?.from) list.push(route.from);
-        if (route?.to) list.push(route.to);
+        if (route?.to) {
+            this.tempToBooth = null;
+            list.push(route.to);
+        }
 
         setTimeout(() => {
             this.rootStore.moveToList(list);
