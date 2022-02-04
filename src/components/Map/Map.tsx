@@ -10,6 +10,7 @@ import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
+import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
 import isIframe from "../../utils/is-iframe";
 import isMac from "../../utils/is-mac";
@@ -136,6 +137,7 @@ export default function Map() {
     ));
 
     function moveToRect(rect: Rect, maxZoomScale: number = 4) {
+        if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
         const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
         zoomTo(z);
