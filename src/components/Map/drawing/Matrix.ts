@@ -4,6 +4,7 @@ import { m4 } from "twgl.js";
 import Rect from "../../../core/Rect";
 import Size from "../../../core/Size";
 import { svgArea } from "../../../data/svg";
+import logger from "../../../tools/logger";
 
 export default class Matrix {
     // svg -> -1..1
@@ -27,6 +28,8 @@ export default class Matrix {
     private zoomTransform: ZoomTransform;
 
     constructor(canvasSize: Size) {
+        logger.info(`new Matrix ${canvasSize?.width}x ${canvasSize?.height}`);
+
         this.canvasSize = canvasSize;
         this.visibleRect = Rect.fromXywh(0, 0, canvasSize.width, canvasSize.height);
         this.zoomTransform = zoomIdentity;
@@ -111,7 +114,7 @@ export default class Matrix {
         this.matrixChangeSubscribers.push(cb);
     }
     private fireMatrixChange() {
-        this.matrixChangeSubscribers.forEach(x => x(this.matrix));
+        this.matrixChangeSubscribers.forEach((x) => x(this.matrix));
     }
 
     //
