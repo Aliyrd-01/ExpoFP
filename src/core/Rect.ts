@@ -4,10 +4,18 @@ export default class Rect {
     y1: number;
     y2: number;
 
-    get h() { return Math.abs(this.y2 - this.y1); }
-    get w() { return Math.abs(this.x2 - this.x1); }
-    get cx() { return (this.x1 + this.x2) / 2; }
-    get cy() { return (this.y1 + this.y2) / 2; }
+    get h() {
+        return Math.abs(this.y2 - this.y1);
+    }
+    get w() {
+        return Math.abs(this.x2 - this.x1);
+    }
+    get cx() {
+        return (this.x1 + this.x2) / 2;
+    }
+    get cy() {
+        return (this.y1 + this.y2) / 2;
+    }
 
     private constructor(x1: number, y1: number, x2: number, y2: number) {
         if (x1 > x2) {
@@ -20,8 +28,8 @@ export default class Rect {
             y1 = y2;
             y2 = y1Orig;
         }
-        if (x1 >= x2 || y1 >= y2) {
-            //throw new Error(`Invalid rect ${x1} ${x2} ${y1} ${y2}`);
+        if (x1 > x2 || y1 > y2) {
+            throw new Error(`Invalid rect ${x1} ${x2} ${y1} ${y2}`);
         }
         this.x1 = x1;
         this.y1 = y1;
@@ -41,7 +49,7 @@ export default class Rect {
         return this.fromX1y1x2y2(cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2);
     }
 
-    static fromXywhRect(rect: { x: number, y: number, w: number, h: number }) {
+    static fromXywhRect(rect: { x: number; y: number; w: number; h: number }) {
         return this.fromX1y1x2y2(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
     }
 
@@ -52,15 +60,20 @@ export default class Rect {
         // let h = svgRect.height.baseVal.value;
         // if (w < 0) { x += w; w = -w; }
         // if (h < 0) { y += h; h = -h; }
-        return this.fromXywh(svgRect.x.baseVal.value, svgRect.y.baseVal.value, svgRect.width.baseVal.value, svgRect.height.baseVal.value);
+        return this.fromXywh(
+            svgRect.x.baseVal.value,
+            svgRect.y.baseVal.value,
+            svgRect.width.baseVal.value,
+            svgRect.height.baseVal.value
+        );
     }
 
     static fromMultiple(rects: Rect[]) {
         return Rect.fromX1y1x2y2(
-            Math.min(...rects.map(x => x.x1)),
-            Math.min(...rects.map(x => x.y1)),
-            Math.max(...rects.map(x => x.x2)),
-            Math.max(...rects.map(x => x.y2))
+            Math.min(...rects.map((x) => x.x1)),
+            Math.min(...rects.map((x) => x.y1)),
+            Math.max(...rects.map((x) => x.x2)),
+            Math.max(...rects.map((x) => x.y2))
         );
     }
 
@@ -83,9 +96,7 @@ export default class Rect {
         const y2 = Math.min(this.y2, r.y2);
         if (x2 >= x1 && y2 >= y1) {
             return Rect.fromX1y1x2y2(x1, y1, x2, y2);
-        }
-        else
-            return Rect.fromX1y1x2y2(0, 0, 0, 0);
+        } else return Rect.fromX1y1x2y2(0, 0, 0, 0);
     }
 
     getRotated90(): Rect {
@@ -106,7 +117,7 @@ export default class Rect {
     }
 
     scale(s: number) {
-        return Rect.fromX1y1x2y2(this.x1 * s, this.y1 * s, this.x2 * s, this.y2 * s)
+        return Rect.fromX1y1x2y2(this.x1 * s, this.y1 * s, this.x2 * s, this.y2 * s);
     }
 
     getArea() {
@@ -131,7 +142,7 @@ export default class Rect {
     }
 
     toString() {
-        return this.x1 + ',' + this.y1 + ',' + this.w + ',' + this.h;
+        return this.x1 + "," + this.y1 + "," + this.w + "," + this.h;
     }
 
     containsPoint(x: number, y: number) {
@@ -152,4 +163,3 @@ export default class Rect {
     //     const x2 = rotateX(this.x1);
     // }
 }
-
