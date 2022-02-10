@@ -1,6 +1,6 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineLength, Point, Rect, shiftPoint } from "simple-geometry";
+import { Line, lineAngle, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
 import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
 import store, { uiState } from "../../../../store";
@@ -242,6 +242,16 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
             wfDrawer.updateVisible(`Dot_${index}`, false);
+
+        var lines = [];
+        for (let index = 0; index < routeLines.length; index++) {
+            const line = routeLines[index];
+            if (pointIsOnLine(shortestrPerp.p, line.p0, line.p1)) {
+                lines.push({ p0: line.p0, p1: shortestrPerp.p });
+                break;
+            } else lines.push(line);
+        }
+        store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
     }
 
     if (context.updatable) {

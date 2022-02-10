@@ -64,7 +64,7 @@ export function createDetailsCanvas(
     } else if (b.exhibitors.length) {
         lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } else {
-        if (b.size) lines.push(b.size);
+        if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
         if (b.price && b.price !== "0") lines.push(b.price);
     }
 
@@ -73,7 +73,7 @@ export function createDetailsCanvas(
     // if (fixBooth) lines.push(b.title);
 
     const boothFontSize = fontSize * pixelRatio;
-    const detailFontSize = fontSize * pixelRatio;
+    const detailFontSize = 0.9 * fontSize * pixelRatio;
     const boothFont = getFont(boothFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
     const boothPadding = 1 * pixelRatio;
@@ -130,7 +130,7 @@ export function createExhibitorsDetailsCanvas(
     const detailsLines: string[] = [];
 
     const mainFontSize = frontSize * pixelRatio;
-    const detailFontSize = frontSize * pixelRatio;
+    const detailFontSize = 0.9 * frontSize * pixelRatio;
 
     const mainFont = getFont(mainFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);

@@ -24,6 +24,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
     function addPath(svgPath: SVGPathElement) {
         if (!svgPath.style.fill) return;
         const d = parseInt(svgPath.getAttribute("data-index"));
+        if (svgPath.style.fill === "none") return;
         const color = Color(svgPath.style.fill).vec4();
 
         const mesh = __fpPaths[d];

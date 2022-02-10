@@ -36,7 +36,7 @@ export default function Floors() {
                     <div
                         className="item"
                         key={f}
-                        onClick={() => store.clickFloor(floors.filter((fl) => fl.name == f)[0])}
+                        onClick={() => store.clickFloor(floors.filter((fl) => fl.name === f)[0])}
                         title={f}
                     >
                         {parseName(f)}
