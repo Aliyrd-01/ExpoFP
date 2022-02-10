@@ -3,6 +3,7 @@ import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
 import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
+import data from "../../../../data";
 import store, { uiState } from "../../../../store";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
@@ -86,6 +87,8 @@ function splitPolyLine(lines: Line[], interval: number): Point[] {
 }
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number) {
+    if (data.hideDirections) return;
+
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());

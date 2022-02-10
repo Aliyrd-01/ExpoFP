@@ -166,4 +166,4 @@ function Wayfinding() {
     });
 }
 
-export default () => useObserver(() => !uiState.menu && uiState.selectedRoute && <Wayfinding />);
+export default () => useObserver(() => settings.wayfinding && !uiState.menu && uiState.selectedRoute && <Wayfinding />);

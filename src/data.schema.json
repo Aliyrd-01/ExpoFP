@@ -62,10 +62,11 @@
             "type": "string",
             "description": "Locale to choose translation resouce file"
         },
- 		"hideWayInformation": {
+        "hideWayInformation": {
             "type": "boolean",
             "description": "Hide Way information"
-        },        "dimensionless": {
+        },
+        "dimensionless": {
             "type": "boolean",
             "description": "Hide booth size"
         },
@@ -89,11 +90,18 @@
             "type": "boolean",
             "description": "Hide the 'Categories' link"
         },
+        "hideDirections": {
+            "type": "boolean",
+            "description": "Hide wayfinding features"
+        },
+        "hideExhibitorBoothNumber": {
+            "type": "boolean",
+            "description": "Hide number if booth has exhibitor"
+        },
         "booths": {
             "type": "array",
             "items": {
-                "anyOf": [
-                    {
+                "anyOf": [{
                         "type": "object",
                         "description": "Regular booth (with exhibitor)",
                         "required": ["id", "name", "exhibitors"],
@@ -115,8 +123,7 @@
                                 }
                             }
                         }
-                    },
-                    {
+                    }, {
                         "type": "object",
                         "description": "Regular booth (without exhibitor, unavailable for reserve because `onHold` or `reserved` is set)",
                         "required": ["id", "name"],
@@ -140,8 +147,7 @@
                                 "description": "Show booth as reserved (hide company from it)"
                             }
                         }
-                    },
-                    {
+                    }, {
                         "type": "object",
                         "description": "Regular booth (without exhibitor, available for reserve)",
                         "required": ["id", "name"],
@@ -176,8 +182,7 @@
                                 "type": "string"
                             }
                         }
-                    },
-                    {
+                    }, {
                         "type": "object",
                         "description": "Special booth",
                         "required": ["id", "name"],

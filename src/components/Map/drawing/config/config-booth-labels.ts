@@ -1,4 +1,5 @@
 import { reaction } from "mobx";
+import data from "../../../../data";
 import { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
@@ -190,7 +191,13 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createExhibitorsDetailsCanvas(b as RegularBooth, this.context.pixelRatio, fillStyle, fontSize, short);
+        const canvas = createExhibitorsDetailsCanvas(
+            b as RegularBooth,
+            this.context.pixelRatio,
+            fillStyle,
+            fontSize,
+            data.hideExhibitorBoothNumber || short
+        );
         // const w = canvas.width / 2;
         // const h = canvas.height / 2;
 

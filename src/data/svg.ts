@@ -1,4 +1,5 @@
 import * as d3 from "d3-selection";
+import data from ".";
 import Rect from "../core/Rect";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
@@ -49,7 +50,7 @@ d3.select(svg)
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
-settings.wayfinding = d3.select(svg).select('[data-layer="WF"]>path').node() ? true : false;
+settings.wayfinding = !data.hideDirections && d3.select(svg).select('[data-layer="WF"]>path').node() ? true : false;
 
 let svgArea: Rect;
 

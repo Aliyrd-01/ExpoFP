@@ -19,6 +19,8 @@ interface Data {
     sendLoginLinkUrl: string;
     trackerUrl: string;
     hideWayInformation: boolean;
+    hideDirections: boolean;
+    hideExhibitorBoothNumber: boolean;
     // hideCompanies: boolean;
     dimensionless: boolean;
     hideCategoriesLink: boolean;
