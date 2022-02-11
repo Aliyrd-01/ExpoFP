@@ -189,8 +189,9 @@ export default class UIState {
     // filtering
     @computed get dimmed() {
         return (
-            this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
-            this.listItems.find((x) => !(x instanceof Exhibitor))
+            this.listItems.length &&
+            (this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
+                this.listItems.find((x) => !(x instanceof Exhibitor)))
         );
     }
 
