@@ -254,6 +254,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 break;
             } else lines.push(line);
         }
+
+        if (shortestrPerp.l < 200) wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
+
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
     }
 
