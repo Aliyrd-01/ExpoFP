@@ -2,7 +2,7 @@ import { reaction } from "mobx";
 import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { uiState } from "./../../../../store/index";
+import store, { uiState } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
@@ -89,6 +89,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             const obs = NumberObserver.singletonForObject("labels-special", () => 1 / context.ptscale);
             this.steps.forEach((s) => obs.observeValue(s.factor, cru));
             reaction(() => booth.skipDim, cru);
+            reaction(() => store.routeStore.routeLines, cru);
 
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // reaction(() => [booth.skipDim, context.ptscale], () => context.requireUpdate(this.updateBound));
@@ -117,7 +118,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             this.previousVisibleId = visibleId;
         }
 
-        const newSkipDim = this.booth.skipDim;
+        const newSkipDim = this.booth.skipDim || !!store.routeStore.routeLines.length;
         if (newSkipDim !== this.previousSkipDim) {
             for (const id of this.ids) {
                 this.painter.updateSkipdim(id, newSkipDim);

@@ -1,6 +1,6 @@
 import { reaction } from "mobx";
 import data from "../../../../data";
-import { boothStore } from "../../../../store";
+import store, { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
@@ -127,6 +127,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             const obs = NumberObserver.singletonForObject("labels", () => context.ptscale);
             this.factors.forEach((f) => obs.observeValue(f, cru));
             reaction(() => booth.skipDim, cru);
+            reaction(() => store.routeStore.routeLines, cru);
         }
         // updates.push(this.updateBound);
     }
@@ -178,7 +179,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             this.previousVisiblePrefix = visiblePrefix;
         }
 
-        const newSkipDim = this.booth.skipDim;
+        const newSkipDim = this.booth.skipDim || !!store.routeStore.routeLines.length;
         if (newSkipDim !== this.previousSkipDim) {
             for (const p of prefixes) {
                 this.painter.updateSkipdim(this.getId(p), newSkipDim);
