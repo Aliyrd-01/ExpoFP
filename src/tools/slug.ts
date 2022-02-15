@@ -16,7 +16,7 @@ export function generateUniqueSlug(text: string) {
     const slugBase = slugify(text, {remove: /[*+~.()'"!:@]/g, lower: true});
     let slug: string;
     do {
-        slug = slugBase + (!slugBase || append++ > 0 ? append : '');
+        slug = slugBase + ( append++ > 0 || !slugBase ? append : '');
     }
     while (generatedSlugs.has(slug))
 
