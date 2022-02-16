@@ -18,7 +18,6 @@ export default function configAll(context: DrawerContext) {
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
-    //configImg(context, 170);
 
     let boothsAnimate = null;
     let basePriority = 6;
@@ -34,6 +33,7 @@ export default function configAll(context: DrawerContext) {
             basePriority += 1;
         });
 
+    if (settings.EXPO === "rodion2") configImg(context, 170);
     configWf(context, 161);
 
     configYah(context);
