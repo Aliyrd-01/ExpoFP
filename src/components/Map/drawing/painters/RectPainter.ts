@@ -13,6 +13,7 @@ export default class RectPainter implements Painter {
     private centersDirty = true;
     private rotateDirty = true;
     private skipdimDirty = true;
+    private stretchDirty = true;
 
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -30,6 +31,8 @@ export default class RectPainter implements Painter {
     private readonly colorBuffer: WebGLBuffer;
     private readonly skipdimLocation: number;
     private readonly skipdimBuffer: WebGLBuffer;
+    private readonly stretchLocation: number;
+    private readonly stretchBuffer: WebGLBuffer;
     private readonly rotateLocation: number;
     private readonly rotateBuffer: WebGLBuffer;
     private readonly texfixLocation: number;
@@ -63,6 +66,7 @@ export default class RectPainter implements Painter {
         this.deltaptLocation = gl.getAttribLocation(this.program, "a_deltapt");
         this.colorLocation = gl.getAttribLocation(this.program, "a_color");
         this.skipdimLocation = gl.getAttribLocation(this.program, "a_skipdim");
+        this.stretchLocation = gl.getAttribLocation(this.program, "a_stretch");
         this.rotateLocation = gl.getAttribLocation(this.program, "a_rotate");
         this.texfixLocation = gl.getAttribLocation(this.program, "a_texfix");
         this.fixdeltaLocation = gl.getAttribLocation(this.program, "a_fixdelta");
@@ -74,6 +78,7 @@ export default class RectPainter implements Painter {
         this.deltaptBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
         this.skipdimBuffer = gl.createBuffer();
+        this.stretchBuffer = gl.createBuffer();
         this.rotateBuffer = gl.createBuffer();
         this.texfixBuffer = gl.createBuffer();
         this.fixdeltaBuffer = gl.createBuffer();
@@ -86,6 +91,7 @@ export default class RectPainter implements Painter {
         const item = obj as DrawerObjectEx;
         if (typeof item.visible === "undefined") item.visible = true;
         item.skipdim = !!item.skipdim;
+        item.stretch = !!item.stretch;
         this.objects.push(item);
         this.sortedObjects.push(item);
         if (item.id) this.objectsById.set(item.id, item);
@@ -108,6 +114,14 @@ export default class RectPainter implements Painter {
         if (obj.skipdim !== skipdim) {
             obj.skipdim = skipdim;
             this.skipdimDirty = true;
+        }
+    }
+
+    updateStretch(id: string, stretch: boolean) {
+        const obj = this.objectsById.get(id);
+        if (obj.stretch !== stretch) {
+            obj.stretch = stretch;
+            this.stretchDirty = true;
         }
     }
 
@@ -170,6 +184,11 @@ export default class RectPainter implements Painter {
         if (this.skipdimDirty) {
             this.populateSkipdimBuffer();
             this.skipdimDirty = false;
+        }
+
+        if (this.stretchDirty) {
+            this.populateStretchBuffer();
+            this.stretchDirty = false;
         }
     }
 
@@ -346,6 +365,7 @@ export default class RectPainter implements Painter {
         this.populateCenterBuffer();
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
+        this.populateStretchBuffer();
 
         if (isDebug) console.timeEnd("RectPainter.populateBuffers");
     }
@@ -388,6 +408,16 @@ export default class RectPainter implements Painter {
         }
 
         this.bufferFloat32Array(this.skipdimBuffer, skipdims);
+    }
+
+    private populateStretchBuffer() {
+        const stretchs: number[] = [];
+        for (const w of this.objects) {
+            const c = w.stretch ? 1 : 0;
+            stretchs.push(c, c, c, c);
+        }
+
+        this.bufferFloat32Array(this.stretchBuffer, stretchs);
     }
 
     private populateGroups(resortObejcts: boolean) {
@@ -479,6 +509,7 @@ export default class RectPainter implements Painter {
         this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
         this.enableBuffer(this.skipdimBuffer, this.skipdimLocation, 1);
+        this.enableBuffer(this.stretchBuffer, this.stretchLocation, 1);
         this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
         this.enableBuffer(this.texfixBuffer, this.texfixLocation, 2);
         this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
@@ -532,6 +563,7 @@ export interface DrawerObject {
     canvasTmp?: CanvasDescriptor;
     visible?: boolean;
     skipdim?: boolean;
+    stretch?: boolean;
     //order: number;
 
     //always: boolean;
@@ -562,6 +594,7 @@ attribute vec2 a_fixdeltapt;
 attribute vec2 a_fixdeltamaxpt; 
 attribute vec2 a_texfix;
 attribute float a_skipdim;
+attribute float a_stretch;
 
 uniform mat4 u_matrix;   
 uniform vec2 u_ptscale; 
@@ -589,7 +622,7 @@ void main() {
     }
 
     vec2 diff = delta - fixdelta;
-    vec2 texdeltapt = diff / u_ptscale;
+    vec2 texdeltapt = a_stretch > 0.0 ? diff : diff / u_ptscale;
     vec2 texcoord = a_texfix + texdeltapt;
 
     vec2 rotatedDelta =  vec2(
@@ -597,7 +630,7 @@ void main() {
         delta.y * a_rotate.y - delta.x * a_rotate.x);
     gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
 
-    v_texcoord = texcoord / u_texsize;
+    v_texcoord =  texcoord / u_texsize;
     v_color = a_color;
     v_dim = a_skipdim > 0.0 ? 0.0 : u_dim;
 }`;
