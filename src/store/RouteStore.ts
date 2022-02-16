@@ -38,6 +38,7 @@ export default class RouteStore {
         setTimeout(() => {
             this.rootStore.moveToList(list);
             uiState.details = route;
+            if (route && (!route.from || !route.to)) store.showOverlay();
         }, 200);
     }
 

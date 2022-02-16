@@ -204,14 +204,11 @@ function ExhibitorComponent() {
                             <Button
                                 text={t("Directions")}
                                 onClick={() => {
-                                    async function pushRoute() {
-                                        store.routeStore.clickRoute(
-                                            null,
-                                            store.routeStore.tempToBooth || exhibitor.booths[0],
-                                            uiState.selectedRoute?.exceptUnaccessible || false
-                                        );
-                                    }
-                                    pushRoute().then(() => setTimeout(() => store.showOverlay(), 300));
+                                    store.routeStore.clickRoute(
+                                        null,
+                                        store.routeStore.tempToBooth || exhibitor.booths[0],
+                                        uiState.selectedRoute?.exceptUnaccessible || false
+                                    );
                                 }}
                             />
                         </div>

@@ -165,10 +165,9 @@ function Booth() {
                     <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
                         <Button
                             text={t("Directions")}
-                            onClick={() => {
-                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false);
-                                store.showOverlay();
-                            }}
+                            onClick={() =>
+                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false)
+                            }
                         />
                     </div>
                 )}
