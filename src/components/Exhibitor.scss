@@ -84,7 +84,6 @@
     &__slider {
         margin: 1rem;
         font-size: 0.9rem;
-
         position: relative;
 
         /* &-show {
@@ -272,7 +271,7 @@
             }
         }
 
-        .exhibitor__details:hover > & {
+        .overlay-content__scrollable:hover & {
             display: block;
         }
     }
