@@ -5,6 +5,8 @@ const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
 export interface CanvasDescriptor {
+    w?: number;
+    h?: number;
     width: number;
     height: number;
     draw(c: CanvasRenderingContext2D): void;
@@ -43,8 +45,12 @@ export function createLabelCanvas(text: string, fontSize: number, pixelRatio: nu
         },
     };
 }
-
-export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+export function createDetailsCanvas(
+    b: RegularBooth,
+    pixelRatio: number,
+    color: string = "#fff",
+    fontSize: number
+): CanvasDescriptor {
     //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
     // const bs = b.special ? (b as SpecialBooth) : undefined;
@@ -58,7 +64,7 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
     } else if (b.exhibitors.length) {
         lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } else {
-        if (b.size) lines.push(b.size);
+        if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
         if (b.price && b.price !== "0") lines.push(b.price);
     }
 
@@ -66,8 +72,8 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
 
     // if (fixBooth) lines.push(b.title);
 
-    const boothFontSize = 14 * pixelRatio;
-    const detailFontSize = 14 * pixelRatio;
+    const boothFontSize = fontSize * pixelRatio;
+    const detailFontSize = 0.9 * fontSize * pixelRatio;
     const boothFont = getFont(boothFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
     const boothPadding = 1 * pixelRatio;
@@ -113,13 +119,77 @@ export function createDetailsCanvas(b: RegularBooth, pixelRatio: number, color: 
     };
 }
 
-const circleCanvasCache = new Map<string, CanvasDescriptor>();
-export function createCircleCanvas(
-    radius: number,
+export function createExhibitorsDetailsCanvas(
+    b: RegularBooth,
     pixelRatio: number,
     color: string = "#fff",
-    stroke: string = null
+    frontSize: number,
+    onlyMain: boolean
 ): CanvasDescriptor {
+    const mainLines: string[] = [];
+    const detailsLines: string[] = [];
+
+    const mainFontSize = frontSize * pixelRatio;
+    const detailFontSize = 0.9 * frontSize * pixelRatio;
+
+    const mainFont = getFont(mainFontSize, 500);
+    const detailFont = getFont(detailFontSize, 300);
+
+    mainLines.push(...b.exhibitors.map((e) => e.name));
+    if (!onlyMain) detailsLines.push(b.name);
+
+    const maxTextWidth = Math.max(
+        ...mainLines.map((x) => measureText(mainFont, x)),
+        ...detailsLines.map((x) => measureText(detailFont, x))
+    );
+
+    const w = Math.max(
+        ...mainLines.map((x) =>
+            measureText(mainFont, x.replace(" ", "").substring(0, 4).replace(/[0-9]/g, "3").replace(/[A-Z]/gi, "A"))
+        ),
+        ...detailsLines.map((x) =>
+            measureText(detailFont, x.replace(" ", "").substring(0, 4).replace(/[0-9]/g, "3").replace(/[A-Z]/gi, "A"))
+        )
+    );
+
+    const height =
+        mainFontSize * mainLines.length +
+        detailFontSize * detailsLines.length +
+        pixelRatio * (mainLines.length + detailsLines.length) +
+        3;
+
+    return {
+        width: maxTextWidth,
+        height,
+        w,
+        h: onlyMain ? height / mainLines.length : null,
+        draw(c) {
+            let nextLine = mainFontSize;
+
+            c.fillStyle = color;
+            c.textAlign = "start";
+            c.textBaseline = "alphabetic";
+
+            c.font = mainFont;
+            c.fillStyle = color;
+
+            for (const line of mainLines) {
+                c.fillText(line, 0, nextLine);
+                nextLine += mainFontSize + pixelRatio;
+            }
+
+            c.font = detailFont;
+
+            for (const line of detailsLines) {
+                c.fillText(line, 0, nextLine);
+                nextLine += detailFontSize + pixelRatio;
+            }
+        },
+    };
+}
+
+const circleCanvasCache = new Map<string, CanvasDescriptor>();
+export function createCircleCanvas(radius: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
     const key = radius + " " + pixelRatio;
     let res = circleCanvasCache.get(key);
 
@@ -137,18 +207,6 @@ export function createCircleCanvas(
                 c.fillStyle = color;
                 c.beginPath();
                 c.arc(size / 2, size / 2, radius * pixelRatio, 0, 2 * Math.PI);
-                c.fill();
-
-                if (!stroke) return;
-
-                c.fillStyle = stroke;
-                c.beginPath();
-                c.arc(size / 2, size / 2, 0.75 * (radius * pixelRatio), 0, 2 * Math.PI);
-                c.fill();
-
-                c.fillStyle = color;
-                c.beginPath();
-                c.arc(size / 2, size / 2, 0.4 * (radius * pixelRatio), 0, 2 * Math.PI);
                 c.fill();
             },
         };
@@ -204,6 +262,84 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
         setTimeout(() => bookmarkCanvasCache.delete(key), 5000);
     }
     return res;
+}
+
+export function createCurrentCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.4
+): CanvasDescriptor {
+    return {
+        width: 70 * scale,
+        height: 70 * scale,
+
+        draw(ctx) {
+            ctx.scale(scale, scale);
+
+            // #path833
+            ctx.beginPath();
+            ctx.fillStyle = "#FFFFFF";
+            ctx.moveTo(0.0, 35.0);
+            ctx.bezierCurveTo(0.0, 54.329966, 15.670034, 70.0, 35.0, 70.0);
+            ctx.bezierCurveTo(54.329966, 70.0, 70.0, 54.329966, 70.0, 35.0);
+            ctx.bezierCurveTo(70.0, 15.670034, 54.329966, 0.0, 35.0, 0.0);
+            ctx.bezierCurveTo(15.670034, 0.0, 0.0, 15.670034, 0.0, 35.0);
+            ctx.fill();
+
+            // #path835
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(10.0, 35.0);
+            ctx.bezierCurveTo(10.0, 48.807119, 21.192881, 60.0, 35.0, 60.0);
+            ctx.bezierCurveTo(48.807119, 60.0, 60.0, 48.807119, 60.0, 35.0);
+            ctx.bezierCurveTo(60.0, 21.192881, 48.807119, 10.0, 35.0, 10.0);
+            ctx.bezierCurveTo(21.192881, 10.0, 10.0, 21.192881, 10.0, 35.0);
+            ctx.fill();
+        },
+    };
+}
+
+export function createTargetCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.5
+): CanvasDescriptor {
+    return {
+        width: 70 * scale,
+        height: 100 * scale,
+        // padding,
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.scale(scale, scale);
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.moveTo(32.6, 97.8);
+            ctx.bezierCurveTo(24.4, 81.5, 0.0, 57.0, 0.0, 32.6);
+            ctx.bezierCurveTo(0.0, 14.6, 14.6, 0.0, 32.6, 0.0);
+            ctx.bezierCurveTo(50.5, 0.0, 65.2, 14.6, 65.2, 32.6);
+            ctx.bezierCurveTo(65.2, 57.0, 40.7, 81.5, 32.6, 97.8);
+            ctx.fill();
+
+            // #path1440
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(32.6, 91.1);
+            ctx.bezierCurveTo(25.2, 76.3, 3.1, 54.2, 3.1, 32.1);
+            ctx.bezierCurveTo(3.1, 15.9, 16.3, 2.6, 32.6, 2.6);
+            ctx.bezierCurveTo(48.8, 2.6, 62.0, 15.9, 62.0, 32.1);
+            ctx.bezierCurveTo(62.0, 54.2, 39.9, 76.3, 32.6, 91.1);
+            ctx.fill();
+
+            // #path1442
+            ctx.beginPath();
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.moveTo(16.2, 32.6);
+            ctx.bezierCurveTo(16.2, 41.6, 23.5, 48.9, 32.5, 48.9);
+            ctx.bezierCurveTo(41.5, 48.9, 48.8, 41.6, 48.8, 32.6);
+            ctx.bezierCurveTo(48.8, 23.6, 41.5, 16.3, 32.5, 16.3);
+            ctx.bezierCurveTo(23.5, 16.3, 16.2, 23.6, 16.2, 32.6);
+            ctx.fill();
+        },
+    };
 }
 
 export function getFont(px: number, weight: number = 500) {

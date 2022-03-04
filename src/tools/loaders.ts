@@ -28,6 +28,7 @@ export async function loadJs(url: string) {
         const scriptTag = document.createElement("script");
         scriptTag.src = goodUrl(url);
         scriptTag.onload = resolve;
+        scriptTag.onerror = resolve;
         logger.log("Injecting script:", scriptTag.src);
         document.head.appendChild(scriptTag);
     });

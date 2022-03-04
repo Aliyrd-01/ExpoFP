@@ -10,6 +10,7 @@ import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
+import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
 import isIframe from "../../utils/is-iframe";
 import isMac from "../../utils/is-mac";
@@ -96,6 +97,15 @@ export default function Map() {
     );
 
     useReaction(
+        () => uiState.moveToRect,
+        () => {
+            if (!uiState.moveToRect) return;
+            moveToRect(uiState.moveToRect, 30);
+            uiState.moveToRect = null;
+        }
+    );
+
+    useReaction(
         () => uiState.moveToBooths,
         () => {
             logger.log("this.moveToBooths", uiState.moveToBooths);
@@ -105,12 +115,9 @@ export default function Map() {
             // // ask map to move to this exhibitor
             const rects = uiState.moveToBooths.map((b) => b.rect) as Rect[];
             if (rects.length === 0) return;
-            const r = Rect.fromMultiple(rects);
-            const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
-            const z = getTramsformToCenterSvgRect(r, uiState.canvasVisibleRectPx, Math.max(zoomScale, 4));
-            zoomTo(z);
-
+            moveToRect(Rect.fromMultiple(rects));
             uiState.moveToBooths = null;
+
             // store.commit("setMoveToBooths", null);
             // this.handledMoveToExhibitor = null;
         }
@@ -129,13 +136,20 @@ export default function Map() {
         </canvas>
     ));
 
+    function moveToRect(rect: Rect, maxZoomScale: number = 4) {
+        if (settings.EXPO === "springfair2022") maxZoomScale = 20;
+        const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
+        const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
+        zoomTo(z);
+    }
+
     function init() {
         s.$canvas = select(el.current);
 
         s.zoom = zoom()
             .clickDistance(15)
             .interpolate(interpolate)
-            .scaleExtent([0.1, 12])
+            .scaleExtent([0.1, 35])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .filter(function () {
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")

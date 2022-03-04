@@ -1,4 +1,5 @@
 import * as d3 from "d3-selection";
+import data from ".";
 import Rect from "../core/Rect";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
@@ -49,11 +50,19 @@ d3.select(svg)
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
+settings.wayfinding = !data.hideDirections && d3.select(svg).select('[data-layer="WF"]>path').node() ? true : false;
+
 let svgArea: Rect;
 
-const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
+const floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[]).map((f) => {
+    f.remove();
+    return {
+        name: f.dataset.floor,
+        rect: Rect.fromSvgRectElement(f),
+    };
+});
 
-settings.wayfinding = d3.select(svg).select('[data-layer="WF"]>path').node() ? true : false;
+const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 
 if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
@@ -82,7 +91,7 @@ if (viewboxRect) {
 
 logger.log("svgArea", svgArea, "svgViewBox", svgViewBox);
 
-export { svgArea, svgViewBox };
+export { svgArea, svgViewBox, floors };
 // export const svgSize = new Size(svgViewBox.w, svgViewBox.h);
 // export let svgVisibleWidth;
 

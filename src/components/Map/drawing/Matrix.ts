@@ -111,7 +111,7 @@ export default class Matrix {
         this.matrixChangeSubscribers.push(cb);
     }
     private fireMatrixChange() {
-        this.matrixChangeSubscribers.forEach(x => x(this.matrix));
+        this.matrixChangeSubscribers.forEach((x) => x(this.matrix));
     }
 
     //

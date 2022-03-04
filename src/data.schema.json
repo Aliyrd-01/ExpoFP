@@ -54,15 +54,54 @@
             "type": "string",
             "description": "Booth term (typically 'booth' or 'stand')"
         },
+        "reserveButtonTerm": {
+            "type": "string",
+            "description": "Term for Reserve button"
+        },
         "locale": {
             "type": "string",
             "description": "Locale to choose translation resouce file"
         },
+        "hideWayInformation": {
+            "type": "boolean",
+            "description": "Hide Way information"
+        },
+        "dimensionless": {
+            "type": "boolean",
+            "description": "Hide booth size"
+        },
+        "hideEventHomeLink": {
+            "type": "boolean",
+            "description": "Hide the 'Event Home' link"
+        },
+        "hideRegisterToAttendLink": {
+            "type": "boolean",
+            "description": "Hide the 'Register to Attend' link"
+        },
+        "hideBookmarksLink": {
+            "type": "boolean",
+            "description": "Hide the 'Bookmarks' link"
+        },
+        "hideDownloadPdfLink": {
+            "type": "boolean",
+            "description": "Hide the 'Download PDF' link"
+        },
+        "hideCategoriesLink": {
+            "type": "boolean",
+            "description": "Hide the 'Categories' link"
+        },
+        "hideDirections": {
+            "type": "boolean",
+            "description": "Hide wayfinding features"
+        },
+        "hideExhibitorBoothNumber": {
+            "type": "boolean",
+            "description": "Hide number if booth has exhibitor"
+        },
         "booths": {
             "type": "array",
             "items": {
-                "anyOf": [
-                    {
+                "anyOf": [{
                         "type": "object",
                         "description": "Regular booth (with exhibitor)",
                         "required": ["id", "name", "exhibitors"],
@@ -74,6 +113,9 @@
                             "name": {
                                 "type": "string"
                             },
+                            "externalId": {
+                                "type": "string"
+                            },
                             "exhibitors": {
                                 "type": "array",
                                 "items": {
@@ -81,8 +123,7 @@
                                 }
                             }
                         }
-                    },
-                    {
+                    }, {
                         "type": "object",
                         "description": "Regular booth (without exhibitor, unavailable for reserve because `onHold` or `reserved` is set)",
                         "required": ["id", "name"],
@@ -94,6 +135,9 @@
                             "name": {
                                 "type": "string"
                             },
+                            "externalId": {
+                                "type": "string"
+                            },
                             "status": {
                                 "type": "string",
                                 "enum": ["onhold", "reserved"]
@@ -103,8 +147,7 @@
                                 "description": "Show booth as reserved (hide company from it)"
                             }
                         }
-                    },
-                    {
+                    }, {
                         "type": "object",
                         "description": "Regular booth (without exhibitor, available for reserve)",
                         "required": ["id", "name"],
@@ -134,10 +177,12 @@
                             "description": {
                                 "type": "string",
                                 "description": "HTML, if set, overrides reserveInstructions"
+                            },
+                            "externalId": {
+                                "type": "string"
                             }
                         }
-                    },
-                    {
+                    }, {
                         "type": "object",
                         "description": "Special booth",
                         "required": ["id", "name"],
@@ -159,6 +204,9 @@
                             "description": {
                                 "type": "string",
                                 "description": "HTML"
+                            },
+                            "externalId": {
+                                "type": "string"
                             }
                         }
                     }
@@ -176,6 +224,9 @@
                         "type": "number"
                     },
                     "name": {
+                        "type": "string"
+                    },
+                    "externalId": {
                         "type": "string"
                     },
                     "categories": {

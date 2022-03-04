@@ -6,24 +6,26 @@
     </head>
     <body>
         <div id="floorplan">Loading...</div>
-        <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
+        <script src="https://etldemo.expofp.com/packages/master/expofp.js" crossorigin="anonymous"></script>
         <script>
-            window.floorplan = new ExpoFP.FloorPlan({
+            let fp = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
-                eventId: "wayfinding",
-                noOverlay: true,
-                onBoothClick: e => {
-                    window.flutter_inappwebview?.callHandler('onBoothClick', e.target.name);
-                }
+                eventId: "etldemo",
+                noOverlay: false,
+                onBoothClick: (e) => console.info(`Booth clicked: ${e.target.name}`),
+                onFpConfigured: () => fp.selectRoute("1300", "Seminar Room-3"),
+                onDirection: (e) => {
+                    if (!e.lines || !e.lines.length) {
+                        fp.selectCurrentPosition(null);
+                    } else {
+                        let middleLine = e.lines[Math.floor(e.lines.length / 2)];
+                        const x = (middleLine.p0.x + middleLine.p1.x) / 2;
+                        const y = (middleLine.p0.y + middleLine.p1.y) / 2;
+
+                        setTimeout(() => fp.selectCurrentPosition({ x: x, y: y - 0 }, false), 200);
+                    }
+                },
             });
-			
-			function selectRoute(from, to){
-				window.floorplan?.selectRoute(from, to);
-			}
-			
-			function selectBooth(name){
-				window.floorplan?.selectBooth(name);
-			}		
         </script>
     </body>
 </html>

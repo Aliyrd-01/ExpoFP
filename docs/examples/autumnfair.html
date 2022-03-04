@@ -6,7 +6,7 @@
     </head>
     <body>
         <div id="floorplan">Loading...</div>
-        <script src="https://wayfinding.expofp.com/packages/features/wayfinding/expofp.js" crossorigin="anonymous"></script>
+        <script src="https://demo.expofp.com/packages/master/expofp.js" crossorigin="anonymous"></script>
         <script>
             window.floorplan = new ExpoFP.FloorPlan({
                 element: document.querySelector("#floorplan"),
@@ -14,13 +14,19 @@
                 noOverlay: true,
                 onBoothClick: e => {
 		    window.onBoothClickHandler?.postMessage(e.target.name);
+		    window.webkit?.messageHandlers?.onBoothClickHandler?.postMessage(e.target.name);
+		    window.flutter_inappwebview?.callHandler("onBoothClick", e.target.name);
                 },
                 onFpConfigured: () => {
 		    window.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
+		    window.webkit?.messageHandlers?.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
+		    window.flutter_inappwebview?.callHandler("onFpConfigured", "FLOOR PLAN CONFIGURED");
                     console.info("FLOOR PLAN CONFIGURED");
                 },
                 onDirection: (e) => {
 		    window.onDirectionHandler?.postMessage(JSON.stringify(e));
+		    window.webkit?.messageHandlers?.onDirectionHandler?.postMessage(JSON.stringify(e));
+		    window.flutter_inappwebview?.callHandler("onDirection", JSON.stringify(e));
                     console.info("NEW DIRECTION", e);
                 }
             });
@@ -31,7 +37,11 @@
 			
 			function selectBooth(name){
 				window.floorplan?.selectBooth(name);
-			}		
+			}
+		
+			function setCurrentPosition(x, y, focus){
+				window.floorplan?.selectCurrentPosition({x: x, y: y}, focus);
+			}
         </script>
     </body>
 </html>

@@ -5,15 +5,14 @@ color_scheme: "dark"
 title: ExpoFP.com Developer
 email: support@expofp.com
 description: >- # this means to ignore newlines until "baseurl:"
-  ExpoFP.com Interactive Floor Plans
+    ExpoFP.com Interactive Floor Plans
 
 logo: https://expofp.com/template/img/site-header-logo.png
-footer_content: © 2020 <a href='http://expofp.com/'>ExpoFP.com</a> • <a href='https://expofp.com/#contact'>Support</a>
+footer_content: © 2022 <a href='http://expofp.com/'>ExpoFP.com</a> • <a href='https://expofp.com/#contact'>Support</a>
 
 runtime_url:
-  production: https://demo.expofp.com/packages/master/expofp.js
-  development: http://localhost:8080/expofp.js
-
+    production: https://demo.expofp.com/packages/master/expofp.js
+    development: http://localhost:8080/expofp.js
 # aux_links:
 #   "ExpoFP.com":
 #     - "//expofp.com/"
@@ -34,12 +33,10 @@ runtime_url:
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-
 # baseurl: "" # the subpath of your site, e.g. /blog
 # url: "" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
 # github_username:  jekyll
-
 
 # Build settings
 # markdown: kramdown

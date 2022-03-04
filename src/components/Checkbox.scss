@@ -1,0 +1,51 @@
+@import "../styles/helpers.scss";
+
+.checkbox {
+    display: inline-flex;
+
+    input[type="checkbox"] {
+        display: none;
+
+        & ~ label {
+            position: relative;
+            min-width: rem(18px);
+            min-height: rem(18px);
+            padding-left: rem(30px);
+            color: $color-black;
+            font-size: rem(16px);
+            font-weight: 500;
+            cursor: pointer;
+            user-select: none;
+
+            &:before {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 0;
+                width: rem(18px);
+                height: rem(18px);
+                border: 1px solid $color-lightgray;
+                border-radius: 2px;
+            }
+            &:after {
+                content: "";
+                position: absolute;
+                top: 3px;
+                left: 1px;
+                width: rem(16px);
+                height: rem(16px);
+                background: url("../../public/icons/check.svg") no-repeat center center;
+                background-size: cover;
+                opacity: 0;
+            }
+        }
+        &:checked ~ label {
+            &:before {
+                border-color: $color-primary;
+            }
+            &:after {
+                opacity: 1;
+            }
+        }
+    }
+}

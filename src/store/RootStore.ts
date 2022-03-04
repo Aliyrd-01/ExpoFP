@@ -5,7 +5,7 @@ import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
-import Route from "./RouteStore";
+import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 
 export default class RootStore {
@@ -13,6 +13,7 @@ export default class RootStore {
     readonly exhibitorStore: ExhibitorStore;
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
+    readonly routeStore: RouteStore;
     fp: FloorPlanReady;
 
     constructor() {
@@ -20,6 +21,7 @@ export default class RootStore {
         this.categoryStore = new CategoryStore(this);
         this.exhibitorStore = new ExhibitorStore(this);
         this.boothStore = new BoothStore(this);
+        this.routeStore = new RouteStore(this);
         this.uiState = new UIState(this);
     }
 
@@ -29,24 +31,10 @@ export default class RootStore {
         this.uiState.details = exhibitor;
     }
 
-    @action selectBooth(booth: Booth | Booth[]) {
+    @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
-        this.moveToList(b);
-    }
-
-    @action selectRoute(route: Route) {
-        this.uiState.details = route;
-        let list = [];
-
-        if (route.from && route.to) this.showMap();
-
-        if (route.from) list.push(route.from);
-        if (route.to) list.push(route.to);
-
-        if (list.length) {
-            this.moveToList(list);
-        }
+        if (focus) this.moveToList(b);
     }
 
     @action reset() {
@@ -113,6 +101,12 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
+    @action clickFloor(floor) {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.moveToRect = floor.rect;
+        this.showMap();
+    }
+
     @action clickSeminars() {
         this.clickCategory(this.categoryStore.seminarsCategory);
     }
@@ -152,14 +146,12 @@ export default class RootStore {
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
 
-        if (this.uiState.selectedRoute && !booth) {
-            return;
-        }
+        if (this.uiState.selectedRoute?.from && this.uiState.selectedRoute?.to) return;
 
         if (!booth) {
             this.uiState.details = null;
             return;
-        }
+        } else this.routeStore.tempToBooth = booth;
 
         if (this.uiState.onBoothClick) {
             const e: FloorPlanBoothClickEvent = {
@@ -171,7 +163,7 @@ export default class RootStore {
         if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
             this.selectExhibitor(booth.exhibitors[0]);
         } else {
-            this.selectBooth(booth);
+            this.selectBooth(booth, false);
         }
         this.showMap();
         // commit("setMenu", false);
@@ -188,22 +180,6 @@ export default class RootStore {
         //     dispatch("selectBooth", id);
         // }
         // dispatch("showMap", id);
-    }
-
-    @action clickRoute(route: Route) {
-        if (window["__resett"]) window["__resett"]();
-        this.uiState.menu = null;
-        this.selectRoute(route);
-        if (this.uiState.onDirection) {
-            const e: FloorPlanDeirectionEvent = {
-                from: undefined,
-                to: undefined,
-                distance: "",
-                time: 0,
-            };
-            this.uiState.onDirection(e);
-        }
-        //this.showMap();
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
@@ -256,7 +232,7 @@ export default class RootStore {
                 booths.push(item);
             }
         });
-        console.log("zzz", booths);
+        //console.log("zzz", booths);
         this.uiState.moveToBooths = booths;
         // commit("setMoveToBooths", booths);
     }

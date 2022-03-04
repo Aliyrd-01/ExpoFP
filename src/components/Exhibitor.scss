@@ -84,7 +84,6 @@
     &__slider {
         margin: 1rem;
         font-size: 0.9rem;
-
         position: relative;
 
         /* &-show {
@@ -209,7 +208,7 @@
         line-height: 1.5rem;
         color: #333;
         font-weight: 600;
-        padding-top: 2rem;
+        padding-top: 1rem;
         margin-left: 1rem;
         font-size: 1.1em;
         flex-grow: 1;
@@ -272,7 +271,7 @@
             }
         }
 
-        .exhibitor__details:hover > & {
+        .overlay-content__scrollable:hover & {
             display: block;
         }
     }
@@ -291,10 +290,10 @@
     }
 
     &__directions {
-        @include button;
-        > button {
-            cursor: pointer;
-        }
+        // @include button;
+        // > button {
+        //     cursor: pointer;
+        // }
     }
 
     &__custom-btn-area {

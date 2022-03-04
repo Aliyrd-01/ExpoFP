@@ -16,7 +16,6 @@ ready(() => {
 
 export const FloorPlan = FloorPlanLoader;
 
-
 /*
 floorplan loader
     requires all resources

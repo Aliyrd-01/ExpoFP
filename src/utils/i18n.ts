@@ -8,7 +8,7 @@ export const initI18n = async (locale: string): Promise<TFunction> => {
     return await i18next.init({
         resources,
         lng: locale,
-        keySeparator: false,
+        keySeparator: ".",
         saveMissing: locale !== "en",
         missingKeyHandler: (lng, ns, key, fallbackValue) =>
             console.debug(`i18n missing key. '${locale}:${key}', fallback to '${fallbackValue}'`),

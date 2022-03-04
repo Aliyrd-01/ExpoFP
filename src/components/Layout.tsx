@@ -11,6 +11,7 @@ import Header from "./Header";
 import LargeMessage from "./LargeMessage";
 // import TouchHover from "./TouchHover";
 import "./Layout.scss";
+import Floors from "./Floors";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
@@ -39,6 +40,8 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
+                <Floors />
+
                 {/*<Areas />*/}
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}

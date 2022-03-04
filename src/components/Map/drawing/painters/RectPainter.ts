@@ -10,7 +10,10 @@ export default class RectPainter implements Painter {
     private buffersInitialized = true;
     private groupsDirty = true;
     private colorsDirty = true;
+    private centersDirty = true;
+    private rotateDirty = true;
     private skipdimDirty = true;
+    private stretchDirty = true;
 
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -28,6 +31,8 @@ export default class RectPainter implements Painter {
     private readonly colorBuffer: WebGLBuffer;
     private readonly skipdimLocation: number;
     private readonly skipdimBuffer: WebGLBuffer;
+    private readonly stretchLocation: number;
+    private readonly stretchBuffer: WebGLBuffer;
     private readonly rotateLocation: number;
     private readonly rotateBuffer: WebGLBuffer;
     private readonly texfixLocation: number;
@@ -61,6 +66,7 @@ export default class RectPainter implements Painter {
         this.deltaptLocation = gl.getAttribLocation(this.program, "a_deltapt");
         this.colorLocation = gl.getAttribLocation(this.program, "a_color");
         this.skipdimLocation = gl.getAttribLocation(this.program, "a_skipdim");
+        this.stretchLocation = gl.getAttribLocation(this.program, "a_stretch");
         this.rotateLocation = gl.getAttribLocation(this.program, "a_rotate");
         this.texfixLocation = gl.getAttribLocation(this.program, "a_texfix");
         this.fixdeltaLocation = gl.getAttribLocation(this.program, "a_fixdelta");
@@ -72,6 +78,7 @@ export default class RectPainter implements Painter {
         this.deltaptBuffer = gl.createBuffer();
         this.colorBuffer = gl.createBuffer();
         this.skipdimBuffer = gl.createBuffer();
+        this.stretchBuffer = gl.createBuffer();
         this.rotateBuffer = gl.createBuffer();
         this.texfixBuffer = gl.createBuffer();
         this.fixdeltaBuffer = gl.createBuffer();
@@ -84,6 +91,7 @@ export default class RectPainter implements Painter {
         const item = obj as DrawerObjectEx;
         if (typeof item.visible === "undefined") item.visible = true;
         item.skipdim = !!item.skipdim;
+        item.stretch = !!item.stretch;
         this.objects.push(item);
         this.sortedObjects.push(item);
         if (item.id) this.objectsById.set(item.id, item);
@@ -109,6 +117,14 @@ export default class RectPainter implements Painter {
         }
     }
 
+    updateStretch(id: string, stretch: boolean) {
+        const obj = this.objectsById.get(id);
+        if (obj.stretch !== stretch) {
+            obj.stretch = stretch;
+            this.stretchDirty = true;
+        }
+    }
+
     updateColor(id: string, color: Vec4) {
         const obj = this.objectsById.get(id);
         if (
@@ -123,6 +139,22 @@ export default class RectPainter implements Painter {
         }
     }
 
+    updateCenter(id: string, center: Vec2) {
+        const obj = this.objectsById.get(id);
+        if (!obj.center || obj.center[0] !== center[0] || obj.center[1] !== center[1]) {
+            this.objectsById.get(id).center = center;
+            this.centersDirty = true;
+        }
+    }
+
+    updateRotation(id: string, rotateRadians: number) {
+        const obj = this.objectsById.get(id);
+        if (!obj.rotateRadians || obj.rotateRadians[0] !== rotateRadians) {
+            this.objectsById.get(id).rotateRadians = rotateRadians;
+            this.rotateDirty = true;
+        }
+    }
+
     private ensureBuffersAndGroupsInternal() {
         if (this.buffersInitialized) {
             this.populateBuffers();
@@ -134,6 +166,16 @@ export default class RectPainter implements Painter {
             this.groupsDirty = false;
         }
 
+        if (this.centersDirty) {
+            this.populateCenterBuffer();
+            this.centersDirty = false;
+        }
+
+        if (this.rotateDirty) {
+            this.populateRotateBuffer();
+            this.rotateDirty = false;
+        }
+
         if (this.colorsDirty) {
             this.populateColorBuffer();
             this.colorsDirty = false;
@@ -143,13 +185,18 @@ export default class RectPainter implements Painter {
             this.populateSkipdimBuffer();
             this.skipdimDirty = false;
         }
+
+        if (this.stretchDirty) {
+            this.populateStretchBuffer();
+            this.stretchDirty = false;
+        }
     }
 
     private populateBuffers() {
         if (isDebug) console.time("RectPainter.populateBuffers");
         const gl = this.gl;
 
-        const centers: number[] = [];
+        //const centers: number[] = [];
         const deltas: number[] = [];
         const deltaPts: number[] = [];
         const rotates: number[] = [];
@@ -207,7 +254,7 @@ export default class RectPainter implements Painter {
         for (let i = 0; i < this.objects.length; i++) {
             const w = this.objects[i];
             // 4 vec2
-            centers.push(...w.center, ...w.center, ...w.center, ...w.center);
+            // centers.push(...w.center, ...w.center, ...w.center, ...w.center);
             // preare points x1, y1, ... xp1, yp1
             const d = w.deltas || [0, 0, 0, 0];
             const x1 = d[0],
@@ -306,7 +353,7 @@ export default class RectPainter implements Painter {
             }
         }
 
-        this.bufferFloat32Array(this.centerBuffer, centers);
+        // this.bufferFloat32Array(this.centerBuffer, centers);
         this.bufferFloat32Array(this.deltaBuffer, deltas);
         this.bufferFloat32Array(this.deltaptBuffer, deltaPts);
         this.bufferFloat32Array(this.rotateBuffer, rotates);
@@ -315,12 +362,34 @@ export default class RectPainter implements Painter {
         this.bufferFloat32Array(this.fixdeltaptBuffer, fixdeltapts);
         this.bufferFloat32Array(this.fixdeltamaxptBuffer, fixdeltamaxpts);
 
+        this.populateCenterBuffer();
         this.populateColorBuffer();
         this.populateSkipdimBuffer();
+        this.populateStretchBuffer();
 
         if (isDebug) console.timeEnd("RectPainter.populateBuffers");
     }
 
+    private populateCenterBuffer() {
+        const centers: number[] = [];
+        for (const w of this.objects) {
+            // const c = w.color || [0, 0, 0, 0];
+            centers.push(...w.center, ...w.center, ...w.center, ...w.center);
+        }
+
+        this.bufferFloat32Array(this.centerBuffer, centers);
+    }
+
+    private populateRotateBuffer() {
+        const rotations: number[] = [];
+        for (const w of this.objects) {
+            const angleInRadians = w.rotateRadians || 0;
+            const r = [Math.sin(angleInRadians), Math.cos(angleInRadians)];
+            rotations.push(...r, ...r, ...r, ...r);
+        }
+
+        this.bufferFloat32Array(this.rotateBuffer, rotations);
+    }
     private populateColorBuffer() {
         const colors: number[] = [];
         for (const w of this.objects) {
@@ -339,6 +408,16 @@ export default class RectPainter implements Painter {
         }
 
         this.bufferFloat32Array(this.skipdimBuffer, skipdims);
+    }
+
+    private populateStretchBuffer() {
+        const stretchs: number[] = [];
+        for (const w of this.objects) {
+            const c = w.stretch ? 1 : 0;
+            stretchs.push(c, c, c, c);
+        }
+
+        this.bufferFloat32Array(this.stretchBuffer, stretchs);
     }
 
     private populateGroups(resortObejcts: boolean) {
@@ -396,7 +475,7 @@ export default class RectPainter implements Painter {
                 indexBuffer: buffer,
                 numElements: realIndices.length,
                 texsize: group.texsize,
-                rotated: group.rotated
+                rotated: group.rotated,
             });
         }
 
@@ -430,6 +509,7 @@ export default class RectPainter implements Painter {
         this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
         this.enableBuffer(this.colorBuffer, this.colorLocation, 4);
         this.enableBuffer(this.skipdimBuffer, this.skipdimLocation, 1);
+        this.enableBuffer(this.stretchBuffer, this.stretchLocation, 1);
         this.enableBuffer(this.rotateBuffer, this.rotateLocation, 2);
         this.enableBuffer(this.texfixBuffer, this.texfixLocation, 2);
         this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
@@ -443,7 +523,7 @@ export default class RectPainter implements Painter {
                 u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
                 u_dim: this.dim,
-                u_alpha: this.alpha
+                u_alpha: this.alpha,
             } as any;
 
             if (group.texture) {
@@ -483,6 +563,7 @@ export interface DrawerObject {
     canvasTmp?: CanvasDescriptor;
     visible?: boolean;
     skipdim?: boolean;
+    stretch?: boolean;
     //order: number;
 
     //always: boolean;
@@ -513,6 +594,7 @@ attribute vec2 a_fixdeltapt;
 attribute vec2 a_fixdeltamaxpt; 
 attribute vec2 a_texfix;
 attribute float a_skipdim;
+attribute float a_stretch;
 
 uniform mat4 u_matrix;   
 uniform vec2 u_ptscale; 
@@ -540,7 +622,7 @@ void main() {
     }
 
     vec2 diff = delta - fixdelta;
-    vec2 texdeltapt = diff / u_ptscale;
+    vec2 texdeltapt = a_stretch > 0.0 ? diff : diff / u_ptscale;
     vec2 texcoord = a_texfix + texdeltapt;
 
     vec2 rotatedDelta =  vec2(
@@ -548,7 +630,7 @@ void main() {
         delta.y * a_rotate.y - delta.x * a_rotate.x);
     gl_Position = u_matrix * vec4(a_center + rotatedDelta, 0, 1);
 
-    v_texcoord = texcoord / u_texsize;
+    v_texcoord =  texcoord / u_texsize;
     v_color = a_color;
     v_dim = a_skipdim > 0.0 ? 0.0 : u_dim;
 }`;

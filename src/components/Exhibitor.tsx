@@ -4,7 +4,6 @@ import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
-import Route from "../store/RouteStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
@@ -12,6 +11,7 @@ import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
 import { useAutorun, useReaction } from "../utils/mobx";
 import BookmarkSvg from "./BookmarkSvg";
+import Button from "./Button";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import { FillMode } from "./Slider/ImageSliderData";
@@ -131,6 +131,22 @@ function ExhibitorComponent() {
             );
         }
 
+        function getDescription(description: String) {
+            if (description == null) return "";
+
+            const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
+            const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;
+
+            const result = descriptions.find((p) => p.startsWith(lang));
+            if (result != null) {
+                return result.substring(18);
+            } else if (descriptions[0].startsWith(`!*//||^^`) && descriptions[0].length > 18) {
+                return descriptions[0].substring(18);
+            }
+
+            return descriptions[0];
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -183,6 +199,20 @@ function ExhibitorComponent() {
                             </a>
                         ))}
                     </div>
+                    {settings.wayfinding && (
+                        <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
+                            <Button
+                                text={t("Directions")}
+                                onClick={() => {
+                                    store.routeStore.clickRoute(
+                                        null,
+                                        store.routeStore.tempToBooth || exhibitor.booths[0],
+                                        uiState.selectedRoute?.exceptUnaccessible || false
+                                    );
+                                }}
+                            />
+                        </div>
+                    )}
                     {exhibitor.description || exhibitor.logo ? (
                         <div
                             className={classNames({
@@ -198,7 +228,7 @@ function ExhibitorComponent() {
                             {exhibitor.description ? (
                                 <span
                                     className="exhibitor__description-html"
-                                    dangerouslySetInnerHTML={{ __html: exhibitor.description }}
+                                    dangerouslySetInnerHTML={{ __html: getDescription(exhibitor.description) }}
                                     onClick={expandDescription}
                                 />
                             ) : null}
@@ -372,19 +402,6 @@ function ExhibitorComponent() {
                             </a>
                         </div>
                     )}
-                    {settings.wayfinding && (
-                        <div className="exhibitor__directions">
-                            <button
-                                onClick={() =>
-                                    store.selectRoute(
-                                        new Route(null, exhibitor.booths[0], uiState.selectedRoute?.exceptUnaccessible || false)
-                                    )
-                                }
-                            >
-                                Directions
-                            </button>
-                        </div>
-                    )}
                     {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
                     {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url)}
                     {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url)}
@@ -409,7 +426,7 @@ function ExhibitorComponent() {
         xhr.setRequestHeader("Content-Type", "application/json");
 
         function er() {
-            alert(t("Error sending login instructions."));
+            alert(t("Error sending login instructions"));
         }
 
         xhr.onload = function (e) {
@@ -417,7 +434,7 @@ function ExhibitorComponent() {
                 er();
                 return;
             }
-            alert(t("A link to edit profile was sent to {{email}}.", { email }));
+            alert(t("A link to edit profile was sent to {{email}}", { email }));
         };
         xhr.onerror = function (e) {
             logger.error("Error", e);

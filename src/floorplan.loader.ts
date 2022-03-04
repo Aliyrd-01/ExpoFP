@@ -32,13 +32,21 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onFpConfigured: () => void;
 
-    onDirection: (e: FloorPlanDeirectionEvent) => void;
+    onDirection: (e: FloorPlanDirectionEvent) => void;
 
-    selectBooth(name: string | string[]) {
+    selectBooth(nameOrExternalId: string | string[]) {
+        nr();
+    }
+
+    selectExhibitor(nameOrExternalId: string | string[]) {
         nr();
     }
 
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
+        nr();
+    }
+
+    selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void {
         nr();
     }
 
@@ -99,6 +107,7 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
+        const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = isFromDesigner
             ? `https://efp-data.s3.amazonaws.com/expos/${eventId}/data/fp.svg.js`
             : dataUrlBase + "fp.svg.js";
@@ -130,7 +139,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(fpUrl)]);
+            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(wfDataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);

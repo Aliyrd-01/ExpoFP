@@ -1,17 +1,18 @@
-import BoothDrawerBase from "./BoothDrawerBase";
-import { createCircleCanvas, getFont, createMultilineTextCanvas } from "./canvases";
-import TextFitter, { TextFitData } from "./TextFitter";
+import { reaction } from "mobx";
+import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { Booth, SpecialBooth } from "../../../../store/BoothStore";
-import { reaction } from "mobx";
+import store, { uiState } from "./../../../../store/index";
+import BoothDrawerBase from "./BoothDrawerBase";
+import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
+import TextFitter, { TextFitData } from "./TextFitter";
 
 const textFitters = new Map<number, TextFitter>();
 function cteateTextFitter(pixelRatio: number) {
     let d = textFitters.get(pixelRatio);
     if (!d) {
-        const allowedFontSizes = [18, 16, 14, 12, 10, 7].map(f => f * pixelRatio);
+        const allowedFontSizes = [18, 16, 14, 12, 10, 7].map((f) => f * pixelRatio);
         const maxMultilineFontSize = 14 * pixelRatio;
         d = new TextFitter(getFont, allowedFontSizes, maxMultilineFontSize);
         textFitters.set(pixelRatio, d);
@@ -35,7 +36,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     public locked: boolean;
 
     constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, "booth-label", RectPainter, 149);
+        super(context, booth, "booth-label", RectPainter, 160);
         this.locked = context.updatable;
         // initDrawer(this.drawer);
 
@@ -57,7 +58,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
                 deltaPts: [-canvasTmp.width / 2, -canvasTmp.height / 2, canvasTmp.width / 2, canvasTmp.height / 2],
                 canvasTmp: canvasTmp,
                 texPosition: "center",
-                visible: false
+                visible: false,
             });
             this.ids.push(id);
         }
@@ -74,7 +75,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             deltaPts: [-dotW, -dotH, dotW, dotH],
             canvasTmp: dotCanvas,
             texPosition: "center",
-            visible: false
+            visible: false,
         });
 
         this.ids.push(dotId);
@@ -86,8 +87,9 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // reaction(() => booth.skipDim, () => context.requireUpdate(this.updateBound));
             const obs = NumberObserver.singletonForObject("labels-special", () => 1 / context.ptscale);
-            this.steps.forEach(s => obs.observeValue(s.factor, cru));
+            this.steps.forEach((s) => obs.observeValue(s.factor, cru));
             reaction(() => booth.skipDim, cru);
+            reaction(() => store.routeStore.routeLines, cru);
 
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // reaction(() => [booth.skipDim, context.ptscale], () => context.requireUpdate(this.updateBound));
@@ -106,8 +108,9 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // let visiblePrefix = "";
         const ptscale = this.context.ptscale;
         // find first with factor larger than this
-        const step = this.steps.find(s => s.factor < 1 / ptscale);
-        const visibleId = this.getId(step ? step.factor.toString() : "Dot");
+        let step = this.steps.find((s) => s.factor < 1 / ptscale)?.factor.toString() || "Dot";
+        if (uiState.printingPdf && step === "Dot") step = this.steps[this.steps.length - 1].factor.toString();
+        let visibleId = this.getId(step);
 
         if (visibleId !== this.previousVisibleId) {
             if (visibleId) this.painter.updateVisible(visibleId, true);
@@ -115,7 +118,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             this.previousVisibleId = visibleId;
         }
 
-        const newSkipDim = this.booth.skipDim;
+        const newSkipDim = this.booth.skipDim || !!store.routeStore.routeLines.length;
         if (newSkipDim !== this.previousSkipDim) {
             for (const id of this.ids) {
                 this.painter.updateSkipdim(id, newSkipDim);
