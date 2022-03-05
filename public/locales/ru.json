@@ -34,5 +34,6 @@
   "Use {{keyCode}} + scroll to zoom": "Используйте {{keyCode}} + колесо прокрутки для увеличения",
   "Zoom In": "Увеличить",
   "Zoom Out": "Уменьшить",
+  "Fit to screen": "По ширине экрана",
   "{{boothTerm}} Type": "{{boothTerm}} Тип"
 }

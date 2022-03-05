@@ -6,7 +6,8 @@
         opacity: 1;
     }
     $s: 2rem;
-    > .fa-plus {
+    > .fa-plus,
+    > .fa-minus {
         margin-bottom: 0.5rem;
     }
     > .fa {
@@ -25,6 +26,10 @@
         color: #777;
         .overlay-left &:hover {
             color: #111;
+        }
+
+        &.fa-expand-arrows-alt {
+            font-size: 0.8rem;
         }
 
         &:active {

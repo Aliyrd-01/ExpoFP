@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
+import { svgArea } from "../data/svg";
 import { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
@@ -22,7 +23,12 @@ export default function Controls() {
     return useObserver(() => (
         <div className={s.className} style={s.style}>
             <button className="fa fa-plus" title={t("Zoom In")} onClick={zoom.bind(window, 1)}></button>
-            <button className="fa fa-minus" title={t("Zoom Out")} onClick={zoom.bind(window, -1)}></button>            
+            <button className="fa fa-minus" title={t("Zoom Out")} onClick={zoom.bind(window, -1)}></button>
+            <button
+                className="fa fa-expand-arrows-alt"
+                title={t("Fit to screen")}
+                onClick={() => (uiState.moveToRect = svgArea)}
+            ></button>
         </div>
     ));
 
