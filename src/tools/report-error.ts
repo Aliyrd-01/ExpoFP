@@ -3,13 +3,6 @@ import logger from "./logger";
 let timeoutId: number;
 
 export default function reportError(e: Partial<ErrorEvent>) {
-    console.info(
-        timeoutId,
-        e.filename,
-        e.filename.indexOf("expofp.com") === -1,
-        timeoutId || e.filename.indexOf("expofp.com") === -1
-    );
-
     if (timeoutId || e.filename.indexOf("expofp.com") === -1) return;
 
     timeoutId = window.setTimeout(async function () {
