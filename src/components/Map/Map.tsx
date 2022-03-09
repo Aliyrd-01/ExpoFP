@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { easeExpOut } from "d3-ease";
 import { interpolate } from "d3-interpolate";
-import { event as currentEvent, select } from "d3-selection";
+import { select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
@@ -151,7 +151,7 @@ export default function Map() {
             .interpolate(interpolate)
             .scaleExtent([0.1, 35])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
-            .filter(function () {
+            .filter(function (currentEvent) {
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")
                     // && currentEvent.type !== "touchstart"
                     return true;
@@ -173,7 +173,7 @@ export default function Map() {
 
                 return !preventWheel;
             })
-            .on("zoom", () => {
+            .on("zoom", (currentEvent) => {
                 if (window["__resett"]) window["__resett"]();
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
