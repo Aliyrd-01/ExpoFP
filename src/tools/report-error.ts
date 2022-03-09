@@ -3,10 +3,9 @@ import logger from "./logger";
 let timeoutId: number;
 
 export default function reportError(e: Partial<ErrorEvent>) {
-    if (timeoutId) return;
+    if (timeoutId || e.filename.indexOf("expofp.com") === -1) return;
 
     timeoutId = window.setTimeout(async function () {
-
         //const ipData = await getIpData();
 
         const language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
