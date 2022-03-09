@@ -1,5 +1,5 @@
 import { ZoomBehavior } from "d3-zoom";
-import { event as currentEvent, Selection, select } from "d3-selection";
+import { Selection, select } from "d3-selection";
 import { easeExpIn } from "d3-ease";
 
 export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
@@ -12,7 +12,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
     let initialTransitionSpeedX = 0.4; // per ms
     let initialTransitionSpeedY = 0.4; // per ms
 
-    zoom.on("start.inertial", function () {
+    zoom.on("start.inertial", function (currentEvent) {
         const e = currentEvent;
         if (!e.sourceEvent) return;
 
@@ -28,7 +28,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
         });
     });
 
-    zoom.on("zoom.inertial", function () {
+    zoom.on("zoom.inertial", function (currentEvent) {
         const e = currentEvent;
         if (!e.sourceEvent) return;
         transforms.push({
@@ -37,7 +37,7 @@ export default function configInertia(zoom: ZoomBehavior<Element, {}>) {
         });
     });
 
-    zoom.on("end.inertial", function () {
+    zoom.on("end.inertial", function (currentEvent) {
         const e = currentEvent;
         if (!e.sourceEvent) return;
         const lastK = transforms[transforms.length - 1].transform.k;
