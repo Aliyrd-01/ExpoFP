@@ -5,6 +5,7 @@ import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
+import MapboxStore from "./MapboxStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 
@@ -14,6 +15,7 @@ export default class RootStore {
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
     readonly routeStore: RouteStore;
+    readonly mapboxStore: MapboxStore;
     fp: FloorPlanReady;
 
     constructor() {
@@ -23,6 +25,7 @@ export default class RootStore {
         this.boothStore = new BoothStore(this);
         this.routeStore = new RouteStore(this);
         this.uiState = new UIState(this);
+        this.mapboxStore = new MapboxStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {

@@ -7,13 +7,14 @@ import { isWebGlSupported } from "../utils";
 import isDebug from "../utils/is-debug";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
+import Floors from "./Floors";
 import Header from "./Header";
 import LargeMessage from "./LargeMessage";
 // import TouchHover from "./TouchHover";
 import "./Layout.scss";
-import Floors from "./Floors";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
+import { MapLoader } from "./Mapbox/MapLoader";
 import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 // import Demo from "./Demo";
@@ -22,6 +23,7 @@ import Ws from "./Ws";
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
+const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
@@ -45,6 +47,11 @@ export default observer(function Layout() {
                 {/*<Areas />*/}
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
+                {store.mapboxStore.mapBoxEnabled && (
+                    <Suspense fallback={<MapLoader />}>
+                        <Mapbox />
+                    </Suspense>
+                )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
                 {isDebug ? (
                     <Suspense fallback={null}>

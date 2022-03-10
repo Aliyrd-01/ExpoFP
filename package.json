@@ -19,6 +19,7 @@
         "@types/node": "^12.12.14",
         "@types/react": "^16.9.13",
         "@types/react-dom": "^16.9.4",
+        "@types/mapbox-gl": "^2.6.3",
         "@typescript-eslint/eslint-plugin": "^2.9.0",
         "@typescript-eslint/parser": "^2.9.0",
         "array-flat-polyfill": "^1.0.1",
@@ -59,7 +60,7 @@
         "html-webpack-plugin": "^3.2.0",
         "i18next": "^19.4.4",
         "jsonschema": "^1.2.5",
-        "simple-geometry":"^1.0.5",
+        "simple-geometry": "^1.0.5",
         "jspdf": "^1.5.3",
         "lz-string": "^1.4.4",
         "mobx": "^5.15.0",
@@ -90,7 +91,8 @@
         "webpack-cli": "^3.3.10",
         "webpack-dashboard": "^3.2.0",
         "webpack-dev-server": "^3.9.0",
-        "webpack-s3-plugin": "^1.0.3"
+        "webpack-s3-plugin": "^1.0.3",
+        "mapbox-gl": "^2.7.0"
     },
     "scripts": {
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",

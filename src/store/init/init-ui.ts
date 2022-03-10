@@ -1,9 +1,9 @@
-import { runInAction, autorun } from "mobx";
+import { autorun, runInAction } from "mobx";
+import Size from "../../core/Size";
+import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import UIState from "../UIState";
-import { isWebGlSupported } from "../../utils";
-import Size from "../../core/Size";
 
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
@@ -21,6 +21,7 @@ export default function initUi(store: RootStore) {
     }
 
     uiState.desiredOverlaySize = previewExhibitor || !isWebGlSupported ? "full" : "medium";
+    store.mapboxStore.mapBoxEnabled = true;
 
     // expand on search focus or menu focus
     autorun(() => {
@@ -51,7 +52,7 @@ export default function initUi(store: RootStore) {
         // document.onclick = resetTimer; // touchpad clicks
         // document.onkeypress = resetTimer;
         // document.addEventListener("scroll", resetTimer, true); // improved; see comments
-        window['__resett'] = resetTimer;
+        window["__resett"] = resetTimer;
         resetTimer();
         function logout() {
             store.reset();

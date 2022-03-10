@@ -1,40 +1,52 @@
+$s: 2rem;
+
 .controls {
-    position: fixed;
     opacity: 0;
+    border-radius: 4px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
     transition: 500ms opacity;
+
+    &.container {
+        position: fixed;
+        top: 30px;
+        left: 30px;
+    }
+
     &.-ready {
         opacity: 1;
     }
-    $s: 2rem;
-    > .fa-plus,
-    > .fa-minus {
-        margin-bottom: 0.5rem;
-    }
-    > .fa {
+
+    button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: $s;
+        width: $s;
+        margin: 0;
         padding: 0;
-        background: #fff;
-        outline: none;
-        border: none;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
-        border-radius: 2px;
-        display: block;
+        background: #ffffff;
+        border: 0;
+        cursor: pointer;
+        color: #333333;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid #e6e6e6;
+        }
+        &.fa-expand-arrows-alt {
+            font-size: 0.9rem;
+        }
+        &:hover {
+            background: #f2f2f2;
+        }
+    }
+
+    > .fa {
         font-size: 0.75rem;
         line-height: $s;
         height: $s;
         width: $s;
         cursor: pointer;
         color: #777;
-        .overlay-left &:hover {
-            color: #111;
-        }
-
-        &.fa-expand-arrows-alt {
-            font-size: 0.8rem;
-        }
-
-        &:active {
-            color: #111;
-            background: #f1f1f1;
-        }
     }
 }
