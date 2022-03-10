@@ -5,6 +5,7 @@ import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
+import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
@@ -162,7 +163,7 @@ function Booth() {
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
                 {settings.wayfinding && (
-                    <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
+                    <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(2) }}>
                         <Button
                             text={t("Directions")}
                             onClick={() =>
