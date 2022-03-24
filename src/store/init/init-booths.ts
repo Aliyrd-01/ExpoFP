@@ -60,7 +60,7 @@ export default function initBooths(store: RootStore) {
             // if (!rect || rect.tagName !== 'rect') continue;
         }
 
-        const idInSvg = (el.getAttribute("data-name") || el.id).substring(1).toLowerCase();
+        const idInSvg = (el.id || el.getAttribute("data-name")).substring(1).toLowerCase();
 
         let booth = boothsByName.get(idInSvg) as MutableRequired<Booth>;
         let boothReg = booth instanceof RegularBooth ? (booth as MutableRequired<RegularBooth>) : null;
