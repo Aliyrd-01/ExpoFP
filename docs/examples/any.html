@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width" />
+        <title>Floor Plan</title>
+    </head>
+    <body>
+        <div class="expofp-floorplan" data-event-id="demo">Loading...</div>
+
+        <script>
+            let search = window.location.search;
+            if (search && search.startsWith("?expo="))
+                document.querySelector(".expofp-floorplan").setAttribute("data-event-id", search.replace("?expo=", ""));
+        </script>
+        <script src="https://demo.expofp.com/packages/master/expofp.js" crossorigin="anonymous"></script>
+    </body>
+</html>
