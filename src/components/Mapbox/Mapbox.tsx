@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import Color from "color";
 import mapboxgl, { Map } from "mapbox-gl";
 import { useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
@@ -255,6 +256,12 @@ export default function Mapbox() {
                             f.properties.color = `#${parseInt(f.properties.color.R).toString(16)}${parseInt(
                                 f.properties.color.G
                             ).toString(16)}${parseInt(f.properties.color.B).toString(16)}`;
+
+                            if (f.properties.type === "venue") f.properties.color = "grey";
+                            else if (f.properties.type === "outline") {
+                                let c = Color(f.properties.color);
+                                f.properties.color = c.lightness(c.lightness() - 15).hex();
+                            }
                         }
                     });
 
