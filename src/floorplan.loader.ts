@@ -115,7 +115,7 @@ export default class FloorPlanLoader implements FloorPlan {
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
-        loadCss("https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css", container);
+        loadCss("vendor/mapbox/mapbox-gl.css", container);
         // loadCss("fonts/fonts.css", container);
 
         loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
