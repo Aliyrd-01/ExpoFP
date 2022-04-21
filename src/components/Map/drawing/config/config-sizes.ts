@@ -8,7 +8,7 @@ import { createLabelCanvas } from "./canvases";
 export default function configSizes(context: DrawerContext, painterOrderPriority: number) {
     let painter: RectPainter = null;
     let ids: string[] = [];
-    let visible = false;
+    let visible = true;
     let edge = 0.5;
 
     (select(svg).selectAll("text").nodes() as SVGImageElement[]).forEach((text) => {
@@ -20,11 +20,23 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
             let ty = parseFloat(mt[2]);
             const r = parseFloat(mt[4]) || 0;
 
-            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180);
+            var anchor = text.getAttribute("text-anchor");
+            var dbl = text.getAttribute("dominant-baseline");
+            let w = parseFloat(text.getAttribute("data-w"));
+            let h = parseFloat(text.getAttribute("data-h"));
+
+            var align = "center";
+            if (anchor == "end" && dbl == "text-bottom") {
+                align = "righttop";
+                tx -= 5;
+                ty -= 5;
+            }
+
+            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align);
         }
     });
 
-    function addLabel(text: string, cX: number, cY: number, angle: number, fontSize: number = 18) {
+    function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number = 18) {
         const canvas = createLabelCanvas(text, fontSize, context.pixelRatio, "#FFFFFF");
         const w = canvas.width / 2;
         const h = canvas.height / 2;
@@ -40,7 +52,7 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
             deltas: [0, 0, 0, 0],
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
-            texPosition: "center",
+            texPosition: alignment,
             visible,
         });
     }
