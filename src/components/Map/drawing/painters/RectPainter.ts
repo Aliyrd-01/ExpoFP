@@ -304,6 +304,8 @@ export default class RectPainter implements Painter {
                     val = [w.spriteItem.rect.cx, w.spriteItem.rect.cy];
                 } else if (w.texPosition === "lefttop") {
                     val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
+                } else if (w.texPosition === "rightbottom") {
+                    val = [w.spriteItem.rect.x2, w.spriteItem.rect.y2];
                 } else {
                     val = [w.spriteItem.rect.x2, w.spriteItem.rect.y1];
                 }
@@ -318,6 +320,8 @@ export default class RectPainter implements Painter {
                     val = [0, 0];
                 } else if (w.texPosition === "lefttop") {
                     val = [x1, y1];
+                } else if (w.texPosition === "rightbottom") {
+                    val = [x2, y2];
                 } else {
                     val = [x2, y1];
                 }
@@ -331,6 +335,8 @@ export default class RectPainter implements Painter {
                     val = [0, 0];
                 } else if (w.texPosition === "lefttop") {
                     val = [xp1, yp1];
+                } else if (w.texPosition === "rightbottom") {
+                    val = [xp2, yp2];
                 } else {
                     val = [xp2, yp1];
                 }
@@ -346,6 +352,8 @@ export default class RectPainter implements Painter {
                 } else if (w.texPosition === "lefttop") {
                     val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
                     //val = [0, 0];
+                } else if (w.texPosition === "rightbottom") {
+                    val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
                 } else {
                     val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
                 }
@@ -556,7 +564,7 @@ export interface DrawerObject {
     deltas?: Vec4; // x1, y1, x2, y2
     deltaPts?: Vec4;
     scalePts?: number;
-    texPosition?: "center" | "lefttop" | "righttop";
+    texPosition?: "center" | "lefttop" | "righttop" | "rightbottom";
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;

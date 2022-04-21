@@ -27,9 +27,9 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
 
             var align = "center";
             if (anchor == "end" && dbl == "text-bottom") {
-                align = "righttop";
-                tx -= 5;
-                ty -= 5;
+                align = "center"; //"rightbottom";
+                tx -= w / 2;
+                ty -= h / 2;
             }
 
             addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align);
@@ -38,8 +38,8 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
 
     function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number = 18) {
         const canvas = createLabelCanvas(text, fontSize, context.pixelRatio, "#FFFFFF");
-        const w = canvas.width / 2;
-        const h = canvas.height / 2;
+        const w = canvas.width;
+        const h = canvas.height;
 
         if (!painter) painter = context.requirePainter(`sizes`, RectPainter, painterOrderPriority);
 
@@ -50,7 +50,7 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
             rotateRadians: angle,
             center: [cX, cY],
             deltas: [0, 0, 0, 0],
-            deltaPts: [-w, -h, w, h],
+            deltaPts: [-w / 2, -h / 2, w / 2, h / 2],
             canvasTmp: canvas,
             texPosition: alignment,
             visible,
