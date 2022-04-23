@@ -129,7 +129,7 @@ function Menu() {
                         <a
                             className="menu__item -pdf"
                             target="_blank"
-                            href={`https://designer-beta.expofp.com/service/convert/${settings.EXPO}/pdf`}
+                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf`}
                         >
                             {" "}
                             {t("Download PDF")}

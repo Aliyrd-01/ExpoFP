@@ -28,8 +28,8 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
             var align = "center";
             if (anchor == "end" && dbl == "text-bottom") {
                 align = "center"; //"rightbottom";
-                tx -= w / 2;
-                ty -= h / 2;
+                tx -= 10;
+                ty -= 5;
             }
 
             addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align);
