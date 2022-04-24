@@ -54,10 +54,10 @@ function dispatchFromUrl() {
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
     } else if (booth) {
-        store.selectBooth(booth);
+        setTimeout(() => store.selectBooth(booth), 250);
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find((x: Exhibitor) => x.slug === slug || x.externalId === slug);
-        if (exhibitor) store.selectExhibitor(exhibitor);
+        if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);

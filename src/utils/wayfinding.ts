@@ -26,7 +26,7 @@ const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) <= 1;
 const sameLine = (l1: Line, l2: Line): boolean =>
     (samePoint(l1.p0, l2.p0) && samePoint(l1.p1, l2.p1)) || (samePoint(l1.p0, l2.p1) && samePoint(l1.p1, l2.p0));
 
-let sublines = (): Sublines => window["__wfData"];
+let sublines = (): Sublines => window["_wfData"] || window["__wfData"];
 let pathFinder = { finder: null, oriented: true, exceptUnAccessible: false };
 
 function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean) {

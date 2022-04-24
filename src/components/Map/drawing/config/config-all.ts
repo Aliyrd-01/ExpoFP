@@ -33,6 +33,7 @@ export default function configAll(context: DrawerContext) {
             basePriority += 1;
         });
 
+    //sconfigSizes(context, 171);
     if (settings.EXPO === "axc2022") configImg(context, 170);
     configWf(context, 161);
 

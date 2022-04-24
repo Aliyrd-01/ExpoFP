@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width"
+    />
+    <title>Floor Plan</title>
+    <style>
+      .lds-grid {
+        top: 42vh;
+        margin: 0 auto;
+        display: block;
+        position: relative;
+        width: 64px;
+        height: 64px;
+      }
+
+      .lds-grid div {
+        position: absolute;
+        width: 13px;
+        height: 13px;
+        background: #aaa;
+        border-radius: 50%;
+        /* border: solid 1px #fff; */
+        animation: lds-grid 1.2s linear infinite;
+      }
+
+      .lds-grid div:nth-child(1) {
+        top: 6px;
+        left: 6px;
+        animation-delay: 0s;
+      }
+
+      .lds-grid div:nth-child(2) {
+        top: 6px;
+        left: 26px;
+        animation-delay: -0.4s;
+      }
+
+      .lds-grid div:nth-child(3) {
+        top: 6px;
+        left: 45px;
+        animation-delay: -0.8s;
+      }
+
+      .lds-grid div:nth-child(4) {
+        top: 26px;
+        left: 6px;
+        animation-delay: -0.4s;
+      }
+
+      .lds-grid div:nth-child(5) {
+        top: 26px;
+        left: 26px;
+        animation-delay: -0.8s;
+      }
+
+      .lds-grid div:nth-child(6) {
+        top: 26px;
+        left: 45px;
+        animation-delay: -1.2s;
+      }
+
+      .lds-grid div:nth-child(7) {
+        top: 45px;
+        left: 6px;
+        animation-delay: -0.8s;
+      }
+
+      .lds-grid div:nth-child(8) {
+        top: 45px;
+        left: 26px;
+        animation-delay: -1.2s;
+      }
+
+      .lds-grid div:nth-child(9) {
+        top: 45px;
+        left: 45px;
+        animation-delay: -1.6s;
+      }
+
+      @keyframes lds-grid {
+        0%,
+        100% {
+          opacity: 1;
+        }
+
+        50% {
+          opacity: 0.5;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lds-grid">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    <div class="expofp-floorplan" data-event-id="demo"</div>
+  
+    <script>
+      let search = window.location.search;
+      if (search && search.startsWith("?expo="))
+        document
+          .querySelector(".expofp-floorplan")
+          .setAttribute("data-event-id", search.replace("?expo=", ""));
+    </script>
+    <script
+      src="https://demo.expofp.com/packages/master/expofp.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
