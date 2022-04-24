@@ -7,8 +7,6 @@ import Rect from "../../core/Rect";
 import svg, { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../store/BoothStore";
-import { loadJson } from "../../tools/loaders";
-import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { bearing, distance } from "../../utils/geolib";
 import { useReaction } from "../../utils/mobx";
@@ -198,168 +196,161 @@ export default function Mapbox() {
     useEffect(() => {
         if (map.current) return;
 
-        loadJson<Polygon>(`https://${settings.EXPO}.expofp.com/data/geo.data.json?t=${new Date().getMilliseconds()}`)
-            .then((data) => {
-                s = data;
+        var data = (s = window["__fpGeo"] as Polygon);
 
-                if (!data.features.length) store.mapboxStore.mapBoxEnabled = false;
+        if (!data.features.length) store.mapboxStore.mapBoxEnabled = false;
 
-                var { cx: lng, cy: lat } = getViewbox();
+        var { cx: lng, cy: lat } = getViewbox();
 
-                map.current = new mapboxgl.Map({
-                    container: mapContainer.current,
-                    style: "mapbox://styles/mapbox/light-v9",
-                    center: [lng, lat],
-                    zoom: 12,
-                    bearing: 30,
-                    pitch: 30,
-                    maxPitch: 45,
-                    accessToken: props.token,
-                });
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: "mapbox://styles/mapbox/light-v9",
+            center: [lng, lat],
+            zoom: 12,
+            bearing: 30,
+            pitch: 30,
+            maxPitch: 45,
+            accessToken: props.token,
+        });
 
-                let current: Map = map.current;
+        let current: Map = map.current;
 
-                current.addControl(new MapboxGLButtonControl(() => switchViewbox(false), "fa fa-home"), "top-left");
+        current.addControl(new MapboxGLButtonControl(() => switchViewbox(false), "fa fa-home"), "top-left");
 
-                current.addControl(
-                    new mapboxgl.GeolocateControl({
-                        positionOptions: {
-                            enableHighAccuracy: true,
-                        },
-                        trackUserLocation: true,
-                        showUserHeading: true,
-                    }),
-                    "top-left"
-                );
+        current.addControl(
+            new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true,
+                },
+                trackUserLocation: true,
+                showUserHeading: true,
+            }),
+            "top-left"
+        );
 
-                current.addControl(
-                    new mapboxgl.NavigationControl({
-                        showCompass: false,
-                    }),
-                    "top-left"
-                );
+        current.addControl(
+            new mapboxgl.NavigationControl({
+                showCompass: false,
+            }),
+            "top-left"
+        );
 
-                current.addControl(new MapboxGLButtonControl(() => flyToCenter(0, 1000), "fa fa-expand-arrows-alt"), "top-left");
+        current.addControl(new MapboxGLButtonControl(() => flyToCenter(0, 1000), "fa fa-expand-arrows-alt"), "top-left");
 
-                current.on("load", async () => {
-                    setTimeout(() => flyToCenter(0, 4000, 0.001), 1000);
+        current.on("load", async () => {
+            setTimeout(() => flyToCenter(0, 4000, 0.001), 1000);
 
-                    data.features.forEach((f) => {
-                        f.properties.id = f.properties.id?.substring(1);
+            data.features.forEach((f) => {
+                f.properties.id = f.properties.id?.substring(1);
 
-                        f.properties.height = props.extrusion[f.properties.type] || props.extrusion.other;
+                f.properties.height = props.extrusion[f.properties.type] || props.extrusion.other;
 
-                        if (f.properties.type === "booth") {
-                            let booth = store.boothStore.booths.filter((b) => b.name === f.properties.id)[0];
-                            if (booth) f.properties.color = defaultColor(booth);
-                        } else if (f.properties.color) {
-                            f.properties.color = `#${parseInt(f.properties.color.R).toString(16)}${parseInt(
-                                f.properties.color.G
-                            ).toString(16)}${parseInt(f.properties.color.B).toString(16)}`;
+                if (f.properties.type === "booth") {
+                    let booth = store.boothStore.booths.filter((b) => b.name === f.properties.id)[0];
+                    if (booth) f.properties.color = defaultColor(booth);
+                } else if (f.properties.color) {
+                    f.properties.color = `#${parseInt(f.properties.color.R).toString(16)}${parseInt(
+                        f.properties.color.G
+                    ).toString(16)}${parseInt(f.properties.color.B).toString(16)}`;
 
-                            if (f.properties.type === "venue") f.properties.color = "grey";
-                            else if (f.properties.type === "outline") {
-                                let c = Color(f.properties.color);
-                                f.properties.color = c.lightness(c.lightness() - 15).hex();
-                            }
-                        }
-                    });
-
-                    current.addSource("booths", {
-                        type: "geojson",
-                        data,
-                    });
-
-                    current.addLayer({
-                        id: "venue",
-                        type: "fill-extrusion",
-                        source: "booths",
-                        filter: ["!in", "type", "booth", "viewbox"],
-                        paint: {
-                            "fill-extrusion-color": ["get", "color"],
-                            "fill-extrusion-height": ["get", "height"],
-                            "fill-extrusion-base": 0,
-                            "fill-extrusion-opacity": 0.8,
-                        },
-                    });
-
-                    current.addLayer({
-                        id: "booths",
-                        type: "fill",
-                        source: "booths",
-                        filter: ["==", "type", "booth"],
-                        paint: {
-                            "fill-color": ["get", "color"],
-                            "fill-outline-color": "#FFFFFF",
-                        },
-                    });
-
-                    let b = getViewbox();
-
-                    current.addImage("pulsing-dot", pulsingDot(200, current), { pixelRatio: 2 });
-
-                    current.addSource("dot-point", {
-                        type: "geojson",
-                        data: {
-                            type: "FeatureCollection",
-                            features: [
-                                {
-                                    properties: {},
-                                    type: "Feature",
-                                    geometry: {
-                                        type: "Point",
-                                        coordinates: [b.cx, b.cy], // icon position [lng, lat]
-                                    },
-                                },
-                            ],
-                        },
-                    });
-
-                    current.addLayer({
-                        id: "layer-with-pulsing-dot",
-                        type: "symbol",
-                        source: "dot-point",
-                        minzoom: 16,
-                        layout: {
-                            "icon-image": "pulsing-dot",
-                        },
-                    });
-
-                    current.on("mouseenter", ["booths"], () => {
-                        current.getCanvas().style.cursor = "pointer";
-                    });
-
-                    current.on("mouseleave", ["booths"], () => {
-                        current.getCanvas().style.cursor = "";
-                    });
-
-                    let prevZoom = 0;
-                    current.on("zoom", (e) => {
-                        let zoom = current.getZoom();
-
-                        if (zoom > prevZoom && zoom > props.edgeZoom && polyIntersected(current.getBounds(), getViewbox()))
-                            switchViewbox(false);
-
-                        prevZoom = zoom;
-                    });
-
-                    current.on("click", (e) => {
-                        const bbox = [
-                            [e.point.x - 5, e.point.y - 5],
-                            [e.point.x + 5, e.point.y + 5],
-                        ] as any;
-
-                        var props = current.queryRenderedFeatures(bbox, { layers: ["booths", "venue"] })[0]?.properties;
-                        if (!props) return;
-
-                        switchViewbox(false);
-                    });
-                });
-            })
-            .catch((e) => {
-                logger.info(`GeoJSON file not found for "${settings.EXPO}"`);
-                store.mapboxStore.mapBoxEnabled = false;
+                    if (f.properties.type === "venue") f.properties.color = "grey";
+                    else if (f.properties.type === "outline") {
+                        let c = Color(f.properties.color);
+                        f.properties.color = c.lightness(c.lightness() - 15).hex();
+                    }
+                }
             });
+
+            current.addSource("booths", {
+                type: "geojson",
+                data,
+            });
+
+            current.addLayer({
+                id: "venue",
+                type: "fill-extrusion",
+                source: "booths",
+                filter: ["!in", "type", "booth", "viewbox"],
+                paint: {
+                    "fill-extrusion-color": ["get", "color"],
+                    "fill-extrusion-height": ["get", "height"],
+                    "fill-extrusion-base": 0,
+                    "fill-extrusion-opacity": 0.8,
+                },
+            });
+
+            current.addLayer({
+                id: "booths",
+                type: "fill",
+                source: "booths",
+                filter: ["==", "type", "booth"],
+                paint: {
+                    "fill-color": ["get", "color"],
+                    "fill-outline-color": "#FFFFFF",
+                },
+            });
+
+            let b = getViewbox();
+
+            current.addImage("pulsing-dot", pulsingDot(200, current), { pixelRatio: 2 });
+
+            current.addSource("dot-point", {
+                type: "geojson",
+                data: {
+                    type: "FeatureCollection",
+                    features: [
+                        {
+                            properties: {},
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates: [b.cx, b.cy], // icon position [lng, lat]
+                            },
+                        },
+                    ],
+                },
+            });
+
+            current.addLayer({
+                id: "layer-with-pulsing-dot",
+                type: "symbol",
+                source: "dot-point",
+                minzoom: 16,
+                layout: {
+                    "icon-image": "pulsing-dot",
+                },
+            });
+
+            current.on("mouseenter", ["booths"], () => {
+                current.getCanvas().style.cursor = "pointer";
+            });
+
+            current.on("mouseleave", ["booths"], () => {
+                current.getCanvas().style.cursor = "";
+            });
+
+            let prevZoom = 0;
+            current.on("zoom", (e) => {
+                let zoom = current.getZoom();
+
+                if (zoom > prevZoom && zoom > props.edgeZoom && polyIntersected(current.getBounds(), getViewbox()))
+                    switchViewbox(false);
+
+                prevZoom = zoom;
+            });
+
+            current.on("click", (e) => {
+                const bbox = [
+                    [e.point.x - 5, e.point.y - 5],
+                    [e.point.x + 5, e.point.y + 5],
+                ] as any;
+
+                var props = current.queryRenderedFeatures(bbox, { layers: ["booths", "venue"] })[0]?.properties;
+                if (!props) return;
+
+                switchViewbox(false);
+            });
+        });
     });
 
     return useObserver(() => {
