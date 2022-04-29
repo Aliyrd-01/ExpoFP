@@ -4,7 +4,7 @@ import mapboxgl, { Map } from "mapbox-gl";
 import { useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import Rect from "../../core/Rect";
-import svg, { svgArea } from "../../data/svg";
+import { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../store/BoothStore";
 import settings from "../../tools/settings";
@@ -15,12 +15,13 @@ import { pulsingDot } from "./Dot";
 import "./Mapbox.scss";
 
 function b() {
-    var el = (svg.querySelector("[data-mb-type='viewbox']") as SVGGraphicsElement)?.getAttribute("data-mb-value") as string;
-    if (!el) {
+    var el = window["__fpGeo"];
+    if (!el?.properties?.mpViewbox) {
         store.mapboxStore.mapBoxEnabled = false;
         return 0;
     }
-    var parts = el.split(" ").map((p) => parseFloat(p));
+
+    var parts = el.properties.mpViewbox;
     if (parts.length < 6) return 0;
     return -1 * bearing(parts[1], parts[0], parts[3], parts[2]) - 90;
 }
@@ -206,7 +207,7 @@ export default function Mapbox() {
             container: mapContainer.current,
             style: "mapbox://styles/mapbox/light-v9",
             center: [lng, lat],
-            zoom: 12,
+            zoom: 14,
             bearing: 30,
             pitch: 30,
             maxPitch: 45,
