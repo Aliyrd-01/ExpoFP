@@ -48,7 +48,7 @@ d3.select(svg)
     });
 
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
-const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
+let svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
 settings.wayfinding = !data.hideDirections && d3.select(svg).select('[data-layer="WF"]>path').node() ? true : false;
 
@@ -65,7 +65,7 @@ const floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectEleme
 const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 
 if (viewboxRect) {
-    svgArea = Rect.fromSvgRectElement(viewboxRect);
+    svgViewBox = svgArea = Rect.fromSvgRectElement(viewboxRect);
     viewboxRect.remove();
 } else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
     const center = [3173, 1987];
