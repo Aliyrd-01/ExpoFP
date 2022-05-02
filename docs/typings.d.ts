@@ -6,17 +6,20 @@ class FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
-    onFpConfigured: () => void;
+
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
+
+    onFpConfigured: () => void;
+
     onDirection: (e: FloorPlanDirectionEvent) => void;
-    selectBooth(nameOrExternalId: string | string[]): void;
-    selectExhibitor(nameOrExternalId: string | string[]): void;
-    selectCurrentPosition(point: CurrentPosition, focus: boolean): void;
-    selectRoute(
-        from: string | { x: number; y: number },
-        to: string | { x: number; y: number },
-        exceptUnaccessible: boolean
-    ): void;    
+
+    selectBooth(nameOrExternalId: string): void;
+
+    selectExhibitor(nameOrExternalId: string): void;
+
+    selectCurrentPosition(point: { x: number; y: number; angle?: number; z?: string }, focus?: boolean): void;
+
+    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }
 
 interface FloorPlanOptions {
@@ -25,6 +28,8 @@ interface FloorPlanOptions {
     dataUrl?: string;
     noOverlay?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
+    onFpConfigured?: () => void;
+    onDirection?: (e: FloorPlanDirectionEvent) => void;
 }
 
 interface FloorPlanBooth {
@@ -36,18 +41,17 @@ interface FloorPlanBoothClickEvent {
     target: FloorPlanBooth;
 }
 
+interface Point {
+    x: number;
+    y: number;
+}
+
 interface FloorPlanDirectionEvent {
     from: FloorPlanBooth;
     to: FloorPlanBooth;
-    points: { x: number; y: number }[];
+    lines: { p0: Point; p1: Point }[];
     distance: string;
     time: number;
-}
-
-class CurrentPosition {
-    public x: number;
-    public y: number;
-    public angle: number;
 }
 
 const ExpoFP: {
