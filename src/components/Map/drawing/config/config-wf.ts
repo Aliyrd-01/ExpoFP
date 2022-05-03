@@ -5,9 +5,11 @@ import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { uiState } from "../../../../store";
+import settings from "../../../../tools/settings";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
+import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
@@ -21,6 +23,24 @@ const isDebug = false;
 
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
+
+function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
+    var mapping = null;
+
+    if (settings.EXPO === "") {
+        mapping = { "-1": { x: 100, y: 100 }, "1": { x: 200, y: 200 }, "2": { x: 300, y: 300 } };
+    }
+
+    var shift: { x: number; y: number } = mapping && position?.z && mapping[position.z] ? mapping[position.z] : null;
+
+    if (!shift) return position;
+
+    var cp = { ...position };
+    cp.x += shift.x;
+    cp.y += shift.y;
+
+    return cp;
+}
 
 function drawLines(wfDrawer: RectPainter, ptscale: number) {
     routePoints.forEach((rp, i) => wfDrawer.updateVisible(`Dot_${i}`, false));
@@ -51,10 +71,10 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
     });
 }
 
-const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
-const asin = (sin: number) => (Math.asin(sin) * 180) / Math.PI;
-
 function splitPolyLine(lines: Line[], interval: number): Point[] {
+    const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
+    const asin = (sin: number) => (Math.asin(sin) * 180) / Math.PI;
+
     let basePoint: Point = lines[0].p0;
 
     const points: Point[] = [basePoint];
@@ -218,7 +238,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     }
 
     function updateCurrentPosition() {
-        let position = store.routeStore.currentPosition;
+        let position = mapCurrentPosition(store.routeStore.currentPosition);
 
         if (position) {
             wfDrawer.updateVisible("sourceLocation", false);
