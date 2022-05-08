@@ -50,6 +50,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    updateLayersVisibility(layers: { name: string; visible: boolean }[]): void {
+        nr();
+    }
+
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;

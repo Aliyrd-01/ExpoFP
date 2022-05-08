@@ -20,6 +20,7 @@ export type Drawer = Pick<
     | "setVisibleScale"
     | "draw"
     | "pixelRatio"
+    | "setPainterVisibility"
 >;
 
 export type DrawerContext = Pick<
@@ -112,6 +113,12 @@ export class DrawerImpl extends Matrix {
             d.paint();
         }
         //this.requireRedraw();
+    }
+
+    public setPainterVisibility(layer: string, visible: boolean) {
+        this.paintersByType.forEach((painter, key) => {
+            if (key.startsWith(layer) && painter.visible !== visible) painter.visible = visible;
+        });
     }
 
     //////////////////

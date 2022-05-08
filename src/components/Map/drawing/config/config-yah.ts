@@ -1,7 +1,7 @@
 import Color from "color";
-import { DrawerContext } from "../Drawer1";
-import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
 import { getYah } from "../../../../utils/yah";
+import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
+import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
 export default function configYah(context: DrawerContext) {
@@ -39,7 +39,7 @@ export default function configYah(context: DrawerContext) {
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter("yah" + drawerSeq++, TrianglePainter, 160);
+            drawer = context.requirePainter("YAH" + drawerSeq++, TrianglePainter, 160);
         }
     }
 
@@ -53,7 +53,7 @@ export default function configYah(context: DrawerContext) {
             p[1] = Math.abs(p[1]);
             p.length = 2;
         }
-    
+
         return mesh.cells.map((c) => ({
             p0: mesh.positions[c[0]],
             p1: mesh.positions[c[1]],

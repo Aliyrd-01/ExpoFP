@@ -19,6 +19,8 @@ class FloorPlan {
 
     selectCurrentPosition(point: { x: number; y: number; angle?: number; z?: string }, focus?: boolean): void;
 
+    updateLayersVisibility(layers: string[], visible: boolean): void;
+
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }
 

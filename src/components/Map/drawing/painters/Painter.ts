@@ -3,6 +3,7 @@ export default interface Painter {
     ptscale?: number;
     dim?: number;
     orderPriority: number;
+    visible:boolean;
     preparePaint();
     paint();
 }

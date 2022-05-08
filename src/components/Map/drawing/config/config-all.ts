@@ -1,7 +1,9 @@
 import { select } from "d3-selection";
 import svg from "../../../../data/svg";
+import { boothStore } from "../../../../store";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
+import { uiState } from "./../../../../store/index";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
@@ -19,18 +21,23 @@ export default function configAll(context: DrawerContext) {
     configDim(context);
     configCanvas(context);
 
-    let boothsAnimate = null;
+    let layers = [];
+    let boothsAnimations = [];
     let basePriority = 6;
     select(svg)
-        .selectAll<SVGAElement, unknown>("svg > g[id]")
+        .selectAll<SVGAElement, unknown>("svg  [data-layer]")
         .nodes()
-        .map((n) => n.getAttribute("id"))
-        .forEach((layerName) => {
-            if (layerName === "Booths") {
-                boothsAnimate = configBooths(context);
-                basePriority = 153;
-            } else configBg(context, layerName, basePriority);
+        .map((n) => n.getAttribute("data-layer"))
+        .forEach((layerID) => {
+            if (layerID !== "WF") layers.push({ name: layerID, visible: true });
+
+            configBg(context, layerID, basePriority);
             basePriority += 1;
+            const booths = boothStore.booths.filter((b) => b.layer === layerID);
+            if (booths.length) {
+                boothsAnimations.push(configBooths(context, layerID, booths));
+                basePriority += 4;
+            }
         });
 
     if (settings.EXPO === "axc2022") configImg(context, 170);
@@ -39,11 +46,13 @@ export default function configAll(context: DrawerContext) {
     configYah(context);
     matrixAfter();
 
+    uiState.layers = layers;
+
     return function () {
         // to be running when all painters prepared
         if (context.updatable) {
             window.setTimeout(() => {
-                matrixAnimate(boothsAnimate);
+                boothsAnimations.forEach((ba) => matrixAnimate(ba));
                 // uiState.canvasStarted = true;
             }, delayAnimations);
         }

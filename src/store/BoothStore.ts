@@ -47,6 +47,7 @@ export abstract class BoothBase {
     readonly slug: string;
     readonly error: boolean;
     readonly description: string;
+    readonly layer: string;
 
     @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;

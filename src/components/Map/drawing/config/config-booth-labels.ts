@@ -34,9 +34,9 @@ const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
 //     }, delayAnimations + 800);
 // }
 
-export default function configBoothLabels(context: DrawerContext, booth: Booth) {
+export default function configBoothLabels(context: DrawerContext, layerID: string, booth: Booth) {
     if (!(booth instanceof RegularBooth) || booth.noLabels) return;
-    return new BoothLabelDrawer(context, booth);
+    return new BoothLabelDrawer(context, layerID, booth);
 }
 
 // function replaceColorTmp(color: string) {
@@ -59,8 +59,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     // private readonly labelColor: string;
     // private readonly detailsHeight: number;
 
-    constructor(context: DrawerContext, booth: RegularBooth) {
-        super(context, booth, "booth-label", RectPainter, 160);
+    constructor(context: DrawerContext, layerID: string, booth: RegularBooth) {
+        super(context, booth, layerID + "booth-label", RectPainter, 160);
         this.locked = context.updatable;
         // initPainter(this.painter);
 

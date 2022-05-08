@@ -32,6 +32,7 @@ export default class UIState {
     // @observable.ref hoveredBooth1 = {};
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
+    @observable layers: { name: string; visible: boolean }[] = [];
     @observable moveToRect: Rect = null;
     @observable menu = false;
     @observable searchFocused = false;
@@ -291,6 +292,18 @@ export default class UIState {
     @action toggleMapOverlay() {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
+    }
+
+    @action updateLayersVisibility(layers: { name: string; visible: boolean }[]): void {
+        var ls = [].concat(this.layers);
+
+        layers.forEach((layer) => {
+            let l = ls.filter((l) => l.name === layer.name)[0];
+            if (l) l.visible = layer.visible;
+            else ls.push({ name: layer.name, visible: layer.visible });
+        });
+
+        this.layers = ls;
     }
 
     ///////////////////////////////////////////////////////////////////////////

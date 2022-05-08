@@ -1,6 +1,6 @@
 import { easeLinear } from "d3-ease";
 import { interpolateNumber } from "d3-interpolate";
-import { boothStore } from "../../../../store";
+import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import isDebug from "../../../../utils/is-debug";
 import { DrawerContext } from "../Drawer1";
@@ -12,12 +12,16 @@ import configBoothBorder from "./config-booth-border";
 import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
 
-export default function configBooths(context: DrawerContext) {
-    const booths = boothStore.booths; //.filter(x => x.name === '4268');
+export default function configBooths(context: DrawerContext, layerID: string, booths: Booth[]) {
+    //.filter(x => x.name === '4268');
     // booths.splice(2740);//
     // , configBoothBorder
+
+    layerID += ":";
+
     const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((
         DrawerContext,
+        string,
         Booth
     ) => void | { unlock: () => void })[]; //configBoothType,
     if (!settings.borderless) configFuncs.push(configBoothBorder);
@@ -30,7 +34,7 @@ export default function configBooths(context: DrawerContext) {
         if (isDebug) console.time(name);
         for (const b of booths) {
             // const afterFunc =
-            const dr = func(context, b);
+            const dr = func(context, layerID, b);
             if (dr) lockedDrawers.push(dr);
             // if (afterFunc) after.push(afterFunc);
         }
@@ -38,16 +42,16 @@ export default function configBooths(context: DrawerContext) {
         // if (drawer) ar.push(drawer);
     }
 
-    const labelsPainter = context.requirePainter("booth-label") as RectPainter;
+    const labelsPainter = context.requirePainter(layerID + "booth-label") as RectPainter;
     if (context.updatable && labelsPainter) {
         labelsPainter.alpha = 0;
     }
 
-    return function() {
+    return function () {
         for (const dr of lockedDrawers) {
             dr.unlock();
         }
-        animate(0, 300, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), v =>
+        animate(0, 300, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), (v) =>
             labelsPainter ? (labelsPainter.alpha = v) : null
         );
     };

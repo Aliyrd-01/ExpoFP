@@ -42,10 +42,12 @@ export default function initBooths(store: RootStore) {
         sortByName(e.booths);
     }
 
-    for (const el of d3.select(svg).selectAll("#Booths g[id^=b], #Booths rect[id^=b]").nodes() as (
-        | SVGRectElement
-        | SVGPathElement
-    )[]) {
+    for (const el of d3
+        .select(svg)
+        .selectAll("[data-tagname='efp-booth'], [data-layer=Booths] g[id^=b], [data-layer=Booths]  rect[id^=b]")
+        .nodes() as (SVGRectElement | SVGPathElement)[]) {
+        const layer = (el.parentNode as SVGGraphicsElement).dataset.layer;
+
         let rect: SVGRectElement;
         let pathsWithRect = false;
         if (el.tagName === "rect") {
@@ -77,7 +79,7 @@ export default function initBooths(store: RootStore) {
             boothsByName.set(idInSvg, booth as Booth);
             booths.push(booth);
         }
-
+        booth.layer = layer;
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
         if (boothReg) {

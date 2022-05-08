@@ -50,6 +50,7 @@ export default class RectPainter implements Painter {
     private indexBuffersAreUint: boolean;
 
     // to be set externally
+    public visible: boolean = true;
     public orderPriority: number;
     public matrix: any;
     public ptscale: number;
@@ -499,7 +500,7 @@ export default class RectPainter implements Painter {
     }
 
     paint() {
-        if (this.alpha < 0.05) return;
+        if (this.alpha < 0.05 || !this.visible) return;
         const gl = this.gl;
 
         this.preparePaint();

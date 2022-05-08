@@ -11,7 +11,10 @@ export default function configBg(context: DrawerContext, layerID: string, painte
     // const drawer: TrianglePainter = context.requirePainter("bg", TrianglePainter, 10);
 
     // const color1 = [0, 0, 0, 0.5] as Vec4;
-    const bgElements = select(svg).select(`#${layerID}`).selectAll("path, rect").nodes() as SVGElement[];
+    const bgElements = select(svg)
+        .select(`#${layerID}`)
+        .selectAll(":scope > *:not([data-tagname='efp-booth']) path, :scope > path")
+        .nodes() as SVGElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") {
@@ -67,7 +70,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter(layerID + drawerSeq++, TrianglePainter, painterOrderPriority);
+            drawer = context.requirePainter(layerID + ":" + drawerSeq++, TrianglePainter, painterOrderPriority);
         }
     }
 

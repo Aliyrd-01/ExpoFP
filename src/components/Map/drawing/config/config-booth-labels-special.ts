@@ -22,10 +22,10 @@ function cteateTextFitter(pixelRatio: number) {
     return d;
 }
 
-export default function configBoothLabelsSpecial(context: DrawerContext, booth: Booth) {
+export default function configBoothLabelsSpecial(context: DrawerContext, layerID: string, booth: Booth) {
     if (!(booth instanceof SpecialBooth) || booth.noLabels) return;
     if (booth.noLabels) return;
-    return new BoothLabelSpecialDrawer(context, booth);
+    return new BoothLabelSpecialDrawer(context, layerID, booth);
 }
 
 class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
@@ -35,8 +35,8 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     private previousSkipDim: boolean;
     public locked: boolean;
 
-    constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, "booth-label", RectPainter, 160);
+    constructor(context: DrawerContext, layerID: string, booth: Booth) {
+        super(context, booth, layerID + "booth-label", RectPainter, 160);
         this.locked = context.updatable;
         // initDrawer(this.drawer);
 

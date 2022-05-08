@@ -11,10 +11,10 @@ import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePain
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 
 // let picked = 0;
-export default function configBoothBg(context: DrawerContext, booth: Booth) {
+export default function configBoothBg(context: DrawerContext, layerID: string, booth: Booth) {
     // picked++;
     // if (picked > 1) return null;
-    new BoothBgDrawer(context, booth);
+    new BoothBgDrawer(context, layerID, booth);
 }
 
 let seq = 0;
@@ -23,7 +23,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     private readonly pathsDefaultColors: string[];
     private readonly painters: TrianglePainter[] = [];
 
-    constructor(context: DrawerContext, booth: Booth) {
+    constructor(context: DrawerContext, layerID: string, booth: Booth) {
         super(context, booth);
 
         // let triangles: Triangle[];
@@ -36,7 +36,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
             for (const t of triangles) {
-                this.addObject({
+                this.addObject(layerID, {
                     id: this.getId("bg-def"),
                     groupId: this.getId("bg"),
                     p0: t[0],
@@ -54,7 +54,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                 const colored = !!p.color;
                 if (colored) pathsColors.add(p.color);
                 for (const t of p.triangles) {
-                    this.addObject({
+                    this.addObject(layerID, {
                         id: colored ? this.getId("bg-" + p.color) : this.getId("bg-def"),
                         groupId: this.getId("bg"),
                         p0: t[0],
@@ -72,7 +72,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
             for (const t of triangles) {
-                this.addObject({
+                this.addObject(layerID, {
                     id: this.getId("bg-def"),
                     groupId: this.getId("bg"),
                     p0: t[0],
@@ -86,10 +86,10 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         this.startAutoupdate();
     }
 
-    addObject(item: TrianglePainterObject) {
-        let painter = this.context.requirePainter("booth-bg" + seq, TrianglePainter, 148);
+    addObject(layerID: string, item: TrianglePainterObject) {
+        let painter = this.context.requirePainter(layerID + "booth-bg" + seq, TrianglePainter, 148);
         while (!painter || !painter.tryAddObject(item)) {
-            painter = this.context.requirePainter("booth-bg" + ++seq, TrianglePainter, 148);
+            painter = this.context.requirePainter(layerID + "booth-bg" + ++seq, TrianglePainter, 148);
         }
 
         if (this.painters.indexOf(painter) === -1) this.painters.push(painter);

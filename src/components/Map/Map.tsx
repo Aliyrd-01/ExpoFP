@@ -123,6 +123,14 @@ export default function Map() {
         }
     );
 
+    useReaction(
+        () => uiState.layers,
+        () => {
+            uiState.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
+            s.drawer.draw();
+        }
+    );
+
     return useObserver(() => (
         <canvas
             ref={el}

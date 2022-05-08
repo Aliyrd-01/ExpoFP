@@ -7,11 +7,12 @@ import { isWebGlSupported } from "../utils";
 import isDebug from "../utils/is-debug";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
+import Floors from "./Floors";
 import Header from "./Header";
 import LargeMessage from "./LargeMessage";
+import Layers from "./Layers";
 // import TouchHover from "./TouchHover";
 import "./Layout.scss";
-import Floors from "./Floors";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import Overlay from "./Overlay";
@@ -41,6 +42,7 @@ export default observer(function Layout() {
                 <Ws />
                 <Controls />
                 <Floors />
+                <Layers />
 
                 {/*<Areas />*/}
                 {!uiState.noOverlay && <Overlay />}
