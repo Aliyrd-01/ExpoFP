@@ -1,14 +1,17 @@
 import { select } from "d3";
+import { reaction } from "mobx";
 import svg from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { createLabelCanvas } from "./canvases";
+import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
 export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number) {
     let painter: RectPainter = null;
     let ids: string[] = [];
     let visible = true;
     let edge = 0.5;
+
+    const labelCanvasCache = new Map<string, CanvasDescriptor>();
 
     (select(svg).selectAll("text").nodes() as SVGImageElement[]).forEach((text) => {
         const transform = text.getAttribute("transform");
@@ -25,18 +28,22 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             let h = parseFloat(text.getAttribute("data-h"));
 
             var align = "center";
-            // if (anchor == "end" && dbl == "text-bottom") {
-            //     align = "center"; //"rightbottom";
-            //     tx -= 10;
-            //     ty -= 5;
-            // }
+            if (anchor == "end" && dbl == "auto") {
+                align = "rightbottom";
+                tx -= w / 2;
+                ty -= h / 2;
+            }
 
             addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align);
         }
     });
 
     function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number = 18) {
-        const canvas = createLabelCanvas(text, fontSize, context.pixelRatio, "#FFFFFF");
+        let canvas = labelCanvasCache.get(text);
+        if (!canvas) {
+            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, "#FFFFFF");
+            labelCanvasCache.set(text, canvas);
+        }
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
@@ -56,15 +63,15 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         });
     }
 
-    // if (context.updatable) {
-    //     reaction(
-    //         () => context.ptscale,
-    //         () => {
-    //             if ((context.ptscale > edge && visible) || (context.ptscale < edge && !visible)) {
-    //                 visible = !visible;
-    //                 ids.forEach((id) => painter.updateVisible(id, visible));
-    //             }
-    //         }
-    //     );
-    // }
+    if (context.updatable) {
+        reaction(
+            () => context.ptscale,
+            () => {
+                if ((context.ptscale > edge && visible) || (context.ptscale < edge && !visible)) {
+                    visible = !visible;
+                    ids.forEach((id) => painter.updateVisible(id, visible));
+                }
+            }
+        );
+    }
 }
