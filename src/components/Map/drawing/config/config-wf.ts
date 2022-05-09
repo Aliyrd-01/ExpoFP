@@ -27,8 +27,8 @@ let toColor = Color("#FF9E2C");
 function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     var mapping = null;
 
-    if (settings.EXPO === "") {
-        mapping = { "-1": { x: 100, y: 100 }, "1": { x: 200, y: 200 }, "2": { x: 300, y: 300 } };
+    if (settings.EXPO === "all-energy") {
+        mapping = { "1": { x: 0, y: 0 }, "2": { x: -410, y: 1302 } };
     }
 
     var shift: { x: number; y: number } = mapping && position?.z && mapping[position.z] ? mapping[position.z] : null;
