@@ -10,6 +10,7 @@ import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
 import configImg from "./config-img";
 import configMatrix from "./config-matrix";
+import configSizes from "./config-sizes";
 import configWf from "./config-wf";
 import configYah from "./config-yah";
 
@@ -40,7 +41,8 @@ export default function configAll(context: DrawerContext) {
             }
         });
 
-    //sconfigSizes(context, 171);
+    configSizes(context, "Sizes", 171);
+
     if (settings.EXPO === "axc2022") configImg(context, 170);
     configWf(context, 161);
 

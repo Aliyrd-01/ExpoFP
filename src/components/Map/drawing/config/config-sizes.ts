@@ -1,11 +1,10 @@
 import { select } from "d3";
-import { reaction } from "mobx";
 import svg from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { createLabelCanvas } from "./canvases";
 
-export default function configSizes(context: DrawerContext, painterOrderPriority: number) {
+export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number) {
     let painter: RectPainter = null;
     let ids: string[] = [];
     let visible = true;
@@ -26,11 +25,11 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
             let h = parseFloat(text.getAttribute("data-h"));
 
             var align = "center";
-            if (anchor == "end" && dbl == "text-bottom") {
-                align = "center"; //"rightbottom";
-                tx -= 10;
-                ty -= 5;
-            }
+            // if (anchor == "end" && dbl == "text-bottom") {
+            //     align = "center"; //"rightbottom";
+            //     tx -= 10;
+            //     ty -= 5;
+            // }
 
             addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align);
         }
@@ -38,10 +37,10 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
 
     function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number = 18) {
         const canvas = createLabelCanvas(text, fontSize, context.pixelRatio, "#FFFFFF");
-        const w = canvas.width;
-        const h = canvas.height;
+        const w = canvas.width / 2;
+        const h = canvas.height / 2;
 
-        if (!painter) painter = context.requirePainter(`sizes`, RectPainter, painterOrderPriority);
+        if (!painter) painter = context.requirePainter(`${layerID}:`, RectPainter, painterOrderPriority);
 
         var id = `${cX}${cY}`;
         ids.push(id);
@@ -50,22 +49,22 @@ export default function configSizes(context: DrawerContext, painterOrderPriority
             rotateRadians: angle,
             center: [cX, cY],
             deltas: [0, 0, 0, 0],
-            deltaPts: [-w / 2, -h / 2, w / 2, h / 2],
+            deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
             texPosition: alignment,
             visible,
         });
     }
 
-    if (context.updatable) {
-        reaction(
-            () => context.ptscale,
-            () => {
-                if ((context.ptscale > edge && visible) || (context.ptscale < edge && !visible)) {
-                    visible = !visible;
-                    ids.forEach((id) => painter.updateVisible(id, visible));
-                }
-            }
-        );
-    }
+    // if (context.updatable) {
+    //     reaction(
+    //         () => context.ptscale,
+    //         () => {
+    //             if ((context.ptscale > edge && visible) || (context.ptscale < edge && !visible)) {
+    //                 visible = !visible;
+    //                 ids.forEach((id) => painter.updateVisible(id, visible));
+    //             }
+    //         }
+    //     );
+    // }
 }
