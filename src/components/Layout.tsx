@@ -18,6 +18,8 @@ import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
+import Modal from "./Modal";
+import Share from "./Share";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -54,6 +56,9 @@ export default observer(function Layout() {
                 {isIframe && <LargeMessage />}
                 {/* {isIframe && <TouchHover />} */}
                 <Pdf />
+                <Modal>
+                    <Share url={window.location.href}/>
+                </Modal>
                 <div id="fps" />
             </div>
         </div>
