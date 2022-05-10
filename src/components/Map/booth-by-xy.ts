@@ -1,9 +1,9 @@
-import { m4 } from 'twgl.js';
-import { Drawer } from './drawing/Drawer1';
-import { Booth } from '../../store/BoothStore';
-import Rect from '../../core/Rect';
-import { boothStore } from '../../store';
-import logger from '../../tools/logger';
+import { m4 } from "twgl.js";
+import Rect from "../../core/Rect";
+import { boothStore } from "../../store";
+import { Booth } from "../../store/BoothStore";
+import logger from "../../tools/logger";
+import { Drawer } from "./drawing/Drawer1";
 // import { getPxSvgMatrix } from "./matrix";
 
 export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): Booth {
@@ -20,10 +20,10 @@ const rects: Rect[] = [];
 
 const segments: Rect[] = [];
 const segmentToRects = new Map<Rect, Rect[]>();
-let superSegment = Rect.fromMultiple(booths.map(b => b.rect));
+let superSegment = Rect.fromMultiple(booths.map((b) => b.rect));
 for (const b of booths) {
     let rect = b.rect;
-    if (Math.abs(b.rotate) === 90 * Math.PI / 180){
+    if (Math.abs(b.rotate) === (90 * Math.PI) / 180) {
         rect = rect.getRotated90();
     }
     rects.push(rect);
@@ -39,30 +39,31 @@ for (let x = 0; x < parts; x++) {
         const startY = superSegment.y1 + y * segmentHeight;
         const segm = Rect.fromXywh(startX, startY, segmentWidth, segmentHeight);
         segments.push(segm);
-        const rectsInSegm = rects.filter(r => segm.intersects(r));
+        const rectsInSegm = rects.filter((r) => segm.intersects(r));
         segmentToRects.set(segm, rectsInSegm);
     }
 }
-logger.log('hover segmentToRects', segmentToRects);
+logger.log("hover segmentToRects", segmentToRects);
 
 let prevSegment: Rect;
 function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {
     var pxSvgMatrix = drawer.getPxSvgMatrix();
     const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);
-    const xs = xys[0], ys = xys[1];
+    const xs = xys[0],
+        ys = xys[1];
 
     let segm: Rect;
     if (prevSegment && prevSegment.containsPoint(xs, ys)) {
         segm = prevSegment;
     } else {
-        segm = segments.find(s => s.containsPoint(xs, ys));
+        segm = segments.find((s) => s.containsPoint(xs, ys));
     }
     // find segment first
     if (!segm) return null;
     prevSegment = segm;
 
     const rects = segmentToRects.get(segm);
-    const found = rects.filter(b => b.containsPoint(xs, ys));
+    const found = rects.filter((b) => b.containsPoint(xs, ys));
     if (found.length) {
         let foundOne: Rect;
         if (found.length > 1) {

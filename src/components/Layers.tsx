@@ -1,14 +1,14 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import { uiState } from "../store";
+import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import "./Layers.scss";
 
 export default function Layers() {
     const s = useLocalStore(() => ({
         get className() {
-            return classNames({ levels: true, "-ready": uiState.wsStarted && uiState.layers.length });
+            return classNames({ levels: true, "-ready": uiState.wsStarted && store.layerStore.layers.length });
         },
         get style() {
             return {
@@ -20,7 +20,7 @@ export default function Layers() {
 
     return useObserver(() => (
         <div className={s.className} style={s.style}>
-            {uiState.layers.map((layer) => (
+            {store.layerStore.layers.map((layer) => (
                 <div
                     style={{ opacity: layer.visible ? 1 : 0.3 }}
                     className="item"

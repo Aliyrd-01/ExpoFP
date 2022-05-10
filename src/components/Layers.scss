@@ -9,6 +9,7 @@
     $s: 2rem;
 
     > .item {
+        user-select: none;
         padding: 0;
         text-align: center;
         background: #fff;

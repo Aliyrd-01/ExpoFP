@@ -124,9 +124,9 @@ export default function Map() {
     );
 
     useReaction(
-        () => uiState.layers,
+        () => store.layerStore.visible,
         () => {
-            uiState.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
+            store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
             s.drawer.draw();
         }
     );

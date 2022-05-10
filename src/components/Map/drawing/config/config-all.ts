@@ -21,7 +21,6 @@ export default function configAll(context: DrawerContext) {
     configDim(context);
     configCanvas(context);
 
-    let layers = [];
     let boothsAnimations = [];
     let basePriority = 6;
     select(svg)
@@ -29,10 +28,8 @@ export default function configAll(context: DrawerContext) {
         .nodes()
         .map((n) => n.getAttribute("data-layer"))
         .forEach((layerID) => {
-            if (layerID !== "WF") layers.push({ name: layerID, visible: true });
-
             configBg(context, layerID, basePriority++);
-            const booths = boothStore.booths.filter((b) => b.layer === layerID);
+            const booths = boothStore.booths.filter((b) => b.layer.name === layerID);
             if (booths.length) {
                 boothsAnimations.push(configBooths(context, layerID, booths, basePriority));
                 basePriority += 20;
@@ -43,8 +40,6 @@ export default function configAll(context: DrawerContext) {
     configSizes(context, "Sizes", basePriority++);
     configYah(context);
     matrixAfter();
-
-    uiState.layers = layers;
 
     return function () {
         // to be running when all painters prepared

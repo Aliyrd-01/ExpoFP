@@ -3,6 +3,7 @@ import { computed } from "mobx";
 import Rect from "../core/Rect";
 import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
+import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
 
 // interface BoothState {
@@ -47,10 +48,14 @@ export abstract class BoothBase {
     readonly slug: string;
     readonly error: boolean;
     readonly description: string;
-    readonly layer: string;
+    readonly layer: Layer;
 
     @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;
+    } 
+    
+    @computed({ keepAlive: true }) private get visible() {
+        return this.layer.visible;
     }
 
     @computed({ keepAlive: true }) private get inList() {
