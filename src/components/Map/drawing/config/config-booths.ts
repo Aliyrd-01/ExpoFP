@@ -12,7 +12,7 @@ import configBoothBorder from "./config-booth-border";
 import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
 
-export default function configBooths(context: DrawerContext, layerID: string, booths: Booth[]) {
+export default function configBooths(context: DrawerContext, layerID: string, booths: Booth[], painterOrderPriority: number) {
     //.filter(x => x.name === '4268');
     // booths.splice(2740);//
     // , configBoothBorder
@@ -22,7 +22,8 @@ export default function configBooths(context: DrawerContext, layerID: string, bo
     const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((
         DrawerContext,
         string,
-        Booth
+        Booth,
+        number
     ) => void | { unlock: () => void })[]; //configBoothType,
     if (!settings.borderless) configFuncs.push(configBoothBorder);
 
@@ -34,7 +35,7 @@ export default function configBooths(context: DrawerContext, layerID: string, bo
         if (isDebug) console.time(name);
         for (const b of booths) {
             // const afterFunc =
-            const dr = func(context, layerID, b);
+            const dr = func(context, layerID, b, painterOrderPriority++);
             if (dr) lockedDrawers.push(dr);
             // if (afterFunc) after.push(afterFunc);
         }

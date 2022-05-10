@@ -8,7 +8,6 @@ import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
-import configImg from "./config-img";
 import configMatrix from "./config-matrix";
 import configSizes from "./config-sizes";
 import configWf from "./config-wf";
@@ -32,20 +31,16 @@ export default function configAll(context: DrawerContext) {
         .forEach((layerID) => {
             if (layerID !== "WF") layers.push({ name: layerID, visible: true });
 
-            configBg(context, layerID, basePriority);
-            basePriority += 1;
+            configBg(context, layerID, basePriority++);
             const booths = boothStore.booths.filter((b) => b.layer === layerID);
             if (booths.length) {
-                boothsAnimations.push(configBooths(context, layerID, booths));
-                basePriority += 4;
+                boothsAnimations.push(configBooths(context, layerID, booths, basePriority));
+                basePriority += 20;
             }
         });
 
-    configSizes(context, "Sizes", 171);
-
-    if (settings.EXPO === "axc2022") configImg(context, 170);
-    configWf(context, 161);
-
+    configWf(context, basePriority++);
+    configSizes(context, "Sizes", basePriority++);
     configYah(context);
     matrixAfter();
 

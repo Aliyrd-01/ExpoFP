@@ -9,16 +9,16 @@ import TrianglePainter from "../painters/TrianglePainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 // import { boothStore } from '../../../../store';
 
-export default function configBoothBorder(context: DrawerContext, layerID: string, booth: Booth) {
+export default function configBoothBorder(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
     if (settings.EXPO === "confex20") return;
     if (booth.paths && !booth.pathsWithRect) return;
-    new BoothBorderDrawer(context, layerID, booth);
+    new BoothBorderDrawer(context, layerID, booth, painterOrderPriority);
 }
 
 class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
-    constructor(context: DrawerContext, layerID: string, booth: Booth) {
-        super(context, booth, layerID + "booth-border", TrianglePainter, 150);
+    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
+        super(context, booth, layerID + "booth-border", TrianglePainter, painterOrderPriority);
 
         const borderColor = Color("#fff").vec4();
         const r = this.booth.rect;

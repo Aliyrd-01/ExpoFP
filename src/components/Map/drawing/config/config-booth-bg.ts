@@ -11,10 +11,10 @@ import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePain
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 
 // let picked = 0;
-export default function configBoothBg(context: DrawerContext, layerID: string, booth: Booth) {
+export default function configBoothBg(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
     // picked++;
     // if (picked > 1) return null;
-    new BoothBgDrawer(context, layerID, booth);
+    new BoothBgDrawer(context, layerID, booth, painterOrderPriority);
 }
 
 let seq = 0;
@@ -23,7 +23,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     private readonly pathsDefaultColors: string[];
     private readonly painters: TrianglePainter[] = [];
 
-    constructor(context: DrawerContext, layerID: string, booth: Booth) {
+    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
         super(context, booth);
 
         // let triangles: Triangle[];
@@ -36,14 +36,18 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
             for (const t of triangles) {
-                this.addObject(layerID, {
-                    id: this.getId("bg-def"),
-                    groupId: this.getId("bg"),
-                    p0: t[0],
-                    p1: t[1],
-                    p2: t[2],
-                    // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
-                });
+                this.addObject(
+                    layerID,
+                    {
+                        id: this.getId("bg-def"),
+                        groupId: this.getId("bg"),
+                        p0: t[0],
+                        p1: t[1],
+                        p2: t[2],
+                        // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+                    },
+                    painterOrderPriority
+                );
             }
         }
 
@@ -54,13 +58,17 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                 const colored = !!p.color;
                 if (colored) pathsColors.add(p.color);
                 for (const t of p.triangles) {
-                    this.addObject(layerID, {
-                        id: colored ? this.getId("bg-" + p.color) : this.getId("bg-def"),
-                        groupId: this.getId("bg"),
-                        p0: t[0],
-                        p1: t[1],
-                        p2: t[2],
-                    });
+                    this.addObject(
+                        layerID,
+                        {
+                            id: colored ? this.getId("bg-" + p.color) : this.getId("bg-def"),
+                            groupId: this.getId("bg"),
+                            p0: t[0],
+                            p1: t[1],
+                            p2: t[2],
+                        },
+                        painterOrderPriority
+                    );
                 }
             }
             this.pathsDefaultColors = Array.from(pathsColors);
@@ -72,24 +80,28 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
             for (const t of triangles) {
-                this.addObject(layerID, {
-                    id: this.getId("bg-def"),
-                    groupId: this.getId("bg"),
-                    p0: t[0],
-                    p1: t[1],
-                    p2: t[2],
-                    // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
-                });
+                this.addObject(
+                    layerID,
+                    {
+                        id: this.getId("bg-def"),
+                        groupId: this.getId("bg"),
+                        p0: t[0],
+                        p1: t[1],
+                        p2: t[2],
+                        // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
+                    },
+                    painterOrderPriority
+                );
             }
         }
 
         this.startAutoupdate();
     }
 
-    addObject(layerID: string, item: TrianglePainterObject) {
-        let painter = this.context.requirePainter(layerID + "booth-bg" + seq, TrianglePainter, 148);
+    addObject(layerID: string, item: TrianglePainterObject, painterOrderPriority: number) {
+        let painter = this.context.requirePainter(layerID + "booth-bg" + seq, TrianglePainter, painterOrderPriority);
         while (!painter || !painter.tryAddObject(item)) {
-            painter = this.context.requirePainter(layerID + "booth-bg" + ++seq, TrianglePainter, 148);
+            painter = this.context.requirePainter(layerID + "booth-bg" + ++seq, TrianglePainter, painterOrderPriority);
         }
 
         if (this.painters.indexOf(painter) === -1) this.painters.push(painter);
