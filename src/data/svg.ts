@@ -54,13 +54,17 @@ settings.wayfinding = !data.hideDirections && d3.select(svg).select('[data-layer
 
 let svgArea: Rect;
 
-const floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[]).map((f) => {
-    f.remove();
-    return {
-        name: f.dataset.floor,
-        rect: Rect.fromSvgRectElement(f),
-    };
-});
+let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[])
+    .map((f) => {
+        f.remove();
+        return {
+            name: f.dataset.floor,
+            rect: Rect.fromSvgRectElement(f),
+        };
+    })
+    .sort();
+
+if (settings.EXPO === "all-energy") floors.reverse();
 
 const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 

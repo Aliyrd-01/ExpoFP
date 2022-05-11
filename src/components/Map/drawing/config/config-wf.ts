@@ -28,10 +28,11 @@ function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     var mapping = null;
 
     if (settings.EXPO === "all-energy") {
-        mapping = { "1": { x: 0, y: 0 }, "2": { x: -410, y: 1302 } };
+        mapping = { "1": { x: 2399, y: 1998 }, "2": { x: 2000, y: 3300 } };
     }
 
-    var shift: { x: number; y: number } = mapping && position?.z && mapping[position.z] ? mapping[position.z] : null;
+    var shift: { x: number; y: number } =
+        mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
 
     if (!shift) return position;
 
