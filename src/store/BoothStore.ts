@@ -29,6 +29,10 @@ export default class BoothStore {
         return ar.reduce((a, b) => a + b) / ar.length / 80;
     }
 
+    @computed({ keepAlive: true }) get visibleBooths() {
+        return this.booths.filter((b) => b.visible);
+    }
+
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
@@ -52,9 +56,9 @@ export abstract class BoothBase {
 
     @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;
-    } 
-    
-    @computed({ keepAlive: true }) private get visible() {
+    }
+
+    @computed({ keepAlive: true }) get visible() {
         return this.layer.visible;
     }
 

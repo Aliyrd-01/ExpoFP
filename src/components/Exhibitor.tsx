@@ -172,7 +172,7 @@ function ExhibitorComponent() {
 
                 <div className="exhibitor__details">
                     <div className="exhibitor__categories">
-                        {exhibitor.booths.map((booth) => (
+                        {exhibitor.visibleBooths.map((booth) => (
                             <a
                                 href={`?${exhibitor.slug}`}
                                 key={booth.id}

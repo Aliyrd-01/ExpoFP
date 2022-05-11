@@ -189,8 +189,8 @@ export default class UIState {
     // filtering
     @computed get dimmed() {
         return (
-            this.rootStore.exhibitorStore.exhibitors.length &&
-            (this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
+            this.rootStore.exhibitorStore.visibleExhibitors.length &&
+            (this.listItems.length !== this.rootStore.exhibitorStore.visibleExhibitors.length ||
                 this.listItems.find((x) => !(x instanceof Exhibitor)))
         );
     }
@@ -202,9 +202,9 @@ export default class UIState {
 
         const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
 
-        const exhibitorsArray = exhibitorStore.exhibitors;
+        const exhibitorsArray = exhibitorStore.visibleExhibitors;
         const categoriesArray = categoryStore.categories;
-        const boothsArray = boothStore.booths;
+        const boothsArray = boothStore.visibleBooths;
 
         if (!text) return exhibitorsArray.length === 0 ? boothsArray : exhibitorsArray;
         if (text === "testerror") throw new Error("Test error");
@@ -241,7 +241,7 @@ export default class UIState {
             case "search":
                 return this.searchItems;
             case "bookmarks":
-                return this.rootStore.exhibitorStore.bookmarked;
+                return this.rootStore.exhibitorStore.visibleExhibitors.filter((e) => e.bookmarked);
             case "category":
                 return this.list.category.exhibitors;
         }

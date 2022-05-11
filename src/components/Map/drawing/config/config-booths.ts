@@ -35,10 +35,11 @@ export default function configBooths(context: DrawerContext, layerID: string, bo
         if (isDebug) console.time(name);
         for (const b of booths) {
             // const afterFunc =
-            const dr = func(context, layerID, b, painterOrderPriority++);
+            const dr = func(context, layerID, b, painterOrderPriority);
             if (dr) lockedDrawers.push(dr);
             // if (afterFunc) after.push(afterFunc);
         }
+        painterOrderPriority++;
         if (isDebug) console.timeEnd(name);
         // if (drawer) ar.push(drawer);
     }

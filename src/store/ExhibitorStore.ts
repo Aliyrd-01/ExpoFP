@@ -1,8 +1,8 @@
 // import { observable } from 'mobx';
-import RootStore from "./RootStore";
-import { Category } from "./CategoryStore";
+import { action, computed, observable } from "mobx";
 import { RegularBooth } from "./BoothStore";
-import { computed, observable, action } from "mobx";
+import { Category } from "./CategoryStore";
+import RootStore from "./RootStore";
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
@@ -30,6 +30,10 @@ export default class ExhibitorStore {
         for (const e of ar) {
             e.bookmarked = true;
         }
+    }
+
+    @computed({ keepAlive: true }) get visibleExhibitors() {
+        return this.exhibitors.filter((e) => !!e.booths.find((b) => b.visible));
     }
 
     constructor(rootStore: RootStore) {
@@ -81,4 +85,8 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];
+
+    @computed({ keepAlive: true }) get visibleBooths() {
+        return this.booths.filter((b) => b.visible);
+    }
 }

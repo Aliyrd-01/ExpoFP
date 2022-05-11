@@ -29,7 +29,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     const [objectsMode] = useState(isArrayOfObjects(options));
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [input, setInput] = useState(
-        objectsMode && value ? options[getActiveOptionIndexByValue(value, true)].label : value || ""
+        objectsMode && value ? options[getActiveOptionIndexByValue(value, true)]?.label : value || ""
     );
     const [activeOptionIndex, setActiveOptionIndex] = useState(
         objectsMode ? getActiveOptionIndexByValue(value, true) : getActiveOptionIndexByValue(value) || null

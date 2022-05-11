@@ -3,7 +3,6 @@ import svg from "../../../../data/svg";
 import { boothStore } from "../../../../store";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
-import { uiState } from "./../../../../store/index";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
