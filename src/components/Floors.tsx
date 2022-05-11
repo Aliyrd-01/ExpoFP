@@ -28,10 +28,7 @@ export default function Floors() {
     return useObserver(() => (
         <div className={s.className} style={s.style}>
             {floors
-                .map((f) => f.name)
-                .sort() // (f1, f2) =>
-                //     lineLength({ x: f1.rect.cx, y: f1.rect.cy }, { x: 0, y: 0 }) -
-                //     lineLength({ x: f2.rect.cx, y: f2.rect.cy }, { x: 0, y: 0 })
+                .map((f) => f.name)              
                 .map((f) => (
                     <div
                         className="item"
