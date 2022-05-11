@@ -79,7 +79,7 @@ export default function initBooths(store: RootStore) {
             boothsByName.set(idInSvg, booth as Booth);
             booths.push(booth);
         }
-        booth.layer = store.layerStore.layers.find((l) => l.name === layer);
+        booth.layer = layerStore.layers.find((l) => l.name === layer);
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
         if (boothReg) {
