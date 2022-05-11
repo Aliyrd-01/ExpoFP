@@ -115,7 +115,8 @@ function Menu() {
                     {!data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
-                                {t("Bookmarks")} <span>({exhibitorStore.bookmarked.length})</span>
+                                {t("Bookmarks")}{" "}
+                                <span>({exhibitorStore.visibleExhibitors.filter((e) => e.bookmarked).length})</span>
                             </span>
                             {exhibitorStore.bookmarked.length ? (
                                 <button onClick={shareBookmarks} className="fas fa-share-square" title={t("Share bookmarks")} />
