@@ -24,7 +24,7 @@ const isDebug = false;
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
 
-function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
+export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     var mapping = null;
 
     if (settings.EXPO === "all-energy") {
@@ -239,7 +239,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     }
 
     function updateCurrentPosition() {
-        let position = mapCurrentPosition(store.routeStore.currentPosition);
+        let position = store.routeStore.currentPosition;
 
         if (position) {
             wfDrawer.updateVisible("sourceLocation", false);
