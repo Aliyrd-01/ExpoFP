@@ -18,12 +18,12 @@ import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
-import Modal from "./Modal";
 import Share from "./Share";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
+const Modal = React.lazy(() => import("./Modal"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
@@ -56,9 +56,13 @@ export default observer(function Layout() {
                 {isIframe && <LargeMessage />}
                 {/* {isIframe && <TouchHover />} */}
                 <Pdf />
-                <Modal>
-                    <Share url={window.location.href}/>
-                </Modal>
+                {uiState.modalActive.share ? (
+                    <Suspense fallback={null}>
+                        <Modal modalType="share">
+                            <Share />
+                        </Modal>
+                    </Suspense>
+                ) : null}
                 <div id="fps" />
             </div>
         </div>
