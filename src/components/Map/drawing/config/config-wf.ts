@@ -5,10 +5,12 @@ import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { uiState } from "../../../../store";
+import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
+import { boothStore } from "./../../../../store/index";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
@@ -41,6 +43,16 @@ export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     cp.y += shift.y;
 
     return cp;
+}
+
+function nearestBooth(point: Point): Booth {
+    var booth = null;
+    boothStore.booths.map((b) => {
+        // lineCenter();
+        // lineLength();
+    });
+
+    return booth;
 }
 
 function drawLines(wfDrawer: RectPainter, ptscale: number) {
@@ -263,6 +275,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             .sort((p1, p2) => p1.l - p2.l)[0];
 
         if (!shortestrPerp) return;
+
+        // Recalvulate logic here
+        var newBooth = nearestBooth(position);
+        // store.routeStore.selectRoute(new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible));
+        // Recalvulate logic here
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
             wfDrawer.updateVisible(`Dot_${index}`, false);
