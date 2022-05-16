@@ -27,11 +27,13 @@ export default function configAll(context: DrawerContext) {
         .nodes()
         .map((n) => n.getAttribute("data-layer"))
         .forEach((layerID) => {
-            configBg(context, layerID, basePriority++);
-            const booths = boothStore.booths.filter((b) => b.layer.name === layerID);
-            if (booths.length) {
-                boothsAnimations.push(configBooths(context, layerID, booths, basePriority));
-                basePriority += 20;
+            if (layerID.indexOf("WF") == -1) {
+                configBg(context, layerID, basePriority++);
+                const booths = boothStore.booths.filter((b) => b.layer.name === layerID);
+                if (booths.length) {
+                    boothsAnimations.push(configBooths(context, layerID, booths, basePriority));
+                    basePriority += 20;
+                }
             }
         });
 

@@ -8,11 +8,9 @@ import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePain
 export default function configBg(context: DrawerContext, layerID: string, painterOrderPriority: number) {
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
-    // const drawer: TrianglePainter = context.requirePainter("bg", TrianglePainter, 10);
 
-    // const color1 = [0, 0, 0, 0.5] as Vec4;
     const bgElements = select(svg)
-        .select(`#${layerID}`)
+        .select(`#${layerID}, [data-layer="${layerID}"]`)
         .selectAll(":scope > *:not([data-tagname='efp-booth']) path, :scope > path")
         .nodes() as SVGElement[];
 
