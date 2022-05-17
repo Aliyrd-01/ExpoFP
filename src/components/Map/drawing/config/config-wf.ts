@@ -1,6 +1,6 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
+import { Line, lineAngle, lineCenter, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
 import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
@@ -11,7 +11,7 @@ import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { boothStore } from "./../../../../store/index";
-import { CurrentPosition } from "./../../../../store/RouteStore";
+import { CurrentPosition, Route } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
@@ -25,6 +25,11 @@ const isDebug = false;
 
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
+
+const timeoutToChangeRoute = 15000; // 15 sec
+const distanceToChangeRoute = 200;
+
+let initialDate = new Date();
 
 export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     var mapping = null;
@@ -45,12 +50,20 @@ export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     return cp;
 }
 
-function nearestBooth(point: Point): Booth {
+function getNearestBooth(point: Point): Booth {
     var booth = null;
-    boothStore.booths.map((b) => {
-        // lineCenter();
-        // lineLength();
+
+    const booths = boothStore.booths.map((b) => {
+        const lineCenterBooth = lineCenter(point, { x: b.rect.cx, y: b.rect.cy });
+        return {
+            lineLength: lineLength(point, lineCenterBooth),
+            name: b.name,
+        };
     });
+
+    const nearest = booths.sort((b1, b2) => b1.lineLength - b2.lineLength)[0];
+
+    booth = boothStore.booths.find((b) => b.name === nearest.name);
 
     return booth;
 }
@@ -276,10 +289,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         if (!shortestrPerp) return;
 
-        // Recalvulate logic here
-        var newBooth = nearestBooth(position);
-        // store.routeStore.selectRoute(new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible));
-        // Recalvulate logic here
+        // Recalculate logic here
+        var newBooth = getNearestBooth(position);
+
+        const date2 = new Date();
+        const diff = date2.valueOf() - initialDate.valueOf();
+
+        if (shortestrPerp.l > distanceToChangeRoute) {
+            if (diff >= timeoutToChangeRoute) {
+                store.routeStore.selectRoute(
+                    new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
+                );
+            }
+        } else {
+            initialDate = new Date();
+        }
+        // Recalculate logic here
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
             wfDrawer.updateVisible(`Dot_${index}`, false);
