@@ -20,8 +20,9 @@ interface Data {
     trackerUrl: string;
     hideWayInformation: boolean;
     hideDirections: boolean;
+    hideExhibitors: boolean;
+    onlyFeaturedExhibitors: boolean;
     hideExhibitorBoothNumber: boolean;
-    // hideCompanies: boolean;
     dimensionless: boolean;
     hideCategoriesLink: boolean;
     hideEventHomeLink: boolean;
