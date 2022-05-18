@@ -16,7 +16,7 @@ const OverlayBar: React.FC<{
     }
 
     function handleShare() {
-        const navigator = window.navigator;
+        const navigator: any = window.navigator;
         const data = {
             title: uiState.selectedExhibitor.name,
             url: window.location.href,
