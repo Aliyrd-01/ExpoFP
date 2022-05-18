@@ -1,9 +1,8 @@
-import React, { MouseEvent } from "react";
-import "./OverlayBar.scss";
 import classNames from "classnames";
-import OverlayBarBack from "./OverlayBarBack";
+import React, { MouseEvent } from "react";
 import store, { uiState } from "../store";
-import isMobile from "../utils/is-mobile";
+import "./OverlayBar.scss";
+import OverlayBarBack from "./OverlayBarBack";
 
 const OverlayBar: React.FC<{
     scrolled: boolean;
@@ -17,13 +16,15 @@ const OverlayBar: React.FC<{
     }
 
     function handleShare() {
-        let navigator = window.navigator as any;
+        const navigator = window.navigator;
         const data = {
             title: uiState.selectedExhibitor.name,
             url: window.location.href,
         };
 
-        if (isMobile() && navigator.canShare(data)) {
+        const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini/i.test(navigator.userAgent);
+
+        if (mobile && navigator?.canShare(data)) {
             navigator.share(data);
         } else {
             store.toggleModal("share");
