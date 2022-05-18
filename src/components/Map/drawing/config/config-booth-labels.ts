@@ -94,7 +94,12 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false,
         });
 
-        let exh = (this.booth as RegularBooth).exhibitors;
+        let exh = data.hideExhibitors
+            ? []
+            : !data.onlyFeaturedExhibitors
+            ? booth.exhibitors
+            : booth.exhibitors.filter((e) => e.featured);
+
         const pad = boothStore.borderWidth / 2;
 
         if (!exh.length) {
@@ -110,7 +115,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
                 deltaPts: [3, 3, -1, -1],
                 scalePts: context.pixelRatio,
-                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, fillStyle, 18),
+                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, fillStyle, 18, !!booth.exhibitors.length),
                 texPosition: "lefttop",
                 visible: false,
             });
@@ -203,10 +208,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             this.context.pixelRatio,
             fillStyle,
             fontSize,
-            data.hideExhibitorBoothNumber || short
+            data.hideExhibitorBoothNumber || short,
+            data.onlyFeaturedExhibitors
         );
-        // const w = canvas.width / 2;
-        // const h = canvas.height / 2;
 
         const pad = padding;
 
