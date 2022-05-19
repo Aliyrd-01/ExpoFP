@@ -66,7 +66,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.routeStore.selectCurrentPosition(point, focus);
     }
 
-    updateLayersVisibility(layers: { name: string; visible: boolean }[]): void {
-        store.uiState.updateLayersVisibility(layers);
+    updateLayerVisibility(layer: string, visible: boolean): void {
+        store.layerStore.updateLayerVisibility(layer, visible);
     }
 }

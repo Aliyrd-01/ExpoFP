@@ -130,13 +130,15 @@ export class DrawerImpl extends Matrix {
 
     requirePainter<T extends Painter>(
         id: string,
-        TypeClass?: new (gl: WebGLRenderingContext) => T,
-        painterOrderPriority?: number
+        TypeClass: new (gl: WebGLRenderingContext) => T,
+        painterOrderPriority: number,
+        visible: boolean
     ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
             d = new TypeClass(this.gl);
             d.orderPriority = painterOrderPriority;
+            d.visible = visible;
             this.paintersByType.set(id, d);
             this.allPainters.push(d);
             this.allPainters.sort((a, b) => a.orderPriority - b.orderPriority);

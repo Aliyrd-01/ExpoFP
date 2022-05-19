@@ -25,7 +25,7 @@ export default class RootStore {
         this.boothStore = new BoothStore(this);
         this.routeStore = new RouteStore(this);
         this.uiState = new UIState(this);
-        this.layerStore = new LayerStore(this);
+        this.layerStore = new LayerStore();
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {

@@ -11,10 +11,16 @@ import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePain
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 
 // let picked = 0;
-export default function configBoothBg(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
+export default function configBoothBg(
+    context: DrawerContext,
+    layerID: string,
+    booth: Booth,
+    painterOrderPriority: number,
+    visible: boolean
+) {
     // picked++;
     // if (picked > 1) return null;
-    new BoothBgDrawer(context, layerID, booth, painterOrderPriority);
+    new BoothBgDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 let seq = 0;
@@ -23,7 +29,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     private readonly pathsDefaultColors: string[];
     private readonly painters: TrianglePainter[] = [];
 
-    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
+    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
         super(context, booth);
 
         // let triangles: Triangle[];
@@ -46,7 +52,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                         p2: t[2],
                         // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                     },
-                    painterOrderPriority
+                    painterOrderPriority,
+                    visible
                 );
             }
         }
@@ -67,7 +74,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                             p1: t[1],
                             p2: t[2],
                         },
-                        painterOrderPriority
+                        painterOrderPriority,
+                        visible
                     );
                 }
             }
@@ -90,7 +98,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                         p2: t[2],
                         // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                     },
-                    painterOrderPriority
+                    painterOrderPriority,
+                    visible
                 );
             }
         }
@@ -98,10 +107,10 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         this.startAutoupdate();
     }
 
-    addObject(layerID: string, item: TrianglePainterObject, painterOrderPriority: number) {
-        let painter = this.context.requirePainter(layerID + "booth-bg" + seq, TrianglePainter, painterOrderPriority);
+    addObject(layerID: string, item: TrianglePainterObject, painterOrderPriority: number, visible: boolean) {
+        let painter = this.context.requirePainter(layerID + "booth-bg" + seq, TrianglePainter, painterOrderPriority, visible);
         while (!painter || !painter.tryAddObject(item)) {
-            painter = this.context.requirePainter(layerID + "booth-bg" + ++seq, TrianglePainter, painterOrderPriority);
+            painter = this.context.requirePainter(layerID + "booth-bg" + ++seq, TrianglePainter, painterOrderPriority, visible);
         }
 
         if (this.painters.indexOf(painter) === -1) this.painters.push(painter);

@@ -5,7 +5,7 @@ import svg from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
-export default function configBg(context: DrawerContext, layerID: string, painterOrderPriority: number) {
+export default function configBg(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
 
@@ -68,7 +68,8 @@ export default function configBg(context: DrawerContext, layerID: string, painte
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter(layerID + ":" + drawerSeq++, TrianglePainter, painterOrderPriority);
+            drawer = context.requirePainter(layerID + ":" + drawerSeq++, TrianglePainter, painterOrderPriority, visible);
+            drawer.visible = visible;
         }
     }
 

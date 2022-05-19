@@ -292,13 +292,5 @@ export default class UIState {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
     }
-
-    @action updateLayersVisibility(layers: { name: string; visible: boolean }[]): void {
-        layers.forEach((layer) => {
-            const l = this.rootStore.layerStore.layers.find((l) => l.name === layer.name);
-            if (l) l.visible = layer.visible;
-        });
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
+       ///////////////////////////////////////////////////////////////////////////
 }

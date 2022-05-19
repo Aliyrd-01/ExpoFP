@@ -12,7 +12,13 @@ import configBoothBorder from "./config-booth-border";
 import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
 
-export default function configBooths(context: DrawerContext, layerID: string, booths: Booth[], painterOrderPriority: number) {
+export default function configBooths(
+    context: DrawerContext,
+    layerID: string,
+    booths: Booth[],
+    painterOrderPriority: number,
+    visible: boolean
+) {
     //.filter(x => x.name === '4268');
     // booths.splice(2740);//
     // , configBoothBorder
@@ -23,7 +29,8 @@ export default function configBooths(context: DrawerContext, layerID: string, bo
         DrawerContext,
         string,
         Booth,
-        number
+        number,
+        boolean
     ) => void | { unlock: () => void })[]; //configBoothType,
     if (!settings.borderless) configFuncs.push(configBoothBorder);
 
@@ -35,7 +42,7 @@ export default function configBooths(context: DrawerContext, layerID: string, bo
         if (isDebug) console.time(name);
         for (const b of booths) {
             // const afterFunc =
-            const dr = func(context, layerID, b, painterOrderPriority);
+            const dr = func(context, layerID, b, painterOrderPriority, visible);
             if (dr) lockedDrawers.push(dr);
             // if (afterFunc) after.push(afterFunc);
         }
@@ -44,7 +51,12 @@ export default function configBooths(context: DrawerContext, layerID: string, bo
         // if (drawer) ar.push(drawer);
     }
 
-    const labelsPainter = context.requirePainter(layerID + "booth-label") as RectPainter;
+    const labelsPainter = context.requirePainter(
+        layerID + "booth-label",
+        RectPainter,
+        painterOrderPriority,
+        visible
+    ) as RectPainter;
     if (context.updatable && labelsPainter) {
         labelsPainter.alpha = 0;
     }

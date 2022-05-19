@@ -1,6 +1,6 @@
 import { select } from "d3-selection";
 import svg from "../../../../data/svg";
-import { boothStore } from "../../../../store";
+import store from "../../../../store";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import configBg from "./config-bg";
@@ -22,23 +22,26 @@ export default function configAll(context: DrawerContext) {
 
     let boothsAnimations = [];
     let basePriority = 6;
+    let { layers } = store.layerStore;
+
     select(svg)
         .selectAll<SVGAElement, unknown>("svg  [data-layer]")
         .nodes()
         .map((n) => n.getAttribute("data-layer"))
         .forEach((layerID) => {
-            if (layerID.indexOf("WF") == -1) {
-                configBg(context, layerID, basePriority++);
-                const booths = boothStore.booths.filter((b) => b.layer.name === layerID);
+            var layer = layers.filter((l) => l.name == layerID)[0];
+            if (layer) {
+                configBg(context, layerID, basePriority++, layer.visible);
+                const booths = store.boothStore.booths.filter((b) => b.layer.name === layerID);
                 if (booths.length) {
-                    boothsAnimations.push(configBooths(context, layerID, booths, basePriority));
+                    boothsAnimations.push(configBooths(context, layerID, booths, basePriority, layer.visible));
                     basePriority += 20;
                 }
             }
         });
 
-    configWf(context, basePriority++);
-    configSizes(context, "Sizes", basePriority++);
+    configWf(context, basePriority++, true);
+    configSizes(context, "Sizes", basePriority++, true);
     configYah(context);
     matrixAfter();
 

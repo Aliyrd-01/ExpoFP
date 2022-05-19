@@ -1,18 +1,32 @@
 // import { observable } from 'mobx';
-import { computed, observable } from "mobx";
-import RootStore from "./RootStore";
+import { action, computed, observable } from "mobx";
+import { floors } from "../data/svg";
+import store from "../store";
 
 export default class LayerStore {
-    private readonly rootStore: RootStore;
-
     @observable layers: Layer[] = [];
+
+    @observable singleVisible: boolean = true;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
     }
 
-    constructor(rootStore: RootStore) {
-        this.rootStore = rootStore;
+    @action updateLayerVisibility(layer: string, visible: boolean): void {
+        if (this.singleVisible && !visible) return;
+
+        if (this.singleVisible) {
+            this.layers.forEach((l) => {
+                if (l.name !== layer) l.visible = false;
+                else {
+                    var floor = floors.filter((fl) => fl.name === l.name)[0];
+                    if (floor) store.clickFloor(floor);
+                }
+            });
+        }
+
+        const l = this.layers.find((l) => l.name === layer);
+        if (l) l.visible = visible;
     }
 }
 

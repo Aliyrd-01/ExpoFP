@@ -26,11 +26,12 @@ export default function configBoothLabelsSpecial(
     context: DrawerContext,
     layerID: string,
     booth: Booth,
-    painterOrderPriority: number
+    painterOrderPriority: number,
+    visible: boolean
 ) {
     if (!(booth instanceof SpecialBooth) || booth.noLabels) return;
     if (booth.noLabels) return;
-    return new BoothLabelSpecialDrawer(context, layerID, booth, painterOrderPriority);
+    return new BoothLabelSpecialDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
@@ -40,8 +41,8 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
     private previousSkipDim: boolean;
     public locked: boolean;
 
-    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
-        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority);
+    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
+        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible);
         this.locked = context.updatable;
         // initDrawer(this.drawer);
 

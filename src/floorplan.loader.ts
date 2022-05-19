@@ -50,7 +50,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    updateLayersVisibility(layers: { name: string; visible: boolean }[]): void {
+    updateLayerVisibility(layer: string, visible: boolean): void {
         nr();
     }
 

@@ -34,9 +34,15 @@ const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
 //     }, delayAnimations + 800);
 // }
 
-export default function configBoothLabels(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
+export default function configBoothLabels(
+    context: DrawerContext,
+    layerID: string,
+    booth: Booth,
+    painterOrderPriority: number,
+    visible: boolean
+) {
     if (!(booth instanceof RegularBooth) || booth.noLabels) return;
-    return new BoothLabelDrawer(context, layerID, booth, painterOrderPriority);
+    return new BoothLabelDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 // function replaceColorTmp(color: string) {
@@ -59,8 +65,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     // private readonly labelColor: string;
     // private readonly detailsHeight: number;
 
-    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number) {
-        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority);
+    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean) {
+        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible);
         this.locked = context.updatable;
         // initPainter(this.painter);
 

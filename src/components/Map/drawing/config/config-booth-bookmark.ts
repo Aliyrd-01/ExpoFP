@@ -6,16 +6,22 @@ import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from "./canvases";
 
-export default function configBoothBookmark(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number) {
+export default function configBoothBookmark(
+    context: DrawerContext,
+    layerID: string,
+    booth: Booth,
+    painterOrderPriority: number,
+    visible: boolean
+) {
     if (uiState.kiosk || !(booth instanceof RegularBooth)) return;
-    return new BoothBookmarkDrawer(context, layerID, booth, painterOrderPriority);
+    return new BoothBookmarkDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
     public locked: boolean;
 
-    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number) {
-        super(context, booth, layerID + "booth-bookmark", RectPainter, painterOrderPriority);
+    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean) {
+        super(context, booth, layerID + "booth-bookmark", RectPainter, painterOrderPriority, visible);
         this.locked = context.updatable;
         const r = this.booth.rect.withPadding(boothStore.borderWidth / 2);
 

@@ -107,10 +107,10 @@ function splitPolyLine(lines: Line[], interval: number): Point[] {
     return points;
 }
 
-export default function configWf(context: DrawerContext, painterOrderPriority: number) {
+export default function configWf(context: DrawerContext, painterOrderPriority: number,  visible: boolean) {
     if (data.hideDirections) return;
 
-    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority);
+    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
 

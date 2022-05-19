@@ -5,10 +5,10 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
-export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number) {
+export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
     let painter: RectPainter = null;
     let ids: string[] = [];
-    let visible = true;
+    let _visible = true;
     let edge = 0.5;
 
     const labelCanvasCache = new Map<string, CanvasDescriptor>();
@@ -47,7 +47,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
-        if (!painter) painter = context.requirePainter(`${layerID}:`, RectPainter, painterOrderPriority);
+        if (!painter) painter = context.requirePainter(`${layerID}:`, RectPainter, painterOrderPriority, visible);
 
         var id = `${cX}${cY}`;
         ids.push(id);
@@ -59,7 +59,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
             texPosition: alignment,
-            visible,
+            visible: _visible,
         });
     }
 
@@ -67,9 +67,9 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         reaction(
             () => context.ptscale,
             () => {
-                if ((context.ptscale > edge && visible) || (context.ptscale < edge && !visible)) {
-                    visible = !visible;
-                    ids.forEach((id) => painter.updateVisible(id, visible));
+                if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
+                    _visible = !_visible;
+                    ids.forEach((id) => painter.updateVisible(id, _visible));
                 }
             }
         );

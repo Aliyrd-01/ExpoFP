@@ -10,7 +10,7 @@ const bgColor = Color("#ebebeb").vec4() as Vec4;
 const whiteColor = Color("#fff").vec4() as Vec4;
 
 export default function configCanvas(context: DrawerContext) {
-    const painter = context.requirePainter("canvas", BgPainter, 5);
+    const painter = context.requirePainter("canvas", BgPainter, 5, true);
 
     function setObjects() {
         const vr = uiState.canvasVisibleRectPt;

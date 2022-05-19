@@ -41,10 +41,10 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                <Floors />
                 <Layers />
 
                 {/*<Areas />*/}
+                {!store.layerStore.layers.length && <Floors />}
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}

@@ -5,7 +5,7 @@ import RectPainter from "../painters/RectPainter";
 import { DrawerObject } from "./../painters/RectPainter";
 import { CanvasDescriptor } from "./canvases";
 
-export default function configImg(context: DrawerContext, painterOrderPriority: number) {
+export default function configImg(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
     let painter: RectPainter = null;
 
     const images = select(svg).selectAll("[data-layer='FG'] image").nodes() as SVGImageElement[];
@@ -32,7 +32,7 @@ export default function configImg(context: DrawerContext, painterOrderPriority: 
     });
 
     function addObject(name: string, item: DrawerObject) {
-        if (!painter) painter = context.requirePainter(`image${name}`, RectPainter, painterOrderPriority);
+        if (!painter) painter = context.requirePainter(`image${name}`, RectPainter, painterOrderPriority, visible);
         painter.addObject(item);
     }
 }
