@@ -28,14 +28,9 @@ export default function Floors() {
     return useObserver(() => (
         <div className={s.className} style={s.style}>
             {floors
-                .map((f) => f.name)              
+                .map((f) => f.name)
                 .map((f) => (
-                    <div
-                        className="item"
-                        key={f}
-                        onClick={() => store.clickFloor(floors.filter((fl) => fl.name === f)[0])}
-                        title={f}
-                    >
+                    <div className="item" key={f} onClick={() => store.clickFloor(f)} title={f}>
                         {parseName(f)}
                     </div>
                 ))}

@@ -1,4 +1,5 @@
 import { action } from "mobx";
+import { floors } from "../data/svg";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -104,9 +105,10 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
-    @action clickFloor(floor) {
+    @action clickFloor(floor: string) {
         if (window["__resett"]) window["__resett"]();
-        this.uiState.moveToRect = floor.rect;
+        var rect = floors.filter((f) => f.name === floor)[0]?.rect;
+        if (rect) this.uiState.moveToRect = rect;
         this.showMap();
     }
 

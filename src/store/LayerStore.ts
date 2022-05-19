@@ -1,6 +1,5 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
-import { floors } from "../data/svg";
 import store from "../store";
 
 export default class LayerStore {
@@ -18,10 +17,7 @@ export default class LayerStore {
         if (this.singleVisible) {
             this.layers.forEach((l) => {
                 if (l.name !== layer) l.visible = false;
-                else {
-                    var floor = floors.filter((fl) => fl.name === l.name)[0];
-                    if (floor) store.clickFloor(floor);
-                }
+                else store.clickFloor(l.name);
             });
         }
 

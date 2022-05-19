@@ -10,7 +10,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
     let drawerSeq = 0;
 
     const bgElements = select(svg)
-        .select(`#${layerID}, [data-layer="${layerID}"]`)
+        .select(`[data-layer="${layerID}"]`)
         .selectAll(":scope > *:not([data-tagname='efp-booth']) path, :scope > path")
         .nodes() as SVGElement[];
 
