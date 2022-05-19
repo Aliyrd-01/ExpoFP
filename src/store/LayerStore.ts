@@ -1,6 +1,7 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import store from "../store";
+import { uiState } from "./index";
 
 export default class LayerStore {
     @observable layers: Layer[] = [];
@@ -23,6 +24,7 @@ export default class LayerStore {
 
         const l = this.layers.find((l) => l.name === layer);
         if (l) l.visible = visible;
+        uiState.details = null;
     }
 }
 

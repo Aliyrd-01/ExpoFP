@@ -68,11 +68,11 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {
-        return this.details instanceof Exhibitor ? this.details : null;
+        return this.details instanceof Exhibitor && this.details.visibleBooths.length ? this.details : null;
     }
 
     @computed({ keepAlive: true }) get selectedBooth() {
-        return this.details instanceof BoothBase ? this.details : null;
+        return this.details instanceof BoothBase && this.details.visible ? this.details : null;
     }
 
     @computed({ keepAlive: true }) get selectedCategory() {
@@ -292,5 +292,5 @@ export default class UIState {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
     }
-       ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 }
