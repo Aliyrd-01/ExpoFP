@@ -131,6 +131,13 @@ export default function Map() {
         }
     );
 
+    useReaction(
+        () => store.layerStore.rectangle,
+        () => {
+            uiState.moveToRect = store.layerStore.rectangle;
+        }
+    );
+
     return useObserver(() => (
         <canvas
             ref={el}
@@ -212,6 +219,7 @@ export default function Map() {
         s.$canvas.call(s.zoom as any);
 
         if (store.fp.onFpConfigured) store.fp?.onFpConfigured();
+        store.layerStore.init();
     }
 
     function raiseBoothOver(b: Booth) {

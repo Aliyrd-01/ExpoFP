@@ -1,5 +1,5 @@
 import { select } from "d3";
-import svg from "../../data/svg";
+import svg, { floors } from "../../data/svg";
 import { Layer } from "../LayerStore";
 import RootStore from "../RootStore";
 
@@ -18,6 +18,7 @@ export default function initLayers(store: RootStore) {
                 let l = new Layer();
                 l.name = layerID;
                 l.visible = !store.layerStore.singleVisible || index === 0;
+                l.rect = floors.filter((f) => f.name === layerID)[0]?.rect;
                 layers.push(l);
             }
         });

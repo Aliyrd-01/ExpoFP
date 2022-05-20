@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { svgArea } from "../data/svg";
-import { uiState } from "../store";
+import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
@@ -27,7 +27,7 @@ export default function Controls() {
             <button
                 className="fa fa-expand-arrows-alt"
                 title={t("Fit to screen")}
-                onClick={() => (uiState.moveToRect = svgArea)}
+                onClick={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
             ></button>
         </div>
     ));
