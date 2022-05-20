@@ -9,13 +9,14 @@
 
     &__slot {
         flex-grow: 1;
-        max-width: calc(100% - 3rem);
+        max-width: calc(100% - 5rem);
     }
 
-    &__close {
+    &__close, &__share {
         @include like-anchor;
         @include overlay-bar-icon;
         align-self: flex-start;
+        margin-left: auto;
     }
 }
 .overlay-bar.scrolled {

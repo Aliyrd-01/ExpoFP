@@ -49,6 +49,7 @@ export default class UIState {
     @observable wsStarted = false;
     @observable canvasStarted = false;
     @observable kiosk = false;
+    @observable modalActive = { share: false };
 
     overlayMediumHeightRems = 10;
 

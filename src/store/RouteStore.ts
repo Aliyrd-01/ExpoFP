@@ -110,5 +110,5 @@ export class Route {
 }
 
 export class CurrentPosition {
-    public constructor(public x: number, public y: number, public angle: number) {}
+    public constructor(public x: number, public y: number, public z?: string, public angle?: number) {}
 }

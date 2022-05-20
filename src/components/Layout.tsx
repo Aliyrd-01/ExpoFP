@@ -17,6 +17,7 @@ import Map from "./Map/Map";
 import { MapLoader } from "./Mapbox/MapLoader";
 import Overlay from "./Overlay";
 import Pdf from "./Pdf";
+import Share from "./Share";
 // import Demo from "./Demo";
 import Ws from "./Ws";
 
@@ -24,6 +25,7 @@ const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
 const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
+const Modal = React.lazy(() => import("./Modal"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
@@ -61,6 +63,13 @@ export default observer(function Layout() {
                 {isIframe && <LargeMessage />}
                 {/* {isIframe && <TouchHover />} */}
                 <Pdf />
+                {uiState.modalActive.share ? (
+                    <Suspense fallback={null}>
+                        <Modal modalType="share">
+                            <Share />
+                        </Modal>
+                    </Suspense>
+                ) : null}
                 <div id="fps" />
             </div>
         </div>
