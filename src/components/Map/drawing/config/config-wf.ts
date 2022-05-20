@@ -294,8 +294,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (shortestrPerp.l > distanceToChangeRoute) {
             if (!initialDate) initialDate = new Date();
             else {
-                const date2 = new Date();
-                const diff = date2.valueOf() - initialDate.valueOf();
+                const diff = new Date().valueOf() - initialDate.valueOf();
 
                 if (diff >= timeoutToChangeRoute) {
                     const newBooth = getNearestBooth(position);
