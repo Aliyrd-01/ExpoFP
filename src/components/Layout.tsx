@@ -23,7 +23,7 @@ import Share from "./Share";
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
-const Modal = React.lazy(() => import("./Modal"));
+const Modal = React.lazy(() => import(/* webpackChunkName: "modal" */ "./Modal"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
