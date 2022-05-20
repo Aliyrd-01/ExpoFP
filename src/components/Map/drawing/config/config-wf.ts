@@ -29,7 +29,7 @@ let toColor = Color("#FF9E2C");
 const timeoutToChangeRoute = 15000; // 15 sec
 const distanceToChangeRoute = 200;
 
-let initialDate = new Date();
+let initialDate = null;
 
 export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     var mapping = null;
@@ -290,20 +290,25 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (!shortestrPerp) return;
 
         // Recalculate logic here
-        var newBooth = getNearestBooth(position);
-
-        const date2 = new Date();
-        const diff = date2.valueOf() - initialDate.valueOf();
 
         if (shortestrPerp.l > distanceToChangeRoute) {
-            if (diff >= timeoutToChangeRoute) {
-                store.routeStore.selectRoute(
-                    new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
-                );
+            if (!initialDate) initialDate = new Date();
+            else {
+                const date2 = new Date();
+                const diff = date2.valueOf() - initialDate.valueOf();
+
+                if (diff >= timeoutToChangeRoute) {
+                    const newBooth = getNearestBooth(position);
+                    if (newBooth)
+                        store.routeStore.selectRoute(
+                            new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
+                        );
+                }
             }
         } else {
-            initialDate = new Date();
+            initialDate = null;
         }
+
         // Recalculate logic here
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
