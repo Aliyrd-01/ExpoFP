@@ -5,13 +5,22 @@ let timeoutId: number;
 export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId || e.filename.indexOf("expofp.com") === -1) return;
 
+    const ignoredErrors = ["loading chunk 4 failed"];
+    let ignoreError = false;
+
+    ignoredErrors.forEach((err) => {
+        if (e.message.toLowerCase().search(err) !== -1) {
+            ignoreError = true;
+        }
+    });
+
     timeoutId = window.setTimeout(async function () {
         //const ipData = await getIpData();
 
         const language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
         const data = {
             host: document.location.host,
-            message: e.message,
+            message: ignoreError ? null : e.message,
             filename: e.filename,
             lineno: e.lineno,
             colno: e.colno,
