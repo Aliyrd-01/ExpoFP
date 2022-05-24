@@ -5,14 +5,8 @@ let timeoutId: number;
 export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId || e.filename.indexOf("expofp.com") === -1) return;
 
-    const ignoredErrors = ["loading chunk 4 failed"];
-    let ignoreError = false;
-
-    ignoredErrors.forEach((err) => {
-        if (e.message.toLowerCase().search(err) !== -1) {
-            ignoreError = true;
-        }
-    });
+    const ignoredErrors = new RegExp(/(loading chunk 4)\b/i);
+    const ignoreError = ignoredErrors.test(e.message);
 
     timeoutId = window.setTimeout(async function () {
         //const ipData = await getIpData();
