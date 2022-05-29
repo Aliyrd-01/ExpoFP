@@ -72,7 +72,8 @@ export default function initBooths(store: RootStore) {
             // create fake booth
             booth = boothReg = new RegularBooth();
             booth.id = getNextId();
-            booth.name = idInSvg.toUpperCase();
+            booth.fullName = booth.name = idInSvg.toUpperCase();
+
             booth.slug = generateUniqueSlug(idInSvg);
             booth.error = true;
             booth.exhibitors = [];
@@ -80,6 +81,8 @@ export default function initBooths(store: RootStore) {
             booths.push(booth);
         }
         booth.layer = layerStore.layers.find((l) => l.name === layer);
+        if (booth.layer) booth.fullName = booth.name + " ● " + booth.layer.name;
+
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
         if (boothReg) {

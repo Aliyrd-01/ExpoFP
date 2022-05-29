@@ -1,14 +1,14 @@
 import React from "react";
-import { Booth } from "../store/BoothStore";
-import SimpleRow from "./SimpleRow";
 import data from "../data";
 import store, { uiState } from "../store";
-import './BoothRow.scss'
+import { Booth } from "../store/BoothStore";
+import "./BoothRow.scss";
+import SimpleRow from "./SimpleRow";
 
 const BoothRow: React.FC<{
     booth: Booth;
     className: string;
-}> = ({ booth, className}) => {
+}> = ({ booth, className }) => {
     return (
         <SimpleRow
             className={className}
@@ -16,7 +16,7 @@ const BoothRow: React.FC<{
             onClick={handleClick}
             onMouseOut={handleMouseOut}
             onMouseOver={handleMouseOver}
-            line1={booth.name}
+            line1={booth.fullName}
             line2={data.boothTerm}
         />
     );

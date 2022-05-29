@@ -25,7 +25,10 @@ export default function Layers() {
                     style={{ opacity: layer.visible ? 1 : 0.3 }}
                     className="item"
                     key={layer.name}
-                    onClick={() => store.layerStore.updateLayerVisibility(layer.name, !layer.visible)}
+                    onClick={() => {
+                        store.layerStore.updateLayerVisibility(layer.name, !layer.visible);
+                        uiState.details = null;
+                    }}
                     title={layer.name}
                 >
                     {layer.name.substring(0, 2).toUpperCase()}

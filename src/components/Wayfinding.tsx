@@ -33,22 +33,22 @@ function Wayfinding() {
         const options = () => {
             const optionsList = [];
 
-            exhibitorStore.visibleExhibitors.forEach((e) => {
-                boothsIDs.push(...e.visibleBooths.map((b) => b.id));
+            exhibitorStore.exhibitors.forEach((e) => {
+                boothsIDs.push(...e.booths.map((b) => b.id));
                 optionsList.push(
-                    ...e.visibleBooths.map((booth) => ({
+                    ...e.booths.map((booth) => ({
                         value: booth.name,
-                        label: e.name + " - " + booth.name,
+                        label: e.name + " - " + booth.fullName,
                     }))
                 );
             });
 
-            boothStore.visibleBooths
+            boothStore.booths
                 .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
                 .forEach((booth) => {
                     optionsList.push({
                         value: booth.name,
-                        label: booth.title || booth.name,
+                        label: booth.title || booth.fullName,
                     });
                 });
 
@@ -56,7 +56,7 @@ function Wayfinding() {
         };
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
-            const booth = boothStore.visibleBooths.filter((b) => b.name === name)[0];
+            const booth = boothStore.booths.filter((b) => b.name === name)[0];
             const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
             if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to, exceptUnaccessible));

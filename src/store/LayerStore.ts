@@ -33,7 +33,6 @@ export default class LayerStore {
 
         const l = this.layers.find((l) => l.name === layer);
         if (l) l.visible = visible;
-        uiState.details = null;
     }
 }
 

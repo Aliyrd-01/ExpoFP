@@ -42,6 +42,7 @@ export abstract class BoothBase {
     protected readonly store: BoothStore;
     readonly id: number;
     readonly name: string;
+    readonly fullName: string;
     readonly externalId: string;
     readonly title: string;
     readonly rect: Rect;

@@ -68,11 +68,11 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {
-        return this.details instanceof Exhibitor && this.details.visibleBooths.length ? this.details : null;
+        return this.details instanceof Exhibitor && this.details.booths.length ? this.details : null;
     }
 
     @computed({ keepAlive: true }) get selectedBooth() {
-        return this.details instanceof BoothBase && this.details.visible ? this.details : null;
+        return this.details instanceof BoothBase ? this.details : null;
     }
 
     @computed({ keepAlive: true }) get selectedCategory() {
@@ -202,9 +202,9 @@ export default class UIState {
 
         const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
 
-        const exhibitorsArray = exhibitorStore.visibleExhibitors;
+        const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories;
-        const boothsArray = boothStore.visibleBooths;
+        const boothsArray = boothStore.booths;
 
         if (!text) return exhibitorsArray.length === 0 ? boothsArray : exhibitorsArray;
         if (text === "testerror") throw new Error("Test error");
@@ -241,7 +241,7 @@ export default class UIState {
             case "search":
                 return this.searchItems;
             case "bookmarks":
-                return this.rootStore.exhibitorStore.visibleExhibitors.filter((e) => e.bookmarked);
+                return this.rootStore.exhibitorStore.exhibitors.filter((e) => e.bookmarked);
             case "category":
                 return this.list.category.exhibitors;
         }
