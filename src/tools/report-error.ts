@@ -5,8 +5,9 @@ let timeoutId: number;
 export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId || e.filename.indexOf("expofp.com") === -1) return;
 
-    const ignoredErrors = new RegExp(/(loading chunk 4)\b/i);
-    const ignoreError = ignoredErrors.test(e.message);
+    const ignoredErrors = [/loading chunk 4\b/i];
+    const ignoreError = ignoredErrors.some((err) => err.test(e.message));
+    if (ignoreError) return;
 
     timeoutId = window.setTimeout(async function () {
         //const ipData = await getIpData();
@@ -14,7 +15,7 @@ export default function reportError(e: Partial<ErrorEvent>) {
         const language = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
         const data = {
             host: document.location.host,
-            message: ignoreError ? null : e.message,
+            message: e.message,
             filename: e.filename,
             lineno: e.lineno,
             colno: e.colno,
