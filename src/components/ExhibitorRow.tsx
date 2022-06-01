@@ -47,7 +47,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 </div>
             )}
             <div className="exhibitor-row__booth">
-                {exhibitor.visibleBooths.map((booth) => (
+                {exhibitor.booths.map((booth) => (
                     <div key={booth.id}>{booth.name}</div>
                 ))}
             </div>

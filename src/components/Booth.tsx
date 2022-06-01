@@ -59,7 +59,6 @@ function Booth() {
             const b = s.regular;
 
             const exhibitors = b.exhibitors
-                .filter((e) => e.visibleBooths.length)
                 .sort((a, b) => (a.name > b.name ? 1 : -1))
                 .map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 

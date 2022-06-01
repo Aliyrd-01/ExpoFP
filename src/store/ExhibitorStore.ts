@@ -85,8 +85,4 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];
-
-    @computed({ keepAlive: true }) get visibleBooths() {
-        return this.booths.filter((b) => b.visible);
-    }
 }
