@@ -15,7 +15,7 @@ export interface MapControlsProps {
     onClickZoomIn: () => void;
     onClickZoomOut: () => void;
     onClickByWidth: () => void;
-    onChangeLayers: (value: string[]) => void;
+    onChangeLayers: (value: string) => void;
 }
 
 const MapControls: React.FC<MapControlsProps> = ({
@@ -30,14 +30,8 @@ const MapControls: React.FC<MapControlsProps> = ({
 }) => {
     const refLayers = useRef(null);
     const [layersIsOpen, setLayersOpen] = useState<boolean>(layersOpen || false);
-    const [, setActiveLayers] = useState<string[]>(layersActiveItems || []);
-
     useOnClickOutside(refLayers, () => setLayersOpen(false));
-
-    const handleLayersCheck = (id: string) => {
-        setActiveLayers([id]);
-        onChangeLayers([id]);
-    };
+    const handleLayersCheck = (id: string) => onChangeLayers(id);
 
     const listItems = (items: layersListItem[]) => {
         return (
@@ -150,12 +144,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                             />
                         </svg>
                     </button>
-                    {layersIsOpen ? (
-                        <div className="checkedPanel">
-                            <div className="checkedPanel__title">Layers</div>
-                            {listItems(layersList)}
-                        </div>
-                    ) : null}
+                    {layersIsOpen ? <div className="checkedPanel">{listItems(layersList)}</div> : null}
                 </div>
             ) : null}
         </div>

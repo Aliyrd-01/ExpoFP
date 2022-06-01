@@ -9,6 +9,14 @@ export default {
 } as Meta;
 
 const Template: Story<MapControlsProps> = (args) => {
+    const onChangeLayers = (id: string) => {
+        !args.layersActiveItems.includes(id)
+            ? args.layersActiveItems.push(id)
+            : args.layersActiveItems.splice(args.layersActiveItems.indexOf(id), 1);
+
+        action("onChangeLayers")(id);
+    };
+
     return (
         <>
             <MapControls
@@ -16,7 +24,7 @@ const Template: Story<MapControlsProps> = (args) => {
                 onClickZoomIn={() => action("onClickZoomIn")(true)}
                 onClickZoomOut={() => action("onClickZoomOut")(true)}
                 onClickByWidth={() => action("onClickByWidth")(true)}
-                onChangeLayers={(value) => action("onChangeLayers")(value)}
+                onChangeLayers={(id) => onChangeLayers(id)}
             />
         </>
     );

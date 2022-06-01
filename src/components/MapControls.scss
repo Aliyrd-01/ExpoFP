@@ -119,14 +119,14 @@ $checkedPanel: ".checkedPanel";
 
 @include media-breakpoint-down(sm) {
     #{$mapControls} {
-        width: 26px;
+        width: 30px;
     }
     #{$mapControl} {
-        width: 26px;
-        height: 26px;
+        width: 30px;
+        height: 30px;
     }
     #{$checkedPanel} {
-        left: 36px;
+        left: 40px;
 
         &:before {
             top: 8px;
