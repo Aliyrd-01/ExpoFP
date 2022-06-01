@@ -32,10 +32,6 @@ export default class ExhibitorStore {
         }
     }
 
-    @computed({ keepAlive: true }) get visibleExhibitors() {
-        return this.exhibitors.filter((e) => !!e.booths.find((b) => b.visible));
-    }
-
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
