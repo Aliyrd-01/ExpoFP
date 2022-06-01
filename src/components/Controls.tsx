@@ -29,20 +29,20 @@ export default function Controls() {
         const activeList = layers.filter((l) => l.visible).map((l) => l.id);
 
         return (
-            <div className={s.className} style={s.style}>
-                <MapControls
-                    titles={[t("Zoom In"), t("Zoom Out"), t("Fit to screen"), t("Layers")]}
-                    onClickZoomIn={zoom.bind(window, 1)}
-                    onClickZoomOut={zoom.bind(window, -1)}
-                    onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
-                    layersActiveItems={activeList}
-                    layersList={layers}
-                    onChangeLayers={(layer) => {
-                        store.layerStore.updateLayerVisibility(layer, activeList.indexOf(layer) == -1);
-                        uiState.details = null;
-                    }}
-                />
-            </div>
+            <MapControls
+                className={s.className}
+                style={s.style}
+                titles={[t("Zoom In"), t("Zoom Out"), t("Fit to screen"), t("Layers")]}
+                onClickZoomIn={zoom.bind(window, 1)}
+                onClickZoomOut={zoom.bind(window, -1)}
+                onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
+                layersActiveItems={activeList}
+                layersList={layers}
+                onChangeLayers={(layer) => {
+                    store.layerStore.updateLayerVisibility(layer, activeList.indexOf(layer) == -1);
+                    uiState.details = null;
+                }}
+            />
         );
     });
 
