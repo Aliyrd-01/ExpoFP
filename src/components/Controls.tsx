@@ -37,11 +37,8 @@ export default function Controls() {
                     onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
                     layersActiveItems={activeList}
                     layersList={layers}
-                    onChangeLayers={(layers) => {
-                        store.layerStore.updateLayerVisibility(
-                            layers[layers.length - 1],
-                            activeList.indexOf(layers[layers.length - 1]) == -1
-                        );
+                    onChangeLayers={(layer) => {
+                        store.layerStore.updateLayerVisibility(layer, activeList.indexOf(layer) == -1);
                         uiState.details = null;
                     }}
                 />

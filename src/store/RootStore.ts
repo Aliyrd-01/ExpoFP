@@ -234,7 +234,7 @@ export default class RootStore {
         const booths = [];
         items.forEach((item) => {
             if (item instanceof Exhibitor) {
-                booths.push(...item.booths);
+                booths.push(...item.booths.filter((b) => b.visible  ));
             } else if (item instanceof BoothBase) {
                 booths.push(item);
             }

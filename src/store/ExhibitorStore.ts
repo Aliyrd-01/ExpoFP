@@ -32,10 +32,6 @@ export default class ExhibitorStore {
         }
     }
 
-    @computed({ keepAlive: true }) get visibleExhibitors() {
-        return this.exhibitors.filter((e) => !!e.booths.find((b) => b.visible));
-    }
-
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
@@ -85,8 +81,4 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];
-
-    @computed({ keepAlive: true }) get visibleBooths() {
-        return this.booths.filter((b) => b.visible);
-    }
 }

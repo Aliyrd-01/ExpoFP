@@ -72,7 +72,8 @@ function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth 
         } else {
             foundOne = found[0];
         }
-        return rectsToBooths.get(foundOne);
+        let booth = rectsToBooths.get(foundOne);
+        return booth.visible ? booth : null;
     }
 
     return null;

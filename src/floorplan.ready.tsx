@@ -36,14 +36,14 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectBooth(nameOrExternalId: string | string[]) {
-        const booths = store.boothStore.visibleBooths.filter(
+        const booths = store.boothStore.booths.filter(
             (b) => nameOrExternalId.indexOf(b.name) > -1 || nameOrExternalId.indexOf(b.externalId) > -1
         );
         store.selectBooth(booths);
     }
 
     selectExhibitor(nameOrExternalId: string | string[]) {
-        const exhibitors = store.exhibitorStore.visibleExhibitors.filter(
+        const exhibitors = store.exhibitorStore.exhibitors.filter(
             (exh) => nameOrExternalId.indexOf(exh.name) > -1 || nameOrExternalId.indexOf(exh.externalId) > -1
         );
         if (exhibitors && exhibitors.length > 0) {
@@ -57,8 +57,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         to: string | { x: number; y: number },
         exceptUnaccessible: boolean
     ): void {
-        const bFrom = store.boothStore.visibleBooths.find((b) => b.name === from) || (from as any);
-        const bTo = store.boothStore.visibleBooths.find((b) => b.name === to) || (to as any);
+        const bFrom = store.boothStore.booths.find((b) => b.name === from) || (from as any);
+        const bTo = store.boothStore.booths.find((b) => b.name === to) || (to as any);
         store.routeStore.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
     }
 
