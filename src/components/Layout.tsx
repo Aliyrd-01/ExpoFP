@@ -10,7 +10,6 @@ import Controls from "./Controls";
 import Floors from "./Floors";
 import Header from "./Header";
 import LargeMessage from "./LargeMessage";
-import Layers from "./Layers";
 // import TouchHover from "./TouchHover";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
@@ -41,7 +40,7 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                <Layers />
+                {/* <Layers /> */}
 
                 {/*<Areas />*/}
                 {!store.layerStore.layers.length && <Floors />}

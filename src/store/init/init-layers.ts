@@ -17,8 +17,9 @@ export default function initLayers(store: RootStore) {
             if (!layerID.startsWith("WF")) {
                 let l = new Layer();
                 l.name = layerID;
+                l.description = layer.getAttribute("data-layer-description") || layerID;
                 l.visible = !store.layerStore.singleVisible || index === 0;
-                l.rect = floors.filter((f) => f.name === layerID)[0]?.rect;
+                l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
                 layers.push(l);
             }
         });

@@ -38,6 +38,7 @@ export default class LayerStore {
 
 export class Layer {
     name: string;
+    description: string;
     rect: Rect = null;
     @observable visible: boolean;
 }

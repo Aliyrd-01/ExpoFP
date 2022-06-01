@@ -30,18 +30,13 @@ const MapControls: React.FC<MapControlsProps> = ({
 }) => {
     const refLayers = useRef(null);
     const [layersIsOpen, setLayersOpen] = useState<boolean>(layersOpen || false);
-    const [activeLayers, setActiveLayers] = useState<string[]>(layersActiveItems || []);
+    const [, setActiveLayers] = useState<string[]>(layersActiveItems || []);
 
     useOnClickOutside(refLayers, () => setLayersOpen(false));
 
     const handleLayersCheck = (id: string) => {
-        let updatedActiveLayers = [...activeLayers];
-        if (!activeLayers.includes(id)) {
-            updatedActiveLayers = [...activeLayers, id];
-        } else updatedActiveLayers.splice(activeLayers.indexOf(id), 1);
-
-        setActiveLayers(updatedActiveLayers);
-        onChangeLayers(updatedActiveLayers);
+        setActiveLayers([id]);
+        onChangeLayers([id]);
     };
 
     const listItems = (items: layersListItem[]) => {
@@ -53,7 +48,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                             type="checkbox"
                             value={item.id}
                             id={item.id}
-                            checked={activeLayers.includes(item.id) ? true : false}
+                            checked={layersActiveItems.includes(item.id) ? true : false}
                             onChange={() => handleLayersCheck(item.id)}
                         />
                         <label htmlFor={item.id}>{item.name}</label>
