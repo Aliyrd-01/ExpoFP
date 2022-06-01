@@ -1,6 +1,7 @@
 @import "../styles/helpers.scss";
 
 $mapControls: ".mapControls";
+$mapFixedControls: ".fixedControls";
 $mapControl: ".mapControl";
 $layersButton: ".layersButton";
 $checkedPanel: ".checkedPanel";
@@ -9,6 +10,9 @@ $checkedPanel: ".checkedPanel";
     display: grid;
     row-gap: rem(6px);
     width: rem(32px);
+}
+#{$mapFixedControls} {
+    position: fixed;
 }
 #{$mapControl} {
     display: flex;

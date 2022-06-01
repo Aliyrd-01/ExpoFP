@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import MapControls, { MapControlsProps } from "../MapControls";
@@ -9,11 +9,18 @@ export default {
 } as Meta;
 
 const Template: Story<MapControlsProps> = (args) => {
-    const onChangeLayers = (id: string) => {
-        !args.layersActiveItems.includes(id)
-            ? args.layersActiveItems.push(id)
-            : args.layersActiveItems.splice(args.layersActiveItems.indexOf(id), 1);
+    const [activeItems, setActiveItems] = useState(args.layersActiveItems);
+    const styles = {
+        top: "10px",
+        left: "10px",
+    };
 
+    const onChangeLayers = (id: string) => {
+        let updatedActiveItems = [...activeItems];
+        !activeItems.includes(id)
+            ? (updatedActiveItems = [...activeItems, id])
+            : updatedActiveItems.splice(activeItems.indexOf(id), 1);
+        setActiveItems(updatedActiveItems);
         action("onChangeLayers")(id);
     };
 
@@ -21,6 +28,8 @@ const Template: Story<MapControlsProps> = (args) => {
         <>
             <MapControls
                 {...args}
+                style={styles}
+                layersActiveItems={activeItems}
                 onClickZoomIn={() => action("onClickZoomIn")(true)}
                 onClickZoomOut={() => action("onClickZoomOut")(true)}
                 onClickByWidth={() => action("onClickByWidth")(true)}
@@ -32,6 +41,7 @@ const Template: Story<MapControlsProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
+    className: "fixedControls",
     titles: ["Zoom In", "Zoom Out", "By Screen Width", "Show Layouts"],
     layersOpen: false,
     layersList: [

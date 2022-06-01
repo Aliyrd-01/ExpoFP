@@ -8,6 +8,8 @@ export interface layersListItem {
     name: string;
 }
 export interface MapControlsProps {
+    className?: string;
+    style?: React.CSSProperties;
     titles: string[];
     layersOpen?: boolean;
     layersList?: layersListItem[];
@@ -19,6 +21,8 @@ export interface MapControlsProps {
 }
 
 const MapControls: React.FC<MapControlsProps> = ({
+    className,
+    style,
     titles,
     layersOpen,
     layersList,
@@ -53,7 +57,7 @@ const MapControls: React.FC<MapControlsProps> = ({
     };
 
     return (
-        <div className="mapControls">
+        <div className={classNames("mapControls", className)} style={style}>
             <button type="button" className="mapControl" title={titles[0]} onClick={onClickZoomIn}>
                 <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
                     <path
