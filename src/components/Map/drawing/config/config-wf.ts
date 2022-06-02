@@ -1,15 +1,17 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
+import { Line, lineAngle, lineCenter, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
 import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { uiState } from "../../../../store";
+import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { CurrentPosition } from "./../../../../store/RouteStore";
+import { boothStore } from "./../../../../store/index";
+import { CurrentPosition, Route } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
@@ -23,6 +25,11 @@ const isDebug = false;
 
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
+
+const timeoutToChangeRoute = 15000; // 15 sec
+const distanceToChangeRoute = 200;
+
+let initialDate = null;
 
 export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     var mapping = null;
@@ -41,6 +48,24 @@ export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
     cp.y += shift.y;
 
     return cp;
+}
+
+function getNearestBooth(point: Point): Booth {
+    var booth = null;
+
+    const booths = boothStore.booths.map((b) => {
+        const lineCenterBooth = lineCenter(point, { x: b.rect.cx, y: b.rect.cy });
+        return {
+            lineLength: lineLength(point, lineCenterBooth),
+            name: b.name,
+        };
+    });
+
+    const nearest = booths.sort((b1, b2) => b1.lineLength - b2.lineLength)[0];
+
+    booth = boothStore.booths.find((b) => b.name === nearest.name);
+
+    return booth;
 }
 
 function drawLines(wfDrawer: RectPainter, ptscale: number) {
@@ -263,6 +288,27 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             .sort((p1, p2) => p1.l - p2.l)[0];
 
         if (!shortestrPerp) return;
+
+        // Recalculate logic here
+
+        if (shortestrPerp.l > distanceToChangeRoute) {
+            if (!initialDate) initialDate = new Date();
+            else {
+                const diff = new Date().valueOf() - initialDate.valueOf();
+
+                if (diff >= timeoutToChangeRoute) {
+                    const newBooth = getNearestBooth(position);
+                    if (newBooth)
+                        store.routeStore.selectRoute(
+                            new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
+                        );
+                }
+            }
+        } else {
+            initialDate = null;
+        }
+
+        // Recalculate logic here
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
             wfDrawer.updateVisible(`Dot_${index}`, false);
