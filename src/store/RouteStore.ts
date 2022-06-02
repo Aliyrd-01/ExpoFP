@@ -1,6 +1,7 @@
 import { action, computed, observable } from "mobx";
 import { Line, lineLength } from "simple-geometry";
 import store from ".";
+import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
 import svg from "../data/svg";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
@@ -72,8 +73,9 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
-        this.currentPosition = point;
-        if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(point.x, point.y, 100, 100);
+        const p = mapCurrentPosition(point);
+        this.currentPosition = p;
+        if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
     }
 
     @action updateRoutePoints(routeLines: Line[]) {
