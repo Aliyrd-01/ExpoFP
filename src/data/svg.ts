@@ -65,8 +65,6 @@ let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement
     .sort();
 
 if (settings.EXPO === "all-energy") floors.reverse();
-
-if (settings.EXPO === "all-energy") floors.reverse();
 if (settings.EXPO === "imex2022") data.onlyFeaturedExhibitors = true;
 
 const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
@@ -109,5 +107,4 @@ window["__svg"] = svg;
 
 export default svg;
 
-declare const __fp: string;
-declare const __fpPaths: { [id: string]: any };
+export let gtePathByIndex = (index: number, suffix: string = "") => window[`__fpPaths${suffix}`][index];

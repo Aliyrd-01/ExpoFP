@@ -144,22 +144,17 @@ export default function initBooths(store: RootStore) {
         if (el.tagName === "g") {
             booth.paths = [];
             booth.pathsWithRect = pathsWithRect;
-            if (pathsWithRect && settings.EXPO === "expo" && (booth.slug === "1745" || booth.slug === "1746")) {
-                booth.pathsWithRect = false;
-            }
+
             for (const kid of d3.select(el).selectAll("path, rect").nodes() as (SVGPathElement | SVGRectElement)[]) {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
                     const color = path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
-                    //if (d !== d) continue;
-                    // const triangles = getTrianglesFromFpPaths(d);
-                    const pi: PathInfo = {
-                        triangles: getTrianglesFromFpPaths(d),
+                    booth.paths.push({
+                        index: d,
                         color,
-                    };
-                    booth.paths.push(pi);
+                    });
                 }
             }
         }
@@ -191,20 +186,4 @@ function fixCbre(b: Booth) {
             else if (b.type.startsWith("Premium C - 2.4m")) (b.availColor as string) = "#3ECC78";
         }
     }
-}
-
-function getTrianglesFromFpPaths(index: number) {
-    const mesh = window["__fpPaths"][index];
-    // TODO: remove in future versions
-    for (const p of mesh.positions) {
-        // a bug in svgMesh3d when normalize: false ?
-        p[1] = Math.abs(p[1]);
-        p.length = 2;
-    }
-    const pathTriangles = [];
-    for (const c of mesh.cells) {
-        pathTriangles.push([mesh.positions[c[0]], mesh.positions[c[1]], mesh.positions[c[2]]]);
-    }
-
-    return pathTriangles;
 }

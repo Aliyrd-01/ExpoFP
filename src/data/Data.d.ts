@@ -110,7 +110,7 @@ interface RawExhibitor {
 }
 
 interface PathInfo {
-    triangles: Triangle[];
+    index: number;
     color: string;
 }
 

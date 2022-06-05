@@ -1,7 +1,7 @@
 import Color from "color";
 import { select } from "d3-selection";
 import Rect from "../../../../core/Rect";
-import svg from "../../../../data/svg";
+import svg, { gtePathByIndex } from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
@@ -28,7 +28,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
         if (svgPath.style.fill === "none") return;
         const color = Color(svgPath.style.fill).vec4();
 
-        const mesh = __fpPaths[d];
+        const mesh = gtePathByIndex(d);
 
         // TODO: remove in future versions
         for (const p of mesh.positions) {
@@ -78,6 +78,3 @@ export default function configBg(context: DrawerContext, layerID: string, painte
 
     // drawer.alpha = 0.5;
 }
-
-declare const __fp: string;
-declare const __fpPaths: { [id: string]: any };
