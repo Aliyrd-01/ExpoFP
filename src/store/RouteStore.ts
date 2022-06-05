@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { Line, lineLength } from "simple-geometry";
+import { Line, lineLength, Point } from "simple-geometry";
 import store from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
@@ -111,6 +111,15 @@ export class Route {
     public constructor(public from: Booth, public to: Booth, public exceptUnaccessible: boolean) {}
 }
 
-export class CurrentPosition {
-    public constructor(public x: number, public y: number, public z?: string, public angle?: number) {}
+export class CurrentPosition extends Point {
+    public constructor(
+        public x: number,
+        public y: number,
+        public z?: string,
+        public angle?: number,
+        public lat?: number,
+        public lng?: number
+    ) {
+        super(x, y);
+    }
 }

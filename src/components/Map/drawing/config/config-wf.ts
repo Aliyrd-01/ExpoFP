@@ -7,6 +7,7 @@ import data from "../../../../data";
 import store, { uiState } from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
+import { convertGpsToLocal } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
@@ -31,19 +32,30 @@ const distanceToChangeRoute = 200;
 
 let initialDate = null;
 
-export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
+export function mapCurrentPosition(position: CurrentPosition): Point {
     var mapping = null;
+    var fpConfig = null;
 
     if (settings.EXPO === "all-energy") {
         mapping = { "1": { x: 2399, y: 1998 }, "2": { x: 2000, y: 3300 } };
     }
 
+    if (settings.EXPO.indexOf("cannes") > -1) {
+        fpConfig = {
+            p0: { lat: 43.552273880353106, lng: 7.016154079629807, x: 10169, y: 13581 },
+            p1: { lat: 43.54881352776774, lng: 7.0191060227003135, x: 14825, y: 15565 },
+        };
+    }
+
+    let point: Point =
+        fpConfig && position.lat && position.lng ? convertGpsToLocal(position.lat, position.lng, fpConfig) : position;
+
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
 
-    if (!shift) return position;
+    if (!shift) return point;
 
-    var cp = { ...position };
+    var cp = { ...point };
     cp.x += shift.x;
     cp.y += shift.y;
 
