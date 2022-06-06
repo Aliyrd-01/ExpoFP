@@ -233,7 +233,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             routeLines = getGraphLines(
                 new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
                 new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                uiState.selectedRoute.exceptUnaccessible
+                uiState.selectedRoute.exceptUnaccessible,
+                false,
+                false
             );
 
             if (routeLines.length === 0) {

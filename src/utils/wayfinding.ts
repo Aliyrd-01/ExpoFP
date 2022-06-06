@@ -29,7 +29,7 @@ const sameLine = (l1: Line, l2: Line): boolean =>
 let sublines = (): Sublines => window["__wfData"];
 let pathFinder = { finder: null, oriented: true, exceptUnAccessible: false };
 
-function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean) {
+function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean, virtualIsZero: boolean) {
     const graph = createGraph();
     const t0 = performance.now();
 
@@ -39,12 +39,12 @@ function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean) {
         lines.forEach((line) => {
             if ((samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) && (!exceptUnAccessible || !line.unaccessible)) {
                 graph.addLink(pointId(line.p0), pointId(line.p1), {
-                    distance: lineLength(line.p0, line.p1) / (line.weight || 4),
+                    distance: virtualIsZero && line.virtual ? 0 : lineLength(line.p0, line.p1) / (line.weight || 4),
                 });
 
                 if (oriented && !line.unidirection)
                     graph.addLink(pointId(line.p1), pointId(line.p0), {
-                        distance: lineLength(line.p1, line.p0) / (line.weight || 4),
+                        distance: virtualIsZero && line.virtual ? 0 : lineLength(line.p1, line.p0) / (line.weight || 4),
                     });
             }
         });
@@ -71,12 +71,13 @@ export function getGraphLines(
     fromRect: Rect,
     toRect: Rect,
     exceptUnAccessible: boolean = false,
-    disableCache: boolean = false
+    disableCache: boolean = false,
+    virtualIsZero: boolean
 ): RouteLine[] {
     let t0 = performance.now();
 
     if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible || disableCache)
-        buildPathFinder(pathFinder.oriented, exceptUnAccessible);
+        buildPathFinder(pathFinder.oriented, exceptUnAccessible, virtualIsZero);
 
     const from: Point[] = [];
     const to: Point[] = [];
