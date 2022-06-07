@@ -1,61 +1,55 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import classNames from "classnames";
 import "./Share.scss";
-import { observer } from "mobx-react-lite";
-import { uiState } from "../store";
 
-interface ShareProps {
+export interface ShareProps {
     title?: string;
+    url?: string;
 }
 
-const Share: React.FC<ShareProps> = ({ title }) => {
-    const [url, setUrl] = useState(null);
-
-    useEffect(() => {
-        setUrl(window.location.href);
-        // eslint-disable-next-line
-    }, [uiState.selectedExhibitor]);
+const Share: React.FC<ShareProps> = ({ title, url }) => {
+    const [isCopied, setIsCopied] = useState(false);
+    const encodedUrl = encodeURI(url);
+    const shaareUrl = {
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+        twitter: `https://twitter.com/share?url=${encodedUrl}`,
+        linkedin: `https://linkedin.com/shareArticle?url=${encodedUrl}`,
+    };
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(url);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
     };
-
-    const encodedUrl = encodeURI(url);
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-    const twitterShareUrl = `https://twitter.com/share?url=${encodedUrl}`;
-    const linkedinShareUrl = `https://linkedin.com/shareArticle?url=${encodedUrl}`;
 
     return (
         <div className="share">
-            <div className="share__title">{title ? title : `Share ${uiState.selectedExhibitor?.name}`}</div>
+            <h3>Share {title}</h3>
             <div className="share__socials">
-                <a href={facebookShareUrl} rel="noopener noreferrer" target="_blank" className="share__social">
-                    <div className="share__circle">
-                        <div className="share__icon facebook"></div>
-                    </div>
-                    <div className="share__name">Facebook</div>
+                <a href={shaareUrl.facebook} rel="noopener noreferrer" target="_blank" className="share-social facebook">
+                    <div className="share-social__icon"></div>
+                    <div className="share-social__title">Facebook</div>
                 </a>
-                <a href={twitterShareUrl} rel="noopener noreferrer" target="_blank" className="share__social">
-                    <div className="share__circle">
-                        <div className="share__icon twitter"></div>
-                    </div>
-                    <div className="share__name">Twitter</div>
+                <a href={shaareUrl.twitter} rel="noopener noreferrer" target="_blank" className="share-social twitter">
+                    <div className="share-social__icon"></div>
+                    <div className="share-social__title">Twitter</div>
                 </a>
-                <a href={linkedinShareUrl} rel="noopener noreferrer" target="_blank" className="share__social">
-                    <div className="share__circle">
-                        <div className="share__icon linkedin"></div>
-                    </div>
-                    <div className="share__name">LinkedIn</div>
+                <a href={shaareUrl.linkedin} rel="noopener noreferrer" target="_blank" className="share-social linkedin">
+                    <div className="share-social__icon"></div>
+                    <div className="share-social__title">LinkedIn</div>
                 </a>
             </div>
             <div className="share__copy">
-                <div className="share__text">or copy link</div>
-                <div className="share__input-wrapper" onClick={copyToClipboard}>
-                    <input type="input" readOnly={true} className="share__input" placeholder={url} />
-                    <button className="share__btn">Copy</button>
+                <span>or copy link</span>
+                <div className="share__copy-input">
+                    <input type="text" value={url} />
+                    <button className={classNames({ isCopied: isCopied })} onClick={copyToClipboard}>
+                        {isCopied ? "Copied!" : "Copy"}
+                    </button>
                 </div>
             </div>
         </div>
     );
 };
 
-export default observer(Share);
+export default Share;
