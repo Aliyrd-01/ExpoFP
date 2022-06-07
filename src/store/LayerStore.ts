@@ -2,49 +2,46 @@
 import { action, computed, observable } from "mobx";
 import { uiState } from ".";
 import { getCOntext } from "../components/Map/drawing/config/config-all";
-import configBg from "../components/Map/drawing/config/config-bg";
+import configLayer from "../components/Map/drawing/config/config-layer";
 import Rect from "../core/Rect";
 
 export default class LayerStore {
     @observable layers: Layer[] = [];
-    @observable singleVisible: boolean = true;
+    @observable separated: boolean = __fpPaths === null;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
     }
 
     @action init() {
-        if (!this.singleVisible) return;
+        if (!this.separated) return;
         var rect = this.layers.filter((f) => f.visible)[0]?.rect;
         if (rect) setTimeout(() => (uiState.moveToRect = rect), 400);
     }
 
     @computed({ keepAlive: true }) get rectangle() {
-        return !this.singleVisible ? null : this.visible[0]?.rect || null;
+        return !this.separated ? null : this.visible[0]?.rect || null;
     }
 
     @action updateLayerVisibility(layer: string, visible: boolean): void {
-        if (this.singleVisible && !visible) return;
+        if(this.separated && !visible) return;
         const l = this.layers.find((l) => l.name === layer);
-        if (visible && !l.configured) {
-            configBg(getCOntext(), l.name, l.priority, true);
-            l.configured = true;
-        }
+        configLayer(l, getCOntext()).then(() => {
+            if (this.separated) {
+                this.layers.forEach((l) => {
+                    if (l.name !== layer) l.visible = false;
+                    else if (l.rect) uiState.moveToRect = l.rect;
+                });
+            }
 
-        if (this.singleVisible) {
-            this.layers.forEach((l) => {
-                if (l.name !== layer) l.visible = false;
-                else if (l.rect) uiState.moveToRect = l.rect;
-            });
-        }
-
-        if (l) l.visible = visible;
+            if (l) l.visible = visible;
+        });
     }
 }
 
 export class Layer {
     configured: boolean;
-    priority: number;
+    basePriority: number;
     name: string;
     description: string;
     rect: Rect = null;

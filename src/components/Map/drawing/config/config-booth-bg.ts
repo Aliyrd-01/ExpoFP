@@ -2,7 +2,7 @@ import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
-import { boothStore } from "../../../../store";
+import store, { boothStore } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
@@ -65,7 +65,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                 // const color = Color(p.color).vec4();
                 const colored = !!p.color;
                 if (colored) pathsColors.add(p.color);
-                for (const t of getTrianglesFromFpPaths(p.index)) {
+                for (const t of getTrianglesFromFpPaths(p.index, store.layerStore.separated ? booth.layer.name : "")) {
                     this.addObject(
                         layerID,
                         {
@@ -201,8 +201,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     }
 }
 
-function getTrianglesFromFpPaths(index: number) {
-    const mesh = gtePathByIndex(index);
+function getTrianglesFromFpPaths(index: number, suffix: string) {
+    const mesh = gtePathByIndex(index, suffix);
     // TODO: remove in future versions
     for (const p of mesh.positions) {
         // a bug in svgMesh3d when normalize: false ?

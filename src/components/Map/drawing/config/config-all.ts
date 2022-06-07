@@ -3,10 +3,9 @@ import svg from "../../../../data/svg";
 import store from "../../../../store";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
-import configBg from "./config-bg";
-import configBooths from "./config-booths";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
+import configLayer from "./config-layer";
 import configMatrix from "./config-matrix";
 import configSizes from "./config-sizes";
 import configWf from "./config-wf";
@@ -26,7 +25,7 @@ export default function configAll(context: DrawerContext) {
 
     let boothsAnimations = [];
     let basePriority = 6;
-    let { layers, singleVisible } = store.layerStore;
+    let { layers, separated } = store.layerStore;
 
     select(svg)
         .selectAll<SVGAElement, unknown>("svg  [data-layer]")
@@ -34,17 +33,12 @@ export default function configAll(context: DrawerContext) {
         .map((n) => n.getAttribute("data-layer"))
         .forEach((layerID, index) => {
             var layer = layers.filter((l) => l.name == layerID)[0];
-            if (layer) {
-                layer.priority = basePriority++;
-                if (!singleVisible || index === 0) {
-                    configBg(context, layerID, layer.priority, layer.visible);
-                    layer.configured = true;
-                }
 
-                const booths = store.boothStore.booths.filter((b) => b.layer.name === layerID);
-                if (booths.length) {
-                    boothsAnimations.push(configBooths(context, layerID, booths, basePriority, layer.visible));
-                    basePriority += 20;
+            if (layer) {
+                layer.basePriority = basePriority;
+                basePriority += 20;
+                if (!separated || index === 0) {
+                    configLayer(layer, context, boothsAnimations).then(() => {});
                 }
             }
         });

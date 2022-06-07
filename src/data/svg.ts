@@ -107,4 +107,10 @@ window["__svg"] = svg;
 
 export default svg;
 
-export let gtePathByIndex = (index: number, suffix: string = "") => window[`__fpPaths${suffix}`][index];
+export let gtePathByIndex = (index: number, suffix: string = "") => {
+    try {
+        return window[`__fpPaths${suffix}`][index];
+    } catch (e) {
+        return window["__fpPaths"][index];
+    }
+};

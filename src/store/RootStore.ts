@@ -39,7 +39,7 @@ export default class RootStore {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
         if (focus) this.moveToList(b);
-        if (b.length === 1 && !b[0].layer.visible && this.layerStore.singleVisible)
+        if (b.length === 1 && !b[0].layer.visible && this.layerStore.separated)
             this.layerStore.updateLayerVisibility(b[0].layer.name, true);
     }
 
@@ -234,7 +234,7 @@ export default class RootStore {
         const booths = [];
         items.forEach((item) => {
             if (item instanceof Exhibitor) {
-                booths.push(...item.booths.filter((b) => b.visible  ));
+                booths.push(...item.booths.filter((b) => b.visible));
             } else if (item instanceof BoothBase) {
                 booths.push(item);
             }

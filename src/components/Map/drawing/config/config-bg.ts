@@ -2,6 +2,7 @@ import Color from "color";
 import { select } from "d3-selection";
 import Rect from "../../../../core/Rect";
 import svg, { gtePathByIndex } from "../../../../data/svg";
+import store from "../../../../store";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
@@ -27,8 +28,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
         const d = parseInt(svgPath.getAttribute("data-index"));
         if (svgPath.style.fill === "none") return;
         const color = Color(svgPath.style.fill).vec4();
-
-        const mesh = gtePathByIndex(d);
+        const mesh = gtePathByIndex(d, store.layerStore.separated ? layerID : "");
 
         // TODO: remove in future versions
         for (const p of mesh.positions) {

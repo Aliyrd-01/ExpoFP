@@ -18,7 +18,7 @@ export default function initLayers(store: RootStore) {
                 let l = new Layer();
                 l.name = layerID;
                 l.description = layer.getAttribute("data-layer-description") || layerID;
-                l.visible = !store.layerStore.singleVisible || index === 0;
+                l.visible = !store.layerStore.separated || index === 0;
                 l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
                 layers.push(l);
             }
