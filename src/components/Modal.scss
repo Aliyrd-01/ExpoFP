@@ -1,45 +1,75 @@
 @import "../styles/import.scss";
 
-.modal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(22, 22, 22, 0.38);
-	align-items: center;
-	justify-content: center;
-	display: flex;
+$modal: ".modal";
+
+#{$modal} {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: rem(20px);
+    background: rgba(22, 22, 22, 0.38);
+
+    &--default {
+        #{$modal}__content {
+            max-width: 600px;
+        }
+    }
+    &--share {
+        #{$modal}__content {
+            max-width: 420px;
+        }
+    }
+    &.isOpen {
+        #{$modal}__content {
+            top: 0;
+            opacity: 1;
+        }
+    }
+    &__close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: rem(40px);
+        height: rem(40px);
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.1s ease;
+
+        &:before {
+            content: "";
+            width: 24px;
+            height: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M4.46967 4.46967C4.76256 4.17678 5.23744 4.17678 5.53033 4.46967L12 10.9393L18.4697 4.46967C18.7626 4.17678 19.2374 4.17678 19.5303 4.46967C19.8232 4.76256 19.8232 5.23744 19.5303 5.53033L13.0607 12L19.5303 18.4697C19.8232 18.7626 19.8232 19.2374 19.5303 19.5303C19.2374 19.8232 18.7626 19.8232 18.4697 19.5303L12 13.0607L5.53033 19.5303C5.23744 19.8232 4.76256 19.8232 4.46967 19.5303C4.17678 19.2374 4.17678 18.7626 4.46967 18.4697L10.9393 12L4.46967 5.53033C4.17678 5.23744 4.17678 4.76256 4.46967 4.46967Z' fill='%23333333'/%3E%3C/svg%3E%0A");
+        }
+        &:hover {
+            opacity: 1;
+        }
+    }
+    &__content {
+        position: relative;
+        top: -40px;
+        width: 100%;
+        padding: rem(30px 40px);
+        background: white;
+        box-shadow: rem(0 4px 30px) rgba(0, 0, 0, 0.15);
+        border-radius: rem(2px);
+        opacity: 0;
+        transition: top 0.3s ease, opacity 0.2s ease;
+    }
 }
 
-.modal__close {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 2.5rem;
-	height: 2.5rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	color: $color-gray;
-
-	&:before {
-		font-size: rem(19px);
-	}
-}
-
-.modal.active {
-	display: flex;
-}
-
-.modal__content {
-	position: relative;
-	width: rem(426px);
-	background: white;
-	padding: rem(30px 40px);
-	box-shadow: rem(0 4px 30px) rgba(0, 0, 0, 0.15);
-	border-radius: rem(2px);
+@include media-breakpoint-down(sm) {
+    #{$modal} {
+        padding: rem(10px);
+    }
 }
