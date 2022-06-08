@@ -28,8 +28,7 @@ $modal: ".modal";
     }
     &.isOpen {
         #{$modal}__content {
-            top: 0;
-            opacity: 1;
+            animation: 0.3s ease forwards transformModal, 0.2s ease forwards opacityModal;
         }
     }
     &__close {
@@ -57,19 +56,33 @@ $modal: ".modal";
     }
     &__content {
         position: relative;
-        top: -40px;
         width: 100%;
         padding: rem(30px 40px);
         background: white;
         box-shadow: rem(0 4px 30px) rgba(0, 0, 0, 0.15);
         border-radius: rem(2px);
-        opacity: 0;
-        transition: top 0.3s ease, opacity 0.2s ease;
     }
 }
 
 @include media-breakpoint-down(sm) {
     #{$modal} {
         padding: rem(10px);
+    }
+}
+
+@keyframes opacityModal {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes transformModal {
+    from {
+        top: -40px;
+    } to {
+        top: 0;
     }
 }

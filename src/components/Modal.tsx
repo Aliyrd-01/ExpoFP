@@ -14,7 +14,7 @@ const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClick
     const [isOpen, setIsOpen] = useState(open);
 
     useEffect(() => {
-        setTimeout(() => setIsOpen(open), 4);
+        setIsOpen(open);
     }, [open]);
 
     return open ? (

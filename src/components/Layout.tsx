@@ -58,8 +58,8 @@ export default observer(function Layout() {
                 <Pdf />
                 {uiState.modalActive.share ? (
                     <Suspense fallback={null}>
-                        <Modal modalType="share">
-                            <Share />
+                        <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
+                            <Share title={uiState.selectedExhibitor?.name} url={window.location.href} />
                         </Modal>
                     </Suspense>
                 ) : null}
