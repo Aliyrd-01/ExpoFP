@@ -1,25 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import classNames from "classnames";
 import "./Modal.scss";
-import { observer } from "mobx-react-lite";
-import store from "../store";
 
-interface ModalProps {
-    modalType: "share";
+type modalType = "default" | "share";
+
+export interface ModalProps {
+    open: boolean;
+    type?: modalType;
+    onClickClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, modalType }) => {
-    const clickHandler = () => {
-        store.toggleModal(modalType);
-    };
+const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClickClose }) => {
+    const [isOpen, setIsOpen] = useState(open);
 
-    return (
-        <div className="modal" onClick={clickHandler}>
+    useEffect(() => {
+        setTimeout(() => setIsOpen(open), 4);
+    }, [open]);
+
+    return open ? (
+        <div className={classNames("modal", `modal--${type}`, { isOpen: isOpen })} onClick={onClickClose}>
             <div className="modal__content" onClick={(e) => e.stopPropagation()}>
-                <div className="far fa-times modal__close" onClick={clickHandler}></div>
+                <div className="far fa-times modal__close" onClick={onClickClose}></div>
                 {children}
             </div>
         </div>
-    );
+    ) : null;
 };
 
-export default observer(Modal);
+export default Modal;

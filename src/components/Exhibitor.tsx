@@ -270,7 +270,7 @@ function ExhibitorComponent() {
                             })}
                         </div>
                     ) : null}
-                    {s.anyAddress ? <div className="exhibitor__sep" /> : null}
+                    {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
                     {s.showEdit ? (
                         <div className="exhibitor__edit">
                             <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
@@ -341,7 +341,6 @@ function ExhibitorComponent() {
                             )}
                         </div>
                     )}
-                    {s.anySocial && <div className="exhibitor__sep" />}
                     {s.anySocial && (
                         <div className="exhibitor__social">
                             <a

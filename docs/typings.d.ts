@@ -17,7 +17,11 @@ class FloorPlan {
 
     selectExhibitor(nameOrExternalId: string): void;
 
-    selectCurrentPosition(point: { x: number; y: number; angle?: number; z?: string }, focus?: boolean): void;
+    selectCurrentPosition(
+        //
+        point: { x: number; y: number; angle?: number; z?: string; lat?: number; lng?: number },
+        focus?: boolean
+    ): void;
 
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }

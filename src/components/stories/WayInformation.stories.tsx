@@ -9,9 +9,11 @@ export default {
 
 const Template: Story<WayInformationProps> = (args) => {
     return (
-        <>
-            <WayInformation {...args} />
-        </>
+        <div className="map">
+            <aside className="sidebar">
+                <WayInformation {...args} />
+            </aside>
+        </div>
     );
 };
 
