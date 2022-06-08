@@ -10,12 +10,12 @@ export default {
 const Template: Story<AutocompleteProps> = (args) => {
     const [value, setValue] = useState<string>("02");
     return (
-        <>
+        <div className="sbContent">
             <Autocomplete {...args} onChange={setValue} value={value} />
             <br />
             <strong>Current value: </strong>
             {value}
-        </>
+        </div>
     );
 };
 

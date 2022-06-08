@@ -13,12 +13,12 @@ const Template: Story<ShareProps> = (args) => {
     const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     return (
-        <>
+        <div className="sbContent">
             <Button text="Share" onClick={() => setModalOpen(true)} />
             <Modal type="share" open={modalOpen} onClickClose={() => setModalOpen(false)}>
                 <Share {...args} />
             </Modal>
-        </>
+        </div>
     );
 };
 
