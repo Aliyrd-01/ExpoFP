@@ -3,7 +3,6 @@ import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { RegularBooth, SpecialBooth } from "../store/BoothStore";
-import { Exhibitor } from "../store/ExhibitorStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
@@ -59,12 +58,7 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors
-                .sort((a: Exhibitor, b: Exhibitor) => {
-                    if (a.featured !== b.featured) return a.featured ? -1 : 1;
-                    return a.name > b.name ? 1 : -1;
-                })
-                .map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (
