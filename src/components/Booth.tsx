@@ -58,9 +58,7 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors
-                .sort((a, b) => (a.name > b.name ? 1 : -1))
-                .map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (
@@ -163,7 +161,10 @@ function Booth() {
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
                 {settings.wayfinding && (
-                    <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(2) }}>
+                    <div
+                        className="exhibitor__directions"
+                        style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(2) }}
+                    >
                         <Button
                             text={t("Directions")}
                             onClick={() =>
