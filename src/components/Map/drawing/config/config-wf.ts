@@ -41,6 +41,14 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     }
 
     if (settings.EXPO.indexOf("cannes") > -1) {
+        mapping = {
+            "-1": { x: 1190, y: 3410 },
+            "0": { x: 0, y: 2120 },
+            "1": { x: 1482, y: 3428 },
+            "3": { x: 1420, y: 3418 },
+            "4": { x: 1440, y: 3462 },
+        };
+
         fpConfig = {
             p0: { lat: 43.552273880353106, lng: 7.016154079629807, x: 10169, y: 13581 },
             p1: { lat: 43.54881352776774, lng: 7.0191060227003135, x: 14825, y: 15565 },
