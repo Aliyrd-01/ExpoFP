@@ -42,11 +42,11 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
 
     if (settings.EXPO.indexOf("cannes") > -1) {
         mapping = {
-            "-1": { x: 10460, y: 13324 },
-            "0": { x: 10515, y: 10358 },
-            "1": { x: 10455, y: 7570 },
-            "3": { x: 10492, y: 5835 },
-            "4": { x: 10460, y: 4110 },
+            "-1": { x: 10474, y: 13360 },
+            "0": { x: 10525, y: 10395 },
+            "1": { x: 10490, y: 7597 },
+            "3": { x: 10494, y: 5865 },
+            "4": { x: 10477, y: 4131 },
         };
 
         fpConfig = {
