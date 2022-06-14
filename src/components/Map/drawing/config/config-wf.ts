@@ -46,7 +46,7 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
             "0": { x: 10515, y: 10358 },
             "1": { x: 10455, y: 7570 },
             "3": { x: 10492, y: 5835 },
-            "4": { x: 10484, y: 4092 },
+            "4": { x: 10460, y: 4110 },
         };
 
         fpConfig = {
