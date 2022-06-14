@@ -43,9 +43,9 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     if (settings.EXPO.indexOf("cannes") > -1) {
         mapping = {
             "-1": { x: 10460, y: 13324 },
-            "0": { x: 10445, y: 10358 },
-            "1": { x: 10480, y: 7564 },
-            "3": { x: 10472, y: 5824 },
+            "0": { x: 10515, y: 10358 },
+            "1": { x: 10455, y: 7570 },
+            "3": { x: 10492, y: 5835 },
             "4": { x: 10484, y: 4092 },
         };
 
