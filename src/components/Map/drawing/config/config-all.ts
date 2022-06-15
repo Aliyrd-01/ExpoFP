@@ -32,11 +32,9 @@ export default function configAll(context: DrawerContext = _context): void {
             if (layer) {
                 layer.basePriority = basePriority;
                 basePriority += 20;
-                if (!separated || index === 0) configLayer(layer, context, matrixAnimate).then(() => {});
+                configLayer(layer, context, !separated || index === 0, matrixAnimate).then(() => {});
             }
         });
-
-    if (separated) for (let index = 1; index < layers.length; index++) configLayer(layers[index], context).then(() => {});
 
     configWf(context, basePriority++, true);
     configSizes(context, "Sizes", basePriority++, true);

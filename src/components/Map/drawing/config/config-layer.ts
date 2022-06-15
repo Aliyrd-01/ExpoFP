@@ -8,28 +8,41 @@ import configBooths from "./config-booths";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
-export default async function configLayer(layer: Layer, context: DrawerContext, matrixAnimate = null): Promise<void> {
-    if (layer.configured) return Promise.resolve();
+export default async function configLayer(
+    layer: Layer,
+    context: DrawerContext,
+    config: boolean,
+    matrixAnimate = null
+): Promise<void> {
+    if (layer.configured && layer.loaded) return Promise.resolve();
 
     return new Promise(async (resolve, reject) => {
-        if (store.layerStore.separated) await loadLayerData(layer.name);
-        layer.configured = true;
-
-        configBg(context, layer.name, layer.basePriority, layer.visible);
-
-        const boothsAnimations = [];
-        const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
-        if (booths.length) boothsAnimations.push(configBooths(context, layer.name, booths, layer.basePriority++, layer.visible));
-
-        // to be running when all painters prepared
-        if (context.updatable) {
-            window.setTimeout(
-                () => boothsAnimations.forEach((ba) => (matrixAnimate ? matrixAnimate(ba) : ba())),
-                delayAnimations
-            );
+        if (store.layerStore.separated && !layer.loaded) {
+            await loadLayerData(layer.name);
         }
+        layer.loaded = true;
 
-        resolve();
+        if (config) {
+            layer.configured = true;
+
+            configBg(context, layer.name, layer.basePriority, layer.visible);
+
+            const boothsAnimations = [];
+            const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
+            if (booths.length)
+                boothsAnimations.push(configBooths(context, layer.name, booths, layer.basePriority++, layer.visible));
+
+            // to be running when all painters prepared
+            if (context.updatable) {
+                window.setTimeout(
+                    () => boothsAnimations.forEach((ba) => (matrixAnimate ? matrixAnimate(ba) : ba())),
+                    delayAnimations
+                );
+            }
+            resolve();
+        } else {
+            resolve();
+        }
     });
 }
 

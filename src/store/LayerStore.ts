@@ -26,7 +26,7 @@ export default class LayerStore {
     @action updateLayerVisibility(layer: string, visible: boolean): void {
         if (this.separated && !visible) return;
         const l = this.layers.find((l) => l.name === layer);
-        configLayer(l, getContext()).then(() => {
+        configLayer(l, getContext(), true).then(() => {
             if (this.separated) {
                 this.layers.forEach((l) => {
                     if (l.name !== layer) l.visible = false;
@@ -41,6 +41,7 @@ export default class LayerStore {
 
 export class Layer {
     configured: boolean;
+    loaded: boolean;
     basePriority: number;
     name: string;
     description: string;
