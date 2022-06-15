@@ -31,9 +31,12 @@ $actionButton: ".actionButton";
     .icon {
         width: 22px;
         height: 22px;
-        margin-right: 4px;
         fill: $color-secondary;
         transition: fill 0.1s ease;
+
+        & + .text {
+            margin-left: 4px;
+        }
     }
     &:hover {
         background: #eaf4ff;

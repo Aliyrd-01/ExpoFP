@@ -1,6 +1,8 @@
 {
   "A link to edit profile was sent to {{email}}": "프로필 수정 링크가 {{email}} 이메일로 전송되었습니다",
   "Bookmarks": "북마크",
+  "Bookmark": "서표",
+  "Share": "",
   "Buy": "구입",
   "Categories": "카테고리",
   "Category": "범주",

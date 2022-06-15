@@ -12,6 +12,7 @@ import "./Booth.scss";
 import Button from "./Button";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
+import SidebarActions from "./SidebarActions";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -163,12 +164,16 @@ function Booth() {
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {content}
                 {settings.wayfinding && (
-                    <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(2) }}>
-                        <Button
-                            text={t("Directions")}
-                            onClick={() =>
-                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false)
-                            }
+                    <div
+                        className="exhibitor__directions"
+                        style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(2) }}
+                    >
+                        <SidebarActions
+                            showBookmark={false}
+                            showShare={false}
+                            onClickDirections={() => {
+                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false);
+                            }}
                         />
                     </div>
                 )}
