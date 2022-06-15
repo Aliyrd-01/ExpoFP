@@ -399,6 +399,7 @@ export default class RectPainter implements Painter {
 
         this.bufferFloat32Array(this.rotateBuffer, rotations);
     }
+
     private populateColorBuffer() {
         const colors: number[] = [];
         for (const w of this.objects) {
