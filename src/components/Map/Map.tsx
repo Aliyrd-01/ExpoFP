@@ -125,10 +125,7 @@ export default function Map() {
 
     useReaction(
         () => store.layerStore.visible,
-        () => {
-            store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
-            s.drawer.draw();
-        }
+        () => store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible))
     );
 
     useReaction(

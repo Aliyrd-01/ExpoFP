@@ -6,15 +6,9 @@ import { DrawerContext } from "./../Drawer1";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 
-var _boothsAnimations = null;
+let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
-export default async function configLayer(
-    layer: Layer,
-    context: DrawerContext,
-    boothsAnimations: any[] = _boothsAnimations
-): Promise<void> {
-    _boothsAnimations = _boothsAnimations || boothsAnimations;
-
+export default async function configLayer(layer: Layer, context: DrawerContext, matrixAnimate = null): Promise<void> {
     if (layer.configured) return Promise.resolve();
 
     return new Promise(async (resolve, reject) => {
@@ -23,8 +17,17 @@ export default async function configLayer(
 
         configBg(context, layer.name, layer.basePriority, layer.visible);
 
+        const boothsAnimations = [];
         const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
-        if (booths.length) _boothsAnimations.push(configBooths(context, layer.name, booths, layer.basePriority++, layer.visible));
+        if (booths.length) boothsAnimations.push(configBooths(context, layer.name, booths, layer.basePriority++, layer.visible));
+
+        // to be running when all painters prepared
+        if (context.updatable) {
+            window.setTimeout(
+                () => boothsAnimations.forEach((ba) => (matrixAnimate ? matrixAnimate(ba) : ba())),
+                delayAnimations
+            );
+        }
 
         resolve();
     });

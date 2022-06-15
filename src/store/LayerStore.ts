@@ -1,7 +1,7 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import { uiState } from ".";
-import { getCOntext } from "../components/Map/drawing/config/config-all";
+import { getContext } from "../components/Map/drawing/config/config-all";
 import configLayer from "../components/Map/drawing/config/config-layer";
 import Rect from "../core/Rect";
 
@@ -24,9 +24,9 @@ export default class LayerStore {
     }
 
     @action updateLayerVisibility(layer: string, visible: boolean): void {
-        if(this.separated && !visible) return;
+        if (this.separated && !visible) return;
         const l = this.layers.find((l) => l.name === layer);
-        configLayer(l, getCOntext()).then(() => {
+        configLayer(l, getContext()).then(() => {
             if (this.separated) {
                 this.layers.forEach((l) => {
                     if (l.name !== layer) l.visible = false;

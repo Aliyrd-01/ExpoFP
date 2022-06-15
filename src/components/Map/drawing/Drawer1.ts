@@ -82,13 +82,10 @@ export class DrawerImpl extends Matrix {
 
     private prepare() {
         // console.log('Prepare painters');
-        const cb = configAll(this as DrawerContext);
+        configAll(this as DrawerContext);
 
-        for (var d of this.allPainters) {
-            d.preparePaint();
-        }
+        for (var d of this.allPainters) d.preparePaint();
 
-        cb();
         this.prepared = true;
     }
 
