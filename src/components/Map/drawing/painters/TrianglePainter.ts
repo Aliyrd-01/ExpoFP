@@ -25,6 +25,7 @@ export default class TrianglePainter implements Painter {
     private indexBufferIsUint32: boolean;
 
     // to be set externally
+    public id: string;
     public visible: boolean = true;
     public orderPriority: number;
     public matrix: any;

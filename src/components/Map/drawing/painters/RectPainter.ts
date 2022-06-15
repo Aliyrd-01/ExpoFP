@@ -50,6 +50,7 @@ export default class RectPainter implements Painter {
     private indexBuffersAreUint: boolean;
 
     // to be set externally
+    public id: string;
     public visible: boolean = true;
     public orderPriority: number;
     public matrix: any;

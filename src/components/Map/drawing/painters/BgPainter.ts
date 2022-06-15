@@ -7,6 +7,7 @@ import Painter from "./Painter";
 // const bgColor = Color(settings.colors.base).vec4();
 
 export default class BgPainter implements Painter {
+    public id: string;
     public orderPriority: number;
     public visible: boolean = true;
     private readonly gl: WebGLRenderingContext;

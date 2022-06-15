@@ -137,6 +137,7 @@ export class DrawerImpl extends Matrix {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
             d = new TypeClass(this.gl);
+            d.id = id;
             d.orderPriority = painterOrderPriority;
             d.visible = visible;
             this.paintersByType.set(id, d);

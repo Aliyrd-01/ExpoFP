@@ -58,7 +58,7 @@ export default function configBooths(
         visible
     ) as RectPainter;
     if (context.updatable && labelsPainter) {
-        labelsPainter.alpha = 0;
+        //labelsPainter.alpha = 0;
     }
 
     return function () {
