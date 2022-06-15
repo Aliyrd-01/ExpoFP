@@ -100,7 +100,7 @@ export default function Map() {
         () => uiState.moveToRect,
         () => {
             if (!uiState.moveToRect) return;
-            moveToRect(uiState.moveToRect, 30);
+            moveToRect(uiState.moveToRect, 30, !store.layerStore.separated);
             uiState.moveToRect = null;
         }
     );
@@ -125,7 +125,10 @@ export default function Map() {
 
     useReaction(
         () => store.layerStore.visible,
-        () => store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible))
+        () => {
+            store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
+            if (!store.layerStore.separated) s.drawer.draw();
+        }
     );
 
     useReaction(
@@ -148,11 +151,11 @@ export default function Map() {
         </canvas>
     ));
 
-    function moveToRect(rect: Rect, maxZoomScale: number = 4) {
+    function moveToRect(rect: Rect, maxZoomScale: number = 4, animate: boolean = true) {
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
         const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
-        zoomTo(z);
+        zoomTo(z, animate);
     }
 
     function init() {
@@ -246,10 +249,10 @@ export default function Map() {
         store.clickBooth(b);
     }
 
-    function zoomTo(transform: ZoomTransform) {
+    function zoomTo(transform: ZoomTransform, animate: boolean = true) {
         const t = zoomTransform(s.$canvas.node());
         if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
-        (transform as any).animate = true;
+        (transform as any).animate = animate;
         s.$canvas.call(s.zoom.transform as any, transform);
     }
 
