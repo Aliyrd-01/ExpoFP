@@ -36,6 +36,8 @@ export default function configAll(context: DrawerContext = _context): void {
             }
         });
 
+    if (separated) for (let index = 1; index < layers.length; index++) configLayer(layers[index], context).then(() => {});
+
     configWf(context, basePriority++, true);
     configSizes(context, "Sizes", basePriority++, true);
     configYah(context);

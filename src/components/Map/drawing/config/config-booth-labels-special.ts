@@ -30,7 +30,6 @@ export default function configBoothLabelsSpecial(
     visible: boolean
 ) {
     if (!(booth instanceof SpecialBooth) || booth.noLabels) return;
-    if (booth.noLabels) return;
     return new BoothLabelSpecialDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
