@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import "./SidebarActions.scss";
 import { t } from "../utils/i18n";
+import i18next from "i18next";
 const sprite = require("/public/icons/actions-sprite.svg") as string;
 
 export interface SidebarActionsProps {
@@ -54,7 +55,7 @@ const SidebarActions: React.FC<SidebarActionsProps> = ({
                     <svg className="icon">
                         <use xlinkHref={`${sprite}#share-line`}></use>
                     </svg>
-                    <span className="text">{t("Share")}</span>
+                    <span className="text">{i18next.language === "en" && "Share"}</span>
                 </button>
             )}
         </div>

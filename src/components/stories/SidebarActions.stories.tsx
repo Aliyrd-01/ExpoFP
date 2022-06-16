@@ -37,5 +37,6 @@ const Template: Story<SidebarActionsProps> = (args) => {
 export const Base = Template.bind({});
 Base.args = {
     inBookmark: false,
-    showDirections: false,
+    showDirections: true,
+    showShare: true
 };

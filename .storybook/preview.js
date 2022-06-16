@@ -1,7 +1,17 @@
 import "../src/styles/storybook.global.scss";
-import i18next from "i18next";
+import StoryWrapper from "./StoryWrapper";
 
-i18next.init({});
+export const decorators = [
+    (Story) => {
+        return (
+            <StoryWrapper
+                render={(init) => {
+                    return init ? <Story /> : "Loading";
+                }}
+            />
+        );
+    },
+];
 
 export const parameters = {
     actions: { argTypesRegex: "^on[A-Z].*" },
