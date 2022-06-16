@@ -1,4 +1,7 @@
 import "../src/styles/storybook.global.scss";
+import i18next from "i18next";
+
+i18next.init({});
 
 export const parameters = {
     actions: { argTypesRegex: "^on[A-Z].*" },
