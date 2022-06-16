@@ -13,9 +13,7 @@
   "Error sending login instructions": "로그인 안내 전송 오류",
   "Event Home": "이벤트 홈",
   "Get your free floor plan at": "무료 이벤트 배치도를 다음에서 확인하십시오.",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "링크가 클립보드에 복사되었습니다.\n다른 장치에서 열어서 북마크를 임포트합니다."
-  },
+  "Link copied to clipboard.\nOpen it on another device to import bookmarks.": "링크가 클립보드에 복사되었습니다.\n다른 장치에서 열어서 북마크를 임포트합니다.",
   "Made with ExpoFP": "ExpoFP로 제작",
   "On Hold": "보류",
   "Preparing PDF": "PDF 저장",

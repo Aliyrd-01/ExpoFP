@@ -140,7 +140,7 @@ function Menu() {
         const loc = window.location;
         const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map((x) => x.id).join("|");
         copyToClipboard(url);
-        alert(t("Link copied to clipboard.Open it on another device to import bookmarks."));
+        alert(t("Link copied to clipboard.\nOpen it on another device to import bookmarks."));
     }
 
     function close() {
