@@ -7,7 +7,7 @@ import Rect from "../core/Rect";
 
 export default class LayerStore {
     @observable layers: Layer[] = [];
-    @observable separated: boolean = __fpPaths === null;
+    @observable separated: boolean = !window["__fpPaths"];
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
@@ -26,7 +26,7 @@ export default class LayerStore {
     @action updateLayerVisibility(layer: string, visible: boolean): void {
         if (this.separated && !visible) return;
         const l = this.layers.find((l) => l.name === layer);
-        configLayer(l, getContext(), true).then(() => {
+        configLayer(l, getContext(), false).then(() => {
             if (this.separated) {
                 this.layers.forEach((l) => {
                     if (l.name !== layer) l.visible = false;
@@ -41,7 +41,6 @@ export default class LayerStore {
 
 export class Layer {
     configured: boolean;
-    loaded: boolean;
     basePriority: number;
     name: string;
     description: string;

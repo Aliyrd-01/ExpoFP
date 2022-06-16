@@ -14,13 +14,12 @@ export default async function configLayer(
     onlyLoading: boolean,
     matrixAnimate = null
 ): Promise<boolean> {
-    if (layer.configured && layer.loaded) return Promise.resolve(true);
+    if (layer.configured && window[`__fpPaths${layer.name}`]) return Promise.resolve(true);
 
     return new Promise(async (resolve, reject) => {
-        if (store.layerStore.separated && !layer.loaded) {
+        if (store.layerStore.separated && !window[`__fpPaths${layer.name}`]) {
             await loadLayerData(layer.name);
         }
-        layer.loaded = true;
 
         if (!onlyLoading) {
             layer.configured = true;
