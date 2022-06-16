@@ -11,10 +11,10 @@ let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 export default async function configLayer(
     layer: Layer,
     context: DrawerContext,
-    config: boolean,
+    onlyLoading: boolean,
     matrixAnimate = null
-): Promise<void> {
-    if (layer.configured && layer.loaded) return Promise.resolve();
+): Promise<boolean> {
+    if (layer.configured && layer.loaded) return Promise.resolve(true);
 
     return new Promise(async (resolve, reject) => {
         if (store.layerStore.separated && !layer.loaded) {
@@ -22,7 +22,7 @@ export default async function configLayer(
         }
         layer.loaded = true;
 
-        if (config) {
+        if (!onlyLoading) {
             layer.configured = true;
 
             configBg(context, layer.name, layer.basePriority, layer.visible);
@@ -39,9 +39,9 @@ export default async function configLayer(
                     delayAnimations
                 );
             }
-            resolve();
+            resolve(true);
         } else {
-            resolve();
+            resolve(false);
         }
     });
 }

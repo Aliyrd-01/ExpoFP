@@ -32,7 +32,9 @@ export default function configAll(context: DrawerContext = _context): void {
             if (layer) {
                 layer.basePriority = basePriority;
                 basePriority += 20;
-                configLayer(layer, context, !separated || index === 0, matrixAnimate).then(() => {});
+                configLayer(layer, context, separated && index !== 0, matrixAnimate).then((configured) =>
+                    console.info(`Layer '${layer.name}' loaded. configured: ${configured}`)
+                );
             }
         });
 
