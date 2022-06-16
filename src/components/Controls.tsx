@@ -37,7 +37,7 @@ export default function Controls() {
                 onClickZoomOut={zoom.bind(window, -1)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
                 layersActiveItems={activeList}
-                layersList={layers}
+                layersList={store.layerStore.separated ? layers : null}
                 onChangeLayers={(layer) => {
                     store.layerStore.updateLayerVisibility(layer, activeList.indexOf(layer) == -1);
                     uiState.details = null;
