@@ -7,7 +7,7 @@ import Rect from "../core/Rect";
 
 export default class LayerStore {
     @observable layers: Layer[] = [];
-    @observable separated: boolean = !window["__fpPaths"];
+    @observable separated: LayersMode = window["__fpSeparated"] || 0;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
@@ -37,6 +37,12 @@ export default class LayerStore {
             if (l) l.visible = visible;
         });
     }
+}
+
+enum LayersMode {
+    Default,
+    Single,
+    Lazy,
 }
 
 export class Layer {
