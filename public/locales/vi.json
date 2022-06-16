@@ -15,9 +15,8 @@
   "Error sending login instructions": "Lỗi gửi hướng dẫn đăng nhập",
   "Event Home": "Trang chủ Sự kiện",
   "Get your free floor plan at": "Tải sơ đồ mặt bằng miễn phí tại",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "Liên kết đã được sao chép vào bộ nhớ tạm.\nMở nó trên một thiết bị khác để nhập dấu trang."
-  },
+  "Link copied to clipboard": "Liên kết đã được sao chép vào bộ nhớ tạm",
+  "Open it on another device to import bookmarks": "Mở nó trên một thiết bị khác để nhập dấu trang",
   "Made with ExpoFP": "Được làm với ExpoFP",
   "On Hold": "Được bảo lưu",
   "Preparing PDF": "Chuẩn bị PDF",

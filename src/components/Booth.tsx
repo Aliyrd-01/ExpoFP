@@ -59,9 +59,7 @@ function Booth() {
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors
-                .sort((a, b) => (a.name > b.name ? 1 : -1))
-                .map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = (

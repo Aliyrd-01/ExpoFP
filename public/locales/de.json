@@ -1,8 +1,6 @@
 {
   "A link to edit profile was sent to {{email}}": "Ein Link zum Bearbeiten des Profils wurde an {{email}} gesendet",
   "Bookmarks": "Lesezeichen",
-  "Bookmark": "Lesezeichen",
-  "Share": "",
   "Buy": "Kaufen",
   "Categories": "Kategorien",
   "Category": "Kategorie",
@@ -15,9 +13,8 @@
   "Error sending login instructions": "Fehler beim Senden der Anmeldeanweisungen",
   "Event Home": "Startseite des Veranstalters",
   "Get your free floor plan at": "Erhalten Sie Ihren kostenlosen Plan unter",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "Link in Zwischenablage kopiert.\nÖffnen Sie ihn auf einem anderen Gerät, um Lesezeichen zu importieren."
-  },
+  "Link copied to clipboard": "Link in Zwischenablage kopiert",
+  "Open it on another device to import bookmarks": "Öffnen Sie ihn auf einem anderen Gerät, um Lesezeichen zu importieren",
   "Made with ExpoFP": "Erstellt mit ExpoFP",
   "On Hold": "Vorgemerkt",
   "Preparing PDF": "PDF wird vorbereitet",

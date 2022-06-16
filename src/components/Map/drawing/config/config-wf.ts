@@ -1,15 +1,18 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
+import { Line, lineAngle, lineCenter, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
 import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { uiState } from "../../../../store";
+import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
+import { convertGpsToLocal } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { CurrentPosition } from "./../../../../store/RouteStore";
+import { boothStore } from "./../../../../store/index";
+import { CurrentPosition, Route } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
@@ -24,23 +27,65 @@ const isDebug = false;
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
 
-export function mapCurrentPosition(position: CurrentPosition): CurrentPosition {
+const timeoutToChangeRoute = 15000; // 15 sec
+const distanceToChangeRoute = 200;
+
+let initialDate = null;
+
+export function mapCurrentPosition(position: CurrentPosition): Point {
     var mapping = null;
+    var fpConfig = null;
 
     if (settings.EXPO === "all-energy") {
         mapping = { "1": { x: 2399, y: 1998 }, "2": { x: 2000, y: 3300 } };
     }
 
+    if (settings.EXPO.indexOf("cannes") > -1) {
+        mapping = {
+            "-1": { x: 10460, y: 13318 },
+            "0": { x: 10511, y: 10360 },
+            "1": { x: 10480, y: 7566 },
+            "3": { x: 10480, y: 5840 },
+            "4": { x: 10460, y: 4106 },
+        };
+
+        fpConfig = {
+            p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
+            p1: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
+        };
+    }
+
+    let point: Point =
+        fpConfig && position.lat && position.lng ? convertGpsToLocal(position.lat, position.lng, fpConfig) : position;
+
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
 
-    if (!shift) return position;
+    if (!shift) return point;
 
-    var cp = { ...position };
+    var cp = { ...point };
     cp.x += shift.x;
     cp.y += shift.y;
 
     return cp;
+}
+
+function getNearestBooth(point: Point): Booth {
+    var booth = null;
+
+    const booths = boothStore.booths.map((b) => {
+        const lineCenterBooth = lineCenter(point, { x: b.rect.cx, y: b.rect.cy });
+        return {
+            lineLength: lineLength(point, lineCenterBooth),
+            name: b.name,
+        };
+    });
+
+    const nearest = booths.sort((b1, b2) => b1.lineLength - b2.lineLength)[0];
+
+    booth = boothStore.booths.find((b) => b.name === nearest.name);
+
+    return booth;
 }
 
 function drawLines(wfDrawer: RectPainter, ptscale: number) {
@@ -196,7 +241,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             routeLines = getGraphLines(
                 new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
                 new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                uiState.selectedRoute.exceptUnaccessible
+                uiState.selectedRoute.exceptUnaccessible,
+                false,
+                false
             );
 
             if (routeLines.length === 0) {
@@ -263,6 +310,27 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             .sort((p1, p2) => p1.l - p2.l)[0];
 
         if (!shortestrPerp) return;
+
+        // Recalculate logic here
+
+        if (shortestrPerp.l > distanceToChangeRoute) {
+            if (!initialDate) initialDate = new Date();
+            else {
+                const diff = new Date().valueOf() - initialDate.valueOf();
+
+                if (diff >= timeoutToChangeRoute) {
+                    const newBooth = getNearestBooth(position);
+                    if (newBooth)
+                        store.routeStore.selectRoute(
+                            new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
+                        );
+                }
+            }
+        } else {
+            initialDate = null;
+        }
+
+        // Recalculate logic here
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
             wfDrawer.updateVisible(`Dot_${index}`, false);

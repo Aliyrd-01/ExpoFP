@@ -15,9 +15,8 @@
   "Error sending login instructions": "Det gick inte att skicka inloggningsinstruktioner",
   "Event Home": "Evenemangets startsida",
   "Get your free floor plan at": "Få din gratis planritning på",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "Länken kopierades till Urklipp.\nÖppna den på en annan enhet för att importera bokmärken."
-  },
+  "Link copied to clipboard": "Länken kopierades till Urklipp",
+  "Open it on another device to import bookmarks": "Öppna den på en annan enhet för att importera bokmärken",
   "Made with ExpoFP": "Skapad med ExpoFP",
   "On Hold": "Placerad i kö",
   "Preparing PDF": "Förbereder PDF",

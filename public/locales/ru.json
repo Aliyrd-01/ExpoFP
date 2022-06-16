@@ -15,9 +15,8 @@
   "Error sending login instructions": "При отправке письма произошла ошибка",
   "Event Home": "Сайт выставки",
   "Get your free floor plan at": "Создайте бесплатный план на",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "Ссылка скопирована в буфер обмена.\nОткройте ее, чтобы импортировать закладки на новом устройстве."
-  },
+  "Link copied to clipboard": "Ссылка скопирована в буфер обмена",
+  "Open it on another device to import bookmarks": "Откройте ее, чтобы импортировать закладки на новом устройстве",
   "Made with ExpoFP": "Создано с помощью ExpoFP",
   "On Hold": "Резерв",
   "Preparing PDF": "Создание PDF",

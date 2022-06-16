@@ -8,6 +8,7 @@ import settings from "../../tools/settings";
 import { generateUniqueSlug } from "../../tools/slug";
 import { sortByName } from "../../utils";
 import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
+import { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
 
 export default function initBooths(store: RootStore) {
@@ -32,6 +33,11 @@ export default function initBooths(store: RootStore) {
                 boothReg.exhibitors.push(exhibitor);
                 exhibitor.booths.push(boothReg as RegularBooth);
             }
+
+            boothReg.exhibitors = boothReg.exhibitors.sort((a: Exhibitor, b: Exhibitor) => {
+                if (a.featured !== b.featured) return a.featured ? -1 : 1;
+                return a.name > b.name ? 1 : -1;
+            });
         }
 
         booths.push(b);
