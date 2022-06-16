@@ -65,6 +65,7 @@ let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement
     .sort();
 
 if (settings.EXPO === "all-energy") floors.reverse();
+if (settings.EXPO === "spoga-gafa") data.boothTerm = "";
 
 const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 
