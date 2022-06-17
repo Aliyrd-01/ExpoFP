@@ -37,7 +37,7 @@ export default function configAll(context: DrawerContext = _context): void {
                     layer,
                     context,
                     mode == LayersMode.Single && index !== 0,
-                    index == 0 ? matrixAnimate : null
+                    index == 0 || mode === LayersMode.Default ? matrixAnimate : null
                 ).then((configured) => console.info(`Layer '${layer.name}' loaded. configured: ${configured}`));
             }
         });
