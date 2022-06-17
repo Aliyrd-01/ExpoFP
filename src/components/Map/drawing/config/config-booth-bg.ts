@@ -4,6 +4,7 @@ import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import store, { boothStore } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
+import { LayersMode } from "../../../../store/LayerStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 // import { getBoothState } from "./config-booths";
@@ -65,7 +66,10 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                 // const color = Color(p.color).vec4();
                 const colored = !!p.color;
                 if (colored) pathsColors.add(p.color);
-                for (const t of getTrianglesFromFpPaths(p.index, store.layerStore.separated ? booth.layer.name : "")) {
+                for (const t of getTrianglesFromFpPaths(
+                    p.index,
+                    store.layerStore.mode !== LayersMode.Default ? booth.layer.name : ""
+                )) {
                     this.addObject(
                         layerID,
                         {

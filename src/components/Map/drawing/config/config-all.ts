@@ -1,6 +1,7 @@
 import { select } from "d3-selection";
 import svg from "../../../../data/svg";
 import store from "../../../../store";
+import { LayersMode } from "../../../../store/LayerStore";
 import { DrawerContext } from "../Drawer1";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
@@ -20,7 +21,7 @@ export default function configAll(context: DrawerContext = _context): void {
     configCanvas(context);
 
     let basePriority = 6;
-    let { layers, separated } = store.layerStore;
+    let { layers, mode: mode } = store.layerStore;
 
     select(svg)
         .selectAll<SVGAElement, unknown>("svg  [data-layer]")
@@ -32,9 +33,12 @@ export default function configAll(context: DrawerContext = _context): void {
             if (layer) {
                 layer.basePriority = basePriority;
                 basePriority += 20;
-                configLayer(layer, context, separated && index !== 0, matrixAnimate).then((configured) =>
-                    console.info(`Layer '${layer.name}' loaded. configured: ${configured}`)
-                );
+                configLayer(
+                    layer,
+                    context,
+                    mode == LayersMode.Single && index !== 0,
+                    index == 0 ? matrixAnimate : null
+                ).then((configured) => console.info(`Layer '${layer.name}' loaded. configured: ${configured}`));
             }
         });
 

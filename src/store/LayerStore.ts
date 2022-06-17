@@ -7,27 +7,27 @@ import Rect from "../core/Rect";
 
 export default class LayerStore {
     @observable layers: Layer[] = [];
-    @observable separated: LayersMode = window["__fpSeparated"] || 0;
+    @observable mode: LayersMode = window["__fpSeparated"] || 0;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
     }
 
     @action init() {
-        if (!this.separated) return;
+        if (this.mode === LayersMode.Default) return;
         var rect = this.layers.filter((f) => f.visible)[0]?.rect;
         if (rect) setTimeout(() => (uiState.moveToRect = rect), 400);
     }
 
     @computed({ keepAlive: true }) get rectangle() {
-        return !this.separated ? null : this.visible[0]?.rect || null;
+        return this.mode !== LayersMode.Single ? null : this.visible[0]?.rect || null;
     }
 
     @action updateLayerVisibility(layer: string, visible: boolean): void {
-        if (this.separated && !visible) return;
+        if (this.mode == LayersMode.Single && !visible) return;
         const l = this.layers.find((l) => l.name === layer);
         configLayer(l, getContext(), false).then(() => {
-            if (this.separated) {
+            if (this.mode === LayersMode.Single) {
                 this.layers.forEach((l) => {
                     if (l.name !== layer) l.visible = false;
                     else if (l.rect) uiState.moveToRect = l.rect;
@@ -39,7 +39,7 @@ export default class LayerStore {
     }
 }
 
-enum LayersMode {
+export enum LayersMode {
     Default,
     Single,
     Lazy,

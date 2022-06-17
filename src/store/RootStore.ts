@@ -6,7 +6,7 @@ import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
-import LayerStore from "./LayerStore";
+import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 
@@ -39,7 +39,7 @@ export default class RootStore {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
         if (focus) this.moveToList(b);
-        if (b.length === 1 && !b[0].layer.visible && this.layerStore.separated)
+        if (b.length === 1 && !b[0].layer.visible && this.layerStore.mode === LayersMode.Single)
             this.layerStore.updateLayerVisibility(b[0].layer.name, true);
     }
 

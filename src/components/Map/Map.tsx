@@ -9,6 +9,7 @@ import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
 import { Booth } from "../../store/BoothStore";
+import { LayersMode } from "../../store/LayerStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
@@ -100,7 +101,7 @@ export default function Map() {
         () => uiState.moveToRect,
         () => {
             if (!uiState.moveToRect) return;
-            moveToRect(uiState.moveToRect, 30, !store.layerStore.separated);
+            moveToRect(uiState.moveToRect, 30, store.layerStore.mode !== LayersMode.Single);
             uiState.moveToRect = null;
         }
     );
@@ -127,7 +128,7 @@ export default function Map() {
         () => store.layerStore.visible,
         () => {
             store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
-            if (!store.layerStore.separated) s.drawer.draw();
+            if (!store.layerStore.mode) s.drawer.draw();
         }
     );
 

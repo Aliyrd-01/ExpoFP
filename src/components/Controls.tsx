@@ -3,6 +3,7 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { svgArea } from "../data/svg";
 import store, { uiState } from "../store";
+import { LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
@@ -37,7 +38,7 @@ export default function Controls() {
                 onClickZoomOut={zoom.bind(window, -1)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
                 layersActiveItems={activeList}
-                layersList={store.layerStore.separated ? layers : null}
+                layersList={store.layerStore.mode !== LayersMode.Default ? layers : null}
                 onChangeLayers={(layer) => {
                     store.layerStore.updateLayerVisibility(layer, activeList.indexOf(layer) == -1);
                     uiState.details = null;

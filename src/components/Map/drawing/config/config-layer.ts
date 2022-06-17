@@ -1,5 +1,5 @@
 import store from "../../../../store";
-import { Layer } from "../../../../store/LayerStore";
+import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "./../Drawer1";
@@ -17,7 +17,7 @@ export default async function configLayer(
     if (layer.configured) return Promise.resolve(true);
 
     return new Promise(async (resolve, reject) => {
-        if (store.layerStore.separated && !window[`__fpPaths${layer.name}`]) await loadLayerData(layer.name);
+        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) await loadLayerData(layer.name);
 
         if (!onlyLoading) {
             layer.configured = true;
