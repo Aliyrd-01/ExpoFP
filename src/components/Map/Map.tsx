@@ -82,7 +82,16 @@ export default function Map() {
         () => {
             if (!uiState.centerMap) return;
             uiState.centerMap = false;
-            zoomTo(zoomIdentity);
+            var { rectangle } = store.layerStore;
+            if (rectangle)
+                zoomTo(
+                    getTramsformToCenterSvgRect(
+                        rectangle,
+                        uiState.canvasVisibleRectPx,
+                        Math.max(zoomTransform(s.$canvas.node()).k, 4)
+                    )
+                );
+            else zoomTo(zoomIdentity);
         }
     );
 
