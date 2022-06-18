@@ -1,4 +1,5 @@
 import _locales from "../public/locales/_locales";
+import { CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -46,7 +47,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectCurrentPosition(point: { x: number; y: number }, focus: boolean): void {
+    selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
         nr();
     }
 

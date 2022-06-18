@@ -118,16 +118,16 @@ function Wayfinding() {
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
                         </div>
-                        <div className="formGroup" style={{ marginBottom: 10 }}>
+                        {/* <div className="formGroup" style={{ marginBottom: 10 }}>
                             <ToggleSwitch
                                 name="exceptUnaccessible"
                                 label="Accessible"
                                 value={uiState.selectedRoute.exceptUnaccessible}
                                 onChange={(value) => onExceptUnaccessible(value)}
                             />
-                        </div>
+                        </div> */}
                     </div>
-                </div>
+                </div>  
             );
         };
 

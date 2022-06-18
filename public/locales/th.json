@@ -13,9 +13,8 @@
   "Error sending login instructions": "เกิดข้อผิดพลาดในการส่งคำแนะนำการเข้าสู่ระบบ",
   "Event Home": "หน้าหลักอีเวนต์",
   "Get your free floor plan at": "รับแผนผังชั้นของคุณฟรีที่",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว\nเปิดในอีกอุปกรณ์หนึ่งเพื่อนำเข้าบุ๊กมาร์ก"
-  },
+  "Link copied to clipboard": "คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว",
+  "Open it on another device to import bookmarks": "เปิดในอีกอุปกรณ์หนึ่งเพื่อนำเข้าบุ๊กมาร์ก",
   "Made with ExpoFP": "ผลิตด้วย ExpoFP",
   "On Hold": "พัก",
   "Preparing PDF": "กำลังเตรียม PDF",

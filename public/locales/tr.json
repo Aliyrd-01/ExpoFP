@@ -13,9 +13,8 @@
   "Error sending login instructions": "Giriş talimatları gönderilirken hata oluştu",
   "Event Home": "Etkinlik Ana Sayfası",
   "Get your free floor plan at": "Şurada ücretsiz yerleşim planı alın: ",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "Bağlantı panoya kopyalandı.\nYer işaretlerini içe aktarmak için bağlantıyı başka bir cihazda açın."
-  },
+  "Link copied to clipboard": "Bağlantı panoya kopyalandı",
+  "Open it on another device to import bookmarks": "Yer işaretlerini içe aktarmak için bağlantıyı başka bir cihazda açın",
   "Made with ExpoFP": "ExpoFP ile yapılmıştır",
   "On Hold": "Beklemede",
   "Preparing PDF": "PDF hazırlanıyor",

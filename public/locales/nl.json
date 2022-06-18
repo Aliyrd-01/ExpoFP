@@ -13,9 +13,8 @@
   "Error sending login instructions": "Fout bij het verzenden van inloginstructies",
   "Event Home": "Startpagina van evenement",
   "Get your free floor plan at": "Ontvang een gratis plattegrond bij ",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "Koppeling gekopieerd naar klembord.\nOpen deze op een ander apparaat om bladwijzers te importeren."
-  },
+  "Link copied to clipboard": "Koppeling gekopieerd naar klembord",
+  "Open it on another device to import bookmarks": "Open deze op een ander apparaat om bladwijzers te importeren",
   "Made with ExpoFP": "Maken met ExpoFP",
   "On Hold": "Met optie",
   "Preparing PDF": "PDF wordt voorbereid",

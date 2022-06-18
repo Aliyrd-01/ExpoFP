@@ -5,7 +5,7 @@ import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
 import "./services/routing";
 import store from "./store";
-import { Route } from "./store/RouteStore";
+import { CurrentPosition, Route } from "./store/RouteStore";
 import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 
@@ -62,7 +62,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.routeStore.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
     }
 
-    selectCurrentPosition(point: { x: number; y: number; z?: string; angle?: number }, focus: boolean): void {
+    selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
         store.routeStore.selectCurrentPosition(point, focus);
     }
 

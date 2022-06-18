@@ -13,9 +13,8 @@
   "Error sending login instructions": "Erreur lors de l'envoi des instructions de connexion",
   "Event Home": "Accueil de l'événement",
   "Get your free floor plan at": "Pour obtenir gratuitement votre plan d'étage, rendez-vous à",
-  "Link copied to clipboard": {
-    "Open it on another device to import bookmarks": "Lien copié dans le presse-papiers.\nOuvrez-le sur un autre appareil pour importer des signets."
-  },
+  "Link copied to clipboard": "Lien copié dans le presse-papiers",
+  "Open it on another device to import bookmarks": "Ouvrez-le sur un autre appareil pour importer des signets",
   "Made with ExpoFP": "Réalisé avec ExpoFP",
   "On Hold": "En attente",
   "Preparing PDF": "Préparation du PDF",
