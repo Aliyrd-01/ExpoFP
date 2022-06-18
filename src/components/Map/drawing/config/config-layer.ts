@@ -1,3 +1,4 @@
+import { getContext } from './config-all';
 import store from "../../../../store";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
@@ -10,44 +11,33 @@ let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
 export default async function configLayer(
     layer: Layer,
-    context: DrawerContext,
-    onlyLoading: boolean,
+    onlyLoading: boolean = false,
+    context: DrawerContext = getContext(),   
     matrixAnimate = null
 ): Promise<boolean> {
     if (layer.configured) return Promise.resolve(true);
 
     return new Promise(async (resolve, reject) => {
-        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) await loadLayerData(layer.name);
-
-        if (!onlyLoading) {
-            layer.configured = true;
-
-            configBg(context, layer.name, layer.basePriority, layer.visible);
-
-            const boothsAnimations = [];
-            const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
-            if (booths.length)
-                boothsAnimations.push(configBooths(context, layer.name, booths, layer.basePriority++, layer.visible));
-
-            // to be running when all painters prepared
-            if (context.updatable) {
-                window.setTimeout(
-                    () => boothsAnimations.forEach((ba) => (matrixAnimate ? matrixAnimate(ba) : ba())),
-                    delayAnimations
-                );
+        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`])
+            try {
+                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);
+            } catch {
+                return reject();
             }
-            resolve(true);
-        } else {
-            resolve(false);
-        }
-    });
-}
 
-function loadLayerData(layerId: string): Promise<void> {
-    return new Promise((accept) => {
-        const url = `https://${settings.EXPO}.expofp.com/data/fp.svg.${layerId}.js`;
-        loadJs(url).then(() => {
-            accept();
-        });
+        if (onlyLoading) return resolve(false);
+
+        configBg(context, layer.name, layer.basePriority, layer.visible);
+
+        const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
+        if (booths.length) {
+            const animation = configBooths(context, layer.name, booths, layer.basePriority++, layer.visible);
+            if (context.updatable)
+                window.setTimeout(() => (matrixAnimate ? matrixAnimate(animation) : animation()), delayAnimations);
+        }
+
+        layer.configured = true;
+
+        resolve(true);
     });
 }

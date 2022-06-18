@@ -1,7 +1,6 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import { uiState } from ".";
-import { getContext } from "../components/Map/drawing/config/config-all";
 import configLayer from "../components/Map/drawing/config/config-layer";
 import Rect from "../core/Rect";
 
@@ -23,18 +22,20 @@ export default class LayerStore {
         return this.mode !== LayersMode.Single ? null : this.visible[0]?.rect || null;
     }
 
-    @action updateLayerVisibility(layer: string, visible: boolean): void {
+    @action updateVisibility(layerName: string, visible: boolean): void {
         if (this.mode == LayersMode.Single && !visible) return;
-        const l = this.layers.find((l) => l.name === layer);
-        configLayer(l, getContext(), false).then(() => {
+
+        const layer = this.layers.find((l) => l.name === layerName);
+
+        configLayer(layer).then(() => {
             if (this.mode === LayersMode.Single) {
                 this.layers.forEach((l) => {
-                    if (l.name !== layer) l.visible = false;
+                    if (l.name !== layerName) l.visible = false;
                     else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
-            if (l) l.visible = visible;
+            if (layer) layer.visible = visible;
         });
     }
 }

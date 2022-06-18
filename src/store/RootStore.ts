@@ -40,7 +40,7 @@ export default class RootStore {
         this.uiState.details = b[0];
         if (focus) this.moveToList(b);
         if (b.length === 1 && !b[0].layer.visible && this.layerStore.mode === LayersMode.Single)
-            this.layerStore.updateLayerVisibility(b[0].layer.name, true);
+            this.layerStore.updateVisibility(b[0].layer.name, true);
     }
 
     @action reset() {

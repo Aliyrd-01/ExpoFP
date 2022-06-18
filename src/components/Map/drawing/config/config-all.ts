@@ -35,8 +35,8 @@ export default function configAll(context: DrawerContext = _context): void {
                 basePriority += 20;
                 configLayer(
                     layer,
-                    context,
                     mode == LayersMode.Single && index !== 0,
+                    context,
                     index == 0 || mode === LayersMode.Default ? matrixAnimate : null
                 ).then((configured) => console.info(`Layer '${layer.name}' loaded. configured: ${configured}`));
             }

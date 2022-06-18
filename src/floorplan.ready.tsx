@@ -67,6 +67,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {
-        store.layerStore.updateLayerVisibility(layer, visible);
+        store.layerStore.updateVisibility(layer, visible);
     }
 }
