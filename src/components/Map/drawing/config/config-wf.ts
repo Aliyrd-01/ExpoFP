@@ -152,7 +152,7 @@ function splitPolyLine(lines: Line[], interval: number): Point[] {
     return points;
 }
 
-export default function configWf(context: DrawerContext, painterOrderPriority: number,  visible: boolean) {
+export default function configWf(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
     if (data.hideDirections) return;
 
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
@@ -243,7 +243,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
                 uiState.selectedRoute.exceptUnaccessible,
                 false,
-                false
+                true
             );
 
             if (routeLines.length === 0) {
