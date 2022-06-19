@@ -6,7 +6,7 @@ import Rect from "../core/Rect";
 
 export default class LayerStore {
     @observable layers: Layer[] = [];
-    @observable mode: LayersMode = window["__fpSeparated"] || 0;
+    @observable mode: LayersMode = window["__fpSeparated"] || LayersMode.Default;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
