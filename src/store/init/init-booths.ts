@@ -52,7 +52,10 @@ export default function initBooths(store: RootStore) {
         .select(svg)
         .selectAll("[data-tagname='efp-booth'], [data-layer=Booths] g[id^=b], [data-layer=Booths]  rect[id^=b]")
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
-        const layer = (el.parentNode as SVGGraphicsElement).dataset.layer;
+
+
+        const layer = (el.parentNode as SVGGraphicsElement).attributes["data-layer"].value;
+       
 
         let rect: SVGRectElement;
         let pathsWithRect = false;
