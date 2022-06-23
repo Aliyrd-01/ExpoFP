@@ -1,7 +1,7 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import { uiState } from ".";
-import configLayer from "../components/Map/drawing/config/config-layer";
+import loadLayer from "../components/Map/drawing/config/config-layer";
 import Rect from "../core/Rect";
 
 export enum LayersMode {
@@ -10,7 +10,7 @@ export enum LayersMode {
     Lazy,
 }
 
-export class    Layer {
+export class Layer {
     configured: boolean;
     basePriority: number;
     name: string;
@@ -20,8 +20,10 @@ export class    Layer {
 }
 
 export default class LayerStore {
+    defaultLayer = null;
+
     @observable layers: Layer[] = [];
-    @observable mode: LayersMode = window["__fpLayers"] ? LayersMode.Single : LayersMode.Default;
+    @observable mode: LayersMode = window["__fpLayers"] ? LayersMode.Lazy : LayersMode.Default;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
@@ -42,7 +44,7 @@ export default class LayerStore {
 
         const layer = this.layers.find((l) => l.name === layerName);
 
-        configLayer(layer).then(() => {
+        loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Single) {
                 this.layers.forEach((l) => {
                     if (l.name !== layerName) l.visible = false;

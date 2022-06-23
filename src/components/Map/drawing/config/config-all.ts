@@ -3,7 +3,7 @@ import { LayersMode } from "../../../../store/LayerStore";
 import { DrawerContext } from "../Drawer1";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
-import configLayer from "./config-layer";
+import loadLayer from "./config-layer";
 import configMatrix from "./config-matrix";
 import configWf from "./config-wf";
 import configYah from "./config-yah";
@@ -24,11 +24,11 @@ export default function configAll(context: DrawerContext = _context): void {
         if (layer) {
             layer.basePriority = basePriority;
             basePriority += 20;
-            configLayer(
+            loadLayer(
                 layer,
-                mode === LayersMode.Single && index !== 0,
+                layer.visible,
                 context,
-                index === 0 || mode === LayersMode.Default ? matrixAnimate : null
+                (mode === LayersMode.Single && layer.visible) || mode === LayersMode.Default || index === 0 ? matrixAnimate : null
             ).then((configured) => console.info(`Layer '${layer.name}' loaded. configured: ${configured}`));
         }
     });
