@@ -1,14 +1,13 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
-import svg from "../data/svg";
+import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import Autocomplete from "./Autocomplete";
 import OverlayContent from "./OverlayContent";
-import ToggleSwitch from "./ToggleSwitch";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
 
@@ -63,14 +62,14 @@ function Wayfinding() {
             else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
 
-        const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
-            const { from, to } = uiState.selectedRoute;
-            store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
-        };
+        // const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
+        //     const { from, to } = uiState.selectedRoute;
+        //     store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
+        // };
 
         const getWayInformation = (distance) => {
             const info = [];
-            const units = svg.getAttribute("units");
+            const units = getLayerSvg().getAttribute("units");
             const seconds = Math.round(distance / (units === "m" ? 1.4 : 4.2));
             let est = new Date();
             est.setMinutes(est.getMinutes() + seconds / 60);
@@ -127,7 +126,7 @@ function Wayfinding() {
                             />
                         </div> */}
                     </div>
-                </div>  
+                </div>
             );
         };
 

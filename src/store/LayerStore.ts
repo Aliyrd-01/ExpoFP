@@ -4,9 +4,24 @@ import { uiState } from ".";
 import configLayer from "../components/Map/drawing/config/config-layer";
 import Rect from "../core/Rect";
 
+export enum LayersMode {
+    Default,
+    Single,
+    Lazy,
+}
+
+export class    Layer {
+    configured: boolean;
+    basePriority: number;
+    name: string;
+    description: string;
+    rect: Rect = null;
+    @observable visible: boolean;
+}
+
 export default class LayerStore {
     @observable layers: Layer[] = [];
-    @observable mode: LayersMode = window["__fpSeparated"] || LayersMode.Default;
+    @observable mode: LayersMode = window["__fpLayers"] ? LayersMode.Single : LayersMode.Default;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
@@ -23,7 +38,7 @@ export default class LayerStore {
     }
 
     @action updateVisibility(layerName: string, visible: boolean): void {
-        if (this.mode == LayersMode.Single && !visible) return;
+        if (this.mode === LayersMode.Single && !visible) return;
 
         const layer = this.layers.find((l) => l.name === layerName);
 
@@ -38,19 +53,4 @@ export default class LayerStore {
             if (layer) layer.visible = visible;
         });
     }
-}
-
-export enum LayersMode {
-    Default,
-    Single,
-    Lazy,
-}
-
-export class Layer {
-    configured: boolean;
-    basePriority: number;
-    name: string;
-    description: string;
-    rect: Rect = null;
-    @observable visible: boolean;
 }

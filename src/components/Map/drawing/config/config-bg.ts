@@ -1,7 +1,7 @@
 import Color from "color";
 import { select } from "d3-selection";
 import Rect from "../../../../core/Rect";
-import svg, { gtePathByIndex } from "../../../../data/svg";
+import { gtePathByIndex, getLayerSvg } from "../../../../data/svg";
 import store from "../../../../store";
 import { LayersMode } from "../../../../store/LayerStore";
 import { DrawerContext } from "../Drawer1";
@@ -11,7 +11,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
 
-    const bgElements = select(svg)
+    const bgElements = select(getLayerSvg(layerID))
         .select(`[data-layer="${layerID}"]`)
         .selectAll(":scope > *:not([data-tagname='efp-booth']) path, :scope > path")
         .nodes() as SVGElement[];

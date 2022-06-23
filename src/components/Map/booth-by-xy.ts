@@ -1,3 +1,4 @@
+import { reaction } from "mobx";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
 import { boothStore } from "../../store";
@@ -6,44 +7,48 @@ import logger from "../../tools/logger";
 import { Drawer } from "./drawing/Drawer1";
 // import { getPxSvgMatrix } from "./matrix";
 
-export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): Booth {
-    // const zz = getSvgPxUnzoomedMatrix();
-    // var point = m4.transformPoint(zz, [1000, 1000, 1])
-    // __logger.log('point', point);
+let rectsToBooths = new Map<Rect, Booth>();
+let rects: Rect[] = [];
 
-    return getLastBoothsFromClientXy(x, y, drawer);
-}
+let segments: Rect[] = [];
+let segmentToRects = new Map<Rect, Rect[]>();
 
-const booths = boothStore.booths;
-const rectsToBooths = new Map<Rect, Booth>();
-const rects: Rect[] = [];
+function calculate(booths: Booth[]) {
+    rectsToBooths = new Map<Rect, Booth>();
+    rects = [];
+    segments = [];
+    segmentToRects = new Map<Rect, Rect[]>();
 
-const segments: Rect[] = [];
-const segmentToRects = new Map<Rect, Rect[]>();
-let superSegment = Rect.fromMultiple(booths.map((b) => b.rect));
-for (const b of booths) {
-    let rect = b.rect;
-    if (Math.abs(b.rotate) === (90 * Math.PI) / 180) {
-        rect = rect.getRotated90();
+    let superSegment = Rect.fromMultiple(booths.map((b) => b.rect));
+    for (const b of booths) {
+        let rect = b.rect;
+        if (Math.abs(b.rotate) === (90 * Math.PI) / 180) {
+            rect = rect.getRotated90();
+        }
+        rects.push(rect);
+        rectsToBooths.set(rect, b);
     }
-    rects.push(rect);
-    rectsToBooths.set(rect, b);
+
+    const parts = 2; // 4 segmetns
+    const segmentWidth = Math.ceil(superSegment.w / parts);
+    const segmentHeight = Math.ceil(superSegment.h / parts);
+    for (let x = 0; x < parts; x++) {
+        for (let y = 0; y < parts; y++) {
+            const startX = superSegment.x1 + x * segmentWidth;
+            const startY = superSegment.y1 + y * segmentHeight;
+            const segm = Rect.fromXywh(startX, startY, segmentWidth, segmentHeight);
+            segments.push(segm);
+            const rectsInSegm = rects.filter((r) => segm.intersects(r));
+            segmentToRects.set(segm, rectsInSegm);
+        }
+    }
+    logger.log("hover segmentToRects", segmentToRects);
 }
 
-const parts = 2; // 4 segmetns
-const segmentWidth = Math.ceil(superSegment.w / parts);
-const segmentHeight = Math.ceil(superSegment.h / parts);
-for (let x = 0; x < parts; x++) {
-    for (let y = 0; y < parts; y++) {
-        const startX = superSegment.x1 + x * segmentWidth;
-        const startY = superSegment.y1 + y * segmentHeight;
-        const segm = Rect.fromXywh(startX, startY, segmentWidth, segmentHeight);
-        segments.push(segm);
-        const rectsInSegm = rects.filter((r) => segm.intersects(r));
-        segmentToRects.set(segm, rectsInSegm);
-    }
-}
-logger.log("hover segmentToRects", segmentToRects);
+reaction(
+    () => boothStore.booths,
+    () => calculate(boothStore.booths)
+);
 
 let prevSegment: Rect;
 function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {
@@ -77,4 +82,12 @@ function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth 
     }
 
     return null;
+}
+
+export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): Booth {
+    // const zz = getSvgPxUnzoomedMatrix();
+    // var point = m4.transformPoint(zz, [1000, 1000, 1])
+    // __logger.log('point', point);
+
+    return getLastBoothsFromClientXy(x, y, drawer);
 }

@@ -1,9 +1,9 @@
+import { getLayerSvg } from "./../data/svg";
 import { action, computed, observable } from "mobx";
 import { Line, lineLength, Point } from "simple-geometry";
 import store from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
-import svg from "../data/svg";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
@@ -85,7 +85,7 @@ export default class RouteStore {
 
         const route = uiState.selectedRoute;
 
-        const units = svg.getAttribute("units");
+        const units = getLayerSvg().getAttribute("units");
         let distance = 0;
 
         routeLines.forEach((line) => (distance += lineLength(line.p0, line.p1)));

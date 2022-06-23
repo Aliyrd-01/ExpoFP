@@ -1,5 +1,5 @@
 // import { observable } from 'mobx';
-import { computed } from "mobx";
+import { computed, observable } from "mobx";
 import Rect from "../core/Rect";
 import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
@@ -18,7 +18,8 @@ import RootStore from "./RootStore";
 
 export default class BoothStore {
     readonly rootStore: RootStore;
-    readonly booths: Booth[] = [];
+    @observable booths: Booth[] = [];
+
     @computed({ keepAlive: true }) get boothById() {
         return new Map<number, Booth>(this.booths.map((c) => [c.id, c]));
     }
@@ -56,7 +57,7 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get visible() {
-        return this.layer.visible;
+        return this.layer?.visible;
     }
 
     @computed({ keepAlive: true }) private get inList() {

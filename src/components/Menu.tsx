@@ -129,6 +129,7 @@ function Menu() {
                         <a
                             className="menu__item -pdf"
                             target="_blank"
+                            rel="noopener noreferrer"
                             href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf`}
                         >
                             {" "}
@@ -175,10 +176,10 @@ function Menu() {
         store.moveToList();
     }
 
-    function handlePdf(e: MouseEvent) {
-        e.preventDefault();
-        uiState.printingPdf = true;
-    }
+    // function handlePdf(e: MouseEvent) {
+    //     e.preventDefault();
+    //     uiState.printingPdf = true;
+    // }
 
     function handleCategoryClick(c: Category, e: MouseEvent) {
         e.preventDefault();

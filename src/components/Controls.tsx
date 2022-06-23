@@ -40,7 +40,7 @@ export default function Controls() {
                 layersActiveItems={activeList}
                 layersList={store.layerStore.mode !== LayersMode.Default ? layers : null}
                 onChangeLayers={(layer) => {
-                    store.layerStore.updateVisibility(layer, activeList.indexOf(layer) == -1);
+                    store.layerStore.updateVisibility(layer, activeList.indexOf(layer) === -1);
                     uiState.details = null;
                 }}
             />

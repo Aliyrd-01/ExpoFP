@@ -1,7 +1,7 @@
 import * as d3 from "d3-selection";
 import Rect from "../../core/Rect";
 import data from "../../data";
-import svg from "../../data/svg";
+import { getLayerSvg } from "../../data/svg";
 import { getNextId } from "../../tools/id";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
@@ -11,12 +11,10 @@ import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
 
-export default function initBooths(store: RootStore) {
-    const { boothStore, layerStore } = store;
-    const boothsByName = new Map<string, Booth>();
+const boothsByName = new Map<string, Booth>();
+const booths: MutableRequired<Booth>[] = [];
 
-    const booths: MutableRequired<Booth>[] = [];
-
+export function iniAllBooths(store: RootStore) {
     for (const raw of data.booths || []) {
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);
@@ -39,7 +37,6 @@ export default function initBooths(store: RootStore) {
                 return a.name > b.name ? 1 : -1;
             });
         }
-
         booths.push(b);
     }
 
@@ -47,15 +44,17 @@ export default function initBooths(store: RootStore) {
     for (const e of store.exhibitorStore.exhibitors) {
         sortByName(e.booths);
     }
+}
+
+export default function initBooths(store: RootStore, layerID: string) {
+    const { boothStore, layerStore } = store;
+    const layerBooths = [];
 
     for (const el of d3
-        .select(svg)
+        .select(getLayerSvg(layerID))
         .selectAll("[data-tagname='efp-booth'], [data-layer=Booths] g[id^=b], [data-layer=Booths]  rect[id^=b]")
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
-
-
         const layer = (el.parentNode as SVGGraphicsElement).attributes["data-layer"].value;
-       
 
         let rect: SVGRectElement;
         let pathsWithRect = false;
@@ -70,7 +69,6 @@ export default function initBooths(store: RootStore) {
             // rect = el.lastElementChild as SVGRectElement;
             // if (!rect || rect.tagName !== 'rect') continue;
         }
-
         const idInSvg = (el.id || el.getAttribute("data-name")).substring(1).toLowerCase();
 
         let booth = boothsByName.get(idInSvg) as MutableRequired<Booth>;
@@ -88,7 +86,8 @@ export default function initBooths(store: RootStore) {
             booth.exhibitors = [];
             boothsByName.set(idInSvg, booth as Booth);
             booths.push(booth);
-        }
+        } else layerBooths.push(booth);
+
         booth.layer = layerStore.layers.find((l) => l.name === layer);
         if (booth.layer) booth.fullName = booth.name + " ● " + booth.layer.description;
 
@@ -112,14 +111,11 @@ export default function initBooths(store: RootStore) {
         } else {
             boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
         }
-        //booth.description = boothSpec.description;// || el.getAttribute("data-description"); // || '<b>Or do this</b>';
 
         const transform = rect.getAttribute("transform");
         if (transform) {
             const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\) rotate\(([-0-9.]+)\)/);
             if (mt) {
-                // const translateX = parseFloat(mt[1]);
-                // const translateY = parseFloat(mt[2]);
                 const rotate = parseFloat(mt[3]);
                 booth.rotate = (-rotate * Math.PI) / 180;
             } else {
@@ -169,14 +165,16 @@ export default function initBooths(store: RootStore) {
         }
     }
 
-    for (const b of booths) {
+    for (const b of layerBooths) {
         if (!b.rect) {
             logger.error("__data booth not found in SVG:", b.name, b);
+            layerBooths.splice(layerBooths.indexOf(b), 1);
         } else {
             (b["store"] as BoothStore) = boothStore;
-            boothStore.booths.push(b as Booth);
         }
     }
+
+    boothStore.booths = boothStore.booths.concat(layerBooths);
 
     // dispose
     delete data.booths;

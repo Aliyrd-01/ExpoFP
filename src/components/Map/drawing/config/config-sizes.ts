@@ -1,6 +1,6 @@
+import { getLayerSvg } from "./../../../../data/svg";
 import { select } from "d3";
 import { reaction } from "mobx";
-import svg from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CanvasDescriptor, createLabelCanvas } from "./canvases";
@@ -13,7 +13,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
     const labelCanvasCache = new Map<string, CanvasDescriptor>();
 
-    (select(svg).selectAll("text").nodes() as SVGImageElement[]).forEach((text) => {
+    (select(getLayerSvg(layerID)).selectAll("text").nodes() as SVGImageElement[]).forEach((text) => {
         const transform = text.getAttribute("transform");
         const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\)( rotate\(([-0-9.]+)\))?/);
         if (mt) {
@@ -28,7 +28,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             let h = parseFloat(text.getAttribute("data-h"));
 
             var align = "center";
-            if (anchor == "end" && dbl == "auto") {
+            if (anchor === "end" && dbl === "auto") {
                 align = "rightbottom";
                 tx -= w / 2;
                 ty -= h / 2;
