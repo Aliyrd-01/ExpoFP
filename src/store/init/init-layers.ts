@@ -6,10 +6,11 @@ import RootStore from "../RootStore";
 
 export default function initLayers(store: RootStore) {
     const { layerStore } = store;
-    let layers: Layer[] = [];
 
     const fpLayers = window["__fpLayers"] as Layer[];
+    layerStore.mode = fpLayers ? LayersMode.Lazy : LayersMode.Default;
 
+    let layers: Layer[] = [];
     if (fpLayers) {
         layers = fpLayers.map((layer) => {
             let l = new Layer();
@@ -23,7 +24,7 @@ export default function initLayers(store: RootStore) {
             .selectAll<SVGAElement, unknown>("svg  [data-layer]")
             .nodes()
             .filter((n) => n.childNodes.length)
-            .forEach((layer, index) => {
+            .forEach((layer) => {
                 const layerID = layer.getAttribute("data-layer");
                 if (!layerID.startsWith("WF")) {
                     let l = new Layer();
@@ -34,6 +35,8 @@ export default function initLayers(store: RootStore) {
                 }
             });
     }
+
+    layerStore.defaultLayer = layers.find((l) => l.name === window["__fpDefaultLayer"])?.name;
 
     layers.forEach(
         (layer, index) =>

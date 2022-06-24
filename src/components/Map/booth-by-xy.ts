@@ -68,6 +68,8 @@ function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth 
     prevSegment = segm;
 
     const rects = segmentToRects.get(segm);
+    if (!rects) return null;
+
     const found = rects.filter((b) => b.containsPoint(xs, ys));
     if (found.length) {
         let foundOne: Rect;

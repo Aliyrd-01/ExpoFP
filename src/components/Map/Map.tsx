@@ -229,7 +229,6 @@ export default function Map() {
         s.$canvas.call(s.zoom as any);
 
         if (store.fp.onFpConfigured) store.fp?.onFpConfigured();
-        store.layerStore.init();
     }
 
     function raiseBoothOver(b: Booth) {

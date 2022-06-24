@@ -69,8 +69,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter(layerID + ":" + drawerSeq++, TrianglePainter, painterOrderPriority, visible);
-            drawer.visible = visible;
+            drawer = context.requirePainter(layerID + ":" + drawerSeq++, TrianglePainter, painterOrderPriority, visible);               
         }
     }
 

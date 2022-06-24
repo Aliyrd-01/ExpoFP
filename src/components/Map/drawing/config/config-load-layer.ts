@@ -3,18 +3,15 @@ import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
 import settings from "../../../../tools/settings";
-import { DrawerContext } from "./../Drawer1";
+import { DrawerContext } from "../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 
-let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
-
 export default async function loadLayer(
     layer: Layer,
     withConfiguration: boolean = true,
-    context: DrawerContext = getContext(),
-    matrixAnimate = null
+    context: DrawerContext = getContext()
 ): Promise<boolean> {
     if (layer.configured) return Promise.resolve(true);
 
@@ -33,12 +30,8 @@ export default async function loadLayer(
         configBg(context, layer.name, layer.basePriority, layer.visible);
 
         const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
-        if (booths.length) {
-            const animation = configBooths(context, layer.name, booths, layer.basePriority++, layer.visible);
-            if (context.updatable)
-                window.setTimeout(() => (matrixAnimate ? matrixAnimate(animation) : animation()), delayAnimations);
-        }
-
+        if (booths.length) configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
+             
         layer.configured = true;
 
         resolve(true);

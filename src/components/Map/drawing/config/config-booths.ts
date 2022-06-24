@@ -68,6 +68,5 @@ export default function configBooths(
         animate(0, 300, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), (v) =>
             labelsPainter ? (labelsPainter.alpha = v) : null
         );
-    };
-    // if (after.length) return function () { for (const f of after) { f(); } }
+    };   
 }

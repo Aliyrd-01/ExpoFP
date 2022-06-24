@@ -1,7 +1,8 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import { uiState } from ".";
-import loadLayer from "../components/Map/drawing/config/config-layer";
+import loadLayer from "../components/Map/drawing/config/config-load-layer";
+
 import Rect from "../core/Rect";
 
 export enum LayersMode {
@@ -20,19 +21,12 @@ export class Layer {
 }
 
 export default class LayerStore {
-    defaultLayer = null;
-
     @observable layers: Layer[] = [];
-    @observable mode: LayersMode = window["__fpLayers"] ? LayersMode.Lazy : LayersMode.Default;
+    @observable defaultLayer: string;
+    @observable mode: LayersMode;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
-    }
-
-    @action init() {
-        if (this.mode === LayersMode.Default) return;
-        var rect = this.layers.filter((f) => f.visible)[0]?.rect;
-        if (rect) setTimeout(() => (uiState.moveToRect = rect), 400);
     }
 
     @computed({ keepAlive: true }) get rectangle() {

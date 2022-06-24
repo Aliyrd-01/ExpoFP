@@ -15,7 +15,7 @@ export default function configMatrix(c: DrawerContext) {
 
     return {
         after: update,
-        animate: cb => {
+        animate: (cb) => {
             if (c.updatable) {
                 animate(
                     0,
@@ -23,7 +23,7 @@ export default function configMatrix(c: DrawerContext) {
                     easeExpOut,
                     interpolateNumber(minVisibleScale, maxVisibleScale),
                     c.requireUpdate.bind(c),
-                    v => {
+                    (v) => {
                         c.setVisibleScale(v);
                         update();
                     },
@@ -34,7 +34,7 @@ export default function configMatrix(c: DrawerContext) {
                     }
                 );
             }
-        }
+        },
     };
 
     function update() {

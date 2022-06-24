@@ -227,7 +227,11 @@ export default class TrianglePainter implements Painter {
             u_alpha: this.alpha,
         } as any;
 
-        twgl.setUniforms(this.programInfo, uniforms);
+        try {
+            twgl.setUniforms(this.programInfo, uniforms);
+        } catch {
+            console.info(this.id,uniforms);
+        }
 
         const elementsToDraw = this.objects.length * 3;
 
