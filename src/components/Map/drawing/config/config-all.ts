@@ -24,19 +24,26 @@ export default function configAll(context: DrawerContext = _context): void {
     let basePriority = 6;
     let { layers } = store.layerStore;
 
+    if (store.layerStore.defaultLayer) {
+        const lrs = [].concat(layers);
+
+        const dl = layers.find((l) => l.name === store.layerStore.defaultLayer);
+        const index = layers.indexOf(dl);
+        lrs.splice(index, 1);
+        layers = [dl].concat(lrs);
+    }
+
     layers.forEach((layer) => {
-        if (layer) {
-            layer.basePriority = basePriority;
-            basePriority += 20;
-            loadLayer(layer, layer.visible, context).then((configured) => {
-                console.info(`Layer '${layer.name}' loaded. configured: ${configured}`);
-                if (configured) {
-                    after();
-                    context.requireUpdate(null);
-                }
-            });
-        }
+        loadLayer(layer, layer.visible, context).then((configured) => {
+            console.info(`Layer '${layer.name}' loaded. configured: ${configured}`);
+            if (configured) {
+                after();
+                context.requireUpdate(null);
+            }
+        });
     });
+
+    basePriority = 20 * (layers.length + 2);
 
     if (context.updatable)
         window.setTimeout(() => {

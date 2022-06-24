@@ -38,13 +38,13 @@ export default function initLayers(store: RootStore) {
 
     layerStore.defaultLayer = layers.find((l) => l.name === window["__fpDefaultLayer"])?.name;
 
-    layers.forEach(
-        (layer, index) =>
-            (layer.visible =
-                store.layerStore.mode !== LayersMode.Single ||
-                layer.name === layerStore.defaultLayer ||
-                (!layerStore.defaultLayer && index === 0))
-    );
+    layers.forEach((layer, index) => {
+        layer.basePriority = 10 * (index + 1);
+        layer.visible =
+            store.layerStore.mode !== LayersMode.Single ||
+            layer.name === layerStore.defaultLayer ||
+            (!layerStore.defaultLayer && index === 0);
+    });
 
     layerStore.layers.push(...layers);
 }
