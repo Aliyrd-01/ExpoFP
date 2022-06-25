@@ -15,11 +15,11 @@ export default function configMatrix(c: DrawerContext) {
 
     return {
         after: update,
-        animate: (cb) => {
+        animate: (cb, duration = 1000) => {
             if (c.updatable) {
                 animate(
                     0,
-                    1000,
+                    duration,
                     easeExpOut,
                     interpolateNumber(minVisibleScale, maxVisibleScale),
                     c.requireUpdate.bind(c),
