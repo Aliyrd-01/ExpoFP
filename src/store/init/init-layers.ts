@@ -50,7 +50,5 @@ export default function initLayers(store: RootStore) {
             (!layerStore.defaultLayer && index === 0);
     });
 
-    console.info(layers.map((l) => l.visible));
-
     layerStore.layers.push(...layers);
 }
