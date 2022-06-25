@@ -82,10 +82,6 @@ export let gtePathByIndex = (index: number, suffix: string = "") => {
 
 export let getLayerSvg = (suffix: string = ""): SVGElement => {
     if (_svg.has(suffix)) return _svg.get(suffix);
-
-    try {
-        return parseSvg(window[`__fp${suffix}`], suffix);
-    } catch (e) {
-        return _svg.get("");
-    }
+    if (window[`__fp${suffix}`]) return parseSvg(window[`__fp${suffix}`], suffix);
+    else return _svg.get("");
 };

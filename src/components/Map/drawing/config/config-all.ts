@@ -23,7 +23,7 @@ export default function configAll(context: DrawerContext = _context): void {
 
     let basePriority = 6;
     let { layers } = store.layerStore;
-
+    
     if (store.layerStore.defaultLayer) {
         const lrs = [].concat(layers);
         const dl = layers.find((l) => l.name === store.layerStore.defaultLayer);

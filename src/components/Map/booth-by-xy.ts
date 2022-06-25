@@ -44,7 +44,7 @@ function calculate(booths: Booth[]) {
     }
     logger.log("hover segmentToRects", segmentToRects);
 }
-
+    
 reaction(
     () => boothStore.booths,
     () => calculate(boothStore.booths)
