@@ -33,15 +33,17 @@ export default function configAll(context: DrawerContext = _context): void {
     }
 
     var animated = false;
-    layers.forEach((layer) => {
-        loadLayer(layer, layer.visible, context).then((configured) => {
-            if (!animated && layer.visible) {
-                animated = true;
-                animate(cb, 0);
-            } else after();
-            if (configured) context.requireUpdate(null);
+    layers
+        //.filter((l) => store.layerStore.mode !== LayersMode.Radio || l.visible)
+        .forEach((layer) => {
+            loadLayer(layer, layer.visible, context).then((configured) => {
+                if (!animated && layer.visible) {
+                    animated = true;
+                    animate(cb, 0);
+                } else after();
+                if (configured) context.requireUpdate(null);
+            });
         });
-    });
 
     basePriority = 20 * (layers.length + 2);
 
