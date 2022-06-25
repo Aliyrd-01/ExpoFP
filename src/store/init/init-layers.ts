@@ -8,7 +8,9 @@ export default function initLayers(store: RootStore) {
     const { layerStore } = store;
 
     const fpLayers = window["__fpLayers"] as Layer[];
-    layerStore.mode = fpLayers ? LayersMode.Lazy : LayersMode.Default;
+    layerStore.mode = window["__fpLayersMode"] || LayersMode.Default;
+
+    console.info(`Layers mode: ${layerStore.mode}`);
 
     let layers: Layer[] = [];
     if (fpLayers) {
@@ -16,6 +18,7 @@ export default function initLayers(store: RootStore) {
             let l = new Layer();
             l.name = layer.name;
             l.description = layer.description;
+            l.visible = layer.visible;
             l.rect = layer.rect;
             return l;
         });
@@ -29,6 +32,7 @@ export default function initLayers(store: RootStore) {
                 if (!layerID.startsWith("WF")) {
                     let l = new Layer();
                     l.name = layerID;
+                    l.visible = true;
                     l.description = layer.getAttribute("data-layer-description") || layerID;
                     l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
                     layers.push(l);
@@ -41,10 +45,12 @@ export default function initLayers(store: RootStore) {
     layers.forEach((layer, index) => {
         layer.basePriority = 10 * (index + 1);
         layer.visible =
-            store.layerStore.mode !== LayersMode.Single ||
+            (layer.visible && store.layerStore.mode !== LayersMode.Radio) ||
             layer.name === layerStore.defaultLayer ||
             (!layerStore.defaultLayer && index === 0);
     });
+
+    console.info(layers.map((l) => l.visible));
 
     layerStore.layers.push(...layers);
 }

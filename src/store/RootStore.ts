@@ -39,7 +39,7 @@ export default class RootStore {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
         if (focus) this.moveToList(b);
-        if (b.length === 1 && !b[0].layer.visible && this.layerStore.mode === LayersMode.Single)
+        if (b.length === 1 && !b[0].layer.visible && this.layerStore.mode === LayersMode.Radio)
             this.layerStore.updateVisibility(b[0].layer.name, true);
     }
 

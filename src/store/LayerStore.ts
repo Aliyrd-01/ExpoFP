@@ -7,8 +7,9 @@ import Rect from "../core/Rect";
 
 export enum LayersMode {
     Default,
-    Single,
-    Lazy,
+    Separated,
+    Radio,
+    CheckBox,
 }
 
 export class Layer {
@@ -30,16 +31,16 @@ export default class LayerStore {
     }
 
     @computed({ keepAlive: true }) get rectangle() {
-        return this.mode !== LayersMode.Single ? null : this.visible[0]?.rect || null;
+        return this.mode !== LayersMode.Radio ? null : this.visible[0]?.rect || null;
     }
 
     @action updateVisibility(layerName: string, visible: boolean): void {
-        if (this.mode === LayersMode.Single && !visible) return;
+        if (this.mode === LayersMode.Radio && !visible) return;
 
         const layer = this.layers.find((l) => l.name === layerName);
 
         loadLayer(layer).then(() => {
-            if (this.mode === LayersMode.Single) {
+            if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
                     if (l.name !== layerName) l.visible = false;
                     else if (l.rect) uiState.moveToRect = l.rect;

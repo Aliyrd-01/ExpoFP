@@ -110,7 +110,7 @@ export default function Map() {
         () => uiState.moveToRect,
         () => {
             if (!uiState.moveToRect) return;
-            moveToRect(uiState.moveToRect, 30, store.layerStore.mode !== LayersMode.Single);
+            moveToRect(uiState.moveToRect, 30, store.layerStore.mode !== LayersMode.Radio);
             uiState.moveToRect = null;
         }
     );
@@ -137,7 +137,7 @@ export default function Map() {
         () => store.layerStore.visible,
         () => {
             store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
-            if (store.layerStore.mode !== LayersMode.Single) s.drawer.draw();
+            if (store.layerStore.mode !== LayersMode.Radio) s.drawer.draw();
         }
     );
 

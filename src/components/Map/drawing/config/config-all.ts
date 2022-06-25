@@ -23,7 +23,7 @@ export default function configAll(context: DrawerContext = _context): void {
 
     let basePriority = 6;
     let { layers } = store.layerStore;
-    
+
     if (store.layerStore.defaultLayer) {
         const lrs = [].concat(layers);
         const dl = layers.find((l) => l.name === store.layerStore.defaultLayer);
@@ -47,8 +47,8 @@ export default function configAll(context: DrawerContext = _context): void {
 
     var cb = () => {
         if (context.updatable)
-            if (store.layerStore.mode === LayersMode.Single) uiState.moveToRect = layers.find((l) => l.visible).rect;
-            else if (store.layerStore.mode === LayersMode.Lazy) {
+            if (store.layerStore.mode === LayersMode.Radio) uiState.moveToRect = layers.find((l) => l.visible).rect;
+            else if (store.layerStore.mode === LayersMode.Separated) {
                 if (store.layerStore.defaultLayer)
                     uiState.moveToRect = layers.find((l) => l.name === store.layerStore.defaultLayer)?.rect;
                 else uiState.moveToRect = layers[0].rect;
