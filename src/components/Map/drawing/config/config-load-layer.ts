@@ -31,8 +31,11 @@ export default async function loadLayer(
 
         const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
         if (booths.length) configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
-             
+
         layer.configured = true;
+
+        context.updateMatrixScale();
+        context.requireUpdate(null);
 
         resolve(true);
     });

@@ -44,10 +44,8 @@ export default function initLayers(store: RootStore) {
 
     layers.forEach((layer, index) => {
         layer.basePriority = 10 * (index + 1);
-        layer.visible =
-            (layer.visible && store.layerStore.mode !== LayersMode.Radio) ||
-            layer.name === layerStore.defaultLayer ||
-            (!layerStore.defaultLayer && index === 0);
+
+        layer.visible = (layer.visible && store.layerStore.mode !== LayersMode.Radio) || layer.name === layerStore.defaultLayer;
     });
 
     layerStore.layers.push(...layers);

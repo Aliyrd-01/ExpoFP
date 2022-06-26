@@ -37,11 +37,10 @@ export default function configAll(context: DrawerContext = _context): void {
         //.filter((l) => store.layerStore.mode !== LayersMode.Radio || l.visible)
         .forEach((layer) => {
             loadLayer(layer, layer.visible, context).then((configured) => {
-                if (!animated && layer.visible) {
+                if (!animated && configured) {
                     animated = true;
                     animate(cb, 0);
-                } else after();
-                if (configured) context.requireUpdate(null);
+                }
             });
         });
 
@@ -49,11 +48,11 @@ export default function configAll(context: DrawerContext = _context): void {
 
     var cb = () => {
         if (context.updatable)
-            if (store.layerStore.mode === LayersMode.Radio) uiState.moveToRect = layers.find((l) => l.visible).rect;
+            if (store.layerStore.mode === LayersMode.Radio) uiState.moveToRect = layers.find((l) => l.visible)?.rect;
             else if (store.layerStore.mode === LayersMode.Separated) {
                 if (store.layerStore.defaultLayer)
                     uiState.moveToRect = layers.find((l) => l.name === store.layerStore.defaultLayer)?.rect;
-                else uiState.moveToRect = layers[0].rect;
+                else uiState.moveToRect = layers.find((l) => l.visible)?.rect;
             }
     };
 

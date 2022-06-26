@@ -37,6 +37,7 @@ export type DrawerContext = Pick<
     // | "getCanvasSize"
     | "subscribeMatrixChange"
     | "getMatrix"
+    | "updateMatrixScale"
     // | "subscribePtscaleChange"
 >;
 
@@ -64,6 +65,7 @@ export class DrawerImpl extends Matrix {
 
         this.gl = createGl(this.canvas);
         this.drawBound = this.draw.bind(this);
+        this.updateMatrixScale = this.updateMatrixScale.bind(this);
 
         if (!updatable) this.requireUpdate = null;
 
@@ -116,6 +118,14 @@ export class DrawerImpl extends Matrix {
         this.paintersByType.forEach((painter, key) => {
             if (key.startsWith(layer) && painter.visible !== visible) painter.visible = visible;
         });
+    }
+
+    public updateMatrixScale() {
+        // __logger.log('matrix change', m.getZoomTransform())
+        for (const d of this.allPainters) {
+            d.matrix = this.getMatrix();
+            d.ptscale = this.ptscale;
+        }
     }
 
     //////////////////
