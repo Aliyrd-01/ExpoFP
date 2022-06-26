@@ -9,6 +9,8 @@ import configWf from "./config-wf";
 import configYah from "./config-yah";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
+import { reaction } from "mobx";
+import settings from "../../../../tools/settings";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
@@ -58,4 +60,21 @@ export default function configAll(context: DrawerContext = _context): void {
 
     configWf(context, basePriority++, true);
     configYah(context);
+
+    if (settings.EXPO !== "rodion2") return;
+
+    var booths = false;
+    reaction(
+        () => context.ptscale,
+        () => {
+            let s = Math.max(context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale), 0.3);
+            if (!booths && s < 2) {
+                store.layerStore.updateVisibility("Booth", true);
+                booths = true;
+            } else if (booths && s >= 2) {
+                store.layerStore.updateVisibility("Booth", false);
+                booths = false;
+            }
+        }
+    );
 }
