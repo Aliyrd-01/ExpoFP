@@ -46,7 +46,7 @@ export function iniAllBooths(store: RootStore) {
     }
 }
 
-export default function initBooths(store: RootStore, layerID: string) {
+export default function initBooths(store: RootStore, layerID: string): Booth[] {
     const { boothStore, layerStore } = store;
     const layerBooths = [];
 
@@ -181,6 +181,8 @@ export default function initBooths(store: RootStore, layerID: string) {
     // dispose
     delete data.booths;
     logger.log("initBooths", boothStore.booths.length);
+
+    return layerBooths;
 }
 
 function fixCbre(b: Booth) {

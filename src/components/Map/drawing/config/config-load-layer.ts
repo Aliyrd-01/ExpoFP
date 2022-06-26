@@ -19,19 +19,17 @@ export default async function loadLayer(
         if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
             try {
                 await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);
-                initBooths(store, layer.name);
+                const booths = initBooths(store, layer.name);
+                if (booths.length) configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
             } catch {
                 return reject();
             }
         }
-       
+
         if (!withConfiguration) return resolve(false);
         layer.configured = true;
 
         configBg(context, layer.name, layer.basePriority, layer.visible);
-
-        const booths = store.boothStore.booths.filter((b) => b.layer.name === layer.name);
-        if (booths.length) configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
 
         context.updateMatrixScale();
         context.requireUpdate(null);
