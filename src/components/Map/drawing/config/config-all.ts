@@ -1,3 +1,4 @@
+import { easeLinear } from "d3-ease";
 import { uiState } from "./../../../../store/index";
 import store from "../../../../store";
 import { DrawerContext } from "../Drawer1";
@@ -11,6 +12,9 @@ import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
 import { reaction } from "mobx";
 import settings from "../../../../tools/settings";
+import animate from "./animate";
+import { interpolateNumber } from "d3-interpolate";
+import RectPainter from "../painters/RectPainter";
 
 let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
@@ -19,7 +23,7 @@ export let getContext = () => _context;
 
 export default function configAll(context: DrawerContext = _context): void {
     _context = context;
-    const { animate } = configMatrix(context);
+    const { animate: an } = configMatrix(context);
     configDim(context);
     configCanvas(context);
 
@@ -41,7 +45,7 @@ export default function configAll(context: DrawerContext = _context): void {
             loadLayer(layer, layer.visible, context).then((configured) => {
                 if (!animated && configured) {
                     animated = true;
-                    animate(cb, 0);
+                    an(cb, 0);
                 }
             });
         });
@@ -71,9 +75,24 @@ export default function configAll(context: DrawerContext = _context): void {
             if (!booths && s < 2) {
                 store.layerStore.updateVisibility("Booth", true);
                 booths = true;
+
+                animate(0, 500, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), (v) => {
+                    context.allPainters.filter((p) => p.id.startsWith("Booth")).forEach((p) => ((p as RectPainter).alpha = v));
+                });
             } else if (booths && s >= 2) {
-                store.layerStore.updateVisibility("Booth", false);
                 booths = false;
+                animate(
+                    0,
+                    500,
+                    easeLinear,
+                    interpolateNumber(1, 0),
+                    context.requireUpdate.bind(context),
+                    (v) =>
+                        context.allPainters
+                            .filter((p) => p.id.startsWith("Booth"))
+                            .forEach((p) => ((p as RectPainter).alpha = v)),
+                    () => store.layerStore.updateVisibility("Booth", false)
+                );
             }
         }
     );
