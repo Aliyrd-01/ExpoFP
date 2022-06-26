@@ -17,7 +17,7 @@ export let getContext = () => _context;
 
 export default function configAll(context: DrawerContext = _context): void {
     _context = context;
-    const { after, animate } = configMatrix(context);
+    const { animate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
 
