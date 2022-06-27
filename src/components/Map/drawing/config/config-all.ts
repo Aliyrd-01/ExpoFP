@@ -4,7 +4,6 @@ import store from "../../../../store";
 import { DrawerContext } from "../Drawer1";
 import configCanvas from "./config-canvas";
 import configDim from "./config-dim";
-
 import configMatrix from "./config-matrix";
 import configWf from "./config-wf";
 import configYah from "./config-yah";
@@ -16,7 +15,7 @@ import animate from "./animate";
 import { interpolateNumber } from "d3-interpolate";
 import RectPainter from "../painters/RectPainter";
 
-let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
+//let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
 let _context: DrawerContext;
 export let getContext = () => _context;
@@ -32,23 +31,21 @@ export default function configAll(context: DrawerContext = _context): void {
 
     if (store.layerStore.defaultLayer) {
         const lrs = [].concat(layers);
-        const dl = layers.find((l) => l.name === store.layerStore.defaultLayer);
+        const dl = layers.find((l) => l === store.layerStore.defaultLayer);
         const index = layers.indexOf(dl);
         lrs.splice(index, 1);
         layers = [dl].concat(lrs);
     }
 
     var animated = false;
-    layers
-        //.filter((l) => store.layerStore.mode !== LayersMode.Radio || l.visible)
-        .forEach((layer) => {
-            loadLayer(layer, layer.visible, context).then((configured) => {
-                if (!animated && configured) {
-                    animated = true;
-                    an(cb, 0);
-                }
-            });
+    layers.forEach((layer) => {
+        loadLayer(layer, layer.visible || layer === store.layerStore.defaultLayer, context).then((configured) => {
+            if (!animated && configured) {
+                animated = true;
+                an(cb, 0);
+            }
         });
+    });
 
     basePriority = 20 * (layers.length + 2);
 
@@ -57,7 +54,7 @@ export default function configAll(context: DrawerContext = _context): void {
             if (store.layerStore.mode === LayersMode.Radio) uiState.moveToRect = layers.find((l) => l.visible)?.rect;
             else if (store.layerStore.mode === LayersMode.Separated) {
                 if (store.layerStore.defaultLayer)
-                    uiState.moveToRect = layers.find((l) => l.name === store.layerStore.defaultLayer)?.rect;
+                    uiState.moveToRect = layers.find((l) => l === store.layerStore.defaultLayer)?.rect;
                 else uiState.moveToRect = layers.find((l) => l.visible)?.rect;
             }
     };
@@ -72,14 +69,15 @@ export default function configAll(context: DrawerContext = _context): void {
         () => context.ptscale,
         () => {
             let s = Math.max(context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale), 0.3);
-            if (!booths && s < 2) {
-                store.layerStore.updateVisibility("Booth", true);
+            if (!booths && s < 1) {
+                store.layerStore.updateVisibility("Booths", true);
+                store.layerStore.updateVisibility("FG", true);
                 booths = true;
 
                 animate(0, 500, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), (v) => {
-                    context.allPainters.filter((p) => p.id.startsWith("Booth")).forEach((p) => ((p as RectPainter).alpha = v));
+                    context.getLayersPainters(["Booths", "FG"]).forEach((p) => ((p as RectPainter).alpha = v));
                 });
-            } else if (booths && s >= 2) {
+            } else if (booths && s >= 1) {
                 booths = false;
                 animate(
                     0,
@@ -87,11 +85,11 @@ export default function configAll(context: DrawerContext = _context): void {
                     easeLinear,
                     interpolateNumber(1, 0),
                     context.requireUpdate.bind(context),
-                    (v) =>
-                        context.allPainters
-                            .filter((p) => p.id.startsWith("Booth"))
-                            .forEach((p) => ((p as RectPainter).alpha = v)),
-                    () => store.layerStore.updateVisibility("Booth", false)
+                    (v) => context.getLayersPainters(["Booths", "FG"]).forEach((p) => ((p as RectPainter).alpha = v)),
+                    () => {
+                        store.layerStore.updateVisibility("Booths", false);
+                        store.layerStore.updateVisibility("FG", false);
+                    }
                 );
             }
         }

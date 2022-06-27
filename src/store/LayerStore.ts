@@ -23,7 +23,7 @@ export class Layer {
 
 export default class LayerStore {
     @observable layers: Layer[] = [];
-    @observable defaultLayer: string;
+    @observable defaultLayer: Layer;
     @observable mode: LayersMode;
 
     @computed({ keepAlive: true }) get visible() {

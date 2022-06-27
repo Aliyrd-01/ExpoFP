@@ -40,12 +40,12 @@ export default function initLayers(store: RootStore) {
             });
     }
 
-    layerStore.defaultLayer = layers.find((l) => l.name === window["__fpDefaultLayer"])?.name;
+    layerStore.defaultLayer = layers.find((l) => l.name === window["__fpDefaultLayer"]);
 
     layers.forEach((layer, index) => {
         layer.basePriority = 10 * (index + 1);
 
-        layer.visible = (layer.visible && store.layerStore.mode !== LayersMode.Radio) || layer.name === layerStore.defaultLayer;
+        layer.visible = (layer.visible && store.layerStore.mode !== LayersMode.Radio);
     });
 
     layerStore.layers.push(...layers);

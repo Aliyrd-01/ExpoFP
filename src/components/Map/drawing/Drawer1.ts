@@ -38,6 +38,7 @@ export type DrawerContext = Pick<
     | "subscribeMatrixChange"
     | "getMatrix"
     | "updateMatrixScale"
+    | "getLayersPainters"
     // | "subscribePtscaleChange"
 >;
 
@@ -126,6 +127,10 @@ export class DrawerImpl extends Matrix {
             d.matrix = this.getMatrix();
             d.ptscale = this.ptscale;
         }
+    }
+
+    public getLayersPainters(layers: string[]): Painter[] {
+        return this.allPainters.filter((p) => !!layers.find((l) => p.id.startsWith(l)));
     }
 
     //////////////////

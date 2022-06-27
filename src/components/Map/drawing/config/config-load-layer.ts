@@ -18,12 +18,16 @@ export default async function loadLayer(
     return new Promise(async (resolve, reject) => {
         if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
             try {
-                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);
-                const booths = initBooths(store, layer.name);
-                if (booths.length) configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
+                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);              
             } catch {
                 return reject();
             }
+        }
+
+        const booths = initBooths(store, layer.name);
+        if (booths.length) {
+            configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
+            context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());         
         }
 
         if (!withConfiguration) return resolve(false);
