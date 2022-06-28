@@ -137,7 +137,8 @@ export default function Map() {
         () => store.layerStore.visible,
         () => {
             store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
-            if (store.layerStore.mode !== LayersMode.Radio) s.drawer.draw();
+            //if (store.layerStore.mode !== LayersMode.Radio) 
+            s.drawer.draw();
         }
     );
 

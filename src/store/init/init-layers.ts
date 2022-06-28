@@ -10,8 +10,6 @@ export default function initLayers(store: RootStore) {
     const fpLayers = window["__fpLayers"] as Layer[];
     layerStore.mode = window["__fpLayersMode"] || LayersMode.Default;
 
-    console.info(`Layers mode: ${layerStore.mode}`);
-
     let layers: Layer[] = [];
     if (fpLayers) {
         layers = fpLayers.map((layer) => {
@@ -44,9 +42,13 @@ export default function initLayers(store: RootStore) {
 
     layers.forEach((layer, index) => {
         layer.basePriority = 10 * (index + 1);
-
-        layer.visible = (layer.visible && store.layerStore.mode !== LayersMode.Radio);
+        layer.visible = layer.visible && store.layerStore.mode !== LayersMode.Radio;
     });
+
+    if (!layers.find((l) => l.visible)) {
+        if (layerStore.defaultLayer) layerStore.defaultLayer.visible = true;
+        else layers[0].visible = true;
+    }
 
     layerStore.layers.push(...layers);
 }
