@@ -313,22 +313,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         // Recalculate logic here
 
-        if (shortestrPerp.l > distanceToChangeRoute) {
-            if (!initialDate) initialDate = new Date();
-            else {
-                const diff = new Date().valueOf() - initialDate.valueOf();
+        // if (shortestrPerp.l > distanceToChangeRoute) {
+        //     if (!initialDate) initialDate = new Date();
+        //     else {
+        //         const diff = new Date().valueOf() - initialDate.valueOf();
 
-                if (diff >= timeoutToChangeRoute) {
-                    const newBooth = getNearestBooth(position);
-                    if (newBooth)
-                        store.routeStore.selectRoute(
-                            new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
-                        );
-                }
-            }
-        } else {
-            initialDate = null;
-        }
+        //         if (diff >= timeoutToChangeRoute) {
+        //             const newBooth = getNearestBooth(position);
+        //             if (newBooth)
+        //                 store.routeStore.selectRoute(
+        //                     new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
+        //                 );
+        //         }
+        //     }
+        // } else {
+        //     initialDate = null;
+        // }
 
         // Recalculate logic here
 
