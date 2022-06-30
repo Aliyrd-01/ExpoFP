@@ -53,9 +53,12 @@ export default function configAll(context: DrawerContext = _context): void {
         if (context.updatable)
             if (store.layerStore.mode === LayersMode.Radio) uiState.moveToRect = layers.find((l) => l.visible)?.rect;
             else if (store.layerStore.mode === LayersMode.Separated) {
-                if (store.layerStore.defaultLayer)
+                if (store.layerStore.defaultLayer && store.layerStore.defaultLayer.visible)
                     uiState.moveToRect = layers.find((l) => l === store.layerStore.defaultLayer)?.rect;
-                else uiState.moveToRect = layers.find((l) => l.visible)?.rect;
+                else {
+                    console.info(layers.find((l) => l.visible)?.rect);
+                    uiState.moveToRect = layers.find((l) => l.visible)?.rect;
+                }
             }
     };
 
@@ -65,11 +68,11 @@ export default function configAll(context: DrawerContext = _context): void {
     if (settings.EXPO !== "rodion2") return;
 
     var booths = false;
+    var edge = 10;
     reaction(
-        () => context.ptscale,
+        () => uiState.zoomAfTransformK,
         () => {
-            let s = Math.max(context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale), 0.3);
-            if (!booths && s < 1) {
+            if (!booths && uiState.zoomAfTransformK > edge) {
                 store.layerStore.updateVisibility("Booths", true);
                 store.layerStore.updateVisibility("FG", true);
                 booths = true;
@@ -77,7 +80,7 @@ export default function configAll(context: DrawerContext = _context): void {
                 animate(0, 500, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), (v) => {
                     context.getLayersPainters(["Booths", "FG"]).forEach((p) => ((p as RectPainter).alpha = v));
                 });
-            } else if (booths && s >= 1) {
+            } else if (booths && uiState.zoomAfTransformK <= edge) {
                 booths = false;
                 animate(
                     0,

@@ -3,10 +3,7 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { svgArea } from "../data/svg";
 import store, { uiState } from "../store";
-<<<<<<< HEAD
 import { LayersMode } from "../store/LayerStore";
-=======
->>>>>>> remotes/origin/features/mapbox
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
@@ -25,7 +22,7 @@ export default function Controls() {
         },
     }));
 
-<<<<<<< HEAD
+
     return useObserver(() => {
         const layers = store.layerStore.layers.map((l) => {
             return { name: l.description, id: l.name, visible: l.visible };
@@ -52,29 +49,7 @@ export default function Controls() {
             />
         );
     });
-=======
-    return useObserver(() => (
-        <div className={s.className} style={s.style}>
-            {store.mapboxStore.mapBoxEnabled && (
-                <button
-                    className={classNames("fa fa-globe")}
-                    title={t("Show map")}
-                    onClick={() => {
-                        store.selectNone();
-                        store.mapboxStore.mapBoxSelected = null;
-                    }}
-                ></button>
-            )}
-            <button className="fa fa-plus" title={t("Zoom In")} onClick={zoom.bind(window, 1)}></button>
-            <button className="fa fa-minus" title={t("Zoom Out")} onClick={zoom.bind(window, -1)}></button>
-            <button
-                className="fa fa-expand-arrows-alt"
-                title={t("Fit to screen")}
-                onClick={() => (uiState.moveToRect = svgArea)}
-            ></button>
-        </div>
-    ));
->>>>>>> remotes/origin/features/mapbox
+
 
     function zoom(val: -1 | 1) {
         uiState.zoomBy = val;

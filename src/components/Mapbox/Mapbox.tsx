@@ -15,7 +15,7 @@ import { pulsingDot } from "./Dot";
 import "./Mapbox.scss";
 
 function b() {
-    var el = window["__fpGeo"];
+    var el = null;// window["__fpGeo"];
     if (!el?.properties?.mpViewbox) {
         store.mapboxStore.mapBoxEnabled = false;
         return 0;
@@ -130,10 +130,10 @@ export default function Mapbox() {
 
         if (mapBoxSelected) {
             flyToCenter(0, duration).then(() => {
-                uiState.moveToRect = svgArea;
+                uiState.moveToRect = store.layerStore.rectangle || svgArea;
             });
         } else {
-            uiState.moveToRect = svgArea;
+            uiState.moveToRect =  store.layerStore.rectangle || svgArea;
             flyToCenter(props.bearing, duration).then(() => {
                 current.setZoom(props.edgeZoom - 0.5);
             });
