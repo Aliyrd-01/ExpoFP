@@ -1,6 +1,6 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import { uiState } from "../store";
+import store, { uiState } from "../store";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
@@ -13,7 +13,10 @@ export default function LogoOverlay() {
             let style: any;
             if (uiState.overlayPosition === "left")
                 style = { bottom: uiState.mapVisibleBottom + pad + "px", right: pad + "px", width: "5rem" };
-            else style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
+            else {
+                style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
+                if (store.mapboxStore.mapBoxSelected) style.top = remsToPixels(0.5) + "px";
+            }
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;
         },

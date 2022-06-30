@@ -209,6 +209,7 @@ export default function Map() {
                 else setZoomTransformAnimated(t, 0, null);
                 s.animatePlease = false;
                 s.moving = true;
+                uiState.zoomAfTransformK = Math.round(t.k * 100) / 100;
             })
             .on("end", () => {
                 s.moving = false;

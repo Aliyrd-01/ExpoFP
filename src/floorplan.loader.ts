@@ -112,7 +112,6 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
-        const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = isFromDesigner
             ? `https://efp-data.s3.amazonaws.com/expos/${eventId}/data/fp.svg.js`
             : dataUrlBase + "fp.svg.js";
@@ -120,6 +119,7 @@ export default class FloorPlanLoader implements FloorPlan {
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
+        loadCss("vendor/mapbox/mapbox-gl.css", container);
         // loadCss("fonts/fonts.css", container);
 
         loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
@@ -144,7 +144,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(wfDataUrl), loadJs(fpUrl)]);
+            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);

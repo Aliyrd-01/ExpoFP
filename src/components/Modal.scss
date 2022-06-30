@@ -1,0 +1,45 @@
+@import "../styles/import.scss";
+
+.modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(22, 22, 22, 0.38);
+	align-items: center;
+	justify-content: center;
+	display: flex;
+}
+
+.modal__close {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 2.5rem;
+	height: 2.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: $color-gray;
+
+	&:before {
+		font-size: rem(19px);
+	}
+}
+
+.modal.active {
+	display: flex;
+}
+
+.modal__content {
+	position: relative;
+	width: rem(426px);
+	background: white;
+	padding: rem(30px 40px);
+	box-shadow: rem(0 4px 30px) rgba(0, 0, 0, 0.15);
+	border-radius: rem(2px);
+}

@@ -42,12 +42,14 @@ export default class UIState {
     @observable desiredOverlaySize: OverlaySize;
     @observable overlayShowsAll = false;
     @observable centerMap = false;
+    @observable zoomAfTransformK: number = 1;
     @observable activeListIndex = -1;
     @observable devicePixelRatio = window.devicePixelRatio;
     previewExhibitor: Exhibitor = null;
     @observable wsStarted = false;
     @observable canvasStarted = false;
     @observable kiosk = false;
+    @observable modalActive = { share: false };
 
     overlayMediumHeightRems = 10;
 

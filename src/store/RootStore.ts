@@ -6,6 +6,8 @@ import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
+
+import MapboxStore from "./MapboxStore";
 import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
@@ -16,7 +18,8 @@ export default class RootStore {
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
     readonly routeStore: RouteStore;
-    readonly layerStore: LayerStore;
+    readonly mapboxStore: MapboxStore;
+	readonly layerStore: LayerStore;
     fp: FloorPlanReady;
 
     constructor() {
@@ -26,7 +29,8 @@ export default class RootStore {
         this.boothStore = new BoothStore(this);
         this.routeStore = new RouteStore(this);
         this.uiState = new UIState(this);
-        this.layerStore = new LayerStore();
+        this.mapboxStore = new MapboxStore(this);
+		this.layerStore = new LayerStore();
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
@@ -253,6 +257,9 @@ export default class RootStore {
         newVal = Math.max(0, Math.min(this.uiState.listItems.length - 1, newVal));
         this.uiState.activeListIndex = newVal;
         // commit("setActiveListIndex", newVal);
+    }
+    @action toggleModal(modalType: "share") {
+        this.uiState.modalActive[modalType] = !this.uiState.modalActive[modalType];
     }
     @action openActiveListItem() {
         const item = this.uiState.listItems[this.uiState.activeListIndex];

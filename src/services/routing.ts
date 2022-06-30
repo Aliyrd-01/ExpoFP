@@ -41,6 +41,9 @@ function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
     disableStateToUrl = true;
     const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
+
+    if (slug && store.mapboxStore.mapBoxEnabled) store.mapboxStore.mapBoxSelected = false;
+
     if (slug.startsWith("route")) {
         const parts = slug.split(":");
         const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;

@@ -1,0 +1,133 @@
+@import "../styles/import.scss";
+
+.share *:not(.share__icon) {
+	font-family: 'Inter', sans-serif;
+}
+
+.share__title {
+	font-weight: 600;
+	font-size: rem(18px);
+	line-height: rem(22px);
+	color: #333333;
+	text-align: center;
+}
+
+.share__socials {
+	display: flex;
+	justify-content: center;
+	margin: rem(30px 0 28px);
+}
+
+.share__social {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	& + & {
+		margin-left: rem(30px);
+	}
+
+	&:nth-child(1) {
+		.share__circle {
+			background: #D9EAFF;
+		}
+	}
+
+	&:nth-child(2) {
+		.share__circle {
+			background: #D9F1FF;
+		}
+	}
+
+	&:nth-child(3) {
+		.share__circle {
+			background: #E4EDFF;
+		}
+	}
+}
+
+.share__circle {
+	display: flex;
+	width: rem(46px);
+	height: rem(46px);
+	border-radius: 50%;
+	position: relative;
+}
+
+.share__icon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-repeat: no-repeat !important;
+	background-size: cover !important;
+
+	&.facebook {
+		background: url("../../public/icons/facebook.svg");
+		width: rem(26px);
+		height: rem(26px);
+	}
+
+	&.twitter {
+		background: url("../../public/icons/twitter.svg");
+		width: rem(26px);
+		height: rem(21px);
+	}
+
+	&.linkedin {
+		background: url("../../public/icons/linkedin.svg");
+		width: rem(22px);
+		height: rem(22px);
+	}
+}
+
+.share__name {
+	font-weight: 400;
+	font-size: rem(12px);
+	line-height: rem(15px);
+	color: #646464;
+	margin-top: rem(5px);
+}
+
+.share__text {
+	font-weight: 400;
+	font-size: rem(12px);
+	line-height: rem(15px);
+	color: #646464;
+	margin-bottom: rem(7px);
+}
+
+.share__input-wrapper {
+	border: rem(1px) solid #E4E4E4;
+	border-radius: rem(2px);
+	padding: rem(0 12px 0 14px);
+	height: rem(38px);
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+.share__input, .share__btn {
+	border: none;
+	padding: 0;
+	cursor: pointer;
+}
+
+.share__input {
+	flex-grow: 1;
+	outline: none;
+
+	&::placeholder {
+		color: #646464;
+		font-weight: 400;
+		font-size: rem(14px);
+		line-height: rem(17px);
+	}
+}
+
+.share__btn {
+	color: #3D91F7;
+	font-weight: 500;
+	font-size: rem(14px);
+	line-height: rem(17px);
+	padding-left: rem(12px);
+}
