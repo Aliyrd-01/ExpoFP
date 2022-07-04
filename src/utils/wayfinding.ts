@@ -7,6 +7,7 @@ export class RouteLine extends Line {
     constructor(
         public p0: Point,
         public p1: Point,
+        public layer: string,
         public unaccessible: boolean,
         public unidirection: boolean,
         public virtual: boolean,
@@ -130,7 +131,7 @@ export function getGraphLines(
 
         let line = getLineByPoints(lines, pp, cp);
 
-        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
+        let l = new RouteLine(pp, cp, line.layer, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
 
         if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
             l.p0 = pp;
