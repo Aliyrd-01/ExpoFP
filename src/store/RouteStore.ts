@@ -1,6 +1,7 @@
+import { RouteLine } from "./../utils/wayfinding";
 import { getLayerSvg } from "./../data/svg";
 import { action, computed, observable } from "mobx";
-import { Line, lineLength, Point } from "simple-geometry";
+import { lineLength, Point } from "simple-geometry";
 import store from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
@@ -11,7 +12,7 @@ import RootStore from "./RootStore";
 
 export default class RouteStore {
     rootStore: RootStore;
-    @observable routeLines: Line[] = [];
+    @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
     @observable tempToBooth: Booth = null;
@@ -26,20 +27,25 @@ export default class RouteStore {
 
         if (route?.from && route?.to)
             window.setTimeout(
-                () => this.rootStore.showMap(),
+                () => {
+                    this.rootStore.showMap();
+                },
                 navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             );
 
-        if (route?.from) list.push(route.from);
-        if (route?.to) {
+        if (route?.from?.layer.visible) list.push(route.from);
+        if (route?.to?.layer.visible) {
             this.tempToBooth = null;
             list.push(route.to);
         }
 
         setTimeout(() => {
             this.rootStore.moveToList(list);
+            var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
+            if (route?.to && route?.from && !route?.from?.layer.visible && id !== route?.from?.id)  
+                this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
         }, 200);
     }
 
@@ -78,7 +84,7 @@ export default class RouteStore {
         if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
     }
 
-    @action updateRoutePoints(routeLines: Line[]) {
+    @action updateRoutePoints(routeLines: RouteLine[]) {
         if (!routeLines?.length && !this.routeLines.length) return;
 
         this.routeLines = routeLines;

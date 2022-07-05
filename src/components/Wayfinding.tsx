@@ -93,6 +93,14 @@ function Wayfinding() {
             return info;
         };
 
+        var layers = [];
+        store.routeStore.routeLines
+            ?.map((rl) => rl.layer)
+            .reverse()
+            .forEach((l) => {
+                if (layers.indexOf(l) === -1) layers.push(l);
+            });
+
         const wayFindingForm = () => {
             return (
                 <div className="wayFindingForm" style={{ marginBottom: 10 }}>
@@ -109,7 +117,7 @@ function Wayfinding() {
                                 onChange={(value) => onSelectionClick(value, true)}
                             />
                         </div>
-                        <div className="formGroup" style={{ marginBottom: 20 }}>
+                        <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
                                 placeholder="Select to"
                                 options={options()}
@@ -117,6 +125,26 @@ function Wayfinding() {
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
                         </div>
+                        {layers.length > 1 && (
+                            <div className="formGroup" style={{ marginBottom: 10 }}>
+                                {layers.map((l) => (
+                                    <a
+                                        key={l}
+                                        href="#"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            store.layerStore.updateVisibility(l, true);
+                                        }}
+                                        style={{
+                                            marginRight: 5,
+                                            opacity: store.layerStore.layers.find((la) => la.name === l)?.visible ? 1 : 0.5,
+                                        }}
+                                    >
+                                        {l}
+                                    </a>
+                                ))}
+                            </div>
+                        )}
                         {/* <div className="formGroup" style={{ marginBottom: 10 }}>
                             <ToggleSwitch
                                 name="exceptUnaccessible"
@@ -148,7 +176,7 @@ function Wayfinding() {
                     {!data.hideWayInformation &&
                     settings.EXPO !== "bloomberg" &&
                     uiState.selectedRoute?.from &&
-                    uiState.selectedRoute.from ? (
+                    uiState.selectedRoute?.to ? (
                         store.routeStore.routeLines.length ? (
                             <WayInformation
                                 items={getWayInformation(store.routeStore.routeDistance)}
