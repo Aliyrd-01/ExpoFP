@@ -36,7 +36,7 @@ export default async function loadLayer(
         configBg(context, layer.name, layer.basePriority, layer.visible);
 
         context.updateMatrixScale();
-        context.requireUpdate(null);
+        (context as any).draw();
 
         resolve(true);
     });
