@@ -18,7 +18,7 @@ export default async function loadLayer(
     return new Promise(async (resolve, reject) => {
         if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
             try {
-                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);              
+                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);
             } catch {
                 return reject();
             }
@@ -27,7 +27,7 @@ export default async function loadLayer(
         const booths = initBooths(store, layer.name);
         if (booths.length) {
             configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
-            context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());         
+            context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
 
         if (!withConfiguration) return resolve(false);
@@ -36,7 +36,7 @@ export default async function loadLayer(
         configBg(context, layer.name, layer.basePriority, layer.visible);
 
         context.updateMatrixScale();
-        (context as any).draw();
+        context.requireUpdate(null);
 
         resolve(true);
     });

@@ -37,12 +37,15 @@ export default function configAll(context: DrawerContext = _context): void {
         layers = [dl].concat(lrs);
     }
 
+    var duration = 10;
     var animated = false;
     layers.forEach((layer) => {
         loadLayer(layer, layer.visible || layer === store.layerStore.defaultLayer, context).then((configured) => {
             if (!animated && configured) {
                 animated = true;
-                an(cb, 0);
+                an(() => {
+                    setTimeout(() => cb(), 2 * duration);
+                }, duration);
             }
         });
     });
@@ -51,12 +54,12 @@ export default function configAll(context: DrawerContext = _context): void {
 
     var cb = () => {
         if (context.updatable)
-            if (store.layerStore.mode === LayersMode.Radio) uiState.moveToRect = layers.find((l) => l.visible)?.rect;
-            else if (store.layerStore.mode === LayersMode.Separated) {
-                if (store.layerStore.defaultLayer && store.layerStore.defaultLayer.visible)
+            if (store.layerStore.mode === LayersMode.Radio) {
+                uiState.moveToRect = layers.find((l) => l.visible)?.rect;
+            } else if (store.layerStore.mode === LayersMode.Separated) {
+                if (store.layerStore.defaultLayer && store.layerStore.defaultLayer.visible) {
                     uiState.moveToRect = layers.find((l) => l === store.layerStore.defaultLayer)?.rect;
-                else {
-                    console.info(layers.find((l) => l.visible)?.rect);
+                } else {
                     uiState.moveToRect = layers.find((l) => l.visible)?.rect;
                 }
             }
