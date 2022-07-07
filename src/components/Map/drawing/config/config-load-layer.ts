@@ -26,7 +26,7 @@ export default async function loadLayer(
 
         const booths = initBooths(store, layer.name);
         if (booths.length) {
-            configBooths(context, layer.name, booths, layer.basePriority++, layer.visible)();
+            configBooths(context, layer.name, booths, layer.basePriority+3, layer.visible)();
             context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
 

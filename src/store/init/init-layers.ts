@@ -41,7 +41,7 @@ export default function initLayers(store: RootStore) {
     layerStore.defaultLayer = layers.find((l) => l.name === window["__fpDefaultLayer"]);
 
     layers.forEach((layer, index) => {
-        layer.basePriority = 10 * (index + 1);
+        layer.basePriority = 15 * (index + 1);
         layer.visible = layer.visible && store.layerStore.mode !== LayersMode.Radio;
     });
 
