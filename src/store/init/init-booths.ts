@@ -46,7 +46,12 @@ export function iniAllBooths(store: RootStore) {
     }
 }
 
+const layers = [];
+
 export default function initBooths(store: RootStore, layerID: string): Booth[] {
+    if (layers.indexOf(layerID) > -1) return [];
+    layers.push(layerID);
+
     const { boothStore, layerStore } = store;
     const layerBooths = [];
 
