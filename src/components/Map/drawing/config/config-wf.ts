@@ -17,8 +17,7 @@ import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
 let routePoints: Point[] = [];
-let visibleRouteLines: RouteLine[] = [];
-let allRouteLines: RouteLine[] = [];
+let routeLines: RouteLine[] = [];
 
 let pointSize: number = null;
 let scale: number = null;
@@ -95,18 +94,20 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
 
     routePoints = [];
 
-    const totalLength = visibleRouteLines.map((rl) => lineLength(rl.p0, rl.p1)).reduce((a, b) => a + b, 0);
+    const totalLength = routeLines.map((rl) => lineLength(rl.p0, rl.p1)).reduce((a, b) => a + b, 0);
 
     let interval = Math.round(pointSize * 1.2 * ptscale);
     if (totalLength > totalPoints * interval) interval = 1.1 * (totalLength / totalPoints);
 
     let lines = [];
-    for (let i = 0; i < visibleRouteLines.length; i++) {
-        let line = visibleRouteLines[i];
+    for (let i = 0; i < routeLines.length; i++) {
+        let line = routeLines[i];
 
-        if (!line.virtual) lines.push(line);
+        let layer = store.layerStore.layers.find((l) => l.name == line.layer);
 
-        if ((line.virtual && lines.length) || i === visibleRouteLines.length - 1) {
+        if (!line.virtual && layer.visible) lines.push(line);
+
+        if ((line.virtual || !layer.visible || i === routeLines.length - 1) && lines.length) {
             routePoints.push(...splitPolyLine(lines, interval));
             lines = [];
         }
@@ -117,6 +118,16 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
         wfDrawer.updateVisible(`Dot_${i}`, true);
         wfDrawer.updateSkipdim(`Dot_${i}`, true);
     });
+
+    if (routePoints.length) {
+        wfDrawer.updateVisible("sourceLocation", true);
+        wfDrawer.updateCenter("sourceLocation", [routePoints[routePoints.length - 1].x, routePoints[routePoints.length - 1].y]);
+        wfDrawer.updateVisible("destinationLocation", true);
+        wfDrawer.updateCenter("destinationLocation", [routePoints[0].x, routePoints[0].y]);
+    } else {
+        wfDrawer.updateVisible("destinationLocation", false);
+        wfDrawer.updateVisible("sourceLocation", false);
+    }
 }
 
 function splitPolyLine(lines: Line[], interval: number): Point[] {
@@ -233,7 +244,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         for (let i = 0; i < routePoints.length; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
 
-        allRouteLines = visibleRouteLines = routePoints = [];
+        routeLines = routePoints = [];
 
         if (layers.length && uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
             let from = uiState.selectedRoute.from;
@@ -242,7 +253,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
             const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
 
-            allRouteLines = getGraphLines(
+            routeLines = getGraphLines(
                 new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
                 new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
                 uiState.selectedRoute.exceptUnaccessible,
@@ -250,10 +261,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 true
             );
 
-            visibleRouteLines = allRouteLines.filter((l) => layers.indexOf(l.layer) > -1 && !l.virtual);
-
-            if (!allRouteLines.length) {
-                store.routeStore.updateRoutePoints(allRouteLines);
+            if (!routeLines.length) {
+                store.routeStore.updateRoutePoints(routeLines);
                 if (from.name !== to.name) throw new Error(`Route not found. From: ${from.name} to: ${to.name}`);
                 return;
             }
@@ -264,7 +273,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 [uiState.selectedRoute.from, uiState.selectedRoute.to].filter((b) => b.layer.visible).map((b) => b.rect)
             );
 
-            visibleRouteLines.forEach((l) => {
+            routeLines.forEach((l) => {
                 if (l.p0.x < x1) x1 = l.p0.x;
                 if (l.p0.x > x2) x2 = l.p0.x;
                 if (l.p0.y < y1) y1 = l.p0.y;
@@ -279,20 +288,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             uiState.moveToRect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
         }
 
-        if (visibleRouteLines.length) {
-            wfDrawer.updateVisible("sourceLocation", true);
-            wfDrawer.updateCenter("sourceLocation", [
-                visibleRouteLines[visibleRouteLines.length - 1].p1.x,
-                visibleRouteLines[visibleRouteLines.length - 1].p1.y,
-            ]);
-            wfDrawer.updateVisible("destinationLocation", true);
-            wfDrawer.updateCenter("destinationLocation", [visibleRouteLines[0].p0.x, visibleRouteLines[0].p0.y]);
-        } else {
-            wfDrawer.updateVisible("destinationLocation", false);
-            wfDrawer.updateVisible("sourceLocation", false);
-        }
-
-        store.routeStore.updateRoutePoints(allRouteLines.filter((gl) => !gl.virtual));
+        store.routeStore.updateRoutePoints(routeLines.filter((gl) => !gl.virtual));
     }
 
     function updateCurrentPosition() {
@@ -346,8 +342,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             wfDrawer.updateVisible(`Dot_${index}`, false);
 
         var lines = [];
-        for (let index = 0; index < allRouteLines.length; index++) {
-            const line = allRouteLines[index];
+        for (let index = 0; index < routeLines.length; index++) {
+            const line = routeLines[index];
             if (pointIsOnLine(shortestrPerp.p, line.p0, line.p1)) {
                 lines.push({ p0: line.p0, p1: shortestrPerp.p });
                 break;

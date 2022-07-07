@@ -3,6 +3,7 @@ import React from "react";
 import data from "../data";
 import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
+import { LayersMode } from "../store/LayerStore";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
@@ -125,26 +126,27 @@ function Wayfinding() {
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
                         </div>
-                        {layers.length > 1 && (
-                            <div className="formGroup" style={{ marginBottom: 10 }}>
-                                {layers.map((l) => (
-                                    <a
-                                        key={l}
-                                        href="#"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            store.layerStore.updateVisibility(l, true);
-                                        }}
-                                        style={{
-                                            marginRight: 5,
-                                            opacity: store.layerStore.layers.find((la) => la.name === l)?.visible ? 1 : 0.5,
-                                        }}
-                                    >
-                                        {l}
-                                    </a>
-                                ))}
-                            </div>
-                        )}
+                        {(store.layerStore.mode === LayersMode.CheckBox || store.layerStore.mode === LayersMode.Radio) &&
+                            layers.length > 1 && (
+                                <div className="formGroup" style={{ marginBottom: 10 }}>
+                                    {layers.map((l) => (
+                                        <a
+                                            key={l}
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                store.layerStore.updateVisibility(l, true);
+                                            }}
+                                            style={{
+                                                marginRight: 5,
+                                                opacity: store.layerStore.layers.find((la) => la.name === l)?.visible ? 1 : 0.5,
+                                            }}
+                                        >
+                                            {l}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
                         {/* <div className="formGroup" style={{ marginBottom: 10 }}>
                             <ToggleSwitch
                                 name="exceptUnaccessible"

@@ -43,8 +43,7 @@ export default function Controls() {
                     store.layerStore.mode === LayersMode.Radio || store.layerStore.mode === LayersMode.CheckBox ? layers : null
                 }
                 onChangeLayers={(layer) => {
-                    store.layerStore.updateVisibility(layer, activeList.indexOf(layer) === -1);
-                    uiState.details = null;
+                    store.layerStore.updateVisibility(layer, activeList.indexOf(layer) === -1);                    
                 }}
             />
         );
