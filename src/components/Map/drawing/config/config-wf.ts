@@ -12,7 +12,7 @@ import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { boothStore } from "./../../../../store/index";
-import { CurrentPosition, Route } from "./../../../../store/RouteStore";
+import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
@@ -246,7 +246,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         routeLines = routePoints = [];
 
-        if (layers.length && uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
+        if (layers.length && uiState.selectedRoute?.from?.rect && uiState.selectedRoute?.to?.rect) {
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
@@ -270,7 +270,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             drawLines(wfDrawer, scale || 3);
 
             let { x1, x2, y1, y2 } = Rectangle.fromMultiple(
-                [uiState.selectedRoute.from, uiState.selectedRoute.to].filter((b) => b.layer.visible).map((b) => b.rect)
+                [uiState.selectedRoute.from, uiState.selectedRoute.to].filter((b) => b.visible).map((b) => b.rect)
             );
 
             routeLines.forEach((l) => {
@@ -368,7 +368,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
 
         reaction(
-            () => [store.layerStore.visible, uiState.selectedRoute],
+            () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
             () => context.requireUpdate(updateRoute)
         );
 

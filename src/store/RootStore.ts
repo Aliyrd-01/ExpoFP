@@ -19,7 +19,7 @@ export default class RootStore {
     readonly uiState: UIState;
     readonly routeStore: RouteStore;
     readonly mapboxStore: MapboxStore;
-	readonly layerStore: LayerStore;
+    readonly layerStore: LayerStore;
     fp: FloorPlanReady;
 
     constructor() {
@@ -30,7 +30,7 @@ export default class RootStore {
         this.routeStore = new RouteStore(this);
         this.uiState = new UIState(this);
         this.mapboxStore = new MapboxStore(this);
-		this.layerStore = new LayerStore();
+        this.layerStore = new LayerStore();
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
@@ -42,8 +42,9 @@ export default class RootStore {
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
+
         if (focus) this.moveToList(b);
-        if (b.length === 1 && !b[0].layer.visible && this.layerStore.mode === LayersMode.Radio)
+        if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
             this.layerStore.updateVisibility(b[0].layer.name, true);
     }
 

@@ -19,6 +19,7 @@ export default async function loadLayer(
         if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
             try {
                 await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);
+                layer.loaded = true;
             } catch {
                 return reject();
             }
@@ -26,7 +27,7 @@ export default async function loadLayer(
 
         const booths = initBooths(store, layer.name);
         if (booths.length) {
-            configBooths(context, layer.name, booths, layer.basePriority+3, layer.visible)();
+            configBooths(context, layer.name, booths, layer.basePriority + 3, layer.visible)();
             context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
 

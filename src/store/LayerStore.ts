@@ -13,11 +13,12 @@ export enum LayersMode {
 }
 
 export class Layer {
-    configured: boolean;
     basePriority: number;
     name: string;
     description: string;
     rect: Rect = null;
+    configured: boolean;
+    @observable loaded: boolean;
     @observable visible: boolean;
 }
 
@@ -28,6 +29,10 @@ export default class LayerStore {
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.visible);
+    }
+
+    @computed({ keepAlive: true }) get loaded() {
+        return this.layers.filter((l) => l.loaded);
     }
 
     @computed({ keepAlive: true }) get rectangle() {

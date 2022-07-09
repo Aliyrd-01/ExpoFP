@@ -123,7 +123,7 @@ export default function Map() {
             //this.handledMoveToExhibitor = uiState.moveToBooths;
             logger.log("watched moveToBooths", uiState.moveToBooths);
             // // ask map to move to this exhibitor
-            const rects = uiState.moveToBooths.map((b) => b.rect) as Rect[];
+            const rects = uiState.moveToBooths.filter(b=>b.rect).map((b) => b.rect) as Rect[];
             if (rects.length === 0) return;
             moveToRect(Rect.fromMultiple(rects));
             uiState.moveToBooths = null;

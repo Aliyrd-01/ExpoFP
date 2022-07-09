@@ -33,8 +33,8 @@ export default class RouteStore {
                 navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             );
 
-        if (route?.from?.layer.visible) list.push(route.from);
-        if (route?.to?.layer.visible) {
+        if (route?.from?.visible) list.push(route.from);
+        if (route?.to?.visible) {
             this.tempToBooth = null;
             list.push(route.to);
         }
@@ -44,7 +44,7 @@ export default class RouteStore {
             var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
-            if (route?.to && route?.from && !route?.from?.layer.visible && id !== route?.from?.id)  
+            if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)  
                 this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
         }, 200);
     }

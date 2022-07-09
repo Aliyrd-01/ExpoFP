@@ -26,7 +26,7 @@ export default class BoothStore {
 
     @computed({ keepAlive: true }) get borderWidth() {
         if (settings.EXPO === "groomexpo") return 0.4;
-        const ar = this.booths.map((x) => x.rect.w + x.rect.h);
+        const ar = this.booths.filter((b) => b.rect).map((x) => x.rect.w + x.rect.h);
         return ar.reduce((a, b) => a + b) / ar.length / 80;
     }
 
@@ -39,7 +39,7 @@ export abstract class BoothBase {
     protected readonly store: BoothStore;
     readonly id: number;
     readonly name: string;
-    readonly fullName: string;
+
     readonly externalId: string;
     readonly title: string;
     readonly rect: Rect;
@@ -50,10 +50,15 @@ export abstract class BoothBase {
     readonly slug: string;
     readonly error: boolean;
     readonly description: string;
-    readonly layer: Layer;
+    @observable layer: Layer;
 
     @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;
+    }
+
+    @computed({ keepAlive: true }) public get fullName() {
+        if (this.layer) return this.name + " ● " + this.layer.description;
+        return this.name;
     }
 
     @computed({ keepAlive: true }) get visible() {
@@ -102,6 +107,10 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     readonly reserved: boolean; // comes from status
 
     readonly exhibitors: Exhibitor[];
+
+    @computed({ keepAlive: true }) get visible() {
+        return this.layer?.visible ?? false;
+    }
 
     @computed({ keepAlive: true }) get bookmarked() {
         return !!this.exhibitors.find((x) => x.bookmarked);

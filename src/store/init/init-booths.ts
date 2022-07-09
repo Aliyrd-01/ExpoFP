@@ -44,6 +44,12 @@ export function iniAllBooths(store: RootStore) {
     for (const e of store.exhibitorStore.exhibitors) {
         sortByName(e.booths);
     }
+
+    store.boothStore.booths = booths as Booth[];
+
+    // dispose
+    delete data.booths;
+    logger.log("initBooths", store.boothStore.booths.length);
 }
 
 const layers = [];
@@ -86,7 +92,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
             // create fake booth
             booth = boothReg = new RegularBooth();
             booth.id = getNextId();
-            booth.fullName = booth.name = idInSvg.toUpperCase();
+            booth.name = idInSvg.toUpperCase();
 
             booth.slug = generateUniqueSlug(idInSvg);
             booth.error = true;
@@ -96,8 +102,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         } else layerBooths.push(booth);
 
         booth.layer = layerStore.layers.find((l) => l.name === layer);
-        if (booth.layer) booth.fullName = booth.name + " ● " + booth.layer.description;
-
+        
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
         if (boothReg) {
@@ -181,11 +186,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         }
     }
 
-    boothStore.booths = boothStore.booths.concat(layerBooths);
-
-    // dispose
-    delete data.booths;
-    logger.log("initBooths", boothStore.booths.length);
+    // boothStore.booths = boothStore.booths.concat(layerBooths);
 
     return layerBooths;
 }

@@ -1,7 +1,7 @@
 import { reaction } from "mobx";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
-import { boothStore } from "../../store";
+import { boothStore, layersStore } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
 import { Drawer } from "./drawing/Drawer1";
@@ -44,10 +44,10 @@ function calculate(booths: Booth[]) {
     }
     logger.log("hover segmentToRects", segmentToRects);
 }
-    
+
 reaction(
-    () => boothStore.booths,
-    () => calculate(boothStore.booths)
+    () => [boothStore.booths, layersStore.loaded],
+    () => calculate(boothStore.booths.filter((b) => b.rect))
 );
 
 let prevSegment: Rect;

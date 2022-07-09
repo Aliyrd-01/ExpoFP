@@ -177,8 +177,8 @@ function Wayfinding() {
                 <div className="wayInformationContainer">
                     {!data.hideWayInformation &&
                     settings.EXPO !== "bloomberg" &&
-                    uiState.selectedRoute?.from &&
-                    uiState.selectedRoute?.to ? (
+                    uiState.selectedRoute?.from.rect &&
+                    uiState.selectedRoute?.to.rect ? (
                         store.routeStore.routeLines.length ? (
                             <WayInformation
                                 items={getWayInformation(store.routeStore.routeDistance)}
