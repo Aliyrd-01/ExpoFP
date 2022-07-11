@@ -8,7 +8,7 @@ export default function initLayers(store: RootStore) {
     const { layerStore } = store;
 
     const fpLayers = window["__fpLayers"] as Layer[];
-    layerStore.mode = LayersMode.Radio;// window["__fpLayersMode"] || LayersMode.Default;
+    layerStore.mode = window["__fpLayersMode"] || LayersMode.Default;
 
     let layers: Layer[] = [];
     if (fpLayers) {
