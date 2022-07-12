@@ -21,6 +21,8 @@ interface Data {
     hideWayInformation: boolean;
     hideDirections: boolean;
     hideExhibitorBoothNumber: boolean;
+    hideExhibitors: boolean;
+    onlyFeaturedExhibitors: boolean;
     // hideCompanies: boolean;
     dimensionless: boolean;
     hideCategoriesLink: boolean;

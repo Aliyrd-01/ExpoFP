@@ -49,7 +49,8 @@ export function createDetailsCanvas(
     b: RegularBooth,
     pixelRatio: number,
     color: string = "#fff",
-    fontSize: number
+    fontSize: number,
+    onlyId: boolean
 ): CanvasDescriptor {
     //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
@@ -61,9 +62,9 @@ export function createDetailsCanvas(
         lines.push(t("On Hold"));
     } else if (b.reserved) {
         lines.push(t("Reserved"));
-    } else if (b.exhibitors.length) {
-        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
-    } else {
+    } /*else if (b.exhibitors.length) {
+            lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+        } */ else if (!onlyId) {
         if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
         if (b.price && b.price !== "0") lines.push(b.price);
     }
@@ -124,7 +125,8 @@ export function createExhibitorsDetailsCanvas(
     pixelRatio: number,
     color: string = "#fff",
     frontSize: number,
-    onlyMain: boolean
+    onlyMain: boolean,
+    onlyFeaturedExhibitors: boolean
 ): CanvasDescriptor {
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
@@ -135,7 +137,9 @@ export function createExhibitorsDetailsCanvas(
     const mainFont = getFont(mainFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
 
-    mainLines.push(...b.exhibitors.map((e) => e.name));
+    if (onlyFeaturedExhibitors) mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
+    else mainLines.push(...b.exhibitors.map((e) => e.name));
+
     if (!onlyMain) detailsLines.push(b.name);
 
     const maxTextWidth = Math.max(
