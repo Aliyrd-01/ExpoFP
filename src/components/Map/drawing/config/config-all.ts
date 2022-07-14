@@ -66,7 +66,7 @@ export default function configAll(context: DrawerContext = _context): void {
     configWf(context, basePriority++, true);
     configYah(context);
 
-    if (settings.EXPO !== "rodion2") return;
+    return;
 
     var booths = false;
     var edge = 10;

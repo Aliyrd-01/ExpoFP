@@ -98,7 +98,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
             booth.error = true;
             booth.exhibitors = [];
             boothsByName.set(idInSvg, booth as Booth);
-            booths.push(booth);
+            layerBooths.push(booth);
         } else layerBooths.push(booth);
 
         booth.layer = layerStore.layers.find((l) => l.name === layer);
