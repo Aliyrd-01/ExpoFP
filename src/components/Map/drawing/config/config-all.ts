@@ -27,11 +27,11 @@ export default function configAll(context: DrawerContext = _context): void {
     configCanvas(context);
 
     let basePriority = 6;
-    let { layers } = store.layerStore;
+    let { layers, defaultLayer } = store.layerStore;
 
-    if (store.layerStore.defaultLayer) {
+    if (defaultLayer) {
         const lrs = [].concat(layers);
-        const dl = layers.find((l) => l === store.layerStore.defaultLayer);
+        const dl = layers.find((l) => l === defaultLayer);
         const index = layers.indexOf(dl);
         lrs.splice(index, 1);
         layers = [dl].concat(lrs);
@@ -40,12 +40,10 @@ export default function configAll(context: DrawerContext = _context): void {
     var duration = 10;
     var animated = false;
     layers.forEach((layer) => {
-        loadLayer(layer, layer.visible || layer === store.layerStore.defaultLayer, context).then((configured) => {
+        loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
             if (!animated && configured) {
                 animated = true;
-                an(() => {
-                    setTimeout(() => cb(), 2 * duration);
-                }, duration);
+                an(() => setTimeout(() => cb(), 2 * duration), duration);
             }
         });
     });
