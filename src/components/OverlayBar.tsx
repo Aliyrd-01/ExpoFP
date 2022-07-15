@@ -1,6 +1,6 @@
+import classNames from "classnames";
 import React, { MouseEvent } from "react";
 import "./OverlayBar.scss";
-import classNames from "classnames";
 import OverlayBarBack from "./OverlayBarBack";
 
 const OverlayBar: React.FC<{

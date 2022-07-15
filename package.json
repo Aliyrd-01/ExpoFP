@@ -102,7 +102,7 @@
         "start": "serve dist",
         "docs": "cd docs && bundle exec jekyll serve",
         "check-locales": "cd scripts && ts-node check-locales.ts",
-        "storybook": "start-storybook -p 6006",
+        "storybook": "start-storybook -s ./public -p 6006",
         "build-storybook": "build-storybook"
     },
     "np": {

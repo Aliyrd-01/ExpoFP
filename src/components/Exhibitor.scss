@@ -224,7 +224,7 @@
             display: flex;
             > span {
                 white-space: nowrap;
-                max-width: 18rem;
+                max-width: 16rem;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
@@ -312,6 +312,10 @@
         display: block;
         width: 100%;
         background: #fff;
+    }
+
+    &__buttons {
+        margin: 0.65rem 1rem 0 1rem;
     }
 
     &__video {

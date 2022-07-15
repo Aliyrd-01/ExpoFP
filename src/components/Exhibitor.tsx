@@ -10,10 +10,9 @@ import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
 import { useAutorun, useReaction } from "../utils/mobx";
-import BookmarkSvg from "./BookmarkSvg";
-import Button from "./Button";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
@@ -97,11 +96,6 @@ function ExhibitorComponent() {
                         <span>{exhibitor.name}</span>
                         {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                     </span>
-                    {uiState.kiosk ? null : (
-                        <a href="/" onClick={bookmark} className="exhibitor__bar-bk">
-                            <BookmarkSvg />
-                        </a>
-                    )}
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
                     {data.boothTerm} {exhibitor.booths.map((b) => b.name).join(", ")}
@@ -156,6 +150,22 @@ function ExhibitorComponent() {
                 bar={bar}
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
+                <div className="exhibitor__buttons">
+                    <SibebarActions
+                        showBookmark={!uiState.kiosk}
+                        showDirections={settings.wayfinding}
+                        inBookmark={s.exhibitor.bookmarked}
+                        onClickBookmark={bookmark}
+                        onClickShare={handleShare}
+                        onClickDirections={() => {
+                            store.routeStore.clickRoute(
+                                null,
+                                store.routeStore.tempToBooth || exhibitor.booths[0],
+                                uiState.selectedRoute?.exceptUnaccessible || false
+                            );
+                        }}
+                    />
+                </div>
                 {exhibitor.leadingImageUrl ? (
                     <div className="exhibitor__leading-image-container exhibitor__slider">
                         {exhibitor.leadingImageLinkUrl ? (
@@ -199,20 +209,6 @@ function ExhibitorComponent() {
                             </a>
                         ))}
                     </div>
-                    {settings.wayfinding && (
-                        <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
-                            <Button
-                                text={t("Directions")}
-                                onClick={() => {
-                                    store.routeStore.clickRoute(
-                                        null,
-                                        store.routeStore.tempToBooth || exhibitor.booths[0],
-                                        uiState.selectedRoute?.exceptUnaccessible || false
-                                    );
-                                }}
-                            />
-                        </div>
-                    )}
                     {exhibitor.description || exhibitor.logo ? (
                         <div
                             className={classNames({
@@ -409,6 +405,22 @@ function ExhibitorComponent() {
         );
     });
 
+    function handleShare() {
+        const navigator: any = window.navigator;
+        const data = {
+            title: uiState.selectedExhibitor.name,
+            url: window.location.href,
+        };
+
+        const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini/i.test(navigator.userAgent);
+
+        if (mobile && navigator?.canShare(data)) {
+            navigator.share(data);
+        } else {
+            store.toggleModal("share");
+        }
+    }
+
     function handleCategoryClick(c: Category) {
         store.selectCategory(c);
     }
@@ -442,8 +454,7 @@ function ExhibitorComponent() {
         xhr.send(JSON.stringify({ id: s.exhibitor.id }));
     }
 
-    function bookmark(e: MouseEvent) {
-        e.preventDefault();
+    function bookmark() {
         s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
     }
 }

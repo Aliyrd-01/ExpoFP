@@ -3,5 +3,23 @@
 @import "base/common";
 
 body {
+    padding: 0 !important;
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+}
+
+.sbContent {
+    padding: 20px;
+}
+
+.map {
+    width: 100vw;
+    height: 100vh;
+    background: gray;
+}
+.sidebar {
+    width: 100%;
+    max-width: 376px;
+    height: 100vh;
+    padding: 20px 15px;
+    background: #fff;
 }
