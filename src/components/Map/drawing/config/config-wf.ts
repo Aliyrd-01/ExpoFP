@@ -103,11 +103,11 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        let layer = store.layerStore.layers.find((l) => l.name == line.layer);
+        let visible = store.layerStore.layers.find((l) => l.name == line.layer)?.visible ?? true;
 
-        if (!line.virtual && layer.visible) lines.push(line);
+        if (!line.virtual && visible) lines.push(line);
 
-        if ((line.virtual || !layer.visible || i === routeLines.length - 1) && lines.length) {
+        if ((line.virtual || !visible || i === routeLines.length - 1) && lines.length) {
             routePoints.push(...splitPolyLine(lines, interval));
             lines = [];
         }
