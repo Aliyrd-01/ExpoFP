@@ -63,11 +63,13 @@ export function createDetailsCanvas(
     } else if (b.reserved) {
         lines.push(t("Reserved"));
     } /*else if (b.exhibitors.length) {
+<<<<<<< HEAD
         lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } */ else if (!onlyId) {
-        if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
-        if (b.price && b.price !== "0") lines.push(b.price);
+        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     }
+    if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
+    if (b.price && b.price !== "0") lines.push(b.price);
 
     // }
 

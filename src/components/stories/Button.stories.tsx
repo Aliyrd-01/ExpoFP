@@ -13,9 +13,9 @@ const Template: Story<ButtonProps> = (args) => {
     };
 
     return (
-        <>
+        <div className="sbContent">
             <Button {...args} onClick={clicked} />
-        </>
+        </div>
     );
 };
 

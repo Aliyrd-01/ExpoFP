@@ -11,13 +11,13 @@ const Template: Story<CheckboxProps> = (args) => {
     const [value, setValue] = useState<boolean>(true);
 
     return (
-        <>
+        <div className="sbContent">
             <Checkbox {...args} onChange={setValue} value={value} />
             <br />
             <br />
             <strong>Current checked: </strong>
             {value.toString()}
-        </>
+        </div>
     );
 };
 
