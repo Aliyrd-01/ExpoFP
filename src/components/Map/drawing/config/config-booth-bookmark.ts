@@ -15,7 +15,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
     public locked: boolean;
 
     constructor(context: DrawerContext, booth: RegularBooth) {
-        super(context, booth, "booth-bookmark", RectPainter, 140);
+        super(context, booth, "booth-bookmark", RectPainter, 161);
         this.locked = context.updatable;
         const r = this.booth.rect.withPadding(boothStore.borderWidth / 2);
 
