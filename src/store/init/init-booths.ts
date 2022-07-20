@@ -64,10 +64,12 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     for (const el of d3
         .select(getLayerSvg(layerID))
         .selectAll(
-            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] g[id^=b], [data-layer='${layerID}']  rect[id^=b]`
+            `[data-layer='${layerID}'] > [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
-        const layer = (el.parentNode as SVGGraphicsElement).attributes["data-layer"].value;
+        const layer = (el.parentNode as SVGGraphicsElement).attributes["data-layer"]?.value;
+
+        if (!layer) continue;
 
         let rect: SVGRectElement;
         let pathsWithRect = false;
@@ -102,7 +104,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         } else layerBooths.push(booth);
 
         booth.layer = layerStore.layers.find((l) => l.name === layer);
-        
+
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
         if (boothReg) {
