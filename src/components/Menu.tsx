@@ -130,7 +130,13 @@ function Menu() {
                             className="menu__item -pdf"
                             target="_blank"
                             rel="noopener noreferrer"
-                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf`}
+                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/${
+                                store.layerStore.visible.find((l) => l.name == "Sizes") ? true : false
+                            }?layers=${
+                                store.layerStore.layers > store.layerStore.visible
+                                    ? store.layerStore.visible.map((l) => l.name).join(",")
+                                    : ""
+                            }`}
                         >
                             {" "}
                             {t("Download PDF")}
