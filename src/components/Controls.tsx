@@ -22,14 +22,7 @@ export default function Controls() {
         },
     }));
 
-
     return useObserver(() => {
-        const layers = store.layerStore.layers.map((l) => {
-            return { name: l.description, id: l.name, visible: l.visible };
-        });
-
-        const activeList = layers.filter((l) => l.visible).map((l) => l.id);
-
         return (
             <MapControls
                 className={s.className}
@@ -38,17 +31,12 @@ export default function Controls() {
                 onClickZoomIn={zoom.bind(window, 1)}
                 onClickZoomOut={zoom.bind(window, -1)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
-                layersActiveItems={activeList}
-                layersList={
-                    store.layerStore.mode === LayersMode.Radio || store.layerStore.mode === LayersMode.CheckBox ? layers : null
-                }
-                onChangeLayers={(layer) => {
-                    store.layerStore.updateVisibility(layer, activeList.indexOf(layer) === -1);                    
-                }}
+                layersActiveItems={[]}
+                layersList={null}
+                onChangeLayers={(layer) => {}}
             />
         );
     });
-
 
     function zoom(val: -1 | 1) {
         uiState.zoomBy = val;

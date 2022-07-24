@@ -45,9 +45,8 @@ export default observer(function Layout() {
                 <Ws />
                 <Controls />
                 {/* <Layers /> */}
-
                 {/*<Areas />*/}
-                {!store.layerStore.layers.length && <Floors />}
+                <Floors />
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxEnabled && (

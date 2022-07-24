@@ -16,6 +16,7 @@ export class Layer {
     basePriority: number;
     name: string;
     description: string;
+    frozen: boolean;
     rect: Rect = null;
     configured: boolean;
     @observable loaded: boolean;
@@ -28,7 +29,7 @@ export default class LayerStore {
     @observable mode: LayersMode;
 
     @computed({ keepAlive: true }) get visible() {
-        return this.layers.filter((l) => l.visible);
+        return this.layers.filter((l) => l.frozen || l.visible);
     }
 
     @computed({ keepAlive: true }) get loaded() {
@@ -36,7 +37,8 @@ export default class LayerStore {
     }
 
     @computed({ keepAlive: true }) get rectangle() {
-        return this.mode !== LayersMode.Radio ? null : this.visible[0]?.rect || null;
+        var l = this.visible.filter((l) => !l.frozen).map((l) => l.rect);      
+        return this.mode === LayersMode.Default || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
     @action updateVisibility(layerName: string, visible: boolean): void {
@@ -47,7 +49,7 @@ export default class LayerStore {
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
-                    if (l.name !== layerName) l.visible = false;
+                    if (l.name !== layerName && !l.frozen) l.visible = false;
                     else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }

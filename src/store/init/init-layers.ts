@@ -16,6 +16,7 @@ export default function initLayers(store: RootStore) {
             let l = new Layer();
             l.name = layer.name;
             l.description = layer.description;
+            l.frozen = layer.frozen;
             l.visible = layer.visible;
             l.rect = layer.rect;
             return l;
@@ -32,20 +33,23 @@ export default function initLayers(store: RootStore) {
                     l.name = layerID;
                     l.visible = true;
                     l.description = layer.getAttribute("data-layer-description") || layerID;
+                    l.frozen = layer.getAttribute("data-layer-isfrozen") === "true" ? true : false;
                     l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
                     layers.push(l);
                 }
             });
     }
 
+    layers = layers.filter((l) => !l.frozen || (l.frozen && l.visible));
+
     layerStore.defaultLayer = layers.find((l) => l.name === window["__fpDefaultLayer"]);
 
     layers.forEach((layer, index) => {
         layer.basePriority = 15 * (index + 1);
-        layer.visible = layer.visible && store.layerStore.mode !== LayersMode.Radio;
+        layer.visible = (layer.frozen && layer.visible) || (layer.visible && store.layerStore.mode !== LayersMode.Radio);
     });
 
-    if (!layers.find((l) => l.visible)) {
+    if (!layers.find((l) => !l.frozen && l.visible)) {
         if (layerStore.defaultLayer) layerStore.defaultLayer.visible = true;
         else layers[0].visible = true;
     }
