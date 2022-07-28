@@ -131,7 +131,7 @@ function Menu() {
                             target="_blank"
                             rel="noopener noreferrer"
                             href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/${
-                                store.layerStore.visible.find((l) => l.name == "Sizes") ? true : false
+                                store.layerStore.visible.find((l) => l.name === "Sizes") ? true : false
                             }?layers=${
                                 store.layerStore.layers > store.layerStore.visible
                                     ? store.layerStore.visible.map((l) => l.name).join(",")

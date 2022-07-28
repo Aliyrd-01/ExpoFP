@@ -1,54 +1,56 @@
-import { Line, lineAngle, lineLength, Point, pointInsideRectangle, Rect } from "simple-geometry";
+import { lineAngle, lineLength, Point, pointInsideRectangle, Rect } from "simple-geometry";
+import Polygon4 from "../core/Polygon";
+import { Booth } from "../store/BoothStore";
 
 const path = require("ngraph.path");
 const createGraph = require("ngraph.graph");
 
-export class RouteLine extends Line {
+export class RouteLine {
     constructor(
-        public p0: Point,
-        public p1: Point,
-        public layer: string,
+        public p0: RoutePoint,
+        public p1: RoutePoint,
         public unaccessible: boolean,
         public unidirection: boolean,
         public virtual: boolean,
         public ended: boolean,
         public weight: number
-    ) {
-        super(p0, p1);
-    }
+    ) {}
 }
 
-type Sublines = { lines: RouteLine[]; intersections: Point[]; lineEnds: Point[] };
+export class RoutePoint {
+    constructor(public layer: string, public x: number, public y: number) {}
+}
 
-const pointId = (p: Point): string => `${p.x.toFixed(0)}_${p.y.toFixed(0)}`;
+type Sublines = { lines: RouteLine[]; lineEnds: RoutePoint[] };
 
-const samePoint = (p1: Point, p2: Point): boolean => lineLength(p1, p2) <= 1;
+const pointId = (p: RoutePoint): string => `${p.layer}_${p.x}_${p.y}`;
 
-const sameLine = (l1: Line, l2: Line): boolean =>
-    (samePoint(l1.p0, l2.p0) && samePoint(l1.p1, l2.p1)) || (samePoint(l1.p0, l2.p1) && samePoint(l1.p1, l2.p0));
+const samePoint = (p1: RoutePoint, p2: RoutePoint): boolean => p1.layer === p2.layer && lineLength(p1, p2) <= 1;
+
+const sameLine = (l: RouteLine, p0: RoutePoint, p1: RoutePoint): boolean =>
+    (samePoint(l.p0, p0) && samePoint(l.p1, p1) && l.p0.layer === p0.layer && l.p1.layer === p1.layer) ||
+    (samePoint(l.p0, p1) && samePoint(l.p1, p0) && l.p0.layer === p1.layer && l.p1.layer === p0.layer);
 
 let sublines = (): Sublines => window["__wfData"];
 let pathFinder = { finder: null, oriented: true, exceptUnAccessible: false };
 
-function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean, virtualIsZero: boolean) {
+function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean) {
     const graph = createGraph();
     const t0 = performance.now();
 
-    let { intersections, lines } = sublines();
+    let { lines } = sublines();
 
-    intersections.forEach((intersect) => {
-        lines.forEach((line) => {
-            if ((samePoint(line.p0, intersect) || samePoint(line.p1, intersect)) && (!exceptUnAccessible || !line.unaccessible)) {
-                graph.addLink(pointId(line.p0), pointId(line.p1), {
-                    distance: virtualIsZero && line.virtual ? 0 : lineLength(line.p0, line.p1) / (line.weight || 4),
+    lines.forEach((line) => {
+        if (!exceptUnAccessible || !line.unaccessible) {
+            graph.addLink(pointId(line.p0), pointId(line.p1), {
+                distance: line.virtual ? 0 : lineLength(line.p0, line.p1) / (line.weight || 4),
+            });
+
+            if (oriented && !line.unidirection)
+                graph.addLink(pointId(line.p1), pointId(line.p0), {
+                    distance: line.virtual ? 0 : lineLength(line.p1, line.p0) / (line.weight || 4),
                 });
-
-                if (oriented && !line.unidirection)
-                    graph.addLink(pointId(line.p1), pointId(line.p0), {
-                        distance: virtualIsZero && line.virtual ? 0 : lineLength(line.p1, line.p0) / (line.weight || 4),
-                    });
-            }
-        });
+        }
     });
 
     pathFinder.oriented = oriented;
@@ -64,45 +66,55 @@ function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean, virtual
     console.debug(`WF. Graph created. ~ ${t1 - t0}ms.`);
 }
 
-function getLineByPoints(lines: RouteLine[], p0: Point, p1: Point): RouteLine {
-    return lines.filter((l) => sameLine(l, { p0, p1 }))[0];
+function getLineByPoints(lines: RouteLine[], p0: RoutePoint, p1: RoutePoint): RouteLine {
+    return lines.filter((l) => sameLine(l, p0, p1))[0];
 }
 
 export function getGraphLines(
-    fromRect: Rect,
-    toRect: Rect,
+    fromBooth: Booth,
+    toBooth: Booth,
     exceptUnAccessible: boolean = false,
-    disableCache: boolean = false,
-    virtualIsZero: boolean
+    disableCache: boolean = false
 ): RouteLine[] {
     let t0 = performance.now();
 
-    if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible || disableCache)
-        buildPathFinder(pathFinder.oriented, exceptUnAccessible, virtualIsZero);
+    const p1 = Polygon4.fromRect(fromBooth.rect).rotate(fromBooth.rotate, fromBooth.rect.cx, fromBooth.rect.cy);
+    const p2 = Polygon4.fromRect(toBooth.rect).rotate(toBooth.rotate, toBooth.rect.cx, toBooth.rect.cy);
 
-    const from: Point[] = [];
-    const to: Point[] = [];
+    const fromRect = new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
+    const toRect = new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4));
+
+    if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible || disableCache)
+        buildPathFinder(pathFinder.oriented, exceptUnAccessible);
+
+    const from: RoutePoint[] = [];
+    const to: RoutePoint[] = [];
 
     let { lines, lineEnds } = sublines();
 
     for (let i = 0; i < lineEnds.length; i++) {
-        const line = lineEnds[i];
+        const lineEnd = lineEnds[i];
 
-        const f = pointInsideRectangle(line, fromRect);
-        const t = pointInsideRectangle(line, toRect);
+        const f = lineEnd.layer === fromBooth.layer.name && pointInsideRectangle(lineEnd, fromRect);
+        const t = lineEnd.layer === toBooth.layer.name && pointInsideRectangle(lineEnd, toRect);
 
-        if (f) from.push(f);
-        if (t) to.push(t);
+        if (f) from.push(lineEnd);
+        if (t) to.push(lineEnd);
     }
 
-    const routePoints: Point[][] = [];
+    const routePoints: RoutePoint[][] = [];
 
     for (let i = 0; i < from.length; i++) {
         for (let j = 0; j < to.length; j++) {
             try {
                 const p = pathFinder.finder.find(pointId(from[i]), pointId(to[j]));
                 if (p.length)
-                    routePoints.push(p.map((p) => new Point(parseFloat(p.id.split("_")[0]), parseFloat(p.id.split("_")[1]))));
+                    routePoints.push(
+                        p.map(
+                            (p) =>
+                                new RoutePoint(p.id.split("_")[0], parseFloat(p.id.split("_")[1]), parseFloat(p.id.split("_")[2]))
+                        )
+                    );
             } catch (e) {
                 console.warn(e);
             }
@@ -131,7 +143,7 @@ export function getGraphLines(
 
         let line = getLineByPoints(lines, pp, cp);
 
-        let l = new RouteLine(pp, cp, line.layer, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
+        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
 
         if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
             l.p0 = pp;

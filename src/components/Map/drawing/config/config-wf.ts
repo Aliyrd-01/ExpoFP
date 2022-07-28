@@ -1,7 +1,6 @@
 import Color from "color";
 import { reaction } from "mobx";
 import { Line, lineAngle, lineCenter, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
-import Polygon4 from "../../../../core/Polygon";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { uiState } from "../../../../store";
@@ -103,7 +102,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        let visible = store.layerStore.layers.find((l) => l.name == line.layer)?.visible ?? true;
+        let visible = store.layerStore.layers.find((l) => l.name == line.p0.layer)?.visible ?? true;
 
         if (!line.virtual && visible) lines.push(line);
 
@@ -250,16 +249,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
-            const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
-
-            routeLines = getGraphLines(
-                new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
-                new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                uiState.selectedRoute.exceptUnaccessible,
-                false,
-                true
-            );
+            routeLines = getGraphLines(from, to, uiState.selectedRoute.exceptUnaccessible, false);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);

@@ -96,7 +96,7 @@ function Wayfinding() {
 
         var layers = [];
         store.routeStore.routeLines
-            ?.map((rl) => rl.layer)
+            ?.map((rl) => rl.p0.layer)
             .reverse()
             .forEach((l) => {
                 if (layers.indexOf(l) === -1) layers.push(l);
@@ -132,7 +132,7 @@ function Wayfinding() {
                                     {layers.map((l) => (
                                         <a
                                             key={l}
-                                            href="#"
+                                            href="/"
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 store.layerStore.updateVisibility(l, true);
