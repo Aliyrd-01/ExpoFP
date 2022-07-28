@@ -50,7 +50,7 @@ d3.select(svg)
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
-settings.wayfinding = !data.hideDirections && d3.select(svg).select('[data-layer="WF"]>path').node() ? true : false;
+settings.wayfinding = !data.hideDirections && d3.select(svg).select('[data-layer^="WF"]>path').node() ? true : false;
 
 let svgArea: Rect;
 

@@ -7,6 +7,7 @@ import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import baseUrl from "../tools/base-data-url";
 import logger from "../tools/logger";
+import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
@@ -122,7 +123,15 @@ function Menu() {
                         </a>
                     )}
                     {!data.hideDownloadPdfLink && !uiState.kiosk && (
-                        <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
+                        // <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
+                        //     {t("Download PDF")}
+                        // </a>
+                        <a
+                            className="menu__item -pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/`}
+                        >                            
                             {t("Download PDF")}
                         </a>
                     )}
