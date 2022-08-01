@@ -34,9 +34,9 @@ const SidebarActions: React.FC<SidebarActionsProps> = ({
                 >
                     <svg className="icon">
                         {inBookmark ? (
-                            <use xlinkHref={`${sprite}#bookmark-line-active`}></use>
+                            <use href={`${sprite}#bookmark-line-active`}></use>
                         ) : (
-                            <use xlinkHref={`${sprite}#bookmark-line`}></use>
+                            <use href={`${sprite}#bookmark-line`}></use>
                         )}
                     </svg>
                     <span className="text">{t("Bookmark")}</span>
@@ -45,7 +45,7 @@ const SidebarActions: React.FC<SidebarActionsProps> = ({
             {showDirections && (
                 <button type="button" className="actionButton actionButton--directions" onClick={onClickDirections}>
                     <svg className="icon">
-                        <use xlinkHref={`${sprite}#directions-line`}></use>
+                        <use href={`${sprite}#directions-line`}></use>
                     </svg>
                     <span className="text">{t("Directions")}</span>
                 </button>
@@ -53,9 +53,9 @@ const SidebarActions: React.FC<SidebarActionsProps> = ({
             {showShare && (
                 <button type="button" className="actionButton actionButton--share" onClick={onClickShare}>
                     <svg className="icon">
-                        <use xlinkHref={`${sprite}#share-line`}></use>
+                        <use href={`${sprite}#share-line`}></use>
                     </svg>
-                    <span className="text">{i18next.language === "en" && "Share"}</span>
+                    {i18next.language === "en" && <span className="text">Share</span>}
                 </button>
             )}
         </div>
