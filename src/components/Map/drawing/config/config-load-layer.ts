@@ -7,6 +7,7 @@ import { DrawerContext } from "../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
+import configSizes from "./config-sizes";
 
 export default async function loadLayer(
     layer: Layer,
@@ -30,6 +31,8 @@ export default async function loadLayer(
             configBooths(context, layer.name, booths, layer.basePriority + 3, layer.visible)();
             context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
+
+        configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
 
         if (!withConfiguration) return resolve(false);
         layer.configured = true;

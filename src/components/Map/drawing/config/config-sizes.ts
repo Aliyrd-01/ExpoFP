@@ -5,15 +5,12 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
+let ids: string[] = [];
+let edge = 0.5;
 export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
-    let painter: RectPainter = null;
-    let ids: string[] = [];
-    let _visible = true;
-    let edge = 0.5;
-
     const labelCanvasCache = new Map<string, CanvasDescriptor>();
 
-    (select(getLayerSvg(layerID)).selectAll("text").nodes() as SVGImageElement[]).forEach((text) => {
+    (select(getLayerSvg(layerID)).selectAll("text").nodes() as SVGTextElement[]).forEach((text) => {
         const transform = text.getAttribute("transform");
         const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\)( rotate\(([-0-9.]+)\))?/);
         if (mt) {
@@ -26,6 +23,9 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             var dbl = text.getAttribute("dominant-baseline");
             let w = parseFloat(text.getAttribute("data-w"));
             let h = parseFloat(text.getAttribute("data-h"));
+            var fontSize = parseFloat(text.getAttribute("font-size")) * 2;
+
+            var fill = text.style?.fill ?? "#000000";
 
             var align = "center";
             if (anchor === "end" && dbl === "auto") {
@@ -34,24 +34,24 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
                 ty -= h / 2;
             }
 
-            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align);
+            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize, fill);
         }
     });
 
-    function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number = 18) {
+    function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number, color: string) {
         let canvas = labelCanvasCache.get(text);
         if (!canvas) {
-            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, "#FFFFFF");
+            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, color);
             labelCanvasCache.set(text, canvas);
         }
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
-        if (!painter) painter = context.requirePainter(`${layerID}:`, RectPainter, painterOrderPriority, visible);
+        const p = context.requirePainter(`${layerID}:Sizes`, RectPainter, painterOrderPriority, visible);
 
-        var id = `${cX}${cY}`;
-        ids.push(id);
-        painter.addObject({
+        var id = `${layerID}${cX}${cY}`;
+        ids.push(layerID);
+        p.addObject({
             id: id,
             rotateRadians: angle,
             center: [cX, cY],
@@ -59,19 +59,18 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
             texPosition: alignment,
-            visible: _visible,
         });
     }
 
-    if (context.updatable) {
-        reaction(
-            () => context.ptscale,
-            () => {
-                if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
-                    _visible = !_visible;
-                    ids.forEach((id) => painter.updateVisible(id, _visible));
-                }
-            }
-        );
-    }
+    // if (context.updatable) {
+    //     reaction(
+    //         () => context.ptscale,
+    //         () => {
+    //             if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
+    //                 _visible = !_visible;
+    //                 ids.forEach((id) => painters.updateVisible(id, _visible));
+    //             }
+    //         }
+    //     );
+    // }
 }
