@@ -18,12 +18,18 @@ function measureText(font: string, text: string) {
     return ctx.measureText(text).width;
 }
 
-export function createLabelCanvas(text: string, fontSize: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+export function createLabelCanvas(
+    text: string,
+    fontSize: number,
+    pixelRatio: number,
+    color: string = "#fff",
+    fontWeight: number
+): CanvasDescriptor {
     text = text.replace(/^_/, "");
     fontSize *= pixelRatio;
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
-    const font = getFont(fontSize, 500);
+    const font = getFont(fontSize, fontWeight);
     const width = measureText(font, text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A")) + 3 + 3; //
     const vPad = 4;
     const height = fontSize + vPad;

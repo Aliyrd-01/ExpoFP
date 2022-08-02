@@ -232,7 +232,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, fillStyle);
+        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, fillStyle, 500);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 

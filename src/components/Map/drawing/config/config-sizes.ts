@@ -5,8 +5,11 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
+let painters: RectPainter[] = [];
 let ids: string[] = [];
-let edge = 0.5;
+let edge = 0.8;
+let _visible = false;
+
 export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
     const labelCanvasCache = new Map<string, CanvasDescriptor>();
 
@@ -25,7 +28,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             let h = parseFloat(text.getAttribute("data-h"));
             var fontSize = parseFloat(text.getAttribute("font-size")) * 2;
 
-            var fill = text.style?.fill ?? "#000000";
+            var fill = text.style?.fill ?? "#FFFFFF";
 
             var align = "center";
             if (anchor === "end" && dbl === "auto") {
@@ -41,16 +44,17 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
     function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number, color: string) {
         let canvas = labelCanvasCache.get(text);
         if (!canvas) {
-            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, color);
+            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, color, 100);
             labelCanvasCache.set(text, canvas);
         }
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
         const p = context.requirePainter(`${layerID}:Sizes`, RectPainter, painterOrderPriority, visible);
+        if (painters.indexOf(p) == -1) painters.push(p);
 
-        var id = `${layerID}${cX}${cY}`;
-        ids.push(layerID);
+        var id = `${layerID}:${cX}${cY}`;
+        ids.push(id);
         p.addObject({
             id: id,
             rotateRadians: angle,
@@ -59,18 +63,22 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             deltaPts: [-w, -h, w, h],
             canvasTmp: canvas,
             texPosition: alignment,
+            visible: _visible,
         });
     }
 
-    // if (context.updatable) {
-    //     reaction(
-    //         () => context.ptscale,
-    //         () => {
-    //             if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
-    //                 _visible = !_visible;
-    //                 ids.forEach((id) => painters.updateVisible(id, _visible));
-    //             }
-    //         }
-    //     );
-    // }
+    if (context.updatable) {
+        reaction(
+            () => context.ptscale,
+            () => {
+                if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
+                    _visible = !_visible;
+                    ids.forEach((id) => {
+                        var la = id.substring(0, id.indexOf(":"));
+                        painters.find((p) => p.id == `${la}:Sizes`).updateVisible(id, _visible);
+                    });
+                }
+            }
+        );
+    }
 }
