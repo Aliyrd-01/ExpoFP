@@ -32,7 +32,7 @@ export default async function loadLayer(
             context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
 
-        configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
+       // configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
 
         if (!withConfiguration) return resolve(false);
         layer.configured = true;
