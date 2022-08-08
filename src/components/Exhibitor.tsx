@@ -155,6 +155,7 @@ function ExhibitorComponent() {
                         showBookmark={!uiState.kiosk}
                         showDirections={settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
+                        showShare={!uiState.kiosk}
                         onClickBookmark={bookmark}
                         onClickShare={handleShare}
                         onClickDirections={() => {
