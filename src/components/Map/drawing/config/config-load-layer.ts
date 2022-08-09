@@ -19,18 +19,19 @@ export default async function loadLayer(
     return new Promise(async (resolve, reject) => {
         if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
             try {
-                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);
-                layer.loaded = true;
+                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);               
             } catch {
                 return reject();
             }
-        } else if (store.layerStore.mode === LayersMode.Default) layer.loaded = true;
+        } 
 
         const booths = initBooths(store, layer.name);
         if (booths.length) {
             configBooths(context, layer.name, booths, layer.basePriority + 3, layer.visible)();
             context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
+
+        layer.loaded = true;
 
        // configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
 

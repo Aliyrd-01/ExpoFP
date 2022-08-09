@@ -102,7 +102,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        let visible = store.layerStore.layers.find((l) => l.name == line.p0.layer)?.visible ?? true;
+        let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
 
         if (!line.virtual && visible) lines.push(line);
 
