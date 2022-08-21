@@ -18,6 +18,7 @@ export default function configAll(context: DrawerContext) {
     const { after: matrixAfter, animate: matrixAnimate } = configMatrix(context);
     configDim(context);
     configCanvas(context);
+    configYah(context);
 
     let boothsAnimate = null;
     let basePriority = 6;
@@ -34,9 +35,9 @@ export default function configAll(context: DrawerContext) {
         });
 
     if (settings.EXPO === "axc2022") configImg(context, 170);
+
     configWf(context, 161);
 
-    configYah(context);
     matrixAfter();
 
     return function () {

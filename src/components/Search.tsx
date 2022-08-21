@@ -147,15 +147,16 @@ function Search() {
             } else if (commandValue === "none") {
                 YouAreHere.removeYah();
                 window.location.replace(window.location.origin);
-            }
-            else if (commandValue.split(",").length === 2 || commandValue.split(",").length === 3) {
+            } else if (commandValue.split(",").length === 1) {
+                YouAreHere.setYah(commandValue.split(",")[0]);
+            } else if (commandValue.split(",").length === 2 || commandValue.split(",").length === 3) {
                 const yahValues = commandValue.split(",");
                 const yahX = parseFloat(yahValues[0].trim());
                 const yahY = parseFloat(yahValues[1].trim());
                 let scale = 1;
                 if (commandValue.split(",").length === 3) scale = parseFloat(yahValues[2].trim());
                 if (!!yahX && !!yahY) {
-                    YouAreHere.setYah(yahX, yahY, scale);
+                    YouAreHere.setYah(`${yahX},${yahY},${scale}`);
                     window.location.replace(window.location.origin);
                 }
             }

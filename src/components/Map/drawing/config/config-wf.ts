@@ -70,24 +70,6 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     return cp;
 }
 
-function getNearestBooth(point: Point): Booth {
-    var booth = null;
-
-    const booths = boothStore.booths.map((b) => {
-        const lineCenterBooth = lineCenter(point, { x: b.rect.cx, y: b.rect.cy });
-        return {
-            lineLength: lineLength(point, lineCenterBooth),
-            name: b.name,
-        };
-    });
-
-    const nearest = booths.sort((b1, b2) => b1.lineLength - b2.lineLength)[0];
-
-    booth = boothStore.booths.find((b) => b.name === nearest.name);
-
-    return booth;
-}
-
 function drawLines(wfDrawer: RectPainter, ptscale: number) {
     routePoints.forEach((rp, i) => wfDrawer.updateVisible(`Dot_${i}`, false));
 

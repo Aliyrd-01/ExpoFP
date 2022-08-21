@@ -1,7 +1,8 @@
 import Color from "color";
-import { DrawerContext } from "../Drawer1";
-import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
+import store from "../../../../store";
 import { getYah } from "../../../../utils/yah";
+import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
+import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 
 export default function configYah(context: DrawerContext) {
@@ -10,7 +11,22 @@ export default function configYah(context: DrawerContext) {
 
     const yah = getYah();
     if (!!yah) {
-        addYah(yah[0], yah[1], yah[2]);
+        const booth = !Array.isArray(yah)
+            ? store.boothStore.booths.find((b) => b.name == yah)
+            : store.boothStore.getBoothAtPoint({ x: yah[0], y: yah[1] });
+
+        store.routeStore.fixedFrom = booth;
+
+        if (booth) {
+            store.boothStore.booths
+                .filter((b) => b.title?.match(/You\s+are\s+here/gi) && b !== booth)
+                .forEach((btr) => store.boothStore.booths.splice(store.boothStore.booths.indexOf(btr), 1));
+            return;
+        }
+
+        var [x, y, s] = yah as number[];
+
+        addYah(x, y, s);
     }
 
     function addYah(yahX: number, yahY: number, scale: number) {
@@ -53,7 +69,7 @@ export default function configYah(context: DrawerContext) {
             p[1] = Math.abs(p[1]);
             p.length = 2;
         }
-    
+
         return mesh.cells.map((c) => ({
             p0: mesh.positions[c[0]],
             p1: mesh.positions[c[1]],
@@ -61,6 +77,4 @@ export default function configYah(context: DrawerContext) {
             color,
         }));
     }
-
-    return () => {};
 }
