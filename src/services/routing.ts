@@ -1,5 +1,6 @@
 import { createBrowserHistory } from "history";
 import { autorun } from "mobx";
+import { hanleCustomCommand } from "../components/Search";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -40,8 +41,10 @@ function historyReplace(search: string) {
 function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
     disableStateToUrl = true;
+
     const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
-    if (slug.startsWith("route")) {
+    if (hanleCustomCommand(slug)) {
+    } else if (slug.startsWith("route")) {
         const parts = slug.split(":");
         const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
         const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
