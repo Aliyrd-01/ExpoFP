@@ -88,6 +88,8 @@ function Menu() {
     return useObserver(() => {
         if (!uiState.menu) return null;
 
+        const bookmarks = (store.boothStore.booths as any).filter((b: any) => b.bookmarked).map((b: any) => b.name) as string[];
+
         return (
             <OverlayContent
                 className={`menu ${s.shown ? "shown" : ""}`}
@@ -130,8 +132,8 @@ function Menu() {
                             className="menu__item -pdf"
                             target="_blank"
                             rel="noopener noreferrer"
-                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/`}
-                        >                            
+                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(",")}`}
+                        >
                             {t("Download PDF")}
                         </a>
                     )}
