@@ -231,7 +231,7 @@ function ExhibitorComponent() {
                             ) : null}
                         </div>
                     ) : null}
-                    {exhibitor.videoUrl ? (
+                    {!uiState.kiosk && exhibitor.videoUrl ? (
                         <div className="exhibitor__video">
                             <iframe
                                 src={exhibitor.videoUrl}
