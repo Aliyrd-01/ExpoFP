@@ -46,13 +46,16 @@ export default function initLayers(store: RootStore) {
 
     layers.forEach((layer, index) => {
         layer.basePriority = 15 * (index + 1);
-        layer.visible = (layer.frozen && layer.visible) || (layer.visible && store.layerStore.mode !== LayersMode.Radio);
+       // layer.visible = (layer.frozen && layer.visible) || (layer.visible && store.layerStore.mode !== LayersMode.Radio);
     });
 
-    if (!layers.find((l) => !l.frozen && l.visible)) {
-        if (layerStore.defaultLayer) layerStore.defaultLayer.visible = true;
-        else layers[0].visible = true;
-    }
+    // if (!layers.find((l) => !l.frozen && l.visible)) {
+
+    //     if (layerStore.defaultLayer) layerStore.defaultLayer.visible = true;
+    //     else layers[0].visible = true;
+    // }
+
+    
 
     layerStore.layers.push(...layers);
 }
