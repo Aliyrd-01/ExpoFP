@@ -40,6 +40,10 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         mapping = { "1": { x: 2399, y: 1998 }, "2": { x: 2000, y: 3300 } };
     }
 
+    if (settings.EXPO === "autumnfair2022") {
+        mapping = { "0": { x: 7330, y: 1190 } };
+    }
+
     if (settings.EXPO.indexOf("cannes") > -1) {
         mapping = {
             "-1": { x: 10460, y: 12534 },
