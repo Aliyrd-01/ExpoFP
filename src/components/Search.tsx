@@ -172,7 +172,7 @@ function Search() {
     }
 
     function handleBlur() {
-        uiState.searchFocused = false;
+        setTimeout(() => (uiState.searchFocused = false), 200);
     }
 
     function handleKeydown(e: KeyboardEvent) {

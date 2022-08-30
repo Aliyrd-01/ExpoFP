@@ -16,7 +16,7 @@ export default function Controls() {
         },
         get style() {
             return {
-                left: uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
+                left: uiState.overlayCollapsed ? 10 : uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
                 top: uiState.mapVisibleTop + remsToPixels(0.7) + "px",
             };
         },

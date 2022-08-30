@@ -100,6 +100,18 @@ export default class UIState {
         if (!this.screenSize || this.screenSize.width > 550) return "left";
         return "bottom";
     }
+
+    @computed get overlayCollapsed() {
+        return (
+            this.overlayPosition === "left" &&
+            !this.searchFocused &&
+            !this.menu &&
+            !this.details &&
+            !this.selectedCategory &&
+            !this.selectedExhibitor && this.list.type !== "bookmarks"
+        );
+    }
+
     @computed get overlaySize(): OverlaySize {
         if (this.overlayLeft) return "full";
         return this.desiredOverlaySize;
