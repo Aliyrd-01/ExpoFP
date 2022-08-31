@@ -3,7 +3,6 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { svgArea } from "../data/svg";
 import store, { uiState } from "../store";
-import { LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
@@ -17,7 +16,7 @@ export default function Controls() {
         get style() {
             return {
                 left: uiState.overlayCollapsed ? 10 : uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
-                top: uiState.mapVisibleTop + remsToPixels(0.7) + "px",
+                top: uiState.overlayCollapsed ? remsToPixels(4.5) : uiState.mapVisibleTop + remsToPixels(0.7) + "px",
             };
         },
     }));

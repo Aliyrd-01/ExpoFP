@@ -65,7 +65,6 @@ export default function configAll(context: DrawerContext = _context): void {
     };
 
     configWf(context, basePriority++, true);
-    configYah(context);
 
     return;
 

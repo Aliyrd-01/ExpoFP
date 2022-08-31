@@ -103,12 +103,14 @@ export default class UIState {
 
     @computed get overlayCollapsed() {
         return (
+            this.kiosk &&
             this.overlayPosition === "left" &&
             !this.searchFocused &&
             !this.menu &&
             !this.details &&
             !this.selectedCategory &&
-            !this.selectedExhibitor && this.list.type !== "bookmarks"
+            !this.selectedExhibitor &&
+            this.list.type !== "bookmarks"
         );
     }
 
