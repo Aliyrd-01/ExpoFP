@@ -1,3 +1,4 @@
+import { lineLength, lineRectangleIntersections, pointInsideRectangle, Rect as Rectangle } from "simple-geometry";
 // import { observable } from 'mobx';
 import { computed, observable } from "mobx";
 import Rect from "../core/Rect";
@@ -32,6 +33,42 @@ export default class BoothStore {
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
+    }
+
+    public getNearestBooth(point: Point): Booth {
+        var booth: Booth = null;
+
+        const booths = this.booths.map((b) => {
+            const { x1, x2, y1, y2 } = b.rect;
+            const w = Math.abs(x2 - x1);
+            const h = Math.abs(y2 - y1);
+            return {
+                lineLength: lineLength(
+                    point,
+                    lineRectangleIntersections(
+                        { p0: point, p1: { x: b.rect.cx, y: b.rect.cy } },
+                        new Rectangle({ x: x1, y: y1 }, { x: x1 + w, y: y1 }, { x: x1 + w, y: y1 + h }, { x: x1, y: y1 + h })
+                    )[0]
+                ),
+                name: b.name,
+            };
+        });
+
+        const nearest = booths.sort((b1, b2) => b1.lineLength - b2.lineLength)[0];
+
+        booth = this.booths.find((b) => b.name === nearest.name);
+
+        return booth;
+    }
+
+    public getBoothAtPoint(point: Point): Booth {
+        return this.booths.find((b) => {
+            const { x1, x2, y1, y2 } = b.rect;
+            const w = Math.abs(x2 - x1);
+            const h = Math.abs(y2 - y1);
+            const r = new Rectangle({ x: x1, y: y1 }, { x: x1 + w, y: y1 }, { x: x1 + w, y: y1 + h }, { x: x1, y: y1 + h });
+            return pointInsideRectangle(point, r);
+        });
     }
 }
 

@@ -1,4 +1,6 @@
 import Color from "color";
+import { Point } from "simple-geometry";
+import store from "../../../../store";
 import { getYah } from "../../../../utils/yah";
 import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
 import { DrawerContext } from "../Drawer1";
@@ -9,9 +11,23 @@ export default function configYah(context: DrawerContext) {
     let drawerSeq = 0;
 
     const yah = getYah();
-    if (!!yah) {
-        addYah(yah[0], yah[1], yah[2]);
-    }
+
+    const isArray = Array.isArray(yah) || false;
+
+    const booth = !isArray
+        ? store.boothStore.booths.find((b) => b.name == yah)
+        : store.boothStore.getBoothAtPoint(new Point((yah as number[])[0], (yah as number[])[1]));
+
+    store.routeStore.fixedFrom = booth;
+
+    store.boothStore.booths
+        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== booth)
+        .forEach((btr) => store.boothStore.booths.splice(store.boothStore.booths.indexOf(btr), 1));
+
+    if (!yah || !isArray) return;
+
+    var [x, y, s] = yah as number[];
+    addYah(x, y, s);
 
     function addYah(yahX: number, yahY: number, scale: number) {
         let yahmesh = yahIcon as any;

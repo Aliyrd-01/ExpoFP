@@ -226,7 +226,7 @@ export default class UIState {
         const matchingBooths = boothsArray.filter(
             (e) =>
                 (!(e instanceof RegularBooth) || !matchingExhibitors.find((x) => x.booths.indexOf(e) !== -1)) &&
-                e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
+                (e.title || e.name).toLowerCase().indexOf(text.toLowerCase()) !== -1
         );
 
         items.push(...matchingExhibitors);

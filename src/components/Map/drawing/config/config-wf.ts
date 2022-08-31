@@ -40,6 +40,10 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         mapping = { "1": { x: 2399, y: 1998 }, "2": { x: 2000, y: 3300 } };
     }
 
+    if (settings.EXPO === "autumnfair2022") {
+        mapping = { "0": { x: 7330, y: 1190 } };
+    }
+
     if (settings.EXPO.indexOf("cannes") > -1) {
         mapping = {
             "-1": { x: 10460, y: 12534 },
@@ -68,24 +72,6 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     cp.y += shift.y;
 
     return cp;
-}
-
-function getNearestBooth(point: Point): Booth {
-    var booth = null;
-
-    const booths = boothStore.booths.map((b) => {
-        const lineCenterBooth = lineCenter(point, { x: b.rect.cx, y: b.rect.cy });
-        return {
-            lineLength: lineLength(point, lineCenterBooth),
-            name: b.name,
-        };
-    });
-
-    const nearest = booths.sort((b1, b2) => b1.lineLength - b2.lineLength)[0];
-
-    booth = boothStore.booths.find((b) => b.name === nearest.name);
-
-    return booth;
 }
 
 function drawLines(wfDrawer: RectPainter, ptscale: number) {

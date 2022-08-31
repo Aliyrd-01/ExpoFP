@@ -155,6 +155,7 @@ function ExhibitorComponent() {
                         showBookmark={!uiState.kiosk}
                         showDirections={settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
+                        showShare={!uiState.kiosk}
                         onClickBookmark={bookmark}
                         onClickShare={handleShare}
                         onClickDirections={() => {
@@ -230,7 +231,7 @@ function ExhibitorComponent() {
                             ) : null}
                         </div>
                     ) : null}
-                    {exhibitor.videoUrl ? (
+                    {!uiState.kiosk && exhibitor.videoUrl ? (
                         <div className="exhibitor__video">
                             <iframe
                                 src={exhibitor.videoUrl}

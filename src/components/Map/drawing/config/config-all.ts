@@ -25,6 +25,7 @@ export default function configAll(context: DrawerContext = _context): void {
     const { animate: an } = configMatrix(context);
     configDim(context);
     configCanvas(context);
+    configYah(context);
 
     let basePriority = 6;
     let { layers, defaultLayer } = store.layerStore;
