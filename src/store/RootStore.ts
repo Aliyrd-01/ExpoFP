@@ -162,6 +162,7 @@ export default class RootStore {
 
         if (!booth) {
             this.uiState.details = null;
+            if (this.uiState.onBoothClick) this.uiState.onBoothClick({ target: null });
             return;
         } else this.routeStore.tempToBooth = booth;
 
@@ -178,20 +179,6 @@ export default class RootStore {
             this.selectBooth(booth, false);
         }
         this.showMap();
-        // commit("setMenu", false);
-        // if (!id) {
-        //     commit("setDetails", null);
-        //     return;
-        // }
-        // // const booth = state.booths[id];
-        // if (booth.exhibitors && booth.exhibitors.length === 1) {
-        //     dispatch("selectExhibitor", booth.exhibitors[0]);
-        //     // } else if (booth.exhibitors.length > 1) {
-        //     //     dispatch('selectSearch', booth.name);
-        // } else {
-        //     dispatch("selectBooth", id);
-        // }
-        // dispatch("showMap", id);
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {

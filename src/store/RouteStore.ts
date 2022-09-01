@@ -23,6 +23,9 @@ export default class RouteStore {
     }
 
     @action selectRoute(route: Route) {
+
+        
+
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
 
         if (route?.from && route?.to && route.from === route.to) route = null;
@@ -42,6 +45,8 @@ export default class RouteStore {
             this.tempToBooth = null;
             list.push(route.to);
         }
+
+        if (!route && store.fp.onDirection) store.fp.onDirection(null);
 
         setTimeout(() => {
             this.rootStore.moveToList(list);
