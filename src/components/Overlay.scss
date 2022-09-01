@@ -2,6 +2,11 @@
     position: fixed;
     bottom: 0;
 
+    &.collapsed {
+        bottom: unset;
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 1px;
+    }
+
     // -webkit-backdrop-filter: saturate(180%) blur(20px);
     background-color: #fff;
     transition: background-color 0.5s;

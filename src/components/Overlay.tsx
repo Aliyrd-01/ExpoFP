@@ -41,6 +41,10 @@ export default observer(function Overlay() {
             logger.log("noMove populate");
             return uiState.overlayPosition === "left";
         },
+
+        get collapsed() {
+            return uiState.overlayCollapsed ? "collapsed" : "";
+        },
     }));
 
     // use useLayoutEffect for this thing to not jump
@@ -177,7 +181,11 @@ export default observer(function Overlay() {
     }, [s]);
 
     return (
-        <div className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition}`} id="overlay" ref={el}>
+        <div
+            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed}`}
+            id="overlay"
+            ref={el}
+        >
             {s.noMove}
             <Menu />
             <Search />

@@ -99,6 +99,21 @@ export default class UIState {
         if (!this.screenSize || this.screenSize.width > 550) return "left";
         return "bottom";
     }
+
+    @computed get overlayCollapsed() {
+        return (
+            this.kiosk &&
+            this.overlayPosition === "left" &&
+            !this.searchFocused &&
+            !this.menu &&
+            !this.details &&
+            !this.selectedCategory &&
+            !this.selectedExhibitor &&
+            this.list.type !== "bookmarks" &&
+            !(this.list as any).text.length
+        );
+    }
+
     @computed get overlaySize(): OverlaySize {
         if (this.overlayLeft) return "full";
         return this.desiredOverlaySize;
@@ -166,6 +181,7 @@ export default class UIState {
 
     // misc
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
+        if (uiState.overlayCollapsed) return false;
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
         if (

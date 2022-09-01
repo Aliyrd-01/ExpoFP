@@ -14,8 +14,8 @@ export default function Controls() {
         },
         get style() {
             return {
-                left: uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
-                top: uiState.mapVisibleTop + remsToPixels(0.7) + "px",
+                left: uiState.overlayCollapsed ? remsToPixels(0.9) : uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
+                top: uiState.overlayCollapsed ? remsToPixels(4.5) : uiState.mapVisibleTop + remsToPixels(0.7) + "px",
             };
         },
     }));
