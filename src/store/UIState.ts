@@ -168,7 +168,12 @@ export default class UIState {
     // visible rect
     @computed get canvasVisibleRectPx(): Rect {
         const s = this.screenSize;
-        return Rect.fromX1y1x2y2(this.mapVisibleLeft, this.mapVisibleTop, s.width, s.height - this.mapVisibleBottom);
+        return Rect.fromX1y1x2y2(
+            uiState.kiosk ? 0 : this.mapVisibleLeft,
+            this.mapVisibleTop,
+            s.width,
+            s.height - this.mapVisibleBottom
+        );
     }
 
     @computed get canvasVisibleRectPt(): Rect {

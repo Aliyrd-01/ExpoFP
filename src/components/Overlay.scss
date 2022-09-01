@@ -2,9 +2,14 @@
     position: fixed;
     bottom: 0;
 
+    &.kiosk {
+        margin: 10px;
+        border-radius: 5px;
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 6px;
+    }
+
     &.collapsed {
         bottom: unset;
-        box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 1px;
     }
 
     // -webkit-backdrop-filter: saturate(180%) blur(20px);
