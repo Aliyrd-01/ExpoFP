@@ -29,6 +29,7 @@ const OverlayContent: React.FC<{
         };
 
         let update: () => void;
+
         if (isScrollUgly) {
             const ps = new PerfectScrollbar(sel);
             update = () => ps.update();
@@ -66,7 +67,12 @@ const OverlayContent: React.FC<{
             </OverlayBar>
 
             <div
-                className={`overlay-content__scrollable ${uiState.kiosk && !uiState.overlayCollapsed ? "kioskoverlay" : ""}`}
+                className={`overlay-content__scrollable`}
+                style={{
+                    height: uiState.kiosk ? "auto" : undefined,
+                    maxHeight: uiState.kiosk ? "calc(100vh - 80px)" : undefined,
+                    display: uiState.overlayCollapsed ? "none" : undefined,
+                }}
                 ref={scrollable}
             >
                 {children}
