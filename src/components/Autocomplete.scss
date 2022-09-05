@@ -53,6 +53,8 @@ $input-height: 50px;
         #{$this}__options {
             visibility: visible;
             opacity: 1;
+            position: fixed;
+            max-width: 316px;
         }
     }
     &.with-clear {
