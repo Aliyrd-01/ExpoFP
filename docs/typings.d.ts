@@ -13,6 +13,8 @@ class FloorPlan {
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
 
+    onDetails: (e: FloorPlanDetailsEvent) => void;
+
     selectBooth(nameOrExternalId: string): void;
 
     selectExhibitor(nameOrExternalId: string): void;
@@ -32,6 +34,7 @@ interface FloorPlanOptions {
     dataUrl?: string;
     noOverlay?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
+    onDetails?: (e: FloorPlanDetailsEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
 }
@@ -43,6 +46,13 @@ interface FloorPlanBooth {
 
 interface FloorPlanBoothClickEvent {
     target: FloorPlanBooth;
+}
+
+interface FloorPlanDetailsEvent {
+    type: "booth" | "exhibitor" | "route";
+    id: string;
+    name: string;
+    externalId: string;
 }
 
 interface Point {

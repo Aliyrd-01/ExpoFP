@@ -13,6 +13,8 @@ class FloorPlan {
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
 
+    onDetails: (e: FloorPlanDetailsEvent) => void;
+
     selectBooth(nameOrExternalId: string): void;
 
     selectExhibitor(nameOrExternalId: string): void;
@@ -34,6 +36,7 @@ interface FloorPlanOptions {
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
+    onDetails?: (e: FloorPlanDetailsEvent) => void;
 }
 
 interface FloorPlanBooth {
@@ -56,6 +59,13 @@ interface FloorPlanDirectionEvent {
     lines: { p0: Point; p1: Point }[];
     distance: string;
     time: number;
+}
+
+interface FloorPlanDetailsEvent {
+    type: "booth" | "exhibitor" | "route";
+    id: string;
+    name: string;
+    externalId: string;
 }
 
 const ExpoFP: {

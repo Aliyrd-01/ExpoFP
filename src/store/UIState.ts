@@ -66,6 +66,10 @@ export default class UIState {
 
     get onDirection() {
         return this.rootStore.fp.onDirection;
+    } 
+    
+    get onDetails() {
+        return this.rootStore.fp.onDetails;
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {
