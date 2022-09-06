@@ -70,7 +70,7 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {
-        return this.details instanceof Exhibitor && this.details.booths.length ? this.details : null;
+        return this.details instanceof Exhibitor ? this.details : null;
     }
 
     @computed({ keepAlive: true }) get selectedBooth() {

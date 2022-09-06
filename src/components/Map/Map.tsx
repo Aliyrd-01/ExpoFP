@@ -123,7 +123,7 @@ export default function Map() {
             //this.handledMoveToExhibitor = uiState.moveToBooths;
             logger.log("watched moveToBooths", uiState.moveToBooths);
             // // ask map to move to this exhibitor
-            const rects = uiState.moveToBooths.filter(b=>b.rect).map((b) => b.rect) as Rect[];
+            const rects = uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect) as Rect[];
             if (rects.length === 0) return;
             moveToRect(Rect.fromMultiple(rects));
             uiState.moveToBooths = null;
@@ -137,17 +137,17 @@ export default function Map() {
         () => store.layerStore.visible,
         () => {
             store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
-            //if (store.layerStore.mode !== LayersMode.Radio) 
+            //if (store.layerStore.mode !== LayersMode.Radio)
             s.drawer.draw();
         }
     );
 
-    useReaction(
-        () => store.layerStore.rectangle,
-        () => {
-            uiState.moveToRect = store.layerStore.rectangle;
-        }
-    );
+    // useReaction(
+    //     () => store.layerStore.rectangle,
+    //     () => {
+    //         uiState.moveToRect = store.layerStore.rectangle;
+    //     }
+    // );
 
     return useObserver(() => (
         <canvas

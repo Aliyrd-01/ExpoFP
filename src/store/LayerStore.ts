@@ -50,7 +50,7 @@ export default class LayerStore {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
                     if (l.name !== layerName && !l.frozen) l.visible = false;
-                    else if (l.rect) uiState.moveToRect = l.rect;
+                    //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
