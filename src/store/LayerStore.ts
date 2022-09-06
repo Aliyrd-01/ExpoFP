@@ -1,6 +1,5 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
-import { uiState } from ".";
 import loadLayer from "../components/Map/drawing/config/config-load-layer";
 
 import Rect from "../core/Rect";

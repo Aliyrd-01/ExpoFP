@@ -98,7 +98,7 @@ function ExhibitorComponent() {
                     </span>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm} {exhibitor.booths.map((b) => b.name).join(", ")}
+                    {data.boothTerm} {exhibitor.booths.map((b) => b.fullName).join(", ")}
                 </div>
             </>
         );
@@ -153,7 +153,7 @@ function ExhibitorComponent() {
                 <div className="exhibitor__buttons">
                     <SibebarActions
                         showBookmark={!uiState.kiosk}
-                        showDirections={settings.wayfinding}
+                        showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
                         showShare={!uiState.kiosk}
                         onClickBookmark={bookmark}
@@ -190,10 +190,11 @@ function ExhibitorComponent() {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     store.toggleMapOverlay();
+                                    if (uiState.overlayPosition !== "bottom") store.selectBooth(booth);
                                 }}
                                 className="exhibitor__categories-booth"
                             >
-                                {data.boothTerm} {booth.name}
+                                {data.boothTerm} {booth.fullName}
                             </a>
                         ))}
                         {exhibitor.categories.map((c) => (

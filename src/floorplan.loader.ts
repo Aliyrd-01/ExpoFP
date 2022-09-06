@@ -35,6 +35,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
 
+    onDetails: (e: FloorPlanDetailsEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -60,8 +62,9 @@ export default class FloorPlanLoader implements FloorPlan {
         this.noOverlay = !!options.noOverlay;
 
         this.onBoothClick = options.onBoothClick;
+        this.onDetails = options.onDetails;
         this.onFpConfigured = options.onFpConfigured;
-        this.onDirection = options.onDirection;
+        this.onDirection = options.onDirection; 
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;
         });

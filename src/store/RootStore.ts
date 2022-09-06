@@ -59,6 +59,7 @@ export default class RootStore {
             (el.querySelector("input[type=search]") as any).blur();
         window.setTimeout(() => {
             this.selectSearch("");
+            this.routeStore.selectRoute(null);
             // this.moveToList();
             this.uiState.centerMap = true;
         }, 1000);

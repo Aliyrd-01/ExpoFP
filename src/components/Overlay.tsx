@@ -45,6 +45,10 @@ export default observer(function Overlay() {
         get collapsed() {
             return uiState.overlayCollapsed ? "collapsed" : "";
         },
+
+        get kiosk() {
+            return uiState.kiosk ? "kiosk" : "";
+        },
     }));
 
     // use useLayoutEffect for this thing to not jump
@@ -182,7 +186,7 @@ export default observer(function Overlay() {
 
     return (
         <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed}`}
+            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed} ${s.kiosk}`}
             id="overlay"
             ref={el}
         >

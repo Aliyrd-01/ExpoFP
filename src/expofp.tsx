@@ -19,7 +19,7 @@ export const FloorPlan = FloorPlanLoader;
 /*
 floorplan loader
     requires all resources
-
+ 
 floorplan ready
     in context
     has reference to store

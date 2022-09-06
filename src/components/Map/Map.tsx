@@ -8,7 +8,8 @@ import React, { useEffect, useRef } from "react";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
-import { Booth } from "../../store/BoothStore";
+import { Booth, BoothBase } from "../../store/BoothStore";
+import { Exhibitor } from "../../store/ExhibitorStore";
 import { LayersMode } from "../../store/LayerStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
@@ -103,6 +104,32 @@ export default function Map() {
             uiState.zoomBy = null;
             s.animatePlease = true;
             s.$canvas.call(s.zoom.scaleBy as any, z === -1 ? 0.66 : 1.5);
+        }
+    );
+
+    useReaction(
+        () => uiState.details,
+        () => {
+            if (!uiState.onDetails) return;
+            if (!uiState.details) {
+                uiState.onDetails(null);
+                return;
+            }
+
+            var details = uiState.details as any;
+            var data = {
+                type:
+                    uiState.details instanceof BoothBase
+                        ? "booth"
+                        : uiState.details instanceof Exhibitor
+                        ? "exhibitor"
+                        : ("route" as any),
+                name: details?.name,
+                id: details?.id,
+                externalId: details?.externalId,
+            };
+
+            uiState.onDetails(data);
         }
     );
 

@@ -33,11 +33,7 @@ function Booth() {
             return this.regular && this.regular.buyUrl && this.regular.price && this.regular.price !== "0";
         },
         get title() {
-            if (this.special) {
-                return this.booth.title || this.booth.name;
-            } else {
-                return data.boothTerm + " " + this.booth.name;
-            }
+            return this.booth.fullName;
         },
         get reserveTitle() {
             return data.reserveButtonTerm || t("Reserve");

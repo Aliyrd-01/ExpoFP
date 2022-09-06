@@ -48,7 +48,7 @@ function Wayfinding() {
                 .forEach((booth) => {
                     optionsList.push({
                         value: booth.name,
-                        label: booth.title || booth.fullName,
+                        label: booth.fullName,
                     });
                 });
 

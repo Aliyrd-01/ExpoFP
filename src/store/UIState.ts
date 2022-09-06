@@ -67,6 +67,10 @@ export default class UIState {
 
     get onDirection() {
         return this.rootStore.fp.onDirection;
+    } 
+    
+    get onDetails() {
+        return this.rootStore.fp.onDetails;
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {
@@ -110,7 +114,8 @@ export default class UIState {
             !this.details &&
             !this.selectedCategory &&
             !this.selectedExhibitor &&
-            this.list.type !== "bookmarks"
+            this.list.type !== "bookmarks" &&
+            !(this.list as any).text.length
         );
     }
 
@@ -168,7 +173,12 @@ export default class UIState {
     // visible rect
     @computed get canvasVisibleRectPx(): Rect {
         const s = this.screenSize;
-        return Rect.fromX1y1x2y2(this.mapVisibleLeft, this.mapVisibleTop, s.width, s.height - this.mapVisibleBottom);
+        return Rect.fromX1y1x2y2(
+            uiState.kiosk ? 0 : this.mapVisibleLeft,
+            this.mapVisibleTop,
+            s.width,
+            s.height - this.mapVisibleBottom
+        );
     }
 
     @computed get canvasVisibleRectPt(): Rect {
@@ -181,6 +191,7 @@ export default class UIState {
 
     // misc
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
+        if (uiState.overlayCollapsed) return false;
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
         if (
@@ -257,7 +268,7 @@ export default class UIState {
             case "search":
                 return this.searchItems;
             case "bookmarks":
-                return this.rootStore.exhibitorStore.exhibitors.filter((e) => e.bookmarked);
+                return this.rootStore.exhibitorStore.bookmarked;
             case "category":
                 return this.list.category.exhibitors;
         }
@@ -308,5 +319,6 @@ export default class UIState {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
     }
+
     ///////////////////////////////////////////////////////////////////////////
 }

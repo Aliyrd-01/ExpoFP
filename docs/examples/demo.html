@@ -12,14 +12,17 @@
                 element: document.querySelector("#floorplan"),
                 eventId: "demo",
                 noOverlay: true,
-                onBoothClick: e => {
-                    window.flutter_inappwebview?.callHandler('myHandlerName', e.target.name);
-                }
+                onBoothClick: (e) => {
+                    window.flutter_inappwebview?.callHandler("myHandlerName", e.target.name);
+                },
+                onDetails: (e) => {
+                    console.info(e);
+                },
             });
-			
-			function selectBooth(name){
-				window.floorplan?.selectBooth(name);
-			}
+
+            function selectBooth(name) {
+                window.floorplan?.selectBooth(name);
+            }
         </script>
     </body>
 </html>

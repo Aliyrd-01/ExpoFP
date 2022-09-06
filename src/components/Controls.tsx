@@ -13,10 +13,12 @@ export default function Controls() {
         get className() {
             return classNames({ controls: true, container: true, "-ready": uiState.wsStarted });
         },
-        get style() {
+         get style() {
             return {
-                left: uiState.overlayCollapsed ? 10 : uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
-                top: uiState.overlayCollapsed ? remsToPixels(4.5) : uiState.mapVisibleTop + remsToPixels(0.7) + "px",
+                left: uiState.overlayCollapsed
+                    ? remsToPixels(0.9)
+                    : (uiState.kiosk ? 10 : 0) + uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
+                top: uiState.overlayCollapsed ? remsToPixels(5) : uiState.mapVisibleTop + remsToPixels(0.7) + "px",
             };
         },
     }));

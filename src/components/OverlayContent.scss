@@ -12,7 +12,7 @@
         height: 1px;
         overflow-y: hidden;
         position: relative;
-
+       
         .overlay.full & {
             overflow-y: scroll;
             -webkit-overflow-scrolling: touch;

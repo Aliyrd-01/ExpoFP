@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
@@ -23,17 +24,17 @@ function Ws() {
                 // todo: remove
                 opacity: uiState.wsStarted ? 1 : 0,
                 right: 0,
-                padding: `0 ${uiState.wsPaddingPx}px`
+                padding: `0 ${uiState.wsPaddingPx}px`,
             } as any;
 
             if (uiState.wsPosition === "top") style.top = uiState.headerHeightPx + "px";
             else style.bottom = 0;
             return style;
-        }
+        },
     }));
 
     useInit(() => {
-        (async function() {
+        (async function () {
             s.all = shuffle(exhibitorStore.advertised);
             s.imgByExhbitorId = await loadExhbibitorImages();
             setupNext();
@@ -45,15 +46,21 @@ function Ws() {
     });
 
     return useObserver(() => (
-        <section className="ws" ref={n => (s.el = n)} onMouseOver={mouseover} onMouseOut={mouseout} style={s.sectionStyle}>
+        <section
+            className={classNames("ws", { kiosk: uiState.kiosk })}
+            ref={(n) => (s.el = n)}
+            onMouseOver={mouseover}
+            onMouseOut={mouseout}
+            style={s.sectionStyle}
+        >
             <TransitionGroup component={null}>
-                {s.adv.map(e => (
+                {s.adv.map((e) => (
                     <CSSTransition key={e.key} timeout={500}>
                         <a
                             href={`?${e.e.slug}`}
                             className="ws__exhibitor"
                             style={{ height: `${uiState.wsImageHeightPx}px` }}
-                            onClick={x => {
+                            onClick={(x) => {
                                 x.preventDefault();
                                 select(e.e);
                             }}
@@ -106,7 +113,7 @@ function Ws() {
     async function loadExhbibitorImages(): Promise<Map<number, HTMLImageElement>> {
         const result = new Map<number, HTMLImageElement>();
         return new Promise((resolve, reject) => {
-            s.all.forEach(x => {
+            s.all.forEach((x) => {
                 const img = new Image();
                 img.onload = () => {
                     result.set(x.id, img);
