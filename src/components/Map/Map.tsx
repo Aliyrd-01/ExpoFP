@@ -137,7 +137,15 @@ export default function Map() {
         () => uiState.moveToRect,
         () => {
             if (!uiState.moveToRect) return;
-            moveToRect(uiState.moveToRect, 30, store.layerStore.mode !== LayersMode.Radio);
+            if (
+                uiState.moveToRect &&
+                uiState.moveToRect.h !== Infinity &&
+                uiState.moveToRect.w !== Infinity &&
+                uiState.moveToRect.h > 0 &&
+                uiState.moveToRect.w > 0
+            ) {
+                moveToRect(uiState.moveToRect, 30, store.layerStore.mode !== LayersMode.Radio);
+            }
             uiState.moveToRect = null;
         }
     );

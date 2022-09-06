@@ -129,22 +129,22 @@ function Wayfinding() {
                         {(store.layerStore.mode === LayersMode.CheckBox || store.layerStore.mode === LayersMode.Radio) &&
                             layers.length > 1 && (
                                 <div className="formGroup" style={{ marginBottom: 10 }}>
-                                    {layers.map((l) => (
-                                        <a
-                                            key={l}
-                                            href="/"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                store.layerStore.updateVisibility(l, true);
-                                            }}
-                                            style={{
-                                                marginRight: 5,
-                                                opacity: store.layerStore.layers.find((la) => la.name === l)?.visible ? 1 : 0.5,
-                                            }}
-                                        >
-                                            {l}
-                                        </a>
-                                    ))}
+                                    {layers.map((l) =>
+                                        !store.layerStore.layers.find((la) => la.description === l || la.name === l).visible ? (
+                                            <a
+                                                key={l}
+                                                href="/"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    store.layerStore.updateVisibility(l, true);
+                                                }}
+                                            >
+                                                {l}
+                                            </a>
+                                        ) : (
+                                            <label className="layer-name">{l}</label>
+                                        )
+                                    )}
                                 </div>
                             )}
                         {/* <div className="formGroup" style={{ marginBottom: 10 }}>

@@ -9,6 +9,20 @@
 .wayFindingForm {
     display: flex;
 
+    a,
+    .layer-name {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .layer-name {
+        font-weight: bold;
+    }
+
+    a {
+        opacity: 0.5;
+    }
+
     &__icons {
         position: relative;
         display: flex;
