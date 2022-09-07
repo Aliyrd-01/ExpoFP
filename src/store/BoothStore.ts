@@ -6,6 +6,7 @@ import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
 import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
+import data from "../data";
 
 // interface BoothState {
 //     hover: boolean;
@@ -94,7 +95,7 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) public get fullName() {
-        if (this.layer) return (this.title || this.name) + " - " + this.layer.description;
+        if (this.layer) return (this.title || this.name) + `, ${data.levelTerm} ` + this.layer.description;
         return this.title || this.name;
     }
 
