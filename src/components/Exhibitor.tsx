@@ -185,7 +185,7 @@ function ExhibitorComponent() {
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map((booth) => (
                             <a
-                                href={`?${exhibitor.slug}`}
+                                href={`?${booth.slug}`}
                                 key={booth.id}
                                 onClick={(e) => {
                                     e.preventDefault();

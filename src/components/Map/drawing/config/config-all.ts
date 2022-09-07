@@ -38,10 +38,19 @@ export default function configAll(context: DrawerContext = _context): void {
         layers = [dl].concat(lrs);
     }
 
+    var counter = layers.length;
+    var loaded = 0;
+
     var duration = 10;
     var animated = false;
     layers.forEach((layer) => {
         loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
+            loaded++;
+            if (counter === loaded) {
+                var l = [...uiState.selectedBooths][0]?.layer?.name || uiState.selectedRoute?.from?.layer.name;
+                if (l) store.layerStore.updateVisibility(l, true);
+            }
+
             if (!animated && configured) {
                 animated = true;
                 an(() => setTimeout(() => cb(), 2 * duration), duration);

@@ -15,7 +15,7 @@ export default function configYah(context: DrawerContext) {
     const isArray = Array.isArray(yah) || false;
 
     const booth = !isArray
-        ? store.boothStore.booths.find((b) => b.name == yah)
+        ? store.boothStore.booths.find((b) => b.name === yah)
         : store.boothStore.getBoothAtPoint(new Point((yah as number[])[0], (yah as number[])[1]));
 
     store.routeStore.fixedFrom = booth;

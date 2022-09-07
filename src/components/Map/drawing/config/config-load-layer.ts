@@ -7,7 +7,6 @@ import { DrawerContext } from "../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
-import configSizes from "./config-sizes";
 
 export default async function loadLayer(
     layer: Layer,

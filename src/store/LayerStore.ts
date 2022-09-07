@@ -36,7 +36,7 @@ export default class LayerStore {
     }
 
     @computed({ keepAlive: true }) get rectangle() {
-        var l = this.visible.filter((l) => !l.frozen).map((l) => l.rect);      
+        var l = this.visible.filter((l) => !l.frozen).map((l) => l.rect);
         return this.mode === LayersMode.Default || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
@@ -44,6 +44,7 @@ export default class LayerStore {
         if (this.mode === LayersMode.Radio && !visible) return;
 
         const layer = this.layers.find((l) => l.name === layerName);
+        if (layer.visible == visible) return;
 
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {
