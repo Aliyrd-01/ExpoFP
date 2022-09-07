@@ -46,8 +46,8 @@ function calculate(booths: Booth[]) {
 }
 
 reaction(
-    () => [boothStore.booths, layersStore.loaded],
-    () => calculate(boothStore.booths.filter((b) => b.rect))
+    () => [boothStore.booths, layersStore.loaded, layersStore.visible],
+    () => calculate(boothStore.booths.filter((b) => b.layer.visible).filter((b) => b.rect))
 );
 
 let prevSegment: Rect;
