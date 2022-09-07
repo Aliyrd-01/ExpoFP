@@ -31,7 +31,7 @@ export default function Floors() {
 
     var click = (name: string) => {
         var layer = store.layerStore.layers.find((l) => l.description == name);
-        if (store.layerStore.mode == LayersMode.Radio) store.layerStore.updateVisibility(layer.name, true);
+        if (store.layerStore.mode == LayersMode.Radio) store.layerStore.updateVisibility(layer.name, true, true);
         else store.layerStore.updateVisibility(layer.name, !layer.visible);
     };
 

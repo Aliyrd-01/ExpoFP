@@ -1,6 +1,12 @@
 // import { observable } from 'mobx';
+import { interpolateNumber } from "d3";
+import { easeLinear } from "d3-ease";
 import { action, computed, observable } from "mobx";
+import store from ".";
+import animate from "../components/Map/drawing/config/animate";
 import loadLayer from "../components/Map/drawing/config/config-load-layer";
+import { DrawerContext } from "../components/Map/drawing/Drawer1";
+import RectPainter from "../components/Map/drawing/painters/RectPainter";
 
 import Rect from "../core/Rect";
 
@@ -40,21 +46,51 @@ export default class LayerStore {
         return this.mode === LayersMode.Default || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
-    @action updateVisibility(layerName: string, visible: boolean): void {
+    @action updateVisibility(layerName: string, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 
         const layer = this.layers.find((l) => l.name === layerName);
-        if (layer.visible == visible) return;
+        if (layer.visible === visible) return;
 
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
-                    if (l.name !== layerName && !l.frozen) l.visible = false;
+                    if (l.name !== layerName && !l.frozen && l.visible) {
+                        if (!animated) l.visible = false;
+                        else an(l, false);
+                    }
                     //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
-            if (layer) layer.visible = visible;
+            if (layer) {
+                if (!animated) layer.visible = visible;
+                else an(layer, visible);
+            }
         });
     }
+}
+
+let _context: DrawerContext;
+export function setContext(context: DrawerContext) {
+    _context = context;
+}
+
+function an(layer: Layer, toVisible: boolean): void {
+    if (toVisible) store.layerStore.updateVisibility(layer.name, true);
+
+    animate(
+        0,
+        1000,
+        easeLinear,
+        toVisible ? interpolateNumber(0, 1) : interpolateNumber(1, 0),
+        _context.requireUpdate.bind(_context),
+        (v) => _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v)),
+        () => {
+            if (!toVisible) {
+                layer.visible = false;
+                _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = 1));
+            }
+        }
+    );
 }

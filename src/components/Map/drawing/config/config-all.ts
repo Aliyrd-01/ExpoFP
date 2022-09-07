@@ -1,4 +1,3 @@
-import { easeLinear } from "d3-ease";
 import { uiState } from "./../../../../store/index";
 import store from "../../../../store";
 import { DrawerContext } from "../Drawer1";
@@ -9,11 +8,6 @@ import configWf from "./config-wf";
 import configYah from "./config-yah";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
-import { reaction } from "mobx";
-import settings from "../../../../tools/settings";
-import animate from "./animate";
-import { interpolateNumber } from "d3-interpolate";
-import RectPainter from "../painters/RectPainter";
 
 //let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
@@ -74,37 +68,4 @@ export default function configAll(context: DrawerContext = _context): void {
     };
 
     configWf(context, basePriority++, true);
-
-    return;
-
-    var booths = false;
-    var edge = 10;
-    reaction(
-        () => uiState.zoomAfTransformK,
-        () => {
-            if (!booths && uiState.zoomAfTransformK > edge) {
-                store.layerStore.updateVisibility("Booths", true);
-                store.layerStore.updateVisibility("FG", true);
-                booths = true;
-
-                animate(0, 500, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), (v) => {
-                    context.getLayersPainters(["Booths", "FG"]).forEach((p) => ((p as RectPainter).alpha = v));
-                });
-            } else if (booths && uiState.zoomAfTransformK <= edge) {
-                booths = false;
-                animate(
-                    0,
-                    500,
-                    easeLinear,
-                    interpolateNumber(1, 0),
-                    context.requireUpdate.bind(context),
-                    (v) => context.getLayersPainters(["Booths", "FG"]).forEach((p) => ((p as RectPainter).alpha = v)),
-                    () => {
-                        store.layerStore.updateVisibility("Booths", false);
-                        store.layerStore.updateVisibility("FG", false);
-                    }
-                );
-            }
-        }
-    );
 }

@@ -1,4 +1,5 @@
 import Size from "../../../core/Size";
+import { setContext } from "../../../store/LayerStore";
 import logger from "../../../tools/logger";
 import isDebug from "../../../utils/is-debug";
 import configAll from "./config/config-all";
@@ -86,6 +87,7 @@ export class DrawerImpl extends Matrix {
     private prepare() {
         // console.log('Prepare painters');
         configAll(this as DrawerContext);
+        setContext(this as DrawerContext);
 
         for (var d of this.allPainters) d.preparePaint();
 
