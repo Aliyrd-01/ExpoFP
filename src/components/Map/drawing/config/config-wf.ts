@@ -130,7 +130,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
 
     var rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
 
-    return rect.w || rect.h ? rect.withPadding(rect.w, rect.h) : null;
+    return  routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }
 
 function splitPolyLine(lines: Line[], interval: number): Point[] {
