@@ -69,7 +69,7 @@ export function getMinZoomLevel(drawer: Drawer) {
 }
 
 function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolean) {
-    const limitToSvg = svgArea.w < svgViewBox.w;
+    const limitToSvg = false; //svgArea.w < svgViewBox.w;
 
     // https://math.stackexchange.com/questions/237369/given-this-transformation-matrix-how-do-i-decompose-it-into-translation-rotati
     const svgPxScale = drawer.getSvgPxUnzoomedScale();
