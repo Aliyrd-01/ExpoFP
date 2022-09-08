@@ -103,7 +103,7 @@ export default function Map() {
             const z = uiState.zoomBy;
             uiState.zoomBy = null;
             s.animatePlease = true;
-            s.$canvas.call(s.zoom.scaleBy as any, z === -1 ? 0.66 : 1.5);
+            s.$canvas.call(s.zoom.scaleBy as any, z);
         }
     );
 
@@ -144,7 +144,7 @@ export default function Map() {
                 uiState.moveToRect.h > 0 &&
                 uiState.moveToRect.w > 0
             ) {
-                moveToRect(uiState.moveToRect, 30, store.layerStore.mode !== LayersMode.Radio);
+                moveToRect(uiState.moveToRect, 30 /*store.layerStore.mode !== LayersMode.Radio*/);
             }
             uiState.moveToRect = null;
         }

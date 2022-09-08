@@ -13,7 +13,7 @@ export default function Controls() {
         get className() {
             return classNames({ controls: true, container: true, "-ready": uiState.wsStarted });
         },
-         get style() {
+        get style() {
             return {
                 left: uiState.overlayCollapsed
                     ? remsToPixels(0.9)
@@ -29,8 +29,8 @@ export default function Controls() {
                 className={s.className}
                 style={s.style}
                 titles={[t("Zoom In"), t("Zoom Out"), t("Fit to screen"), t("Layers")]}
-                onClickZoomIn={zoom.bind(window, 1)}
-                onClickZoomOut={zoom.bind(window, -1)}
+                onClickZoomIn={() => (uiState.zoomBy = 1.5)}
+                onClickZoomOut={() => (uiState.zoomBy = 0.66)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
                 layersActiveItems={[]}
                 layersList={null}
@@ -38,8 +38,4 @@ export default function Controls() {
             />
         );
     });
-
-    function zoom(val: -1 | 1) {
-        uiState.zoomBy = val;
-    }
 }
