@@ -74,7 +74,7 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     return cp;
 }
 
-function drawLines(wfDrawer: RectPainter, ptscale: number) {
+function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     routePoints.forEach((rp, i) => wfDrawer.updateVisible(`Dot_${i}`, false));
 
     routePoints = [];
@@ -113,6 +113,24 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
     }
+
+    var x1 = 1000000;
+    var y1 = 1000000;
+
+    var x2 = 0;
+    var y2 = 0;
+
+    routePoints.forEach((l) => {
+        if (l.x < x1) x1 = l.x;
+        if (l.y < y1) y1 = l.y;
+
+        if (l.x > x2) x2 = l.x;
+        if (l.y > y2) y2 = l.y;
+    });
+
+    var rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
+
+    return rect.w || rect.h ? rect.withPadding(rect.w, rect.h) : null;
 }
 
 function splitPolyLine(lines: Line[], interval: number): Point[] {
@@ -243,25 +261,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 return;
             }
 
-            drawLines(wfDrawer, scale || 3);
-
-            let { x1, x2, y1, y2 } = Rectangle.fromMultiple(
-                [uiState.selectedRoute.from, uiState.selectedRoute.to].filter((b) => b.visible).map((b) => b.rect)
-            );
-
-            routeLines.forEach((l) => {
-                if (l.p0.x < x1) x1 = l.p0.x;
-                if (l.p0.x > x2) x2 = l.p0.x;
-                if (l.p0.y < y1) y1 = l.p0.y;
-                if (l.p0.y > y2) y2 = l.p0.y;
-
-                if (l.p1.x < x1) x1 = l.p1.x;
-                if (l.p1.x > x2) x2 = l.p1.x;
-                if (l.p1.y < y1) y1 = l.p1.y;
-                if (l.p1.y > y2) y2 = l.p1.y;
-            });
-
-            uiState.moveToRect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
+            var rect = drawLines(wfDrawer, scale || 3);
+            if (rect) uiState.moveToRect = rect;
         }
 
         store.routeStore.updateRoutePoints(routeLines.filter((gl) => !gl.virtual));
