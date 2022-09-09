@@ -127,22 +127,24 @@ function Wayfinding() {
                             />
                         </div>
                         {(store.layerStore.mode === LayersMode.CheckBox || store.layerStore.mode === LayersMode.Radio) &&
-                            layers.length > 1 && (
+                            store.routeStore.layers.length > 1 && (
                                 <div className="formGroup" style={{ marginBottom: 10 }}>
-                                    {layers.map((l) =>
-                                        !store.layerStore.layers.find((la) => la.description === l || la.name === l).visible ? (
+                                    {store.routeStore.layers.map((l) =>
+                                        !l.visible ? (
                                             <a
-                                                key={l}
+                                                key={l.name}
                                                 href="/"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    store.layerStore.updateVisibility(l, true);
+                                                    store.layerStore.updateVisibility(l.name, true);
                                                 }}
                                             >
-                                                {l}
+                                                {l.description}
                                             </a>
                                         ) : (
-                                            <label className="layer-name">{l}</label>
+                                            <label className="layer-name" key={l.name}>
+                                                {l.description}
+                                            </label>
                                         )
                                     )}
                                 </div>

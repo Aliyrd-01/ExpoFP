@@ -9,6 +9,7 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";
+import { Layer } from "./LayerStore";
 
 export default class RouteStore {
     rootStore: RootStore;
@@ -23,7 +24,6 @@ export default class RouteStore {
     }
 
     @action selectRoute(route: Route) {
-
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
 
         if (route?.from && route?.to && route.from === route.to) route = null;
@@ -51,7 +51,7 @@ export default class RouteStore {
             var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
-            if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)  
+            if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
                 this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
         }, 200);
     }
@@ -65,6 +65,19 @@ export default class RouteStore {
                     lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
             )[0] || null
         );
+    }
+
+    @computed({ keepAlive: true }) get layers(): Layer[] {
+        
+        var layers = [];
+        store.routeStore.routeLines
+            ?.map((rl) => rl.p0.layer)
+            .reverse()
+            .forEach((l) => {
+                if (layers.indexOf(l) === -1) layers.push(l);
+            });
+
+        return store.layerStore.layers.filter((l) => layers.indexOf(l.name) > -1);
     }
 
     @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {

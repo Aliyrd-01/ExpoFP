@@ -13,9 +13,9 @@ function parseName(name: string): string {
     if (parts.length === 1) return name.substring(0, 2).toUpperCase();
     else return `${parts[0][0].toUpperCase()}${parts[1][0].toUpperCase()}`;
 }
-
+var timeout = null;
 export default function Floors() {
-    var data: { active: boolean; name: string }[] = [];
+    var data: { active: boolean; description: string; disabled: boolean }[] = [];
 
     const s = useLocalStore(() => ({
         get className() {
@@ -30,6 +30,8 @@ export default function Floors() {
     }));
 
     var click = (name: string) => {
+        if (timeout) return;
+        timeout = setTimeout(() => (timeout = null), 1000);
         var layer = store.layerStore.layers.find((l) => l.description == name);
         if (store.layerStore.mode == LayersMode.Radio) {
             store.layerStore.updateVisibility(layer.name, true, true);
@@ -40,7 +42,6 @@ export default function Floors() {
             if (i1 === i2) return;
             if (i2 < i1) uiState.zoomBy = 0.95;
             else uiState.zoomBy = 1.05;
-            
         } else store.layerStore.updateVisibility(layer.name, !layer.visible);
     };
 
@@ -48,7 +49,11 @@ export default function Floors() {
         data = store.layerStore.layers
             .filter((l) => !l.frozen)
             .map((l) => {
-                return { name: l.description, active: l.visible };
+                return {
+                    description: l.description,
+                    active: l.visible,
+                    disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) == -1,
+                };
             });
 
         return (
@@ -56,12 +61,12 @@ export default function Floors() {
                 <div className={s.className} style={s.style}>
                     {data.map((f) => (
                         <div
-                            className={classNames("item", { active: f.active })}
-                            key={f.name}
-                            onClick={() => click(f.name)}
-                            title={f.name}
+                            className={classNames("item", { active: f.active, disabled: f.disabled })}
+                            key={f.description}
+                            onClick={() => click(f.description)}
+                            title={f.description}
                         >
-                            {parseName(f.name)}
+                            {parseName(f.description)}
                         </div>
                     ))}
                 </div>
