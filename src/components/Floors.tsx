@@ -37,9 +37,10 @@ export default function Floors() {
             var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);
             var i2 = store.layerStore.layers.indexOf(layer);
 
+            if (i1 === i2) return;
             if (i2 < i1) uiState.zoomBy = 0.95;
             else uiState.zoomBy = 1.05;
-
+            
         } else store.layerStore.updateVisibility(layer.name, !layer.visible);
     };
 
