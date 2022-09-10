@@ -36,7 +36,7 @@ export default function Free() {
             <section>
                 <div className="free__message">
                     <span>
-                        {t("This is a FREE floor plan")} {s.top && <br />} {t("Create yours at")} &nbsp;
+                        {t("Create a free floor plan at")}&nbsp;
                         <a href="https://expofp.com/" target="_blank" rel="noopener noreferrer">
                             ExpoFP.com
                         </a>

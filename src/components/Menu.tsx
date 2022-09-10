@@ -66,10 +66,12 @@ function Menu() {
         </div>
     );
 
-    const categories = categoryStore.categories.length ? (
+    const cats = categoryStore.categories.filter((c) => c.exhibitors.length);
+
+    const categories = cats.length ? (
         <>
             <div className="menu__item">{t("Categories")}</div>
-            {categoryStore.categories.map((c) => (
+            {cats.map((c) => (
                 <a
                     className="menu__cat"
                     href={`?${encodeURIComponent(c.slug)}`}
