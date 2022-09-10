@@ -27,6 +27,7 @@ export default class BoothStore {
     }
 
     @computed({ keepAlive: true }) get borderWidth() {
+        if (settings.boothBorderWidth) return settings.boothBorderWidth;
         if (settings.EXPO === "groomexpo") return 0.4;
         const ar = this.booths.filter((b) => b.rect).map((x) => x.rect.w + x.rect.h);
         return ar.reduce((a, b) => a + b, 0) / ar.length / 80;

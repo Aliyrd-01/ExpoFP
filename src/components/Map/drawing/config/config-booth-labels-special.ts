@@ -1,5 +1,6 @@
 import { reaction } from "mobx";
 import { Booth, SpecialBooth } from "../../../../store/BoothStore";
+import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import store, { uiState } from "./../../../../store/index";
@@ -7,6 +8,8 @@ import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
 import TextFitter, { TextFitData } from "./TextFitter";
+
+let fillStyle = settings.boothLabelColor || "#fff";
 
 const textFitters = new Map<number, TextFitter>();
 function cteateTextFitter(pixelRatio: number) {
@@ -53,7 +56,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         this.ids = [];
 
         for (const s of this.steps) {
-            const canvasTmp = createMultilineTextCanvas(s.lines, s.width, s.fontSize);
+            const canvasTmp = createMultilineTextCanvas(s.lines, s.width, s.fontSize, fillStyle);
             const id = this.getId(s.factor.toString());
             this.painter.addObject({
                 id,
@@ -68,7 +71,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             this.ids.push(id);
         }
 
-        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio);
+        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio, fillStyle);
         const dotW = dotCanvas.width / 2;
         const dotH = dotCanvas.width / 2;
         const dotId = this.getId("Dot");

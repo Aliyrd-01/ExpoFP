@@ -16,6 +16,10 @@ let settings = {
             empty: "rgba(0,0,0,0.205)", // this is #aaa for default BG #d6d6d6d
         },
     },
+
+    //fpSettings fron Designer
+    boothBorderWidth: null,
+    boothLabelColor: null,
 };
 
 if (settings.EXPO === "jtrade19") {
@@ -36,7 +40,7 @@ if (settings.EXPO === "jtrade19") {
 //     settings.borderless = true;
 // }
 
-settings = deepmerge(settings, window["__settings"] || {});
+settings = deepmerge(settings, window["__settings"] || window["__fpSettings"] || {});
 export default settings;
 // extendGlobal({ __settings: settings })
 

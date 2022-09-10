@@ -14,7 +14,7 @@ import { NumberObserver } from "./NumberObserver";
 // const dotW = dotCanvas.canvas.width / 2;
 // const dotH = dotCanvas.canvas.width / 2;
 
-let fillStyle = "#fff";
+let fillStyle = settings.boothLabelColor || "#fff";
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
 const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
