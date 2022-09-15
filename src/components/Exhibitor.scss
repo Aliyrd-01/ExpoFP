@@ -289,16 +289,9 @@
         }
     }
 
-    &__directions {
-        // @include button;
-        // > button {
-        //     cursor: pointer;
-        // }
-    }
-
     &__custom-btn-area {
-        @include button;
         margin: 2rem 1rem;
+        text-align: center;
     }
 
     &__leading-image-container {
