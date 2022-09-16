@@ -1,5 +1,6 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
+import { action } from "@storybook/addon-actions";
 import Button, { ButtonProps } from "../Button";
 
 export default {
@@ -8,13 +9,9 @@ export default {
 } as Meta;
 
 const Template: Story<ButtonProps> = (args) => {
-    const clicked = () => {
-        alert("Clicked");
-    };
-
     return (
         <div className="sbContent">
-            <Button {...args} onClick={clicked} />
+            <Button {...args} onClick={() => action("onClick")(true)} />
         </div>
     );
 };
@@ -23,4 +20,5 @@ export const Base = Template.bind({});
 Base.args = {
     text: "Text",
     disabled: false,
+    inline: false,
 };

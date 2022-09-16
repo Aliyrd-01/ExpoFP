@@ -89,7 +89,6 @@
     }
 
     &__buy {
-        @include button;
         margin: 2rem 0 0.5rem;
 
         a {
@@ -98,10 +97,9 @@
     }
 
     &__directions {
-        @include button;
         margin: 0.5rem 0;
 
-        >button {
+        > button {
             cursor: pointer;
         }
     }
