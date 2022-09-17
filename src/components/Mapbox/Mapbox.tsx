@@ -15,15 +15,17 @@ import { pulsingDot } from "./Dot";
 import "./Mapbox.scss";
 
 function b() {
-    var el = null;// window["__fpGeo"];
-    if (!el?.properties?.mpViewbox) {
+    var el = window["__fpGeo"];
+    var parts = el?.properties?.mpViewbox;
+
+    if ((parts?.length ?? 0) < 6) {
         store.mapboxStore.mapBoxEnabled = false;
         return 0;
     }
 
-    var parts = el.properties.mpViewbox;
-    if (parts.length < 6) return 0;
-    return -1 * bearing(parts[1], parts[0], parts[3], parts[2]) - 90;
+    let b = -1 * bearing(parts[1], parts[0], parts[3], parts[2]) - 90;
+    if (Math.abs(b) >= 360) b = 180;
+    return b;
 }
 
 var props = {
@@ -133,7 +135,7 @@ export default function Mapbox() {
                 uiState.moveToRect = store.layerStore.rectangle || svgArea;
             });
         } else {
-            uiState.moveToRect =  store.layerStore.rectangle || svgArea;
+            uiState.moveToRect = store.layerStore.rectangle || svgArea;
             flyToCenter(props.bearing, duration).then(() => {
                 current.setZoom(props.edgeZoom - 0.5);
             });
