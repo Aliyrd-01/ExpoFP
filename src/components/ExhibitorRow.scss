@@ -17,11 +17,13 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        > .fa-gem {
+
+        >.fa-gem {
             color: #02a8ff;
             font-size: 0.9rem;
         }
     }
+
     &__booth {
         padding: 0 1rem 0 0;
         min-width: 3.5rem;
@@ -29,6 +31,7 @@
         font-weight: 700;
         font-size: 0.9rem;
         color: #555;
+        overflow-wrap: break-word;
     }
 
     &__bookmark {

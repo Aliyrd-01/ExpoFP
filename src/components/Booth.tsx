@@ -127,16 +127,12 @@ function Booth() {
 
                             {s.showBuy && (
                                 <div className="booth__buy">
-                                    <a href={buyUrl?.href} rel="noopener">
-                                        {t("Buy")}
-                                    </a>
+                                    <Button link={buyUrl?.href}>{t("Buy")}</Button>
                                 </div>
                             )}
                             {s.showReserve && (
                                 <div className="booth__buy">
-                                    <a href={reserveUrl?.href || buyUrl?.href} rel="noopener">
-                                        {s.reserveTitle}
-                                    </a>
+                                    <Button link={reserveUrl?.href || buyUrl?.href}>{s.reserveTitle}</Button>
                                 </div>
                             )}
                         </div>

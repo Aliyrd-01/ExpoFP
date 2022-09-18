@@ -14,6 +14,7 @@ import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
+import Button from "./Button";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -118,9 +119,9 @@ function ExhibitorComponent() {
             if (!title || !url) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <a href={url} onClick={customButtonClick} target="_blank" rel="noopener noreferrer">
+                    <Button link={url} inline={true} onClick={customButtonClick}>
                         {title}
-                    </a>
+                    </Button>
                 </div>
             );
         }
