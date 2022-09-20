@@ -1,7 +1,6 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import store, { uiState } from "../store";
-import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
