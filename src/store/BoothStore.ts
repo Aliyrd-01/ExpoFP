@@ -101,7 +101,7 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get visible() {
-        return this.layer?.visible;
+        return this.layer?.visible ?? true;
     }
 
     @computed({ keepAlive: true }) private get inList() {
@@ -146,10 +146,6 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     readonly reserved: boolean; // comes from status
 
     readonly exhibitors: Exhibitor[];
-
-    @computed({ keepAlive: true }) get visible() {
-        return this.layer?.visible ?? false;
-    }
 
     @computed({ keepAlive: true }) get bookmarked() {
         return !!this.exhibitors.find((x) => x.bookmarked);

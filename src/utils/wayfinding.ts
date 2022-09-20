@@ -95,8 +95,8 @@ export function getGraphLines(
     for (let i = 0; i < lineEnds.length; i++) {
         const lineEnd = lineEnds[i];
 
-        const f = lineEnd.layer === fromBooth.layer.name && pointInsideRectangle(lineEnd, fromRect);
-        const t = lineEnd.layer === toBooth.layer.name && pointInsideRectangle(lineEnd, toRect);
+        const f = (lineEnd.layer === fromBooth.layer?.name || !fromBooth.layer) && pointInsideRectangle(lineEnd, fromRect);
+        const t = (lineEnd.layer === toBooth.layer?.name || !toBooth.layer) && pointInsideRectangle(lineEnd, toRect);
 
         if (f) from.push(lineEnd);
         if (t) to.push(lineEnd);

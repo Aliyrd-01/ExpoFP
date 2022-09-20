@@ -61,6 +61,8 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     const { boothStore, layerStore } = store;
     const layerBooths = [];
 
+    const layersEnabled = !!window["__fpLayers"];
+
     for (const el of d3
         .select(getLayerSvg(layerID))
         .selectAll(
@@ -103,7 +105,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
             layerBooths.push(booth);
         } else layerBooths.push(booth);
 
-        booth.layer = layerStore.layers.find((l) => l.name === layer);
+        if (layersEnabled) booth.layer = layerStore.layers.find((l) => l.name === layer);
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
