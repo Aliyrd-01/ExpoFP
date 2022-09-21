@@ -38,7 +38,7 @@ export default function LogoOverlay() {
     const bu = window["__efpBaseUrl"];
 
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
-    var showWarning = isFromDesigner && dataSize > 9.3;
+    var showWarning = isFromDesigner && dataSize >= 10;
 
     return useObserver(() => (
         <div>
