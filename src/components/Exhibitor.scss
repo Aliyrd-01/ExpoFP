@@ -2,6 +2,7 @@
 
 .expo-jtrade19 .exhibitor__categories-booth {
     background: #e9522a; //#fb3e59;
+
     &:hover {
         background: #e9522a; //#ea2b46;
     }
@@ -10,6 +11,7 @@
 .overlay-content.-exhibitor-featured {
     background: #230762;
     color: #fff;
+
     .exhibitor__bar,
     .exhibitor__meta {
         color: #fff;
@@ -17,6 +19,7 @@
 }
 
 .exhibitor {
+
     // &__booth {
     //     margin: 0 1rem 0.2rem;
     //     color: #777;
@@ -24,10 +27,11 @@
     &__categories {
         margin: 0rem 1rem 1rem 0.7rem;
         font-size: 0.9rem;
+
         // display: flex;
         // flex-direction: column;
         // align-items: flex-start;
-        > a {
+        >a {
             display: inline-block;
 
             color: #fff !important;
@@ -40,6 +44,7 @@
 
         &-cat {
             background: #41b6e7;
+
             &:hover {
                 background: #1598d0;
             }
@@ -47,6 +52,7 @@
 
         &-sponsorship {
             background: #ff8c00;
+
             &:hover {
                 background: #e87f00;
             }
@@ -54,11 +60,13 @@
 
         &-booth {
             background: #fb3e59;
+
             &:hover {
                 background: #ea2b46;
             }
         }
     }
+
     &__logo-container {
         width: 75px;
         height: 75px;
@@ -73,6 +81,7 @@
         z-index: 2;
         background: #fff;
     }
+
     &__logo {
         max-width: 100%;
         max-height: 100%;
@@ -100,21 +109,24 @@
         } */
 
         &-html {
-            > *:first-child {
+            >*:first-child {
                 margin-top: 0;
                 padding-top: 0;
             }
-            > *:last-child {
+
+            >*:last-child {
                 margin-bottom: 0;
                 padding-bottom: 0;
             }
         }
 
-        &.collapsed > .exhibitor__description-html {
+        &.collapsed>.exhibitor__description-html {
             cursor: pointer;
+
             &:hover {
                 opacity: 1;
             }
+
             opacity: 0.8;
             height: 6.5em;
             display: block;
@@ -126,6 +138,7 @@
 
         .image-slider-full-screen-container svg {
             fill: "#FFFFFF";
+
             &:hover {
                 fill: gray;
             }
@@ -133,21 +146,26 @@
 
         @include clearfix;
     }
+
     &__market-materials {
         margin: 1rem;
         font-size: 0.9rem;
+
         div {
             word-break: break-all;
         }
     }
+
     &__description-html {
         overflow-wrap: break-word;
+
         ol,
         ul {
             padding-inline-start: 20px;
             display: grid;
         }
     }
+
     &__sep {
         margin: 1rem;
         border-top: dotted 1px #ddd;
@@ -155,20 +173,22 @@
 
     &__meta {
         color: #333;
-        > div {
+
+        >div {
             display: flex;
             margin: 0.8rem 1rem;
             overflow: hidden;
 
-            > .fas,
-            > .far {
+            >.fas,
+            >.far {
                 text-align: center;
                 min-width: 0.8rem;
                 margin-top: 0.2rem;
                 color: #ccc;
                 font-size: 0.8rem;
             }
-            > div {
+
+            >div {
                 font-size: 0.85rem;
                 line-height: 1.1rem;
 
@@ -179,22 +199,26 @@
             }
         }
     }
+
     &__social {
         margin: 0 1rem 2rem;
 
         display: flex;
+
         // justify-content: space-between;
         // padding-top: 1rem;
-        > a {
+        >a {
             font-size: 2rem;
             text-decoration: none;
 
             margin: 0 1rem 0.5rem 0;
             color: #eee;
             display: none;
+
             &:hover {
                 color: #eee;
             }
+
             &[href] {
                 display: block;
                 color: #adadad;
@@ -212,6 +236,7 @@
         margin-left: 1rem;
         font-size: 1.1em;
         flex-grow: 1;
+
         // display: flex;
         // align-items: center;
         .fa-gem {
@@ -220,16 +245,18 @@
             font-size: 0.85rem;
             line-height: 1.5rem;
         }
-        > span {
+
+        >span {
             display: flex;
-            > span {
-                white-space: nowrap;
+
+            >span {
                 max-width: 16rem;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
         }
     }
+
     &__bar-booth {
         margin-left: 1rem;
         font-size: 0.7rem;
@@ -243,6 +270,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
         .overlay-bar.scrolled & {
             opacity: 1;
         }
@@ -259,13 +287,15 @@
     &__edit {
         position: relative;
         display: none;
-        > button {
+
+        >button {
             position: absolute;
             right: 1rem;
             padding: 0 0 1rem 1rem;
             border: 0;
             cursor: pointer;
             color: #aaa;
+
             &:hover {
                 color: #555;
             }
@@ -282,7 +312,7 @@
 
         @include button;
 
-        > .video-chat-btn {
+        >.video-chat-btn {
             &.disabled {
                 background: #c6c6c6;
             }
@@ -296,7 +326,8 @@
 
     &__leading-image-container {
         margin: 0 0 1rem 0;
-        > a {
+
+        >a {
             display: block;
         }
     }
@@ -317,7 +348,7 @@
         height: 0;
         padding-bottom: 51.5%;
 
-        > iframe {
+        >iframe {
             position: absolute;
             top: 0;
             left: 0;
