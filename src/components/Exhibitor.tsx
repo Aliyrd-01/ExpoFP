@@ -142,9 +142,8 @@ function ExhibitorComponent() {
             return descriptions[0];
         }
 
-        function shareIsShow() {
-            const regExp = new RegExp(`https://${window["__efpEvent"]}.expofp.com(.+)?`, "gm");
-            return !uiState.kiosk && regExp.test(window.location.href);
+        function shareButtonVisible() {
+            return !uiState.kiosk && window.location.host.endsWith(".expofp.com");
         }
 
         return (
@@ -161,7 +160,7 @@ function ExhibitorComponent() {
                         showBookmark={!uiState.kiosk}
                         showDirections={settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
-                        showShare={shareIsShow()}
+                        showShare={shareButtonVisible()}
                         onClickBookmark={bookmark}
                         onClickShare={handleShare}
                         onClickDirections={() => {
