@@ -142,6 +142,11 @@ function ExhibitorComponent() {
             return descriptions[0];
         }
 
+        function showShare() {
+            const regExp = new RegExp(`https://${window["__efpEvent"]}.expofp.com(.+)?`, "gm");
+            return !uiState.kiosk && regExp.test(window.location.href);
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -156,7 +161,7 @@ function ExhibitorComponent() {
                         showBookmark={!uiState.kiosk}
                         showDirections={settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
-                        showShare={!uiState.kiosk}
+                        showShare={showShare()}
                         onClickBookmark={bookmark}
                         onClickShare={handleShare}
                         onClickDirections={() => {
