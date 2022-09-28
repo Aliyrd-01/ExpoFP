@@ -142,7 +142,7 @@ function ExhibitorComponent() {
             return descriptions[0];
         }
 
-        function showShare() {
+        function shareIsShow() {
             const regExp = new RegExp(`https://${window["__efpEvent"]}.expofp.com(.+)?`, "gm");
             return !uiState.kiosk && regExp.test(window.location.href);
         }
@@ -161,7 +161,7 @@ function ExhibitorComponent() {
                         showBookmark={!uiState.kiosk}
                         showDirections={settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
-                        showShare={showShare()}
+                        showShare={shareIsShow()}
                         onClickBookmark={bookmark}
                         onClickShare={handleShare}
                         onClickDirections={() => {
