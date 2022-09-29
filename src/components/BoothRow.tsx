@@ -16,7 +16,7 @@ const BoothRow: React.FC<{
             onClick={handleClick}
             onMouseOut={handleMouseOut}
             onMouseOver={handleMouseOver}
-            line1={booth.title || booth.name}
+            line1={booth.name}
             line2={booth instanceof SpecialBooth ? "" : data.boothTerm}
         />
     );
