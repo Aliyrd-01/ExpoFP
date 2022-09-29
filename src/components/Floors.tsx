@@ -34,6 +34,7 @@ export default function Floors() {
         timeout = setTimeout(() => (timeout = null), 1000);
         var layer = store.layerStore.layers.find((l) => l.description == name);
         if (store.layerStore.mode == LayersMode.Radio) {
+            store.routeStore.currentPosition = null;
             store.layerStore.updateVisibility(layer.name, true, true);
 
             var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);

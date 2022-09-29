@@ -9,7 +9,7 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";
-import { Layer } from "./LayerStore";
+import { Layer, LayersMode } from "./LayerStore";
 
 export default class RouteStore {
     rootStore: RootStore;
@@ -68,7 +68,6 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
-        
         var layers = [];
         store.routeStore.routeLines
             ?.map((rl) => rl.p0.layer)
@@ -100,8 +99,21 @@ export default class RouteStore {
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
         const p = mapCurrentPosition(point);
-        this.currentPosition = p;
-        if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
+
+        if (point.z && store.layerStore.mode === LayersMode.Radio) {
+            let z = point.z.toString();
+
+            let layer = store.layerStore.layers.find((l) => l.name === z);
+
+            if (layer) {
+                if (!layer.visible) store.layerStore.updateVisibility(z, true);
+                if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
+                this.currentPosition = p;
+            }
+        } else if (store.layerStore.mode === LayersMode.Default && focus) {
+            this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
+            this.currentPosition = p;
+        }
     }
 
     @action updateRoutePoints(routeLines: RouteLine[]) {
