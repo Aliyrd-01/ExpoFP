@@ -163,7 +163,7 @@ export default function Map() {
         </canvas>
     ));
 
-    function moveToRect(rect: Rect, maxZoomScale: number = 4) {
+    function moveToRect(rect: Rect, maxZoomScale: number = 10) {
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
         const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
