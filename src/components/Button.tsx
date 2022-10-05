@@ -18,7 +18,7 @@ const Button: React.FC<ButtonProps> = ({ children, inline = false, text, link, t
     return link ? (
         <a
             href={link}
-            className={classNames("efp-button", { "efp-button--inline": inline })}
+            className={classNames("efp-button", { "efp-button--inline": inline, "efp-button--disabled": disabled })}
             target={target}
             rel="noopener noreferrer"
             onClick={onClick}
