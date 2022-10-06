@@ -44,13 +44,7 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                {/* <Alert title="This floor plan is too big" variant="warning" closable={false} position="bottomRight">
-                    <a href="https://google.com" target="_blank" rel="noopener noreferrer">
-                        Read how to optimize it
-                    </a>
-                </Alert> */}
                 <Floors />
-
                 {/*<Areas />*/}
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
