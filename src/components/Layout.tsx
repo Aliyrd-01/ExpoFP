@@ -10,6 +10,7 @@ import Controls from "./Controls";
 import Header from "./Header";
 import LargeMessage from "./LargeMessage";
 // import TouchHover from "./TouchHover";
+import "../styles/index.scss";
 import "./Layout.scss";
 import Floors from "./Floors";
 import LogoOverlay from "./LogoOverlay";
@@ -19,6 +20,7 @@ import Pdf from "./Pdf";
 // import Demo from "./Demo";
 import Ws from "./Ws";
 import Share from "./Share";
+import Alert from "./Alert";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -42,6 +44,11 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
+                {/* <Alert title="This floor plan is too big" variant="warning" closable={false} position="bottomRight">
+                    <a href="https://google.com" target="_blank" rel="noopener noreferrer">
+                        Read how to optimize it
+                    </a>
+                </Alert> */}
                 <Floors />
 
                 {/*<Areas />*/}

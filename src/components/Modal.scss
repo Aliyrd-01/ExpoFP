@@ -1,4 +1,4 @@
-@import "../styles/import.scss";
+@import "../styles/helpers.scss";
 
 $modal: ".modal";
 
@@ -82,7 +82,8 @@ $modal: ".modal";
 @keyframes transformModal {
     from {
         top: -40px;
-    } to {
+    }
+    to {
         top: 0;
     }
 }

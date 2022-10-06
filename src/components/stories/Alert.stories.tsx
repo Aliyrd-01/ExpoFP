@@ -17,7 +17,7 @@ const Template: Story<AlertProps> = (args) => {
     };
 
     return (
-        <div className="sbContent">
+        <div className="layout">
             <button onClick={() => setAlertOpen(!alertOpen)}>{alertOpen ? "Hide alert" : "Show alert"}</button>
             <br />
             <br />

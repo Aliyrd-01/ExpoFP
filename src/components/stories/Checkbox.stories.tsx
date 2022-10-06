@@ -11,7 +11,7 @@ const Template: Story<CheckboxProps> = (args) => {
     const [value, setValue] = useState<boolean>(true);
 
     return (
-        <div className="sbContent">
+        <div className="layout">
             <Checkbox {...args} onChange={setValue} value={value} />
             <br />
             <br />
