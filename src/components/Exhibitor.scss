@@ -1,4 +1,4 @@
-@import "../styles/import.scss";
+@import "../styles/helpers.scss";
 
 .expo-jtrade19 .exhibitor__categories-booth {
     background: #e9522a; //#fb3e59;
@@ -19,7 +19,6 @@
 }
 
 .exhibitor {
-
     // &__booth {
     //     margin: 0 1rem 0.2rem;
     //     color: #777;
@@ -31,7 +30,7 @@
         // display: flex;
         // flex-direction: column;
         // align-items: flex-start;
-        >a {
+        > a {
             display: inline-block;
 
             color: #fff !important;
@@ -109,18 +108,18 @@
         } */
 
         &-html {
-            >*:first-child {
+            > *:first-child {
                 margin-top: 0;
                 padding-top: 0;
             }
 
-            >*:last-child {
+            > *:last-child {
                 margin-bottom: 0;
                 padding-bottom: 0;
             }
         }
 
-        &.collapsed>.exhibitor__description-html {
+        &.collapsed > .exhibitor__description-html {
             cursor: pointer;
 
             &:hover {
@@ -174,13 +173,13 @@
     &__meta {
         color: #333;
 
-        >div {
+        > div {
             display: flex;
             margin: 0.8rem 1rem;
             overflow: hidden;
 
-            >.fas,
-            >.far {
+            > .fas,
+            > .far {
                 text-align: center;
                 min-width: 0.8rem;
                 margin-top: 0.2rem;
@@ -188,7 +187,7 @@
                 font-size: 0.8rem;
             }
 
-            >div {
+            > div {
                 font-size: 0.85rem;
                 line-height: 1.1rem;
 
@@ -207,7 +206,7 @@
 
         // justify-content: space-between;
         // padding-top: 1rem;
-        >a {
+        > a {
             font-size: 2rem;
             text-decoration: none;
 
@@ -246,10 +245,10 @@
             line-height: 1.5rem;
         }
 
-        >span {
+        > span {
             display: flex;
 
-            >span {
+            > span {
                 max-width: 16rem;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -288,7 +287,7 @@
         position: relative;
         display: none;
 
-        >button {
+        > button {
             position: absolute;
             right: 1rem;
             padding: 0 0 1rem 1rem;
@@ -312,7 +311,7 @@
 
         @include button;
 
-        >.video-chat-btn {
+        > .video-chat-btn {
             &.disabled {
                 background: #c6c6c6;
             }
@@ -327,7 +326,7 @@
     &__leading-image-container {
         margin: 0 0 1rem 0;
 
-        >a {
+        > a {
             display: block;
         }
     }
@@ -348,7 +347,7 @@
         height: 0;
         padding-bottom: 51.5%;
 
-        >iframe {
+        > iframe {
             position: absolute;
             top: 0;
             left: 0;

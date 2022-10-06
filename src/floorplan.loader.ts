@@ -127,6 +127,7 @@ export default class FloorPlanLoader implements FloorPlan {
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
+            loadFont("efp", "fonts/efp.woff", { weight: 400 }),
         ];
 
         let handledStyleElements = 0;

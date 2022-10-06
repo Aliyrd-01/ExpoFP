@@ -1,4 +1,4 @@
-@import "../styles/import.scss";
+@import "../styles/helpers.scss";
 
 .booth {
     &__bar {
@@ -51,7 +51,7 @@
         /* justify-content: center; */
         margin-bottom: 1rem;
 
-        >i {
+        > i {
             font-size: 2.1rem;
             /* padding-bottom: 0.5rem; */
             color: #71b7d4;

@@ -12,7 +12,7 @@ export interface AlertProps {
     showIcon?: boolean;
     closable?: boolean;
     title?: string;
-    onClose: () => void;
+    onClose?: () => void;
 }
 
 const Alert: React.FC<AlertProps> = ({

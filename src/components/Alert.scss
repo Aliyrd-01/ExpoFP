@@ -74,12 +74,12 @@ $alert: ".efp-alert";
         box-shadow: var(--shadow-medium);
     }
     &--topRight {
-        top: rem(20px);
-        right: rem(20px);
+        top: rem(10px);
+        right: rem(10px);
     }
     &--bottomRight {
-        bottom: rem(20px);
-        right: rem(20px);
+        bottom: rem(10px);
+        right: rem(10px);
     }
     // Variant
     &--info {

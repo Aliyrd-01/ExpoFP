@@ -1,4 +1,4 @@
-@import "../styles/import.scss";
+@import "../styles/helpers.scss";
 
 .overlay-bar-back {
     min-width: 3rem;
@@ -7,7 +7,7 @@
     position: relative;
     display: flex;
 
-    &__icon2{
+    &__icon2 {
         @include like-anchor;
     }
     &__icon1,

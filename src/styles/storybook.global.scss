@@ -1,17 +1,19 @@
-//@import "base/normalize";
-@import "base/fonts";
-@import "base/icons";
-@import "base/common";
+@import "index";
 
+@font-face {
+    font-family: "#{$icons-font-family}";
+    src: url("#{$icons-font-path}/#{$icons-font-family}.woff?ek80j1") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
 body {
     padding: 0 !important;
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
 }
-
-.sbContent {
+.layout {
     padding: 20px;
 }
-
 .map {
     width: 100vw;
     height: 100vh;
