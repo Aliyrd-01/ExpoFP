@@ -310,7 +310,7 @@ export default function Map() {
     }
 
     function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number) {
-        const minPaddingPercent = 10;
+        const minPaddingPercent = 5;
 
         const targetRect = vRect.withPadding((vRect.w * minPaddingPercent) / 100, (vRect.h * minPaddingPercent) / 100);
 
@@ -327,7 +327,9 @@ export default function Map() {
         // __logger.log(bSvgRect.w, bSvgRect.h, bSvgRect);
 
         // get max zoom
-        const zoom = 0.3 * Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h);
+        let zoom = 0.3 * Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h);
+        const zoom1 = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
+        zoom = Math.max(zoom, zoom1);
 
         const diffX = targetRect.cx - bSvgRect.cx * zoom;
         const diffY = targetRect.cy - bSvgRect.cy * zoom;
