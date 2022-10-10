@@ -45,8 +45,6 @@ const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectEleme
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
-settings.wayfinding = !data.hideDirections && window["__wfData"] ? true : false;
-
 let svgArea: Rect;
 if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);

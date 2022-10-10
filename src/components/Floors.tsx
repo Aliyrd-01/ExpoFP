@@ -1,10 +1,10 @@
 import classNames from "classnames";
-import { active } from "d3";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import { floors } from "../data/svg";
+import Rect from "../core/Rect";
 import store, { uiState } from "../store";
 import { LayersMode } from "../store/LayerStore";
+import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import "./Floors.scss";
 
@@ -37,12 +37,16 @@ export default function Floors() {
             store.routeStore.currentPosition = null;
             store.layerStore.updateVisibility(layer.name, true, true);
 
-            var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);
-            var i2 = store.layerStore.layers.indexOf(layer);
+            if (settings.EXPO === "money2020usa") {
+                uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);
+            } else {
+                var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);
+                var i2 = store.layerStore.layers.indexOf(layer);
 
-            if (i1 === i2) return;
-            if (i2 < i1) uiState.zoomBy = 0.95;
-            else uiState.zoomBy = 1.05;
+                if (i1 === i2) return;
+                if (i2 < i1) uiState.zoomBy = 0.95;
+                else uiState.zoomBy = 1.05;
+            }
         } else store.layerStore.updateVisibility(layer.name, !layer.visible);
     };
 
