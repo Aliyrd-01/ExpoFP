@@ -163,7 +163,7 @@ export default function Map() {
         </canvas>
     ));
 
-    function moveToRect(rect: Rect, maxZoomScale: number = 10) {
+    function moveToRect(rect: Rect, maxZoomScale: number = 4) {
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
         const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
@@ -327,10 +327,13 @@ export default function Map() {
         // __logger.log(bSvgRect.w, bSvgRect.h, bSvgRect);
 
         // get max zoom
-        const zoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
+        let zoom = 0.3 * Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h);
+        const zoom1 = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
+        zoom = Math.max(zoom, zoom1);
 
         const diffX = targetRect.cx - bSvgRect.cx * zoom;
         const diffY = targetRect.cy - bSvgRect.cy * zoom;
+
         const t = zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
         return zoomBound(s.drawer, t, true);
     }
