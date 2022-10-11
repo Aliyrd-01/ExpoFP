@@ -1,4 +1,4 @@
-$s: 2rem;
+$s: 2.5rem;
 
 .controls {
     opacity: 0;
@@ -42,7 +42,7 @@ $s: 2rem;
     }
 
     > .fa {
-        font-size: 0.75rem;
+        font-size: 0.4 * $s;
         line-height: $s;
         height: $s;
         width: $s;

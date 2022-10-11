@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
+import Rect from "../core/Rect";
 import { svgArea } from "../data/svg";
 import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
