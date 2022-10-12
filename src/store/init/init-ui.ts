@@ -23,8 +23,7 @@ export default function initUi(store: RootStore) {
     }
 
     uiState.desiredOverlaySize = previewExhibitor || !isWebGlSupported ? "full" : "medium";
-    store.mapboxStore.mapBoxEnabled = true;
-
+   
     // expand on search focus or menu focus
     autorun(() => {
         if ((uiState.searchFocused || uiState.menu) && uiState.overlayPosition !== "left") {
@@ -40,9 +39,9 @@ export default function initUi(store: RootStore) {
     });
 
     if (!uiState.wsShown) uiState.wsStarted = true;
-
-  
+      
     uiState.kiosk = localStorage.getItem(kioskKey) === "1";
+    store.mapboxStore.mapBoxEnabled = !uiState.kiosk;
 
     if (uiState.kiosk) {
         var time;

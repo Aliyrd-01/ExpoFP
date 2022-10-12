@@ -14,15 +14,9 @@ export default function configYah(context: DrawerContext) {
 
     const isArray = Array.isArray(yah) || false;
 
-    const booth = !isArray
+    store.routeStore.fixedFrom = !isArray
         ? store.boothStore.booths.find((b) => b.name === yah)
         : store.boothStore.getBoothAtPoint(new Point((yah as number[])[0], (yah as number[])[1]));
-
-    store.routeStore.fixedFrom = booth;
-
-    store.boothStore.booths
-        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== booth)
-        .forEach((btr) => store.boothStore.booths.splice(store.boothStore.booths.indexOf(btr), 1));
 
     if (!yah || !isArray) return;
 

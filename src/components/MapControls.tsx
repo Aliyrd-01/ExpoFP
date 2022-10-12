@@ -11,9 +11,11 @@ export interface MapControlsProps {
     className?: string;
     style?: React.CSSProperties;
     titles: string[];
+    findLocation: boolean;
     layersOpen?: boolean;
     layersList?: layersListItem[];
     layersActiveItems?: string[];
+    onClickFindLocation: () => void;
     onClickZoomIn: () => void;
     onClickZoomOut: () => void;
     onClickByWidth: () => void;
@@ -24,9 +26,11 @@ const MapControls: React.FC<MapControlsProps> = ({
     className,
     style,
     titles,
+    findLocation,
     layersOpen,
     layersList,
     layersActiveItems,
+    onClickFindLocation,
     onClickZoomIn,
     onClickZoomOut,
     onClickByWidth,
@@ -58,7 +62,15 @@ const MapControls: React.FC<MapControlsProps> = ({
 
     return (
         <div className={classNames("mapControls", className)} style={style}>
-            <button type="button" className="mapControl" title={titles[0]} onClick={onClickZoomIn}>
+            {findLocation && (
+                <button type="button" className="mapControl" title={titles[0]} onClick={onClickFindLocation}>
+                    <svg x="0px" y="0px" viewBox="0 0 122.88 122.88" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M68.23,13.49c10.44,1.49,19.79,6.36,26.91,13.48c7.29,7.29,12.23,16.93,13.58,27.68h14.17v13.58h-14.39 c-1.62,10.13-6.42,19.2-13.36,26.13c-7.11,7.11-16.47,11.99-26.91,13.48v15.04H54.65v-15.04c-10.44-1.49-19.79-6.36-26.9-13.48 c-6.94-6.94-11.74-16-13.36-26.13H0V54.65h14.16c1.35-10.75,6.29-20.39,13.58-27.68c7.11-7.11,16.46-11.99,26.9-13.48V0h13.58 V13.49L68.23,13.49z M61.44,35.41c13.95,0,25.25,11.31,25.25,25.25c0,13.95-11.31,25.25-25.25,25.25 c-13.95,0-25.25-11.31-25.25-25.25C36.19,46.72,47.49,35.41,61.44,35.41L61.44,35.41z M89,33.11c-7.05-7.05-16.8-11.42-27.56-11.42 c-10.76,0-20.51,4.36-27.56,11.42c-7.05,7.05-11.42,16.8-11.42,27.56c0,10.76,4.36,20.51,11.42,27.56 c7.05,7.05,16.8,11.42,27.56,11.42c10.76,0,20.51-4.36,27.56-11.42c7.05-7.05,11.42-16.8,11.42-27.56 C100.41,49.9,96.05,40.16,89,33.11L89,33.11z" />
+                    </svg>
+                </button>
+            )}
+
+            <button type="button" className="mapControl" title={titles[1]} onClick={onClickZoomIn}>
                 <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
                     <path
                         fillRule="evenodd"
@@ -67,7 +79,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                     />
                 </svg>
             </button>
-            <button type="button" className="mapControl" title={titles[1]} onClick={onClickZoomOut}>
+            <button type="button" className="mapControl" title={titles[2]} onClick={onClickZoomOut}>
                 <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
                     <path
                         fillRule="evenodd"
@@ -76,7 +88,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                     />
                 </svg>
             </button>
-            <button type="button" className="mapControl" title={titles[2]} onClick={onClickByWidth}>
+            <button type="button" className="mapControl" title={titles[3]} onClick={onClickByWidth}>
                 <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
                     <path
                         fillRule="evenodd"
@@ -127,7 +139,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                         className={classNames("mapControl", {
                             isActive: layersIsOpen,
                         })}
-                        title={titles[3]}
+                        title={titles[4]}
                         onClick={() => setLayersOpen(!layersIsOpen)}
                     >
                         <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">

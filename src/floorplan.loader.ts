@@ -146,7 +146,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(wfDataUrl), loadJs(fpUrl)]);
+            await Promise.all([...fontPromises, loadJs(wfDataUrl), loadJs(dataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);

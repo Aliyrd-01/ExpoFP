@@ -45,7 +45,7 @@ function dispatchFromUrl() {
     const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
 
     if (slug && store.mapboxStore.mapBoxEnabled) store.mapboxStore.mapBoxSelected = false;
-
+    
     if (hanleCustomCommand(slug)) {
     } else if (slug.startsWith("route")) {
         const parts = slug.split(":");

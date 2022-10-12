@@ -190,7 +190,9 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         }
     }
 
-    // boothStore.booths = boothStore.booths.concat(layerBooths);
+    layerBooths
+        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.fixedFrom)
+        .forEach((btr) => layerBooths.splice(layerBooths.indexOf(btr), 1));
 
     return layerBooths;
 }
