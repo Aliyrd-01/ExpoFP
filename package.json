@@ -59,6 +59,7 @@
         "history": "^4.10.1",
         "html-webpack-plugin": "^3.2.0",
         "i18next": "^19.4.4",
+        "if-env": "^1.0.4",
         "jsonschema": "^1.2.5",
         "simple-geometry": "^1.0.5",
         "jspdf": "^1.5.3",
@@ -98,7 +99,7 @@
     },
     "scripts": {
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",
-        "build": "cross-env NODE_ENV=production webpack",
+        "build": "if-env BUILD_STORYBOOK=true && build-storybook || cross-env NODE_ENV=production webpack",
         "build+deploy": "cross-env AWS_DEPLOY=true yarn build",
         "create-package": "node ./scripts/create-package.js",
         "prepublishOnly": "yarn build",
@@ -131,5 +132,8 @@
         "last 3 Firefox versions",
         "last 3 FirefoxAndroid versions",
         "last 2 Edge versions"
-    ]
+    ],
+    "engines": {
+        "node": "14.x"
+    }
 }
