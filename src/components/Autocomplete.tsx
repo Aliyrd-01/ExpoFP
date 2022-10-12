@@ -126,14 +126,15 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     const onInputChange = (event) => {
         setShowOptionsDropdown(true);
         const searchText = event.target.value;
+
         let result = [];
         if (objectsMode) result = options.filter((option) => option.label.toLowerCase().indexOf(searchText.toLowerCase()) > -1);
         else result = options.filter((option) => option.toLowerCase().indexOf(searchText.toLowerCase()) > -1);
 
-        setInput(event.target.value);
-        setSearchValue(event.target.value);
+        setInput(searchText);
+        setSearchValue(searchText);
         setFocusOptionIndex(null);
-        setFilteredOptions(searchValue && result.length ? result : []);
+        setFilteredOptions(searchText && result.length ? result : []);
     };
 
     const showOptions = () => {

@@ -5,6 +5,8 @@ import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import UIState from "../UIState";
 
+export const kioskKey = "kiosk";
+
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
     updateScreenSize(uiState);
@@ -39,8 +41,8 @@ export default function initUi(store: RootStore) {
 
     if (!uiState.wsShown) uiState.wsStarted = true;
 
-    const storageKey = "kiosk";
-    uiState.kiosk = localStorage.getItem(storageKey) === "1";
+  
+    uiState.kiosk = localStorage.getItem(kioskKey) === "1";
 
     if (uiState.kiosk) {
         var time;
@@ -71,10 +73,10 @@ export default function initUi(store: RootStore) {
         const l = uiState.list;
         if (l.type === "search") {
             if (l.text === "kkiosk") {
-                localStorage.setItem(storageKey, "1");
+                localStorage.setItem(kioskKey, "1");
                 uiState.kiosk = true;
             } else if (l.text === "nokkiosk") {
-                localStorage.removeItem(storageKey);
+                localStorage.removeItem(kioskKey);
                 uiState.kiosk = false;
             }
         }

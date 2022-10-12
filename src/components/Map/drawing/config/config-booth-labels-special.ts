@@ -56,7 +56,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         this.ids = [];
 
         for (const s of this.steps) {
-            const canvasTmp = createMultilineTextCanvas(s.lines, s.width, s.fontSize, fillStyle);
+            const canvasTmp = createMultilineTextCanvas(s.lines, s.width, s.fontSize, settings.boothLabelColor);
             const id = this.getId(s.factor.toString());
             this.painter.addObject({
                 id,
@@ -71,7 +71,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
             this.ids.push(id);
         }
 
-        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio, fillStyle);
+        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio, settings.boothLabelColor);
         const dotW = dotCanvas.width / 2;
         const dotH = dotCanvas.width / 2;
         const dotId = this.getId("Dot");

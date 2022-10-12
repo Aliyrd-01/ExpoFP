@@ -4,6 +4,9 @@ import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
+
+import Alert from "./Alert";
+import "./Alert.scss";
 import "./LogoOverlay.scss";
 
 export default function LogoOverlay() {
@@ -46,16 +49,11 @@ export default function LogoOverlay() {
                 <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} />
             </a>
             {showWarning && (
-                <a
-                    title={`File size ${dataSize}Mb. Maybe your plan is too slow.`}
-                    href="https://expofp.com/"
-                    target="_blank"
-                    className="logo-overlay"
-                    style={s.warningStyle}
-                    rel="noopener noreferrer"
-                >
-                    <img src={bu + "warning.png"} alt={t("Made with ExpoFP")} />
-                </a>
+                <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
+                    <a target="_blank" href="https://expofp.com/pages/huge-fp-warning">
+                        Read how to optimize it
+                    </a>
+                </Alert>
             )}
         </div>
     ));

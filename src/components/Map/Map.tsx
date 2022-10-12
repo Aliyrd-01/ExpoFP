@@ -362,10 +362,13 @@ export default function Map() {
         // __logger.log(bSvgRect.w, bSvgRect.h, bSvgRect);
 
         // get max zoom
-        const zoom = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
+        let zoom = 0.3 * Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h);
+        const zoom1 = Math.min(targetRect.w / bSvgRect.w, targetRect.h / bSvgRect.h, maxZoom);
+        zoom = Math.max(zoom, zoom1);
 
         const diffX = targetRect.cx - bSvgRect.cx * zoom;
         const diffY = targetRect.cy - bSvgRect.cy * zoom;
+
         const t = zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
         return zoomBound(s.drawer, t, true);
     }

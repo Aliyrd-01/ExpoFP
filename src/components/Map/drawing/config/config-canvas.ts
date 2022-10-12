@@ -3,10 +3,11 @@ import { autorun } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
 import { uiState } from "../../../../store";
+import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import BgPainter from "../painters/BgPainter";
 
-const bgColor = Color("#ebebeb").vec4() as Vec4;
+const bgColor = Color(settings.backgroundColor).vec4() as Vec4;
 const whiteColor = Color("#fff").vec4() as Vec4;
 
 export default function configCanvas(context: DrawerContext) {

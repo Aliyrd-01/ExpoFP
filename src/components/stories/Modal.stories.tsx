@@ -18,7 +18,7 @@ const Template: Story<ModalProps> = (args) => {
     };
 
     return (
-        <div className="sbContent">
+        <div className="layout">
             <Button text="Open modal" onClick={() => setIsOpen(true)} />
             <Modal {...args} open={isOpen} onClickClose={clickClose}>
                 While Earth is only the fifth largest planet in the solar system, it is the only world in our solar system with

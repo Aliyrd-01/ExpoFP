@@ -142,6 +142,10 @@ function ExhibitorComponent() {
             return descriptions[0];
         }
 
+        function shareButtonVisible() {
+            return !uiState.kiosk && window.location.host.endsWith(".expofp.com");
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -156,7 +160,7 @@ function ExhibitorComponent() {
                         showBookmark={!uiState.kiosk}
                         showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
-                        showShare={!uiState.kiosk}
+                        showShare={shareButtonVisible()}
                         onClickBookmark={bookmark}
                         onClickShare={handleShare}
                         onClickDirections={() => {

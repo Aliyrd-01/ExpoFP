@@ -11,6 +11,7 @@ import Floors from "./Floors";
 import Header from "./Header";
 import LargeMessage from "./LargeMessage";
 // import TouchHover from "./TouchHover";
+import "../styles/index.scss";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
@@ -20,6 +21,7 @@ import Pdf from "./Pdf";
 import Share from "./Share";
 // import Demo from "./Demo";
 import Ws from "./Ws";
+import Alert from "./Alert";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));

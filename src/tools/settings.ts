@@ -1,26 +1,31 @@
 import deepmerge from "deepmerge";
 
-// console.log("aaa", window["__efpEvent"]);
-let settings = {
+export class FpSettings {
+    boothLabelColor: string = "#fff";
+    boothBorderColor: string = "#fff";
+    backgroundColor: string = "#ebebeb";
+    boothBorderWidth:number;
+}
+
+class Settings extends FpSettings {
     // this is not replaced with const, so calls to settings.EXPO won't get replaced with const
     // this is done for template to work
-    EXPO: window["__efpEvent"], //process.env.REACT_APP_EFP_EXPO,
-    borderless: false,
-    wayfinding: false,
+    EXPO: string = window["__efpEvent"]; //process.env.REACT_APP_EFP_EXPO,
+    borderless: boolean = false;
+    wayfinding: boolean = false;
     // borderWidth: 1,
-    colors: {
+    colors = {
         // base: "#ebebeb",
         booths: {
             default: "#41b6e7",
             selected: "#fb3e59", //'#002cff',
             empty: "rgba(0,0,0,0.205)", // this is #aaa for default BG #d6d6d6d
         },
-    },
+    };
+}
 
-    //fpSettings fron Designer
-    boothBorderWidth: null,
-    boothLabelColor: null,
-};
+// console.log("aaa", window["__efpEvent"]);
+let settings = new Settings();
 
 if (settings.EXPO === "jtrade19") {
     settings.colors.booths.selected = "#dc6533";
@@ -41,6 +46,8 @@ if (settings.EXPO === "jtrade19") {
 // }
 
 settings = deepmerge(settings, window["__settings"] || window["__fpSettings"] || {});
+settings = deepmerge<any, FpSettings>(settings, (window["__fpSettings"] as FpSettings) || {});
+
 export default settings;
 // extendGlobal({ __settings: settings })
 
