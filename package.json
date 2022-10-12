@@ -96,7 +96,7 @@
     },
     "scripts": {
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",
-        "build": "if-env BUILD_STORYBOOK=true && build-storybook || cross-env NODE_ENV=production webpack",
+        "build": "if-env BUILD_STORYBOOK=true && start-storybook -s ./public -p 80 || cross-env NODE_ENV=production webpack",
         "build+deploy": "cross-env AWS_DEPLOY=true yarn build",
         "create-package": "node ./scripts/create-package.js",
         "prepublishOnly": "yarn build",
