@@ -1,0 +1,92 @@
+@import "../styles/helpers.scss";
+
+$wayfindingForm: ".efp-wayfindingForm";
+$wayfindingError: ".efp-wayfindingError";
+
+#{$wayfindingForm} {
+    display: flex;
+    align-items: center;
+    margin-bottom: rem(30px);
+    padding-right: rem(10px);
+
+    &__icons {
+        position: relative;
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: space-between;
+        width: 45px;
+        height: 110px;
+        padding-left: rem(15px);
+
+        &:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 50%;
+            margin-left: 1px;
+            width: 4px;
+            height: 18px;
+            background: url("../../public/icons/dots.svg");
+        }
+        &-item {
+            display: flex;
+            align-items: center;
+            height: 50px;
+
+            &.is-from {
+                &:before {
+                    content: "";
+                    width: 21px;
+                    height: 21px;
+                    background: url("../../public/icons/from.svg");
+                    background-size: cover;
+                }
+            }
+            &.is-to {
+                &:before {
+                    content: "";
+                    width: 20px;
+                    height: 25px;
+                    background: url("../../public/icons/to.svg");
+                    background-size: cover;
+                }
+            }
+        }
+    }
+    &__controls {
+        flex: 1;
+        padding: rem(0 10px 0 0);
+    }
+    &__switch {
+        width: rem(30px);
+        height: rem(34px);
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: var(--border-radius-1);
+        color: var(--color-grayDark);
+        cursor: pointer;
+        transition: all var(--transition-duration) ease;
+
+        &:before {
+            @include icon();
+            content: $icon-swap;
+            font-size: 20px;
+            line-height: 1.2;
+        }
+        &:hover {
+            background: var(--color-grayUltraLight);
+            color: var(--color-black);
+        }
+    }
+}
+
+#{$wayfindingError} {
+    padding: rem(20px 15px);
+    border-top: 1px solid #e4e4e4;
+    font-size: var(--text-size-1);
+    color: var(--color-grayDark);
+    font-weight: var(--font-bold);
+    text-align: center;
+}

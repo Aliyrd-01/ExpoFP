@@ -6,11 +6,9 @@ import store, { boothStore, exhibitorStore, uiState } from "../store";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
-import Autocomplete from "./Autocomplete";
+import WayfindingTemplate from "./WayfindingTemplate";
 import OverlayContent from "./OverlayContent";
-import ToggleSwitch from "./ToggleSwitch";
 import "./Wayfinding.scss";
-import WayInformation from "./WayInformation";
 
 function Wayfinding() {
     const routeSelected = () => {
@@ -57,6 +55,7 @@ function Wayfinding() {
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
             const booth = boothStore.booths.filter((b) => b.name === name)[0];
+            console.log(booth);
             const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
             if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to, exceptUnaccessible));
@@ -94,41 +93,10 @@ function Wayfinding() {
             return info;
         };
 
-        const wayFindingForm = () => {
-            return (
-                <div className="wayFindingForm" style={{ marginBottom: 10 }}>
-                    <div className="wayFindingForm__icons">
-                        <div className="wayFindingForm__icons-item is-from"></div>
-                        <div className="wayFindingForm__icons-item is-to"></div>
-                    </div>
-                    <div className="wayFindingForm__controls">
-                        <div className="formGroup" style={{ marginBottom: 10 }}>
-                            <Autocomplete
-                                placeholder="Select from"
-                                options={options()}
-                                value={uiState.selectedRoute.from?.name || ""}
-                                onChange={(value) => onSelectionClick(value, true)}
-                            />
-                        </div>
-                        <div className="formGroup" style={{ marginBottom: 20 }}>
-                            <Autocomplete
-                                placeholder="Select to"
-                                options={options()}
-                                value={uiState.selectedRoute.to?.name || ""}
-                                onChange={(value) => onSelectionClick(value, false)}
-                            />
-                        </div>
-                        {/* <div className="formGroup" style={{ marginBottom: 10 }}>
-                            <ToggleSwitch
-                                name="exceptUnaccessible"
-                                label="Accessible"
-                                value={uiState.selectedRoute.exceptUnaccessible}
-                                onChange={(value) => onExceptUnaccessible(value)}
-                            />
-                        </div> */}
-                    </div>
-                </div>  
-            );
+        const onSwitch = () => {
+            const { from, to, exceptUnaccessible } = uiState.selectedRoute;
+            store.routeStore.selectRoute(new Route(uiState.selectedRoute.to || null, to, exceptUnaccessible));
+            store.routeStore.selectRoute(new Route(from, uiState.selectedRoute.from || null, exceptUnaccessible));
         };
 
         return (
@@ -144,23 +112,27 @@ function Wayfinding() {
                     store.selectNone();
                 }}
             >
-                {!mobileShowForm() ? wayFindingForm() : null}
-                <div className="wayInformationContainer">
-                    {!data.hideWayInformation &&
-                    settings.EXPO !== "bloomberg" &&
-                    uiState.selectedRoute?.from &&
-                    uiState.selectedRoute.from ? (
-                        store.routeStore.routeLines.length ? (
-                            <WayInformation
-                                items={getWayInformation(store.routeStore.routeDistance)}
-                                accessible={uiState.selectedRoute.exceptUnaccessible}
-                                onClick={() => store.showOverlay()}
-                            />
-                        ) : (
-                            <div style={{ textAlign: "center", fontWeight: "bold" }}>Route not found</div>
-                        )
-                    ) : null}
-                </div>
+                <WayfindingTemplate
+                    showForm={!mobileShowForm() ? true : false}
+                    showInfo={
+                        !data.hideWayInformation &&
+                        settings.EXPO !== "bloomberg" &&
+                        uiState.selectedRoute?.from &&
+                        uiState.selectedRoute.from
+                            ? true
+                            : false
+                    }
+                    routeFound={store.routeStore.routeLines.length ? true : false}
+                    options={options()}
+                    fromValue={uiState.selectedRoute.from?.name || ""}
+                    toValue={uiState.selectedRoute.to?.name || ""}
+                    onChangeFrom={(value) => onSelectionClick(value, true)}
+                    onChangeTo={(value) => onSelectionClick(value, false)}
+                    onSwitch={onSwitch}
+                    infoItems={getWayInformation(store.routeStore.routeDistance)}
+                    infoAccessible={uiState.selectedRoute.exceptUnaccessible}
+                    onClickInfo={() => store.showOverlay()}
+                />
             </OverlayContent>
         );
     });
