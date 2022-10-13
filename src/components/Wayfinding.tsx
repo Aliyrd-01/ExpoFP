@@ -95,8 +95,7 @@ function Wayfinding() {
 
         const onSwitch = () => {
             const { from, to, exceptUnaccessible } = uiState.selectedRoute;
-            store.routeStore.selectRoute(new Route(uiState.selectedRoute.to || null, to, exceptUnaccessible));
-            store.routeStore.selectRoute(new Route(from, uiState.selectedRoute.from || null, exceptUnaccessible));
+            store.routeStore.selectRoute(new Route(to, from, exceptUnaccessible));
         };
 
         return (
