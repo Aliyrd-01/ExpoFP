@@ -70,9 +70,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                     p.index,
                     store.layerStore.mode !== LayersMode.Default ? booth.layer.name : ""
                 )) {
-
-                    console.info("add", painterOrderPriority+10)
-
+                  
                     this.addObject(
                         layerID,
                         {
