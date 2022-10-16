@@ -1,4 +1,5 @@
 import classNames from "classnames";
+
 import Color from "color";
 import mapboxgl, { Map } from "mapbox-gl";
 import { useObserver } from "mobx-react-lite";
@@ -14,16 +15,20 @@ import MapboxGLButtonControl from "./Button";
 import { pulsingDot } from "./Dot";
 import "./Mapbox.scss";
 
+let style: string;
+
 function b() {
     var el = window["__fpGeo"];
     var parts = el?.properties?.mpViewbox;
+    var bear = el?.properties?.bearing;
+    style = el?.properties?.style;
 
     if ((parts?.length ?? 0) < 6) {
         store.mapboxStore.mapBoxEnabled = false;
         return 0;
     }
 
-    let b = -1 * bearing(parts[1], parts[0], parts[3], parts[2]) - 90;
+    let b = bear != null ? bear : -1 * bearing(parts[1], parts[0], parts[3], parts[2]) - 90;
     if (Math.abs(b) >= 360) b = 180;
     return b;
 }
@@ -207,7 +212,7 @@ export default function Mapbox() {
 
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
-            style: "mapbox://styles/mapbox/light-v9",
+            style: `mapbox://styles/mapbox/${style || "light-v10"}`,
             center: [lng, lat],
             zoom: 14,
             bearing: 30,
