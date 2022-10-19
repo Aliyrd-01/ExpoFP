@@ -35,6 +35,16 @@ let initialDate = null;
 export function mapCurrentPosition(position: CurrentPosition): Point {
     var mapping = null;
     var fpConfig = null;
+    
+    if (settings.EXPO === "money2020usa") {
+         mapping = {
+            "1": { x: 6150, y: 570 },
+            "2": { x: 6150, y: 570 },
+            "3": { x: 6150, y: 570 },
+            "4": { x: 6150, y: 570 },
+            "5": { x: 6150, y: 570 },
+        };
+    }
 
     if (settings.EXPO === "all-energy") {
         mapping = { "1": { x: 2399, y: 1998 }, "2": { x: 2000, y: 3300 } };
