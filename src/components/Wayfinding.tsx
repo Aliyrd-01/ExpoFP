@@ -8,7 +8,6 @@ import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import Autocomplete from "./Autocomplete";
 import OverlayContent from "./OverlayContent";
-import ToggleSwitch from "./ToggleSwitch";
 import "./Wayfinding.scss";
 import WayInformation from "./WayInformation";
 
@@ -30,6 +29,9 @@ function Wayfinding() {
         const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
         const boothsIDs = [];
 
+        const booths = () =>
+            store.routeStore.defaultFrom ? boothStore.booths.concat([store.routeStore.defaultFrom]) : boothStore.booths;
+
         const options = () => {
             const optionsList = [];
 
@@ -43,7 +45,7 @@ function Wayfinding() {
                 );
             });
 
-            boothStore.booths
+            booths()
                 .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
                 .forEach((booth) => {
                     optionsList.push({
@@ -56,7 +58,7 @@ function Wayfinding() {
         };
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
-            const booth = boothStore.booths.filter((b) => b.name === name)[0];
+            const booth = booths().filter((b) => b.name === name)[0];
             const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
             if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to, exceptUnaccessible));
@@ -127,7 +129,7 @@ function Wayfinding() {
                             />
                         </div> */}
                     </div>
-                </div>  
+                </div>
             );
         };
 
