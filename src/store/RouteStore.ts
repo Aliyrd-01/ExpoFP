@@ -15,7 +15,7 @@ export default class RouteStore {
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
     @observable tempToBooth: Booth = null;
-    @observable fixedFrom: Booth = null;
+    @observable defaultFrom: Booth = null;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -61,7 +61,7 @@ export default class RouteStore {
     @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
-        this.selectRoute(new Route(this.fixedFrom || from, to, exceptUnaccessible));
+        this.selectRoute(new Route(this.defaultFrom || from, to, exceptUnaccessible));
         sendEventToGa(`FP Wayfinding`, GaEventActions.ClickDirections, to.name);
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {

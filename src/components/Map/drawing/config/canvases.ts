@@ -346,6 +346,51 @@ export function createTargetCanvas(
     };
 }
 
+export function canvarFromPath(paths: PathInfo[], scale: number = 0.5): CanvasDescriptor {
+    
+    var bounds: number[] = [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE];
+    
+    paths.forEach((path) => {
+        path.triangles.forEach((tri: Triangle) => {
+            tri.forEach((point) => {
+                if (point[0] < bounds[0]) bounds[0] = point[0];
+                else if (point[0] > bounds[2]) bounds[2] = point[0];
+
+                if (point[1] < bounds[1]) bounds[1] = point[1];
+                else if (point[1] > bounds[3]) bounds[3] = point[1];
+            });
+        });
+    });
+
+    const w = bounds[2] - bounds[0];
+    const h = bounds[3] - bounds[1];
+    const dx = bounds[0];
+    const dy = bounds[1];
+
+    return {
+        width: w * scale,
+        height: h * scale,
+        
+        draw(ctx) {
+            ctx.scale(scale, scale);
+
+            paths.forEach((path) => {
+                ctx.beginPath();
+                ctx.fillStyle = path.color;
+
+                path.triangles.forEach((tri) => {
+                    ctx.moveTo(tri[0][0] - dx, tri[0][1] - dy);
+                    ctx.lineTo(tri[1][0] - dx, tri[1][1] - dy);
+                    ctx.lineTo(tri[2][0] - dx, tri[2][1] - dy);
+                    ctx.lineTo(tri[0][0] - dx, tri[0][1] - dy);
+                });
+
+                ctx.fill();
+            });
+        },
+    };
+}
+
 export function getFont(px: number, weight: number = 500) {
     return (
         weight +
@@ -385,7 +430,3 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
         },
     };
 }
-
-// function getFont(px: number, weight: number) {
-//     return weight + " " + px + 'px "Oswald", sans-serif';//-apple-system, Roboto,
-// }
