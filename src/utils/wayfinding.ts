@@ -143,6 +143,8 @@ export function getGraphLines(
 
         let line = getLineByPoints(lines, pp, cp);
 
+        if (!line) continue;
+
         let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
 
         if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
