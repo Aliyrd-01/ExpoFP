@@ -103,8 +103,6 @@ export default class RouteStore {
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
         const p = mapCurrentPosition(point);
 
-        if (settings.EXPO === "money2020usa") focus = false;
-
         if (point.z && store.layerStore.mode === LayersMode.Radio) {
             let z = point.z.toString();
 
