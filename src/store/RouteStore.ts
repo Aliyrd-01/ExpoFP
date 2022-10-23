@@ -10,6 +10,7 @@ import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";
 import { Layer, LayersMode } from "./LayerStore";
+import settings from "../tools/settings";
 
 export default class RouteStore {
     rootStore: RootStore;
@@ -59,11 +60,13 @@ export default class RouteStore {
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
         return (
-            this.rootStore.boothStore.booths.sort(
-                (b1, b2) =>
-                    lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
-                    lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
-            )[0] || null
+            this.rootStore.boothStore.booths
+                .filter((b) => b.visible)
+                .sort(
+                    (b1, b2) =>
+                        lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
+                        lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+                )[0] || null
         );
     }
 
@@ -99,6 +102,8 @@ export default class RouteStore {
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
         const p = mapCurrentPosition(point);
+
+        if (settings.EXPO === "money2020usa") focus = false;
 
         if (point.z && store.layerStore.mode === LayersMode.Radio) {
             let z = point.z.toString();
