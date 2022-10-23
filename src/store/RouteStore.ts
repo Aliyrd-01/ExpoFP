@@ -106,7 +106,7 @@ export default class RouteStore {
             let layer = store.layerStore.layers.find((l) => l.name === z);
 
             if (layer) {
-                if (!layer.visible) store.layerStore.updateVisibility(z, true);
+                if (!layer.visible) return; // store.layerStore.updateVisibility(z, true);
                 if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
                 this.currentPosition = p;
             }
