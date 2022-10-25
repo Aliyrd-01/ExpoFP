@@ -40,21 +40,13 @@ self.addEventListener("fetch", function (event) {
     // console.info("Fetching:", event.request.url);
     event.respondWith(
         (async function () {
-            var response;
-
             try {
-                response = await fetch(event.request.url);
+                var response = await fetch(event.request.url);
                 // console.info("\tInternert fetch: " + event.request.url);
                 if (response.status > 0 && response.status < 400) await cache(event.request, response);
                 return response;
             } catch (e) {
-                const cachedResponse = await caches.match(event.request);
-                if (cachedResponse) {
-                    // console.info("\tCached version found: " + event.request.url);
-                    return cachedResponse;
-                }
-
-                return response;
+                return await caches.match(event.request.url, { ignoreSearch: true });
             }
         })()
     );
@@ -76,7 +68,7 @@ function cache(request, response) {
     if (cur_cache) {
         //console.info("Caching the response to", request.url);
         return caches.open(cur_cache).then(function (cache) {
-            cache.put(request, response.clone());
+            cache.put(request.url, response.clone());
             return response;
         });
     } else {
