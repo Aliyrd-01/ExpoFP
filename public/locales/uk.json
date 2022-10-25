@@ -3,7 +3,7 @@
     "Zoom In": "Приблизити",
     "Zoom Out": "Віддалити",
     "Edit": "Редагувати",
-    "Toggle bookmark": "Перемкнути закладку",
+    "Toggle bookmark": "Додати закладку",
     "Share bookmarks": "Поділитися закладками",
     "Changes saved": "Зміни збережено",
     "Link copied to clipboard": "Посилання скопійовано в буфер обміну",
@@ -34,5 +34,6 @@
     "Create yours at": "Створіть свій на",
     "Buy": "Купити",
     "Made with ExpoFP": "Зроблено за допомогою ExpoFP",
-    "Category": "Категорія"
+    "Category": "Категорія",
+    "Fit to screen": "По ширині екрану"
 }
