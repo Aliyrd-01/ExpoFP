@@ -9,8 +9,6 @@ import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvas
 import { NumberObserver } from "./NumberObserver";
 import TextFitter, { TextFitData } from "./TextFitter";
 
-let fillStyle = settings.boothLabelColor || "#fff";
-
 const textFitters = new Map<number, TextFitter>();
 function cteateTextFitter(pixelRatio: number) {
     let d = textFitters.get(pixelRatio);

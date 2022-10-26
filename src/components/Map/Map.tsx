@@ -10,7 +10,6 @@ import Rect from "../../core/Rect";
 import store, { uiState } from "../../store";
 import { Booth, BoothBase } from "../../store/BoothStore";
 import { Exhibitor } from "../../store/ExhibitorStore";
-import { LayersMode } from "../../store/LayerStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";

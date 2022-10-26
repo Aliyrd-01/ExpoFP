@@ -21,7 +21,6 @@ import Pdf from "./Pdf";
 import Share from "./Share";
 // import Demo from "./Demo";
 import Ws from "./Ws";
-import Alert from "./Alert";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));

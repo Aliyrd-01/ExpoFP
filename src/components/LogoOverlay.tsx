@@ -50,7 +50,7 @@ export default function LogoOverlay() {
             </a>
             {showWarning && (
                 <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
-                    <a target="_blank" href="https://expofp.com/pages/huge-fp-warning">
+                    <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/huge-fp-warning">
                         Read how to optimize it
                     </a>
                 </Alert>

@@ -128,7 +128,7 @@ function ExhibitorComponent() {
         }
 
         function getDescription(description: String) {
-            if (description == null) return "";
+            if (description === null) return "";
 
             const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
             const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;

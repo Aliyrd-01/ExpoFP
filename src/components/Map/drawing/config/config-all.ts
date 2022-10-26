@@ -8,8 +8,6 @@ import configWf from "./config-wf";
 import configYah from "./config-yah";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
-import settings from "../../../../tools/settings";
-import configImg from "./config-img";
 
 //let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
@@ -46,7 +44,7 @@ export default function configAll(context: DrawerContext = _context): void {
             loaded++;
             if (counter === loaded) {
                 // TODO: money2020usa fix. Do no show booths for hidden floors.
-                if (store.layerStore.mode != LayersMode.Default)
+                if (store.layerStore.mode !== LayersMode.Default)
                     store.boothStore.booths = store.boothStore.booths.filter((b) => !!b.layer);
                 var l = [...uiState.selectedBooths][0]?.layer?.name || uiState.selectedRoute?.from?.layer.name;
                 if (l) store.layerStore.updateVisibility(l, true);
