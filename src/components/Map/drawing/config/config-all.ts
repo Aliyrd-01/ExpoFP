@@ -8,6 +8,8 @@ import configWf from "./config-wf";
 import configYah from "./config-yah";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
+import settings from "../../../../tools/settings";
+import configImg from "./config-img";
 
 //let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
@@ -23,6 +25,8 @@ export default function configAll(context: DrawerContext = _context): void {
 
     let basePriority = 6;
     let { layers, defaultLayer } = store.layerStore;
+
+    //if (settings.EXPO === "rodion-test") configImg(context, 170, true);
 
     if (defaultLayer) {
         const lrs = [].concat(layers);
@@ -41,7 +45,6 @@ export default function configAll(context: DrawerContext = _context): void {
         loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
             loaded++;
             if (counter === loaded) {
-
                 // TODO: money2020usa fix. Do no show booths for hidden floors.
                 if (store.layerStore.mode != LayersMode.Default)
                     store.boothStore.booths = store.boothStore.booths.filter((b) => !!b.layer);

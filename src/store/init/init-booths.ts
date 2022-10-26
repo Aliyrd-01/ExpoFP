@@ -191,7 +191,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     }
 
     layerBooths
-        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.fixedFrom)
+        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.defaultFrom)
         .forEach((btr) => layerBooths.splice(layerBooths.indexOf(btr), 1));
 
     return layerBooths;

@@ -117,7 +117,7 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
-        return this.inList || this.selected || this.store.rootStore.routeStore.fixedFrom?.id === this.id;
+        return this.inList || this.selected || this.store.rootStore.routeStore.defaultFrom?.id === this.id;
     }
 
     // // skipDim: boolean;
