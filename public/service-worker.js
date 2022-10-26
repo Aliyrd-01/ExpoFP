@@ -41,7 +41,7 @@ self.addEventListener("fetch", function (event) {
     event.respondWith(
         (async function () {
             try {
-                var response = await fetch(event.request.url);
+                var response = await fetch(event.request);
                 // console.info("\tInternert fetch: " + event.request.url);
                 if (response.status > 0 && response.status < 400) await cache(event.request, response);
                 return response;
