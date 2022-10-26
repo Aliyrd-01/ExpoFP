@@ -26,7 +26,7 @@ export default class ErrorBoundary extends React.Component<any, State> {
     render() {
         if (this.state.hasError) {
             // You can render any custom fallback UI
-            return <h4>Something went wrong.</h4>;
+            return <h4 style={{ textAlign: "center" }}>Not available offline.</h4>;
         }
 
         return this.props.children;
