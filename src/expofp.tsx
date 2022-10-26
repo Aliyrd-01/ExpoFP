@@ -8,7 +8,7 @@ window.addEventListener("error", reportError);
 window["__efpStyleElements"] = [];
 
 ready(async () => {
-    if ("serviceWorker" in navigator) await navigator.serviceWorker.register("service-worker.js");
+    if ("serviceWorker" in navigator) await navigator.serviceWorker.register("service-worker.js?v=3");
 
     const floorplanDivs = document.querySelectorAll(".expofp-floorplan") as NodeListOf<HTMLDivElement>;
     for (const element of Array.from(floorplanDivs)) {
