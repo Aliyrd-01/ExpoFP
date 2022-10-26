@@ -15,6 +15,8 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
+    self.clients.claim();
+
     var expectedCacheNames = Object.keys(CURRENT_CACHES).map(function (key) {
         return CURRENT_CACHES[key];
     });
@@ -22,16 +24,23 @@ self.addEventListener("activate", (event) => {
     // Delete out of date caches
     event.waitUntil(
         caches.keys().then(function (cacheNames) {
+            var open = caches.open(CURRENT_CACHES.site);
+            open.then((cache) => cache.add("/"));
+
             return Promise.all(
-                cacheNames.map(function (cacheName) {
-                    if (expectedCacheNames.indexOf(cacheName) == -1) {
-                        // console.log('Deleting out of date cache:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
+                cacheNames
+                    .map(function (cacheName) {
+                        if (expectedCacheNames.indexOf(cacheName) == -1) {
+                            // console.log('Deleting out of date cache:', cacheName);
+                            return caches.delete(cacheName);
+                        }
+                    })
+                    .concat([open])
             );
         })
     );
+
+    caches.open(CURRENT_CACHES.site).then((cache) => cache.add("/"));
 
     console.info("Service Worker has been activated");
 });
