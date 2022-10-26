@@ -4,8 +4,6 @@ import FloorPlanLoader from "./floorplan.loader";
 import "./public-path.js";
 import reportError from "./tools/report-error";
 
-//if ("serviceWorker" in navigator) navigator.serviceWorker.register("service-worker.js?v=4").then(() => {});
-
 window.addEventListener("error", reportError);
 window["__efpStyleElements"] = [];
 
