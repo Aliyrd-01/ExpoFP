@@ -17,7 +17,7 @@ export default class RouteStore {
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
     @observable tempToBooth: Booth = null;
-    @observable fixedFrom: Booth = null;
+    @observable defaultFrom: Booth = null;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -59,11 +59,13 @@ export default class RouteStore {
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
         return (
-            this.rootStore.boothStore.booths.sort(
-                (b1, b2) =>
-                    lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
-                    lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
-            )[0] || null
+            this.rootStore.boothStore.booths
+                .filter((b) => b.visible)
+                .sort(
+                    (b1, b2) =>
+                        lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
+                        lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+                )[0] || null
         );
     }
 
@@ -82,7 +84,7 @@ export default class RouteStore {
     @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
-        this.selectRoute(new Route(this.fixedFrom || from, to, exceptUnaccessible));
+        this.selectRoute(new Route(this.defaultFrom || from, to, exceptUnaccessible));
         sendEventToGa(`FP Wayfinding`, GaEventActions.ClickDirections, to.name);
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {
@@ -106,7 +108,7 @@ export default class RouteStore {
             let layer = store.layerStore.layers.find((l) => l.name === z);
 
             if (layer) {
-                if (!layer.visible) store.layerStore.updateVisibility(z, true);
+                if (!layer.visible) return; // store.layerStore.updateVisibility(z, true);
                 if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
                 this.currentPosition = p;
             }
