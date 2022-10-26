@@ -32,8 +32,8 @@ export default function Floors() {
     var click = (name: string) => {
         if (timeout) return;
         timeout = setTimeout(() => (timeout = null), 1000);
-        var layer = store.layerStore.layers.find((l) => l.description == name);
-        if (store.layerStore.mode == LayersMode.Radio) {
+        var layer = store.layerStore.layers.find((l) => l.description === name);
+        if (store.layerStore.mode === LayersMode.Radio) {
             store.routeStore.currentPosition = null;
             store.layerStore.updateVisibility(layer.name, true, true);
 
@@ -57,7 +57,7 @@ export default function Floors() {
                 return {
                     description: l.description,
                     active: l.visible,
-                    disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) == -1,
+                    disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
                 };
             });
 

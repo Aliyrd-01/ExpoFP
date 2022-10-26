@@ -1,16 +1,14 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineCenter, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
+import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { uiState } from "../../../../store";
-import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { boothStore } from "./../../../../store/index";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
@@ -27,17 +25,17 @@ const isDebug = false;
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
 
-const timeoutToChangeRoute = 15000; // 15 sec
-const distanceToChangeRoute = 200;
+// const timeoutToChangeRoute = 15000; // 15 sec
+// const distanceToChangeRoute = 200;
 
-let initialDate = null;
+// let initialDate = null;
 
 export function mapCurrentPosition(position: CurrentPosition): Point {
     var mapping = null;
     var fpConfig = null;
-    
+
     if (settings.EXPO === "money2020usa") {
-         mapping = {
+        mapping = {
             "1": { x: 6150, y: 570 },
             "2": { x: 6150, y: 570 },
             "3": { x: 6150, y: 570 },
@@ -140,7 +138,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
 
     var rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
 
-    return  routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
+    return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }
 
 function splitPolyLine(lines: Line[], interval: number): Point[] {

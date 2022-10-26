@@ -51,7 +51,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         const h = canvas.height / 2;
 
         const p = context.requirePainter(`${layerID}:Sizes`, RectPainter, painterOrderPriority, visible);
-        if (painters.indexOf(p) == -1) painters.push(p);
+        if (painters.indexOf(p) === -1) painters.push(p);
 
         var id = `${layerID}:${cX}${cY}`;
         ids.push(id);
@@ -75,7 +75,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
                     _visible = !_visible;
                     ids.forEach((id) => {
                         var la = id.substring(0, id.indexOf(":"));
-                        painters.find((p) => p.id == `${la}:Sizes`).updateVisible(id, _visible);
+                        painters.find((p) => p.id === `${la}:Sizes`).updateVisible(id, _visible);
                     });
                 }
             }

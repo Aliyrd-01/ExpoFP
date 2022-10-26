@@ -49,7 +49,6 @@ type Polygon = GeoJSON.FeatureCollection<GeoJSON.Polygon>;
 export default function Mapbox() {
     const mapContainer = useRef(null);
     const map = useRef(null);
-    let s: Polygon;
 
     useReaction(
         () => uiState.zoomAfTransformK,
@@ -75,10 +74,12 @@ export default function Mapbox() {
         var xMax = -1000;
         var yMax = -1000;
 
+        var data = window["__fpGeo"] as Polygon;
+
         var features =
-            s.features.filter((f) => f.properties.type === "viewbox")[0] ||
-            s.features.filter((f) => f.properties.type === "venue")[0] ||
-            s.features.filter((f) => f.properties.type === "booth");
+            data.features.filter((f) => f.properties.type === "viewbox")[0] ||
+            data.features.filter((f) => f.properties.type === "venue")[0] ||
+            data.features.filter((f) => f.properties.type === "booth");
 
         (Array.isArray(features) ? features : [features]).forEach((feature) => {
             var coords = feature.geometry.coordinates[0];
@@ -204,7 +205,7 @@ export default function Mapbox() {
     useEffect(() => {
         if (map.current) return;
 
-        var data = (s = window["__fpGeo"] as Polygon);
+        var data = window["__fpGeo"] as Polygon;
 
         if (!data.features.length) store.mapboxStore.mapBoxEnabled = false;
 
