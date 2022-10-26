@@ -37,6 +37,10 @@ export default class RootStore {
         // if (data.hideCompanies) return;
         this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
+
+        var visible = exhibitor.booths.filter((b) => b.visible);
+        var invisible = exhibitor.booths.filter((b) => !b.visible);
+        if (!visible.length && invisible.length) this.selectBooth(invisible[0]);
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
