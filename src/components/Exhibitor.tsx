@@ -116,7 +116,7 @@ function ExhibitorComponent() {
         };
 
         function renderButton(title: string, url: string) {
-            if (!title || !url) return null;
+            if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
                     <Button link={url} inline={true} onClick={customButtonClick}>
