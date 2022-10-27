@@ -1,12 +1,12 @@
 import { select } from "d3";
 import { getLayerSvg } from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
-import RectPainter from "../painters/RectPainter";
+import ImagePainter from "../painters/ImagePainter";
 import { DrawerObject } from "./../painters/RectPainter";
 import { CanvasDescriptor } from "./canvases";
 
 export default function configImg(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
-    let painter: RectPainter = null;
+    let painter: ImagePainter = null;
 
     const images = select(getLayerSvg(layerID)).selectAll("[data-layer='FG'] image").nodes() as SVGImageElement[];
 
@@ -32,7 +32,7 @@ export default function configImg(context: DrawerContext, layerID: string, paint
     });
 
     function addObject(name: string, item: DrawerObject) {
-        if (!painter) painter = context.requirePainter(`layerID:image${name}`, RectPainter, painterOrderPriority, visible);
+        if (!painter) painter = context.requirePainter(`image${name}`, ImagePainter, painterOrderPriority);
         painter.addObject(item);
     }
 }
