@@ -1,8 +1,8 @@
 // import { observable } from 'mobx';
-import RootStore from "./RootStore";
-import { Category } from "./CategoryStore";
+import { action, computed, observable } from "mobx";
 import { RegularBooth } from "./BoothStore";
-import { computed, observable, action } from "mobx";
+import { Category } from "./CategoryStore";
+import RootStore from "./RootStore";
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;

@@ -1,4 +1,5 @@
 import Size from "../../../core/Size";
+import { setContext } from "../../../store/LayerStore";
 import logger from "../../../tools/logger";
 import isDebug from "../../../utils/is-debug";
 import configAll from "./config/config-all";
@@ -20,6 +21,7 @@ export type Drawer = Pick<
     | "setVisibleScale"
     | "draw"
     | "pixelRatio"
+    | "setPainterVisibility"
 >;
 
 export type DrawerContext = Pick<
@@ -36,6 +38,8 @@ export type DrawerContext = Pick<
     // | "getCanvasSize"
     | "subscribeMatrixChange"
     | "getMatrix"
+    | "updateMatrixScale"
+    | "getLayersPainters"
     // | "subscribePtscaleChange"
 >;
 
@@ -63,6 +67,7 @@ export class DrawerImpl extends Matrix {
 
         this.gl = createGl(this.canvas);
         this.drawBound = this.draw.bind(this);
+        this.updateMatrixScale = this.updateMatrixScale.bind(this);
 
         if (!updatable) this.requireUpdate = null;
 
@@ -81,13 +86,11 @@ export class DrawerImpl extends Matrix {
 
     private prepare() {
         // console.log('Prepare painters');
-        const cb = configAll(this as DrawerContext);
+        configAll(this as DrawerContext);
+        setContext(this as DrawerContext);
 
-        for (var d of this.allPainters) {
-            d.preparePaint();
-        }
+        for (var d of this.allPainters) d.preparePaint();
 
-        cb();
         this.prepared = true;
     }
 
@@ -114,6 +117,24 @@ export class DrawerImpl extends Matrix {
         //this.requireRedraw();
     }
 
+    public setPainterVisibility(layer: string, visible: boolean) {
+        this.paintersByType.forEach((painter, key) => {
+            if (key.startsWith(layer) && painter.visible !== visible) painter.visible = visible;
+        });
+    }
+
+    public updateMatrixScale() {
+        // __logger.log('matrix change', m.getZoomTransform())
+        for (const d of this.allPainters) {
+            d.matrix = this.getMatrix();
+            d.ptscale = this.ptscale;
+        }
+    }
+
+    public getLayersPainters(layers: string[]): Painter[] {
+        return this.allPainters.filter((p) => !!layers.find((l) => p.id.startsWith(l)));
+    }
+
     //////////////////
     // DrawerContext
     requireUpdate(func: () => void): void {
@@ -123,13 +144,16 @@ export class DrawerImpl extends Matrix {
 
     requirePainter<T extends Painter>(
         id: string,
-        TypeClass?: new (gl: WebGLRenderingContext) => T,
-        painterOrderPriority?: number
+        TypeClass: new (gl: WebGLRenderingContext) => T,
+        painterOrderPriority: number,
+        visible: boolean
     ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
             d = new TypeClass(this.gl);
+            d.id = id;
             d.orderPriority = painterOrderPriority;
+            d.visible = visible;
             this.paintersByType.set(id, d);
             this.allPainters.push(d);
             this.allPainters.sort((a, b) => a.orderPriority - b.orderPriority);

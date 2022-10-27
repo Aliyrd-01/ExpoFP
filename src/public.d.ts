@@ -25,6 +25,8 @@ class FloorPlan {
         focus?: boolean
     ): void;
 
+    updateLayerVisibility(layer: string, visible: boolean): void;
+
     selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
 }
 

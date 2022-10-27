@@ -82,7 +82,16 @@ export default function Map() {
         () => {
             if (!uiState.centerMap) return;
             uiState.centerMap = false;
-            zoomTo(zoomIdentity);
+            var { rectangle } = store.layerStore;
+            if (rectangle)
+                zoomTo(
+                    getTramsformToCenterSvgRect(
+                        rectangle,
+                        uiState.canvasVisibleRectPx,
+                        Math.max(zoomTransform(s.$canvas.node()).k, 4)
+                    )
+                );
+            else zoomTo(zoomIdentity);
         }
     );
 
@@ -93,7 +102,7 @@ export default function Map() {
             const z = uiState.zoomBy;
             uiState.zoomBy = null;
             s.animatePlease = true;
-            s.$canvas.call(s.zoom.scaleBy as any, z === -1 ? 0.66 : 1.5);
+            s.$canvas.call(s.zoom.scaleBy as any, z);
         }
     );
 
@@ -127,7 +136,15 @@ export default function Map() {
         () => uiState.moveToRect,
         () => {
             if (!uiState.moveToRect) return;
-            moveToRect(uiState.moveToRect, 30);
+            if (
+                uiState.moveToRect &&
+                uiState.moveToRect.h !== Infinity &&
+                uiState.moveToRect.w !== Infinity &&
+                uiState.moveToRect.h > 0 &&
+                uiState.moveToRect.w > 0
+            ) {
+                moveToRect(uiState.moveToRect, 30 /*store.layerStore.mode !== LayersMode.Radio*/);
+            }
             uiState.moveToRect = null;
         }
     );
@@ -140,7 +157,7 @@ export default function Map() {
             //this.handledMoveToExhibitor = uiState.moveToBooths;
             logger.log("watched moveToBooths", uiState.moveToBooths);
             // // ask map to move to this exhibitor
-            const rects = uiState.moveToBooths.map((b) => b.rect) as Rect[];
+            const rects = uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect) as Rect[];
             if (rects.length === 0) return;
             moveToRect(Rect.fromMultiple(rects));
             uiState.moveToBooths = null;
@@ -149,6 +166,22 @@ export default function Map() {
             // this.handledMoveToExhibitor = null;
         }
     );
+
+    useReaction(
+        () => store.layerStore.visible,
+        () => {
+            store.layerStore.layers.forEach((layer) => s.drawer.setPainterVisibility(layer.name, layer.visible));
+            //if (store.layerStore.mode !== LayersMode.Radio)
+            s.drawer.draw();
+        }
+    );
+
+    // useReaction(
+    //     () => store.layerStore.rectangle,
+    //     () => {
+    //         uiState.moveToRect = store.layerStore.rectangle;
+    //     }
+    // );
 
     return useObserver(() => (
         <canvas
@@ -163,11 +196,11 @@ export default function Map() {
         </canvas>
     ));
 
-    function moveToRect(rect: Rect, maxZoomScale: number = 4) {
+    function moveToRect(rect: Rect, maxZoomScale: number = 10, animate: boolean = true) {
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
         const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
-        zoomTo(z);
+        zoomTo(z, animate);
     }
 
     function init() {
@@ -210,6 +243,7 @@ export default function Map() {
                 else setZoomTransformAnimated(t, 0, null);
                 s.animatePlease = false;
                 s.moving = true;
+                uiState.zoomAfTransformK = Math.round(t.k * 100) / 100;
             })
             .on("end", () => {
                 s.moving = false;
@@ -260,10 +294,10 @@ export default function Map() {
         store.clickBooth(b);
     }
 
-    function zoomTo(transform: ZoomTransform) {
+    function zoomTo(transform: ZoomTransform, animate: boolean = true) {
         const t = zoomTransform(s.$canvas.node());
         if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
-        (transform as any).animate = true;
+        (transform as any).animate = animate;
         s.$canvas.call(s.zoom.transform as any, transform);
     }
 

@@ -15,7 +15,7 @@ class ScaledBoothDrawer extends BoothDrawerBaseWithoutPainter {
         super(context, booth);
 
         let { cx, cy } = booth.rect;
-        this.painter = this.context.requirePainter(this.getId("yahCanvas"), RectPainter, 161);
+        this.painter = this.context.requirePainter(this.getId("yahCanvas"), RectPainter, 161, true);
 
         const yahCanvas = canvarFromPath(booth.paths);
 

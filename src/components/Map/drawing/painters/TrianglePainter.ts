@@ -25,12 +25,14 @@ export default class TrianglePainter implements Painter {
     private indexBufferIsUint32: boolean;
 
     // to be set externally
+    public id: string;
+    public visible: boolean = true;
     public orderPriority: number;
     public matrix: any;
     public ptscale: number;
     public alpha = 1;
     public dim = 0;
-    private readonly maxObjects = Math.floor(65535 / 3)
+    private readonly maxObjects = Math.floor(65535 / 3);
     // private readonly maxObjects = Math.floor(65545 / 3);
 
     constructor(gl: WebGLRenderingContext) {
@@ -210,7 +212,7 @@ export default class TrianglePainter implements Painter {
     }
 
     paint() {
-        if (this.alpha < 0.05) return;
+        if (this.alpha < 0.05 || !this.visible) return;
         const gl = this.gl;
 
         this.preparePaint();
@@ -222,7 +224,7 @@ export default class TrianglePainter implements Painter {
         const uniforms = {
             u_matrix: this.matrix,
             u_dim: this.dim,
-            u_alpha: this.alpha
+            u_alpha: this.alpha,
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);

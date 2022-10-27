@@ -1,23 +1,21 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineCenter, lineLength, Point, pointIsOnLine, Rect, shiftPoint } from "simple-geometry";
-import Polygon4 from "../../../../core/Polygon";
+import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { uiState } from "../../../../store";
-import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { boothStore } from "./../../../../store/index";
-import { CurrentPosition, Route } from "./../../../../store/RouteStore";
+import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
+
 let pointSize: number = null;
 let scale: number = null;
 
@@ -27,17 +25,17 @@ const isDebug = false;
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
 
-const timeoutToChangeRoute = 15000; // 15 sec
-const distanceToChangeRoute = 200;
+// const timeoutToChangeRoute = 15000; // 15 sec
+// const distanceToChangeRoute = 200;
 
-let initialDate = null;
+// let initialDate = null;
 
 export function mapCurrentPosition(position: CurrentPosition): Point {
     var mapping = null;
     var fpConfig = null;
-    
+
     if (settings.EXPO === "money2020usa") {
-         mapping = {
+        mapping = {
             "1": { x: 6150, y: 570 },
             "2": { x: 6150, y: 570 },
             "3": { x: 6150, y: 570 },
@@ -84,7 +82,7 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     return cp;
 }
 
-function drawLines(wfDrawer: RectPainter, ptscale: number) {
+function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     routePoints.forEach((rp, i) => wfDrawer.updateVisible(`Dot_${i}`, false));
 
     routePoints = [];
@@ -98,9 +96,11 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        if (!line.virtual) lines.push(line);
+        let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
 
-        if ((line.virtual && lines.length) || i === routeLines.length - 1) {
+        if (!line.virtual && visible) lines.push(line);
+
+        if ((line.virtual || !visible || i === routeLines.length - 1) && lines.length) {
             routePoints.push(...splitPolyLine(lines, interval));
             lines = [];
         }
@@ -111,6 +111,34 @@ function drawLines(wfDrawer: RectPainter, ptscale: number) {
         wfDrawer.updateVisible(`Dot_${i}`, true);
         wfDrawer.updateSkipdim(`Dot_${i}`, true);
     });
+
+    if (routePoints.length) {
+        wfDrawer.updateVisible("sourceLocation", true);
+        wfDrawer.updateCenter("sourceLocation", [routePoints[routePoints.length - 1].x, routePoints[routePoints.length - 1].y]);
+        wfDrawer.updateVisible("destinationLocation", true);
+        wfDrawer.updateCenter("destinationLocation", [routePoints[0].x, routePoints[0].y]);
+    } else {
+        wfDrawer.updateVisible("destinationLocation", false);
+        wfDrawer.updateVisible("sourceLocation", false);
+    }
+
+    var x1 = 1000000;
+    var y1 = 1000000;
+
+    var x2 = 0;
+    var y2 = 0;
+
+    routePoints.forEach((l) => {
+        if (l.x < x1) x1 = l.x;
+        if (l.y < y1) y1 = l.y;
+
+        if (l.x > x2) x2 = l.x;
+        if (l.y > y2) y2 = l.y;
+    });
+
+    var rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
+
+    return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }
 
 function splitPolyLine(lines: Line[], interval: number): Point[] {
@@ -148,10 +176,10 @@ function splitPolyLine(lines: Line[], interval: number): Point[] {
     return points;
 }
 
-export default function configWf(context: DrawerContext, painterOrderPriority: number) {
+export default function configWf(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
     if (data.hideDirections) return;
 
-    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority);
+    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
 
@@ -223,59 +251,26 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("currentLocation", false);
 
     function updateRoute() {
+        var layers = store.layerStore.visible.map((l) => l.name);
+
         for (let i = 0; i < routePoints.length; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
 
         routeLines = routePoints = [];
 
-        if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
+        if (layers.length && uiState.selectedRoute?.from?.rect && uiState.selectedRoute?.to?.rect) {
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            const p1 = Polygon4.fromRect(from.rect).rotate(from.rotate, from.rect.cx, from.rect.cy);
-            const p2 = Polygon4.fromRect(to.rect).rotate(to.rotate, to.rect.cx, to.rect.cy);
+            routeLines = getGraphLines(from, to, uiState.selectedRoute.exceptUnaccessible, false);
 
-            routeLines = getGraphLines(
-                new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4)),
-                new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4)),
-                uiState.selectedRoute.exceptUnaccessible,
-                false,
-                false
-            );
-
-            if (routeLines.length === 0) {
+            if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);
                 if (from.name !== to.name) throw new Error(`Route not found. From: ${from.name} to: ${to.name}`);
                 return;
             }
 
-            drawLines(wfDrawer, scale || 3);
-
-            wfDrawer.updateVisible("sourceLocation", true);
-            wfDrawer.updateCenter("sourceLocation", [
-                routeLines[routeLines.length - 1].p1.x,
-                routeLines[routeLines.length - 1].p1.y,
-            ]);
-
-            wfDrawer.updateVisible("destinationLocation", true);
-            wfDrawer.updateCenter("destinationLocation", [routeLines[0].p0.x, routeLines[0].p0.y]);
-
-            let { x1, x2, y1, y2 } = Rectangle.fromMultiple([uiState.selectedRoute.from.rect, uiState.selectedRoute.to.rect]);
-            routeLines.forEach((l) => {
-                if (l.p0.x < x1) x1 = l.p0.x;
-                if (l.p0.x > x2) x2 = l.p0.x;
-                if (l.p0.y < y1) y1 = l.p0.y;
-                if (l.p0.y > y2) y2 = l.p0.y;
-
-                if (l.p1.x < x1) x1 = l.p1.x;
-                if (l.p1.x > x2) x2 = l.p1.x;
-                if (l.p1.y < y1) y1 = l.p1.y;
-                if (l.p1.y > y2) y2 = l.p1.y;
-            });
-
-            uiState.moveToRect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
-        } else {
-            wfDrawer.updateVisible("destinationLocation", false);
-            wfDrawer.updateVisible("sourceLocation", false);
+            var rect = drawLines(wfDrawer, scale || 3);
+            if (rect) uiState.moveToRect = rect;
         }
 
         store.routeStore.updateRoutePoints(routeLines.filter((gl) => !gl.virtual));
@@ -358,7 +353,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         );
 
         reaction(
-            () => uiState.selectedRoute,
+            () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
             () => context.requireUpdate(updateRoute)
         );
 

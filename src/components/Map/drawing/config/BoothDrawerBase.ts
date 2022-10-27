@@ -32,7 +32,7 @@ export abstract class BoothDrawerBaseWithoutPainter {
 
     update() {}
 
-    startAutoupdate() {        
+    startAutoupdate() {
         let initial = true;
 
         // console.log("autorun1");
@@ -59,12 +59,13 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
     constructor(
         context: DrawerContext,
         booth: Booth,
-        painterType: string,
+        layerId: string,
         painterClass: new (gl: WebGLRenderingContext) => T,
-        painterOrderPriority: number
+        painterOrderPriority: number,
+        visible: boolean
     ) {
         super(context, booth);
-        this.painter = context.requirePainter(painterType, painterClass, painterOrderPriority);
+        this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible);
     }
     protected getId(name: string) {
         return (

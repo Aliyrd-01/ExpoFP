@@ -119,7 +119,7 @@ function Menu() {
                     {!data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
-                                {t("Bookmarks")} <span>({exhibitorStore.bookmarked.length})</span>
+                                {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
                             </span>
                             {exhibitorStore.bookmarked.length ? (
                                 <button onClick={shareBookmarks} className="fas fa-share-square" title={t("Share bookmarks")} />
@@ -134,7 +134,11 @@ function Menu() {
                             className="menu__item -pdf"
                             target="_blank"
                             rel="noopener noreferrer"
-                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(",")}`}
+                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(",")}&layers=${
+                                store.layerStore.layers > store.layerStore.visible
+                                    ? store.layerStore.visible.map((l) => l.name).join(",")
+                                    : ""
+                            }`}
                         >
                             {t("Download PDF")}
                         </a>
@@ -179,10 +183,10 @@ function Menu() {
         store.moveToList();
     }
 
-    function handlePdf(e: MouseEvent) {
-        e.preventDefault();
-        uiState.printingPdf = true;
-    }
+    // function handlePdf(e: MouseEvent) {
+    //     e.preventDefault();
+    //     uiState.printingPdf = true;
+    // }
 
     function handleCategoryClick(c: Category, e: MouseEvent) {
         e.preventDefault();

@@ -4,6 +4,7 @@ export class FpSettings {
     boothLabelColor: string = "#fff";
     boothBorderColor: string = "#fff";
     backgroundColor: string = "#ebebeb";
+    boothBorderWidth:number;
 }
 
 class Settings extends FpSettings {
@@ -44,7 +45,7 @@ if (settings.EXPO === "jtrade19") {
 //     settings.borderless = true;
 // }
 
-settings = deepmerge(settings, window["__settings"] || {});
+settings = deepmerge(settings, window["__settings"] || window["__fpSettings"] || {});
 settings = deepmerge<any, FpSettings>(settings, (window["__fpSettings"] as FpSettings) || {});
 
 export default settings;

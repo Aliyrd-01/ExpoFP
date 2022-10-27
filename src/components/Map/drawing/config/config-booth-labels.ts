@@ -35,9 +35,15 @@ const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
 //     }, delayAnimations + 800);
 // }
 
-export default function configBoothLabels(context: DrawerContext, booth: Booth) {
+export default function configBoothLabels(
+    context: DrawerContext,
+    layerID: string,
+    booth: Booth,
+    painterOrderPriority: number,
+    visible: boolean
+) {
     if (!(booth instanceof RegularBooth) || booth.noLabels) return;
-    return new BoothLabelDrawer(context, booth);
+    return new BoothLabelDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 // function replaceColorTmp(color: string) {
@@ -60,8 +66,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     // private readonly labelColor: string;
     // private readonly detailsHeight: number;
 
-    constructor(context: DrawerContext, booth: RegularBooth) {
-        super(context, booth, "booth-label", RectPainter, 160);
+    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean) {
+        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible);
         this.locked = context.updatable;
         // initPainter(this.painter);
 
@@ -206,8 +212,6 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             data.hideExhibitorBoothNumber || short,
             data.onlyFeaturedExhibitors
         );
-        // const w = canvas.width / 2;
-        // const h = canvas.height / 2;
 
         const pad = padding;
 
@@ -229,7 +233,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, fillStyle);
+        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, fillStyle, 500);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 

@@ -43,11 +43,15 @@ function dispatchFromUrl() {
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
+
+    if (slug && store.mapboxStore.mapBoxEnabled) store.mapboxStore.mapBoxSelected = false;
+    
     if (hanleCustomCommand(slug)) {
     } else if (slug.startsWith("route")) {
         const parts = slug.split(":");
         const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
         const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
+
         store.routeStore.selectRoute(new Route(from, to, false));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();

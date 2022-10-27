@@ -48,7 +48,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             )}
             <div className="exhibitor-row__booth">
                 {exhibitor.booths.map((booth) => (
-                    <div key={booth.id}>{booth.name}</div>
+                    <div key={booth.id}>{booth.fullName}</div>
                 ))}
             </div>
         </a>

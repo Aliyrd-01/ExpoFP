@@ -6,16 +6,22 @@ import RectPainter from "../painters/RectPainter";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createBookmarkCanvas } from "./canvases";
 
-export default function configBoothBookmark(context: DrawerContext, booth: Booth) {
+export default function configBoothBookmark(
+    context: DrawerContext,
+    layerID: string,
+    booth: Booth,
+    painterOrderPriority: number,
+    visible: boolean
+) {
     if (uiState.kiosk || !(booth instanceof RegularBooth)) return;
-    return new BoothBookmarkDrawer(context, booth);
+    return new BoothBookmarkDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
     public locked: boolean;
 
-    constructor(context: DrawerContext, booth: RegularBooth) {
-        super(context, booth, "booth-bookmark", RectPainter, 161);
+    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean) {
+        super(context, booth, layerID + "booth-bookmark", RectPainter, painterOrderPriority, visible);
         this.locked = context.updatable;
         const r = this.booth.rect.withPadding(boothStore.borderWidth / 2);
 
@@ -91,7 +97,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
         if (context.updatable) {
             // context.subscribePtscaleChange(() => context.requireUpdate(this.updateBound));
             // const cru = reaction(() => [booth.skipDim, booth.bookmarked], () => context.requireUpdate(this.updateBound));
-           
+
             reaction(
                 () => booth.bookmarked,
                 () => {
@@ -106,7 +112,7 @@ class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {
                             () => dispose()
                         );
                     }
-                }, 
+                },
                 { fireImmediately: booth.bookmarked }
             );
         }

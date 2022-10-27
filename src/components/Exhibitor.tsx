@@ -99,7 +99,7 @@ function ExhibitorComponent() {
                     </span>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm} {exhibitor.booths.map((b) => b.name).join(", ")}
+                    {data.boothTerm} {exhibitor.booths.map((b) => b.fullName).join(", ")}
                 </div>
             </>
         );
@@ -127,7 +127,7 @@ function ExhibitorComponent() {
         }
 
         function getDescription(description: String) {
-            if (description == null) return "";
+            if (description === null) return "";
 
             const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
             const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;
@@ -158,7 +158,7 @@ function ExhibitorComponent() {
                 <div className="exhibitor__buttons">
                     <SibebarActions
                         showBookmark={!uiState.kiosk}
-                        showDirections={settings.wayfinding}
+                        showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
                         showShare={shareButtonVisible()}
                         onClickBookmark={bookmark}
@@ -190,15 +190,16 @@ function ExhibitorComponent() {
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map((booth) => (
                             <a
-                                href={`?${exhibitor.slug}`}
+                                href={`?${booth.slug}`}
                                 key={booth.id}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     store.toggleMapOverlay();
+                                    if (uiState.overlayPosition !== "bottom") store.selectBooth(booth);
                                 }}
                                 className="exhibitor__categories-booth"
                             >
-                                {data.boothTerm} {booth.name}
+                                {data.boothTerm} {booth.fullName}
                             </a>
                         ))}
                         {exhibitor.categories.map((c) => (

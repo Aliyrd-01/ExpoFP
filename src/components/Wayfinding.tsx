@@ -1,8 +1,9 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
-import svg from "../data/svg";
+import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
+import { LayersMode } from "../store/LayerStore";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
@@ -40,7 +41,7 @@ function Wayfinding() {
                 optionsList.push(
                     ...e.booths.map((booth) => ({
                         value: booth.name,
-                        label: e.name + " - " + booth.name,
+                        label: e.name + " - " + booth.fullName,
                     }))
                 );
             });
@@ -50,7 +51,7 @@ function Wayfinding() {
                 .forEach((booth) => {
                     optionsList.push({
                         value: booth.name,
-                        label: booth.title || booth.name,
+                        label: booth.fullName,
                     });
                 });
 
@@ -65,14 +66,14 @@ function Wayfinding() {
             else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
 
-        const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
-            const { from, to } = uiState.selectedRoute;
-            store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
-        };
+        // const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
+        //     const { from, to } = uiState.selectedRoute;
+        //     store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
+        // };
 
         const getWayInformation = (distance) => {
             const info = [];
-            const units = svg.getAttribute("units");
+            const units = getLayerSvg().getAttribute("units");
             const seconds = Math.round(distance / (units === "m" ? 1.4 : 4.2));
             let est = new Date();
             est.setMinutes(est.getMinutes() + seconds / 60);
@@ -96,6 +97,14 @@ function Wayfinding() {
             return info;
         };
 
+        var layers = [];
+        store.routeStore.routeLines
+            ?.map((rl) => rl.p0.layer)
+            .reverse()
+            .forEach((l) => {
+                if (layers.indexOf(l) === -1) layers.push(l);
+            });
+
         const wayFindingForm = () => {
             return (
                 <div className="wayFindingForm" style={{ marginBottom: 10 }}>
@@ -112,7 +121,7 @@ function Wayfinding() {
                                 onChange={(value) => onSelectionClick(value, true)}
                             />
                         </div>
-                        <div className="formGroup" style={{ marginBottom: 20 }}>
+                        <div className="formGroup" style={{ marginBottom: 10 }}>
                             <Autocomplete
                                 placeholder="Select to"
                                 options={options()}
@@ -120,6 +129,29 @@ function Wayfinding() {
                                 onChange={(value) => onSelectionClick(value, false)}
                             />
                         </div>
+                        {(store.layerStore.mode === LayersMode.CheckBox || store.layerStore.mode === LayersMode.Radio) &&
+                            store.routeStore.layers.length > 1 && (
+                                <div className="formGroup" style={{ marginBottom: 10 }}>
+                                    {store.routeStore.layers.map((l) =>
+                                        !l.visible ? (
+                                            <a
+                                                key={l.name}
+                                                href="/"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    store.layerStore.updateVisibility(l.name, true);
+                                                }}
+                                            >
+                                                {l.description}
+                                            </a>
+                                        ) : (
+                                            <label className="layer-name" key={l.name}>
+                                                {l.description}
+                                            </label>
+                                        )
+                                    )}
+                                </div>
+                            )}
                         {/* <div className="formGroup" style={{ marginBottom: 10 }}>
                             <ToggleSwitch
                                 name="exceptUnaccessible"
@@ -150,8 +182,8 @@ function Wayfinding() {
                 <div className="wayInformationContainer">
                     {!data.hideWayInformation &&
                     settings.EXPO !== "bloomberg" &&
-                    uiState.selectedRoute?.from &&
-                    uiState.selectedRoute.from ? (
+                    uiState.selectedRoute?.from?.rect &&
+                    uiState.selectedRoute?.to?.rect ? (
                         store.routeStore.routeLines.length ? (
                             <WayInformation
                                 items={getWayInformation(store.routeStore.routeDistance)}

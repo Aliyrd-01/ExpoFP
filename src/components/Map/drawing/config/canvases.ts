@@ -18,12 +18,18 @@ function measureText(font: string, text: string) {
     return ctx.measureText(text).width;
 }
 
-export function createLabelCanvas(text: string, fontSize: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
+export function createLabelCanvas(
+    text: string,
+    fontSize: number,
+    pixelRatio: number,
+    color: string = "#fff",
+    fontWeight: number
+): CanvasDescriptor {
     text = text.replace(/^_/, "");
     fontSize *= pixelRatio;
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
-    const font = getFont(fontSize, 500);
+    const font = getFont(fontSize, fontWeight);
     const width = measureText(font, text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A")) + 3 + 3; //
     const vPad = 4;
     const height = fontSize + vPad;
@@ -63,11 +69,13 @@ export function createDetailsCanvas(
     } else if (b.reserved) {
         lines.push(t("Reserved"));
     } /*else if (b.exhibitors.length) {
-            lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
-        } */ else if (!onlyId) {
-        if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
-        if (b.price && b.price !== "0") lines.push(b.price);
+<<<<<<< HEAD
+        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+    } */ else if (!onlyId) {
+        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     }
+    if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
+    if (b.price && b.price !== "0") lines.push(b.price);
 
     // }
 
@@ -347,9 +355,8 @@ export function createTargetCanvas(
 }
 
 export function canvarFromPath(paths: PathInfo[], scale: number = 0.5): CanvasDescriptor {
-    
     var bounds: number[] = [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE];
-    
+
     paths.forEach((path) => {
         path.triangles.forEach((tri: Triangle) => {
             tri.forEach((point) => {
@@ -370,7 +377,7 @@ export function canvarFromPath(paths: PathInfo[], scale: number = 0.5): CanvasDe
     return {
         width: w * scale,
         height: h * scale,
-        
+
         draw(ctx) {
             ctx.scale(scale, scale);
 

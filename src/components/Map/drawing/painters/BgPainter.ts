@@ -7,7 +7,9 @@ import Painter from "./Painter";
 // const bgColor = Color(settings.colors.base).vec4();
 
 export default class BgPainter implements Painter {
+    public id: string;
     public orderPriority: number;
+    public visible: boolean = true;
     private readonly gl: WebGLRenderingContext;
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -58,6 +60,8 @@ export default class BgPainter implements Painter {
     }
 
     paint() {
+        if (!this.visible) return;
+
         const gl = this.gl;
         this.preparePaint();
         if (!this.colors) return;
@@ -67,11 +71,11 @@ export default class BgPainter implements Painter {
         this.enableBuffer(this.nodimBuffer, this.nodimLocation, 1);
 
         const uniforms = {
-            u_dim: this.dim
+            u_dim: this.dim,
         } as any;
 
         twgl.setUniforms(this.programInfo, uniforms);
-        gl.drawArrays(gl.TRIANGLES, 0, this.positions.length/2);
+        gl.drawArrays(gl.TRIANGLES, 0, this.positions.length / 2);
     }
 
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {

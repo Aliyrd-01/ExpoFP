@@ -1,10 +1,14 @@
 import { action } from "mobx";
+import { floors } from "../data/svg";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
+
+import MapboxStore from "./MapboxStore";
+import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 
@@ -14,6 +18,8 @@ export default class RootStore {
     readonly boothStore: BoothStore;
     readonly uiState: UIState;
     readonly routeStore: RouteStore;
+    readonly mapboxStore: MapboxStore;
+    readonly layerStore: LayerStore;
     fp: FloorPlanReady;
 
     constructor() {
@@ -23,18 +29,27 @@ export default class RootStore {
         this.boothStore = new BoothStore(this);
         this.routeStore = new RouteStore(this);
         this.uiState = new UIState(this);
+        this.mapboxStore = new MapboxStore(this);
+        this.layerStore = new LayerStore();
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
         // if (data.hideCompanies) return;
         this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
+
+        var visible = exhibitor.booths.filter((b) => b.visible);
+        var invisible = exhibitor.booths.filter((b) => !b.visible);
+        if (!visible.length && invisible.length) this.selectBooth(invisible[0]);
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
+
         if (focus) this.moveToList(b);
+        if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
+            this.layerStore.updateVisibility(b[0].layer.name, true);
     }
 
     @action reset() {
@@ -102,9 +117,10 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
-    @action clickFloor(floor) {
+    @action clickFloor(floor: string) {
         if (window["__resett"]) window["__resett"]();
-        this.uiState.moveToRect = floor.rect;
+        var rect = floors.filter((f) => f.name === floor)[0]?.rect;
+        if (rect) this.uiState.moveToRect = rect;
         this.showMap();
     }
 
@@ -151,6 +167,7 @@ export default class RootStore {
 
         if (!booth) {
             this.uiState.details = null;
+            if (this.uiState.onBoothClick) this.uiState.onBoothClick({ target: null });
             return;
         } else this.routeStore.tempToBooth = booth;
 
@@ -167,20 +184,6 @@ export default class RootStore {
             this.selectBooth(booth, false);
         }
         this.showMap();
-        // commit("setMenu", false);
-        // if (!id) {
-        //     commit("setDetails", null);
-        //     return;
-        // }
-        // // const booth = state.booths[id];
-        // if (booth.exhibitors && booth.exhibitors.length === 1) {
-        //     dispatch("selectExhibitor", booth.exhibitors[0]);
-        //     // } else if (booth.exhibitors.length > 1) {
-        //     //     dispatch('selectSearch', booth.name);
-        // } else {
-        //     dispatch("selectBooth", id);
-        // }
-        // dispatch("showMap", id);
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
@@ -228,7 +231,7 @@ export default class RootStore {
         const booths = [];
         items.forEach((item) => {
             if (item instanceof Exhibitor) {
-                booths.push(...item.booths);
+                booths.push(...item.booths.filter((b) => b.visible));
             } else if (item instanceof BoothBase) {
                 booths.push(item);
             }

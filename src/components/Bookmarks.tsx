@@ -10,7 +10,7 @@ function Bookmarks() {
     return useObserver(() => {
         const bar = (
             <div className="bar">
-                {t("Bookmarks")}&nbsp;<span>({exhibitorStore.bookmarked.length})</span>
+                {t("Bookmarks")}&nbsp;<span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
             </div>
         );
 
