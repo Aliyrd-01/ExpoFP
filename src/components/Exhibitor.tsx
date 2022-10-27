@@ -15,6 +15,7 @@ import OverlayContent from "./OverlayContent";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
+import ErrorBoundary from "./ErrorBoundary";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -179,9 +180,11 @@ function ExhibitorComponent() {
                                 <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
                             </a>
                         ) : (
-                            <Suspense fallback={null}>
-                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
-                            </Suspense>
+                            <ErrorBoundary>
+                                <Suspense fallback={null}>
+                                    <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                </Suspense>
+                            </ErrorBoundary>
                         )}
                     </div>
                 ) : null}
@@ -250,9 +253,11 @@ function ExhibitorComponent() {
                     )}
                     {exhibitor.gallery && (
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
-                            <Suspense fallback={null}>
-                                <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
-                            </Suspense>
+                            <ErrorBoundary>
+                                <Suspense fallback={null}>
+                                    <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
+                                </Suspense>
+                            </ErrorBoundary>
                         </div>
                     )}
                     {!uiState.kiosk && exhibitor.marketMaterials && (
