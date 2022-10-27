@@ -1,5 +1,6 @@
 import { easeLinear } from "d3-ease";
 import { interpolateNumber } from "d3-interpolate";
+import store from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import isDebug from "../../../../utils/is-debug";
@@ -11,6 +12,7 @@ import configBoothBookmark from "./config-booth-bookmark";
 import configBoothBorder from "./config-booth-border";
 import configBoothLabels from "./config-booth-labels";
 import configBoothLabelsSpecial from "./config-booth-labels-special";
+import configScaledBoot from "./config-booth-scaled";
 
 export default function configBooths(
     context: DrawerContext,
@@ -19,11 +21,7 @@ export default function configBooths(
     painterOrderPriority: number,
     visible: boolean
 ) {
-    //.filter(x => x.name === '4268');
-    // booths.splice(2740);//
-    // , configBoothBorder
-
-    layerID += ":";
+    var _layerID = layerID + ":";
 
     const configFuncs = [configBoothBg, configBoothLabels, configBoothLabelsSpecial, configBoothBookmark] as ((
         DrawerContext,
@@ -41,10 +39,10 @@ export default function configBooths(
         const name = "config-func " + func.name;
         if (isDebug) console.time(name);
         for (const b of booths) {
-            // const afterFunc =
-            const dr = func(context, layerID, b, painterOrderPriority, visible);
+            if (b === store.routeStore.defaultFrom) continue;
+
+            const dr = func(context, _layerID, b, painterOrderPriority, visible);
             if (dr) lockedDrawers.push(dr);
-            // if (afterFunc) after.push(afterFunc);
         }
         painterOrderPriority++;
         if (isDebug) console.timeEnd(name);
@@ -52,7 +50,7 @@ export default function configBooths(
     }
 
     const labelsPainter = context.requirePainter(
-        layerID + "booth-label",
+        _layerID + "booth-label",
         RectPainter,
         painterOrderPriority,
         visible
@@ -61,6 +59,9 @@ export default function configBooths(
         labelsPainter.alpha = 0;
     }
 
+    if (store.routeStore.defaultFrom?.layer?.name === layerID)
+        configScaledBoot(context, _layerID, store.routeStore.defaultFrom, painterOrderPriority, visible);
+
     return function () {
         for (const dr of lockedDrawers) {
             dr.unlock();
@@ -68,5 +69,5 @@ export default function configBooths(
         animate(0, 300, easeLinear, interpolateNumber(0, 1), context.requireUpdate.bind(context), (v) =>
             labelsPainter ? (labelsPainter.alpha = v) : null
         );
-    };   
+    };
 }

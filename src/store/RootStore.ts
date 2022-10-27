@@ -64,7 +64,10 @@ export default class RootStore {
         window.setTimeout(() => {
             this.selectSearch("");
             this.routeStore.selectRoute(null);
-            // this.moveToList();
+
+            if (!this.routeStore.defaultFrom?.visible || true)
+                this.selectBooth(this.routeStore.defaultFrom);
+
             this.uiState.centerMap = true;
         }, 1000);
     }

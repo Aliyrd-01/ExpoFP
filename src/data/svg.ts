@@ -72,6 +72,22 @@ let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement
 
 export { svgArea, svgViewBox, floors };
 
+export function getTrianglesFromFpPaths(index: number, suffix: string) {
+    const mesh = gtePathByIndex(index, suffix);
+    // TODO: remove in future versions
+    for (const p of mesh.positions) {
+        // a bug in svgMesh3d when normalize: false ?
+        p[1] = Math.abs(p[1]);
+        p.length = 2;
+    }
+    const pathTriangles = [];
+    for (const c of mesh.cells) {
+        pathTriangles.push([mesh.positions[c[0]], mesh.positions[c[1]], mesh.positions[c[2]]]);
+    }
+
+    return pathTriangles;
+}
+
 export let gtePathByIndex = (index: number, suffix: string = "") => {
     try {
         return window[`__fpPaths${suffix}`][index];

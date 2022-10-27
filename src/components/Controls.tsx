@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import Rect from "../core/Rect";
 import { svgArea } from "../data/svg";
 import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
@@ -30,12 +29,7 @@ export default function Controls() {
                 className={s.className}
                 style={s.style}
                 titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("Fit to screen"), t("Layers")]}
-                onClickFindLocation={() => {
-                    let { rect } = store.routeStore.defaultFrom;
-                    let x = store.routeStore.defaultFrom.rect.w * 5;
-                    let y = store.routeStore.defaultFrom.rect.h * 5;
-                    uiState.moveToRect = Rect.fromCxcywh(rect.cx, rect.cy, rect.w - x * 2, rect.h - y * 2);
-                }}
+                onClickFindLocation={() => store.selectBooth(store.routeStore.defaultFrom)}
                 onClickZoomIn={() => (uiState.zoomBy = 1.5)}
                 onClickZoomOut={() => (uiState.zoomBy = 0.66)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}

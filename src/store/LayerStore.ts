@@ -81,7 +81,7 @@ function an(layer: Layer, toVisible: boolean): void {
 
     animate(
         0,
-        500,
+        250,
         easeLinear,
         toVisible ? interpolateNumber(0, 1) : interpolateNumber(1, 0),
         _context.requireUpdate.bind(_context),
