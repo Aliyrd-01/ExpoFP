@@ -32,7 +32,7 @@ export default function configImg(context: DrawerContext, layerID: string, paint
     });
 
     function addObject(name: string, item: DrawerObject) {
-        if (!painter) painter = context.requirePainter(`image${name}`, ImagePainter, painterOrderPriority);
+        if (!painter) painter = context.requirePainter(`image${name}`, ImagePainter, painterOrderPriority, visible);
         painter.addObject(item);
     }
 }

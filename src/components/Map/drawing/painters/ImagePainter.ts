@@ -1,9 +1,9 @@
 import * as twgl from "twgl.js";
 import isDebug from "../../../../utils/is-debug";
-import { CanvasDescriptor } from "../config/canvases";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
-import Sprite, { SpriteItem } from "./Sprite";
+import { DrawerObject } from "./RectPainter";
+import Sprite from "./Sprite";
 
 export default class ImagePainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -50,6 +50,8 @@ export default class ImagePainter implements Painter {
     private indexBuffersAreUint: boolean;
 
     // to be set externally
+    public id: string;
+    public visible: boolean = true;
     public orderPriority: number;
     public matrix: any;
     public ptscale: number;
@@ -548,25 +550,6 @@ export default class ImagePainter implements Painter {
             gl.drawElements(gl.TRIANGLES, group.numElements, this.indexBuffersAreUint ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
         }
     }
-}
-
-export interface DrawerObject {
-    id?: string;
-    center: Vec2;
-    deltas?: Vec4; // x1, y1, x2, y2
-    deltaPts?: Vec4;
-    scalePts?: number;
-    texPosition?: "center" | "lefttop" | "righttop";
-    color?: Vec4;
-    rotateRadians?: number;
-    spriteItem?: SpriteItem;
-    canvasTmp?: CanvasDescriptor;
-    visible?: boolean;
-    skipdim?: boolean;
-    stretch?: boolean;
-    //order: number;
-
-    //always: boolean;
 }
 
 interface DrawerObjectEx extends DrawerObject {
