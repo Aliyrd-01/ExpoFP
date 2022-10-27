@@ -7,9 +7,8 @@ import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore"
 import { LayersMode } from "../../../../store/LayerStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
-// import { getBoothState } from "./config-booths";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
-import { gtePathByIndex } from "./../../../../data/svg";
+import { getTrianglesFromFpPaths } from "./../../../../data/svg";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 
 // let picked = 0;
@@ -34,12 +33,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
         super(context, booth);
 
-        // let triangles: Triangle[];
-
         if (!booth.paths || booth.pathsWithRect) {
-            let rect = this.booth.rect;
-            //if (settings.borderless)
-            rect = rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
+            
+            let rect = this.booth.rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
 
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
@@ -203,20 +199,4 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
 
         return colorInfo;
     }
-}
-
-function getTrianglesFromFpPaths(index: number, suffix: string) {
-    const mesh = gtePathByIndex(index, suffix);
-    // TODO: remove in future versions
-    for (const p of mesh.positions) {
-        // a bug in svgMesh3d when normalize: false ?
-        p[1] = Math.abs(p[1]);
-        p.length = 2;
-    }
-    const pathTriangles = [];
-    for (const c of mesh.cells) {
-        pathTriangles.push([mesh.positions[c[0]], mesh.positions[c[1]], mesh.positions[c[2]]]);
-    }
-
-    return pathTriangles;
 }

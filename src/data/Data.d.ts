@@ -113,7 +113,6 @@ interface RawExhibitor {
 interface PathInfo {
     index: number;
     color: string;
-    triangles?: Triangle[];
 }
 
 interface MarketMaterial {

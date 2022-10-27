@@ -31,7 +31,7 @@ export default function Floors() {
 
     var click = (name: string) => {
         if (timeout) return;
-        timeout = setTimeout(() => (timeout = null), 1000);
+        timeout = setTimeout(() => (timeout = null), 500);
         var layer = store.layerStore.layers.find((l) => l.description === name);
         if (store.layerStore.mode === LayersMode.Radio) {
             store.routeStore.currentPosition = null;

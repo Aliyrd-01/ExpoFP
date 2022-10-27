@@ -1,3 +1,4 @@
+import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 
@@ -354,11 +355,14 @@ export function createTargetCanvas(
     };
 }
 
-export function canvarFromPath(paths: PathInfo[], scale: number = 0.5): CanvasDescriptor {
+export function canvarFromPath(paths: PathInfo[], scale: number = 0.5,suffix:string): CanvasDescriptor {
     var bounds: number[] = [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE];
 
     paths.forEach((path) => {
-        path.triangles.forEach((tri: Triangle) => {
+
+        path["triangles"] = getTrianglesFromFpPaths(path.index,suffix);
+
+        path["triangles"].forEach((tri: Triangle) => {
             tri.forEach((point) => {
                 if (point[0] < bounds[0]) bounds[0] = point[0];
                 else if (point[0] > bounds[2]) bounds[2] = point[0];
@@ -385,7 +389,7 @@ export function canvarFromPath(paths: PathInfo[], scale: number = 0.5): CanvasDe
                 ctx.beginPath();
                 ctx.fillStyle = path.color;
 
-                path.triangles.forEach((tri) => {
+                path["triangles"].forEach((tri) => {
                     ctx.moveTo(tri[0][0] - dx, tri[0][1] - dy);
                     ctx.lineTo(tri[1][0] - dx, tri[1][1] - dy);
                     ctx.lineTo(tri[2][0] - dx, tri[2][1] - dy);

@@ -117,7 +117,7 @@ function ExhibitorComponent() {
         };
 
         function renderButton(title: string, url: string) {
-            if (!title || !url) return null;
+            if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
                     <Button link={url} inline={true} onClick={customButtonClick}>
@@ -240,7 +240,7 @@ function ExhibitorComponent() {
                             ) : null}
                         </div>
                     ) : null}
-                    {!uiState.kiosk && exhibitor.videoUrl ? (
+                    {!uiState.kiosk && exhibitor.videoUrl && (
                         <div className="exhibitor__video">
                             <iframe
                                 src={exhibitor.videoUrl}
@@ -250,8 +250,8 @@ function ExhibitorComponent() {
                                 allowFullScreen
                             ></iframe>
                         </div>
-                    ) : null}
-                    {exhibitor.gallery ? (
+                    )}
+                    {exhibitor.gallery && (
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                             <ErrorBoundary>
                                 <Suspense fallback={null}>
@@ -259,8 +259,8 @@ function ExhibitorComponent() {
                                 </Suspense>
                             </ErrorBoundary>
                         </div>
-                    ) : null}
-                    {exhibitor.marketMaterials ? (
+                    )}
+                    {!uiState.kiosk && exhibitor.marketMaterials && (
                         <div className="exhibitor__market-materials">
                             {exhibitor.marketMaterials.map((marketMaterial) => {
                                 return (
@@ -277,13 +277,13 @@ function ExhibitorComponent() {
                                 );
                             })}
                         </div>
-                    ) : null}
+                    )}
                     {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
-                    {s.showEdit ? (
+                    {!uiState.kiosk  && s.showEdit && (
                         <div className="exhibitor__edit">
                             <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
                         </div>
-                    ) : null}
+                    )}
                     {s.anyAddress && (
                         <div className="exhibitor__meta">
                             {!!(exhibitor.address || exhibitor.address2) && (
