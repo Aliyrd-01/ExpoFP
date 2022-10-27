@@ -5,7 +5,6 @@ import { getYah } from "../../../../utils/yah";
 import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
-import configScaledBooth from "./config-booth-scaled";
 
 export default function configYah(context: DrawerContext) {
     let drawer: TrianglePainter = null;
@@ -15,15 +14,13 @@ export default function configYah(context: DrawerContext) {
 
     const isArray = Array.isArray(yah) || false;
 
-    store.routeStore.defaultFrom= !isArray
+    store.routeStore.defaultFrom = !isArray
         ? store.boothStore.booths.find((b) => b.name === yah)
         : store.boothStore.getBoothAtPoint(new Point((yah as number[])[0], (yah as number[])[1]));
 
     store.boothStore.booths
         .filter((b) => b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi))
         .forEach((btr) => store.boothStore.booths.splice(store.boothStore.booths.indexOf(btr), 1));
-
-    configScaledBooth(context, store.routeStore.defaultFrom);
 
     if (!yah || !isArray) return;
 

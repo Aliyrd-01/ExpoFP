@@ -39,6 +39,7 @@ export default function configAll(context: DrawerContext = _context): void {
 
     var duration = 10;
     var animated = false;
+
     layers.forEach((layer) => {
         loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
             loaded++;
@@ -46,6 +47,7 @@ export default function configAll(context: DrawerContext = _context): void {
                 // TODO: money2020usa fix. Do no show booths for hidden floors.
                 if (store.layerStore.mode !== LayersMode.Default)
                     store.boothStore.booths = store.boothStore.booths.filter((b) => !!b.layer);
+
                 var l = [...uiState.selectedBooths][0]?.layer?.name || uiState.selectedRoute?.from?.layer.name;
                 if (l) store.layerStore.updateVisibility(l, true);
             }

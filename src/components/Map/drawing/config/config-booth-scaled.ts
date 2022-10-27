@@ -1,23 +1,36 @@
+import store from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
+import { LayersMode } from "../../../../store/LayerStore";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 import { canvarFromPath } from "./canvases";
 
-export default function configScaledBoot(context: DrawerContext, booth: Booth) {
-    if (booth) new ScaledBoothDrawer(context, booth);
+export default function configScaledBoot(
+    context: DrawerContext,
+    layerID: string,
+    booth: Booth,
+    painterOrderPriority: number,
+    visible: boolean
+) {
+    new ScaledBoothDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 class ScaledBoothDrawer extends BoothDrawerBaseWithoutPainter {
     private readonly painter: RectPainter = null;
 
-    constructor(context: DrawerContext, booth: Booth) {
+    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
         super(context, booth);
 
         let { cx, cy } = booth.rect;
-        this.painter = this.context.requirePainter(this.getId("yahCanvas"), RectPainter, 161, true);
+        this.painter = this.context.requirePainter(
+            layerID + ":" + this.getId("yahCanvas"),
+            RectPainter,
+            painterOrderPriority,
+            visible
+        );
 
-        const yahCanvas = canvarFromPath(booth.paths);
+        const yahCanvas = canvarFromPath(booth.paths, 0.5, store.layerStore.mode !== LayersMode.Default ? booth.layer.name : "");
 
         this.painter.addObject({
             id: "yahCanvas",
