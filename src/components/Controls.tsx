@@ -29,14 +29,7 @@ export default function Controls() {
                 className={s.className}
                 style={s.style}
                 titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("Fit to screen"), t("Layers")]}
-                onClickFindLocation={() => {
-                    // let { rect } = store.routeStore.defaultFrom;
-                    // let x = store.routeStore.defaultFrom.rect.w * 5;
-                    // let y = store.routeStore.defaultFrom.rect.h * 5;
-                    if (!store.routeStore.defaultFrom.visible)
-                        store.layerStore.updateVisibility(store.routeStore.defaultFrom.layer.name, true);
-                    uiState.moveToBooths = [store.routeStore.defaultFrom]; // Rect.fromCxcywh(rect.cx, rect.cy, rect.w - x * 2, rect.h - y * 2);
-                }}
+                onClickFindLocation={() => store.selectBooth(store.routeStore.defaultFrom)}
                 onClickZoomIn={() => (uiState.zoomBy = 1.5)}
                 onClickZoomOut={() => (uiState.zoomBy = 0.66)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}

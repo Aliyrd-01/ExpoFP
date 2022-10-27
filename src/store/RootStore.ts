@@ -66,7 +66,7 @@ export default class RootStore {
             this.routeStore.selectRoute(null);
 
             if (!this.routeStore.defaultFrom?.visible || true)
-                this.layerStore.updateVisibility(this.routeStore.defaultFrom.layer.name, true);
+                this.selectBooth(this.routeStore.defaultFrom);
 
             this.uiState.centerMap = true;
         }, 1000);
