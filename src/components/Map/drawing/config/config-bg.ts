@@ -19,7 +19,7 @@ export default function configBg(context: DrawerContext, layerID: string, painte
 
     var fgElements = select(getLayerSvg(layerID))
         .select(`[data-layer="${layerID}"]`)
-        .selectAll(":scope > g[data-is-editable='false'] path")
+        .selectAll(":scope > g[data-is-editable='false'] path, :scope > path[data-tagname='ptext']")
         .nodes() as SVGElement[];
 
     for (const el of bgElements) {
