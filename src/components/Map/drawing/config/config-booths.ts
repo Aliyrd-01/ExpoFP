@@ -59,7 +59,10 @@ export default function configBooths(
         labelsPainter.alpha = 0;
     }
 
-    if (!store.routeStore.defaultFrom.layer || store.routeStore.defaultFrom?.layer?.name === layerID)
+    if (
+        store.routeStore.defaultFrom &&
+        (!store.routeStore.defaultFrom?.layer || store.routeStore.defaultFrom?.layer?.name === layerID)
+    )
         configScaledBoot(context, _layerID, store.routeStore.defaultFrom, painterOrderPriority, visible);
 
     return function () {
