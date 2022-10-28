@@ -119,7 +119,7 @@ export class DrawerImpl extends Matrix {
 
     public setPainterVisibility(layer: string, visible: boolean) {
         this.paintersByType.forEach((painter, key) => {
-            if (key.startsWith(layer) && painter.visible !== visible) painter.visible = visible;
+            if (key.startsWith(layer + ":") && painter.visible !== visible) painter.visible = visible;
         });
     }
 

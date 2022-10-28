@@ -8,11 +8,20 @@ import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import "./Floors.scss";
 
-function parseName(name: string): string {
-    const parts = name.split(" ");
-    if (parts.length === 1) return name.substring(0, 2).toUpperCase();
-    else return `${parts[0][0].toUpperCase()}${parts[1][0].toUpperCase()}`;
+function parseName(description: string): string {
+    const parts = description.split(" ");
+    if (parts.length === 1) return description.substring(0, 2).toUpperCase();
+
+    var name: string;
+    if (Number.isInteger(parseInt(parts[0]))) {
+        name = parts[0] + parts[1][0];
+    } else if (Number.isInteger(parseInt(parts[1]))) {
+        name = parts[0][0] + parts[1];
+    } else name = parts[0][0] + parts[1][0];
+
+    return name.toLocaleUpperCase();
 }
+
 var timeout = null;
 export default function Floors() {
     var data: { active: boolean; description: string; disabled: boolean }[] = [];
