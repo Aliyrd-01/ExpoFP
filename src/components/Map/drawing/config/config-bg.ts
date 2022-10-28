@@ -90,9 +90,9 @@ export default function configBg(context: DrawerContext, layerID: string, painte
 
         if (!isFg)
             while (!bgPainter || !bgPainter.tryAddObject(item))
-                bgPainter = context.requirePainter(`${layerID}":"${suffix} ${drawerSeq++}`, TrianglePainter, priority, visible);
+                bgPainter = context.requirePainter(`${layerID}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
         else
             while (!fgPainter || !fgPainter.tryAddObject(item))
-                fgPainter = context.requirePainter(`${layerID}":"${suffix} ${drawerSeq++}`, TrianglePainter, priority, visible);
+                fgPainter = context.requirePainter(`${layerID}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
 }
