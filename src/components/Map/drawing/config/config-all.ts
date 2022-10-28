@@ -50,8 +50,8 @@ export default function configAll(context: DrawerContext = _context): void {
 
                 var l =
                     [...uiState.selectedBooths][0]?.layer?.name ||
-                    uiState.selectedRoute?.from?.layer.name ||
-                    store.routeStore.defaultFrom?.layer.name;
+                    uiState.selectedRoute?.from?.layer?.name ||
+                    store.routeStore.defaultFrom?.layer?.name;
 
                 if (l) store.layerStore.updateVisibility(l, true);
             }

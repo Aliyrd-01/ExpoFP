@@ -59,11 +59,11 @@ export default function configBooths(
         labelsPainter.alpha = 0;
     }
 
-    if (
-        store.routeStore.defaultFrom &&
-        (!store.routeStore.defaultFrom?.layer || store.routeStore.defaultFrom?.layer?.name === layerID)
-    )
-        configScaledBoot(context, _layerID, store.routeStore.defaultFrom, painterOrderPriority, visible);
+    const { defaultFrom } = store.routeStore;
+
+    if (defaultFrom?.layer === null || defaultFrom?.layer?.name === layerID) {
+        configScaledBoot(context, _layerID, defaultFrom, painterOrderPriority, visible);
+    }
 
     return function () {
         for (const dr of lockedDrawers) {

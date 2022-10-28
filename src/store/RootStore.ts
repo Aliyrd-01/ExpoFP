@@ -40,7 +40,10 @@ export default class RootStore {
 
         var visible = exhibitor.booths.filter((b) => b.visible);
         var invisible = exhibitor.booths.filter((b) => !b.visible);
-        if (!visible.length && invisible.length) this.selectBooth(invisible[0]);
+        if (!visible.length && invisible.length) {
+            this.layerStore.updateVisibility(invisible[0].layer.name, true);
+            this.moveToList(invisible);
+        }
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
@@ -63,9 +66,9 @@ export default class RootStore {
             (el.querySelector("input[type=search]") as any).blur();
         window.setTimeout(() => {
             this.selectSearch("");
-            this.routeStore.selectRoute(null);
+            this.uiState.details = null;
 
-            if (!this.routeStore.defaultFrom?.visible || true)
+            if (this.routeStore.defaultFrom && !this.routeStore.defaultFrom?.visible)
                 this.selectBooth(this.routeStore.defaultFrom);
 
             this.uiState.centerMap = true;

@@ -105,7 +105,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
             layerBooths.push(booth);
         } else layerBooths.push(booth);
 
-        if (layersEnabled) booth.layer = layerStore.layers.find((l) => l.name === layer);
+        booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
