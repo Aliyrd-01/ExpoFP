@@ -46,7 +46,7 @@ export default function Floors() {
             store.routeStore.currentPosition = null;
             store.layerStore.updateVisibility(layer.name, true, true);
 
-            if (settings.EXPO === "money2020usa") {
+            if (settings.EXPO === "money2020usa" || settings.EXPO === "rodion2") {
                 uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);
             } else {
                 var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);
