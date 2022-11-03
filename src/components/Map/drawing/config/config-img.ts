@@ -1,9 +1,7 @@
 import { select } from "d3";
 import { getLayerSvg } from "../../../../data/svg";
 import { DrawerContext } from "../Drawer1";
-import ImagePainter from "../painters/ImagePainter";
-import { DrawerObject } from "./../painters/RectPainter";
-import { CanvasDescriptor } from "./canvases";
+import ImagePainter, { DrawerObjectEx as DrawerObject } from "../painters/ImagePainter";
 
 export default function configImg(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
     let painter: ImagePainter = null;
@@ -15,34 +13,28 @@ export default function configImg(context: DrawerContext, layerID: string, paint
         const y = image.y.animVal.value;
         const width = image.width.animVal.value;
         const height = image.height.animVal.value;
+        const angle = image.transform?.animVal[0]?.angle;
 
         var img = new Image();
         img.onload = () => {
             addObject(`${x}${y}${width}${height}`, {
-                center: [x + width / 2, y + height / 2],
+                center: [x, y],
                 deltaPts: [0, 0, 0, 0],
-                deltas: [-width / 2, -height / 2, width / 2, height / 2],
-                canvasTmp: createImageCanvas(width, height, img),
+                deltas: [0, 0, width, height],
+                img, imgWidth: width, imgHeight: height,
                 visible: true,
                 texPosition: "center",
                 stretch: true,
+                rotateRadians: angle ? (angle * Math.PI / 180.0) : null
             });
         };
+        img.crossOrigin = "";
         img.src = image.href.animVal;
     });
 
-    function addObject(name: string, item: DrawerObject) {
+    function addObject(name: string, item: Partial<DrawerObject>) {
         if (!painter) painter = context.requirePainter(`image${name}`, ImagePainter, painterOrderPriority, visible);
-        painter.addObject(item);
+        painter.addObject(item as DrawerObject);
     }
 }
 
-function createImageCanvas(width: number, height: number, image: HTMLImageElement): CanvasDescriptor {
-    return {
-        width,
-        height,
-        draw(c: CanvasRenderingContext2D) {
-            c.drawImage(image, 0, 0, width, height);
-        },
-    };
-}

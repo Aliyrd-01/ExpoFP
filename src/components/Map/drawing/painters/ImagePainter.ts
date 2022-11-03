@@ -194,6 +194,17 @@ export default class ImagePainter implements Painter {
         }
     }
 
+    protected createTextureForImageObject(obj: DrawerObjectEx) {
+        const { gl } = this;
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, obj.img);
+        obj.texture = texture;
+    }
+
     private populateBuffers() {
         if (isDebug) console.time("RectPainter.populateBuffers");
         const gl = this.gl;
@@ -214,7 +225,11 @@ export default class ImagePainter implements Painter {
         //this.objects.sort((a, b) => a.order - b.order);
         // set index
         for (let i = 0; i < this.objects.length; i++) {
-            this.objects[i].index = i;
+            const obj = this.objects[i];
+            obj.index = i;
+            if (obj.img) {
+                this.createTextureForImageObject(obj)
+            }
         }
 
         // populate sprite
@@ -445,9 +460,18 @@ export default class ImagePainter implements Painter {
                 groups.push(currentGroup);
             }
 
+
             if (obj.texture && !currentGroup.texture) {
                 currentGroup.texture = obj.texture;
-                currentGroup.texsize = [obj.spriteItem.containerCanvasWidth, obj.spriteItem.containerCanvasHeight];
+                let w: number, h: number;
+                if (obj.img) {
+                    w = obj.imgWidth;
+                    h = obj.imgHeight;
+                } else {
+                    w = obj.spriteItem.containerCanvasWidth;
+                    h = obj.spriteItem.containerCanvasHeight;
+                }
+                currentGroup.texsize = [w, h];
             }
 
             currentGroup.indices.push(obj.index);
@@ -552,10 +576,13 @@ export default class ImagePainter implements Painter {
     }
 }
 
-interface DrawerObjectEx extends DrawerObject {
+export interface DrawerObjectEx extends DrawerObject {
     texture?: WebGLTexture;
     texcoords: Vec4; // x1, y1, x2, y2
     index: number;
+    img: HTMLImageElement;
+    imgWidth: number;
+    imgHeight: number;
 }
 
 interface DrawerGroup {
