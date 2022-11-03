@@ -72,7 +72,7 @@ const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectEleme
 if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
     viewboxRect.remove();
-} else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
+} else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020") {
     const center = [3173, 1987];
     const size = [1024, 873];
     svgArea = Rect.fromCxcywh(center[0], center[1], size[0], size[1]);
