@@ -1,7 +1,7 @@
 import { getLayerSvg } from "./../../data/svg";
 import { select } from "d3";
 import { floors } from "../../data/svg";
-import { Layer, LayersMode } from "../LayerStore";
+import { Layer, LayerMode, LayersMode } from "../LayerStore";
 import RootStore from "../RootStore";
 
 export default function initLayers(store: RootStore) {
@@ -19,6 +19,7 @@ export default function initLayers(store: RootStore) {
             l.frozen = layer.frozen;
             l.visible = layer.visible;
             l.rect = layer.rect;
+            l.mode = layer.mode || LayerMode.Unset;
             return l;
         });
     } else {
@@ -35,10 +36,24 @@ export default function initLayers(store: RootStore) {
                     l.description = layer.getAttribute("data-layer-description") || layerID;
                     l.frozen = layer.getAttribute("data-layer-isfrozen") === "true" ? true : false;
                     l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
+                    l.mode = LayerMode.Unset;
                     layers.push(l);
                 }
             });
     }
+
+    // Backward compatibilitty. Remove for future
+    layers.forEach((l) => {
+        if (l.mode === LayerMode.AlwaysHidden) {
+            l.frozen = true;
+            l.visible = false;
+        } else if (l.mode === LayerMode.AlwaysVisible) {
+            l.frozen = l.visible = true;
+        } else if (l.mode === LayerMode.TurnedOn || l.mode === LayerMode.TurnedOff) {
+            l.frozen = false;
+            l.visible = l.mode === LayerMode.TurnedOn;
+        }
+    });
 
     layers = layers.filter((l) => !l.frozen || (l.frozen && l.visible));
 

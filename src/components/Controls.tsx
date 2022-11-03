@@ -11,7 +11,7 @@ import MapControls from "./MapControls";
 export default function Controls() {
     const s = useLocalStore(() => ({
         get className() {
-            return classNames({ controls: true, container: true, "-ready": uiState.wsStarted });
+            return classNames({ controls: true, container: true, "-ready": true });
         },
         get style() {
             return {

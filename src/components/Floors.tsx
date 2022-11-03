@@ -9,7 +9,7 @@ import { remsToPixels } from "../utils";
 import "./Floors.scss";
 
 function parseName(description: string): string {
-    const parts = description.replace(/\"/g, "").split(" ");
+    const parts = description.replace(/"/g, "").split(" ");
     if (parts.length === 1) return description.substring(0, 2).toUpperCase();
 
     var name: string;
@@ -28,7 +28,7 @@ export default function Floors() {
 
     const s = useLocalStore(() => ({
         get className() {
-            return classNames({ levels: true, "-ready": uiState.wsStarted && data.length });
+            return classNames({ levels: true, "-ready": data.length });
         },
         get style() {
             return {

@@ -17,6 +17,14 @@ export enum LayersMode {
     CheckBox,
 }
 
+export enum LayerMode {
+    Unset = 0,
+    AlwaysVisible = 1,
+    AlwaysHidden = 2,
+    TurnedOn = 3,
+    TurnedOff = 4,
+}
+
 export class Layer {
     basePriority: number;
     name: string;
@@ -24,6 +32,8 @@ export class Layer {
     frozen: boolean;
     rect: Rect = null;
     configured: boolean;
+    mode: LayerMode;
+
     @observable loaded: boolean;
     @observable visible: boolean;
 }
