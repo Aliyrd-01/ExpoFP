@@ -22,6 +22,7 @@ export default async function configImg(
                 const angle = image.transform?.animVal[0]?.angle;
 
                 var img = new Image();
+                img.onerror = () => resolve(null);
                 img.onload = () => {
                     addObject({
                         id: `${x}${y}${width}${height}`,

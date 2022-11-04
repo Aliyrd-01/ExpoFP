@@ -82,7 +82,7 @@ export abstract class BoothBase {
     readonly externalId: string;
     readonly title: string;
     readonly rect: Rect;
-    readonly noLabels: boolean;
+    noLabels: boolean;
     readonly rotate: number;
     readonly paths: PathInfo[];
     readonly pathsWithRect: boolean;

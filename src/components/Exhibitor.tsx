@@ -264,7 +264,7 @@ function ExhibitorComponent() {
                         <div className="exhibitor__market-materials">
                             {exhibitor.marketMaterials.map((marketMaterial) => {
                                 return (
-                                    <div>
+                                    <div key={marketMaterial.fileName}>
                                         <a
                                             href={marketMaterial.path}
                                             key={marketMaterial.path}

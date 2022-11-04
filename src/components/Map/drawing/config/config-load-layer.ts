@@ -26,9 +26,11 @@ export default async function loadLayer(
             }
         }
 
-        const drawIcons: boolean = false;
-
         const booths = initBooths(store, layer.name);
+
+        const drawIcons: boolean = settings.EXPO === "techcrunch";
+        if (drawIcons)
+            booths.filter((b: any) => b.exhibitors?.find((e) => e.featured && e.logo)).forEach((b) => (b.noLabels = true));
 
         if (booths.length) {
             configBooths(context, layer.name, booths, layer.basePriority + 3, layer.visible)();
@@ -44,7 +46,15 @@ export default async function loadLayer(
 
         await configBg(context, layer.name, layer.basePriority, layer.visible);
         // Exhibitors logos drawing
-        if (drawIcons) await configImg(context, layer.name, logosFromBooths(booths), layer.basePriority + 6, layer.visible);
+        if (drawIcons) {
+            await configImg(
+                context,
+                layer.name,
+                (await logosFromBooths(booths)).filter((l) => !!l),
+                layer.basePriority + 6,
+                layer.visible
+            );
+        }
 
         context.updateMatrixScale();
         context.requireUpdate(null);

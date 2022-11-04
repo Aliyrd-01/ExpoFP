@@ -112,7 +112,8 @@ export class DrawerImpl extends Matrix {
         }
 
         for (var d of this.allPainters) {
-            d.paint();
+            // TODO: - check this point
+            if (d.matrix) d.paint();
         }
         //this.requireRedraw();
     }
