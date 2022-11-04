@@ -14,7 +14,7 @@ export default function logosFromBooths(booths: Booth[]): Promise<SVGImageElemen
                         img.onerror = () => resolve(null);
                         img.onload = () => {
                             const ratio = img.height / img.width;
-                            const w = rect.w * 0.9;
+                            const w = rect.w * 0.95;
                             const h = w * ratio;
                             const x = rect.cx - w / 2;
                             const y = rect.cy - h / 2;

@@ -45,6 +45,7 @@ export default async function loadLayer(
         layer.configured = true;
 
         await configBg(context, layer.name, layer.basePriority, layer.visible);
+        
         // Exhibitors logos drawing
         if (drawIcons) {
             await configImg(
