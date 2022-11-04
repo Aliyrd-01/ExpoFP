@@ -8,10 +8,6 @@ import configWf from "./config-wf";
 import configYah from "./config-yah";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
-import configImg from "./config-img";
-import settings from "../../../../tools/settings";
-
-//let delayAnimations = /Mobi|Android/i.test(navigator.userAgent) ? 1000 : 500;
 
 let _context: DrawerContext;
 export let getContext = () => _context;
@@ -25,8 +21,6 @@ export default function configAll(context: DrawerContext = _context): void {
 
     let basePriority = 6;
     let { layers, defaultLayer } = store.layerStore;
-
-    if (settings.EXPO === "images") configImg(context,"images", 200, true);
 
     if (defaultLayer) {
         const lrs = [].concat(layers);

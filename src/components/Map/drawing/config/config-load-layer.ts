@@ -3,10 +3,12 @@ import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
 import settings from "../../../../tools/settings";
+import logosFromBooths from "../../../../utils/logosFromBooths";
 import { DrawerContext } from "../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
+import configImg from "./config-img";
 
 export default async function loadLayer(
     layer: Layer,
@@ -24,6 +26,8 @@ export default async function loadLayer(
             }
         }
 
+        const drawIcons: boolean = false;
+
         const booths = initBooths(store, layer.name);
 
         if (booths.length) {
@@ -38,7 +42,9 @@ export default async function loadLayer(
         if (!withConfiguration) return resolve(false);
         layer.configured = true;
 
-        configBg(context, layer.name, layer.basePriority, layer.visible);
+        await configBg(context, layer.name, layer.basePriority, layer.visible);
+        // Exhibitors logos drawing
+        if (drawIcons) await configImg(context, layer.name, logosFromBooths(booths), layer.basePriority + 6, layer.visible);
 
         context.updateMatrixScale();
         context.requireUpdate(null);

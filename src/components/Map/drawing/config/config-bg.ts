@@ -1,26 +1,34 @@
 import Color from "color";
 import { select } from "d3-selection";
 import Rect from "../../../../core/Rect";
-import { gtePathByIndex, getLayerSvg } from "../../../../data/svg";
+import { getLayerSvg, gtePathByIndex } from "../../../../data/svg";
 import store from "../../../../store";
 import { LayersMode } from "../../../../store/LayerStore";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
+import configImg from "./config-img";
 
-export default function configBg(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
+export default async function configBg(
+    context: DrawerContext,
+    layerID: string,
+    painterOrderPriority: number,
+    visible: boolean
+): Promise<HTMLImageElement[]> {
     let bgPainter: TrianglePainter = null;
     let fgPainter: TrianglePainter = null;
     let drawerSeq = 0;
 
-    var bgElements = select(getLayerSvg(layerID))
-        .select(`[data-layer="${layerID}"]`)
+    var seleted = select(getLayerSvg(layerID)).select(`[data-layer="${layerID}"]`);
+
+    const bgElements = seleted
         .selectAll(":scope > *:not([data-tagname='efp-booth']):not(g[data-is-editable='false']) path, :scope > path")
         .nodes() as SVGElement[];
 
-    var fgElements = select(getLayerSvg(layerID))
-        .select(`[data-layer="${layerID}"]`)
+    const fgElements = seleted
         .selectAll(":scope > g[data-is-editable='false'] path, :scope > path[data-tagname='ptext']")
         .nodes() as SVGElement[];
+
+    const img = seleted.selectAll(":scope > g[data-is-editable='false'] image").nodes() as SVGImageElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") addPath(el as SVGPathElement);
@@ -95,4 +103,6 @@ export default function configBg(context: DrawerContext, layerID: string, painte
             while (!fgPainter || !fgPainter.tryAddObject(item))
                 fgPainter = context.requirePainter(`${layerID}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
+
+    return await configImg(context, layerID, img, painterOrderPriority + 6, visible);
 }

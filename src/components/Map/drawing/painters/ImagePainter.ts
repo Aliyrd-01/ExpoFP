@@ -1,4 +1,5 @@
 import * as twgl from "twgl.js";
+import Rect from "../../../../core/Rect";
 import isDebug from "../../../../utils/is-debug";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
@@ -194,15 +195,15 @@ export default class ImagePainter implements Painter {
         }
     }
 
-    protected createTextureForImageObject(obj: DrawerObjectEx) {
+    protected createTextureForImageObject(source: HTMLImageElement | HTMLCanvasElement): WebGLTexture {
         const { gl } = this;
         const texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, obj.img);
-        obj.texture = texture;
+        //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+        return texture;
     }
 
     private populateBuffers() {
@@ -228,7 +229,7 @@ export default class ImagePainter implements Painter {
             const obj = this.objects[i];
             obj.index = i;
             if (obj.img) {
-                this.createTextureForImageObject(obj)
+                obj.texture = this.createTextureForImageObject(obj.img);
             }
         }
 
@@ -244,14 +245,8 @@ export default class ImagePainter implements Painter {
         const canvasIdToTexture = new Map<string, WebGLTexture>();
         // create texture per canvas
         for (const c of canvases) {
-            const texture = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, texture);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-
             const canvas = c();
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+            const texture = this.createTextureForImageObject(canvas);
             canvasIdToTexture.set(canvas.id, texture);
         }
 
@@ -284,6 +279,9 @@ export default class ImagePainter implements Painter {
                 yp1 = dp[1] * scale,
                 xp2 = dp[2] * scale,
                 yp2 = dp[3] * scale;
+
+            const texRect = w.img ? Rect.fromXywh(0, 0, w.imgWidth, w.imgHeight) : w.spriteItem?.rect;
+
             // 4 vec2
             // eslint-disable-next-line
             {
@@ -315,14 +313,14 @@ export default class ImagePainter implements Painter {
             // eslint-disable-next-line
             {
                 let val: Vec2;
-                if (!w.spriteItem) {
+                if (!texRect) {
                     val = [0, 0];
                 } else if (w.texPosition === "center") {
-                    val = [w.spriteItem.rect.cx, w.spriteItem.rect.cy];
+                    val = [texRect.cx, texRect.cy];
                 } else if (w.texPosition === "lefttop") {
-                    val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
+                    val = [texRect.x1, texRect.y1];
                 } else {
-                    val = [w.spriteItem.rect.x2, w.spriteItem.rect.y1];
+                    val = [texRect.x2, texRect.y1];
                 }
 
                 texfixes.push(...val, ...val, ...val, ...val);
@@ -331,7 +329,7 @@ export default class ImagePainter implements Painter {
             // eslint-disable-next-line
             {
                 let val: Vec2;
-                if (!w.spriteItem || w.texPosition === "center") {
+                if (!texRect || w.texPosition === "center") {
                     val = [0, 0];
                 } else if (w.texPosition === "lefttop") {
                     val = [x1, y1];
@@ -340,11 +338,12 @@ export default class ImagePainter implements Painter {
                 }
                 fixdeltas.push(...val, ...val, ...val, ...val);
             }
+
             // fixdeltapt 4 vec2
             // eslint-disable-next-line
             {
                 let val: Vec2;
-                if (!w.spriteItem || w.texPosition === "center") {
+                if (!texRect || w.texPosition === "center") {
                     val = [0, 0];
                 } else if (w.texPosition === "lefttop") {
                     val = [xp1, yp1];
@@ -358,13 +357,12 @@ export default class ImagePainter implements Painter {
             // eslint-disable-next-line
             {
                 let val: Vec2;
-                if (!w.spriteItem || w.texPosition === "center") {
+                if (!texRect || w.texPosition === "center") {
                     val = [0, 0];
                 } else if (w.texPosition === "lefttop") {
-                    val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
-                    //val = [0, 0];
+                    val = [texRect.w, texRect.h];
                 } else {
-                    val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
+                    val = [-texRect.w, -texRect.h];
                 }
                 fixdeltamaxpts.push(...val, ...val, ...val, ...val);
             }
@@ -460,7 +458,6 @@ export default class ImagePainter implements Painter {
                 groups.push(currentGroup);
             }
 
-
             if (obj.texture && !currentGroup.texture) {
                 currentGroup.texture = obj.texture;
                 let w: number, h: number;
@@ -525,7 +522,7 @@ export default class ImagePainter implements Painter {
     }
 
     paint() {
-        if (this.alpha < 0.05) return;
+        if (this.alpha < 0.05 || !this.visible) return;
         const gl = this.gl;
 
         this.preparePaint();
