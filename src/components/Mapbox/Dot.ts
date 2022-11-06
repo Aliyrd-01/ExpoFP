@@ -28,14 +28,14 @@ export function pulsingDot(size: number, map: Map) {
         render: function () {
             const ctx: CanvasRenderingContext2D = this.context;
 
-            let t = counter > 60 ? 0 : 1;
+            let t = counter > 60 ? 0 : 0.7;
             counter++;
             if (counter > 90) counter = 0;
             let fill = `rgba(255, 255, 255, ${t})`;
 
             ctx.clearRect(0, 0, this.width, this.height);
 
-            ctx.fillStyle = "#FFFFFF";
+            ctx.fillStyle = "#FFFFFF55";
 
             ctx.beginPath();
 
