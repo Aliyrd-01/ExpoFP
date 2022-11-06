@@ -104,5 +104,7 @@ export default async function configBg(
                 fgPainter = context.requirePainter(`${layerID}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
 
-    return await configImg(context, layerID, img, painterOrderPriority + 6, visible);
+    return Promise.resolve(null);
+
+    //return await configImg(context, layerID, img, painterOrderPriority + 6, visible);
 }
