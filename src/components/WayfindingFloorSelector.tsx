@@ -3,15 +3,15 @@ import cn from "classnames";
 import "./WayfindingFloorSelector.scss";
 
 export interface WayfindingFloorSelectorProps {
-    floors: number[];
-    current?: number;
-    onClickFloor?: (val: number) => void;
+    floors: string[];
+    current?: string;
+    onClickFloor?: (val: string) => void;
 }
 
-const WayfindingFloorSelector: React.FC<WayfindingFloorSelectorProps> = ({ floors, current = 1, onClickFloor }) => {
+const WayfindingFloorSelector: React.FC<WayfindingFloorSelectorProps> = ({ floors, current, onClickFloor }) => {
     return (
         <div className="efp-wayfinding-floor">
-            <div className="efp-wayfinding-floor__title">Floor</div>
+            <div className="efp-wayfinding-floor__title">&nbsp;</div>
             <div className="efp-wayfinding-floor__list">
                 {floors.map((floor, index) => (
                     <button

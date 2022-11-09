@@ -13,13 +13,13 @@ export interface WayfindingTemplateProps {
     routeFound?: boolean;
     infoItems?: WayInformationItem[];
     infoAccessible?: boolean;
-    floors?: number[];
-    currentFloor?: number;
+    floors?: string[];
+    currentFloor?: string;
     onChangeFrom?: (val: string) => void;
     onChangeTo?: (val: string) => void;
     onSwitch?: () => void;
     onClickInfo?: () => void;
-    onClickFloor?: (val: number) => void;
+    onClickFloor?: (val: string) => void;
 }
 
 const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
@@ -32,7 +32,7 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     infoItems = [],
     infoAccessible,
     floors,
-    currentFloor = 1,
+    currentFloor,
     onChangeFrom,
     onChangeTo,
     onSwitch,

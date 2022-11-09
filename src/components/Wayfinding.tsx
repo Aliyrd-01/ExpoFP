@@ -124,6 +124,11 @@ function Wayfinding() {
                             ? true
                             : false
                     }
+                    floors={store.routeStore.layers.map((l) => l.description)}
+                    currentFloor={store?.routeStore.layers.find((l) => l.visible)?.description}
+                    onClickFloor={(floor) =>
+                        store.layerStore.updateVisibility(store.layerStore.layers.find((l) => l.description === floor).name, true)
+                    }
                     routeFound={store.routeStore.routeLines.length ? true : false}
                     options={options()}
                     fromValue={uiState.selectedRoute.from?.name || ""}

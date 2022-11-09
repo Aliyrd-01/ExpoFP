@@ -9,8 +9,8 @@ export default {
 } as Meta;
 
 const Template: Story<WayfindingFloorSelectorProps> = (args) => {
-    const [currentFloor, setCurrentFloor] = useState<number>(args.current);
-    const changeFloor = (val: number) => {
+    const [currentFloor, setCurrentFloor] = useState<string>(args.current);
+    const changeFloor = (val: string) => {
         setCurrentFloor(val);
         action("onClickFloor")(val);
     };
@@ -28,6 +28,6 @@ const Template: Story<WayfindingFloorSelectorProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
-    floors: [1, 2, 3, 4],
-    current: 2,
+    floors: ["1", "2", "3", "4"],
+    current: "2",
 };
