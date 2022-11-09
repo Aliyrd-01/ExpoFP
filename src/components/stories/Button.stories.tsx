@@ -10,7 +10,7 @@ export default {
 
 const Template: Story<ButtonProps> = (args) => {
     return (
-        <div className="layout">
+        <div className="layout sb-layout">
             <Button {...args} onClick={() => action("onClick")(true)} />
         </div>
     );

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import "./Autocomplete.scss";
 
@@ -12,7 +12,7 @@ export interface AutocompleteProps {
     options: string[] | (OptionObject | any)[];
     value?: string;
     showClear?: boolean;
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
 }
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value, showClear = false, onChange }) => {
@@ -49,6 +49,23 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
         setFilteredOptions([]);
         onChange(value);
     };
+
+    useEffect(() => {
+        if (objectsMode && value) {
+            const activeOption = options[options.findIndex((option) => option.value === value)];
+            const activeIndex = options.findIndex((option) => option.value === value);
+            setActiveOptionIndex(activeIndex);
+            setFocusOptionIndex(activeIndex);
+            setInput(activeOption.label);
+        } else {
+            const activeIndex = options.findIndex((option) => option === value);
+            setActiveOptionIndex(activeIndex);
+            setFocusOptionIndex(activeIndex);
+            setInput(value);
+        }
+        setSearchValue("");
+        setFilteredOptions([]);
+    }, [value, objectsMode, options]);
 
     const onClickOption = (event) => {
         setFilteredOptions([]);
@@ -139,7 +156,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
 
     const showOptions = () => {
         const allOptions = filteredOptions.length ? filteredOptions : options;
-        if (searchValue && !filteredOptions.length) return <div className="autocomplete__empty">No options</div>;
+        if (searchValue && !filteredOptions.length) return <div className="efp-autocomplete__empty">No options</div>;
         else
             return (
                 <ul>
@@ -167,15 +184,16 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
         <>
             <div
                 ref={refAutocomplete}
-                className={classNames("autocomplete", {
+                className={classNames("efp-autocomplete", {
                     "is-open": showOptionsDropdown,
                     "with-clear": showOptionsDropdown && showClear,
                 })}
             >
-                <div className={"autocomplete__inner"}>
+                {input}
+                <div className={"efp-autocomplete__inner"}>
                     <input
                         type="search"
-                        className="autocomplete__input"
+                        className="efp-autocomplete__input"
                         onChange={onInputChange}
                         onFocus={onFocus}
                         onBlur={onBlur}
@@ -185,9 +203,9 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
                         ref={refSearchInput}
                     />
                     {showClear && showOptionsDropdown && input ? (
-                        <div className="autocomplete__clear" onClick={() => clear(true)}></div>
+                        <div className="efp-autocomplete__clear" onClick={() => clear(true)}></div>
                     ) : null}
-                    {showOptionsDropdown ? <div className="autocomplete__options">{showOptions()}</div> : null}
+                    {showOptionsDropdown ? <div className="efp-autocomplete__options">{showOptions()}</div> : null}
                 </div>
             </div>
         </>

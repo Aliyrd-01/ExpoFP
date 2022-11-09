@@ -11,7 +11,7 @@ const Template: Story<ToggleSwitchProps> = (args) => {
     const [value, setValue] = useState<boolean>(true);
 
     return (
-        <div className="layout">
+        <div className="layout sb-layout">
             <ToggleSwitch {...args} onChange={setValue} value={value} />
             <br />
             <br />
