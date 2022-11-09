@@ -1,12 +1,18 @@
 @import "../styles/helpers.scss";
 
+$wayfinding: ".efp-wayfinding";
 $wayfindingForm: ".efp-wayfindingForm";
 $wayfindingError: ".efp-wayfindingError";
 
+#{$wayfinding} {
+    &__top {
+        margin-bottom: rem(30px);
+    }
+}
 #{$wayfindingForm} {
     display: flex;
     align-items: center;
-    margin-bottom: rem(30px);
+    margin-bottom: rem(18px);
     padding-right: rem(10px);
 
     &__icons {

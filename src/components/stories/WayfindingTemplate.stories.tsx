@@ -11,6 +11,7 @@ export default {
 const Template: Story<WayfindingTemplateProps> = (args) => {
     const [from, setFrom] = useState(args.options[1].value);
     const [to, setTo] = useState(args.options[6].value);
+    const [currentFloor, setCurrentFloor] = useState<number>(args.currentFloor);
 
     const getWayInformation = (distance) => {
         const info = [];
@@ -54,6 +55,11 @@ const Template: Story<WayfindingTemplateProps> = (args) => {
         action("onSwitch")(true);
     };
 
+    const onChangeFloor = (val: number) => {
+        setCurrentFloor(val);
+        action("onClickFloor")(val);
+    };
+
     return (
         <div className="map layout">
             <aside className="sidebar">
@@ -66,6 +72,8 @@ const Template: Story<WayfindingTemplateProps> = (args) => {
                     infoItems={getWayInformation(400)}
                     onClickInfo={() => action("onClickInfo")(true)}
                     onSwitch={onSwitch}
+                    currentFloor={currentFloor}
+                    onClickFloor={onChangeFloor}
                 />
 
                 <div className="sb-data">
@@ -123,4 +131,6 @@ Base.args = {
     ],
     showInfo: true,
     routeFound: true,
+    floors: [1, 2, 3, 4, 5],
+    currentFloor: 1,
 };
