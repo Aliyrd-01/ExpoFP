@@ -19,6 +19,7 @@
         "@types/node": "^12.12.14",
         "@types/react": "^16.9.13",
         "@types/react-dom": "^16.9.4",
+        "@types/mapbox-gl": "^2.6.3",
         "@typescript-eslint/eslint-plugin": "^2.9.0",
         "@typescript-eslint/parser": "^2.9.0",
         "array-flat-polyfill": "^1.0.1",
@@ -58,6 +59,7 @@
         "history": "^4.10.1",
         "html-webpack-plugin": "^3.2.0",
         "i18next": "^19.4.4",
+        "if-env": "^1.0.4",
         "jsonschema": "^1.2.5",
         "jspdf": "^1.5.3",
         "lz-string": "^1.4.4",
@@ -91,11 +93,12 @@
         "webpack-cli": "^3.3.10",
         "webpack-dashboard": "^3.2.0",
         "webpack-dev-server": "^3.9.0",
-        "webpack-s3-plugin": "^1.0.3"
+        "webpack-s3-plugin": "^1.0.3",
+        "mapbox-gl": "^2.7.0"
     },
     "scripts": {
         "dev": "webpack-dashboard --minimal -- webpack-dev-server",
-        "build": "cross-env NODE_ENV=production webpack",
+        "build": "if-env BUILD_STORYBOOK=true && build-storybook || cross-env NODE_ENV=production webpack",
         "build+deploy": "cross-env AWS_DEPLOY=true yarn build",
         "create-package": "node ./scripts/create-package.js",
         "prepublishOnly": "yarn build",
@@ -128,5 +131,8 @@
         "last 3 Firefox versions",
         "last 3 FirefoxAndroid versions",
         "last 2 Edge versions"
-    ]
+    ],
+    "engines": {
+        "node": "14.x"
+    }
 }

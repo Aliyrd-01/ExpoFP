@@ -14,14 +14,12 @@ export default function configYah(context: DrawerContext) {
 
     const isArray = Array.isArray(yah) || false;
 
-    const booth = !isArray
-        ? store.boothStore.booths.find((b) => b.name == yah)
+    store.routeStore.defaultFrom = !isArray
+        ? store.boothStore.booths.find((b) => b.name === yah)
         : store.boothStore.getBoothAtPoint(new Point((yah as number[])[0], (yah as number[])[1]));
 
-    store.routeStore.fixedFrom = booth;
-
     store.boothStore.booths
-        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== booth)
+        .filter((b) => b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi))
         .forEach((btr) => store.boothStore.booths.splice(store.boothStore.booths.indexOf(btr), 1));
 
     if (!yah || !isArray) return;
@@ -55,7 +53,7 @@ export default function configYah(context: DrawerContext) {
 
     function addObject(item: TrianglePainterObject) {
         while (!drawer || !drawer.tryAddObject(item)) {
-            drawer = context.requirePainter("yah" + drawerSeq++, TrianglePainter, 160);
+            drawer = context.requirePainter("YAH" + drawerSeq++, TrianglePainter, 160, true);
         }
     }
 
@@ -77,4 +75,6 @@ export default function configYah(context: DrawerContext) {
             color,
         }));
     }
+
+    return () => {};
 }

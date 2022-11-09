@@ -45,6 +45,20 @@ export function hanleCustomCommand(text: string): boolean {
             }
         }
         return true;
+    } else if (text.toLowerCase() === "__addcache") {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+            if (!registrations.length) return alert("No registered service workers.");
+
+            var images = [];
+            store.exhibitorStore.exhibitors.forEach((exhibitor) => {
+                images.push(exhibitor.logo);
+                images.push(...(exhibitor.gallery || []));
+            });
+
+            Promise.all(images.map((image) => fetch(image)))
+                .then((value) => alert(`${value.length} images loaded.`))
+                .catch((error) => alert(error));
+        });
     }
     return false;
 }

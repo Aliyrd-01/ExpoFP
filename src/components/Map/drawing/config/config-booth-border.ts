@@ -3,22 +3,28 @@ import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
 import { boothStore } from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
+import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
 import BoothDrawerBase from "./BoothDrawerBase";
-import settings from "../../../../tools/settings";
 // import { boothStore } from '../../../../store';
 
-export default function configBoothBorder(context: DrawerContext, booth: Booth) {
+export default function configBoothBorder(
+    context: DrawerContext,
+    layerID: string,
+    booth: Booth,
+    painterOrderPriority: number,
+    visible: boolean
+) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
     if (settings.EXPO === "confex20") return;
     if (booth.paths && !booth.pathsWithRect) return;
-    new BoothBorderDrawer(context, booth);
+    new BoothBorderDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
 class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
-    constructor(context: DrawerContext, booth: Booth) {
-        super(context, booth, "booth-border", TrianglePainter, 150);
+    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
+        super(context, booth, layerID + "booth-border", TrianglePainter, painterOrderPriority, visible);
 
         const borderColor = Color(settings.boothBorderColor).vec4();
         const r = this.booth.rect;

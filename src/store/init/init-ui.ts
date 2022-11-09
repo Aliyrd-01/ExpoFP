@@ -1,9 +1,9 @@
-import { runInAction, autorun } from "mobx";
+import { autorun, runInAction } from "mobx";
+import Size from "../../core/Size";
+import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import UIState from "../UIState";
-import { isWebGlSupported } from "../../utils";
-import Size from "../../core/Size";
 
 export const kioskKey = "kiosk";
 
@@ -40,8 +40,8 @@ export default function initUi(store: RootStore) {
 
     if (!uiState.wsShown) uiState.wsStarted = true;
 
-  
     uiState.kiosk = localStorage.getItem(kioskKey) === "1";
+    store.mapboxStore.mapBoxEnabled = !uiState.kiosk && !!window["__fpGeo"];
 
     if (uiState.kiosk) {
         var time;
@@ -53,7 +53,7 @@ export default function initUi(store: RootStore) {
         // document.onclick = resetTimer; // touchpad clicks
         // document.onkeypress = resetTimer;
         // document.addEventListener("scroll", resetTimer, true); // improved; see comments
-        window['__resett'] = resetTimer;
+        window["__resett"] = resetTimer;
         resetTimer();
         function logout() {
             store.reset();

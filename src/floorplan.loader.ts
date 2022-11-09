@@ -5,7 +5,6 @@ import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
-import isFromDesigner from "./utils/is-from-designer";
 import useShadow from "./utils/use-shadow";
 
 function nr() {
@@ -50,6 +49,10 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
+        nr();
+    }
+
+    updateLayerVisibility(layer: string, visible: boolean): void {
         nr();
     }
 
@@ -117,6 +120,7 @@ export default class FloorPlanLoader implements FloorPlan {
         loadCss("vendor/fa/css/fontawesome-all.min.css", container);
         loadCss("vendor/sanitize-css/sanitize.css", container);
         loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
+        loadCss("vendor/mapbox/mapbox-gl.css", container);
         // loadCss("fonts/fonts.css", container);
 
         loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
@@ -142,7 +146,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(dataUrl), loadJs(wfDataUrl), loadJs(fpUrl)]);
+            await Promise.all([...fontPromises, loadJs(wfDataUrl), loadJs(dataUrl), loadJs(fpUrl)]);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);

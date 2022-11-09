@@ -27,17 +27,17 @@ function Booth() {
             return this.booth instanceof SpecialBooth ? this.booth : null;
         },
         get showReserve() {
-            return this.regular && ((this.regular.price === "0" && !!this.regular.buyUrl) || !!this.regular.reserveUrl);
+            return (
+                !uiState.kiosk &&
+                this.regular &&
+                ((this.regular.price === "0" && !!this.regular.buyUrl) || !!this.regular.reserveUrl)
+            );
         },
         get showBuy() {
-            return this.regular && this.regular.buyUrl && this.regular.price && this.regular.price !== "0";
+            return !uiState.kiosk && this.regular && this.regular.buyUrl && this.regular.price && this.regular.price !== "0";
         },
         get title() {
-            if (this.special) {
-                return this.booth.title || this.booth.name;
-            } else {
-                return data.boothTerm + " " + this.booth.name;
-            }
+            return this.booth.fullName;
         },
         get reserveTitle() {
             return data.reserveButtonTerm || t("Reserve");

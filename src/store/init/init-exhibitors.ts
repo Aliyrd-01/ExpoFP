@@ -29,6 +29,8 @@ export default function initExhibitors(store: RootStore) {
         e.slug = generateUniqueSlug(e.name);
 
         e.logo = addBaseUrl(e.logo);
+
+
         if (e.gallery) e.gallery = e.gallery.map((url) => addBaseUrl(url));
         if (e.marketMaterials) 
             e.marketMaterials = e.marketMaterials.map((mm) => { 

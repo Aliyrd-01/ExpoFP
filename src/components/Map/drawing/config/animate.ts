@@ -1,11 +1,12 @@
-
-export default function animate<T>(timeout: number, duration: number,
+export default function animate<T>(
+    timeout: number,
+    duration: number,
     easingFunc: (k: number) => number,
     interpolateFunc: (k: number) => T,
     requireUpdateFunc: (func: () => void) => void,
     setFunc: (t: T) => void,
-    callback?: () => void) {
-
+    callback?: () => void
+) {
     let stopAnimation = false;
 
     function doAnimation() {
@@ -31,5 +32,5 @@ export default function animate<T>(timeout: number, duration: number,
 
     return () => {
         stopAnimation = true;
-    }
+    };
 }

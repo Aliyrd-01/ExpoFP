@@ -54,6 +54,10 @@
             "type": "string",
             "description": "Booth term (typically 'booth' or 'stand')"
         },
+        "levelTerm": {
+            "type": "string",
+            "description": "Booth term (typically 'booth' or 'stand')"
+        },
         "reserveButtonTerm": {
             "type": "string",
             "description": "Term for Reserve button"
@@ -112,6 +116,15 @@
                             },
                             "name": {
                                 "type": "string"
+                            },
+                            "availColor": {
+                                "type": "string"
+                            },
+                            "onHold": {
+                                "type": "string"
+                            },
+                            "size":{
+                                "type":"string"
                             },
                             "externalId": {
                                 "type": "string"
@@ -323,8 +336,7 @@
                         "type": "string"
                     },
                     "website": {
-                        "type": "string",
-                        "format": "uri"
+                        "type": "string"
                     },
                     "facebook": {
                         "type": "string",

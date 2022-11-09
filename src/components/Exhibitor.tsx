@@ -15,6 +15,7 @@ import OverlayContent from "./OverlayContent";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
+import ErrorBoundary from "./ErrorBoundary";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -99,7 +100,7 @@ function ExhibitorComponent() {
                     </span>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm} {exhibitor.booths.map((b) => b.name).join(", ")}
+                    {data.boothTerm} {exhibitor.booths.map((b) => b.fullName).join(", ")}
                 </div>
             </>
         );
@@ -116,7 +117,7 @@ function ExhibitorComponent() {
         };
 
         function renderButton(title: string, url: string) {
-            if (!title || !url) return null;
+            if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
                     <Button link={url} inline={true} onClick={customButtonClick}>
@@ -127,7 +128,7 @@ function ExhibitorComponent() {
         }
 
         function getDescription(description: String) {
-            if (description == null) return "";
+            if (description === null) return "";
 
             const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
             const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;
@@ -158,7 +159,7 @@ function ExhibitorComponent() {
                 <div className="exhibitor__buttons">
                     <SibebarActions
                         showBookmark={!uiState.kiosk}
-                        showDirections={settings.wayfinding}
+                        showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                         inBookmark={s.exhibitor.bookmarked}
                         showShare={shareButtonVisible()}
                         onClickBookmark={bookmark}
@@ -179,9 +180,11 @@ function ExhibitorComponent() {
                                 <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
                             </a>
                         ) : (
-                            <Suspense fallback={null}>
-                                <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
-                            </Suspense>
+                            <ErrorBoundary>
+                                <Suspense fallback={null}>
+                                    <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                </Suspense>
+                            </ErrorBoundary>
                         )}
                     </div>
                 ) : null}
@@ -190,15 +193,16 @@ function ExhibitorComponent() {
                     <div className="exhibitor__categories">
                         {exhibitor.booths.map((booth) => (
                             <a
-                                href={`?${exhibitor.slug}`}
+                                href={`?${booth.slug}`}
                                 key={booth.id}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     store.toggleMapOverlay();
+                                    if (uiState.overlayPosition !== "bottom") store.selectBooth(booth);
                                 }}
                                 className="exhibitor__categories-booth"
                             >
-                                {data.boothTerm} {booth.name}
+                                {data.boothTerm} {booth.fullName}
                             </a>
                         ))}
                         {exhibitor.categories.map((c) => (
@@ -236,7 +240,7 @@ function ExhibitorComponent() {
                             ) : null}
                         </div>
                     ) : null}
-                    {!uiState.kiosk && exhibitor.videoUrl ? (
+                    {!uiState.kiosk && exhibitor.videoUrl && (
                         <div className="exhibitor__video">
                             <iframe
                                 src={exhibitor.videoUrl}
@@ -246,19 +250,21 @@ function ExhibitorComponent() {
                                 allowFullScreen
                             ></iframe>
                         </div>
-                    ) : null}
-                    {exhibitor.gallery ? (
+                    )}
+                    {exhibitor.gallery && (
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
-                            <Suspense fallback={null}>
-                                <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
-                            </Suspense>
+                            <ErrorBoundary>
+                                <Suspense fallback={null}>
+                                    <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
+                                </Suspense>
+                            </ErrorBoundary>
                         </div>
-                    ) : null}
-                    {exhibitor.marketMaterials ? (
+                    )}
+                    {!uiState.kiosk && exhibitor.marketMaterials && (
                         <div className="exhibitor__market-materials">
                             {exhibitor.marketMaterials.map((marketMaterial) => {
                                 return (
-                                    <div>
+                                    <div key={marketMaterial.fileName}>
                                         <a
                                             href={marketMaterial.path}
                                             key={marketMaterial.path}
@@ -271,13 +277,13 @@ function ExhibitorComponent() {
                                 );
                             })}
                         </div>
-                    ) : null}
+                    )}
                     {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
-                    {s.showEdit ? (
+                    {!uiState.kiosk  && s.showEdit && (
                         <div className="exhibitor__edit">
                             <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
                         </div>
-                    ) : null}
+                    )}
                     {s.anyAddress && (
                         <div className="exhibitor__meta">
                             {!!(exhibitor.address || exhibitor.address2) && (

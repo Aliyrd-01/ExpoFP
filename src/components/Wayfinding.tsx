@@ -1,8 +1,9 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
-import svg from "../data/svg";
+import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
+import { LayersMode } from "../store/LayerStore";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
@@ -28,6 +29,9 @@ function Wayfinding() {
         const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
         const boothsIDs = [];
 
+        const booths = () =>
+            store.routeStore.defaultFrom ? boothStore.booths.concat([store.routeStore.defaultFrom]) : boothStore.booths;
+
         const options = () => {
             const optionsList = [];
 
@@ -36,17 +40,17 @@ function Wayfinding() {
                 optionsList.push(
                     ...e.booths.map((booth) => ({
                         value: booth.name,
-                        label: e.name + " - " + booth.name,
+                        label: e.name + " - " + booth.fullName,
                     }))
                 );
             });
 
-            boothStore.booths
+            booths()
                 .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
                 .forEach((booth) => {
                     optionsList.push({
                         value: booth.name,
-                        label: booth.title || booth.name,
+                        label: booth.fullName,
                     });
                 });
 
@@ -54,22 +58,21 @@ function Wayfinding() {
         };
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
-            const booth = boothStore.booths.filter((b) => b.name === name)[0];
-            console.log(booth);
+            const booth = booths().filter((b) => b.name === name)[0];
             const { from, to, exceptUnaccessible } = uiState.selectedRoute;
 
             if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to, exceptUnaccessible));
             else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
         };
 
-        const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
-            const { from, to } = uiState.selectedRoute;
-            store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
-        };
+        // const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
+        //     const { from, to } = uiState.selectedRoute;
+        //     store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
+        // };
 
         const getWayInformation = (distance) => {
             const info = [];
-            const units = svg.getAttribute("units");
+            const units = getLayerSvg().getAttribute("units");
             const seconds = Math.round(distance / (units === "m" ? 1.4 : 4.2));
             let est = new Date();
             est.setMinutes(est.getMinutes() + seconds / 60);

@@ -1,7 +1,7 @@
 import * as d3 from "d3-selection";
 import Rect from "../../core/Rect";
 import data from "../../data";
-import svg from "../../data/svg";
+import { getLayerSvg } from "../../data/svg";
 import { getNextId } from "../../tools/id";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
@@ -11,12 +11,10 @@ import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
 
-export default function initBooths(store: RootStore) {
-    const { boothStore } = store;
-    const boothsByName = new Map<string, Booth>();
+const boothsByName = new Map<string, Booth>();
+const booths: MutableRequired<Booth>[] = [];
 
-    const booths: MutableRequired<Booth>[] = [];
-
+export function iniAllBooths(store: RootStore) {
     for (const raw of data.booths || []) {
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);
@@ -39,7 +37,6 @@ export default function initBooths(store: RootStore) {
                 return a.name > b.name ? 1 : -1;
             });
         }
-
         booths.push(b);
     }
 
@@ -48,10 +45,34 @@ export default function initBooths(store: RootStore) {
         sortByName(e.booths);
     }
 
-    for (const el of d3.select(svg).selectAll("#Booths g[id^=b], #Booths rect[id^=b]").nodes() as (
-        | SVGRectElement
-        | SVGPathElement
-    )[]) {
+    store.boothStore.booths = booths as Booth[];
+
+    // dispose
+    delete data.booths;
+    logger.log("initBooths", store.boothStore.booths.length);
+}
+
+const layers = [];
+
+export default function initBooths(store: RootStore, layerID: string): Booth[] {
+    if (layers.indexOf(layerID) > -1) return [];
+    layers.push(layerID);
+
+    const { boothStore, layerStore } = store;
+    const layerBooths = [];
+
+    const layersEnabled = !!window["__fpLayers"];
+
+    for (const el of d3
+        .select(getLayerSvg(layerID))
+        .selectAll(
+            `[data-layer='${layerID}'] > [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
+        )
+        .nodes() as (SVGRectElement | SVGPathElement)[]) {
+        const layer = (el.parentNode as SVGGraphicsElement).attributes["data-layer"]?.value;
+
+        if (!layer) continue;
+
         let rect: SVGRectElement;
         let pathsWithRect = false;
         if (el.tagName === "rect") {
@@ -65,7 +86,6 @@ export default function initBooths(store: RootStore) {
             // rect = el.lastElementChild as SVGRectElement;
             // if (!rect || rect.tagName !== 'rect') continue;
         }
-
         const idInSvg = (el.id || el.getAttribute("data-name")).substring(1).toLowerCase();
 
         let booth = boothsByName.get(idInSvg) as MutableRequired<Booth>;
@@ -77,12 +97,15 @@ export default function initBooths(store: RootStore) {
             booth = boothReg = new RegularBooth();
             booth.id = getNextId();
             booth.name = idInSvg.toUpperCase();
+
             booth.slug = generateUniqueSlug(idInSvg);
             booth.error = true;
             booth.exhibitors = [];
             boothsByName.set(idInSvg, booth as Booth);
-            booths.push(booth);
-        }
+            layerBooths.push(booth);
+        } else layerBooths.push(booth);
+
+        booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
@@ -104,14 +127,11 @@ export default function initBooths(store: RootStore) {
         } else {
             boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
         }
-        //booth.description = boothSpec.description;// || el.getAttribute("data-description"); // || '<b>Or do this</b>';
 
         const transform = rect.getAttribute("transform");
         if (transform) {
             const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\) rotate\(([-0-9.]+)\)/);
             if (mt) {
-                // const translateX = parseFloat(mt[1]);
-                // const translateY = parseFloat(mt[2]);
                 const rotate = parseFloat(mt[3]);
                 booth.rotate = (-rotate * Math.PI) / 180;
             } else {
@@ -145,39 +165,36 @@ export default function initBooths(store: RootStore) {
         if (el.tagName === "g") {
             booth.paths = [];
             booth.pathsWithRect = pathsWithRect;
-            if (pathsWithRect && settings.EXPO === "expo" && (booth.slug === "1745" || booth.slug === "1746")) {
-                booth.pathsWithRect = false;
-            }
+
             for (const kid of d3.select(el).selectAll("path, rect").nodes() as (SVGPathElement | SVGRectElement)[]) {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
                     const color = path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
-                    //if (d !== d) continue;
-                    // const triangles = getTrianglesFromFpPaths(d);
-                    const pi: PathInfo = {
-                        triangles: getTrianglesFromFpPaths(d),
+                    booth.paths.push({
+                        index: d,
                         color,
-                    };
-                    booth.paths.push(pi);
+                    });
                 }
             }
         }
     }
 
-    for (const b of booths) {
+    for (const b of layerBooths) {
         if (!b.rect) {
             logger.error("__data booth not found in SVG:", b.name, b);
+            layerBooths.splice(layerBooths.indexOf(b), 1);
         } else {
             (b["store"] as BoothStore) = boothStore;
-            boothStore.booths.push(b as Booth);
         }
     }
 
-    // dispose
-    delete data.booths;
-    logger.log("initBooths", boothStore.booths.length);
+    layerBooths
+        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.defaultFrom)
+        .forEach((btr) => layerBooths.splice(layerBooths.indexOf(btr), 1));
+
+    return layerBooths;
 }
 
 function fixCbre(b: Booth) {
@@ -192,20 +209,4 @@ function fixCbre(b: Booth) {
             else if (b.type.startsWith("Premium C - 2.4m")) (b.availColor as string) = "#3ECC78";
         }
     }
-}
-
-function getTrianglesFromFpPaths(index: number) {
-    const mesh = window["__fpPaths"][index];
-    // TODO: remove in future versions
-    for (const p of mesh.positions) {
-        // a bug in svgMesh3d when normalize: false ?
-        p[1] = Math.abs(p[1]);
-        p.length = 2;
-    }
-    const pathTriangles = [];
-    for (const c of mesh.cells) {
-        pathTriangles.push([mesh.positions[c[0]], mesh.positions[c[1]], mesh.positions[c[2]]]);
-    }
-
-    return pathTriangles;
 }

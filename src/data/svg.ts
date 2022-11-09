@@ -4,55 +4,61 @@ import Rect from "../core/Rect";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 
-function parseSvg(text: string) {
+const _svg = new Map<string, SVGElement>();
+
+function parseSvg(text: string, suffix: string = ""): SVGElement {
     const parser = new DOMParser();
-    return parser.parseFromString(text, "image/svg+xml").documentElement as any as SVGElement;
+    const element = parser.parseFromString(text, "image/svg+xml").documentElement as any as SVGElement;
+
+    if ((element.firstChild as Element).tagName === "parsererror") logger.error("Parsed svg with error: ", svg);
+
+    // prepare map of fill colors per class
+    const classFill = new Map<string, string>();
+    d3.select(element)
+        .selectAll("style")
+        .each(function () {
+            const css = (this as any).textContent as string;
+            const r = /\.([a-z0-9.]+)\s*{[^}]*fill\s*:\s*([^};]+);[^}]*}/gi;
+            let m: string[];
+            while ((m = r.exec(css)) !== null) {
+                const cls = m[1],
+                    fill = m[2];
+                classFill.set(cls, fill);
+            }
+        });
+
+    // set fill attrs for elements having class attrs
+    d3.select(element)
+        .selectAll("*[class]")
+        .each(function () {
+            const el = this as SVGGraphicsElement;
+            el.style.fill = classFill.get(el.className.baseVal);
+        });
+
+    _svg.set(suffix, element);
+    return element;
 }
 
-//if (typeof __fpBorderWidth === "undefined") window["__fpBorderWidth"] = 2;
-// TODO: make it a conta
-// window["__fpBorderWidth"] = 2
+let svg = parseSvg(window["__fp"]);
 
-//const overrideSvg = localStorage.getItem('overrideSvg');
-
-let svg = parseSvg(window["__fp"]); //overrideSvg ||
-if ((svg.firstChild as Element).tagName === "parsererror") {
-    logger.error("Parsed svg with error: ", svg);
-    // if (overrideSvg) {
-    //     alert('FP SVG error, see console');
-    //     svg = parseSvg(__fp);
-    // }
-}
-
-// prepare map of fill colors per class
-const classFill = new Map<string, string>();
-d3.select(svg)
-    .selectAll("style")
-    .each(function () {
-        const css = (this as any).textContent as string;
-        const r = /\.([a-z0-9.]+)\s*{[^}]*fill\s*:\s*([^};]+);[^}]*}/gi;
-        let m: string[];
-        while ((m = r.exec(css)) !== null) {
-            const cls = m[1],
-                fill = m[2];
-            classFill.set(cls, fill);
-        }
-    });
-
-// set fill attrs for elements having class attrs
-d3.select(svg)
-    .selectAll("*[class]")
-    .each(function () {
-        const el = this as SVGGraphicsElement;
-        el.style.fill = classFill.get(el.className.baseVal);
-    });
-
+const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
-settings.wayfinding = !data.hideDirections && d3.select(svg).select('[data-layer^="WF"]>path').node() ? true : false;
-
 let svgArea: Rect;
+if (viewboxRect) {
+    svgArea = Rect.fromSvgRectElement(viewboxRect);
+    viewboxRect.remove();
+} else {
+    svgArea = svgViewBox.withPadding(-svgViewBox.w * 0.05, -svgViewBox.h * 0.05);
+}
+
+d3.select(svg).attr("width", svgViewBox.w);
+d3.select(svg).attr("height", svgViewBox.h);
+
+logger.log("svgArea", svgArea, "svgViewBox", svgViewBox);
+
+settings.wayfinding = !data.hideDirections && window["__wfData"] ? true : false;
 
 let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[])
     .map((f) => {
@@ -64,48 +70,34 @@ let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement
     })
     .sort();
 
-if (settings.EXPO === "all-energy") floors.reverse();
-if (settings.EXPO === "spoga-gafa") data.boothTerm = "";
+export { svgArea, svgViewBox, floors };
 
-const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
+export function getTrianglesFromFpPaths(index: number, suffix: string) {
+    const mesh = gtePathByIndex(index, suffix);
+    // TODO: remove in future versions
+    for (const p of mesh.positions) {
+        // a bug in svgMesh3d when normalize: false ?
+        p[1] = Math.abs(p[1]);
+        p.length = 2;
+    }
+    const pathTriangles = [];
+    for (const c of mesh.cells) {
+        pathTriangles.push([mesh.positions[c[0]], mesh.positions[c[1]], mesh.positions[c[2]]]);
+    }
 
-if (viewboxRect) {
-    svgArea = Rect.fromSvgRectElement(viewboxRect);
-    viewboxRect.remove();
-} else if (settings.EXPO === "eventtechlive2019" || settings.EXPO === "eventtechlive2020" || settings.EXPO === "eventscase") {
-    const center = [3173, 1987];
-    const size = [1024, 873];
-    svgArea = Rect.fromCxcywh(center[0], center[1], size[0], size[1]);
-    // svgCenterX = center[0];
-    // svgCenterY = center[1];
-    // svgVisibleHeight = size[0] * 0.75;
-    // svgVisibleWidth = size[1];
-} else if (settings.EXPO === "latintyrepartsexpo") {
-    const k = 12000 / 8192;
-    const ky = 8920 / 6296;
-    const center = [5120, 3270];
-    const size = [1648, 888];
-    // svgCenterX = center[0] * k;
-    // svgCenterY = center[1] * ky;
-    // svgVisibleHeight = size[0] * ky * 0.75;
-    // svgVisibleWidth = size[1] * k;
-    svgArea = Rect.fromCxcywh(center[0] * k, center[1] * ky, size[0] * ky, size[1] * k);
-} else {
-    svgArea = svgViewBox.withPadding(-svgViewBox.w * 0.05, -svgViewBox.h * 0.05);
+    return pathTriangles;
 }
 
-logger.log("svgArea", svgArea, "svgViewBox", svgViewBox);
+export let gtePathByIndex = (index: number, suffix: string = "") => {
+    try {
+        return window[`__fpPaths${suffix}`][index];
+    } catch (e) {
+        return window["__fpPaths"][index];
+    }
+};
 
-export { svgArea, svgViewBox, floors };
-// export const svgSize = new Size(svgViewBox.w, svgViewBox.h);
-// export let svgVisibleWidth;
-
-d3.select(svg).attr("width", svgViewBox.w);
-d3.select(svg).attr("height", svgViewBox.h);
-
-window["__svg"] = svg;
-
-export default svg;
-
-declare const __fp: string;
-declare const __fpPaths: { [id: string]: any };
+export let getLayerSvg = (suffix: string = ""): SVGElement => {
+    if (_svg.has(suffix)) return _svg.get(suffix);
+    if (window[`__fp${suffix}`]) return parseSvg(window[`__fp${suffix}`], suffix);
+    else return _svg.get("");
+};

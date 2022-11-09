@@ -1,21 +1,23 @@
+import { RouteLine } from "./../utils/wayfinding";
+import { getLayerSvg } from "./../data/svg";
 import { action, computed, observable } from "mobx";
-import { Line, lineLength, Point } from "simple-geometry";
+import { lineLength, Point } from "simple-geometry";
 import store from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
-import svg from "../data/svg";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";
+import { Layer, LayersMode } from "./LayerStore";
 
 export default class RouteStore {
     rootStore: RootStore;
-    @observable routeLines: Line[] = [];
+    @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
     @observable tempToBooth: Booth = null;
-    @observable fixedFrom: Booth = null;
+    @observable defaultFrom: Booth = null;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -30,38 +32,59 @@ export default class RouteStore {
 
         if (route?.from && route?.to)
             window.setTimeout(
-                () => this.rootStore.showMap(),
+                () => {
+                    this.rootStore.showMap();
+                },
                 navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             );
 
-        if (route?.from) list.push(route.from);
-        if (route?.to) {
+        if (route?.from?.visible) list.push(route.from);
+        if (route?.to?.visible) {
             this.tempToBooth = null;
             list.push(route.to);
         }
 
+        if (!route && store.fp.onDirection) store.fp.onDirection(null);
+
         setTimeout(() => {
             this.rootStore.moveToList(list);
+            var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
+            if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
+                this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
         }, 200);
     }
 
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
         return (
-            this.rootStore.boothStore.booths.sort(
-                (b1, b2) =>
-                    lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
-                    lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
-            )[0] || null
+            this.rootStore.boothStore.booths
+                .filter((b) => b.visible)
+                .sort(
+                    (b1, b2) =>
+                        lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
+                        lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+                )[0] || null
         );
+    }
+
+    @computed({ keepAlive: true }) get layers(): Layer[] {
+        var layers = [];
+        store.routeStore.routeLines
+            ?.map((rl) => rl.p0.layer)
+            .reverse()
+            .forEach((l) => {
+                if (layers.indexOf(l) === -1) layers.push(l);
+            });
+
+        return store.layerStore.layers.filter((l) => layers.indexOf(l.name) > -1);
     }
 
     @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
-        this.selectRoute(new Route(this.fixedFrom || from, to, exceptUnaccessible));
+        this.selectRoute(new Route(this.defaultFrom || from, to, exceptUnaccessible));
         sendEventToGa(`FP Wayfinding`, GaEventActions.ClickDirections, to.name);
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {
@@ -78,18 +101,31 @@ export default class RouteStore {
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
         const p = mapCurrentPosition(point);
-        this.currentPosition = p;
-        if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
+
+        if (point.z && store.layerStore.mode === LayersMode.Radio) {
+            let z = point.z.toString();
+
+            let layer = store.layerStore.layers.find((l) => l.name === z);
+
+            if (layer) {
+                if (!layer.visible) return; // store.layerStore.updateVisibility(z, true);
+                if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
+                this.currentPosition = p;
+            }
+        } else if (store.layerStore.mode === LayersMode.Default && focus) {
+            this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
+            this.currentPosition = p;
+        }
     }
 
-    @action updateRoutePoints(routeLines: Line[]) {
+    @action updateRoutePoints(routeLines: RouteLine[]) {
         if (!routeLines?.length && !this.routeLines.length) return;
 
         this.routeLines = routeLines;
 
         const route = uiState.selectedRoute;
 
-        const units = svg.getAttribute("units");
+        const units = getLayerSvg().getAttribute("units");
         let distance = 0;
 
         routeLines.forEach((line) => (distance += lineLength(line.p0, line.p1)));

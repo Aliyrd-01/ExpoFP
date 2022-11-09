@@ -9,6 +9,7 @@ interface Data {
     gallery: string[];
     gtag: string;
     boothTerm: string;
+    levelTerm: string;
     reserveButtonTerm: string;
     exhibitorTerm: string;
     locale: string;
@@ -20,10 +21,9 @@ interface Data {
     trackerUrl: string;
     hideWayInformation: boolean;
     hideDirections: boolean;
-    hideExhibitorBoothNumber: boolean;
     hideExhibitors: boolean;
     onlyFeaturedExhibitors: boolean;
-    // hideCompanies: boolean;
+    hideExhibitorBoothNumber: boolean;
     dimensionless: boolean;
     hideCategoriesLink: boolean;
     hideEventHomeLink: boolean;
@@ -111,7 +111,7 @@ interface RawExhibitor {
 }
 
 interface PathInfo {
-    triangles: Triangle[];
+    index: number;
     color: string;
 }
 

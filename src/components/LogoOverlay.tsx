@@ -1,6 +1,6 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
-import { uiState } from "../store";
+import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
@@ -16,7 +16,10 @@ export default function LogoOverlay() {
             let style: any;
             if (uiState.overlayPosition === "left")
                 style = { bottom: uiState.mapVisibleBottom + pad + "px", right: pad + "px", width: "5rem" };
-            else style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
+            else {
+                style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
+                if (store.mapboxStore.mapBoxSelected) style.top = remsToPixels(0.5) + "px";
+            }
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;
         },
@@ -28,6 +31,7 @@ export default function LogoOverlay() {
                 style = { bottom: uiState.mapVisibleBottom + 2 * pad + "px", right: pad + "px", width: "3rem" };
             else {
                 style = { top: uiState.mapVisibleTop + 2 * pad + "px", right: pad + "px", width: "2rem" };
+                if (store.mapboxStore.mapBoxSelected) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;
@@ -46,7 +50,7 @@ export default function LogoOverlay() {
             </a>
             {showWarning && (
                 <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
-                    <a target="_blank" href="https://expofp.com/pages/huge-fp-warning">
+                    <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/huge-fp-warning">
                         Read how to optimize it
                     </a>
                 </Alert>
