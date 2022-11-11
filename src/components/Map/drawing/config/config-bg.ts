@@ -10,6 +10,7 @@ import configImg from "./config-img";
 
 export default async function configBg(
     context: DrawerContext,
+    images: Promise<SVGImageElement[]>,
     layerID: string,
     painterOrderPriority: number,
     visible: boolean
@@ -28,7 +29,7 @@ export default async function configBg(
         .selectAll(":scope > g[data-is-editable='false'] path, :scope > path[data-tagname='ptext']")
         .nodes() as SVGElement[];
 
-    const img = seleted.selectAll(":scope > g[data-is-editable='false'] image").nodes() as SVGImageElement[];
+    const fpImages = seleted.selectAll(":scope > g[data-is-editable='false'] image").nodes() as SVGImageElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") addPath(el as SVGPathElement);
@@ -104,5 +105,6 @@ export default async function configBg(
                 fgPainter = context.requirePainter(`${layerID}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
 
-    return await configImg(context, layerID, img, painterOrderPriority + 6, visible);
+    const logos = (await images).filter((image) => !!image);
+    return await configImg(context, layerID, fpImages.concat(logos), painterOrderPriority + 6, visible);
 }

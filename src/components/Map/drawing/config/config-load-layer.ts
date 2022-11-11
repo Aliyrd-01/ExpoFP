@@ -1,14 +1,13 @@
+import { DrawerContext } from "./../Drawer1";
 import store from "../../../../store";
 import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
 import settings from "../../../../tools/settings";
 import logosFromBooths from "../../../../utils/logosFromBooths";
-import { DrawerContext } from "../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
-import configImg from "./config-img";
 
 export default async function loadLayer(
     layer: Layer,
@@ -44,22 +43,20 @@ export default async function loadLayer(
         if (!withConfiguration) return resolve(false);
         layer.configured = true;
 
-        await configBg(context, layer.name, layer.basePriority, layer.visible);
-        
-        // Exhibitors logos drawing
-        if (drawIcons) {
-            await configImg(
-                context,
-                layer.name,
-                (await logosFromBooths(booths)).filter((l) => !!l),
-                layer.basePriority + 6,
-                layer.visible
-            );
-        }
+        configBg(
+            context,
+            drawIcons ? logosFromBooths(booths) : Promise.resolve([]),
+            layer.name,
+            layer.basePriority,
+            layer.visible
+        ).then(() => {
+            context.getLayersPainters([layer.name]).forEach((p) => (p.visible = layer.visible));
+            context.updateMatrixScale();
+            context.requireUpdate(null);
+        });
 
         context.updateMatrixScale();
         context.requireUpdate(null);
-
         resolve(true);
     });
 }
