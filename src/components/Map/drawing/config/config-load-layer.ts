@@ -8,6 +8,7 @@ import logosFromBooths from "../../../../utils/logosFromBooths";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
+import { RegularBooth } from "../../../../store/BoothStore";
 
 export default async function loadLayer(
     layer: Layer,
@@ -27,9 +28,11 @@ export default async function loadLayer(
 
         const booths = initBooths(store, layer.name);
 
-        const drawIcons: boolean = settings.EXPO === "techcrunch";
-        if (drawIcons)
-            booths.filter((b: any) => b.exhibitors?.find((e) => e.featured && e.logo)).forEach((b) => (b.noLabels = true));
+        const logosBooths = booths.filter(
+            (b) => b instanceof RegularBooth && b.exhibitors.find((e) => !!e.logo)
+        ) as RegularBooth[];
+
+        logosBooths.forEach((b) => (b.noLabels = true));
 
         if (booths.length) {
             configBooths(context, layer.name, booths, layer.basePriority + 3, layer.visible)();
@@ -41,15 +44,11 @@ export default async function loadLayer(
         // configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
 
         if (!withConfiguration) return resolve(false);
+
         layer.configured = true;
 
-        configBg(
-            context,
-            drawIcons ? logosFromBooths(booths) : Promise.resolve([]),
-            layer.name,
-            layer.basePriority,
-            layer.visible
-        ).then(() => {
+        var logosSources = logosBooths.map((b) => b.exhibitors.find((e) => !!e.logo).logo);
+        configBg(context, logosFromBooths(logosBooths, logosSources), layer.name, layer.basePriority, layer.visible).then(() => {
             context.requireUpdate(null);
             context.getLayersPainters([layer.name]).forEach((p) => (p.visible = layer.visible));
         });
