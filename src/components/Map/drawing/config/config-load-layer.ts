@@ -50,12 +50,10 @@ export default async function loadLayer(
             layer.basePriority,
             layer.visible
         ).then(() => {
-            context.getLayersPainters([layer.name]).forEach((p) => (p.visible = layer.visible));
-            context.updateMatrixScale();
             context.requireUpdate(null);
+            context.getLayersPainters([layer.name]).forEach((p) => (p.visible = layer.visible));
         });
 
-        context.updateMatrixScale();
         context.requireUpdate(null);
         resolve(true);
     });
