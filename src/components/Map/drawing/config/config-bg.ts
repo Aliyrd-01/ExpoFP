@@ -106,5 +106,5 @@ export default async function configBg(
     }
 
     const logos = (await images).filter((image) => !!image);
-    return await configImg(context, layerID, fpImages.concat(logos), painterOrderPriority + 6, visible);
+    return await configImg(context, layerID, fpImages.concat(logos), painterOrderPriority + 6, false);
 }
