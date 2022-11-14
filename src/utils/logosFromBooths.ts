@@ -10,9 +10,19 @@ export default function logosFromBooths(booths: Booth[], sources: string[]): Pro
                     var img = new Image();
                     img.onerror = () => resolve(null);
                     img.onload = () => {
-                        const ratio = img.height / img.width;
-                        const w = rect.w * 0.9;
-                        const h = w * ratio;
+                        const ratioBooth = rect.w / rect.h;
+                        const ratio = img.width / img.height;
+                        let w = 0;
+                        let h = 0;
+
+                        if (ratioBooth > ratio) {
+                            h = rect.h * 0.9;
+                            w = h * ratio;
+                        } else {
+                            w = rect.w * 0.9;
+                            h = w / ratio;
+                        }
+
                         const x = rect.cx - w / 2;
                         const y = rect.cy - h / 2;
 
