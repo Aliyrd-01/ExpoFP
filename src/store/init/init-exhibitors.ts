@@ -41,6 +41,7 @@ export default function initExhibitors(store: RootStore) {
         e.leadingImageUrl = addBaseUrl(e.leadingImageUrl);
         e.categories = [];
         e.booths = [];
+        //e.logoInBooth = true;
 
         (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
