@@ -19,17 +19,17 @@ export default async function configBg(
     let fgPainter: TrianglePainter = null;
     let drawerSeq = 0;
 
-    var seleted = select(getLayerSvg(layerID)).select(`[data-layer="${layerID}"]`);
+    const selected = select(getLayerSvg(layerID)).select(`[data-layer="${layerID}"]`);
 
-    const bgElements = seleted
+    const bgElements = selected
         .selectAll(":scope > *:not([data-tagname='efp-booth']):not(g[data-is-editable='false']) path, :scope > path")
         .nodes() as SVGElement[];
 
-    const fgElements = seleted
+    const fgElements = selected
         .selectAll(":scope > g[data-is-editable='false'] path, :scope > path[data-tagname='ptext']")
         .nodes() as SVGElement[];
 
-    const fpImages = seleted.selectAll(":scope > g[data-is-editable='false'] image").nodes() as SVGImageElement[];
+    const fpImages = selected.selectAll(":scope > g[data-is-editable='false'] image").nodes() as SVGImageElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") addPath(el as SVGPathElement);
@@ -106,5 +106,5 @@ export default async function configBg(
     }
 
     const logos = (await images).filter((image) => !!image);
-    return await configImg(context, layerID, fpImages.concat(logos), painterOrderPriority + 6, false);
+    return configImg(context, layerID, fpImages.concat(logos), painterOrderPriority + 6, false);
 }

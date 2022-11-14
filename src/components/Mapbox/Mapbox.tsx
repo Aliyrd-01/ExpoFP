@@ -134,7 +134,7 @@ export default function Mapbox() {
 
             const toHex = (input: string) => {
                 var h = parseInt(input).toString(16);
-                return h.length == 1 ? "0" + h : h;
+                return h.length === 1 ? "0" + h : h;
             };
 
             data.features.forEach((f) => {

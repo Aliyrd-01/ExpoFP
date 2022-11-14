@@ -11,7 +11,6 @@ import configBooths from "./config-booths";
 import { RegularBooth } from "../../../../store/BoothStore";
 import animate from "./animate";
 import { easeLinear, interpolateNumber } from "d3";
-import RectPainter from "../painters/RectPainter";
 import ImagePainter from "../painters/ImagePainter";
 
 export default async function loadLayer(
@@ -54,11 +53,11 @@ export default async function loadLayer(
         var logosSources = logosBooths.map((b) => b.exhibitors.find((e) => !!e.logo).logo);
         configBg(context, logosFromBooths(logosBooths, logosSources), layer.name, layer.basePriority, layer.visible).then(() => {
             context.requireUpdate(null);
-            var imagePainter = context.getLayersPainters([layer.name]).find((p) => p.id.indexOf("IMAGES") > -1) as ImagePainter;
+            var imagePainter = context.getLayersPainters([layer.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
             if (!imagePainter) return;
 
-            imagePainter.visible = true;
             imagePainter.alpha = 0;
+            imagePainter.visible = true;
             animate(
                 0,
                 500,
