@@ -34,7 +34,7 @@ function historyPush(search: string) {
     history.push(getHistoryUrl(search));
 }
 
-function historyReplace(search: string) {
+export function historyReplace(search: string) {
     history.replace(getHistoryUrl(search));
 }
 
@@ -45,8 +45,8 @@ function dispatchFromUrl() {
     const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
 
     if (slug && store.mapboxStore.mapBoxEnabled) store.mapboxStore.mapBoxSelected = false;
-    
-    if (hanleCustomCommand(slug)) {
+
+    if (hanleCustomCommand(slug, false)) {
     } else if (slug.startsWith("route")) {
         const parts = slug.split(":");
         const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;

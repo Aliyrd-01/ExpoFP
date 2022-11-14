@@ -14,11 +14,11 @@ export interface WayInformationProps {
 
 const WayInformation: React.FC<WayInformationProps> = ({ items, accessible, onClick }) =>
     items?.length ? (
-        <div className="wayInformation" onClick={onClick}>
+        <div className="efp-wayInformation" onClick={onClick}>
             {items.map((item, index) => {
                 return (
                     <div
-                        className={classNames("wayInformation__item", {
+                        className={classNames("efp-wayInformation__item", {
                             "is-accessible": accessible && index === 0,
                         })}
                         key={index}

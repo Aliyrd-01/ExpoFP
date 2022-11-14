@@ -132,6 +132,11 @@ export default function Mapbox() {
         current.on("load", async () => {
             setTimeout(() => flyToCenter(0, 4000, 0.001), 1000);
 
+            const toHex = (input: string) => {
+                var h = parseInt(input).toString(16);
+                return h.length == 1 ? "0" + h : h;
+            };
+
             data.features.forEach((f) => {
                 f.properties.id = f.properties.id?.substring(1);
 
@@ -141,9 +146,8 @@ export default function Mapbox() {
                     let booth = store.boothStore.booths.filter((b) => b.name === f.properties.id)[0];
                     if (booth) f.properties.color = defaultColor(booth);
                 } else if (f.properties.color) {
-                    f.properties.color = `#${parseInt(f.properties.color.R).toString(16)}${parseInt(
-                        f.properties.color.G
-                    ).toString(16)}${parseInt(f.properties.color.B).toString(16)}`;
+                    let color = f.properties.color;
+                    f.properties.color = `#${toHex(color.R)}${toHex(color.G)}${toHex(color.B)}`;
 
                     if (f.properties.type === "venue") f.properties.color = "grey";
                     else if (f.properties.type === "outline") {

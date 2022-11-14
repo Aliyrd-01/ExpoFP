@@ -11,9 +11,6 @@ body {
     padding: 0 !important;
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
 }
-.layout {
-    padding: 20px;
-}
 .map {
     width: 100vw;
     height: 100vh;
@@ -23,6 +20,39 @@ body {
     width: 100%;
     max-width: 376px;
     height: 100vh;
-    padding: 20px 15px;
+    padding-top: 20px;
     background: #fff;
+}
+.sidebar-container {
+    padding: 20px 15px;
+}
+.sb-layout {
+    padding: rem(20px);
+}
+.sb-data {
+    margin-top: 40px;
+    padding: 14px;
+    background: #e6e6e6;
+    border-radius: 4px;
+    font-size: 13px;
+
+    &--top {
+        margin-top: 0;
+        margin-bottom: 30px;
+    }
+    & > strong {
+        display: block;
+    }
+    & > button {
+        padding: rem(6px 12px);
+        background: var(--color-black);
+        border: 0;
+        border-radius: 60px;
+        color: var(--color-white);
+        cursor: pointer;
+
+        &:hover {
+            background: var(--color-grayDark);
+        }
+    }
 }

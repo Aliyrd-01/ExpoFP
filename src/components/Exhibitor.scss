@@ -135,14 +135,6 @@
             mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
         }
 
-        .image-slider-full-screen-container svg {
-            fill: "#FFFFFF";
-
-            &:hover {
-                fill: gray;
-            }
-        }
-
         @include clearfix;
     }
 
@@ -353,6 +345,95 @@
             left: 0;
             width: 100%;
             height: 100%;
+        }
+    }
+}
+
+$imageSliderClass: ".image-slider";
+
+#{$imageSliderClass} {
+    &__nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translate(0, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 40px;
+        margin: 0 6px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 0;
+        border-radius: 10px;
+        outline: none;
+        cursor: pointer;
+
+        svg {
+            fill: var(--color-white);
+        }
+        &:hover {
+            background: rgba(0, 0, 0, 0.6);
+
+            svg {
+                fill: var(--color-gray);
+            }
+        }
+    }
+    &__toggle {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        background: rgba(0, 0, 0, 0.3);
+        border: 0;
+        border-radius: 10px;
+        cursor: pointer;
+
+        & > svg {
+            width: 90%;
+            fill: var(--color-white);
+        }
+        &:hover {
+            background: rgba(0, 0, 0, 0.6);
+
+            svg {
+                fill: var(--color-gray);
+            }
+        }
+    }
+    &.is-full {
+        #{$imageSliderClass}__nav-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+        #{$imageSliderClass}__toggle {
+            width: 54px;
+            height: 54px;
+            background: transparent;
+        }
+        @include media-breakpoint-down(sm) {
+            #{$imageSliderClass}__nav-btn {
+                top: 100%;
+                transform: translate(0, -120px);
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+
+                & > svg {
+                    height: 30px !important;
+                }
+                &.nav-btn-left {
+                    left: 50% !important;
+                    margin-left: -60px;
+                }
+                &.nav-btn-right {
+                    right: 50% !important;
+                    margin-right: -60px;
+                }
+            }
         }
     }
 }

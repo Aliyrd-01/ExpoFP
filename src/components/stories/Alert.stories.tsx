@@ -17,10 +17,10 @@ const Template: Story<AlertProps> = (args) => {
     };
 
     return (
-        <div className="layout">
-            <button onClick={() => setAlertOpen(!alertOpen)}>{alertOpen ? "Hide alert" : "Show alert"}</button>
-            <br />
-            <br />
+        <div className="sb-layout layout">
+            <div className="sb-data sb-data--top">
+                <button onClick={() => setAlertOpen(!alertOpen)}>{alertOpen ? "Hide alert" : "Show alert"}</button>
+            </div>
             {alertOpen ? (
                 <Alert {...args} onClose={toggleAlert}>
                     <a href="https://google.com" target="_blank" rel="noopener noreferrer">

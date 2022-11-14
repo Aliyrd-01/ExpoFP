@@ -1,4 +1,5 @@
 import React from "react";
+import cn from "classnames";
 import data, { FillMode } from "./ImageSliderData";
 import ImagePreLoader from "./ImageSliderPreLoader";
 import styles from "./ImageSliderStyle";
@@ -36,8 +37,7 @@ class State {
         public startTouchPoint: { x: number; y: number },
         public isFullScreen: boolean,
         public height: number = null
-    ) {
-    }
+    ) {}
 }
 
 let isTouch = isTouchDevice();
@@ -58,14 +58,10 @@ class ImageSlider extends React.Component<Props, State> {
         isFullScreen: false,
         hideFullScreenIcon: false,
 
-        onClickNav: () => {
-        },
-        onClickBullets: () => {
-        },
-        onStartSlide: () => {
-        },
-        onCompleteSlide: () => {
-        }
+        onClickNav: () => {},
+        onClickBullets: () => {},
+        onStartSlide: () => {},
+        onCompleteSlide: () => {},
     };
 
     constructor(props: Props) {
@@ -93,7 +89,7 @@ class ImageSlider extends React.Component<Props, State> {
             null,
             props.isFullScreen
         );
-        ImagePreLoader.load(this.getImageUrl(0, true)).catch(() => this.originalImagesExists = false);
+        ImagePreLoader.load(this.getImageUrl(0, true)).catch(() => (this.originalImagesExists = false));
         ImagePreLoader.load(this.getImageUrl(2, false));
         this.updateRatio(this.getImageUrl(0, false));
     }
@@ -141,7 +137,7 @@ class ImageSlider extends React.Component<Props, State> {
             ImagePreLoader.load(url).then((image) => {
                 this.setState({
                     ...this.state,
-                    height: (image.height * this.rootContainer.clientWidth) / image.width
+                    height: (image.height * this.rootContainer.clientWidth) / image.width,
                 });
             });
         }
@@ -150,7 +146,7 @@ class ImageSlider extends React.Component<Props, State> {
     getImageUrl = (idx: number, isFullScreen: boolean) => {
         if (isFullScreen) {
             const originalPath = this.originalImageFromTumb(this.props.images[idx]);
-            return this.originalImagesExists ? (originalPath || "") : (this.props.images[idx] || "");
+            return this.originalImagesExists ? originalPath || "" : this.props.images[idx] || "";
         } else {
             return this.props.images[idx] || "";
         }
@@ -164,7 +160,7 @@ class ImageSlider extends React.Component<Props, State> {
         }
 
         return paths.join("/");
-    }
+    };
 
     isCanSlide = (idx: number) => idx !== this.state.idx && !this.state.sliding;
 
@@ -194,7 +190,7 @@ class ImageSlider extends React.Component<Props, State> {
     onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
         this.setState({
             ...this.state,
-            startTouchPoint: { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY }
+            startTouchPoint: { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY },
         });
     };
 
@@ -215,21 +211,31 @@ class ImageSlider extends React.Component<Props, State> {
     onFullScreenContainerClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (this.state.isFullScreen) e.preventDefault();
 
-        if ((e.target as HTMLDivElement).classList.contains("image-slider-full-screen-container") && this.state.isFullScreen)
+        if ((e.target as HTMLDivElement).classList.contains("image-slider") && this.state.isFullScreen)
             this.onFullScreenChanged();
     };
 
     renderNav = () => ({
         left: this.isPrevImageAvail() ? (
-            <button type="button" style={styles.NavLeft} onClick={() => this.onClickNav(false)}>
+            <button
+                type="button"
+                className="image-slider__nav-btn nav-btn-left"
+                style={styles.NavLeft}
+                onClick={() => this.onClickNav(false)}
+            >
                 {styles.ImageNavArrowLeft(this.state.isFullScreen)}
             </button>
         ) : null,
         right: this.isNextImageAvail() ? (
-            <button type="button" style={styles.NavRight} onClick={() => this.onClickNav(true)}>
+            <button
+                type="button"
+                className="image-slider__nav-btn nav-btn-right"
+                style={styles.NavRight}
+                onClick={() => this.onClickNav(true)}
+            >
                 {styles.ImageNavArrowRight(this.state.isFullScreen)}
             </button>
-        ) : null
+        ) : null,
     });
 
     renderBullets = (length: number, idx: number) => {
@@ -272,7 +278,7 @@ class ImageSlider extends React.Component<Props, State> {
                     nextReadyX,
                     this.props.useGPURender,
                     this.state.isFullScreen ? FillMode.contain : this.props.fillMode
-                )
+                ),
             },
             () => {
                 // animation slides
@@ -292,7 +298,7 @@ class ImageSlider extends React.Component<Props, State> {
                                 0,
                                 this.props.useGPURender,
                                 this.state.isFullScreen ? FillMode.contain : this.props.fillMode
-                            )
+                            ),
                         },
                         () => this.updateRatio(nextUrl)
                     );
@@ -314,7 +320,7 @@ class ImageSlider extends React.Component<Props, State> {
                 this.props.useGPURender,
                 this.state.isFullScreen ? FillMode.contain : this.props.fillMode
             ),
-            sliding: false
+            sliding: false,
         });
 
         this.props.onCompleteSlide(this.state.idx + 1);
@@ -341,7 +347,7 @@ class ImageSlider extends React.Component<Props, State> {
                     this.props.useGPURender,
                     isFullScreen ? FillMode.contain : this.props.fillMode
                 ),
-                isFullScreen
+                isFullScreen,
             },
             () => {
                 if (!isFullScreen) this.updateRatio(this.getImageUrl(this.state.idx, !isFullScreen));
@@ -357,17 +363,19 @@ class ImageSlider extends React.Component<Props, State> {
         const rightNav = !isTouch && this.props.showNavs ? this.renderNav().right : null;
         const bullets = this.props.showBullets ? this.renderBullets(imageLength, this.state.idx) : null;
         const renderFullScreenIcon = (
-            <div onClick={() => this.onFullScreenChanged()}>{styles.FullScreenIcon(this.state.isFullScreen)}</div>
+            <button type="button" className="image-slider__toggle" onClick={() => this.onFullScreenChanged()}>
+                {styles.FullScreenIcon(this.state.isFullScreen)}
+            </button>
         );
 
         return (
             <div
                 ref={(ref) => (this.rootContainer = ref)}
-                className="image-slider-full-screen-container"
+                className={cn(data.ClassNameRoot, { "is-full": this.state.isFullScreen })}
                 onClick={(e) => this.onFullScreenContainerClick(e)}
                 style={styles.FullScreenContainer(this.state.isFullScreen)}
             >
-                <div className={data.ClassNameRoot} style={assignObjects(rootStyle, this.props.style)}>
+                <div style={assignObjects(rootStyle, this.props.style)}>
                     <div style={styles.getSubContainer(this.props.width, "100%")}>
                         <div
                             onClick={() => (!this.state.isFullScreen ? this.onFullScreenChanged() : null)}

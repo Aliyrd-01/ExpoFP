@@ -16,22 +16,23 @@ import { kioskKey } from "../store/init/init-ui";
 
 const DEBOUNCE_DELAY_MS = 2000;
 
-export function hanleCustomCommand(text: string): boolean {
+export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean {
     text = text.trim();
 
     if (text.startsWith(`${YouAreHere.yahKey}`)) {
-        const commandValue = text.substr(YouAreHere.yahKey.length).trim();
+        const commandValue = text.substr(YouAreHere.yahKey.length).trim();        
+        var url = window.location.origin + window.location.pathname;
         if (commandValue[1] === undefined) {
             const yah = YouAreHere.getYah();
             alert(`"You are here" coordinantes: ${yah[0]} ${yah[1]}, scale ${yah[2]}`);
         } else if (commandValue === "none") {
             YouAreHere.removeYah();
             localStorage.removeItem(kioskKey);
-            window.location.replace(window.location.origin);
+            if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
             YouAreHere.setYah(commandValue.split(",")[0]);
             localStorage.setItem(kioskKey, "1");
-            window.location.replace(window.location.origin);
+            if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 2 || commandValue.split(",").length === 3) {
             const yahValues = commandValue.split(",");
             const yahX = parseFloat(yahValues[0].trim());
@@ -41,7 +42,7 @@ export function hanleCustomCommand(text: string): boolean {
             if (!!yahX && !!yahY) {
                 YouAreHere.setYah(`${yahX},${yahY},${scale}`);
                 localStorage.setItem(kioskKey, "1");
-                window.location.replace(window.location.origin);
+                if (forseRefresh) window.location.replace(url);
             }
         }
         return true;
@@ -208,7 +209,7 @@ function Search() {
             case "Enter":
                 e.preventDefault();
                 store.openActiveListItem();
-                hanleCustomCommand(getInput().value);
+                hanleCustomCommand(getInput().value, true);
                 return;
         }
         if (delta) {
