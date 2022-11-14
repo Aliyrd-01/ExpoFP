@@ -74,6 +74,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     //populated
     readonly logo: string;
+    readonly logoInBooth: boolean;
     readonly gallery: string[];
     readonly marketMaterials: MarketMaterial[];
     readonly slug: string;

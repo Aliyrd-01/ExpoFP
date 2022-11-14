@@ -32,7 +32,7 @@ export default async function loadLayer(
         const booths = initBooths(store, layer.name);
 
         const logosBooths = booths.filter(
-            (b) => b instanceof RegularBooth && b.exhibitors.find((e) => !!e.logo)
+            (b) => b instanceof RegularBooth && b.exhibitors.find((e) => !!e.logoInBooth)
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));
@@ -50,7 +50,7 @@ export default async function loadLayer(
 
         layer.configured = true;
 
-        var logosSources = logosBooths.map((b) => b.exhibitors.find((e) => !!e.logo).logo);
+        var logosSources = logosBooths.map((b) => b.exhibitors.find((e) => !!e.logoInBooth).logo);
         configBg(context, logosFromBooths(logosBooths, logosSources), layer.name, layer.basePriority, layer.visible).then(() => {
             context.requireUpdate(null);
             var imagePainter = context.getLayersPainters([layer.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
