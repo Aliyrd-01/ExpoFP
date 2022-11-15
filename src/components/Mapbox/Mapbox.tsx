@@ -127,10 +127,10 @@ export default function Mapbox() {
             "top-left"
         );
 
-        current.addControl(new MapboxGLButtonControl(() => flyToCenter(0, 1000), "fa fa-expand-arrows-alt"), "top-left");
+        current.addControl(new MapboxGLButtonControl(() => flyToCenter(0, 1000, 0, 45), "fa fa-expand-arrows-alt"), "top-left");
 
         current.on("load", async () => {
-            setTimeout(() => flyToCenter(0, 4000, 0.001), 1000);
+            setTimeout(() => flyToCenter(0, 4000, 0.001, 45), 1000);
 
             const toHex = (input: string) => {
                 var h = parseInt(input).toString(16);
@@ -266,7 +266,7 @@ export default function Mapbox() {
         }
     );
 
-    function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0): Promise<void> {
+    function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0, pitch: number): Promise<void> {
         return new Promise((resolve) => {
             let current: Map = map.current;
 
@@ -282,7 +282,7 @@ export default function Mapbox() {
                     bearing,
                     essential: true,
                     duration,
-                    pitch: 0,
+                    pitch: pitch,
                 }
             );
         });
@@ -305,12 +305,12 @@ export default function Mapbox() {
         }, duration);
 
         if (mapBoxSelected) {
-            flyToCenter(0, duration).then(() => {
+            flyToCenter(0, duration, 0, 45).then(() => {
                 uiState.moveToRect = store.layerStore.rectangle || svgArea;
             });
         } else {
             uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            flyToCenter(props.bearing, duration).then(() => {
+            flyToCenter(props.bearing, duration, 0, 0).then(() => {
                 current.setZoom(props.edgeZoom - 0.5);
             });
         }
