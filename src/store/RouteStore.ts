@@ -112,8 +112,8 @@ export default class RouteStore {
                 if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
                 this.currentPosition = p;
             }
-        } else if (store.layerStore.mode === LayersMode.Default && focus) {
-            this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
+        } else if (store.layerStore.mode === LayersMode.Default) {
+            if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
             this.currentPosition = p;
         }
     }
