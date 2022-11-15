@@ -33,7 +33,7 @@ export default function logosFromBooths(booths: Booth[], sources: string[]): Pro
                         image.setAttribute("x", x.toString());
                         image.setAttribute("y", y.toString());
 
-                        image.setAttribute("transforn", `rotate(${booth.rotate || 0} ${rect.cx} ${rect.cy})`);
+                        image.setAttribute("transform", `rotate(${-booth.rotate * (180 / Math.PI) || 0} ${rect.cx} ${rect.cy})`);
 
                         resolve(image);
                     };
