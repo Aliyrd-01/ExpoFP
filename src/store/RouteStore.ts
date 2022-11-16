@@ -100,9 +100,9 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
-        const p = mapCurrentPosition(point);
+        const p = point ? mapCurrentPosition(point) : null;
 
-        if (point.z && store.layerStore.mode === LayersMode.Radio) {
+        if (point?.z && store.layerStore.mode === LayersMode.Radio) {
             let z = point.z.toString();
 
             let layer = store.layerStore.layers.find((l) => l.name === z);
