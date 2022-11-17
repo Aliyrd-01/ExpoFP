@@ -78,8 +78,8 @@ var props = {
     edgeZoom: 19,
     extrusion: {
         building: 5,
-        venue: 1.5,
-        other: 1,
+        venue: 1,
+        other: 0.5,
     },
 };
 
