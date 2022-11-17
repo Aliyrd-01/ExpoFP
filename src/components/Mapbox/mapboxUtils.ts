@@ -1,0 +1,85 @@
+import { getAngle, lineLength } from "simple-geometry";
+
+const radius: number = 6371000.0;
+const minlon: number = -180.0;
+const maxlon: number = 180.0;
+
+let toRad = (value: number) => (value * Math.PI) / 180;
+let toDeg = (value: number) => (value * 180) / Math.PI;
+
+let robustAcos = (value: number) => {
+    if (value > 1) return 1;
+    if (value < -1) return -1;
+    return value;
+};
+
+export function convertPoint(x: number, y: any, geoConfig: any): [number, number] {
+    var diagAngle = -getAngle(geoConfig.p0, geoConfig.p2, { x: geoConfig.p0.x + 10000, y: geoConfig.p0.y });
+    var pointAngle = -getAngle(geoConfig.p0, { x, y }, { x: geoConfig.p0.x + 10000, y: geoConfig.p0.y });
+
+    var delta = pointAngle - diagAngle;
+
+    var diagLen = lineLength(geoConfig.p2, geoConfig.p0);
+    var pointLen = lineLength(geoConfig.p0, { x, y });
+    var perc = pointLen / diagLen;
+
+    var _distance = distance(geoConfig.p0.lat, geoConfig.p0.lng, geoConfig.p2.lat, geoConfig.p2.lng);
+
+    var pointDist = perc * _distance;
+
+    var _bearing = bearing(geoConfig.p0.lat, geoConfig.p0.lng, geoConfig.p2.lat, geoConfig.p2.lng);
+
+    var res = destinationPoint(geoConfig.p0.lat, geoConfig.p0.lng, pointDist, _bearing + delta);
+
+    return res;
+}
+
+function distance(fromlat: number, fromLon: number, tolat: number, toLon: number): number {
+    var distance =
+        Math.acos(
+            robustAcos(
+                Math.sin(toRad(tolat)) * Math.sin(toRad(fromlat)) +
+                    Math.cos(toRad(tolat)) * Math.cos(toRad(fromlat)) * Math.cos(toRad(fromLon) - toRad(toLon))
+            )
+        ) * radius;
+
+    return distance;
+}
+
+function bearing(lat1: number, lon1: number, lat2: number, lon2: number) {
+    var bearing =
+        (toDeg(
+            Math.atan2(
+                Math.sin(toRad(lon2) - toRad(lon1)) * Math.cos(toRad(lat2)),
+                Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+                    Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(toRad(lon2) - toRad(lon1))
+            )
+        ) +
+            360) %
+        360;
+
+    return bearing;
+}
+
+function destinationPoint(lat: number, lng: number, distance: number, bearing: number): [number, number] {
+    var delta = distance / radius;
+    var theta = toRad(bearing);
+
+    var phi1 = toRad(lat);
+    var lambda1 = toRad(lng);
+
+    var phi2 = Math.asin(Math.sin(phi1) * Math.cos(delta) + Math.cos(phi1) * Math.sin(delta) * Math.cos(theta));
+
+    var lambda2 =
+        lambda1 +
+        Math.atan2(Math.sin(theta) * Math.sin(delta) * Math.cos(phi1), Math.cos(delta) - Math.sin(phi1) * Math.sin(phi2));
+
+    var longitude = toDeg(lambda2);
+    if (longitude < minlon || longitude > maxlon) {
+        // normalise to >=-180 and <=180° if value is >MAXLON or <MINLON
+        lambda2 = ((lambda2 + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+        longitude = toDeg(lambda2);
+    }
+
+    return [longitude, toDeg(phi2)];
+}

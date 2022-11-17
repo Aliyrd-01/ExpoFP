@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import Color from "color";
 import mapboxgl, { Map } from "mapbox-gl";
-import { useObserver } from "mobx-react-lite";
+import { useLocalStore, useObserver } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
 import * as React from "react";
 import Rect from "../../core/Rect";
@@ -14,6 +14,8 @@ import { useReaction } from "../../utils/mobx";
 import MapboxGLButtonControl from "./Button";
 import { pulsingDot } from "./Dot";
 import "./Mapbox.scss";
+import { convertPoint } from "./mapboxUtils";
+import { remsToPixels } from "../../utils";
 
 var fpGeo = window["__fpGeo"];
 
@@ -75,7 +77,7 @@ var props = {
     style: getStyle(),
     edgeZoom: 19,
     extrusion: {
-        building: 10,
+        building: 5,
         venue: 1.5,
         other: 1,
     },
@@ -101,7 +103,7 @@ export default function Mapbox() {
             zoom: 14,
             bearing: 30,
             pitch: 30,
-            maxPitch: 45,
+            maxPitch: 70,
             accessToken: props.token,
         });
 
@@ -137,6 +139,8 @@ export default function Mapbox() {
                 return h.length == 1 ? "0" + h : h;
             };
 
+            let b = props.viewbox;
+
             data.features.forEach((f) => {
                 f.properties.id = f.properties.id?.substring(1);
 
@@ -147,7 +151,7 @@ export default function Mapbox() {
                     if (booth) f.properties.color = defaultColor(booth);
                 } else if (f.properties.color) {
                     let color = f.properties.color;
-                    f.properties.color = `#${toHex(color.R)}${toHex(color.G)}${toHex(color.B)}`;
+                    f.properties.color = `#${toHex(color.R || color.r)}${toHex(color.G || color.g)}${toHex(color.B || color.b)}`;
 
                     if (f.properties.type === "venue") f.properties.color = "grey";
                     else if (f.properties.type === "outline") {
@@ -163,7 +167,7 @@ export default function Mapbox() {
             });
 
             current.addLayer({
-                id: "venue2",
+                id: "booths",
                 type: "fill-extrusion",
                 source: "booths",
                 filter: ["==", "type", "booth"],
@@ -184,7 +188,7 @@ export default function Mapbox() {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
                     "fill-extrusion-base": 0,
-                    "fill-extrusion-opacity": 0.4,
+                    "fill-extrusion-opacity": 0.3,
                 },
             });
 
@@ -199,36 +203,47 @@ export default function Mapbox() {
             //     },
             // });
 
-            let b = props.viewbox;
+            // current.addImage("pulsing-dot", pulsingDot(200, current), { pixelRatio: 2 });
 
-            current.addImage("pulsing-dot", pulsingDot(200, current), { pixelRatio: 2 });
+            // current.addSource("dot-point", {
+            //     type: "geojson",
+            //     data: {
+            //         type: "FeatureCollection",
+            //         features: [
+            //             {
+            //                 properties: {},
+            //                 type: "Feature",
+            //                 geometry: {
+            //                     type: "Point",
+            //                     coordinates: [b.cx, b.cy], // icon position [lng, lat]
+            //                 },
+            //             },
+            //         ],
+            //     },
+            // });
 
-            current.addSource("dot-point", {
-                type: "geojson",
-                data: {
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            properties: {},
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [b.cx, b.cy], // icon position [lng, lat]
-                            },
-                        },
-                    ],
-                },
-            });
+            // current.addLayer({
+            //     id: "layer-with-pulsing-dot",
+            //     type: "symbol",
+            //     source: "dot-point",
+            //     minzoom: 16,
+            //     layout: {
+            //         "icon-image": "pulsing-dot",
+            //     },
+            // });
 
-            current.addLayer({
-                id: "layer-with-pulsing-dot",
-                type: "symbol",
-                source: "dot-point",
-                minzoom: 16,
-                layout: {
-                    "icon-image": "pulsing-dot",
-                },
-            });
+            if (store.routeStore.defaultFrom) {
+                var htmlElement = document.createElement("div");
+                htmlElement.className = "yahMarker";
+
+                const point = convertPoint(
+                    store.routeStore.defaultFrom.rect.cx,
+                    store.routeStore.defaultFrom.rect.cy,
+                    fpGeo.properties.config
+                );
+
+                var yah = new mapboxgl.Marker(htmlElement).setLngLat(point).addTo(current);
+            }
 
             current.on("mouseenter", ["booths"], () => {
                 current.getCanvas().style.cursor = "pointer";
@@ -238,15 +253,15 @@ export default function Mapbox() {
                 current.getCanvas().style.cursor = "";
             });
 
-            let prevZoom = 0;
-            current.on("zoom", (e) => {
-                let zoom = current.getZoom();
+            // let prevZoom = 0;
+            // current.on("zoom", (e) => {
+            //     let zoom = current.getZoom();
 
-                if (zoom > prevZoom && zoom > props.edgeZoom && polyIntersected(current.getBounds(), props.viewbox))
-                    switchViewbox(false);
+            //     if (zoom > prevZoom && zoom > props.edgeZoom && polyIntersected(current.getBounds(), props.viewbox))
+            //         switchViewbox(false);
 
-                prevZoom = zoom;
-            });
+            //     prevZoom = zoom;
+            // });
 
             current.on("click", (e) => {
                 const bbox = [
@@ -383,11 +398,20 @@ export default function Mapbox() {
         return defColor;
     }
 
+    const s = useLocalStore(() => ({
+        get style() {
+            return {
+                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleLeft + "px",
+            };
+        },
+    }));
+
     return useObserver(() => {
         return (
             <div>
                 <div
                     ref={mapContainer}
+                    style={s.style}
                     className={classNames("map-container", {
                         hidden: !store.mapboxStore.showMapbox,
                     })}
