@@ -75,9 +75,9 @@ var props = {
     style: getStyle(),
     edgeZoom: 19,
     extrusion: {
-        building: 2,
-        venue: 3,
-        other: 3,
+        building: 10,
+        venue: 1.5,
+        other: 1,
     },
 };
 
@@ -147,7 +147,7 @@ export default function Mapbox() {
                     if (booth) f.properties.color = defaultColor(booth);
                 } else if (f.properties.color) {
                     let color = f.properties.color;
-                    f.properties.color = `#${toHex(color.R)}${toHex(color.G)}${toHex(color.B)}`;
+                    f.properties.color = `#${toHex(color.R || color.r)}${toHex(color.G || color.g)}${toHex(color.B || color.b)}`;
 
                     if (f.properties.type === "venue") f.properties.color = "grey";
                     else if (f.properties.type === "outline") {
@@ -163,6 +163,19 @@ export default function Mapbox() {
             });
 
             current.addLayer({
+                id: "booths",
+                type: "fill-extrusion",
+                source: "booths",
+                filter: ["==", "type", "booth"],
+                paint: {
+                    "fill-extrusion-color": ["get", "color"],
+                    "fill-extrusion-height": ["get", "height"],
+                    "fill-extrusion-base": 0,
+                    "fill-extrusion-opacity": 1,
+                },
+            });
+
+            current.addLayer({
                 id: "venue",
                 type: "fill-extrusion",
                 source: "booths",
@@ -171,20 +184,20 @@ export default function Mapbox() {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
                     "fill-extrusion-base": 0,
-                    "fill-extrusion-opacity": 0.8,
+                    "fill-extrusion-opacity": 0.4,
                 },
             });
 
-            current.addLayer({
-                id: "booths",
-                type: "fill",
-                source: "booths",
-                filter: ["==", "type", "booth"],
-                paint: {
-                    "fill-color": ["get", "color"],
-                    "fill-outline-color": "#FFFFFF",
-                },
-            });
+            // current.addLayer({
+            //     id: "booths",
+            //     type: "fill",
+            //     source: "booths",
+            //     filter: ["==", "type", "booth"],
+            //     paint: {
+            //         "fill-color": ["get", "color"],
+            //         "fill-outline-color": "#FFFFFF"
+            //     },
+            // });
 
             let b = props.viewbox;
 
