@@ -2,6 +2,7 @@
     position: fixed;
     opacity: 0;
     transition: 500ms opacity;
+    z-index: 100;
     &.-ready {
         opacity: 1;
     }
