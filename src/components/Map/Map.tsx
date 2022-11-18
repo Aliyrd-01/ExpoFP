@@ -98,7 +98,7 @@ export default function Map() {
     useReaction(
         () => uiState.zoomBy,
         () => {
-            if (!uiState.zoomBy) return;
+            if (!uiState.zoomBy || store.mapboxStore.mapBoxSelected) return;
             const z = uiState.zoomBy;
             uiState.zoomBy = null;
             s.animatePlease = true;

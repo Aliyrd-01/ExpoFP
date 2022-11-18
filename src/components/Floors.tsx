@@ -33,7 +33,7 @@ export default function Floors() {
         get style() {
             return {
                 right: remsToPixels(0.5) + "px",
-                top: uiState.mapVisibleTop + remsToPixels(uiState.overlayPosition === "left" ? 0.7 : 1.5) + "px",
+                top: uiState.mapVisibleTop + remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) + "px",
             };
         },
     }));
@@ -45,6 +45,8 @@ export default function Floors() {
         if (store.layerStore.mode === LayersMode.Radio) {
             store.routeStore.currentPosition = null;
             store.layerStore.updateVisibility(layer.name, true, true);
+
+            if (store.mapboxStore.mapBoxSelected) return;
 
             if (settings.EXPO === "money2020usa" || settings.EXPO === "rodion2") {
                 uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);

@@ -1,5 +1,4 @@
 import { computed, observable } from "mobx";
-import { uiState } from "./index";
 import RootStore from "./RootStore";
 
 export default class MapboxStore {
@@ -13,6 +12,6 @@ export default class MapboxStore {
     }
 
     @computed({ keepAlive: true }) get showMapbox() {
-        return this.mapBoxEnabled && this.mapBoxSelected && !uiState.details;
+        return this.mapBoxEnabled && this.mapBoxSelected;
     }
 }
