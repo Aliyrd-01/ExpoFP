@@ -14,8 +14,9 @@ import {
     setDataSource,
     setMarker,
     setVenuesLayer,
-    updateDataSource,
+    updateSelectionDataSource,
     updateRouteLines,
+    updateHoverDataSource,
 } from "./utils/data";
 
 export default function Mapbox() {
@@ -33,6 +34,7 @@ export default function Mapbox() {
             bearing: 30,
             pitch: 30,
             maxPitch: 70,
+            bearingSnap: 0,
             accessToken: props.token,
         });
 
@@ -47,17 +49,13 @@ export default function Mapbox() {
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
                     : null
             );
-            
+
             const boothsLayers = setBoothsLayers(map, store.layerStore.layers);
             setVenuesLayer(map);
 
-            map.on("mouseenter", boothsLayers, () => {
-                map.getCanvas().style.cursor = "pointer";
-            });
+            map.on("mouseenter", boothsLayers, () => (map.getCanvas().style.cursor = "pointer"));
 
-            map.on("mouseleave", boothsLayers, () => {
-                map.getCanvas().style.cursor = "";
-            });
+            map.on("mouseleave", boothsLayers, () => (map.getCanvas().style.cursor = ""));
 
             map.on("click", (e) => {
                 const bbox = [
@@ -65,16 +63,17 @@ export default function Mapbox() {
                     [e.point.x + 5, e.point.y + 5],
                 ] as any;
 
-                var props = map.queryRenderedFeatures(bbox, { layers: boothsLayers })[0]?.properties;
-                if (!props) return;
+                const selectedFeature = map.queryRenderedFeatures(bbox, {
+                    layers: boothsLayers,
+                })[0];
 
-                switchViewbox(false);
+                const booth = store.boothStore.booths.find((b) => b.name === selectedFeature?.properties?.id);
+                store.clickBooth(booth);
             });
-
-            map.on("zoomend", () => updateRouteLines(map, store.routeStore));
         });
     });
 
+    // ZoomBy
     useReaction(
         () => uiState.zoomBy,
         () => {
@@ -90,6 +89,7 @@ export default function Mapbox() {
         }
     );
 
+    //Layer visible
     useReaction(
         () => store.layerStore.visible,
         () => {
@@ -115,22 +115,34 @@ export default function Mapbox() {
         }
     );
 
-    // useReaction(
-    //     () => uiState.hoveredBooths,
-    //     () => {
-    //         updateDataSource(
-    //             map,
-    //             [...uiState.hoveredBooths].filter((b) => b.layer.visible),
-    //             store.boothStore.booths
-    //         );
-    //     }
-    // );
-
+    // Hover
+    let hoverTimeout = null;
     useReaction(
-        () => uiState.selectedBooths,
-        () => updateDataSource(map, [...uiState.selectedBooths], store.boothStore.booths)
+        () => uiState.hoveredBooths,
+        () => {
+            if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = null;
+            }
+
+            hoverTimeout = setTimeout(() => {
+                hoverTimeout = null;
+                updateHoverDataSource(
+                    map,
+                    [...uiState.hoveredBooths].filter((b) => b.layer?.visible ?? true),
+                    store.boothStore.booths
+                );
+            }, 50);
+        }
     );
 
+    // Selection
+    useReaction(
+        () => uiState.selectedBooths,
+        () => updateSelectionDataSource(map, [...uiState.selectedBooths], store.boothStore.booths)
+    );
+
+    // View switching
     useReaction(
         () => store.mapboxStore.mapBoxSelected,
         () => {
@@ -138,6 +150,7 @@ export default function Mapbox() {
         }
     );
 
+    // Routing
     useReaction(
         () => store.routeStore.routeLines,
         () => updateRouteLines(map, store.routeStore)

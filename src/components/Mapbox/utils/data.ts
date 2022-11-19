@@ -9,6 +9,7 @@ import mapboxgl from "mapbox-gl";
 import { convertPoint } from "./trannsformations";
 import store from "../../../store";
 import RouteStore from "../../../store/RouteStore";
+import Color from "color";
 
 interface ExtendFeatureCollection extends FeatureCollection {
     properties: any;
@@ -106,6 +107,22 @@ export const props = {
     },
 };
 
+const isDark = props.style.indexOf("dark") > -1;
+
+const lineStyle = isDark
+    ? ["interpolate", ["linear"], ["line-progress"], 0, "#ff9e2c", 0.5, "lime", 1, "#30afeb"]
+    : [
+          "interpolate",
+          ["linear"],
+          ["line-progress"],
+          0,
+          Color("#ff9e2c").darken(0.3).hex(),
+          0.5,
+          Color("lime").darken(0.3).hex(),
+          1,
+          Color("#30afeb").darken(0.3).hex(),
+      ];
+
 export function setDataSource(map: Map, booths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
         f.properties.id = f.properties.id?.substring(1);
@@ -126,13 +143,25 @@ export function setDataSource(map: Map, booths: Booth[]) {
     return map.addSource("data", { type: "geojson", data: fpGeo });
 }
 
-export function updateDataSource(map: Map, selectedBooths: Booth[], allBooths: Booth[]) {
-    
+export function updateHoverDataSource(map: Map, hoveredBooths: Booth[], allBooths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
         if (f.properties.type === "booth") {
             var b = allBooths.find((booth) => booth.name === f.properties.id);
 
-            if (selectedBooths.length && selectedBooths.indexOf(b) === -1) f.properties.color = "#777";
+            if (hoveredBooths.indexOf(b) > -1) f.properties.height = 4 * props.extrusion.booths;
+            else f.properties.height = props.extrusion.booths;
+        }
+    });
+
+    (map.getSource("data") as GeoJSONSource).setData(fpGeo);
+}
+
+export function updateSelectionDataSource(map: Map, selectedBooths: Booth[], allBooths: Booth[]) {
+    fpGeo.features.forEach((f: Feature) => {
+        if (f.properties.type === "booth") {
+            var b = allBooths.find((booth) => booth.name === f.properties.id);
+
+            if (selectedBooths.length && selectedBooths.indexOf(b) === -1) f.properties.color = isDark ? "#222" : "#DDD";
             else f.properties.color = actualBoothColor(b);
         }
     });
@@ -148,7 +177,8 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
             (feature) => feature.properties.type === "booth" && feature.properties.layer === layer.name
         );
 
-        if (layerBooths.length)
+        if (layerBooths.length) {
+            layersNames.push(layer.name);
             map.addLayer({
                 id: layer.name,
                 type: "fill-extrusion",
@@ -164,6 +194,7 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
                     "fill-extrusion-opacity": 1,
                 },
             });
+        }
     });
 
     return layersNames;
@@ -226,8 +257,7 @@ export function setWayfindingLayer(map: Map) {
         paint: {
             "line-color": "#30afeb",
             "line-width": 3,
-
-            "line-gradient": ["interpolate", ["linear"], ["line-progress"], 0, "#ff9e2c", 0.5, "lime", 1, "#30afeb"],
+            "line-gradient": lineStyle as any,
             "line-gap-width": 2,
         },
         layout: {
@@ -239,6 +269,10 @@ export function setWayfindingLayer(map: Map) {
 
 export function updateRouteLines(map: Map, routeStore: RouteStore) {
     var wayfindingData = map.getSource("wfData") as GeoJSONSource;
+    if (!wayfindingData) {
+        setWayfindingLayer(map);
+        wayfindingData = map.getSource("wfData") as GeoJSONSource;
+    }
 
     var routeLines = routeStore.routeLines.filter((line) => {
         let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
