@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React from "react";
+import * as React from "react";
 import { svgArea } from "../data/svg";
 import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
@@ -28,11 +28,14 @@ export default function Controls() {
             <MapControls
                 className={s.className}
                 style={s.style}
-                titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("Fit to screen"), t("Layers")]}
+                titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("View switch"), t("Fit to screen"), t("Layers")]}
                 onClickFindLocation={() => store.selectBooth(store.routeStore.defaultFrom)}
                 onClickZoomIn={() => (uiState.zoomBy = 1.5)}
                 onClickZoomOut={() => (uiState.zoomBy = 0.66)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
+                onViewModeSwitch={() => (store.mapboxStore.mapBoxSelected = !store.mapboxStore.mapBoxSelected)}
+                viewModeSwitch={store.mapboxStore.mapBoxEnabled}
+                viewMode={store.mapboxStore.mapBoxSelected}
                 findLocation={!!store.routeStore.defaultFrom}
                 layersActiveItems={[]}
                 layersList={null}

@@ -21,12 +21,14 @@ import {
 
 export default function Mapbox() {
     const mapContainer = useRef(null);
-    let map: Map;
+    let map = useRef<Map>(null);
 
     useEffect(() => {
+        if (map.current) return;
+
         var { cx: lng, cy: lat } = props.viewbox;
 
-        map = new mapboxgl.Map({
+        map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: `mapbox://styles/mapbox/${props.style}`,
             center: [lng, lat],
@@ -38,32 +40,32 @@ export default function Mapbox() {
             accessToken: props.token,
         });
 
-        map.on("load", async () => {
+        map.current.on("load", async () => {
             setTimeout(() => flyToCenter(0, 4000, 0, 50), 1000);
 
-            setDataSource(map, store.boothStore.booths);
+            setDataSource(map.current, store.boothStore.booths);
             setMarker(
-                map,
+                map.current,
                 "yah",
                 store.routeStore.defaultFrom
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
                     : null
             );
 
-            const boothsLayers = setBoothsLayers(map, store.layerStore.layers);
-            setVenuesLayer(map);
+            const boothsLayers = setBoothsLayers(map.current, store.layerStore.layers);
+            setVenuesLayer(map.current);
 
-            map.on("mouseenter", boothsLayers, () => (map.getCanvas().style.cursor = "pointer"));
+            map.current.on("mouseenter", boothsLayers, () => (map.current.getCanvas().style.cursor = "pointer"));
 
-            map.on("mouseleave", boothsLayers, () => (map.getCanvas().style.cursor = ""));
+            map.current.on("mouseleave", boothsLayers, () => (map.current.getCanvas().style.cursor = ""));
 
-            map.on("click", (e) => {
+            map.current.on("click", (e) => {
                 const bbox = [
                     [e.point.x - 5, e.point.y - 5],
                     [e.point.x + 5, e.point.y + 5],
                 ] as any;
 
-                const selectedFeature = map.queryRenderedFeatures(bbox, {
+                const selectedFeature = map.current.queryRenderedFeatures(bbox, {
                     layers: boothsLayers,
                 })[0];
 
@@ -80,8 +82,8 @@ export default function Mapbox() {
             if (!uiState.zoomBy || !store.mapboxStore.mapBoxSelected) return;
             const z = uiState.zoomBy;
             uiState.zoomBy = null;
-            map.flyTo({
-                zoom: map.getZoom() + (z > 1 ? 0.5 : -0.5),
+            map.current.flyTo({
+                zoom: map.current.getZoom() + (z > 1 ? 0.5 : -0.5),
                 animate: true,
                 duration: 500,
                 essential: true,
@@ -95,18 +97,20 @@ export default function Mapbox() {
         () => {
             // Update layers visibility
             store.layerStore.layers.forEach((layer) => {
-                var exists = map.getLayer(layer.name);
+                var exists = map.current.getLayer(layer.name);
 
                 if (exists) {
-                    if (exists && layer.visible ? "visible" : "none" !== map.getLayoutProperty(layer.name, "visibility")) {
-                        map.setLayoutProperty(layer.name, "visibility", layer.visible ? "visible" : "none");
+                    if (
+                        exists && layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(layer.name, "visibility")
+                    ) {
+                        map.current.setLayoutProperty(layer.name, "visibility", layer.visible ? "visible" : "none");
                     }
                 }
             });
 
             // Update YAH marker visibility
             setMarker(
-                map,
+                map.current,
                 "yah",
                 store.routeStore.defaultFrom
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
@@ -128,7 +132,7 @@ export default function Mapbox() {
             hoverTimeout = setTimeout(() => {
                 hoverTimeout = null;
                 updateHoverDataSource(
-                    map,
+                    map.current,
                     [...uiState.hoveredBooths].filter((b) => b.layer?.visible ?? true),
                     store.boothStore.booths
                 );
@@ -139,21 +143,19 @@ export default function Mapbox() {
     // Selection
     useReaction(
         () => uiState.selectedBooths,
-        () => updateSelectionDataSource(map, [...uiState.selectedBooths], store.boothStore.booths)
+        () => updateSelectionDataSource(map.current, [...uiState.selectedBooths], store.boothStore.booths)
     );
 
     // View switching
     useReaction(
         () => store.mapboxStore.mapBoxSelected,
-        () => {
-            if (store.mapboxStore.mapBoxSelected === null) switchViewbox(true);
-        }
+        () => switchViewbox(store.mapboxStore.mapBoxSelected)
     );
 
     // Routing
     useReaction(
         () => store.routeStore.routeLines,
-        () => updateRouteLines(map, store.routeStore)
+        () => updateRouteLines(map.current, store.routeStore)
     );
 
     function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0, pitch: number): Promise<void> {
@@ -161,7 +163,7 @@ export default function Mapbox() {
             setTimeout(() => resolve(), duration);
             let rect = props.viewbox;
 
-            map.fitBounds(
+            map.current.fitBounds(
                 [
                     [rect.x1 - boundsOffset, rect.y1 - boundsOffset],
                     [rect.x2 + boundsOffset, rect.y2 + boundsOffset],
@@ -181,14 +183,14 @@ export default function Mapbox() {
 
         store.mapboxStore.mapBoxSelected = mapBoxSelected;
 
-        map.scrollZoom.disable();
-        map.touchPitch.disable();
-        map.touchZoomRotate.disable();
+        map.current.scrollZoom.disable();
+        map.current.touchPitch.disable();
+        map.current.touchZoomRotate.disable();
 
         setTimeout(() => {
-            map.scrollZoom.enable();
-            map.touchPitch.enable();
-            map.touchZoomRotate.enable();
+            map.current.scrollZoom.enable();
+            map.current.touchPitch.enable();
+            map.current.touchZoomRotate.enable();
         }, duration);
 
         if (mapBoxSelected) {
@@ -198,7 +200,7 @@ export default function Mapbox() {
         } else {
             uiState.moveToRect = store.layerStore.rectangle || svgArea;
             flyToCenter(props.bearing, duration, 0, 0).then(() => {
-                map.setZoom(props.edgeZoom - 0.5);
+                map.current.setZoom(props.edgeZoom - 0.5);
             });
         }
     }

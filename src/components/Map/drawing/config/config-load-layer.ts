@@ -3,12 +3,10 @@ import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
 import settings from "../../../../tools/settings";
-import logosFromBooths from "../../../../utils/logosFromBooths";
 import { DrawerContext } from "../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
-import configImg from "./config-img";
 
 export default async function loadLayer(
     layer: Layer,
@@ -45,7 +43,7 @@ export default async function loadLayer(
         layer.configured = true;
 
         await configBg(context, layer.name, layer.basePriority, layer.visible);
-        
+
         // Exhibitors logos drawing
         // if (drawIcons) {
         //     await configImg(

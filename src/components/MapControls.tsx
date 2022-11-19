@@ -11,10 +11,13 @@ export interface MapControlsProps {
     className?: string;
     style?: React.CSSProperties;
     titles: string[];
+    viewModeSwitch: boolean;
     findLocation: boolean;
+    viewMode: boolean;
     layersOpen?: boolean;
     layersList?: layersListItem[];
     layersActiveItems?: string[];
+    onViewModeSwitch: () => void;
     onClickFindLocation: () => void;
     onClickZoomIn: () => void;
     onClickZoomOut: () => void;
@@ -26,10 +29,13 @@ const MapControls: React.FC<MapControlsProps> = ({
     className,
     style,
     titles,
+    viewMode,
+    viewModeSwitch,
     findLocation,
     layersOpen,
     layersList,
     layersActiveItems,
+    onViewModeSwitch,
     onClickFindLocation,
     onClickZoomIn,
     onClickZoomOut,
@@ -88,7 +94,24 @@ const MapControls: React.FC<MapControlsProps> = ({
                     />
                 </svg>
             </button>
-            <button type="button" className="mapControl" title={titles[3]} onClick={onClickByWidth}>
+            {viewModeSwitch && (
+                <button type="button" className="mapControl" title={titles[3]} onClick={onViewModeSwitch}>
+                    <svg width="22" height="14" viewBox="0 0 22 14" xmlns="http://www.w3.org/2000/svg">
+                        {viewMode ? (
+                            <path
+                                d="M9.479,12.567L9.479,14L0.272,14L0.272,12.738L5.137,7.427Q6.215,6.223,6.629,5.467Q7.036,4.714,7.036,3.909L7.036,3.909Q7.036,2.825,6.369,2.135Q5.708,1.441,4.593,1.441L4.593,1.441Q3.265,1.441,2.523,2.187Q1.787,2.932,1.787,4.26L1.787,4.26L0,4.26Q0,2.353,1.249,1.177Q2.498,0,4.593,0L4.593,0Q6.555,0,7.692,1.011Q8.833,2.021,8.833,3.7L8.833,3.7Q8.833,5.738,6.19,8.557L6.19,8.557L2.425,12.567L9.479,12.567ZM15.723,14L11.835,14L11.835,0.189L15.805,0.189Q17.634,0.189,19.045,0.987Q20.453,1.784,21.22,3.255Q21.989,4.725,22,6.629L22,6.629L22,7.511Q22,9.467,21.233,10.937Q20.467,12.407,19.041,13.195Q17.615,13.98,15.723,14L15.723,14ZM15.851,1.687L13.69,1.687L13.69,12.51L15.638,12.51Q17.784,12.51,18.975,11.203Q20.163,9.892,20.163,7.473L20.163,7.473L20.163,6.669Q20.163,4.316,19.041,3.013Q17.919,1.707,15.851,1.687L15.851,1.687Z"
+                                fill="#48484A"
+                            />
+                        ) : (
+                            <path
+                                d="M2.862,7.569L2.862,6.157L4.206,6.157Q5.472,6.14,6.197,5.511Q6.922,4.885,6.922,3.817L6.922,3.817Q6.922,1.422,4.457,1.422L4.457,1.422Q3.297,1.422,2.606,2.064Q1.914,2.705,1.914,3.761L1.914,3.761L0.126,3.761Q0.126,2.143,1.349,1.07Q2.572,0,4.457,0L4.457,0Q6.449,0,7.58,1.02Q8.711,2.041,8.711,3.858L8.711,3.858Q8.711,4.744,8.116,5.578Q7.522,6.41,6.497,6.823L6.497,6.823Q7.657,7.177,8.29,8Q8.924,8.825,8.924,10.013L8.924,10.013Q8.924,11.849,7.686,12.923Q6.449,14,4.467,14Q2.485,14,1.242,12.961Q0,11.922,0,10.219L0,10.219L1.798,10.219Q1.798,11.295,2.523,11.941Q3.249,12.586,4.467,12.586L4.467,12.586Q5.762,12.586,6.449,11.931Q7.135,11.276,7.135,10.05L7.135,10.05Q7.135,8.862,6.381,8.224Q5.627,7.589,4.206,7.569L4.206,7.569L2.862,7.569ZM15.739,13.812L11.843,13.812L11.843,0.188L15.817,0.188Q17.654,0.188,19.065,0.974Q20.477,1.759,21.245,3.211Q22.014,4.661,22.024,6.543L22.024,6.543L22.024,7.412Q22.024,9.339,21.255,10.789Q20.486,12.241,19.06,13.017Q17.635,13.795,15.739,13.812L15.739,13.812ZM15.865,1.666L13.7,1.666L13.7,12.343L15.653,12.343Q17.799,12.343,18.993,11.054Q20.187,9.76,20.187,7.373L20.187,7.373L20.187,6.579Q20.187,4.258,19.06,2.973Q17.934,1.685,15.865,1.666L15.865,1.666Z"
+                                fill="#48484A"
+                            />
+                        )}
+                    </svg>
+                </button>
+            )}
+            <button type="button" className="mapControl" title={titles[4]} onClick={onClickByWidth}>
                 <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
                     <path
                         fillRule="evenodd"
@@ -132,6 +155,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                     />
                 </svg>
             </button>
+
             {layersList ? (
                 <div className="layersButton" ref={refLayers}>
                     <button
