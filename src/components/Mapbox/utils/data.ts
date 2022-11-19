@@ -210,7 +210,7 @@ export function setVenuesLayer(map: Map): string {
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
             "fill-extrusion-base": 0,
-            "fill-extrusion-opacity": 0.2,
+            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 14, 0.8, 18, 0.2],
         },
     });
 
