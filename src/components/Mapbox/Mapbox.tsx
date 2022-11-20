@@ -34,16 +34,16 @@ export default function Mapbox() {
             container: mapContainer.current,
             style: `mapbox://styles/mapbox/${props.style}`,
             center: [lng, lat],
-            zoom: 16,
-            bearing: 30,
-            pitch: 30,
+            zoom: 17,
+            bearing: props.initBearing - 30,
+            pitch: props.initPitch + 30,
             maxPitch: 70,
             bearingSnap: 0,
             accessToken: props.token,
         });
 
         map.current.on("load", async () => {
-            setTimeout(() => flyToCenter(0, 4000, 0, 50), 1000);
+            setTimeout(() => flyToCenter(props.initBearing, 4000, 0, props.initPitch), 1000);
 
             setDataSource(map.current, store.boothStore.booths);
             setMarker(
@@ -183,6 +183,8 @@ export default function Mapbox() {
             map.current.fitBounds([p1, p2], {
                 essential: true,
                 duration: 1000,
+                pitch: props.initPitch,
+                bearing: props.initBearing,
             });
         }
     );
@@ -207,7 +209,7 @@ export default function Mapbox() {
                     bearing,
                     essential: true,
                     duration,
-                    pitch: pitch,
+                    pitch,
                 }
             );
         });
@@ -229,8 +231,8 @@ export default function Mapbox() {
         }, duration);
 
         if (mapBoxSelected) {
-            flyToCenter(0, duration, 0, 45).then(() => {
-                uiState.moveToRect = store.layerStore.rectangle || svgArea;
+            flyToCenter(props.initBearing, duration, 0, props.initPitch).then(() => {
+                //uiState.moveToRect = store.layerStore.rectangle || svgArea;
             });
         } else {
             uiState.moveToRect = store.layerStore.rectangle || svgArea;
