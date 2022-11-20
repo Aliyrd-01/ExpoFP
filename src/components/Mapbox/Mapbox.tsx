@@ -34,7 +34,7 @@ export default function Mapbox() {
             container: mapContainer.current,
             style: `mapbox://styles/mapbox/${props.style}`,
             center: [lng, lat],
-            zoom: 17,
+            zoom: 15.5,
             bearing: props.initBearing - 30,
             pitch: props.initPitch + 30,
             maxPitch: 70,
