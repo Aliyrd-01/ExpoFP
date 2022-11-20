@@ -138,7 +138,10 @@ export function setDataSource(map: Map, booths: Booth[]) {
 
         if (f.properties.type === "booth") {
             let booth = booths.filter((b) => b.name === f.properties.id)[0];
-            if (booth) f.properties.color = actualBoothColor(booth);
+            f.properties.color = actualBoothColor(booth);
+            f.properties.description = booth.noLabels
+                ? null
+                : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
         } else {
             let color = f.properties.color;
             f.properties.color = `#${decimalToHex(color.R || color.r)}${decimalToHex(color.G || color.g)}${decimalToHex(
@@ -198,13 +201,32 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
                     "fill-extrusion-base": 0,
-                    "fill-extrusion-opacity": 1,
+                    "fill-extrusion-opacity": 0.8,
                 },
             });
         }
     });
 
     return layersNames;
+}
+
+export function setBoothsLabelsLayers(map: Map, layers: Layer[]) {
+    map.addLayer({
+        id: "labels",
+        type: "symbol",
+        source: "data",
+        minzoom: 19,
+
+        layout: {
+            "text-field": ["get", "description"],
+            "text-rotation-alignment": "viewport",
+            "text-pitch-alignment": "viewport",
+            "text-size": 14,
+        },
+        paint: {
+            "text-color": settings.boothLabelColor,
+        },
+    });
 }
 
 export function setOthersLayer(map: Map): string {

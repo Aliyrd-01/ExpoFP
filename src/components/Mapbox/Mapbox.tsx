@@ -19,6 +19,7 @@ import {
     updateHoverDataSource,
     convertSvgPoint,
     setOthersLayer,
+    setBoothsLabelsLayers,
 } from "./utils/data";
 
 export default function Mapbox() {
@@ -55,6 +56,7 @@ export default function Mapbox() {
             );
 
             const boothsLayers = setBoothsLayers(map.current, store.layerStore.layers);
+            setBoothsLabelsLayers(map.current, store.layerStore.layers);
             setOthersLayer(map.current);
             setVenuesLayer(map.current);
 
@@ -147,8 +149,6 @@ export default function Mapbox() {
     useReaction(
         () => [uiState.selectedBooths, uiState.listBooths],
         () => {
-            console.info(uiState.listBooths);
-
             var selected = [];
             if (uiState.selectedBooths.size) selected = [...uiState.selectedBooths];
             else if (
