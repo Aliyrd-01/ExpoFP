@@ -3,7 +3,6 @@ import React from "react";
 import data from "../data";
 import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
-import { LayersMode } from "../store/LayerStore";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";

@@ -112,8 +112,7 @@ export class DrawerImpl extends Matrix {
         }
 
         for (var d of this.allPainters) {
-            // TODO: - check this point
-            if (d.matrix) d.paint();
+            d.paint();
         }
         //this.requireRedraw();
     }
@@ -155,6 +154,8 @@ export class DrawerImpl extends Matrix {
             d.id = id;
             d.orderPriority = painterOrderPriority;
             d.visible = visible;
+            d.matrix = this.getMatrix();
+            d.ptscale = this.ptscale;
             this.paintersByType.set(id, d);
             this.allPainters.push(d);
             this.allPainters.sort((a, b) => a.orderPriority - b.orderPriority);
