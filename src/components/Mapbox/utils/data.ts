@@ -208,14 +208,11 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
 export function setOthersLayer(map: Map): string {
     map.addLayer({
         id: "other",
-        type: "fill-extrusion",
+        type: "fill",
         source: "data",
         filter: ["in", "type", "other"],
         paint: {
-            "fill-extrusion-color": ["get", "color"],
-            "fill-extrusion-height": ["get", "height"],
-            "fill-extrusion-base": 0,
-            "fill-extrusion-opacity": 1,
+            "fill-color": ["get", "color"],
         },
     });
 
