@@ -143,10 +143,23 @@ export default function Mapbox() {
         }
     );
 
-    // Selection
+    // Selection & listed
     useReaction(
-        () => uiState.selectedBooths,
-        () => updateSelectionDataSource(map.current, [...uiState.selectedBooths], store.boothStore.booths)
+        () => [uiState.selectedBooths, uiState.listBooths],
+        () => {
+            console.info(uiState.listBooths);
+
+            var selected = [];
+            if (uiState.selectedBooths.size) selected = [...uiState.selectedBooths];
+            else if (
+                uiState.listBooths.size &&
+                (uiState.activeListIndex === 0 || uiState.list.type === "bookmarks" || uiState.list.type === "category")
+            ) {
+                selected = [...uiState.listBooths];
+            }
+
+            updateSelectionDataSource(map.current, selected, store.boothStore.booths);
+        }
     );
 
     // View switching
