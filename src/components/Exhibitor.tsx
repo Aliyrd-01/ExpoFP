@@ -16,6 +16,7 @@ import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
+import isIframe from "../utils/is-iframe";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -120,7 +121,7 @@ function ExhibitorComponent() {
             if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <Button link={url} inline={true} onClick={customButtonClick}>
+                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? '_blank' : '_self'}>
                         {title}
                     </Button>
                 </div>
@@ -279,7 +280,7 @@ function ExhibitorComponent() {
                         </div>
                     )}
                     {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
-                    {!uiState.kiosk  && s.showEdit && (
+                    {!uiState.kiosk && s.showEdit && (
                         <div className="exhibitor__edit">
                             <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
                         </div>
