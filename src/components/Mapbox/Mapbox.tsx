@@ -17,6 +17,8 @@ import {
     updateSelectionDataSource,
     updateRouteLines,
     updateHoverDataSource,
+    convertSvgPoint,
+    setOthersLayer,
 } from "./utils/data";
 
 export default function Mapbox() {
@@ -53,6 +55,7 @@ export default function Mapbox() {
             );
 
             const boothsLayers = setBoothsLayers(map.current, store.layerStore.layers);
+            setOthersLayer(map.current);
             setVenuesLayer(map.current);
 
             map.current.on("mouseenter", boothsLayers, () => (map.current.getCanvas().style.cursor = "pointer"));
@@ -150,6 +153,25 @@ export default function Mapbox() {
     useReaction(
         () => store.mapboxStore.mapBoxSelected,
         () => switchViewbox(store.mapboxStore.mapBoxSelected)
+    );
+
+    // Move to rect
+    useReaction(
+        () => uiState.moveToRect,
+        () => {
+            if (!uiState.moveToRect || !store.mapboxStore.mapBoxSelected) return;
+
+            var off = uiState.moveToRect.w;
+            var p1 = convertSvgPoint(uiState.moveToRect.x1 - off, uiState.moveToRect.y1 - off);
+            var p2 = convertSvgPoint(uiState.moveToRect.x2 + off, uiState.moveToRect.y2 + off);
+
+            uiState.moveToRect = null;
+
+            map.current.fitBounds([p1, p2], {
+                essential: true,
+                duration: 1000,
+            });
+        }
     );
 
     // Routing

@@ -104,6 +104,7 @@ export const props = {
     extrusion: {
         building: 5,
         booths: 1,
+        other: 0.5,
     },
 };
 
@@ -122,6 +123,10 @@ const lineStyle = isDark
           1,
           Color("#30afeb").darken(0.3).hex(),
       ];
+
+export function convertSvgPoint(x: number, y: number) {
+    return convertPoint(x, y, fpGeo.properties.config);
+}
 
 export function setDataSource(map: Map, booths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
@@ -200,6 +205,23 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
     return layersNames;
 }
 
+export function setOthersLayer(map: Map): string {
+    map.addLayer({
+        id: "other",
+        type: "fill-extrusion",
+        source: "data",
+        filter: ["in", "type", "other"],
+        paint: {
+            "fill-extrusion-color": ["get", "color"],
+            "fill-extrusion-height": ["get", "height"],
+            "fill-extrusion-base": 0,
+            "fill-extrusion-opacity": 1,
+        },
+    });
+
+    return "venues";
+}
+
 export function setVenuesLayer(map: Map): string {
     map.addLayer({
         id: "venues",
@@ -210,7 +232,7 @@ export function setVenuesLayer(map: Map): string {
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
             "fill-extrusion-base": 0,
-            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 18, 0.2],
+            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 18, 0.1],
         },
     });
 

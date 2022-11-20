@@ -135,7 +135,7 @@ export default function Map() {
     useReaction(
         () => uiState.moveToRect,
         () => {
-            if (!uiState.moveToRect) return;
+            if (!uiState.moveToRect || store.mapboxStore.mapBoxSelected) return;
             if (
                 uiState.moveToRect &&
                 uiState.moveToRect.h !== Infinity &&
