@@ -18,7 +18,11 @@ interface ExtendFeatureCollection extends FeatureCollection {
 const fpGeo = window["__fpGeo"] as ExtendFeatureCollection;
 
 type Polygon = GeoJSON.FeatureCollection<GeoJSON.Polygon>;
-
+enum featureTypes {
+    "booth" = "booth",
+    "building" = "building",
+    "other" = "other",
+}
 function getBearing() {
     var parts = fpGeo?.properties?.mpViewbox;
     var bear = fpGeo?.properties?.bearing;
@@ -36,10 +40,7 @@ function getViewbox(): Rect {
 
     var data = fpGeo as Polygon;
 
-    var features =
-        data.features.filter((f) => f.properties.type === "viewbox")[0] ||
-        data.features.filter((f) => f.properties.type === "venue")[0] ||
-        data.features.filter((f) => f.properties.type === "booth");
+    var features = data.features.filter((f) => f.properties.type === featureTypes.booth);
 
     (Array.isArray(features) ? features : [features]).forEach((feature) => {
         var coords = feature.geometry.coordinates[0];
@@ -136,7 +137,7 @@ export function setDataSource(map: Map, booths: Booth[]) {
 
         f.properties.height = props.extrusion[f.properties.type] || props.extrusion.booths;
 
-        if (f.properties.type === "booth") {
+        if (f.properties.type === featureTypes.booth) {
             let booth = booths.filter((b) => b.name === f.properties.id)[0];
             f.properties.color = actualBoothColor(booth);
             f.properties.description = booth.noLabels
@@ -155,7 +156,7 @@ export function setDataSource(map: Map, booths: Booth[]) {
 
 export function updateHoverDataSource(map: Map, hoveredBooths: Booth[], allBooths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
-        if (f.properties.type === "booth") {
+        if (f.properties.type === featureTypes.booth) {
             var b = allBooths.find((booth) => booth.name === f.properties.id);
 
             if (hoveredBooths.indexOf(b) > -1) f.properties.height = 4 * props.extrusion.booths;
@@ -168,7 +169,7 @@ export function updateHoverDataSource(map: Map, hoveredBooths: Booth[], allBooth
 
 export function updateSelectionDataSource(map: Map, selectedBooths: Booth[], allBooths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
-        if (f.properties.type === "booth") {
+        if (f.properties.type === featureTypes.booth) {
             var b = allBooths.find((booth) => booth.name === f.properties.id);
 
             if (selectedBooths.length && selectedBooths.indexOf(b) === -1) f.properties.color = isDark ? "#222" : "#DDD";
@@ -184,7 +185,7 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
 
     layers.forEach((layer) => {
         var layerBooths = fpGeo.features.filter(
-            (feature) => feature.properties.type === "booth" && feature.properties.layer === layer.name
+            (feature) => feature.properties.type === featureTypes.booth && feature.properties.layer === layer.name
         );
 
         if (layerBooths.length) {
@@ -193,7 +194,7 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
                 id: layer.name,
                 type: "fill-extrusion",
                 source: "data",
-                filter: ["all", ["in", "type", "booth"], ["in", "layer", layer.name]],
+                filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name]],
                 layout: {
                     visibility: layer.visible ? "visible" : "none",
                 },
@@ -234,7 +235,7 @@ export function setOthersLayer(map: Map): string {
         id: "other",
         type: "fill",
         source: "data",
-        filter: ["in", "type", "other"],
+        filter: ["in", "type", featureTypes.other],
         paint: {
             "fill-color": ["get", "color"],
         },
@@ -248,7 +249,7 @@ export function setVenuesLayer(map: Map): string {
         id: "venues",
         type: "fill-extrusion",
         source: "data",
-        filter: ["in", "type", "building"],
+        filter: ["in", "type", featureTypes.building],
         paint: {
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
