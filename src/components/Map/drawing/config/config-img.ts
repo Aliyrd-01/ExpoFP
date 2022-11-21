@@ -33,7 +33,7 @@ export default async function configImg(
                         imgWidth: width,
                         imgHeight: height,
                         texPosition: "center",
-                        stretch: true,
+                        stretch: true,                        
                         rotateRadians: angle ? (-angle * Math.PI) / 180.0 : null,
                     });
                     resolve(img);
@@ -45,7 +45,7 @@ export default async function configImg(
     );
 
     function addObject(item: Partial<DrawerObject>) {
-        if (!painter) painter = context.requirePainter(layerID + ":images", ImagePainter, painterOrderPriority, visible);
+        if (!painter) painter = context.requirePainter(layerID + ":IMAGES", ImagePainter, painterOrderPriority, visible);
         painter.addObject(item as DrawerObject);
     }
 

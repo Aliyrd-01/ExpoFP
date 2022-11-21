@@ -13,6 +13,7 @@ import Button from "./Button";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
 import SidebarActions from "./SidebarActions";
+import isIframe from "../utils/is-iframe";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -131,12 +132,12 @@ function Booth() {
 
                             {s.showBuy && (
                                 <div className="booth__buy">
-                                    <Button link={buyUrl?.href}>{t("Buy")}</Button>
+                                    <Button link={buyUrl?.href} target={isIframe ? '_blank' : '_self'}>{t("Buy")}</Button>
                                 </div>
                             )}
                             {s.showReserve && (
                                 <div className="booth__buy">
-                                    <Button link={reserveUrl?.href || buyUrl?.href}>{s.reserveTitle}</Button>
+                                    <Button link={reserveUrl?.href || buyUrl?.href} target={isIframe ? '_blank' : '_self'}>{s.reserveTitle}</Button>
                                 </div>
                             )}
                         </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 const ClassNameRoot = "image-slider";
 const ClassNameNavs = `${ClassNameRoot}-navs`;
 const ClassNameBullets = `${ClassNameRoot}-bullets`;

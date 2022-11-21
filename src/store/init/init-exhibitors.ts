@@ -30,17 +30,18 @@ export default function initExhibitors(store: RootStore) {
 
         e.logo = addBaseUrl(e.logo);
 
-
         if (e.gallery) e.gallery = e.gallery.map((url) => addBaseUrl(url));
-        if (e.marketMaterials) 
-            e.marketMaterials = e.marketMaterials.map((mm) => { 
+        if (e.marketMaterials)
+            e.marketMaterials = e.marketMaterials.map((mm) => {
                 return {
                     fileName: mm.fileName,
-                    path: addBaseUrl(mm.path) 
-                }});
+                    path: addBaseUrl(mm.path),
+                };
+            });
         e.leadingImageUrl = addBaseUrl(e.leadingImageUrl);
         e.categories = [];
         e.booths = [];
+        //e.logoInBooth = true;
 
         (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
