@@ -41,8 +41,7 @@ export default function initUi(store: RootStore) {
     if (!uiState.wsShown) uiState.wsStarted = true;
 
     uiState.kiosk = localStorage.getItem(kioskKey) === "1";
-    store.mapboxStore.mapBoxEnabled = !!window["__fpGeo"];
-
+    
     if (uiState.kiosk) {
         var time;
         // window.onload = resetTimer;

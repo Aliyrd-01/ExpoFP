@@ -84,7 +84,7 @@ export default function Mapbox() {
     useReaction(
         () => uiState.zoomBy,
         () => {
-            if (!uiState.zoomBy || !store.mapboxStore.mapBoxSelected) return;
+            if (!uiState.zoomBy || !store.mapboxStore.showMapbox) return;
             const z = uiState.zoomBy;
             uiState.zoomBy = null;
             map.current.flyTo({
@@ -164,15 +164,15 @@ export default function Mapbox() {
 
     // View switching
     useReaction(
-        () => store.mapboxStore.mapBoxSelected,
-        () => switchViewbox(store.mapboxStore.mapBoxSelected)
+        () => store.mapboxStore.showMapbox,
+        () => switchViewbox(store.mapboxStore.showMapbox)
     );
 
     // Move to rect
     useReaction(
         () => uiState.moveToRect,
         () => {
-            if (!uiState.moveToRect || !store.mapboxStore.mapBoxSelected) return;
+            if (!uiState.moveToRect || !store.mapboxStore.showMapbox) return;
 
             var off = uiState.moveToRect.w;
             var p1 = convertSvgPoint(uiState.moveToRect.x1 - off, uiState.moveToRect.y1 - off);
@@ -215,10 +215,10 @@ export default function Mapbox() {
         });
     }
 
-    function switchViewbox(mapBoxSelected: boolean) {
+    function switchViewbox(showMapbox: boolean) {
         let duration = 1200;
 
-        store.mapboxStore.mapBoxSelected = mapBoxSelected;
+        store.mapboxStore.mapBoxSelected = showMapbox;
 
         map.current.scrollZoom.disable();
         map.current.touchPitch.disable();
@@ -230,7 +230,7 @@ export default function Mapbox() {
             map.current.touchZoomRotate.enable();
         }, duration);
 
-        if (mapBoxSelected) {
+        if (showMapbox) {
             flyToCenter(props.initBearing, duration, 0, props.initPitch).then(() => {
                 //uiState.moveToRect = store.layerStore.rectangle || svgArea;
             });

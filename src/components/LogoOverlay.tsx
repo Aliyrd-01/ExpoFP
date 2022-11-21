@@ -18,7 +18,7 @@ export default function LogoOverlay() {
                 style = { bottom: uiState.mapVisibleBottom + pad + "px", right: pad + "px", width: "5rem" };
             else {
                 style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
-                if (store.mapboxStore.mapBoxSelected) style.top = remsToPixels(0.5) + "px";
+                if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;
@@ -31,7 +31,7 @@ export default function LogoOverlay() {
                 style = { bottom: uiState.mapVisibleBottom + 2 * pad + "px", right: pad + "px", width: "3rem" };
             else {
                 style = { top: uiState.mapVisibleTop + 2 * pad + "px", right: pad + "px", width: "2rem" };
-                if (store.mapboxStore.mapBoxSelected) style.top = remsToPixels(0.5) + "px";
+                if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;

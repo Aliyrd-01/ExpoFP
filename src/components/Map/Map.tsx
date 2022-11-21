@@ -98,7 +98,7 @@ export default function Map() {
     useReaction(
         () => uiState.zoomBy,
         () => {
-            if (!uiState.zoomBy || store.mapboxStore.mapBoxSelected) return;
+            if (!uiState.zoomBy || store.mapboxStore.showMapbox) return;
             const z = uiState.zoomBy;
             uiState.zoomBy = null;
             s.animatePlease = true;
@@ -135,7 +135,7 @@ export default function Map() {
     useReaction(
         () => uiState.moveToRect,
         () => {
-            if (!uiState.moveToRect || store.mapboxStore.mapBoxSelected) return;
+            if (!uiState.moveToRect || store.mapboxStore.showMapbox) return;
             if (
                 uiState.moveToRect &&
                 uiState.moveToRect.h !== Infinity &&
