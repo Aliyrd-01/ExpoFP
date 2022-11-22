@@ -3,7 +3,7 @@ import mapboxgl, { Map } from "mapbox-gl";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
 import { svgArea } from "../../data/svg";
-import store, { uiState } from "../../store";
+import store, { boothStore, uiState } from "../../store";
 import { useReaction } from "../../utils/mobx";
 import "./Mapbox.scss";
 import * as React from "react";
@@ -17,10 +17,12 @@ import {
     updateSelectionDataSource,
     updateRouteLines,
     updateHoverDataSource,
-    convertSvgPoint,
     setOthersLayer,
     setBoothsLabelsLayers,
+    moveToRect,
+    setMap,
 } from "./utils/data";
+import Rect from "../../core/Rect";
 
 export default function Mapbox() {
     const mapContainer = useRef(null);
@@ -43,20 +45,21 @@ export default function Mapbox() {
             accessToken: props.token,
         });
 
+        setMap(map.current);
+
         map.current.on("load", async () => {
             setTimeout(() => flyToCenter(props.initBearing, 4000, 0, props.initPitch), 1000);
 
-            setDataSource(map.current, store.boothStore.booths);
+            setDataSource(store.boothStore.booths);
             setMarker(
-                map.current,
                 "yah",
                 store.routeStore.defaultFrom
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
                     : null
             );
 
-            const boothsLayers = setBoothsLayers(map.current, store.layerStore.layers);
-            setBoothsLabelsLayers(map.current, store.layerStore.layers);
+            const boothsLayers = setBoothsLayers(store.layerStore.layers);
+            setBoothsLabelsLayers(store.layerStore.layers);
             setOthersLayer(map.current);
             setVenuesLayer(map.current);
 
@@ -115,7 +118,6 @@ export default function Mapbox() {
 
             // Update YAH marker visibility
             setMarker(
-                map.current,
                 "yah",
                 store.routeStore.defaultFrom
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
@@ -137,7 +139,6 @@ export default function Mapbox() {
             hoverTimeout = setTimeout(() => {
                 hoverTimeout = null;
                 updateHoverDataSource(
-                    map.current,
                     [...uiState.hoveredBooths].filter((b) => b.layer?.visible ?? true),
                     store.boothStore.booths
                 );
@@ -158,7 +159,7 @@ export default function Mapbox() {
                 selected = [...uiState.listBooths];
             }
 
-            updateSelectionDataSource(map.current, selected, store.boothStore.booths);
+            updateSelectionDataSource(selected, store.boothStore.booths);
         }
     );
 
@@ -168,31 +169,40 @@ export default function Mapbox() {
         () => switchViewbox(store.mapboxStore.showMapbox)
     );
 
+    // Move to boothsa
+    useReaction(
+        () => uiState.moveToBooths,
+        () => {
+            if (!uiState.moveToBooths || !store.mapboxStore.showMapbox) return;
+            moveToRect(Rect.fromMultiple(uiState.moveToBooths.map((b) => b.rect)));
+            uiState.moveToBooths = null;
+        }
+    );
+
     // Move to rect
     useReaction(
         () => uiState.moveToRect,
         () => {
             if (!uiState.moveToRect || !store.mapboxStore.showMapbox) return;
-
-            var off = uiState.moveToRect.w;
-            var p1 = convertSvgPoint(uiState.moveToRect.x1 - off, uiState.moveToRect.y1 - off);
-            var p2 = convertSvgPoint(uiState.moveToRect.x2 + off, uiState.moveToRect.y2 + off);
-
+            moveToRect(uiState.moveToRect);
             uiState.moveToRect = null;
+        }
+    );
 
-            map.current.fitBounds([p1, p2], {
-                essential: true,
-                duration: 1000,
-                pitch: props.initPitch,
-                bearing: props.initBearing,
-            });
+    // Move to center
+    useReaction(
+        () => uiState.centerMap,
+        () => {
+            if (!uiState.centerMap || !store.mapboxStore.showMapbox) return;
+            moveToRect(Rect.fromMultiple(boothStore.booths.map((b) => b.rect)));
+            uiState.centerMap = false;
         }
     );
 
     // Routing
     useReaction(
         () => store.routeStore.routeLines,
-        () => updateRouteLines(map.current, store.routeStore)
+        () => updateRouteLines(store.routeStore)
     );
 
     function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0, pitch: number): Promise<void> {

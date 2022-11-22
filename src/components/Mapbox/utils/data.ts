@@ -18,11 +18,13 @@ interface ExtendFeatureCollection extends FeatureCollection {
 const fpGeo = window["__fpGeo"] as ExtendFeatureCollection;
 
 type Polygon = GeoJSON.FeatureCollection<GeoJSON.Polygon>;
+
 enum featureTypes {
     "booth" = "booth",
     "building" = "building",
     "other" = "other",
 }
+
 function getBearing() {
     var parts = fpGeo?.properties?.mpViewbox;
     var bear = fpGeo?.properties?.bearing;
@@ -127,11 +129,32 @@ const lineStyle = isDark
           Color("#30afeb").darken(0.3).hex(),
       ];
 
+let markersObject = {};
+
+let map: Map;
+
+export function setMap(m: Map) {
+    map = m;
+}
+
 export function convertSvgPoint(x: number, y: number) {
     return convertPoint(x, y, fpGeo.properties.config);
 }
 
-export function setDataSource(map: Map, booths: Booth[]) {
+export function moveToRect(svgRect: Rect) {
+    var off = svgRect.w;
+    var p1 = convertSvgPoint(svgRect.x1 - off, svgRect.y1 - off);
+    var p2 = convertSvgPoint(svgRect.x2 + off, svgRect.y2 + off);
+
+    map.fitBounds([p1, p2], {
+        essential: true,
+        duration: 1000,
+        pitch: props.initPitch,
+        bearing: props.initBearing,
+    });
+}
+
+export function setDataSource(booths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
         f.properties.id = f.properties.id?.substring(1);
 
@@ -154,7 +177,7 @@ export function setDataSource(map: Map, booths: Booth[]) {
     return map.addSource("data", { type: "geojson", data: fpGeo });
 }
 
-export function updateHoverDataSource(map: Map, hoveredBooths: Booth[], allBooths: Booth[]) {
+export function updateHoverDataSource(hoveredBooths: Booth[], allBooths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
         if (f.properties.type === featureTypes.booth) {
             var b = allBooths.find((booth) => booth.name === f.properties.id);
@@ -164,23 +187,28 @@ export function updateHoverDataSource(map: Map, hoveredBooths: Booth[], allBooth
         }
     });
 
-    (map.getSource("data") as GeoJSONSource).setData(fpGeo);
+    (map.getSource("data") as GeoJSONSource)?.setData(fpGeo);
 }
 
-export function updateSelectionDataSource(map: Map, selectedBooths: Booth[], allBooths: Booth[]) {
+export function updateSelectionDataSource(selectedBooths: Booth[], allBooths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
         if (f.properties.type === featureTypes.booth) {
             var b = allBooths.find((booth) => booth.name === f.properties.id);
 
-            if (selectedBooths.length && selectedBooths.indexOf(b) === -1) f.properties.color = isDark ? "#222" : "#DDD";
-            else f.properties.color = actualBoothColor(b);
+            if (selectedBooths.length && selectedBooths.indexOf(b) === -1) {
+                f.properties.color = isDark ? "#222" : "#DDD";
+                f.properties.opacity = 0;
+            } else {
+                f.properties.color = actualBoothColor(b);
+                f.properties.opacity = 1;
+            }
         }
     });
 
-    (map.getSource("data") as GeoJSONSource).setData(fpGeo);
+    (map.getSource("data") as GeoJSONSource)?.setData(fpGeo);
 }
 
-export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
+export function setBoothsLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
@@ -211,7 +239,7 @@ export function setBoothsLayers(map: Map, layers: Layer[]): string[] {
     return layersNames;
 }
 
-export function setBoothsLabelsLayers(map: Map, layers: Layer[]) {
+export function setBoothsLabelsLayers(layers: Layer[]) {
     map.addLayer({
         id: "labels",
         type: "symbol",
@@ -225,6 +253,7 @@ export function setBoothsLabelsLayers(map: Map, layers: Layer[]) {
             "text-size": 14,
         },
         paint: {
+            "text-opacity": ["get", "opacity"],
             "text-color": settings.boothLabelColor,
         },
     });
@@ -261,8 +290,7 @@ export function setVenuesLayer(map: Map): string {
     return "venues";
 }
 
-let markersObject = {};
-export function setMarker(map: Map, type: "from" | "to" | "yah", point: Point) {
+export function setMarker(type: "from" | "to" | "yah", point: Point) {
     var marker = markersObject[type];
 
     if (!point) {
@@ -285,7 +313,6 @@ export function setMarker(map: Map, type: "from" | "to" | "yah", point: Point) {
     marker.setLngLat(lngLat);
 }
 
-// Wayfinding
 export function setWayfindingLayer(map: Map) {
     map.addSource("wfData", {
         type: "geojson",
@@ -311,7 +338,7 @@ export function setWayfindingLayer(map: Map) {
     });
 }
 
-export function updateRouteLines(map: Map, routeStore: RouteStore) {
+export function updateRouteLines(routeStore: RouteStore) {
     var wayfindingData = map.getSource("wfData") as GeoJSONSource;
     if (!wayfindingData) {
         setWayfindingLayer(map);
@@ -348,6 +375,6 @@ export function updateRouteLines(map: Map, routeStore: RouteStore) {
     };
 
     wayfindingData.setData(fc);
-    setMarker(map, "from", lastPoint);
-    setMarker(map, "to", firstPoint);
+    setMarker("from", lastPoint);
+    setMarker("to", firstPoint);
 }

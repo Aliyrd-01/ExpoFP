@@ -9,8 +9,6 @@ import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import { RegularBooth } from "../../../../store/BoothStore";
-import animate from "./animate";
-import { easeLinear, interpolateNumber } from "d3";
 import ImagePainter from "../painters/ImagePainter";
 
 export default async function loadLayer(

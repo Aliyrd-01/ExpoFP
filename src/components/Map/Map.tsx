@@ -80,7 +80,7 @@ export default function Map() {
     useReaction(
         () => uiState.centerMap,
         () => {
-            if (!uiState.centerMap) return;
+            if (!uiState.centerMap || store.mapboxStore.showMapbox) return;
             uiState.centerMap = false;
             var { rectangle } = store.layerStore;
             if (rectangle)
@@ -153,7 +153,7 @@ export default function Map() {
         () => uiState.moveToBooths,
         () => {
             logger.log("this.moveToBooths", uiState.moveToBooths);
-            if (!uiState.moveToBooths) return;
+            if (!uiState.moveToBooths || store.mapboxStore.showMapbox) return;
             //this.handledMoveToExhibitor = uiState.moveToBooths;
             logger.log("watched moveToBooths", uiState.moveToBooths);
             // // ask map to move to this exhibitor
