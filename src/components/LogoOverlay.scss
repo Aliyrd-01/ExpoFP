@@ -11,3 +11,15 @@
         width: 100%;
     }
 }
+
+.qr-logo {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    width: 100px;
+    height: 100px;
+    padding: 5px;
+    background-color: white;
+    z-index: 110 !important;
+    opacity: 0.8;
+}
