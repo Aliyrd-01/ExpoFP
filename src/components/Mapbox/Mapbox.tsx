@@ -21,6 +21,7 @@ import {
     setBoothsLabelsLayers,
     moveToRect,
     setMap,
+    loadLogos,
 } from "./utils/data";
 import Rect from "../../core/Rect";
 
@@ -49,6 +50,8 @@ export default function Mapbox() {
 
         map.current.on("load", async () => {
             setTimeout(() => flyToCenter(props.initBearing, 4000, 0, props.initPitch), 1000);
+
+            await loadLogos();
 
             setDataSource(store.boothStore.booths);
             setMarker(
