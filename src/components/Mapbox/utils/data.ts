@@ -1,15 +1,14 @@
+import Color from "color";
 import { Feature, FeatureCollection } from "geojson";
-import { GeoJSONSource, Map } from "mapbox-gl";
+import mapboxgl, { GeoJSONSource, Map } from "mapbox-gl";
 import Rect from "../../../core/Rect";
+import store, { uiState } from "../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../store/BoothStore";
+import { Layer } from "../../../store/LayerStore";
+import RouteStore from "../../../store/RouteStore";
 import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
-import { Layer } from "../../../store/LayerStore";
-import mapboxgl from "mapbox-gl";
 import { convertPoint } from "./trannsformations";
-import store, { uiState } from "../../../store";
-import RouteStore from "../../../store/RouteStore";
-import Color from "color";
 
 interface ExtendFeatureCollection extends FeatureCollection {
     properties: any;
@@ -283,7 +282,7 @@ export function setBoothsLayers(layers: Layer[]): string[] {
     return layersNames;
 }
 
-export function setOthersLayer(map: Map): string {
+export function setOtherLayer(): void {
     map.addLayer({
         id: "other",
         type: "fill",
@@ -293,13 +292,11 @@ export function setOthersLayer(map: Map): string {
             "fill-color": ["get", "color"],
         },
     });
-
-    return "venues";
 }
 
-export function setVenuesLayer(map: Map): string {
+export function setBuildingsLayer(): void {
     map.addLayer({
-        id: "venues",
+        id: "buildings",
         type: "fill-extrusion",
         source: "data",
         filter: ["in", "type", featureTypes.building],
@@ -310,8 +307,6 @@ export function setVenuesLayer(map: Map): string {
             "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 18, 0.1],
         },
     });
-
-    return "venues";
 }
 
 export function setMarker(type: "from" | "to" | "yah", point: Point) {
@@ -337,7 +332,7 @@ export function setMarker(type: "from" | "to" | "yah", point: Point) {
     marker.setLngLat(lngLat);
 }
 
-export function setWayfindingLayer(map: Map) {
+export function setWayfindingLayer() {
     map.addSource("wfData", {
         type: "geojson",
         lineMetrics: true,
@@ -365,7 +360,7 @@ export function setWayfindingLayer(map: Map) {
 export function updateRouteLines(routeStore: RouteStore) {
     var wayfindingData = map.getSource("wfData") as GeoJSONSource;
     if (!wayfindingData) {
-        setWayfindingLayer(map);
+        setWayfindingLayer();
         wayfindingData = map.getSource("wfData") as GeoJSONSource;
     }
 

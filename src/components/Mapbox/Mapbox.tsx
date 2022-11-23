@@ -8,21 +8,21 @@ import { useReaction } from "../../utils/mobx";
 import "./Mapbox.scss";
 import * as React from "react";
 
+import Rect from "../../core/Rect";
 import {
+    loadLogos,
+    moveToRect,
     props,
     setBoothsLayers,
+    setBuildingsLayer,
     setDataSource,
-    setMarker,
-    setVenuesLayer,
-    updateSelectionDataSource,
-    updateRouteLines,
-    updateHoverDataSource,
-    setOthersLayer,
-    moveToRect,
     setMap,
-    loadLogos,
+    setMarker,
+    setOtherLayer,
+    updateHoverDataSource,
+    updateRouteLines,
+    updateSelectionDataSource,
 } from "./utils/data";
-import Rect from "../../core/Rect";
 
 export default function Mapbox() {
     const mapContainer = useRef(null);
@@ -62,8 +62,8 @@ export default function Mapbox() {
 
             const boothsLayers = setBoothsLayers(store.layerStore.layers);
 
-            setOthersLayer(map.current);
-            setVenuesLayer(map.current);
+            setOtherLayer();
+            setBuildingsLayer();
 
             map.current.on("mouseenter", boothsLayers, () => (map.current.getCanvas().style.cursor = "pointer"));
 
@@ -101,11 +101,10 @@ export default function Mapbox() {
         }
     );
 
-    //Layer visible
+    // Update layers visibility
     useReaction(
         () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
         () => {
-            // Update layers visibility
             store.layerStore.layers.forEach((layer) => {
                 var exists = map.current.getLayer(layer.name);
 
