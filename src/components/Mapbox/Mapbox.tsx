@@ -119,7 +119,7 @@ export default function Mapbox() {
             // Update YAH marker visibility
             setMarker(
                 "yah",
-                store.routeStore.defaultFrom
+                store.routeStore.defaultFrom?.rect
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
                     : null
             );
