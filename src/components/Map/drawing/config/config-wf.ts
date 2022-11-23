@@ -66,11 +66,11 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
             p1: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
         };
     }
-    
+
     if (settings.EXPO.indexOf("xpmusic-conference22") > -1) {
         fpConfig = {
-            p0: { lat: 24.744760034152826, lng: 46.535945439716905, x: 550, y: 1350},
-            p1: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505},
+            p0: { lat: 24.744760034152826, lng: 46.535945439716905, x: 550, y: 1350 },
+            p1: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505 },
         };
     }
 
@@ -254,7 +254,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
-
     wfDrawer.updateSkipdim("currentLocation", false);
 
     function updateRoute() {
@@ -278,6 +277,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
             var rect = drawLines(wfDrawer, scale || 3);
             if (rect) uiState.moveToRect = rect;
+        } else {
+            wfDrawer.updateVisible("sourceLocation", false);
+            wfDrawer.updateVisible("destinationLocation", false);
         }
 
         store.routeStore.updateRoutePoints(routeLines.filter((gl) => !gl.virtual));
