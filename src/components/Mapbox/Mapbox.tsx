@@ -228,22 +228,18 @@ export default function Mapbox() {
     function switchViewbox(showMapbox: boolean) {
         let duration = 1200;
 
-        store.mapboxStore.mapBoxSelected = showMapbox;
-
         if (showMapbox) {
             if (uiState.selectedBooths.size) {
                 moveToRect(Rect.fromMultiple([...uiState.selectedBooths].map((b) => b.rect)));
             } else {
-                flyToCenter(props.initBearing, duration, 0, props.initPitch).then(
-                    () => (uiState.moveToRect = store.layerStore.rectangle || svgArea)
-                );
+                uiState.moveToRect = store.layerStore.rectangle || svgArea;
             }
         } else {
             uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            flyToCenter(props.bearing, duration, 0, 0).then(() => {
-                map.current.setZoom(props.edgeZoom - 0.5);
-            });
+            flyToCenter(props.bearing, duration, 0, 0).then(() => {});
         }
+
+        store.mapboxStore.mapBoxSelected = showMapbox;
     }
 
     const s = useLocalStore(() => ({
