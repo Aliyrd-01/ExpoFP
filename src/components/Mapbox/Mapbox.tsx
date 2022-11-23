@@ -104,7 +104,7 @@ export default function Mapbox() {
 
     //Layer visible
     useReaction(
-        () => store.layerStore.visible,
+        () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
         () => {
             // Update layers visibility
             store.layerStore.layers.forEach((layer) => {
@@ -233,20 +233,14 @@ export default function Mapbox() {
 
         store.mapboxStore.mapBoxSelected = showMapbox;
 
-        map.current.scrollZoom.disable();
-        map.current.touchPitch.disable();
-        map.current.touchZoomRotate.disable();
-
-        setTimeout(() => {
-            map.current.scrollZoom.enable();
-            map.current.touchPitch.enable();
-            map.current.touchZoomRotate.enable();
-        }, duration);
-
         if (showMapbox) {
-            flyToCenter(props.initBearing, duration, 0, props.initPitch).then(() => {
-                //uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            });
+            if (uiState.selectedBooths.size) {
+                moveToRect(Rect.fromMultiple([...uiState.selectedBooths].map((b) => b.rect)));
+            } else {
+                flyToCenter(props.initBearing, duration, 0, props.initPitch).then(
+                    () => (uiState.moveToRect = store.layerStore.rectangle || svgArea)
+                );
+            }
         } else {
             uiState.moveToRect = store.layerStore.rectangle || svgArea;
             flyToCenter(props.bearing, duration, 0, 0).then(() => {

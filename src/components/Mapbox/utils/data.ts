@@ -7,7 +7,7 @@ import { bearing } from "../../../utils/geolib";
 import { Layer } from "../../../store/LayerStore";
 import mapboxgl from "mapbox-gl";
 import { convertPoint } from "./trannsformations";
-import store from "../../../store";
+import store, { uiState } from "../../../store";
 import RouteStore from "../../../store/RouteStore";
 import Color from "color";
 
@@ -189,6 +189,10 @@ export function setDataSource(booths: Booth[]) {
             )}`;
         }
     });
+
+    updateSelectionDataSource([...uiState.selectedBooths], store.boothStore.booths);
+    updateRouteLines(store.routeStore);
+    
 
     return map.addSource("data", { type: "geojson", data: fpGeo });
 }
