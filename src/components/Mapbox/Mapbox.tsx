@@ -18,7 +18,6 @@ import {
     updateRouteLines,
     updateHoverDataSource,
     setOthersLayer,
-    setBoothsLabelsLayers,
     moveToRect,
     setMap,
     loadLogos,
@@ -62,7 +61,7 @@ export default function Mapbox() {
             );
 
             const boothsLayers = setBoothsLayers(store.layerStore.layers);
-            setBoothsLabelsLayers(store.layerStore.layers);
+
             setOthersLayer(map.current);
             setVenuesLayer(map.current);
 
@@ -111,10 +110,9 @@ export default function Mapbox() {
                 var exists = map.current.getLayer(layer.name);
 
                 if (exists) {
-                    if (
-                        exists && layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(layer.name, "visibility")
-                    ) {
+                    if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(layer.name, "visibility")) {
                         map.current.setLayoutProperty(layer.name, "visibility", layer.visible ? "visible" : "none");
+                        map.current.setLayoutProperty(layer.name + "-labels", "visibility", layer.visible ? "visible" : "none");
                     }
                 }
             });

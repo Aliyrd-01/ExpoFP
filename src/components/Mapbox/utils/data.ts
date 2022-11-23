@@ -192,7 +192,6 @@ export function setDataSource(booths: Booth[]) {
 
     updateSelectionDataSource([...uiState.selectedBooths], store.boothStore.booths);
     updateRouteLines(store.routeStore);
-    
 
     return map.addSource("data", { type: "geojson", data: fpGeo });
 }
@@ -253,34 +252,35 @@ export function setBoothsLayers(layers: Layer[]): string[] {
                     "fill-extrusion-opacity": 0.8,
                 },
             });
+
+            layersNames.push(layer.name + "-labels");
+            map.addLayer({
+                id: layer.name + "-labels",
+                type: "symbol",
+                source: "data",
+                filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name]],
+                minzoom: 19,
+
+                layout: {
+                    "text-field": ["get", "description"],
+                    "text-size": 14,
+                    "icon-image": ["get", "logo"],
+                    "icon-anchor": "bottom",
+                    "icon-size": 0.25,
+                    "icon-allow-overlap": true,
+                    "icon-ignore-placement": true,
+                    "icon-offset": [0, props.extrusion.booths * -50],
+                    visibility: layer.visible ? "visible" : "none",
+                },
+                paint: {
+                    "text-opacity": ["get", "opacity"],
+                    "text-color": settings.boothLabelColor,
+                },
+            });
         }
     });
 
     return layersNames;
-}
-
-export function setBoothsLabelsLayers(layers: Layer[]) {
-    map.addLayer({
-        id: "labels",
-        type: "symbol",
-        source: "data",
-        minzoom: 19,
-
-        layout: {
-            "text-field": ["get", "description"],
-            "text-size": 14,
-            "icon-image": ["get", "logo"],
-            "icon-anchor": "bottom",
-            "icon-size": 0.25,
-            "icon-allow-overlap": true,
-            "icon-ignore-placement": true,
-            "icon-offset": [0, props.extrusion.booths * -50],
-        },
-        paint: {
-            "text-opacity": ["get", "opacity"],
-            "text-color": settings.boothLabelColor,
-        },
-    });
 }
 
 export function setOthersLayer(map: Map): string {
