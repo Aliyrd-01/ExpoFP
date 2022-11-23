@@ -10,7 +10,7 @@ window["__efpStyleElements"] = [];
 ready(async () => {
     const floorplanDivs = document.querySelectorAll(".expofp-floorplan") as NodeListOf<HTMLDivElement>;
     for (const element of Array.from(floorplanDivs)) {
-        window["fp"] = new FloorPlanLoader({ element });
+        new FloorPlanLoader({ element });
     }
 });
 
