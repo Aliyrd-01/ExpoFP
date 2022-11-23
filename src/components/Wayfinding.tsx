@@ -100,6 +100,8 @@ function Wayfinding() {
             store.routeStore.selectRoute(new Route(to, from, exceptUnaccessible));
         };
 
+        const routeNotFound = uiState.selectedRoute?.from && uiState.selectedRoute?.to && !store.routeStore.routeLines.length;
+
         return (
             <OverlayContent
                 bar={bar}
@@ -119,7 +121,7 @@ function Wayfinding() {
                         !data.hideWayInformation &&
                         settings.EXPO !== "bloomberg" &&
                         uiState.selectedRoute?.from &&
-                        uiState.selectedRoute.from
+                        uiState.selectedRoute?.to
                             ? true
                             : false
                     }
@@ -128,10 +130,10 @@ function Wayfinding() {
                     onClickFloor={(floor) =>
                         store.layerStore.updateVisibility(store.layerStore.layers.find((l) => l.description === floor).name, true)
                     }
-                    routeFound={store.routeStore.routeLines.length ? true : false}
+                    routeFound={!routeNotFound}
                     options={options()}
-                    fromValue={uiState.selectedRoute.from?.name || ""}
-                    toValue={uiState.selectedRoute.to?.name || ""}
+                    fromValue={uiState.selectedRoute?.from?.name || ""}
+                    toValue={uiState.selectedRoute?.to?.name || ""}
                     onChangeFrom={(value) => onSelectionClick(value, true)}
                     onChangeTo={(value) => onSelectionClick(value, false)}
                     onSwitch={onSwitch}
