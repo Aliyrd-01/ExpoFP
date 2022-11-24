@@ -28,6 +28,12 @@ export default function Mapbox() {
     const mapContainer = useRef(null);
     let map = useRef<Map>(null);
 
+    var ls = useLocalStore(() => ({
+        get initFocus() {
+            return !uiState.selectedBooths.size;
+        },
+    }));
+
     useEffect(() => {
         if (map.current) return;
 
@@ -48,7 +54,7 @@ export default function Mapbox() {
         setMap(map.current);
 
         map.current.on("load", async () => {
-            setTimeout(() => flyToCenter(props.initBearing, 4000, 0, props.initPitch), 1000);
+            if (ls.initFocus) setTimeout(() => moveToRect(svgArea, 0, 4000), 1500);
 
             await loadLogos();
 
@@ -115,6 +121,8 @@ export default function Mapbox() {
                     }
                 }
             });
+
+            updateSelectionDataSource([...uiState.selectedBooths], store.boothStore.booths);
 
             // Update YAH marker visibility
             setMarker(
@@ -205,26 +213,6 @@ export default function Mapbox() {
         () => updateRouteLines(store.routeStore)
     );
 
-    function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0, pitch: number): Promise<void> {
-        return new Promise((resolve) => {
-            setTimeout(() => resolve(), duration);
-            let rect = props.viewbox;
-
-            map.current.fitBounds(
-                [
-                    [rect.x1 - boundsOffset, rect.y1 - boundsOffset],
-                    [rect.x2 + boundsOffset, rect.y2 + boundsOffset],
-                ],
-                {
-                    bearing,
-                    essential: true,
-                    duration,
-                    pitch,
-                }
-            );
-        });
-    }
-
     function switchViewbox(showMapbox: boolean) {
         let duration = 1200;
 
@@ -236,7 +224,7 @@ export default function Mapbox() {
             }
         } else {
             uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            flyToCenter(props.bearing, duration, 0, 0).then(() => {});
+            moveToRect(svgArea, 0, duration, 0, props.bearing);
         }
 
         store.mapboxStore.mapBoxSelected = showMapbox;

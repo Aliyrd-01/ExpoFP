@@ -154,16 +154,21 @@ export function convertSvgPoint(x: number, y: number) {
     return convertPoint(x, y, fpGeo.properties.config);
 }
 
-export function moveToRect(svgRect: Rect) {
-    var off = svgRect.w;
-    var p1 = convertSvgPoint(svgRect.x1 - off, svgRect.y1 - off);
-    var p2 = convertSvgPoint(svgRect.x2 + off, svgRect.y2 + off);
+export function moveToRect(
+    svgRect: Rect,
+    padding: number = Math.max(svgRect.w, svgRect.h),
+    duration: number = 1000,
+    pitch: number = props.initPitch,
+    bearing: number = props.initBearing
+) {
+    var p1 = convertSvgPoint(svgRect.x1 - padding, svgRect.y1 - padding);
+    var p2 = convertSvgPoint(svgRect.x2 + padding, svgRect.y2 + padding);
 
     map.fitBounds([p1, p2], {
         essential: true,
-        duration: 1000,
-        pitch: props.initPitch,
-        bearing: props.initBearing,
+        duration: duration,
+        pitch,
+        bearing,
     });
 }
 
