@@ -249,7 +249,7 @@ export function updateSelectionDataSource(selectedBooths: Booth[], allBooths: Bo
     (map.getSource("data") as GeoJSONSource)?.setData(fpGeo);
 }
 
-export function setBoothsLayers(layers: Layer[]): string[] {
+export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
@@ -299,22 +299,24 @@ export function setBoothsLayers(layers: Layer[]): string[] {
                     "text-color": settings.boothLabelColor,
                 },
             });
+
+            layersNames.push(layer.name + "-other");
+            map.addLayer({
+                id: layer.name + "-other",
+                type: "fill",
+                source: "data",
+                filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name]],
+                layout: {
+                    visibility: layer.visible ? "visible" : "none",
+                },
+                paint: {
+                    "fill-color": ["get", "color"],
+                },
+            });
         }
     });
 
     return layersNames;
-}
-
-export function setOtherLayer(): void {
-    map.addLayer({
-        id: "other",
-        type: "fill",
-        source: "data",
-        filter: ["in", "type", featureTypes.other],
-        paint: {
-            "fill-color": ["get", "color"],
-        },
-    });
 }
 
 export function setBuildingsLayer(): void {

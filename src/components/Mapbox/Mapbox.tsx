@@ -13,12 +13,11 @@ import {
     loadLogos,
     moveToRect,
     props,
-    setBoothsLayers,
     setBuildingsLayer,
     setDataSource,
+    setLayers,
     setMap,
     setMarker,
-    setOtherLayer,
     switchViewbox,
     updateHoverDataSource,
     updateRouteLines,
@@ -76,9 +75,8 @@ export default function Mapbox() {
                     : null
             );
 
-            const boothsLayers = setBoothsLayers(store.layerStore.layers);
+            const boothsLayers = setLayers(store.layerStore.layers);
 
-            setOtherLayer();
             setBuildingsLayer();
 
             map.current.on("mouseenter", boothsLayers, () => (map.current.getCanvas().style.cursor = "pointer"));
@@ -126,8 +124,9 @@ export default function Mapbox() {
 
                 if (exists) {
                     if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(layer.name, "visibility")) {
-                        map.current.setLayoutProperty(layer.name, "visibility", layer.visible ? "visible" : "none");
-                        map.current.setLayoutProperty(layer.name + "-labels", "visibility", layer.visible ? "visible" : "none");
+                        ["", "-labels", "-other"].forEach((suffix) =>
+                            map.current.setLayoutProperty(layer.name + suffix, "visibility", layer.visible ? "visible" : "none")
+                        );
                     }
                 }
             });
