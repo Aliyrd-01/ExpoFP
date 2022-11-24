@@ -2,6 +2,7 @@ import Color from "color";
 import { Feature, FeatureCollection } from "geojson";
 import mapboxgl, { GeoJSONSource, Map } from "mapbox-gl";
 import Rect from "../../../core/Rect";
+import { svgArea } from "../../../data/svg";
 import store, { uiState } from "../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../store/BoothStore";
 import { Layer } from "../../../store/LayerStore";
@@ -170,6 +171,23 @@ export function moveToRect(
         pitch,
         bearing,
     });
+}
+
+export function switchViewbox(showMapbox: boolean) {
+    let duration = 1200;
+
+    if (showMapbox) {
+        if (uiState.selectedBooths.size) {
+            moveToRect(Rect.fromMultiple([...uiState.selectedBooths].map((b) => b.rect)));
+        } else {
+            uiState.moveToRect = store.layerStore.rectangle || svgArea;
+        }
+    } else {
+        uiState.moveToRect = store.layerStore.rectangle || svgArea;
+        moveToRect(svgArea, 0, duration, 0, props.bearing);
+    }
+
+    store.mapboxStore.mapBoxSelected = showMapbox;
 }
 
 export function setDataSource(booths: Booth[]) {

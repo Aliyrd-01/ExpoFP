@@ -19,6 +19,7 @@ import {
     setMap,
     setMarker,
     setOtherLayer,
+    switchViewbox,
     updateHoverDataSource,
     updateRouteLines,
     updateSelectionDataSource,
@@ -26,11 +27,20 @@ import {
 
 export default function Mapbox() {
     const mapContainer = useRef(null);
-    let map = useRef<Map>(null);
+    const map = useRef<Map>(null);
+    let hoverTimeout = null;
 
-    var ls = useLocalStore(() => ({
+    const ls = useLocalStore(() => ({
         get initFocus() {
             return !uiState.selectedBooths.size;
+        },
+    }));
+
+    const s = useLocalStore(() => ({
+        get style() {
+            return {
+                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleLeft + "px",
+            };
         },
     }));
 
@@ -107,7 +117,7 @@ export default function Mapbox() {
         }
     );
 
-    // Update layers visibility
+    // Update layers visibility, loading, selected route
     useReaction(
         () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
         () => {
@@ -127,15 +137,14 @@ export default function Mapbox() {
             // Update YAH marker visibility
             setMarker(
                 "yah",
-                store.routeStore.defaultFrom?.rect
+                store.routeStore.defaultFrom?.rect && store.routeStore.defaultFrom?.layer?.visible
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
                     : null
             );
         }
     );
 
-    // Hover
-    let hoverTimeout = null;
+    // Hover booths
     useReaction(
         () => uiState.hoveredBooths,
         () => {
@@ -177,12 +186,12 @@ export default function Mapbox() {
         () => switchViewbox(store.mapboxStore.showMapbox)
     );
 
-    // Move to boothsa
+    // Move to booths
     useReaction(
         () => uiState.moveToBooths,
         () => {
             if (!uiState.moveToBooths || !store.mapboxStore.showMapbox) return;
-            moveToRect(Rect.fromMultiple(uiState.moveToBooths.map((b) => b.rect)));
+            moveToRect(Rect.fromMultiple(uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect)));
             uiState.moveToBooths = null;
         }
     );
@@ -207,36 +216,11 @@ export default function Mapbox() {
         }
     );
 
-    // Routing
+    // Route lines
     useReaction(
         () => store.routeStore.routeLines,
         () => updateRouteLines(store.routeStore)
     );
-
-    function switchViewbox(showMapbox: boolean) {
-        let duration = 1200;
-
-        if (showMapbox) {
-            if (uiState.selectedBooths.size) {
-                moveToRect(Rect.fromMultiple([...uiState.selectedBooths].map((b) => b.rect)));
-            } else {
-                uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            }
-        } else {
-            uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            moveToRect(svgArea, 0, duration, 0, props.bearing);
-        }
-
-        store.mapboxStore.mapBoxSelected = showMapbox;
-    }
-
-    const s = useLocalStore(() => ({
-        get style() {
-            return {
-                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleLeft + "px",
-            };
-        },
-    }));
 
     return useObserver(() => {
         return (
