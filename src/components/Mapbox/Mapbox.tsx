@@ -147,7 +147,9 @@ export default function Mapbox() {
                     if (booth) f.properties.color = defaultColor(booth);
                 } else if (f.properties.color) {
                     let color = f.properties.color;
-                    f.properties.color = `#${toHex(color.R || color.r)}${toHex(color.G || color.g)}${toHex(color.B || color.b)}`;
+                    f.properties.color = `#${toHex(color.R || color.r || 0)}${toHex(color.G || color.g || 0)}${toHex(
+                        color.B || color.b || 0
+                    )}`;
 
                     if (f.properties.type === "venue") f.properties.color = "grey";
                     else if (f.properties.type === "outline") {
