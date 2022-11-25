@@ -157,11 +157,13 @@ export function convertSvgPoint(x: number, y: number) {
 
 export function moveToRect(
     svgRect: Rect,
-    padding: number = Math.max(svgRect.w, svgRect.h),
+    paddingPercent: number = 100,
     duration: number = 1000,
     pitch: number = props.initPitch,
     bearing: number = props.initBearing
 ) {
+    const padding = (paddingPercent / 100) * Math.max(svgRect.w, svgRect.h);
+
     var p1 = convertSvgPoint(svgRect.x1 - padding, svgRect.y1 - padding);
     var p2 = convertSvgPoint(svgRect.x2 + padding, svgRect.y2 + padding);
 

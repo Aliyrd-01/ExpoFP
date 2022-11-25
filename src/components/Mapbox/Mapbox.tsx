@@ -63,7 +63,7 @@ export default function Mapbox() {
         setMap(map.current);
 
         map.current.on("load", async () => {
-            if (ls.initFocus) setTimeout(() => moveToRect(svgArea, 0, 4000), 1500);
+            if (ls.initFocus) setTimeout(() => moveToRect(svgArea, 15, 4000), 1500);
 
             await loadLogos();
 
@@ -200,7 +200,7 @@ export default function Mapbox() {
         () => uiState.moveToRect,
         () => {
             if (!uiState.moveToRect || !store.mapboxStore.showMapbox) return;
-            moveToRect(uiState.moveToRect);
+            moveToRect(uiState.moveToRect, 15);
             uiState.moveToRect = null;
         }
     );
@@ -210,7 +210,7 @@ export default function Mapbox() {
         () => uiState.centerMap,
         () => {
             if (!uiState.centerMap || !store.mapboxStore.showMapbox) return;
-            moveToRect(Rect.fromMultiple(boothStore.booths.map((b) => b.rect)));
+            moveToRect(Rect.fromMultiple(boothStore.booths.map((b) => b.rect)), 15);
             uiState.centerMap = false;
         }
     );
