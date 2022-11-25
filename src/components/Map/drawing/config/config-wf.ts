@@ -289,7 +289,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible || true;
+            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
             wfDrawer.updateSkipdim("currentLocation", visible);
             wfDrawer.updateVisible("currentLocation", visible);
