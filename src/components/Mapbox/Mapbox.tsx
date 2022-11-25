@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import * as React from "react";
 import Rect from "../../core/Rect";
 import { svgArea } from "../../data/svg";
-import store, { uiState } from "../../store";
+import store, { boothStore, layersStore, uiState } from "../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../store/BoothStore";
 import settings from "../../tools/settings";
 import { bearing, distance } from "../../utils/geolib";
@@ -162,11 +162,15 @@ export default function Mapbox() {
                 data,
             });
 
+            const layerName =
+                layersStore.layers.filter((l) => l.name === "Booths")[0]?.name ||
+                layersStore.layers.filter((l) => l.name === "1")[0]?.name;
+
             current.addLayer({
                 id: "booths",
                 type: "fill-extrusion",
                 source: "booths",
-                filter: ["==", "type", "booth"],
+                filter: ["all", ["in", "type", "booth"], ["in", "layer", layerName]],
                 paint: {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
