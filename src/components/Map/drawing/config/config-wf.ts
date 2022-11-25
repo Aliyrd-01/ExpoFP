@@ -339,7 +339,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         var lines = [];
         for (let index = 0; index < routeLines.length; index++) {
             const line = routeLines[index];
-            if (pointIsOnLine(shortestrPerp.p, line.p0, line.p1)) {
+            if (shortestrPerp.l < 200 && pointIsOnLine(shortestrPerp.p, line.p0, line.p1)) {
                 lines.push({ p0: line.p0, p1: shortestrPerp.p });
                 break;
             } else lines.push(line);
