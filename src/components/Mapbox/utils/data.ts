@@ -162,14 +162,14 @@ export function moveToRect(
     pitch: number = props.initPitch,
     bearing: number = props.initBearing
 ) {
-    const padding = (paddingPercent / 100) * Math.max(svgRect.w, svgRect.h);
+    const padding = (paddingPercent / 100) * Math.max(Math.abs(svgRect.x2 - svgRect.x1), Math.abs(svgRect.y2 - svgRect.y1)) || 0;
 
     var p1 = convertSvgPoint(svgRect.x1 - padding, svgRect.y1 - padding);
     var p2 = convertSvgPoint(svgRect.x2 + padding, svgRect.y2 + padding);
 
     map.fitBounds([p1, p2], {
         essential: true,
-        duration: duration,
+        duration,
         pitch,
         bearing,
     });
@@ -336,7 +336,7 @@ export function setBuildingsLayer(): void {
     });
 }
 
-export function setMarker(type: "from" | "to" | "yah", point: Point) {
+export function setMarker(type: "from" | "to" | "yah" | "cp", point: Point) {
     var marker = markersObject[type];
 
     if (!point) {
@@ -351,7 +351,10 @@ export function setMarker(type: "from" | "to" | "yah", point: Point) {
     if (!marker) {
         var htmlElement = document.createElement("div");
         htmlElement.className = `marker ${type}`;
-        marker = new mapboxgl.Marker(htmlElement).setLngLat(lngLat);
+        marker = new mapboxgl.Marker(htmlElement, {
+            rotationAlignment: type === "cp" ? "map" : "auto",
+        }).setLngLat(lngLat);
+
         marker.addTo(map);
         markersObject[type] = marker;
     }

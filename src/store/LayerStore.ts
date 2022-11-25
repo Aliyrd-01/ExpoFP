@@ -60,7 +60,7 @@ export default class LayerStore {
         if (this.mode === LayersMode.Radio && !visible) return;
 
         const layer = this.layers.find((l) => l.name === layerName);
-        if (layer.visible === visible) return;
+        if (!layer || layer.visible === visible) return;
 
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {

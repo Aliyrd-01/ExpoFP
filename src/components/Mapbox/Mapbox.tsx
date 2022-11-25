@@ -23,6 +23,7 @@ import {
     updateRouteLines,
     updateSelectionDataSource,
 } from "./utils/data";
+import { CurrentPosition } from "../../store/RouteStore";
 
 export default function Mapbox() {
     const mapContainer = useRef(null);
@@ -31,7 +32,15 @@ export default function Mapbox() {
 
     const ls = useLocalStore(() => ({
         get initFocus() {
-            return !uiState.selectedBooths.size;
+            return ![...uiState.selectedBooths].filter((b) => b.rect).length;
+        },
+
+        get actualCurrentPosition(): CurrentPosition {
+            const cp = store.routeStore.currentPosition;
+
+            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.layers.find((l) => l.name === cp.z)) > -1
+                ? cp
+                : null;
         },
     }));
 
@@ -140,6 +149,8 @@ export default function Mapbox() {
                     ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
                     : null
             );
+
+            setMarker("cp", ls.actualCurrentPosition);
         }
     );
 
@@ -190,7 +201,10 @@ export default function Mapbox() {
         () => uiState.moveToBooths,
         () => {
             if (!uiState.moveToBooths || !store.mapboxStore.showMapbox) return;
-            moveToRect(Rect.fromMultiple(uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect)));
+
+            const rects = uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect);
+            const rect = Rect.fromMultiple(rects);
+            if (rects.length) moveToRect(rect);
             uiState.moveToBooths = null;
         }
     );
@@ -219,6 +233,12 @@ export default function Mapbox() {
     useReaction(
         () => store.routeStore.routeLines,
         () => updateRouteLines(store.routeStore)
+    );
+
+    // Current position
+    useReaction(
+        () => ls.actualCurrentPosition,
+        () => setMarker("cp", ls.actualCurrentPosition)
     );
 
     return useObserver(() => {

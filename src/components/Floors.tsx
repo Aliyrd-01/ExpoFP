@@ -43,7 +43,6 @@ export default function Floors() {
         timeout = setTimeout(() => (timeout = null), 500);
         var layer = store.layerStore.layers.find((l) => l.description === name);
         if (store.layerStore.mode === LayersMode.Radio) {
-            store.routeStore.currentPosition = null;
             store.layerStore.updateVisibility(layer.name, true, true);
 
             if (store.mapboxStore.showMapbox) return;

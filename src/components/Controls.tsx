@@ -29,14 +29,14 @@ export default function Controls() {
                 className={s.className}
                 style={s.style}
                 titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("View switch"), t("Fit to screen"), t("Layers")]}
-                onClickFindLocation={() => store.selectBooth(store.routeStore.defaultFrom)}
+                onClickFindLocation={() => store.routeStore.findLocation()}
                 onClickZoomIn={() => (uiState.zoomBy = 1.5)}
                 onClickZoomOut={() => (uiState.zoomBy = 0.66)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
                 onViewModeSwitch={() => (store.mapboxStore.mapBoxSelected = !store.mapboxStore.showMapbox)}
                 viewModeSwitch={store.mapboxStore.mapBoxEnabled}
                 viewMode={store.mapboxStore.showMapbox}
-                findLocation={!!store.routeStore.defaultFrom}
+                findLocation={!!store.routeStore.defaultFrom || !!store.routeStore.currentPosition}
                 layersActiveItems={[]}
                 layersList={null}
                 onChangeLayers={(layer) => {}}

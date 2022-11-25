@@ -3,7 +3,7 @@ import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
-import store, { uiState } from "../../../../store";
+import store, { layersStore, uiState } from "../../../../store";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
@@ -289,9 +289,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
+            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible || true;
             wfDrawer.updateVisible("sourceLocation", false);
-            wfDrawer.updateSkipdim("currentLocation", true);
-            wfDrawer.updateVisible("currentLocation", true);
+            wfDrawer.updateSkipdim("currentLocation", visible);
+            wfDrawer.updateVisible("currentLocation", visible);
             wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
             wfDrawer.updateVisible("currentLocation", false);
@@ -363,7 +364,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         reaction(
             () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
-            () => context.requireUpdate(updateRoute)
+            () => {
+                context.requireUpdate(updateRoute);
+                updateCurrentPosition();
+            }
         );
 
         reaction(
