@@ -208,8 +208,8 @@ export function setDataSource(booths: Booth[]) {
             if (booth.name === "1117") f.properties.logo = "expofp";
         } else {
             let color = f.properties.color;
-            f.properties.color = `#${decimalToHex(color.R || color.r)}${decimalToHex(color.G || color.g)}${decimalToHex(
-                color.B || color.b
+            f.properties.color = `#${decimalToHex(color.R || color.r || 0)}${decimalToHex(color.G || color.g || 0)}${decimalToHex(
+                color.B || color.b || 0
             )}`;
         }
     });
