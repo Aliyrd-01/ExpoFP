@@ -33,7 +33,7 @@ export default function Controls() {
                 onClickZoomIn={() => (uiState.zoomBy = 1.5)}
                 onClickZoomOut={() => (uiState.zoomBy = 0.66)}
                 onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
-                onViewModeSwitch={() => (store.mapboxStore.mapBoxSelected = !store.mapboxStore.showMapbox)}
+                onViewModeSwitch={() => store.mapboxStore.activateMapbox()}
                 viewModeSwitch={store.mapboxStore.mapBoxEnabled}
                 viewMode={store.mapboxStore.showMapbox}
                 findLocation={!!store.routeStore.defaultFrom || !!store.routeStore.currentPosition}
