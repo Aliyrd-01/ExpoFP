@@ -31,8 +31,8 @@ export default function Mapbox() {
     let hoverTimeout = null;
 
     const ls = useLocalStore(() => ({
-        get initFocus() {
-            return ![...uiState.selectedBooths].filter((b) => b.rect).length;
+        get initselected() {
+            return ![...uiState.selectedBooths].filter((b) => b.rect);
         },
 
         get actualCurrentPosition(): CurrentPosition {
@@ -72,7 +72,17 @@ export default function Mapbox() {
         setMap(map.current);
 
         map.current.on("load", async () => {
-            if (ls.initFocus) setTimeout(() => moveToRect(svgArea, 15, 4000), 1500);
+            setTimeout(
+                () =>
+                    moveToRect(
+                        ls.initselected
+                            ? Rect.fromMultiple([...uiState.selectedBooths].filter((b) => b.rect).map((b) => b.rect))
+                            : svgArea,
+                        15,
+                        4000
+                    ),
+                1500
+            );
 
             await loadLogos();
 

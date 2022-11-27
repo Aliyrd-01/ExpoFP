@@ -1,4 +1,4 @@
-import { uiState } from './index';
+import { uiState } from "./index";
 import { computed, observable, action } from "mobx";
 import RootStore from "./RootStore";
 
@@ -15,10 +15,10 @@ export default class MapboxStore {
 
     @action activateMapbox() {
         this.mapBoxSelected = !this.showMapbox;
-       this.mapBoxActivated = true;              
+        this.mapBoxActivated = true;
     }
 
     @computed({ keepAlive: true }) get showMapbox() {
-        return  this.mapBoxEnabled && this.mapBoxSelected && this.mapBoxActivated;
+        return this.mapBoxEnabled && this.mapBoxSelected && this.mapBoxActivated;
     }
 }

@@ -352,7 +352,7 @@ export function setMarker(type: "from" | "to" | "yah" | "cp", point: Point) {
         var htmlElement = document.createElement("div");
         htmlElement.className = `marker ${type}`;
         marker = new mapboxgl.Marker(htmlElement, {
-            rotationAlignment: type === "cp" ? "map" : "auto",
+            rotationAlignment: type === "cp" || type === "from" ? "map" : "auto",
         }).setLngLat(lngLat);
 
         marker.addTo(map);
