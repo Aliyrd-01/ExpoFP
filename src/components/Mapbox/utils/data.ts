@@ -301,21 +301,21 @@ export function setLayers(layers: Layer[]): string[] {
                     "text-color": settings.boothLabelColor,
                 },
             });
-
-            layersNames.push(layer.name + "-other");
-            map.addLayer({
-                id: layer.name + "-other",
-                type: "fill",
-                source: "data",
-                filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name]],
-                layout: {
-                    visibility: layer.visible ? "visible" : "none",
-                },
-                paint: {
-                    "fill-color": ["get", "color"],
-                },
-            });
         }
+
+        layersNames.push(layer.name + "-other");
+        map.addLayer({
+            id: layer.name + "-other",
+            type: "fill",
+            source: "data",
+            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name]],
+            layout: {
+                visibility: layer.visible ? "visible" : "none",
+            },
+            paint: {
+                "fill-color": ["get", "color"],
+            },
+        });
     });
 
     return layersNames;
