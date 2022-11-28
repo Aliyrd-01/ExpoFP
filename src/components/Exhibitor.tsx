@@ -279,7 +279,7 @@ function ExhibitorComponent() {
                         </div>
                     )}
                     {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
-                    {!uiState.kiosk  && s.showEdit && (
+                    {!uiState.kiosk && s.showEdit && (
                         <div className="exhibitor__edit">
                             <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
                         </div>

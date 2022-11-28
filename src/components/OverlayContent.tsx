@@ -70,7 +70,6 @@ const OverlayContent: React.FC<{
                 className={`overlay-content__scrollable`}
                 style={{
                     height: uiState.kiosk ? "auto" : undefined,
-                    maxHeight: uiState.kiosk ? "calc(100vh - 80px)" : undefined,
                     display: uiState.overlayCollapsed ? "none" : undefined,
                 }}
                 ref={scrollable}
