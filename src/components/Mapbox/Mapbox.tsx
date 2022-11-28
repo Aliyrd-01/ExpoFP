@@ -75,9 +75,9 @@ var props = {
     style: getStyle(),
     edgeZoom: 19,
     extrusion: {
-        building: 2,
-        venue: 3,
-        other: 3,
+        building: 10,
+        venue: 1.5,
+        other: 1,
     },
 };
 
@@ -127,10 +127,15 @@ export default function Mapbox() {
             "top-left"
         );
 
-        current.addControl(new MapboxGLButtonControl(() => flyToCenter(0, 1000), "fa fa-expand-arrows-alt"), "top-left");
+        current.addControl(new MapboxGLButtonControl(() => flyToCenter(0, 1000, 0, 45), "fa fa-expand-arrows-alt"), "top-left");
 
         current.on("load", async () => {
-            setTimeout(() => flyToCenter(0, 4000, 0.001), 1000);
+            setTimeout(() => flyToCenter(0, 4000, 0.001, 45), 1000);
+
+            const toHex = (input: string) => {
+                var h = parseInt(input).toString(16);
+                return h.length == 1 ? "0" + h : h;
+            };
 
             data.features.forEach((f) => {
                 f.properties.id = f.properties.id?.substring(1);
@@ -141,9 +146,8 @@ export default function Mapbox() {
                     let booth = store.boothStore.booths.filter((b) => b.name === f.properties.id)[0];
                     if (booth) f.properties.color = defaultColor(booth);
                 } else if (f.properties.color) {
-                    f.properties.color = `#${parseInt(f.properties.color.R).toString(16)}${parseInt(
-                        f.properties.color.G
-                    ).toString(16)}${parseInt(f.properties.color.B).toString(16)}`;
+                    let color = f.properties.color;
+                    f.properties.color = `#${toHex(color.R || color.r)}${toHex(color.G || color.g)}${toHex(color.B || color.b)}`;
 
                     if (f.properties.type === "venue") f.properties.color = "grey";
                     else if (f.properties.type === "outline") {
@@ -159,6 +163,19 @@ export default function Mapbox() {
             });
 
             current.addLayer({
+                id: "booths",
+                type: "fill-extrusion",
+                source: "booths",
+                filter: ["==", "type", "booth"],
+                paint: {
+                    "fill-extrusion-color": ["get", "color"],
+                    "fill-extrusion-height": ["get", "height"],
+                    "fill-extrusion-base": 0,
+                    "fill-extrusion-opacity": 1,
+                },
+            });
+
+            current.addLayer({
                 id: "venue",
                 type: "fill-extrusion",
                 source: "booths",
@@ -167,20 +184,20 @@ export default function Mapbox() {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
                     "fill-extrusion-base": 0,
-                    "fill-extrusion-opacity": 0.8,
+                    "fill-extrusion-opacity": 0.4,
                 },
             });
 
-            current.addLayer({
-                id: "booths",
-                type: "fill",
-                source: "booths",
-                filter: ["==", "type", "booth"],
-                paint: {
-                    "fill-color": ["get", "color"],
-                    "fill-outline-color": "#FFFFFF",
-                },
-            });
+            // current.addLayer({
+            //     id: "booths",
+            //     type: "fill",
+            //     source: "booths",
+            //     filter: ["==", "type", "booth"],
+            //     paint: {
+            //         "fill-color": ["get", "color"],
+            //         "fill-outline-color": "#FFFFFF"
+            //     },
+            // });
 
             let b = props.viewbox;
 
@@ -262,7 +279,7 @@ export default function Mapbox() {
         }
     );
 
-    function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0): Promise<void> {
+    function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0, pitch: number): Promise<void> {
         return new Promise((resolve) => {
             let current: Map = map.current;
 
@@ -278,7 +295,7 @@ export default function Mapbox() {
                     bearing,
                     essential: true,
                     duration,
-                    pitch: 0,
+                    pitch: pitch,
                 }
             );
         });
@@ -301,12 +318,12 @@ export default function Mapbox() {
         }, duration);
 
         if (mapBoxSelected) {
-            flyToCenter(0, duration).then(() => {
+            flyToCenter(0, duration, 0, 45).then(() => {
                 uiState.moveToRect = store.layerStore.rectangle || svgArea;
             });
         } else {
             uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            flyToCenter(props.bearing, duration).then(() => {
+            flyToCenter(props.bearing, duration, 0, 0).then(() => {
                 current.setZoom(props.edgeZoom - 0.5);
             });
         }

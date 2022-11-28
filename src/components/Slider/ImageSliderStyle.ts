@@ -42,15 +42,6 @@ export const containSlide = {
     backgroundPosition: "center",
 };
 
-const basicNav = {
-    position: "absolute",
-    top: "50%",
-    transform: "translate(0, -50%)",
-    padding: "50px 20px",
-    cursor: "pointer",
-    outline: "none",
-    background: "none",
-};
 const bulletContainer = {
     position: "absolute",
     bottom: "15px",
@@ -82,30 +73,19 @@ const fullScreenSubContainer = {
     transform: "translateY(-50%)",
 };
 
-const fullScreenIcon = (scale: number) => ({
-    position: "absolute",
-    right: `${scale * 10}px`,
-    top: `${scale * 10}px`,
-    width: `${scale * 25}px`,
-    cursor: "pointer",
-});
-
 export default {
-    ImageNavArrowLeft: (isFullScreen: boolean) =>
-        ImageNavArrowLeft({ height: isFullScreen ? "100px" : "50px" }),
+    ImageNavArrowLeft: (isFullScreen: boolean) => ImageNavArrowLeft({ height: isFullScreen ? "40px" : "30px" }),
 
-    ImageNavArrowRight: (isFullScreen: boolean) =>
-        ImageNavArrowRight({ height: isFullScreen ? "100px" : "50px" }),
+    ImageNavArrowRight: (isFullScreen: boolean) => ImageNavArrowRight({ height: isFullScreen ? "40px" : "30px" }),
 
     FullScreenContainer: (isFullScreen: boolean) => (isFullScreen ? fullScreenContainer : {}),
 
-    FullScreenIcon: (isFullScreen: boolean) =>
-        FullScreenIcon(isFullScreen, fullScreenIcon(isFullScreen ? 1.5 : 1)),
+    FullScreenIcon: (isFullScreen: boolean) => FullScreenIcon(isFullScreen),
 
     ImageSlider: (isFullScreen: boolean) => assignObjects(basic, basicRootContainer, isFullScreen ? null : { cursor: "pointer" }),
 
-    NavLeft: assignObjects(basic, basicNav, { left: 0 }),
-    NavRight: assignObjects(basic, basicNav, { right: 0 }),
+    NavLeft: assignObjects({ left: 0 }),
+    NavRight: assignObjects({ right: 0 }),
     BulletContainer: (bulletLength) => assignObjects(basic, bulletContainer),
     BulletNormal: assignObjects(basic, basicBullet),
     BulletActive: assignObjects(basic, basicBullet, { background: fillColor }),
