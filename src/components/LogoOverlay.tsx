@@ -4,8 +4,6 @@ import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
-import QRCode from "react-qr-code";
-
 import Alert from "./Alert";
 import "./Alert.scss";
 import "./LogoOverlay.scss";
@@ -37,18 +35,6 @@ export default function LogoOverlay() {
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;
         },
-
-        get qrUrl() {
-            var _qrUrl = null;
-            if (uiState.kiosk && uiState.overlayLeft) {
-                if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
-                    _qrUrl = window.location.href;
-                } else if (store.routeStore.defaultFrom) {
-                    _qrUrl = `${window.location.href}?${store.routeStore.defaultFrom.slug}`;
-                }
-            }
-            return _qrUrl;
-        },
     }));
 
     const bu = window["__efpBaseUrl"];
@@ -67,16 +53,6 @@ export default function LogoOverlay() {
                         Read how to optimize it
                     </a>
                 </Alert>
-            )}
-            {s.qrUrl && (
-                <div className="qr-logo">
-                    <QRCode
-                        size={256}
-                        viewBox={`0 0 256 256`}
-                        style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                        value={s.qrUrl}
-                    />
-                </div>
             )}
         </div>
     ));
