@@ -5,3 +5,11 @@
         margin-left: 1rem;
     }
 }
+
+.efp-kiosk {
+    .wayfinding {
+        &__bar {
+            margin-left: var(--k-spacing-lg);
+        }
+    }
+}

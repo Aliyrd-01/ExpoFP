@@ -96,3 +96,78 @@ $wayfindingError: ".efp-wayfindingError";
     font-weight: var(--font-bold);
     text-align: center;
 }
+
+.efp-kiosk {
+    .main-wayfinding {
+        max-height: calc(100vh - (var(--k-app-gap) * 2));
+
+        .overlay-bar {
+            position: relative;
+            box-shadow: unset;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+
+            &.scrolled {
+                box-shadow: var(--k-box-shadow-1);
+            }
+        }
+        .overlay-content__scrollable {
+            top: unset;
+            max-height: unset;
+            overflow: unset !important;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        .efp-autocomplete__input {
+            height: var(--k-inputHeight);
+            font-size: 0.9em;
+        }
+        .efp-autocomplete {
+            min-height: var(--k-inputHeight);
+
+            &::before,
+            &::after {
+                height: var(--k-inputHeight);
+                font-size: 1.2em;
+            }
+            &__input {
+                height: var(--k-inputHeight);
+                font-size: 0.9em;
+            }
+        }
+    }
+    #{$wayfindingForm} {
+        align-items: unset;
+        padding-right: var(--k-spacing-lg);
+
+        &__icons-item {
+            height: var(--k-inputHeight);
+
+            &.is-from::before {
+                width: 24px;
+                height: 24px;
+            }
+            &.is-to::before {
+                width: 22px;
+                height: 28px;
+            }
+        }
+        &__icons {
+            width: 56px;
+            height: unset;
+            padding-left: var(--k-spacing-lg);
+        }
+        &__controls {
+            padding-right: 16px;
+        }
+        &__switch {
+            align-self: center;
+            width: clamp(30px, 4vw, 38px);
+            height: 50px;
+
+            &::before {
+                font-size: 1.3em;
+            }
+        }
+    }
+}

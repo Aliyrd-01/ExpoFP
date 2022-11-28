@@ -7,15 +7,24 @@
     font-weight: 600;
     color: #333;
     > span {
-        color: rgba(0,0,0,0.35);
+        color: rgba(0, 0, 0, 0.35);
         font-weight: 400;
     }
     // padding: 0.5rem 0;
 }
 .note {
     font-size: 0.7rem;
-    color: rgba(0,0,0,0.35);
+    color: rgba(0, 0, 0, 0.35);
     display: block;
     font-weight: normal;
     margin-top: -0.2rem;
+}
+
+.efp-kiosk {
+    .bar {
+        margin-top: 0;
+    }
+    .note {
+        font-size: 0.7em;
+    }
 }

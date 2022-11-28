@@ -12,14 +12,26 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-weight: 500
+        font-weight: 500;
     }
 
     &__sub {
         font-size: 0.7rem;
-        color: rgba(0,0,0,0.4);//#aaa
+        color: rgba(0, 0, 0, 0.4); //#aaa
         padding: 0 0 0 $p;
         height: 0.7rem;
         margin: -2px 0;
+    }
+}
+
+.efp-kiosk {
+    .simple-row {
+        &__main {
+        }
+        &__sub {
+            height: unset;
+            margin: 0;
+            font-size: 0.8em;
+        }
     }
 }

@@ -146,11 +146,3 @@ $input-height: 50px;
         color: var(--color-grayDark);
     }
 }
-
-.kiosk {
-    #{$autocomplete}__options {
-        position: fixed;
-        max-width: 281px;
-        overflow-x: hidden;
-    }
-}
