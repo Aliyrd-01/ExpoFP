@@ -1,14 +1,9 @@
+@import "../styles/helpers.scss";
+
 .overlay {
     position: fixed;
     bottom: 0;
     z-index: 100;
-
-    &.kiosk {
-        margin: 10px;
-        border-radius: 5px;
-        box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 6px;
-        bottom: unset;
-    }
 
     &.collapsed {
         bottom: unset;
@@ -35,5 +30,20 @@
 
     @media print {
         display: none;
+    }
+}
+
+.efp-kiosk {
+    .overlay {
+        top: var(--k-app-gap) !important;
+        left: var(--k-app-gap) !important;
+        width: var(--k-searchBox-width) !important;
+        background: transparent;
+        box-shadow: unset;
+
+        &.-backdrop {
+            background: transparent;
+            backdrop-filter: unset;
+        }
     }
 }

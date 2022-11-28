@@ -17,7 +17,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
 
-        >.fa-gem {
+        > .fa-gem {
             color: #02a8ff;
             font-size: 0.9rem;
         }
@@ -37,5 +37,20 @@
         align-self: stretch;
         padding: 0 0.5rem 0 1rem;
         outline: none;
+    }
+}
+
+.efp-kiosk {
+    .exhibitor-row {
+        padding: var(--k-itemsPadding-1);
+
+        &__lines {
+            padding-left: 0;
+            font-size: 1.2em;
+        }
+        &__booth {
+            padding-right: 0;
+            font-size: 1em;
+        }
     }
 }

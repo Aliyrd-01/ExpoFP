@@ -48,8 +48,7 @@ $checkedPanel: ".checkedPanel";
 }
 
 #{$checkedPanel} {
-
-    > ul{
+    > ul {
         position: fixed;
         background-color: white;
         box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.3);
@@ -144,6 +143,38 @@ $checkedPanel: ".checkedPanel";
         }
         &__title {
             padding: rem(6px 16px);
+        }
+    }
+}
+
+.efp-kiosk {
+    #{$mapControls} {
+        position: absolute;
+        left: unset !important;
+        top: var(--k-app-gap) !important;
+        right: var(--k-app-gap) !important;
+        overflow: unset;
+        width: unset;
+        box-shadow: unset;
+        row-gap: var(--k-mapControls-gap);
+    }
+    #{$mapControl} {
+        width: var(--k-mapControl-size);
+        height: var(--k-mapControl-size);
+        border-radius: var(--k-border-radius-2);
+        box-shadow: var(--k-box-shadow-1);
+        padding: var(--k-mapControl-padding);
+        transition: all 0.1s ease;
+
+        & > svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--k-color-primary);
+            opacity: 1;
+        }
+        &:hover {
+            background: var(--k-color-primaryLight);
+            box-shadow: var(--k-box-shadow-1-active);
         }
     }
 }

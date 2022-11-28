@@ -12,10 +12,49 @@
         height: 1px;
         overflow-y: hidden;
         position: relative;
-       
+
         .overlay.full & {
             overflow-y: scroll;
             -webkit-overflow-scrolling: touch;
+        }
+    }
+}
+
+.efp-kiosk {
+    .overlay-content {
+        height: auto;
+
+        &__scrollable {
+            top: var(--k-sidebarPositionTop);
+            max-height: var(--k-sidebarMaxHeight);
+            background: var(--color-white);
+            border-radius: var(--k-border-radius-1);
+            box-shadow: var(--k-box-shadow-1);
+        }
+        &.menu {
+            background: transparent;
+        }
+        &.menu,
+        &.exhibitor,
+        &.main-wayfinding {
+            .overlay-bar {
+                border-top-left-radius: var(--k-border-radius-1);
+                border-top-right-radius: var(--k-border-radius-1);
+            }
+        }
+        &.-exhibitor-featured {
+            border-radius: var(--k-border-radius-1);
+            .overlay-bar {
+                background: transparent;
+            }
+            .overlay-content__scrollable {
+                background: transparent;
+            }
+            .overlay-bar__close {
+                &:hover {
+                    color: var(--color-white) !important;
+                }
+            }
         }
     }
 }

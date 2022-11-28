@@ -15,13 +15,8 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
     filter: brightness(97%);
     transition: opacity 0.5s;
-    z-index: 100;
-
-    &.kiosk {
-        margin: 10px -20px 10px 10px;
-        box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 6px;
-        border-radius: 5px;
-    }
+    display: none !important; // WIP
+	z-index: 100;
 
     /* .overlay-bottom & {
         bottom: unset;
