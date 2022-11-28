@@ -186,7 +186,7 @@ export default observer(function Overlay() {
 
     return (
         <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed} ${s.kiosk}`}
+            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed}`}
             id="overlay"
             ref={el}
         >

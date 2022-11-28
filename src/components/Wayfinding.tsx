@@ -105,6 +105,7 @@ function Wayfinding() {
             <OverlayContent
                 bar={bar}
                 backMode="none"
+                className={"main-wayfinding"}
                 onBack={() => {
                     store.routeStore.selectRoute(null);
                     store.selectSearch();

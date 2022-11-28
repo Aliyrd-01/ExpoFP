@@ -437,3 +437,79 @@ $imageSliderClass: ".image-slider";
         }
     }
 }
+
+.efp-kiosk {
+    .exhibitor {
+        max-height: calc(100vh - (var(--k-app-gap) * 2));
+
+        .overlay-bar {
+            position: relative;
+            box-shadow: unset;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+
+            &.scrolled {
+                box-shadow: var(--k-box-shadow-1);
+            }
+        }
+        .overlay-content__scrollable {
+            top: unset;
+            max-height: unset;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+        &__categories-booth,
+        &__categories-cat {
+            padding: var(--k-bottomPadding-2);
+            border-radius: 60px;
+            font-size: 1em;
+        }
+        &__categories-cat {
+            background: var(--k-color-primary);
+            border: 1px solid var(--k-color-primary);
+            color: var(--color-white) !important;
+        }
+        &__description {
+            margin: var(--k-spacing-md) var(--k-spacing-lg);
+            font-size: 0.86em;
+        }
+        &__logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 0 0 var(--k-spacing-md);
+            padding: calc(min(2vh, 12px)) calc(min(4vw, 20px));
+        }
+        &__meta {
+            font-size: 1em;
+
+            & > div {
+                margin: var(--k-spacing-sm) var(--k-spacing-lg);
+
+                & > div {
+                    font-size: 0.8em;
+                    line-height: 1.2em;
+                }
+                .fas {
+                    font-size: 0.8em;
+                }
+            }
+        }
+        &__bar {
+            margin-left: var(--k-spacing-lg);
+        }
+        &__bar-booth {
+            margin-left: var(--k-spacing-lg);
+        }
+        &__buttons {
+            margin: 0 var(--k-spacing-lg);
+        }
+        &__categories {
+            margin: 0 var(--k-spacing-lg) var(--k-spacing-md);
+        }
+        &__sep {
+            margin: var(--k-spacing-lg);
+        }
+    }
+}

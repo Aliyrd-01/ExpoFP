@@ -33,3 +33,19 @@
         }
     }
 }
+
+.efp-kiosk {
+    .efp-wayInformation {
+        padding-left: var(--k-spacing-lg);
+        padding-right: var(--k-spacing-lg);
+
+        &__item {
+            span {
+                font-size: 0.9em;
+            }
+            strong {
+                font-size: 1.1em;
+            }
+        }
+    }
+}

@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React, { Suspense } from "react";
+import cn from "classnames";
 import data from "../data";
 import store, { uiState } from "../store";
 import settings from "../tools/settings";
@@ -39,7 +40,7 @@ export default observer(function Layout() {
     else if (data.expoFpAd) freeOrDemo = <Free />;
 
     return (
-        <div className="layout">
+        <div className={cn("layout", { "efp-kiosk": uiState.kiosk })}>
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />
                 <LogoOverlay />
