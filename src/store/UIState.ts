@@ -50,6 +50,7 @@ export default class UIState {
     @observable canvasStarted = false;
     @observable kiosk = false;
     @observable modalActive = { share: false };
+    @observable galleryActive = false;
 
     overlayMediumHeightRems = 10;
 
@@ -67,8 +68,8 @@ export default class UIState {
 
     get onDirection() {
         return this.rootStore.fp.onDirection;
-    } 
-    
+    }
+
     get onDetails() {
         return this.rootStore.fp.onDetails;
     }
@@ -194,11 +195,7 @@ export default class UIState {
         if (uiState.overlayCollapsed) return false;
         if (localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
-        if (
-            this.selectedExhibitor?.gallery ||
-            (this.selectedExhibitor?.leadingImageUrl && !this.selectedExhibitor?.leadingImageLinkUrl)
-        )
-            return false;
+        if (this.selectedExhibitor?.leadingImageUrl && !this.selectedExhibitor?.leadingImageLinkUrl) return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
         // const ua = navigator.userAgent;
         // const isWebkit = ua.indexOf("AppleWebKit") !== -1 && ua.indexOf("Edge/") === -1;

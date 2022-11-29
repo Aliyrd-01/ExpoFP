@@ -260,6 +260,12 @@ export default class RootStore {
     @action toggleModal(modalType: "share") {
         this.uiState.modalActive[modalType] = !this.uiState.modalActive[modalType];
     }
+    @action openGallery() {
+        this.uiState.galleryActive = true;
+    }
+    @action closeGallery() {
+        this.uiState.galleryActive = false;
+    }
     @action openActiveListItem() {
         const item = this.uiState.listItems[this.uiState.activeListIndex];
         if (!item) return;

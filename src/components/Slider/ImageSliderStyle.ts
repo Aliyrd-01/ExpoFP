@@ -73,12 +73,20 @@ const fullScreenSubContainer = {
     transform: "translateY(-50%)",
 };
 
+const backdrop = {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    webkitBackdropFilter: "saturate(180%) blur(20px)",
+    backdropFilter: "saturate(180%) blur(20px)",
+};
+
 export default {
     ImageNavArrowLeft: (isFullScreen: boolean) => ImageNavArrowLeft({ height: isFullScreen ? "40px" : "30px" }),
 
     ImageNavArrowRight: (isFullScreen: boolean) => ImageNavArrowRight({ height: isFullScreen ? "40px" : "30px" }),
 
     FullScreenContainer: (isFullScreen: boolean) => (isFullScreen ? fullScreenContainer : {}),
+
+    Backdrop: (useBackdrop: boolean) => (useBackdrop ? backdrop : {}),
 
     FullScreenIcon: (isFullScreen: boolean) => FullScreenIcon(isFullScreen),
 
