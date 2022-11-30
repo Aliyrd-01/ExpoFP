@@ -41,3 +41,13 @@
         }
     }
 }
+
+.efp-kiosk {
+    .efp-wayfinding-floor {
+        &__list {
+            & > button {
+                width: 2vw;
+            }
+        }
+    }
+}

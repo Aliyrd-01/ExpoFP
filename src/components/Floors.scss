@@ -77,6 +77,10 @@
                 background: var(--color-grayUltraLight);
                 color: var(--color-black);
             }
+            &.disabled {
+                opacity: 0.8;
+                color: var(--color-gray);
+            }
         }
     }
 }
