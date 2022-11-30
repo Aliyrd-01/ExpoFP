@@ -306,14 +306,17 @@ export function setLayers(layers: Layer[]): string[] {
         layersNames.push(layer.name + "-other");
         map.addLayer({
             id: layer.name + "-other",
-            type: "fill",
+            type: "fill-extrusion",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name]],
             layout: {
                 visibility: layer.visible ? "visible" : "none",
             },
             paint: {
-                "fill-color": ["get", "color"],
+                "fill-extrusion-color": ["get", "color"],
+                "fill-extrusion-height": ["get", "height"],
+                "fill-extrusion-base": 0,
+                "fill-extrusion-opacity": 0.8,
             },
         });
     });
@@ -331,7 +334,7 @@ export function setBuildingsLayer(): void {
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
             "fill-extrusion-base": 0,
-            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 18, 0.1],
+            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 17, 0.05],
         },
     });
 }
