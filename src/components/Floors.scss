@@ -19,7 +19,7 @@
         border-top-right-radius: 0.3rem;
     }
 
-    >.item {
+    > .item {
         padding: 0;
         text-align: center;
         background: #fff;
@@ -53,14 +53,14 @@
 
 .efp-kiosk {
     .levels {
-        top: calc(240px + 8vh) !important;
+        top: calc(var(--k-mapControl-size) * 3 + var(--k-mapControls-gap) * 3 + var(--k-app-gap)) !important;
         right: var(--k-app-gap) !important;
         overflow: hidden;
         background: var(--color-white);
         border-radius: var(--k-border-radius-3);
         box-shadow: var(--k-box-shadow-1);
 
-        &>.item {
+        & > .item {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -86,6 +86,11 @@
                 opacity: 0.8;
                 color: var(--color-gray);
             }
+        }
+    }
+    &.efp-layers-mode {
+        .levels {
+            top: calc(var(--k-mapControl-size) * 4 + var(--k-mapControls-gap) * 4 + var(--k-app-gap)) !important;
         }
     }
 }
