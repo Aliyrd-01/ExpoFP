@@ -17,6 +17,9 @@
         @include overlay-bar-icon;
         align-self: flex-start;
     }
+    &__search-icon {
+        display: none;
+    }
 }
 .overlay-bar.scrolled {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -39,6 +42,17 @@
             &:hover {
                 color: var(--color-black) !important;
             }
+        }
+        &__search-icon {
+            position: absolute;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: calc(var(--k-searchBox-height) - 10px);
+            padding-right: 14px;
+            pointer-events: none;
         }
     }
 }
