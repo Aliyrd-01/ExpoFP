@@ -53,8 +53,8 @@ export default function initUi(store: RootStore) {
         // document.onclick = resetTimer; // touchpad clicks
         // document.onkeypress = resetTimer;
         // document.addEventListener("scroll", resetTimer, true); // improved; see comments
-        window["__resett"] = resetTimer;
-        resetTimer();
+        // window["__resett"] = resetTimer;
+        // resetTimer();
         function logout() {
             store.reset();
             // alert("You are now logged out.");
