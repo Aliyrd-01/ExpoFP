@@ -11,8 +11,9 @@
         color: var(--color-gray);
         font-weight: var(--font-bold);
     }
+
     &__list {
-        & > button {
+        &>button {
             position: relative;
             z-index: 1;
             width: rem(30px);
@@ -28,10 +29,12 @@
                 border-top-left-radius: var(--border-radius-1);
                 border-bottom-left-radius: var(--border-radius-1);
             }
+
             &:last-child {
                 border-top-right-radius: var(--border-radius-1);
                 border-bottom-right-radius: var(--border-radius-1);
             }
+
             &.isCurrent {
                 z-index: 2;
                 background: var(--color-grayLight);
@@ -45,8 +48,9 @@
 .efp-kiosk {
     .efp-wayfinding-floor {
         &__list {
-            & > button {
-                width: 2vw;
+            &>button {
+                width: clamp(38px, 4vw, 50px);
+                height: clamp(40px, 6vh, 46px);
             }
         }
     }

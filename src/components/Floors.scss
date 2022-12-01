@@ -2,6 +2,7 @@
     position: fixed;
     opacity: 0;
     transition: 500ms opacity;
+
     &.-ready {
         opacity: 1;
     }
@@ -18,7 +19,7 @@
         border-top-right-radius: 0.3rem;
     }
 
-    > .item {
+    >.item {
         padding: 0;
         text-align: center;
         background: #fff;
@@ -52,14 +53,14 @@
 
 .efp-kiosk {
     .levels {
-        top: 300px !important;
+        top: calc(240px + 8vh) !important;
         right: var(--k-app-gap) !important;
         overflow: hidden;
         background: var(--color-white);
         border-radius: var(--k-border-radius-3);
         box-shadow: var(--k-box-shadow-1);
 
-        & > .item {
+        &>.item {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -68,15 +69,19 @@
             background: transparent;
             box-shadow: unset;
             border-top: 1px solid var(--color-grayLight);
+            font-size: 1em;
+            font-weight: 500;
             color: var(--k-color-primary);
 
             &:first-child {
                 border-top: 0;
             }
+
             &.active {
                 background: var(--color-grayUltraLight);
                 color: var(--color-black);
             }
+
             &.disabled {
                 opacity: 0.8;
                 color: var(--color-gray);
