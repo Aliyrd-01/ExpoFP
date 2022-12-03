@@ -287,7 +287,7 @@ export function setLayers(layers: Layer[]): string[] {
 
                 layout: {
                     "text-field": ["get", "description"],
-                    "text-size": 14,
+                    "text-size": 16,
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
                     "icon-size": 0.25,
@@ -308,17 +308,22 @@ export function setLayers(layers: Layer[]): string[] {
         layersNames.push(layer.name + "-other");
         map.addLayer({
             id: layer.name + "-other",
-            type: "fill-extrusion",
+            //type: "fill-extrusion",
+            type: "fill",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name]],
             layout: {
                 visibility: layer.visible ? "visible" : "none",
             },
+            // paint: {
+            //     "fill-extrusion-color": ["get", "color"],
+            //     "fill-extrusion-height": ["get", "height"],
+            //     "fill-extrusion-base": 0,
+            //     "fill-extrusion-opacity": 0.8,
+            // },
             paint: {
-                "fill-extrusion-color": ["get", "color"],
-                "fill-extrusion-height": ["get", "height"],
-                "fill-extrusion-base": 0,
-                "fill-extrusion-opacity": 0.8,
+                "fill-color": ["get", "color"],
+                "fill-opacity": 0.8,
             },
         });
     });
