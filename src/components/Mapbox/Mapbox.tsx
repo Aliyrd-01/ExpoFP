@@ -92,7 +92,7 @@ export default function Mapbox() {
                     : null
             );
 
-            const boothsLayers = setLayers(store.layerStore.layers).filter((l) => l.indexOf("-other") == -1);
+            const boothsLayers = setLayers(store.layerStore.layers).filter((l) => l.indexOf("-other") === -1);
 
             setBuildingsLayer();
 

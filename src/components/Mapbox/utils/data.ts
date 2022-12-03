@@ -108,8 +108,8 @@ export const props = {
     edgeZoom: 19,
     extrusion: {
         building: 5,
-        booths: 1,
-        other: 0.5,
+        booths: 0.3,
+        other: 0.3,
     },
 };
 
@@ -292,8 +292,10 @@ export function setLayers(layers: Layer[]): string[] {
                     "icon-anchor": "bottom",
                     "icon-size": 0.25,
                     "icon-allow-overlap": true,
+                    "icon-rotation-alignment": "viewport",
+                    "icon-pitch-alignment": "viewport",
                     "icon-ignore-placement": true,
-                    "icon-offset": [0, props.extrusion.booths * -50],
+                    //"icon-offset": [0, props.extrusion.booths * -50],
                     visibility: layer.visible ? "visible" : "none",
                 },
                 paint: {
@@ -331,6 +333,7 @@ export function setBuildingsLayer(): void {
         source: "data",
         filter: ["in", "type", featureTypes.building],
         paint: {
+            "fill-extrusion-vertical-gradient": true,
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
             "fill-extrusion-base": 0,
