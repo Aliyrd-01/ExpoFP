@@ -74,8 +74,10 @@ a:visited {
     --k-mapControls-gap: clamp(14px * var(--k-scale), 1.4vmin * var(--k-scale), 18px * var(--k-scale));
     --k-mapControl-size: clamp(calc(54px * var(--k-scale)), calc(4.2vmax * var(--k-scale)), calc(70px * var(--k-scale)));
     --k-mapControl-padding: 18%;
+    --k-ws-height: 60px;
     --k-sidebarPositionTop: calc(var(--k-searchBox-height) + calc(max(16px, 1vmin)));
     --k-sidebarMaxHeight: calc(100vh - var(--k-sidebarPositionTop) - (var(--k-app-gap) * 2));
+    --k-sidebarMaxHeightWithWs: calc(100vh - var(--k-sidebarPositionTop) - (var(--k-app-gap) * 2) - var(--k-ws-height));
     --k-sidebarMenuTopHeight: clamp(200px * var(--k-scale), 10vmax * var(--k-scale), 400px * var(--k-scale));
     --k-itemsPadding-1: var(--k-spacing-lg) calc(max(26px, 1.4vw) * var(--k-scale));
     --k-bottomPadding-2: clamp(4px, 1vh, 8px) clamp(14px, 1.6vw, 20px);
