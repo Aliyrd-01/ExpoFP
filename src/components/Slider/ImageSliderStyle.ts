@@ -74,7 +74,6 @@ const fullScreenSubContainer = {
 };
 
 const backdrop = {
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
     webkitBackdropFilter: "saturate(180%) blur(20px)",
     backdropFilter: "saturate(180%) blur(20px)",
 };
