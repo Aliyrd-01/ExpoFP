@@ -40,7 +40,13 @@ export default observer(function Layout() {
     else if (data.expoFpAd) freeOrDemo = <Free />;
 
     return (
-        <div className={cn("layout", { "efp-kiosk": uiState.kiosk, "efp-layers-mode": store.layerStore.mode })}>
+        <div
+            className={cn("layout", {
+                "efp-kiosk": uiState.kiosk,
+                "efp-layers-mode": store.layerStore.mode,
+                "efp-ws-mode": uiState.wsShown,
+            })}
+        >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />
                 <LogoOverlay />
