@@ -47,7 +47,7 @@ function Ws() {
 
     return useObserver(() => (
         <section
-            className={classNames("ws", { kiosk: uiState.kiosk })}
+            className={classNames("ws")}
             ref={(n) => (s.el = n)}
             onMouseOver={mouseover}
             onMouseOut={mouseout}

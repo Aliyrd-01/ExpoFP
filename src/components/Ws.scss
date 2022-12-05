@@ -15,7 +15,7 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
     filter: brightness(97%);
     transition: opacity 0.5s;
-    //display: none !important; // WIP
+    display: none !important; // WIP
 	z-index: 100;
 
     /* .overlay-bottom & {
@@ -63,3 +63,20 @@
 // // .overlay-left .ws .ws__exhibitor.leave-to {
 // //     opacity: 0;
 // }
+
+.efp-kiosk {
+    &.efp-ws-mode {
+        .overlay-content__scrollable {
+            max-height: var(--k-sidebarMaxHeightWithWs);
+        }
+    }
+    .ws {
+        top: unset !important;
+        bottom: 0;
+        right: 0 !important;
+        width: 100vw !important;
+        height: var(--k-ws-height);
+        max-height: var(--k-ws-height);
+        align-items: center;
+    }
+}
