@@ -82,7 +82,7 @@ export default function Mapbox() {
                 1500
             );
 
-            await loadLogos();
+            await loadLogos(store.exhibitorStore.exhibitors.filter((e) => !!e.logo && e.logoInBooth));
 
             setDataSource(store.boothStore.booths);
             setMarker(

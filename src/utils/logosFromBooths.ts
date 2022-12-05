@@ -1,9 +1,12 @@
 import { Booth } from "./../store/BoothStore";
-export default function logosFromBooths(booths: Booth[], sources: string[]): Promise<SVGImageElement[]> {
+
+export type BoothImage = { image: SVGImageElement; booth: Booth };
+
+export default function logosFromBooths(booths: Booth[], sources: string[]): Promise<BoothImage[]> {
     return Promise.all(
         booths.map(
-            (booth: any, index) =>
-                new Promise<SVGImageElement>((resolve) => {
+            (booth: Booth, index) =>
+                new Promise<BoothImage>((resolve) => {
                     const src = sources[index];
                     const rect = booth.rect;
 
@@ -35,7 +38,7 @@ export default function logosFromBooths(booths: Booth[], sources: string[]): Pro
 
                         image.setAttribute("transform", `rotate(${-booth.rotate * (180 / Math.PI) || 0} ${rect.cx} ${rect.cy})`);
 
-                        resolve(image);
+                        resolve({ image, booth });
                     };
 
                     img.crossOrigin = "Anonymous";
