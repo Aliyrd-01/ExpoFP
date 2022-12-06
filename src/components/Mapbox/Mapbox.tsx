@@ -24,6 +24,7 @@ import {
     updateSelectionDataSource,
 } from "./utils/data";
 import { CurrentPosition } from "../../store/RouteStore";
+import { RegularBooth } from "../../store/BoothStore";
 
 export default function Mapbox() {
     const mapContainer = useRef(null);
@@ -82,9 +83,9 @@ export default function Mapbox() {
                 1500
             );
 
-            await loadLogos(store.exhibitorStore.exhibitors.filter((e) => !!e.logo && e.logoInBooth));
+            const logos = await loadLogos(store.boothStore.booths as RegularBooth[]);
 
-            setDataSource(store.boothStore.booths);
+            setDataSource(store.boothStore.booths, logos);
             setMarker(
                 "yah",
                 store.routeStore.defaultFrom?.rect
@@ -113,6 +114,7 @@ export default function Mapbox() {
                 const booth = store.boothStore.booths.find((b) => b.name === selectedFeature?.properties?.id);
                 store.clickBooth(booth);
             });
+         
         });
     });
 

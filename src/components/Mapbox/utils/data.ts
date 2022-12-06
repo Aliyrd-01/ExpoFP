@@ -1,4 +1,4 @@
-import { Exhibitor } from "./../../../store/ExhibitorStore";
+import { Img } from "./../../../utils/imageloader";
 import Color from "color";
 import { Feature, FeatureCollection } from "geojson";
 import mapboxgl, { GeoJSONSource, Map } from "mapbox-gl";
@@ -10,6 +10,7 @@ import { Layer } from "../../../store/LayerStore";
 import RouteStore from "../../../store/RouteStore";
 import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
+import logosFromBooths from "../../../utils/imageloader";
 import { convertPoint } from "./trannsformations";
 
 interface ExtendFeatureCollection extends FeatureCollection {
@@ -134,18 +135,10 @@ let markersObject = {};
 
 let map: Map;
 
-export function loadLogos(exhibitors: Exhibitor[]): Promise<void[]> {
-    return Promise.all(
-        exhibitors.map(
-            (exhibitor) =>
-                new Promise<void>((accept, reject) => {
-                    map.loadImage(exhibitor.logo, (error, result) => {
-                        if (!error) map.addImage(exhibitor.slug, result);
-                        accept();
-                    });
-                })
-        )
-    );
+export async function loadLogos(booths: RegularBooth[]): Promise<Img[]> {
+    const logos = await logosFromBooths(booths);
+    logos.filter((l) => !!l).forEach((image) => map.addImage(image.name, image.htmlImage));
+    return logos;
 }
 
 export function setMap(m: Map) {
@@ -193,7 +186,7 @@ export function switchViewbox(showMapbox: boolean) {
     store.mapboxStore.mapBoxSelected = showMapbox;
 }
 
-export function setDataSource(booths: Booth[]) {
+export function setDataSource(booths: Booth[], logos: Img[]) {
     fpGeo.features.forEach((f: Feature) => {
         f.properties.id = f.properties.id?.substring(1);
 
@@ -206,8 +199,14 @@ export function setDataSource(booths: Booth[]) {
                 ? null
                 : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
 
+            const logo = logos.find((l) => l?.name === booth.name);
+
+            if (logo) {
+                f.properties.scale = booth.rect.w / logo.htmlImage.width / 2;
+            }
+
             var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
-            if (exhibitor) f.properties.logo = exhibitor.slug;
+            if (exhibitor) f.properties.logo = booth.slug;
         } else {
             let color = f.properties.color;
             f.properties.color = `#${decimalToHex(color.R || color.r || 0)}${decimalToHex(color.G || color.g || 0)}${decimalToHex(
@@ -291,13 +290,12 @@ export function setLayers(layers: Layer[]): string[] {
                     "text-field": ["get", "description"],
                     "text-size": 16,
                     "icon-image": ["get", "logo"],
-                    "icon-anchor": "bottom",
-                    "icon-size": 0.25,
-                    "icon-allow-overlap": true,
+                    "icon-anchor": "center",
+                    "icon-size": ["get", "scale"],
+                    "icon-allow-overlap": false,
+                    "icon-ignore-placement": false,
                     "icon-rotation-alignment": "viewport",
                     "icon-pitch-alignment": "viewport",
-                    "icon-ignore-placement": true,
-                    //"icon-offset": [0, props.extrusion.booths * -50],
                     visibility: layer.visible ? "visible" : "none",
                 },
                 paint: {
