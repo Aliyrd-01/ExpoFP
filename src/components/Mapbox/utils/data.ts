@@ -202,7 +202,9 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
             const logo = logos.find((l) => l?.name === booth.name);
 
             if (logo) {
-                f.properties.scale = booth.rect.w / logo.htmlImage.width / 2;
+                const ration = booth.rect.w / logo.htmlImage.width;
+                console.info(booth.name, ration)
+                f.properties.scale = ration > 1 ? ration / 2 : 0.2;
             }
 
             var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
@@ -287,10 +289,10 @@ export function setLayers(layers: Layer[]): string[] {
                 minzoom: 19,
 
                 layout: {
-                    "text-field": ["get", "description"],
+                    // "text-field": ["get", "description"],
                     "text-size": 16,
                     "icon-image": ["get", "logo"],
-                    "icon-anchor": "center",
+                    "icon-anchor": "bottom",
                     "icon-size": ["get", "scale"],
                     "icon-allow-overlap": false,
                     "icon-ignore-placement": false,
