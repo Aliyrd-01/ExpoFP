@@ -11,6 +11,7 @@
         color: var(--color-gray);
         font-weight: var(--font-bold);
     }
+
     &__list {
         & > button {
             position: relative;
@@ -28,15 +29,39 @@
                 border-top-left-radius: var(--border-radius-1);
                 border-bottom-left-radius: var(--border-radius-1);
             }
+
             &:last-child {
                 border-top-right-radius: var(--border-radius-1);
                 border-bottom-right-radius: var(--border-radius-1);
             }
+
             &.isCurrent {
                 z-index: 2;
                 background: var(--color-grayLight);
                 border-color: var(--color-grayLight);
                 font-weight: var(--font-bold);
+            }
+        }
+    }
+}
+
+.efp-kiosk {
+    .efp-wayfinding-floor {
+        &__list {
+            & > button {
+                width: clamp(40px, 4vw, 52px);
+                height: clamp(40px, 6vh, 46px);
+
+                &:first-child {
+                    padding-left: 10px;
+                    border-top-left-radius: var(--k-border-radius-3);
+                    border-bottom-left-radius: var(--k-border-radius-3);
+                }
+                &:last-child {
+                    padding-right: 10px;
+                    border-top-right-radius: var(--k-border-radius-3);
+                    border-bottom-right-radius: var(--k-border-radius-3);
+                }
             }
         }
     }

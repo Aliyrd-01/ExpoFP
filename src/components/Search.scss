@@ -23,3 +23,13 @@
         }
     }
 }
+
+.efp-kiosk {
+    .search__bar {
+        & > input {
+            height: var(--k-searchBox-height);
+            padding-right: 60px;
+            font-size: 1.2em;
+        }
+    }
+}

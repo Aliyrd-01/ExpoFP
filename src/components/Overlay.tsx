@@ -28,7 +28,7 @@ export default observer(function Overlay() {
         // backdropStarted: false,
         get backdropClass() {
             let classes = "";
-            if (uiState.canvasStarted && uiState.shouldUseBackdrop && !uiState.dimmed) {
+            if (uiState.canvasStarted && uiState.shouldUseBackdrop && !uiState.dimmed && !uiState.galleryActive) {
                 classes += " -backdrop";
             }
             if (uiState.dimmed) {
@@ -186,7 +186,7 @@ export default observer(function Overlay() {
 
     return (
         <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed} ${s.kiosk}`}
+            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed}`}
             id="overlay"
             ref={el}
         >

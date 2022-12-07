@@ -171,3 +171,42 @@ div.menu__item {
     border-top: solid 1px #ddd;
     padding-bottom: 0;
 }
+
+.efp-kiosk {
+    .menu {
+        height: calc(100vh - (var(--k-app-gap) * 2));
+
+        &__item {
+            padding: var(--k-itemsPadding-1);
+        }
+        &__title {
+            background: transparent;
+            border-top-left-radius: var(--k-border-radius-1);
+            border-top-right-radius: var(--k-border-radius-1);
+        }
+        &__cat {
+            padding: var(--k-itemsPadding-1);
+            border-top: solid 1px rgba(0, 0, 0, 0.08);
+        }
+        &__cat-bullet {
+            display: none;
+        }
+        .overlay-bar {
+            position: relative;
+            height: var(--k-sidebarMenuTopHeight);
+            box-shadow: unset;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+
+            &.scrolled {
+                box-shadow: var(--k-box-shadow-1);
+            }
+        }
+        .overlay-content__scrollable {
+            top: unset;
+            max-height: unset;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
+}

@@ -108,3 +108,11 @@
         line-height: 1.4em;
     }
 }
+
+.efp-kiosk {
+    .booth {
+        &__bar {
+            margin-left: var(--k-spacing-lg);
+        }
+    }
+}

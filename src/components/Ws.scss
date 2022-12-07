@@ -16,12 +16,6 @@
     filter: brightness(97%);
     transition: opacity 0.5s;
 
-    &.kiosk {
-        margin: 10px -20px 10px 10px;
-        box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 6px;
-        border-radius: 5px;
-    }
-
     /* .overlay-bottom & {
         bottom: unset;
         top: 0;
@@ -67,3 +61,20 @@
 // // .overlay-left .ws .ws__exhibitor.leave-to {
 // //     opacity: 0;
 // }
+
+.efp-kiosk {
+    &.efp-ws-mode {
+        .overlay-content__scrollable {
+            max-height: var(--k-sidebarMaxHeightWithWs);
+        }
+    }
+    .ws {
+        top: unset !important;
+        bottom: 0;
+        right: 0 !important;
+        width: 100vw !important;
+        height: var(--k-ws-height);
+        max-height: var(--k-ws-height);
+        align-items: center;
+    }
+}
