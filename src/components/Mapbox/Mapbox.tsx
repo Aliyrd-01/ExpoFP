@@ -83,9 +83,10 @@ export default function Mapbox() {
                 1500
             );
 
-            const logos = await loadLogos(store.boothStore.booths as RegularBooth[]);
+            const logos = (await loadLogos(store.boothStore.booths as RegularBooth[]));
 
             setDataSource(store.boothStore.booths, logos);
+            
             setMarker(
                 "yah",
                 store.routeStore.defaultFrom?.rect
@@ -114,7 +115,6 @@ export default function Mapbox() {
                 const booth = store.boothStore.booths.find((b) => b.name === selectedFeature?.properties?.id);
                 store.clickBooth(booth);
             });
-         
         });
     });
 

@@ -136,8 +136,8 @@ let markersObject = {};
 let map: Map;
 
 export async function loadLogos(booths: RegularBooth[]): Promise<Img[]> {
-    const logos = await logosFromBooths(booths);
-    logos.filter((l) => !!l).forEach((image) => map.addImage(image.name, image.htmlImage));
+    const logos = (await logosFromBooths(booths)).filter((l) => !!l);
+    logos.forEach((image) => map.addImage(image.name, image.htmlImage));
     return logos;
 }
 
@@ -204,10 +204,10 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
             if (logo) {
                 const ration = booth.rect.w / logo.htmlImage.width;
                 f.properties.scale = ration > 1 ? ration / 2 : 0.2;
-            }
 
-            var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
-            if (exhibitor) f.properties.logo = booth.slug;
+                var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
+                if (exhibitor) f.properties.logo = booth.slug;
+            }
         } else {
             let color = f.properties.color;
             f.properties.color = `#${decimalToHex(color.R || color.r || 0)}${decimalToHex(color.G || color.g || 0)}${decimalToHex(
@@ -263,6 +263,8 @@ export function setLayers(layers: Layer[]): string[] {
 
         if (layerBooths.length) {
             layersNames.push(layer.name);
+            layersNames.push(layer.name + "-labels");
+
             map.addLayer({
                 id: layer.name,
                 type: "fill-extrusion",
@@ -279,7 +281,6 @@ export function setLayers(layers: Layer[]): string[] {
                 },
             });
 
-            layersNames.push(layer.name + "-labels");
             map.addLayer({
                 id: layer.name + "-labels",
                 type: "symbol",
@@ -290,11 +291,12 @@ export function setLayers(layers: Layer[]): string[] {
                 layout: {
                     "text-field": ["get", "description"],
                     "text-size": 16,
+                    "text-optional": true,
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
                     "icon-size": ["get", "scale"],
-                    "icon-allow-overlap": false,
-                    "icon-ignore-placement": false,
+                    "icon-allow-overlap": true,
+                    "icon-ignore-placement": true,
                     "icon-rotation-alignment": "viewport",
                     "icon-pitch-alignment": "viewport",
                     visibility: layer.visible ? "visible" : "none",

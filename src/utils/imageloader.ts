@@ -12,7 +12,8 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
             (booth: RegularBooth) =>
                 new Promise<Img>(async (resolve) => {
                     const src = booth.exhibitors?.find((e) => e.logoInBooth && e.logo)?.logo;
-                    if (!src) resolve(null);
+                    
+                    if (!src) return resolve(null);
                     const rect = booth.rect;
 
                     var img = await loadImage(src);
