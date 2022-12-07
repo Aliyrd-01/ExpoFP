@@ -203,7 +203,6 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
 
             if (logo) {
                 const ration = booth.rect.w / logo.htmlImage.width;
-                console.info(booth.name, ration)
                 f.properties.scale = ration > 1 ? ration / 2 : 0.2;
             }
 
@@ -289,7 +288,7 @@ export function setLayers(layers: Layer[]): string[] {
                 minzoom: 19,
 
                 layout: {
-                    // "text-field": ["get", "description"],
+                    "text-field": ["get", "description"],
                     "text-size": 16,
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
