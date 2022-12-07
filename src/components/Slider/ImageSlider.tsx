@@ -4,6 +4,7 @@ import data, { FillMode } from "./ImageSliderData";
 import ImagePreLoader from "./ImageSliderPreLoader";
 import styles from "./ImageSliderStyle";
 import { assignObjects, isTouchDevice } from "./ImageSliderUtil";
+import store, { uiState } from "../../store";
 
 interface Props {
     // Required
@@ -330,6 +331,8 @@ class ImageSlider extends React.Component<Props, State> {
         let isFullScreen = !this.state.isFullScreen;
         let { currentSlideStyle, nextSlideStyle } = this.state;
 
+        isFullScreen && uiState.shouldUseBackdrop ? store.openGallery() : store.closeGallery();
+
         this.setState(
             {
                 ...this.state,
@@ -373,7 +376,10 @@ class ImageSlider extends React.Component<Props, State> {
                 ref={(ref) => (this.rootContainer = ref)}
                 className={cn(data.ClassNameRoot, { "is-full": this.state.isFullScreen })}
                 onClick={(e) => this.onFullScreenContainerClick(e)}
-                style={styles.FullScreenContainer(this.state.isFullScreen)}
+                style={{
+                    ...styles.FullScreenContainer(this.state.isFullScreen),
+                    ...styles.Backdrop(uiState.galleryActive),
+                }}
             >
                 <div style={assignObjects(rootStyle, this.props.style)}>
                     <div style={styles.getSubContainer(this.props.width, "100%")}>
