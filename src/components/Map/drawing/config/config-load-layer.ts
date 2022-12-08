@@ -21,7 +21,7 @@ export default async function loadLayer(
     return new Promise(async (resolve, reject) => {
         if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
             try {
-                await loadJs(`https://${settings.EXPO}.expofp.com/data/fp.svg.${layer.name}.js`);
+                await loadJs(`${window["__dataUrlBase"]}fp.svg.${layer.name}.js`);
             } catch {
                 return reject();
             }
