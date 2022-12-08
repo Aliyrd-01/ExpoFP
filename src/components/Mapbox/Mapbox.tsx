@@ -96,6 +96,8 @@ export default function Mapbox() {
 
             const boothsLayers = setLayers(store.layerStore.layers).filter((l) => l.indexOf("-other") === -1);
 
+            updateRouteLines(store.routeStore);
+
             setBuildingsLayer();
 
             map.current.on("mouseenter", boothsLayers, () => (map.current.getCanvas().style.cursor = "pointer"));

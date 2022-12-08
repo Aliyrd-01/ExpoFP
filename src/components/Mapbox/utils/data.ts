@@ -217,8 +217,7 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
     });
 
     updateSelectionDataSource([...uiState.selectedBooths], store.boothStore.booths);
-    updateRouteLines(store.routeStore);
-
+   
     return map.addSource("data", { type: "geojson", data: fpGeo });
 }
 
@@ -238,14 +237,13 @@ export function updateHoverDataSource(hoveredBooths: Booth[], allBooths: Booth[]
 export function updateSelectionDataSource(selectedBooths: Booth[], allBooths: Booth[]) {
     fpGeo.features.forEach((f: Feature) => {
         if (f.properties.type === featureTypes.booth) {
-            var b = allBooths.find((booth) => booth.name === f.properties.id);
+            const b = allBooths.find((booth) => booth.name === f.properties.id);
+            const color = actualBoothColor(b);
 
-            if (selectedBooths.length && selectedBooths.indexOf(b) === -1) {
-                f.properties.color = isDark ? "#222" : "#DDD";
-                f.properties.opacity = 0;
+            if (selectedBooths.length) {
+                f.properties.color = selectedBooths.indexOf(b) === -1 ? Color(color).darken(0.7).hex() : "#f03b55";
             } else {
-                f.properties.color = actualBoothColor(b);
-                f.properties.opacity = 1;
+                f.properties.color = color;                
             }
         }
     });
@@ -277,7 +275,6 @@ export function setLayers(layers: Layer[]): string[] {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
                     "fill-extrusion-base": 0,
-                    "fill-extrusion-opacity": 0.8,
                 },
             });
 
@@ -335,7 +332,6 @@ export function setLayers(layers: Layer[]): string[] {
                 "fill-extrusion-color": ["get", "color"],
                 "fill-extrusion-height": ["get", "height"],
                 "fill-extrusion-base": 0,
-                "fill-extrusion-opacity": 0.8,
             },
         });
     });
@@ -354,7 +350,7 @@ export function setBuildingsLayer(): void {
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
             "fill-extrusion-base": 0,
-            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 17, 0.05],
+            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 17, 0.2],
         },
     });
 }
