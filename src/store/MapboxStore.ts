@@ -6,7 +6,7 @@ export default class MapboxStore {
     rootStore: RootStore;
 
     @observable mapBoxSelected = true;
-    @observable mapBoxActivated = true;
+    @observable mapBoxActivated = false;
     @observable mapBoxEnabled = !!window["__fpGeo"] && !uiState.kiosk;
 
     constructor(rootStore: RootStore) {

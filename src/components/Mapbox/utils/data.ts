@@ -111,7 +111,7 @@ export const props = {
     extrusion: {
         building: 5,
         booths: 0.3,
-        other: 0.3,
+        other: 4,
     },
 };
 
@@ -311,22 +311,31 @@ export function setLayers(layers: Layer[]): string[] {
         layersNames.push(layer.name + "-other");
         map.addLayer({
             id: layer.name + "-other",
-            //type: "fill-extrusion",
             type: "fill",
             source: "data",
-            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name]],
+            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["!in", "value", "3D"]],
             layout: {
                 visibility: layer.visible ? "visible" : "none",
             },
-            // paint: {
-            //     "fill-extrusion-color": ["get", "color"],
-            //     "fill-extrusion-height": ["get", "height"],
-            //     "fill-extrusion-base": 0,
-            //     "fill-extrusion-opacity": 0.8,
-            // },
             paint: {
                 "fill-color": ["get", "color"],
-                "fill-opacity": 0.8,
+            },
+        });
+
+        layersNames.push(layer.name + "-other-3D");
+        map.addLayer({
+            id: layer.name + "-other-3D",
+            type: "fill-extrusion",
+            source: "data",
+            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["in", "value", "3D"]],
+            layout: {
+                visibility: layer.visible ? "visible" : "none",
+            },
+            paint: {
+                "fill-extrusion-color": ["get", "color"],
+                "fill-extrusion-height": ["get", "height"],
+                "fill-extrusion-base": 0,
+                "fill-extrusion-opacity": 0.8,
             },
         });
     });

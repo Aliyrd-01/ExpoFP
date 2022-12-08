@@ -3,7 +3,6 @@ import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
-import settings from "../../../../tools/settings";
 import logosFromBooths from "../../../../utils/imageloader";
 import ImagePainter from "../painters/ImagePainter";
 import { DrawerContext } from "./../Drawer1";
