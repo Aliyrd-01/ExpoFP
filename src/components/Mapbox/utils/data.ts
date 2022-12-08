@@ -111,7 +111,7 @@ export const props = {
     extrusion: {
         building: 5,
         booths: 0.3,
-        other: 4,
+        other: 0.5,
     },
 };
 
