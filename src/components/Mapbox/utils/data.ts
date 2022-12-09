@@ -273,7 +273,7 @@ export function setLayers(layers: Layer[]): string[] {
                 },
                 paint: {
                     "fill-extrusion-color": ["get", "color"],
-                    "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 19, 0, 20, ["get", "height"]],
+                    "fill-extrusion-height": ["get", "height"],
                 },
             });
 
@@ -329,7 +329,7 @@ export function setLayers(layers: Layer[]): string[] {
             },
             paint: {
                 "fill-extrusion-color": ["get", "color"],
-                "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 19, 0, 20, ["get", "height"]],
+                "fill-extrusion-height": ["get", "height"],
             },
         });
     });
@@ -346,8 +346,7 @@ export function setBuildingsLayer(): void {
         paint: {
             "fill-extrusion-vertical-gradient": true,
             "fill-extrusion-color": ["get", "color"],
-            "fill-extrusion-height": ["get", "height"],
-            "fill-extrusion-base": 0,
+            "fill-extrusion-height": ["get", "height"],            
             "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 17, 0.2],
         },
     });
