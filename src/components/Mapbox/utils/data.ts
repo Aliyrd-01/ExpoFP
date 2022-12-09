@@ -110,7 +110,7 @@ export const props = {
     edgeZoom: 19,
     extrusion: {
         building: 5,
-        booths: 0.3,
+        booths: 0.5,
         other: 0.5,
     },
 };
@@ -217,7 +217,7 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
     });
 
     updateSelectionDataSource([...uiState.selectedBooths], store.boothStore.booths);
-   
+
     return map.addSource("data", { type: "geojson", data: fpGeo });
 }
 
@@ -243,7 +243,7 @@ export function updateSelectionDataSource(selectedBooths: Booth[], allBooths: Bo
             if (selectedBooths.length) {
                 f.properties.color = selectedBooths.indexOf(b) === -1 ? Color(color).darken(0.7).hex() : "#f03b55";
             } else {
-                f.properties.color = color;                
+                f.properties.color = color;
             }
         }
     });
@@ -273,8 +273,7 @@ export function setLayers(layers: Layer[]): string[] {
                 },
                 paint: {
                     "fill-extrusion-color": ["get", "color"],
-                    "fill-extrusion-height": ["get", "height"],
-                    "fill-extrusion-base": 0,
+                    "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 19, 0, 20, ["get", "height"]],
                 },
             });
 
@@ -283,11 +282,11 @@ export function setLayers(layers: Layer[]): string[] {
                 type: "symbol",
                 source: "data",
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name]],
-                minzoom: 19,
+                minzoom: 18,
 
                 layout: {
                     "text-field": ["get", "description"],
-                    "text-size": 16,
+                    "text-size": ["interpolate", ["linear"], ["zoom"], 18, 8, 19.5, 10, 20, 11, 20.5, 11, 21, 16, 22, 20],
                     "text-optional": true,
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
@@ -330,8 +329,7 @@ export function setLayers(layers: Layer[]): string[] {
             },
             paint: {
                 "fill-extrusion-color": ["get", "color"],
-                "fill-extrusion-height": ["get", "height"],
-                "fill-extrusion-base": 0,
+                "fill-extrusion-height": ["interpolate", ["linear"], ["zoom"], 19, 0, 20, ["get", "height"]],
             },
         });
     });

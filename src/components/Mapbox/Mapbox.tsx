@@ -83,10 +83,10 @@ export default function Mapbox() {
                 1500
             );
 
-            const logos = (await loadLogos(store.boothStore.booths as RegularBooth[]));
+            const logos = await loadLogos(store.boothStore.booths as RegularBooth[]);
 
             setDataSource(store.boothStore.booths, logos);
-            
+
             setMarker(
                 "yah",
                 store.routeStore.defaultFrom?.rect
