@@ -259,10 +259,6 @@ export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
-        var layerBooths = fpGeo.features.filter(
-            (feature) => feature.properties.type === featureTypes.booth && feature.properties.layer === layer.name
-        );
-
         layersNames.push(layer.name + "-other");
         map.addLayer({
             id: layer.name + "-other",
@@ -291,6 +287,12 @@ export function setLayers(layers: Layer[]): string[] {
                 "fill-extrusion-height": ["get", "height"],
             },
         });
+    });
+
+    layers.forEach((layer) => {
+        var layerBooths = fpGeo.features.filter(
+            (feature) => feature.properties.type === featureTypes.booth && feature.properties.layer === layer.name
+        );
 
         if (layerBooths.length) {
             layersNames.push(layer.name);
@@ -332,6 +334,7 @@ export function setLayers(layers: Layer[]): string[] {
                     "icon-pitch-alignment": "viewport",
                     visibility: layer.visible ? "visible" : "none",
                 },
+
                 paint: {
                     "text-opacity": ["get", "opacity"],
                     "text-color": settings.boothLabelColor,
