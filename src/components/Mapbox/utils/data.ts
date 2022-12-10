@@ -336,7 +336,6 @@ export function setLayers(layers: Layer[]): string[] {
                 },
 
                 paint: {
-                    "text-opacity": ["get", "opacity"],
                     "text-color": settings.boothLabelColor,
                 },
             });
@@ -356,7 +355,7 @@ export function setBuildingsLayer(): void {
             "fill-extrusion-vertical-gradient": true,
             "fill-extrusion-color": ["get", "color"],
             "fill-extrusion-height": ["get", "height"],
-            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 17, 0.2],
+            "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 19, 0.1],
         },
     });
 }
