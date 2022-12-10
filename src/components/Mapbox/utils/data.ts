@@ -187,13 +187,16 @@ export function switchViewbox(showMapbox: boolean) {
 }
 
 export function setDataSource(booths: Booth[], logos: Img[]) {
+    const avgHeight = logos.map((l) => l.htmlImage.height).reduce((a, b) => a + b, 0) / logos.length;
+    const avgArea = logos.map((l) => l.bounds.width * l.bounds.height).reduce((a, b) => a + b, 0) / logos.length;
+
     fpGeo.features.forEach((f: Feature) => {
         f.properties.id = f.properties.id?.substring(1);
 
         f.properties.height = props.extrusion[f.properties.type] || props.extrusion.booths;
 
         if (f.properties.type === featureTypes.booth) {
-            let booth = booths.filter((b) => b.name === f.properties.id)[0];
+            let booth = booths.filter((b) => b.name === f.properties.id)[0] as RegularBooth;
             f.properties.color = actualBoothColor(booth);
             f.properties.description = booth.noLabels
                 ? null
@@ -202,8 +205,9 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
             const logo = logos.find((l) => l?.name === booth.name);
 
             if (logo) {
-                const ration = booth.rect.w / logo.htmlImage.width;
-                f.properties.scale = ration > 1 ? ration / 2 : 0.2;
+                const scale = avgHeight / logo.htmlImage.height;
+                const factor = Math.sqrt(Math.max(1, (logo.bounds.height * logo.bounds.width) / avgArea)) / 5;
+                f.properties.scale = scale * factor;
 
                 var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
                 if (exhibitor) f.properties.logo = booth.slug;
@@ -259,6 +263,35 @@ export function setLayers(layers: Layer[]): string[] {
             (feature) => feature.properties.type === featureTypes.booth && feature.properties.layer === layer.name
         );
 
+        layersNames.push(layer.name + "-other");
+        map.addLayer({
+            id: layer.name + "-other",
+            type: "fill",
+            source: "data",
+            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["!in", "value", "3D"]],
+            layout: {
+                visibility: layer.visible ? "visible" : "none",
+            },
+            paint: {
+                "fill-color": ["get", "color"],
+            },
+        });
+
+        layersNames.push(layer.name + "-other-3D");
+        map.addLayer({
+            id: layer.name + "-other-3D",
+            type: "fill-extrusion",
+            source: "data",
+            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["in", "value", "3D"]],
+            layout: {
+                visibility: layer.visible ? "visible" : "none",
+            },
+            paint: {
+                "fill-extrusion-color": ["get", "color"],
+                "fill-extrusion-height": ["get", "height"],
+            },
+        });
+
         if (layerBooths.length) {
             layersNames.push(layer.name);
             layersNames.push(layer.name + "-labels");
@@ -288,6 +321,8 @@ export function setLayers(layers: Layer[]): string[] {
                     "text-field": ["get", "description"],
                     "text-size": ["interpolate", ["linear"], ["zoom"], 18, 8, 19.5, 10, 20, 11, 20.5, 11, 21, 16, 22, 20],
                     "text-optional": true,
+                    "text-allow-overlap": false,
+                    "text-ignore-placement": false,
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
                     "icon-size": ["get", "scale"],
@@ -303,35 +338,6 @@ export function setLayers(layers: Layer[]): string[] {
                 },
             });
         }
-
-        layersNames.push(layer.name + "-other");
-        map.addLayer({
-            id: layer.name + "-other",
-            type: "fill",
-            source: "data",
-            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["!in", "value", "3D"]],
-            layout: {
-                visibility: layer.visible ? "visible" : "none",
-            },
-            paint: {
-                "fill-color": ["get", "color"],
-            },
-        });
-
-        layersNames.push(layer.name + "-other-3D");
-        map.addLayer({
-            id: layer.name + "-other-3D",
-            type: "fill-extrusion",
-            source: "data",
-            filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["in", "value", "3D"]],
-            layout: {
-                visibility: layer.visible ? "visible" : "none",
-            },
-            paint: {
-                "fill-extrusion-color": ["get", "color"],
-                "fill-extrusion-height": ["get", "height"],
-            },
-        });
     });
 
     return layersNames;
@@ -346,7 +352,7 @@ export function setBuildingsLayer(): void {
         paint: {
             "fill-extrusion-vertical-gradient": true,
             "fill-extrusion-color": ["get", "color"],
-            "fill-extrusion-height": ["get", "height"],            
+            "fill-extrusion-height": ["get", "height"],
             "fill-extrusion-opacity": ["interpolate", ["linear", 0.5], ["zoom"], 16, 0.9, 17, 0.2],
         },
     });
