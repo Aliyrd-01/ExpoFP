@@ -9,5 +9,12 @@
     > img {
         display: block;
         width: 100%;
-    }
+    }   
+}
+
+.qr {
+    position: absolute;   
+    background-color: white;
+    padding: 10px;
+    box-shadow: var(--k-box-shadow-1);
 }

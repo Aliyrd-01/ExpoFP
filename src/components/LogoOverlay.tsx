@@ -5,6 +5,7 @@ import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
 import Alert from "./Alert";
+import QRCode from "react-qr-code";
 import "./Alert.scss";
 import "./LogoOverlay.scss";
 
@@ -14,7 +15,11 @@ export default function LogoOverlay() {
             const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
             let style: any;
             if (uiState.overlayPosition === "left")
-                style = { bottom: uiState.mapVisibleBottom + pad + "px", right: pad + "px", width: "5rem" };
+                style = {
+                    bottom: (uiState.kiosk && uiState.wsStarted ? remsToPixels(3.5) : 0) + uiState.mapVisibleBottom + pad + "px",
+                    right: pad + "px",
+                    width: "5rem",
+                };
             else {
                 style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
                 if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
@@ -53,6 +58,11 @@ export default function LogoOverlay() {
                         Read how to optimize it
                     </a>
                 </Alert>
+            )}
+            {uiState.kiosk && (
+                <div className="qr" style={{ bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5), left: remsToPixels(0.5) }}>
+                    <QRCode value={window.location.href} size={100} />
+                </div>
             )}
         </div>
     ));
