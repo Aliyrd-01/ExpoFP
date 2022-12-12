@@ -40,8 +40,9 @@
 
 .efp-kiosk {
     .overlay-bar-back {
-        width: 80px;
+        width: 70px;
         height: calc(var(--k-searchBox-height) - 10px);
+        padding-left: 10px;
         justify-content: center;
         align-items: center;
         align-self: center;
