@@ -467,7 +467,8 @@ $imageSliderClass: ".image-slider";
             border-top-right-radius: 0;
         }
         &__categories-booth,
-        &__categories-cat {
+        &__categories-cat,
+        &__categories-sponsorship {
             padding: var(--k-bottomPadding-2);
             border-radius: 60px;
             font-size: 1.04em;
@@ -491,12 +492,14 @@ $imageSliderClass: ".image-slider";
             padding: calc(min(2vh, 12px)) calc(min(4vw, 20px));
         }
         &__meta {
+            padding-bottom: 4px;
             font-size: 1em;
 
             & > div {
                 margin: var(--k-spacing-sm) var(--k-spacing-lg);
 
                 & > div {
+                    margin-left: 10px;
                     font-size: 0.8em;
                     line-height: 1.2em;
                 }

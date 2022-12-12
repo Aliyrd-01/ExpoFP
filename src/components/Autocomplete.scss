@@ -146,3 +146,15 @@ $input-height: 50px;
         color: var(--color-grayDark);
     }
 }
+
+.efp-kiosk {
+    #{$autocomplete} {
+        &__options {
+            & > ul {
+                li {
+                    padding: clamp(4px, 2vh, 10px) clamp(10px, 2vw, 18px);
+                }
+            }
+        }
+    }
+}
