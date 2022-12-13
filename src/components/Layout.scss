@@ -80,7 +80,7 @@ a:visited {
     --k-sidebarMaxHeightWithWs: calc(100vh - var(--k-sidebarPositionTop) - (var(--k-app-gap) * 2) - var(--k-ws-height));
     --k-sidebarMenuTopHeight: clamp(200px * var(--k-scale), 10vmax * var(--k-scale), 400px * var(--k-scale));
     --k-itemsPadding-1: var(--k-spacing-lg) calc(max(26px, 1.4vw) * var(--k-scale));
-    --k-bottomPadding-2: clamp(4px, 1vh, 8px) clamp(14px, 1.6vw, 20px);
+    --k-bottomPadding-2: clamp(4px, 1vh, 6px) clamp(12px, 1.6vw, 20px);
     --k-inputHeight: clamp(50px, 10vh, 68px);
     --k-imageHeight: clamp(120px, 12vh, 160px);
 }
