@@ -135,9 +135,23 @@ let markersObject = {};
 
 let map: Map;
 
+const canvas = document.createElement("canvas");
+var context = canvas.getContext("2d");
+function fillBg(image: HTMLImageElement) {
+    const { width, height } = image;
+    canvas.width = width;
+    canvas.height = height;
+    context.fillStyle = "white";
+    context.fillRect(0, 0, width, height);
+    context.drawImage(image, 0, 0);
+
+    return context.getImageData(0, 0, width, height);
+}
+
 export async function loadLogos(booths: RegularBooth[]): Promise<Img[]> {
     const logos = (await logosFromBooths(booths)).filter((l) => !!l);
-    logos.forEach((image) => map.addImage(image.name, image.htmlImage));
+
+    logos.forEach((image) => map.addImage(image.name, fillBg(image.htmlImage)));
     return logos;
 }
 
