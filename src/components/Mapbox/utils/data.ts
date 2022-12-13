@@ -102,7 +102,7 @@ function decimalToHex(input: string) {
 
 export const props = {
     token: "pk.eyJ1Ijoicm9kaW9ubmlrb2xhZXYiLCJhIjoiY2wwanE5aXB4MDM2NTNibGExd3k4bHhsaiJ9.wdpy8dJ1qktQXGtZYDNH3w",
-    initBearing: settings.EXPO.indexOf("expoexpo") > -1 ? getBearing() - 30 : 0,
+    initBearing:  getBearing() - 30,
     initPitch: 45,
     bearing: getBearing(),
     viewbox: getViewbox(),
