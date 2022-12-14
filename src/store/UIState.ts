@@ -102,7 +102,7 @@ export default class UIState {
     }
 
     @computed get overlayPosition() {
-        if (!this.screenSize || this.screenSize.width > 550) return "left";
+        if (!this.screenSize || this.screenSize.width > 550 || this.kiosk) return "left";
         return "bottom";
     }
 
