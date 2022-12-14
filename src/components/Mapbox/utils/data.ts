@@ -102,7 +102,7 @@ function decimalToHex(input: string) {
 
 export const props = {
     token: "pk.eyJ1Ijoicm9kaW9ubmlrb2xhZXYiLCJhIjoiY2wwanE5aXB4MDM2NTNibGExd3k4bHhsaiJ9.wdpy8dJ1qktQXGtZYDNH3w",
-    initBearing:  getBearing() - 30,
+    initBearing: getBearing() - 30,
     initPitch: 45,
     bearing: getBearing(),
     viewbox: getViewbox(),
@@ -311,6 +311,7 @@ export function setLayers(layers: Layer[]): string[] {
         if (layerBooths.length) {
             layersNames.push(layer.name);
             layersNames.push(layer.name + "-labels");
+            layersNames.push(layer.name + "-logos");
 
             map.addLayer({
                 id: layer.name,
@@ -330,15 +331,29 @@ export function setLayers(layers: Layer[]): string[] {
                 id: layer.name + "-labels",
                 type: "symbol",
                 source: "data",
-                filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name]],
+                filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["!has", "logo"]],
                 minzoom: 18,
 
                 layout: {
                     "text-field": ["get", "description"],
                     "text-size": ["interpolate", ["linear"], ["zoom"], 18, 8, 19.5, 10, 20, 11, 20.5, 11, 21, 16, 22, 20],
-                    "text-optional": true,
                     "text-allow-overlap": false,
                     "text-ignore-placement": false,
+                    visibility: layer.visible ? "visible" : "none",
+                },
+
+                paint: {
+                    "text-color": settings.boothLabelColor,
+                },
+            });
+
+            map.addLayer({
+                id: layer.name + "-logos",
+                type: "symbol",
+                source: "data",
+                filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["has", "logo"]],
+                minzoom: 18,
+                layout: {
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
                     "icon-size": ["get", "scale"],
@@ -347,10 +362,6 @@ export function setLayers(layers: Layer[]): string[] {
                     "icon-rotation-alignment": "viewport",
                     "icon-pitch-alignment": "viewport",
                     visibility: layer.visible ? "visible" : "none",
-                },
-
-                paint: {
-                    "text-color": settings.boothLabelColor,
                 },
             });
         }

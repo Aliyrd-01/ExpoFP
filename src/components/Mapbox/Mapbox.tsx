@@ -145,7 +145,7 @@ export default function Mapbox() {
 
                 if (exists) {
                     if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(layer.name, "visibility")) {
-                        ["", "-labels", "-other"].forEach((suffix) =>
+                        ["", "-labels", "-logos", "-other"].forEach((suffix) =>
                             map.current.setLayoutProperty(layer.name + suffix, "visibility", layer.visible ? "visible" : "none")
                         );
                     }
