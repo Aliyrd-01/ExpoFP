@@ -23,6 +23,7 @@
 .efp-kiosk {
     .overlay-content {
         height: auto;
+        pointer-events: auto;
 
         &__scrollable {
             top: var(--k-sidebarPositionTop);
