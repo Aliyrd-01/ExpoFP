@@ -94,6 +94,8 @@ export default function Mapbox() {
                     : null
             );
 
+            setMarker("cp", ls.actualCurrentPosition);
+
             const boothsLayers = setLayers(store.layerStore.layers).filter((l) => l.indexOf("-other") === -1);
 
             updateRouteLines(store.routeStore);
