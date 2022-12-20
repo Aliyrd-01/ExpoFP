@@ -11,7 +11,7 @@ import RouteStore from "../../../store/RouteStore";
 import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
 import logosFromBooths from "../../../utils/imageloader";
-import { convertLocalToGps } from "./trannsformations";
+import { convertLocalToGps } from "../../../utils/gps";
 
 interface ExtendFeatureCollection extends FeatureCollection {
     properties: any;

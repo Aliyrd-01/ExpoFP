@@ -6,10 +6,9 @@ import FloorPlanLoader from "./floorplan.loader";
 import "./services/routing";
 import store from "./store";
 import { CurrentPosition, Route } from "./store/RouteStore";
-import { convertLocalToGps } from "./components/Mapbox/utils/trannsformations";
 import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
-import { convertGpsToLocal } from "./utils/gps";
+import { convertGpsToLocal, convertLocalToGps } from "./utils/gps";
 
 trackEvent("load");
 sendEventToGa(`FP`, GaEventActions.Load, ``);
