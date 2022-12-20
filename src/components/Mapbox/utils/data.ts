@@ -11,7 +11,7 @@ import RouteStore from "../../../store/RouteStore";
 import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
 import logosFromBooths from "../../../utils/imageloader";
-import { convertPoint } from "./trannsformations";
+import { convertLocalToGps } from "./trannsformations";
 
 interface ExtendFeatureCollection extends FeatureCollection {
     properties: any;
@@ -160,7 +160,7 @@ export function setMap(m: Map) {
 }
 
 export function convertSvgPoint(x: number, y: number) {
-    return convertPoint(x, y, fpGeo.properties.config);
+    return convertLocalToGps(x, y, fpGeo.properties.config);
 }
 
 export function moveToRect(
@@ -395,7 +395,7 @@ export function setMarker(type: "from" | "to" | "yah" | "cp", point: Point) {
     }
 
     const { x, y } = point;
-    const lngLat = convertPoint(x, y, fpGeo.properties.config);
+    const lngLat = convertLocalToGps(x, y, fpGeo.properties.config);
 
     if (!marker) {
         var htmlElement = document.createElement("div");
@@ -453,8 +453,8 @@ export function updateRouteLines(routeStore: RouteStore) {
 
     var points = [];
     if (lastPoint) {
-        points = routeLines.map((rl) => convertPoint(rl.p0.x, rl.p0.y, fpGeo.properties.config));
-        points.push(convertPoint(lastPoint.x, lastPoint.y, fpGeo.properties.config));
+        points = routeLines.map((rl) => convertLocalToGps(rl.p0.x, rl.p0.y, fpGeo.properties.config));
+        points.push(convertLocalToGps(lastPoint.x, lastPoint.y, fpGeo.properties.config));
     }
 
     var fc: FeatureCollection = {

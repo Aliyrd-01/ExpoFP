@@ -13,7 +13,7 @@ let robustAcos = (value: number) => {
     return value;
 };
 
-export function convertPoint(x: number, y: any, geoConfig: any): [number, number] {
+export function convertLocalToGps(x: number, y: any, geoConfig: any): [number, number] {
     var diagAngle = -getAngle(geoConfig.p0, geoConfig.p2, { x: geoConfig.p0.x + 10000, y: geoConfig.p0.y });
     var pointAngle = -getAngle(geoConfig.p0, { x, y }, { x: geoConfig.p0.x + 10000, y: geoConfig.p0.y });
 
