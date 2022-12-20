@@ -42,22 +42,24 @@ function bearing(lat1: number, lng1: number, lat2: number, lng2: number): number
 }
 
 export interface GpsConfig {
+    bearing?: number;
     p0: { x: number; y: number; lat: number; lng: number };
-    p1: { x: number; y: number; lat: number; lng: number };
+    p1?: { x: number; y: number; lat: number; lng: number };
     p2: { x: number; y: number; lat: number; lng: number };
+    style?: string;
 }
 
 export function convertGpsToLocal(latitude: number, longitude: number, config: GpsConfig): Point {
     let currLat = latitude;
     let currLng = longitude;
 
-    let { p0, p1 } = config;
+    let { p0, p2 } = config;
 
-    const fullGpsDistance = distance(p0.lat, p0.lng, p1.lat, p1.lng);
-    const globalGpsBearing = bearing(p0.lat, p0.lng, p1.lat, p1.lng);
+    const fullGpsDistance = distance(p0.lat, p0.lng, p2.lat, p2.lng);
+    const globalGpsBearing = bearing(p0.lat, p0.lng, p2.lat, p2.lng);
 
-    const fullSvgLength = lineLength(p0, p1);
-    const fullSvgAngle = lineAngle(p0, p1);
+    const fullSvgLength = lineLength(p0, p2);
+    const fullSvgAngle = lineAngle(p0, p2);
 
     // Distance between top left point of plan and current point
     let pointDistance = distance(p0.lat, p0.lng, currLat, currLng);
@@ -71,15 +73,15 @@ export function convertGpsToLocal(latitude: number, longitude: number, config: G
     // Current point position in SVG coordinates.
     let locationPixel = rotatePoint(deltaDegrees, shiftPoint(p0, fullSvgLength * deltaDistanсe, fullSvgAngle), p0.x, p0.y);
 
-    let distToCenter = lineLength(locationPixel, lineCenter(config.p0, config.p1));
-    let diagonale = lineLength(config.p0, config.p1);
+    let distToCenter = lineLength(locationPixel, lineCenter(config.p0, config.p2));
+    let diagonale = lineLength(config.p0, config.p2);
 
     if (distToCenter > 5 * diagonale) logger.warn("Current position too far");
 
     return locationPixel;
 }
 
-export function convertLocalToGps(x: number, y: any, geoConfig: any): [number, number] {
+export function convertLocalToGps(x: number, y: number, geoConfig: GpsConfig): [number, number] {
     var diagAngle = -getAngle(geoConfig.p0, geoConfig.p2, { x: geoConfig.p0.x + 10000, y: geoConfig.p0.y });
     var pointAngle = -getAngle(geoConfig.p0, { x, y }, { x: geoConfig.p0.x + 10000, y: geoConfig.p0.y });
 

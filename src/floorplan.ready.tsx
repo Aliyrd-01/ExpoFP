@@ -8,7 +8,9 @@ import store from "./store";
 import { CurrentPosition, Route } from "./store/RouteStore";
 import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
-import { convertGpsToLocal, convertLocalToGps } from "./utils/gps";
+import { convertGpsToLocal, convertLocalToGps, GpsConfig } from "./utils/gps";
+import data from "./data/index";
+import logger from "./tools/logger";
 
 trackEvent("load");
 sendEventToGa(`FP`, GaEventActions.Load, ``);
@@ -34,21 +36,34 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.renderTarget
         );
 
+        data.trackGPS = true;
+
+        if (data.trackGPS && window["__fpGeo"]?.properties?.config) {
+            this.trackGps();
+        }
+
+        this.resolveReady();
+    }
+
+    private trackGps() {
         let watcher = navigator.geolocation.watchPosition(
             (pos) => {
                 try {
                     const localPoint = convertGpsToLocal(
                         pos.coords.latitude,
                         pos.coords.longitude,
-                        window["__fpGeo"].properties.config
+                        window["__fpGeo"].properties.config as GpsConfig
                     );
-                    const gpsPoint = convertLocalToGps(localPoint.x, localPoint.y, window["__fpGeo"].properties.config);
+                    const gpsPoint = convertLocalToGps(
+                        localPoint.x,
+                        localPoint.y,
+                        window["__fpGeo"].properties.config as GpsConfig
+                    );
 
-                    const current = new CurrentPosition(localPoint.x, localPoint.y, null, 0, gpsPoint[0], gpsPoint[1]);
-                    store.routeStore.selectCurrentPosition(current, true);
-                    // updadeCurrentPosition(pos.coords);
+                    const currentPosition = new CurrentPosition(localPoint.x, localPoint.y, null, 0, gpsPoint[0], gpsPoint[1]);
+                    store.routeStore.selectCurrentPosition(currentPosition, false);
                 } catch (e) {
-                    console.error(e);
+                    logger.error(e);
                 }
             },
             (err) => {
@@ -63,8 +78,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 timeout: 10000,
             }
         );
-
-        this.resolveReady();
     }
 
     selectBooth(nameOrExternalId: string | string[]) {
