@@ -74,6 +74,10 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         };
     }
 
+    if (!fpConfig) {
+        fpConfig = window["__fpGeo"].properties.config;
+    }
+
     let point: Point =
         fpConfig && position.lat && position.lng ? convertGpsToLocal(position.lat, position.lng, fpConfig) : position;
 

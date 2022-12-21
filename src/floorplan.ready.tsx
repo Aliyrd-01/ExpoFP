@@ -37,7 +37,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
         );
 
         data.trackGPS = true;
-
         if (data.trackGPS && window["__fpGeo"]?.properties?.config) {
             this.trackGps();
         }
@@ -54,13 +53,15 @@ export default class FloorPlanReady extends FloorPlanLoader {
                         pos.coords.longitude,
                         window["__fpGeo"].properties.config as GpsConfig
                     );
-                    const gpsPoint = convertLocalToGps(
+
+                    const currentPosition = new CurrentPosition(
                         localPoint.x,
                         localPoint.y,
-                        window["__fpGeo"].properties.config as GpsConfig
+                        null,
+                        0,
+                        pos.coords.latitude,
+                        pos.coords.longitude
                     );
-
-                    const currentPosition = new CurrentPosition(localPoint.x, localPoint.y, null, 0, gpsPoint[0], gpsPoint[1]);
                     store.routeStore.selectCurrentPosition(currentPosition, false);
                 } catch (e) {
                     logger.error(e);
