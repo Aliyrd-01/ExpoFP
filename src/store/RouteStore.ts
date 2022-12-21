@@ -122,6 +122,11 @@ export default class RouteStore {
     }
 
     @action findLocation() {
+        if (store.mapboxStore.showMapbox) {
+            uiState.moveToLocation = true;
+            return;
+        }
+
         if (store.routeStore.currentPosition) {
             const cp = store.routeStore.currentPosition;
             uiState.moveToRect = Rect.fromCxcywh(cp.x, cp.y, 1000, 1000);

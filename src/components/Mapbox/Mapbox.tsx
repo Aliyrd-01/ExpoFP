@@ -22,6 +22,7 @@ import {
     updateHoverDataSource,
     updateRouteLines,
     updateSelectionDataSource,
+    moveToLocation,
 } from "./utils/data";
 import { CurrentPosition } from "../../store/RouteStore";
 import { RegularBooth } from "../../store/BoothStore";
@@ -207,7 +208,9 @@ export default function Mapbox() {
     // View switching
     useReaction(
         () => store.mapboxStore.showMapbox,
-        () => switchViewbox(store.mapboxStore.showMapbox)
+        () => {
+            switchViewbox(store.mapboxStore.showMapbox);
+        }
     );
 
     // Move to booths
@@ -230,6 +233,15 @@ export default function Mapbox() {
             if (!uiState.moveToRect || !store.mapboxStore.showMapbox) return;
             moveToRect(uiState.moveToRect, 15);
             uiState.moveToRect = null;
+        }
+    );
+
+    // Move to Location
+    useReaction(
+        () => uiState.moveToLocation,
+        () => {
+            if (!uiState.moveToLocation || !store.mapboxStore.showMapbox) return;
+            moveToLocation();
         }
     );
 

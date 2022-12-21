@@ -33,6 +33,7 @@ export default class UIState {
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
     @observable moveToRect: Rect = null;
+    @observable moveToLocation = false;
     @observable menu = false;
     @observable searchFocused = false;
     @observable printingPdf = false;

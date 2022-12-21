@@ -7,7 +7,7 @@ import { svgArea } from "../../../data/svg";
 import store, { uiState } from "../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../store/BoothStore";
 import { Layer } from "../../../store/LayerStore";
-import RouteStore from "../../../store/RouteStore";
+import RouteStore, { CurrentPosition } from "../../../store/RouteStore";
 import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
 import logosFromBooths from "../../../utils/imageloader";
@@ -180,6 +180,23 @@ export function moveToRect(
         duration,
         pitch,
         bearing,
+    });
+}
+
+export function moveToLocation(duration: number = 1000, pitch: number = props.initPitch, bearing: number = props.initBearing) {
+    const currentPosition = store.routeStore.currentPosition;
+    const { lng, lat } = currentPosition;
+
+    map.flyTo({
+        center: [lng, lat],
+        essential: true,
+        duration,
+        pitch,
+        bearing,
+    });
+
+    map.once("moveend", () => {
+        uiState.moveToLocation = false;
     });
 }
 
@@ -385,7 +402,7 @@ export function setBuildingsLayer(): void {
     });
 }
 
-export function setMarker(type: "from" | "to" | "yah" | "cp", point: Point) {
+export function setMarker(type: "from" | "to" | "yah" | "cp", point: CurrentPosition) {
     var marker = markersObject[type];
 
     if (!point) {
@@ -395,7 +412,8 @@ export function setMarker(type: "from" | "to" | "yah" | "cp", point: Point) {
     }
 
     const { x, y } = point;
-    const lngLat = convertLocalToGps(x, y, fpGeo.properties.config);
+    const lngLat: [number, number] =
+        point.lat && point.lng ? [point.lng, point.lat] : convertLocalToGps(x, y, fpGeo.properties.config);
 
     if (!marker) {
         var htmlElement = document.createElement("div");
