@@ -42,11 +42,9 @@ function bearing(lat1: number, lng1: number, lat2: number, lng2: number): number
 }
 
 export interface GpsConfig {
-    bearing?: number;
     p0: { x: number; y: number; lat: number; lng: number };
     p1?: { x: number; y: number; lat: number; lng: number };
     p2: { x: number; y: number; lat: number; lng: number };
-    style?: string;
 }
 
 export function convertGpsToLocal(latitude: number, longitude: number, config: GpsConfig): Point {
