@@ -72,7 +72,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
                     navigator.geolocation.clearWatch(watcher);
                     watcher = null;
                 }
-                setTimeout(() => this.trackGps(), 3000);
+                setTimeout(() => this.trackGps(), 1000);
             },
             {
                 maximumAge: 0,
