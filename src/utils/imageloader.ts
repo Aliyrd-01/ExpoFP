@@ -12,7 +12,7 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
             (booth: RegularBooth) =>
                 new Promise<Img>(async (resolve) => {
                     const src = booth.exhibitors?.find((e) => e.logoInBooth && e.logo)?.logo;
-                    
+
                     if (!src) return resolve(null);
                     const rect = booth.rect;
 
@@ -46,15 +46,15 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
         svgImages.map(
             (image) =>
                 new Promise<Img>(async (resolve, reject) => {
-                    var img = await loadImage(image.href.animVal);                    
+                    var img = await loadImage(image.href.animVal);
                     resolve(
                         img
                             ? {
                                   bounds: {
-                                      x: img.x,
-                                      y: img.y,
-                                      width: img.width,
-                                      height: img.height,
+                                      x: image.x.animVal.value,
+                                      y: image.y.animVal.value,
+                                      width: image.width.animVal.value,
+                                      height: image.height.animVal.value,
                                       angle: image.transform?.animVal[0]?.angle ?? 0,
                                   },
                                   htmlImage: img,
