@@ -14,6 +14,11 @@ export default function validateData(data: Data) {
     if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
 
+    if (data.trackGPS === undefined) data.trackGPS = false;
+    if (data.mapboxEnabled === undefined) data.mapboxEnabled = true;
+    if (data.show3dMap === undefined) data.show3dMap = false;
+    if (data.showModeSwitch === undefined) data.showModeSwitch = true;
+
     // temporary workaround for invalid data.js
     if (data.exhibitors.length > 0) {
         for (const booth of data.booths) {

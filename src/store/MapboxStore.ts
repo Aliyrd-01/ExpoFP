@@ -1,13 +1,15 @@
 import { uiState } from "./index";
 import { computed, observable, action } from "mobx";
 import RootStore from "./RootStore";
+import data from "../data";
 
 export default class MapboxStore {
     rootStore: RootStore;
 
     @observable mapBoxSelected = true;
-    @observable mapBoxActivated = false;
-    @observable mapBoxEnabled = !!window["__fpGeo"] && !uiState.kiosk;
+    @observable showModeSwitch = data.showModeSwitch;
+    @observable mapBoxActivated = data.show3dMap;
+    @observable mapBoxEnabled = !!window["__fpGeo"] && data.mapboxEnabled && !uiState.kiosk;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
