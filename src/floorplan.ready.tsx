@@ -36,8 +36,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.renderTarget
         );
 
-        data.trackGPS = true;
-        if (data.trackGPS && window["__fpGeo"]?.properties?.config) {
+        data.autoTrackingGPS = true;
+        if (data.autoTrackingGPS && window["__fpGeo"]?.properties?.config) {
             this.trackGps();
         }
 

@@ -30,7 +30,7 @@ interface Data {
     hideRegisterToAttendLink: boolean;
     hideDownloadPdfLink: boolean;
     hideBookmarksLink: boolean;
-    trackGPS: boolean;
+    autoTrackingGPS: boolean;
 }
 
 interface RawCategory {
