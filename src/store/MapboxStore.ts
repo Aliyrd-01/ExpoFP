@@ -7,8 +7,8 @@ export default class MapboxStore {
     rootStore: RootStore;
 
     @observable mapBoxSelected = true;
-    @observable showModeSwitch = data.showModeSwitch;
-    @observable mapBoxActivated = data.show3dMap;
+    @observable hideModeSwitchButton = data.hideModeSwitchButton;
+    @observable mapBoxActivated = !data.hide3dMap;
     @observable mapBoxEnabled = !!window["__fpGeo"] && data.mapboxEnabled && !uiState.kiosk;
 
     constructor(rootStore: RootStore) {
