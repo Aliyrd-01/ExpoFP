@@ -5,7 +5,7 @@ import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
 import store, { layersStore, uiState } from "../../../../store";
 import settings from "../../../../tools/settings";
-import { convertGpsToLocal } from "../../../../utils/gps";
+import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
@@ -32,7 +32,7 @@ let toColor = Color("#FF9E2C");
 
 export function mapCurrentPosition(position: CurrentPosition): Point {
     var mapping = null;
-    var fpConfig = null;
+    var fpConfig: GpsConfig = null;
 
     if (settings.EXPO === "money2020usa") {
         mapping = {
@@ -63,19 +63,23 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
 
         fpConfig = {
             p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
-            p1: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
+            p2: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
         };
     }
 
     if (settings.EXPO.indexOf("xpmusic-conference22") > -1) {
         fpConfig = {
             p0: { lat: 24.744760034152826, lng: 46.535945439716905, x: 550, y: 1350 },
-            p1: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505 },
+            p2: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505 },
         };
     }
 
+    if (!fpConfig) {
+        fpConfig = window["__fpGeo"].properties.config;
+    }
+
     let point: Point =
-        fpConfig && position.lat && position.lng ? convertGpsToLocal(position.lat, position.lng, fpConfig) : position;
+        fpConfig && position.lat && position.lng ? position : convertGpsToLocal(position.lat, position.lng, fpConfig);
 
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;

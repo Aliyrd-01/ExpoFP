@@ -7,11 +7,11 @@ import { svgArea } from "../../../data/svg";
 import store, { uiState } from "../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../store/BoothStore";
 import { Layer } from "../../../store/LayerStore";
-import RouteStore from "../../../store/RouteStore";
+import RouteStore, { CurrentPosition } from "../../../store/RouteStore";
 import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
 import logosFromBooths from "../../../utils/imageloader";
-import { convertPoint } from "./trannsformations";
+import { convertLocalToGps } from "../../../utils/gps";
 
 interface ExtendFeatureCollection extends FeatureCollection {
     properties: any;
@@ -160,7 +160,7 @@ export function setMap(m: Map) {
 }
 
 export function convertSvgPoint(x: number, y: number) {
-    return convertPoint(x, y, fpGeo.properties.config);
+    return convertLocalToGps(x, y, fpGeo.properties.config);
 }
 
 export function moveToRect(
@@ -180,6 +180,23 @@ export function moveToRect(
         duration,
         pitch,
         bearing,
+    });
+}
+
+export function moveToLocation(duration: number = 1000, pitch: number = props.initPitch, bearing: number = props.initBearing) {
+    const currentPosition = store.routeStore.currentPosition;
+    const { lng, lat } = currentPosition;
+
+    map.flyTo({
+        center: [lng, lat],
+        essential: true,
+        duration,
+        pitch,
+        bearing,
+    });
+
+    map.once("moveend", () => {
+        uiState.moveToLocation = false;
     });
 }
 
@@ -385,7 +402,7 @@ export function setBuildingsLayer(): void {
     });
 }
 
-export function setMarker(type: "from" | "to" | "yah" | "cp", point: Point) {
+export function setMarker(type: "from" | "to" | "yah" | "cp", point: CurrentPosition) {
     var marker = markersObject[type];
 
     if (!point) {
@@ -395,13 +412,15 @@ export function setMarker(type: "from" | "to" | "yah" | "cp", point: Point) {
     }
 
     const { x, y } = point;
-    const lngLat = convertPoint(x, y, fpGeo.properties.config);
+    const lngLat: [number, number] =
+        point.lat && point.lng ? [point.lng, point.lat] : convertLocalToGps(x, y, fpGeo.properties.config);
 
     if (!marker) {
         var htmlElement = document.createElement("div");
         htmlElement.className = `marker ${type}`;
         marker = new mapboxgl.Marker(htmlElement, {
-            rotationAlignment: type === "cp" || type === "from" ? "map" : "auto",
+            rotationAlignment: "auto",
+            // rotationAlignment: type === "cp" || type === "from" ? "map" : "auto",
         }).setLngLat(lngLat);
 
         marker.addTo(map);
@@ -453,8 +472,8 @@ export function updateRouteLines(routeStore: RouteStore) {
 
     var points = [];
     if (lastPoint) {
-        points = routeLines.map((rl) => convertPoint(rl.p0.x, rl.p0.y, fpGeo.properties.config));
-        points.push(convertPoint(lastPoint.x, lastPoint.y, fpGeo.properties.config));
+        points = routeLines.map((rl) => convertLocalToGps(rl.p0.x, rl.p0.y, fpGeo.properties.config));
+        points.push(convertLocalToGps(lastPoint.x, lastPoint.y, fpGeo.properties.config));
     }
 
     var fc: FeatureCollection = {
