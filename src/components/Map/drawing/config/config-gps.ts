@@ -5,6 +5,7 @@ import logger from "../../../../tools/logger";
 import data from "../../../../data";
 
 export default function configGPS() {
+    data.autoTrackingGPS = true;
     if (data.autoTrackingGPS && store.mapboxStore.mapBoxEnabled) {
         trackGPS();
     }
