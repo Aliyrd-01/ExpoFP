@@ -6,8 +6,10 @@ import configDim from "./config-dim";
 import configMatrix from "./config-matrix";
 import configWf from "./config-wf";
 import configYah from "./config-yah";
+import configGPS from "./config-gps";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
+import data from "../../../../data";
 
 let _context: DrawerContext;
 export let getContext = () => _context;
@@ -71,4 +73,5 @@ export default function configAll(context: DrawerContext = _context): void {
     };
 
     configWf(context, basePriority++, true);
+    configGPS();
 }
