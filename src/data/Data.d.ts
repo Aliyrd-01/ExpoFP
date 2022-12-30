@@ -31,8 +31,8 @@ interface Data {
     hideDownloadPdfLink: boolean;
     hideBookmarksLink: boolean;
     autoTrackingGPS: boolean;
-    mapboxEnabled: boolean;
-    hide3dMap: boolean;
+    allow3dView: boolean;
+    hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;
 }
 
