@@ -3,9 +3,10 @@ import { CurrentPosition } from "../../../../store/RouteStore";
 import store from "../../../../store";
 import logger from "../../../../tools/logger";
 import data from "../../../../data";
+import settings from "../../../../tools/settings";
 
 export default function configGPS() {
-    data.autoTrackingGPS = true;
+    data.autoTrackingGPS = settings.EXPO.startsWith("mapbox") || settings.EXPO.startsWith("serge");
     if (data.autoTrackingGPS && store.mapboxStore.mapBoxEnabled) {
         trackGPS();
     }
