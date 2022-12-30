@@ -36,50 +36,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.renderTarget
         );
 
-        data.trackGPS = true;
-        if (data.trackGPS && window["__fpGeo"]?.properties?.config) {
-            this.trackGps();
-        }
-
         this.resolveReady();
-    }
-
-    private trackGps() {
-        let watcher = navigator.geolocation.watchPosition(
-            (pos) => {
-                try {
-                    const localPoint = convertGpsToLocal(
-                        pos.coords.latitude,
-                        pos.coords.longitude,
-                        window["__fpGeo"].properties.config as GpsConfig
-                    );
-
-                    const currentPosition = new CurrentPosition(
-                        localPoint.x,
-                        localPoint.y,
-                        null,
-                        0,
-                        pos.coords.latitude,
-                        pos.coords.longitude
-                    );
-                    store.routeStore.selectCurrentPosition(currentPosition, false);
-                } catch (e) {
-                    logger.error(e);
-                }
-            },
-            (err) => {
-                if (watcher) {
-                    navigator.geolocation.clearWatch(watcher);
-                    watcher = null;
-                }
-                setTimeout(() => this.trackGps(), 1000);
-            },
-            {
-                maximumAge: 0,
-                enableHighAccuracy: true,
-                timeout: 10000,
-            }
-        );
     }
 
     selectBooth(nameOrExternalId: string | string[]) {
