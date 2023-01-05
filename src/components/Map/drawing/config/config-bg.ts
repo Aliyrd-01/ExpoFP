@@ -29,7 +29,11 @@ export default async function configBg(
         .selectAll(":scope > g[data-is-editable='false'] path, :scope > path[data-tagname='ptext']")
         .nodes() as SVGElement[];
 
-    const fpImages = selected.selectAll(":scope > g[data-is-editable='false'] image").nodes() as SVGImageElement[];
+    const fpImages = (
+        window["__fpVersion"] > 5
+            ? selected.selectAll(":scope image").nodes()
+            : selected.selectAll(":scope > g[data-is-editable='false'] image").nodes()
+    ) as SVGImageElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") addPath(el as SVGPathElement);
