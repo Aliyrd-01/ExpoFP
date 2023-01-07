@@ -8,23 +8,9 @@ import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import "./Floors.scss";
 
-function parseName(description: string): string {
-    const parts = description.replace(/"/g, "").split(" ");
-    if (parts.length === 1) return description.substring(0, 2).toUpperCase();
-
-    var name: string;
-    if (Number.isInteger(parseInt(parts[0]))) {
-        name = parts[0] + parts[1][0];
-    } else if (Number.isInteger(parseInt(parts[1]))) {
-        name = parts[0][0] + parts[1];
-    } else name = parts[0][0] + parts[1][0];
-
-    return name.toLocaleUpperCase();
-}
-
 var timeout = null;
 export default function Floors() {
-    var data: { active: boolean; description: string; disabled: boolean }[] = [];
+    var data: { shortName: string; active: boolean; description: string; disabled: boolean }[] = [];
 
     const s = useLocalStore(() => ({
         get className() {
@@ -65,6 +51,7 @@ export default function Floors() {
             .filter((l) => !l.frozen)
             .map((l) => {
                 return {
+                    shortName: l.shortName,
                     description: l.description,
                     active: l.visible,
                     disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
@@ -81,7 +68,7 @@ export default function Floors() {
                             onClick={() => click(f.description)}
                             title={f.description}
                         >
-                            {parseName(f.description)}
+                            {f.shortName}
                         </div>
                     ))}
                 </div>

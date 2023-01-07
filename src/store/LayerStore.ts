@@ -36,6 +36,20 @@ export class Layer {
 
     @observable loaded: boolean;
     @observable visible: boolean;
+
+    get shortName(): string {
+        const parts = this.description.replace(/"/g, "").split(" ");
+        if (parts.length === 1) return this.description.substring(0, 2).toUpperCase();
+    
+        var name: string;
+        if (Number.isInteger(parseInt(parts[0]))) {
+            name = parts[0] + parts[1][0];
+        } else if (Number.isInteger(parseInt(parts[1]))) {
+            name = parts[0][0] + parts[1];
+        } else name = parts[0][0] + parts[1][0];
+    
+        return name.toLocaleUpperCase();
+    }
 }
 
 export default class LayerStore {

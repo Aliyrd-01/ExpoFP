@@ -129,10 +129,10 @@ function Wayfinding() {
                             ? true
                             : false
                     }
-                    floors={store.routeStore.layers.map((l) => l.description)}
+                    floors={store.routeStore.layers.map((l) => l.shortName)}
                     currentFloor={store?.routeStore.layers.find((l) => l.visible)?.description}
                     onClickFloor={(floor) =>
-                        store.layerStore.updateVisibility(store.layerStore.layers.find((l) => l.description === floor).name, true)
+                        store.layerStore.updateVisibility(store.layerStore.layers.find((l) => l.shortName === floor).name, true)
                     }
                     routeFound={!routeNotFound}
                     options={options()}
