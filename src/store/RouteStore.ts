@@ -60,7 +60,7 @@ export default class RouteStore {
         if (!this.currentPosition) return null;
         return (
             this.rootStore.boothStore.booths
-                .filter((b) => b.visible)
+                .filter((b) => b.visible && b.rect)
                 .sort(
                     (b1, b2) =>
                         lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
