@@ -34,7 +34,7 @@ export function iniAllBooths(store: RootStore) {
 
             boothReg.exhibitors = boothReg.exhibitors.sort((a: Exhibitor, b: Exhibitor) => {
                 if (a.featured !== b.featured) return a.featured ? -1 : 1;
-                return a.name > b.name ? 1 : -1;
+                return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
             });
         }
         booths.push(b);
