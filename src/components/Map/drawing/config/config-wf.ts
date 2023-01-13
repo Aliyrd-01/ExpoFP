@@ -22,6 +22,8 @@ let scale: number = null;
 const totalPoints = 700;
 const isDebug = false;
 
+const blinkCounter = 5;
+
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
 
@@ -79,7 +81,7 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     }
 
     let point: Point =
-        fpConfig && position.lat && position.lng ? position : convertGpsToLocal(position.lat, position.lng, fpConfig);
+        fpConfig && position.lat && position.lng ? convertGpsToLocal(position.lat, position.lng, fpConfig) : position;
 
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
@@ -91,6 +93,65 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     cp.y += shift.y;
 
     return cp;
+}
+
+let blinkCancellation = null;
+let blinkTimeout = null;
+let counter = 0;
+function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {
+    if (blinkTimeout) clearTimeout(blinkTimeout);
+    if (blinkCancellation) blinkCancellation();
+    if (counter) return;
+
+    blinkTimeout = setTimeout(() => {
+        blinkTimeout = null;
+        if (routePoints.length) blinkCancellation = blinkCircle(context, painter, startIndex);
+    }, 1000);
+}
+
+let currentIndex: number;
+
+function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: number): () => void {
+    const updateBlink = (painter: RectPainter, visible: boolean) => {
+        for (let i = 0; i < blinkCounter; i++) {
+            painter.updateVisible(`Blink_${i.toString()}`, visible);
+            painter.updateSkipdim(`Blink_${i.toString()}`, visible);
+        }
+    };
+
+    const cIndex = () => startIndex || routePoints.length - 1;
+
+    const st = () => {
+        for (let i = 0; i < blinkCounter; i++) {
+            const point = routePoints[currentIndex - i];
+            if (point) painter.updateCenter(`Blink_${i.toString()}`, [point.x, point.y]);
+        }
+
+        if (currentIndex <= 0) {
+            currentIndex = cIndex();
+            counter++;
+        }
+
+        if (counter > 1) {
+            clearInterval(blinkStepInterval);
+            updateBlink(painter, false);
+        }
+
+        currentIndex--;
+    };
+
+    currentIndex = cIndex();
+
+    const interval = 4000 / currentIndex;
+    let blinkStepInterval = null;
+
+    updateBlink(painter, true);
+    blinkStepInterval = setInterval(() => context.requireUpdate(st), Math.min(40, interval));
+
+    return () => {
+        clearInterval(blinkStepInterval);
+        context.requireUpdate(() => updateBlink(painter, false));
+    };
 }
 
 function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
@@ -191,8 +252,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     if (data.hideDirections) return;
 
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
+    const blinkDrawer = context.requirePainter("BLINK", RectPainter, painterOrderPriority + 1, visible);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
+
+    const blinkCanvas = createCircleCanvas(6, context.pixelRatio, Color("#c1e4f5").hex());
 
     const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
@@ -206,6 +270,17 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             center: [0, 0],
             deltaPts: [-pointCanvas.width / 2, -pointCanvas.width / 2, pointCanvas.width, pointCanvas.width],
             canvasTmp: pointCanvas,
+            texPosition: "lefttop",
+            visible: isDebug,
+        });
+    }
+
+    for (let i = 0; i < blinkCounter; i++) {
+        blinkDrawer.addObject({
+            id: `Blink_${i.toString()}`,
+            center: [0, 0],
+            deltaPts: [-blinkCanvas.width / 2, -blinkCanvas.width / 2, blinkCanvas.width / 2, blinkCanvas.width / 2],
+            canvasTmp: blinkCanvas,
             texPosition: "lefttop",
             visible: isDebug,
         });
@@ -289,7 +364,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         store.routeStore.updateRoutePoints(routeLines.filter((gl) => !gl.virtual));
     }
 
-    function updateCurrentPosition() {
+    function updateCurrentPosition(): number {
         let position = store.routeStore.currentPosition;
 
         if (position) {
@@ -302,7 +377,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             wfDrawer.updateVisible("currentLocation", false);
         }
 
-        if (!position || !routePoints.length) return;
+        if (!position || !routePoints.length) return 0;
 
         const shortestrPerp = routePoints
             .map((p, i) => {
@@ -314,7 +389,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             })
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        if (!shortestrPerp) return;
+        if (!shortestrPerp || shortestrPerp.l > 100) return 0;
 
         // Recalculate logic here
 
@@ -352,6 +427,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (shortestrPerp.l < 200) wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
 
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
+
+        return shortestrPerp.i;
     }
 
     if (context.updatable) {
@@ -362,21 +439,27 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
-                updateCurrentPosition();
+                var index = updateCurrentPosition();
+                blink(context, blinkDrawer, index);
             }
         );
 
         reaction(
             () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
             () => {
+                counter = 0;
                 context.requireUpdate(updateRoute);
-                updateCurrentPosition();
             }
         );
 
         reaction(
             () => store.routeStore.currentPosition,
-            () => context.requireUpdate(updateCurrentPosition)
+            () => {
+                context.requireUpdate(() => {
+                    var index = updateCurrentPosition();
+                    blink(context, blinkDrawer, index);
+                });
+            }
         );
 
         updateRoute();
