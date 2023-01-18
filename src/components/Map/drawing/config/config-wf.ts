@@ -98,10 +98,13 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
 let blinkCancellation = null;
 let blinkTimeout = null;
 let counter = 0;
-function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {
+function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {    
     if (blinkTimeout) clearTimeout(blinkTimeout);
     if (blinkCancellation) blinkCancellation();
-    if (counter) return;
+    if (counter) {
+        if(!routePoints.length) counter = 0;
+        return;
+    }
 
     blinkTimeout = setTimeout(() => {
         blinkTimeout = null;
