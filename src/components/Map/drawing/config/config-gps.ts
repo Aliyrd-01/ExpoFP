@@ -5,8 +5,7 @@ import logger from "../../../../tools/logger";
 import data from "../../../../data";
 import settings from "../../../../tools/settings";
 
-export default function configGPS() {
-    data.autoTrackingGPS = settings.EXPO.startsWith("mapbox") || settings.EXPO.startsWith("serge");
+export default function configGPS() {    
     if (data.autoTrackingGPS && store.mapboxStore.mapBoxEnabled) {
         trackGPS();
     }
