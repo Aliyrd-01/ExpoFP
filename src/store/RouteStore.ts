@@ -1,5 +1,5 @@
 import { RouteLine } from "./../utils/wayfinding";
-import { getLayerSvg } from "./../data/svg";
+import { getLayerSvg, svgArea } from "./../data/svg";
 import { action, computed, observable } from "mobx";
 import { lineLength, Point } from "simple-geometry";
 import store, { layersStore } from ".";
@@ -129,7 +129,11 @@ export default class RouteStore {
 
         if (store.routeStore.currentPosition) {
             const cp = store.routeStore.currentPosition;
-            uiState.moveToRect = Rect.fromCxcywh(cp.x, cp.y, 1000, 1000);
+
+            const rect = Rect.fromCxcywh(cp.x, cp.y, 1000, 1000);
+            if (!rect.intersects(svgArea)) return;           
+
+            uiState.moveToRect = rect;
             layersStore.updateVisibility(store.routeStore.currentPosition?.z, true);
         } else store.selectBooth(store.routeStore.defaultFrom);
     }
