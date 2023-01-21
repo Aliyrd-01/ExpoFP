@@ -100,11 +100,11 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
 let blinkCancellation = null;
 let blinkTimeout = null;
 let counter = 0;
-function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {    
+function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {
     if (blinkTimeout) clearTimeout(blinkTimeout);
     if (blinkCancellation) blinkCancellation();
     if (counter) {
-        if(!routePoints.length) counter = 0;
+        if (!routePoints.length) counter = 0;
         return;
     }
 
@@ -444,16 +444,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
-                var index = updateCurrentPosition();
-                blink(context, blinkDrawer, index);
             }
         );
 
         reaction(
-            () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
+            () => [store.layerStore.loaded, store.layerStore.visible],
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);
+            }
+        );
+        reaction(
+            () => [uiState.selectedRoute],
+            () => {
+                context.requireUpdate(updateRoute);
+                counter = 0;
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
