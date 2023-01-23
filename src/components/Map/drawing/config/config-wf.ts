@@ -80,6 +80,13 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
             p1: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725},
         };
     }
+        
+    if (settings.EXPO === "bett2023") {
+        fpConfig = {
+            p0: { lat: 51.50924604464074, lng: 0.026175553161736653, x: 8629, y: 7416},
+            p1: { lat: 51.50715813053298, lng: 0.03452882241528408, x: 16272, y: 1033},
+        };
+    }
 
     let point: Point =
         fpConfig && position.lat && position.lng ? convertGpsToLocal(position.lat, position.lng, fpConfig) : position;
