@@ -3,7 +3,7 @@ import Color from "color";
 import { Feature, FeatureCollection } from "geojson";
 import mapboxgl, { GeoJSONSource, Map } from "mapbox-gl";
 import Rect from "../../../core/Rect";
-import { svgArea } from "../../../data/svg";
+import { getLayerSvg, svgArea } from "../../../data/svg";
 import store, { uiState } from "../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../store/BoothStore";
 import { Layer } from "../../../store/LayerStore";
@@ -290,6 +290,41 @@ export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
+        var l = getLayerSvg(layer.name);
+
+        try {
+            const image = l.querySelector("image[data-mb-type]") as SVGImageElement;
+
+            if (image) {
+                const x = image.x.baseVal.value;
+                const y = image.y.baseVal.value;
+                const width = image.width.baseVal.value;
+                const height = image.height.baseVal.value;
+
+                const points = [
+                    convertLocalToGps(x, y, fpGeo.properties.config),
+                    convertLocalToGps(x + width, y, fpGeo.properties.config),
+                    convertLocalToGps(x + width, y + height, fpGeo.properties.config),
+                    convertLocalToGps(x, y + height, fpGeo.properties.config),
+                ];
+
+                map.addSource("radar", {
+                    type: "image",
+                    url: image.href.baseVal,
+                    coordinates: points,
+                });
+
+                map.addLayer({
+                    id: "radar-layer",
+                    type: "raster",
+                    source: "radar",
+                    paint: {
+                        "raster-fade-duration": 0,
+                    },
+                });
+            }
+        } catch (e) {}
+
         layersNames.push(layer.name + "-other");
         map.addLayer({
             id: layer.name + "-other",
@@ -341,6 +376,7 @@ export function setLayers(layers: Layer[]): string[] {
                 paint: {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
+                    "fill-extrusion-opacity": 0.8,
                 },
             });
 
