@@ -31,6 +31,7 @@ export default function Mapbox() {
     const mapContainer = useRef(null);
     const map = useRef<Map>(null);
     let hoverTimeout = null;
+    let activeLayers = [];
 
     const ls = useLocalStore(() => ({
         get initselected() {
@@ -97,7 +98,9 @@ export default function Mapbox() {
 
             setMarker("cp", ls.actualCurrentPosition);
 
-            const boothsLayers = setLayers(store.layerStore.layers).filter((l) => l.indexOf("-other") === -1);
+            activeLayers = setLayers(store.layerStore.layers);
+
+            const boothsLayers = activeLayers.filter((l) => l.indexOf("-") === -1);
 
             updateRouteLines(store.routeStore);
 
@@ -114,7 +117,7 @@ export default function Mapbox() {
                 ] as any;
 
                 const selectedFeature = map.current.queryRenderedFeatures(bbox, {
-                    layers: boothsLayers,
+                    layers: activeLayers,
                 })[0];
 
                 const booth = store.boothStore.booths.find((b) => b.name === selectedFeature?.properties?.id);
@@ -143,16 +146,12 @@ export default function Mapbox() {
     useReaction(
         () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
         () => {
-            store.layerStore.layers.forEach((layer) => {
-                var exists = map.current.getLayer(layer.name);
+            activeLayers.forEach((l: string) => {
+                const layerName = l.split("-")[0];
+                const layer = store.layerStore.layers.find((l) => l.name === layerName);
 
-                if (exists) {
-                    if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(layer.name, "visibility")) {
-                        ["", "-labels", "-logos", "-other"].forEach((suffix) =>
-                            map.current.setLayoutProperty(layer.name + suffix, "visibility", layer.visible ? "visible" : "none")
-                        );
-                    }
-                }
+                if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(l, "visibility"))
+                    map.current.setLayoutProperty(l, "visibility", layer.visible ? "visible" : "none");
             });
 
             updateSelectionDataSource([...uiState.selectedBooths], store.boothStore.booths);

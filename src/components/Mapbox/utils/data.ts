@@ -13,8 +13,15 @@ import { bearing } from "../../../utils/geolib";
 import logosFromBooths from "../../../utils/imageloader";
 import { convertLocalToGps } from "../../../utils/gps";
 
+interface ImageData {
+    layer: string;
+    data: string;
+    points: [][];
+}
+
 interface ExtendFeatureCollection extends FeatureCollection {
     properties: any;
+    images: ImageData[];
 }
 
 const fpGeo = window["__fpGeo"] as ExtendFeatureCollection;
@@ -290,40 +297,26 @@ export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
-        var l = getLayerSvg(layer.name);
+        const image = fpGeo.images?.find((i) => i.layer == layer.name);
+        if (image) {
+            const bgLayer = layer.name + "-bg";
 
-        try {
-            const image = l.querySelector("image[data-mb-type]") as SVGImageElement;
+            layersNames.push(bgLayer);
+            map.addSource(bgLayer, {
+                type: "image",
+                url: image.data,
+                coordinates: image.points,
+            });
 
-            if (image) {
-                const x = image.x.baseVal.value;
-                const y = image.y.baseVal.value;
-                const width = image.width.baseVal.value;
-                const height = image.height.baseVal.value;
-
-                const points = [
-                    convertLocalToGps(x, y, fpGeo.properties.config),
-                    convertLocalToGps(x + width, y, fpGeo.properties.config),
-                    convertLocalToGps(x + width, y + height, fpGeo.properties.config),
-                    convertLocalToGps(x, y + height, fpGeo.properties.config),
-                ];
-
-                map.addSource("radar", {
-                    type: "image",
-                    url: image.href.baseVal,
-                    coordinates: points,
-                });
-
-                map.addLayer({
-                    id: "radar-layer",
-                    type: "raster",
-                    source: "radar",
-                    paint: {
-                        "raster-fade-duration": 0,
-                    },
-                });
-            }
-        } catch (e) {}
+            map.addLayer({
+                id: bgLayer,
+                source: bgLayer,
+                type: "raster",
+                layout: {
+                    visibility: layer.visible ? "visible" : "none",
+                },
+            });
+        }
 
         layersNames.push(layer.name + "-other");
         map.addLayer({
@@ -340,6 +333,7 @@ export function setLayers(layers: Layer[]): string[] {
         });
 
         layersNames.push(layer.name + "-other-3D");
+
         map.addLayer({
             id: layer.name + "-other-3D",
             type: "fill-extrusion",
@@ -419,7 +413,6 @@ export function setLayers(layers: Layer[]): string[] {
             });
         }
     });
-
     return layersNames;
 }
 
