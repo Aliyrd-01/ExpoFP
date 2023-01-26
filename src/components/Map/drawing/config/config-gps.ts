@@ -1,3 +1,4 @@
+import { fpGeo } from './../../../Mapbox/utils/data';
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { CurrentPosition } from "../../../../store/RouteStore";
 import store from "../../../../store";
@@ -19,7 +20,7 @@ function trackGPS() {
                 const localPoint = convertGpsToLocal(
                     pos.coords.latitude,
                     pos.coords.longitude,
-                    window["__fpGeo"].properties.config as GpsConfig
+                    fpGeo.properties.config as GpsConfig
                 );
 
                 const currentPosition = new CurrentPosition(

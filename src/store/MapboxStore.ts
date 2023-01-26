@@ -1,3 +1,4 @@
+import { fpGeo } from './../components/Mapbox/utils/data';
 import { action, computed, observable } from "mobx";
 import data from "../data";
 import { uiState } from "./index";
@@ -9,7 +10,7 @@ export default class MapboxStore {
     @observable mapBoxSelected = true;
 
     @observable mapBoxActivated = !data.hide3dMapDefault;
-    @observable mapBoxEnabled = !!window["__fpGeo"] && data.allow3dView && !uiState.kiosk;
+    @observable mapBoxEnabled = !!fpGeo && data.allow3dView && !uiState.kiosk;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;

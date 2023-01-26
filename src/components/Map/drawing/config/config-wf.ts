@@ -1,3 +1,4 @@
+import { fpGeo } from './../../../Mapbox/utils/data';
 import Color from "color";
 import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
@@ -77,7 +78,7 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     }
 
     if (!fpConfig) {
-        fpConfig = window["__fpGeo"].properties.config;
+        fpConfig = fpGeo.properties.config;
     }
 
     let point: Point =

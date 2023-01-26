@@ -13,6 +13,8 @@ import { bearing } from "../../../utils/geolib";
 import logosFromBooths from "../../../utils/imageloader";
 import { convertLocalToGps } from "../../../utils/gps";
 
+export const fpGeo = window["__fpGeo"] as ExtendFeatureCollection;
+
 interface ImageData {
     layer: string;
     data: string;
@@ -24,7 +26,6 @@ interface ExtendFeatureCollection extends FeatureCollection {
     images: ImageData[];
 }
 
-const fpGeo = window["__fpGeo"] as ExtendFeatureCollection;
 
 type Polygon = GeoJSON.FeatureCollection<GeoJSON.Polygon>;
 
@@ -68,7 +69,7 @@ function getViewbox(): Rect {
     });
 
     if (xMin === 1000) {
-        var parts = window["__fpGeo"]?.properties?.mpViewbox;
+        var parts = fpGeo?.properties?.mpViewbox;
         var x = [parts[0], parts[2], parts[4]];
         var y = [parts[1], parts[3], parts[5]];
 

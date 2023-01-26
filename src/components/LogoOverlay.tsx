@@ -8,6 +8,8 @@ import Alert from "./Alert";
 import QRCode from "react-qr-code";
 import "./Alert.scss";
 import "./LogoOverlay.scss";
+import { fpGeo } from "./Mapbox/utils/data";
+import data from "../data";
 
 export default function LogoOverlay() {
     const s = useLocalStore(() => ({
@@ -46,6 +48,7 @@ export default function LogoOverlay() {
 
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
     var showWarning = isFromDesigner && dataSize >= 10;
+    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView;
 
     return useObserver(() => (
         <div>
@@ -56,6 +59,13 @@ export default function LogoOverlay() {
                 <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
                     <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/huge-fp-warning">
                         Read how to optimize it
+                    </a>
+                </Alert>
+            )}
+            {showMapboxWarning && (
+                <Alert title="3D view is hidden" variant="warning" showIcon={true} position="bottomRight">
+                    <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/expofp-mapbox-integration">
+                        Setup mapbox first
                     </a>
                 </Alert>
             )}
