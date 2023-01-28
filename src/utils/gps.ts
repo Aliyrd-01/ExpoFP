@@ -8,12 +8,6 @@ const maxlon: number = 180.0;
 let toRad = (value: number) => (value * Math.PI) / 180;
 let toDeg = (value: number) => (value * 180) / Math.PI;
 
-let robustAcos = (value: number) => {
-    if (value > 1) return 1;
-    if (value < -1) return -1;
-    return value;
-};
-
 function distance(lat1: number, lng1: number, lat2: number, lng2: number): number {
     const R = 6371e3; // metres
     const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians

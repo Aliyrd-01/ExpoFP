@@ -8,8 +8,8 @@ import Alert from "./Alert";
 import QRCode from "react-qr-code";
 import "./Alert.scss";
 import "./LogoOverlay.scss";
-import { fpGeo } from "./Mapbox/utils/data";
 import data from "../data";
+import { fpGeo } from "./Mapbox/utils/fpGeo";
 
 export default function LogoOverlay() {
     const s = useLocalStore(() => ({

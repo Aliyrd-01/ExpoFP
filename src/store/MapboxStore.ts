@@ -1,5 +1,5 @@
-import { fpGeo } from './../components/Mapbox/utils/data';
 import { action, computed, observable } from "mobx";
+import { fpGeo } from "../components/Mapbox/utils/fpGeo";
 import data from "../data";
 import { uiState } from "./index";
 import RootStore from "./RootStore";

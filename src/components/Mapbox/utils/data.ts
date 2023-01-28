@@ -3,7 +3,7 @@ import Color from "color";
 import { Feature, FeatureCollection } from "geojson";
 import mapboxgl, { GeoJSONSource, Map } from "mapbox-gl";
 import Rect from "../../../core/Rect";
-import { getLayerSvg, svgArea } from "../../../data/svg";
+import { svgArea } from "../../../data/svg";
 import store, { uiState } from "../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../store/BoothStore";
 import { Layer } from "../../../store/LayerStore";
@@ -12,20 +12,7 @@ import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
 import logosFromBooths from "../../../utils/imageloader";
 import { convertLocalToGps } from "../../../utils/gps";
-
-export const fpGeo = window["__fpGeo"] as ExtendFeatureCollection;
-
-interface ImageData {
-    layer: string;
-    data: string;
-    points: [][];
-}
-
-interface ExtendFeatureCollection extends FeatureCollection {
-    properties: any;
-    images: ImageData[];
-}
-
+import { fpGeo } from "./fpGeo";
 
 type Polygon = GeoJSON.FeatureCollection<GeoJSON.Polygon>;
 
@@ -55,7 +42,7 @@ function getViewbox(): Rect {
     var features = data.features.filter((f) => f.properties.type === featureTypes.booth);
 
     (Array.isArray(features) ? features : [features]).forEach((feature) => {
-        var coords = feature.geometry.coordinates[0];
+        var coords = feature.geometry.coordinates[0] || [];
 
         for (let index = 1; index < coords.length; index++) {
             const coord = coords[index];
@@ -298,7 +285,7 @@ export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
-        const image = fpGeo.images?.find((i) => i.layer == layer.name);
+        const image = fpGeo.images?.find((i) => i.layer === layer.name);
         if (image) {
             const bgLayer = layer.name + "-bg";
 

@@ -1,10 +1,9 @@
-import { fpGeo } from './../../../Mapbox/utils/data';
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { CurrentPosition } from "../../../../store/RouteStore";
 import store from "../../../../store";
 import logger from "../../../../tools/logger";
 import data from "../../../../data";
-import settings from "../../../../tools/settings";
+import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 
 export default function configGPS() {
 

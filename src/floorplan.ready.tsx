@@ -8,9 +8,6 @@ import store from "./store";
 import { CurrentPosition, Route } from "./store/RouteStore";
 import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
-import { convertGpsToLocal, convertLocalToGps, GpsConfig } from "./utils/gps";
-import data from "./data/index";
-import logger from "./tools/logger";
 
 trackEvent("load");
 sendEventToGa(`FP`, GaEventActions.Load, ``);
