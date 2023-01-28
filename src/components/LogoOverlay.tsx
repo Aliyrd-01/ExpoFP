@@ -48,7 +48,7 @@ export default function LogoOverlay() {
 
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
     var showWarning = isFromDesigner && dataSize >= 10;
-    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView;
+    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk;
 
     return useObserver(() => (
         <div>
