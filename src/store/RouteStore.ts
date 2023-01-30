@@ -1,15 +1,15 @@
 import { RouteLine } from "./../utils/wayfinding";
-import { getLayerSvg } from "./../data/svg";
+import { getLayerSvg, svgArea } from "./../data/svg";
 import { action, computed, observable } from "mobx";
 import { lineLength, Point } from "simple-geometry";
-import store from ".";
+import store, { layersStore } from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
 import RootStore from "./RootStore";
-import { Layer, LayersMode } from "./LayerStore";
+import { Layer } from "./LayerStore";
 
 export default class RouteStore {
     rootStore: RootStore;
@@ -18,9 +18,11 @@ export default class RouteStore {
     @observable currentPosition: CurrentPosition = null;
     @observable tempToBooth: Booth = null;
     @observable defaultFrom: Booth = null;
+    @observable focusEnabled: boolean = true;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
+        this.focusEnabled = !window.location.search;
     }
 
     @action selectRoute(route: Route) {
@@ -100,22 +102,40 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
+        focus = focus && this.focusEnabled;
+        if (this.focusEnabled) this.focusEnabled = false;
+
         const p = point ? mapCurrentPosition(point) : null;
-
-        if (point?.z && store.layerStore.mode === LayersMode.Radio) {
-            let z = point.z.toString();
-
-            let layer = store.layerStore.layers.find((l) => l.name === z);
-
-            if (layer) {
-                if (!layer.visible) return; // store.layerStore.updateVisibility(z, true);
-                if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
-                this.currentPosition = p;
-            }
-        } else if (store.layerStore.mode === LayersMode.Default) {
-            if (focus) this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 100, 100);
-            this.currentPosition = p;
+        if (!p) {
+            this.currentPosition = null;
+            return;
         }
+
+        let layer = store.layerStore.layers.find((l) => l?.name === point.z?.toString());
+
+        if (focus) {
+            if (layer && !layer?.visible) layersStore.updateVisibility(layer.name, true);
+            this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 1000, 1000);
+        }
+
+        this.currentPosition = p;
+    }
+
+    @action findLocation() {
+        if (store.mapboxStore.showMapbox) {
+            uiState.moveToLocation = true;
+            return;
+        }
+
+        if (store.routeStore.currentPosition) {
+            const cp = store.routeStore.currentPosition;
+
+            const rect = Rect.fromCxcywh(cp.x, cp.y, 1000, 1000);
+            if (!rect.intersects(svgArea)) return;           
+
+            uiState.moveToRect = rect;
+            layersStore.updateVisibility(store.routeStore.currentPosition?.z, true);
+        } else store.selectBooth(store.routeStore.defaultFrom);
     }
 
     @action updateRoutePoints(routeLines: RouteLine[]) {

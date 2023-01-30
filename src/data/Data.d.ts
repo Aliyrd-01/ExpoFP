@@ -30,6 +30,10 @@ interface Data {
     hideRegisterToAttendLink: boolean;
     hideDownloadPdfLink: boolean;
     hideBookmarksLink: boolean;
+    autoTrackingGps: boolean;
+    allow3dView: boolean;
+    hide3dMapDefault: boolean;
+    hideModeSwitchButton: boolean;
 }
 
 interface RawCategory {

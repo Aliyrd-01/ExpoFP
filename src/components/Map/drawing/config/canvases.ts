@@ -203,7 +203,7 @@ export function createExhibitorsDetailsCanvas(
 
 const circleCanvasCache = new Map<string, CanvasDescriptor>();
 export function createCircleCanvas(radius: number, pixelRatio: number, color: string = "#fff"): CanvasDescriptor {
-    const key = radius + " " + pixelRatio;
+    const key = radius + " " + pixelRatio + " " + color;
     let res = circleCanvasCache.get(key);
 
     if (!res) {
@@ -355,12 +355,11 @@ export function createTargetCanvas(
     };
 }
 
-export function canvarFromPath(paths: PathInfo[], scale: number = 0.5,suffix:string): CanvasDescriptor {
+export function canvarFromPath(paths: PathInfo[], scale: number = 0.5, suffix: string): CanvasDescriptor {
     var bounds: number[] = [Number.MAX_VALUE, Number.MAX_VALUE, Number.MIN_VALUE, Number.MIN_VALUE];
 
     paths.forEach((path) => {
-
-        path["triangles"] = getTrianglesFromFpPaths(path.index,suffix);
+        path["triangles"] = getTrianglesFromFpPaths(path.index, suffix);
 
         path["triangles"].forEach((tri: Triangle) => {
             tri.forEach((point) => {

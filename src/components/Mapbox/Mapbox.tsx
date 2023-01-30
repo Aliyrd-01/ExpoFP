@@ -1,96 +1,60 @@
 import classNames from "classnames";
-import Color from "color";
 import mapboxgl, { Map } from "mapbox-gl";
-import { useObserver } from "mobx-react-lite";
+import { useLocalStore, useObserver } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
-import * as React from "react";
-import Rect from "../../core/Rect";
 import { svgArea } from "../../data/svg";
-import store, { boothStore, layersStore, uiState } from "../../store";
-import { Booth, RegularBooth, SpecialBooth } from "../../store/BoothStore";
-import settings from "../../tools/settings";
-import { bearing, distance } from "../../utils/geolib";
+import store, { boothStore, uiState } from "../../store";
 import { useReaction } from "../../utils/mobx";
-import MapboxGLButtonControl from "./Button";
-import { pulsingDot } from "./Dot";
 import "./Mapbox.scss";
+import * as React from "react";
 
-var fpGeo = window["__fpGeo"];
-
-function getBearing() {
-    var parts = fpGeo?.properties?.mpViewbox;
-    var bear = fpGeo?.properties?.bearing;
-    let b = bear != null ? bear : -1 * bearing(parts[1], parts[0], parts[3], parts[2]) - 90;
-    if (Math.abs(b) >= 360) b = 180;
-    return b;
-}
-
-function getViewbox(): Rect {
-    var xMin = 1000;
-    var yMin = 1000;
-
-    var xMax = -1000;
-    var yMax = -1000;
-
-    var data = fpGeo as Polygon;
-
-    var features =
-        data.features.filter((f) => f.properties.type === "viewbox")[0] ||
-        data.features.filter((f) => f.properties.type === "venue")[0] ||
-        data.features.filter((f) => f.properties.type === "booth");
-
-    (Array.isArray(features) ? features : [features]).forEach((feature) => {
-        var coords = feature.geometry.coordinates[0];
-
-        for (let index = 1; index < coords.length; index++) {
-            const coord = coords[index];
-
-            if (coord[0] < xMin) xMin = coord[0];
-            if (coord[1] < yMin) yMin = coord[1];
-
-            if (coord[0] > xMax) xMax = coord[0];
-            if (coord[1] > yMax) yMax = coord[1];
-        }
-    });
-
-    if (xMin === 1000) {
-        var parts = window["__fpGeo"]?.properties?.mpViewbox;
-        var x = [parts[0], parts[2], parts[4]];
-        var y = [parts[1], parts[3], parts[5]];
-
-        return Rect.fromX1y1x2y2(Math.min(...x), Math.min(...y), Math.max(...x), Math.max(...y));
-    }
-
-    return Rect.fromX1y1x2y2(xMin, yMin, xMax, yMax);
-}
-
-function getStyle(): string {
-    return fpGeo?.properties?.style || "light-v10";
-}
-
-var props = {
-    token: "pk.eyJ1Ijoicm9kaW9ubmlrb2xhZXYiLCJhIjoiY2wwanE5aXB4MDM2NTNibGExd3k4bHhsaiJ9.wdpy8dJ1qktQXGtZYDNH3w",
-    bearing: getBearing(),
-    viewbox: getViewbox(),
-    style: getStyle(),
-    edgeZoom: 19,
-    extrusion: {
-        building: 10,
-        venue: 1.5,
-        other: 1,
-    },
-};
-
-type Polygon = GeoJSON.FeatureCollection<GeoJSON.Polygon>;
+import Rect from "../../core/Rect";
+import {
+    loadLogos,
+    moveToRect,
+    props,
+    setBuildingsLayer,
+    setDataSource,
+    setLayers,
+    setMap,
+    setMarker,
+    switchViewbox,
+    updateHoverDataSource,
+    updateRouteLines,
+    updateSelectionDataSource,
+    moveToLocation,
+} from "./utils/data";
+import { CurrentPosition } from "../../store/RouteStore";
+import { RegularBooth } from "../../store/BoothStore";
 
 export default function Mapbox() {
     const mapContainer = useRef(null);
-    const map = useRef(null);
+    const map = useRef<Map>(null);
+    let hoverTimeout = null;
+    let activeLayers = [];
+
+    const ls = useLocalStore(() => ({
+        get initselected() {
+            return ![...uiState.selectedBooths].filter((b) => b.rect);
+        },
+
+        get actualCurrentPosition(): CurrentPosition {
+            const cp = store.routeStore.currentPosition;
+
+            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.layers.find((l) => l.name === cp.z)) > -1
+                ? cp
+                : null;
+        },
+
+        get style() {
+            return {
+                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleLeft + "px",
+            };
+        },
+    }));
 
     useEffect(() => {
         if (map.current) return;
-
-        var data = window["__fpGeo"] as Polygon;
 
         var { cx: lng, cy: lat } = props.viewbox;
 
@@ -98,307 +62,219 @@ export default function Mapbox() {
             container: mapContainer.current,
             style: `mapbox://styles/mapbox/${props.style}`,
             center: [lng, lat],
-            zoom: 14,
-            bearing: 30,
-            pitch: 30,
-            maxPitch: 45,
+            zoom: 15.5,
+            bearing: props.initBearing - 30,
+            pitch: props.initPitch + 30,
+            maxPitch: 70,
+            bearingSnap: 0,
             accessToken: props.token,
         });
 
-        let current: Map = map.current;
+        setMap(map.current);
 
-        current.addControl(new MapboxGLButtonControl(() => switchViewbox(false), "fa fa-home"), "top-left");
+        map.current.on("load", async () => {
+            setTimeout(
+                () =>
+                    moveToRect(
+                        ls.initselected
+                            ? Rect.fromMultiple([...uiState.selectedBooths].filter((b) => b.rect).map((b) => b.rect))
+                            : svgArea,
+                        15,
+                        4000
+                    ),
+                1500
+            );
 
-        current.addControl(
-            new mapboxgl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: true,
-                },
-                trackUserLocation: true,
-                showUserHeading: true,
-            }),
-            "top-left"
-        );
+            const logos = await loadLogos(store.boothStore.booths as RegularBooth[]);
 
-        current.addControl(
-            new mapboxgl.NavigationControl({
-                showCompass: false,
-            }),
-            "top-left"
-        );
+            setDataSource(store.boothStore.booths, logos);
 
-        current.addControl(new MapboxGLButtonControl(() => flyToCenter(0, 1000, 0, 45), "fa fa-expand-arrows-alt"), "top-left");
+            setMarker(
+                "yah",
+                store.routeStore.defaultFrom?.rect
+                    ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
+                    : null
+            );
 
-        current.on("load", async () => {
-            setTimeout(() => flyToCenter(0, 4000, 0.001, 45), 1000);
+            setMarker("cp", ls.actualCurrentPosition);
 
-            const toHex = (input: string) => {
-                var h = parseInt(input).toString(16);
-                return h.length === 1 ? "0" + h : h;
-            };
+            activeLayers = setLayers(store.layerStore.layers);
 
-            data.features.forEach((f) => {
-                f.properties.id = f.properties.id?.substring(1);
+            const boothsLayers = activeLayers.filter((l) => l.indexOf("-") === -1);
 
-                f.properties.height = props.extrusion[f.properties.type] || props.extrusion.other;
+            updateRouteLines(store.routeStore);
 
-                if (f.properties.type === "booth") {
-                    let booth = store.boothStore.booths.filter((b) => b.name === f.properties.id)[0];
-                    if (booth) f.properties.color = defaultColor(booth);
-                } else if (f.properties.color) {
-                    let color = f.properties.color;
-                    f.properties.color = `#${toHex(color.R || color.r || 0)}${toHex(color.G || color.g || 0)}${toHex(
-                        color.B || color.b || 0
-                    )}`;
+            setBuildingsLayer();
 
-                    if (f.properties.type === "venue") f.properties.color = "grey";
-                    else if (f.properties.type === "outline") {
-                        let c = Color(f.properties.color);
-                        f.properties.color = c.lightness(c.lightness() - 15).hex();
-                    }
-                }
-            });
+            map.current.on("mouseenter", boothsLayers, () => (map.current.getCanvas().style.cursor = "pointer"));
 
-            current.addSource("booths", {
-                type: "geojson",
-                data,
-            });
+            map.current.on("mouseleave", boothsLayers, () => (map.current.getCanvas().style.cursor = ""));
 
-            const layerName =
-                layersStore.layers.filter((l) => l.name === "Booths")[0]?.name ||
-                layersStore.layers.filter((l) => l.name === "1")[0]?.name;
-
-            current.addLayer({
-                id: "booths",
-                type: "fill-extrusion",
-                source: "booths",
-                filter: ["all", ["in", "type", "booth"], ["in", "layer", layerName]],
-                paint: {
-                    "fill-extrusion-color": ["get", "color"],
-                    "fill-extrusion-height": ["get", "height"],
-                    "fill-extrusion-base": 0,
-                    "fill-extrusion-opacity": 1,
-                },
-            });
-
-            current.addLayer({
-                id: "venue",
-                type: "fill-extrusion",
-                source: "booths",
-                filter: ["!in", "type", "booth", "viewbox"],
-                paint: {
-                    "fill-extrusion-color": ["get", "color"],
-                    "fill-extrusion-height": ["get", "height"],
-                    "fill-extrusion-base": 0,
-                    "fill-extrusion-opacity": 0.4,
-                },
-            });
-
-            // current.addLayer({
-            //     id: "booths",
-            //     type: "fill",
-            //     source: "booths",
-            //     filter: ["==", "type", "booth"],
-            //     paint: {
-            //         "fill-color": ["get", "color"],
-            //         "fill-outline-color": "#FFFFFF"
-            //     },
-            // });
-
-            let b = props.viewbox;
-
-            current.addImage("pulsing-dot", pulsingDot(200, current), { pixelRatio: 2 });
-
-            current.addSource("dot-point", {
-                type: "geojson",
-                data: {
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            properties: {},
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [b.cx, b.cy], // icon position [lng, lat]
-                            },
-                        },
-                    ],
-                },
-            });
-
-            current.addLayer({
-                id: "layer-with-pulsing-dot",
-                type: "symbol",
-                source: "dot-point",
-                minzoom: 16,
-                layout: {
-                    "icon-image": "pulsing-dot",
-                },
-            });
-
-            current.on("mouseenter", ["booths"], () => {
-                current.getCanvas().style.cursor = "pointer";
-            });
-
-            current.on("mouseleave", ["booths"], () => {
-                current.getCanvas().style.cursor = "";
-            });
-
-            let prevZoom = 0;
-            current.on("zoom", (e) => {
-                let zoom = current.getZoom();
-
-                if (zoom > prevZoom && zoom > props.edgeZoom && polyIntersected(current.getBounds(), props.viewbox))
-                    switchViewbox(false);
-
-                prevZoom = zoom;
-            });
-
-            current.on("click", (e) => {
+            map.current.on("click", (e) => {
                 const bbox = [
                     [e.point.x - 5, e.point.y - 5],
                     [e.point.x + 5, e.point.y + 5],
                 ] as any;
 
-                var props = current.queryRenderedFeatures(bbox, { layers: ["booths", "venue"] })[0]?.properties;
-                if (!props) return;
+                const selectedFeature = map.current.queryRenderedFeatures(bbox, {
+                    layers: activeLayers,
+                })[0];
 
-                switchViewbox(false);
+                const booth = store.boothStore.booths.find((b) => b.name === selectedFeature?.properties?.id);
+                store.clickBooth(booth);
             });
         });
     });
 
+    // ZoomBy
     useReaction(
-        () => uiState.zoomAfTransformK,
+        () => uiState.zoomBy,
         () => {
-            if (uiState.zoomAfTransformK < 0.6) {
-                store.selectNone();
-                switchViewbox(true);
-            }
+            if (!uiState.zoomBy || !store.mapboxStore.showMapbox) return;
+            const z = uiState.zoomBy;
+            uiState.zoomBy = null;
+            map.current.flyTo({
+                zoom: map.current.getZoom() + (z > 1 ? 0.5 : -0.5),
+                animate: true,
+                duration: 500,
+                essential: true,
+            });
         }
     );
 
+    // Update layers visibility, loading, selected route
     useReaction(
-        () => store.mapboxStore.mapBoxSelected,
+        () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
         () => {
-            if (store.mapboxStore.mapBoxSelected === null) switchViewbox(true);
-        }
-    );
+            activeLayers.forEach((l: string) => {
+                const layerName = l.split("-")[0];
+                const layer = store.layerStore.layers.find((l) => l.name === layerName);
 
-    function flyToCenter(bearing: number, duration: number, boundsOffset: number = 0, pitch: number): Promise<void> {
-        return new Promise((resolve) => {
-            let current: Map = map.current;
+                if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(l, "visibility"))
+                    map.current.setLayoutProperty(l, "visibility", layer.visible ? "visible" : "none");
+            });
 
-            setTimeout(() => resolve(), duration);
-            let rect = props.viewbox;
+            updateSelectionDataSource([...uiState.selectedBooths], store.boothStore.booths);
 
-            current.fitBounds(
-                [
-                    [rect.x1 - boundsOffset, rect.y1 - boundsOffset],
-                    [rect.x2 + boundsOffset, rect.y2 + boundsOffset],
-                ],
-                {
-                    bearing,
-                    essential: true,
-                    duration,
-                    pitch: pitch,
-                }
+            // Update YAH marker visibility
+            setMarker(
+                "yah",
+                store.routeStore.defaultFrom?.rect && store.routeStore.defaultFrom?.layer?.visible
+                    ? { x: store.routeStore.defaultFrom.rect.cx, y: store.routeStore.defaultFrom.rect.cy }
+                    : null
             );
-        });
-    }
 
-    function switchViewbox(mapBoxSelected: boolean) {
-        let current: Map = map.current;
-        let duration = 1200;
-
-        store.mapboxStore.mapBoxSelected = mapBoxSelected;
-
-        current.scrollZoom.disable();
-        current.touchPitch.disable();
-        current.touchZoomRotate.disable();
-
-        setTimeout(() => {
-            current.scrollZoom.enable();
-            current.touchPitch.enable();
-            current.touchZoomRotate.enable();
-        }, duration);
-
-        if (mapBoxSelected) {
-            flyToCenter(0, duration, 0, 45).then(() => {
-                uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            });
-        } else {
-            uiState.moveToRect = store.layerStore.rectangle || svgArea;
-            flyToCenter(props.bearing, duration, 0, 0).then(() => {
-                current.setZoom(props.edgeZoom - 0.5);
-            });
+            setMarker("cp", ls.actualCurrentPosition);
         }
-    }
+    );
 
-    function polyIntersected(bounds: mapboxgl.LngLatBounds, rect: Rect): boolean {
-        function contains(a, b) {
-            return !(b.x1 < a.x1 || b.y1 < a.y1 || b.x2 > a.x2 || b.y2 > a.y2);
-        }
-
-        function overlaps(a, b) {
-            // no horizontal overlap
-            if (a.x1 >= b.x2 || b.x1 >= a.x2) return false;
-
-            // no vertical overlap
-            if (a.y1 >= b.y2 || b.y1 >= a.y2) return false;
-
-            return true;
-        }
-
-        function touches(a, b) {
-            // has horizontal gap
-            if (a.x1 > b.x2 || b.x1 > a.x2) return false;
-
-            // has vertical gap
-            if (a.y1 > b.y2 || b.y1 > a.y2) return false;
-
-            return true;
-        }
-
-        let arr = bounds.toArray();
-        let rect1 = { x1: arr[0][0], y1: arr[0][1], x2: arr[1][0], y2: arr[1][1] };
-
-        let l1 = distance(rect.x1, rect.y1, rect.x2, rect.y2);
-        let l2 = distance(rect1.x1, rect1.y1, rect1.x2, rect1.y2);
-
-        return l1 > 1.2 * l2 && (touches(rect1, rect) || overlaps(rect1, rect) || contains(rect1, rect));
-    }
-
-    function defaultColor(b: Booth) {
-        let defColor: string;
-        if (b instanceof SpecialBooth) {
-            defColor = b.color || settings.colors.booths.empty;
-        } else if (b instanceof RegularBooth) {
-            const settingsColors = settings.colors.booths;
-            if (b.onHold) {
-                defColor = b.holdColor || b.soldColor || settingsColors.default;
-            } else if (b.exhibitors.length || b.reserved) {
-                defColor = b.soldColor || settingsColors.default;
-            } else {
-                defColor = b.availColor || settingsColors.empty;
+    // Hover booths
+    useReaction(
+        () => uiState.hoveredBooths,
+        () => {
+            if (hoverTimeout) {
+                clearTimeout(hoverTimeout);
+                hoverTimeout = null;
             }
+
+            hoverTimeout = setTimeout(() => {
+                hoverTimeout = null;
+                updateHoverDataSource(
+                    [...uiState.hoveredBooths].filter((b) => b.layer?.visible ?? true),
+                    store.boothStore.booths
+                );
+            }, 50);
         }
+    );
 
-        if (defColor === "#666" || defColor === "#666666") defColor = "rgba(0,0,0,0.172)";
+    // Selection & listed
+    useReaction(
+        () => [uiState.selectedBooths, uiState.listBooths],
+        () => {
+            var selected = [];
+            if (uiState.selectedBooths.size) selected = [...uiState.selectedBooths];
+            else if (
+                uiState.listBooths.size &&
+                (uiState.activeListIndex === 0 || uiState.list.type === "bookmarks" || uiState.list.type === "category")
+            ) {
+                selected = [...uiState.listBooths];
+            }
 
-        return defColor;
-    }
+            updateSelectionDataSource(selected, store.boothStore.booths);
+        }
+    );
+
+    // View switching
+    useReaction(
+        () => store.mapboxStore.showMapbox,
+        () => {
+            switchViewbox(store.mapboxStore.showMapbox);
+        }
+    );
+
+    // Move to booths
+    useReaction(
+        () => uiState.moveToBooths,
+        () => {
+            if (!uiState.moveToBooths || !store.mapboxStore.showMapbox) return;
+
+            const rects = uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect);
+            const rect = Rect.fromMultiple(rects);
+            if (rects.length) moveToRect(rect);
+            uiState.moveToBooths = null;
+        }
+    );
+
+    // Move to rect
+    useReaction(
+        () => uiState.moveToRect,
+        () => {
+            if (!uiState.moveToRect || !store.mapboxStore.showMapbox) return;
+            moveToRect(uiState.moveToRect, 15);
+            uiState.moveToRect = null;
+        }
+    );
+
+    // Move to Location
+    useReaction(
+        () => uiState.moveToLocation,
+        () => {
+            if (!uiState.moveToLocation || !store.mapboxStore.showMapbox) return;
+            moveToLocation();
+        }
+    );
+
+    // Move to center
+    useReaction(
+        () => uiState.centerMap,
+        () => {
+            if (!uiState.centerMap || !store.mapboxStore.showMapbox) return;
+            moveToRect(Rect.fromMultiple(boothStore.booths.map((b) => b.rect)), 15);
+            uiState.centerMap = false;
+        }
+    );
+
+    // Route lines
+    useReaction(
+        () => store.routeStore.routeLines,
+        () => updateRouteLines(store.routeStore)
+    );
+
+    // Current position
+    useReaction(
+        () => ls.actualCurrentPosition,
+        () => setMarker("cp", ls.actualCurrentPosition)
+    );
 
     return useObserver(() => {
         return (
-            <div>
-                <div
-                    ref={mapContainer}
-                    className={classNames("map-container", {
-                        hidden: !store.mapboxStore.showMapbox,
-                    })}
-                />
-            </div>
+            <div
+                ref={mapContainer}
+                style={ls.style}
+                className={classNames("map-container", {
+                    hidden: !store.mapboxStore.showMapbox,
+                })}
+            />
         );
     });
 }

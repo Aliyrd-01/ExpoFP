@@ -32,6 +32,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             // </FpContext.Provider>,
             this.renderTarget
         );
+
         this.resolveReady();
     }
 

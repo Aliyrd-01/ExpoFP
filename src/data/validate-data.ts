@@ -13,6 +13,8 @@ export default function validateData(data: Data) {
     if (!data.categories) data.categories = [];
     if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
     if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
+   
+    if (data.hide3dMapDefault === undefined) data.hide3dMapDefault = false;
 
     // temporary workaround for invalid data.js
     if (data.exhibitors.length > 0) {

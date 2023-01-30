@@ -23,6 +23,7 @@
 .efp-kiosk {
     .overlay-content {
         height: auto;
+        pointer-events: auto;
 
         &__scrollable {
             top: var(--k-sidebarPositionTop);
@@ -40,6 +41,9 @@
             .overlay-bar {
                 border-top-left-radius: var(--k-border-radius-1);
                 border-top-right-radius: var(--k-border-radius-1);
+            }
+            &.hidden {
+                opacity: 0.7;
             }
         }
         &.-exhibitor-featured {

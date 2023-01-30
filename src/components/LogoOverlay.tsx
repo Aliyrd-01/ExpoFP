@@ -4,10 +4,12 @@ import store, { uiState } from "../store";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
-
 import Alert from "./Alert";
+import QRCode from "react-qr-code";
 import "./Alert.scss";
 import "./LogoOverlay.scss";
+import data from "../data";
+import { fpGeo } from "./Mapbox/utils/fpGeo";
 
 export default function LogoOverlay() {
     const s = useLocalStore(() => ({
@@ -15,10 +17,14 @@ export default function LogoOverlay() {
             const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
             let style: any;
             if (uiState.overlayPosition === "left")
-                style = { bottom: uiState.mapVisibleBottom + pad + "px", right: pad + "px", width: "5rem" };
+                style = {
+                    bottom: (uiState.kiosk && uiState.wsStarted ? remsToPixels(3.5) : 0) + uiState.mapVisibleBottom + pad + "px",
+                    right: pad + "px",
+                    width: "5rem",
+                };
             else {
                 style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
-                if (store.mapboxStore.mapBoxSelected) style.top = remsToPixels(0.5) + "px";
+                if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;
@@ -31,7 +37,7 @@ export default function LogoOverlay() {
                 style = { bottom: uiState.mapVisibleBottom + 2 * pad + "px", right: pad + "px", width: "3rem" };
             else {
                 style = { top: uiState.mapVisibleTop + 2 * pad + "px", right: pad + "px", width: "2rem" };
-                if (store.mapboxStore.mapBoxSelected) style.top = remsToPixels(0.5) + "px";
+                if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
             return style;
@@ -42,6 +48,7 @@ export default function LogoOverlay() {
 
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
     var showWarning = isFromDesigner && dataSize >= 10;
+    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk;
 
     return useObserver(() => (
         <div>
@@ -54,6 +61,18 @@ export default function LogoOverlay() {
                         Read how to optimize it
                     </a>
                 </Alert>
+            )}
+            {showMapboxWarning && (
+                <Alert title="3D view is hidden" variant="warning" showIcon={true} position="bottomRight">
+                    <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/expofp-mapbox-integration">
+                        Setup mapbox first
+                    </a>
+                </Alert>
+            )}
+            {uiState.kiosk && (
+                <div className="qr" style={{ bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5), left: remsToPixels(0.5) }}>
+                    <QRCode value={window.location.href} size={100} />
+                </div>
             )}
         </div>
     ));

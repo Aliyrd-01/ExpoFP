@@ -9,6 +9,7 @@ import { t } from "../utils/i18n";
 import WayfindingTemplate from "./WayfindingTemplate";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
+import classNames from "classnames";
 
 function Wayfinding() {
     const routeSelected = () => {
@@ -106,7 +107,9 @@ function Wayfinding() {
             <OverlayContent
                 bar={bar}
                 backMode="none"
-                className={"main-wayfinding"}
+                className={classNames("main-wayfinding", {
+                    hidden: uiState.kiosk && uiState.selectedRoute?.from && uiState.selectedRoute?.to,
+                })}
                 onBack={() => {
                     store.routeStore.selectRoute(null);
                     store.selectSearch();
@@ -126,10 +129,10 @@ function Wayfinding() {
                             ? true
                             : false
                     }
-                    floors={store.routeStore.layers.map((l) => l.description)}
+                    floors={store.routeStore.layers.map((l) => l.shortName)}
                     currentFloor={store?.routeStore.layers.find((l) => l.visible)?.description}
                     onClickFloor={(floor) =>
-                        store.layerStore.updateVisibility(store.layerStore.layers.find((l) => l.description === floor).name, true)
+                        store.layerStore.updateVisibility(store.layerStore.layers.find((l) => l.shortName === floor).name, true)
                     }
                     routeFound={!routeNotFound}
                     options={options()}

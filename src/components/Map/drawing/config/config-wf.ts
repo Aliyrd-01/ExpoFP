@@ -3,10 +3,11 @@ import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import data from "../../../../data";
-import store, { uiState } from "../../../../store";
+import store, { layersStore, uiState } from "../../../../store";
 import settings from "../../../../tools/settings";
-import { convertGpsToLocal } from "../../../../utils/gps";
+import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
+import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
@@ -22,6 +23,8 @@ let scale: number = null;
 const totalPoints = 700;
 const isDebug = false;
 
+const blinkCounter = 5;
+
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
 
@@ -32,7 +35,7 @@ let toColor = Color("#FF9E2C");
 
 export function mapCurrentPosition(position: CurrentPosition): Point {
     var mapping = null;
-    var fpConfig = null;
+    var fpConfig: GpsConfig = null;
 
     if (settings.EXPO === "money2020usa") {
         mapping = {
@@ -63,19 +66,25 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
 
         fpConfig = {
             p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
-            p1: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
+            p2: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
         };
     }
 
     if (settings.EXPO.indexOf("xpmusic-conference22") > -1) {
         fpConfig = {
             p0: { lat: 24.744760034152826, lng: 46.535945439716905, x: 550, y: 1350 },
-            p1: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505 },
+            p2: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505 },
         };
     }
 
+    if (!fpConfig) {
+        fpConfig = fpGeo.properties.config;
+    }
+
     let point: Point =
-        fpConfig && position.lat && position.lng ? convertGpsToLocal(position.lat, position.lng, fpConfig) : position;
+        fpConfig && position.lat && position.lng
+            ? { ...convertGpsToLocal(position.lat, position.lng, fpConfig), lat: position.lat, lng: position.lng }
+            : position;
 
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
@@ -87,6 +96,68 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     cp.y += shift.y;
 
     return cp;
+}
+
+let blinkCancellation = null;
+let blinkTimeout = null;
+let counter = 0;
+function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {
+    if (blinkTimeout) clearTimeout(blinkTimeout);
+    if (blinkCancellation) blinkCancellation();
+    if (counter) {
+        if (!routePoints.length) counter = 0;
+        return;
+    }
+
+    blinkTimeout = setTimeout(() => {
+        blinkTimeout = null;
+        if (routePoints.length) blinkCancellation = blinkCircle(context, painter, startIndex);
+    }, 1000);
+}
+
+let currentIndex: number;
+
+function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: number): () => void {
+    const updateBlink = (painter: RectPainter, visible: boolean) => {
+        for (let i = 0; i < blinkCounter; i++) {
+            painter.updateVisible(`Blink_${i.toString()}`, visible);
+            painter.updateSkipdim(`Blink_${i.toString()}`, visible);
+        }
+    };
+
+    const cIndex = () => startIndex || routePoints.length - 1;
+
+    const st = () => {
+        for (let i = 0; i < blinkCounter; i++) {
+            const point = routePoints[currentIndex - i];
+            if (point) painter.updateCenter(`Blink_${i.toString()}`, [point.x, point.y]);
+        }
+
+        if (currentIndex <= 0) {
+            currentIndex = cIndex();
+            counter++;
+        }
+
+        if (counter > 1) {
+            clearInterval(blinkStepInterval);
+            updateBlink(painter, false);
+        }
+
+        currentIndex--;
+    };
+
+    currentIndex = cIndex();
+
+    const interval = 4000 / currentIndex;
+    let blinkStepInterval = null;
+
+    updateBlink(painter, true);
+    blinkStepInterval = setInterval(() => context.requireUpdate(st), Math.min(40, interval));
+
+    return () => {
+        clearInterval(blinkStepInterval);
+        context.requireUpdate(() => updateBlink(painter, false));
+    };
 }
 
 function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
@@ -187,8 +258,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     if (data.hideDirections) return;
 
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
+    const blinkDrawer = context.requirePainter("BLINK", RectPainter, painterOrderPriority + 1, visible);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
+
+    const blinkCanvas = createCircleCanvas(6, context.pixelRatio, Color("#c1e4f5").hex());
 
     const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
@@ -202,6 +276,17 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             center: [0, 0],
             deltaPts: [-pointCanvas.width / 2, -pointCanvas.width / 2, pointCanvas.width, pointCanvas.width],
             canvasTmp: pointCanvas,
+            texPosition: "lefttop",
+            visible: isDebug,
+        });
+    }
+
+    for (let i = 0; i < blinkCounter; i++) {
+        blinkDrawer.addObject({
+            id: `Blink_${i.toString()}`,
+            center: [0, 0],
+            deltaPts: [-blinkCanvas.width / 2, -blinkCanvas.width / 2, blinkCanvas.width / 2, blinkCanvas.width / 2],
+            canvasTmp: blinkCanvas,
             texPosition: "lefttop",
             visible: isDebug,
         });
@@ -285,19 +370,20 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         store.routeStore.updateRoutePoints(routeLines.filter((gl) => !gl.virtual));
     }
 
-    function updateCurrentPosition() {
+    function updateCurrentPosition(): number {
         let position = store.routeStore.currentPosition;
 
         if (position) {
+            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
-            wfDrawer.updateSkipdim("currentLocation", true);
-            wfDrawer.updateVisible("currentLocation", true);
+            wfDrawer.updateSkipdim("currentLocation", visible);
+            wfDrawer.updateVisible("currentLocation", visible);
             wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
         } else {
             wfDrawer.updateVisible("currentLocation", false);
         }
 
-        if (!position || !routePoints.length) return;
+        if (!position || !routePoints.length) return 0;
 
         const shortestrPerp = routePoints
             .map((p, i) => {
@@ -309,7 +395,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             })
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        if (!shortestrPerp) return;
+        if (!shortestrPerp || shortestrPerp.l > 100) return 0;
 
         // Recalculate logic here
 
@@ -338,7 +424,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         var lines = [];
         for (let index = 0; index < routeLines.length; index++) {
             const line = routeLines[index];
-            if (pointIsOnLine(shortestrPerp.p, line.p0, line.p1)) {
+            if (shortestrPerp.l < 200 && pointIsOnLine(shortestrPerp.p, line.p0, line.p1)) {
                 lines.push({ p0: line.p0, p1: shortestrPerp.p });
                 break;
             } else lines.push(line);
@@ -347,6 +433,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (shortestrPerp.l < 200) wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
 
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
+
+        return shortestrPerp.i;
     }
 
     if (context.updatable) {
@@ -357,18 +445,33 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
-                updateCurrentPosition();
             }
         );
 
         reaction(
-            () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
-            () => context.requireUpdate(updateRoute)
+            () => [store.layerStore.loaded, store.layerStore.visible],
+            () => {
+                counter = 0;
+                context.requireUpdate(updateRoute);
+            }
+        );
+        reaction(
+            () => [uiState.selectedRoute],
+            () => {
+                context.requireUpdate(updateRoute);
+                counter = 0;
+                blink(context, blinkDrawer, updateCurrentPosition());
+            }
         );
 
         reaction(
             () => store.routeStore.currentPosition,
-            () => context.requireUpdate(updateCurrentPosition)
+            () => {
+                context.requireUpdate(() => {
+                    var index = updateCurrentPosition();
+                    blink(context, blinkDrawer, index);
+                });
+            }
         );
 
         updateRoute();

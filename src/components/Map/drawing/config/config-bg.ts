@@ -4,17 +4,18 @@ import Rect from "../../../../core/Rect";
 import { getLayerSvg, gtePathByIndex } from "../../../../data/svg";
 import store from "../../../../store";
 import { LayersMode } from "../../../../store/LayerStore";
+import { Img, loadIcons } from "../../../../utils/imageloader";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import configImg from "./config-img";
 
 export default async function configBg(
     context: DrawerContext,
-    images: Promise<SVGImageElement[]>,
+    images: Promise<Img[]>,
     layerID: string,
     painterOrderPriority: number,
     visible: boolean
-): Promise<HTMLImageElement[]> {
+): Promise<void> {
     let bgPainter: TrianglePainter = null;
     let fgPainter: TrianglePainter = null;
     let drawerSeq = 0;
@@ -110,5 +111,5 @@ export default async function configBg(
     }
 
     const logos = (await images).filter((image) => !!image);
-    return configImg(context, layerID, fpImages.concat(logos), painterOrderPriority + 6, false);
+    return configImg(context, layerID, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 6, false);
 }

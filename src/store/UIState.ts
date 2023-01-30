@@ -33,6 +33,7 @@ export default class UIState {
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
     @observable moveToRect: Rect = null;
+    @observable moveToLocation = false;
     @observable menu = false;
     @observable searchFocused = false;
     @observable printingPdf = false;
@@ -102,7 +103,7 @@ export default class UIState {
     }
 
     @computed get overlayPosition() {
-        if (!this.screenSize || this.screenSize.width > 550) return "left";
+        if (!this.screenSize || this.screenSize.width > 550 || this.kiosk) return "left";
         return "bottom";
     }
 

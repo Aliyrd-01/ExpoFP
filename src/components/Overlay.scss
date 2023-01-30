@@ -3,6 +3,7 @@
 .overlay {
     position: fixed;
     bottom: 0;
+    z-index: 100;
 
     &.collapsed {
         bottom: unset;
@@ -39,6 +40,7 @@
         width: var(--k-searchBox-width) !important;
         background: transparent;
         box-shadow: unset;
+        pointer-events: none;
 
         &.-backdrop {
             background: transparent;

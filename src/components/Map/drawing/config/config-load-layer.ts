@@ -1,17 +1,14 @@
-import { DrawerContext } from "./../Drawer1";
 import store from "../../../../store";
+import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
-import settings from "../../../../tools/settings";
-import logosFromBooths from "../../../../utils/logosFromBooths";
+import logosFromBooths from "../../../../utils/imageloader";
+import ImagePainter from "../painters/ImagePainter";
+import { DrawerContext } from "./../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
-import { RegularBooth } from "../../../../store/BoothStore";
-import animate from "./animate";
-import { easeLinear, interpolateNumber } from "d3";
-import ImagePainter from "../painters/ImagePainter";
 
 export default async function loadLayer(
     layer: Layer,
@@ -50,8 +47,7 @@ export default async function loadLayer(
 
         layer.configured = true;
 
-        var logosSources = logosBooths.map((b) => b.exhibitors.find((e) => !!e.logoInBooth).logo);
-        configBg(context, logosFromBooths(logosBooths, logosSources), layer.name, layer.basePriority, layer.visible).then(() => {
+        configBg(context, logosFromBooths(logosBooths), layer.name, layer.basePriority, layer.visible).then(() => {
             context.requireUpdate(null);
             var imagePainter = context.getLayersPainters([layer.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
             if (!imagePainter) return;

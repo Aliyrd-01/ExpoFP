@@ -7,6 +7,7 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
+import { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, BoothBase } from "../../store/BoothStore";
 import { Exhibitor } from "../../store/ExhibitorStore";
@@ -80,7 +81,7 @@ export default function Map() {
     useReaction(
         () => uiState.centerMap,
         () => {
-            if (!uiState.centerMap) return;
+            if (!uiState.centerMap || store.mapboxStore.showMapbox) return;
             uiState.centerMap = false;
             var { rectangle } = store.layerStore;
             if (rectangle)
@@ -98,7 +99,7 @@ export default function Map() {
     useReaction(
         () => uiState.zoomBy,
         () => {
-            if (!uiState.zoomBy) return;
+            if (!uiState.zoomBy || store.mapboxStore.showMapbox) return;
             const z = uiState.zoomBy;
             uiState.zoomBy = null;
             s.animatePlease = true;
@@ -135,7 +136,7 @@ export default function Map() {
     useReaction(
         () => uiState.moveToRect,
         () => {
-            if (!uiState.moveToRect) return;
+            if (!uiState.moveToRect || store.mapboxStore.showMapbox) return;
             if (
                 uiState.moveToRect &&
                 uiState.moveToRect.h !== Infinity &&
@@ -153,7 +154,7 @@ export default function Map() {
         () => uiState.moveToBooths,
         () => {
             logger.log("this.moveToBooths", uiState.moveToBooths);
-            if (!uiState.moveToBooths) return;
+            if (!uiState.moveToBooths || store.mapboxStore.showMapbox) return;
             //this.handledMoveToExhibitor = uiState.moveToBooths;
             logger.log("watched moveToBooths", uiState.moveToBooths);
             // // ask map to move to this exhibitor
@@ -205,11 +206,10 @@ export default function Map() {
 
     function init() {
         s.$canvas = select(el.current);
-
         s.zoom = zoom()
             .clickDistance(15)
             .interpolate(interpolate)
-            .scaleExtent([0.1, 35])
+            .scaleExtent([0.1, svgArea.w > 100000 ? 100 : 35])
             .constrain((transform, extent, translateExtent) => zoomBound(s.drawer, transform, false))
             .filter(function (currentEvent) {
                 if (!isIframe || !currentEvent || currentEvent.type !== "wheel")

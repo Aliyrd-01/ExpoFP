@@ -57,7 +57,7 @@ export default observer(function Layout() {
                 <Floors />
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
-                {store.mapboxStore.mapBoxEnabled && (
+                {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
                         <Mapbox />
                     </Suspense>
