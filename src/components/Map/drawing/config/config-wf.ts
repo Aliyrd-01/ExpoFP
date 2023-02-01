@@ -76,18 +76,18 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
             p2: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505 },
         };
     }
-    
+
     if (settings.EXPO === "demo") {
         fpConfig = {
-            p0: { lat: 38.255223, lng: -85.756780, x: 3309, y: 2702},
-            p2: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725},
+            p0: { lat: 38.255223, lng: -85.75678, x: 3309, y: 2702 },
+            p2: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725 },
         };
     }
-        
+
     if (settings.EXPO === "bett2023") {
         fpConfig = {
-            p0: { lat: 51.50924604464074, lng: 0.026175553161736653, x: 8629, y: 7416},
-            p2: { lat: 51.50715813053298, lng: 0.03452882241528408, x: 16272, y: 1033},
+            p0: { lat: 51.50924604464074, lng: 0.026175553161736653, x: 8629, y: 7416 },
+            p2: { lat: 51.50715813053298, lng: 0.03452882241528408, x: 16272, y: 1033 },
         };
     }
 
@@ -467,6 +467,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
         reaction(
@@ -481,10 +482,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => store.routeStore.currentPosition,
             () => {
-                context.requireUpdate(() => {
-                    var index = updateCurrentPosition();
-                    blink(context, blinkDrawer, index);
-                });
+                context.requireUpdate(() => blink(context, blinkDrawer, updateCurrentPosition()));
             }
         );
 
