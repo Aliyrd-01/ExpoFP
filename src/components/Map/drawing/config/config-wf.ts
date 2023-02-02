@@ -91,7 +91,7 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         };
     }
 
-    if (!fpConfig) {
+    if (!fpConfig && fpGeo) {
         fpConfig = fpGeo.properties.config;
     }
 
