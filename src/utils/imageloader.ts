@@ -35,7 +35,11 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                     const x = rect.cx - w / 2;
                     const y = rect.cy - h / 2;
 
-                    resolve({ name: booth.slug, bounds: { x, y, width: w, height: h, angle: -booth.rotate }, htmlImage: img });
+                    resolve({
+                        name: booth.slug,
+                        bounds: { x, y, width: w, height: h, angle: (-booth.rotate * 180) / Math.PI },
+                        htmlImage: img,
+                    });
                 })
         )
     );
