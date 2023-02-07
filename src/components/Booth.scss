@@ -107,6 +107,13 @@
     &__reserve-instructions {
         line-height: 1.4em;
     }
+
+    &__desc {
+        p,
+        span {
+            background: transparent !important;
+        }
+    }
 }
 
 .efp-kiosk {
