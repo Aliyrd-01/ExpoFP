@@ -149,8 +149,8 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
                 }
             }
             // ET: this is a fix for Illustrator re-save (it can have large rotates)
-            const maxDegree = 45.5;
-            if (booth.rotate > (maxDegree / 180) * Math.PI) {
+            const maxDegree = 180;
+            if (Math.abs((booth.rotate * 180) / Math.PI) > maxDegree) {
                 booth.rotate = booth.rotate - (90 * Math.PI) / 180;
                 // also swap width and height of rect
                 booth.rect = booth.rect.getRotated90();
