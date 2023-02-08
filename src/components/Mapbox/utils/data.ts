@@ -223,20 +223,22 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
 
         if (f.properties.type === featureTypes.booth) {
             let booth = booths.filter((b) => b.name === f.properties.id)[0] as RegularBooth;
-            f.properties.color = actualBoothColor(booth);
-            f.properties.description = booth.noLabels
-                ? null
-                : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
+            if (booth) {
+                f.properties.color = actualBoothColor(booth);
+                f.properties.description = booth.noLabels
+                    ? null
+                    : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
 
-            const logo = logos.find((l) => l?.name === booth.name);
+                const logo = logos.find((l) => l?.name === booth.name);
 
-            if (logo) {
-                const scale = avgHeight / logo.htmlImage.height;
-                const factor = Math.sqrt(Math.max(1, (logo.bounds.height * logo.bounds.width) / avgArea)) / 5;
-                f.properties.scale = scale * factor;
+                if (logo) {
+                    const scale = avgHeight / logo.htmlImage.height;
+                    const factor = Math.sqrt(Math.max(1, (logo.bounds.height * logo.bounds.width) / avgArea)) / 5;
+                    f.properties.scale = scale * factor;
 
-                var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
-                if (exhibitor) f.properties.logo = booth.slug;
+                    var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
+                    if (exhibitor) f.properties.logo = booth.slug;
+                }
             }
         } else {
             let color = f.properties.color;
