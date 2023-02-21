@@ -196,8 +196,9 @@ class ImageSlider extends React.Component<Props, State> {
     };
 
     onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-        let target = e.target as HTMLDivElement;
+        if (!this.state.startTouchPoint) return;
 
+        let target = e.target as HTMLDivElement;
         let x = e.changedTouches[0].clientX;
         let startX = this.state.startTouchPoint.x;
         let centerX = (target.clientLeft + (target.clientLeft + target.clientWidth)) / 2;
