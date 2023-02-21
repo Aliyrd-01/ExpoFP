@@ -75,7 +75,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
         var img = new Image();
         img.onerror = () => resolve(null);
         img.onload = () => resolve(img);
-        img.crossOrigin = "Anonymous";
+        img.crossOrigin = "anonymous";
         img.src = src;
     });
 }
