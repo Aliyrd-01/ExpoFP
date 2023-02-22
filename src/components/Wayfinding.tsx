@@ -10,6 +10,7 @@ import WayfindingTemplate from "./WayfindingTemplate";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
 import classNames from "classnames";
+import { RegularBooth } from "../store/BoothStore";
 
 function Wayfinding() {
     const routeSelected = () => {
@@ -32,8 +33,11 @@ function Wayfinding() {
         const booths = () =>
             store.routeStore.defaultFrom ? boothStore.booths.concat([store.routeStore.defaultFrom]) : boothStore.booths;
 
+        const regularBooths = booths().filter((booth) => booth instanceof RegularBooth);
+        const otheBooths = booths().filter((booth) => regularBooths.indexOf(booth) === -1);
+
         const options = () => {
-            const optionsList = [];
+            let optionsList = [];
 
             exhibitorStore.exhibitors.forEach((e) => {
                 boothsIDs.push(...e.booths.map((b) => b.id));
@@ -45,7 +49,18 @@ function Wayfinding() {
                 );
             });
 
-            booths()
+            otheBooths
+                .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
+                .forEach((booth) => {
+                    optionsList.push({
+                        value: booth.name,
+                        label: booth.fullName,
+                    });
+                });
+
+            optionsList = optionsList.sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }));
+
+            regularBooths
                 .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
                 .forEach((booth) => {
                     optionsList.push({
