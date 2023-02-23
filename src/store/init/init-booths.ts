@@ -159,8 +159,6 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
 
         let logoInBooth = false;
 
-        console.log(booth);
-
         if (booth instanceof RegularBooth) {
             const exhibitorsWithLogoInBooths = booth.exhibitors.filter((ex) => ex.logoInBooth);
             logoInBooth = exhibitorsWithLogoInBooths.length > 0;
