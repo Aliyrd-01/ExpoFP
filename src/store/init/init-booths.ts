@@ -157,7 +157,16 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
             }
         }
 
-        if (!booth.rotate && booth.rect.h > booth.rect.w * 2.0 && (booth.title || booth.name).length > 5) {
+        let logoInBooth = false;
+
+        console.log(booth);
+
+        if (booth instanceof RegularBooth) {
+            const exhibitorsWithLogoInBooths = booth.exhibitors.filter((ex) => ex.logoInBooth);
+            logoInBooth = exhibitorsWithLogoInBooths.length > 0;
+        }
+
+        if (!booth.rotate && booth.rect.h > booth.rect.w * 2.0 && (booth.title || booth.name).length > 5 && !logoInBooth) {
             booth.rotate = (90 * Math.PI) / 180;
             booth.rect = booth.rect.getRotated90();
         }

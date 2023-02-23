@@ -23,6 +23,7 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                     const ratio = img.width / img.height;
                     let w = 0;
                     let h = 0;
+                    let angle: number;
 
                     if (ratioBooth > ratio) {
                         h = rect.h * 0.9;
@@ -32,12 +33,28 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                         h = w / ratio;
                     }
 
+                    if (ratio >= 2 && !booth.rotate && booth.rect.h >= booth.rect.w * 2.0) {
+                        let newH = rect.w * 0.9;
+                        let newW = newH * ratio;
+
+                        while (newW > rect.h - 2) {
+                            newH--;
+                            newW = newH * ratio;
+                        }
+
+                        h = newH;
+                        w = newW;
+                        angle = -90;
+                    } else {
+                        angle = (-booth.rotate * 180) / Math.PI;
+                    }
+
                     const x = rect.cx - w / 2;
                     const y = rect.cy - h / 2;
 
                     resolve({
                         name: booth.slug,
-                        bounds: { x, y, width: w, height: h, angle: (-booth.rotate * 180) / Math.PI },
+                        bounds: { x, y, width: w, height: h, angle: angle },
                         htmlImage: img,
                     });
                 })
