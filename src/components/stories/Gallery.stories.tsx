@@ -20,25 +20,11 @@ const Template: Story<GalleryProps> = (args) => {
 export const Base = Template.bind({});
 Base.args = {
     images: [
+        "https://demo.expofp.com/data/exhibitors/1327144/media/original-Fj9Y3QMWQAIbn7n.jpeg",
+        "https://demo.expofp.com/data/exhibitors/1327144/media/original-Fj9Y3QNXkAIfnTF.jpeg",
         "https://demo.expofp.com/data/exhibitors/1327130/media/original-Capture.jpeg",
         "https://demo.expofp.com/data/exhibitors/1327233/media/316170713_5866732393386490_7382723422240955204_n.jpeg",
         "https://demo.expofp.com/data/exhibitors/1327130/media/original-fkgdlfj.jpeg",
         "https://demo.expofp.com/data/exhibitors/1327233/media/318585866_5911928238866905_8652592448164600146_n.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327144/media/original-Fj9Y3QMWQAIbn7n.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327144/media/original-Fj9Y3QNXkAIfnTF.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
-        "https://demo.expofp.com/data/exhibitors/1327130/media/original-flghdlf.jpeg",
     ],
 };
