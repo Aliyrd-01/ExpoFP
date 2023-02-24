@@ -269,7 +269,7 @@ function splitPolyLine(lines: Line[], interval: number): Point[] {
 }
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
-    if (data.hideDirections) return;
+    //if (data.hideDirections) return;
 
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
     const blinkDrawer = context.requirePainter("BLINK", RectPainter, painterOrderPriority + 1, visible);
