@@ -5,7 +5,6 @@ import LightGallery from "lightgallery/react";
 // import plugins
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 // import styles
 import "lightgallery/css/lightgallery.css";
@@ -29,13 +28,9 @@ const Gallery: FC<GalleryProps> = ({ images }) => {
     const renderImages = () => {
         return images.map((url, i) => {
             return (
-                <TransformWrapper>
-                    <TransformComponent>
-                        <div className="gallery__item" data-src={url} key={url + i}>
-                            <img src={url} />
-                        </div>
-                    </TransformComponent>
-                </TransformWrapper>
+                <div className="gallery__item" data-src={url} key={url + i}>
+                    <img src={url} />
+                </div>
             );
         });
     };
@@ -69,7 +64,6 @@ const Gallery: FC<GalleryProps> = ({ images }) => {
                 showZoomInOutIcons={true}
                 hideScrollbar={true}
                 onInit={onInit}
-                zoomFromOrigin={true}
                 mobileSettings={{ showCloseIcon: true }}
                 plugins={[lgThumbnail, lgZoom]}
                 elementClassNames="gallery__wrapper"
