@@ -14,13 +14,13 @@ import "./Search.scss";
 import * as YouAreHere from "../utils/yah";
 import { kioskKey } from "../store/init/init-ui";
 
-const DEBOUNCE_DELAY_MS = 2000;
+const DEBOUNCE_DELAY_MS = 1000;
 
 export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean {
     text = text.trim();
 
     if (text.startsWith(`${YouAreHere.yahKey}`)) {
-        const commandValue = text.substr(YouAreHere.yahKey.length).trim();        
+        const commandValue = text.substr(YouAreHere.yahKey.length).trim();
         var url = window.location.origin + window.location.pathname;
         if (commandValue[1] === undefined) {
             const yah = YouAreHere.getYah();
@@ -138,7 +138,7 @@ function Search() {
     const debouncedChange = useCallback(
         debounce(() => {
             if (s.text) {
-                sendEventToGa(`FP`, GaEventActions.Search, s.text);
+                sendEventToGa(GaEventActions.Search, s.text);
             }
         }, DEBOUNCE_DELAY_MS),
         [s]

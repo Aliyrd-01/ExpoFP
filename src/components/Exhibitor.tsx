@@ -64,7 +64,7 @@ function ExhibitorComponent() {
     useAutorun(() => {
         if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(`FP Exhibitor`, GaEventActions.View, s.exhibitor.name);
+            sendEventToGa(GaEventActions.View, s.exhibitor.name);
         }
     });
 
@@ -82,11 +82,11 @@ function ExhibitorComponent() {
     }
 
     function customButtonClick() {
-        sendEventToGa(`FP Exhibitor`, GaEventActions.ClickCustomButton, s.exhibitor.name);
+        sendEventToGa(GaEventActions.ClickCustomButton, s.exhibitor.name);
     }
 
     function itemClick(action: GaEventActions) {
-        sendEventToGa(`FP Exhibitor`, action, s.exhibitor.name);
+        sendEventToGa(action, s.exhibitor.name);
     }
 
     return useObserver(() => {

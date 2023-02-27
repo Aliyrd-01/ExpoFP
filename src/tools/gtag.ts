@@ -28,12 +28,52 @@ export enum GaEventActions {
     ClickDirections = "Click Directions",
 }
 
-export function sendEventToGa(category: string, action: GaEventActions, label: string) {
-    let actionTitle: string = action as string;
-    gtag("event", actionTitle, {
-        event_category: category,
-        event_label: label,
-    });
+export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string,) {
+    //for reference https://developers.google.com/analytics/devguides/collection/ga4/reference/events
+    switch (action) {
+        case GaEventActions.View:
+        case GaEventActions.ViewGallery:
+        case GaEventActions.ViewVideo:
+            gtag("event", "select_content", {
+                content_type: action,
+                content_id: label
+            });
+            break;
+        case GaEventActions.Search:
+            gtag("event", "search", {
+                search_term: label
+            });
+            break;
+        case GaEventActions.ClickCustomButton:
+        case GaEventActions.ClickPhone:
+        case GaEventActions.ClickEmail:
+        case GaEventActions.ClickWebsite:
+        case GaEventActions.ClickFacebook:
+        case GaEventActions.ClickInstagaram:
+        case GaEventActions.ClickLinkedin:
+        case GaEventActions.ClickTwitter:
+        case GaEventActions.ClickGooglePlus:
+        case GaEventActions.ClickXing:
+        case GaEventActions.ClickYoutube:
+            gtag("event", "share", {
+                //method: action,
+                content_type: action,
+                content_id: label
+            });
+            break;
+        case GaEventActions.ClickDirections:
+            gtag("event", "route", {
+                content_type: action,
+                content_id: label
+            });
+            break;
+        default:
+            gtag("event", action, {
+                content_type: eventCategory,
+                content_id: label,
+            });
+    }
+
 }
 
 if (data.gtag) {

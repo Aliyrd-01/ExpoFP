@@ -10,7 +10,7 @@ import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 
 trackEvent("load");
-sendEventToGa(`FP`, GaEventActions.Load, ``);
+sendEventToGa(GaEventActions.Load, ``);
 
 // initStore(store);
 
