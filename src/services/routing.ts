@@ -7,7 +7,6 @@ import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { Route } from "../store/RouteStore";
-import gtag from "../tools/gtag";
 import logger from "../tools/logger";
 // import settings from '@/settings';
 
@@ -127,7 +126,6 @@ function stateToUrl() {
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
         // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         historyPush(newQuery);
-        sendGa();
     } else {
         // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         // logger.log('history replace', queryRaw);
@@ -171,16 +169,3 @@ if (uiState.previewExhibitor) {
 dispatchFromUrl();
 autorun(setTitle);
 autorun(stateToUrl);
-
-let timeout: number;
-
-function sendGa() {
-    if (!data.gtag) return;
-    if (timeout) window.clearTimeout(timeout);
-    timeout = window.setTimeout(() => {
-        gtag("config", data.gtag, {
-            page_title: document.title,
-            page_path: window.location.pathname + window.location.search,
-        });
-    }, 1000);
-}

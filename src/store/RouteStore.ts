@@ -87,7 +87,7 @@ export default class RouteStore {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
         this.selectRoute(new Route(this.defaultFrom || from, to, exceptUnaccessible));
-        sendEventToGa(`FP Wayfinding`, GaEventActions.ClickDirections, to.name);
+
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {
                 from: undefined,
@@ -131,7 +131,7 @@ export default class RouteStore {
             const cp = store.routeStore.currentPosition;
 
             const rect = Rect.fromCxcywh(cp.x, cp.y, 1000, 1000);
-            if (!rect.intersects(svgArea)) return;           
+            if (!rect.intersects(svgArea)) return;
 
             uiState.moveToRect = rect;
             layersStore.updateVisibility(store.routeStore.currentPosition?.z, true);
@@ -152,6 +152,11 @@ export default class RouteStore {
 
         distance = Math.round(distance / 10.0);
 
+        sendEventToGa(
+            GaEventActions.ClickDirections,
+            `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
+        );
+
         if (store.fp.onDirection)
             setTimeout(() => {
                 store.fp.onDirection({
@@ -168,7 +173,7 @@ export default class RouteStore {
 }
 
 export class Route {
-    public constructor(public from: Booth, public to: Booth, public exceptUnaccessible: boolean) {}
+    public constructor(public from: Booth, public to: Booth, public exceptUnaccessible: boolean) { }
 }
 
 export class CurrentPosition extends Point {
