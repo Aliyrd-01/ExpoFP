@@ -110,195 +110,195 @@
 	}
 }
 
-.lg-thumb-outer {
-}
+//.lg-thumb-outer {
+//}
+//
+//.lg-icon {
+//	width: 60px !important;
+//	height: 60px !important;
+//	background: rgba(48, 48, 48, 0.56) !important;
+//	backdrop-filter: blur(5px) !important;
+//	border-radius: 50%;
+//	color: #E4E4E4 !important;
+//
+//	@include media-breakpoint-down(md) {
+//		width: 50px !important;
+//		height: 50px !important;
+//	}
+//}
+//
+//.lg-close, .lg-zoom-in, .lg-zoom-out, .lg-next, .lg-prev {
+//	&:before {
+//		content: "" !important;
+//		display: block;
+//		height: 100%;
+//		width: 100%;
+//		background-position: 50% !important;
+//		background-repeat: no-repeat !important;
+//	}
+//
+//	&:after {
+//		content: "" !important;
+//	}
+//}
+//
+//.lg-close {
+//	&:before {
+//		background-image: url("./icons/close.svg");
+//	}
+//}
+//
+//.lg-zoom-in {
+//	&:before {
+//		background-image: url("./icons/zoom-in.svg");
+//	}
+//}
+//
+//.lg-zoom-out {
+//	&:before {
+//		background-image: url("./icons/zoom-out.svg");
+//	}
+//}
+//
+//.lg-toolbar.lg-group {
+//	width: 60px !important;
+//	top: 30px !important;
+//	right: 40px !important;
+//	left: unset !important;
+//	display: flex !important;
+//	flex-direction: column !important;
+//	align-items: flex-end;
+//	gap: 20px;
+//	background-image: none !important;
+//
+//	@include media-breakpoint-down(md) {
+//		top: 20px !important;
+//		right: 20px !important;
+//	}
+//}
+//
+//.lg-next {
+//	right: 40px !important;
+//
+//	@include media-breakpoint-down(md) {
+//		right: calc(50% - 35px) !important;
+//		transform: translateX(50%) !important;
+//	}
+//
+//	&:before {
+//		background: url("./icons/chevron-right.svg") no-repeat;
+//	}
+//}
+//
+//.lg-prev {
+//	left: 40px !important;
+//
+//	@include media-breakpoint-down(md) {
+//		left: calc(50% - 35px) !important;
+//		transform: translateX(-50%) !important;
+//	}
+//
+//	&:before {
+//		background: url("./icons/chevron-left.svg") no-repeat;
+//	}
+//}
+//
+//.lg-next, .lg-prev {
+//	border-radius: 50% !important;
+//
+//	@include media-breakpoint-down(md) {
+//		bottom: -85px !important;
+//		top: unset !important;
+//	}
+//}
+//
+//.lg-counter {
+//	position: absolute !important;
+//	bottom: -50px !important;
+//	left: 50% !important;
+//	transform: translateX(-50%) !important;
+//	color: #9E9E9E !important;
+//	height: auto !important;
+//	padding: 0 !important;
+//
+//	@include media-breakpoint-down(md) {
+//		display: none !important;
+//	}
+//}
+//
+//.lg-components {
+//	height: 90px !important;
+//	margin: 0 65px;
+//	transition: transform 0.2s !important;
+//	@include media-breakpoint-down(md) {
+//		height: 67px !important;
+//		margin: 0;
+//	}
+//}
+//
+//.lg-outer.lg-components-open:not(.lg-zoomed) .lg-components {
+//	bottom: 30px !important;
+//	@include media-breakpoint-down(md) {
+//		bottom: 20px !important;
+//	}
+//}
+//
+//.lg-thumb-item {
+//	height: 100% !important;
+//	opacity: 0.5 !important;
+//	border: none !important;
+//}
+//
+//.lg-thumb-item.active {
+//	opacity: 1 !important;
+//}
+//
+//.lg-outer .lg-content {
+//	bottom: 210px !important;
+//	top: 30px !important;
+//
+//	@include media-breakpoint-down(md) {
+//		top: 230px !important;
+//	}
+//}
+//
+//.lg-outer .lg-thumb {
+//	padding: 0 !important;
+//}
+//
+//.lg-outer .lg-thumb-outer {
+//	background: none !important;
+//	height: 100% !important;
+//}
 
-.lg-icon {
-	width: 60px !important;
-	height: 60px !important;
-	background: rgba(48, 48, 48, 0.56) !important;
-	backdrop-filter: blur(5px) !important;
-	border-radius: 50%;
-	color: #E4E4E4 !important;
-
-	@include media-breakpoint-down(md) {
-		width: 50px !important;
-		height: 50px !important;
-	}
-}
-
-.lg-close, .lg-zoom-in, .lg-zoom-out, .lg-next, .lg-prev {
-	&:before {
-		content: "" !important;
-		display: block;
-		height: 100%;
-		width: 100%;
-		background-position: 50% !important;
-		background-repeat: no-repeat !important;
-	}
-
-	&:after {
-		content: "" !important;
-	}
-}
-
-.lg-close {
-	&:before {
-		background-image: url("./icons/close.svg");
-	}
-}
-
-.lg-zoom-in {
-	&:before {
-		background-image: url("./icons/zoom-in.svg");
-	}
-}
-
-.lg-zoom-out {
-	&:before {
-		background-image: url("./icons/zoom-out.svg");
-	}
-}
-
-.lg-toolbar.lg-group {
-	width: 60px !important;
-	top: 30px !important;
-	right: 40px !important;
-	left: unset !important;
-	display: flex !important;
-	flex-direction: column !important;
-	align-items: flex-end;
-	gap: 20px;
-	background-image: none !important;
-
-	@include media-breakpoint-down(md) {
-		top: 20px !important;
-		right: 20px !important;
-	}
-}
-
-.lg-next {
-	right: 40px !important;
-
-	@include media-breakpoint-down(md) {
-		right: calc(50% - 35px) !important;
-		transform: translateX(50%) !important;
-	}
-
-	&:before {
-		background: url("./icons/chevron-right.svg") no-repeat;
-	}
-}
-
-.lg-prev {
-	left: 40px !important;
-
-	@include media-breakpoint-down(md) {
-		left: calc(50% - 35px) !important;
-		transform: translateX(-50%) !important;
-	}
-
-	&:before {
-		background: url("./icons/chevron-left.svg") no-repeat;
-	}
-}
-
-.lg-next, .lg-prev {
-	border-radius: 50% !important;
-
-	@include media-breakpoint-down(md) {
-		bottom: -85px !important;
-		top: unset !important;
-	}
-}
-
-.lg-counter {
-	position: absolute !important;
-	bottom: -50px !important;
-	left: 50% !important;
-	transform: translateX(-50%) !important;
-	color: #9E9E9E !important;
-	height: auto !important;
-	padding: 0 !important;
-
-	@include media-breakpoint-down(md) {
-		display: none !important;
-	}
-}
-
-.lg-components {
-	height: 90px !important;
-	margin: 0 65px;
-	transition: transform 0.2s !important;
-	@include media-breakpoint-down(md) {
-		height: 67px !important;
-		margin: 0;
-	}
-}
-
-.lg-outer.lg-components-open:not(.lg-zoomed) .lg-components {
-	bottom: 30px !important;
-	@include media-breakpoint-down(md) {
-		bottom: 20px !important;
-	}
-}
-
-.lg-thumb-item {
-	height: 100% !important;
-	opacity: 0.5 !important;
-	border: none !important;
-}
-
-.lg-thumb-item.active {
-	opacity: 1 !important;
-}
-
-.lg-outer .lg-content {
-	bottom: 210px !important;
-	top: 30px !important;
-
-	@include media-breakpoint-down(md) {
-		top: 230px !important;
-	}
-}
-
-.lg-outer .lg-thumb {
-	padding: 0 !important;
-}
-
-.lg-outer .lg-thumb-outer {
-	background: none !important;
-	height: 100% !important;
-}
-
-.gallery__wrapper {
-	.lg-item {
-		// By default all slides should be hidden
-		opacity: 0;
-		will-change: transform, opacity;
-
-		// For the zoom in transition, set scale3d to 2
-		&.lg-prev-slide {
-			transform: scale3d(2, 2, 2);
-		}
-
-		// For the zoom out transition, set scale3d to 0
-		&.lg-next-slide {
-			transform: scale3d(0, 0, 0);
-		}
-
-		// Reset opacity and transition
-		&.lg-current {
-			transform: scale3d(1, 1, 1);
-			opacity: 1;
-		}
-
-		// Add CSS transition for opacity and transform
-		&.lg-prev-slide,
-		&.lg-next-slide,
-		&.lg-current {
-			transition: transform 1s cubic-bezier(0, 0, 0.25, 1) 0s, opacity 1s
-			ease 0s;
-		}
-	}
-}
+//.gallery__wrapper {
+//	.lg-item {
+//		// By default all slides should be hidden
+//		opacity: 0;
+//		will-change: transform, opacity;
+//
+//		// For the zoom in transition, set scale3d to 2
+//		&.lg-prev-slide {
+//			transform: scale3d(2, 2, 2);
+//		}
+//
+//		// For the zoom out transition, set scale3d to 0
+//		&.lg-next-slide {
+//			transform: scale3d(0, 0, 0);
+//		}
+//
+//		// Reset opacity and transition
+//		&.lg-current {
+//			transform: scale3d(1, 1, 1);
+//			opacity: 1;
+//		}
+//
+//		// Add CSS transition for opacity and transform
+//		&.lg-prev-slide,
+//		&.lg-next-slide,
+//		&.lg-current {
+//			transition: transform 1s cubic-bezier(0, 0, 0.25, 1) 0s, opacity 1s
+//			ease 0s;
+//		}
+//	}
+//}

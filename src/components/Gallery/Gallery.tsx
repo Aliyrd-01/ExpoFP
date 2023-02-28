@@ -10,7 +10,6 @@ import lgZoom from "lightgallery/plugins/zoom";
 import "lightgallery/css/lightgallery.css";
 import "lightgallery/css/lg-zoom.css";
 import "lightgallery/css/lg-thumbnail.css";
-import "lightgallery/css/lg-transitions.css";
 
 export interface GalleryProps {
     images: string[];
@@ -35,21 +34,21 @@ const Gallery: FC<GalleryProps> = ({ images }) => {
         });
     };
 
-    const changeCounterSeparator = (replaceTo: string) => {
-        const counterElement = lightGallery.current.$content.selector.querySelector(".lg-counter");
-        const childNodes = counterElement.childNodes;
-
-        for (let i = 0; i < childNodes.length; i++) {
-            if (childNodes[i].nodeType === Node.TEXT_NODE) {
-                childNodes[i].textContent = childNodes[i].textContent.replace("/", replaceTo);
-            }
-        }
-    };
+    // const changeCounterSeparator = (replaceTo: string) => {
+    //     const counterElement = lightGallery.current.$toolbar.selector.querySelector(".lg-counter");
+    //     const childNodes = counterElement.childNodes;
+    //
+    //     for (let i = 0; i < childNodes.length; i++) {
+    //         if (childNodes[i].nodeType === Node.TEXT_NODE) {
+    //             childNodes[i].textContent = childNodes[i].textContent.replace("/", replaceTo);
+    //         }
+    //     }
+    // };
 
     const onInit = useCallback((detail) => {
         if (detail) {
             lightGallery.current = detail.instance;
-            changeCounterSeparator("of");
+            // changeCounterSeparator("of");
         }
     }, []);
 
@@ -57,14 +56,14 @@ const Gallery: FC<GalleryProps> = ({ images }) => {
         <div className="gallery">
             <LightGallery
                 speed={300}
-                appendCounterTo={".lg-content"}
                 actualSize={false}
                 download={false}
                 showCloseIcon={true}
                 showZoomInOutIcons={true}
                 hideScrollbar={true}
                 onInit={onInit}
-                mobileSettings={{ showCloseIcon: true }}
+                closeOnTap={false}
+                mobileSettings={{ showCloseIcon: true, controls: false }}
                 plugins={[lgThumbnail, lgZoom]}
                 elementClassNames="gallery__wrapper"
             >
