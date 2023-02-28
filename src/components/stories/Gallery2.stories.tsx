@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
-import Gallery, { GalleryProps } from "../Gallery/Gallery";
-import Gallery2 from "../Gallery2/Gallery2";
+import Gallery2, { GalleryProps } from "../Gallery2/Gallery2";
 
 export default {
-    title: "Components/Gallery",
-    component: Gallery,
+    title: "Components/Gallery2",
+    component: Gallery2,
 } as Meta;
 
 const exhibitors = [
@@ -53,14 +52,7 @@ const Template: Story<GalleryProps> = (args) => {
     return (
         <div className="layout sb-layout">
             <div className="sidebar">
-                <div>
-                    <span>Default styles</span>
-                    <Gallery images={images} />
-                </div>
-                <div style={{ marginTop: "20px" }}>
-                    <span>Custom styles</span>
-                    <Gallery2 images={images} />
-                </div>
+                <Gallery2 images={images} />
                 <button style={{ marginTop: "10px" }} onClick={toggleImages}>
                     change images
                 </button>
