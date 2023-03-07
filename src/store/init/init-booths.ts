@@ -32,10 +32,10 @@ export function iniAllBooths(store: RootStore) {
                 exhibitor.booths.push(boothReg as RegularBooth);
             }
 
-            boothReg.exhibitors = boothReg.exhibitors.sort((a: Exhibitor, b: Exhibitor) => {
-                if (a.featured !== b.featured) return a.featured ? -1 : 1;
-                return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
-            });
+            // boothReg.exhibitors = boothReg.exhibitors.sort((a: Exhibitor, b: Exhibitor) => {
+            //     if (a.featured !== b.featured) return a.featured ? -1 : 1;
+            //     return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+            // });
         }
         booths.push(b);
     }
