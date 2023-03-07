@@ -1,4 +1,7 @@
 import data from "../data";
+import settings from "../tools/settings";
+
+const ga_common_prop = "G-78CKLYWFJK";
 
 window["dataLayer"] = window["dataLayer"] || [];
 
@@ -76,8 +79,16 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
 
 }
 
+const v = document.createElement("script");
+v.type = "text/javascript";
+v.async = true;
+v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
+const vx = document.getElementsByTagName("script")[0];
+vx.parentNode.insertBefore(v, vx);
+
+gtag("js", new Date());
+
 if (data.gtag) {
-    // insert script
     const s = document.createElement("script");
     s.type = "text/javascript";
     s.async = true;
@@ -85,9 +96,8 @@ if (data.gtag) {
     const x = document.getElementsByTagName("script")[0];
     x.parentNode.insertBefore(s, x);
 
-    // initial view
-    gtag("js", new Date());
-    gtag("config", data.gtag, { transport_type: "beacon" });
+    gtag("config", data.gtag, { fp_key: settings.EXPO });
 }
+gtag("config", ga_common_prop, { fp_key: settings.EXPO });
 
 window["gtag"] = gtag;
