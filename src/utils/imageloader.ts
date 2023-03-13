@@ -93,6 +93,6 @@ function loadImage(src: string): Promise<HTMLImageElement> {
         img.onerror = () => resolve(null);
         img.onload = () => resolve(img);
         img.crossOrigin = "anonymous";
-        img.src = src;
+        img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
     });
 }

@@ -1,3 +1,4 @@
+import { boothStore } from "./../../../../store/index";
 import store from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
@@ -28,8 +29,12 @@ export default async function loadLayer(
 
         const booths = initBooths(store, layer.name);
 
-        const logosBooths = booths.filter(
-            (b) => b instanceof RegularBooth && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
+        const logosBooths = boothStore.booths.filter(
+            (b) =>
+                b instanceof RegularBooth &&
+                b.rect &&
+                (!b.layer || b.layer === layer) &&
+                b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));
