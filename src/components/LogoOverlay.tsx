@@ -75,7 +75,7 @@ export default function LogoOverlay() {
                     style={{ textAlign: "center", bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5), left: remsToPixels(0.5) }}
                 >
                     <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
-                    <QRCode value={window.location.href} size={100} />
+                    <QRCode value={window.location.href.replace("/?kkiosk", "")} size={100} />
                 </div>
             )}
         </div>
