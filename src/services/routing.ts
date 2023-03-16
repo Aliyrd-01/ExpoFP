@@ -151,6 +151,9 @@ else if (locationSearch.startsWith("?b=")) {
     const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
     if (exhibitor) historyReplace("?" + exhibitor.slug);
     else historyReplace("?bookmarks");
+} else if (locationSearch.startsWith("?nooverlay")) {
+    historyReplace("?");
+    store.uiState.hideOverlay = true;
 }
 
 // facebook and google  fix

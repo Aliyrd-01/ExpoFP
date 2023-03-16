@@ -52,6 +52,7 @@ export default class UIState {
     @observable kiosk = false;
     @observable modalActive = { share: false };
     @observable galleryActive = false;
+    @observable hideOverlay = false;
 
     overlayMediumHeightRems = 10;
 
@@ -59,8 +60,8 @@ export default class UIState {
         this.rootStore = rootStore;
     }
 
-    get noOverlay() {
-        return this.rootStore.fp.noOverlay;
+    @computed({ keepAlive: true })  get noOverlay() {
+        return this.rootStore.fp.noOverlay || this.hideOverlay;
     }
 
     get onBoothClick() {
