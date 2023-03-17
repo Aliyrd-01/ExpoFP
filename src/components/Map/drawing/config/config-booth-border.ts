@@ -28,7 +28,7 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
 
         const borderColor = Color(settings.boothBorderColor).vec4();
         const r = this.booth.rect;
-        const width = boothStore.borderWidth;
+        const width = booth.borderWidth;
 
         const triangles: Triangle[] = [];
 

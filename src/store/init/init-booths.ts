@@ -106,6 +106,8 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         } else layerBooths.push(booth);
 
         booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
+        booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor;
+        booth.borderWidth = parseFloat(rect.getAttribute("stroke-width") || rect.style.strokeWidth) || boothStore.borderWidth;
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
