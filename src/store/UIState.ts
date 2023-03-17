@@ -232,16 +232,19 @@ export default class UIState {
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
 
-        if (!text)
-            return exhibitorsArray.length === 0
-                ? boothsArray
-                : [...exhibitorsArray, ...boothsArray.filter((b) => b instanceof SpecialBooth)].sort((a, b) =>
-                      a["featured"] === b["featured"]
-                          ? a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-                          : a["featured"]
-                          ? -1
-                          : 1
-                  );
+        if (!text) {
+            // return exhibitorsArray.length === 0
+            //     ? boothsArray
+            //     : [...exhibitorsArray, ...boothsArray.filter((b) => b instanceof SpecialBooth)].sort((a, b) =>
+            //         a["featured"] === b["featured"]
+            //             ? a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+            //             : a["featured"]
+            //             ? -1
+            //             : 1
+            //     );
+
+            return exhibitorsArray.length === 0 ? boothsArray : exhibitorsArray;
+        }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
             window.setTimeout(() => {
