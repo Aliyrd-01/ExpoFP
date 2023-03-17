@@ -15,11 +15,12 @@ export default function initExhibitors(store: RootStore) {
         else data.exhibitors.push(previewExhibitor);
     }
 
-    data.exhibitors.sort(function (a: RawExhibitor, b: RawExhibitor) {
-        var x = (a.featured ? "0" : "1") + a.name.toLowerCase();
-        var y = (b.featured ? "0" : "1") + b.name.toLowerCase();
-        return x < y ? -1 : x > y ? 1 : 0;
-    });
+    /// TODO: remove this
+    // data.exhibitors.sort(function (a: RawExhibitor, b: RawExhibitor) {
+    //     var x = (a.featured ? "0" : "1") + a.name.toLowerCase();
+    //     var y = (b.featured ? "0" : "1") + b.name.toLowerCase();
+    //     return x < y ? -1 : x > y ? 1 : 0;
+    // });
 
     const { exhibitorStore } = store;
 

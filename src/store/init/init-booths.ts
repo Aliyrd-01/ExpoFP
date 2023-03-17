@@ -32,6 +32,7 @@ export function iniAllBooths(store: RootStore) {
                 exhibitor.booths.push(boothReg as RegularBooth);
             }
 
+            //TODO: remove this
             // boothReg.exhibitors = boothReg.exhibitors.sort((a: Exhibitor, b: Exhibitor) => {
             //     if (a.featured !== b.featured) return a.featured ? -1 : 1;
             //     return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
@@ -106,7 +107,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         } else layerBooths.push(booth);
 
         booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
-        booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor;
+        booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor || "#FFFFFF";
         booth.borderWidth = parseFloat(rect.getAttribute("stroke-width") || rect.style.strokeWidth) || boothStore.borderWidth;
 
         booth.rect = Rect.fromSvgRectElement(rect);
