@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Meta, Story } from "@storybook/react";
-import Gallery, { GalleryProps } from "../Gallery/Gallery";
-import Gallery2 from "../Gallery2/Gallery2";
+import Gallery from "../Gallery/Gallery";
 
 export default {
     title: "Components/Gallery",
@@ -43,27 +42,13 @@ const examples = [
     "https://images.unsplash.com/photo-1539678050869-2b97c7c359fd?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1600&q=80",
 ];
 
-const Template: Story<GalleryProps> = (args) => {
-    const [images, setImages] = useState(examples);
-
-    const toggleImages = () => {
-        setImages((prevState) => (prevState === exhibitors ? examples : exhibitors));
-    };
-
+const Template: any = (args) => {
     return (
         <div className="layout sb-layout">
             <div className="sidebar">
                 <div>
-                    <span>Default styles</span>
-                    <Gallery images={images} />
+                    <Gallery images={examples} />
                 </div>
-                <div style={{ marginTop: "20px" }}>
-                    <span>Custom styles</span>
-                    <Gallery2 images={images} />
-                </div>
-                <button style={{ marginTop: "10px" }} onClick={toggleImages}>
-                    change images
-                </button>
             </div>
         </div>
     );

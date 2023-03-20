@@ -79,7 +79,7 @@
         "react-dom": "^16.12.0",
         "react-qr-code": "^2.0.9",
         "react-transition-group": "^4.3.0",
-        "react-zoom-pan-pinch": "^3.0.2",
+        "react-zoom-pan-pinch-sr": "^0.2.0",
         "sass-loader": "^8.0.0",
         "serve": "^11.2.0",
         "simple-geometry": "^1.0.5",
