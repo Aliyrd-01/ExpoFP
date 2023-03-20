@@ -427,7 +427,7 @@ function ExhibitorComponent() {
 
         const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini/i.test(navigator.userAgent);
 
-        if (mobile && navigator?.canShare(data)) {
+        if (mobile && navigator?.canShare && navigator.canShare(data)) {
             navigator.share(data);
         } else {
             store.toggleModal("share");
