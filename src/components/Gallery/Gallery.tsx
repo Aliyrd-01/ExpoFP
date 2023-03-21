@@ -29,7 +29,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         return images.map((url, i) => {
             return (
                 <div className="gallery__item" key={url + i} onClick={() => openModal(i)}>
-                    <img src={url} />
+                    <img src={url} alt={url} />
                 </div>
             );
         });
@@ -67,16 +67,8 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         });
     };
 
-    const thumbsOptions: any = {
-        modules: [Thumbs],
-        slidesPerView: "auto",
-        watchSlidesProgress: true,
-        slideToClickedSlide: true,
-        spaceBetween: 5,
-    };
-
-    const Controls = ({ zoomIn, zoomOut }) => (
-        <>
+    const Controls = ({ zoomIn, zoomOut, className = "" }) => (
+        <div className={className}>
             <button
                 className="gallery-slider__btn close"
                 onClick={() => {
@@ -125,8 +117,16 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                     />
                 </svg>
             </button>
-        </>
+        </div>
     );
+
+    const thumbsOptions: any = {
+        modules: [Thumbs],
+        slidesPerView: "auto",
+        watchSlidesProgress: true,
+        slideToClickedSlide: true,
+        spaceBetween: 5,
+    };
 
     return (
         <React.Fragment>
@@ -200,11 +200,13 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                         }}
                     >
                         <div ref={paginationRef} className="gallery-slider__pagination" />
-                        <div className="gallery-slider__controls">
-                            {utils.length && (
-                                <Controls zoomIn={utils[currentSlideIndex].zoomIn} zoomOut={utils[currentSlideIndex].zoomOut} />
-                            )}
-                        </div>
+                        {utils.length && (
+                            <Controls
+                                className="gallery-slider__controls"
+                                zoomIn={utils[currentSlideIndex].zoomIn}
+                                zoomOut={utils[currentSlideIndex].zoomOut}
+                            />
+                        )}
                         <button ref={nextRef} className="gallery-slider__btn next">
                             <svg
                                 className="icon"
@@ -256,6 +258,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
 
 const TransformImg = ({ swiperRef, url }) => {
     useTransformEffect(({ state, instance }) => {
+        if (!swiperRef.current) return;
         swiperRef.current.swiper.allowTouchMove = state.scale === 1;
 
         if (state.scale === 1 && state.positionX !== 0 && state.positionY !== 0) {

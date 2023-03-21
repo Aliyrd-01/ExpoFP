@@ -146,8 +146,9 @@
 		}
 
 		& img {
-			width: 100%;
-			height: 100%;
+			max-width: 100%;
+			max-height: 100%;
+			height: auto;
 			object-fit: contain;
 			//position: absolute;
 			//top: 50%;
@@ -266,14 +267,16 @@
 }
 
 .gallery-slider__zoom {
-	width: fit-content;
-	margin: 0 auto;
-	height: fit-content;
 	overflow: visible;
+	width: 100%;
+	height: 100%;
 }
 
 .gallery-slider__zoom-content {
 	transform-origin: 0 0;
+	height: 100%;
+	width: 100%;
+	justify-content: center;
 }
 
 //.react-transform-wrapper {
