@@ -21,6 +21,20 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
     const nextRef = useRef(null);
     const paginationRef = useRef(null);
 
+    const getImageUrl = (idx: number, isOriginal: boolean) => {
+        return isOriginal ? originalImageFromTumb(images[idx]) : images[idx];
+    };
+
+    const originalImageFromTumb = (tumb) => {
+        let paths = tumb.split("/");
+        const fileName = paths[paths.length - 1];
+        if (fileName.indexOf("original-") === -1) {
+            paths[paths.length - 1] = "original-" + fileName;
+        }
+
+        return paths.join("/");
+    };
+
     const openModal = (initialSlideIndex: number) => {
         setCurrentSlideIndex(initialSlideIndex);
         setIsModalOpen(true);
@@ -30,7 +44,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         return images.map((url, i) => {
             return (
                 <div className="gallery__item" key={url + i} onClick={() => openModal(i)}>
-                    <img className="lazyload" src={url} alt={url} loading="lazy" />
+                    <img className="lazyload" src={getImageUrl(i, false)} alt={url} loading="lazy" />
                 </div>
             );
         });
@@ -40,7 +54,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         return images.map((url, i) => {
             return (
                 <SwiperSlide key={url + i}>
-                    <img className="lazyload" src={url} alt={url} loading="lazy" />
+                    <img className="lazyload" src={getImageUrl(i, true)} alt={url} loading="lazy" />
                 </SwiperSlide>
             );
         });
@@ -61,7 +75,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                             setUtils((state) => [...state, controls]);
                         }}
                     >
-                        <TransformImg swiperRef={swiperRef} url={url} />
+                        <TransformImg swiperRef={swiperRef} url={getImageUrl(i, true)} />
                     </TransformWrapper>
                 </SwiperSlide>
             );
