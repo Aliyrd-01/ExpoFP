@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Navigation, Pagination, Thumbs } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { TransformWrapper, TransformComponent, useTransformEffect } from "react-zoom-pan-pinch-sr";
+import "lazysizes";
 
 import "./Gallery.scss";
 
@@ -29,7 +30,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         return images.map((url, i) => {
             return (
                 <div className="gallery__item" key={url + i} onClick={() => openModal(i)}>
-                    <img src={url} alt={url} />
+                    <img className="lazyload" src={url} alt={url} loading="lazy" />
                 </div>
             );
         });
@@ -39,7 +40,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         return images.map((url, i) => {
             return (
                 <SwiperSlide key={url + i}>
-                    <img src={url} alt={url} />
+                    <img className="lazyload" src={url} alt={url} loading="lazy" />
                 </SwiperSlide>
             );
         });
@@ -268,7 +269,7 @@ const TransformImg = ({ swiperRef, url }) => {
 
     return (
         <TransformComponent wrapperClass="gallery-slider__zoom" contentClass="gallery-slider__zoom-content">
-            <img src={url} alt={url} />
+            <img className="lazyload" src={url} alt={url} loading="lazy" />
         </TransformComponent>
     );
 };

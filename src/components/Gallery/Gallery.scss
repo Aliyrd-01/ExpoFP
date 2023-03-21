@@ -273,10 +273,12 @@
 }
 
 .gallery-slider__zoom-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	transform-origin: 0 0;
 	height: 100%;
 	width: 100%;
-	justify-content: center;
 }
 
 //.react-transform-wrapper {
