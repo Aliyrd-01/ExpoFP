@@ -287,9 +287,10 @@ export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
-        const image = fpGeo.images?.find((i) => i.layer === layer.name);
-        if (image) {
-            const bgLayer = layer.name + "-bg";
+        const images = fpGeo.images?.filter((i) => i.layer === layer.name);
+
+        images.forEach((image, index) => {
+            const bgLayer = layer.name + "-bg" + "_" + index;
 
             layersNames.push(bgLayer);
             map.addSource(bgLayer, {
@@ -306,7 +307,7 @@ export function setLayers(layers: Layer[]): string[] {
                     visibility: layer.visible ? "visible" : "none",
                 },
             });
-        }
+        });
 
         layersNames.push(layer.name + "-other");
         map.addLayer({
