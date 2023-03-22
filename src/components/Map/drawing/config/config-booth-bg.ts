@@ -34,7 +34,6 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         super(context, booth);
 
         if (!booth.paths || booth.pathsWithRect) {
-            
             let rect = this.booth.rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
 
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
@@ -177,7 +176,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     }
 
     @computed get selectedColorInterpolateFunc() {
-        const color0 = "#000";
+        const color0 = !Color(settings.boothLabelColor).isLight() ? "#fff" : "#000";
         const color1 = settings.colors.booths.selected;
         return colorInterpolate([color0, color1]);
     }
