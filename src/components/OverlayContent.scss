@@ -43,7 +43,17 @@
                 border-top-right-radius: var(--k-border-radius-1);
             }
             &.hidden {
-                opacity: 0.7;
+                .overlay-bar,
+                .overlay-content__scrollable {
+                    background: rgba(255, 255, 255, 0.8);
+                    backdrop-filter: blur(5px);
+                }
+                .efp-wayInformation {
+                    border-color: var(--color-white);
+                }
+                .efp-wayInformation__item span {
+                    color: var(--color-grayDark);
+                }
             }
         }
         &.-exhibitor-featured {
