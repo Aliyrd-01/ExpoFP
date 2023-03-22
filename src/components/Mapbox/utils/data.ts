@@ -287,7 +287,7 @@ export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
-        const images = fpGeo.images?.filter((i) => i.layer === layer.name);
+        const images = fpGeo.images?.filter((i) => i.layer === layer.name) ?? [];
 
         images.forEach((image, index) => {
             const bgLayer = layer.name + "-bg" + "_" + index;
