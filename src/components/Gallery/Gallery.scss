@@ -111,8 +111,7 @@
 	}
 
 	&-modal {
-		//width: 100vw;
-		//height: 100vh;
+		width: 100vw;
 		position: fixed;
 		top: 0;
 		bottom: 0;
@@ -172,6 +171,9 @@
 		}
 
 		&__btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			width: 60px;
 			height: 60px;
 			background: rgba(48, 48, 48, 0.56);
@@ -179,6 +181,7 @@
 			border-radius: 50%;
 			border: none;
 			cursor: pointer;
+			padding: 0;
 
 			@include media-breakpoint-down(md) {
 				width: 50px;
