@@ -1,4 +1,5 @@
 import React from "react";
+import "lazysizes";
 
 interface GalleryImgProps {
     url: string;

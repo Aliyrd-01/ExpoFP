@@ -3,7 +3,6 @@ import { Navigation, Pagination, Thumbs } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { TransformWrapper, TransformComponent, useTransformEffect } from "react-zoom-pan-pinch-sr";
 import GalleryImg from "./GalleryImg";
-import "lazysizes";
 
 import "./Gallery.scss";
 
