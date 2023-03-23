@@ -190,7 +190,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
         } else color = this.defaultColor;
 
-        let colorInfo = Color(color);
+        let colorInfo = Color(color === "none" ? "#f33" : color);
         if (b.hover && !b.selected) {
             const a = colorInfo.alpha();
             colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
