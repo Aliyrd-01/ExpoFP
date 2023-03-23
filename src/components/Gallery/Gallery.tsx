@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Navigation, Pagination, Thumbs } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { TransformWrapper, TransformComponent, useTransformEffect } from "react-zoom-pan-pinch-sr";
+import GalleryImg from "./GalleryImg";
 import "lazysizes";
 
 import "./Gallery.scss";
@@ -14,26 +15,12 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-    const [utils, setUtils] = useState([]);
+    const [zoomUtils, setZoomUtils] = useState([]);
 
     const swiperRef = useRef(null);
     const prevRef = useRef(null);
     const nextRef = useRef(null);
     const paginationRef = useRef(null);
-
-    const getImageUrl = (idx: number, isOriginal: boolean) => {
-        return isOriginal ? originalImageFromTumb(images[idx]) : images[idx];
-    };
-
-    const originalImageFromTumb = (tumb) => {
-        let paths = tumb.split("/");
-        const fileName = paths[paths.length - 1];
-        if (fileName.indexOf("original-") === -1) {
-            paths[paths.length - 1] = "original-" + fileName;
-        }
-
-        return paths.join("/");
-    };
 
     const openModal = (initialSlideIndex: number) => {
         setCurrentSlideIndex(initialSlideIndex);
@@ -44,7 +31,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         return images.map((url, i) => {
             return (
                 <div className="gallery__item" key={url + i} onClick={() => openModal(i)}>
-                    <img className="lazyload" src={getImageUrl(i, false)} alt={url} loading="lazy" />
+                    <GalleryImg url={url} />
                 </div>
             );
         });
@@ -54,10 +41,17 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         return images.map((url, i) => {
             return (
                 <SwiperSlide key={url + i}>
-                    <img className="lazyload" src={getImageUrl(i, true)} alt={url} loading="lazy" />
+                    <GalleryImg url={url} />
                 </SwiperSlide>
             );
         });
+    };
+
+    const closeHandler = () => {
+        setIsModalOpen(false);
+        setZoomUtils([]);
+        setThumbsSwiper(null);
+        swiperRef.current.swiper.destroy();
     };
 
     const renderImagesSwiperZoom = () => {
@@ -66,33 +60,21 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                 <SwiperSlide key={url + i}>
                     <TransformWrapper
                         initialScale={1}
-                        minScale={1}
-                        maxScale={7}
-                        initialPositionX={0}
-                        initialPositionY={0}
                         alignmentAnimation={{ sizeX: 0, sizeY: 0 }}
                         onInit={(controls) => {
-                            setUtils((state) => [...state, controls]);
+                            setZoomUtils((state) => [...state, controls]);
                         }}
                     >
-                        <TransformImg swiperRef={swiperRef} url={getImageUrl(i, true)} />
+                        <TransformImg swiperRef={swiperRef} url={url} />
                     </TransformWrapper>
                 </SwiperSlide>
             );
         });
     };
 
-    const Controls = ({ zoomIn, zoomOut, className = "" }) => (
-        <div className={className}>
-            <button
-                className="gallery-slider__btn close"
-                onClick={() => {
-                    setIsModalOpen(false);
-                    setUtils([]);
-                    setThumbsSwiper(null);
-                    swiperRef.current.swiper.destroy();
-                }}
-            >
+    const Controls = ({ zoomIn, zoomOut }) => (
+        <div className="gallery-slider__controls">
+            <button className="gallery-slider__btn close" onClick={closeHandler}>
                 <svg className="icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M22.5 7.5L7.5 22.5M7.5 7.5L22.5 22.5"
@@ -143,6 +125,20 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         spaceBetween: 5,
     };
 
+    const mainSliderOptions: any = {
+        initialSlide: currentSlideIndex,
+        draggable: false,
+        modules: [Navigation, Pagination, Thumbs],
+        thumbs: { swiper: thumbsSwiper },
+        spaceBetween: 50,
+        slidesPerView: 1,
+        navigation: {
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+        },
+        grabCursor: true,
+    };
+
     return (
         <React.Fragment>
             <div className="gallery">
@@ -189,18 +185,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                 <div className="gallery-modal">
                     <Swiper
                         ref={swiperRef}
-                        initialSlide={currentSlideIndex}
-                        draggable={false}
                         className="gallery-slider"
-                        modules={[Navigation, Pagination, Thumbs]}
-                        thumbs={{ swiper: thumbsSwiper }}
-                        spaceBetween={50}
-                        slidesPerView={1}
-                        navigation={{
-                            prevEl: prevRef.current,
-                            nextEl: nextRef.current,
-                        }}
-                        grabCursor={true}
                         pagination={{
                             clickable: true,
                             el: paginationRef.current,
@@ -211,17 +196,17 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                         }}
                         onSlideChange={(swiper) => {
                             setCurrentSlideIndex(swiper.activeIndex);
-                            utils[swiper.previousIndex]?.resetTransform();
+                            zoomUtils[swiper.previousIndex]?.resetTransform();
                         }}
+                        {...mainSliderOptions}
                     >
                         <div ref={paginationRef} className="gallery-slider__pagination" />
-                        {utils.length && (
+                        {zoomUtils.length ? (
                             <Controls
-                                className="gallery-slider__controls"
-                                zoomIn={utils[currentSlideIndex].zoomIn}
-                                zoomOut={utils[currentSlideIndex].zoomOut}
+                                zoomIn={zoomUtils[currentSlideIndex].zoomIn}
+                                zoomOut={zoomUtils[currentSlideIndex].zoomOut}
                             />
-                        )}
+                        ) : null}
                         <button ref={nextRef} className="gallery-slider__btn next">
                             <svg
                                 className="icon"
@@ -283,7 +268,7 @@ const TransformImg = ({ swiperRef, url }) => {
 
     return (
         <TransformComponent wrapperClass="gallery-slider__zoom" contentClass="gallery-slider__zoom-content">
-            <img className="lazyload" src={url} alt={url} loading="lazy" />
+            <GalleryImg url={url} />
         </TransformComponent>
     );
 };
