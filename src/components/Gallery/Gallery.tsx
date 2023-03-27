@@ -36,15 +36,15 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         });
     };
 
-    const renderImagesThumbs = () => {
-        return images.map((url, i) => {
-            return (
-                <SwiperSlide key={url + i}>
-                    <GalleryImg url={url} />
-                </SwiperSlide>
-            );
-        });
-    };
+    // const renderImagesThumbs = () => {
+    //     return images.map((url, i) => {
+    //         return (
+    //             <SwiperSlide key={url + i}>
+    //                 <GalleryImg url={url} />
+    //             </SwiperSlide>
+    //         );
+    //     });
+    // };
 
     const closeHandler = () => {
         setIsModalOpen(false);
@@ -73,8 +73,16 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
 
     const Controls = ({ zoomIn, zoomOut }) => (
         <div className="gallery-slider__controls">
-            <button className="gallery-slider__btn close" onClick={closeHandler}>
-                <svg className="icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <button className="gallery-slider__btn close" aria-label="🗙" onClick={closeHandler}>
+                <svg
+                    className="icon"
+                    width="30"
+                    height="30"
+                    viewBox="0 0 30 30"
+                    fill="none"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
                     <path
                         d="M22.5 7.5L7.5 22.5M7.5 7.5L22.5 22.5"
                         stroke="#E4E4E4"
@@ -84,8 +92,16 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                     />
                 </svg>
             </button>
-            <button className="gallery-slider__btn zoom-in" onClick={() => zoomIn()}>
-                <svg className="icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <button className="gallery-slider__btn zoom-in" aria-label="🔺" onClick={() => zoomIn()}>
+                <svg
+                    className="icon"
+                    width="30"
+                    height="30"
+                    viewBox="0 0 30 30"
+                    fill="none"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
                     <path
                         d="M26.25 26.25L20.8125 20.8125M13.75 10V17.5M10 13.75H17.5M23.75 13.75C23.75 19.2728 19.2728 23.75 13.75 23.75C8.22715 23.75 3.75 19.2728 3.75 13.75C3.75 8.22715 8.22715 3.75 13.75 3.75C19.2728 3.75 23.75 8.22715 23.75 13.75Z"
                         stroke="#E4E4E4"
@@ -95,8 +111,16 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                     />
                 </svg>
             </button>
-            <button className="gallery-slider__btn zoom-out" onClick={() => zoomOut()}>
-                <svg className="icon" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <button className="gallery-slider__btn zoom-out" aria-label="🔻" onClick={() => zoomOut()}>
+                <svg
+                    className="icon"
+                    width="30"
+                    height="30"
+                    viewBox="0 0 30 30"
+                    fill="none"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
                     <path
                         d="M26.25 26.25L20.8125 20.8125"
                         stroke="#E4E4E4"
@@ -116,13 +140,13 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         </div>
     );
 
-    const thumbsOptions: any = {
-        modules: [Thumbs],
-        slidesPerView: "auto",
-        watchSlidesProgress: true,
-        slideToClickedSlide: true,
-        spaceBetween: 5,
-    };
+    // const thumbsOptions: any = {
+    //     modules: [Thumbs],
+    //     slidesPerView: "auto",
+    //     watchSlidesProgress: true,
+    //     slideToClickedSlide: true,
+    //     spaceBetween: 5,
+    // };
 
     const mainSliderOptions: any = {
         initialSlide: currentSlideIndex,
@@ -159,7 +183,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                             strokeLinejoin="round"
                         />
                     </svg>
-                    <span>{images.length} images</span>
+                    <span>{images.length}</span>
                 </div>
                 <div className="gallery__badge gallery__badge-fullscreen">
                     <svg
@@ -185,14 +209,14 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                     <Swiper
                         ref={swiperRef}
                         className="gallery-slider"
-                        pagination={{
-                            clickable: true,
-                            el: paginationRef.current,
-                            type: "custom",
-                            renderCustom: function (swiper, current, total) {
-                                return `${current} of ${total}`;
-                            },
-                        }}
+                        // pagination={{
+                        //     clickable: true,
+                        //     el: paginationRef.current,
+                        //     type: "custom",
+                        //     renderCustom: function (swiper, current, total) {
+                        //         return `${current} of ${total}`;
+                        //     },
+                        // }}
                         onSlideChange={(swiper) => {
                             setCurrentSlideIndex(swiper.activeIndex);
                             zoomUtils[swiper.previousIndex]?.resetTransform();
@@ -206,13 +230,14 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                                 zoomOut={zoomUtils[currentSlideIndex].zoomOut}
                             />
                         ) : null}
-                        <button ref={nextRef} className="gallery-slider__btn next">
+                        <button ref={nextRef} aria-label="˃" className="gallery-slider__btn next">
                             <svg
                                 className="icon"
                                 width="30"
                                 height="30"
                                 viewBox="0 0 30 30"
                                 fill="none"
+                                aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path
@@ -224,13 +249,14 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                                 />
                             </svg>
                         </button>
-                        <button ref={prevRef} className="gallery-slider__btn prev">
+                        <button ref={prevRef} aria-label="˂" className="gallery-slider__btn prev">
                             <svg
                                 className="icon"
                                 width="30"
                                 height="30"
                                 viewBox="0 0 30 30"
                                 fill="none"
+                                aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path
@@ -244,11 +270,11 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                         </button>
                         {renderImagesSwiperZoom()}
                     </Swiper>
-                    <div className="gallery__thumbs-wrapper">
-                        <Swiper className="gallery__thumbs" onSwiper={setThumbsSwiper} {...thumbsOptions}>
-                            {renderImagesThumbs()}
-                        </Swiper>
-                    </div>
+                    {/*<div className="gallery__thumbs-wrapper">*/}
+                    {/*    <Swiper className="gallery__thumbs" onSwiper={setThumbsSwiper} {...thumbsOptions}>*/}
+                    {/*        {renderImagesThumbs()}*/}
+                    {/*    </Swiper>*/}
+                    {/*</div>*/}
                 </div>
             )}
         </React.Fragment>
