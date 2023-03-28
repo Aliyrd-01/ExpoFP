@@ -10,7 +10,10 @@ export const kioskKey = "kiosk";
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
     updateScreenSize(uiState);
-    window.addEventListener("resize", () => updateScreenSize(uiState));
+
+    window.addEventListener("resize", () => {
+        if (!uiState.kiosk) updateScreenSize(uiState);
+    });
     if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
     // uiState.previewExhibitor = previewExhibitor;
 
@@ -41,7 +44,7 @@ export default function initUi(store: RootStore) {
     if (!uiState.wsShown) uiState.wsStarted = true;
 
     uiState.kiosk = localStorage.getItem(kioskKey) === "1";
-    
+
     if (uiState.kiosk) {
         var time;
         // window.onload = resetTimer;
