@@ -60,7 +60,7 @@ export default class UIState {
         this.rootStore = rootStore;
     }
 
-    @computed({ keepAlive: true })  get noOverlay() {
+    @computed({ keepAlive: true }) get noOverlay() {
         return this.rootStore.fp.noOverlay || this.hideOverlay;
     }
 
@@ -214,10 +214,13 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
+        const exhibitors = this.rootStore.exhibitorStore.exhibitors;
+        const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
+
         return (
-            this.rootStore.exhibitorStore.exhibitors.length &&
-            (this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
-                this.listItems.find((x) => !(x instanceof Exhibitor)))
+            exhibitors.length &&
+            (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
+                this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
         );
     }
 
@@ -233,17 +236,15 @@ export default class UIState {
         const boothsArray = boothStore.booths;
 
         if (!text) {
-            // return exhibitorsArray.length === 0
-            //     ? boothsArray
-            //     : [...exhibitorsArray, ...boothsArray.filter((b) => b instanceof SpecialBooth)].sort((a, b) =>
-            //         a["featured"] === b["featured"]
-            //             ? a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-            //             : a["featured"]
-            //             ? -1
-            //             : 1
-            //     );
-
-            return exhibitorsArray.length === 0 ? boothsArray : exhibitorsArray;
+            return exhibitorsArray.length === 0
+                ? boothsArray
+                : [...exhibitorsArray, ...boothsArray.filter((b) => b instanceof SpecialBooth)].sort((a, b) =>
+                      a["featured"] === b["featured"]
+                          ? a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+                          : a["featured"]
+                          ? -1
+                          : 1
+                  );
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
