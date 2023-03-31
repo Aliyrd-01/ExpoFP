@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Navigation, Pagination, Thumbs } from "swiper";
-import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperInstance } from "swiper";
+import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
+
 import { TransformWrapper, TransformComponent, useTransformEffect } from "react-zoom-pan-pinch-sr";
 import GalleryImg from "./GalleryImg";
 
@@ -16,7 +18,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
     const [zoomUtils, setZoomUtils] = useState([]);
 
-    const swiperRef = useRef(null);
+    const swiperRef = useRef<SwiperInstance>(null);
     const prevRef = useRef(null);
     const nextRef = useRef(null);
     const paginationRef = useRef(null);
@@ -50,7 +52,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
         setIsModalOpen(false);
         setZoomUtils([]);
         setThumbsSwiper(null);
-        swiperRef.current.swiper.destroy();
+        swiperRef.current.destroy();
     };
 
     const renderImagesSwiperZoom = () => {
@@ -206,8 +208,8 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
             </div>
             {isModalOpen && (
                 <div className="gallery-modal">
-                    <Swiper
-                        ref={swiperRef}
+                    <SwiperComponent
+                        onSwiper={(swiper) => (swiperRef.current = swiper)}
                         className="gallery-slider"
                         // pagination={{
                         //     clickable: true,
@@ -269,7 +271,7 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
                             </svg>
                         </button>
                         {renderImagesSwiperZoom()}
-                    </Swiper>
+                    </SwiperComponent>
                     {/*<div className="gallery__thumbs-wrapper">*/}
                     {/*    <Swiper className="gallery__thumbs" onSwiper={setThumbsSwiper} {...thumbsOptions}>*/}
                     {/*        {renderImagesThumbs()}*/}
@@ -281,10 +283,15 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
     );
 };
 
-const TransformImg = ({ swiperRef, url }) => {
+interface TransformImgProps {
+    swiperRef: React.RefObject<SwiperInstance>;
+    url: string;
+}
+
+const TransformImg: React.FC<TransformImgProps> = ({ swiperRef, url }) => {
     useTransformEffect(({ state, instance }) => {
         if (!swiperRef.current) return;
-        swiperRef.current.swiper.allowTouchMove = state.scale === 1;
+        swiperRef.current.allowTouchMove = state.scale === 1;
 
         if (state.scale === 1 && state.positionX !== 0 && state.positionY !== 0) {
             instance.setCenter();
