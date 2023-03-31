@@ -67,7 +67,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     for (const el of d3
         .select(getLayerSvg(layerID))
         .selectAll(
-            `[data-layer='${layerID}'] > [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
+            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
         const layer = (el.parentNode as SVGGraphicsElement).attributes["data-layer"]?.value;
