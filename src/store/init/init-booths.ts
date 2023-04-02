@@ -70,7 +70,8 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
             `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
-        const layer = (el.parentNode as SVGGraphicsElement).attributes["data-layer"]?.value;
+        const layer = ((el as SVGGraphicsElement).closest("svg > [data-layer]") as SVGGraphicsElement).attributes["data-layer"]
+            ?.value;
 
         if (!layer) continue;
 
