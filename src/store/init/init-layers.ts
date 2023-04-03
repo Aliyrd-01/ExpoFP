@@ -43,17 +43,19 @@ export default function initLayers(store: RootStore) {
     }
 
     // Backward compatibilitty. Remove for future
-    layers.forEach((l) => {
-        if (l.mode === LayerMode.AlwaysHidden) {
-            l.frozen = true;
-            l.visible = false;
-        } else if (l.mode === LayerMode.AlwaysVisible) {
-            l.frozen = l.visible = true;
-        } else if (l.mode === LayerMode.TurnedOn || l.mode === LayerMode.TurnedOff) {
-            l.frozen = false;
-            l.visible = l.mode === LayerMode.TurnedOn;
-        }
-    });
+    if (layerStore.mode === LayersMode.Radio) {
+        layers.forEach((l) => {
+            if (l.mode === LayerMode.AlwaysHidden) {
+                l.frozen = true;
+                l.visible = false;
+            } else if (l.mode === LayerMode.AlwaysVisible) {
+                l.frozen = l.visible = true;
+            } else if (l.mode === LayerMode.TurnedOn || l.mode === LayerMode.TurnedOff) {
+                l.frozen = false;
+                l.visible = l.mode === LayerMode.TurnedOn;
+            }
+        });
+    }
 
     layers = layers.filter((l) => !l.frozen || (l.frozen && l.visible));
 

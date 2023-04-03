@@ -2,7 +2,8 @@ import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as React from "react";
 import { svgArea } from "../data/svg";
-import store, { uiState } from "../store";
+import store, { layersStore, uiState } from "../store";
+import { LayerMode, LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
@@ -23,6 +24,8 @@ export default function Controls() {
         },
     }));
 
+    const layers = layersStore.layers.map((l) => ({ id: l.name, name: l.description, visible: l.visible }));
+
     return useObserver(() => {
         return (
             <MapControls
@@ -37,9 +40,11 @@ export default function Controls() {
                 viewModeSwitch={store.mapboxStore.mapBoxEnabled && !store.mapboxStore.hideModeSwitchButton}
                 viewMode={store.mapboxStore.showMapbox}
                 findLocation={!!store.routeStore.defaultFrom || !!store.routeStore.currentPosition}
-                layersActiveItems={[]}
-                layersList={null}
-                onChangeLayers={(layer) => {}}
+                layersActiveItems={layers.filter((l) => l.visible).map((l) => l.id)}
+                layersList={layersStore.mode === LayersMode.CheckBox ? layers : null}
+                onChangeLayers={(layer) => {
+                    layersStore.updateVisibility(layer, !layersStore.layers.find((l) => l.name === layer).visible);
+                }}
             />
         );
     });
