@@ -119,12 +119,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     update() {
         const s = this.booth; //this.getBoothState();
         const c = this.getBoothColor();
-        const { list } = store.uiState;
 
         this.painters.forEach((p) => p.updateColor(this.getId("bg-def"), c.vec4()));
-        this.painters.forEach((p) =>
-            p.updateSkipdim(this.getId("bg"), list.type === "search" && list.text.trim().length === 0 ? true : s.skipDim)
-        );
+        this.painters.forEach((p) => p.updateSkipdim(this.getId("bg"), s.skipDim));
 
         for (const color of this.pathsDefaultColors || []) {
             const newColor = this.getBoothPathColor(color);

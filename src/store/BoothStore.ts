@@ -119,7 +119,18 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
-        return this.inList || this.selected || this.store.rootStore.routeStore.defaultFrom?.id === this.id;
+        const { selectedRoute } = this.uiState;
+
+        if (selectedRoute?.from?.id !== this.id && selectedRoute?.to?.id !== this.id) {
+            return false;
+        }
+
+        return (
+            this.inList ||
+            this.selected ||
+            this.store.rootStore.routeStore.defaultFrom?.id === this.id ||
+            (this.uiState.list.type === "search" && this.uiState.list.text.trim().length === 0)
+        );
     }
 
     // // skipDim: boolean;
