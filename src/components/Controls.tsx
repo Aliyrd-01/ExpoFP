@@ -22,9 +22,18 @@ export default function Controls() {
                 top: uiState.overlayCollapsed ? remsToPixels(5) : uiState.mapVisibleTop + remsToPixels(0.7) + "px",
             };
         },
-    }));
 
-    const layers = layersStore.layers.map((l) => ({ id: l.name, name: l.description, visible: l.visible }));
+        get layers(): any {
+            return layersStore.layers
+                .map((l) => ({ id: l.name, name: l.description, visible: l.visible }))
+                .concat([])
+                .reverse();
+        },
+
+        get visible() {
+            return layersStore.layers.filter((l) => l.visible).map((l) => l.name);
+        },
+    }));
 
     return useObserver(() => {
         return (
@@ -40,8 +49,8 @@ export default function Controls() {
                 viewModeSwitch={store.mapboxStore.mapBoxEnabled && !store.mapboxStore.hideModeSwitchButton}
                 viewMode={store.mapboxStore.showMapbox}
                 findLocation={!!store.routeStore.defaultFrom || !!store.routeStore.currentPosition}
-                layersActiveItems={layers.filter((l) => l.visible).map((l) => l.id)}
-                layersList={layersStore.mode === LayersMode.CheckBox ? layers : null}
+                layersActiveItems={s.visible}
+                layersList={layersStore.mode === LayersMode.CheckBox ? s.layers : null}
                 onChangeLayers={(layer) => {
                     layersStore.updateVisibility(layer, !layersStore.layers.find((l) => l.name === layer).visible);
                 }}
