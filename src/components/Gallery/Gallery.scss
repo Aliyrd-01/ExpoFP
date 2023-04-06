@@ -7,8 +7,25 @@
 	position: relative;
 	cursor: pointer;
 
+	&-leading {
+		height: auto;
+
+		.gallery__img {
+			background-size: contain;
+		}
+
+		.gallery__item {
+			height: auto !important;
+		}
+	}
+
 	& .icon {
 		fill: none;
+	}
+
+	&__img {
+		height: 100%;
+		width: 100%;
 	}
 
 	&__wrapper {
@@ -64,13 +81,6 @@
 				height: 240px;
 			}
 
-		}
-
-		& img {
-			width: 100%;
-			height: 100%;
-			display: block;
-			object-fit: cover;
 		}
 	}
 
@@ -129,29 +139,14 @@
 		width: 100%;
 		height: 100%;
 
-		//& .swiper-wrapper {
-		//	height: calc(100% - 210px);
-		//
-		//	@include media-breakpoint-down(md) {
-		//		height: calc(100% - 100px);
-		//	}
-		//}
-
 		& .swiper-slide {
 			overflow: hidden;
 			display: flex;
 			align-items: center;
 		}
 
-		& img {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-			padding: 25px;
-			//position: absolute;
-			//top: 50%;
-			//left: 50%;
-			//transform: translate(-50%, -50%);
+		.gallery__img {
+			background-position: center center;
 		}
 
 		&__controls {
@@ -208,63 +203,6 @@
 				left: 30px;
 			}
 		}
-
-		&__pagination {
-			color: #9E9E9E;
-			position: absolute;
-			bottom: 155px;
-			left: 50%;
-			transform: translateX(-50%);
-
-			@include media-breakpoint-down(md) {
-				display: none;
-			}
-		}
-	}
-
-	&__thumbs {
-		display: flex;
-		margin: 0 65px;
-
-		@include media-breakpoint-down(md) {
-			margin: 0;
-			height: 67px;
-		}
-
-		& .swiper-slide {
-			opacity: 0.5;
-		}
-
-		& .swiper-slide-thumb-active {
-			opacity: 1;
-		}
-
-		& .swiper-wrapper {
-			margin: 0 auto;
-			width: auto;
-			cursor: grab;
-		}
-	}
-
-	&__thumbs-wrapper {
-		position: absolute;
-		bottom: 30px;
-		width: 100%;
-
-		@include media-breakpoint-down(md) {
-			bottom: 20px;
-		}
-
-		& .swiper-slide {
-			width: 100px !important;
-			height: 90px !important;
-		}
-
-		& img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-		}
 	}
 }
 
@@ -281,13 +219,9 @@
 	transform-origin: 0 0;
 	height: 100%;
 	width: 100%;
-}
+	padding: 40px;
 
-//.react-transform-wrapper {
-//	overflow: visible;
-//}
-//
-//.react-transform-wrapper, .react-transform-component {
-//	height: 100% !important;
-//	margin: 0 auto;
-//}
+	@include media-breakpoint-down(md) {
+		padding: 20px;
+	}
+}

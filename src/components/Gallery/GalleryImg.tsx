@@ -1,39 +1,38 @@
-import React from "react";
-import "lazysizes";
+import React, { useEffect, useRef } from "react";
+import GalleryPreLoader from "./GalleryPreLoader";
+
+type FillMode = "cover" | "contain";
 
 interface GalleryImgProps {
     url: string;
+    setHeight?: boolean;
+    fillMode?: FillMode;
+    containerRef: React.RefObject<HTMLElement>;
 }
 
-const GalleryImg: React.FC<GalleryImgProps> = ({ url }) => {
-    const originalImageFromTumb = (url) => {
-        let paths = url.split("/");
-        const fileName = paths[paths.length - 1];
-        if (fileName.indexOf("original-") === -1) {
-            paths[paths.length - 1] = "original-" + fileName;
-        }
+const GalleryImg: React.FC<GalleryImgProps> = ({ url, setHeight = false, fillMode = "contain", containerRef }) => {
+    const imgRef = useRef<HTMLDivElement>(null);
 
-        return paths.join("/");
+    useEffect(() => {
+        (async () => {
+            if (!imgRef.current) return;
+
+            GalleryPreLoader.load(url).then((image) => {
+                imgRef.current.style.backgroundImage = `url(${image.src})`;
+                imgRef.current.style.backgroundSize = fillMode;
+                if (setHeight) {
+                    imgRef.current.style.height = (image.height * containerRef.current.clientWidth) / image.width + "px";
+                }
+            });
+        })();
+    }, [url]);
+
+    const style = {
+        backgroundImage: `url("${url}")`,
+        backgroundSize: fillMode,
     };
 
-    const getImageUrl = (url, isOriginal: boolean) => {
-        return isOriginal ? originalImageFromTumb(url) : url;
-    };
-
-    const originalUrl = getImageUrl(url, true);
-    const imageUrl = getImageUrl(url, false);
-
-    return (
-        <img
-            className="lazyload"
-            src={originalUrl}
-            alt=""
-            loading="lazy"
-            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                e.currentTarget.src = imageUrl;
-            }}
-        />
-    );
+    return <div ref={imgRef} className="gallery__img" style={style} />;
 };
 
 export default GalleryImg;

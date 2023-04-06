@@ -13,13 +13,11 @@ import { useAutorun, useReaction } from "../utils/mobx";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import SibebarActions from "./SidebarActions";
-import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import isIframe from "../utils/is-iframe";
-import SwiperGallery from "./Gallery/Gallery";
 
-const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
+const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
@@ -184,7 +182,7 @@ function ExhibitorComponent() {
                         ) : (
                             <ErrorBoundary>
                                 <Suspense fallback={null}>
-                                    <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                    <Gallery leading={true} images={[exhibitor.leadingImageUrl]} />
                                 </Suspense>
                             </ErrorBoundary>
                         )}
@@ -257,8 +255,7 @@ function ExhibitorComponent() {
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                             <ErrorBoundary>
                                 <Suspense fallback={null}>
-                                    <SwiperGallery images={exhibitor.gallery} />
-                                    {/*<ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />*/}
+                                    <Gallery images={exhibitor.gallery} />
                                 </Suspense>
                             </ErrorBoundary>
                         </div>
