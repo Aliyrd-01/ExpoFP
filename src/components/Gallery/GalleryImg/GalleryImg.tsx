@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import GalleryPreLoader from "./GalleryPreLoader";
+import React, { useEffect, useRef } from "react";
+import GalleryPreLoader from "../GalleryPreLoader";
 
 type FillMode = "cover" | "contain";
 
