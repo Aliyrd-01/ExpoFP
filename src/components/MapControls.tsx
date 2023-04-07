@@ -163,7 +163,7 @@ const MapControls: React.FC<MapControlsProps> = ({
                         className={classNames("mapControl", {
                             isActive: layersIsOpen,
                         })}
-                        title={titles[4]}
+                        title={titles[5]}
                         onClick={() => setLayersOpen(!layersIsOpen)}
                     >
                         <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
