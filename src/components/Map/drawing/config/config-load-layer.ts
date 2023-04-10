@@ -30,11 +30,7 @@ export default async function loadLayer(
         const booths = initBooths(store, layer.name);
 
         const logosBooths = boothStore.booths.filter(
-            (b) =>
-                b instanceof RegularBooth &&
-                b.rect &&
-                (!b.layer || b.layer === layer) &&
-                b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
+            (b) => b.rect && (!b.layer || b.layer === layer) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));

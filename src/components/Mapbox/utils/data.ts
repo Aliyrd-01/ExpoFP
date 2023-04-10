@@ -289,7 +289,7 @@ export function setLayers(layers: Layer[]): string[] {
         const images = fpGeo.images?.filter((i) => i.layer === layer.name) ?? [];
 
         images.forEach((image, index) => {
-            const bgLayer = layer.name + "-bg" + "_" + index;
+            const bgLayer = layer.name + "-bg_" + index;
 
             layersNames.push(bgLayer);
             map.addSource(bgLayer, {

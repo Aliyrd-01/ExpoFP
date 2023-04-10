@@ -91,7 +91,12 @@ export abstract class BoothBase {
     readonly slug: string;
     readonly error: boolean;
     readonly description: string;
+    readonly exhibitors: Exhibitor[];
     @observable layer: Layer;
+
+    @computed({ keepAlive: true }) get bookmarked() {
+        return !!this.exhibitors.find((x) => x.bookmarked);
+    }
 
     @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;
@@ -158,18 +163,12 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     readonly onHold: boolean; // comes from status
     readonly reserved: boolean; // comes from status
 
-    readonly exhibitors: Exhibitor[];
-
-    @computed({ keepAlive: true }) get bookmarked() {
-        return !!this.exhibitors.find((x) => x.bookmarked);
-    }
-
     // @computed({ keepAlive: true }) get reserved() {
     //     return this.exhibitors.length > 0 || this.onHold;
     // }
 }
 
-export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {
+export class SpecialBooth extends BoothBase {
     // readonly description: string;
     readonly color: string; // comes from svg or data.js
 }

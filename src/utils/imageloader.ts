@@ -1,4 +1,6 @@
 import { RegularBooth } from "../store/BoothStore";
+import settings from "../tools/settings";
+import isDebug from "./is-debug";
 
 export type Img = {
     name?: string;
@@ -93,6 +95,8 @@ function loadImage(src: string): Promise<HTMLImageElement> {
         img.onerror = () => resolve(null);
         img.onload = () => resolve(img);
         img.crossOrigin = "anonymous";
-        img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
+
+        if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
+        else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
     });
 }
