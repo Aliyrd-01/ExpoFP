@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "Yakınlaştırma/uzaklaştırma için {{keyCode}} + kaydırma tuşunu kullanın",
   "Zoom In": "Yakınlaştır",
   "Zoom Out": "Uzaklaştır",
-  "{{boothTerm}} Type": "{{boothTerm}} Türü"
+  "{{boothTerm}} Type": "{{boothTerm}} Türü",
+  "Next slide": "Sonraki slayt",
+  "Prev slide": "Önceki slayt"
 }

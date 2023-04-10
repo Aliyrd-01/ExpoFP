@@ -1,4 +1,5 @@
 import React from "react";
+import { t } from "../../../utils/i18n";
 
 interface GalleryControlsProps {
     zoomIn: () => void;
@@ -9,7 +10,7 @@ interface GalleryControlsProps {
 const GalleryControls: React.FC<GalleryControlsProps> = ({ zoomIn, zoomOut, onClose }) => {
     return (
         <div className="gallery-slider__controls">
-            <button className="gallery-slider__btn close" aria-label="🗙" onClick={onClose}>
+            <button className="gallery-slider__btn close" title={t("Close")} aria-label="🗙" onClick={onClose}>
                 <svg
                     className="icon"
                     width="30"
@@ -28,7 +29,7 @@ const GalleryControls: React.FC<GalleryControlsProps> = ({ zoomIn, zoomOut, onCl
                     />
                 </svg>
             </button>
-            <button className="gallery-slider__btn zoom-in" aria-label="🔺" onClick={() => zoomIn()}>
+            <button className="gallery-slider__btn zoom-in" title={t("Zoom In")} aria-label="🔺" onClick={() => zoomIn()}>
                 <svg
                     className="icon"
                     width="30"
@@ -47,7 +48,7 @@ const GalleryControls: React.FC<GalleryControlsProps> = ({ zoomIn, zoomOut, onCl
                     />
                 </svg>
             </button>
-            <button className="gallery-slider__btn zoom-out" aria-label="🔻" onClick={() => zoomOut()}>
+            <button className="gallery-slider__btn zoom-out" title={t("Zoom Out")} aria-label="🔻" onClick={() => zoomOut()}>
                 <svg
                     className="icon"
                     width="30"

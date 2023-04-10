@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "Gebruik {{keyCode}} + scrollen om te zoomen",
   "Zoom In": "Inzoomen",
   "Zoom Out": "Uitzoomen",
-  "{{boothTerm}} Type": "{{boothTerm}}-type"
+  "{{boothTerm}} Type": "{{boothTerm}}-type",
+  "Next slide": "Volgende dia",
+  "Prev slide": "Vorige dia"
 }

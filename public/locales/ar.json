@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "استخدم {{keyCode}} مع التمرير للتكبيرللتكبير",
   "Zoom In": "تكبير",
   "Zoom Out": "تصغير",
-  "{{boothTerm}} Type": "نوع {{boothTerm}}"
+  "{{boothTerm}} Type": "نوع {{boothTerm}}",
+  "Next slide": "الشريحة التالية",
+  "Prev slide": "الشريحة السابقة"
 }

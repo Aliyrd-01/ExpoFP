@@ -1,6 +1,11 @@
 import React from "react";
 
-const GalleryBadges = ({ count }: { count: number }) => {
+interface GalleryBadgesProps {
+    count: number;
+    onFullscreen: () => void;
+}
+
+const GalleryBadges: React.FC<GalleryBadgesProps> = ({ count, onFullscreen }) => {
     return (
         <>
             <div className="gallery__badge gallery__badge-count">
@@ -15,7 +20,7 @@ const GalleryBadges = ({ count }: { count: number }) => {
                 </svg>
                 <span>{count}</span>
             </div>
-            <div className="gallery__badge gallery__badge-fullscreen">
+            <div className="gallery__badge gallery__badge-fullscreen" onClick={onFullscreen}>
                 <svg className="icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M5.33333 0.75H5.15C3.60986 0.75 2.83978 0.75 2.25153 1.04973C1.73408 1.31338 1.31338 1.73408 1.04973 2.25153C0.75 2.83978 0.75 3.60986 0.75 5.15V5.33333M5.33333 17.25H5.15C3.60986 17.25 2.83978 17.25 2.25153 16.9503C1.73408 16.6866 1.31338 16.2659 1.04973 15.7485C0.75 15.1602 0.75 14.3901 0.75 12.85V12.6667M17.25 5.33333V5.15C17.25 3.60986 17.25 2.83978 16.9503 2.25153C16.6866 1.73408 16.2659 1.31338 15.7485 1.04973C15.1602 0.75 14.3901 0.75 12.85 0.75H12.6667M17.25 12.6667V12.85C17.25 14.3901 17.25 15.1602 16.9503 15.7485C16.6866 16.2659 16.2659 16.6866 15.7485 16.9503C15.1602 17.25 14.3901 17.25 12.85 17.25H12.6667"

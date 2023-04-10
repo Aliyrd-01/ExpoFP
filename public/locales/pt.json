@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "Use {{keyCode}} + rolagem para aumentar",
   "Zoom In": "Aumentar",
   "Zoom Out": "Diminuir",
-  "{{boothTerm}} Type": "Tipo de {{boothTerm}}"
+  "{{boothTerm}} Type": "Tipo de {{boothTerm}}",
+  "Next slide": "Próximo slide",
+  "Prev slide": "Slide anterior"
 }

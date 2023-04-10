@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "使用 {{keyCode}} 和鼠标滚动进行缩放",
   "Zoom In": "放大",
   "Zoom Out": "缩小",
-  "{{boothTerm}} Type": "{{boothTerm}} 类型"
+  "{{boothTerm}} Type": "{{boothTerm}} 类型",
+  "Next slide": "下一张幻灯片",
+  "Prev slide": "上一张幻灯片"
 }

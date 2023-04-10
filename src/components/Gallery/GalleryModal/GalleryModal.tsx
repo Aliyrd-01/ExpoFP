@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
 import type { Swiper as SwiperInstance } from "swiper";
+import { Navigation } from "swiper";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
 import { TransformWrapper, ReactZoomPanPinchRef } from "react-zoom-pan-pinch-sr";
 import GalleryControls from "../GalleryControls/GalleryControls";
 import TransformImg from "../TransformImg/TransformImg";
-
+import { t } from "../../../utils/i18n";
 import "./GalleryModal.scss";
-import { Navigation } from "swiper";
 
 interface GalleryModalProps {
     images: string[];
@@ -55,7 +55,7 @@ const GalleryModal: React.FC<GalleryModalProps> = ({ images, leading, initialSli
                     />
                 ) : null}
                 {images.length > 1 && (
-                    <button ref={nextRef} aria-label="˃" className="gallery-slider__btn next">
+                    <button ref={nextRef} title={t("Next slide")} aria-label="˃" className="gallery-slider__btn next">
                         <svg
                             className="icon"
                             width="30"
@@ -76,7 +76,7 @@ const GalleryModal: React.FC<GalleryModalProps> = ({ images, leading, initialSli
                     </button>
                 )}
                 {images.length > 1 && (
-                    <button ref={prevRef} aria-label="˂" className="gallery-slider__btn prev">
+                    <button ref={prevRef} title={t("Prev slide")} aria-label="˂" className="gallery-slider__btn prev">
                         <svg
                             className="icon"
                             width="30"

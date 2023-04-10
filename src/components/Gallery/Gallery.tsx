@@ -46,7 +46,7 @@ const Gallery: React.FC<GalleryProps> = ({ images, leading = false }) => {
                         ))
                     )}
                 </div>
-                {!leading && <GalleryBadges count={images.length} />}
+                {!leading && <GalleryBadges onFullscreen={() => openModal(0)} count={images.length} />}
             </div>
             {isModalOpen && (
                 <GalleryModal images={images} leading={leading} initialSlideIndex={currentSlideIndex} onClose={closeModal} />

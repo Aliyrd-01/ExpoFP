@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "Usa {{keyCode}} + scorr per ingrandire",
   "Zoom In": "Ingrandisci",
   "Zoom Out": "Riduci",
-  "{{boothTerm}} Type": "Tipo {{boothTerm}}"
+  "{{boothTerm}} Type": "Tipo {{boothTerm}}",
+  "Next slide": "Prossima diapositiva",
+  "Prev slide": "Diapositiva precedente"
 }

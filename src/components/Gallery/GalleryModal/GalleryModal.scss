@@ -2,7 +2,6 @@
 @import "~swiper/swiper.min.css";
 
 .gallery-modal {
-	width: 100vw;
 	position: fixed;
 	top: 0;
 	bottom: 0;
@@ -57,10 +56,15 @@
 		border: none;
 		cursor: pointer;
 		padding: 0;
+		transition: background 0.2s;
 
 		@include media-breakpoint-down(md) {
 			width: 50px;
 			height: 50px;
+		}
+
+		&:hover {
+			background: rgba(48, 48, 48, 0.4);
 		}
 
 		&.zoom-in, &.zoom-out, &.next, &.prev {
@@ -82,6 +86,10 @@
 
 		&.prev {
 			left: 30px;
+		}
+
+		&:disabled {
+			display: none;
 		}
 	}
 }

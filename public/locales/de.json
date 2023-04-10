@@ -33,5 +33,7 @@
     "Use {{keyCode}} + scroll to zoom": "Verwenden Sie zum Vergrößern {{keyCode}} + Scrollen",
     "Zoom In": "Vergrößern",
     "Zoom Out": "Verkleinern",
-    "{{boothTerm}} Type": "{{boothTerm}}-Art"
+    "{{boothTerm}} Type": "{{boothTerm}}-Art",
+    "Next slide": "Nächste Folie",
+    "Prev slide": "Vorherige Folie"
 }
