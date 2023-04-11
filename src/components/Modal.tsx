@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import "./Modal.scss";
+import { useResponsiveClass } from "../hooks/useResponsiveClass";
 
 type modalType = "default" | "share";
 
@@ -11,6 +12,7 @@ export interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClickClose }) => {
+    const responsiveClass = useResponsiveClass();
     const [isOpen, setIsOpen] = useState(open);
 
     useEffect(() => {
@@ -18,7 +20,7 @@ const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClick
     }, [open]);
 
     return open ? (
-        <div className={classNames("modal", `modal--${type}`, { isOpen: isOpen })} onClick={onClickClose}>
+        <div className={classNames("modal", `modal--${type}`, { isOpen: isOpen }, responsiveClass)} onClick={onClickClose}>
             <div className="modal__content" onClick={(e) => e.stopPropagation()}>
                 <div className="far fa-times modal__close" onClick={onClickClose}></div>
                 {children}

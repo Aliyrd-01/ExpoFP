@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./ToggleSwitch.scss";
+import { useResponsiveClass } from "../hooks/useResponsiveClass";
+import classNames from "classnames";
 
 export interface ToggleSwitchProps {
     name: string;
@@ -9,6 +11,7 @@ export interface ToggleSwitchProps {
 }
 
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ name, value, label, onChange }) => {
+    const responsiveClass = useResponsiveClass();
     const [checked, setChecked] = useState(value);
 
     const onCheckedChange = () => {
@@ -17,7 +20,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ name, value, label, onChang
     };
 
     return (
-        <div className="toggleSwitch">
+        <div className={classNames("toggleSwitch", responsiveClass)}>
             <input type="checkbox" name={name} id={name} checked={checked} onChange={onCheckedChange} />
             <label htmlFor={name}>{label ? <span>{label}</span> : null}</label>
         </div>

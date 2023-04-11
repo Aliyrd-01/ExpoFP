@@ -86,6 +86,7 @@ export default function initUi(store: RootStore) {
 
 function updateScreenSize(uiState: UIState) {
     runInAction("uiState.screenSize", () => {
-        uiState.screenSize = new Size(window.innerWidth, window.innerHeight);
+        // uiState.screenSize = new Size(window.innerWidth, window.innerHeight);
+        uiState.screenSize = new Size(window["__efpElement"].clientWidth, window["__efpElement"].clientHeight);
     });
 }

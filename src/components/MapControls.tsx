@@ -2,6 +2,7 @@ import classNames from "classnames";
 import React, { useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import "./MapControls.scss";
+import { useResponsiveClass } from "../hooks/useResponsiveClass";
 
 export interface layersListItem {
     id: string;
@@ -42,6 +43,7 @@ const MapControls: React.FC<MapControlsProps> = ({
     onClickByWidth,
     onChangeLayers,
 }) => {
+    const responsiveClass = useResponsiveClass();
     const refLayers = useRef(null);
     const [layersIsOpen, setLayersOpen] = useState<boolean>(layersOpen || false);
     useOnClickOutside(refLayers, () => setLayersOpen(false));
@@ -67,7 +69,7 @@ const MapControls: React.FC<MapControlsProps> = ({
     };
 
     return (
-        <div className={classNames("mapControls", className)} style={style}>
+        <div className={classNames("mapControls", className, responsiveClass)} style={style}>
             {findLocation && (
                 <button type="button" className="mapControl" title={titles[0]} onClick={onClickFindLocation}>
                     <svg x="0px" y="0px" viewBox="0 0 122.88 122.88" version="1.1" xmlns="http://www.w3.org/2000/svg">

@@ -17,10 +17,12 @@ import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import isIframe from "../utils/is-iframe";
+import { useResponsiveClass } from "../hooks/useResponsiveClass";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
 function ExhibitorComponent() {
+    const responsiveClass = useResponsiveClass();
     const el = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         collapsed: true,
@@ -110,6 +112,7 @@ function ExhibitorComponent() {
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
             bookmarked: exhibitor.bookmarked,
+            [responsiveClass]: true,
         });
 
         const expandDescription = () => {
@@ -121,7 +124,7 @@ function ExhibitorComponent() {
             if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? '_blank' : '_self'}>
+                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? "_blank" : "_self"}>
                         {title}
                     </Button>
                 </div>

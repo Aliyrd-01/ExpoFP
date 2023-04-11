@@ -210,9 +210,9 @@ function getTopForBottomPosition(size: OverlaySize): number {
         case "full":
             return remsToPixels(paddingRems);
         case "medium":
-            return window.innerHeight - remsToPixels(uiState.overlayMediumHeightRems);
+            return window["__efpElement"].clientHeight - remsToPixels(uiState.overlayMediumHeightRems);
         case "small":
-            return window.innerHeight - remsToPixels(miniSizeRems);
+            return window["__efpElement"].clientHeight - remsToPixels(miniSizeRems);
     }
 
     return null;
