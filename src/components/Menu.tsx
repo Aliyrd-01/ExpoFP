@@ -14,7 +14,7 @@ import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
 
-const logoUrl = baseUrl + data.logo;
+const logoUrl = /^https?:\/\//i.test(data.logo) ? data.logo : baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
 
 window.setTimeout(function () {
