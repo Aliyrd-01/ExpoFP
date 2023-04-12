@@ -121,7 +121,13 @@ export abstract class BoothBase {
     @computed({ keepAlive: true }) get skipDim() {
         const { selectedRoute } = this.uiState;
 
-        if (selectedRoute?.from?.id !== this.id && selectedRoute?.to?.id !== this.id) {
+        if (
+            selectedRoute &&
+            selectedRoute.from &&
+            selectedRoute.from.id !== this.id &&
+            selectedRoute.to &&
+            selectedRoute.to.id !== this.id
+        ) {
             return false;
         }
 
