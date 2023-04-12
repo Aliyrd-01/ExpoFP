@@ -10,6 +10,7 @@ interface GalleryImgProps {
     setHeight?: boolean;
     isFullscreen?: boolean;
     position?: "center" | "top";
+    onImageLoadHeightUpdate?: () => void;
 }
 
 const GalleryImg: React.FC<GalleryImgProps> = ({
@@ -19,6 +20,7 @@ const GalleryImg: React.FC<GalleryImgProps> = ({
     isFullscreen = "false",
     leading = false,
     fillMode = "contain",
+    onImageLoadHeightUpdate,
 }) => {
     const imgRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -51,6 +53,8 @@ const GalleryImg: React.FC<GalleryImgProps> = ({
     const setImage = (image: HTMLImageElement) => {
         if (setHeight) {
             containerRef.current.style.height = (image.height * containerRef.current.clientWidth) / image.width + "px";
+
+            if (onImageLoadHeightUpdate) onImageLoadHeightUpdate();
         }
         imgRef.current.style.backgroundImage = `url(${image.src})`;
     };
@@ -73,7 +77,6 @@ const GalleryImg: React.FC<GalleryImgProps> = ({
         backgroundImage: leading ? `url("${getImageUrl(url, false)}")` : `url("${getImageUrl(url, true)}")`,
         backgroundSize: fillMode,
         transition: leading ? "all 0.5s ease 0s" : "none",
-        backgroundColor: "black",
         backgroundPosition: position,
     };
 

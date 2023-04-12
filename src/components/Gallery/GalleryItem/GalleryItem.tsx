@@ -8,6 +8,7 @@ interface GalleryItemProps {
     fillMode?: "cover" | "contain";
     position?: "center" | "top";
     onClick: () => void;
+    onImageLoadHeightUpdate?: () => void;
 }
 
 const GalleryItem: React.FC<GalleryItemProps> = ({
@@ -17,10 +18,18 @@ const GalleryItem: React.FC<GalleryItemProps> = ({
     setHeight = false,
     fillMode,
     onClick,
+    onImageLoadHeightUpdate,
 }) => {
     return (
         <div className="gallery__item" onClick={onClick}>
-            <GalleryImg position={position} fillMode={fillMode} url={url} leading={leading} setHeight={setHeight} />
+            <GalleryImg
+                position={position}
+                fillMode={fillMode}
+                url={url}
+                leading={leading}
+                setHeight={setHeight}
+                onImageLoadHeightUpdate={onImageLoadHeightUpdate}
+            />
         </div>
     );
 };

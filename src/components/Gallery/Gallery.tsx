@@ -9,9 +9,10 @@ import "./Gallery.scss";
 export interface GalleryProps {
     images: string[];
     leading?: boolean;
+    onImageLoadHeightUpdate?: () => void;
 }
 
-const Gallery: React.FC<GalleryProps> = ({ images, leading = false }) => {
+const Gallery: React.FC<GalleryProps> = ({ images, leading = false, onImageLoadHeightUpdate }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
@@ -39,10 +40,18 @@ const Gallery: React.FC<GalleryProps> = ({ images, leading = false }) => {
                             setHeight={true}
                             fillMode="contain"
                             onClick={() => openModal(0)}
+                            onImageLoadHeightUpdate={onImageLoadHeightUpdate}
                         />
                     ) : (
                         images.map((url, i) => (
-                            <GalleryItem key={url + i} url={url} position="top" fillMode="cover" onClick={() => openModal(i)} />
+                            <GalleryItem
+                                key={url + i}
+                                url={url}
+                                position="top"
+                                fillMode="cover"
+                                onClick={() => openModal(i)}
+                                onImageLoadHeightUpdate={onImageLoadHeightUpdate}
+                            />
                         ))
                     )}
                 </div>

@@ -147,6 +147,10 @@ function ExhibitorComponent() {
             return !uiState.kiosk && window.location.host.endsWith(".expofp.com");
         }
 
+        function onUpdateGallery() {
+            s.updateOverlayContent();
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -182,7 +186,11 @@ function ExhibitorComponent() {
                         ) : (
                             <ErrorBoundary>
                                 <Suspense fallback={null}>
-                                    <Gallery leading={true} images={[exhibitor.leadingImageUrl]} />
+                                    <Gallery
+                                        onImageLoadHeightUpdate={onUpdateGallery}
+                                        leading={true}
+                                        images={[exhibitor.leadingImageUrl]}
+                                    />
                                 </Suspense>
                             </ErrorBoundary>
                         )}
@@ -255,7 +263,7 @@ function ExhibitorComponent() {
                         <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                             <ErrorBoundary>
                                 <Suspense fallback={null}>
-                                    <Gallery images={exhibitor.gallery} />
+                                    <Gallery onImageLoadHeightUpdate={onUpdateGallery} images={exhibitor.gallery} />
                                 </Suspense>
                             </ErrorBoundary>
                         </div>
