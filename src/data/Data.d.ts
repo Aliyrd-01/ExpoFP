@@ -34,6 +34,7 @@ interface Data {
     allow3dView: boolean;
     hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;
+    isRebooking: boolean;
 }
 
 interface RawCategory {
@@ -112,6 +113,8 @@ interface RawExhibitor {
     categories: number[];
     leadingImageUrl: string;
     videoUrl: string;
+
+    rebookingState: number;
 }
 
 interface PathInfo {

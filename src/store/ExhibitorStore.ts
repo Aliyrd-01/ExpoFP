@@ -1,5 +1,6 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
+import isDebug from "../utils/is-debug";
 import { RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
@@ -7,6 +8,11 @@ import RootStore from "./RootStore";
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
     readonly exhibitors: Exhibitor[] = [];
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+    }
+
     @computed({ keepAlive: true }) get exhibitorById() {
         return new Map<number, Exhibitor>(this.exhibitors.map((c) => [c.id, c]));
     }
@@ -32,8 +38,23 @@ export default class ExhibitorStore {
         }
     }
 
-    constructor(rootStore: RootStore) {
-        this.rootStore = rootStore;
+    @action setRebookingState(exhibitor: Exhibitor, state: number) {
+        fetch(`/api/exhibitors/${exhibitor.id}/rebookingState`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                exhibitorId: exhibitor.id,
+                rebookingState: state,
+            }),
+        })
+            .then((r) => {
+                if (r.ok || isDebug) exhibitor.rebookingState = state;
+            })
+            .catch((e) => {
+                if (isDebug) exhibitor.rebookingState = state;
+            });
     }
 }
 
@@ -79,6 +100,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly marketMaterials: MarketMaterial[];
     readonly slug: string;
     @observable bookmarked: boolean;
+    @observable rebookingState: number;
 
     readonly booths: RegularBooth[];
     readonly categories: Category[];

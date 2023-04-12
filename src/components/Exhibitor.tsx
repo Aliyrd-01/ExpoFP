@@ -106,6 +106,20 @@ function ExhibitorComponent() {
             </>
         );
 
+        const rebooking = data.isRebooking ? (
+            <div>
+                <select
+                    value={exhibitor.rebookingState}
+                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value))}
+                >
+                    <option value="0">Unasked</option>
+                    <option value="1">Accepted</option>
+                    <option value="2">Rejected</option>
+                    <option value="3">Undecided</option>
+                </select>
+            </div>
+        ) : null;
+
         const cls = classNames({
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
@@ -121,7 +135,7 @@ function ExhibitorComponent() {
             if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? '_blank' : '_self'}>
+                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? "_blank" : "_self"}>
                         {title}
                     </Button>
                 </div>
@@ -157,6 +171,7 @@ function ExhibitorComponent() {
                 bar={bar}
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
+                {rebooking}
                 <div className="exhibitor__buttons">
                     <SibebarActions
                         showBookmark={!uiState.kiosk}

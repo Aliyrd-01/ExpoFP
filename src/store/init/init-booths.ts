@@ -8,7 +8,6 @@ import settings from "../../tools/settings";
 import { generateUniqueSlug } from "../../tools/slug";
 import { sortByName } from "../../utils";
 import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
-import { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
 
 const boothsByName = new Map<string, Booth>();

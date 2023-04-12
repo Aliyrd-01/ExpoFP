@@ -2,6 +2,7 @@ import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
+import data from "../../../../data";
 import store, { boothStore } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import { LayersMode } from "../../../../store/LayerStore";
@@ -10,6 +11,8 @@ import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import { getTrianglesFromFpPaths } from "./../../../../data/svg";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
+
+const rebookingColors = ["#98a2b3", "#32b175", "#e1463c", "#faba27"];
 
 // let picked = 0;
 export default function configBoothBg(
@@ -160,6 +163,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
+            if (data.isRebooking) return rebookingColors[b.exhibitors[0]?.rebookingState ?? 0];
             const settingsColors = settings.colors.booths;
             if (b.onHold) {
                 defColor = b.holdColor || b.soldColor || settingsColors.default;

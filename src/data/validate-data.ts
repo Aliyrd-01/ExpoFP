@@ -14,6 +14,8 @@ export default function validateData(data: Data) {
 
     if (data.hide3dMapDefault === undefined) data.hide3dMapDefault = false;
 
+    data.isRebooking = true;
+
     // temporary workaround for invalid data.js
     if (data.exhibitors.length > 0) {
         for (const booth of data.booths) {
