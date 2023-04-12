@@ -30,37 +30,38 @@ const Template: Story<RebookingRadioGroupProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
+    showTitle: true,
     options: [
         {
+            type: "unasked",
             name: "offer",
             value: "offer_unasked",
             label: "Unasked",
             iconName: "icon-question",
-            color: "#98A2B3",
             disabled: false,
         },
         {
+            type: "accepted",
             name: "offer",
             value: "offer_accepted",
             label: "Accepted",
             iconName: "icon-checked",
-            color: "#32B175",
             disabled: false,
         },
         {
+            type: "rejected",
             name: "offer",
             value: "offer_rejected",
             label: "Rejected",
             iconName: "icon-close",
-            color: "#E1463C",
             disabled: false,
         },
         {
+            type: "undecided",
             name: "offer",
             value: "offer_undecided",
             label: "Undecided",
             iconName: "icon-refresh",
-            color: "#FABA27",
             disabled: false,
         },
     ],
