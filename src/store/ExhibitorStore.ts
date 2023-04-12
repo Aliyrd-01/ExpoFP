@@ -1,7 +1,7 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import isDebug from "../utils/is-debug";
-import { RegularBooth } from "./BoothStore";
+import { Booth, RegularBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
 
@@ -102,6 +102,6 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     @observable bookmarked: boolean;
     @observable rebookingState: number;
 
-    readonly booths: RegularBooth[];
+    readonly booths: Booth[];
     readonly categories: Category[];
 }

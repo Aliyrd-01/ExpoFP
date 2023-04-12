@@ -57,7 +57,7 @@ interface RawRegularBooth extends RawBoothBase {
     type: string;
     // onHold: boolean;
     // reserved: boolean;
-    exhibitors: number[];
+   
 }
 
 interface RawSpecialBooth extends RawBoothBase {
@@ -72,6 +72,7 @@ interface RawBoothBase {
     name: string;
     title: string;
     externalId: string;
+    exhibitors: number[];
     // special?: true;
     // rect: Rect;
     // noLabels: boolean;

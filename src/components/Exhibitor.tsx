@@ -17,6 +17,7 @@ import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import isIframe from "../utils/is-iframe";
+import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -107,17 +108,11 @@ function ExhibitorComponent() {
         );
 
         const rebooking = data.isRebooking ? (
-            <div>
-                <select
-                    value={exhibitor.rebookingState}
-                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value))}
-                >
-                    <option value="0">Unasked</option>
-                    <option value="1">Accepted</option>
-                    <option value="2">Rejected</option>
-                    <option value="3">Undecided</option>
-                </select>
-            </div>
+            <RebookingRadioGroup
+                options={defaultRebookingOptions}
+                checked={exhibitor.rebookingState.toString()}
+                onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value))}
+            />
         ) : null;
 
         const cls = classNames({

@@ -1,3 +1,4 @@
+import { defaultRebookingOptions } from "./../../../RebookingRadioGroup";
 import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
@@ -11,8 +12,6 @@ import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import { getTrianglesFromFpPaths } from "./../../../../data/svg";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
-
-const rebookingColors = ["#98a2b3", "#32b175", "#e1463c", "#faba27"];
 
 // let picked = 0;
 export default function configBoothBg(
@@ -160,10 +159,12 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     @computed({ keepAlive: true }) get defaultColor() {
         const b = this.booth;
         let defColor: string;
+
+        if (data.isRebooking && b.exhibitors.length) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color;
+
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
-            if (data.isRebooking) return rebookingColors[b.exhibitors[0]?.rebookingState ?? 0];
             const settingsColors = settings.colors.booths;
             if (b.onHold) {
                 defColor = b.holdColor || b.soldColor || settingsColors.default;

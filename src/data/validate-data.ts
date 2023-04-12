@@ -105,8 +105,9 @@ export default function validateData(data: Data) {
             if (typeof regBooth["onHold"] === "undefined") regBooth["onHold"] = b.isOnHold;
             if (typeof regBooth.availColor === "undefined") regBooth.availColor = b.availableColor;
             if (typeof regBooth.type === "undefined") regBooth.type = b.boothTypeName;
-            regBooth.exhibitors = regBooth.exhibitors || [];
         }
+
+        booth.exhibitors = booth.exhibitors || [];
     }
 
     for (const exhibitor of data.exhibitors) {
