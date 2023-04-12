@@ -45,7 +45,7 @@ export const defaultRebookingOptions = [
         name: "offer",
         value: "3",
         label: "Undecided",
-        iconName: "icon-refresh",
+        iconName: "icon-question",
         color: "#FABA27",
         disabled: false,
     },
@@ -77,8 +77,7 @@ const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, chec
     };
 
     return (
-        <div className="rebooking-radio-group">
-            <div className="rebooking-radio-group__title">Choose Rebooking offer</div>
+        <div className="rebooking-radio-group">            
             <div className="rebooking-radio-group__options">{renderGroup()}</div>
         </div>
     );

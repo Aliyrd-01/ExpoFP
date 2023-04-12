@@ -1,7 +1,8 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
+import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
-import { Booth, RegularBooth } from "./BoothStore";
+import { Booth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
 
@@ -39,12 +40,13 @@ export default class ExhibitorStore {
     }
 
     @action setRebookingState(exhibitor: Exhibitor, state: number) {
-        fetch(`/api/exhibitors/${exhibitor.id}/rebookingState`, {
+        fetch("https://app-show.herokuapp.com/api/v2/exhibitors/set-rebooking-state", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
+                expoKey: settings.EXPO,
                 exhibitorId: exhibitor.id,
                 rebookingState: state,
             }),
