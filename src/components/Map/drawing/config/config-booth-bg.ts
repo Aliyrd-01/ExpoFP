@@ -160,11 +160,11 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         const b = this.booth;
         let defColor: string;
 
-        if (data.isRebooking && b.exhibitors.length) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color;
-
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
+            if (data.isRebooking) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color;
+
             const settingsColors = settings.colors.booths;
             if (b.onHold) {
                 defColor = b.holdColor || b.soldColor || settingsColors.default;

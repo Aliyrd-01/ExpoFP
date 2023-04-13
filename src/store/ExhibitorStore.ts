@@ -40,11 +40,13 @@ export default class ExhibitorStore {
     }
 
     @action setRebookingState(exhibitor: Exhibitor, state: number) {
+        exhibitor.rebookingState = state;
         fetch("https://app-show.herokuapp.com/api/v2/exhibitors/set-rebooking-state", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
+            
             body: JSON.stringify({
                 expoKey: settings.EXPO,
                 exhibitorId: exhibitor.id,
@@ -52,10 +54,10 @@ export default class ExhibitorStore {
             }),
         })
             .then((r) => {
-                if (r.ok || isDebug) exhibitor.rebookingState = state;
+                if (!r.ok && !isDebug) exhibitor.rebookingState = 0;
             })
             .catch((e) => {
-                if (isDebug) exhibitor.rebookingState = state;
+                if (isDebug) exhibitor.rebookingState = 0;
             });
     }
 }

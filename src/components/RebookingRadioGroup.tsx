@@ -35,6 +35,41 @@ const colors = {
     },
 };
 
+export const defaultRebookingOptions = [
+    {
+        name: "offer",
+        value: "0",
+        label: "Unasked",
+        iconName: "icon-question",
+        color: "#98A2B3",
+        disabled: false,
+    },
+    {
+        name: "offer",
+        value: "1",
+        label: "Accepted",
+        iconName: "icon-checked",
+        color: "#32B175",
+        disabled: false,
+    },
+    {
+        name: "offer",
+        value: "2",
+        label: "Rejected",
+        iconName: "icon-close",
+        color: "#E1463C",
+        disabled: false,
+    },
+    {
+        name: "offer",
+        value: "3",
+        label: "Undecided",
+        iconName: "icon-question",
+        color: "#FABA27",
+        disabled: false,
+    },
+] as RebookingOption[];
+
 const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, checked, showTitle, onChange }) => {
     const renderGroup = () => {
         return options.map((option: RebookingOption, index) => {
