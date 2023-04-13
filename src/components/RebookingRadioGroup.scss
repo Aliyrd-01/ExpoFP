@@ -45,11 +45,22 @@
             }
         }
         &:checked ~ label {
-            background: var(--color-primaryLight);
-            border-color: var(--color-primary);
+            background: var(--rebooking-color-secondary);
+            border-color: var(--rebooking-color-primary);
 
             &:before {
-                border: 5px solid var(--color-primary);
+                border: 5px solid var(--rebooking-color-primary);
+            }
+        }
+        &:disabled {
+            & ~ label {
+                background: var(--color-grayUltraLight);
+                color: var(--color-gray);
+                cursor: default;
+
+                & > .rebooking-radio__icon {
+                    background: var(--color-gray);
+                }
             }
         }
     }
@@ -63,6 +74,7 @@
         align-items: center;
         width: 24px;
         height: 24px;
+        background: var(--rebooking-color-primary);
         border-radius: 50%;
         color: var(--color-white);
 

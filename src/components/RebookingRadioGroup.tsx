@@ -1,61 +1,54 @@
 import React from "react";
 import "./RebookingRadioGroup.scss";
 
-type Colors = "#98A2B3" | "#32B175" | "#E1463C" | "#FABA27";
 export interface RebookingOption {
     name: string;
     value: string;
     label: string;
     iconName?: string;
-    color?: Colors;
+    type: string;
     disabled?: boolean;
 }
 export interface RebookingRadioGroupProps {
     options: RebookingOption[];
     checked: string;
+    showTitle: boolean;
     onChange: (event: any) => void;
 }
 
-export const defaultRebookingOptions = [
-    {
-        name: "offer",
-        value: "0",
-        label: "Unasked",
-        iconName: "icon-question",
-        color: "#98A2B3",
-        disabled: false,
+const colors = {
+    unasked: {
+        primary: "#98A2B3",
+        secondary: "#EAEFF9",
     },
-    {
-        name: "offer",
-        value: "1",
-        label: "Accepted",
-        iconName: "icon-checked",
-        color: "#32B175",
-        disabled: false,
+    accepted: {
+        primary: "#32B175",
+        secondary: "#E4FFF2",
     },
-    {
-        name: "offer",
-        value: "2",
-        label: "Rejected",
-        iconName: "icon-close",
-        color: "#E1463C",
-        disabled: false,
+    rejected: {
+        primary: "#E1463C",
+        secondary: "#FFEDEB",
     },
-    {
-        name: "offer",
-        value: "3",
-        label: "Undecided",
-        iconName: "icon-question",
-        color: "#FABA27",
-        disabled: false,
+    undecided: {
+        primary: "#FABA27",
+        secondary: "#FFF7E5",
     },
-] as RebookingOption[];
+};
 
-const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, checked, onChange }) => {
+const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, checked, showTitle, onChange }) => {
     const renderGroup = () => {
         return options.map((option: RebookingOption, index) => {
             return (
-                <div className="rebooking-radio" key={option.value}>
+                <div
+                    className="rebooking-radio"
+                    key={option.value}
+                    style={
+                        {
+                            "--rebooking-color-primary": `${colors[option.type].primary}`,
+                            "--rebooking-color-secondary": `${colors[option.type].secondary}`,
+                        } as React.CSSProperties
+                    }
+                >
                     <input
                         type="radio"
                         name={option.name}
@@ -67,7 +60,7 @@ const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, chec
                     />
                     <label htmlFor={option.value}>
                         <div className="rebooking-radio__label">{option.label}</div>
-                        <div className="rebooking-radio__icon" style={{ background: option.color }}>
+                        <div className="rebooking-radio__icon">
                             <i className={option.iconName}></i>
                         </div>
                     </label>
@@ -77,7 +70,8 @@ const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, chec
     };
 
     return (
-        <div className="rebooking-radio-group">            
+        <div className="rebooking-radio-group">
+            {showTitle && <div className="rebooking-radio-group__title">Choose Rebooking offer</div>}
             <div className="rebooking-radio-group__options">{renderGroup()}</div>
         </div>
     );
