@@ -1,3 +1,4 @@
+import Color from "color";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import store, { uiState } from "../store";
@@ -10,6 +11,8 @@ import "./Alert.scss";
 import "./LogoOverlay.scss";
 import data from "../data";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
+import classNames from "classnames";
+import settings from "../tools/settings";
 
 export default function LogoOverlay() {
     const s = useLocalStore(() => ({
@@ -52,7 +55,16 @@ export default function LogoOverlay() {
 
     return useObserver(() => (
         <div>
-            <a href="https://expofp.com/" target="_blank" className="logo-overlay" style={s.style} rel="noopener noreferrer">
+            <a
+                href="https://expofp.com/"
+                target="_blank"
+                className={classNames("logo-overlay", {
+                    invert:
+                        Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.indexOf("dark") > -1,
+                })}
+                style={s.style}
+                rel="noopener noreferrer"
+            >
                 <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} />
             </a>
             {showWarning && (

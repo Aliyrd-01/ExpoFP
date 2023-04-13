@@ -236,15 +236,24 @@ export default class UIState {
         const boothsArray = boothStore.booths;
 
         if (!text) {
+            const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
+            const combinedArray = [...exhibitorsArray, ...otherSpacesArray];
+
             return exhibitorsArray.length === 0
                 ? boothsArray
-                : [...exhibitorsArray, ...boothsArray.filter((b) => b instanceof SpecialBooth)].sort((a, b) =>
-                      a["featured"] === b["featured"]
-                          ? a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
-                          : a["featured"]
-                          ? -1
-                          : 1
-                  );
+                : combinedArray.sort((a, b) => {
+                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+
+                      if (aFeatured !== bFeatured) {
+                          return aFeatured ? -1 : 1;
+                      }
+
+                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+
+                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
+                  });
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {

@@ -1,3 +1,5 @@
+import { Booth } from "../store/BoothStore";
+
 export const yahKey = "__yah";
 
 export function setYah(value: string): void {
@@ -6,6 +8,10 @@ export function setYah(value: string): void {
 
 export function removeYah() {
     localStorage.removeItem(yahKey);
+}
+
+export function isYahBooth(booth: Booth) {
+    return /^yah/i.test(booth.name) || /You\s+are\s+here/gi.test(booth.title);
 }
 
 export function getYah(): [number, number, number] | string {

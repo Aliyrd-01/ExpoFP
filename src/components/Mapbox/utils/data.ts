@@ -229,8 +229,7 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
                     ? null
                     : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
 
-                const logo = logos.find((l) => l?.name === booth.name);
-
+                const logo = logos.find((l) => l?.name === booth.slug);
                 if (logo) {
                     const scale = avgHeight / logo.htmlImage.height;
                     const factor = Math.sqrt(Math.max(1, (logo.bounds.height * logo.bounds.width) / avgArea)) / 5;

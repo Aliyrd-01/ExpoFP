@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { layersStore, uiState } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
 import isDebug from "../utils/is-debug";
@@ -22,6 +22,7 @@ import Pdf from "./Pdf";
 import Share from "./Share";
 // import Demo from "./Demo";
 import Ws from "./Ws";
+import { LayersMode } from "../store/LayerStore";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -54,7 +55,7 @@ export default observer(function Layout() {
                 <Controls />
                 {/* <Layers /> */}
                 {/*<Areas />*/}
-                <Floors />
+                {layersStore.mode == LayersMode.Radio && <Floors />}
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
