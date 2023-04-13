@@ -28,7 +28,7 @@ export const defaultRebookingOptions = [
         iconName: "icon-question",
         disabled: false,
         color: {
-            primary: "#98A2B3",
+            primary: "#8E99AB",
             secondary: "#EAEFF9",
         },
     },
@@ -58,7 +58,7 @@ export const defaultRebookingOptions = [
         name: "offer",
         value: "3",
         label: "Undecided",
-        iconName: "icon-question",
+        iconName: "icon-switch-horizontal",
         disabled: false,
         color: {
             primary: "#FABA27",

@@ -30,6 +30,6 @@ const Template: Story<RebookingRadioGroupProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
-    showTitle: true,
+    showTitle: false,
     options: defaultRebookingOptions,
 };
