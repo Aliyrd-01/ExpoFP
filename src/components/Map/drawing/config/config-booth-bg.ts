@@ -163,7 +163,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
-            if (data.isRebooking) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color;
+            if (data.isRebooking) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color.primary;
 
             const settingsColors = settings.colors.booths;
             if (b.onHold) {

@@ -112,6 +112,7 @@ function ExhibitorComponent() {
                 options={defaultRebookingOptions}
                 checked={exhibitor.rebookingState.toString()}
                 onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value))}
+                showTitle={false}
             />
         ) : null;
 
