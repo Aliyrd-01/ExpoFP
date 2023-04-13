@@ -18,7 +18,7 @@ export interface RebookingRadioGroupProps {
 
 const colors = {
     unasked: {
-        primary: "#98A2B3",
+        primary: "#8E99AB",
         secondary: "#EAEFF9",
     },
     accepted: {

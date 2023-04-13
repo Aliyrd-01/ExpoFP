@@ -61,7 +61,7 @@ Base.args = {
             name: "offer",
             value: "offer_undecided",
             label: "Undecided",
-            iconName: "icon-refresh",
+            iconName: "icon-switch-horizontal",
             disabled: false,
         },
     ],

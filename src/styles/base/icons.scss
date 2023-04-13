@@ -15,6 +15,11 @@ $icons-font-path: "../../public/fonts" !default;
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-switch-horizontal {
+    &:before {
+        content: $icon-switch-horizontal;
+    }
+}
 .icon-chevron-left {
     &:before {
         content: $icon-chevron-left;
