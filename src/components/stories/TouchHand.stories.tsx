@@ -1,17 +1,17 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import PinchToZoom from "../PinchToZoom";
+import TouchHand from "../TouchHand";
 
 export default {
-    title: "Components/PinchToZoom",
-    component: PinchToZoom,
+    title: "Components/TouchHand",
+    component: TouchHand,
 } as Meta;
 
 const Template: Story = (args) => {
     return (
         <>
             <iframe src="https://sample.expofp.com" className="sb-iframe" title="test"></iframe>
-            <PinchToZoom />
+            <TouchHand />
         </>
     );
 };
