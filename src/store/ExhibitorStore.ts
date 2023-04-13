@@ -41,7 +41,7 @@ export default class ExhibitorStore {
 
     @action setRebookingState(exhibitor: Exhibitor, state: number) {
         exhibitor.rebookingState = state;
-        fetch("https://app-show.expofp.com/api/v2/exhibitors/set-rebooking-state", {
+        fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
