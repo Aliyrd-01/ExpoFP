@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
-import RebookingRadioGroup, { RebookingRadioGroupProps } from "../RebookingRadioGroup";
+import RebookingRadioGroup, { defaultRebookingOptions, RebookingRadioGroupProps } from "../RebookingRadioGroup";
 import { useToast } from "../Toast/index";
 
 export default {
@@ -30,39 +30,6 @@ const Template: Story<RebookingRadioGroupProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
-    showTitle: true,
-    options: [
-        {
-            type: "unasked",
-            name: "offer",
-            value: "offer_unasked",
-            label: "Unasked",
-            iconName: "icon-question",
-            disabled: false,
-        },
-        {
-            type: "accepted",
-            name: "offer",
-            value: "offer_accepted",
-            label: "Accepted",
-            iconName: "icon-checked",
-            disabled: false,
-        },
-        {
-            type: "rejected",
-            name: "offer",
-            value: "offer_rejected",
-            label: "Rejected",
-            iconName: "icon-close",
-            disabled: false,
-        },
-        {
-            type: "undecided",
-            name: "offer",
-            value: "offer_undecided",
-            label: "Undecided",
-            iconName: "icon-switch-horizontal",
-            disabled: false,
-        },
-    ],
+    showTitle: false,
+    options: defaultRebookingOptions,
 };
