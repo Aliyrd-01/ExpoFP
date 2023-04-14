@@ -3,17 +3,19 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as React from "react";
 import { svgArea } from "../data/svg";
 import store, { layersStore, uiState } from "../store";
-import { LayerMode, LayersMode } from "../store/LayerStore";
+import { LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
 import MapControls from "./MapControls";
+import { useResponsiveClass } from "../hooks/useResponsiveClass";
+import { useEffect } from "react";
+import { useReaction } from "../utils/mobx";
 
 export default function Controls() {
+    const { responsiveClass, updateResponsiveClass } = useResponsiveClass(uiState.screenSize.width);
     const s = useLocalStore(() => ({
-        get className() {
-            return classNames({ controls: true, container: true, "-ready": true });
-        },
+        className: "",
         get style() {
             return {
                 left: uiState.overlayCollapsed
@@ -34,6 +36,17 @@ export default function Controls() {
             return layersStore.layers.filter((l) => l.visible).map((l) => l.name);
         },
     }));
+
+    useReaction(
+        () => uiState.screenSize.width,
+        () => {
+            updateResponsiveClass(uiState.screenSize.width);
+        }
+    );
+
+    useEffect(() => {
+        s.className = classNames({ controls: true, container: true, "-ready": true, [responsiveClass]: true });
+    }, [responsiveClass]);
 
     return useObserver(() => {
         return (

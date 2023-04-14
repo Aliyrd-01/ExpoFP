@@ -8,39 +8,31 @@ const breakpoints = {
     xl: 1100,
 };
 
-export const useResponsiveClass = () => {
+export const useResponsiveClass = (width: number) => {
     const [responsiveClass, setResponsiveClass] = useState("");
+    const [stateWidth, setStateWidth] = useState(width);
+
+    const updateResponsiveClass = (width: number) => {
+        const { sm, md, lg, xl } = breakpoints;
+
+        if (width < sm) {
+            setResponsiveClass("xs");
+        } else if (width >= sm && width < md) {
+            setResponsiveClass("sm");
+        } else if (width >= md && width < lg) {
+            setResponsiveClass("md");
+        } else if (width >= lg && width < xl) {
+            setResponsiveClass("lg");
+        } else {
+            setResponsiveClass("xl");
+        }
+
+        setStateWidth(width);
+    };
 
     useEffect(() => {
-        const updateResponsiveClass = (width) => {
-            const { sm, md, lg, xl } = breakpoints;
+        updateResponsiveClass(stateWidth);
+    }, [stateWidth]);
 
-            if (width < sm) {
-                setResponsiveClass("xs");
-            } else if (width >= sm && width < md) {
-                setResponsiveClass("sm");
-            } else if (width >= md && width < lg) {
-                setResponsiveClass("md");
-            } else if (width >= lg && width < xl) {
-                setResponsiveClass("lg");
-            } else {
-                setResponsiveClass("xl");
-            }
-        };
-
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (let entry of entries) {
-                const { width } = entry.contentRect;
-                updateResponsiveClass(width);
-            }
-        });
-
-        resizeObserver.observe(window["__efpElement"] || document.body);
-
-        return () => {
-            resizeObserver.disconnect();
-        };
-    }, []);
-
-    return responsiveClass;
+    return { responsiveClass, updateResponsiveClass };
 };

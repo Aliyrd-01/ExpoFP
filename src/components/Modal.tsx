@@ -7,12 +7,12 @@ type modalType = "default" | "share";
 
 export interface ModalProps {
     open: boolean;
+    className?: string;
     type?: modalType;
     onClickClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClickClose }) => {
-    const responsiveClass = useResponsiveClass();
+const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClickClose, className }) => {
     const [isOpen, setIsOpen] = useState(open);
 
     useEffect(() => {
@@ -20,7 +20,7 @@ const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClick
     }, [open]);
 
     return open ? (
-        <div className={classNames("modal", `modal--${type}`, { isOpen: isOpen }, responsiveClass)} onClick={onClickClose}>
+        <div className={classNames("modal", `modal--${type}`, { isOpen: isOpen }, className)} onClick={onClickClose}>
             <div className="modal__content" onClick={(e) => e.stopPropagation()}>
                 <div className="far fa-times modal__close" onClick={onClickClose}></div>
                 {children}

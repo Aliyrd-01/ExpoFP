@@ -22,7 +22,7 @@ import { useResponsiveClass } from "../hooks/useResponsiveClass";
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
 function ExhibitorComponent() {
-    const responsiveClass = useResponsiveClass();
+    const { responsiveClass, updateResponsiveClass } = useResponsiveClass(uiState.screenSize.width);
     const el = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         collapsed: true,
@@ -62,6 +62,13 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
+
+    useReaction(
+        () => uiState.screenSize.width,
+        () => {
+            updateResponsiveClass(uiState.screenSize.width);
+        }
+    );
 
     useAutorun(() => {
         if (s.exhibitor) {

@@ -9,6 +9,8 @@ export const kioskKey = "kiosk";
 
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
+    uiState.rootElement = window["__efpElement"];
+
     updateScreenSize(uiState);
 
     window.addEventListener("resize", () => {
@@ -86,6 +88,6 @@ export default function initUi(store: RootStore) {
 
 function updateScreenSize(uiState: UIState) {
     runInAction("uiState.screenSize", () => {
-        uiState.screenSize = new Size(window["__efpElement"].clientWidth, window["__efpElement"].clientHeight);
+        uiState.screenSize = new Size(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
     });
 }

@@ -12,8 +12,7 @@ import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 
 const n = Math.ceil(
-    (Math.max(window["__efpElement"].clientHeight, window["__efpElement"].clientWidth) - remsToPixels(3.5 + 2)) /
-        remsToPixels(3.5)
+    (Math.max(uiState.rootElement.clientHeight, uiState.rootElement.clientWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5)
 );
 logger.log("List n1:", n);
 
