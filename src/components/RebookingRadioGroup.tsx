@@ -86,7 +86,7 @@ const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, chec
                         name={option.name}
                         value={option.value}
                         id={option.value}
-                        defaultChecked={option.value === checked}
+                        checked={option.value === checked}
                         disabled={option.disabled}
                         onChange={onChange}
                     />

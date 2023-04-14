@@ -191,12 +191,13 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
 
         let color: string;
         if (b.error) color = "#f33";
+        else if (data.isRebooking) color = this.defaultColor;
         else if (b.selected) {
             color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
         } else color = this.defaultColor;
 
         let colorInfo = Color(color === "none" ? "#f33" : color);
-        if (b.hover && !b.selected) {
+        if ((b.hover && !b.selected) || (b.selected && data.isRebooking)) {
             const a = colorInfo.alpha();
             colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
         }

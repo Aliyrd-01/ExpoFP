@@ -57,7 +57,8 @@ export default class ExhibitorStore {
                 if (!r.ok && !isDebug) exhibitor.rebookingState = 0;
             })
             .catch((e) => {
-                if (isDebug) exhibitor.rebookingState = 0;
+                exhibitor.rebookingState = 0;
+                alert("Error sending rebooking state");
             });
     }
 }
