@@ -7,6 +7,7 @@ import { Exhibitor } from "../store/ExhibitorStore";
 import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
+import { defaultRebookingOptions } from "./RebookingRadioGroup";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     function handleClick(e: MouseEvent) {
@@ -34,6 +35,11 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 bookmarked: exhibitor.bookmarked,
                 featured: exhibitor.featured,
             })}`}
+            style={{
+                borderLeft: data.isRebooking
+                    ? `5px solid ${defaultRebookingOptions[exhibitor.rebookingState].color.primary}`
+                    : null,
+            }}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}
             href={`?${exhibitor.slug}`}
