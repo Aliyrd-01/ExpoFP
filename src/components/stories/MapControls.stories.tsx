@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import MapControls, { MapControlsProps } from "../MapControls";
+import ResponsiveClassContext from "../../storybook/contexts/ResponsiveClassContext";
 
 export default {
     title: "Components/MapControls",
@@ -10,6 +11,8 @@ export default {
 
 const Template: Story<MapControlsProps> = (args) => {
     const [activeItems, setActiveItems] = useState(args.layersActiveItems);
+    const responsiveClass = useContext(ResponsiveClassContext);
+
     const styles = {
         top: "10px",
         left: "10px",
@@ -28,6 +31,7 @@ const Template: Story<MapControlsProps> = (args) => {
         <>
             <MapControls
                 {...args}
+                className={responsiveClass}
                 style={styles}
                 layersActiveItems={activeItems}
                 onClickZoomIn={() => action("onClickZoomIn")(true)}

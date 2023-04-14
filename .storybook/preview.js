@@ -1,5 +1,6 @@
 import "../src/styles/storybook.global.scss";
-import StoryWrapper from "./StoryWrapper";
+import StoryWrapper from "../src/storybook/decorators/StoryWrapper";
+import WithResize from "../src/storybook/decorators/WithResize";
 
 export const decorators = [
     (Story) => {
@@ -10,6 +11,10 @@ export const decorators = [
                 }}
             />
         );
+    },
+    (Story) => {
+        const WrappedStory = WithResize(Story);
+        return <WrappedStory />;
     },
 ];
 
