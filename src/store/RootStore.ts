@@ -72,6 +72,7 @@ export default class RootStore {
                 this.selectBooth(this.routeStore.defaultFrom);
 
             this.uiState.centerMap = true;
+            this.uiState.inIdle = true;
         }, 1000);
     }
 

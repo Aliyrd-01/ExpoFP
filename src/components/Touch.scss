@@ -1,0 +1,112 @@
+.touch-container {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+$hand-fill: path(
+    "M380.923 308.7C380.223 273.3 328.023 273.6 327.223 308.7V213.7C325.723 178.1 275.023 178.1 273.523 213.7V304.3V427.5C273.523 458.8 273.523 452.1 230.123 422.3C195.323 398.5 164.023 420.6 165.023 435.7C166.023 450.8 252.823 528.6 252.823 528.6C352.123 643.8 455.923 571 475.023 515.2C494.123 459.3 489 361.3 489 361.3C488 346.5 476.423 334.4 461.623 334.4C446.823 334.4 434.623 347.3 434.623 361.3V335.5C433.723 300.7 382.323 300 380.923 335V308.7Z"
+);
+$hand-stroke: path(
+    "M327.223 308.7C328.023 273.6 380.223 273.3 380.923 308.7V335M327.223 308.7V213.7C325.723 178.1 275.023 178.1 273.523 213.7V304.3V427.5C273.523 458.8 273.523 452.1 230.123 422.3C195.323 398.5 164.023 420.6 165.023 435.7C166.023 450.8 252.823 528.6 252.823 528.6C352.123 643.8 455.923 571 475.023 515.2C494.123 459.3 489 361.3 489 361.3C488 346.5 476.423 334.4 461.623 334.4C446.823 334.4 434.623 347.3 434.623 361.3M327.223 308.7V388.8M380.923 335C382.323 300 433.723 300.7 434.623 335.5V361.3M380.923 335V388.8M434.623 361.3V399.3"
+);
+$speed: 2.2s;
+
+.touchon-hand-fill {
+    d: $hand-fill;
+    fill: #ffffff;
+    filter: drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.5));
+}
+.touchon-hand-stroke {
+    d: $hand-stroke;
+    stroke: #000;
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+.touchon-hand-fill,
+.touchon-hand-stroke {
+    animation: $speed linear 0.6s infinite handTouch;
+    transform-origin: 50% 50%;
+}
+.hand-touch-1,
+.hand-touch-2,
+.hand-touch-3 {
+    stroke: #fff;
+    stroke-width: 14;
+    cx: 299;
+    cy: 201;
+    filter: drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.4));
+}
+.hand-touch-1 {
+    animation: $speed linear 0s infinite touch-1;
+    r: 50;
+}
+.hand-touch-2 {
+    animation: $speed linear 0s infinite touch-2;
+    opacity: 0;
+    r: 110;
+}
+.hand-touch-3 {
+    animation: $speed linear 0s infinite touch-3;
+    opacity: 0;
+    r: 160;
+}
+
+@keyframes touch-1 {
+    0% {
+        r: 0;
+    }
+    70% {
+        r: 0;
+    }
+    80% {
+        r: 50;
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes touch-2 {
+    0% {
+        r: 0;
+    }
+    50% {
+        r: 0;
+    }
+    80% {
+        r: 110;
+        opacity: 0.8;
+    }
+    95% {
+        opacity: 0;
+    }
+}
+@keyframes touch-3 {
+    30% {
+        r: 0;
+        opacity: 0;
+    }
+    80% {
+        r: 160;
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0;
+    }
+}
+
+@keyframes handTouch {
+    0% {
+        transform: scale(1, 1);
+    }
+    10% {
+        transform: scale(0.7, 0.7);
+    }
+    20% {
+        transform: scale(1, 1);
+    }
+}
