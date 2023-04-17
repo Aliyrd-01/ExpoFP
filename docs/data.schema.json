@@ -251,6 +251,9 @@
                     "logo": {
                         "type": "string"
                     },
+                    "logoInBooth": {
+                        "type": "boolean"
+                    },
                     "gallery": {
                         "type": "array",
                         "items": {

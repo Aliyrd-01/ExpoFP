@@ -9,6 +9,7 @@ import { generateUniqueSlug } from "../../tools/slug";
 import { sortByName } from "../../utils";
 import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import RootStore from "../RootStore";
+import { isYahBooth } from "../../utils/yah";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
@@ -171,7 +172,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
-                    const color = path.style.fill;
+                    const color = isYahBooth(booth as Booth) ? el.style?.fill || path.style.fill : path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
                     booth.paths.push({
                         index: d,
