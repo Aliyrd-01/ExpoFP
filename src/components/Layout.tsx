@@ -21,7 +21,7 @@ import Pdf from "./Pdf";
 import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
-import Touch from "./Touch";
+import TouchHand from "./TouchHand";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -52,7 +52,7 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                {uiState.kiosk && uiState.inIdle && <Touch />}
+                {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}

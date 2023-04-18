@@ -14,10 +14,6 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
     const labelCanvasCache = new Map<string, CanvasDescriptor>();
 
     (select(getLayerSvg(layerID)).selectAll("text").nodes() as SVGTextElement[]).forEach((text) => {
-
-        console.info(layerID)
-
-
         const transform = text.getAttribute("transform");
         const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\)( rotate\(([-0-9.]+)\))?/);
 
@@ -33,9 +29,8 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             let h = parseFloat(text.getAttribute("data-h"));
             var fontSize = parseFloat(text.getAttribute("font-size")) * 2;
 
-            var fill = "#000000";// text.style?.fill ?? "#FFFFFF";
+            var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
-         
             var align = "center";
             if (anchor === "end" && dbl === "auto") {
                 align = "rightbottom";
