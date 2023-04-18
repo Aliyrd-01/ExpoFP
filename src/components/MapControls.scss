@@ -146,26 +146,6 @@ $checkedPanel: ".checkedPanel";
     }
 }
 
-//@include media-breakpoint-down(sm) {
-//    #{$mapControls} {
-//        width: 30px;
-//    }
-//    #{$mapControl} {
-//        width: 30px;
-//        height: 30px;
-//    }
-//    #{$checkedPanel} {
-//        left: 40px;
-//
-//        &:before {
-//            top: 8px;
-//        }
-//        &__title {
-//            padding: rem(6px 16px);
-//        }
-//    }
-//}
-
 .efp-kiosk {
     #{$mapControls} {
         position: absolute;
