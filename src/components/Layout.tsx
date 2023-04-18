@@ -49,7 +49,8 @@ export default observer(function Layout() {
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />
-                {!data.hideLogoOverlay && <LogoOverlay />}
+                {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
+                <LogoOverlay />
                 <Ws />
                 <Controls />
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
