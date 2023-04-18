@@ -1,11 +1,13 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
+import data from "../data";
 import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
+import { defaultRebookingOptions } from "./RebookingRadioGroup";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     function handleClick(e: MouseEvent) {
@@ -33,6 +35,11 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 bookmarked: exhibitor.bookmarked,
                 featured: exhibitor.featured,
             })}`}
+            style={{
+                borderLeft: data.isRebooking
+                    ? `5px solid ${defaultRebookingOptions[exhibitor.rebookingState].color.primary}`
+                    : null,
+            }}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}
             href={`?${exhibitor.slug}`}
@@ -41,7 +48,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             <div className="exhibitor-row__lines">
                 {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
             </div>
-            {uiState.kiosk ? null : (
+            {data.isRebooking || uiState.kiosk ? null : (
                 <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
                     <BookmarkSvg />
                 </div>

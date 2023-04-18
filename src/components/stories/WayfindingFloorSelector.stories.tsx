@@ -16,13 +16,11 @@ const Template: Story<WayfindingFloorSelectorProps> = (args) => {
     };
 
     return (
-        <>
-            <div className="map layout">
-                <aside className="sidebar">
-                    <WayfindingFloorSelector {...args} current={currentFloor} onClickFloor={changeFloor} />
-                </aside>
-            </div>
-        </>
+        <div className="map layout">
+            <aside className="sidebar">
+                <WayfindingFloorSelector {...args} current={currentFloor} onClickFloor={changeFloor} />
+            </aside>
+        </div>
     );
 };
 

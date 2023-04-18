@@ -8,7 +8,6 @@ import settings from "../../tools/settings";
 import { generateUniqueSlug } from "../../tools/slug";
 import { sortByName } from "../../utils";
 import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
-import { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
 import { isYahBooth } from "../../utils/yah";
 
@@ -24,21 +23,14 @@ export function iniAllBooths(store: RootStore) {
         boothsByName.set(b.name.toLowerCase(), b as Booth);
         fixCbre(b as Booth);
 
-        if (b instanceof RegularBooth) {
-            const boothReg = b as MutableRequired<RegularBooth>;
-            boothReg.exhibitors = [];
-            for (const exhibitorId of (raw as RawRegularBooth).exhibitors) {
-                const exhibitor = store.exhibitorStore.exhibitorById.get(exhibitorId);
-                boothReg.exhibitors.push(exhibitor);
-                exhibitor.booths.push(boothReg as RegularBooth);
-            }
-
-            //TODO: remove this
-            // boothReg.exhibitors = boothReg.exhibitors.sort((a: Exhibitor, b: Exhibitor) => {
-            //     if (a.featured !== b.featured) return a.featured ? -1 : 1;
-            //     return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
-            // });
+        const boothReg = b as MutableRequired<RegularBooth>;
+        boothReg.exhibitors = [];
+        for (const exhibitorId of raw.exhibitors) {
+            const exhibitor = store.exhibitorStore.exhibitorById.get(exhibitorId);
+            boothReg.exhibitors.push(exhibitor);
+            exhibitor.booths.push(boothReg as RegularBooth);
         }
+
         booths.push(b);
     }
 
@@ -164,10 +156,8 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
 
         let logoInBooth = false;
 
-        if (booth instanceof RegularBooth) {
-            const exhibitorsWithLogoInBooths = booth.exhibitors.filter((ex) => ex.logoInBooth);
-            logoInBooth = exhibitorsWithLogoInBooths.length > 0;
-        }
+        const exhibitorsWithLogoInBooths = booth.exhibitors.filter((ex) => ex.logoInBooth);
+        logoInBooth = exhibitorsWithLogoInBooths.length > 0;
 
         if (!booth.rotate && booth.rect.h > booth.rect.w * 2.0 && (booth.title || booth.name).length > 5 && !logoInBooth) {
             booth.rotate = (90 * Math.PI) / 180;

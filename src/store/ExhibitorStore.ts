@@ -1,12 +1,19 @@
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
-import { RegularBooth } from "./BoothStore";
+import settings from "../tools/settings";
+import isDebug from "../utils/is-debug";
+import { Booth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
     readonly exhibitors: Exhibitor[] = [];
+
+    constructor(rootStore: RootStore) {
+        this.rootStore = rootStore;
+    }
+
     @computed({ keepAlive: true }) get exhibitorById() {
         return new Map<number, Exhibitor>(this.exhibitors.map((c) => [c.id, c]));
     }
@@ -32,8 +39,27 @@ export default class ExhibitorStore {
         }
     }
 
-    constructor(rootStore: RootStore) {
-        this.rootStore = rootStore;
+    @action setRebookingState(exhibitor: Exhibitor, state: number) {
+        exhibitor.rebookingState = state;
+        fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+                expoKey: settings.EXPO,
+                exhibitorId: exhibitor.id,
+                rebookingState: state,
+            }),
+        })
+            .then((r) => {
+                if (!r.ok && !isDebug) exhibitor.rebookingState = 0;
+            })
+            .catch((e) => {
+                exhibitor.rebookingState = 0;
+                alert("Error sending rebooking state");
+            });
     }
 }
 
@@ -79,7 +105,8 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly marketMaterials: MarketMaterial[];
     readonly slug: string;
     @observable bookmarked: boolean;
+    @observable rebookingState: number;
 
-    readonly booths: RegularBooth[];
+    readonly booths: Booth[];
     readonly categories: Category[];
 }
