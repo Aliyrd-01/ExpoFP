@@ -27,7 +27,7 @@ class FloorPlan {
 
     updateLayerVisibility(layer: string, visible: boolean): void;
 
-    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
+    selectRoute(from: string, to: string, onlyAccessible: boolean): void;
 }
 
 interface FloorPlanOptions {

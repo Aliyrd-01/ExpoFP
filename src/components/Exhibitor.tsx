@@ -9,15 +9,15 @@ import logger from "../tools/logger";
 import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
+import isIframe from "../utils/is-iframe";
 import { useAutorun, useReaction } from "../utils/mobx";
-import "./Exhibitor.scss";
-import OverlayContent from "./OverlayContent";
-import SibebarActions from "./SidebarActions";
-import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
-import isIframe from "../utils/is-iframe";
+import "./Exhibitor.scss";
+import OverlayContent from "./OverlayContent";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
+import SibebarActions from "./SidebarActions";
+import { FillMode } from "./Slider/ImageSliderData";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -178,11 +178,7 @@ function ExhibitorComponent() {
                                 onClickBookmark={bookmark}
                                 onClickShare={handleShare}
                                 onClickDirections={() => {
-                                    store.routeStore.clickRoute(
-                                        null,
-                                        store.routeStore.tempToBooth || exhibitor.booths[0],
-                                        uiState.selectedRoute?.exceptUnaccessible || false
-                                    );
+                                    store.routeStore.clickRoute(null, store.routeStore.tempToBooth || exhibitor.booths[0]);
                                 }}
                             />
                         </div>

@@ -1,7 +1,8 @@
 import React from "react";
-import "./WayfindingTemplate.scss";
 import Autocomplete, { OptionObject } from "./Autocomplete";
+import ToggleSwitch from "./ToggleSwitch";
 import WayfindingFloorSelector from "./WayfindingFloorSelector";
+import "./WayfindingTemplate.scss";
 import WayInformation, { WayInformationItem } from "./WayInformation";
 
 export interface WayfindingTemplateProps {
@@ -10,6 +11,8 @@ export interface WayfindingTemplateProps {
     toValue?: string;
     showForm?: boolean;
     showInfo?: boolean;
+    showAccessible?: boolean;
+    onlyAccessible?: boolean;
     routeFound?: boolean;
     infoItems?: WayInformationItem[];
     infoAccessible?: boolean;
@@ -20,6 +23,7 @@ export interface WayfindingTemplateProps {
     onSwitch?: () => void;
     onClickInfo?: () => void;
     onClickFloor?: (val: string) => void;
+    onAccessibleCheck: (checked: boolean) => void;
 }
 
 const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
@@ -27,6 +31,7 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     fromValue = "",
     toValue = "",
     showForm = true,
+    showAccessible = false,
     showInfo = false,
     routeFound = false,
     infoItems = [],
@@ -38,7 +43,9 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     onSwitch,
     onClickInfo,
     onClickFloor,
+    onAccessibleCheck,
 }) => {
+
     return (
         <div className="efp-wayfinding">
             {showForm && (
@@ -63,6 +70,16 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                         </div>
                         <button type="button" className="efp-wayfindingForm__switch" onClick={onSwitch}></button>
                     </div>
+                    {showAccessible && (
+                        <div className="formGroup" style={{ marginLeft: 45 }}>
+                            <ToggleSwitch
+                                name="onlyAccessible"
+                                label="Accessible"
+                                value={infoAccessible}
+                                onChange={(value) => onAccessibleCheck(value)}
+                            />
+                        </div>
+                    )}
                     {floors.length > 1 && (
                         <WayfindingFloorSelector floors={floors} current={currentFloor} onClickFloor={onClickFloor} />
                     )}

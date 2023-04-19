@@ -7,13 +7,13 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
+import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
 import Button from "./Button";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
 import SidebarActions from "./SidebarActions";
-import isIframe from "../utils/is-iframe";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -171,7 +171,7 @@ function Booth() {
                             showBookmark={false}
                             showShare={false}
                             onClickDirections={() => {
-                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false);
+                                store.routeStore.clickRoute(null, s.booth);
                             }}
                         />
                     </div>

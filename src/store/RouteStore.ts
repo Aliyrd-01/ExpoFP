@@ -1,15 +1,15 @@
-import { RouteLine } from "./../utils/wayfinding";
-import { getLayerSvg, svgArea } from "./../data/svg";
 import { action, computed, observable } from "mobx";
 import { lineLength, Point } from "simple-geometry";
 import store, { layersStore } from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import { getLayerSvg, svgArea } from "./../data/svg";
+import { RouteLine, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
-import RootStore from "./RootStore";
 import { Layer } from "./LayerStore";
+import RootStore from "./RootStore";
 
 export default class RouteStore {
     rootStore: RootStore;
@@ -19,6 +19,8 @@ export default class RouteStore {
     @observable tempToBooth: Booth = null;
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
+    @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
+    @observable onlyAccessible: boolean = false;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -83,10 +85,10 @@ export default class RouteStore {
         return store.layerStore.layers.filter((l) => layers.indexOf(l.name) > -1);
     }
 
-    @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {
+    @action clickRoute(from: Booth, to: Booth) {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
-        this.selectRoute(new Route(this.defaultFrom || from, to, exceptUnaccessible));
+        this.selectRoute(new Route(this.defaultFrom || from, to));
 
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {
@@ -173,7 +175,7 @@ export default class RouteStore {
 }
 
 export class Route {
-    public constructor(public from: Booth, public to: Booth, public exceptUnaccessible: boolean) { }
+    public constructor(public from: Booth, public to: Booth) {}
 }
 
 export class CurrentPosition extends Point {
