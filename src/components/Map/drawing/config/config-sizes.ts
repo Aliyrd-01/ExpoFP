@@ -26,7 +26,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
             var anchor = text.getAttribute("text-anchor");
             var dbl = text.getAttribute("dominant-baseline");
-            var fontSize = 6 * boothStore.borderWidth;
+            var fontSize = 8 * boothStore.borderWidth;
 
             var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
