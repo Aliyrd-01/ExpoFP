@@ -1,6 +1,5 @@
 import { getLayerSvg } from "./../../data/svg";
 import { select } from "d3";
-import { floors } from "../../data/svg";
 import { Layer, LayerMode, LayersMode } from "../LayerStore";
 import RootStore from "../RootStore";
 
@@ -35,7 +34,6 @@ export default function initLayers(store: RootStore) {
                     l.visible = true;
                     l.description = layer.getAttribute("data-layer-description") || layerID;
                     l.frozen = layer.getAttribute("data-layer-isfrozen") === "true" ? true : false;
-                    l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
                     l.mode = LayerMode.Unset;
                     layers.push(l);
                 }

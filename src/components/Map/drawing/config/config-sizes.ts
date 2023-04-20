@@ -2,7 +2,7 @@ import { getLayerSvg } from "./../../../../data/svg";
 import { select } from "d3";
 import { reaction } from "mobx";
 import { DrawerContext } from "../Drawer1";
-import RectPainter from "../painters/RectPainter";
+import RectPainter, { TexPosition } from "../painters/RectPainter";
 import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
 let painters: RectPainter[] = [];
@@ -25,34 +25,47 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
             var anchor = text.getAttribute("text-anchor");
             var dbl = text.getAttribute("dominant-baseline");
-            let w = parseFloat(text.getAttribute("data-w"));
-            let h = parseFloat(text.getAttribute("data-h"));
             var fontSize = parseFloat(text.getAttribute("font-size")) * 2;
 
             var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
-            var align = "center";
-            if (anchor === "end" && dbl === "auto") {
-                align = "rightbottom";
-                tx -= w / 2;
-                ty -= h / 2;
-            }
+            var align: TexPosition;
+            if (anchor === "end" && dbl === "auto") align = "rightbottom";
+            else if (anchor === "start" && dbl === "middle") align = "leftcenter";
+            else if (anchor === "end" && dbl === "middle") align = "rightcenter";
+            else if (anchor === "middle" && dbl === "auto") align = "centerbottom";
+            else if (anchor === "middle" && dbl === "hanging") align = "centertop";
 
             addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize, fill);
         }
     });
 
-    function addLabel(text: string, cX: number, cY: number, angle: number, alignment: any, fontSize: number, color: string) {
+    function addLabel(
+        text: string,
+        cX: number,
+        cY: number,
+        angle: number,
+        alignment: TexPosition,
+        fontSize: number,
+        color: string
+    ) {
         let canvas = labelCanvasCache.get(text);
         if (!canvas) {
-            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, color, 100);
+            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, color, 200);
             labelCanvasCache.set(text, canvas);
         }
-        const w = canvas.width / 2;
-        const h = canvas.height / 2;
+        const w = canvas.width;
+        const h = canvas.height;
 
         const p = context.requirePainter(`${layerID}:Sizes`, RectPainter, painterOrderPriority, visible);
         if (painters.indexOf(p) === -1) painters.push(p);
+
+        var deltas: Vec4;
+        if (alignment == "rightbottom") deltas = [-w, -h, 0, 0];
+        else if (alignment == "leftcenter") deltas = [0, -h / 2, w, h / 2];
+        else if (alignment == "rightcenter") deltas = [-w, -h / 2, 0, h / 2];
+        else if (alignment == "centerbottom") deltas = [-w / 2, -h, w / 2, 0];
+        else if (alignment == "centertop") deltas = [-w / 2, 0, w / 2, h];
 
         var id = `${layerID}:${cX}${cY}`;
         ids.push(id);
@@ -61,7 +74,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             rotateRadians: angle,
             center: [cX, cY],
             deltas: [0, 0, 0, 0],
-            deltaPts: [-w, -h, w, h],
+            deltaPts: deltas,
             canvasTmp: canvas,
             texPosition: alignment,
             visible: _visible,

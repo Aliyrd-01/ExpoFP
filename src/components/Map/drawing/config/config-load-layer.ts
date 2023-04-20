@@ -1,4 +1,4 @@
-import { boothStore } from "./../../../../store/index";
+import { boothStore, layersStore } from "./../../../../store/index";
 import store from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
@@ -43,7 +43,7 @@ export default async function loadLayer(
 
         layer.loaded = true;
 
-        //configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
+        if (layersStore.mode === LayersMode.CheckBox) configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
 
         if (!withConfiguration) return resolve(false);
 

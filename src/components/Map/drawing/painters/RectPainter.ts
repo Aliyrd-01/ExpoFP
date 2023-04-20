@@ -308,6 +308,14 @@ export default class RectPainter implements Painter {
                     val = [w.spriteItem.rect.x1, w.spriteItem.rect.y1];
                 } else if (w.texPosition === "rightbottom") {
                     val = [w.spriteItem.rect.x2, w.spriteItem.rect.y2];
+                } else if (w.texPosition === "leftcenter") {
+                    val = [w.spriteItem.rect.x1, w.spriteItem.rect.cy];
+                } else if (w.texPosition === "rightcenter") {
+                    val = [w.spriteItem.rect.x2, w.spriteItem.rect.cy];
+                } else if (w.texPosition === "centerbottom") {
+                    val = [w.spriteItem.rect.cx, w.spriteItem.rect.y2];
+                } else if (w.texPosition === "centertop") {
+                    val = [w.spriteItem.rect.cx, w.spriteItem.rect.y1];
                 } else {
                     val = [w.spriteItem.rect.x2, w.spriteItem.rect.y1];
                 }
@@ -324,6 +332,14 @@ export default class RectPainter implements Painter {
                     val = [x1, y1];
                 } else if (w.texPosition === "rightbottom") {
                     val = [x2, y2];
+                } else if (w.texPosition === "leftcenter") {
+                    val = [x1, 0];
+                } else if (w.texPosition === "rightcenter") {
+                    val = [x2, 0];
+                } else if (w.texPosition === "centerbottom") {
+                    val = [0, y2];
+                } else if (w.texPosition === "centertop") {
+                    val = [0, y1];
                 } else {
                     val = [x2, y1];
                 }
@@ -339,6 +355,14 @@ export default class RectPainter implements Painter {
                     val = [xp1, yp1];
                 } else if (w.texPosition === "rightbottom") {
                     val = [xp2, yp2];
+                } else if (w.texPosition === "leftcenter") {
+                    val = [xp1, 0];
+                } else if (w.texPosition === "rightcenter") {
+                    val = [xp2, 0];
+                } else if (w.texPosition === "centerbottom") {
+                    val = [0, yp2];
+                } else if (w.texPosition === "centertop") {
+                    val = [0, yp1];
                 } else {
                     val = [xp2, yp1];
                 }
@@ -353,9 +377,16 @@ export default class RectPainter implements Painter {
                     val = [0, 0];
                 } else if (w.texPosition === "lefttop") {
                     val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
-                    //val = [0, 0];
                 } else if (w.texPosition === "rightbottom") {
                     val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
+                } else if (w.texPosition === "leftcenter") {
+                    val = [w.spriteItem.rect.w, w.spriteItem.rect.h];
+                } else if (w.texPosition === "rightcenter") {
+                    val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
+                } else if (w.texPosition === "centerbottom") {
+                    val = [-w.spriteItem.rect.w / 2, -w.spriteItem.rect.h];
+                } else if (w.texPosition === "centertop") {
+                    val = [-w.spriteItem.rect.w / 2, -w.spriteItem.rect.h];
                 } else {
                     val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
                 }
@@ -561,13 +592,24 @@ export default class RectPainter implements Painter {
     }
 }
 
+export type TexPosition =
+    | "center"
+    | "lefttop"
+    | "righttop"
+    | "rightbottom"
+    | "leftcenter"
+    | "centertop"
+    | "rightcenter"
+    | "centerbottom"
+    | "rightcenter";
+
 export interface DrawerObject {
     id?: string;
     center: Vec2;
     deltas?: Vec4; // x1, y1, x2, y2
     deltaPts?: Vec4;
     scalePts?: number;
-    texPosition?: "center" | "lefttop" | "righttop" | "rightbottom";
+    texPosition?: TexPosition;
     color?: Vec4;
     rotateRadians?: number;
     spriteItem?: SpriteItem;
