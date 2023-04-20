@@ -62,8 +62,7 @@ $switchHeight: 20px;
             }
         }
     }
-
-    &.xs, &.sm {
+    @include media-breakpoint-down(sm) {
         input[type="checkbox"] {
             & + label {
                 &:before {

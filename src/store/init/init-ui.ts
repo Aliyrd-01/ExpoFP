@@ -9,8 +9,6 @@ export const kioskKey = "kiosk";
 
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
-    uiState.rootElement = window["__efpElement"];
-
     updateScreenSize(uiState);
 
     window.addEventListener("resize", () => {
@@ -51,10 +49,10 @@ export default function initUi(store: RootStore) {
         var time;
         // window.onload = resetTimer;
         // document.onload = resetTimer;
-        // document.onmousemove = resetTimer;
+        //document.onmousemove = resetTimer;
         // document.onmousedown = resetTimer; // touchscreen presses
-        // document.ontouchstart = resetTimer;
-        // document.onclick = resetTimer; // touchpad clicks
+        document.ontouchstart = resetTimer;
+        document.onclick = resetTimer; // touchpad clicks
         // document.onkeypress = resetTimer;
         // document.addEventListener("scroll", resetTimer, true); // improved; see comments
         window["__resett"] = resetTimer;
@@ -89,6 +87,6 @@ export default function initUi(store: RootStore) {
 
 function updateScreenSize(uiState: UIState) {
     runInAction("uiState.screenSize", () => {
-        uiState.screenSize = new Size(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
+        uiState.screenSize = new Size(window.innerWidth, window.innerHeight);
     });
 }
