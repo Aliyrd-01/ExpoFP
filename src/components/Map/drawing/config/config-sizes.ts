@@ -1,3 +1,4 @@
+import { boothStore } from "./../../../../store/index";
 import { getLayerSvg } from "./../../../../data/svg";
 import { select } from "d3";
 import { reaction } from "mobx";
@@ -7,7 +8,7 @@ import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
 let painters: RectPainter[] = [];
 let ids: string[] = [];
-let edge = 1;
+let edge = 1.2;
 let _visible = true;
 
 export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
@@ -25,7 +26,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
             var anchor = text.getAttribute("text-anchor");
             var dbl = text.getAttribute("dominant-baseline");
-            var fontSize = parseFloat(text.getAttribute("font-size")) * 2;
+            var fontSize = 8 * boothStore.borderWidth;
 
             var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
