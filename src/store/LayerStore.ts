@@ -67,7 +67,7 @@ export default class LayerStore {
 
     @computed({ keepAlive: true }) get rectangle() {
         var l = this.visible.filter((l) => !l.frozen).map((l) => l.rect);
-        return this.mode === LayersMode.Default || !l.length ? null : Rect.fromMultiple(l) || null;
+        return this.mode !== LayersMode.Radio || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
     @action updateVisibility(layerName: string, visible: boolean, animated: boolean = false): void {
