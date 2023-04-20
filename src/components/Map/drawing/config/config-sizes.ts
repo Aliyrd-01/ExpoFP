@@ -1,4 +1,4 @@
-import { boothStore } from "./../../../../store/index";
+import store, { boothStore } from "./../../../../store/index";
 import { getLayerSvg } from "./../../../../data/svg";
 import { select } from "d3";
 import { reaction } from "mobx";
@@ -26,7 +26,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
             var anchor = text.getAttribute("text-anchor");
             var dbl = text.getAttribute("dominant-baseline");
-            var fontSize = 8 * boothStore.borderWidth;
+            var fontSize = 6 * boothStore.borderWidth;
 
             var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
@@ -58,7 +58,8 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         const w = canvas.width;
         const h = canvas.height;
 
-        const p = context.requirePainter(`${layerID}:Sizes`, RectPainter, painterOrderPriority, visible);
+        const p = context.requirePainter(`Sizes:${layerID}`, RectPainter, painterOrderPriority, visible);
+        _visible = visible;
         if (painters.indexOf(p) === -1) painters.push(p);
 
         var deltas: Vec4;
@@ -78,7 +79,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             deltaPts: deltas,
             canvasTmp: canvas,
             texPosition: alignment,
-            visible: _visible,
+            visible: visible,
         });
     }
 
@@ -87,11 +88,8 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             () => context.ptscale,
             () => {
                 if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
-                    _visible = !_visible;
-                    ids.forEach((id) => {
-                        var la = id.substring(0, id.indexOf(":"));
-                        painters.find((p) => p.id === `${la}:Sizes`).updateVisible(id, _visible);
-                    });
+                    _visible = !_visible;                 
+                    store.layerStore.updateVisibility(`Sizes`, _visible);
                 }
             }
         );
