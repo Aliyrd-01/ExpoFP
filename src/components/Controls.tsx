@@ -8,7 +8,7 @@ import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
 import MapControls from "./MapControls";
-import { useResponsiveClass } from "../hooks/useResponsiveClass";
+import { useResponsiveClass } from "../utils/useResponsiveClass";
 import { useEffect } from "react";
 import { useReaction } from "../utils/mobx";
 

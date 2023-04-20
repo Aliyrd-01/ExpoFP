@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ResponsiveClassContext from "../contexts/ResponsiveClassContext";
-import { useResponsiveClass } from "../../hooks/useResponsiveClass";
+import { useResponsiveClass } from "../../utils/useResponsiveClass";
 
 const WithResizeComponent = ({ children }) => {
     const { responsiveClass, updateResponsiveClass } = useResponsiveClass(window.innerWidth);

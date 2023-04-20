@@ -18,7 +18,7 @@ import OverlayContent from "./OverlayContent";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
-import { useResponsiveClass } from "../hooks/useResponsiveClass";
+import { useResponsiveClass } from "../utils/useResponsiveClass";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import "./Modal.scss";
-import { useResponsiveClass } from "../hooks/useResponsiveClass";
 
 type modalType = "default" | "share";
 
