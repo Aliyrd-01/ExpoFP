@@ -1,15 +1,18 @@
 import "../src/styles/storybook.global.scss";
 import StoryWrapper from "../src/storybook/decorators/StoryWrapper";
 import WithResize from "../src/storybook/decorators/WithResize";
+import ToastProvider from "../src/components/Toast/ToastProvider";
 
 export const decorators = [
     (Story) => {
         return (
-            <StoryWrapper
-                render={(init) => {
-                    return init ? <Story /> : "Loading";
-                }}
-            />
+            <ToastProvider>
+                <StoryWrapper
+                    render={(init) => {
+                        return init ? <Story /> : "Loading";
+                    }}
+                />
+            </ToastProvider>
         );
     },
     (Story) => {

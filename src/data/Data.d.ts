@@ -30,11 +30,12 @@ interface Data {
     hideRegisterToAttendLink: boolean;
     hideDownloadPdfLink: boolean;
     hideBookmarksLink: boolean;
-    hideLogoOverlay: boolean;
+    // hideLogoOverlay: boolean;
     autoTrackingGps: boolean;
     allow3dView: boolean;
     hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;
+    isRebooking: boolean;
 }
 
 interface RawCategory {
@@ -57,7 +58,7 @@ interface RawRegularBooth extends RawBoothBase {
     type: string;
     // onHold: boolean;
     // reserved: boolean;
-    exhibitors: number[];
+   
 }
 
 interface RawSpecialBooth extends RawBoothBase {
@@ -72,6 +73,7 @@ interface RawBoothBase {
     name: string;
     title: string;
     externalId: string;
+    exhibitors: number[];
     // special?: true;
     // rect: Rect;
     // noLabels: boolean;
@@ -113,6 +115,8 @@ interface RawExhibitor {
     categories: number[];
     leadingImageUrl: string;
     videoUrl: string;
+
+    rebookingState: number;
 }
 
 interface PathInfo {

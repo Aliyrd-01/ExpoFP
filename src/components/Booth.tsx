@@ -7,13 +7,13 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
+import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Booth.scss";
 import Button from "./Button";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
 import SidebarActions from "./SidebarActions";
-import isIframe from "../utils/is-iframe";
 
 function Booth() {
     // return <div>adsa</div>;
@@ -132,12 +132,16 @@ function Booth() {
 
                             {s.showBuy && (
                                 <div className="booth__buy">
-                                    <Button link={buyUrl?.href} target={isIframe ? '_blank' : '_self'}>{t("Buy")}</Button>
+                                    <Button link={buyUrl?.href} target={isIframe ? "_blank" : "_self"}>
+                                        {t("Buy")}
+                                    </Button>
                                 </div>
                             )}
                             {s.showReserve && (
                                 <div className="booth__buy">
-                                    <Button link={reserveUrl?.href || buyUrl?.href} target={isIframe ? '_blank' : '_self'}>{s.reserveTitle}</Button>
+                                    <Button link={reserveUrl?.href || buyUrl?.href} target={isIframe ? "_blank" : "_self"}>
+                                        {s.reserveTitle}
+                                    </Button>
                                 </div>
                             )}
                         </div>
@@ -157,8 +161,8 @@ function Booth() {
 
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
-                {content}
-                {settings.wayfinding && (
+                {!data.isRebooking && content}
+                {!data.isRebooking && settings.wayfinding && (
                     <div
                         className="exhibitor__directions"
                         style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(2) }}
@@ -167,7 +171,7 @@ function Booth() {
                             showBookmark={false}
                             showShare={false}
                             onClickDirections={() => {
-                                store.routeStore.clickRoute(null, s.booth, uiState.selectedRoute?.exceptUnaccessible || false);
+                                store.routeStore.clickRoute(null, s.booth);
                             }}
                         />
                     </div>

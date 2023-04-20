@@ -11,7 +11,6 @@ import Controls from "./Controls";
 import Floors from "./Floors";
 import Header from "./Header";
 import LargeMessage from "./LargeMessage";
-// import TouchHover from "./TouchHover";
 import "../styles/index.scss";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
@@ -20,9 +19,9 @@ import { MapLoader } from "./Mapbox/MapLoader";
 import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 import Share from "./Share";
-// import Demo from "./Demo";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
+import TouchHand from "./TouchHand";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -50,9 +49,11 @@ export default observer(function Layout() {
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />
-                {!data.hideLogoOverlay && <LogoOverlay />}
+                {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
+                <LogoOverlay />
                 <Ws />
                 <Controls />
+                {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}

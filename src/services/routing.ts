@@ -48,8 +48,8 @@ function dispatchFromUrl() {
         const parts = slug.split(":");
         const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
         const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
-
-        store.routeStore.selectRoute(new Route(from, to, false));
+        store.routeStore.onlyAccessible = parts[3] === "true";
+        store.routeStore.selectRoute(new Route(from, to));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "-pdf") {
@@ -94,8 +94,9 @@ function stateToUrl() {
     if (route) {
         const from = route.from ? `:${route.from.slug}` : "";
         const to = route.to ? `:${route.to.slug}` : "";
+        const accessible = store.routeStore.onlyAccessible ? ":true" : "";
 
-        queryRaw = `route${to}${from}`;
+        queryRaw = `route${to}${from}${accessible}`;
     } else if (exhibitor) {
         queryRaw = exhibitor.slug;
     } else if (booth) {

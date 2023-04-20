@@ -28,7 +28,7 @@ export default function initExhibitors(store: RootStore) {
         const e = new Exhibitor() as MutableRequired<Exhibitor>;
         Object.assign(e, raw);
         e.slug = generateUniqueSlug(e.name);
-
+        e.rebookingState = e.rebookingState || 0;
         e.logo = addBaseUrl(e.logo);
 
         if (e.gallery) e.gallery = e.gallery.map((url) => addBaseUrl(url));

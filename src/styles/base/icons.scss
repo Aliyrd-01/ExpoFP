@@ -15,6 +15,26 @@ $icons-font-path: "../../public/fonts" !default;
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-switch-horizontal {
+    &:before {
+        content: $icon-switch-horizontal;
+    }
+}
+.icon-chevron-left {
+    &:before {
+        content: $icon-chevron-left;
+    }
+}
+.icon-chevron-right {
+    &:before {
+        content: $icon-chevron-right;
+    }
+}
+.icon-chevron-up {
+    &:before {
+        content: $icon-chevron-up;
+    }
+}
 .icon-close {
     &:before {
         content: $icon-close;
@@ -48,6 +68,16 @@ $icons-font-path: "../../public/fonts" !default;
 .icon-linkedin {
     &:before {
         content: $icon-linkedin;
+    }
+}
+.icon-question {
+    &:before {
+        content: $icon-question;
+    }
+}
+.icon-refresh {
+    &:before {
+        content: $icon-refresh;
     }
 }
 .icon-share {
@@ -118,20 +148,5 @@ $icons-font-path: "../../public/fonts" !default;
 .icon-chevron-down {
     &:before {
         content: $icon-chevron-down;
-    }
-}
-.icon-chevron-left {
-    &:before {
-        content: $icon-chevron-left;
-    }
-}
-.icon-chevron-right {
-    &:before {
-        content: $icon-chevron-right;
-    }
-}
-.icon-chevron-up {
-    &:before {
-        content: $icon-chevron-up;
     }
 }

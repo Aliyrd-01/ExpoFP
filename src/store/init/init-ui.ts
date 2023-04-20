@@ -69,6 +69,7 @@ export default function initUi(store: RootStore) {
             console.log("zzz2", "reset timer");
             clearTimeout(time);
             time = setTimeout(logout, 30000);
+            uiState.inIdle = false;
         }
     }
 

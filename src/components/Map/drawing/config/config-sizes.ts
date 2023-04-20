@@ -7,8 +7,8 @@ import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
 let painters: RectPainter[] = [];
 let ids: string[] = [];
-let edge = 0.8;
-let _visible = false;
+let edge = 1;
+let _visible = true;
 
 export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
     const labelCanvasCache = new Map<string, CanvasDescriptor>();
@@ -16,6 +16,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
     (select(getLayerSvg(layerID)).selectAll("text").nodes() as SVGTextElement[]).forEach((text) => {
         const transform = text.getAttribute("transform");
         const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\)( rotate\(([-0-9.]+)\))?/);
+
         if (mt) {
             var t = text.innerHTML;
             let tx = parseFloat(mt[1]);
@@ -28,7 +29,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             let h = parseFloat(text.getAttribute("data-h"));
             var fontSize = parseFloat(text.getAttribute("font-size")) * 2;
 
-            var fill = text.style?.fill ?? "#FFFFFF";
+            var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
             var align = "center";
             if (anchor === "end" && dbl === "auto") {

@@ -274,7 +274,7 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);       
         // console.log("handleMouseMoveAndOver", b);
         raiseBoothOver(b);
     }
