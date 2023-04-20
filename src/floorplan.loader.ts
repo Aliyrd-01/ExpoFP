@@ -82,7 +82,18 @@ export default class FloorPlanLoader implements FloorPlan {
         this.eventId = eventId;
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
+
         window["__efpElement"] = element;
+        const classes = [...element.classList];
+        element.classList.remove(...classes);
+        element.classList.add("expofp-floorplan-default", ...classes);
+
+        const css = `.expofp-floorplan-default { width: 100%; height: 100%; contain: content; }`;
+        const head = document.head || document.getElementsByTagName("head")[0];
+        const style = document.createElement("style");
+
+        head.prepend(style);
+        style.textContent = css;
 
         const shadowContainer = document.createElement("div");
         element.appendChild(shadowContainer);
