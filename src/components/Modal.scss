@@ -64,10 +64,8 @@ $modal: ".modal";
     }
 }
 
-@include media-breakpoint-down(sm) {
-    #{$modal} {
-        padding: rem(10px);
-    }
+#{$modal}.xs, #{$modal}.sm {
+    padding: rem(10px);
 }
 
 @keyframes opacityModal {

@@ -54,7 +54,7 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
-  
+    rootElement: HTMLDivElement;
 
     overlayMediumHeightRems = 10;
 
