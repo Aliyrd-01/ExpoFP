@@ -1,4 +1,4 @@
-import store, { boothStore } from "./../../../../store/index";
+import store from "./../../../../store/index";
 import { getLayerSvg } from "./../../../../data/svg";
 import { select } from "d3";
 import { reaction } from "mobx";
@@ -8,7 +8,7 @@ import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
 let painters: RectPainter[] = [];
 let ids: string[] = [];
-let edge = 1.2;
+let edge = 1;
 let _visible = true;
 
 export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
@@ -26,7 +26,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
             var anchor = text.getAttribute("text-anchor");
             var dbl = text.getAttribute("dominant-baseline");
-            var fontSize = 8 * boothStore.borderWidth;
+            var fontSize = 19;
 
             var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
@@ -88,7 +88,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             () => context.ptscale,
             () => {
                 if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
-                    _visible = !_visible;                 
+                    _visible = !_visible;
                     store.layerStore.updateVisibility(`Sizes`, _visible);
                 }
             }
