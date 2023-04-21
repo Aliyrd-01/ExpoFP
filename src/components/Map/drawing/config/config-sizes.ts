@@ -38,7 +38,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             else if (anchor === "middle" && dbl === "hanging") align = "centertop";
 
             addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize, fill, "", false);
-            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize /3, fill, "_r", true);
+            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize, fill, "_r", true);
         }
     });
 
@@ -83,11 +83,12 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             id: id,
             rotateRadians: angle,
             center: [cX, cY],
-            deltas: [0, 0, 0, 0],
-            deltaPts: deltas,
+            deltas: suffix ? deltas : [0, 0, 0, 0],
+            deltaPts: !suffix ? deltas : null,
             canvasTmp: canvas,
             texPosition: alignment,
             visible: vis,
+            stretch: !!suffix,
         });
     }
 
