@@ -1,15 +1,15 @@
-import store from "./../../../../store/index";
 import { getLayerSvg } from "./../../../../data/svg";
 import { select } from "d3";
 import { reaction } from "mobx";
 import { DrawerContext } from "../Drawer1";
 import RectPainter, { TexPosition } from "../painters/RectPainter";
-import { CanvasDescriptor, createLabelCanvas } from "./canvases";
+import { CanvasDescriptor, createCircleCanvas, createLabelCanvas } from "./canvases";
 
-let painters: RectPainter[] = [];
-let ids: string[] = [];
-let edge = 1;
+let edge = 1.3;
 let _visible = true;
+
+const ids: string[] = [];
+let painter: RectPainter;
 
 export default function configSizes(context: DrawerContext, layerID: string, painterOrderPriority: number, visible: boolean) {
     const labelCanvasCache = new Map<string, CanvasDescriptor>();
@@ -26,7 +26,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
             var anchor = text.getAttribute("text-anchor");
             var dbl = text.getAttribute("dominant-baseline");
-            var fontSize = 19;
+            var fontSize = parseFloat(text.getAttribute("font-size"));
 
             var fill = "#000000"; // text.style?.fill ?? "#FFFFFF";
 
@@ -58,26 +58,44 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         const w = canvas.width;
         const h = canvas.height;
 
-        const p = context.requirePainter(`Sizes:${layerID}`, RectPainter, painterOrderPriority, visible);
+        painter = context.requirePainter(`Sizes:${layerID}`, RectPainter, painterOrderPriority, visible);
         _visible = visible;
-        if (painters.indexOf(p) === -1) painters.push(p);
 
         var deltas: Vec4;
         if (alignment == "rightbottom") deltas = [-w, -h, 0, 0];
-        else if (alignment == "leftcenter") deltas = [0, -h / 2, w, h / 2];
-        else if (alignment == "rightcenter") deltas = [-w, -h / 2, 0, h / 2];
-        else if (alignment == "centerbottom") deltas = [-w / 2, -h, w / 2, 0];
-        else if (alignment == "centertop") deltas = [-w / 2, 0, w / 2, h];
+        // else if (alignment == "leftcenter") deltas = [0, -h / 2, w, h / 2];
+        // else if (alignment == "rightcenter") deltas = [-w, -h / 2, 0, h / 2];
+        // else if (alignment == "centerbottom") deltas = [-w / 2, -h, w / 2, 0];
+        // else if (alignment == "centertop") deltas = [-w / 2, 0, w / 2, h];
+        else {
+            deltas = [-w / 2, -h / 2, w / 2, h / 2];
+            alignment = "center";
+        }
 
         var id = `${layerID}:${cX}${cY}`;
         ids.push(id);
-        p.addObject({
+
+        painter.addObject({
             id: id,
             rotateRadians: angle,
             center: [cX, cY],
             deltas: [0, 0, 0, 0],
             deltaPts: deltas,
             canvasTmp: canvas,
+            texPosition: alignment,
+            visible: false,
+        });
+
+        const s = 2;
+        var circle = createCircleCanvas(s, context.pixelRatio, "#777");
+        var idr = id + "_r";
+        ids.push(idr);
+
+        painter.addObject({
+            id: idr,
+            center: [cX, cY],
+            deltaPts: [-s, -s, s, s],
+            canvasTmp: circle,
             texPosition: alignment,
             visible: visible,
         });
@@ -89,7 +107,11 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             () => {
                 if ((context.ptscale > edge && _visible) || (context.ptscale < edge && !_visible)) {
                     _visible = !_visible;
-                    store.layerStore.updateVisibility(`Sizes`, _visible);
+
+                    ids.forEach((id) => {
+                        if (id.endsWith("_r")) painter.updateVisible(id, !_visible);
+                        else painter.updateVisible(id, _visible);
+                    });
                 }
             }
         );
