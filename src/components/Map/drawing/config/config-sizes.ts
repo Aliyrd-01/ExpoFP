@@ -52,7 +52,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
     ) {
         let canvas = labelCanvasCache.get(text);
         if (!canvas) {
-            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, color, 200);
+            canvas = createLabelCanvas(text, fontSize, 1, color, 200);
             labelCanvasCache.set(text, canvas);
         }
         const w = canvas.width;
