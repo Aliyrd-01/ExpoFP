@@ -3,9 +3,9 @@ import { select } from "d3";
 import { reaction } from "mobx";
 import { DrawerContext } from "../Drawer1";
 import RectPainter, { TexPosition } from "../painters/RectPainter";
-import { CanvasDescriptor, createCircleCanvas, createLabelCanvas } from "./canvases";
+import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
-let edge = 1.3;
+let edge = 1.5;
 let _visible = true;
 
 const ids: string[] = [];
@@ -37,7 +37,8 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             else if (anchor === "middle" && dbl === "auto") align = "centerbottom";
             else if (anchor === "middle" && dbl === "hanging") align = "centertop";
 
-            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize, fill);
+            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize, fill, "", false);
+            addLabel(t, tx, ty, (-1 * r * Math.PI) / 180, align, fontSize /3, fill, "_r", true);
         }
     });
 
@@ -48,12 +49,15 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         angle: number,
         alignment: TexPosition,
         fontSize: number,
-        color: string
+        color: string,
+        suffix: string,
+        vis: boolean
     ) {
-        let canvas = labelCanvasCache.get(text);
+        var key = text + fontSize + color;
+        let canvas = labelCanvasCache.get(key);
         if (!canvas) {
             canvas = createLabelCanvas(text, fontSize, 1, color, 200);
-            labelCanvasCache.set(text, canvas);
+            labelCanvasCache.set(key, canvas);
         }
         const w = canvas.width;
         const h = canvas.height;
@@ -63,16 +67,16 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
 
         var deltas: Vec4;
         if (alignment == "rightbottom") deltas = [-w, -h, 0, 0];
-        // else if (alignment == "leftcenter") deltas = [0, -h / 2, w, h / 2];
-        // else if (alignment == "rightcenter") deltas = [-w, -h / 2, 0, h / 2];
-        // else if (alignment == "centerbottom") deltas = [-w / 2, -h, w / 2, 0];
-        // else if (alignment == "centertop") deltas = [-w / 2, 0, w / 2, h];
+        else if (alignment == "leftcenter") deltas = [0, -h / 2, w, h / 2];
+        else if (alignment == "rightcenter") deltas = [-w, -h / 2, 0, h / 2];
+        else if (alignment == "centerbottom") deltas = [-w / 2, -h, w / 2, 0];
+        else if (alignment == "centertop") deltas = [-w / 2, 0, w / 2, h];
         else {
             deltas = [-w / 2, -h / 2, w / 2, h / 2];
             alignment = "center";
         }
 
-        var id = `${layerID}:${cX}${cY}`;
+        var id = `${layerID}:${cX}${cY}${suffix}`;
         ids.push(id);
 
         painter.addObject({
@@ -83,21 +87,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             deltaPts: deltas,
             canvasTmp: canvas,
             texPosition: alignment,
-            visible: false,
-        });
-
-        const s = 2;
-        var circle = createCircleCanvas(s, context.pixelRatio, "#777");
-        var idr = id + "_r";
-        ids.push(idr);
-
-        painter.addObject({
-            id: idr,
-            center: [cX, cY],
-            deltaPts: [-s, -s, s, s],
-            canvasTmp: circle,
-            texPosition: alignment,
-            visible: visible,
+            visible: vis,
         });
     }
 
