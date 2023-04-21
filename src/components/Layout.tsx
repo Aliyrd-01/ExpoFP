@@ -53,7 +53,7 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                {uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {/* {uiState.kiosk && uiState.inIdle && <TouchHand />} */}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}
