@@ -5,7 +5,7 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter, { TexPosition } from "../painters/RectPainter";
 import { CanvasDescriptor, createLabelCanvas } from "./canvases";
 
-let edge = 1.5;
+let edge = 1;
 let _visible = true;
 
 const ids: string[] = [];
@@ -56,7 +56,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
         var key = text + fontSize + color;
         let canvas = labelCanvasCache.get(key);
         if (!canvas) {
-            canvas = createLabelCanvas(text, fontSize, 1, color, 200);
+            canvas = createLabelCanvas(text, fontSize, context.pixelRatio, color, 200);
             labelCanvasCache.set(key, canvas);
         }
         const w = canvas.width;
@@ -84,7 +84,7 @@ export default function configSizes(context: DrawerContext, layerID: string, pai
             rotateRadians: angle,
             center: [cX, cY],
             deltas: suffix ? deltas : [0, 0, 0, 0],
-            deltaPts: !suffix ? deltas : null,
+            deltaPts: !suffix ? deltas :  [0, 0, 0, 0],
             canvasTmp: canvas,
             texPosition: alignment,
             visible: vis,
