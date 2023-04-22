@@ -53,17 +53,7 @@ export default async function loadLayer(
             context.requireUpdate(null);
             var imagePainter = context.getLayersPainters([layer.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
             if (!imagePainter) return;
-
-            //imagePainter.alpha = 0;
-            imagePainter.visible = true;
-            // animate(
-            //     0,
-            //     500,
-            //     easeLinear,
-            //     interpolateNumber(0, 1),
-            //     context.requireUpdate.bind(context),
-            //     (v) => (imagePainter.alpha = v)
-            // );
+            imagePainter.visible = layer.visible;
         });
 
         context.requireUpdate(null);
