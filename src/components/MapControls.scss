@@ -127,7 +127,7 @@ $checkedPanel: ".checkedPanel";
     display: inline-flex;
 }
 
-#{$mapControls}.xs, #{$mapControls}.sm {
+@include responsive-classes-down-to($mapControls, sm) {
     width: 30px;
 
     #{$mapControl} {

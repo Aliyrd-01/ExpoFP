@@ -64,7 +64,7 @@ $modal: ".modal";
     }
 }
 
-#{$modal}.xs, #{$modal}.sm {
+@include responsive-classes-down-to($modal, sm) {
     padding: rem(10px);
 }
 

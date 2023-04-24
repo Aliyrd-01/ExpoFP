@@ -422,7 +422,7 @@ $imageSliderClass: ".image-slider";
     }
 }
 
-.exhibitor.xs, .exhibitor.sm {
+@include responsive-classes-down-to(".exhibitor", sm) {
     #{$imageSliderClass}.is-full {
         #{$imageSliderClass}__nav-btn {
             top: 100%;

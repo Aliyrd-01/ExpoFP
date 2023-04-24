@@ -10,7 +10,10 @@ const breakpoints = {
 
 export const useResponsiveClass = (width: number) => {
     const [responsiveClass, setResponsiveClass] = useState("");
-    const [stateWidth, setStateWidth] = useState(width);
+
+    useEffect(() => {
+        updateResponsiveClass(width);
+    }, []);
 
     const updateResponsiveClass = (width: number) => {
         const { sm, md, lg, xl } = breakpoints;
@@ -26,13 +29,7 @@ export const useResponsiveClass = (width: number) => {
         } else {
             setResponsiveClass("xl");
         }
-
-        setStateWidth(width);
     };
-
-    useEffect(() => {
-        updateResponsiveClass(stateWidth);
-    }, [stateWidth]);
 
     return { responsiveClass, updateResponsiveClass };
 };
