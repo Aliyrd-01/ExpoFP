@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import ResponsiveClassContext from "../contexts/ResponsiveClassContext";
-import { useResponsiveClass } from "../../utils/useResponsiveClass";
+import { getResponsiveClass } from "../../utils/responsiveClass";
 
 const WithResizeComponent = ({ children }) => {
-    const { responsiveClass, updateResponsiveClass } = useResponsiveClass(window.innerWidth);
+    const [responsiveClass, setResponsiveClass] = useState("");
     const [width, setWidth] = useState(window.innerWidth);
 
     useEffect(() => {
         const handleResize = () => {
+            console.log(window.innerWidth);
             setWidth(window.innerWidth);
         };
 
@@ -19,7 +20,7 @@ const WithResizeComponent = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        updateResponsiveClass(width);
+        setResponsiveClass(getResponsiveClass(width));
     }, [width]);
 
     return <ResponsiveClassContext.Provider value={responsiveClass}>{children}</ResponsiveClassContext.Provider>;
