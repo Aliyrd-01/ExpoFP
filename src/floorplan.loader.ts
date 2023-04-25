@@ -82,6 +82,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.eventId = eventId;
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
+        window["__efpElement"] = element;
 
         window["__efpElement"] = element;
         const classes = [...element.classList];
