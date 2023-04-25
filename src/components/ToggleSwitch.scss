@@ -61,7 +61,7 @@ $switchHeight: 20px;
                 }
             }
         }
-    }
+    }      
 }
 
 @include responsive-classes-down-to(".toggleSwitch", sm) {

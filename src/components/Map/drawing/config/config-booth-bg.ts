@@ -36,7 +36,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         super(context, booth);
 
         if (!booth.paths || booth.pathsWithRect) {
-            let rect = this.booth.rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
+            const width =
+                booth.borderColor === "none" ? 0 : isNaN(booth.borderWidth) ? boothStore.borderWidth : booth.borderWidth;
+            let rect = this.booth.rect.withPadding(width / 2, width / 2);
 
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
