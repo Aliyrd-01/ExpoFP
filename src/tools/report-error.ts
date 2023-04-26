@@ -5,7 +5,7 @@ let timeoutId: number;
 export default function reportError(e: Partial<ErrorEvent>) {
     if (timeoutId || e.filename.indexOf("expofp.com") === -1) return;
 
-    const ignoredErrors = [/loading chunk \d{1,2}\b/i, /zaloJS/i];
+    const ignoredErrors = [/loading chunk \d{1,2}\b/i, /zaloJS/i, /e.target.name/i];
     const ignoreError = ignoredErrors.some((err) => err.test(e.message));
     if (ignoreError) return;
 
