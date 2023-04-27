@@ -69,6 +69,7 @@ function Search() {
 
     const s = useLocalStore(() => ({
         elementTop: 0,
+        updateOverlayContent: null as () => void,
         get hideRealInput() {
             return uiState.overlayBottom ? this.elementTop > 50 || uiState.overlaySize !== "full" : false;
         },
@@ -165,7 +166,14 @@ function Search() {
         );
         // console.log("Search", s.hideRealInput, s.text);
         return (
-            <OverlayContent onClose={handleClose} onBack={handleBack} backMode={s.backMode} hideClose={!s.showClose} bar={bar}>
+            <OverlayContent
+                onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
+                onClose={handleClose}
+                onBack={handleBack}
+                backMode={s.backMode}
+                hideClose={!s.showClose}
+                bar={bar}
+            >
                 <List />
             </OverlayContent>
         );
