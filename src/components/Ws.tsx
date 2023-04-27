@@ -82,7 +82,7 @@ function Ws() {
         do {
             const e = s.all[s.index % s.all.length];
             const img = s.imgByExhbitorId.get(e.id);
-            const width = (img.width * uiState.wsImageHeightPx) / img.height + 20; //padding
+            const width = img ? (img.width * uiState.wsImageHeightPx) / img.height + 20 : 50; //padding
 
             if (filledWidth + width > maxWidth && adv.length) break;
 
@@ -112,15 +112,21 @@ function Ws() {
 
     async function loadExhbibitorImages(): Promise<Map<number, HTMLImageElement>> {
         const result = new Map<number, HTMLImageElement>();
+        let counter = 0;
         return new Promise((resolve, reject) => {
             s.all.forEach((x) => {
                 const img = new Image();
                 img.onload = () => {
                     result.set(x.id, img);
-                    if (result.size === s.all.length) {
-                        resolve(result);
-                    }
+                    counter++;
+                    if (counter === s.all.length) resolve(result);
                 };
+
+                img.onerror = () => {
+                    counter++;
+                    if (counter === s.all.length) resolve(result);
+                };
+
                 img.src = x.logo;
             });
         });

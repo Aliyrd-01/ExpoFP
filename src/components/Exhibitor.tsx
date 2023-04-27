@@ -82,8 +82,17 @@ function ExhibitorComponent() {
         if (uiState.kiosk) return e.preventDefault();
     }
 
-    function customButtonClick() {
+    function customButtonClick(buttonNumber: number, buttonUrl: string) {
         sendEventToGa(GaEventActions.ClickCustomButton, s.exhibitor.name);
+
+        const data = {
+            externalId: s.exhibitor.externalId,
+            buttonNumber,
+            buttonUrl,
+        };
+        if (uiState.onExhibitorCustomButtonClick) {
+            uiState.onExhibitorCustomButtonClick(data);
+        }
     }
 
     function itemClick(action: GaEventActions) {
@@ -128,11 +137,18 @@ function ExhibitorComponent() {
             setTimeout(s.updateOverlayContent);
         };
 
-        function renderButton(title: string, url: string) {
+        function renderButton(title: string, url: string, buttonNumber: number) {
             if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? "_blank" : "_self"}>
+                    <Button
+                        link={url}
+                        inline={true}
+                        onClick={() => {
+                            customButtonClick(buttonNumber, url);
+                        }}
+                        target={isIframe || uiState.onExhibitorCustomButtonClick ? "_blank" : "_self"}
+                    >
                         {title}
                     </Button>
                 </div>
@@ -423,9 +439,9 @@ function ExhibitorComponent() {
                                     </a>
                                 </div>
                             )}
-                            {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
-                            {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url)}
-                            {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url)}
+                            {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl, 1)}
+                            {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2)}
+                            {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3)}
                         </div>
                     </>
                 ) : (
