@@ -18,12 +18,10 @@ import OverlayContent from "./OverlayContent";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
-import { useResponsiveClass } from "../utils/useResponsiveClass";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
 function ExhibitorComponent() {
-    const { responsiveClass, updateResponsiveClass } = useResponsiveClass(uiState.screenSize.width);
     const el = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         collapsed: true,
@@ -63,13 +61,6 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
-
-    useReaction(
-        () => uiState.screenSize.width,
-        () => {
-            updateResponsiveClass(uiState.screenSize.width);
-        }
-    );
 
     useAutorun(() => {
         if (s.exhibitor) {
@@ -129,7 +120,7 @@ function ExhibitorComponent() {
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
             bookmarked: exhibitor.bookmarked,
-            [responsiveClass]: true,
+            [uiState.responsiveClass]: true,
         });
 
         const expandDescription = () => {

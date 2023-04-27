@@ -8,14 +8,12 @@ import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
 import MapControls from "./MapControls";
-import { useResponsiveClass } from "../utils/useResponsiveClass";
-import { useEffect } from "react";
-import { useReaction } from "../utils/mobx";
 
 export default function Controls() {
-    const { responsiveClass, updateResponsiveClass } = useResponsiveClass(uiState.screenSize.width);
     const s = useLocalStore(() => ({
-        className: "",
+        get className() {
+            return classNames({ controls: true, container: true, "-ready": true, [uiState.responsiveClass]: true });
+        },
         get style() {
             return {
                 left: uiState.overlayCollapsed
@@ -36,17 +34,6 @@ export default function Controls() {
             return layersStore.layers.filter((l) => l.visible).map((l) => l.name);
         },
     }));
-
-    useReaction(
-        () => uiState.screenSize.width,
-        () => {
-            updateResponsiveClass(uiState.screenSize.width);
-        }
-    );
-
-    useEffect(() => {
-        s.className = classNames({ controls: true, container: true, "-ready": true, [responsiveClass]: true });
-    }, [responsiveClass]);
 
     return useObserver(() => {
         return (
