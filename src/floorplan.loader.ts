@@ -6,6 +6,7 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
+import isIframe from "./utils/is-iframe";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -92,12 +93,16 @@ export default class FloorPlanLoader implements FloorPlan {
         element.classList.remove(...classes);
         element.classList.add("expofp-floorplan-default", ...classes);
 
-        const css = `.expofp-floorplan-default { width: 100%; height: 100%; contain: content; }`;
         const head = document.head || document.getElementsByTagName("head")[0];
-        const style = document.createElement("style");
 
-        head.prepend(style);
-        style.textContent = css;
+        if (isIframe) {
+            element.style.height = "100%";
+            element.style.width = "100%";
+        } else {
+            const style = document.createElement("style");
+            head.prepend(style);
+            style.textContent = `.expofp-floorplan-default { width: 100%; height: 100%; contain: content; }`;
+        }
 
         const shadowContainer = document.createElement("div");
         element.appendChild(shadowContainer);
