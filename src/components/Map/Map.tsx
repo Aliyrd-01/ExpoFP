@@ -274,7 +274,12 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);       
+        const { left, top } = uiState.rootElement.getBoundingClientRect();
+
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+
+        const b = getBoothIdFromClientXy(x, y, s.drawer);
         // console.log("handleMouseMoveAndOver", b);
         raiseBoothOver(b);
     }
@@ -288,8 +293,14 @@ export default function Map() {
         if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
             store.showMap();
         }
+
+        const { left, top } = uiState.rootElement.getBoundingClientRect();
+
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+
         // if (!this.props.onBoothClick) return;
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        const b = getBoothIdFromClientXy(x, y, s.drawer);
         logger.log("click", b);
         store.clickBooth(b);
     }
