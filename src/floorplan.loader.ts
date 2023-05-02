@@ -36,6 +36,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
+    onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -62,6 +64,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onDetails = options.onDetails;
+        this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
@@ -82,6 +85,19 @@ export default class FloorPlanLoader implements FloorPlan {
         this.eventId = eventId;
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
+        window["__efpElement"] = element;
+
+        window["__efpElement"] = element;
+        const classes = [...element.classList];
+        element.classList.remove(...classes);
+        element.classList.add("expofp-floorplan-default", ...classes);
+
+        const css = `.expofp-floorplan-default { width: 100%; height: 100%; contain: content; }`;
+        const head = document.head || document.getElementsByTagName("head")[0];
+        const style = document.createElement("style");
+
+        head.prepend(style);
+        style.textContent = css;
 
         const shadowContainer = document.createElement("div");
         element.appendChild(shadowContainer);
