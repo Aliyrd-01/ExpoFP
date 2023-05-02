@@ -117,6 +117,7 @@ interface RawExhibitor {
     videoUrl: string;
 
     rebookingState: number;
+    rebookingNote: number;
 }
 
 interface PathInfo {
