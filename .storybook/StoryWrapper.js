@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import _locales from "../../../public/locales/_locales";
+import React, { useEffect, useState } from "react";
+import _locales from "../public/locales/_locales";
 import i18next from "i18next";
 
 const StoryWrapper = ({ render }) => {

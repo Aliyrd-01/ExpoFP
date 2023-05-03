@@ -10,7 +10,6 @@ import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
-import { getResponsiveClass } from "../utils/responsiveClass";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -55,7 +54,6 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
-    rootElement: HTMLDivElement;
 
     overlayMediumHeightRems = 10;
 
@@ -165,9 +163,7 @@ export default class UIState {
     @computed get wsPosition() {
         return this.overlayBottom ? "top" : this.wsDesktopPosition;
     }
-    @computed get responsiveClass() {
-        return getResponsiveClass(this.screenSize.width);
-    }
+
     // map
     @computed get mapVisibleTop() {
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;

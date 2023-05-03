@@ -3,7 +3,7 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as React from "react";
 import { svgArea } from "../data/svg";
 import store, { layersStore, uiState } from "../store";
-import { LayersMode } from "../store/LayerStore";
+import { LayerMode, LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
@@ -12,7 +12,7 @@ import MapControls from "./MapControls";
 export default function Controls() {
     const s = useLocalStore(() => ({
         get className() {
-            return classNames({ controls: true, container: true, "-ready": true, [uiState.responsiveClass]: true });
+            return classNames({ controls: true, container: true, "-ready": true });
         },
         get style() {
             return {
