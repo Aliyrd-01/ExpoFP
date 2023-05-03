@@ -188,7 +188,7 @@ function ExhibitorComponent() {
                     <>
                         <div className="exhibitor__buttons">
                             <SibebarActions
-                                showBookmark={!uiState.kiosk}
+                                showBookmark={!data.hideBookmarks && !uiState.kiosk}
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}

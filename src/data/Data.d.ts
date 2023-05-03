@@ -30,6 +30,7 @@ interface Data {
     hideRegisterToAttendLink: boolean;
     hideDownloadPdfLink: boolean;
     hideBookmarksLink: boolean;
+    hideBookmarks: boolean;
     // hideLogoOverlay: boolean;
     autoTrackingGps: boolean;
     allow3dView: boolean;
