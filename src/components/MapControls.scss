@@ -127,9 +127,10 @@ $checkedPanel: ".checkedPanel";
     display: inline-flex;
 }
 
-@include responsive-classes-down-to($mapControls, sm) {
-    width: 30px;
-
+@include media-breakpoint-down(sm) {
+    #{$mapControls} {
+        width: 30px;
+    }
     #{$mapControl} {
         width: 30px;
         height: 30px;
