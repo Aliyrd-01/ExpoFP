@@ -92,6 +92,7 @@ export abstract class BoothBase {
     readonly error: boolean;
     readonly description: string;
     readonly exhibitors: Exhibitor[];
+    readonly labelColor: string;
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {

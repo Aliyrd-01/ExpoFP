@@ -57,6 +57,7 @@ interface RawRegularBooth extends RawBoothBase {
     buyUrl: string;
     reserveUrl: string;
     type: string;
+    labelColor: string;
     // onHold: boolean;
     // reserved: boolean;
    
