@@ -105,6 +105,8 @@ export default class FloorPlanLoader implements FloorPlan {
         }
 
         const shadowContainer = document.createElement("div");
+        shadowContainer.style.height = "100%";
+        shadowContainer.style.width = "100%";
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
@@ -121,6 +123,8 @@ export default class FloorPlanLoader implements FloorPlan {
         }
 
         const fpContainer = document.createElement("div");
+        fpContainer.style.height = "100%";
+        fpContainer.style.width = "100%";
         container.appendChild(fpContainer);
         if (useShadow) {
             Object.defineProperty(fpContainer, "ownerDocument", { value: container });

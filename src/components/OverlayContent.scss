@@ -20,6 +20,13 @@
     }
 }
 
+.overlay.-gallery-active {
+    top: 0 !important;
+    .overlay-content, .overlay-content__scrollable, .exhibitor__slider {
+        position: static;
+    }
+}
+
 .efp-kiosk {
     .overlay-content {
         height: auto;

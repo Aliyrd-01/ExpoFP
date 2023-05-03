@@ -332,7 +332,7 @@ class ImageSlider extends React.Component<Props, State> {
         let isFullScreen = !this.state.isFullScreen;
         let { currentSlideStyle, nextSlideStyle } = this.state;
 
-        isFullScreen && uiState.shouldUseBackdrop ? store.openGallery() : store.closeGallery();
+        isFullScreen ? store.openGallery() : store.closeGallery();
 
         this.setState(
             {

@@ -34,6 +34,9 @@ export default observer(function Overlay() {
             if (uiState.dimmed) {
                 classes += " -no-transition";
             }
+            if (uiState.galleryActive) {
+                classes += " -gallery-active";
+            }
             return classes;
             // if (!uiState.canvasStarted || !uiState.shouldUseBackdrop || uiState.dimmed) return "";
         },
