@@ -13,6 +13,7 @@ interface Props {
     // Optional
     width: string | number;
     height: string | number;
+    screenSize?: { width: number; height: number };
     style?: any;
     slideDuration?: number;
     showNavs?: boolean;
@@ -380,6 +381,7 @@ class ImageSlider extends React.Component<Props, State> {
                 style={{
                     ...styles.FullScreenContainer(this.state.isFullScreen),
                     ...styles.Backdrop(uiState.galleryActive),
+                    width: this.state.isFullScreen ? `${this.props.screenSize.width}px` : "auto",
                 }}
             >
                 <div style={assignObjects(rootStyle, this.props.style)}>

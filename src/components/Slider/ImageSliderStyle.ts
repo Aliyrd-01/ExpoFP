@@ -20,7 +20,6 @@ const basicRootContainer = {
 
 const fullScreenContainer = {
     position: "absolute",
-    width: uiState.screenSize.width + "px",
     top: 0,
     bottom: 0,
     left: 0,

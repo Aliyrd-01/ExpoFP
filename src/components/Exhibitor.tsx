@@ -209,7 +209,11 @@ function ExhibitorComponent() {
                                 ) : (
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                            <ImageSlider
+                                                screenSize={uiState.screenSize}
+                                                hideFullScreenIcon={true}
+                                                images={[exhibitor.leadingImageUrl]}
+                                            />
                                         </Suspense>
                                     </ErrorBoundary>
                                 )}
@@ -284,7 +288,11 @@ function ExhibitorComponent() {
                                 <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
+                                            <ImageSlider
+                                                screenSize={uiState.screenSize}
+                                                fillMode={FillMode.cover}
+                                                images={exhibitor.gallery}
+                                            />
                                         </Suspense>
                                     </ErrorBoundary>
                                 </div>

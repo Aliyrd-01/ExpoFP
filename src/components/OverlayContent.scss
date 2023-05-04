@@ -25,6 +25,9 @@
     .overlay-content, .overlay-content__scrollable, .exhibitor__slider {
         position: static;
     }
+    .overlay-bar, .overlay-grip {
+        display: none;
+    }
 }
 
 .efp-kiosk {
