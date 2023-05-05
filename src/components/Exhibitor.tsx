@@ -129,6 +129,7 @@ function ExhibitorComponent() {
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
             bookmarked: exhibitor.bookmarked,
+            [uiState.responsiveClass]: true,
         });
 
         const expandDescription = () => {
