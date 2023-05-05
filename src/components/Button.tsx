@@ -11,10 +11,20 @@ export interface ButtonProps {
     link?: string;
     target?: targets;
     disabled?: boolean;
+    variant?: "default" | "gray";
     onClick?: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, inline = false, text, link, target = "_self", disabled = false, onClick }) => {
+const Button: React.FC<ButtonProps> = ({
+    children,
+    inline = false,
+    text,
+    link,
+    target = "_self",
+    disabled = false,
+    variant,
+    onClick,
+}) => {
     return link ? (
         <a
             href={link}
@@ -28,7 +38,7 @@ const Button: React.FC<ButtonProps> = ({ children, inline = false, text, link, t
     ) : (
         <button
             type="button"
-            className={classNames("efp-button", { "efp-button--inline": inline })}
+            className={classNames("efp-button", { "efp-button--inline": inline, "efp-button--gray": variant === "gray" })}
             disabled={disabled}
             onClick={onClick}
         >
