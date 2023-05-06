@@ -31,17 +31,17 @@ const sameLine = (l: RouteLine, p0: RoutePoint, p1: RoutePoint): boolean =>
     (samePoint(l.p0, p0) && samePoint(l.p1, p1) && l.p0.layer === p0.layer && l.p1.layer === p1.layer) ||
     (samePoint(l.p0, p1) && samePoint(l.p1, p0) && l.p0.layer === p1.layer && l.p1.layer === p0.layer);
 
-let sublines = (): Sublines => window["__wfData"];
-let pathFinder = { finder: null, oriented: true, exceptUnAccessible: false };
+export let sublines = (): Sublines => window["__wfData"];
+let pathFinder = { finder: null, oriented: true, onlyAccessible: false };
 
-function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean) {
+function buildPathFinder(oriented: boolean, onlyAccessible: boolean) {
     const graph = createGraph();
     const t0 = performance.now();
 
     let { lines } = sublines();
 
     lines.forEach((line) => {
-        if (!exceptUnAccessible || !line.unaccessible) {
+        if (!onlyAccessible || !line.unaccessible) {
             graph.addLink(pointId(line.p0), pointId(line.p1), {
                 distance: line.virtual ? 0 : lineLength(line.p0, line.p1) / (line.weight || 4),
             });
@@ -54,7 +54,7 @@ function buildPathFinder(oriented: boolean, exceptUnAccessible: boolean) {
     });
 
     pathFinder.oriented = oriented;
-    pathFinder.exceptUnAccessible = exceptUnAccessible;
+    pathFinder.onlyAccessible = onlyAccessible;
     pathFinder.finder = path.aStar(graph, {
         oriented,
         distance(fromNode, toNode, link) {
@@ -73,7 +73,7 @@ function getLineByPoints(lines: RouteLine[], p0: RoutePoint, p1: RoutePoint): Ro
 export function getGraphLines(
     fromBooth: Booth,
     toBooth: Booth,
-    exceptUnAccessible: boolean = false,
+    onlyAccessible: boolean = false,
     disableCache: boolean = false
 ): RouteLine[] {
     let t0 = performance.now();
@@ -84,8 +84,8 @@ export function getGraphLines(
     const fromRect = new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     const toRect = new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4));
 
-    if (!pathFinder.finder || pathFinder.exceptUnAccessible !== exceptUnAccessible || disableCache)
-        buildPathFinder(pathFinder.oriented, exceptUnAccessible);
+    if (!pathFinder.finder || pathFinder.onlyAccessible !== onlyAccessible || disableCache)
+        buildPathFinder(pathFinder.oriented, onlyAccessible);
 
     const from: RoutePoint[] = [];
     const to: RoutePoint[] = [];

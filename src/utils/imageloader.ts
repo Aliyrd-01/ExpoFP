@@ -96,7 +96,9 @@ function loadImage(src: string): Promise<HTMLImageElement> {
         img.onload = () => resolve(img);
         img.crossOrigin = "anonymous";
 
-        if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-        else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
+        img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
+
+        // if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
+        // else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
     });
 }

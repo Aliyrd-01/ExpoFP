@@ -1,3 +1,4 @@
+import { PathInfo } from "../../../../data/Data";
 import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";

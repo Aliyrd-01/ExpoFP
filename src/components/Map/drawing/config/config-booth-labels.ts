@@ -103,11 +103,13 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const pad = boothStore.borderWidth / 2;
 
+        const color = booth.labelColor || fillStyle;
+
         if (!exh.length) {
-            this.addLabel(7, "XS");
-            this.addLabel(10, "S");
-            this.addLabel(12, "M");
-            this.addLabel(14, "L");
+            this.addLabel(7, "XS", color);
+            this.addLabel(10, "S", color);
+            this.addLabel(12, "M", color);
+            this.addLabel(14, "L", color);
 
             this.painter.addObject({
                 id: this.getId("Details"),
@@ -116,16 +118,16 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
                 deltaPts: [3, 3, -1, -1],
                 scalePts: context.pixelRatio,
-                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, fillStyle, 18, !!booth.exhibitors.length),
+                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, color, 18, !!booth.exhibitors.length),
                 texPosition: "lefttop",
                 visible: false,
             });
         } else {
-            this.addExhibitorsLabel(7, "XS", pad, true);
-            this.addExhibitorsLabel(10, "S", pad, true);
-            this.addExhibitorsLabel(12, "M", pad, true);
-            this.addExhibitorsLabel(14, "L", pad, true);
-            this.addExhibitorsLabel(18, "Details", pad, false);
+            this.addExhibitorsLabel(7, "XS", pad, true, color);
+            this.addExhibitorsLabel(10, "S", pad, true, color);
+            this.addExhibitorsLabel(12, "M", pad, true, color);
+            this.addExhibitorsLabel(14, "L", pad, true, color);
+            this.addExhibitorsLabel(18, "Details", pad, false, color);
         }
 
         this.calcFactors(exh.length > 0);
@@ -200,14 +202,14 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         }
     }
 
-    addExhibitorsLabel(fontSize: number, sizeName: string, padding: number, short: boolean) {
+    addExhibitorsLabel(fontSize: number, sizeName: string, padding: number, short: boolean, color: string) {
         const b = this.booth;
         const r = b.rect;
 
         const canvas = createExhibitorsDetailsCanvas(
             b as RegularBooth,
             this.context.pixelRatio,
-            fillStyle,
+            color,
             fontSize,
             data.hideExhibitorBoothNumber || short,
             data.onlyFeaturedExhibitors
@@ -229,11 +231,11 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         });
     }
 
-    addLabel(fontSize: number, sizeName: string) {
+    addLabel(fontSize: number, sizeName: string, color: string) {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, fillStyle, 500);
+        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, color, 500);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 

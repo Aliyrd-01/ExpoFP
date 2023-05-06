@@ -9,15 +9,16 @@ import logger from "../tools/logger";
 import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
+import isIframe from "../utils/is-iframe";
 import { useAutorun, useReaction } from "../utils/mobx";
-import "./Exhibitor.scss";
-import OverlayContent from "./OverlayContent";
-import SibebarActions from "./SidebarActions";
-import { FillMode } from "./Slider/ImageSliderData";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
-import isIframe from "../utils/is-iframe";
+import "./Exhibitor.scss";
+import OverlayContent from "./OverlayContent";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
+import Schedule from "./Schedule";
+import SibebarActions from "./SidebarActions";
+import { FillMode } from "./Slider/ImageSliderData";
 
 const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
 
@@ -82,8 +83,17 @@ function ExhibitorComponent() {
         if (uiState.kiosk) return e.preventDefault();
     }
 
-    function customButtonClick() {
+    function customButtonClick(buttonNumber: number, buttonUrl: string) {
         sendEventToGa(GaEventActions.ClickCustomButton, s.exhibitor.name);
+
+        const data = {
+            externalId: s.exhibitor.externalId,
+            buttonNumber,
+            buttonUrl,
+        };
+        if (uiState.onExhibitorCustomButtonClick) {
+            uiState.onExhibitorCustomButtonClick(data);
+        }
     }
 
     function itemClick(action: GaEventActions) {
@@ -127,11 +137,18 @@ function ExhibitorComponent() {
             setTimeout(s.updateOverlayContent);
         };
 
-        function renderButton(title: string, url: string) {
+        function renderButton(title: string, url: string, buttonNumber: number) {
             if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? "_blank" : "_self"}>
+                    <Button
+                        link={url}
+                        inline={true}
+                        onClick={() => {
+                            customButtonClick(buttonNumber, url);
+                        }}
+                        target={isIframe || uiState.onExhibitorCustomButtonClick ? "_blank" : "_self"}
+                    >
                         {title}
                     </Button>
                 </div>
@@ -171,18 +188,14 @@ function ExhibitorComponent() {
                     <>
                         <div className="exhibitor__buttons">
                             <SibebarActions
-                                showBookmark={!uiState.kiosk}
+                                showBookmark={!data.hideBookmarks && !uiState.kiosk}
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}
                                 onClickBookmark={bookmark}
                                 onClickShare={handleShare}
                                 onClickDirections={() => {
-                                    store.routeStore.clickRoute(
-                                        null,
-                                        store.routeStore.tempToBooth || exhibitor.booths[0],
-                                        uiState.selectedRoute?.exceptUnaccessible || false
-                                    );
+                                    store.routeStore.clickRoute(null, store.routeStore.tempToBooth || exhibitor.booths[0]);
                                 }}
                             />
                         </div>
@@ -256,6 +269,9 @@ function ExhibitorComponent() {
                                     ) : null}
                                 </div>
                             ) : null}
+                            {(!!exhibitor.schedule?.length || !!exhibitor.booths[0].schedule.length) && (
+                                <Schedule events={exhibitor.schedule || exhibitor.booths[0].schedule} />
+                            )}
                             {!uiState.kiosk && exhibitor.videoUrl && (
                                 <div className="exhibitor__video">
                                     <iframe
@@ -426,9 +442,9 @@ function ExhibitorComponent() {
                                     </a>
                                 </div>
                             )}
-                            {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
-                            {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url)}
-                            {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url)}
+                            {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl, 1)}
+                            {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2)}
+                            {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3)}
                         </div>
                     </>
                 ) : (

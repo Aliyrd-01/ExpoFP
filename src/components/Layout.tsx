@@ -49,10 +49,11 @@ export default observer(function Layout() {
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />
+                {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                {uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {settings.EXPO === "exhibitorlive2023" && uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}

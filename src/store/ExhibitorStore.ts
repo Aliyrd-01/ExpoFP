@@ -1,3 +1,4 @@
+import { ScheduleItem } from "./ScheduleStore";
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import settings from "../tools/settings";
@@ -5,6 +6,7 @@ import isDebug from "../utils/is-debug";
 import { Booth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
+import { MarketMaterial, RawExhibitor } from "../data/Data";
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
@@ -39,7 +41,7 @@ export default class ExhibitorStore {
         }
     }
 
-    @action setRebookingState(exhibitor: Exhibitor, state: number) {
+    @action setRebookingState(exhibitor: Exhibitor, state: number, note?: string) {
         exhibitor.rebookingState = state;
         fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
@@ -51,6 +53,7 @@ export default class ExhibitorStore {
                 expoKey: settings.EXPO,
                 exhibitorId: exhibitor.id,
                 rebookingState: state,
+                rebookingNote: note,
             }),
         })
             .then((r) => {
@@ -106,7 +109,9 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly slug: string;
     @observable bookmarked: boolean;
     @observable rebookingState: number;
+    @observable rebookingNote: number;
 
     readonly booths: Booth[];
     readonly categories: Category[];
+    readonly schedule: ScheduleItem[];
 }

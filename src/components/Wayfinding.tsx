@@ -1,16 +1,16 @@
+import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
 import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
+import { RegularBooth } from "../store/BoothStore";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
-import WayfindingTemplate from "./WayfindingTemplate";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
-import classNames from "classnames";
-import { RegularBooth } from "../store/BoothStore";
+import WayfindingTemplate from "./WayfindingTemplate";
 
 function Wayfinding() {
     const routeSelected = () => {
@@ -74,15 +74,15 @@ function Wayfinding() {
 
         const onSelectionClick = (name: string, isFrom: boolean = true) => {
             const booth = booths().filter((b) => b.name === name)[0];
-            const { from, to, exceptUnaccessible } = uiState.selectedRoute;
+            const { from, to } = uiState.selectedRoute;
 
-            if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to, exceptUnaccessible));
-            else store.routeStore.selectRoute(new Route(from, booth || null, exceptUnaccessible));
+            if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to));
+            else store.routeStore.selectRoute(new Route(from, booth || null));
         };
 
-        // const onExceptUnaccessible = (exceptUnaccessible: boolean) => {
+        // const ononlyAccessible = (onlyAccessible: boolean) => {
         //     const { from, to } = uiState.selectedRoute;
-        //     store.routeStore.selectRoute(new Route(from, to, exceptUnaccessible));
+        //     store.routeStore.selectRoute(new Route(from, to, onlyAccessible));
         // };
 
         const getWayInformation = (distance) => {
@@ -112,8 +112,8 @@ function Wayfinding() {
         };
 
         const onSwitch = () => {
-            const { from, to, exceptUnaccessible } = uiState.selectedRoute;
-            store.routeStore.selectRoute(new Route(to, from, exceptUnaccessible));
+            const { from, to } = uiState.selectedRoute;
+            store.routeStore.selectRoute(new Route(to, from));
         };
 
         const routeNotFound = uiState.selectedRoute?.from && uiState.selectedRoute?.to && !store.routeStore.routeLines.length;
@@ -157,7 +157,9 @@ function Wayfinding() {
                     onChangeTo={(value) => onSelectionClick(value, false)}
                     onSwitch={onSwitch}
                     infoItems={getWayInformation(store.routeStore.routeDistance)}
-                    infoAccessible={uiState.selectedRoute.exceptUnaccessible}
+                    infoAccessible={store.routeStore.onlyAccessible}
+                    showAccessible={store.routeStore.showAccessible}
+                    onAccessibleCheck={(checked) => (store.routeStore.onlyAccessible = checked)}
                     onClickInfo={() => store.showOverlay()}
                 />
             </OverlayContent>

@@ -1,3 +1,4 @@
+import { RawExhibitor } from "../data/Data";
 import lzUtils from "./lz-utils";
 
 const url = new URL(window.location.href);

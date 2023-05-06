@@ -77,6 +77,10 @@ export default class UIState {
         return this.rootStore.fp.onDetails;
     }
 
+    get onExhibitorCustomButtonClick() {
+        return this.rootStore.fp.onExhibitorCustomButtonClick;
+    }
+
     @computed({ keepAlive: true }) get selectedExhibitor() {
         return this.details instanceof Exhibitor ? this.details : null;
     }

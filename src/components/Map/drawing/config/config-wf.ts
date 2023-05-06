@@ -2,7 +2,6 @@ import Color from "color";
 import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
-import data from "../../../../data";
 import store, { layersStore, uiState } from "../../../../store";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
@@ -366,7 +365,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            routeLines = getGraphLines(from, to, uiState.selectedRoute.exceptUnaccessible, false);
+            routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, false);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);
@@ -422,7 +421,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         //             const newBooth = getNearestBooth(position);
         //             if (newBooth)
         //                 store.routeStore.selectRoute(
-        //                     new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
+        //                     new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.onlyAccessible)
         //                 );
         //         }
         //     }
@@ -471,7 +470,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             }
         );
         reaction(
-            () => [uiState.selectedRoute],
+            () => [uiState.selectedRoute, store.routeStore.onlyAccessible],
             () => {
                 context.requireUpdate(updateRoute);
                 counter = 0;
