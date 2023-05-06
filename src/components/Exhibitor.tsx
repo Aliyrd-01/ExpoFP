@@ -15,6 +15,7 @@ import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import RebookingNotes from "./RebookingNotes";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
@@ -118,14 +119,24 @@ function ExhibitorComponent() {
         );
 
         const rebooking = data.isRebooking ? (
-            <RebookingRadioGroup
-                options={defaultRebookingOptions}
-                checked={exhibitor.rebookingState.toString()}
-                onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value))}
-                showTitle={false}
-            />
+            <div>
+                <RebookingRadioGroup
+                    showTitle={false}
+                    options={defaultRebookingOptions}
+                    checked={exhibitor.rebookingState.toString()}
+                    onChange={(e) =>
+                        store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), exhibitor.rebookingNote)
+                    }
+                />
+                <RebookingNotes
+                    state={exhibitor.rebookingNote ? "edit" : "default"}
+                    value={exhibitor.rebookingNote}
+                    onClickSave={(val: string) =>
+                        store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
+                    }
+                />
+            </div>
         ) : null;
-
         const cls = classNames({
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,

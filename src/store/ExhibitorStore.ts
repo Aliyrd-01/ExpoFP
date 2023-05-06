@@ -41,8 +41,10 @@ export default class ExhibitorStore {
         }
     }
 
-    @action setRebookingState(exhibitor: Exhibitor, state: number, note?: string) {
+    @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
         exhibitor.rebookingState = state;
+        exhibitor.rebookingNote = rebookingNote;
+
         fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
             headers: {
@@ -53,7 +55,7 @@ export default class ExhibitorStore {
                 expoKey: settings.EXPO,
                 exhibitorId: exhibitor.id,
                 rebookingState: state,
-                rebookingNote: note,
+                rebookingNote,
             }),
         })
             .then((r) => {
@@ -109,7 +111,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly slug: string;
     @observable bookmarked: boolean;
     @observable rebookingState: number;
-    @observable rebookingNote: number;
+    @observable rebookingNote: string;
 
     readonly booths: Booth[];
     readonly categories: Category[];

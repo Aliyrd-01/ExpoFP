@@ -132,7 +132,7 @@ interface RawExhibitor {
     videoUrl: string;
 
     rebookingState: number;
-    rebookingNote: number;
+    rebookingNote: string;
 }
 
 interface PathInfo {
