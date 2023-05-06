@@ -54,6 +54,10 @@
         transition: background var(--transition-duration) ease;
         text-decoration: none;
 
+        &.current {
+            background: #e1e1e1;
+        }
+
         &:hover {
             background: #f2f4f7;
         }

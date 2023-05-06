@@ -1,4 +1,5 @@
 import _locales from "../public/locales/_locales";
+import { Data } from "./data/Data";
 import { CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs } from "./tools/loaders";
@@ -6,7 +7,6 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
-import isIframe from "./utils/is-iframe";
 
 function nr() {
     throw new Error("FloorPlan not ready");

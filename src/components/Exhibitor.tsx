@@ -16,6 +16,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
+import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 
@@ -268,6 +269,9 @@ function ExhibitorComponent() {
                                     ) : null}
                                 </div>
                             ) : null}
+                            {(!!exhibitor.schedule?.length || !!exhibitor.booths[0].schedule.length) && (
+                                <Schedule events={exhibitor.schedule || exhibitor.booths[0].schedule} />
+                            )}
                             {!uiState.kiosk && exhibitor.videoUrl && (
                                 <div className="exhibitor__video">
                                     <iframe

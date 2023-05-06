@@ -1,3 +1,4 @@
+import { ScheduleItem } from "./ScheduleStore";
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import settings from "../tools/settings";
@@ -5,6 +6,7 @@ import isDebug from "../utils/is-debug";
 import { Booth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
+import { MarketMaterial, RawExhibitor } from "../data/Data";
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
@@ -111,4 +113,5 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: Booth[];
     readonly categories: Category[];
+    readonly schedule: ScheduleItem[];
 }

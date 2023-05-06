@@ -1,3 +1,4 @@
+import { ScheduleItem } from './../store/ScheduleStore';
 interface Data {
     noFeatured: boolean;
     expoFpAd: boolean;
@@ -37,6 +38,19 @@ interface Data {
     hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;
     isRebooking: boolean;
+    events: ScheduleItem[];
+}
+
+interface ScheduleItem {
+    id: number;
+    name: string;
+    externalId: string;
+    description?: string;
+    exhibitorId?: number;
+    boothId?: number;
+    startDate: string;
+    endDate: string;
+    link?   : string;
 }
 
 interface RawCategory {
@@ -60,7 +74,6 @@ interface RawRegularBooth extends RawBoothBase {
     labelColor: string;
     // onHold: boolean;
     // reserved: boolean;
-   
 }
 
 interface RawSpecialBooth extends RawBoothBase {

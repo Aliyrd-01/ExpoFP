@@ -1,27 +1,35 @@
-import React from "react";
+import classNames from "classnames";
 import dateFormat from "dateformat";
+import React from "react";
 import "./Schedule.scss";
 
 export interface ScheduleProps {
     events: {
         name: string;
-        startsAt: string;
-        endsAt?: string;
+        startDate: string;
+        endDate?: string;
         link?: string;
     }[];
 }
 
+function isCurrent(from: Date, to: Date) {
+    const now = new Date();
+    return from <= now && now <= to;
+}
+
 const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
-    const sortByDate = events.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
+    events = events.filter((event) => new Date(event.endDate).getTime() > new Date().getTime());
+
+    const sortByDate = events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     const grouped = sortByDate.reduce((acc, curr) => {
-        const date = new Date(curr.startsAt).toISOString().slice(0, 10);
+        const date = new Date(curr.startDate).toISOString().slice(0, 10);
         acc[date] ? acc[date].push(curr) : (acc[date] = [curr]);
         return acc;
     }, {});
 
-    const EventWrapper = ({ children, link }) => {
+    const EventWrapper = ({ children, link, current }) => {
         return link.length !== 0 ? (
-            <a href={link} className="schedule__event" target="_blank" rel="noopener noreferrer">
+            <a href={link} className={classNames("schedule__event", current)} target="_blank" rel="noopener noreferrer">
                 {children}
             </a>
         ) : (
@@ -42,11 +50,14 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
                         <div className="schedule__events">
                             {Array.isArray(events) &&
                                 events.map((event) => (
-                                    <div key={event.startsAt}>
-                                        <EventWrapper link={event.link ? event.link : ""}>
+                                    <div key={event.id}>
+                                        <EventWrapper
+                                            link={event.link ? event.link : ""}
+                                            current={isCurrent(event.startDate, event.endDate)}
+                                        >
                                             <span>
-                                                {dateFormat(event.startsAt, "shortTime")}
-                                                {event.endsAt ? ` - ${dateFormat(event.endsAt, "shortTime")}` : null}
+                                                {dateFormat(event.startDate, "shortTime")}
+                                                {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
                                             </span>
                                             <strong>{event.name}</strong>
                                         </EventWrapper>
