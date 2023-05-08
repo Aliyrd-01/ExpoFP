@@ -280,8 +280,8 @@ function ExhibitorComponent() {
                                     ) : null}
                                 </div>
                             ) : null}
-                            {(!!exhibitor.schedule?.length || !!exhibitor.booths[0].schedule.length) && (
-                                <Schedule events={exhibitor.schedule || exhibitor.booths[0].schedule} />
+                            {(!!exhibitor.schedule?.length || !!exhibitor.booths[0]?.schedule.length) && (
+                                <Schedule events={exhibitor.schedule || exhibitor.booths[0]?.schedule} />
                             )}
                             {!uiState.kiosk && exhibitor.videoUrl && (
                                 <div className="exhibitor__video">
