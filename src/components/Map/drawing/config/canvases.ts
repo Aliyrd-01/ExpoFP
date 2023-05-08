@@ -53,6 +53,7 @@ export function createLabelCanvas(
         },
     };
 }
+
 export function createDetailsCanvas(
     b: RegularBooth,
     pixelRatio: number,
@@ -351,6 +352,76 @@ export function createTargetCanvas(
             ctx.bezierCurveTo(41.5, 48.9, 48.8, 41.6, 48.8, 32.6);
             ctx.bezierCurveTo(48.8, 23.6, 41.5, 16.3, 32.5, 16.3);
             ctx.bezierCurveTo(23.5, 16.3, 16.2, 23.6, 16.2, 32.6);
+            ctx.fill();
+        },
+    };
+}
+
+export function createYahCanvas(
+    pixelRatio: number,
+    color: string = "#ff4343",
+    scale: number = pixelRatio * 0.5
+): CanvasDescriptor {
+    return {
+        width: 77 * scale,
+        height: 116 * scale,
+        // padding,
+        draw(ctx) {
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.scale(scale, scale);    
+            ctx.moveTo(51.565, 35.459);
+            ctx.bezierCurveTo(51.565, 43.256, 45.201, 49.575, 37.354, 49.575);
+            ctx.bezierCurveTo(29.516, 49.575, 23.159, 43.256, 23.159, 35.459);
+            ctx.bezierCurveTo(23.159, 27.668, 29.516, 21.345, 37.354, 21.345);
+            ctx.bezierCurveTo(45.201, 21.345, 51.565, 27.668, 51.565, 35.459);
+            ctx.closePath();
+            ctx.fill();
+            
+        // #path4
+            ctx.beginPath();
+            ctx.moveTo(68.303, 57.335);
+            ctx.bezierCurveTo(77.894, 39.304, 70.649, 15.785, 50.950, 8.040);
+            ctx.bezierCurveTo(30.727, 0., 8.375, 11.837, 3.207, 32.831);
+            ctx.bezierCurveTo(0., 46.185, 6.644, 57.323, 13.131, 68.211);
+            ctx.lineTo(13.131, 68.211);
+            ctx.lineTo(13.131, 68.211);
+            ctx.bezierCurveTo(13.921, 69.533, 14.698, 70.829, 15.454, 72.137);
+            ctx.bezierCurveTo(19.465, 79.158, 23.533, 86.120, 27.571, 93.086);
+            ctx.lineTo(27.571, 93.086);
+            ctx.bezierCurveTo(30.098, 97.421, 32.611, 101.756, 35.116, 106.077);
+            ctx.bezierCurveTo(36.128, 107.868, 38.934, 107.868, 39.945, 106.077);
+            ctx.bezierCurveTo(49.387, 90.003, 58.708, 74.029, 68.031, 57.951);
+            ctx.bezierCurveTo(68.150, 57.743, 68.240, 57.543, 68.303, 57.335);
+            ctx.closePath();
+            ctx.moveTo(60.103, 60.395);
+            ctx.lineTo(63.201, 55.041);
+            ctx.lineTo(63.201, 55.041);
+            ctx.bezierCurveTo(73.310, 36.735, 61.285, 11.614, 39.040, 11.170);
+            ctx.bezierCurveTo(19.388, 10.714, 2.759, 29.479, 9.386, 49.013);
+            ctx.bezierCurveTo(10.726, 52.998, 12.657, 56.900, 14.840, 60.721);
+            ctx.bezierCurveTo(15.041, 58.454, 15.938, 56.258, 17.589, 54.586);
+            ctx.bezierCurveTo(19.708, 52.425, 22.216, 50.638, 24.996, 49.283);
+            ctx.bezierCurveTo(28.252, 52.249, 32.595, 54.051, 37.354, 54.051);
+            ctx.bezierCurveTo(42.123, 54.051, 46.470, 52.249, 49.730, 49.283);
+            ctx.bezierCurveTo(52.505, 50.638, 55.017, 52.425, 57.135, 54.586);
+            ctx.bezierCurveTo(58.701, 56.188, 59.701, 58.245, 60.103, 60.395);
+            ctx.closePath();
+            ctx.fill("evenodd");
+            
+        // #path6
+            ctx.beginPath();
+            
+            ctx.moveTo(29.024, 104.982);
+            ctx.bezierCurveTo(29.024, 103.626, 27.923, 102.527, 26.570, 102.527);
+            ctx.bezierCurveTo(25.214, 102.527, 24.114, 103.626, 24.114, 104.982);
+            ctx.bezierCurveTo(24.114, 111.395, 30.347, 116.838, 37.444, 116.838);
+            ctx.bezierCurveTo(44.540, 116.838, 50.771, 111.395, 50.771, 104.982);
+            ctx.bezierCurveTo(50.771, 103.626, 49.666, 102.527, 48.317, 102.527);
+            ctx.bezierCurveTo(46.961, 102.527, 45.855, 103.626, 45.855, 104.982);
+            ctx.bezierCurveTo(45.855, 108.193, 42.352, 111.956, 37.444, 111.956);
+            ctx.bezierCurveTo(32.528, 111.956, 29.024, 108.193, 29.024, 104.982);
+            ctx.closePath();
             ctx.fill();
         },
     };
