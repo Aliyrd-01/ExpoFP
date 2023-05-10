@@ -13,6 +13,7 @@ import "./Booth.scss";
 import Button from "./Button";
 import ExhibitorRow from "./ExhibitorRow";
 import OverlayContent from "./OverlayContent";
+import Schedule from "./Schedule";
 import SidebarActions from "./SidebarActions";
 
 function Booth() {
@@ -162,6 +163,7 @@ function Booth() {
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {!data.isRebooking && content}
+                {!!s.booth.schedule?.length && <Schedule events={s.booth.schedule} />}
                 {!data.isRebooking && settings.wayfinding && (
                     <div
                         className="exhibitor__directions"

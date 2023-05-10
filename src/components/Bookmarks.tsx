@@ -1,5 +1,6 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
+import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
 import "./Bookmarks.scss";
@@ -26,4 +27,5 @@ function Bookmarks() {
     }
 }
 
-export default () => useObserver(() => !uiState.details && uiState.list.type === "bookmarks" && <Bookmarks />);
+export default () =>
+    useObserver(() => !data.hideBookmarks && !uiState.details && uiState.list.type === "bookmarks" && <Bookmarks />);

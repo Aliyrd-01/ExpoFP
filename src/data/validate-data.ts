@@ -3,6 +3,7 @@ import schema from "../data.schema.json";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
+import { Data, RawRegularBooth, RawSpecialBooth } from "./Data";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {

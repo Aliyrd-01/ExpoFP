@@ -1,4 +1,5 @@
 import _locales from "../public/locales/_locales";
+import { Data } from "./data/Data";
 import { CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs } from "./tools/loaders";
@@ -36,6 +37,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
+    onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -62,6 +65,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onDetails = options.onDetails;
+        this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {

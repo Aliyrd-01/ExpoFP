@@ -274,7 +274,7 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);       
+        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
         // console.log("handleMouseMoveAndOver", b);
         raiseBoothOver(b);
     }
@@ -288,6 +288,7 @@ export default function Map() {
         if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
             store.showMap();
         }
+
         // if (!this.props.onBoothClick) return;
         const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
         logger.log("click", b);

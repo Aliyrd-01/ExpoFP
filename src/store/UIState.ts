@@ -54,7 +54,6 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
-  
 
     overlayMediumHeightRems = 10;
 
@@ -76,6 +75,10 @@ export default class UIState {
 
     get onDetails() {
         return this.rootStore.fp.onDetails;
+    }
+
+    get onExhibitorCustomButtonClick() {
+        return this.rootStore.fp.onExhibitorCustomButtonClick;
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {

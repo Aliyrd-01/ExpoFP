@@ -46,6 +46,8 @@ export default function initExhibitors(store: RootStore) {
 
         (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
+        const schedule = store.scheduleStore.scheduleItems.filter((s) => s.exhibitorId === e.id);
+        e.schedule = schedule.length ? schedule : null;
     }
 
     // dispose
