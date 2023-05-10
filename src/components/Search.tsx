@@ -66,6 +66,8 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
 
 function Search() {
     const el = useRef<HTMLDivElement>();
+    const listRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     const s = useLocalStore(() => ({
         elementTop: 0,
@@ -173,8 +175,9 @@ function Search() {
                 backMode={s.backMode}
                 hideClose={!s.showClose}
                 bar={bar}
+                passScrollRefToParent={(scroll) => (scrollRef.current = scroll.current)}
             >
-                <List />
+                <List ref={listRef} />
             </OverlayContent>
         );
     });
@@ -199,7 +202,10 @@ function Search() {
         uiState.searchFocused = true;
     }
 
-    function handleBlur() {
+    function handleBlur(e: FocusEvent) {
+        if (listRef.current.contains(e.relatedTarget) || scrollRef.current.contains(e.relatedTarget)) {
+            return;
+        }
         setTimeout(() => (uiState.searchFocused = false), 200);
     }
 

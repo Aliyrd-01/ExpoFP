@@ -17,13 +17,15 @@ const OverlayContent: React.FC<{
     onBack?: () => void;
     onClose: () => void;
     onUpdateFuncSet?: (s: () => void) => void;
-}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet }) => {
+    passScrollRefToParent?: (el: React.RefObject<HTMLDivElement>) => void;
+}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet, passScrollRefToParent }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
     const [psInstance, setPsInstance] = useState<PerfectScrollbar>(null);
 
     useLayoutEffect(() => {
         const sel = scrollable.current;
+        if (passScrollRefToParent) passScrollRefToParent(scrollable);
         const setScrolled = () => {
             setScrolled1(sel.scrollTop > 0);
             // logger.log("scrolled", sel.scrollTop, scrolled);
@@ -34,6 +36,8 @@ const OverlayContent: React.FC<{
         if (isScrollUgly) {
             if (!psInstance) {
                 const ps = new PerfectScrollbar(sel, { minScrollbarLength: 25 });
+                ps.scrollbarY.tabIndex = 0;
+                ps.scrollbarYRail.tabIndex = 0;
                 setPsInstance(ps);
                 update = () => ps.update();
             } else {
