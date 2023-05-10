@@ -66,8 +66,7 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
 
 function Search() {
     const el = useRef<HTMLDivElement>();
-    const listRef = useRef<HTMLDivElement>(null);
-    const scrollRef = useRef<HTMLDivElement>(null);
+    const overlayContentRef = useRef<HTMLDivElement>();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
@@ -101,6 +100,12 @@ function Search() {
     useAutorun(() => {
         if (uiState.overlaySize !== "full" && document.activeElement === getInput()) {
             getInput().blur();
+        }
+    });
+
+    useAutorun(() => {
+        if (uiState.menu && uiState.kiosk) {
+            uiState.searchFocused = false;
         }
     });
 
@@ -175,9 +180,9 @@ function Search() {
                 backMode={s.backMode}
                 hideClose={!s.showClose}
                 bar={bar}
-                passScrollRefToParent={(scroll) => (scrollRef.current = scroll.current)}
+                passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
             >
-                <List ref={listRef} />
+                <List />
             </OverlayContent>
         );
     });
@@ -203,7 +208,7 @@ function Search() {
     }
 
     function handleBlur(e: FocusEvent) {
-        if (listRef.current.contains(e.relatedTarget) || scrollRef.current.contains(e.relatedTarget)) {
+        if (overlayContentRef.current.contains(e.relatedTarget)) {
             return;
         }
         setTimeout(() => (uiState.searchFocused = false), 200);
@@ -244,6 +249,9 @@ function Search() {
     }
 
     function handleBack() {
+        if (uiState.kiosk) {
+            uiState.searchFocused = false;
+        }
         getInput().value = "";
         setText();
         uiState.desiredOverlaySize = "medium";

@@ -17,15 +17,19 @@ const OverlayContent: React.FC<{
     onBack?: () => void;
     onClose: () => void;
     onUpdateFuncSet?: (s: () => void) => void;
-    passScrollRefToParent?: (el: React.RefObject<HTMLDivElement>) => void;
-}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet, passScrollRefToParent }) => {
+    passRefToParent?: (el: React.RefObject<HTMLDivElement>) => void;
+}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet, passRefToParent }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
     const [psInstance, setPsInstance] = useState<PerfectScrollbar>(null);
+    const contentRef = useRef<HTMLDivElement>();
+
+    useLayoutEffect(() => {
+        if (passRefToParent) passRefToParent(contentRef);
+    }, [contentRef, passRefToParent]);
 
     useLayoutEffect(() => {
         const sel = scrollable.current;
-        if (passScrollRefToParent) passScrollRefToParent(scrollable);
         const setScrolled = () => {
             setScrolled1(sel.scrollTop > 0);
             // logger.log("scrolled", sel.scrollTop, scrolled);
@@ -73,7 +77,7 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     return (
-        <div className={`overlay-content ${className || ""}`} id="overlay-content">
+        <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}>
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
             <OverlayBar scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>

@@ -1,5 +1,5 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { forwardRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { uiState } from "../store";
 import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
@@ -14,7 +14,7 @@ import "./List.scss";
 const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5));
 logger.log("List n1:", n);
 
-const List = forwardRef<HTMLDivElement, any>((props, ref) => {
+const List = () => {
     const s = useLocalStore(() => ({
         get items() {
             if (uiState.overlayShowsAll || uiState.listItems.length <= n) return uiState.listItems;
@@ -38,7 +38,7 @@ const List = forwardRef<HTMLDivElement, any>((props, ref) => {
         }
     }
 
-    return useObserver(() => <div ref={ref}>{s.items.map(mapItem)}</div>);
-});
+    return useObserver(() => <div>{s.items.map(mapItem)}</div>);
+};
 
 export default List;
