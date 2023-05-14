@@ -51,7 +51,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
+    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         nr();
     }
 

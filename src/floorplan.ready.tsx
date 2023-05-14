@@ -59,8 +59,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.routeStore.selectRoute(new Route(bFrom, bTo));
     }
 
-    selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
-        store.routeStore.selectCurrentPosition(point, focus);
+    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
+        store.routeStore.selectCurrentPosition(point, focus, icon);
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {

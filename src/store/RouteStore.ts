@@ -16,6 +16,7 @@ export default class RouteStore {
     @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
+    @observable iconType: number = 0;
     @observable tempToBooth: Booth = null;
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
@@ -29,9 +30,7 @@ export default class RouteStore {
 
     @action selectRoute(route: Route) {
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
-
         if (route?.from && route?.to && route.from === route.to) route = null;
-
         let list = [];
 
         if (route?.from && route?.to)
@@ -103,10 +102,10 @@ export default class RouteStore {
         //this.showMap();
     }
 
-    @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
+    @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
         focus = focus && this.focusEnabled;
         if (this.focusEnabled) this.focusEnabled = false;
-
+        this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
         if (!p) {
             this.currentPosition = null;
