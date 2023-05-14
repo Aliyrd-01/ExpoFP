@@ -6,6 +6,7 @@ import "./Schedule.scss";
 export interface ScheduleProps {
     events: {
         name: string;
+        description?: string;
         startDate: string;
         endDate?: string;
         link?: string;
