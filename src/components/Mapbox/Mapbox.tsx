@@ -271,7 +271,7 @@ export default function Mapbox() {
             <div
                 ref={mapContainer}
                 style={ls.style}
-                className={classNames("map-container", {
+                className={classNames("map-container", "mapboxgl-map", {
                     hidden: !store.mapboxStore.showMapbox,
                 })}
             />
