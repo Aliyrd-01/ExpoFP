@@ -101,7 +101,7 @@ export default class FloorPlanLoader implements FloorPlan {
         } else {
             const style = document.createElement("style");
             head.prepend(style);
-            style.textContent = `.expofp-floorplan-default { width: 100%; height: 100%; contain: content; }`;
+            style.textContent = `.expofp-floorplan-default { width: 100%; height: 100%;}`;
         }
 
         const shadowContainer = document.createElement("div");
