@@ -95,14 +95,9 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const head = document.head || document.getElementsByTagName("head")[0];
 
-        if (isIframe) {
-            element.style.height = "100%";
-            element.style.width = "100%";
-        } else {
-            const style = document.createElement("style");
-            head.prepend(style);
-            style.textContent = `.expofp-floorplan-default { width: 100%; height: 100%;}`;
-        }
+        const style = document.createElement("style");
+        head.prepend(style);
+        style.textContent = `.expofp-floorplan-default { width: 100%; height: 100%;}`;
 
         const shadowContainer = document.createElement("div");
         shadowContainer.style.height = "100%";
