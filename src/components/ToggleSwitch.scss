@@ -61,29 +61,31 @@ $switchHeight: 20px;
                 }
             }
         }
-    }
-    @include media-breakpoint-down(sm) {
-        input[type="checkbox"] {
-            & + label {
-                &:before {
-                    top: 0;
-                    width: 40px;
-                    height: 24px;
-                }
-                &:after {
-                    top: 3px;
-                    width: 18px;
-                    height: 18px;
-                }
-                span {
-                    padding-left: 50px;
-                }
+    }      
+}
+
+@include responsive-classes-down-to(".toggleSwitch", sm) {
+    input[type="checkbox"] {
+        background: red;
+        & + label {
+            &:before {
+                top: 0;
+                width: 40px;
+                height: 24px;
             }
-            &:checked {
-                & + label {
-                    &:after {
-                        left: 18px;
-                    }
+            &:after {
+                top: 3px;
+                width: 18px;
+                height: 18px;
+            }
+            span {
+                padding-left: 50px;
+            }
+        }
+        &:checked {
+            & + label {
+                &:after {
+                    left: 18px;
                 }
             }
         }

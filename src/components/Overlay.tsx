@@ -34,6 +34,9 @@ export default observer(function Overlay() {
             if (uiState.dimmed) {
                 classes += " -no-transition";
             }
+            if (uiState.galleryActive) {
+                classes += " -gallery-active";
+            }
             return classes;
             // if (!uiState.canvasStarted || !uiState.shouldUseBackdrop || uiState.dimmed) return "";
         },
@@ -210,9 +213,9 @@ function getTopForBottomPosition(size: OverlaySize): number {
         case "full":
             return remsToPixels(paddingRems);
         case "medium":
-            return window.innerHeight - remsToPixels(uiState.overlayMediumHeightRems);
+            return uiState.rootElement.clientHeight - remsToPixels(uiState.overlayMediumHeightRems);
         case "small":
-            return window.innerHeight - remsToPixels(miniSizeRems);
+            return uiState.rootElement.clientHeight - remsToPixels(miniSizeRems);
     }
 
     return null;
