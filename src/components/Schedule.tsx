@@ -1,19 +1,22 @@
 import classNames from "classnames";
 import dateFormat from "dateformat";
+import sanitizeHTML from "../utils/sanitizeHtml";
 import React from "react";
 import "./Schedule.scss";
 
+export interface EventI {
+    id: string | number;
+    name: string;
+    description?: string;
+    startDate: string;
+    endDate?: string;
+    link?: string;
+}
 export interface ScheduleProps {
-    events: {
-        name: string;
-        description?: string;
-        startDate: string;
-        endDate?: string;
-        link?: string;
-    }[];
+    events: EventI[];
 }
 
-function isCurrent(from: Date, to: Date) {
+function isCurrent(from: Date | string, to: Date | string) {
     const now = new Date();
     return from <= now && now <= to;
 }
@@ -50,7 +53,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
                         </div>
                         <div className="schedule__events">
                             {Array.isArray(events) &&
-                                events.map((event) => (
+                                events.map((event: EventI) => (
                                     <div key={event.id}>
                                         <EventWrapper
                                             link={event.link ? event.link : ""}
@@ -61,6 +64,12 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
                                                 {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
                                             </span>
                                             <strong>{event.name}</strong>
+                                            {event.description && (
+                                                <div
+                                                    className="schedule__event-desc"
+                                                    dangerouslySetInnerHTML={{ __html: sanitizeHTML(event.description) }}
+                                                ></div>
+                                            )}
                                         </EventWrapper>
                                     </div>
                                 ))}

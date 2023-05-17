@@ -82,4 +82,13 @@
             color: var(--color-primary);
         }
     }
+    &__event-desc {
+        margin: 6px 0;
+        font-size: var(--text-size-2);
+        color: var(--color-grayDark);
+
+        & > p {
+            margin: 6px 0;
+        }
+    }
 }
