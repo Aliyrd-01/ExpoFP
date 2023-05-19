@@ -67,7 +67,7 @@ function ExhibitorComponent() {
     useAutorun(() => {
         if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(GaEventActions.View, s.exhibitor.name);
+            sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
         }
     });
 
