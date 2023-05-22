@@ -152,9 +152,19 @@ else if (locationSearch.startsWith("?b=")) {
     const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
     if (exhibitor) historyReplace("?" + exhibitor.slug);
     else historyReplace("?bookmarks");
-} else if (locationSearch.startsWith("?nooverlay")) {
-    historyReplace("?");
-    store.uiState.hideOverlay = true;
+} else if (locationSearch.includes("noOverlay")) {
+    const url = new URL(window.location.href);
+    const noOverlayParamValue = url.searchParams.get("noOverlay");
+
+    if (noOverlayParamValue === "true") {
+        url.searchParams.delete("noOverlay");
+
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+
+        historyReplace(newSearch);
+        store.uiState.hideOverlay = true;
+    }
 }
 
 // facebook and google  fix
