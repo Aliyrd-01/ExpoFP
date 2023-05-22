@@ -487,6 +487,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
