@@ -271,18 +271,41 @@ export default class UIState {
             }, 1000);
         }
 
-        let items: ListItem[] = [];
+        const items: ListItem[] = [];
 
-        // rulles here
-        const matchingExhibitors = exhibitorsArray.filter(
-            (e) => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1 || e.booths.find((b) => b.name.toLowerCase() === text)
-        );
-        const matchingCategories = categoriesArray.filter((e) => e.name.toLowerCase().indexOf(text.toLowerCase()) !== -1);
-        const matchingBooths = boothsArray.filter(
-            (e) =>
-                (!(e instanceof RegularBooth) || !matchingExhibitors.find((x) => x.booths.indexOf(e) !== -1)) &&
-                (e.title || e.name).toLowerCase().indexOf(text.toLowerCase()) !== -1
-        );
+        const matchingExhibitors = new Set<Exhibitor>();
+        const matchingBooths = new Set<Booth>();
+        const matchingCategories = new Set<Category>();
+
+        const splittedTexts = text.split("&").filter((s) => s);
+
+        function containsIgnoreCase(str: string, searchTerm: string) {
+            return str.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+
+        exhibitorsArray.forEach((e) => {
+            if (
+                splittedTexts.some(
+                    (text) => containsIgnoreCase(e.name, text) || e.booths.some((b) => containsIgnoreCase(b.name, text))
+                )
+            ) {
+                matchingExhibitors.add(e);
+            }
+        });
+
+        categoriesArray.forEach((c) => {
+            if (splittedTexts.some((text) => containsIgnoreCase(c.name, text))) {
+                matchingCategories.add(c);
+            }
+        });
+
+        boothsArray.forEach((b) => {
+            if (!(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b))) {
+                if (splittedTexts.some((text) => containsIgnoreCase(b.title || b.name, text))) {
+                    matchingBooths.add(b);
+                }
+            }
+        });
 
         items.push(...matchingExhibitors);
         items.push(...matchingCategories);
