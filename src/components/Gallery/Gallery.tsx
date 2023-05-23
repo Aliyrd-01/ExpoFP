@@ -10,19 +10,23 @@ export interface GalleryProps {
     images: string[];
     leading?: boolean;
     onImageLoadHeightUpdate?: () => void;
+    onOpenGallery?: () => void;
+    onCloseGallery?: () => void;
 }
 
-const Gallery: React.FC<GalleryProps> = ({ images, leading = false, onImageLoadHeightUpdate }) => {
+const Gallery: React.FC<GalleryProps> = ({ images, leading = false, onImageLoadHeightUpdate, onOpenGallery, onCloseGallery }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
     const openModal = (initialSlideIndex: number) => {
         setCurrentSlideIndex(initialSlideIndex);
         setIsModalOpen(true);
+        if (onOpenGallery) onOpenGallery();
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+        if (onCloseGallery) onCloseGallery();
     };
 
     return (

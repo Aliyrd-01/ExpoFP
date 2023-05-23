@@ -226,6 +226,8 @@ function ExhibitorComponent() {
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
                                             <Gallery
+                                                onOpenGallery={() => store.openGallery()}
+                                                onCloseGallery={() => store.closeGallery()}
                                                 onImageLoadHeightUpdate={onUpdateGallery}
                                                 leading={true}
                                                 images={[exhibitor.leadingImageUrl]}
@@ -307,7 +309,12 @@ function ExhibitorComponent() {
                                 <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <Gallery onImageLoadHeightUpdate={onUpdateGallery} images={exhibitor.gallery} />
+                                            <Gallery
+                                                onOpenGallery={() => store.openGallery()}
+                                                onCloseGallery={() => store.closeGallery()}
+                                                onImageLoadHeightUpdate={onUpdateGallery}
+                                                images={exhibitor.gallery}
+                                            />
                                         </Suspense>
                                     </ErrorBoundary>
                                 </div>
