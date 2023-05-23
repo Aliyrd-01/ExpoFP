@@ -155,7 +155,7 @@ function zoomBound(drawer: Drawer, transform: ZoomTransform, forAutoMove: boolea
 
     const y = Math.min(maxTy, Math.max(minTy, transform.y));
     const x = Math.min(maxTx, Math.max(minTx, transform.x));
-    if (y !== transform.y || x !== transform.x || k !== transform.k) {
+    if (/*y !== transform.y || x !== transform.x ||*/ k !== transform.k) {
         return zoomIdentity.translate(x, y).scale(k); // { x, y, k: transform.k };
     }
 

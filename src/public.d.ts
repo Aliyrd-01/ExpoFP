@@ -15,6 +15,8 @@ class FloorPlan {
 
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
+    onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
     selectBooth(nameOrExternalId: string): void;
 
     selectExhibitor(nameOrExternalId: string): void;
@@ -22,12 +24,13 @@ class FloorPlan {
     selectCurrentPosition(
         //
         point: { x: number; y: number; angle?: number; z?: string; lat?: number; lng?: number },
-        focus?: boolean
+        focus?: boolean,
+        icon?: number // 0- blue dot, 1- YAH icon
     ): void;
 
     updateLayerVisibility(layer: string, visible: boolean): void;
 
-    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
+    selectRoute(from: string, to: string, onlyAccessible: boolean): void;
 }
 
 interface FloorPlanOptions {
@@ -39,6 +42,7 @@ interface FloorPlanOptions {
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
+    onExhibitorCustomButtonClick?: (e: FloorPlanCustomButtonEvent) => void;
 }
 
 interface FloorPlanBooth {
@@ -68,6 +72,12 @@ interface FloorPlanDetailsEvent {
     id: string;
     name: string;
     externalId: string;
+}
+
+interface FloorPlanCustomButtonEvent {
+    externalId: string;
+    buttonNumber: number;
+    buttonUrl: string;
 }
 
 const ExpoFP: {

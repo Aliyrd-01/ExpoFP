@@ -7,7 +7,6 @@ import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { Route } from "../store/RouteStore";
-import gtag from "../tools/gtag";
 import logger from "../tools/logger";
 // import settings from '@/settings';
 
@@ -49,8 +48,8 @@ function dispatchFromUrl() {
         const parts = slug.split(":");
         const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
         const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
-
-        store.routeStore.selectRoute(new Route(from, to, false));
+        store.routeStore.onlyAccessible = parts[3] === "true";
+        store.routeStore.selectRoute(new Route(from, to));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "-pdf") {
@@ -95,8 +94,9 @@ function stateToUrl() {
     if (route) {
         const from = route.from ? `:${route.from.slug}` : "";
         const to = route.to ? `:${route.to.slug}` : "";
+        const accessible = store.routeStore.onlyAccessible ? ":true" : "";
 
-        queryRaw = `route${to}${from}`;
+        queryRaw = `route${to}${from}${accessible}`;
     } else if (exhibitor) {
         queryRaw = exhibitor.slug;
     } else if (booth) {
@@ -127,7 +127,6 @@ function stateToUrl() {
     if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
         // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         historyPush(newQuery);
-        sendGa();
     } else {
         // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         // logger.log('history replace', queryRaw);
@@ -153,6 +152,9 @@ else if (locationSearch.startsWith("?b=")) {
     const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
     if (exhibitor) historyReplace("?" + exhibitor.slug);
     else historyReplace("?bookmarks");
+} else if (locationSearch.startsWith("?nooverlay")) {
+    historyReplace("?");
+    store.uiState.hideOverlay = true;
 }
 
 // facebook and google  fix
@@ -171,16 +173,3 @@ if (uiState.previewExhibitor) {
 dispatchFromUrl();
 autorun(setTitle);
 autorun(stateToUrl);
-
-let timeout: number;
-
-function sendGa() {
-    if (!data.gtag) return;
-    if (timeout) window.clearTimeout(timeout);
-    timeout = window.setTimeout(() => {
-        gtag("config", data.gtag, {
-            page_title: document.title,
-            page_path: window.location.pathname + window.location.search,
-        });
-    }, 1000);
-}

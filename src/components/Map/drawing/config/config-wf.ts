@@ -2,7 +2,6 @@ import Color from "color";
 import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
-import data from "../../../../data";
 import store, { layersStore, uiState } from "../../../../store";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
@@ -12,7 +11,7 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
-import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
+import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createYahCanvas } from "./canvases";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -269,7 +268,7 @@ function splitPolyLine(lines: Line[], interval: number): Point[] {
 }
 
 export default function configWf(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
-    if (data.hideDirections) return;
+    //if (data.hideDirections) return;
 
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
     const blinkDrawer = context.requirePainter("BLINK", RectPainter, painterOrderPriority + 1, visible);
@@ -281,6 +280,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
+    const currentLocationCanvas_2 = createYahCanvas(context.pixelRatio);
 
     pointSize = pointCanvas.width;
 
@@ -311,12 +311,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -currentLocationCanvas.width / 2,
-            -currentLocationCanvas.height / 2,
-            currentLocationCanvas.width,
-            currentLocationCanvas.height,
+            -sourceLocationCanvas.width / 2,
+            -sourceLocationCanvas.height / 2,
+            sourceLocationCanvas.width,
+            sourceLocationCanvas.height,
         ],
-        canvasTmp: currentLocationCanvas,
+        canvasTmp: sourceLocationCanvas,
         texPosition: "lefttop",
         visible: isDebug,
     });
@@ -341,12 +341,27 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -sourceLocationCanvas.width / 2,
-            -sourceLocationCanvas.height / 2,
+            -currentLocationCanvas.width / 2,
+            -currentLocationCanvas.height / 2,
             currentLocationCanvas.width,
-            sourceLocationCanvas.height,
+            currentLocationCanvas.height,
         ],
         canvasTmp: sourceLocationCanvas,
+        texPosition: "lefttop",
+        visible: isDebug,
+    });
+
+    wfDrawer.addObject({
+        id: "currentLocation_2",
+        center: [0, 0],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -currentLocationCanvas_2.width / 2,
+            -currentLocationCanvas_2.height,
+            currentLocationCanvas_2.width,
+            currentLocationCanvas_2.height,
+        ],
+        canvasTmp: currentLocationCanvas_2,
         texPosition: "lefttop",
         visible: isDebug,
     });
@@ -354,6 +369,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
     wfDrawer.updateSkipdim("currentLocation", false);
+    wfDrawer.updateSkipdim("currentLocation_2", false);
 
     function updateRoute() {
         var layers = store.layerStore.visible.map((l) => l.name);
@@ -366,7 +382,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            routeLines = getGraphLines(from, to, uiState.selectedRoute.exceptUnaccessible, false);
+            routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, false);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);
@@ -390,11 +406,23 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (position) {
             const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
-            wfDrawer.updateSkipdim("currentLocation", visible);
-            wfDrawer.updateVisible("currentLocation", visible);
-            wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
+
+            if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
+                wfDrawer.updateVisible("currentLocation_2", false);
+
+                wfDrawer.updateVisible("currentLocation", visible);
+                wfDrawer.updateSkipdim("currentLocation", visible);
+                wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
+            } else {
+                wfDrawer.updateVisible("currentLocation", false);
+
+                wfDrawer.updateSkipdim("currentLocation_2", visible);
+                wfDrawer.updateVisible("currentLocation_2", visible);
+                wfDrawer.updateCenter("currentLocation_2", [position.x, position.y]);
+            }
         } else {
             wfDrawer.updateVisible("currentLocation", false);
+            wfDrawer.updateVisible("currentLocation_2", false);
         }
 
         if (!position || !routePoints.length) return 0;
@@ -422,7 +450,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         //             const newBooth = getNearestBooth(position);
         //             if (newBooth)
         //                 store.routeStore.selectRoute(
-        //                     new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.exceptUnaccessible)
+        //                     new Route(newBooth, uiState.selectedRoute.to, uiState.selectedRoute.onlyAccessible)
         //                 );
         //         }
         //     }
@@ -459,6 +487,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
@@ -471,7 +500,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             }
         );
         reaction(
-            () => [uiState.selectedRoute],
+            () => [uiState.selectedRoute, store.routeStore.onlyAccessible],
             () => {
                 context.requireUpdate(updateRoute);
                 counter = 0;

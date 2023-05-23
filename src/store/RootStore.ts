@@ -3,7 +3,7 @@ import { floors } from "../data/svg";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
-import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
+import BoothStore, { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 
@@ -11,6 +11,7 @@ import MapboxStore from "./MapboxStore";
 import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
+import ScheduleStore from "./ScheduleStore";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -20,6 +21,8 @@ export default class RootStore {
     readonly routeStore: RouteStore;
     readonly mapboxStore: MapboxStore;
     readonly layerStore: LayerStore;
+    readonly scheduleStore: ScheduleStore;
+
     fp: FloorPlanReady;
 
     constructor() {
@@ -31,6 +34,7 @@ export default class RootStore {
         this.uiState = new UIState(this);
         this.mapboxStore = new MapboxStore(this);
         this.layerStore = new LayerStore();
+        this.scheduleStore = new ScheduleStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
@@ -72,6 +76,7 @@ export default class RootStore {
                 this.selectBooth(this.routeStore.defaultFrom);
 
             this.uiState.centerMap = true;
+            this.uiState.inIdle = true;
         }, 1000);
     }
 
@@ -184,7 +189,10 @@ export default class RootStore {
             this.uiState.onBoothClick(e);
         }
 
-        if (booth instanceof RegularBooth && booth.exhibitors.length === 1) {
+        if (
+            booth.exhibitors.length === 1 &&
+            ((booth instanceof SpecialBooth && !booth.description) || booth instanceof RegularBooth)
+        ) {
             this.selectExhibitor(booth.exhibitors[0]);
         } else {
             this.selectBooth(booth, false);

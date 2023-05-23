@@ -5,11 +5,12 @@ import Size from "../core/Size";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import browser from "../utils/browser";
-import { Booth, BoothBase, RegularBooth } from "./BoothStore";
+import { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
+import { getResponsiveClass } from "../utils/responsiveClass";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -50,8 +51,11 @@ export default class UIState {
     @observable wsStarted = false;
     @observable canvasStarted = false;
     @observable kiosk = false;
+    @observable inIdle = false;
     @observable modalActive = { share: false };
     @observable galleryActive = false;
+    @observable hideOverlay = false;
+    rootElement: HTMLDivElement;
 
     overlayMediumHeightRems = 10;
 
@@ -59,8 +63,8 @@ export default class UIState {
         this.rootStore = rootStore;
     }
 
-    get noOverlay() {
-        return this.rootStore.fp.noOverlay;
+    @computed({ keepAlive: true }) get noOverlay() {
+        return this.rootStore.fp.noOverlay || this.hideOverlay;
     }
 
     get onBoothClick() {
@@ -73,6 +77,10 @@ export default class UIState {
 
     get onDetails() {
         return this.rootStore.fp.onDetails;
+    }
+
+    get onExhibitorCustomButtonClick() {
+        return this.rootStore.fp.onExhibitorCustomButtonClick;
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {
@@ -157,7 +165,9 @@ export default class UIState {
     @computed get wsPosition() {
         return this.overlayBottom ? "top" : this.wsDesktopPosition;
     }
-
+    @computed get responsiveClass() {
+        return getResponsiveClass(this.screenSize.width);
+    }
     // map
     @computed get mapVisibleTop() {
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
@@ -213,10 +223,13 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
+        const exhibitors = this.rootStore.exhibitorStore.exhibitors;
+        const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
+
         return (
-            this.rootStore.exhibitorStore.exhibitors.length &&
-            (this.listItems.length !== this.rootStore.exhibitorStore.exhibitors.length ||
-                this.listItems.find((x) => !(x instanceof Exhibitor)))
+            exhibitors.length &&
+            (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
+                this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
         );
     }
 
@@ -231,7 +244,26 @@ export default class UIState {
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
 
-        if (!text) return exhibitorsArray.length === 0 ? boothsArray : exhibitorsArray;
+        if (!text) {
+            const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
+            const combinedArray = [...exhibitorsArray, ...otherSpacesArray];
+
+            return exhibitorsArray.length === 0
+                ? boothsArray
+                : combinedArray.sort((a, b) => {
+                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+
+                      if (aFeatured !== bFeatured) {
+                          return aFeatured ? -1 : 1;
+                      }
+
+                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+
+                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
+                  });
+        }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
             window.setTimeout(() => {

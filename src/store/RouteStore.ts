@@ -1,24 +1,27 @@
-import { RouteLine } from "./../utils/wayfinding";
-import { getLayerSvg, svgArea } from "./../data/svg";
 import { action, computed, observable } from "mobx";
 import { lineLength, Point } from "simple-geometry";
 import store, { layersStore } from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import { getLayerSvg, svgArea } from "./../data/svg";
+import { RouteLine, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
-import RootStore from "./RootStore";
 import { Layer } from "./LayerStore";
+import RootStore from "./RootStore";
 
 export default class RouteStore {
     rootStore: RootStore;
     @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
+    @observable iconType: number = 0;
     @observable tempToBooth: Booth = null;
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
+    @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
+    @observable onlyAccessible: boolean = false;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -27,9 +30,7 @@ export default class RouteStore {
 
     @action selectRoute(route: Route) {
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
-
         if (route?.from && route?.to && route.from === route.to) route = null;
-
         let list = [];
 
         if (route?.from && route?.to)
@@ -83,11 +84,11 @@ export default class RouteStore {
         return store.layerStore.layers.filter((l) => layers.indexOf(l.name) > -1);
     }
 
-    @action clickRoute(from: Booth, to: Booth, exceptUnaccessible: boolean) {
+    @action clickRoute(from: Booth, to: Booth) {
         if (window["__resett"]) window["__resett"]();
         this.rootStore.uiState.menu = null;
-        this.selectRoute(new Route(this.defaultFrom || from, to, exceptUnaccessible));
-        sendEventToGa(`FP Wayfinding`, GaEventActions.ClickDirections, to.name);
+        this.selectRoute(new Route(this.defaultFrom || from, to));
+
         if (this.rootStore.uiState.onDirection) {
             const e: FloorPlanDirectionEvent = {
                 from: undefined,
@@ -101,10 +102,10 @@ export default class RouteStore {
         //this.showMap();
     }
 
-    @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
+    @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
         focus = focus && this.focusEnabled;
         if (this.focusEnabled) this.focusEnabled = false;
-
+        this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
         if (!p) {
             this.currentPosition = null;
@@ -131,7 +132,7 @@ export default class RouteStore {
             const cp = store.routeStore.currentPosition;
 
             const rect = Rect.fromCxcywh(cp.x, cp.y, 1000, 1000);
-            if (!rect.intersects(svgArea)) return;           
+            if (!rect.intersects(svgArea)) return;
 
             uiState.moveToRect = rect;
             layersStore.updateVisibility(store.routeStore.currentPosition?.z, true);
@@ -152,6 +153,11 @@ export default class RouteStore {
 
         distance = Math.round(distance / 10.0);
 
+        sendEventToGa(
+            GaEventActions.ClickDirections,
+            `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
+        );
+
         if (store.fp.onDirection)
             setTimeout(() => {
                 store.fp.onDirection({
@@ -168,7 +174,7 @@ export default class RouteStore {
 }
 
 export class Route {
-    public constructor(public from: Booth, public to: Booth, public exceptUnaccessible: boolean) {}
+    public constructor(public from: Booth, public to: Booth) {}
 }
 
 export class CurrentPosition extends Point {

@@ -1,6 +1,6 @@
 .logo-overlay {
     display: block;
-    position: fixed;
+    position: absolute;
     /* bottom: 1rem; */
     /* right: 0.5rem; */
     /* opacity: 0; */
@@ -9,11 +9,15 @@
     > img {
         display: block;
         width: 100%;
-    }   
+    }
+
+    &.invert{
+        filter: invert(1);
+    }
 }
 
 .qr {
-    position: absolute;   
+    position: absolute;
     background-color: white;
     padding: 10px;
     box-shadow: var(--k-box-shadow-1);

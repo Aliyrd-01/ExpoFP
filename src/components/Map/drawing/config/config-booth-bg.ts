@@ -1,7 +1,9 @@
+import { defaultRebookingOptions } from "./../../../RebookingRadioGroup";
 import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
+import data from "../../../../data";
 import store, { boothStore } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import { LayersMode } from "../../../../store/LayerStore";
@@ -34,8 +36,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         super(context, booth);
 
         if (!booth.paths || booth.pathsWithRect) {
-            
-            let rect = this.booth.rect.withPadding(boothStore.borderWidth / 2, boothStore.borderWidth / 2);
+            const width =
+                booth.borderColor === "none" ? 0 : isNaN(booth.borderWidth) ? boothStore.borderWidth : booth.borderWidth;
+            let rect = this.booth.rect.withPadding(width / 2, width / 2);
 
             const p = Polygon4.fromRect(rect).rotate(this.booth.rotate, this.booth.rect.cx, this.booth.rect.cy);
             const triangles = p.toTriangles();
@@ -158,9 +161,12 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     @computed({ keepAlive: true }) get defaultColor() {
         const b = this.booth;
         let defColor: string;
+
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
+            if (data.isRebooking) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color.primary;
+
             const settingsColors = settings.colors.booths;
             if (b.onHold) {
                 defColor = b.holdColor || b.soldColor || settingsColors.default;
@@ -177,7 +183,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     }
 
     @computed get selectedColorInterpolateFunc() {
-        const color0 = "#000";
+        const color0 = !Color(settings.boothLabelColor).isLight() ? "#fff" : "#000";
         const color1 = settings.colors.booths.selected;
         return colorInterpolate([color0, color1]);
     }
@@ -187,12 +193,13 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
 
         let color: string;
         if (b.error) color = "#f33";
+        else if (data.isRebooking) color = this.defaultColor;
         else if (b.selected) {
             color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
         } else color = this.defaultColor;
 
-        let colorInfo = Color(color);
-        if (b.hover && !b.selected) {
+        let colorInfo = Color(color === "none" ? "#f33" : color);
+        if ((b.hover && !b.selected) || (b.selected && data.isRebooking)) {
             const a = colorInfo.alpha();
             colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
         }

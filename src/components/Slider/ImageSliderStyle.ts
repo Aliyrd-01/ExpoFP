@@ -1,5 +1,6 @@
 import { FillMode, FullScreenIcon, ImageNavArrowLeft, ImageNavArrowRight } from "./ImageSliderData";
 import { assignObjects } from "./ImageSliderUtil";
+import { uiState } from "../../store";
 
 const fillColor = "#FFFFFF";
 
@@ -18,7 +19,7 @@ const basicRootContainer = {
 };
 
 const fullScreenContainer = {
-    position: "fixed",
+    position: "absolute",
     top: 0,
     bottom: 0,
     left: 0,

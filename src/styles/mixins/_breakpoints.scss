@@ -33,3 +33,21 @@
         @content;
     }
 }
+@mixin responsive-classes-down-to($class, $name, $breakpoints: $grid-breakpoints) {
+    $max: breakpoint-max($name, $breakpoints);
+    $keys: map-keys($breakpoints);
+    $index: index($keys, $name);
+    $selectors: "";
+
+    @if $index {
+        @for $i from 1 through $index {
+            $key: nth($keys, $i);
+            $selectors: if($selectors == "", $class + "." + $key, $selectors + ", " + $class + "." + $key);
+        }
+        #{$selectors} {
+            @content;
+        }
+    } @else {
+        @content;
+    }
+}

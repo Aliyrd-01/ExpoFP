@@ -18,7 +18,7 @@ export default function configBoothBorder(
 ) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
     if (settings.EXPO === "confex20") return;
-    if (booth.paths && !booth.pathsWithRect) return;
+    if (booth.borderColor === "none" || booth.borderWidth === 0 || (booth.paths && !booth.pathsWithRect)) return;
     new BoothBorderDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
@@ -26,9 +26,9 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
     constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
         super(context, booth, layerID + "booth-border", TrianglePainter, painterOrderPriority, visible);
 
-        const borderColor = Color(settings.boothBorderColor).vec4();
+        const borderColor = Color(booth.borderColor).vec4();
         const r = this.booth.rect;
-        const width = boothStore.borderWidth;
+        const width = booth.borderWidth || boothStore.borderWidth;
 
         const triangles: Triangle[] = [];
 

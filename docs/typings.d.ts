@@ -22,12 +22,13 @@ class FloorPlan {
     selectCurrentPosition(
         //
         point: { x: number; y: number; angle?: number; z?: string; lat?: number; lng?: number },
-        focus?: boolean
+        focus?: boolean,
+        icon?: number // 0- blue dot, 1- YAH icon
     ): void;
 
     updateLayerVisibility(layer: string, visible: boolean): void;
 
-    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void;
+    selectRoute(from: string, to: string, onlyAccessible: boolean): void;
 }
 
 interface FloorPlanOptions {

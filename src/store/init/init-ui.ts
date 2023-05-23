@@ -9,8 +9,13 @@ export const kioskKey = "kiosk";
 
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
+    uiState.rootElement = window["__efpElement"];
+
     updateScreenSize(uiState);
-    window.addEventListener("resize", () => updateScreenSize(uiState));
+
+    window.addEventListener("resize", () => {
+        if (!uiState.kiosk) updateScreenSize(uiState);
+    });
     if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
     // uiState.previewExhibitor = previewExhibitor;
 
@@ -41,7 +46,7 @@ export default function initUi(store: RootStore) {
     if (!uiState.wsShown) uiState.wsStarted = true;
 
     uiState.kiosk = localStorage.getItem(kioskKey) === "1";
-    
+
     if (uiState.kiosk) {
         var time;
         // window.onload = resetTimer;
@@ -64,6 +69,7 @@ export default function initUi(store: RootStore) {
             console.log("zzz2", "reset timer");
             clearTimeout(time);
             time = setTimeout(logout, 30000);
+            uiState.inIdle = false;
         }
     }
 
@@ -83,6 +89,6 @@ export default function initUi(store: RootStore) {
 
 function updateScreenSize(uiState: UIState) {
     runInAction("uiState.screenSize", () => {
-        uiState.screenSize = new Size(window.innerWidth, window.innerHeight);
+        uiState.screenSize = new Size(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
     });
 }

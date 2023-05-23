@@ -46,4 +46,14 @@ a.efp-button {
         display: inline-flex;
         width: auto;
     }
+    &--gray {
+        background: var(--color-grayUltraLight);
+        color: var(--color-black);
+
+        &:hover,
+        &:active {
+            background: var(--color-grayLight);
+            color: var(--color-black);
+        }
+    }
 }

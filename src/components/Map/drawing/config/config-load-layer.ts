@@ -1,3 +1,4 @@
+import { boothStore } from "./../../../../store/index";
 import store from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
@@ -9,6 +10,7 @@ import { DrawerContext } from "./../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
+import configSizes from "./config-sizes";
 
 export default async function loadLayer(
     layer: Layer,
@@ -28,8 +30,8 @@ export default async function loadLayer(
 
         const booths = initBooths(store, layer.name);
 
-        const logosBooths = booths.filter(
-            (b) => b instanceof RegularBooth && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
+        const logosBooths = boothStore.booths.filter(
+            (b) => b.rect && (!b.layer || b.layer === layer) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));
@@ -41,7 +43,7 @@ export default async function loadLayer(
 
         layer.loaded = true;
 
-        // configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
+        //configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
 
         if (!withConfiguration) return resolve(false);
 
@@ -51,17 +53,7 @@ export default async function loadLayer(
             context.requireUpdate(null);
             var imagePainter = context.getLayersPainters([layer.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
             if (!imagePainter) return;
-
-            //imagePainter.alpha = 0;
-            imagePainter.visible = true;
-            // animate(
-            //     0,
-            //     500,
-            //     easeLinear,
-            //     interpolateNumber(0, 1),
-            //     context.requireUpdate.bind(context),
-            //     (v) => (imagePainter.alpha = v)
-            // );
+            imagePainter.visible = layer.visible;
         });
 
         context.requireUpdate(null);

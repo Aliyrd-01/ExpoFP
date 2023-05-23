@@ -10,7 +10,7 @@ import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 
 trackEvent("load");
-sendEventToGa(`FP`, GaEventActions.Load, ``);
+sendEventToGa(GaEventActions.Load, ``);
 
 // initStore(store);
 
@@ -53,18 +53,14 @@ export default class FloorPlanReady extends FloorPlanLoader {
         }
     }
 
-    selectRoute(
-        from: string | { x: number; y: number },
-        to: string | { x: number; y: number },
-        exceptUnaccessible: boolean
-    ): void {
+    selectRoute(from: string | { x: number; y: number }, to: string | { x: number; y: number }): void {
         const bFrom = store.boothStore.booths.find((b) => b.name === from) || (from as any);
         const bTo = store.boothStore.booths.find((b) => b.name === to) || (to as any);
-        store.routeStore.selectRoute(new Route(bFrom, bTo, exceptUnaccessible));
+        store.routeStore.selectRoute(new Route(bFrom, bTo));
     }
 
-    selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
-        store.routeStore.selectCurrentPosition(point, focus);
+    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
+        store.routeStore.selectCurrentPosition(point, focus, icon);
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {

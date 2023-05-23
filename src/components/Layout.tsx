@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { layersStore, uiState } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
 import isDebug from "../utils/is-debug";
@@ -11,7 +11,6 @@ import Controls from "./Controls";
 import Floors from "./Floors";
 import Header from "./Header";
 import LargeMessage from "./LargeMessage";
-// import TouchHover from "./TouchHover";
 import "../styles/index.scss";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
@@ -20,8 +19,9 @@ import { MapLoader } from "./Mapbox/MapLoader";
 import Overlay from "./Overlay";
 import Pdf from "./Pdf";
 import Share from "./Share";
-// import Demo from "./Demo";
 import Ws from "./Ws";
+import { LayersMode } from "../store/LayerStore";
+import TouchHand from "./TouchHand";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -49,12 +49,14 @@ export default observer(function Layout() {
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />
+                {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
                 <LogoOverlay />
                 <Ws />
                 <Controls />
+                {settings.EXPO === "exhibitorlive2023" && uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
-                <Floors />
+                {layersStore.mode == LayersMode.Radio && <Floors />}
                 {!uiState.noOverlay && <Overlay />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (

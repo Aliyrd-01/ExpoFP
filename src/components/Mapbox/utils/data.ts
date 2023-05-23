@@ -213,9 +213,6 @@ export function switchViewbox(showMapbox: boolean) {
 }
 
 export function setDataSource(booths: Booth[], logos: Img[]) {
-    const avgHeight = logos.map((l) => l.htmlImage.height).reduce((a, b) => a + b, 0) / logos.length;
-    const avgArea = logos.map((l) => l.bounds.width * l.bounds.height).reduce((a, b) => a + b, 0) / logos.length;
-
     fpGeo.features.forEach((f: Feature) => {
         f.properties.id = f.properties.id?.substring(1);
 
@@ -229,12 +226,13 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
                     ? null
                     : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
 
-                const logo = logos.find((l) => l?.name === booth.name);
+                const logo = logos.find((l) => l?.name === booth.slug);
 
                 if (logo) {
-                    const scale = avgHeight / logo.htmlImage.height;
-                    const factor = Math.sqrt(Math.max(1, (logo.bounds.height * logo.bounds.width) / avgArea)) / 5;
-                    f.properties.scale = scale * factor;
+                    var diagonale = Math.max(booth.rect.w, booth.rect.h);
+                    var aRatio = diagonale / logo.htmlImage.width;
+                    f.properties.scale = aRatio / 5;
+                    f.properties.scale1 = 5 * f.properties.scale;
 
                     var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
                     if (exhibitor) f.properties.logo = booth.slug;
@@ -287,9 +285,10 @@ export function setLayers(layers: Layer[]): string[] {
     const layersNames: string[] = [];
 
     layers.forEach((layer) => {
-        const image = fpGeo.images?.find((i) => i.layer === layer.name);
-        if (image) {
-            const bgLayer = layer.name + "-bg";
+        const images = fpGeo.images?.filter((i) => i.layer === layer.name) ?? [];
+
+        images.forEach((image, index) => {
+            const bgLayer = layer.name + "-bg_" + index;
 
             layersNames.push(bgLayer);
             map.addSource(bgLayer, {
@@ -306,7 +305,7 @@ export function setLayers(layers: Layer[]): string[] {
                     visibility: layer.visible ? "visible" : "none",
                 },
             });
-        }
+        });
 
         layersNames.push(layer.name + "-other");
         map.addLayer({
@@ -391,9 +390,10 @@ export function setLayers(layers: Layer[]): string[] {
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["has", "logo"]],
                 minzoom: 18,
                 layout: {
+                    "icon-size": ["interpolate", ["exponential", 2], ["zoom"], 18, ["get", "scale"], 22, ["get", "scale1"]],
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
-                    "icon-size": ["get", "scale"],
+                    //"icon-size": ["get", "scale"],
                     "icon-allow-overlap": true,
                     "icon-ignore-placement": true,
                     "icon-rotation-alignment": "viewport",
@@ -438,7 +438,7 @@ export function setMarker(type: "from" | "to" | "yah" | "cp", point: CurrentPosi
         var htmlElement = document.createElement("div");
         htmlElement.className = `marker ${type}`;
         marker = new mapboxgl.Marker(htmlElement, {
-            rotationAlignment: type !== "to" ? "map" : "auto",
+            rotationAlignment: type !== "to" && type !== "yah" ? "map" : "auto",
         }).setLngLat(lngLat);
 
         marker.addTo(map);

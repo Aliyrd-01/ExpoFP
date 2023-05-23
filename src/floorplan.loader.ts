@@ -1,4 +1,5 @@
 import _locales from "../public/locales/_locales";
+import { Data } from "./data/Data";
 import { CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadFont, loadJs } from "./tools/loaders";
@@ -36,6 +37,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
+    onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -44,11 +47,11 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(from: string, to: string, exceptUnaccessible: boolean): void {
+    selectRoute(from: string, to: string, onlyAccessible: boolean): void {
         nr();
     }
 
-    selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
+    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         nr();
     }
 
@@ -62,6 +65,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onDetails = options.onDetails;
+        this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
@@ -82,8 +86,22 @@ export default class FloorPlanLoader implements FloorPlan {
         this.eventId = eventId;
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
+        window["__efpElement"] = element;
+
+        window["__efpElement"] = element;
+        const classes = [...element.classList];
+        element.classList.remove(...classes);
+        element.classList.add("expofp-floorplan-default", ...classes);
+
+        const head = document.head || document.getElementsByTagName("head")[0];
+
+        const style = document.createElement("style");
+        head.prepend(style);
+        style.textContent = `.expofp-floorplan-default { width: 100%; height: 100%;}`;
 
         const shadowContainer = document.createElement("div");
+        shadowContainer.style.height = "100%";
+        shadowContainer.style.width = "100%";
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
@@ -100,6 +118,8 @@ export default class FloorPlanLoader implements FloorPlan {
         }
 
         const fpContainer = document.createElement("div");
+        fpContainer.style.height = "100%";
+        fpContainer.style.width = "100%";
         container.appendChild(fpContainer);
         if (useShadow) {
             Object.defineProperty(fpContainer, "ownerDocument", { value: container });

@@ -3,6 +3,7 @@ import schema from "../data.schema.json";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
+import { Data, RawRegularBooth, RawSpecialBooth } from "./Data";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {
@@ -11,9 +12,7 @@ export default function validateData(data: Data) {
     if (!data.exhibitors) data.exhibitors = [];
     if (!data.booths) data.booths = [];
     if (!data.categories) data.categories = [];
-    if (!data.gtag && EFP_EXPO === "jtrade19") data.gtag = "UA-134602409-3";
-    if (!data.gtag && EFP_EXPO === "expo") data.gtag = "UA-134602409-2";
-   
+
     if (data.hide3dMapDefault === undefined) data.hide3dMapDefault = false;
 
     // temporary workaround for invalid data.js
@@ -89,7 +88,7 @@ export default function validateData(data: Data) {
     if (!data.homeUrl && EFP_EXPO === "jtrade19") data.homeUrl = "https://www.jtrade.co.uk/";
     // this is permanent
     if (!data.boothTerm) data.boothTerm = "Booth";
-    if (!data.levelTerm) data.levelTerm = "lvl";
+    if (!data.levelTerm) data.levelTerm = "";
     if (EFP_EXPO === "expo") {
         const expoExpoAds = [2567, 2704, 2681, 2592, 2740, 2709, 2482, 2609, 2734, 2696, 2840, 2566, 2736];
         data.exhibitors.filter((x) => x.logo && expoExpoAds.indexOf(x.id) !== -1).forEach((x) => (x.advertise = true));
@@ -105,8 +104,9 @@ export default function validateData(data: Data) {
             if (typeof regBooth["onHold"] === "undefined") regBooth["onHold"] = b.isOnHold;
             if (typeof regBooth.availColor === "undefined") regBooth.availColor = b.availableColor;
             if (typeof regBooth.type === "undefined") regBooth.type = b.boothTypeName;
-            regBooth.exhibitors = regBooth.exhibitors || [];
         }
+
+        booth.exhibitors = booth.exhibitors || [];
     }
 
     for (const exhibitor of data.exhibitors) {

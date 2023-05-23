@@ -12,11 +12,13 @@ let rects: Rect[] = [];
 
 let segments: Rect[] = [];
 let segmentToRects = new Map<Rect, Rect[]>();
+let prevSegment: Rect;
 
 function calculate(booths: Booth[]) {
     rectsToBooths = new Map<Rect, Booth>();
     rects = [];
     segments = [];
+    prevSegment = null;
     segmentToRects = new Map<Rect, Rect[]>();
 
     let superSegment = Rect.fromMultiple(booths.map((b) => b.rect));
@@ -50,7 +52,6 @@ reaction(
     () => calculate(boothStore.booths.filter((b) => b.visible && b.rect).filter((b) => b.rect))
 );
 
-let prevSegment: Rect;
 function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {
     var pxSvgMatrix = drawer.getPxSvgMatrix();
     const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);

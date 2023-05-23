@@ -15,11 +15,12 @@ export default function initExhibitors(store: RootStore) {
         else data.exhibitors.push(previewExhibitor);
     }
 
-    data.exhibitors.sort(function (a: RawExhibitor, b: RawExhibitor) {
-        var x = (a.featured ? "0" : "1") + a.name.toLowerCase();
-        var y = (b.featured ? "0" : "1") + b.name.toLowerCase();
-        return x < y ? -1 : x > y ? 1 : 0;
-    });
+    /// TODO: remove this
+    // data.exhibitors.sort(function (a: RawExhibitor, b: RawExhibitor) {
+    //     var x = (a.featured ? "0" : "1") + a.name.toLowerCase();
+    //     var y = (b.featured ? "0" : "1") + b.name.toLowerCase();
+    //     return x < y ? -1 : x > y ? 1 : 0;
+    // });
 
     const { exhibitorStore } = store;
 
@@ -27,7 +28,7 @@ export default function initExhibitors(store: RootStore) {
         const e = new Exhibitor() as MutableRequired<Exhibitor>;
         Object.assign(e, raw);
         e.slug = generateUniqueSlug(e.name);
-
+        e.rebookingState = e.rebookingState || 0;
         e.logo = addBaseUrl(e.logo);
 
         if (e.gallery) e.gallery = e.gallery.map((url) => addBaseUrl(url));
@@ -45,6 +46,8 @@ export default function initExhibitors(store: RootStore) {
 
         (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
+        const schedule = store.scheduleStore.scheduleItems.filter((s) => s.exhibitorId === e.id);
+        e.schedule = schedule.length ? schedule : null;
     }
 
     // dispose

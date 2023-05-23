@@ -1,3 +1,4 @@
+import Color from "color";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import store, { uiState } from "../store";
@@ -10,6 +11,8 @@ import "./Alert.scss";
 import "./LogoOverlay.scss";
 import data from "../data";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
+import classNames from "classnames";
+import settings from "../tools/settings";
 
 export default function LogoOverlay() {
     const s = useLocalStore(() => ({
@@ -52,7 +55,16 @@ export default function LogoOverlay() {
 
     return useObserver(() => (
         <div>
-            <a href="https://expofp.com/" target="_blank" className="logo-overlay" style={s.style} rel="noopener noreferrer">
+            <a
+                href="https://expofp.com/"
+                target="_blank"
+                className={classNames("logo-overlay", {
+                    invert:
+                        Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.indexOf("dark") > -1,
+                })}
+                style={s.style}
+                rel="noopener noreferrer"
+            >
                 <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} />
             </a>
             {showWarning && (
@@ -70,8 +82,12 @@ export default function LogoOverlay() {
                 </Alert>
             )}
             {uiState.kiosk && (
-                <div className="qr" style={{ bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5), left: remsToPixels(0.5) }}>
-                    <QRCode value={window.location.href} size={100} />
+                <div
+                    className="qr"
+                    style={{ textAlign: "center", bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5), left: remsToPixels(0.5) }}
+                >
+                    <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
+                    <QRCode value={window.location.href.replace("/?kkiosk", "")} size={100} />
                 </div>
             )}
         </div>

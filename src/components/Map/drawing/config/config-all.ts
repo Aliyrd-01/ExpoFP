@@ -43,10 +43,18 @@ export default function configAll(context: DrawerContext = _context): void {
             if (counter === loaded) {
                 var l =
                     [...uiState.selectedBooths][0]?.layer?.name ||
+                    store.uiState.selectedExhibitor?.booths[0]?.layer?.name ||
                     uiState.selectedRoute?.from?.layer?.name ||
                     store.routeStore.defaultFrom?.layer?.name;
 
-                if (l) store.layerStore.updateVisibility(l, true);
+                if (l) {
+                    store.layerStore.updateVisibility(l, true);
+
+                    const booths =
+                        store.uiState.selectedExhibitor?.booths.filter((b) => b.layer?.name === l) ||
+                        [...store.uiState.selectedBooths].filter((b) => b.layer?.name === l);
+                    if (booths.length) store.uiState.moveToBooths = booths;
+                }
             }
 
             if (!animated && configured) {

@@ -12,36 +12,36 @@
                 element: document.querySelector("#floorplan"),
                 eventId: "wayfinding",
                 noOverlay: true,
-                onBoothClick: e => {
-		    window.onBoothClickHandler?.postMessage(e.target.name);
-		    window.webkit?.messageHandlers?.onBoothClickHandler?.postMessage(e.target.name);
-		    window.flutter_inappwebview?.callHandler("onBoothClick", e.target.name);
+                onBoothClick: (e) => {
+                    window.onBoothClickHandler?.postMessage(e.target.name);
+                    window.webkit?.messageHandlers?.onBoothClickHandler?.postMessage(e.target.name);
+                    window.flutter_inappwebview?.callHandler("onBoothClick", e.target.name);
                 },
                 onFpConfigured: () => {
-		    window.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
-		    window.webkit?.messageHandlers?.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
-		    window.flutter_inappwebview?.callHandler("onFpConfigured", "FLOOR PLAN CONFIGURED");
+                    window.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
+                    window.webkit?.messageHandlers?.onFpConfiguredHandler?.postMessage("FLOOR PLAN CONFIGURED");
+                    window.flutter_inappwebview?.callHandler("onFpConfigured", "FLOOR PLAN CONFIGURED");
                     console.info("FLOOR PLAN CONFIGURED");
                 },
                 onDirection: (e) => {
-		    window.onDirectionHandler?.postMessage(JSON.stringify(e));
-		    window.webkit?.messageHandlers?.onDirectionHandler?.postMessage(JSON.stringify(e));
-		    window.flutter_inappwebview?.callHandler("onDirection", JSON.stringify(e));
+                    window.onDirectionHandler?.postMessage(JSON.stringify(e));
+                    window.webkit?.messageHandlers?.onDirectionHandler?.postMessage(JSON.stringify(e));
+                    window.flutter_inappwebview?.callHandler("onDirection", JSON.stringify(e));
                     console.info("NEW DIRECTION", e);
-                }
+                },
             });
-			
-			function selectRoute(from, to, exceptUnAccessible){
-				window.floorplan?.selectRoute(from, to, exceptUnAccessible);
-			}
-			
-			function selectBooth(name){
-				window.floorplan?.selectBooth(name);
-			}
-		
-			function setCurrentPosition(x, y, focus){
-				window.floorplan?.selectCurrentPosition({x: x, y: y}, focus);
-			}
+
+            function selectRoute(from, to, onlyAccessible) {
+                window.floorplan?.selectRoute(from, to, onlyAccessible);
+            }
+
+            function selectBooth(name) {
+                window.floorplan?.selectBooth(name);
+            }
+
+            function setCurrentPosition(x, y, focus) {
+                window.floorplan?.selectCurrentPosition({ x: x, y: y }, focus);
+            }
         </script>
     </body>
 </html>

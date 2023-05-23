@@ -1,3 +1,4 @@
+import { ScheduleItem } from './ScheduleStore';
 import { lineLength, lineRectangleIntersections, pointInsideRectangle, Rect as Rectangle } from "simple-geometry";
 // import { observable } from 'mobx';
 import { computed, observable } from "mobx";
@@ -7,6 +8,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
 import data from "../data";
+import { PathInfo, RawRegularBooth } from "../data/Data";
 
 // interface BoothState {
 //     hover: boolean;
@@ -82,6 +84,8 @@ export abstract class BoothBase {
     readonly externalId: string;
     readonly title: string;
     readonly rect: Rect;
+    readonly borderWidth: number;
+    readonly borderColor: string;
     noLabels: boolean;
     readonly rotate: number;
     readonly paths: PathInfo[];
@@ -89,7 +93,14 @@ export abstract class BoothBase {
     readonly slug: string;
     readonly error: boolean;
     readonly description: string;
+    readonly exhibitors: Exhibitor[];
+    readonly labelColor: string;
+    readonly schedule: ScheduleItem[];
     @observable layer: Layer;
+
+    @computed({ keepAlive: true }) get bookmarked() {
+        return !!this.exhibitors.find((x) => x.bookmarked);
+    }
 
     @computed({ keepAlive: true }) private get uiState() {
         return this.store.rootStore.uiState;
@@ -117,7 +128,24 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
-        return this.inList || this.selected || this.store.rootStore.routeStore.defaultFrom?.id === this.id;
+        const { selectedRoute } = this.uiState;
+
+        if (
+            selectedRoute &&
+            selectedRoute.from &&
+            selectedRoute.from.id !== this.id &&
+            selectedRoute.to &&
+            selectedRoute.to.id !== this.id
+        ) {
+            return false;
+        }
+
+        return (
+            this.inList ||
+            this.selected ||
+            this.store.rootStore.routeStore.defaultFrom?.id === this.id ||
+            (this.uiState.list.type === "search" && this.uiState.list.text.trim().length === 0)
+        );
     }
 
     // // skipDim: boolean;
@@ -145,18 +173,12 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     readonly onHold: boolean; // comes from status
     readonly reserved: boolean; // comes from status
 
-    readonly exhibitors: Exhibitor[];
-
-    @computed({ keepAlive: true }) get bookmarked() {
-        return !!this.exhibitors.find((x) => x.bookmarked);
-    }
-
     // @computed({ keepAlive: true }) get reserved() {
     //     return this.exhibitors.length > 0 || this.onHold;
     // }
 }
 
-export class SpecialBooth extends BoothBase implements Omit<RawSpecialBooth, "special"> {
+export class SpecialBooth extends BoothBase {
     // readonly description: string;
     readonly color: string; // comes from svg or data.js
 }

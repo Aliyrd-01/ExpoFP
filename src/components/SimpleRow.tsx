@@ -1,4 +1,5 @@
 import React from "react";
+import data from "../data";
 import "./SimpleRow.scss";
 
 const SimpleRow: React.FC<{
@@ -18,6 +19,7 @@ const SimpleRow: React.FC<{
             className={"simple-row" + (active ? " active" : "") + " " + className}
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
+            style={{ marginLeft: data.isRebooking ? `5px` : null }}
         >
             <div className="simple-row__main">{line1}</div>
             <div className="simple-row__sub">{line2}</div>
