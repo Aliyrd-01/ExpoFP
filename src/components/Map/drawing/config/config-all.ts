@@ -42,17 +42,20 @@ export default function configAll(context: DrawerContext = _context): void {
             loaded++;
             if (counter === loaded) {
                 var l =
-                    [...uiState.selectedBooths][0]?.layer?.name ||
-                    store.uiState.selectedExhibitor?.booths[0]?.layer?.name ||
-                    uiState.selectedRoute?.from?.layer?.name ||
-                    store.routeStore.defaultFrom?.layer?.name;
+                    [...uiState.selectedBooths][0]?.layer ||
+                    store.uiState.selectedExhibitor?.booths[0]?.layer ||
+                    uiState.selectedRoute?.from?.layer ||
+                    store.routeStore.defaultFrom?.layer;
 
-                if (l) {
-                    store.layerStore.updateVisibility(l, true);
+                var name = l?.name;
+
+                if (name) {
+                    store.layerStore.updateVisibility(name, true);
+                    store.routeStore.currentRouteLayer = l;
 
                     const booths =
-                        store.uiState.selectedExhibitor?.booths.filter((b) => b.layer?.name === l) ||
-                        [...store.uiState.selectedBooths].filter((b) => b.layer?.name === l);
+                        store.uiState.selectedExhibitor?.booths.filter((b) => b.layer?.name === name) ||
+                        [...store.uiState.selectedBooths].filter((b) => b.layer?.name === name);
                     if (booths.length) store.uiState.moveToBooths = booths;
                 }
             }

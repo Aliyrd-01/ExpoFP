@@ -22,6 +22,7 @@ export default class RouteStore {
     @observable focusEnabled: boolean = true;
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
+    @observable currentRouteLayer: Layer = null;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -56,6 +57,8 @@ export default class RouteStore {
             if (route && (!route.from || !route.to)) store.showOverlay();
             if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
                 this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
+
+            if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
         }, 200);
     }
 

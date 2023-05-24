@@ -45,7 +45,6 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     onClickFloor,
     onAccessibleCheck,
 }) => {
-
     return (
         <div className="efp-wayfinding">
             {showForm && (
@@ -71,7 +70,7 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                         <button type="button" className="efp-wayfindingForm__switch" onClick={onSwitch}></button>
                     </div>
                     {showAccessible && (
-                        <div className="formGroup" style={{ marginLeft: 45 }}>
+                        <div className="formGroup" style={{ marginLeft: 20, marginBottom: 20 }}>
                             <ToggleSwitch
                                 name="onlyAccessible"
                                 label="Accessible"

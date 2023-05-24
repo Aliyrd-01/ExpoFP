@@ -30,6 +30,7 @@ export default function Floors() {
         var layer = store.layerStore.layers.find((l) => l.description === name);
         if (store.layerStore.mode === LayersMode.Radio) {
             store.layerStore.updateVisibility(layer.name, true, true);
+            store.routeStore.currentRouteLayer = layer;
 
             if (store.mapboxStore.showMapbox) return;
 
