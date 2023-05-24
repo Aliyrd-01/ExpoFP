@@ -50,6 +50,8 @@ export default function Floors() {
     return useObserver(() => {
         data = store.layerStore.layers
             .filter((l) => !l.frozen)
+            .concat(store.routeStore.layers)
+            .filter((value, index, array) => array.indexOf(value) === index)
             .map((l) => {
                 return {
                     shortName: l.shortName,

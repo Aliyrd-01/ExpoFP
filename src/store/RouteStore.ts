@@ -76,7 +76,7 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
-        var layers = [];
+        var layers: string[] = [];
         store.routeStore.routeLines
             ?.map((rl) => rl.p0.layer)
             .reverse()
@@ -84,7 +84,7 @@ export default class RouteStore {
                 if (layers.indexOf(l) === -1) layers.push(l);
             });
 
-        return store.layerStore.layers.filter((l) => layers.indexOf(l.name) > -1);
+        return layers.map((l) => store.layerStore.layers.find((layer) => layer.name === l));
     }
 
     @action clickRoute(from: Booth, to: Booth) {
