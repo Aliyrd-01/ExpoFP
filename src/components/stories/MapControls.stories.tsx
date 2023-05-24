@@ -14,8 +14,9 @@ const Template: Story<MapControlsProps> = (args) => {
     const responsiveClass = useContext(ResponsiveClassContext);
 
     const styles = {
+        position: "absolute",
         top: "10px",
-        left: "10px",
+        left: "386px",
     };
 
     const onChangeLayers = (id: string) => {
@@ -28,7 +29,8 @@ const Template: Story<MapControlsProps> = (args) => {
     };
 
     return (
-        <>
+        <div className="map layout">
+            <aside className="sidebar">Hops& Highways Lounge</aside>
             <MapControls
                 {...args}
                 className={responsiveClass}
@@ -39,7 +41,7 @@ const Template: Story<MapControlsProps> = (args) => {
                 onClickByWidth={() => action("onClickByWidth")(true)}
                 onChangeLayers={(id) => onChangeLayers(id)}
             />
-        </>
+        </div>
     );
 };
 

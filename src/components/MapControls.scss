@@ -1,15 +1,16 @@
 @import "../styles/helpers.scss";
 
-$mapControls: ".mapControls";
-$mapFixedControls: ".fixedControls";
-$mapControl: ".mapControl";
-$layersButton: ".layersButton";
-$checkedPanel: ".checkedPanel";
+$mapControls: ".map-controls";
+$mapFixedControls: ".fixed-controls";
+$mapControl: ".map-control";
+$layersButton: ".layers-button";
+$checkedPanel: ".checked-panel";
 
 #{$mapControls} {
     display: grid;
-    row-gap: rem(6px);
-    width: rem(32px);
+    row-gap: 6px;
+    width: 32px;
+    box-shadow: none;
 }
 #{$mapFixedControls} {
     position: fixed;
@@ -18,30 +19,29 @@ $checkedPanel: ".checkedPanel";
     display: flex;
     justify-content: center;
     align-items: center;
-    width: rem(32px);
-    height: rem(32px);
+    width: 32px;
+    height: 32px;
     padding: 0;
-    background: $color-white;
+    background: var(--color-white);
     border: 0;
-    border-radius: $border-radius;
-    box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.3);
+    border-radius: var(--border-radius-2);
+    box-shadow: var(--shadow-medium);
     outline: none;
     cursor: pointer;
 
     & > svg {
-        width: rem(20px);
-        height: rem(20px);
-        fill: $color-black;
-        opacity: 0.8;
+        width: 20px;
+        height: 20px;
+        fill: var(--color-grayDark);
     }
     &:hover {
         & > svg {
-            opacity: 1;
+            fill: var(--color-black);
         }
     }
     &.isActive {
         & > svg {
-            fill: $color-secondary;
+            fill: var(--color-primary);
             opacity: 1;
         }
     }
@@ -50,17 +50,17 @@ $checkedPanel: ".checkedPanel";
 #{$checkedPanel} {
     > ul {
         position: absolute;
-        background-color: white;
-        box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.3);
+        background-color: var(--color-white);
+        box-shadow: var(--shadow-medium);
     }
 
     position: absolute;
     left: 42px;
     top: 0;
-    min-width: rem(150px);
-    background: $color-white;
-    border-radius: $border-radius;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 150px;
+    background: var(--color-white);
+    border-radius: var(--border-radius-2);
+    box-shadow: var(--shadow-medium);
     backdrop-filter: blur(8px);
 
     &:before {
@@ -69,23 +69,24 @@ $checkedPanel: ".checkedPanel";
         top: 10px;
         left: -1px;
         transform: translateX(-50%);
-        border-right: 8px solid $color-white;
+        border-right: 8px solid var(--color-white);
         border-bottom: 8px solid transparent;
         border-top: 8px solid transparent;
     }
     &__title {
         display: flex;
         align-items: center;
-        padding: rem(8px 16px);
-        border-bottom: 1px solid $color-lightgray;
-        font-size: rem(15px);
+        padding: 8px 16px;
+        border-bottom: 1px solid var(--color-grayLight);
+        font-size: 15px;
         font-weight: bold;
         user-select: none;
     }
     & > ul {
         margin: 0;
-        padding: rem(6px 0);
+        padding: 6px 0;
         list-style: none;
+        border-radius: var(--border-radius-2);
 
         & > li {
             input[type="checkbox"] {
@@ -95,9 +96,9 @@ $checkedPanel: ".checkedPanel";
                     position: relative;
                     display: flex;
                     align-items: center;
-                    padding: rem(4px 16px);
+                    padding: 4px 16px;
                     width: 100%;
-                    font-size: rem(14px);
+                    font-size: 14px;
                     user-select: none;
                     cursor: pointer;
 
@@ -105,11 +106,11 @@ $checkedPanel: ".checkedPanel";
                         content: "";
                         width: 18px;
                         height: 12px;
-                        margin-right: rem(8px);
+                        margin-right: 8px;
                         background-image: url("data:image/svg+xml,%3Csvg width='18' height='12' viewBox='0 0 18 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.00004 3.58325C7.66533 3.58325 6.58337 4.66521 6.58337 5.99992C6.58337 7.33463 7.66533 8.41659 9.00004 8.41659C10.3348 8.41659 11.4167 7.33463 11.4167 5.99992C11.4167 4.66521 10.3348 3.58325 9.00004 3.58325ZM8.08337 5.99992C8.08337 5.49363 8.49375 5.08325 9.00004 5.08325C9.50633 5.08325 9.91671 5.49363 9.91671 5.99992C9.91671 6.50621 9.50633 6.91659 9.00004 6.91659C8.49375 6.91659 8.08337 6.50621 8.08337 5.99992Z' fill='%23C4C4C4'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9 0.25C5.24793 0.25 2.78838 3.21455 0.916877 5.52834C0.714855 5.7781 0.694331 6.12879 0.865839 6.40042C1.69641 7.71584 2.85936 9.03973 4.23721 10.0413C5.61359 11.0419 7.24653 11.75 9 11.75C10.7535 11.75 12.3864 11.0419 13.7628 10.0413C15.1406 9.03973 16.3036 7.71584 17.1342 6.40043C17.3057 6.1288 17.2852 5.77812 17.0831 5.52835C15.2117 3.2145 12.7521 0.25 9 0.25ZM5.1192 8.82804C4.06745 8.06348 3.14258 7.06936 2.43006 6.04557C4.28453 3.78647 6.24385 1.75 9 1.75C11.7562 1.75 13.7155 3.78644 15.5699 6.04556C14.8574 7.06936 13.9325 8.06348 12.8808 8.82804C11.6753 9.70438 10.3451 10.25 9 10.25C7.65489 10.25 6.32473 9.70438 5.1192 8.82804Z' fill='%23C4C4C4'/%3E%3C/svg%3E%0A");
                     }
                     &:hover {
-                        background: $color-ultraLightgray;
+                        background: var(--color-grayUltraLight);
                     }
                 }
                 &:checked ~ label {
@@ -141,7 +142,7 @@ $checkedPanel: ".checkedPanel";
             top: 8px;
         }
         &__title {
-            padding: rem(6px 16px);
+            padding: 6px 16px;
         }
     }
 }
