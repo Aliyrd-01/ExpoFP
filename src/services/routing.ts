@@ -180,6 +180,23 @@ if (uiState.previewExhibitor) {
     historyReplace("?" + uiState.previewExhibitor.slug);
 }
 
+if (history.location.search.includes("&") || history.location.search.includes("%26")) {
+    let search = history.location.search;
+    search = search.startsWith("?") ? search.slice(1) : search;
+
+    const delimiter = search.includes("&") ? "&" : "%26";
+    const splittedUrl: string[] = search.split(delimiter);
+
+    const newSearch = splittedUrl
+        .map((url) => {
+            const exhibitor = store.exhibitorStore.exhibitors.find((x: Exhibitor) => x.slug === url || x.externalId === url);
+            return exhibitor ? exhibitor.name : url;
+        })
+        .join("&");
+
+    historyReplace("?" + newSearch);
+}
+
 dispatchFromUrl();
 autorun(setTitle);
 autorun(stateToUrl);
