@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, CSSProperties } from "react";
 import { Meta, Story } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import MapControls, { MapControlsProps } from "../MapControls";
@@ -13,7 +13,7 @@ const Template: Story<MapControlsProps> = (args) => {
     const [activeItems, setActiveItems] = useState(args.layersActiveItems);
     const responsiveClass = useContext(ResponsiveClassContext);
 
-    const styles = {
+    const styles: CSSProperties = {
         position: "absolute",
         top: "10px",
         left: "386px",
