@@ -40,6 +40,8 @@ Base.args = {
             startDate: "2024-04-26T11:54:12.489Z",
             endDate: "2024-04-26T12:54:12.489Z",
             link: "https://google.com",
+            description:
+                "The season will feature 10 teams and follow the same format as the previous year, with each side playing 14 league games (7 at home and 7 away). The top 4 teams from the standings will progress to the playoffs, and while the dates for these games have not yet been announced, the finals will take place on May 28th, 2023, after the league stage concludes on May 21st.There will be a total of 74 matches in the IPL, comprising 70 league games and 4 playoff matches. This season, 18 double headers are scheduled, with the afternoon game at 3.30 PM IST and the evening match at 7.30 PM IST.",
         },
         {
             id: 65543343,
@@ -57,6 +59,7 @@ Base.args = {
             name: "Four alpine skiers survive Monviso avalanche",
             startDate: "2024-04-30T10:00:49.489Z",
             endDate: "2024-04-30T12:00:49.489Z",
+            description: "A 75 minute fast paced performance that uniquely blends stand-up comedy",
         },
     ],
 };

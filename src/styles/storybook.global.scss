@@ -17,6 +17,7 @@ body {
     background: gray;
 }
 .sidebar {
+    overflow: auto;
     width: 100%;
     max-width: 376px;
     height: 100vh;
