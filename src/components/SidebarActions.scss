@@ -73,7 +73,7 @@ $actionButton: ".efp-actionButton";
     }
     #{$actionButton} {
         height: clamp(52px, 6.2vh, 74px);
-        background: linear-gradient(270deg, #fb3e59 0%, #3d91f7 100%);
+        background: var(--k-color-primaryDark);
         box-shadow: var(--k-box-shadow-1);
         border: 0;
         border-radius: 60px;
