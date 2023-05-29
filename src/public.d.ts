@@ -78,6 +78,7 @@ interface FloorPlanCustomButtonEvent {
     externalId: string;
     buttonNumber: number;
     buttonUrl: string;
+    preventDefault: () => void;
 }
 
 const ExpoFP: {

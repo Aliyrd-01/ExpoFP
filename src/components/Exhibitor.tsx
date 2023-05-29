@@ -84,13 +84,14 @@ function ExhibitorComponent() {
         if (uiState.kiosk) return e.preventDefault();
     }
 
-    function customButtonClick(buttonNumber: number, buttonUrl: string) {
+    function customButtonClick(buttonNumber: number, buttonUrl: string, e: MouseEvent) {
         sendEventToGa(GaEventActions.ClickCustomButton, s.exhibitor.name);
 
         const data = {
             externalId: s.exhibitor.externalId,
             buttonNumber,
             buttonUrl,
+            preventDefault: e.preventDefault.bind(e),
         };
         if (uiState.onExhibitorCustomButtonClick) {
             uiState.onExhibitorCustomButtonClick(data);
@@ -156,8 +157,8 @@ function ExhibitorComponent() {
                     <Button
                         link={url}
                         inline={true}
-                        onClick={() => {
-                            customButtonClick(buttonNumber, url);
+                        onClick={(e) => {
+                            customButtonClick(buttonNumber, url, e);
                         }}
                         target={isIframe || uiState.onExhibitorCustomButtonClick ? "_blank" : "_self"}
                     >
