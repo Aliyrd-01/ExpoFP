@@ -15,9 +15,12 @@
 
 .layout {
     box-sizing: border-box;
+    position: relative;
+    height: 100%;
+    width: 100%;
 
     &__fixed {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
@@ -54,6 +57,7 @@ a:visited {
     font-size: calc(16px + 0.25vw);
 
     --k-color-primary: #3d91f7;
+    --k-color-primaryDark: #165eb6;
     --k-color-primaryLight: #e5f1ff;
     --k-scale: 1;
     --k-scale-font: 1;

@@ -1,23 +1,29 @@
+import React, { useState } from "react";
 import classNames from "classnames";
 import dateFormat from "dateformat";
-import React from "react";
+import sanitizeHTML from "../utils/sanitizeHtml";
+import Button from "./Button";
 import "./Schedule.scss";
 
+export interface EventI {
+    id: string | number;
+    name: string;
+    description?: string;
+    startDate: string;
+    endDate?: string;
+    link?: string;
+}
 export interface ScheduleProps {
-    events: {
-        name: string;
-        startDate: string;
-        endDate?: string;
-        link?: string;
-    }[];
+    events: EventI[];
+    descriptionMaxLength?: number;
 }
 
-function isCurrent(from: Date, to: Date) {
+function isCurrent(from: Date | string, to: Date | string) {
     const now = new Date();
     return from <= now && now <= to;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
+const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength = 200 }) => {
     events = events.filter((event) => new Date(event.endDate).getTime() > new Date().getTime());
 
     const sortByDate = events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
@@ -26,6 +32,27 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
         acc[date] ? acc[date].push(curr) : (acc[date] = [curr]);
         return acc;
     }, {});
+
+    const [eventsFullDescription, setEventsFullDescription] = useState(
+        Object.keys(grouped).reduce((result, date) => {
+            result[date] = grouped[date].map((event) => ({
+                showFullDescription: false,
+            }));
+            return result;
+        }, {})
+    );
+
+    const toggleDescription = (event: React.MouseEvent<HTMLButtonElement>, date: string, index: number) => {
+        event.preventDefault();
+        setEventsFullDescription((prev) => {
+            const newState = { ...prev };
+            newState[date][index].showFullDescription = !newState[date][index].showFullDescription;
+            return newState;
+        });
+    };
+
+    const transformDescription = (desc: string, show: boolean) =>
+        desc.length > descriptionMaxLength && show === false ? desc.slice(0, descriptionMaxLength) + "..." : desc;
 
     const EventWrapper = ({ children, link, current }) => {
         return link.length !== 0 ? (
@@ -49,7 +76,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
                         </div>
                         <div className="schedule__events">
                             {Array.isArray(events) &&
-                                events.map((event) => (
+                                events.map((event: EventI, eventIndex: number) => (
                                     <div key={event.id}>
                                         <EventWrapper
                                             link={event.link ? event.link : ""}
@@ -60,6 +87,33 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [] }) => {
                                                 {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
                                             </span>
                                             <strong>{event.name}</strong>
+                                            {event.description && (
+                                                <>
+                                                    <div
+                                                        className="schedule__event-desc"
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: sanitizeHTML(
+                                                                transformDescription(
+                                                                    event.description,
+                                                                    eventsFullDescription[date][eventIndex].showFullDescription
+                                                                )
+                                                            ),
+                                                        }}
+                                                    ></div>
+                                                    {event.description.length > descriptionMaxLength && (
+                                                        <Button
+                                                            variant="gray-border"
+                                                            size="sm"
+                                                            inline={true}
+                                                            onClick={(event) => toggleDescription(event, date, eventIndex)}
+                                                        >
+                                                            {eventsFullDescription[date][eventIndex].showFullDescription
+                                                                ? "Show less"
+                                                                : "Show more"}
+                                                        </Button>
+                                                    )}
+                                                </>
+                                            )}
                                         </EventWrapper>
                                     </div>
                                 ))}

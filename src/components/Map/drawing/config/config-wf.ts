@@ -3,6 +3,7 @@ import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import store, { layersStore, uiState } from "../../../../store";
+import { LayersMode } from "../../../../store/LayerStore";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
@@ -187,7 +188,11 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
+        let visible =
+            store.layerStore.mode == LayersMode.Default
+                ? true
+                : (store.layerStore.layers.find((l) => store.routeStore.currentRouteLayer?.name === line.p0.layer)?.visible ||
+                  false);
 
         if (!line.virtual && visible) lines.push(line);
 
@@ -407,7 +412,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
 
-            if (uiState.selectedRoute?.from && uiState.selectedRoute?.to) {
+            if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
                 wfDrawer.updateVisible("currentLocation_2", false);
 
                 wfDrawer.updateVisible("currentLocation", visible);
@@ -487,11 +492,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
         reaction(
-            () => [store.layerStore.loaded, store.layerStore.visible],
+            () => [store.layerStore.loaded, store.layerStore.visible, store.routeStore.currentRouteLayer],
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);

@@ -67,7 +67,7 @@ function ExhibitorComponent() {
     useAutorun(() => {
         if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(GaEventActions.View, s.exhibitor.name);
+            sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
         }
     });
 
@@ -141,6 +141,7 @@ function ExhibitorComponent() {
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
             bookmarked: exhibitor.bookmarked,
+            [uiState.responsiveClass]: true,
         });
 
         const expandDescription = () => {
@@ -220,7 +221,11 @@ function ExhibitorComponent() {
                                 ) : (
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                            <ImageSlider
+                                                screenSize={uiState.screenSize}
+                                                hideFullScreenIcon={true}
+                                                images={[exhibitor.leadingImageUrl]}
+                                            />
                                         </Suspense>
                                     </ErrorBoundary>
                                 )}
@@ -298,7 +303,11 @@ function ExhibitorComponent() {
                                 <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
+                                            <ImageSlider
+                                                screenSize={uiState.screenSize}
+                                                fillMode={FillMode.cover}
+                                                images={exhibitor.gallery}
+                                            />
                                         </Suspense>
                                     </ErrorBoundary>
                                 </div>

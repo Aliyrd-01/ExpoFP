@@ -11,7 +11,9 @@ export default function gtag(...args: any[]) {
 
 export enum GaEventActions {
     Load = "Load floor plan",
-    View = "View",
+    ViewBooth = "View booth",
+    ViewExhibitor = "View exhibitor",
+    ViewCategory = "View category",
     Search = "Search",
     ClickCustomButton = "Click custom button",
     ViewVideo = "View video",
@@ -34,7 +36,9 @@ export enum GaEventActions {
 export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string,) {
     //for reference https://developers.google.com/analytics/devguides/collection/ga4/reference/events
     switch (action) {
-        case GaEventActions.View:
+        case GaEventActions.ViewBooth:
+        case GaEventActions.ViewExhibitor:
+        case GaEventActions.ViewCategory:
         case GaEventActions.ViewGallery:
         case GaEventActions.ViewVideo:
             gtag("event", "select_content", {

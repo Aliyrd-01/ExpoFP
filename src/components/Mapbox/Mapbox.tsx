@@ -269,12 +269,13 @@ export default function Mapbox() {
     return useObserver(() => {
         return (
             <div
-                ref={mapContainer}
                 style={ls.style}
                 className={classNames("map-container", {
                     hidden: !store.mapboxStore.showMapbox,
                 })}
-            />
+            >
+                <div ref={mapContainer} className={classNames("map-wrapper", "mapboxgl-map")} />
+            </div>
         );
     });
 }

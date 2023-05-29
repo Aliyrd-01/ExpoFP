@@ -11,10 +11,12 @@ import CategoryRow from "./CategoryRow";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 
-const n = Math.ceil((Math.max(window.innerHeight, window.innerWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5));
+const n = Math.ceil(
+    (Math.max(uiState.rootElement.clientHeight, uiState.rootElement.clientWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5)
+);
 logger.log("List n1:", n);
 
-const List = () => {
+export default function List() {
     const s = useLocalStore(() => ({
         get items() {
             if (uiState.overlayShowsAll || uiState.listItems.length <= n) return uiState.listItems;
@@ -39,6 +41,4 @@ const List = () => {
     }
 
     return useObserver(() => <div>{s.items.map(mapItem)}</div>);
-};
-
-export default List;
+}

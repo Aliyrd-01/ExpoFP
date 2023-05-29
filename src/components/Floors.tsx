@@ -30,6 +30,7 @@ export default function Floors() {
         var layer = store.layerStore.layers.find((l) => l.description === name);
         if (store.layerStore.mode === LayersMode.Radio) {
             store.layerStore.updateVisibility(layer.name, true, true);
+            store.routeStore.currentRouteLayer = layer;
 
             if (store.mapboxStore.showMapbox) return;
 
@@ -49,6 +50,8 @@ export default function Floors() {
     return useObserver(() => {
         data = store.layerStore.layers
             .filter((l) => !l.frozen)
+            .concat(store.routeStore.layers)
+            .filter((value, index, array) => array.indexOf(value) === index)
             .map((l) => {
                 return {
                     shortName: l.shortName,

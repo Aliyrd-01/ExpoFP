@@ -6,10 +6,7 @@ a.efp-button {
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: rem(400px);
-    min-width: rem(160px);
-    min-height: rem(43px);
-    padding: rem(10px 20px);
+    max-width: 400px;
     background: $color-primary;
     border: 0;
     border-radius: 30px;
@@ -17,7 +14,6 @@ a.efp-button {
     cursor: pointer;
     color: $color-white;
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
-    font-size: rem(16px);
     font-weight: 600;
     text-decoration: none;
     transition: background 0.1s ease-in-out;
@@ -55,5 +51,35 @@ a.efp-button {
             background: var(--color-grayLight);
             color: var(--color-black);
         }
+    }
+    &--gray-border {
+        background: var(--color-white);
+        border: 1px solid var(--color-grayLight);
+        color: var(--color-black);
+
+        &:hover,
+        &:active {
+            background: var(--color-grayUltraLight);
+            border-color: var(--color-gray);
+            color: var(--color-black);
+        }
+    }
+    &--lg {
+        min-width: 160px;
+        min-height: 44px;
+        padding: 10px 20px;
+        font-size: rem(16px);
+    }
+    &--md {
+        min-width: 140px;
+        min-height: 38px;
+        padding: 8px 18px;
+        font-size: rem(14px);
+    }
+    &--sm {
+        min-width: 100px;
+        min-height: 30px;
+        padding: 4px 16px;
+        font-size: rem(14px);
     }
 }

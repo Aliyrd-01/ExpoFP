@@ -51,7 +51,7 @@ function Booth() {
 
     useAutorun(() => {
         if (s.booth) {
-            sendEventToGa(GaEventActions.View, s.booth.name);
+            sendEventToGa(GaEventActions.ViewBooth, s.booth.name);
         }
     });
 
