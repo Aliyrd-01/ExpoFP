@@ -170,6 +170,7 @@ export default class UIState {
     }
     // map
     @computed get mapVisibleTop() {
+        if (uiState.kiosk) return 0;
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
     }
     @computed get mapVisibleBottom() {
