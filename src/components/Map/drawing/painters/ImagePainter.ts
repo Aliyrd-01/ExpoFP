@@ -222,8 +222,6 @@ export default class ImagePainter implements Painter {
 
         const sprite = new Sprite();
 
-        const textureMap = new Map<string, WebGLTexture>();
-
         // sort objects
         //this.objects.sort((a, b) => a.order - b.order);
         // set index
@@ -231,12 +229,7 @@ export default class ImagePainter implements Painter {
             const obj = this.objects[i];
             obj.index = i;
             if (obj.img) {
-                if (textureMap.has(obj.img.src)) {
-                    obj.texture = textureMap.get(obj.img.src);
-                } else {
-                    obj.texture = this.createTextureForImageObject(obj.img);
-                    textureMap.set(obj.img.src, obj.texture);
-                }
+                obj.texture = this.createTextureForImageObject(obj.img);
             }
         }
 
