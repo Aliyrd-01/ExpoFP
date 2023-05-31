@@ -12,9 +12,12 @@ export interface GalleryProps {
     onImageLoadHeightUpdate?: () => void;
     onOpenGallery?: () => void;
     onCloseGallery?: () => void;
+    className?: string;
 }
 
-const Gallery: React.FC<GalleryProps> = ({ images, leading = false, onImageLoadHeightUpdate, onOpenGallery, onCloseGallery }) => {
+const Gallery: React.FC<GalleryProps> = (props) => {
+    const { images, leading = false, onImageLoadHeightUpdate, onOpenGallery, onCloseGallery, className } = props;
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
 
@@ -32,9 +35,13 @@ const Gallery: React.FC<GalleryProps> = ({ images, leading = false, onImageLoadH
     return (
         <React.Fragment>
             <div
-                className={classNames("gallery", {
-                    "gallery-leading": leading,
-                })}
+                className={classNames(
+                    "gallery",
+                    {
+                        "gallery-leading": leading,
+                    },
+                    className
+                )}
             >
                 <div className="gallery__wrapper">
                     {leading ? (
@@ -62,7 +69,13 @@ const Gallery: React.FC<GalleryProps> = ({ images, leading = false, onImageLoadH
                 {!leading && <GalleryBadges onFullscreen={() => openModal(0)} count={images.length} />}
             </div>
             {isModalOpen && (
-                <GalleryModal images={images} leading={leading} initialSlideIndex={currentSlideIndex} onClose={closeModal} />
+                <GalleryModal
+                    className={className}
+                    images={images}
+                    leading={leading}
+                    initialSlideIndex={currentSlideIndex}
+                    onClose={closeModal}
+                />
             )}
         </React.Fragment>
     );

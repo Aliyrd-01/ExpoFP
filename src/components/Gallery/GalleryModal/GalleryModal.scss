@@ -1,5 +1,4 @@
 @import "../../../styles/helpers.scss";
-@import "~swiper/swiper.min.css";
 
 .gallery-modal {
 	position: fixed;
@@ -37,11 +36,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
-
-		@include media-breakpoint-down(md) {
-			top: 20px;
-			right: 20px;
-		}
 	}
 
 	&__btn {
@@ -58,19 +52,8 @@
 		padding: 0;
 		transition: background 0.2s;
 
-		@include media-breakpoint-down(md) {
-			width: 50px;
-			height: 50px;
-		}
-
 		&:hover {
 			background: rgba(48, 48, 48, 0.4);
-		}
-
-		&.zoom-in, &.zoom-out, &.next, &.prev {
-			@include media-breakpoint-down(md) {
-				display: none;
-			}
 		}
 
 		&.next, &.prev {
@@ -108,8 +91,26 @@
 	height: 100%;
 	width: 100%;
 	padding: 40px;
+}
 
-	@include media-breakpoint-down(md) {
+@include responsive-classes-down-to(".gallery-modal", md) {
+	.gallery-slider {
+		&__controls {
+			top: 20px;
+			right: 20px;
+		}
+
+		&__btn {
+			width: 50px;
+			height: 50px;
+
+			&.zoom-in, &.zoom-out, &.next, &.prev {
+				display: none;
+			}
+		}
+	}
+
+	.gallery-slider__zoom-content {
 		padding: 20px;
 	}
 }

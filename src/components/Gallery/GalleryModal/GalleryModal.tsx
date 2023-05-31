@@ -7,15 +7,19 @@ import GalleryControls from "../GalleryControls/GalleryControls";
 import TransformImg from "../TransformImg/TransformImg";
 import { t } from "../../../utils/i18n";
 import "./GalleryModal.scss";
+import classNames from "classnames";
 
 interface GalleryModalProps {
     images: string[];
     leading: boolean;
     initialSlideIndex: number;
     onClose: () => void;
+    className?: string;
 }
 
-const GalleryModal: React.FC<GalleryModalProps> = ({ images, leading, initialSlideIndex, onClose }) => {
+const GalleryModal: React.FC<GalleryModalProps> = (props) => {
+    const { images, leading, initialSlideIndex, onClose, className } = props;
+
     const [currentSlideIndex, setCurrentSlideIndex] = useState(initialSlideIndex);
     const [zoomUtils, setZoomUtils] = useState<ReactZoomPanPinchRef[]>([]);
 
@@ -37,7 +41,7 @@ const GalleryModal: React.FC<GalleryModalProps> = ({ images, leading, initialSli
     };
 
     return (
-        <div className="gallery-modal">
+        <div className={classNames("gallery-modal", className)}>
             <SwiperComponent
                 onSwiper={(swiper) => (swiperRef.current = swiper)}
                 className="gallery-slider"

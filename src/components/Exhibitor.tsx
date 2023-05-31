@@ -226,6 +226,7 @@ function ExhibitorComponent() {
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
                                             <Gallery
+                                                className={uiState.responsiveClass}
                                                 onOpenGallery={() => store.openGallery()}
                                                 onCloseGallery={() => store.closeGallery()}
                                                 onImageLoadHeightUpdate={onUpdateGallery}
@@ -310,6 +311,7 @@ function ExhibitorComponent() {
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
                                             <Gallery
+                                                className={uiState.responsiveClass}
                                                 onOpenGallery={() => store.openGallery()}
                                                 onCloseGallery={() => store.closeGallery()}
                                                 onImageLoadHeightUpdate={onUpdateGallery}

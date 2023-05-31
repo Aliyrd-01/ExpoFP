@@ -32,24 +32,6 @@
 		overflow-x: hidden;
 		overflow-y: hidden;
 		height: 100%;
-		@include media-breakpoint-down(md) {
-			display: grid;
-			grid-gap: 16px;
-			grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
-			grid-template-rows: 50%;
-			grid-auto-flow: column;
-			grid-auto-columns: minmax(280px,1fr);
-
-			overflow-x: visible;
-
-			-webkit-overflow-scrolling: touch;
-
-			&::-webkit-scrollbar {
-				display: none;
-			}
-			-ms-overflow-style: none;
-			scrollbar-width: none;
-		}
 	}
 
 	&__item {
@@ -57,31 +39,6 @@
 		flex-shrink: 0;
 		gap: 10px;
 		background: black;
-
-		@include media-breakpoint-down(md) {
-			height: 240px;
-
-			&:nth-child(3n+2) {
-				grid-row: 1 / -1;
-				height: 120px;
-			}
-
-			&:nth-child(3n) {
-				grid-row: 2 / -1;
-				height: 120px;
-			}
-
-			&:nth-child(3n-2) {
-				grid-row: 1 / -1;
-			}
-
-			&:nth-child(3n+2):last-child:not(:nth-child(3)) {
-				/* stretch the last element to 2 rows if the 2nd row is empty */
-				grid-row: span 2;
-				height: 240px;
-			}
-
-		}
 	}
 
 	&__badge {
@@ -121,6 +78,51 @@
 
 		& span {
 			margin-left: 8px;
+		}
+	}
+}
+
+@include responsive-classes-down-to(".gallery", md) {
+	.gallery__wrapper {
+		display: grid;
+		grid-gap: 16px;
+		grid-template-columns: repeat(auto-fill, minmax(75%, 1fr));
+		grid-template-rows: 50%;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(75%, 1fr);
+
+		overflow-x: visible;
+
+		-webkit-overflow-scrolling: touch;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	.gallery__item {
+		height: 240px;
+
+		&:nth-child(3n+2) {
+			grid-row: 1 / -1;
+			height: 120px;
+		}
+
+		&:nth-child(3n) {
+			grid-row: 2 / -1;
+			height: 120px;
+		}
+
+		&:nth-child(3n-2) {
+			grid-row: 1 / -1;
+		}
+
+		&:nth-child(3n+2):last-child:not(:nth-child(3)) {
+			/* stretch the last element to 2 rows if the 2nd row is empty */
+			grid-row: span 2;
+			height: 240px;
 		}
 	}
 }
