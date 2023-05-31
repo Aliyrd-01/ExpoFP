@@ -35,7 +35,7 @@ $actionButton: ".efp-actionButton";
         transition: fill 0.1s ease;
 
         & + .text {
-            margin-left: 4px;
+            margin-inline-start: 4px;
         }
     }
     &:hover {

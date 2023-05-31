@@ -33,6 +33,13 @@
     }
 }
 
+.layout[dir="rtl"] .overlay {
+    &.start {
+        left: unset;
+        right: 0;
+    }
+}
+
 .efp-kiosk {
     .overlay {
         top: var(--k-app-gap) !important;

@@ -38,6 +38,12 @@
     }
 }
 
+.layout[dir="rtl"] .overlay-bar-back {
+    &__icon2 {
+        transform: rotateY(180deg);
+    }
+}
+
 .efp-kiosk {
     .overlay-bar-back {
         width: 70px;
