@@ -46,7 +46,7 @@ export default class ExhibitorStore {
 
         if (rebookingNote?.length) exhibitor.rebookingNote += "\r\n" + rebookingNote;
 
-        fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
+        fetch("https://app.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
