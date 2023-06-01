@@ -66,9 +66,11 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
 
 function Search() {
     const el = useRef<HTMLDivElement>();
+    const overlayContentRef = useRef<HTMLDivElement>();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
+        updateOverlayContent: null as () => void,
         get hideRealInput() {
             return uiState.overlayBottom ? this.elementTop > 50 || uiState.overlaySize !== "full" : false;
         },
@@ -98,6 +100,12 @@ function Search() {
     useAutorun(() => {
         if (uiState.overlaySize !== "full" && document.activeElement === getInput()) {
             getInput().blur();
+        }
+    });
+
+    useAutorun(() => {
+        if (uiState.menu && uiState.kiosk) {
+            uiState.searchFocused = false;
         }
     });
 
@@ -165,7 +173,15 @@ function Search() {
         );
         // console.log("Search", s.hideRealInput, s.text);
         return (
-            <OverlayContent onClose={handleClose} onBack={handleBack} backMode={s.backMode} hideClose={!s.showClose} bar={bar}>
+            <OverlayContent
+                onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
+                onClose={handleClose}
+                onBack={handleBack}
+                backMode={s.backMode}
+                hideClose={!s.showClose}
+                bar={bar}
+                passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
+            >
                 <List />
             </OverlayContent>
         );
@@ -191,7 +207,10 @@ function Search() {
         uiState.searchFocused = true;
     }
 
-    function handleBlur() {
+    function handleBlur(e: FocusEvent) {
+        if (overlayContentRef.current.contains(e.relatedTarget)) {
+            return;
+        }
         setTimeout(() => (uiState.searchFocused = false), 200);
     }
 
@@ -230,6 +249,9 @@ function Search() {
     }
 
     function handleBack() {
+        if (uiState.kiosk) {
+            uiState.searchFocused = false;
+        }
         getInput().value = "";
         setText();
         uiState.desiredOverlaySize = "medium";

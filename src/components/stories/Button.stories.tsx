@@ -18,6 +18,8 @@ const Template: Story<ButtonProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
+    variant: "primary",
+    size: "lg",
     text: "Text",
     disabled: false,
     inline: false,

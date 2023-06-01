@@ -43,9 +43,10 @@ export default class ExhibitorStore {
 
     @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
         exhibitor.rebookingState = state;
-        exhibitor.rebookingNote = rebookingNote;
 
-        fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
+        if (rebookingNote?.length) exhibitor.rebookingNote += "\r\n" + rebookingNote;
+
+        fetch("https://app.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -59,6 +60,7 @@ export default class ExhibitorStore {
             }),
         })
             .then((r) => {
+                console.info("Rebooking state sent", r.ok);
                 if (!r.ok && !isDebug) exhibitor.rebookingState = 0;
             })
             .catch((e) => {

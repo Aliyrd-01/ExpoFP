@@ -1,4 +1,4 @@
-import { ScheduleItem } from './ScheduleStore';
+import { ScheduleItem } from "./ScheduleStore";
 import { lineLength, lineRectangleIntersections, pointInsideRectangle, Rect as Rectangle } from "simple-geometry";
 // import { observable } from 'mobx';
 import { computed, observable } from "mobx";
@@ -107,7 +107,7 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) public get fullName() {
-        if (this.layer) return (this.title || this.name) + ` ${data.levelTerm} ` + this.layer.description;
+        if (this.layer?.mode > 1) return (this.title || this.name) + ` ${data.levelTerm} ` + this.layer.description;
         return this.title || this.name;
     }
 

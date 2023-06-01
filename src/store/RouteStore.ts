@@ -22,6 +22,7 @@ export default class RouteStore {
     @observable focusEnabled: boolean = true;
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
+    @observable currentRouteLayer: Layer = null;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -56,6 +57,8 @@ export default class RouteStore {
             if (route && (!route.from || !route.to)) store.showOverlay();
             if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
                 this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
+
+            if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
         }, 200);
     }
 
@@ -73,7 +76,7 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
-        var layers = [];
+        var layers: string[] = [];
         store.routeStore.routeLines
             ?.map((rl) => rl.p0.layer)
             .reverse()
@@ -81,7 +84,7 @@ export default class RouteStore {
                 if (layers.indexOf(l) === -1) layers.push(l);
             });
 
-        return store.layerStore.layers.filter((l) => layers.indexOf(l.name) > -1);
+        return layers.map((l) => store.layerStore.layers.find((layer) => layer.name === l));
     }
 
     @action clickRoute(from: Booth, to: Booth) {

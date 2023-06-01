@@ -17,9 +17,16 @@ const OverlayContent: React.FC<{
     onBack?: () => void;
     onClose: () => void;
     onUpdateFuncSet?: (s: () => void) => void;
-}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet }) => {
+    passRefToParent?: (el: React.RefObject<HTMLDivElement>) => void;
+}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet, passRefToParent }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
+    const [psInstance, setPsInstance] = useState<PerfectScrollbar>(null);
+    const contentRef = useRef<HTMLDivElement>();
+
+    useLayoutEffect(() => {
+        if (passRefToParent) passRefToParent(contentRef);
+    }, [contentRef, passRefToParent]);
 
     useLayoutEffect(() => {
         const sel = scrollable.current;
@@ -28,11 +35,18 @@ const OverlayContent: React.FC<{
             // logger.log("scrolled", sel.scrollTop, scrolled);
         };
 
-        let update: () => void;
+        let update: () => void = () => {};
 
         if (isScrollUgly) {
-            const ps = new PerfectScrollbar(sel);
-            update = () => ps.update();
+            if (!psInstance) {
+                const ps = new PerfectScrollbar(sel, { minScrollbarLength: 25 });
+                ps.scrollbarY.tabIndex = 0;
+                ps.scrollbarYRail.tabIndex = 0;
+                setPsInstance(ps);
+                update = () => ps.update();
+            } else {
+                update = () => psInstance.update();
+            }
             sel.addEventListener("ps-scroll-y", setScrolled);
         } else {
             update = setScrolled;
@@ -45,11 +59,15 @@ const OverlayContent: React.FC<{
         observer.observe(sel, { childList: true, subtree: true });
 
         return () => {
+            if (psInstance) {
+                psInstance.destroy();
+                setPsInstance(null);
+            }
             window.removeEventListener("resize", update);
             if (onUpdateFuncSet) onUpdateFuncSet(null);
             observer.disconnect();
         };
-    }, [scrollable, onUpdateFuncSet]);
+    }, [scrollable, onUpdateFuncSet, psInstance]);
 
     useEffect(() => {
         if (uiState.overlaySize !== "full" && scrollable.current.scrollTop !== 0) {
@@ -59,7 +77,7 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     return (
-        <div className={`overlay-content ${className || ""}`} id="overlay-content">
+        <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}>
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
             <OverlayBar scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>

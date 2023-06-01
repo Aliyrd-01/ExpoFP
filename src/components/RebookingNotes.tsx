@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./RebookingNotes.scss";
 import Button from "./Button";
 
@@ -11,9 +11,14 @@ export interface RebookingNotesProps {
 }
 
 const RebookingNotes: React.FC<RebookingNotesProps> = ({ state = "default", value, date, onClickSave }) => {
-    const [internalValue, setInternalValue] = useState<string>(value);
+    const [internalValue, setInternalValue] = useState<string>("");
     const [currentState, setCurrentState] = useState<RebookingNotesMode>(state);
     const [bufValue, setBufValue] = useState<string>("");
+
+    useEffect(() => {
+        setCurrentState("default");
+        setInternalValue("");
+    }, [value]);
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => setInternalValue(event.target.value as string);
     const handleEdit = () => {
@@ -22,6 +27,7 @@ const RebookingNotes: React.FC<RebookingNotesProps> = ({ state = "default", valu
     };
     const handleSave = () => {
         onClickSave(internalValue);
+        setInternalValue("");
         setCurrentState("default");
     };
     const handleCancel = () => {

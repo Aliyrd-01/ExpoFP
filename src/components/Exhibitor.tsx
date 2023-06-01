@@ -84,13 +84,14 @@ function ExhibitorComponent() {
         if (uiState.kiosk) return e.preventDefault();
     }
 
-    function customButtonClick(buttonNumber: number, buttonUrl: string) {
+    function customButtonClick(buttonNumber: number, buttonUrl: string, e: MouseEvent) {
         sendEventToGa(GaEventActions.ClickCustomButton, s.exhibitor.name);
 
         const data = {
             externalId: s.exhibitor.externalId,
             buttonNumber,
             buttonUrl,
+            preventDefault: e.preventDefault.bind(e),
         };
         if (uiState.onExhibitorCustomButtonClick) {
             uiState.onExhibitorCustomButtonClick(data);
@@ -124,12 +125,14 @@ function ExhibitorComponent() {
                     showTitle={false}
                     options={defaultRebookingOptions}
                     checked={exhibitor.rebookingState.toString()}
-                    onChange={(e) =>
-                        store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), exhibitor.rebookingNote)
-                    }
+                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), "")}
                 />
+                <div
+                    style={{ margin: "0 20px 20px 20px", whiteSpace: "pre-wrap" }}
+                    dangerouslySetInnerHTML={{ __html: exhibitor.rebookingNote }}
+                ></div>
                 <RebookingNotes
-                    state={exhibitor.rebookingNote ? "edit" : "default"}
+                    state={"default"}
                     value={exhibitor.rebookingNote}
                     onClickSave={(val: string) =>
                         store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
@@ -156,8 +159,8 @@ function ExhibitorComponent() {
                     <Button
                         link={url}
                         inline={true}
-                        onClick={() => {
-                            customButtonClick(buttonNumber, url);
+                        onClick={(e) => {
+                            customButtonClick(buttonNumber, url, e);
                         }}
                         target={isIframe || uiState.onExhibitorCustomButtonClick ? "_blank" : "_self"}
                     >

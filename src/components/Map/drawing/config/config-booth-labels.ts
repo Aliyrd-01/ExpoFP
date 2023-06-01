@@ -80,7 +80,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const r = this.booth.rect;
 
-        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio, fillStyle);
+        const color = booth.labelColor || fillStyle;
+
+        const dotCanvas = createCircleCanvas(1.5, context.pixelRatio, color);
         const dotW = dotCanvas.width / 2;
         const dotH = dotCanvas.width / 2;
 
@@ -102,8 +104,6 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             : booth.exhibitors.filter((e) => e.featured);
 
         const pad = boothStore.borderWidth / 2;
-
-        const color = booth.labelColor || fillStyle;
 
         if (!exh.length) {
             this.addLabel(7, "XS", color);

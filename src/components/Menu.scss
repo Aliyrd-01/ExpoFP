@@ -174,7 +174,7 @@ div.menu__item {
 
 .efp-kiosk {
     .menu {
-        height: calc(100vh - (var(--k-app-gap) * 2));
+        height: calc(100% - (var(--k-app-gap)));
 
         &__item {
             padding: var(--k-itemsPadding-1);
