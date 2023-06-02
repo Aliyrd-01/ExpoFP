@@ -60,7 +60,7 @@ export default function configBoothLabels(
 
 class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     private readonly factors: number[] = [];
-    private previousVisiblePrefix: typeof prefixes[number];
+    private previousVisiblePrefix: (typeof prefixes)[number];
     private previousSkipDim: boolean;
     public locked: boolean;
     // private readonly labelColor: string;
@@ -116,10 +116,10 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
                 rotateRadians: booth.rotate,
                 center: [r.cx, r.cy],
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
-                deltaPts: [3, 3, -1, -1],
+                deltaPts: [0, 0, -3, -3],
                 scalePts: context.pixelRatio,
-                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, color, 18, !!booth.exhibitors.length),
-                texPosition: "lefttop",
+                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, color, 18, !!booth.exhibitors.length, "right"),
+                texPosition: "righttop",
                 visible: false,
             });
         } else {
@@ -173,7 +173,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         // if (!canUpdate) return;
         // if (this.painter.alpha === 0) return;
         if (this.locked) return;
-        let visiblePrefix: typeof prefixes[number] = null;
+        let visiblePrefix: (typeof prefixes)[number] = null;
         const ptscale = this.context.ptscale;
         // const rectHeight = this.booth.rect.h * ptscale;
 
@@ -212,7 +212,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             color,
             fontSize,
             data.hideExhibitorBoothNumber || short,
-            data.onlyFeaturedExhibitors
+            data.onlyFeaturedExhibitors,
+            "right"
         );
 
         const pad = padding;
@@ -223,10 +224,10 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
             center: [r.cx, r.cy],
             deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
-            deltaPts: [3, 3, -1, -1],
+            deltaPts: [0, 0, -3, -3],
 
             canvasTmp: canvas,
-            texPosition: "lefttop",
+            texPosition: "righttop",
             visible: false,
         });
     }
