@@ -3,7 +3,7 @@ import Size from "../../core/Size";
 import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
-import UIState from "../UIState";
+import ResizeObserver from "resize-observer-polyfill";
 
 export const kioskKey = "kiosk";
 
@@ -11,14 +11,16 @@ export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
     uiState.rootElement = window["__efpElement"];
 
-    updateScreenSize(uiState);
+    updateScreenSize(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
 
-    window.addEventListener("resize", () => {
-        if (!uiState.kiosk) updateScreenSize(uiState);
+    const resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+            updateScreenSize(entry.contentRect.width, entry.contentRect.height);
+        });
     });
-    window.addEventListener("orientationchange", () => {
-        if (!uiState.kiosk) updateScreenSize(uiState);
-    });
+
+    resizeObserver.observe(uiState.rootElement);
+
     if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
     // uiState.previewExhibitor = previewExhibitor;
 
@@ -88,10 +90,10 @@ export default function initUi(store: RootStore) {
             }
         }
     });
-}
 
-function updateScreenSize(uiState: UIState) {
-    runInAction("uiState.screenSize", () => {
-        uiState.screenSize = new Size(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
-    });
+    function updateScreenSize(width, height) {
+        runInAction("uiState.screenSize", () => {
+            uiState.screenSize = new Size(width, height);
+        });
+    }
 }
