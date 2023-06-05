@@ -119,7 +119,7 @@
 .efp-kiosk {
     .booth {
         &__bar {
-            margin-left: var(--k-spacing-lg);
+            margin-inline-start: var(--k-spacing-lg);
         }
     }
 }

@@ -30,6 +30,13 @@
     }
 }
 
+.layout[dir="rtl"] {
+    .ps__thumb-y {
+        right: unset;
+        left: 2px;
+    }
+}
+
 .efp-kiosk {
     .overlay-content {
         height: auto;

@@ -22,7 +22,7 @@ export default function LogoOverlay() {
             if (uiState.overlayPosition === "left")
                 style = {
                     bottom: (uiState.kiosk && uiState.wsStarted ? remsToPixels(3.5) : 0) + uiState.mapVisibleBottom + pad + "px",
-                    right: pad + "px",
+                    [uiState.rtl ? "left" : "right"]: pad + "px",
                     width: "5rem",
                 };
             else {
@@ -59,8 +59,7 @@ export default function LogoOverlay() {
                 href="https://expofp.com/"
                 target="_blank"
                 className={classNames("logo-overlay", {
-                    invert:
-                        Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.indexOf("dark") > -1,
+                    invert: Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.indexOf("dark") > -1,
                 })}
                 style={s.style}
                 rel="noopener noreferrer"
@@ -84,7 +83,11 @@ export default function LogoOverlay() {
             {uiState.kiosk && (
                 <div
                     className="qr"
-                    style={{ textAlign: "center", bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5), left: remsToPixels(0.5) }}
+                    style={{
+                        textAlign: "center",
+                        bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5),
+                        [uiState.rtl ? "right" : "left"]: remsToPixels(0.5),
+                    }}
                 >
                     <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
                     <QRCode value={window.location.href.replace("/?kkiosk", "")} size={100} />

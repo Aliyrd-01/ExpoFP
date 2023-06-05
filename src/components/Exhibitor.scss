@@ -239,7 +239,7 @@
         // align-items: center;
         .fa-gem {
             color: #02a8ff;
-            margin-left: 0.2rem;
+            margin-inline-start: 0.2rem;
             font-size: 0.85rem;
             line-height: 1.5rem;
         }
@@ -256,7 +256,7 @@
     }
 
     &__bar-booth {
-        margin-left: 1rem;
+        margin-inline-start: 1rem;
         font-size: 0.7rem;
         color: #777;
         display: block;
