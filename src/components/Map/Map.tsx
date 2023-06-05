@@ -261,6 +261,11 @@ export default function Map() {
             sizeCanvasToParentElement(el.current);
             s.drawer.resetCanvasSize();
         });
+        window.addEventListener("orientationchange", () => {
+            // __logger.log('canvas change', canvas);
+            sizeCanvasToParentElement(el.current);
+            s.drawer.resetCanvasSize();
+        });
         setZoomTransformAnimated(zoomIdentity, 0, null);
         s.$canvas.call(s.zoom as any);
 

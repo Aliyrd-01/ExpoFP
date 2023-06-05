@@ -16,6 +16,9 @@ export default function initUi(store: RootStore) {
     window.addEventListener("resize", () => {
         if (!uiState.kiosk) updateScreenSize(uiState);
     });
+    window.addEventListener("orientationchange", () => {
+        if (!uiState.kiosk) updateScreenSize(uiState);
+    });
     if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
     // uiState.previewExhibitor = previewExhibitor;
 
