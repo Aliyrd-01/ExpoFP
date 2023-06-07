@@ -2,6 +2,7 @@ import { PathInfo } from "../../../../data/Data";
 import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
+import { isRTLText } from "../../../../utils/is-rtl";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -157,6 +158,18 @@ export function createExhibitorsDetailsCanvas(
 
     if (onlyFeaturedExhibitors) mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
     else mainLines.push(...b.exhibitors.map((e) => e.name));
+
+    mainLines.forEach((text, i) => {
+        // Adding an invisible character to display punctuation marks correctly in the right-to-left version
+        if (text.endsWith(".") || text.endsWith("!") || text.endsWith("?")) {
+            mainLines[i] = mainLines[i] + "\u200F";
+        }
+
+        // Adding an 2 space symbol to fix render arabic text
+        if (isRTLText(text)) {
+            mainLines[i] = mainLines[i] + "\u0020\u0020";
+        }
+    });
 
     if (!onlyMain) detailsLines.push(b.name);
 

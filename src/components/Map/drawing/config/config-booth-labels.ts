@@ -111,6 +111,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             this.addLabel(12, "M", color);
             this.addLabel(14, "L", color);
 
+            const textAlign = uiState.rtl ? "right" : "left";
+            const texPosition = uiState.rtl ? "rightbottom" : "lefttop";
+
             this.painter.addObject({
                 id: this.getId("Details"),
                 rotateRadians: booth.rotate,
@@ -118,8 +121,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
                 deltaPts: [3, 3, -1, -1],
                 scalePts: context.pixelRatio,
-                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, color, 18, !!booth.exhibitors.length),
-                texPosition: "lefttop",
+                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, color, 18, !!booth.exhibitors.length, textAlign),
+                texPosition,
                 visible: false,
             });
         } else {
@@ -206,13 +209,17 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const b = this.booth;
         const r = b.rect;
 
+        const textAlign = uiState.rtl ? "right" : "left";
+        const texPosition = uiState.rtl ? "rightbottom" : "lefttop";
+
         const canvas = createExhibitorsDetailsCanvas(
             b as RegularBooth,
             this.context.pixelRatio,
             color,
             fontSize,
             data.hideExhibitorBoothNumber || short,
-            data.onlyFeaturedExhibitors
+            data.onlyFeaturedExhibitors,
+            textAlign
         );
 
         const pad = padding;
@@ -226,7 +233,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             deltaPts: [3, 3, -1, -1],
 
             canvasTmp: canvas,
-            texPosition: "lefttop",
+            texPosition,
             visible: false,
         });
     }

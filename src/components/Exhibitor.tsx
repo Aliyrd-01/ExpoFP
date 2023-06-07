@@ -281,7 +281,10 @@ function ExhibitorComponent() {
                                     ) : null}
                                     {exhibitor.description ? (
                                         <span
-                                            className="exhibitor__description-html"
+                                            className={classNames("exhibitor__description-html", {
+                                                "text-right": uiState.rtl,
+                                            })}
+                                            dir="auto"
                                             dangerouslySetInnerHTML={{ __html: getDescription(exhibitor.description) }}
                                             onClick={expandDescription}
                                         />
@@ -365,6 +368,7 @@ function ExhibitorComponent() {
                                             <i className="fas fa-phone" />
                                             <div>
                                                 <a
+                                                    dir="ltr"
                                                     href={"tel:" + exhibitor.phone1}
                                                     onClick={(e) => handleClick(e, GaEventActions.ClickPhone)}
                                                 >

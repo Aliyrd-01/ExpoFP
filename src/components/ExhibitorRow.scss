@@ -18,7 +18,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
 
-        > .fa-gem {
+        & > div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        & .fa-gem {
             color: #02a8ff;
             font-size: 0.9rem;
         }
