@@ -26,7 +26,7 @@ export default function LogoOverlay() {
                     width: "5rem",
                 };
             else {
-                style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
+                style = { top: uiState.mapVisibleTop + pad + "px", [uiState.rtl ? "left" : "right"]: pad + "px", width: "3rem" };
                 if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
@@ -37,9 +37,17 @@ export default function LogoOverlay() {
             const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
             let style: any;
             if (uiState.overlayPosition === "left")
-                style = { bottom: uiState.mapVisibleBottom + 2 * pad + "px", right: pad + "px", width: "3rem" };
+                style = {
+                    bottom: uiState.mapVisibleBottom + 2 * pad + "px",
+                    [uiState.rtl ? "left" : "right"]: pad + "px",
+                    width: "3rem",
+                };
             else {
-                style = { top: uiState.mapVisibleTop + 2 * pad + "px", right: pad + "px", width: "2rem" };
+                style = {
+                    top: uiState.mapVisibleTop + 2 * pad + "px",
+                    [uiState.rtl ? "left" : "right"]: pad + "px",
+                    width: "2rem",
+                };
                 if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
