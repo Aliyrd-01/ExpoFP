@@ -112,7 +112,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             this.addLabel(14, "L", color);
 
             const textAlign = uiState.rtl ? "right" : "left";
-            const texPosition = uiState.rtl ? "rightbottom" : "lefttop";
+            const texPosition = uiState.rtl ? "righttop" : "lefttop";
 
             this.painter.addObject({
                 id: this.getId("Details"),
@@ -210,7 +210,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const r = b.rect;
 
         const textAlign = uiState.rtl ? "right" : "left";
-        const texPosition = uiState.rtl ? "rightbottom" : "lefttop";
+        const texPosition = uiState.rtl ? "righttop" : "lefttop";
 
         const canvas = createExhibitorsDetailsCanvas(
             b as RegularBooth,
