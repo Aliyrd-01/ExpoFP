@@ -113,13 +113,14 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
             const textAlign = uiState.rtl ? "right" : "left";
             const texPosition = uiState.rtl ? "righttop" : "lefttop";
+            const deltaPts: [number, number, number, number] = uiState.rtl ? [1, 3, -3, -3] : [3, 3, -1, -1];
 
             this.painter.addObject({
                 id: this.getId("Details"),
                 rotateRadians: booth.rotate,
                 center: [r.cx, r.cy],
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
-                deltaPts: [3, 3, -1, -1],
+                deltaPts,
                 scalePts: context.pixelRatio,
                 canvasTmp: createDetailsCanvas(booth, context.pixelRatio, color, 18, !!booth.exhibitors.length, textAlign),
                 texPosition,
@@ -211,6 +212,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         const textAlign = uiState.rtl ? "right" : "left";
         const texPosition = uiState.rtl ? "righttop" : "lefttop";
+        const deltaPts: [number, number, number, number] = uiState.rtl ? [1, 3, -3, -3] : [3, 3, -1, -1];
 
         const canvas = createExhibitorsDetailsCanvas(
             b as RegularBooth,
@@ -230,7 +232,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
             center: [r.cx, r.cy],
             deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
-            deltaPts: [3, 3, -1, -1],
+            deltaPts,
 
             canvasTmp: canvas,
             texPosition,
