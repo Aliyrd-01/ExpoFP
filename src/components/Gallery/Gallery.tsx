@@ -22,7 +22,6 @@ const Gallery: React.FC<GalleryProps> = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
     const [originalExists, setOriginalExists] = useState(false);
-    const [checkedOriginal, setCheckedOriginal] = useState(false);
 
     const openModal = (initialSlideIndex: number) => {
         setCurrentSlideIndex(initialSlideIndex);
@@ -59,7 +58,6 @@ const Gallery: React.FC<GalleryProps> = (props) => {
                 } catch (error) {
                     setOriginalExists(false);
                 }
-                setCheckedOriginal(true);
             }
         };
 
