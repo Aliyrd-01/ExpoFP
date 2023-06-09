@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "Använd {{keyCode}} + skrolla för att zooma",
   "Zoom In": "Zooma in",
   "Zoom Out": "Zooma ut",
-  "{{boothTerm}} Type": "Typ av {{boothTerm}}"
+  "{{boothTerm}} Type": "Typ av {{boothTerm}}",
+  "Next slide": "Nästa bild",
+  "Prev slide": "Föregående bild"
 }

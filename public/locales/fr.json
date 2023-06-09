@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "Utilisez {{keyCode}} + faites défiler pour zoomer",
   "Zoom In": "Zoom avant",
   "Zoom Out": "Zoom arrière",
-  "{{boothTerm}} Type": "Type de {{boothTerm}}"
+  "{{boothTerm}} Type": "Type de {{boothTerm}}",
+  "Next slide": "Diapositive suivante",
+  "Prev slide": "Diapositive précédente"
 }

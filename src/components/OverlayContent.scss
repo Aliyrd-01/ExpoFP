@@ -15,7 +15,7 @@
 
         .overlay.full & {
             overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
+            //-webkit-overflow-scrolling: touch;
         }
     }
 }
@@ -24,6 +24,9 @@
     top: 0 !important;
     .overlay-content, .overlay-content__scrollable, .exhibitor__slider {
         position: static;
+    }
+    .overlay-content__scrollable {
+        overflow: hidden;
     }
     .overlay-bar, .overlay-grip {
         display: none;

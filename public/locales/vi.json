@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "Sử dụng {{keyCode}} + cuộn để thu phóng",
   "Zoom In": "Phóng to",
   "Zoom Out": "Thu nhỏ",
-  "{{boothTerm}} Type": "Loại {{boothTerm}}"
+  "{{boothTerm}} Type": "Loại {{boothTerm}}",
+  "Next slide": "Trang trình bày tiếp theo",
+  "Prev slide": "Trang trình bày trước"
 }
