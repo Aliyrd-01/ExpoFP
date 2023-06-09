@@ -17,7 +17,7 @@ const GalleryImg: React.FC<GalleryImgProps> = ({
     url,
     setHeight = false,
     position = "center",
-    isFullscreen = "false",
+    isFullscreen = false,
     leading = false,
     fillMode = "contain",
     onImageLoadHeightUpdate,
@@ -26,55 +26,23 @@ const GalleryImg: React.FC<GalleryImgProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (!imgRef.current || !containerRef.current) return;
-
-        const originalImage = getImageUrl(url, true);
-        const image = getImageUrl(url, false);
-
-        if (leading) {
-            loadImage(image);
-        } else {
-            loadImage(originalImage, image);
-        }
+        if (!imgRef.current || !containerRef.current || !leading) return;
+        loadImage(url);
     }, [url]);
 
-    const loadImage = async (imageUrl: string, fallbackUrl?: string) => {
+    const loadImage = async (imageUrl: string) => {
+        if (!setHeight) return;
+
         try {
             const loadedImage = await GalleryPreLoader.load(imageUrl);
-            setImage(loadedImage);
-        } catch (error) {
-            if (fallbackUrl) {
-                const fallbackImage = await GalleryPreLoader.load(fallbackUrl);
-                setImage(fallbackImage);
-            }
-        }
-    };
-
-    const setImage = (image: HTMLImageElement) => {
-        if (setHeight) {
-            containerRef.current.style.height = (image.height * containerRef.current.clientWidth) / image.width + "px";
-
+            containerRef.current.style.height =
+                (loadedImage.height * containerRef.current.clientWidth) / loadedImage.width + "px";
             if (onImageLoadHeightUpdate) onImageLoadHeightUpdate();
-        }
-        imgRef.current.style.backgroundImage = `url(${image.src})`;
-    };
-
-    const originalImageFromTumb = (url: string) => {
-        let paths = url.split("/");
-        const fileName = paths[paths.length - 1];
-        if (fileName.indexOf("original-") === -1) {
-            paths[paths.length - 1] = "original-" + fileName;
-        }
-
-        return paths.join("/");
-    };
-
-    const getImageUrl = (url: string, isOriginal: boolean) => {
-        return isOriginal ? originalImageFromTumb(url) : url;
+        } catch (err) {}
     };
 
     const style = {
-        backgroundImage: leading ? `url("${getImageUrl(url, false)}")` : `url("${getImageUrl(url, true)}")`,
+        backgroundImage: `url("${url}")`,
         backgroundSize: fillMode,
         transition: leading ? "all 0.5s ease 0s" : "none",
         backgroundPosition: position,
