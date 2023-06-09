@@ -4,3 +4,8 @@ export function isRTLText(text: string) {
 
     return rtlDirCheck.test(text);
 }
+
+export function isHebrewText(text: string): boolean {
+    const hebrew = /[\u0590-\u05FF]/;
+    return hebrew.test(text);
+}

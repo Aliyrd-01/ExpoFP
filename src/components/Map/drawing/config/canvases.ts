@@ -2,7 +2,7 @@ import { PathInfo } from "../../../../data/Data";
 import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
-import { isRTLText } from "../../../../utils/is-rtl";
+import { isRTLText, isHebrewText } from "../../../../utils/rtl";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -166,7 +166,7 @@ export function createExhibitorsDetailsCanvas(
         }
 
         // Adding an 2 space symbol to fix render arabic text
-        if (isRTLText(text)) {
+        if (isRTLText(text) && !isHebrewText(text)) {
             mainLines[i] = mainLines[i] + "\u0020\u0020";
         }
     });
