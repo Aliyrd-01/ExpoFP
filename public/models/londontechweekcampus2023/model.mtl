@@ -1,0 +1,141 @@
+newmtl 0x29A1AD
+	Kd 0.161 0.631 0.678
+
+newmtl BG_0.webp
+map_Kd textures/BG_0.webp
+
+newmtl 0xE52923
+	Kd 0.898 0.161 0.137
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x063D77
+	Kd 0.024 0.239 0.467
+
+newmtl 0x7E06FF
+	Kd 0.494 0.024 1
+
+newmtl 0x00F1BA
+	Kd 0 0.945 0.729
+
+newmtl 0x41B6E7
+	Kd 0.255 0.714 0.906
+
+newmtl 0x7BD341
+	Kd 0.482 0.827 0.255
+
+newmtl ground_0.webp
+map_Kd textures/ground_0.webp
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x3D6FC7
+	Kd 0.239 0.435 0.78
+
+newmtl 0x29A1AD
+	Kd 0.161 0.631 0.678
+
+newmtl 0x41B6E7
+	Kd 0.255 0.714 0.906
+
+newmtl 0x7E06FF
+	Kd 0.494 0.024 1
+
+newmtl 1_0.webp
+map_Kd textures/1_0.webp
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x41B6E7
+	Kd 0.255 0.714 0.906
+
+newmtl 0x29A1AD
+	Kd 0.161 0.631 0.678
+
+newmtl 0xB32E0D
+	Kd 0.702 0.18 0.051
+
+newmtl 0x7E06FF
+	Kd 0.494 0.024 1
+
+newmtl 2_0.webp
+map_Kd textures/2_0.webp
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x7E06FF
+	Kd 0.494 0.024 1
+
+newmtl 0x3ECC78
+	Kd 0.243 0.8 0.471
+
+newmtl 0x29A1AD
+	Kd 0.161 0.631 0.678
+
+newmtl 0xBA3DC8
+	Kd 0.729 0.239 0.784
+
+newmtl 0xA6C715
+	Kd 0.651 0.78 0.082
+
+newmtl 0x41B6E7
+	Kd 0.255 0.714 0.906
+
+newmtl 3_0.webp
+map_Kd textures/3_0.webp
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x7E06FF
+	Kd 0.494 0.024 1
+
+newmtl 3M_0.webp
+map_Kd textures/3M_0.webp
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x434C5C
+	Kd 0.263 0.298 0.361
+
+newmtl 0x063D77
+	Kd 0.024 0.239 0.467
+
+newmtl 0x00F1BA
+	Kd 0 0.945 0.729
+
+newmtl 0x7E06FF
+	Kd 0.494 0.024 1
+
+newmtl 0xE74784
+	Kd 0.906 0.278 0.518
+
+newmtl 4_0.webp
+map_Kd textures/4_0.webp
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x29A1AD
+	Kd 0.161 0.631 0.678
+
+newmtl 0x7E06FF
+	Kd 0.494 0.024 1
+
+newmtl 5_0.webp
+map_Kd textures/5_0.webp
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x1F5BBB
+	Kd 0.122 0.357 0.733
+
+newmtl 6_0.webp
+map_Kd textures/6_0.webp
+

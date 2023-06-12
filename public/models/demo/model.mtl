@@ -1,0 +1,25 @@
+newmtl 0xB1C6CE
+	Kd 0.694 0.776 0.808
+	Tr 0.334
+
+newmtl 0x40A3CB
+	Kd 0.251 0.639 0.796
+
+newmtl 0x9A9A9A
+	Kd 0.604 0.604 0.604
+
+newmtl 0x50B09A
+	Kd 0.314 0.69 0.604
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x57A953
+	Kd 0.341 0.663 0.325
+
+newmtl 0xE6395C
+	Kd 0.902 0.224 0.361
+
+newmtl Default_0.webp
+map_Kd textures/Default_0.webp
+

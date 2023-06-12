@@ -1,0 +1,46 @@
+newmtl 0xB1C6CE
+	Kd 0.694 0.776 0.808
+	Tr 0.334
+
+newmtl 0xFFFFFF
+	Kd 1 1 1
+
+newmtl 0x2ECACA
+	Kd 0.18 0.792 0.792
+
+newmtl 3_0.webp
+map_Kd textures/3_0.webp
+
+newmtl 0x2ECACA
+	Kd 0.18 0.792 0.792
+
+newmtl 0xC850A0
+	Kd 0.784 0.314 0.627
+
+newmtl 0xC6529E
+	Kd 0.776 0.322 0.62
+
+newmtl 0x1E0039
+	Kd 0.118 0 0.224
+
+newmtl 2_0.webp
+map_Kd textures/2_0.webp
+
+newmtl 0x2ECACA
+	Kd 0.18 0.792 0.792
+
+newmtl 0xC6529E
+	Kd 0.776 0.322 0.62
+
+newmtl 1_0.webp
+map_Kd textures/1_0.webp
+
+newmtl 0x2ECACA
+	Kd 0.18 0.792 0.792
+
+newmtl 0xC6529E
+	Kd 0.776 0.322 0.62
+
+newmtl EXHIBITHALL_0.webp
+map_Kd textures/EXHIBITHALL_0.webp
+
