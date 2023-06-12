@@ -546,4 +546,15 @@ $imageSliderClass: ".image-slider";
             }
         }
     }
+
+    .gallery {
+        &__badge {
+            font-size: 1.1em;
+            height: 40px;
+
+            &-fullscreen {
+                width: 40px;
+            }
+        }
+    }
 }

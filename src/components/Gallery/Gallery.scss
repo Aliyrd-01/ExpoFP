@@ -46,7 +46,7 @@
 		align-items: center;
 		justify-content: center;
 		position: absolute;
-		font-size: 14px;
+		font-size: rem(14px);
 		background: rgba(31, 31, 31, 0.6);
 		backdrop-filter: blur(3px);
 		border-radius: 6px;
@@ -75,6 +75,10 @@
 			}
 		}
 
+		& .icon {
+			width: 90%;
+			height: 56%;
+		}
 
 		& span {
 			margin-left: 8px;
