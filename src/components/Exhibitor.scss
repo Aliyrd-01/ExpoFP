@@ -555,6 +555,11 @@ $imageSliderClass: ".image-slider";
             &-fullscreen {
                 width: 40px;
             }
+
+            & .icon {
+                width: 22px;
+                height: 22px;
+            }
         }
     }
 }
