@@ -1,3 +1,4 @@
+import { boothStore } from './../../../store/index';
 import * as THREE from "three";
 import { MeshPhongMaterial } from "three";
 import { ICommonData } from "./dataLoader";
@@ -90,8 +91,8 @@ export default async function sceneLoader(
 
     raycaster.layers.enableAll();
 
-    data.booths.forEach(
-        (booth) => (materals[booth.id] = (model.children.find((ch) => ch.name == booth.id) as THREE.Mesh)?.material)
+    boothStore.booths.forEach(
+        (booth) => (materals[booth.id] = (model.children.find((ch) => ch.name == booth.name) as THREE.Mesh)?.material)
     );
 
     let pressed = false;
@@ -125,18 +126,18 @@ export default async function sceneLoader(
 
         let name = intersection?.object.name;
 
-        if (name && data.booths.find((b) => name === b.id)) {
+        if (name && boothStore.booths.find((b) => name === b.name)) {
             const mesh = intersection.object as THREE.Mesh;
             selected = [mesh];
             mesh.material = selecterMaterial;
 
-            data.booths.forEach((booth) => {
-                var mesh = model.getObjectByName(booth.id) as THREE.Mesh;
+            boothStore.booths.forEach((booth) => {
+                var mesh = model.getObjectByName(booth.name) as THREE.Mesh;
                 if (mesh && mesh.name !== name) mesh.material = dimmedMaterial;
             });
         } else {
-            data.booths.forEach((booth) => {
-                var mesh = model.getObjectByName(booth.id) as THREE.Mesh;
+            boothStore.booths.forEach((booth) => {
+                var mesh = model.getObjectByName(booth.name) as THREE.Mesh;
                 if (mesh) mesh.material = materals[booth.id];
             });
         }
