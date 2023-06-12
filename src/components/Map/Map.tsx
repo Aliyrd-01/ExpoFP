@@ -23,6 +23,7 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import ResizeObserver from "resize-observer-polyfill";
 
 //console.log('isIframe', isIframe)
 
@@ -256,11 +257,14 @@ export default function Map() {
 
         // s.drawer.setVisibleRect((uiState.canvasVisibleRectPx as Rect).scale(uiState.devicePixelRatio));
         s.drawer.setPixelRatio(uiState.devicePixelRatio);
-        window.addEventListener("resize", () => {
-            // __logger.log('canvas change', canvas);
+
+        const resizeObserver = new ResizeObserver(() => {
             sizeCanvasToParentElement(el.current);
             s.drawer.resetCanvasSize();
         });
+
+        resizeObserver.observe(uiState.rootElement);
+
         setZoomTransformAnimated(zoomIdentity, 0, null);
         s.$canvas.call(s.zoom as any);
 
