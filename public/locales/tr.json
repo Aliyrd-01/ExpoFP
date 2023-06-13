@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "Profili düzenleme bağlantısı {{email}} adresine gönderildi",
   "Bookmarks": "Yer işaretleri",
+  "Bookmark": "Yer imi",
   "Buy": "Satın Al",
   "Categories": "Kategoriler",
   "Category": "Kategori",
@@ -35,5 +36,9 @@
   "Zoom Out": "Uzaklaştır",
   "{{boothTerm}} Type": "{{boothTerm}} Türü",
   "Next slide": "Sonraki slayt",
-  "Prev slide": "Önceki slayt"
+  "Prev slide": "Önceki slayt",
+  "Find your location": "Konumunuzu bulun",
+  "View switch": "Görünümü değiştir",
+  "Fit to screen": "Ekrana sığdır",
+  "Layers": "Katmanlar"
 }

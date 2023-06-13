@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "Se envió un enlace para editar el perfil a {{email}}",
   "Bookmarks": "Marcadores",
+  "Bookmark": "Marcador",
   "Buy": "Comprar",
   "Categories": "Categorías",
   "Category": "Categoría",
@@ -35,5 +36,9 @@
   "Zoom Out": "Reducir",
   "{{boothTerm}} Type": "Tipo de {{boothTerm}}",
   "Next slide": "Próximo slide",
-  "Prev slide": "Slide anterior"
+  "Prev slide": "Slide anterior",
+  "Find your location": "Encuentra tu ubicación",
+  "View switch": "Cambiar vista",
+  "Fit to screen": "Ajustar a la pantalla",
+  "Layers": "Capas"
 }

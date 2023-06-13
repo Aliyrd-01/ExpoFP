@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "ลิงก์เพื่อแก้ไขโปรไฟล์ส่งไปยัง {{email}}",
   "Bookmarks": "บุ๊กมาร์ก",
+  "Bookmark": "บุ๊กมาร์ค",
   "Buy": "ซื้อ",
   "Categories": "หมวดหมู่",
   "Category": "หมวดหมู่",
@@ -35,5 +36,9 @@
   "Zoom Out": "ซูมออก",
   "{{boothTerm}} Type": "ประเภท {{boothTerm}}",
   "Next slide": "สไลด์ถัดไป",
-  "Prev slide": "สไลด์ก่อนหน้า"
+  "Prev slide": "สไลด์ก่อนหน้า",
+  "Find your location": "ค้นหาตำแหน่งของคุณ",
+  "View switch": "เปลี่ยนมุมมอง",
+  "Fit to screen": "ปรับให้พอดีกับหน้าจอ",
+  "Layers": "ชั้น"
 }

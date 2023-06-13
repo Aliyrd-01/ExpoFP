@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "تم إرسال رابط لتحرير الملف التعريفي إلى {{email}}",
   "Bookmarks": "الإشارات المرجعية",
+  "Bookmark": "إشارة مرجعية",
   "Buy": "شراء",
   "Categories": "الفئات",
   "Category": "الفئة",
@@ -33,7 +34,11 @@
   "Use {{keyCode}} + scroll to zoom": "استخدم {{keyCode}} مع التمرير للتكبيرللتكبير",
   "Zoom In": "تكبير",
   "Zoom Out": "تصغير",
+  "Fit to screen": "يصلح للشاشة",
+  "Layers": "طبقات",
   "{{boothTerm}} Type": "نوع {{boothTerm}}",
   "Next slide": "الشريحة التالية",
-  "Prev slide": "الشريحة السابقة"
+  "Prev slide": "الشريحة السابقة",
+  "Find your location": "اعثر على موقعك",
+  "View switch": "تبديل العرض"
 }
