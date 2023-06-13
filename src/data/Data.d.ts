@@ -1,4 +1,4 @@
-import { ScheduleItem } from './../store/ScheduleStore';
+import { ScheduleItem } from "./../store/ScheduleStore";
 interface Data {
     noFeatured: boolean;
     expoFpAd: boolean;
@@ -37,6 +37,7 @@ interface Data {
     allow3dView: boolean;
     hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;
+    isRTL: boolean;
     isRebooking: boolean;
     events: ScheduleItem[];
 }
