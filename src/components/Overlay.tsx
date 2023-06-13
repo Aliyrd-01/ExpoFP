@@ -132,6 +132,7 @@ export default observer(function Overlay() {
                     s.left = "0";
                     s.height = undefined;
                     setShowAll();
+                    resetCurrentTop();
                     break;
                 case "bottom":
                     s.left = "0";
@@ -139,6 +140,10 @@ export default observer(function Overlay() {
                     setHeight();
                     break;
             }
+        }
+
+        function resetCurrentTop() {
+            s.currentTop = undefined;
         }
 
         function setShowAll() {

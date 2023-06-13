@@ -44,6 +44,7 @@ const GalleryImg: React.FC<GalleryImgProps> = ({
     const style = {
         backgroundImage: `url("${url}")`,
         backgroundSize: fillMode,
+        backgroundRepeat: "no-repeat",
         transition: leading ? "all 0.5s ease 0s" : "none",
         backgroundPosition: position,
     };

@@ -162,12 +162,10 @@ function Booth() {
 
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
-                {!data.isRebooking && content}
-                {!!s.booth.schedule?.length && <Schedule events={s.booth.schedule} />}
                 {!data.isRebooking && settings.wayfinding && (
                     <div
                         className="exhibitor__directions"
-                        style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(2) }}
+                        style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(1) }}
                     >
                         <SidebarActions
                             showBookmark={false}
@@ -178,6 +176,8 @@ function Booth() {
                         />
                     </div>
                 )}
+                {!data.isRebooking && content}
+                {!!s.booth.schedule?.length && <Schedule events={s.booth.schedule} />}
             </OverlayContent>
         );
     });

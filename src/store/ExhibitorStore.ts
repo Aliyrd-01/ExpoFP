@@ -44,7 +44,8 @@ export default class ExhibitorStore {
     @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
         exhibitor.rebookingState = state;
 
-        if (rebookingNote?.length) exhibitor.rebookingNote += "\r\n" + rebookingNote;
+        if (rebookingNote?.length)
+            exhibitor.rebookingNote = (exhibitor.rebookingNote || "") + "\r\n" + "Rebooking note: " + rebookingNote;
 
         fetch("https://app.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
