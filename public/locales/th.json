@@ -33,5 +33,7 @@
   "Use {{keyCode}} + scroll to zoom": "ใช้ {{keyCode}} + เลื่อนเพื่อซูม",
   "Zoom In": "ซูมเข้า",
   "Zoom Out": "ซูมออก",
-  "{{boothTerm}} Type": "ประเภท {{boothTerm}}"
+  "{{boothTerm}} Type": "ประเภท {{boothTerm}}",
+  "Next slide": "สไลด์ถัดไป",
+  "Prev slide": "สไลด์ก่อนหน้า"
 }
