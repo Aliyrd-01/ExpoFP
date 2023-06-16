@@ -62,8 +62,8 @@ export async function init(container: HTMLElement, data: ICommonData): Promise<S
 
                         cameraPosition.applyMatrix4(l.invert());
                         let direction = mouse.clone().applyMatrix4(camera.projectionMatrix.clone().invert());
-                        direction.divideScalar(direction.w).sub(cameraPosition).normalize();
-                        raycaster.set(cameraPosition as any, direction as any);
+                        direction.divideScalar(direction.w);
+                        raycaster.set(cameraPosition as any, direction.sub(cameraPosition).normalize() as any);
                         return raycaster;
                     },
                     () => {}

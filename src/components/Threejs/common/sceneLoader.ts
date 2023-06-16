@@ -83,12 +83,12 @@ export default async function sceneLoader(
     });
 
     function onClick(x: number, y: number) {
-        onclickCallback(x, y, raycaster);
-
         const intersections = raycaster
             .intersectObjects(scene.children)
             .filter((ch) => ((ch.object as THREE.Mesh).material as MeshPhongMaterial).visible)
             .sort((a, b) => a.distance - b.distance);
+
+        console.info(intersections.map((i) => i.object.name));
 
         scene.onClickCallbacks.forEach((cb) => cb(intersections));
     }

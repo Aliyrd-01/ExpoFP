@@ -17,11 +17,6 @@ import store, { boothStore } from "../../store";
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import logosFromBooths from "../../utils/imageloader";
 import TextureMerger from "./utils/textureMerger";
-import initBooths from "./common/initBooths";
-
-const selecterMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
-const dimmedMaterial = new THREE.MeshPhongMaterial({ color: 0x777777, side: THREE.DoubleSide });
-const selected: THREE.Mesh[] = [];
 
 const routeMeshes: THREE.Mesh[] = [];
 const booths: BoothMesh[] = [];
@@ -66,23 +61,27 @@ export default class UIManager {
         });
     }
 
-    public changeLayerVisibility(layer: string | number, isVisible: boolean): void {
+    public changeLayerVisibility(layer: string, isVisible: boolean): void {
+        
         if (!this.isInit) return;
-
-        const l = typeof layer === "string" ? this.scene.objLayers.get(layer) : layer;
+        const l = this.scene.getlayer(layer);
 
         if (isVisible) {
             this.scene.camera.layers.enable(l);
             this.scene.raycaster.layers.enable(l);
         } else {
-            this.scene.camera.layers.disable(l);
-            this.scene.raycaster.layers.disable(l);
+            // this.scene.camera.layers.disable(l);
+            // this.scene.raycaster.layers.disable(l);
         }
     }
 
-    public hoverBooths(hoveredBooths: Booth[]) {}
+    public hoverBooths(hoveredBooths: Booth[]) {
+        booths.forEach((b) => b.hovered(hoveredBooths.length && !!hoveredBooths.find((hb) => hb.name === b.name)));
+    }
 
-    public selectBooths(booths: string[]): void {}
+    public selectBooths(selectedBooths: Booth[]): void {
+        booths.forEach((b) => b.dimmed(selectedBooths.length && !selectedBooths.find((hb) => hb.name === b.name)));
+    }
 
     public setMarker(type: "from" | "to" | "yah" | "cp", point: CurrentPosition) {
         const localPoint = this.convertPoint(point);
@@ -110,8 +109,6 @@ export default class UIManager {
             routeMeshes.push(cube);
             this.scene.add(cube);
         });
-
-        console.info("updateRouteLines", points);
     }
 
     public onBeforeRender(
@@ -127,28 +124,11 @@ export default class UIManager {
 
     private onClickCallback(intersections: Array<any>): void {
         const intersection = intersections[0];
-
-        console.info(intersections.filter((i) => i.object.name.startsWith("b")));
-
-        // let name = intersection?.object?.name?.substring(1);
-
-        // selected.forEach((mesh) => (mesh.material = materals[mesh.name]));
-
-        // if (name && boothStore.booths.find((b) => name === b.name)) {
-        //     const mesh = intersection.object as THREE.Mesh;
-        //     selected = [mesh];
-        //     mesh.material = selecterMaterial;
-
-        //     boothStore.booths.forEach((booth) => {
-        //         var mesh = model.getObjectByName(booth.name) as THREE.Mesh;
-        //         if (mesh && mesh.name !== name) mesh.material = dimmedMaterial;
-        //     });
-        // } else {
-        //     boothStore.booths.forEach((booth) => {
-        //         var mesh = model.getObjectByName(booth.name) as THREE.Mesh;
-        //         if (mesh) mesh.material = materals[booth.id];
-        //     });
-        // }
+        let name = intersection?.object?.name;
+        let booth = boothStore.booths.find((b) => b.name === name);
+        if (booth) {
+            store.selectBooth(booth);
+        }
     }
 
     private async initBooths(scene: Scene, model: Group): Promise<void> {
@@ -163,44 +143,40 @@ export default class UIManager {
         material.side = THREE.DoubleSide;
         material.transparent = true;
 
-        let layerCounter = 1;
-
-        model.children.forEach((mesh, idex) => {
+        model.children.forEach((mesh, index) => {
             var [layer, name] = mesh.name.split(/ (.*)/s);
-
-            if (!scene.objLayers.has(layer)) scene.objLayers.set(layer, layerCounter++);
-            let l = scene.objLayers.get(layer);
-
-            const booth = store.boothStore.booths.find((b) => name[0] === "b" && b.name === name.substring(1));
-
-            if (booth) {
-                let objLayer = this.data.objLayers.find((l) => l.name === booth.layer?.name);
-                let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
-
-                const boothMesh = new BoothMesh(
-                    booth,
-                    this.data.booths.find((b) => b.name === booth.name),
-                    mesh,
-                    name,
-                    l,
-                    z,
-                    this.scene
-                );
-
-                boothMesh.setText();
-
-                var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
-                //if (exhibitor) boothMesh.setLogo(textureMerger, material);
-
-                model.children[idex] = boothMesh;
-                booths.push(boothMesh);
-            }
-
+            
+            const l = scene.addLayer(layer);
             mesh.layers.set(l);
-            scene.camera.layers.enable(l);
-        });
+            mesh.name = name;
 
-        //await initBooths(scene, this.data);
+            //const efpBooth = store.boothStore.booths.find((b) => name && name[0] === "b" && b.name === name?.substring(1));
+
+            // if (efpBooth) {
+            //     let objLayer = this.data.objLayers.find((l) => l.name === efpBooth.layer?.name);
+            //     let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
+
+            //     const boothMesh = new BoothMesh(
+            //         efpBooth,
+            //         this.data.booths.find((b) => b.name === efpBooth.name),
+            //         mesh as THREE.Mesh,
+            //         name.substring(1),
+            //         l,
+            //         z
+            //     );
+
+            //     let text = boothMesh.setText();
+            //     if (text) scene.add(text);
+
+            //     // var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
+            //     // if (exhibitor) scene.add(boothMesh.setLogo(textureMerger, material));
+
+            //     //model.children[index] = boothMesh;
+            //     boothMesh.layers.set(l);
+
+            //     booths.push(boothMesh);
+            // } 
+        });
 
         scene.add(model);
     }

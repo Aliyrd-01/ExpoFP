@@ -11,16 +11,6 @@ export default async function loadModel(objPath: string, mtlPath: string): Promi
                 material.alphaTest = 0.6;
                 material.transparent = true;
             }
-
-            // if (material.name === "0xB1C6CE") {
-            //      //material.visible = false;
-            //     material.alphaTest = 0.3;
-            //     material.transparent = true;
-            //     material.opacity = 0.3;
-            //     material.side = 2;
-            //     material.depthWrite = false;
-            //     material.depthTest = false;
-            // }
         });
 
         const loader = new OBJLoader();

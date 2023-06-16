@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Mesh } from "three";
+import { Material, Mesh } from "three";
 import { Booth } from "../../../store/BoothStore";
 import { IBooth as ThreeBooth } from "../common/dataLoader";
 
@@ -7,65 +7,67 @@ import { getBoothlabel } from "../../Mapbox/utils/data";
 import TextureMerger, { modifySphereUV } from "../utils/textureMerger";
 var { Text } = require("troika-three-text");
 
+const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
+const dimmedMaterial = new THREE.MeshPhongMaterial({ color: 0x777777, side: THREE.DoubleSide, name: "hovered" });
+const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
+
 export class BoothMesh extends THREE.Group {
+    private material: Material | Material[];
+
     public constructor(
         public efpBooth: Booth,
         public threeBooth: ThreeBooth,
-        public boothMesh: THREE.Object3D,
+        public boothMesh: THREE.Mesh,
         public name: string,
         public threeLayer: number,
-        public z: number,
-        public scene: THREE.Scene
+        public z: number
     ) {
         super();
         this.name = name;
         boothMesh.name = name;
+        this.material = boothMesh.material;
         this.children.push(boothMesh);
     }
 
-    public invertText() {}
+    public setText(): Mesh {
+        const label = new Text();
+        label.text = getBoothlabel(this.efpBooth);
+        if (!label.text) return;
 
-    public setText() {
-        const myText = new Text();
+        label.color = 0xffffff;
+        label.anchorX = "center";
+        label.anchorY = "middle";
+        label.textAlign = "center";
 
-        this.scene.add(myText);
+        const { rect } = this.threeBooth;
+        let maxDimension = Math.max(rect.width, rect.height);
+        let minDimension = Math.min(rect.width, rect.height);
 
-        myText.text = getBoothlabel(this.efpBooth);
-        if (!myText.text) return;
+        label.fontSize = (1.6 * maxDimension) / label.text.length;
 
-        let mesh = myText as Mesh;
+        if (label.fontSize > minDimension) label.fontSize *= minDimension / label.fontSize;
 
-        const b = this.threeBooth;
+        let mesh = label as Mesh;
 
-        let maxDimension = Math.max(b.rect.width, b.rect.height);
-        let minDimension = Math.min(b.rect.width, b.rect.height);
+        if (rect.width < rect.height) mesh.rotateZ(Math.PI / 2);
 
-        myText.fontSize = (1.6 * maxDimension) / myText.text.length;
-
-        if (myText.fontSize > minDimension) myText.fontSize *= minDimension / myText.fontSize;
-
-        if (b.rect.width < b.rect.height) mesh.rotateZ(Math.PI / 2);
-
-        myText.position.x = b.rect.center.x;
-        myText.position.y = b.rect.center.y;
-        myText.position.z = this.z;
-
-        myText.color = 0xffffff;
-        myText.anchorX = "center";
-        myText.anchorY = "middle";
-        myText.textAlign = "center";
-        myText.scale.y = -1;
+        mesh.position.x = rect.center.x;
+        mesh.position.y = rect.center.y;
+        mesh.position.z = this.z;
+        mesh.scale.y = -1;
         mesh.name = this.name;
         mesh.layers.set(this.threeLayer);
-        myText.sync();
+
+        label.sync();
+
+        return label;
     }
 
-    public setLogo(textureMerger:TextureMerger, material:THREE.MeshBasicMaterial){
+    public setLogo(textureMerger: TextureMerger, material: THREE.MeshBasicMaterial): Mesh {
         var plane = new THREE.Mesh(new THREE.PlaneGeometry(this.threeBooth.rect.width, this.threeBooth.rect.height), material);
-        this.scene.add(plane);
         plane.layers.set(this.threeLayer);
 
-        modifySphereUV(plane, textureMerger.ranges.get(this.efpBooth.name));
+        modifySphereUV(plane, textureMerger.ranges.get(this.efpBooth.slug));
         plane.position.x = this.threeBooth.rect.center.x;
         plane.position.y = this.threeBooth.rect.center.y;
         plane.position.z = this.z;
@@ -73,5 +75,24 @@ export class BoothMesh extends THREE.Group {
 
         plane.material.map = textureMerger.mergedTexture;
         plane.name = this.efpBooth.name;
+
+        return plane;
     }
+
+    public dimmed(value: boolean) {
+        this.boothMesh.material = value ? dimmedMaterial : this.material;
+        this.boothMesh.userData.dimmed = value;
+    }
+
+    public hovered(value: boolean) {
+        if (value) this.boothMesh.material = hoveredMaterial;
+        else if (this.boothMesh.userData.dimmed) this.boothMesh.material = dimmedMaterial;
+        else if (this.boothMesh.userData.selected) this.boothMesh.material = this.material;
+        else this.boothMesh.material = this.material;
+    }
+
+    // public selected(value: boolean) {
+    //     this.boothMesh.material = value ? this.material : dimmedMaterial;
+    //     this.boothMesh.userData.selected = value;
+    // }
 }
