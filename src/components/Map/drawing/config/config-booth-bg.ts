@@ -4,7 +4,7 @@ import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import data from "../../../../data";
-import store, { boothStore } from "../../../../store";
+import store, { boothStore, uiState } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import { LayersMode } from "../../../../store/LayerStore";
 import settings from "../../../../tools/settings";
@@ -12,6 +12,8 @@ import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import { getTrianglesFromFpPaths } from "./../../../../data/svg";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
+import { heatmapData } from "../../../../data/heatmap";
+import { getColorFromClickCount } from "../../../../utils/heatmap";
 
 // let picked = 0;
 export default function configBoothBg(
@@ -190,6 +192,11 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
 
     getBoothColor() {
         const b = this.booth;
+
+        if (uiState.heatmap) {
+            const clickCount = heatmapData.find((field) => b.id === field.boothId)?.clickCount || 0;
+            return Color(getColorFromClickCount(clickCount));
+        }
 
         let color: string;
         if (b.error) color = "#f33";

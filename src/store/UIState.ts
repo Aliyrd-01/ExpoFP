@@ -54,6 +54,7 @@ export default class UIState {
     @observable inIdle = false;
     @observable modalActive = { share: false };
     @observable galleryActive = false;
+    @observable heatmap = true;
     @observable hideOverlay = false;
     rootElement: HTMLDivElement;
 
