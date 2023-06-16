@@ -165,6 +165,19 @@ else if (locationSearch.startsWith("?b=")) {
         historyReplace(newSearch);
         store.uiState.hideOverlay = true;
     }
+} else if (locationSearch.startsWith("?heatmap")) {
+    const url = new URL(window.location.href);
+    const heatmapParamValue = url.searchParams.get("heatmap");
+
+    if (heatmapParamValue === "true") {
+        url.searchParams.delete("heatmap");
+
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+
+        historyReplace(newSearch);
+        store.uiState.heatmap = true;
+    }
 }
 
 // facebook and google  fix
