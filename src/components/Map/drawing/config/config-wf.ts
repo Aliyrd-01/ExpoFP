@@ -242,7 +242,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }
 
-function splitPolyLine(lines: Line[], interval: number): Point[] {
+export function splitPolyLine(lines: Line[], interval: number): Point[] {
     const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
     const asin = (sin: number) => (Math.asin(sin) * 180) / Math.PI;
 

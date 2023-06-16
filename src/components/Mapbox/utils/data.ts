@@ -70,7 +70,7 @@ function getStyle(): string {
     return fpGeo?.properties?.style || "light-v10";
 }
 
-function actualBoothColor(b: Booth) {
+export function actualBoothColor(b: Booth) {
     let defColor: string;
     if (b instanceof SpecialBooth) {
         defColor = b.color || settings.colors.booths.empty;
@@ -88,6 +88,10 @@ function actualBoothColor(b: Booth) {
     if (defColor === "#666" || defColor === "#666666") defColor = "rgba(0,0,0,0.172)";
 
     return defColor;
+}
+
+export function getBoothlabel(booth: Booth) {
+    return booth.noLabels ? null : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
 }
 
 function decimalToHex(input: string) {
@@ -222,9 +226,7 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
             let booth = booths.filter((b) => b.name === f.properties.id)[0] as RegularBooth;
             if (booth) {
                 f.properties.color = actualBoothColor(booth);
-                f.properties.description = booth.noLabels
-                    ? null
-                    : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
+                f.properties.description = getBoothlabel(booth);
 
                 const logo = logos.find((l) => l?.name === booth.slug);
 

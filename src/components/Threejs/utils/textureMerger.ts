@@ -377,12 +377,6 @@ export default class TextureMerger {
         return resizedCanvas;
     }
 }
-
-//var sphere1 = new THREE.Mesh(new THREE.SphereBufferGeometry(10), material);
-//var sphere2 = new THREE.Mesh(new THREE.SphereBufferGeometry(10), material);
-//modifySphereUV(sphere1, textureMerger.ranges.texture1);
-
-//meshs[i].material.map = textureMerger.mergedTexture;
 export function modifySphereUV(mesh: THREE.Mesh, range: Range) {
     var uvAttrAry = (mesh.geometry.attributes.uv as THREE.BufferAttribute).array as number[];
 

@@ -1,6 +1,5 @@
-newmtl 0xB1C6CE
-	Kd 0.694 0.776 0.808
-	Tr 0.334
+newmtl BG_0.webp
+map_Kd textures/BG_0.webp
 
 newmtl 0xFFFFFF
 	Kd 1 1 1

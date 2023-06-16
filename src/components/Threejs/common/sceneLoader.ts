@@ -1,28 +1,15 @@
-import { boothStore } from './../../../store/index';
 import * as THREE from "three";
 import { MeshPhongMaterial } from "three";
-import { ICommonData } from "./dataLoader";
-import initTexts from "./initTexts";
-import loadModel from "./modelLoader";
 import Scene from "./Scene";
 
-let selected: THREE.Mesh[] = [];
-const materals: any = {};
-const selecterMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
-const dimmedMaterial = new THREE.MeshPhongMaterial({ color: 0x777777, side: THREE.DoubleSide });
-
 export default async function sceneLoader(
-    expo: string,
     canvas: HTMLCanvasElement,
     gl: WebGLRenderingContext,
     container: HTMLElement,
     camera: THREE.PerspectiveCamera,
-    data: ICommonData,
     onclickCallback: (x: number, y: number, raycaster: THREE.Raycaster) => void,
     renderCallback: () => void
 ): Promise<{ scene: Scene; renderer: THREE.WebGLRenderer }> {
-    let model = await loadModel(`models/${expo}/model.obj`, `models/${expo}/model.mtl`);
-
     const raycaster = new THREE.Raycaster();
 
     const scene = new Scene();
@@ -32,11 +19,9 @@ export default async function sceneLoader(
     camera.near = 0.1;
     camera.far = 10000;
 
-    var { x, y } = data.viewbox.center;
-
     const light = new THREE.HemisphereLight(0xffffff, 10);
     light.castShadow = true;
-    light.position.set(x, y, 100);
+    light.position.set(0, 0, 100);
     scene.add(light);
 
     const renderer = new THREE.WebGLRenderer({
@@ -78,22 +63,7 @@ export default async function sceneLoader(
 
     animate();
 
-    let layerCounter = 1;
-
-    model.children.forEach((mesh) => {
-        var [layer, name] = mesh.name.split(/ (.*)/s);
-
-        if (!scene.userLayers.has(layer)) scene.userLayers.set(layer, layerCounter++);
-        mesh.name = name;
-        mesh.layers.set(scene.userLayers.get(layer)!);
-        camera.layers.enable(scene.userLayers.get(layer));
-    });
-
     raycaster.layers.enableAll();
-
-    boothStore.booths.forEach(
-        (booth) => (materals[booth.id] = (model.children.find((ch) => ch.name == booth.name) as THREE.Mesh)?.material)
-    );
 
     let pressed = false;
 
@@ -115,39 +85,17 @@ export default async function sceneLoader(
     function onClick(x: number, y: number) {
         onclickCallback(x, y, raycaster);
 
-        selected.forEach((mesh) => (mesh.material = materals[mesh.name]));
-
         const intersections = raycaster
             .intersectObjects(scene.children)
             .filter((ch) => ((ch.object as THREE.Mesh).material as MeshPhongMaterial).visible)
             .sort((a, b) => a.distance - b.distance);
-            
-        const intersection = intersections[0];
 
-        let name = intersection?.object.name;
-
-        if (name && boothStore.booths.find((b) => name === b.name)) {
-            const mesh = intersection.object as THREE.Mesh;
-            selected = [mesh];
-            mesh.material = selecterMaterial;
-
-            boothStore.booths.forEach((booth) => {
-                var mesh = model.getObjectByName(booth.name) as THREE.Mesh;
-                if (mesh && mesh.name !== name) mesh.material = dimmedMaterial;
-            });
-        } else {
-            boothStore.booths.forEach((booth) => {
-                var mesh = model.getObjectByName(booth.name) as THREE.Mesh;
-                if (mesh) mesh.material = materals[booth.id];
-            });
-        }
+        scene.onClickCallbacks.forEach((cb) => cb(intersections));
     }
 
     // #endregion mouse interaction
 
-    scene.add(model);
     scene.scale.x = -1;
-    initTexts(scene.userLayers, scene, data);
 
     // const plane = new SpriteMesh(yah);
     // plane.rotateX(Math.PI / 2);

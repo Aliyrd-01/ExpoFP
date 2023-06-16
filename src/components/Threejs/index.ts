@@ -4,7 +4,7 @@ import { ICommonData } from "./common/dataLoader";
 import Scene from "./common/Scene";
 import sceneLoader from "./common/sceneLoader";
 
-export default function init(container: HTMLElement, data: ICommonData, expo: string): Promise<Scene> {
+export default function init(container: HTMLElement, data: ICommonData): Promise<Scene> {
     return new Promise(async (resolve, reject) => {
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -21,12 +21,10 @@ export default function init(container: HTMLElement, data: ICommonData, expo: st
         let controls: OrbitControls;
 
         const res = await sceneLoader(
-            expo,
             null,
             null,
             container,
             camera,
-            data,
             (x: number, y: number, raycaster: THREE.Raycaster) => {
                 const pointer = new THREE.Vector2();
                 pointer.x = (x / window.innerWidth) * 2 - 1;

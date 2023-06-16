@@ -8,10 +8,11 @@ export default function initMapbox(container: HTMLElement, style: string): Promi
 
         const map = new mapboxgl.Map({
             container: container,
-            style: "mapbox://styles/mapbox/" + style,
+            style: `mapbox://styles/mapbox/${"streets-v12"}`,
+            //style: "mapbox://styles/mapbox/" + style,
             antialias: true,
-            pitch: 45,
-            maxPitch: 60,
+            pitch: 50,
+            maxPitch: 70,
         });
 
         map.on("load", () => resolve(map));
