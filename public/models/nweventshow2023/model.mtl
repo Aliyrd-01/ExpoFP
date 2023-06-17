@@ -1,14 +1,23 @@
 newmtl BG_0.webp
 map_Kd textures/BG_0.webp
 
-newmtl 0xFFFFFF
-	Kd 1 1 1
+newmtl 0x2ECACA
+	Kd 0.18 0.792 0.792
+
+newmtl 0xC6529E
+	Kd 0.776 0.322 0.62
+
+newmtl EXHIBITHALL_0.webp
+map_Kd textures/EXHIBITHALL_0.webp
 
 newmtl 0x2ECACA
 	Kd 0.18 0.792 0.792
 
-newmtl 3_0.webp
-map_Kd textures/3_0.webp
+newmtl 0xC6529E
+	Kd 0.776 0.322 0.62
+
+newmtl 1_0.webp
+map_Kd textures/1_0.webp
 
 newmtl 0x2ECACA
 	Kd 0.18 0.792 0.792
@@ -25,21 +34,12 @@ newmtl 0x1E0039
 newmtl 2_0.webp
 map_Kd textures/2_0.webp
 
-newmtl 0x2ECACA
-	Kd 0.18 0.792 0.792
-
-newmtl 0xC6529E
-	Kd 0.776 0.322 0.62
-
-newmtl 1_0.webp
-map_Kd textures/1_0.webp
+newmtl 0xFFFFFF
+	Kd 1 1 1
 
 newmtl 0x2ECACA
 	Kd 0.18 0.792 0.792
 
-newmtl 0xC6529E
-	Kd 0.776 0.322 0.62
-
-newmtl EXHIBITHALL_0.webp
-map_Kd textures/EXHIBITHALL_0.webp
+newmtl 3_0.webp
+map_Kd textures/3_0.webp
 

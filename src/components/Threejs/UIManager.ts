@@ -21,7 +21,7 @@ import TextureMerger from "./utils/textureMerger";
 const routeMeshes: THREE.Mesh[] = [];
 const booths: BoothMesh[] = [];
 
-const pointSize = 0.05;
+const pointSize = 0.04;
 
 let currentPositionMesh = new THREE.Mesh(
     new THREE.BoxGeometry(2 * pointSize, 2 * pointSize, 10 * pointSize),
@@ -54,7 +54,7 @@ export default class UIManager {
             scene.onClickCallbacks.push(this.onClickCallback.bind(this));
             scene.onBeforeRender = this.onBeforeRender.bind(this);
             await this.initBooths(scene, model);
-            scene.add(currentPositionMesh);
+            //scene.add(currentPositionMesh);
 
             resolve();
         });
@@ -83,7 +83,26 @@ export default class UIManager {
 
     public setMarker(type: "from" | "to" | "yah" | "cp", point: CurrentPosition) {
         const localPoint = this.convertPoint(point);
-        currentPositionMesh.position.set(localPoint.x, localPoint.y, localPoint.z);
+        // currentPositionMesh.position.set(localPoint.x, localPoint.y, localPoint.z);
+    }
+
+    public interpolateColors(color1: string, color2: string, steps: number): string[] {
+        var stepFactor = 1 / (steps - 1),
+            interpolatedColorArray = [];
+
+        var c1 = new THREE.Color(color1);
+        var c2 = new THREE.Color(color2);
+
+        for (var i = 0; i < steps; i++) {
+            interpolatedColorArray.push(
+                c1
+                    .clone()
+                    .lerp(c2, stepFactor * i)
+                    .getHex()
+            );
+        }
+
+        return interpolatedColorArray;
     }
 
     public updateRouteLines(routeStore: RouteStore): void {
@@ -95,15 +114,19 @@ export default class UIManager {
         routeMeshes.forEach((g) => this.scene.remove(g));
         routeMeshes.splice(0, routeMeshes.length);
 
+        if (!routeLines.length) return;
+
         const points = this.linesToPoints(routeLines);
 
         const { z } = this.data.objLayers.find((l) => l.name === routeLines[0].p0.layer);
 
-        points.forEach((point) => {
-            const geometry = new THREE.BoxGeometry(pointSize, pointSize, pointSize);
-            const material = new THREE.MeshPhongMaterial({ color: 0xffa500 });
+        const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
+
+        points.concat().reverse().forEach((point, index) => {
+            const geometry = new THREE.SphereGeometry(((index + 1) / points.length) * pointSize);
+            const material = new THREE.MeshPhongMaterial({ color: colors[index] });
             const cube = new THREE.Mesh(geometry, material);
-            cube.position.set(point.x, point.y, z);
+            cube.position.set(point.x, point.y, z + 0.02);
             routeMeshes.push(cube);
             this.scene.add(cube);
         });
@@ -166,9 +189,16 @@ export default class UIManager {
                 if (text) scene.add(text);
 
                 var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
-                if (exhibitor) scene.add(boothMesh.setLogo(textureMerger, material));
+                if (exhibitor)
+                    scene.add(
+                        boothMesh.setLogo(
+                            textureMerger,
+                            logos.find((l) => l.booth.name === name.substring(1)),
+                            material
+                        )
+                    );
 
-                model.children[index] = boothMesh;            
+                model.children[index] = boothMesh;
 
                 booths.push(boothMesh);
             }
@@ -203,7 +233,7 @@ export default class UIManager {
     private linesToPoints(routeLines: RouteLine[]): THREE.Vector3[] {
         let routePoints = [];
 
-        let interval = Math.round(pointSize * 1000);
+        let interval = Math.round(pointSize * 200);
 
         let lines = [];
         for (let i = 0; i < routeLines.length; i++) {

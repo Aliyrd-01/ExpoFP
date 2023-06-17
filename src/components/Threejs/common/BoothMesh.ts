@@ -5,10 +5,11 @@ import { IBooth as ThreeBooth } from "../common/dataLoader";
 
 import { getBoothlabel } from "../../Mapbox/utils/data";
 import TextureMerger, { modifySphereUV } from "../utils/textureMerger";
+import { Img } from "../../../utils/imageloader";
 var { Text } = require("troika-three-text");
 
 const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
-const dimmedMaterial = new THREE.MeshPhongMaterial({ color: 0x777777, side: THREE.DoubleSide, name: "hovered" });
+const dimmedMaterial = new THREE.MeshPhongMaterial({ color: 0x333333, side: THREE.DoubleSide, name: "hovered" });
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
 
 export class BoothMesh extends THREE.Group {
@@ -62,13 +63,50 @@ export class BoothMesh extends THREE.Group {
         return label;
     }
 
-    public setLogo(textureMerger: TextureMerger, material: THREE.MeshBasicMaterial): Mesh {
-        var plane = new THREE.Mesh(new THREE.PlaneGeometry(this.threeBooth.rect.width, this.threeBooth.rect.height), material);
+    public setLogo(textureMerger: TextureMerger, img: Img, material: THREE.MeshBasicMaterial): Mesh {
+        const rect = this.threeBooth.rect;
+
+        const ratioBooth = rect.width / rect.height;
+        const ratio = img.htmlImage.width / img.htmlImage.height;
+
+        let w = 0;
+        let h = 0;
+
+        let angle: number = 0;
+
+        if (ratioBooth > ratio) {
+            h = rect.height * 0.9;
+            w = h * ratio;
+        } else {
+            w = rect.width * 0.9;
+            h = w / ratio;
+        }
+
+        if (ratio >= 2 && !this.efpBooth.rotate && rect.height >= rect.width * 2.0) {
+            let newH = rect.width * 0.9;
+            let newW = newH * ratio;
+
+            while (newW > rect.height - 0.0002) {
+                newH--;
+                newW = newH * ratio;
+            }
+
+            h = newH;
+            w = newW;
+            angle = -90;
+        } else {
+            angle = (-this.efpBooth.rotate * 180) / Math.PI;
+        }
+
+        var plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), material);
         plane.layers.set(this.threeLayer);
 
         modifySphereUV(plane, textureMerger.ranges.get(this.efpBooth.slug));
-        plane.position.x = this.threeBooth.rect.center.x;
-        plane.position.y = this.threeBooth.rect.center.y;
+
+        plane.rotateZ(((angle || 0) * Math.PI) / 180);
+
+        plane.position.x = rect.center.x;
+        plane.position.y = rect.center.y;
         plane.position.z = this.z;
         plane.scale.y = -1;
 

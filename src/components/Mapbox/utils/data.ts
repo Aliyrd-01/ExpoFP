@@ -169,6 +169,8 @@ export function moveToRect(
     pitch: number = props.initPitch,
     bearing: number = props.initBearing
 ) {
+    if (!map) return;
+
     const padding = (paddingPercent / 100) * Math.max(Math.abs(svgRect.x2 - svgRect.x1), Math.abs(svgRect.y2 - svgRect.y1)) || 0;
 
     var p1 = convertSvgPoint(svgRect.x1 - padding, svgRect.y1 - padding);
