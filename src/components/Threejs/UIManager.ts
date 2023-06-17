@@ -17,11 +17,12 @@ import store, { boothStore, uiState } from "../../store";
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import logosFromBooths from "../../utils/imageloader";
 import TextureMerger from "./utils/textureMerger";
+import { getLayerSvg } from "../../data/svg";
 
 const routeMeshes: THREE.Mesh[] = [];
 const booths: BoothMesh[] = [];
 
-const pointSize = 0.04;
+let pointSize = 0.04;
 
 let currentPositionMesh = new THREE.Mesh(
     new THREE.BoxGeometry(2 * pointSize, 2 * pointSize, 10 * pointSize),
@@ -45,6 +46,8 @@ export default class UIManager {
     public async init(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             this.data = await dataLoader(this.expo);
+
+            if (getLayerSvg().getAttribute("units") == "m") pointSize *= 0.3;
 
             const scene = await (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data));
             const model = await loadModel(`models/${this.expo}/model.obj`, `models/${this.expo}/model.mtl`);
@@ -122,14 +125,17 @@ export default class UIManager {
 
         const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
 
-        points.concat().reverse().forEach((point, index) => {
-            const geometry = new THREE.SphereGeometry(((index + 1) / points.length) * pointSize);
-            const material = new THREE.MeshPhongMaterial({ color: colors[index] });
-            const cube = new THREE.Mesh(geometry, material);
-            cube.position.set(point.x, point.y, z + 0.02);
-            routeMeshes.push(cube);
-            this.scene.add(cube);
-        });
+        points
+            .concat()
+            .reverse()
+            .forEach((point, index) => {
+                const geometry = new THREE.SphereGeometry(pointSize);
+                const material = new THREE.MeshPhongMaterial({ color: colors[index] });
+                const cube = new THREE.Mesh(geometry, material);
+                cube.position.set(point.x, point.y, z + 0.02);
+                routeMeshes.push(cube);
+                this.scene.add(cube);
+            });
     }
 
     public onBeforeRender(
@@ -141,6 +147,7 @@ export default class UIManager {
         group: Group
     ): void {
         let position: THREE.Vector3 = camera.userData.position || camera.position;
+        //console.info("render");
     }
 
     private onClickCallback(intersections: Array<any>): void {
