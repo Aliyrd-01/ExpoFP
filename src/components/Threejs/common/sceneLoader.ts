@@ -83,6 +83,9 @@ export default async function sceneLoader(
     });
 
     function onClick(x: number, y: number) {
+        onclickCallback(x, y, raycaster);
+
+
         const intersections = raycaster
             .intersectObjects(scene.children)
             .filter((ch) => ((ch.object as THREE.Mesh).material as MeshPhongMaterial).visible)
