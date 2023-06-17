@@ -233,7 +233,7 @@ export default class UIManager {
     private linesToPoints(routeLines: RouteLine[]): THREE.Vector3[] {
         let routePoints = [];
 
-        let interval = Math.round(pointSize * 200);
+        let interval = Math.round(pointSize * 1000);
 
         let lines = [];
         for (let i = 0; i < routeLines.length; i++) {
