@@ -27,6 +27,7 @@ export class BoothMesh extends THREE.Group {
         boothMesh.name = name;
         this.material = boothMesh.material;
         this.children.push(boothMesh);
+        this.layers.set(threeLayer);
     }
 
     public setText(): Mesh {
@@ -57,8 +58,6 @@ export class BoothMesh extends THREE.Group {
         mesh.scale.y = -1;
         mesh.name = this.name;
         mesh.layers.set(this.threeLayer);
-
-        label.sync();
 
         return label;
     }

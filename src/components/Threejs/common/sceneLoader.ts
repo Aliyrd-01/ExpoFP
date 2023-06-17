@@ -33,18 +33,18 @@ export default async function sceneLoader(
     });
 
     if (!canvas && !gl) {
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(renderer.domElement);
     }
 
     renderer.autoClear = false;
 
-    window.addEventListener(
+    container.addEventListener(
         "resize",
         () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.aspect = container.clientWidth / container.clientHeight;
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(container.clientWidth, container.clientHeight);
             render();
         },
         false
@@ -69,29 +69,27 @@ export default async function sceneLoader(
 
     // #region mouse interaction
 
-    window.addEventListener("mousedown", () => {
+    container.addEventListener("mousedown", () => {
         pressed = true;
     });
 
-    window.addEventListener("mousemove", () => {
+    container.addEventListener("mousemove", () => {
         pressed = false;
     });
 
-    window.addEventListener("mouseup", (event: MouseEvent) => {
-        if (pressed) onClick(event.clientX, event.clientY);
+    container.addEventListener("mouseup", (event: MouseEvent) => {
+        if (pressed)
+            onClick(event.clientX - container.parentElement.offsetLeft, event.clientY - container.parentElement.offsetTop);
         pressed = false;
     });
 
     function onClick(x: number, y: number) {
         onclickCallback(x, y, raycaster);
 
-
         const intersections = raycaster
             .intersectObjects(scene.children)
             .filter((ch) => ((ch.object as THREE.Mesh).material as MeshPhongMaterial).visible)
             .sort((a, b) => a.distance - b.distance);
-
-        console.info(intersections.map((i) => i.object.name));
 
         scene.onClickCallbacks.forEach((cb) => cb(intersections));
     }

@@ -12,7 +12,7 @@ import Scene from "./common/Scene";
 import init from "./index";
 import { init as initMapbox } from "./index_mapbox";
 
-import store, { boothStore } from "../../store";
+import store, { boothStore, uiState } from "../../store";
 
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import logosFromBooths from "../../utils/imageloader";
@@ -44,25 +44,23 @@ export default class UIManager {
 
     public async init(): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            let model = await loadModel(`models/${this.expo}/model.obj`, `models/${this.expo}/model.mtl`);
-
             this.data = await dataLoader(this.expo);
 
-            (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data)).then((scene) => {
-                this.isInit = true;
-                this.scene = scene;
-                scene.onClickCallbacks.push(this.onClickCallback.bind(this));
-                scene.onBeforeRender = this.onBeforeRender.bind(this);
-                this.initBooths(scene, model);
-                scene.add(currentPositionMesh);
+            const scene = await (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data));
+            const model = await loadModel(`models/${this.expo}/model.obj`, `models/${this.expo}/model.mtl`);
 
-                resolve();
-            });
+            this.isInit = true;
+            this.scene = scene;
+            scene.onClickCallbacks.push(this.onClickCallback.bind(this));
+            scene.onBeforeRender = this.onBeforeRender.bind(this);
+            await this.initBooths(scene, model);
+            scene.add(currentPositionMesh);
+
+            resolve();
         });
     }
 
     public changeLayerVisibility(layer: string, isVisible: boolean): void {
-        
         if (!this.isInit) return;
         const l = this.scene.getlayer(layer);
 
@@ -70,8 +68,8 @@ export default class UIManager {
             this.scene.camera.layers.enable(l);
             this.scene.raycaster.layers.enable(l);
         } else {
-            // this.scene.camera.layers.disable(l);
-            // this.scene.raycaster.layers.disable(l);
+            this.scene.camera.layers.disable(l);
+            this.scene.raycaster.layers.disable(l);
         }
     }
 
@@ -126,9 +124,8 @@ export default class UIManager {
         const intersection = intersections[0];
         let name = intersection?.object?.name;
         let booth = boothStore.booths.find((b) => b.name === name);
-        if (booth) {
-            store.selectBooth(booth);
-        }
+        if (booth) store.selectBooth(booth);
+        else uiState.details = null;
     }
 
     private async initBooths(scene: Scene, model: Group): Promise<void> {
@@ -145,37 +142,36 @@ export default class UIManager {
 
         model.children.forEach((mesh, index) => {
             var [layer, name] = mesh.name.split(/ (.*)/s);
-            
+
             const l = scene.addLayer(layer);
             mesh.layers.set(l);
             mesh.name = name;
 
-            //const efpBooth = store.boothStore.booths.find((b) => name && name[0] === "b" && b.name === name?.substring(1));
+            const efpBooth = store.boothStore.booths.find((b) => name && name[0] === "b" && b.name === name?.substring(1));
 
-            // if (efpBooth) {
-            //     let objLayer = this.data.objLayers.find((l) => l.name === efpBooth.layer?.name);
-            //     let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
+            if (efpBooth) {
+                let objLayer = this.data.objLayers.find((l) => l.name === efpBooth.layer?.name);
+                let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
 
-            //     const boothMesh = new BoothMesh(
-            //         efpBooth,
-            //         this.data.booths.find((b) => b.name === efpBooth.name),
-            //         mesh as THREE.Mesh,
-            //         name.substring(1),
-            //         l,
-            //         z
-            //     );
+                const boothMesh = new BoothMesh(
+                    efpBooth,
+                    this.data.booths.find((b) => b.name === efpBooth.name),
+                    mesh as THREE.Mesh,
+                    name.substring(1),
+                    l,
+                    z
+                );
 
-            //     let text = boothMesh.setText();
-            //     if (text) scene.add(text);
+                let text = boothMesh.setText();
+                if (text) scene.add(text);
 
-            //     // var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
-            //     // if (exhibitor) scene.add(boothMesh.setLogo(textureMerger, material));
+                var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
+                if (exhibitor) scene.add(boothMesh.setLogo(textureMerger, material));
 
-            //     //model.children[index] = boothMesh;
-            //     boothMesh.layers.set(l);
+                model.children[index] = boothMesh;            
 
-            //     booths.push(boothMesh);
-            // } 
+                booths.push(boothMesh);
+            }
         });
 
         scene.add(model);

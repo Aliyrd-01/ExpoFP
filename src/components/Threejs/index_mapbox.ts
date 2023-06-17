@@ -46,7 +46,7 @@ export async function init(container: HTMLElement, data: ICommonData): Promise<S
                 var res = await sceneLoader(
                     map.getCanvas(),
                     gl,
-                    null,
+                    container,
                     camera,
                     (x: number, y: number, raycaster: THREE.Raycaster) => {
                         const freeCamera = map.getFreeCameraOptions();
@@ -57,8 +57,9 @@ export async function init(container: HTMLElement, data: ICommonData): Promise<S
                             1
                         );
                         const mouse = new THREE.Vector4(-1000, -1000, 1, 1);
-                        mouse.x = (x / window.innerWidth) * 2 - 1;
-                        mouse.y = -(y / window.innerHeight) * 2 + 1;
+
+                        mouse.x = (x / container.clientWidth) * 2 - 1;
+                        mouse.y = -(y / container.clientHeight) * 2 + 1;
 
                         cameraPosition.applyMatrix4(l.invert());
                         let direction = mouse.clone().applyMatrix4(camera.projectionMatrix.clone().invert());
