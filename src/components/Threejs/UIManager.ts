@@ -20,6 +20,11 @@ import TextureMerger from "./utils/textureMerger";
 import { getLayerSvg } from "../../data/svg";
 
 const routeMeshes: THREE.Mesh[] = [];
+const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
+const currentMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+
+let routeIndex = 0;
+
 const booths: BoothMesh[] = [];
 
 let pointSize = 0.04;
@@ -41,13 +46,27 @@ export default class UIManager {
         this.expo = expo;
         this.isMapbox = isMapbox;
         this.container = container;
+
+        setInterval(() => {
+            if (!routeMeshes.length) {
+                routeIndex = 0;
+                return;
+            }
+
+            routeMeshes[routeIndex].material = currentMaterial;
+            if (routeIndex > 0) routeMeshes[routeIndex - 1].material = defaultMaterial;
+
+            if (routeIndex < routeMeshes.length - 1) routeIndex++;
+            else {
+                routeMeshes[routeIndex - 1].material = defaultMaterial;
+                routeIndex = 0;
+            }
+        }, 50);
     }
 
     public async init(): Promise<void> {
         return new Promise(async (resolve, reject) => {
             this.data = await dataLoader(this.expo);
-
-            if (getLayerSvg().getAttribute("units") == "m") pointSize *= 0.3;
 
             const scene = await (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data));
             const model = await loadModel(`models/${this.expo}/model.obj`, `models/${this.expo}/model.mtl`);
@@ -123,15 +142,14 @@ export default class UIManager {
 
         const { z } = this.data.objLayers.find((l) => l.name === routeLines[0].p0.layer);
 
-        const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
+        //const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
 
-        points
-            .concat()
+        []
+            .concat(points)
             .reverse()
             .forEach((point, index) => {
                 const geometry = new THREE.SphereGeometry(pointSize);
-                const material = new THREE.MeshPhongMaterial({ color: colors[index] });
-                const cube = new THREE.Mesh(geometry, material);
+                const cube = new THREE.Mesh(geometry, defaultMaterial);
                 cube.position.set(point.x, point.y, z + 0.02);
                 routeMeshes.push(cube);
                 this.scene.add(cube);
@@ -147,7 +165,18 @@ export default class UIManager {
         group: Group
     ): void {
         let position: THREE.Vector3 = camera.userData.position || camera.position;
-        //console.info("render");
+
+        // if (!routeMeshes.length) {
+        //     routeIndex = 0;
+        //     return;
+        // }
+
+        // routeMeshes[routeIndex].material = currentMaterial;
+
+        // if (routeIndex > 0) routeMeshes[routeIndex - 1].material = defaultMaterial;
+
+        // if (routeIndex < routeMeshes.length - 1) routeIndex++;
+        // else routeIndex = 0;
     }
 
     private onClickCallback(intersections: Array<any>): void {
@@ -240,7 +269,7 @@ export default class UIManager {
     private linesToPoints(routeLines: RouteLine[]): THREE.Vector3[] {
         let routePoints = [];
 
-        let interval = Math.round(pointSize * 1000);
+        let interval = Math.round(pointSize * (getLayerSvg().getAttribute("units") == "m" ? 300 : 900));
 
         let lines = [];
         for (let i = 0; i < routeLines.length; i++) {
