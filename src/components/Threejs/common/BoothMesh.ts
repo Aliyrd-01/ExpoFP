@@ -51,7 +51,11 @@ export class BoothMesh extends THREE.Group {
 
         let mesh = label as Mesh;
 
-        if (rect.width < rect.height) mesh.rotateZ(Math.PI / 2);
+        var angle = ((this.efpBooth.rotate || 0) * 180) / Math.PI;
+        
+        if (rect.width < rect.height) angle += 90;
+
+        mesh.rotateZ(-(angle * Math.PI) / 180);
 
         mesh.position.x = rect.center.x;
         mesh.position.y = rect.center.y;
