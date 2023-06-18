@@ -34,7 +34,10 @@ export interface ICommonData {
 
 export default async function dataLoader(expo: string): Promise<ICommonData> {
     return new Promise(async (resolve, reject) => {
-        let response = await fetch(`models/${expo}/model.json`);
+
+
+
+        let response = await fetch(`https://${expo}.expofp.com/data/models/model.json`);
         let data = (await response.json()) as ICommonData;
         resolve(data);
     });

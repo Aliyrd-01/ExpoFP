@@ -68,8 +68,10 @@ export default class UIManager {
         return new Promise(async (resolve, reject) => {
             this.data = await dataLoader(this.expo);
 
+            const baseUrl = `https://${this.expo}.expofp.com/data/models`;
+
             const scene = await (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data));
-            const model = await loadModel(`models/${this.expo}/model.obj`, `models/${this.expo}/model.mtl`);
+            const model = await loadModel(`${baseUrl}/model.obj`, `${baseUrl}/model.mtl`);
 
             this.isInit = true;
             this.scene = scene;
