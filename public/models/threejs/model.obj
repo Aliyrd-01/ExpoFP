@@ -1,4 +1,4 @@
-mtllib nweventshow2023.mtl
+mtllib threejs.mtl
 
 o BG BG_0
 usemtl BG_0.webp
@@ -12,9 +12,9 @@ vt 0 1 0
 vt 1 1 0
 f -4/4 -3/3 -2/1 -1/2
 
-mtllib nweventshow2023.mtl
+mtllib threejs.mtl
 
-mtllib nweventshow2023.mtl
+mtllib threejs.mtl
 
 o EXHIBITHALL bFirst Aid
 usemtl 0x2ECACA
@@ -956,7 +956,7 @@ vt 0 1 0
 vt 1 1 0
 f -4/4 -3/3 -2/1 -1/2
 
-mtllib nweventshow2023.mtl
+mtllib threejs.mtl
 
 o 1 bRegistration 1
 usemtl 0x2ECACA
@@ -1086,7 +1086,7 @@ vt 0 1 0
 vt 1 1 0
 f -4/4 -3/3 -2/1 -1/2
 
-mtllib nweventshow2023.mtl
+mtllib threejs.mtl
 
 o 2 bFirst Aid 1
 usemtl 0x2ECACA
@@ -5584,7 +5584,7 @@ vt 0 1 0
 vt 1 1 0
 f -4/4 -3/3 -2/1 -1/2
 
-mtllib nweventshow2023.mtl
+mtllib threejs.mtl
 
 o 3 b-1
 usemtl 0xFFFFFF
