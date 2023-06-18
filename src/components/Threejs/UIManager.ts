@@ -18,6 +18,7 @@ import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import logosFromBooths from "../../utils/imageloader";
 import TextureMerger from "./utils/textureMerger";
 import { getLayerSvg } from "../../data/svg";
+import isDebug from "../../utils/is-debug";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -68,7 +69,7 @@ export default class UIManager {
         return new Promise(async (resolve, reject) => {
             this.data = await dataLoader(this.expo);
 
-            const baseUrl = `https://${this.expo}.expofp.com/data/models`;
+            const baseUrl = isDebug ? `models/${this.expo}/` : `https://${this.expo}.expofp.com/data/models`;
 
             const scene = await (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data));
             const model = await loadModel(`${baseUrl}/model.obj`, `${baseUrl}/model.mtl`);
@@ -211,7 +212,8 @@ export default class UIManager {
             const efpBooth = store.boothStore.booths.find((b) => name && name[0] === "b" && b.name === name?.substring(1));
 
             if (efpBooth) {
-                let objLayer = this.data.objLayers.find((l) => l.name === efpBooth.layer?.name);
+                let objLayer = this.data.objLayers.find((l) => l.name === (efpBooth.layer?.name || "Default"));
+
                 let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
 
                 const boothMesh = new BoothMesh(

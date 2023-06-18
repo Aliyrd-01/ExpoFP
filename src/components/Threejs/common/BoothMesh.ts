@@ -1,3 +1,4 @@
+import { lineAngle } from "simple-geometry";
 import * as THREE from "three";
 import { Material, Mesh } from "three";
 import { Booth } from "../../../store/BoothStore";
@@ -51,7 +52,7 @@ export class BoothMesh extends THREE.Group {
 
         let mesh = label as Mesh;
 
-        var angle = ((this.efpBooth.rotate || 0) * 180) / Math.PI;
+        var angle = lineAngle(this.threeBooth.rect.p0, this.threeBooth.rect.p1) || 0;
 
         if (rect.width < rect.height) angle -= 90;
 
