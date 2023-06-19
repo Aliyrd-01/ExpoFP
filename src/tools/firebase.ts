@@ -1,12 +1,8 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, doc, getDocs, getDoc, setDoc } from "firebase/firestore";
 import { Heatmap } from "../store/HeatmapStore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import logger from "./logger";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyCDhFIYzbNyRJvuDe10i99RJu1Mqu0Z9cw",
     authDomain: "fp-heatmap.firebaseapp.com",
@@ -21,38 +17,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// export async function getAllClicks(floorplanId: string) {
-//     try {
-//         // Get a reference to the collection
-//         const collectionRef = collection(doc(db, "heatmaps", floorplanId), "booths");
-//
-//         // Get all documents in the collection
-//         const querySnapshot = await getDocs(collectionRef);
-//         console.log(querySnapshot);
-//
-//         let booths = [];
-//         querySnapshot.forEach((doc) => {
-//             let booth = doc.data();
-//             booth.id = doc.id;
-//             booths.push(booth);
-//         });
-//
-//         console.log(booths);
-//         return booths;
-//     } catch (error) {
-//         console.log("Error getting documents:", error);
-//         throw error;
-//     }
-// }
-
 export async function getAllClicks(floorplanId: string) {
-    const querySnapshot = await getDocs(collection(doc(db, "heatmaps", floorplanId), "booths"));
-    const heatmapData = querySnapshot.docs.map<Heatmap>((doc) => ({
-        boothId: Number(doc.id),
-        clickCount: doc.data().clickCount,
-    }));
-    console.log(heatmapData);
-    return heatmapData as Heatmap[];
+    try {
+        const querySnapshot = await getDocs(collection(doc(db, "heatmaps", floorplanId), "booths"));
+        logger.log("Heatmap data loaded");
+        return querySnapshot.docs.map<Heatmap>((doc) => ({
+            boothId: Number(doc.id),
+            clickCount: doc.data().clickCount,
+        }));
+    } catch (e) {}
 }
 
 export async function recordClick(floorplanId: string, boothId: number) {
@@ -71,9 +44,6 @@ export async function recordClick(floorplanId: string, boothId: number) {
             // If document does not exist, initialize it with a click count of 1
             await setDoc(boothDocRef, { clickCount: 1 });
         }
-        console.log("Success update click");
-    } catch (error) {
-        console.log("Error updating document:", error);
-        throw error;
-    }
+        logger.log("Success update click");
+    } catch (error) {}
 }

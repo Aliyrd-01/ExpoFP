@@ -180,7 +180,10 @@ export default class FloorPlanLoader implements FloorPlan {
             const navLocale = _locales.find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
 
-            window["__heatmapData"] = await getAllClicks(eventId);
+            const isHeatmap = window.location.search.startsWith("?heatmap=true");
+            if (isHeatmap) {
+                window["__heatmapData"] = await getAllClicks(eventId);
+            }
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");

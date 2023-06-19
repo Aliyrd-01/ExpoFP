@@ -13,7 +13,6 @@ import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 import ScheduleStore from "./ScheduleStore";
 import HeatmapStore from "./HeatmapStore";
-import settings from "../tools/settings";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -194,6 +193,14 @@ export default class RootStore {
         }
 
         if (
+            this.uiState.selectedBooth?.id !== booth.id &&
+            ![...this.uiState.selectedBooths].some((b) => b.id === booth.id) &&
+            !this.uiState.heatmap
+        ) {
+            this.heatmapStore.recordUserClick(booth.id);
+        }
+
+        if (
             booth.exhibitors.length === 1 &&
             ((booth instanceof SpecialBooth && !booth.description) || booth instanceof RegularBooth)
         ) {
@@ -201,8 +208,8 @@ export default class RootStore {
         } else {
             this.selectBooth(booth, false);
         }
+
         this.showMap();
-        this.heatmapStore.recordUserClick(booth.id);
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
