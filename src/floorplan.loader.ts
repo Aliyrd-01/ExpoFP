@@ -7,6 +7,7 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
+import { getAllClicks } from "./tools/firebase";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -178,6 +179,8 @@ export default class FloorPlanLoader implements FloorPlan {
             const navLanguage = navigator.languages?.[0] || navigator.language;
             const navLocale = _locales.find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
+
+            window["__heatmapData"] = await getAllClicks(eventId);
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");

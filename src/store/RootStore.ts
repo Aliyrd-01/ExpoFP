@@ -12,6 +12,8 @@ import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 import ScheduleStore from "./ScheduleStore";
+import HeatmapStore from "./HeatmapStore";
+import settings from "../tools/settings";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -22,6 +24,7 @@ export default class RootStore {
     readonly mapboxStore: MapboxStore;
     readonly layerStore: LayerStore;
     readonly scheduleStore: ScheduleStore;
+    readonly heatmapStore: HeatmapStore;
 
     fp: FloorPlanReady;
 
@@ -35,6 +38,7 @@ export default class RootStore {
         this.mapboxStore = new MapboxStore(this);
         this.layerStore = new LayerStore();
         this.scheduleStore = new ScheduleStore(this);
+        this.heatmapStore = new HeatmapStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {
@@ -198,6 +202,7 @@ export default class RootStore {
             this.selectBooth(booth, false);
         }
         this.showMap();
+        this.heatmapStore.recordUserClick(booth.id);
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
