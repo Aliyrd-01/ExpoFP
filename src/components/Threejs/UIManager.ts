@@ -131,6 +131,9 @@ export default class UIManager {
     }
 
     public updateRouteLines(routeStore: RouteStore): void {
+
+        if(!this.isInit) return;
+
         var routeLines = routeStore.routeLines.filter((line) => {
             let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
             return !line.virtual && visible;
@@ -143,7 +146,7 @@ export default class UIManager {
 
         const points = this.linesToPoints(routeLines);
 
-        const { z } = this.data.objLayers.find((l) => l.name === routeLines[0].p0.layer || "Default");
+        const { z } = this.data.objLayers.find((l) => l.name === (routeLines[0].p0.layer || "Default"));
 
         //const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
 
