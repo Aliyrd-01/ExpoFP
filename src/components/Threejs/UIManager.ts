@@ -186,7 +186,7 @@ export default class UIManager {
         const intersection = intersections[0];
         let name = intersection?.object?.name;
         let booth = boothStore.booths.find((b) => b.name === name);
-        if (booth) store.selectBooth(booth);
+        if (booth) store.clickBooth(booth);
         else uiState.details = null;
     }
 
