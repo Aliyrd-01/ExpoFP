@@ -143,7 +143,7 @@ export default class UIManager {
 
         const points = this.linesToPoints(routeLines);
 
-        const { z } = this.data.objLayers.find((l) => l.name === routeLines[0].p0.layer);
+        const { z } = this.data.objLayers.find((l) => l.name === routeLines[0].p0.layer || "Default");
 
         //const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
 

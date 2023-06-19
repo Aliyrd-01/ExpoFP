@@ -18,6 +18,8 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
         uiManager = new UIManager(expo, isMapbox, mapContainer.current);
         uiManager.init().then(() => {
             store.layerStore.layers.forEach((l) => uiManager.changeLayerVisibility(l.name, l.visible));
+            uiManager.selectBooths([...uiState.listBooths]);
+            uiManager.updateRouteLines(store.routeStore);
         });
     }, []);
 
@@ -83,7 +85,7 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
     useReaction(
         () => uiState.hoveredBooths,
         () => {
-           uiManager.hoverBooths([...uiState.hoveredBooths]);
+            uiManager.hoverBooths([...uiState.hoveredBooths]);
         }
     );
 
