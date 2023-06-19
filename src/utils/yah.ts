@@ -11,7 +11,7 @@ export function removeYah() {
 }
 
 export function isYahBooth(booth: Booth) {
-    return /^yah/i.test(booth.name) || /You\s+are\s+here/gi.test(booth.title);
+    return /^yah_/i.test(booth.name) || /You\s+are\s+here/gi.test(booth.title);
 }
 
 export function getYah(): [number, number, number] | string {
