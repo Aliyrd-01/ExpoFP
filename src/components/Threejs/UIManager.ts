@@ -12,13 +12,14 @@ import Scene from "./common/Scene";
 import init from "./index";
 import { init as initMapbox } from "./index_mapbox";
 
-import store, { boothStore, uiState } from "../../store";
+import store, { boothStore, layersStore, uiState } from "../../store";
 
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import logosFromBooths from "../../utils/imageloader";
 import TextureMerger from "./utils/textureMerger";
 import { getLayerSvg } from "../../data/svg";
 import isDebug from "../../utils/is-debug";
+import { LayersMode } from "../../store/LayerStore";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -131,8 +132,7 @@ export default class UIManager {
     }
 
     public updateRouteLines(routeStore: RouteStore): void {
-
-        if(!this.isInit) return;
+        if (!this.isInit) return;
 
         var routeLines = routeStore.routeLines.filter((line) => {
             let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
@@ -146,7 +146,9 @@ export default class UIManager {
 
         const points = this.linesToPoints(routeLines);
 
-        const { z } = this.data.objLayers.find((l) => l.name === (routeLines[0].p0.layer || "Default"));
+        const { z } = this.data.objLayers.find(
+            (l) => l.name === (layersStore.mode === LayersMode.Default ? "Default" : routeLines[0].p0.layer)
+        );
 
         //const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
 
