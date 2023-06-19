@@ -20,6 +20,7 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
             store.layerStore.layers.forEach((l) => uiManager.changeLayerVisibility(l.name, l.visible));
             uiManager.selectBooths([...uiState.listBooths]);
             uiManager.updateRouteLines(store.routeStore);
+            switchViewbox(true)
         });
     }, []);
 
