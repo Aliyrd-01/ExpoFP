@@ -1,6 +1,6 @@
 import { lineAngle } from "simple-geometry";
 import * as THREE from "three";
-import { Material, Mesh } from "three";
+import { AdditiveBlending, Material, Mesh } from "three";
 import { Booth } from "../../../store/BoothStore";
 import { IBooth as ThreeBooth } from "../common/dataLoader";
 
@@ -42,13 +42,29 @@ export class BoothMesh extends THREE.Group {
         label.anchorY = "middle";
         label.textAlign = "center";
 
+        // if (label.text !== "FACIL'iti") return;
+
+        const words: string[] = label.text.split(" ");
+        const maxWordLength = Math.max(...words.map((w) => w.length));
+
         const { rect } = this.threeBooth;
         let maxDimension = Math.max(rect.width, rect.height);
         let minDimension = Math.min(rect.width, rect.height);
 
-        label.fontSize = (1.6 * maxDimension) / label.text.length;
+        label.fontSize = minDimension;
 
-        if (label.fontSize > minDimension) label.fontSize *= minDimension / label.fontSize;
+        if (label.fontSize * label.text.length > maxDimension)
+            label.fontSize *= (1.5 * maxDimension) / (label.fontSize * label.text.length);
+
+        if (label.fontSize / minDimension < 0.15) {
+            label.maxWidth = 0.1;
+            label.fontSize *= words.length;
+
+            if (label.fontSize * words.length > minDimension)
+                label.fontSize *= (0.9 * minDimension) / (label.fontSize * words.length);
+
+            if (label.fontSize * maxWordLength > maxDimension) label.fontSize *= maxDimension / (label.fontSize * maxWordLength);
+        }
 
         let mesh = label as Mesh;
 
