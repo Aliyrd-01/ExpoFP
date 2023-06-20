@@ -87,7 +87,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                                 {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
                                             </span>
                                             <strong>{event.name}</strong>
-                                            {event.description && (
+                                            {event.description && eventsFullDescription[date][eventIndex] && (
                                                 <>
                                                     <div
                                                         className="schedule__event-desc"
