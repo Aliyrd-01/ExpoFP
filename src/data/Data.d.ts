@@ -37,7 +37,6 @@ interface Data {
     allow3dView: boolean;
     hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;
-    isRTL: boolean;
     isRebooking: boolean;
     events: ScheduleItem[];
 }
@@ -51,7 +50,7 @@ interface ScheduleItem {
     boothId?: number;
     startDate: string;
     endDate: string;
-    link?   : string;
+    link?: string;
 }
 
 interface RawCategory {

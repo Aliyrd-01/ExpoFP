@@ -22,8 +22,6 @@ export default function validateData(data: Data) {
         }
     }
 
-    data.isRTL = true;
-
     // if (EFP_EXPO === "miblive2020") {
     //     data.booths
     //         .filter((b: any) => b.special !== true)
