@@ -176,6 +176,7 @@ export default class RootStore {
 
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
+        this.uiState.clickedBooth = booth;
 
         if (this.uiState.selectedRoute?.from && this.uiState.selectedRoute?.to) return;
 

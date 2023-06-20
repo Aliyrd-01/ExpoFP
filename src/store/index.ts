@@ -18,6 +18,7 @@ export const exhibitorStore = store.exhibitorStore;
 export const boothStore = store.boothStore;
 export const categoryStore = store.categoryStore;
 export const layersStore = store.layerStore;
+export const heatmapStore = store.heatmapStore;
 
 window["__store"] = store;
 

@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { layersStore, uiState } from "../store";
+import store, { layersStore, uiState, heatmapStore } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
 import isDebug from "../utils/is-debug";
@@ -22,6 +22,7 @@ import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
+import ClickCount from "./ClickCount";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -80,6 +81,7 @@ export default observer(function Layout() {
                         </Modal>
                     </Suspense>
                 ) : null}
+                {uiState.heatmap && <ClickCount count={heatmapStore.getClickCount} />}
                 <div id="fps" />
             </div>
         </div>

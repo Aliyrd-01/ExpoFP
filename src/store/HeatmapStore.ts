@@ -1,5 +1,5 @@
 import RootStore from "./RootStore";
-import { action } from "mobx";
+import { action, computed } from "mobx";
 import { recordClick } from "../tools/firebase";
 import settings from "../tools/settings";
 
@@ -13,6 +13,10 @@ export default class HeatmapStore {
 
     @action async recordUserClick(boothId: number) {
         await recordClick(settings.EXPO, boothId);
+    }
+
+    @computed get getClickCount() {
+        return this.heatmapData.find((data) => this.rootStore.uiState.clickedBooth?.id === data.boothId)?.clickCount || 0;
     }
 }
 

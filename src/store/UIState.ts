@@ -30,6 +30,7 @@ export default class UIState {
     @observable.ref details: Booth | Exhibitor | Route = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
+    @observable.ref clickedBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
