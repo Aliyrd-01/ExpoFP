@@ -46,7 +46,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             onClick={handleClick}
         >
             <div className={classNames("exhibitor-row__lines")}>
-                <div className={classNames({ "text-right": uiState.rtl })} dir="auto">
+                <div dir="auto">
                     {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                 </div>
             </div>

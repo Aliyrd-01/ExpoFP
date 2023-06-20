@@ -155,6 +155,7 @@
 
     &__description-html {
         overflow-wrap: break-word;
+        text-align: left;
 
         ol,
         ul {
@@ -251,6 +252,7 @@
                 max-width: 16rem;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                text-align: left;
             }
         }
     }
@@ -430,6 +432,12 @@ $imageSliderClass: ".image-slider";
 }
 
 .layout[dir="rtl"] .exhibitor {
+    &__bar > span > span {
+        text-align: right;
+    }
+    &__description-html {
+        text-align: right;
+    }
     &__logo-container {
         float: right;
     }

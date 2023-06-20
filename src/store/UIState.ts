@@ -11,7 +11,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { getResponsiveClass } from "../utils/responsiveClass";
-import data from "../data";
+import { getlanguage } from "../utils/i18n";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -56,7 +56,7 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
-    @observable rtl = data.isRTL;
+    rtl = getlanguage() === "ar" || getlanguage() === "he";
     rootElement: HTMLDivElement;
 
     overlayMediumHeightRems = 10;
