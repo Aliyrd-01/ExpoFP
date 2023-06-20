@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "Ссылка для изменения профиля была отправлена {{email}}",
   "Bookmarks": "Закладки",
+  "Bookmark": "Закладка",
   "Buy": "Купить",
   "Categories": "Категории",
   "Category": "Категория",
@@ -35,5 +36,9 @@
   "Zoom Out": "Уменьшить",
   "Fit to screen": "По ширине экрана",
   "Layers": "Слои",
-  "{{boothTerm}} Type": "{{boothTerm}} Тип"
+  "{{boothTerm}} Type": "{{boothTerm}} Тип",
+  "Next slide": "Следующий слайд",
+  "Prev slide": "Предыдущий слайд",
+  "Find your location": "Найти ваше местоположение",
+  "View switch": "Переключить вид"
 }

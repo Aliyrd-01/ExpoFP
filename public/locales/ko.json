@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "프로필 수정 링크가 {{email}} 이메일로 전송되었습니다",
   "Bookmarks": "북마크",
+  "Bookmark": "책갈피",
   "Buy": "구입",
   "Categories": "카테고리",
   "Category": "범주",
@@ -33,5 +34,11 @@
   "Use {{keyCode}} + scroll to zoom": "{{keyCode}} + 스크롤을 사용하여 확대",
   "Zoom In": "확대",
   "Zoom Out": "축소",
-  "{{boothTerm}} Type": "{{boothTerm}} 타입"
+  "{{boothTerm}} Type": "{{boothTerm}} 타입",
+  "Next slide": "다음 슬라이드",
+  "Prev slide": "이전 슬라이드",
+  "Find your location": "위치 찾기",
+  "View switch": "뷰 전환",
+  "Fit to screen": "화면에 맞추기",
+  "Layers": "레이어"
 }

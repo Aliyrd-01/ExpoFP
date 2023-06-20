@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "编辑配置文件的链接已发送至 {{email}}",
   "Bookmarks": "书签",
+  "Bookmark": "书签",
   "Buy": "购买",
   "Categories": "类别",
   "Category": "类别",
@@ -33,5 +34,11 @@
   "Use {{keyCode}} + scroll to zoom": "使用 {{keyCode}} 和鼠标滚动进行缩放",
   "Zoom In": "放大",
   "Zoom Out": "缩小",
-  "{{boothTerm}} Type": "{{boothTerm}} 类型"
+  "{{boothTerm}} Type": "{{boothTerm}} 类型",
+  "Next slide": "下一张幻灯片",
+  "Prev slide": "上一张幻灯片",
+  "Find your location": "查找您的位置",
+  "View switch": "视图切换",
+  "Fit to screen": "适应屏幕",
+  "Layers": "层"
 }

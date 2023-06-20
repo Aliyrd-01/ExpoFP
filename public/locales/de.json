@@ -1,6 +1,7 @@
 {
     "A link to edit profile was sent to {{email}}": "Ein Link zum Bearbeiten des Profils wurde an {{email}} gesendet",
     "Bookmarks": "Lesezeichen",
+    "Bookmark": "Lesezeichen",
     "Buy": "Kaufen",
     "Categories": "Kategorien",
     "Category": "Kategorie",
@@ -33,5 +34,11 @@
     "Use {{keyCode}} + scroll to zoom": "Verwenden Sie zum Vergrößern {{keyCode}} + Scrollen",
     "Zoom In": "Vergrößern",
     "Zoom Out": "Verkleinern",
-    "{{boothTerm}} Type": "{{boothTerm}}-Art"
+    "{{boothTerm}} Type": "{{boothTerm}}-Art",
+    "Next slide": "Nächste Folie",
+    "Prev slide": "Vorherige Folie",
+    "Find your location": "Finde deinen Standort",
+    "View switch": "Ansicht wechseln",
+    "Fit to screen": "An Bildschirm anpassen",
+    "Layers": "Ebenen"
 }

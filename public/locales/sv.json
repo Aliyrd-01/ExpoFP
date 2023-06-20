@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "En länk för att redigera profilen har skickats till {{email}}",
   "Bookmarks": "Bokmärken",
+  "Bookmark": "Bokmärke",
   "Buy": "Köp",
   "Categories": "Kategorier",
   "Category": "Kategori",
@@ -33,5 +34,11 @@
   "Use {{keyCode}} + scroll to zoom": "Använd {{keyCode}} + skrolla för att zooma",
   "Zoom In": "Zooma in",
   "Zoom Out": "Zooma ut",
-  "{{boothTerm}} Type": "Typ av {{boothTerm}}"
+  "{{boothTerm}} Type": "Typ av {{boothTerm}}",
+  "Next slide": "Nästa bild",
+  "Prev slide": "Föregående bild",
+  "Find your location": "Hitta din plats",
+  "View switch": "Byt vy",
+  "Fit to screen": "Anpassa till skärm",
+  "Layers": "Lager"
 }
