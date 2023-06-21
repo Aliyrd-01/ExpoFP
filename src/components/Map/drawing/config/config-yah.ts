@@ -19,7 +19,7 @@ export default function configYah(context: DrawerContext) {
         : store.boothStore.getBoothAtPoint(new Point((yah as number[])[0], (yah as number[])[1]));
 
     store.boothStore.booths
-        .filter((b) => b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi))
+        .filter((b) => b.name.match(/^yah_/i) || b.title?.match(/You\s+are\s+here/gi))
         .forEach((btr) => store.boothStore.booths.splice(store.boothStore.booths.indexOf(btr), 1));
 
     if (!yah || !isArray) return;

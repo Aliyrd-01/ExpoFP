@@ -55,20 +55,20 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         mapping = { "0": { x: 7330, y: 1190 } };
     }
 
-    if (settings.EXPO.indexOf("cannes") > -1) {
-        mapping = {
-            "-1": { x: 10460, y: 12534 },
-            "0": { x: 10511, y: 9568 },
-            "1": { x: 10480, y: 7625 },
-            "3": { x: 10480, y: 5094 },
-            "4": { x: 10460, y: 3360 },
-        };
+    // if (settings.EXPO.indexOf("cannes") > -1) {
+    //     mapping = {
+    //         "-1": { x: 10460, y: 12534 },
+    //         "0": { x: 10511, y: 9568 },
+    //         "1": { x: 10480, y: 7625 },
+    //         "3": { x: 10480, y: 5094 },
+    //         "4": { x: 10460, y: 3360 },
+    //     };
 
-        fpConfig = {
-            p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
-            p2: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
-        };
-    }
+    //     fpConfig = {
+    //         p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
+    //         p2: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
+    //     };
+    // }
 
     if (settings.EXPO.indexOf("xpmusic-conference22") > -1) {
         fpConfig = {

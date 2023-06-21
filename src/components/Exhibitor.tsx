@@ -21,7 +21,7 @@ import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 
-const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
+const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
@@ -190,6 +190,10 @@ function ExhibitorComponent() {
             return !uiState.kiosk && window.location.host.endsWith(".expofp.com");
         }
 
+        function onUpdateGallery() {
+            s.updateOverlayContent();
+        }
+
         return (
             <OverlayContent
                 className={cls}
@@ -224,9 +228,12 @@ function ExhibitorComponent() {
                                 ) : (
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider
-                                                screenSize={uiState.screenSize}
-                                                hideFullScreenIcon={true}
+                                            <Gallery
+                                                className={uiState.responsiveClass}
+                                                onOpenGallery={() => store.openGallery()}
+                                                onCloseGallery={() => store.closeGallery()}
+                                                onImageLoadHeightUpdate={onUpdateGallery}
+                                                leading={true}
                                                 images={[exhibitor.leadingImageUrl]}
                                             />
                                         </Suspense>
@@ -306,9 +313,11 @@ function ExhibitorComponent() {
                                 <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider
-                                                screenSize={uiState.screenSize}
-                                                fillMode={FillMode.cover}
+                                            <Gallery
+                                                className={uiState.responsiveClass}
+                                                onOpenGallery={() => store.openGallery()}
+                                                onCloseGallery={() => store.closeGallery()}
+                                                onImageLoadHeightUpdate={onUpdateGallery}
                                                 images={exhibitor.gallery}
                                             />
                                         </Suspense>

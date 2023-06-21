@@ -1,6 +1,7 @@
 {
   "A link to edit profile was sent to {{email}}": "Een koppeling naar profiel bewerken is verzonden naar {{email}}",
   "Bookmarks": "Bladwijzers",
+  "Bookmark": "Bladwijzer",
   "Buy": "Kopen",
   "Categories": "Categorieën",
   "Category": "Categorie",
@@ -33,5 +34,11 @@
   "Use {{keyCode}} + scroll to zoom": "Gebruik {{keyCode}} + scrollen om te zoomen",
   "Zoom In": "Inzoomen",
   "Zoom Out": "Uitzoomen",
-  "{{boothTerm}} Type": "{{boothTerm}}-type"
+  "{{boothTerm}} Type": "{{boothTerm}}-type",
+  "Next slide": "Volgende dia",
+  "Prev slide": "Vorige dia",
+  "Find your location": "Vind je locatie",
+  "View switch": "Schakel weergave",
+  "Fit to screen": "Aanpassen aan scherm",
+  "Layers": "Lagen"
 }

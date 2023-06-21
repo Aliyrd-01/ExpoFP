@@ -26,14 +26,21 @@
     "Event Home": "Головна сторінка події",
     "Register to Attend": "Зареєструватися для участі",
     "Bookmarks": "Закладки",
+    "Bookmark": "Закладка",
     "Categories": "Категорії",
     "Use {{keyCode}} + scroll to zoom": "Використовуйте {{keyCode}} + прокрутку, щоб збільшити",
     "Get your free floor plan at": "Отримайте безкоштовний план поверху на",
     "Dismiss": "Відхилити",
     "This is a FREE floor plan": "Це БЕЗКОШТОВНИЙ план поверху",
+    "Create a free floor plan at": "Створіть безкоштовний план поверху на сайті",
     "Create yours at": "Створіть свій на",
     "Buy": "Купити",
     "Made with ExpoFP": "Зроблено за допомогою ExpoFP",
     "Category": "Категорія",
-    "Fit to screen": "По ширині екрану"
+    "Fit to screen": "По ширині екрану",
+    "Next slide": "Наступний слайд",
+    "Prev slide": "Попередній слайд",
+    "Find your location": "Знайдіть своє місцезнаходження",
+    "View switch": "Перемкнути вигляд",
+    "Layers": "Шари"
 }
