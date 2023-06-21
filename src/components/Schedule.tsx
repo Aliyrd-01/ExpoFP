@@ -70,9 +70,9 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                 {Object.entries(grouped).map(([date, events]) => (
                     <div className="schedule__item" key={date}>
                         <div className="schedule__date">
-                            <div>{dateFormat(date, "dd")}</div>
-                            <div>{dateFormat(date, "mmm")}</div>
-                            <div>{dateFormat(date, "ddd")}</div>
+                            <div>{dateFormat(date + "T00:00:00-0500", "dd")}</div>
+                            <div>{dateFormat(date + "T00:00:00-0500", "mmm")}</div>
+                            <div>{dateFormat(date + "T00:00:00-0500", "ddd")}</div>
                         </div>
                         <div className="schedule__events">
                             {Array.isArray(events) &&
