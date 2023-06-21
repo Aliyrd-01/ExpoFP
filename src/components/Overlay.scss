@@ -33,10 +33,16 @@
     }
 }
 
-.layout[dir="rtl"] .overlay {
-    &.start {
+.layout[dir="rtl"] {
+    .overlay.start {
         left: unset;
         right: 0;
+    }
+
+    &.efp-kiosk {
+        .overlay {
+            right: var(--k-app-gap) !important;
+        }
     }
 }
 

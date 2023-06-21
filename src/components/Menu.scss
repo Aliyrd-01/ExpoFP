@@ -158,6 +158,7 @@
         /* border-bottom: dotted 1px #ccc; */
         flex-grow: 1;
         /* padding-left: 0.5rem; */
+        text-align: left;
     }
     &__cat-count {
         color: #888;
@@ -169,6 +170,12 @@
 div.menu__item {
     border-top: solid 1px #ddd;
     padding-bottom: 0;
+}
+
+.layout[dir="rtl"] .menu {
+    &__cat-title {
+        text-align: right;
+    }
 }
 
 .efp-kiosk {
