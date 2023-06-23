@@ -8,10 +8,11 @@ const SimpleRow: React.FC<{
     slug: string;
     active?: boolean;
     className: string;
+    style?: React.CSSProperties;
     onClick: () => void;
     onMouseOver?: () => void;
     onMouseOut?: () => void;
-}> = ({ line1, line2, slug, className, active = false, onClick, onMouseOver, onMouseOut }) => {
+}> = ({ line1, line2, slug, style, className, active = false, onClick, onMouseOver, onMouseOut }) => {
     return (
         <a
             href={"?" + encodeURIComponent(slug)}
@@ -19,7 +20,7 @@ const SimpleRow: React.FC<{
             className={"simple-row" + (active ? " active" : "") + " " + className}
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
-            style={{ marginLeft: data.isRebooking ? `5px` : null }}
+            style={{ marginLeft: data.isRebooking ? `5px` : null, ...style }}
         >
             <div className="simple-row__main">{line1}</div>
             <div className="simple-row__sub">{line2}</div>

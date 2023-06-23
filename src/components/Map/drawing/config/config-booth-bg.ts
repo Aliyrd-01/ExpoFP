@@ -12,7 +12,6 @@ import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import { getTrianglesFromFpPaths } from "./../../../../data/svg";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
-import { getColorFromClickCount } from "../../../../utils/heatmap";
 
 // let picked = 0;
 export default function configBoothBg(
@@ -194,7 +193,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
 
         if (uiState.heatmap) {
             let clickCount = store.heatmapStore.heatmapData.booths.find((field) => b.id === field.id)?.clickCount || 0;
-            return Color(getColorFromClickCount(clickCount));
+            return Color(store.heatmapStore.getColorFromClickCount(clickCount));
         }
 
         let color: string;

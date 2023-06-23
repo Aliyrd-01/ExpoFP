@@ -8,7 +8,6 @@ import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
 import { defaultRebookingOptions } from "./RebookingRadioGroup";
-import { getColorFromClickCount } from "../utils/heatmap";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     function handleClick(e: MouseEvent) {
@@ -30,7 +29,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
-    const backgroundRow = getColorFromClickCount(heatmapStore.getExhibitorClicksById(exhibitor.id));
+    const background = heatmapStore.getColorFromClickCount(heatmapStore.getExhibitorClicksById(exhibitor.id));
 
     return useObserver(() => (
         <a
@@ -42,7 +41,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 borderLeft: data.isRebooking
                     ? `5px solid ${defaultRebookingOptions[exhibitor.rebookingState].color.primary}`
                     : null,
-                background: uiState.heatmap ? `linear-gradient(to right, transparent 50%, ${backgroundRow} 100%)` : null,
+                background: uiState.heatmap ? `linear-gradient(to right, transparent 50%, ${background} 100%)` : null,
             }}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}

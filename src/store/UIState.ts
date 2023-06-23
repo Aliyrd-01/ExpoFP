@@ -229,12 +229,19 @@ export default class UIState {
     @computed get dimmed() {
         const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
+        const booths = this.rootStore.boothStore.booths;
+        const hasExhibitors = exhibitors.length > 0;
 
-        return (
-            exhibitors.length &&
-            (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
-                this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
-        );
+        const itemCountsNotMatch = (items: ListItem[]) => this.listItems.length !== [...exhibitors, ...items].length;
+
+        const itemIsNotExhibitorOrBooth = (boothClass: typeof BoothBase | typeof SpecialBooth) =>
+            this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof boothClass));
+
+        if (this.heatmap) {
+            return hasExhibitors && (itemCountsNotMatch(booths) || itemIsNotExhibitorOrBooth(BoothBase));
+        }
+
+        return hasExhibitors && (itemCountsNotMatch(specialBooths) || itemIsNotExhibitorOrBooth(SpecialBooth));
     }
 
     @computed get searchItems(): ListItem[] {
@@ -242,7 +249,7 @@ export default class UIState {
         let text = this.list.text.trim().toLowerCase() as string;
         // let words = text.split(/\s+/).filter(x => x);
 
-        const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, heatmapStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories;
@@ -251,6 +258,11 @@ export default class UIState {
         if (!text) {
             const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
             const combinedArray = [...exhibitorsArray, ...otherSpacesArray];
+
+            if (this.heatmap) {
+                const allItems = [...exhibitorsArray, ...boothsArray];
+                return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+            }
 
             return exhibitorsArray.length === 0
                 ? boothsArray
@@ -314,6 +326,10 @@ export default class UIState {
         items.push(...matchingExhibitors);
         items.push(...matchingCategories);
         items.push(...matchingBooths);
+
+        if (this.heatmap) {
+            return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        }
 
         return items;
     }
