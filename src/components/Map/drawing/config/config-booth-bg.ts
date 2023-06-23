@@ -193,7 +193,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         const b = this.booth;
 
         if (uiState.heatmap) {
-            const clickCount = store.heatmapStore.heatmapData.find((field) => b.id === field.boothId)?.clickCount || 0;
+            let clickCount = store.heatmapStore.heatmapData.booths.find((field) => b.id === field.id)?.clickCount || 0;
             return Color(getColorFromClickCount(clickCount));
         }
 

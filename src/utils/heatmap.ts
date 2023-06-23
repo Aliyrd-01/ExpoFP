@@ -6,6 +6,6 @@ export function getColorFromClickCount(count: number) {
     } else if (count > 5) {
         return "#116B16";
     } else {
-        return "#000000";
+        return "#786e6e";
     }
 }

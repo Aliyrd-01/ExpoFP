@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, doc, getDocs, getDoc, setDoc } from "firebase/firestore";
-import { Heatmap } from "../store/HeatmapStore";
+import { HeatmapItem } from "../store/HeatmapStore";
 import logger from "./logger";
 
 const firebaseConfig = {
@@ -19,31 +19,46 @@ const db = getFirestore(app);
 
 export async function getAllClicks(floorplanId: string) {
     try {
-        const querySnapshot = await getDocs(collection(doc(db, "heatmaps", floorplanId), "booths"));
-        logger.log("Heatmap data loaded");
-        return querySnapshot.docs.map<Heatmap>((doc) => ({
-            boothId: Number(doc.id),
+        const boothsSnapshotPromise = getDocs(collection(doc(db, "heatmaps", floorplanId), "booths"));
+        const exhibitorsSnapshotPromise = getDocs(collection(doc(db, "heatmaps", floorplanId), "exhibitors"));
+
+        const [boothsSnapshot, exhibitorsSnapshot] = await Promise.all([boothsSnapshotPromise, exhibitorsSnapshotPromise]);
+
+        const booths = boothsSnapshot.docs.map<HeatmapItem>((doc) => ({
+            id: Number(doc.id),
             clickCount: doc.data().clickCount,
         }));
-    } catch (e) {}
+
+        const exhibitors = exhibitorsSnapshot.docs.map<HeatmapItem>((doc) => ({
+            id: Number(doc.id),
+            clickCount: doc.data().clickCount,
+        }));
+
+        return { booths, exhibitors };
+    } catch (e) {
+        logger.error(e);
+    }
 }
 
-export async function recordClick(floorplanId: string, boothId: number) {
+export async function recordClick(floorplanId: string, boothId: number, type: "booths" | "exhibitors") {
     try {
+        return;
         // Get a reference to the document
         const floorplanDocRef = doc(db, "heatmaps", floorplanId);
-        const boothDocRef = doc(collection(floorplanDocRef, "booths"), boothId.toString());
+        const docRef = doc(collection(floorplanDocRef, type), boothId.toString());
 
         // Check if document exists
-        const docSnap = await getDoc(boothDocRef);
+        const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
             // If document exists, increment the click count
-            await setDoc(boothDocRef, { clickCount: docSnap.data().clickCount + 1 }, { merge: true });
+            await setDoc(docRef, { clickCount: docSnap.data().clickCount + 1 }, { merge: true });
         } else {
             // If document does not exist, initialize it with a click count of 1
-            await setDoc(boothDocRef, { clickCount: 1 });
+            await setDoc(docRef, { clickCount: 1 });
         }
         logger.log("Success update click");
-    } catch (error) {}
+    } catch (e) {
+        logger.error(e);
+    }
 }
