@@ -42,7 +42,6 @@ export async function getAllClicks(floorplanId: string) {
 
 export async function recordClick(floorplanId: string, boothId: number, type: "booths" | "exhibitors") {
     try {
-        return;
         // Get a reference to the document
         const floorplanDocRef = doc(db, "heatmaps", floorplanId);
         const docRef = doc(collection(floorplanDocRef, type), boothId.toString());
