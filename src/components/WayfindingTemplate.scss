@@ -13,7 +13,7 @@ $wayfindingError: ".efp-wayfindingError";
     display: flex;
     align-items: center;
     margin-bottom: rem(18px);
-    padding-right: rem(10px);
+    padding-inline-end: rem(10px);
 
     &__icons {
         position: relative;
@@ -22,7 +22,7 @@ $wayfindingError: ".efp-wayfindingError";
         justify-content: space-between;
         width: 45px;
         height: 110px;
-        padding-left: rem(15px);
+        padding-inline-start: rem(15px);
 
         &:after {
             content: "";
@@ -30,7 +30,7 @@ $wayfindingError: ".efp-wayfindingError";
             top: 50%;
             transform: translateY(-50%);
             left: 50%;
-            margin-left: 1px;
+            margin-inline-start: 1px;
             width: 4px;
             height: 18px;
             background: url("../../public/icons/dots.svg");
@@ -62,7 +62,7 @@ $wayfindingError: ".efp-wayfindingError";
     }
     &__controls {
         flex: 1;
-        padding: rem(0 10px 0 0);
+        padding-inline-end: rem(10px);
     }
     &__switch {
         width: rem(30px);
@@ -138,7 +138,7 @@ $wayfindingError: ".efp-wayfindingError";
     }
     #{$wayfindingForm} {
         align-items: unset;
-        padding-right: var(--k-spacing-lg);
+        padding-inline-end: var(--k-spacing-lg);
 
         &__icons-item {
             height: var(--k-inputHeight);
@@ -169,5 +169,11 @@ $wayfindingError: ".efp-wayfindingError";
                 font-size: 1.3em;
             }
         }
+    }
+}
+
+.layout[dir="rtl"] #{$wayfindingForm} {
+    &__icons:after {
+        right: 50%;
     }
 }

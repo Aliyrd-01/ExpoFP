@@ -60,7 +60,7 @@
 
 		&-count {
 			padding: 0 10px;
-			left: 15px;
+			inset-inline-start: 15px;
 			top: 15px;
 			pointer-events: none;
 		}
@@ -68,7 +68,7 @@
 		&-fullscreen {
 			width: 32px;
 			top: 15px;
-			right: 15px;
+			inset-inline-end: 15px;
 
 			@include media-breakpoint-down(md) {
 				display: none;
@@ -76,7 +76,7 @@
 		}
 
 		& span {
-			margin-left: 8px;
+			margin-inline-start: 8px;
 		}
 	}
 }

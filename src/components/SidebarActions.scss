@@ -35,7 +35,7 @@ $actionButton: ".efp-actionButton";
         transition: fill 0.1s ease;
 
         & + .text {
-            margin-left: 4px;
+            margin-inline-start: 4px;
         }
     }
     &:hover {
@@ -86,5 +86,11 @@ $actionButton: ".efp-actionButton";
             fill: var(--color-white);
             margin-right: 10px;
         }
+    }
+}
+
+.layout[dir="rtl"] #{$actionButton} {
+    &--directions .icon {
+        transform: scaleX(-1);
     }
 }

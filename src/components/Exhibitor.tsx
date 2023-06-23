@@ -109,7 +109,7 @@ function ExhibitorComponent() {
             <>
                 <div className="exhibitor__bar">
                     <span onClick={() => store.toggleMapOverlay()}>
-                        <span>{exhibitor.name}</span>
+                        <span dir="auto">{exhibitor.name}</span>
                         {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                     </span>
                 </div>
@@ -289,6 +289,7 @@ function ExhibitorComponent() {
                                     {exhibitor.description ? (
                                         <span
                                             className="exhibitor__description-html"
+                                            dir="auto"
                                             dangerouslySetInnerHTML={{ __html: getDescription(exhibitor.description) }}
                                             onClick={expandDescription}
                                         />
@@ -374,6 +375,7 @@ function ExhibitorComponent() {
                                             <i className="fas fa-phone" />
                                             <div>
                                                 <a
+                                                    dir="ltr"
                                                     href={"tel:" + exhibitor.phone1}
                                                     onClick={(e) => handleClick(e, GaEventActions.ClickPhone)}
                                                 >

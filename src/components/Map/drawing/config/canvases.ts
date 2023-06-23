@@ -2,6 +2,7 @@ import { PathInfo } from "../../../../data/Data";
 import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
+import { isRTLText, isHebrewText } from "../../../../utils/rtl";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -59,7 +60,8 @@ export function createDetailsCanvas(
     pixelRatio: number,
     color: string = "#fff",
     fontSize: number,
-    onlyId: boolean
+    onlyId: boolean,
+    textAlign: CanvasTextAlign = "start"
 ): CanvasDescriptor {
     //const fixBooth = EFP_EXPO === "fincon19" && b.special === true && b.title.startsWith("Quick Money");
     const lines = [];
@@ -111,20 +113,25 @@ export function createDetailsCanvas(
         height,
         draw(c) {
             let nextLine = boothFontSize;
+            let x = 0;
+
+            if (textAlign === "right") {
+                x = width;
+            }
 
             c.fillStyle = color;
-            c.textAlign = "start";
+            c.textAlign = textAlign;
             c.textBaseline = "alphabetic";
             c.font = boothFont;
 
-            c.fillText(mainLine, 0, nextLine);
+            c.fillText(mainLine, x, nextLine);
             nextLine += boothFontSize + boothPadding;
 
             c.font = detailFont;
             c.fillStyle = color;
 
             for (const line of lines) {
-                c.fillText(line, 0, nextLine);
+                c.fillText(line, x, nextLine);
                 nextLine += detailFontSize + 1 * pixelRatio;
             }
         },
@@ -137,7 +144,8 @@ export function createExhibitorsDetailsCanvas(
     color: string = "#fff",
     frontSize: number,
     onlyMain: boolean,
-    onlyFeaturedExhibitors: boolean
+    onlyFeaturedExhibitors: boolean,
+    textAlign: CanvasTextAlign = "start"
 ): CanvasDescriptor {
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
@@ -150,6 +158,18 @@ export function createExhibitorsDetailsCanvas(
 
     if (onlyFeaturedExhibitors) mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
     else mainLines.push(...b.exhibitors.map((e) => e.name));
+
+    mainLines.forEach((text, i) => {
+        // Adding an invisible character to display punctuation marks correctly in the right-to-left version
+        if (text.endsWith(".") || text.endsWith("!") || text.endsWith("?")) {
+            mainLines[i] = mainLines[i] + "\u200F";
+        }
+
+        // Adding an 2 space symbol to fix render arabic text
+        if (isRTLText(text) && !isHebrewText(text)) {
+            mainLines[i] = mainLines[i] + "\u0020\u0020";
+        }
+    });
 
     if (!onlyMain) detailsLines.push(b.name);
 
@@ -180,23 +200,28 @@ export function createExhibitorsDetailsCanvas(
         h: onlyMain ? height / mainLines.length : null,
         draw(c) {
             let nextLine = mainFontSize;
+            let x = 0;
+
+            if (textAlign === "right") {
+                x = maxTextWidth;
+            }
 
             c.fillStyle = color;
-            c.textAlign = "start";
+            c.textAlign = textAlign;
             c.textBaseline = "alphabetic";
 
             c.font = mainFont;
             c.fillStyle = color;
 
             for (const line of mainLines) {
-                c.fillText(line, 0, nextLine);
+                c.fillText(line, x, nextLine);
                 nextLine += mainFontSize + pixelRatio;
             }
 
             c.font = detailFont;
 
             for (const line of detailsLines) {
-                c.fillText(line, 0, nextLine);
+                c.fillText(line, x, nextLine);
                 nextLine += detailFontSize + pixelRatio;
             }
         },
@@ -374,7 +399,7 @@ export function createYahCanvas(
             ctx.moveTo(68.303, 57.335);
             ctx.bezierCurveTo(77.894, 39.304, 70.649, 15.785, 50.95, 8.04);
             ctx.bezierCurveTo(30.727, 0, 8.375, 11.837, 3.207, 32.831);
-            ctx.bezierCurveTo(0, 46.185, 6.644, 57.323, 13.131, 68.211);          
+            ctx.bezierCurveTo(0, 46.185, 6.644, 57.323, 13.131, 68.211);
             ctx.fill();
 
             ctx.beginPath();
