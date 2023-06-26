@@ -8,7 +8,7 @@ import { getLayerSvg, svgArea } from "./../data/svg";
 import { RouteLine, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
-import { Layer } from "./LayerStore";
+import { Layer, LayersMode } from "./LayerStore";
 import RootStore from "./RootStore";
 
 export default class RouteStore {
@@ -64,6 +64,20 @@ export default class RouteStore {
 
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
+
+        // If the floor mode is default, then ignore the z parameter in this.currentPosition
+        if (layersStore.mode === LayersMode.Default) {
+            return (
+                this.rootStore.boothStore.booths
+                    .filter((b) => b.visible && b.rect)
+                    .sort(
+                        (b1, b2) =>
+                            lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
+                            lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+                    )[0] || null
+            );
+        }
+
         return (
             this.rootStore.boothStore.booths
                 .filter((b) => b.rect && ((!this.currentPosition.z && b.visible) || this.currentPosition.z === b.layer?.name))
