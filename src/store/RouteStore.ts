@@ -64,23 +64,16 @@ export default class RouteStore {
 
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
-
-        // If the floor mode is default, then ignore the z parameter in this.currentPosition
-        if (layersStore.mode === LayersMode.Default) {
-            return (
-                this.rootStore.boothStore.booths
-                    .filter((b) => b.visible && b.rect)
-                    .sort(
-                        (b1, b2) =>
-                            lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
-                            lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
-                    )[0] || null
-            );
-        }
-
+        let layerExists = this.rootStore.layerStore.layers.some((layer) => layer.name === this.currentPosition.z);
         return (
             this.rootStore.boothStore.booths
-                .filter((b) => b.rect && ((!this.currentPosition.z && b.visible) || this.currentPosition.z === b.layer?.name))
+                .filter((b) => {
+                    if (layersStore.mode === LayersMode.Default || !layerExists) {
+                        return b.visible && b.rect;
+                    } else {
+                        return b.rect && ((!this.currentPosition.z && b.visible) || this.currentPosition.z === b.layer?.name);
+                    }
+                })
                 .sort(
                     (b1, b2) =>
                         lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
