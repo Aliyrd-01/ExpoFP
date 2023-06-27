@@ -9,7 +9,7 @@ const BoothRow: React.FC<{
     booth: Booth;
     className: string;
 }> = ({ booth, className }) => {
-    const background = heatmapStore.getColorFromClickCount(heatmapStore.getBoothClicksById(booth.id));
+    const background = heatmapStore.getColorByClicks(booth);
 
     return (
         <SimpleRow

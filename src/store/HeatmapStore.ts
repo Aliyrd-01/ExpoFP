@@ -2,10 +2,16 @@ import RootStore from "./RootStore";
 import { computed } from "mobx";
 import { recordClick } from "../tools/firebase";
 import settings from "../tools/settings";
-import { heatmapStore } from "./index";
 import { Exhibitor } from "./ExhibitorStore";
 import { BoothBase } from "./BoothStore";
 import { Category } from "./CategoryStore";
+
+const COLOR_THRESHOLDS = {
+    high: { limit: 30, color: "#DC143C" },
+    medium: { limit: 15, color: "#939C0E" },
+    low: { limit: 5, color: "#116B16" },
+    default: { color: "#786e6e" },
+};
 
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
@@ -42,31 +48,39 @@ export default class HeatmapStore {
 
     getClicksByType(item: Exhibitor | BoothBase | Category) {
         if (item instanceof Category) {
+            // -1 is returned for Categories to ensure they appear last in sorted methods
             return -1;
         } else if (item instanceof Exhibitor) {
-            return this.getExhibitorClicksById(item.id);
+            return this.getClicksByItem(item);
         }
-        return this.getBoothClicksById(item.id);
+        return this.getClicksByItem(item);
+    }
+
+    getClicksByItem(item: Exhibitor | BoothBase) {
+        if (item instanceof Exhibitor) {
+            return this.heatmapData?.exhibitors.find((a) => a.id === item.id)?.clickCount || 0;
+        }
+
+        if (item instanceof BoothBase) {
+            return this.heatmapData?.booths.find((a) => a.id === item.id)?.clickCount || 0;
+        }
+    }
+
+    getColorByClicks(item: Exhibitor | BoothBase) {
+        const clickCount = this.getClicksByItem(item);
+        return this.getColorFromClickCount(clickCount);
     }
 
     getColorFromClickCount(count: number) {
-        if (count > 30) {
-            return "#DC143C";
-        } else if (count > 15) {
-            return "#939C0E";
-        } else if (count > 5) {
-            return "#116B16";
+        if (count > COLOR_THRESHOLDS.high.limit) {
+            return COLOR_THRESHOLDS.high.color;
+        } else if (count > COLOR_THRESHOLDS.medium.limit) {
+            return COLOR_THRESHOLDS.medium.color;
+        } else if (count > COLOR_THRESHOLDS.low.limit) {
+            return COLOR_THRESHOLDS.low.color;
         } else {
-            return "#786e6e";
+            return COLOR_THRESHOLDS.default.color;
         }
-    }
-
-    getBoothClicksById(id: number) {
-        return heatmapStore.heatmapData?.booths.find((ex) => ex.id === id)?.clickCount || 0;
-    }
-
-    getExhibitorClicksById(id: number) {
-        return heatmapStore.heatmapData?.exhibitors.find((ex) => ex.id === id)?.clickCount || 0;
     }
 }
 

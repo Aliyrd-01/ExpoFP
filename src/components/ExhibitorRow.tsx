@@ -29,7 +29,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
-    const background = heatmapStore.getColorFromClickCount(heatmapStore.getExhibitorClicksById(exhibitor.id));
+    const background = heatmapStore.getColorByClicks(exhibitor);
 
     return useObserver(() => (
         <a

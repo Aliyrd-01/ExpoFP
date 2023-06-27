@@ -184,7 +184,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
 
     @computed get selectedColorInterpolateFunc() {
         const color0 = !Color(this.booth.labelColor || settings.boothLabelColor).isLight() ? "#fff" : "#000";
-        const color1 = settings.colors.booths.selected;
+        const color1 = uiState.heatmap ? store.heatmapStore.getColorByClicks(this.booth) : settings.colors.booths.selected;
         return colorInterpolate([color0, color1]);
     }
 
@@ -192,8 +192,14 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         const b = this.booth;
 
         if (uiState.heatmap) {
-            let clickCount = store.heatmapStore.heatmapData.booths.find((field) => b.id === field.id)?.clickCount || 0;
-            return Color(store.heatmapStore.getColorFromClickCount(clickCount));
+            const heatmapColor = store.heatmapStore.getColorByClicks(b);
+
+            if (b.selected) {
+                const color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
+                return Color(color);
+            }
+
+            return Color(heatmapColor);
         }
 
         let color: string;
