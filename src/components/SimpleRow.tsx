@@ -22,8 +22,12 @@ const SimpleRow: React.FC<{
             onMouseOut={handleMouseOut}
             style={{ marginLeft: data.isRebooking ? `5px` : null, ...style }}
         >
-            <div className="simple-row__main">{line1}</div>
-            <div className="simple-row__sub">{line2}</div>
+            <div className="simple-row__main" dir="auto">
+                {line1}
+            </div>
+            <div className="simple-row__sub" dir="auto">
+                {line2}
+            </div>
         </a>
     );
 

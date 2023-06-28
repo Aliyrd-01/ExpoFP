@@ -178,3 +178,10 @@ $checkedPanel: ".checked-panel";
         }
     }
 }
+
+.efp-kiosk[dir="rtl"] {
+    .map-controls {
+        right: unset !important;
+        left: var(--k-app-gap) !important;;
+    }
+}

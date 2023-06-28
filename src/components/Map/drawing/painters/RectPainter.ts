@@ -357,7 +357,7 @@ export default class RectPainter implements Painter {
                 } else if (w.texPosition === "rightbottom") {
                     val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
                 } else {
-                    val = [-w.spriteItem.rect.w, -w.spriteItem.rect.h];
+                    val = [-w.spriteItem.rect.w, w.spriteItem.rect.h];
                 }
                 fixdeltamaxpts.push(...val, ...val, ...val, ...val);
             }
@@ -626,10 +626,17 @@ void main() {
     // this is relative to fix point (on svg)
     vec2 fixdeltamax = a_fixdeltamaxpt * u_ptscale;
     vec2 deltamax = fixdeltamax + fixdelta;
+    
     if (a_fixdeltamaxpt.x > 0.0) {
-        delta = vec2(min(delta.x, deltamax.x), min(delta.y, deltamax.y));
+        delta.x = min(delta.x, deltamax.x);
     } else if (a_fixdeltamaxpt.x < 0.0) {
-        delta = vec2(max(delta.x, deltamax.x), max(delta.y, deltamax.y));
+        delta.x = max(delta.x, deltamax.x);
+    }
+
+    if (a_fixdeltamaxpt.y > 0.0) {
+        delta.y = min(delta.y, deltamax.y);
+    } else if (a_fixdeltamaxpt.y < 0.0) {
+        delta.y = max(delta.y, deltamax.y);
     }
 
     vec2 diff = delta - fixdelta;

@@ -28,7 +28,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
 
     const sortByDate = events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     const grouped = sortByDate.reduce((acc, curr) => {
-        const date = new Date(curr.startDate).toISOString().slice(0, 10);
+        const date = new Date(curr.startDate).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
         acc[date] ? acc[date].push(curr) : (acc[date] = [curr]);
         return acc;
     }, {});
@@ -87,7 +87,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                                 {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
                                             </span>
                                             <strong>{event.name}</strong>
-                                            {event.description && (
+                                            {event.description && eventsFullDescription[date][eventIndex] && (
                                                 <>
                                                     <div
                                                         className="schedule__event-desc"

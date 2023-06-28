@@ -447,7 +447,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             })
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        if (!shortestrPerp || shortestrPerp.l > 100) return 0;
+        if (!shortestrPerp || shortestrPerp.l > 150) return 0;
 
         // Recalculate logic here
 

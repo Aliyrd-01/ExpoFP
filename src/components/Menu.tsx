@@ -79,7 +79,9 @@ function Menu() {
                     onClick={handleCategoryClick.bind(window, c)}
                 >
                     <div className="menu__cat-bullet">&bull;</div>
-                    <div className="menu__cat-title">{c.name}</div>
+                    <div className="menu__cat-title" dir="auto">
+                        {c.name}
+                    </div>
                     <div className="menu__cat-count">{numOfExhibitors(c.id)}</div>
                 </a>
             ))}

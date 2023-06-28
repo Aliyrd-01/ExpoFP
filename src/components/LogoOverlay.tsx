@@ -22,11 +22,11 @@ export default function LogoOverlay() {
             if (uiState.overlayPosition === "left")
                 style = {
                     bottom: (uiState.kiosk && uiState.wsStarted ? remsToPixels(3.5) : 0) + uiState.mapVisibleBottom + pad + "px",
-                    right: pad + "px",
+                    [uiState.rtl ? "left" : "right"]: pad + "px",
                     width: "5rem",
                 };
             else {
-                style = { top: uiState.mapVisibleTop + pad + "px", right: pad + "px", width: "3rem" };
+                style = { top: uiState.mapVisibleTop + pad + "px", [uiState.rtl ? "left" : "right"]: pad + "px", width: "3rem" };
                 if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
@@ -37,9 +37,17 @@ export default function LogoOverlay() {
             const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
             let style: any;
             if (uiState.overlayPosition === "left")
-                style = { bottom: uiState.mapVisibleBottom + 2 * pad + "px", right: pad + "px", width: "3rem" };
+                style = {
+                    bottom: uiState.mapVisibleBottom + 2 * pad + "px",
+                    [uiState.rtl ? "left" : "right"]: pad + "px",
+                    width: "3rem",
+                };
             else {
-                style = { top: uiState.mapVisibleTop + 2 * pad + "px", right: pad + "px", width: "2rem" };
+                style = {
+                    top: uiState.mapVisibleTop + 2 * pad + "px",
+                    [uiState.rtl ? "left" : "right"]: pad + "px",
+                    width: "2rem",
+                };
                 if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;
@@ -59,8 +67,7 @@ export default function LogoOverlay() {
                 href="https://expofp.com/"
                 target="_blank"
                 className={classNames("logo-overlay", {
-                    invert:
-                        Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.indexOf("dark") > -1,
+                    invert: Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.indexOf("dark") > -1,
                 })}
                 style={s.style}
                 rel="noopener noreferrer"
@@ -84,7 +91,11 @@ export default function LogoOverlay() {
             {uiState.kiosk && (
                 <div
                     className="qr"
-                    style={{ textAlign: "center", bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5), left: remsToPixels(0.5) }}
+                    style={{
+                        textAlign: "center",
+                        bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5),
+                        [uiState.rtl ? "right" : "left"]: remsToPixels(0.5),
+                    }}
                 >
                     <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
                     <QRCode value={window.location.href.replace("/?kkiosk", "")} size={100} />

@@ -35,7 +35,7 @@ $shareSocial: ".share-social";
         & > input {
             flex: 1;
             height: 38px;
-            padding: rem(0 0 0 14px);
+            padding-inline-start: rem(14px);
             border: 0;
             outline: none;
             font-size: rem(14px);

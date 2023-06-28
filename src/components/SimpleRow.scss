@@ -13,14 +13,22 @@
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 500;
+        text-align: left;
     }
 
     &__sub {
         font-size: 0.7rem;
         color: rgba(0, 0, 0, 0.4); //#aaa
-        padding: 0 0 0 $p;
+        padding-inline-start: $p;
         height: 0.7rem;
         margin: -2px 0;
+        text-align: left;
+    }
+}
+
+.layout[dir="rtl"] .simple-row {
+    &__main, &__sub {
+        text-align: right;
     }
 }
 

@@ -231,7 +231,7 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
                 if (logo) {
                     var diagonale = Math.max(booth.rect.w, booth.rect.h);
                     var aRatio = diagonale / logo.htmlImage.width;
-                    f.properties.scale = aRatio / 5;
+                    f.properties.scale = Math.max(0.08, aRatio / 5);
                     f.properties.scale1 = 5 * f.properties.scale;
 
                     var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
