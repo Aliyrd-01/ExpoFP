@@ -31,8 +31,6 @@ export default class UIState {
     @observable.ref details: Booth | Exhibitor | Route = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
-    @observable.ref clickedBooth: Booth = null;
-    @observable.ref clickedExhibitor: Exhibitor = null;
     // @observable.ref hoveredBooth1 = {};
     @observable zoomBy = null as number;
     @observable moveToBooths: Booth[] = null;
@@ -318,10 +316,12 @@ export default class UIState {
         });
 
         boothsArray.forEach((b) => {
-            if (!(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b))) {
-                if (splittedTexts.some((text) => containsIgnoreCase(b.title || b.name, text))) {
-                    matchingBooths.add(b);
-                }
+            const addBoothCondition = this.heatmap
+                ? true
+                : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
+
+            if (addBoothCondition && splittedTexts.some((text) => containsIgnoreCase(b.title || b.name, text))) {
+                matchingBooths.add(b);
             }
         });
 

@@ -29,8 +29,8 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
-    const background = heatmapStore.getColorByClicks(exhibitor);
-
+    const clicks = heatmapStore.getClicksByItem(exhibitor);
+    const background = heatmapStore.getColorFromClickCount(clicks);
     return useObserver(() => (
         <a
             className={`exhibitor-row ${className} ${classNames({
@@ -41,7 +41,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 borderLeft: data.isRebooking
                     ? `5px solid ${defaultRebookingOptions[exhibitor.rebookingState].color.primary}`
                     : null,
-                background: uiState.heatmap ? `linear-gradient(to right, transparent 50%, ${background} 100%)` : null,
+                background: uiState.heatmap ? `linear-gradient(to right, transparent 98%, ${background} 93%)` : null,
             }}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}
@@ -52,16 +52,14 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 <div dir="auto">
                     {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                 </div>
-            </div
+            </div>
             {data.hideBookmarks || data.isRebooking || uiState.kiosk ? null : (
                 <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
                     <BookmarkSvg />
                 </div>
             )}
-            <div className="exhibitor-row__booth">
-                {exhibitor.booths.map((booth) => (
-                    <div key={booth.id}>{booth.fullName}</div>
-                ))}
+            <div className="exhibitor-row__info">
+                {uiState.heatmap ? clicks : exhibitor.booths.map((booth) => <div key={booth.id}>{booth.fullName}</div>)}
             </div>
         </a>
     ));

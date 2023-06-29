@@ -4,7 +4,10 @@ export class FpSettings {
     boothLabelColor: string = "#fff";
     boothBorderColor: string = "#fff";
     backgroundColor: string = "#ebebeb";
-    boothBorderWidth:number;
+    boothBorderWidth: number;
+    heatmapColors: string[] = ["#F8D4BC", "#F26948", "#C21753", "#5B1E51"];
+    minClicks: number = 0;
+    maxClicks: number = 50;
 }
 
 class Settings extends FpSettings {

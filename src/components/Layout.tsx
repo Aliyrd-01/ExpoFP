@@ -22,7 +22,6 @@ import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
-import ClickCount from "./ClickCount";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -82,7 +81,6 @@ export default observer(function Layout() {
                         </Modal>
                     </Suspense>
                 ) : null}
-                {uiState.heatmap && <ClickCount count={heatmapStore.getClickCount} />}
                 <div id="fps" />
             </div>
         </div>

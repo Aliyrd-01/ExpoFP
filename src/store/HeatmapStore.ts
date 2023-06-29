@@ -1,17 +1,10 @@
 import RootStore from "./RootStore";
-import { computed } from "mobx";
 import { recordClick } from "../tools/firebase";
 import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
 import { BoothBase } from "./BoothStore";
 import { Category } from "./CategoryStore";
-
-const COLOR_THRESHOLDS = {
-    high: { limit: 30, color: "#DC143C" },
-    medium: { limit: 15, color: "#939C0E" },
-    low: { limit: 5, color: "#116B16" },
-    default: { color: "#786e6e" },
-};
+import { getColorFromGradient } from "../tools/Color";
 
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
@@ -22,20 +15,6 @@ export default class HeatmapStore {
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
-    }
-
-    @computed get getClickCount() {
-        if (this.rootStore.uiState.clickedBooth) {
-            return this.heatmapData.booths.find((data) => this.rootStore.uiState.clickedBooth.id === data.id)?.clickCount || 0;
-        }
-        if (this.rootStore.uiState.clickedExhibitor) {
-            return (
-                this.heatmapData.exhibitors.find((data) => this.rootStore.uiState.clickedExhibitor.id === data.id)?.clickCount ||
-                0
-            );
-        }
-
-        return 0;
     }
 
     async recordUserClickBooth(boothId: number) {
@@ -71,16 +50,8 @@ export default class HeatmapStore {
         return this.getColorFromClickCount(clickCount);
     }
 
-    getColorFromClickCount(count: number) {
-        if (count > COLOR_THRESHOLDS.high.limit) {
-            return COLOR_THRESHOLDS.high.color;
-        } else if (count > COLOR_THRESHOLDS.medium.limit) {
-            return COLOR_THRESHOLDS.medium.color;
-        } else if (count > COLOR_THRESHOLDS.low.limit) {
-            return COLOR_THRESHOLDS.low.color;
-        } else {
-            return COLOR_THRESHOLDS.default.color;
-        }
+    getColorFromClickCount(countClicks: number) {
+        return getColorFromGradient(countClicks);
     }
 }
 

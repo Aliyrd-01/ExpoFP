@@ -176,8 +176,6 @@ export default class RootStore {
 
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
-        this.uiState.clickedBooth = booth;
-        this.uiState.clickedExhibitor = null;
 
         if (this.uiState.selectedRoute?.from && this.uiState.selectedRoute?.to) return;
 
@@ -218,8 +216,6 @@ export default class RootStore {
         if (!this.uiState.heatmap) {
             this.heatmapStore.recordUserClickExhibitor(exhibitor.id);
         }
-        this.uiState.clickedExhibitor = exhibitor;
-        this.uiState.clickedBooth = null;
 
         this.selectExhibitor(exhibitor);
         this.moveToExhibitor(exhibitor);

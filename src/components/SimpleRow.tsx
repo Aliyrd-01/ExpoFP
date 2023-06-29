@@ -5,6 +5,7 @@ import "./SimpleRow.scss";
 const SimpleRow: React.FC<{
     line1: string;
     line2: string;
+    lineEnd?: string;
     slug: string;
     active?: boolean;
     className: string;
@@ -12,7 +13,7 @@ const SimpleRow: React.FC<{
     onClick: () => void;
     onMouseOver?: () => void;
     onMouseOut?: () => void;
-}> = ({ line1, line2, slug, style, className, active = false, onClick, onMouseOver, onMouseOut }) => {
+}> = ({ line1, line2, lineEnd, slug, style, className, active = false, onClick, onMouseOver, onMouseOut }) => {
     return (
         <a
             href={"?" + encodeURIComponent(slug)}
@@ -22,12 +23,15 @@ const SimpleRow: React.FC<{
             onMouseOut={handleMouseOut}
             style={{ marginLeft: data.isRebooking ? `5px` : null, ...style }}
         >
-            <div className="simple-row__main" dir="auto">
-                {line1}
+            <div className="simple-row__col">
+                <div className="simple-row__main" dir="auto">
+                    {line1}
+                </div>
+                <div className="simple-row__sub" dir="auto">
+                    {line2}
+                </div>
             </div>
-            <div className="simple-row__sub" dir="auto">
-                {line2}
-            </div>
+            {lineEnd && <div className="simple-row__end">{lineEnd}</div>}
         </a>
     );
 

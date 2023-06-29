@@ -9,11 +9,12 @@ const BoothRow: React.FC<{
     booth: Booth;
     className: string;
 }> = ({ booth, className }) => {
-    const background = heatmapStore.getColorByClicks(booth);
+    const clicks = heatmapStore.getClicksByItem(booth);
+    const background = heatmapStore.getColorFromClickCount(clicks);
 
     return (
         <SimpleRow
-            style={{ background: uiState.heatmap ? `linear-gradient(to right, transparent 50%, ${background} 100%)` : null }}
+            style={{ background: uiState.heatmap ? `linear-gradient(to right, transparent 98%, ${background} 93%)` : null }}
             className={className}
             slug={booth.slug}
             onClick={handleClick}
@@ -21,6 +22,7 @@ const BoothRow: React.FC<{
             onMouseOver={handleMouseOver}
             line1={booth.name.startsWith("yah") ? booth.title : booth.fullName}
             line2={booth instanceof SpecialBooth ? "" : data.boothTerm}
+            lineEnd={uiState.heatmap ? clicks.toString() : null}
         />
     );
     function handleClick() {
