@@ -1,4 +1,4 @@
-import { ScheduleItem } from './../store/ScheduleStore';
+import { ScheduleItem } from "./../store/ScheduleStore";
 interface Data {
     noFeatured: boolean;
     expoFpAd: boolean;
@@ -50,7 +50,7 @@ interface ScheduleItem {
     boothId?: number;
     startDate: string;
     endDate: string;
-    link?   : string;
+    link?: string;
 }
 
 interface RawCategory {

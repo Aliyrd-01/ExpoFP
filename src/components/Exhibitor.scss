@@ -24,7 +24,9 @@
     //     color: #777;
     // }
     &__categories {
-        margin: 0rem 1rem 1rem 0.7rem;
+        margin-inline-start: 0.7rem;
+        margin-inline-end: 1rem;
+        margin-bottom: 1rem;
         font-size: 0.9rem;
 
         // display: flex;
@@ -38,7 +40,8 @@
             padding: 0.3rem 0.6rem;
             word-break: break-all;
             border-radius: 1em;
-            margin: 0.3rem 0 0 0.3rem;
+            margin-top: 0.3rem;
+            margin-inline-start: 0.3rem;
             text-decoration: none !important;
         }
 
@@ -71,7 +74,9 @@
         width: 75px;
         height: 75px;
         float: left;
-        margin: 0.3rem 0.8rem 0.4rem 0;
+        margin-top: 0.3rem;
+        margin-bottom: 0.4rem;
+        margin-inline-end: 0.8rem;
         border: solid 1px #ddd;
         border-radius: 5px;
         overflow: hidden;
@@ -150,6 +155,7 @@
 
     &__description-html {
         overflow-wrap: break-word;
+        text-align: left;
 
         ol,
         ul {
@@ -184,7 +190,7 @@
                 font-size: 0.85rem;
                 line-height: 1.1rem;
 
-                margin-left: 0.4rem;
+                margin-inline-start: 0.4rem;
                 text-overflow: ellipsis;
                 overflow: hidden;
                 // font-weight: 200;
@@ -203,7 +209,8 @@
             font-size: 2rem;
             text-decoration: none;
 
-            margin: 0 1rem 0.5rem 0;
+            margin-inline-end: 1rem;
+            margin-bottom: 0.5rem;
             color: #eee;
             display: none;
 
@@ -225,7 +232,7 @@
         color: #333;
         font-weight: 600;
         padding-top: 1rem;
-        margin-left: 1rem;
+        margin-inline-start: 1rem;
         font-size: 1.1em;
         flex-grow: 1;
 
@@ -233,7 +240,7 @@
         // align-items: center;
         .fa-gem {
             color: #02a8ff;
-            margin-left: 0.2rem;
+            margin-inline-start: 0.2rem;
             font-size: 0.85rem;
             line-height: 1.5rem;
         }
@@ -245,12 +252,13 @@
                 max-width: 16rem;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                text-align: left;
             }
         }
     }
 
     &__bar-booth {
-        margin-left: 1rem;
+        margin-inline-start: 1rem;
         font-size: 0.7rem;
         color: #777;
         display: block;
@@ -423,6 +431,21 @@ $imageSliderClass: ".image-slider";
     }
 }
 
+.layout[dir="rtl"] .exhibitor {
+    &__bar > span > span {
+        text-align: right;
+    }
+    &__description-html {
+        text-align: right;
+    }
+    &__logo-container {
+        float: right;
+    }
+    &__bar > span {
+        gap: 5px;
+    }
+}
+
 @include responsive-classes-down-to(".exhibitor", sm) {
     #{$imageSliderClass}.is-full {
         #{$imageSliderClass}__nav-btn {
@@ -502,7 +525,7 @@ $imageSliderClass: ".image-slider";
                 margin: var(--k-spacing-sm) var(--k-spacing-lg);
 
                 & > div {
-                    margin-left: 10px;
+                    margin-inline-start: 10px;
                     font-size: 0.8em;
                     line-height: 1.2em;
                 }

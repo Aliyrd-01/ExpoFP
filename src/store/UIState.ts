@@ -11,6 +11,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { getResponsiveClass } from "../utils/responsiveClass";
+import { getlanguage } from "../utils/i18n";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -55,6 +56,7 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
+    rtl = getlanguage() === "ar" || getlanguage() === "he";
     rootElement: HTMLDivElement;
 
     overlayMediumHeightRems = 10;
@@ -179,7 +181,7 @@ export default class UIState {
         }
         return remsToPixels(this.overlayMediumHeightRems);
     }
-    @computed get mapVisibleLeft() {
+    @computed get mapVisibleStart() {
         return this.overlayLeft ? this.overlayWidthPx : 0;
     }
 
@@ -187,9 +189,9 @@ export default class UIState {
     @computed get canvasVisibleRectPx(): Rect {
         const s = this.screenSize;
         return Rect.fromX1y1x2y2(
-            uiState.kiosk ? 0 : this.mapVisibleLeft,
+            uiState.kiosk || uiState.rtl ? 0 : this.mapVisibleStart,
             this.mapVisibleTop,
-            s.width,
+            uiState.rtl ? s.width - this.mapVisibleStart : s.width,
             s.height - this.mapVisibleBottom
         );
     }

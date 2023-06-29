@@ -51,8 +51,15 @@
             align-items: center;
             width: 60px;
             height: calc(var(--k-searchBox-height) - 10px);
-            padding-right: 14px;
+            padding-inline-end: 14px;
             pointer-events: none;
         }
+    }
+}
+
+.efp-kiosk[dir="rtl"] .overlay-bar {
+    &__search-icon {
+        right: unset;
+        left: 0;
     }
 }

@@ -48,7 +48,7 @@ export default function Mapbox() {
 
         get style() {
             return {
-                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleLeft + "px",
+                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleStart + "px",
             };
         },
     }));
