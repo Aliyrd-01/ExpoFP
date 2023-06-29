@@ -288,7 +288,7 @@ export function setLayers(layers: Layer[]): string[] {
         const images = fpGeo.images?.filter((i) => i.layer === layer.name) ?? [];
 
         images.forEach((image, index) => {
-            const bgLayer = layer.name + "-bg_" + index;
+            const bgLayer = layer.name + "--bg_" + index;
 
             layersNames.push(bgLayer);
             map.addSource(bgLayer, {
@@ -307,9 +307,9 @@ export function setLayers(layers: Layer[]): string[] {
             });
         });
 
-        layersNames.push(layer.name + "-other");
+        layersNames.push(layer.name + "--other");
         map.addLayer({
-            id: layer.name + "-other",
+            id: layer.name + "--other",
             type: "fill",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["!in", "value", "3D"]],
@@ -321,10 +321,10 @@ export function setLayers(layers: Layer[]): string[] {
             },
         });
 
-        layersNames.push(layer.name + "-other-3D");
+        layersNames.push(layer.name + "--other-3D");
 
         map.addLayer({
-            id: layer.name + "-other-3D",
+            id: layer.name + "--other-3D",
             type: "fill-extrusion",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["in", "value", "3D"]],
@@ -345,8 +345,8 @@ export function setLayers(layers: Layer[]): string[] {
 
         if (layerBooths.length) {
             layersNames.push(layer.name);
-            layersNames.push(layer.name + "-labels");
-            layersNames.push(layer.name + "-logos");
+            layersNames.push(layer.name + "--labels");
+            layersNames.push(layer.name + "--logos");
 
             map.addLayer({
                 id: layer.name,
@@ -364,7 +364,7 @@ export function setLayers(layers: Layer[]): string[] {
             });
 
             map.addLayer({
-                id: layer.name + "-labels",
+                id: layer.name + "--labels",
                 type: "symbol",
                 source: "data",
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["!has", "logo"]],
@@ -384,7 +384,7 @@ export function setLayers(layers: Layer[]): string[] {
             });
 
             map.addLayer({
-                id: layer.name + "-logos",
+                id: layer.name + "--logos",
                 type: "symbol",
                 source: "data",
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["has", "logo"]],
