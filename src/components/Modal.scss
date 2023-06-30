@@ -69,6 +69,13 @@ $modal: ".modal";
     padding: rem(10px);
 }
 
+.layout[dir="rtl"] #{$modal} {
+    &__close {
+        right: unset;
+        left: 0;
+    }
+}
+
 @keyframes opacityModal {
     from {
         opacity: 0;

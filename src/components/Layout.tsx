@@ -46,6 +46,7 @@ export default observer(function Layout() {
                 "efp-layers-mode": store.layerStore.mode,
                 "efp-ws-mode": uiState.wsShown,
             })}
+            dir={uiState.rtl ? "rtl" : "ltr"}
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />

@@ -98,3 +98,9 @@ $actionButton: ".efp-actionButton";
         }
     }
 }
+
+.layout[dir="rtl"] #{$actionButton} {
+    &--directions .icon {
+        transform: scaleX(-1);
+    }
+}

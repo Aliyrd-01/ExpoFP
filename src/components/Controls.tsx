@@ -16,9 +16,9 @@ export default function Controls() {
         },
         get style() {
             return {
-                left: uiState.overlayCollapsed
+                [uiState.rtl ? "right" : "left"]: uiState.overlayCollapsed
                     ? remsToPixels(0.9)
-                    : (uiState.kiosk ? 10 : 0) + uiState.mapVisibleLeft + remsToPixels(0.7) + "px",
+                    : (uiState.kiosk ? 10 : 0) + uiState.mapVisibleStart + remsToPixels(0.7) + "px",
                 top: uiState.overlayCollapsed ? remsToPixels(5) : uiState.mapVisibleTop + remsToPixels(0.7) + "px",
             };
         },

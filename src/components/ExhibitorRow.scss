@@ -3,6 +3,7 @@
     align-items: center;
     text-decoration: none !important;
     color: #333 !important;
+    text-align: left;
 
     &.featured {
         .exhibitor-row__lines {
@@ -11,22 +12,28 @@
     }
 
     &__lines {
-        padding: 0 0.1rem 0 1rem;
+        padding-inline-start: 1rem;
+        padding-inline-end: 0.1rem;
         flex-grow: 1;
 
         overflow: hidden;
         text-overflow: ellipsis;
 
-        > .fa-gem {
+        & > div {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        & .fa-gem {
             color: #02a8ff;
             font-size: 0.9rem;
         }
     }
 
     &__booth {
-        padding: 0 1rem 0 0;
+        padding-inline-end: 1rem;
         min-width: 4rem;
-        text-align: right;
+        text-align: end;
         font-weight: 700;
         font-size: 0.9rem;
         color: #555;
@@ -35,9 +42,14 @@
 
     &__bookmark {
         align-self: stretch;
-        padding: 0 0.5rem 0 1rem;
+        padding-inline-start: 1rem;
+        padding-inline-end: 0.5rem;
         outline: none;
     }
+}
+
+.layout[dir="rtl"] .exhibitor-row {
+    text-align: right;
 }
 
 .efp-kiosk {
@@ -45,11 +57,11 @@
         padding: var(--k-itemsPadding-1);
 
         &__lines {
-            padding-left: 0;
+            padding-inline-start: 0;
             font-size: 1.2em;
         }
         &__booth {
-            padding-right: 0;
+            padding-inline-end: 0;
             font-size: 1em;
         }
     }

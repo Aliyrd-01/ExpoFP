@@ -48,7 +48,7 @@ export default function Mapbox() {
 
         get style() {
             return {
-                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleLeft + "px",
+                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleStart + "px",
             };
         },
     }));
@@ -100,7 +100,7 @@ export default function Mapbox() {
 
             activeLayers = setLayers(store.layerStore.layers);
 
-            const boothsLayers = activeLayers.filter((l) => l.indexOf("-") === -1);
+            const boothsLayers = activeLayers.filter((l) => l.indexOf("--") === -1);
 
             updateRouteLines(store.routeStore);
 
@@ -147,7 +147,7 @@ export default function Mapbox() {
         () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
         () => {
             activeLayers.forEach((l: string) => {
-                const layerName = l.split("-")[0];
+                const layerName = l.split("--")[0];
                 const layer = store.layerStore.layers.find((l) => l.name === layerName);
 
                 if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(l, "visibility"))

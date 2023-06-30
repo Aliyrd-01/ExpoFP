@@ -23,7 +23,6 @@ function Ws() {
                 width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx}px` : "100%",
                 // todo: remove
                 opacity: uiState.wsStarted ? 1 : 0,
-                right: 0,
                 padding: `0 ${uiState.wsPaddingPx}px`,
             } as any;
 

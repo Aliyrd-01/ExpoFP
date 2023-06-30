@@ -79,3 +79,8 @@
         align-items: center;
     }
 }
+
+.layout[dir="rtl"] .ws {
+    right: unset;
+    left: 0;
+}
