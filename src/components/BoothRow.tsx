@@ -14,7 +14,11 @@ const BoothRow: React.FC<{
 
     return (
         <SimpleRow
-            style={{ background: uiState.heatmap ? `linear-gradient(to right, transparent 98%, ${background} 93%)` : null }}
+            style={{
+                background: uiState.heatmap
+                    ? `linear-gradient(to right, transparent 98%, ${background} 93%) center / 100% 99% no-repeat`
+                    : null,
+            }}
             className={className}
             slug={booth.slug}
             onClick={handleClick}

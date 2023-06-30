@@ -41,7 +41,9 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 borderLeft: data.isRebooking
                     ? `5px solid ${defaultRebookingOptions[exhibitor.rebookingState].color.primary}`
                     : null,
-                background: uiState.heatmap ? `linear-gradient(to right, transparent 98%, ${background} 93%)` : null,
+                background: uiState.heatmap
+                    ? `linear-gradient(to right, transparent 98%, ${background} 93%) center / 100% 99% no-repeat`
+                    : null,
             }}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}

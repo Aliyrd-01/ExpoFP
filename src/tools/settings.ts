@@ -7,7 +7,7 @@ export class FpSettings {
     boothBorderWidth: number;
     heatmapColors: string[] = ["#FDE7C7", "#FDDBAE", "#FDC48D", "#FCB37C", "#FCA26D", "#F67B5B", "#EB483E", "#E03143", "#6C0022"];
     minClicks: number = 0;
-    maxClicks: number = 42;
+    maxClicks: number = 50;
 }
 
 class Settings extends FpSettings {
