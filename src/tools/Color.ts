@@ -13,6 +13,9 @@ export function getColorFromGradient(countClicks: number) {
     // Приводим текущее количество кликов к диапазону [0, 1]
     let t = (countClicks - settings.minClicks) / (settings.maxClicks - settings.minClicks);
 
+    // Ограничиваем t в диапазоне от 0 до 1
+    t = Math.max(0, Math.min(t, 1));
+
     // Индекс нижнего цвета в градиенте
     let i = Math.floor(t * (colors.length - 1));
     i = Math.max(0, Math.min(i, colors.length - 2)); // Обрезаем до допустимого диапазона
