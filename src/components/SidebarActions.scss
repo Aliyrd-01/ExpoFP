@@ -9,7 +9,7 @@ $actionButton: ".efp-actionButton";
     align-items: center;
     gap: 10px;
     width: 100%;
-    margin-bottom: rem(20px);
+    margin-bottom: 18px;
 }
 
 #{$actionButton} {
@@ -17,33 +17,34 @@ $actionButton: ".efp-actionButton";
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    height: rem(36px);
-    padding: rem(0 14px 0 10px);
-    background: $color-white;
-    border: 1px solid $color-primary;
+    height: 38px;
+    padding: 0 12px 0 8px;
+    background: var(--color-white);
+    border: 1px solid var(--color-primary);
     border-radius: 30px;
-    font-size: rem(14px);
-    color: $color-primary;
+    font-size: var(--text-size-2);
+    font-weight: var(--font-medium);
+    color: var(--color-primary);
     cursor: pointer;
     box-shadow: 0px 0px 0 rgba(61, 145, 247, 0);
     transition: background 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
 
-    .icon {
-        width: 22px;
-        height: 22px;
-        fill: $color-primary;
+    &:hover {
+        background: var(--color-primaryLight);
+    }
+    &:active {
+        background: var(--color-primaryLight);
+        box-shadow: 0px 0px 8px rgba(61, 145, 247, 0.3);
+    }
+    & > .icon {
+        width: 20px;
+        height: 20px;
+        fill: var(--color-primary);
         transition: fill 0.1s ease;
 
         & + .text {
-            margin-left: 4px;
+            margin-left: 6px;
         }
-    }
-    &:hover {
-        background: #edfaff;
-    }
-    &:active {
-        background: #edfaff;
-        box-shadow: 0px 0px 8px rgba(61, 145, 247, 0.3);
     }
     &--bookmark {
         flex-grow: 1;
@@ -58,6 +59,15 @@ $actionButton: ".efp-actionButton";
     &--directions {
         flex-grow: 1;
         flex-shrink: 0.5;
+        background: var(--color-primary);
+        color: var(--color-white);
+
+        &:hover {
+            background: var(--color-primaryDark);
+        }
+        & > .icon {
+            fill: var(--color-white);
+        }
     }
     &--share {
         flex-shrink: 0.2;
