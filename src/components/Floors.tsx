@@ -18,7 +18,7 @@ export default function Floors() {
         },
         get style() {
             return {
-                right: remsToPixels(0.5) + "px",
+                [uiState.rtl ? "left" : "right"]: remsToPixels(0.5) + "px",
                 top: uiState.mapVisibleTop + remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) + "px",
             };
         },
@@ -70,6 +70,7 @@ export default function Floors() {
                             key={f.description}
                             onClick={() => click(f.description)}
                             title={f.description}
+                            dir="auto"
                         >
                             {f.shortName}
                         </div>
