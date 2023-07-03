@@ -1,0 +1,63 @@
+@import "../styles/helpers.scss";
+
+.layers-loading {
+    position: absolute;
+    bottom: 60px;
+    right: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 5;
+
+    &.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    & > svg {
+        width: 60px;
+        transform-origin: center;
+        animation: rotate 2s linear infinite;
+
+        & > circle {
+            fill: none;
+            stroke: rgba(65, 182, 231, 1);
+            stroke-width: 2;
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            animation: dash 1.5s ease-in-out infinite;
+        }
+
+        @include media-breakpoint-down(sm) {
+            width: 40px;
+        }
+    }
+
+    @include media-breakpoint-down(sm) {
+        bottom: 190px;
+        right: 20px;
+    }
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 90, 200;
+        stroke-dashoffset: -35px;
+    }
+    100% {
+        stroke-dashoffset: -125px;
+    }
+}

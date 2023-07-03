@@ -18,7 +18,7 @@ const Template: Story<SidebarActionsProps> = (args) => {
 
     return (
         <>
-            <div className="map">
+            <div className="map layout">
                 <aside className="sidebar">
                     <SidebarActions
                         {...args}
@@ -38,5 +38,5 @@ export const Base = Template.bind({});
 Base.args = {
     inBookmark: false,
     showDirections: true,
-    showShare: true
+    showShare: true,
 };

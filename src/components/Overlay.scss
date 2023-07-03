@@ -20,7 +20,7 @@
         border-radius: 0.5rem 0.5rem 0 0;
     }
     &.-backdrop {
-        background-color: rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.6);
         -webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);
     }
