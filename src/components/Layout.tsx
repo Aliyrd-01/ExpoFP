@@ -22,6 +22,7 @@ import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
+import LayersLoading from "./LayersLoading";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -81,6 +82,7 @@ export default observer(function Layout() {
                         </Modal>
                     </Suspense>
                 ) : null}
+                <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
             </div>
         </div>

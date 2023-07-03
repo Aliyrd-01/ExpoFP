@@ -40,14 +40,14 @@ export class Layer {
     get shortName(): string {
         const parts = this.description.replace(/"/g, "").split(" ");
         if (parts.length === 1) return this.description.substring(0, 2).toUpperCase();
-    
+
         var name: string;
         if (Number.isInteger(parseInt(parts[0]))) {
             name = parts[0] + parts[1][0];
         } else if (Number.isInteger(parseInt(parts[1]))) {
             name = parts[0][0] + parts[1];
         } else name = parts[0][0] + parts[1][0];
-    
+
         return name.toLocaleUpperCase();
     }
 }
@@ -56,6 +56,7 @@ export default class LayerStore {
     @observable layers: Layer[] = [];
     @observable defaultLayer: Layer;
     @observable mode: LayersMode;
+    @observable layersLoaded: boolean = false;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.frozen || l.visible);
