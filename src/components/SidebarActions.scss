@@ -16,6 +16,7 @@ $actionButton: ".efp-actionButton";
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 6px;
     overflow: hidden;
     height: 38px;
     padding: 0 12px 0 8px;
@@ -41,10 +42,6 @@ $actionButton: ".efp-actionButton";
         height: 20px;
         fill: var(--color-primary);
         transition: fill 0.1s ease;
-
-        & + .text {
-            margin-left: 6px;
-        }
     }
     &--bookmark {
         flex-grow: 1;
