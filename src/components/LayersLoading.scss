@@ -38,8 +38,12 @@
 
     @include media-breakpoint-down(sm) {
         bottom: 190px;
-        right: 20px;
     }
+}
+
+.layout[dir="rtl"] .layers-loading {
+    right: unset;
+    left: 20px;
 }
 
 @keyframes rotate {
