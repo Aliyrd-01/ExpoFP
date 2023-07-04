@@ -8,7 +8,7 @@ import { OverlaySize } from "../store/UIState";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import Bookmarks from "./Bookmarks";
-import Booth from "./Booth";
+import Booth from "./Booth/Booth";
 import Category from "./Category";
 import Exhibitor from "./Exhibitor";
 import Menu from "./Menu";
