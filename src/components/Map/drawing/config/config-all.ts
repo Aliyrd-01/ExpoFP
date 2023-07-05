@@ -1,4 +1,4 @@
-import { uiState } from "./../../../../store/index";
+import { layersStore, uiState } from "./../../../../store/index";
 import store from "../../../../store";
 import { DrawerContext } from "../Drawer1";
 import configCanvas from "./config-canvas";
@@ -31,40 +31,38 @@ export default function configAll(context: DrawerContext = _context): void {
         layers = [dl].concat(lrs);
     }
 
-    var counter = layers.length;
-    var loaded = 0;
-
     var duration = 10;
     var animated = false;
 
-    layers.forEach((layer) => {
-        loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
-            loaded++;
-            if (counter === loaded) {
-                var l =
-                    [...uiState.selectedBooths][0]?.layer ||
-                    store.uiState.selectedExhibitor?.booths[0]?.layer ||
-                    uiState.selectedRoute?.from?.layer ||
-                    store.routeStore.defaultFrom?.layer;
-
-                var name = l?.name;
-
-                if (name) {
-                    store.layerStore.updateVisibility(name, true);
-                    store.routeStore.currentRouteLayer = l;
-
-                    const booths =
-                        store.uiState.selectedExhibitor?.booths.filter((b) => b.layer?.name === name) ||
-                        [...store.uiState.selectedBooths].filter((b) => b.layer?.name === name);
-                    if (booths.length) store.uiState.moveToBooths = booths;
-                }
-            }
-
+    const promises = layers.map((layer) => {
+        return loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
             if (!animated && configured) {
                 animated = true;
                 an(() => setTimeout(() => cb(), 2 * duration), duration);
             }
         });
+    });
+
+    Promise.all(promises).then(() => {
+        layersStore.layersLoaded = true;
+
+        const l =
+            [...uiState.selectedBooths][0]?.layer ||
+            store.uiState.selectedExhibitor?.booths[0]?.layer ||
+            uiState.selectedRoute?.from?.layer ||
+            store.routeStore.defaultFrom?.layer;
+
+        const name = l?.name;
+
+        if (name) {
+            store.layerStore.updateVisibility(name, true);
+            store.routeStore.currentRouteLayer = l;
+
+            const booths =
+                store.uiState.selectedExhibitor?.booths.filter((b) => b.layer?.name === name) ||
+                [...store.uiState.selectedBooths].filter((b) => b.layer?.name === name);
+            if (booths.length) store.uiState.moveToBooths = booths;
+        }
     });
 
     basePriority = 20 * (layers.length + 2);
