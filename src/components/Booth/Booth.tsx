@@ -69,7 +69,15 @@ function Booth() {
             } else if (b.reserved) {
                 content = <BoothReserved />;
             } else if (b.exhibitors.length === 0) {
-                content = <BoothWithoutExhibitor booth={b} showBuy={s.showBuy} showReserve={s.showReserve} isRebooking={false} />;
+                content = (
+                    <BoothWithoutExhibitor
+                        booth={b}
+                        description={s.descriptionCombined}
+                        showBuy={s.showBuy}
+                        showReserve={s.showReserve}
+                        isRebooking={false}
+                    />
+                );
             } else {
                 content = <>{exhibitors}</>;
             }
@@ -95,7 +103,13 @@ function Booth() {
                 )}
                 {!data.isRebooking && content}
                 {data.isRebooking && s.regular && s.regular.exhibitors.length === 0 && (
-                    <BoothWithoutExhibitor showBuy={false} showReserve={false} booth={s.regular} isRebooking={data.isRebooking} />
+                    <BoothWithoutExhibitor
+                        showBuy={false}
+                        description={s.descriptionCombined}
+                        showReserve={false}
+                        booth={s.regular}
+                        isRebooking={data.isRebooking}
+                    />
                 )}
                 {!!s.booth.schedule?.length && <Schedule events={s.booth.schedule} />}
             </OverlayContent>

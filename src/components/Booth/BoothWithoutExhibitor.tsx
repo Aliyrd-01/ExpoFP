@@ -7,12 +7,19 @@ import React, { FC } from "react";
 
 interface BoothWithoutExhibitorProps {
     booth: RegularBooth;
+    description: string;
     showBuy: boolean;
     showReserve: boolean;
     isRebooking: boolean;
 }
 
-export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({ booth, showBuy, showReserve, isRebooking }) => {
+export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
+    booth,
+    description,
+    showBuy,
+    showReserve,
+    isRebooking,
+}) => {
     const makeUrl = (href) => {
         if (href) {
             const url = new URL(href);
@@ -58,8 +65,8 @@ export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({ booth, s
                     </div>
                 )}
             </div>
-            {!isRebooking && booth.description && (
-                <span dangerouslySetInnerHTML={{ __html: booth.description }} className="booth__reserve-instructions" />
+            {!isRebooking && description && (
+                <span dangerouslySetInnerHTML={{ __html: description }} className="booth__reserve-instructions" />
             )}
             {!isRebooking && showBuy && (
                 <div className="booth__buy">
