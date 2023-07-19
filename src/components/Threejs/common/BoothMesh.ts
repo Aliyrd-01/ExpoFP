@@ -7,6 +7,7 @@ import { IBooth as ThreeBooth } from "../common/dataLoader";
 import { getBoothlabel } from "../../Mapbox/utils/data";
 import TextureMerger, { modifySphereUV } from "../utils/textureMerger";
 import { Img } from "../../../utils/imageloader";
+import settings from "../../../tools/settings";
 var { Text } = require("troika-three-text");
 
 const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
@@ -36,8 +37,7 @@ export class BoothMesh extends THREE.Group {
         const label = new Text();
         label.text = getBoothlabel(this.efpBooth);
         if (!label.text) return;
-
-        label.color = 0xffffff;
+        label.color = this.efpBooth.labelColor || settings.boothLabelColor;
         label.anchorX = "center";
         label.anchorY = "middle";
         label.textAlign = "center";
