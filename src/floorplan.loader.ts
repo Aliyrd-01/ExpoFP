@@ -6,11 +6,14 @@ import { loadCss, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
+import FontFaceObserver from "fontfaceobserver";
 import useShadow from "./utils/use-shadow";
 
 function nr() {
     throw new Error("FloorPlan not ready");
 }
+
+declare const FontFace: any;
 
 export default class FloorPlanLoader implements FloorPlan {
     protected readonly options: FloorPlanOptions;
@@ -187,6 +190,58 @@ export default class FloorPlanLoader implements FloorPlan {
             while (element.firstChild && element.firstChild !== shadowContainer) {
                 element.removeChild(element.firstChild);
             }
+
+            // const customCss = `
+            //     * {
+            //         font-family: 'Lumanosimo', cursive;
+            //     }
+            // `;
+
+            async function fetchFont() {
+                try {
+                    const response = await fetch("https://fonts.googleapis.com/css2?family=Lumanosimo&display=swap", {
+                        method: "GET",
+                        headers: {
+                            Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                            "Accept-Encoding": "gzip, deflate, br",
+                        },
+                    });
+
+                    const fontCss = await response.text();
+
+                    return fontCss;
+                } catch {
+                    console.error("failed");
+                }
+            }
+
+            const fontCss = await fetchFont();
+            console.log(fontCss);
+
+            // const font = new FontFace(
+            //     "Lumanosimo",
+            //     "url('https://fonts.gstatic.com/s/lumanosimo/v2/K2F0fZBYg_JDSEZHEfO8MoOAAhLz.woff2')"
+            // );
+            // font.load().then((loadedFont) => document["fonts"].add(loadedFont));
+
+            const customCss = `
+                * {
+                    font-family: 'Lumanosimo', cursive;
+                }
+            `;
+
+            const style = document.createElement("style");
+            style.textContent = customCss;
+
+            container.append(style);
+
+            // let link = document.createElement("link");
+            // link.href = "https://fonts.googleapis.com/css2?family=Lumanosimo&display=swap";
+            // link.rel = "stylesheet";
+            // document.head.appendChild(link);
+
+            // const font = new FontFaceObserver("Lumanosimo");
+            // await font.load();
 
             //const fp = new FloorPlanReady.default(options);
             const fpReady = Object.setPrototypeOf(self, FloorPlanReady.prototype);
