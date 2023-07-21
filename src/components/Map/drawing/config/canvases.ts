@@ -3,6 +3,7 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
+import settings from "../../../../tools/settings";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -508,12 +509,11 @@ export function canvarFromPath(paths: PathInfo[], scale: number = 0.5, suffix: s
 }
 
 export function getFont(px: number, weight: number = 500) {
-    return (
-        weight +
-        " " +
-        px +
-        'px Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-    );
+    const defaultFont =
+        'Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+    const font = settings.customFont ? `${settings.customFont}, ${defaultFont}` : defaultFont;
+
+    return weight + " " + px + `px ${font}`;
 }
 
 export function createMultilineTextCanvas(lines: string[], inputWidth: number, fontSize: number, color: string = "#fff") {

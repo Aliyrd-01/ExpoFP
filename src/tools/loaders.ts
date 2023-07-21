@@ -34,7 +34,6 @@ export async function loadJs(url: string) {
     });
 }
 
-declare const FontFace: any;
 export async function loadFont(family: string, url: string, d?) {
     url = goodUrl(url);
     d = { style: "normal", weight: "normal", ...(d || {}) };
@@ -78,4 +77,81 @@ export function injectFontFace(fontFamily: string, src: string, d) {
     );
     div.innerHTML = "Oswald";
     document.body.appendChild(div);
+}
+
+interface Font {
+    fontFamily: string;
+    fontWeight: string;
+    url: string;
+}
+
+export async function loadCustomFonts(container: HTMLDivElement | ShadowRoot, customCss: string) {
+    const importURL = getImportURL(customCss);
+
+    async function fetchFont() {
+        try {
+            const response = await fetch(importURL, {
+                method: "GET",
+            });
+
+            return await response.text();
+        } catch {
+            logger.error("Error with fetch font");
+        }
+    }
+
+    if (importURL) {
+        const fontsString = await fetchFont();
+        const fontRegex =
+            /@font-face {[\s\S]*?font-family: '(.*?)';[\s\S]*?font-style: normal;[\s\S]*?font-weight: (\d+);[\s\S]*?src:.*?url\((https:.*?\.woff2)\) format\('woff2'\)[\s\S]*?}/g;
+        let fontMatch;
+
+        const fonts: Font[] = [];
+        while ((fontMatch = fontRegex.exec(fontsString)) !== null) {
+            const fontFamily = fontMatch[1];
+            const fontWeight = fontMatch[2];
+            const url = fontMatch[3];
+            fonts.push({ fontFamily, fontWeight, url });
+        }
+
+        const promisesFonts = fonts.map((font) => {
+            const fontFace = new FontFace(font.fontFamily, `url(${font.url})`, { weight: font.fontWeight });
+            return fontFace
+                .load()
+                .then((loadedFont) => document["fonts"].add(loadedFont))
+                .catch((error) => {
+                    logger.error(`Failed to load font ${font.fontFamily} with url ${font.url}:`, error);
+                    return null;
+                });
+        });
+
+        await Promise.allSettled(promisesFonts);
+    }
+}
+
+function getImportURL(css: string) {
+    const importPattern = /@import url\("(.*?)"\);/g;
+    let importURL = "";
+    css.replace(importPattern, (match, p1) => {
+        importURL = p1;
+        return "";
+    });
+
+    return importURL;
+}
+
+export function getFontFamily(css: string) {
+    const fontFamilyPattern = /font-family:\s*(.*?);/g;
+    let fontFamily = "";
+    const match = fontFamilyPattern.exec(css);
+    if (match) {
+        fontFamily = match[1];
+    }
+
+    return fontFamily;
+}
+
+export function removeCSSImport(css: string) {
+    const importPattern = /@import url\("(.*?)"\);/g;
+    return css.replace(importPattern, "");
 }

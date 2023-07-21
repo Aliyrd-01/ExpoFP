@@ -4,13 +4,14 @@ export class FpSettings {
     boothLabelColor: string = "#fff";
     boothBorderColor: string = "#fff";
     backgroundColor: string = "#ebebeb";
-    boothBorderWidth:number;
+    boothBorderWidth: number;
 }
 
 class Settings extends FpSettings {
     // this is not replaced with const, so calls to settings.EXPO won't get replaced with const
     // this is done for template to work
     EXPO: string = window["__efpEvent"]; //process.env.REACT_APP_EFP_EXPO,
+    customFont: string = window["__efpCustomFontFamily"];
     borderless: boolean = false;
     wayfinding: boolean = false;
     // borderWidth: 1,

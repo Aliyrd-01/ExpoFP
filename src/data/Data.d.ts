@@ -39,6 +39,7 @@ interface Data {
     hideModeSwitchButton: boolean;
     isRebooking: boolean;
     events: ScheduleItem[];
+    customCss: string;
 }
 
 interface ScheduleItem {
