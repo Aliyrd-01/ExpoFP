@@ -33,6 +33,8 @@
 
     --default-font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
 
+    --app-font-family: var(--expofp-font-face, var(--default-font-family));
+
     --heading-size-1: 26px;
     --heading-size-2: 22px;
     --heading-size-3: 18px;

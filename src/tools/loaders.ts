@@ -1,6 +1,7 @@
 import browser from "../utils/browser";
 import isFromDesigner from "../utils/is-from-designer";
 import baseUrl from "./base-url";
+import FontFaceObserver from "fontfaceobserver";
 import logger from "./logger";
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
@@ -79,79 +80,14 @@ export function injectFontFace(fontFamily: string, src: string, d) {
     document.body.appendChild(div);
 }
 
-interface Font {
-    fontFamily: string;
-    fontWeight: string;
-    url: string;
-}
+export async function loadCustomFonts() {
+    const fontFaceRaw = getComputedStyle(document.body).getPropertyValue("--expofp-font-face");
+    const fontFaces = fontFaceRaw
+        .replace(/"/g, "")
+        .split(", ")
+        .map((x) => x.trim()); // Удаляем кавычки и пробелы и получаем массив шрифтов
 
-export async function loadCustomFonts(container: HTMLDivElement | ShadowRoot, customCss: string) {
-    const importURL = getImportURL(customCss);
+    const fontObservers = fontFaces.map((fontFace) => new FontFaceObserver(fontFace).load());
 
-    async function fetchFont() {
-        try {
-            const response = await fetch(importURL, {
-                method: "GET",
-            });
-
-            return await response.text();
-        } catch {
-            logger.error("Error with fetch font");
-        }
-    }
-
-    if (importURL) {
-        const fontsString = await fetchFont();
-        const fontRegex =
-            /@font-face {[\s\S]*?font-family: '(.*?)';[\s\S]*?font-style: normal;[\s\S]*?font-weight: (\d+);[\s\S]*?src:.*?url\((https:.*?\.woff2)\) format\('woff2'\)[\s\S]*?}/g;
-        let fontMatch;
-
-        const fonts: Font[] = [];
-        while ((fontMatch = fontRegex.exec(fontsString)) !== null) {
-            const fontFamily = fontMatch[1];
-            const fontWeight = fontMatch[2];
-            const url = fontMatch[3];
-            fonts.push({ fontFamily, fontWeight, url });
-        }
-
-        const promisesFonts = fonts.map((font) => {
-            const fontFace = new FontFace(font.fontFamily, `url(${font.url})`, { weight: font.fontWeight });
-            return fontFace
-                .load()
-                .then((loadedFont) => document["fonts"].add(loadedFont))
-                .catch((error) => {
-                    logger.error(`Failed to load font ${font.fontFamily} with url ${font.url}:`, error);
-                    return null;
-                });
-        });
-
-        await Promise.allSettled(promisesFonts);
-    }
-}
-
-function getImportURL(css: string) {
-    const importPattern = /@import url\("(.*?)"\);/g;
-    let importURL = "";
-    css.replace(importPattern, (match, p1) => {
-        importURL = p1;
-        return "";
-    });
-
-    return importURL;
-}
-
-export function getFontFamily(css: string) {
-    const fontFamilyPattern = /font-family:\s*(.*?);/g;
-    let fontFamily = "";
-    const match = fontFamilyPattern.exec(css);
-    if (match) {
-        fontFamily = match[1];
-    }
-
-    return fontFamily;
-}
-
-export function removeCSSImport(css: string) {
-    const importPattern = /@import url\("(.*?)"\);/g;
-    return css.replace(importPattern, "");
+    return Promise.allSettled(fontObservers);
 }

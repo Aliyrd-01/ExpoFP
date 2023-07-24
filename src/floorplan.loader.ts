@@ -2,7 +2,7 @@ import _locales from "../public/locales/_locales";
 import { Data } from "./data/Data";
 import { CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
-import { loadCss, loadFont, loadJs, loadCustomFonts, removeCSSImport, getFontFamily } from "./tools/loaders";
+import { loadCss, loadFont, loadJs, loadCustomFonts } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
@@ -175,21 +175,32 @@ export default class FloorPlanLoader implements FloorPlan {
             }
             const data = window["__data"] as Data;
 
+            const navLanguage = navigator.languages?.[0] || navigator.language;
+            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
+            await initI18n(navLocale || data.locale || "en");
+
             data.customCss = `
-                @import url("https://fonts.googleapis.com/css2?family=Tektur:wght@400;500&display=swap");
-                * {
-                    font-family: 'Tektur', cursive;
+                @import url('https://fonts.googleapis.com/css2?family=Lumanosimo&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+                :root {
+                    --expofp-font-face: "Lumanosimo", "Roboto";
                 }
             `;
 
             if (data.customCss) {
-                await loadCustomFonts(container, data.customCss);
-                window["__efpCustomFontFamily"] = getFontFamily(data.customCss);
-            }
+                const style = document.createElement("style");
+                style.textContent = data.customCss;
+                document.head.append(style);
 
-            const navLanguage = navigator.languages?.[0] || navigator.language;
-            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
-            await initI18n(navLocale || data.locale || "en");
+                if (useShadow) {
+                    const style2 = document.createElement("style");
+                    style2.textContent = data.customCss;
+                    container.append(style2);
+                }
+
+                await loadCustomFonts();
+            }
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
@@ -198,13 +209,6 @@ export default class FloorPlanLoader implements FloorPlan {
             // remove all kids (loaders)
             while (element.firstChild && element.firstChild !== shadowContainer) {
                 element.removeChild(element.firstChild);
-            }
-
-            if (data.customCss) {
-                const style = document.createElement("style");
-                style.textContent = removeCSSImport(data.customCss);
-
-                container.append(style);
             }
 
             //const fp = new FloorPlanReady.default(options);
