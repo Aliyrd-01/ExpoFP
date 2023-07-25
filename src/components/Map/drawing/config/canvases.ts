@@ -156,8 +156,15 @@ export function createExhibitorsDetailsCanvas(
     const mainFont = getFont(mainFontSize, 500);
     const detailFont = getFont(detailFontSize, 300);
 
-    if (onlyFeaturedExhibitors) mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
-    else mainLines.push(...b.exhibitors.map((e) => e.name));
+    const primaryExhibitors = b.exhibitors.filter((e) => e.order === 0);
+
+    if (primaryExhibitors.length > 0) {
+        mainLines.push(...primaryExhibitors.map((e) => e.name));
+    } else if (onlyFeaturedExhibitors) {
+        mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
+    } else {
+        mainLines.push(...b.exhibitors.map((e) => e.name));
+    }
 
     mainLines.forEach((text, i) => {
         // Adding an invisible character to display punctuation marks correctly in the right-to-left version
