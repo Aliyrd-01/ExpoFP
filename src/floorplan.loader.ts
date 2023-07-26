@@ -199,7 +199,7 @@ export default class FloorPlanLoader implements FloorPlan {
                     container.append(style2);
                 }
 
-                await loadCustomFonts();
+                await loadCustomFonts(data.customCss);
             }
 
             logger.log("Data loaded");

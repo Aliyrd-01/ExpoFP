@@ -80,12 +80,17 @@ export function injectFontFace(fontFamily: string, src: string, d) {
     document.body.appendChild(div);
 }
 
-export async function loadCustomFonts() {
-    const fontFaceRaw = getComputedStyle(document.body).getPropertyValue("--expofp-font-face");
+export async function loadCustomFonts(customCss: string) {
+    const fontFaceRaw =
+        getComputedStyle(document.documentElement).getPropertyValue("--expofp-font-face") ||
+        customCss.match(/--expofp-font-face:\s*([^;]*)/)?.[1];
+
+    if (!fontFaceRaw) return;
+
     const fontFaces = fontFaceRaw
         .replace(/"/g, "")
         .split(", ")
-        .map((x) => x.trim()); // Удаляем кавычки и пробелы и получаем массив шрифтов
+        .map((x) => x.trim());
 
     const fontObservers = fontFaces.map((fontFace) => new FontFaceObserver(fontFace).load());
 
