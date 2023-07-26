@@ -7,6 +7,7 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
+import { resetGlobalVariables } from "./tools/reset";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -60,6 +61,7 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     constructor(options?: FloorPlanOptions) {
+        resetGlobalVariables();
         this.options = options;
         this.noOverlay = !!options.noOverlay;
 
