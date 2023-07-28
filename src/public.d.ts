@@ -31,6 +31,8 @@ class FloorPlan {
     updateLayerVisibility(layer: string, visible: boolean): void;
 
     selectRoute(from: string, to: string, onlyAccessible: boolean): void;
+
+    unstable_destroy(): void;
 }
 
 interface FloorPlanOptions {
