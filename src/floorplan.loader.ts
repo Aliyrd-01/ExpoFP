@@ -22,6 +22,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly dataUrl: string;
     readonly noOverlay: boolean;
 
+    protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
 
     get ready() {
@@ -56,6 +57,10 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {
+        nr();
+    }
+
+    unstable_destroy(): void {
         nr();
     }
 
@@ -156,14 +161,17 @@ export default class FloorPlanLoader implements FloorPlan {
         ];
 
         let handledStyleElements = 0;
-        window.addEventListener("__efpStyleLoad", function (e: Event) {
+
+        this.efpStyleLoadHandler = function (e: Event) {
             const elements = window["__efpStyleElements"] as HTMLStyleElement[];
             while (handledStyleElements < elements.length) {
                 const el = elements[handledStyleElements];
                 container.appendChild(el);
                 handledStyleElements++;
             }
-        });
+        };
+
+        window.addEventListener("__efpStyleLoad", this.efpStyleLoadHandler);
 
         const self = this;
         (async function init() {
