@@ -7,7 +7,6 @@ export function resetGlobalVariables() {
     deleteKey("__mobxGlobals");
     deleteKey("__store");
     deleteKey("__mobxInstanceCount");
-    deleteKey("gtag");
 
     for (let key in window) {
         if (key === "__efpStyleElements") continue;
