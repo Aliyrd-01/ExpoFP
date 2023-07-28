@@ -9,6 +9,7 @@ import { CurrentPosition, Route } from "./store/RouteStore";
 import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 import { resetGlobalVariables } from "./tools/reset";
+import reportError from "./tools/report-error";
 
 trackEvent("load");
 sendEventToGa(GaEventActions.Load, ``);
@@ -68,9 +69,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.layerStore.updateVisibility(layer, visible);
     }
 
-    destroy() {
+    unstable_destroy() {
         let efpElement = window["__efpElement"].firstChild;
         resetGlobalVariables();
+
+        window.removeEventListener("__efpStyleLoad", this.efpStyleLoadHandler);
+        window.removeEventListener("error", reportError);
+
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
     }

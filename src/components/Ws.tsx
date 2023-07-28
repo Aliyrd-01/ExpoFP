@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { reaction } from "mobx";
+import { IReactionDisposer, reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -33,15 +33,30 @@ function Ws() {
     }));
 
     useInit(() => {
+        let dispose: IReactionDisposer;
+        let isMounted = true;
+
         (async function () {
             s.all = shuffle(exhibitorStore.advertised);
             s.imgByExhbitorId = await loadExhbibitorImages();
+            if (!isMounted) return;
             setupNext();
             mouseout();
             uiState.wsStarted = true;
 
-            reaction(() => uiState.screenSize, setupNext);
+            dispose = reaction(() => uiState.screenSize, setupNext);
         })();
+
+        return () => {
+            isMounted = false;
+            if (dispose) {
+                dispose();
+            }
+            if (s.intervalId) {
+                window.clearInterval(s.intervalId);
+                s.intervalId = 0;
+            }
+        };
     });
 
     return useObserver(() => (
