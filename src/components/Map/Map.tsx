@@ -32,6 +32,7 @@ export default function Map() {
     let zoomAfTransform: ZoomTransform;
     // do not use useState unless really needed
     const el = useRef<HTMLCanvasElement>();
+    const resizeObserverRef = useRef<ResizeObserver>();
     // use mobx for everything
     const s = useLocalStore(() => ({
         animatePlease: false,
@@ -47,7 +48,12 @@ export default function Map() {
     }));
 
     // init
-    useEffect(init, []);
+    useEffect(() => {
+        init();
+
+        return () => resizeObserverRef.current.disconnect();
+    }, []);
+
     useReaction(
         () => uiState.devicePixelRatio,
         () => {
@@ -262,6 +268,8 @@ export default function Map() {
             sizeCanvasToParentElement(el.current);
             s.drawer.resetCanvasSize();
         });
+
+        resizeObserverRef.current = resizeObserver;
 
         resizeObserver.observe(uiState.rootElement);
 

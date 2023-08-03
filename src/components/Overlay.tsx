@@ -63,7 +63,7 @@ export default observer(function Overlay() {
         el.current.ontouchend = handleTouchEnd;
         el.current.ontouchcancel = handleTouchCancel;
 
-        autorun(position);
+        const disposer = autorun(position);
 
         function handleTouchStart(e: TouchEvent) {
             if (s.noMove) return;
@@ -190,6 +190,8 @@ export default observer(function Overlay() {
         //     //const backdrop =  shouldUseBackdrop && uiState.overlayLeft && settings.EXPO === "aweusa2020";
         //     s.backdropStarted = true;
         // }, 3000);
+
+        return () => disposer();
     }, [s]);
 
     return (
