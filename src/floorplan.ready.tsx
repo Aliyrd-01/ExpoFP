@@ -10,6 +10,8 @@ import { GaEventActions, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 import { resetGlobalVariables } from "./tools/reset";
 import reportError from "./tools/report-error";
+import { destroyHistory } from "./services/routing";
+import { destroyUiHandlers } from "./store/init/init-ui";
 
 trackEvent("load");
 sendEventToGa(GaEventActions.Load, ``);
@@ -75,6 +77,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         window.removeEventListener("__efpStyleLoad", this.efpStyleLoadHandler);
         window.removeEventListener("error", reportError);
+        destroyHistory();
+        destroyUiHandlers();
 
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();

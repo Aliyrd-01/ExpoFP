@@ -17,13 +17,17 @@ let disableStateToUrl = false;
 let savedSelectedExhibitor: Exhibitor | null = null;
 let savedSelectedBooth: Booth | null = null;
 
-history.listen((location, action) => {
+const unlisten = history.listen((location, action) => {
     logger.log("history", action, location);
     if (action === "POP") {
         // we moved back in history - need to adjust selected exhibitor//search-text
         dispatchFromUrl();
     }
 });
+
+export function destroyHistory() {
+    unlisten();
+}
 
 function getHistoryUrl(search: string) {
     return pathname + search;

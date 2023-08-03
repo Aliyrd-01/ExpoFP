@@ -7,13 +7,15 @@ import ResizeObserver from "resize-observer-polyfill";
 
 export const kioskKey = "kiosk";
 
+let resizeObserver;
+
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
     uiState.rootElement = window["__efpElement"];
 
     updateScreenSize(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
 
-    const resizeObserver = new ResizeObserver((entries) => {
+    resizeObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
             updateScreenSize(entry.contentRect.width, entry.contentRect.height);
         });
@@ -95,5 +97,12 @@ export default function initUi(store: RootStore) {
         runInAction("uiState.screenSize", () => {
             uiState.screenSize = new Size(width, height);
         });
+    }
+}
+
+export function destroyUiHandlers() {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
     }
 }
