@@ -5,6 +5,7 @@
 		line-height: 1.5rem;
 		color: #333;
 		font-weight: 600;
+		padding: 1rem 0;
 		margin-inline-start: 1rem;
 		font-size: 1.1em;
 		overflow-wrap: break-word;
@@ -119,6 +120,7 @@
 .efp-kiosk {
 	.booth {
 		&__bar {
+			padding: 0;
 			margin-inline-start: var(--k-spacing-lg);
 		}
 	}
