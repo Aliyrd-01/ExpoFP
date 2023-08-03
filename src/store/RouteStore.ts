@@ -20,6 +20,8 @@ export default class RouteStore {
     @observable tempToBooth: Booth = null;
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
+    @observable prevZ: string = null;
+
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
     @observable currentRouteLayer: Layer = null;
@@ -113,8 +115,10 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
-        focus = focus && this.focusEnabled;
+        focus = focus && (this.focusEnabled || this.prevZ != point?.z);
         if (this.focusEnabled) this.focusEnabled = false;
+        this.prevZ = point?.z;
+
         this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
         if (!p) {
