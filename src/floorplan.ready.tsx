@@ -12,6 +12,7 @@ import { resetGlobalVariables } from "./tools/reset";
 import reportError from "./tools/report-error";
 import { destroyHistory } from "./services/routing";
 import { destroyUiHandlers } from "./store/init/init-ui";
+import { destroyGtag } from "./tools/gtag";
 
 trackEvent("load");
 sendEventToGa(GaEventActions.Load, ``);
@@ -79,6 +80,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         window.removeEventListener("error", reportError);
         destroyHistory();
         destroyUiHandlers();
+        destroyGtag();
 
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
