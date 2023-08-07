@@ -122,6 +122,7 @@ interface RawExhibitor {
     youtube: string;
     email: string; // new
     privateEmail: string;
+    order: number;
 
     //populated
     logo: string;
