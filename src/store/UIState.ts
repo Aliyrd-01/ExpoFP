@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { uiState } from ".";
+import store, { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import settings from "../tools/settings";
@@ -228,8 +228,10 @@ export default class UIState {
     @computed get dimmed() {
         const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
+        let text = (this.list as any)?.text?.trim().toLowerCase() as string;
 
         return (
+            text &&
             exhibitors.length &&
             (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
                 this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
@@ -242,30 +244,39 @@ export default class UIState {
         // let words = text.split(/\s+/).filter(x => x);
 
         const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
+        
+        const exhibitorsArray = exhibitorStore.exhibitors        
+            .sort(function (x, y) {
+            
+                var xp = x.name.substring(18, 2);
+                var yp = y.name.substring(18, 2);
+                return xp == yp ? 0 : xp < yp ? -1 : 1;
+            });
 
-        const exhibitorsArray = exhibitorStore.exhibitors;
-        const categoriesArray = categoryStore.categories;
+        const categoriesArray = categoryStore.categories.filter(c=>c.exhibitors.length);
         const boothsArray = boothStore.booths;
 
         if (!text) {
             const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
             const combinedArray = [...exhibitorsArray, ...otherSpacesArray];
 
-            return exhibitorsArray.length === 0
-                ? boothsArray
-                : combinedArray.sort((a, b) => {
-                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+            return (categoriesArray as any).concat(
+                exhibitorsArray.length === 0
+                    ? boothsArray
+                    : combinedArray.sort((a, b) => {
+                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                      if (aFeatured !== bFeatured) {
-                          return aFeatured ? -1 : 1;
-                      }
+                          if (aFeatured !== bFeatured) {
+                              return aFeatured ? -1 : 1;
+                          }
 
-                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
-                  });
+                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
+                      })
+            );
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
@@ -289,7 +300,8 @@ export default class UIState {
         exhibitorsArray.forEach((e) => {
             if (
                 splittedTexts.some(
-                    (text) => containsIgnoreCase(e.name, text) || e.booths.some((b) => containsIgnoreCase(b.name, text))
+                    (text) =>
+                        containsIgnoreCase(e.name, text) || (!text && e.booths.some((b) => containsIgnoreCase(b.name, text)))
                 )
             ) {
                 matchingExhibitors.add(e);
