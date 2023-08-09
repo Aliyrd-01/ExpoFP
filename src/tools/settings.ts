@@ -4,7 +4,7 @@ export class FpSettings {
     boothLabelColor: string = "#fff";
     boothBorderColor: string = "#fff";
     backgroundColor: string = "#ebebeb";
-    boothBorderWidth:number;
+    boothBorderWidth: number;
 }
 
 class Settings extends FpSettings {

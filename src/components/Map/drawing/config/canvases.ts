@@ -515,12 +515,13 @@ export function canvarFromPath(paths: PathInfo[], scale: number = 0.5, suffix: s
 }
 
 export function getFont(px: number, weight: number = 500) {
-    return (
-        weight +
-        " " +
-        px +
-        'px Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-    );
+    const customFont = getComputedStyle(document.body).getPropertyValue("--expofp-font-face");
+    const defaultFont =
+        'Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
+    const font = customFont ? `${customFont}, ${defaultFont}` : defaultFont;
+
+    return weight + " " + px + `px ${font}`;
 }
 
 export function createMultilineTextCanvas(lines: string[], inputWidth: number, fontSize: number, color: string = "#fff") {
