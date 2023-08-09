@@ -179,15 +179,6 @@ export default class FloorPlanLoader implements FloorPlan {
             const navLocale = _locales.find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
 
-            data.customCss = `
-                @import url('https://fonts.googleapis.com/css2?family=Lumanosimo&display=swap');
-                @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
-                :root {
-                    --expofp-font-face: "Lumanosimo", "Roboto";
-                }
-            `;
-
             if (data.customCss) {
                 const style = document.createElement("style");
                 style.textContent = data.customCss;
