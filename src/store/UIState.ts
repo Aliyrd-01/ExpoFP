@@ -12,6 +12,7 @@ import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { getResponsiveClass } from "../utils/responsiveClass";
 import { getLanguage } from "../utils/i18n";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -207,7 +208,7 @@ export default class UIState {
     // misc
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
         if (uiState.overlayCollapsed) return false;
-        if (localStorage.getItem("forcebackdrop") === "1") return true;
+        if (isLocalStorageAvailable && localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
         if (this.selectedExhibitor?.leadingImageUrl && !this.selectedExhibitor?.leadingImageLinkUrl) return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
