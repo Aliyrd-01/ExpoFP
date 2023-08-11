@@ -4,6 +4,7 @@ import logger from "../tools/logger";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
 import { Data, RawRegularBooth, RawSpecialBooth } from "./Data";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {
@@ -45,7 +46,7 @@ export default function validateData(data: Data) {
 
     // if (isDebug && EFP_EXPO === "sydneybuildexpo") data.free = true;
 
-    const validationEnabled = isDebug || localStorage.getItem("validate") === "1";
+    const validationEnabled = isDebug || (isLocalStorageAvailable && localStorage.getItem("validate") === "1");
 
     if (validationEnabled) {
         const res = validate(data, schema);

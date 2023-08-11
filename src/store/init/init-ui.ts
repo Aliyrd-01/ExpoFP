@@ -4,6 +4,7 @@ import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import ResizeObserver from "resize-observer-polyfill";
+import { isLocalStorageAvailable } from "../../utils/localStorage";
 
 export const kioskKey = "kiosk";
 
@@ -52,7 +53,7 @@ export default function initUi(store: RootStore) {
 
     if (!uiState.wsShown) uiState.wsStarted = true;
 
-    uiState.kiosk = localStorage.getItem(kioskKey) === "1";
+    uiState.kiosk = isLocalStorageAvailable && localStorage.getItem(kioskKey) === "1";
 
     if (uiState.kiosk) {
         var time;
@@ -84,10 +85,10 @@ export default function initUi(store: RootStore) {
         const l = uiState.list;
         if (l.type === "search") {
             if (l.text === "kkiosk") {
-                localStorage.setItem(kioskKey, "1");
+                isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
                 uiState.kiosk = true;
             } else if (l.text === "nokkiosk") {
-                localStorage.removeItem(kioskKey);
+                isLocalStorageAvailable && localStorage.removeItem(kioskKey);
                 uiState.kiosk = false;
             }
         }
