@@ -12,6 +12,7 @@ import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { getResponsiveClass } from "../utils/responsiveClass";
 import { getLanguage } from "../utils/i18n";
+import data from "../data";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -244,16 +245,14 @@ export default class UIState {
         // let words = text.split(/\s+/).filter(x => x);
 
         const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
-        
-        const exhibitorsArray = exhibitorStore.exhibitors        
-            .sort(function (x, y) {
-            
-                var xp = x.name.substring(18, 2);
-                var yp = y.name.substring(18, 2);
-                return xp == yp ? 0 : xp < yp ? -1 : 1;
-            });
 
-        const categoriesArray = categoryStore.categories.filter(c=>c.exhibitors.length);
+        const exhibitorsArray = exhibitorStore.exhibitors.sort(function (x, y) {
+            var xp = x.name.substring(18, 2);
+            var yp = y.name.substring(18, 2);
+            return xp == yp ? 0 : xp < yp ? -1 : 1;
+        });
+
+        const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
         const boothsArray = boothStore.booths;
 
         if (!text) {
@@ -297,11 +296,19 @@ export default class UIState {
             return str.toLowerCase().includes(searchTerm.toLowerCase());
         }
 
+        function containsLevelIgnoreCase(str: string, searchTerm: string) {
+            return containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
+        }
+
         exhibitorsArray.forEach((e) => {
             if (
                 splittedTexts.some(
                     (text) =>
-                        containsIgnoreCase(e.name, text) || (!text && e.booths.some((b) => containsIgnoreCase(b.name, text)))
+                        containsIgnoreCase(e.name, text) ||
+                        e.booths.some(
+                            (b) =>
+                                (!text && containsIgnoreCase(b.name, text)) || containsLevelIgnoreCase(b.layer?.name || "", text)
+                        )
                 )
             ) {
                 matchingExhibitors.add(e);
@@ -316,7 +323,12 @@ export default class UIState {
 
         boothsArray.forEach((b) => {
             if (!(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b))) {
-                if (splittedTexts.some((text) => containsIgnoreCase(b.title || b.name, text))) {
+                if (
+                    splittedTexts.some(
+                        (text) =>
+                            containsIgnoreCase(b.title || b.name, text) || containsLevelIgnoreCase(b.layer?.name || "", text)
+                    )
+                ) {
                     matchingBooths.add(b);
                 }
             }
