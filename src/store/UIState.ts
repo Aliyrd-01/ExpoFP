@@ -297,7 +297,9 @@ export default class UIState {
         }
 
         function containsLevelIgnoreCase(str: string, searchTerm: string) {
-            return containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
+            return !str
+                ? false
+                : containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
         }
 
         exhibitorsArray.forEach((e) => {
@@ -307,7 +309,8 @@ export default class UIState {
                         containsIgnoreCase(e.name, text) ||
                         e.booths.some(
                             (b) =>
-                                (!text && containsIgnoreCase(b.name, text)) || containsLevelIgnoreCase(b.layer?.name || "", text)
+                                (!text && containsIgnoreCase(b.name, text)) ||
+                                containsLevelIgnoreCase(b.layer?.name ?? null, text)
                         )
                 )
             ) {
@@ -326,7 +329,7 @@ export default class UIState {
                 if (
                     splittedTexts.some(
                         (text) =>
-                            containsIgnoreCase(b.title || b.name, text) || containsLevelIgnoreCase(b.layer?.name || "", text)
+                            containsIgnoreCase(b.title || b.name, text) || containsLevelIgnoreCase(b.layer?.name ?? null, text)
                     )
                 ) {
                     matchingBooths.add(b);
