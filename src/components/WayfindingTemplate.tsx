@@ -65,7 +65,12 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                                 />
                             </div>
                             <div>
-                                <Autocomplete placeholder={t("Select to")} options={options} value={toValue} onChange={onChangeTo} />
+                                <Autocomplete
+                                    placeholder={t("Choose destination")}
+                                    options={options}
+                                    value={toValue}
+                                    onChange={onChangeTo}
+                                />
                             </div>
                         </div>
                         <button type="button" className="efp-wayfindingForm__switch" onClick={onSwitch}></button>
