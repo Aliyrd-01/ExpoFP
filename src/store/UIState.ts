@@ -246,36 +246,29 @@ export default class UIState {
 
         const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
 
-        const exhibitorsArray = exhibitorStore.exhibitors.sort(function (x, y) {
-            var xp = x.name.substring(18, 2);
-            var yp = y.name.substring(18, 2);
-            return xp == yp ? 0 : xp < yp ? -1 : 1;
-        });
-
-        const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
+        const exhibitorsArray = exhibitorStore.exhibitors;
+        const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
 
         if (!text) {
             const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
             const combinedArray = [...exhibitorsArray, ...otherSpacesArray];
 
-            return (categoriesArray as any).concat(
-                exhibitorsArray.length === 0
-                    ? boothsArray
-                    : combinedArray.sort((a, b) => {
-                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+            return exhibitorsArray.length === 0
+                ? boothsArray
+                : combinedArray.sort((a, b) => {
+                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                          if (aFeatured !== bFeatured) {
-                              return aFeatured ? -1 : 1;
-                          }
+                      if (aFeatured !== bFeatured) {
+                          return aFeatured ? -1 : 1;
+                      }
 
-                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
-                      })
-            );
+                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
+                  });
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
