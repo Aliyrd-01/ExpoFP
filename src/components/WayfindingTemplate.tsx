@@ -66,7 +66,7 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                             </div>
                             <div>
                                 <Autocomplete
-                                    placeholder={t("Choose destination")}
+                                    placeholder={t("Choose destination point")}
                                     options={options}
                                     value={toValue}
                                     onChange={onChangeTo}
