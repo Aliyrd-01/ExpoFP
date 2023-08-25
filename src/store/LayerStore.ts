@@ -71,6 +71,10 @@ export default class LayerStore {
         return this.mode === LayersMode.Default || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
+    @computed({ keepAlive: true }) get current() {
+        return store.layerStore.layers.find((l) => !l.frozen && l.visible)?.name;
+    }
+
     @action updateVisibility(layerName: string, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 

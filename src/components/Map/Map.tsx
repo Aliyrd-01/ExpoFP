@@ -367,7 +367,8 @@ export default function Map() {
     }
 
     function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number) {
-        const minPaddingPercent = 5;
+        const ratio = (svgRect.w * svgRect.h) / (svgArea.h * svgArea.w);
+        const minPaddingPercent = ratio > 0.1 ? 5 : 25;
 
         const targetRect = vRect.withPadding((vRect.w * minPaddingPercent) / 100, (vRect.h * minPaddingPercent) / 100);
 

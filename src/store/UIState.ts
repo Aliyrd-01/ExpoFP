@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { uiState } from ".";
+import store, { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import settings from "../tools/settings";
@@ -13,6 +13,7 @@ import { Route } from "./RouteStore";
 import { getResponsiveClass } from "../utils/responsiveClass";
 import { getLanguage } from "../utils/i18n";
 import { isLocalStorageAvailable } from "../utils/localStorage";
+import data from "../data";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -229,8 +230,10 @@ export default class UIState {
     @computed get dimmed() {
         const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
+        let text = (this.list as any)?.text?.trim().toLowerCase() as string;
 
         return (
+            text &&
             exhibitors.length &&
             (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
                 this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
@@ -287,10 +290,22 @@ export default class UIState {
             return str.toLowerCase().includes(searchTerm.toLowerCase());
         }
 
+        function containsLevelIgnoreCase(str: string, searchTerm: string) {
+            return !str
+                ? false
+                : containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
+        }
+
         exhibitorsArray.forEach((e) => {
             if (
                 splittedTexts.some(
-                    (text) => containsIgnoreCase(e.name, text) || e.booths.some((b) => containsIgnoreCase(b.name, text))
+                    (text) =>
+                        containsIgnoreCase(e.name, text) ||
+                        e.booths.some(
+                            (b) =>
+                                (!text && containsIgnoreCase(b.name, text)) ||
+                                containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                        )
                 )
             ) {
                 matchingExhibitors.add(e);
@@ -305,7 +320,12 @@ export default class UIState {
 
         boothsArray.forEach((b) => {
             if (!(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b))) {
-                if (splittedTexts.some((text) => containsIgnoreCase(b.title || b.name, text))) {
+                if (
+                    splittedTexts.some(
+                        (text) =>
+                            containsIgnoreCase(b.title || b.name, text) || containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                    )
+                ) {
                     matchingBooths.add(b);
                 }
             }
