@@ -1,8 +1,9 @@
-import { RegularBooth } from "../store/BoothStore";
+import { Booth, RegularBooth } from "../store/BoothStore";
 import settings from "../tools/settings";
 import isDebug from "./is-debug";
 
 export type Img = {
+    booth: Booth;
     name?: string;
     htmlImage: HTMLImageElement;
     bounds: { x: number; y: number; width: number; height: number; angle: number };
@@ -58,6 +59,7 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                         name: booth.slug,
                         bounds: { x, y, width: w, height: h, angle: angle },
                         htmlImage: img,
+                        booth,
                     });
                 })
         )
@@ -81,6 +83,7 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
                                       angle: image.transform?.animVal[0]?.angle ?? 0,
                                   },
                                   htmlImage: img,
+                                  booth: null,
                               }
                             : null
                     );
