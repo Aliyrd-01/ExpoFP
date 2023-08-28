@@ -23,6 +23,7 @@ import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
+import { fpGeo } from "./Mapbox/utils/fpGeo";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -64,8 +65,11 @@ export default observer(function Layout() {
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
-                        <ThreeComponent isMapbox={true} expo={settings.EXPO} />
-                        {/* <Mapbox /> */}
+                        {fpGeo?.properties?.mode === "threejs" ? (
+                            <ThreeComponent isMapbox={true} expo={settings.EXPO} />
+                        ) : (
+                            <Mapbox />
+                        )}
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}

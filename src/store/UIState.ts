@@ -186,6 +186,9 @@ export default class UIState {
     @computed get mapVisibleStart() {
         return this.overlayLeft ? this.overlayWidthPx : 0;
     }
+    @computed get mapVisibleLeft() {
+        return this.overlayLeft ? this.overlayWidthPx : 0;
+    }
 
     // visible rect
     @computed get canvasVisibleRectPx(): Rect {
