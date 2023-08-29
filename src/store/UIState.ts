@@ -334,8 +334,8 @@ export default class UIState {
             }
         });
 
-        items.push(...matchingExhibitors);
         items.push(...matchingCategories);
+        items.push(...matchingExhibitors);      
         items.push(...matchingBooths);
 
         return items;
