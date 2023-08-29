@@ -126,7 +126,10 @@ export default class RouteStore {
             return;
         }
 
-        let layer = store.layerStore.layers.find((l) => l?.name === point.z?.toString());
+        let layer = store.layerStore.layers.find(
+            (l) =>
+                l?.name === point.z?.toString() || l?.description === point.z?.toString() || l?.shortName === point.z?.toString()
+        );
 
         if (focus) {
             if (layer && !layer?.visible) layersStore.updateVisibility(layer.name, true);
