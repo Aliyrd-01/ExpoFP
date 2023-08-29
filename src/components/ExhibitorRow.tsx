@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useLocalStore, useObserver } from "mobx-react-lite";
+import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
@@ -29,12 +29,6 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
-    const s = useLocalStore(() => ({
-        get currentLayer() {
-            return store.layerStore.current;
-        },
-    }));
-
     return useObserver(() => (
         <a
             className={`exhibitor-row ${className} ${classNames({
@@ -63,14 +57,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             )}
             <div className="exhibitor-row__booth">
                 {exhibitor.booths.map((booth) => (
-                    <div
-                        className={classNames({
-                            back: s.currentLayer !== booth.layer?.name,
-                        })}
-                        key={booth.id}
-                    >
-                        {booth.fullName}
-                    </div>
+                    <div key={booth.id}>{booth.fullName}</div>
                 ))}
             </div>
         </a>
