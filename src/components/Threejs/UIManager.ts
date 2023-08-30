@@ -70,7 +70,9 @@ export default class UIManager {
         return new Promise(async (resolve, reject) => {
             this.data = await dataLoader(this.expo);
 
-            const baseUrl = `https://${this.expo}.expofp.com/data/threejs`;
+            const baseUrl = isDebug
+                ? `https://efp-data.s3.amazonaws.com/expos/${this.expo}/data/threejs`
+                : `https://${this.expo}.expofp.com/data/threejs`;
 
             const scene = await (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data));
             const model = await loadModel(`${baseUrl}/model.obj`, `${baseUrl}/model.mtl`);

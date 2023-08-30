@@ -115,6 +115,9 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
+
+        focus = true; // Temp always "true" SDK compatility
+
         focus = focus && (this.focusEnabled || this.prevZ != point?.z);
         if (this.focusEnabled) this.focusEnabled = false;
         this.prevZ = point?.z;
