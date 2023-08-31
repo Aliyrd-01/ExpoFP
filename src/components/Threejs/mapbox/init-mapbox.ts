@@ -1,4 +1,3 @@
-import { Console } from "console";
 import mapboxgl from "mapbox-gl";
 
 export default function initMapbox(container: HTMLElement, style: string): Promise<mapboxgl.Map> {

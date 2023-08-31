@@ -1,10 +1,10 @@
 import mapboxgl, { CustomLayerInterface, Map } from "mapbox-gl";
 import * as THREE from "three";
-import { setMap } from "../Mapbox/utils/data";
-import { ICommonData } from "./common/dataLoader";
-import Scene from "./common/Scene";
-import sceneLoader from "./common/sceneLoader";
-import initMapbox from "./mapbox/init-mapbox";
+import { setMap } from "../../Mapbox/utils/data";
+import { ICommonData } from "../common/dataLoader";
+import Scene from "../common/Scene";
+import sceneLoader from "../common/sceneLoader";
+import initMapbox from "./init-mapbox";
 
 export async function init(container: HTMLElement, data: ICommonData): Promise<Scene> {
     return new Promise(async (resolve, reject) => {

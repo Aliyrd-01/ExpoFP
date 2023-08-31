@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Group, WebGLRenderer } from "three";
+import { Group, Intersection, Object3D, WebGLRenderer } from "three";
 import { Booth, RegularBooth } from "./../../store/BoothStore";
 import { RouteLine } from "./../../utils/wayfinding";
 import { BoothMesh } from "./common/BoothMesh";
@@ -10,16 +10,16 @@ import dataLoader, { ICommonData } from "./common/dataLoader";
 import loadModel from "./common/modelLoader";
 import Scene from "./common/Scene";
 import init from "./index";
-import { init as initMapbox } from "./index_mapbox";
+import { init as initMapbox } from "./mapbox/index_mapbox";
 
 import store, { boothStore, layersStore, uiState } from "../../store";
 
-import { splitPolyLine } from "../Map/drawing/config/config-wf";
-import logosFromBooths from "../../utils/imageloader";
-import TextureMerger from "./utils/textureMerger";
 import { getLayerSvg } from "../../data/svg";
-import isDebug from "../../utils/is-debug";
 import { LayersMode } from "../../store/LayerStore";
+import logosFromBooths from "../../utils/imageloader";
+import isDebug from "../../utils/is-debug";
+import { splitPolyLine } from "../Map/drawing/config/config-wf";
+import TextureMerger from "./utils/textureMerger";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -189,8 +189,8 @@ export default class UIManager {
         // else routeIndex = 0;
     }
 
-    private onClickCallback(intersections: Array<any>): void {
-        const intersection = intersections[0];
+    private onClickCallback(intersections: Array<Intersection<Object3D>>): void {
+        const intersection = intersections.filter((i) => i.object.name !== "building")[0];
         let name = intersection?.object?.name;
         let booth = boothStore.booths.find((b) => b.name === name);
         if (booth) store.clickBooth(booth);
