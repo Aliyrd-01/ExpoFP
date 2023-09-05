@@ -533,6 +533,7 @@ $imageSliderClass: ".image-slider";
             height: var(--k-imageHeight);
             margin: 0 0 var(--k-spacing-md);
             padding: calc(min(2vh, 12px)) calc(min(4vw, 20px));
+            float: none;
         }
         &__meta {
             padding-bottom: 4px;
