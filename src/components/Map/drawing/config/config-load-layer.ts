@@ -37,7 +37,7 @@ export default async function loadLayer(
         logosBooths.forEach((b) => (b.noLabels = true));
 
         if (booths.length) {
-            configBooths(context, layer.name, booths, layer.basePriority + 3, layer.visible)();
+            configBooths(context, layer.name, booths, layer.basePriority + 7, layer.visible)();
             context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
 
