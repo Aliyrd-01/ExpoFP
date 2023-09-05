@@ -24,6 +24,7 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
+import { destroyGtag, initializeGtag, setConsentSettings } from "../tools/gtag";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -31,16 +32,34 @@ const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug")
 const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
 const ThreeComponent = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Threejs/ThreeComponent"));
 const Modal = React.lazy(() => import("./Modal"));
+const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cookie-consent" */ "./CookieConsent"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
 //     console.log("body touchstart")
 // });
 
-export default observer(function Layout() {
+interface LayoutProps {
+    allowConsent?: boolean;
+}
+
+export default observer(function Layout({ allowConsent }: LayoutProps) {
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
+
+    const onCookieConcentAccept = () => {
+        localStorage.setItem("userCookieChoice", "true");
+        initializeGtag(allowConsent);
+        setConsentSettings();
+        store.uiState.hideCookieConsent = true;
+    };
+
+    const onCookieConcentReject = () => {
+        localStorage.setItem("userCookieChoice", "false");
+        store.uiState.hideCookieConsent = true;
+        setConsentSettings();
+    };
 
     return (
         <div
@@ -73,6 +92,15 @@ export default observer(function Layout() {
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
+                {!store.uiState.hideCookieConsent && allowConsent === undefined && (
+                    <Suspense fallback={null}>
+                        <CookieConsent
+                            link="https://expofp.com"
+                            onClickAccept={onCookieConcentAccept}
+                            onClickReject={onCookieConcentReject}
+                        />
+                    </Suspense>
+                )}
                 {isDebug ? (
                     <Suspense fallback={null}>
                         <Debug />

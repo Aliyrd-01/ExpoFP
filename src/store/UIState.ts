@@ -58,6 +58,7 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
+    @observable hideCookieConsent = Boolean(localStorage.getItem("userCookieChoice"));
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
 

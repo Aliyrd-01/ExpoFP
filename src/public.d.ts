@@ -40,6 +40,7 @@ interface FloorPlanOptions {
     eventId?: string;
     dataUrl?: string;
     noOverlay?: boolean;
+    allowConsent?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
