@@ -102,7 +102,7 @@ export default async function configBg(
 
     function addObject(item: TrianglePainterObject, isFg: boolean) {
         const suffix = isFg ? "_FG" : "_BG";
-        const priority = isFg ? painterOrderPriority + 8 : painterOrderPriority;
+        const priority = isFg ? painterOrderPriority + 5 : painterOrderPriority;
 
         if (!isFg)
             while (!bgPainter || !bgPainter.tryAddObject(item))
