@@ -32,7 +32,7 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
         get actualCurrentPosition(): CurrentPosition {
             const cp = store.routeStore.currentPosition;
 
-            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.layers.find((l) => l.name === cp.z)) > -1
+            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.layers.find((l) => l.name === cp.z.toString())) > -1
                 ? cp
                 : null;
         },

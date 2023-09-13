@@ -84,11 +84,10 @@ export class BoothMesh extends THREE.Group {
         return label;
     }
 
-    public setLogo(textureMerger: TextureMerger, img: Img, material: THREE.MeshBasicMaterial): Mesh {
+    public setLogo(textureMerger: TextureMerger, ratio: number, material: THREE.MeshBasicMaterial): Mesh {
         const rect = this.threeBooth.rect;
 
         const ratioBooth = rect.width / rect.height;
-        const ratio = img.htmlImage.width / img.htmlImage.height;
 
         let w = 0;
         let h = 0;
@@ -122,7 +121,7 @@ export class BoothMesh extends THREE.Group {
         var plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), material);
         plane.layers.set(this.threeLayer);
 
-        modifySphereUV(plane, textureMerger.ranges.get(this.efpBooth.slug));
+        modifySphereUV(plane, textureMerger.ranges.get(this.efpBooth.slug + "_logo"));
 
         plane.rotateZ(((angle || 0) * Math.PI) / 180);
 

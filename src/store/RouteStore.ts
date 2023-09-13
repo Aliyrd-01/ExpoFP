@@ -115,12 +115,11 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
-
         focus = true; // Temp always "true" SDK compatility
 
         focus = focus && (this.focusEnabled || this.prevZ != point?.z);
         if (this.focusEnabled) this.focusEnabled = false;
-        this.prevZ = point?.z;
+        this.prevZ = point?.z?.toString();
 
         this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
@@ -155,7 +154,7 @@ export default class RouteStore {
             if (!rect.intersects(svgArea)) return;
 
             uiState.moveToRect = rect;
-            layersStore.updateVisibility(store.routeStore.currentPosition?.z, true);
+            layersStore.updateVisibility(store.routeStore.currentPosition?.z.toString(), true);
         } else store.selectBooth(store.routeStore.defaultFrom);
     }
 
@@ -201,7 +200,7 @@ export class CurrentPosition extends Point {
     public constructor(
         public x: number,
         public y: number,
-        public z?: string,
+        public z?: number | string,
         public angle?: number,
         public lat?: number,
         public lng?: number

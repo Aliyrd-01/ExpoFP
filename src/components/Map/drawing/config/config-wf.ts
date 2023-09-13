@@ -414,7 +414,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
+            const visible = layersStore.layers.find((l) => l.name === position.z?.toString())?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
 
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
