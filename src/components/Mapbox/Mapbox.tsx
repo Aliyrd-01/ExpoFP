@@ -86,6 +86,12 @@ export default function Mapbox() {
                 1500
             );
 
+            map.current.setLight({
+                anchor: "viewport",
+                color: "white",
+                intensity: 0,
+            });
+
             const logos = await loadLogos(store.boothStore.booths as RegularBooth[]);
 
             setDataSource(store.boothStore.booths, logos);

@@ -234,9 +234,10 @@ export default class UIState {
         const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;
+        const isCategory = this.list.type === "category";
 
         return (
-            text &&
+            (text || isCategory) &&
             exhibitors.length &&
             (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
                 this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
@@ -335,7 +336,7 @@ export default class UIState {
         });
 
         items.push(...matchingCategories);
-        items.push(...matchingExhibitors);      
+        items.push(...matchingExhibitors);
         items.push(...matchingBooths);
 
         return items;
