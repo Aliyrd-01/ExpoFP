@@ -107,8 +107,8 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) public get fullName() {
-        if (this.layer?.mode > 1) return (this.title || this.name) + ` ${data.levelTerm} ` + this.layer.description;
-        return this.title || this.name;
+        if (this.layer?.mode > 1) return this.name + ` ${data.levelTerm} ` + this.layer.description;
+        return this.name;
     }
 
     @computed({ keepAlive: true }) get visible() {
