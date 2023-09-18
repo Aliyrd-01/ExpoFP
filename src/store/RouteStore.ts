@@ -66,14 +66,15 @@ export default class RouteStore {
 
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
-        let layerExists = this.rootStore.layerStore.layers.some((layer) => layer.name === this.currentPosition.z);
+        let layerExists = this.rootStore.layerStore.findLayer(this.currentPosition.z);
+
         return (
             this.rootStore.boothStore.booths
                 .filter((b) => {
                     if (layersStore.mode === LayersMode.Default || !layerExists) {
                         return b.visible && b.rect;
                     } else {
-                        return b.rect && ((!this.currentPosition.z && b.visible) || this.currentPosition.z === b.layer?.name);
+                        return b.rect && ((!this.currentPosition.z && b.visible) || layerExists.name === b.layer?.name);
                     }
                 })
                 .sort(
@@ -128,10 +129,7 @@ export default class RouteStore {
             return;
         }
 
-        let layer = store.layerStore.layers.find(
-            (l) =>
-                l?.name === point.z?.toString() || l?.description === point.z?.toString() || l?.shortName === point.z?.toString()
-        );
+        let layer = store.layerStore.findLayer(point.z);
 
         if (focus) {
             if (layer && !layer?.visible) layersStore.updateVisibility(layer.name, true);
@@ -154,7 +152,9 @@ export default class RouteStore {
             if (!rect.intersects(svgArea)) return;
 
             uiState.moveToRect = rect;
-            layersStore.updateVisibility(store.routeStore.currentPosition?.z.toString(), true);
+
+            const layer = store.layerStore.findLayer(store.routeStore.currentPosition?.z);
+            layersStore.updateVisibility(layer.name, true);
         } else store.selectBooth(store.routeStore.defaultFrom);
     }
 
