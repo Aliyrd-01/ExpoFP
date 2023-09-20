@@ -17,18 +17,6 @@ import { v4 as uuidv4 } from "uuid";
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
 
-function getQueryParam(name: string): string | null {
-    const params = new URLSearchParams(window.location.search);
-    return params.get(name);
-}
-
-function dublicateExhibitorsInBooth(exhibitor: Exhibitor, booth: MutableRequired<RegularBooth>, times: number) {
-    for (let i = 0; i < times; i++) {
-        const copyExhibitor: MutableRequired<Exhibitor> = { ...exhibitor, id: uuidv4() };
-        booth.exhibitors.push(copyExhibitor as Exhibitor);
-    }
-}
-
 export function iniAllBooths(store: RootStore) {
     const copyExh = parseInt(getQueryParam("copy_exh"));
 
@@ -218,6 +206,18 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         .forEach((btr) => layerBooths.splice(layerBooths.indexOf(btr), 1));
 
     return layerBooths;
+}
+
+function getQueryParam(name: string): string | null {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+}
+
+function dublicateExhibitorsInBooth(exhibitor: Exhibitor, booth: MutableRequired<RegularBooth>, times: number) {
+    for (let i = 0; i < times; i++) {
+        const copyExhibitor: MutableRequired<Exhibitor> = { ...exhibitor, id: uuidv4() };
+        booth.exhibitors.push(copyExhibitor as Exhibitor);
+    }
 }
 
 function fixCbre(b: Booth) {
