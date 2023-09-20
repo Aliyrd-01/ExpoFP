@@ -13,6 +13,7 @@ import reportError from "./tools/report-error";
 import { destroyHistory } from "./services/routing";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { destroyGtag } from "./tools/gtag";
+import { SpecialBooth } from "./store/BoothStore";
 
 trackEvent("load");
 sendEventToGa(GaEventActions.Load, ``);
@@ -74,6 +75,35 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     updateLayerVisibility(layer: string, visible: boolean): void {
         store.layerStore.updateVisibility(layer, visible);
+    }
+
+    getData(): any {
+        return {
+            booths: store.boothStore.booths.map((b) => {
+                return {
+                    id: b.id,
+                    name: b.name,
+                    externalId: b.externalId,
+                    isSpecial: b instanceof SpecialBooth,
+                    exhibitors: b.exhibitors.map((e) => e.id),
+                };
+            }),
+            exhibitors: store.exhibitorStore.exhibitors.map((e) => {
+                return {
+                    id: e.id,
+                    name: e.name,
+                    externalId: e.externalId,
+                    booths: e.booths.map((b) => b.id),
+                };
+            }),
+            categories: store.categoryStore.categories.map((c) => {
+                return {
+                    id: c.id,
+                    name: c.name,
+                    exhibitors: c.exhibitors.map((e) => e.id),
+                };
+            }),
+        };
     }
 
     unstable_destroy() {
