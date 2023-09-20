@@ -27,7 +27,7 @@ export default class Sprite {
                 rect: undefined,
                 width: Math.ceil(canvas.width),
                 height: Math.ceil(canvas.height),
-                canvas
+                canvas,
             };
             // console.log('zzzz', item);
             this.canvasToSpriteItem.set(canvas, item);
@@ -89,11 +89,17 @@ export default class Sprite {
         this.canvasToSpriteItem.clear();
 
         if (isDebug) console.timeEnd("sprite.generateSpriteCanvases");
-        const canvas = document.createElement("canvas");
-        const c = canvas.getContext("2d");
+
+        let canvas = document.createElement("canvas");
+        let c = canvas.getContext("2d");
 
         // we're reusing same canvas
         return containerCanvasInfos.map((ci, i) => () => {
+            if (isDebug) {
+                canvas = document.createElement("canvas");
+                c = canvas.getContext("2d");
+            }
+
             canvas.id = "cnvs_" + i;
 
             if (canvas.width !== ci.width || canvas.height !== ci.height) {
