@@ -60,6 +60,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    getData(): any {
+        return nr();
+    }
+
     unstable_destroy(): void {
         nr();
     }
