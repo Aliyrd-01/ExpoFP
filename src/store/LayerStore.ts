@@ -94,6 +94,17 @@ export default class LayerStore {
             }
         });
     }
+
+    public findLayer(z: string | number): Layer {
+        if (!z) return null;
+        z = z.toString();
+
+        return this.layers.find((l) => {
+            const extractedNumber = (l.name.match(/(-?[0-9]+)/) || "")[0];
+
+            return z === l?.name || z === l?.description || z === l?.shortName || z === extractedNumber;
+        });
+    }
 }
 
 let _context: DrawerContext;
