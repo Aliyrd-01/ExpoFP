@@ -42,6 +42,7 @@ interface FloorPlanOptions {
     eventId?: string;
     dataUrl?: string;
     noOverlay?: boolean;
+    offHistory?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;

@@ -21,6 +21,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly offHistory: boolean;
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
@@ -71,6 +72,7 @@ export default class FloorPlanLoader implements FloorPlan {
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;
+        this.offHistory = !!options.offHistory;
 
         this.onBoothClick = options.onBoothClick;
         this.onDetails = options.onDetails;

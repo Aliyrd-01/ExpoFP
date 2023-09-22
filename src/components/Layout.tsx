@@ -37,7 +37,11 @@ const Modal = React.lazy(() => import("./Modal"));
 //     console.log("body touchstart")
 // });
 
-export default observer(function Layout() {
+interface LayoutProps {
+    offHistory: boolean;
+}
+
+export default observer(function Layout({ offHistory }: LayoutProps) {
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
@@ -84,7 +88,14 @@ export default observer(function Layout() {
                 {uiState.modalActive.share ? (
                     <Suspense fallback={null}>
                         <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
-                            <Share title={uiState.selectedExhibitor?.name} url={window.location.href} />
+                            <Share
+                                title={uiState.selectedExhibitor?.name}
+                                url={
+                                    offHistory
+                                        ? `${window.location.origin}?${encodeURI(uiState.selectedExhibitor.slug)}`
+                                        : window.location.href
+                                }
+                            />
                         </Modal>
                     </Suspense>
                 ) : null}
