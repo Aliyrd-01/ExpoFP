@@ -6,6 +6,7 @@ class FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly offHistory: boolean;
 
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
@@ -42,6 +43,7 @@ interface FloorPlanOptions {
     eventId?: string;
     dataUrl?: string;
     noOverlay?: boolean;
+    offHistory?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
