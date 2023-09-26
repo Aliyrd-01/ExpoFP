@@ -61,8 +61,16 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    getData(): any {
-        return nr();
+    exhibitorsList(): any {
+        nr();
+    }
+
+    boothsList(): any {
+        nr();
+    }
+
+    categoriesList(): any {
+        nr();
     }
 
     unstable_destroy(): void {

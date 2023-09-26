@@ -32,7 +32,11 @@ class FloorPlan {
 
     selectRoute(from: string, to: string, onlyAccessible: boolean): void;
 
-    getData(): ExpoData;
+    exhibitorsList(): FloorPlanExhibitor[];
+
+    boothsList(): FloorPlanBooth[];
+
+    categoriesList(): FloorPlanCategory[];
 
     unstable_destroy(): void;
 }
