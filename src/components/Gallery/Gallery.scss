@@ -1,0 +1,127 @@
+@import "../../styles/helpers.scss";
+@import "~swiper/swiper.min.css";
+
+.gallery {
+	height: 240px;
+	position: relative;
+	cursor: pointer;
+
+	&-leading {
+		height: auto;
+
+		.gallery__img {
+			background-size: contain;
+		}
+
+		.gallery__item {
+			height: auto !important;
+		}
+	}
+
+	& .icon {
+		fill: none;
+	}
+
+	&__img {
+		height: 100%;
+		width: 100%;
+	}
+
+	&__wrapper {
+		display: flex;
+		overflow-x: hidden;
+		overflow-y: hidden;
+		height: 100%;
+	}
+
+	&__item {
+		width: 100%;
+		flex-shrink: 0;
+		gap: 10px;
+		background: black;
+	}
+
+	&__badge {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		font-size: rem(14px);
+		background: rgba(31, 31, 31, 0.6);
+		backdrop-filter: blur(3px);
+		border-radius: 6px;
+		z-index: 2;
+		color: #fff;
+		height: 32px;
+
+		&:hover {
+			background: rgba(48, 48, 48, 0.8);
+		}
+
+		&-count {
+			padding: 0 10px;
+			inset-inline-start: 15px;
+			top: 15px;
+			pointer-events: none;
+		}
+
+		&-fullscreen {
+			width: 32px;
+			top: 15px;
+			inset-inline-end: 15px;
+
+			@include media-breakpoint-down(md) {
+				display: none;
+			}
+		}
+
+		& span {
+			margin-inline-start: 8px;
+		}
+	}
+}
+
+@include responsive-classes-down-to(".gallery", md) {
+	.gallery__wrapper {
+		display: grid;
+		grid-gap: 16px;
+		grid-template-columns: repeat(auto-fill, minmax(75%, 1fr));
+		grid-template-rows: 50%;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(75%, 1fr);
+
+		overflow-x: visible;
+
+		-webkit-overflow-scrolling: touch;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	.gallery__item {
+		height: 240px;
+
+		&:nth-child(3n+2) {
+			grid-row: 1 / -1;
+			height: 120px;
+		}
+
+		&:nth-child(3n) {
+			grid-row: 2 / -1;
+			height: 120px;
+		}
+
+		&:nth-child(3n-2) {
+			grid-row: 1 / -1;
+		}
+
+		&:nth-child(3n+2):last-child:not(:nth-child(3)) {
+			/* stretch the last element to 2 rows if the 2nd row is empty */
+			grid-row: span 2;
+			height: 240px;
+		}
+	}
+}

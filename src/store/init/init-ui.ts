@@ -3,17 +3,27 @@ import Size from "../../core/Size";
 import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
-import UIState from "../UIState";
+import ResizeObserver from "resize-observer-polyfill";
+import { isLocalStorageAvailable } from "../../utils/localStorage";
 
 export const kioskKey = "kiosk";
 
+let resizeObserver;
+
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
-    updateScreenSize(uiState);
+    uiState.rootElement = window["__efpElement"];
 
-    window.addEventListener("resize", () => {
-        if (!uiState.kiosk) updateScreenSize(uiState);
+    updateScreenSize(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
+
+    resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+            updateScreenSize(entry.contentRect.width, entry.contentRect.height);
+        });
     });
+
+    resizeObserver.observe(uiState.rootElement);
+
     if (previewExhibitor) uiState.previewExhibitor = exhibitorStore.exhibitorById.get(previewExhibitor.id);
     // uiState.previewExhibitor = previewExhibitor;
 
@@ -43,16 +53,16 @@ export default function initUi(store: RootStore) {
 
     if (!uiState.wsShown) uiState.wsStarted = true;
 
-    uiState.kiosk = localStorage.getItem(kioskKey) === "1";
+    uiState.kiosk = isLocalStorageAvailable && localStorage.getItem(kioskKey) === "1";
 
     if (uiState.kiosk) {
         var time;
         // window.onload = resetTimer;
         // document.onload = resetTimer;
-        //document.onmousemove = resetTimer;
+        // document.onmousemove = resetTimer;
         // document.onmousedown = resetTimer; // touchscreen presses
-        document.ontouchstart = resetTimer;
-        document.onclick = resetTimer; // touchpad clicks
+        // document.ontouchstart = resetTimer;
+        // document.onclick = resetTimer; // touchpad clicks
         // document.onkeypress = resetTimer;
         // document.addEventListener("scroll", resetTimer, true); // improved; see comments
         window["__resett"] = resetTimer;
@@ -75,18 +85,25 @@ export default function initUi(store: RootStore) {
         const l = uiState.list;
         if (l.type === "search") {
             if (l.text === "kkiosk") {
-                localStorage.setItem(kioskKey, "1");
+                isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
                 uiState.kiosk = true;
             } else if (l.text === "nokkiosk") {
-                localStorage.removeItem(kioskKey);
+                isLocalStorageAvailable && localStorage.removeItem(kioskKey);
                 uiState.kiosk = false;
             }
         }
     });
+
+    function updateScreenSize(width, height) {
+        runInAction("uiState.screenSize", () => {
+            uiState.screenSize = new Size(width, height);
+        });
+    }
 }
 
-function updateScreenSize(uiState: UIState) {
-    runInAction("uiState.screenSize", () => {
-        uiState.screenSize = new Size(window.innerWidth, window.innerHeight);
-    });
+export function destroyUiHandlers() {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+    }
 }

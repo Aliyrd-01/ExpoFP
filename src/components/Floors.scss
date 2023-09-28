@@ -1,52 +1,74 @@
+@import "../styles/helpers.scss";
+
 .levels {
-    position: fixed;
-    opacity: 0;
-    transition: 500ms opacity;
+    position: absolute;
     z-index: 100;
+    overflow: hidden;
+    border-radius: var(--border-radius-1);
+    opacity: 0;
+    box-shadow: var(--shadow-medium);
+    transition: 3s opacity ease;
+
     &.-ready {
         opacity: 1;
     }
 
-    $s: 2.5rem;
-
-    :last-child {
-        border-bottom-left-radius: 0.3rem;
-        border-bottom-right-radius: 0.3rem;
-    }
-
-    :first-child {
-        border-top-left-radius: 0.3rem;
-        border-top-right-radius: 0.3rem;
-    }
-
     > .item {
-        padding: 0;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: 40px;
+        max-width: 70px;
+        height: 38px;
+        padding: 0 6px;
         text-align: center;
-        background: #fff;
+        background: var(--color-white);
         outline: none;
-        border: none;
-        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.3);
-        display: block;
-        font-size: 0.5 * $s;
-        line-height: $s;
-        height: $s;
-        width: $s;
+        border-bottom: 1px solid var(--color-grayLight);
+        font-size: var(--heading-size-3);
+        font-weight: var(--font-bold);
+        color: var(--color-grayDark);
         cursor: pointer;
-        color: #777;
-        font-weight: bold;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
 
+        &:hover {
+            background: var(--color-grayUltraLight);
+            color: var(--color-black);
+        }
         &.active {
-            background: #ddd;
+            background: var(--color-primaryLight);
+            color: var(--color-primaryDark);
+
+            &:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 2px;
+                height: 100%;
+                background: var(--color-primary);
+            }
+            &:hover {
+                color: var(--color-primaryDark);
+            }
         }
 
         &.disabled {
-            opacity: 0.1;
+            background: var(--color-grayUltraLight);
+            color: var(--color-gray);
             cursor: default;
             pointer-events: none;
         }
 
-        .overlay-left &:hover {
-            color: #111;
+        @include media-breakpoint-down(sm) {
+            max-width: 50px;
+            min-width: 34px;
+            height: 32px;
+            padding: 0 4px;
+            font-size: var(--text-size-1);
         }
     }
 }
@@ -66,10 +88,9 @@
             align-items: center;
             width: var(--k-mapControl-size);
             height: calc(var(--k-mapControl-size) - 4px);
-            background: transparent;
             box-shadow: unset;
             border-top: 1px solid var(--color-grayLight);
-            font-size: 1em;
+            font-size: 1.1em;
             font-weight: 500;
             color: var(--k-color-primary);
 
@@ -78,8 +99,21 @@
             }
 
             &.active {
-                background: var(--color-grayUltraLight);
-                color: var(--color-black);
+                background: var(--k-color-primaryLight);
+                color: var(--k-color-primaryDark);
+
+                &:before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 4px;
+                    height: 100%;
+                    background: var(--k-color-primary);
+                }
+                &:hover {
+                    color: var(--k-color-primaryDark);
+                }
             }
 
             &.disabled {

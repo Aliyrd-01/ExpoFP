@@ -3,6 +3,7 @@ import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import store, { layersStore, uiState } from "../../../../store";
+import { LayersMode } from "../../../../store/LayerStore";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
@@ -11,7 +12,7 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
-import { createCircleCanvas, createCurrentCanvas, createTargetCanvas } from "./canvases";
+import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createYahCanvas } from "./canvases";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -54,20 +55,20 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         mapping = { "0": { x: 7330, y: 1190 } };
     }
 
-    if (settings.EXPO.indexOf("cannes") > -1) {
-        mapping = {
-            "-1": { x: 10460, y: 12534 },
-            "0": { x: 10511, y: 9568 },
-            "1": { x: 10480, y: 7625 },
-            "3": { x: 10480, y: 5094 },
-            "4": { x: 10460, y: 3360 },
-        };
+    // if (settings.EXPO.indexOf("cannes") > -1) {
+    //     mapping = {
+    //         "-1": { x: 10460, y: 12534 },
+    //         "0": { x: 10511, y: 9568 },
+    //         "1": { x: 10480, y: 7625 },
+    //         "3": { x: 10480, y: 5094 },
+    //         "4": { x: 10460, y: 3360 },
+    //     };
 
-        fpConfig = {
-            p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
-            p2: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
-        };
-    }
+    //     fpConfig = {
+    //         p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
+    //         p2: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
+    //     };
+    // }
 
     if (settings.EXPO.indexOf("xpmusic-conference22") > -1) {
         fpConfig = {
@@ -187,6 +188,15 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
+        // let visible =
+        //     store.layerStore.mode == LayersMode.Default
+        //         ? true
+        //         : store.layerStore.layers.find(
+        //               (l) =>
+        //                   l.name == store.routeStore.currentRouteLayer?.name &&
+        //                   store.routeStore.currentRouteLayer?.name === line.p0.layer
+        //           )?.visible || false;
+
         let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
 
         if (!line.virtual && visible) lines.push(line);
@@ -232,7 +242,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }
 
-function splitPolyLine(lines: Line[], interval: number): Point[] {
+export function splitPolyLine(lines: Line[], interval: number): Point[] {
     const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
     const asin = (sin: number) => (Math.asin(sin) * 180) / Math.PI;
 
@@ -280,6 +290,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
+    const currentLocationCanvas_2 = createYahCanvas(context.pixelRatio);
 
     pointSize = pointCanvas.width;
 
@@ -310,12 +321,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -currentLocationCanvas.width / 2,
-            -currentLocationCanvas.height / 2,
-            currentLocationCanvas.width,
-            currentLocationCanvas.height,
+            -sourceLocationCanvas.width / 2,
+            -sourceLocationCanvas.height / 2,
+            sourceLocationCanvas.width,
+            sourceLocationCanvas.height,
         ],
-        canvasTmp: currentLocationCanvas,
+        canvasTmp: sourceLocationCanvas,
         texPosition: "lefttop",
         visible: isDebug,
     });
@@ -340,12 +351,27 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -sourceLocationCanvas.width / 2,
-            -sourceLocationCanvas.height / 2,
+            -currentLocationCanvas.width / 2,
+            -currentLocationCanvas.height / 2,
             currentLocationCanvas.width,
-            sourceLocationCanvas.height,
+            currentLocationCanvas.height,
         ],
         canvasTmp: sourceLocationCanvas,
+        texPosition: "lefttop",
+        visible: isDebug,
+    });
+
+    wfDrawer.addObject({
+        id: "currentLocation_2",
+        center: [0, 0],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -currentLocationCanvas_2.width / 2,
+            -currentLocationCanvas_2.height,
+            currentLocationCanvas_2.width,
+            currentLocationCanvas_2.height,
+        ],
+        canvasTmp: currentLocationCanvas_2,
         texPosition: "lefttop",
         visible: isDebug,
     });
@@ -353,6 +379,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
     wfDrawer.updateSkipdim("currentLocation", false);
+    wfDrawer.updateSkipdim("currentLocation_2", false);
 
     function updateRoute() {
         var layers = store.layerStore.visible.map((l) => l.name);
@@ -387,13 +414,25 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
+            const visible = layersStore.findLayer(position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
-            wfDrawer.updateSkipdim("currentLocation", visible);
-            wfDrawer.updateVisible("currentLocation", visible);
-            wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
+
+            if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
+                wfDrawer.updateVisible("currentLocation_2", false);
+
+                wfDrawer.updateVisible("currentLocation", visible);
+                wfDrawer.updateSkipdim("currentLocation", visible);
+                wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
+            } else {
+                wfDrawer.updateVisible("currentLocation", false);
+
+                wfDrawer.updateSkipdim("currentLocation_2", visible);
+                wfDrawer.updateVisible("currentLocation_2", visible);
+                wfDrawer.updateCenter("currentLocation_2", [position.x, position.y]);
+            }
         } else {
             wfDrawer.updateVisible("currentLocation", false);
+            wfDrawer.updateVisible("currentLocation_2", false);
         }
 
         if (!position || !routePoints.length) return 0;
@@ -408,7 +447,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             })
             .sort((p1, p2) => p1.l - p2.l)[0];
 
-        if (!shortestrPerp || shortestrPerp.l > 100) return 0;
+        if (!shortestrPerp || shortestrPerp.l > 150) return 0;
 
         // Recalculate logic here
 
@@ -458,11 +497,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
         reaction(
-            () => [store.layerStore.loaded, store.layerStore.visible],
+            () => [store.layerStore.loaded, store.layerStore.visible, store.routeStore.currentRouteLayer],
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);

@@ -22,11 +22,14 @@ import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
+import LayersLoading from "./LayersLoading";
+import { fpGeo } from "./Mapbox/utils/fpGeo";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
 const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
+const ThreeComponent = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Threejs/ThreeComponent"));
 const Modal = React.lazy(() => import("./Modal"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
@@ -34,7 +37,11 @@ const Modal = React.lazy(() => import("./Modal"));
 //     console.log("body touchstart")
 // });
 
-export default observer(function Layout() {
+interface LayoutProps {
+    offHistory: boolean;
+}
+
+export default observer(function Layout({ offHistory }: LayoutProps) {
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
@@ -46,6 +53,7 @@ export default observer(function Layout() {
                 "efp-layers-mode": store.layerStore.mode,
                 "efp-ws-mode": uiState.wsShown,
             })}
+            dir={uiState.rtl ? "rtl" : "ltr"}
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <Header />
@@ -53,7 +61,7 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                {uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {settings.EXPO === "exhibitorlive2023" && uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}
@@ -61,7 +69,11 @@ export default observer(function Layout() {
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
-                        <Mapbox />
+                        {fpGeo?.properties?.mode === "threejs" ? (
+                            <ThreeComponent isMapbox={true} expo={settings.EXPO} />
+                        ) : (
+                            <Mapbox />
+                        )}
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
@@ -76,10 +88,18 @@ export default observer(function Layout() {
                 {uiState.modalActive.share ? (
                     <Suspense fallback={null}>
                         <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
-                            <Share title={uiState.selectedExhibitor?.name} url={window.location.href} />
+                            <Share
+                                title={uiState.selectedExhibitor?.name}
+                                url={
+                                    offHistory
+                                        ? `${window.location.origin}?${encodeURI(uiState.selectedExhibitor.slug)}`
+                                        : window.location.href
+                                }
+                            />
                         </Modal>
                     </Suspense>
                 ) : null}
+                <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
             </div>
         </div>

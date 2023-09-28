@@ -1,0 +1,155 @@
+import { lineAngle } from "simple-geometry";
+import * as THREE from "three";
+import { AdditiveBlending, Material, Mesh } from "three";
+import { Booth } from "../../../store/BoothStore";
+import { IBooth as ThreeBooth } from "../common/dataLoader";
+
+import { getBoothlabel } from "../../Mapbox/utils/data";
+import TextureMerger, { modifySphereUV } from "../utils/textureMerger";
+import { Img } from "../../../utils/imageloader";
+import settings from "../../../tools/settings";
+var { Text } = require("troika-three-text");
+
+const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
+const dimmedMaterial = new THREE.MeshPhongMaterial({ color: 0x333333, side: THREE.DoubleSide, name: "hovered" });
+const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
+
+export class BoothMesh extends THREE.Group {
+    private material: Material | Material[];
+
+    public constructor(
+        public efpBooth: Booth,
+        public threeBooth: ThreeBooth,
+        public boothMesh: THREE.Mesh,
+        public name: string,
+        public threeLayer: number,
+        public z: number
+    ) {
+        super();
+        this.name = name;
+        boothMesh.name = name;
+        this.material = boothMesh.material;
+        this.children.push(boothMesh);
+        this.layers.set(threeLayer);
+    }
+
+    public setText(): Mesh {
+        const label = new Text();
+        label.text = getBoothlabel(this.efpBooth);
+        if (!label.text) return;
+        label.color = this.efpBooth.labelColor || settings.boothLabelColor;
+        label.anchorX = "center";
+        label.anchorY = "middle";
+        label.textAlign = "center";
+
+        // if (label.text !== "FACIL'iti") return;
+
+        const words: string[] = label.text.split(" ");
+        const maxWordLength = Math.max(...words.map((w) => w.length));
+
+        const { rect } = this.threeBooth;
+        let maxDimension = Math.max(rect.width, rect.height);
+        let minDimension = Math.min(rect.width, rect.height);
+
+        label.fontSize = minDimension;
+
+        if (label.fontSize * label.text.length > maxDimension)
+            label.fontSize *= (1.5 * maxDimension) / (label.fontSize * label.text.length);
+
+        if (label.fontSize / minDimension < 0.15) {
+            label.maxWidth = 0.1;
+            label.fontSize *= words.length;
+
+            if (label.fontSize * words.length > minDimension)
+                label.fontSize *= (0.9 * minDimension) / (label.fontSize * words.length);
+
+            if (label.fontSize * maxWordLength > maxDimension) label.fontSize *= maxDimension / (label.fontSize * maxWordLength);
+        }
+
+        let mesh = label as Mesh;
+
+        var angle = lineAngle(this.threeBooth.rect.p0, this.threeBooth.rect.p1) || 0;
+
+        if (rect.width < rect.height) angle -= 90;
+
+        mesh.rotateZ(-(angle * Math.PI) / 180);
+
+        mesh.position.x = rect.center.x;
+        mesh.position.y = rect.center.y;
+        mesh.position.z = this.z;
+        mesh.scale.y = -1;
+        mesh.name = this.name;
+        mesh.layers.set(this.threeLayer);
+
+        return label;
+    }
+
+    public setLogo(textureMerger: TextureMerger, ratio: number, material: THREE.MeshBasicMaterial): Mesh {
+        const rect = this.threeBooth.rect;
+
+        const ratioBooth = rect.width / rect.height;
+
+        let w = 0;
+        let h = 0;
+
+        let angle: number = 0;
+
+        if (ratioBooth > ratio) {
+            h = rect.height * 0.9;
+            w = h * ratio;
+        } else {
+            w = rect.width * 0.9;
+            h = w / ratio;
+        }
+
+        if (ratio >= 2 && !this.efpBooth.rotate && rect.height >= rect.width * 2.0) {
+            let newH = rect.width * 0.9;
+            let newW = newH * ratio;
+
+            while (newW > rect.height - 0.02) {
+                newH -= 0.01;
+                newW = newH * ratio;
+            }
+
+            h = newH;
+            w = newW;
+            angle = 90;
+        } else {
+            angle = (-this.efpBooth.rotate * 180) / Math.PI;
+        }
+
+        var plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), material);
+        plane.layers.set(this.threeLayer);
+
+        modifySphereUV(plane, textureMerger.ranges.get(this.efpBooth.slug + "_logo"));
+
+        plane.rotateZ(((angle || 0) * Math.PI) / 180);
+
+        plane.position.x = rect.center.x;
+        plane.position.y = rect.center.y;
+        plane.position.z = this.z;
+        plane.scale.y = -1;
+
+        plane.material.map = textureMerger.mergedTexture;
+        plane.name = this.efpBooth.name;
+
+        return plane;
+    }
+
+    public dimmed(value: boolean) {
+        this.boothMesh.material = value ? dimmedMaterial : this.material;
+        this.boothMesh.userData.dimmed = value;
+    }
+
+    public hovered(value: boolean) {
+        if (value) this.boothMesh.material = hoveredMaterial;
+        else if (this.boothMesh.userData.dimmed) this.boothMesh.material = dimmedMaterial;
+        else if (this.boothMesh.userData.selected) this.boothMesh.material = this.material;
+        else this.boothMesh.material = this.material;
+    }
+
+    // public selected(value: boolean) {
+    //     this.boothMesh.material = value ? this.material : dimmedMaterial;
+    //     this.boothMesh.userData.selected = value;
+    // }
+}

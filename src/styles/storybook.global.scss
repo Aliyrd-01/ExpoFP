@@ -17,11 +17,16 @@ body {
     background: gray;
 }
 .sidebar {
+    overflow: auto;
     width: 100%;
     max-width: 376px;
     height: 100vh;
     padding-top: 20px;
     background: #fff;
+
+    @include media-breakpoint-down(sm) {
+        max-width: 100%;
+    }
 }
 .sidebar-container {
     padding: 20px 15px;

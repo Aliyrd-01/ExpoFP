@@ -15,11 +15,13 @@ import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
 import OverlayContent from "./OverlayContent";
+import RebookingNotes from "./RebookingNotes";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
+import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 
-const ImageSlider = React.lazy(() => import(/* webpackChunkName: "slider" */ "./Slider/ImageSlider"));
+const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
 function ExhibitorComponent() {
     const el = useRef<HTMLDivElement>();
@@ -65,7 +67,7 @@ function ExhibitorComponent() {
     useAutorun(() => {
         if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(GaEventActions.View, s.exhibitor.name);
+            sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
         }
     });
 
@@ -82,8 +84,18 @@ function ExhibitorComponent() {
         if (uiState.kiosk) return e.preventDefault();
     }
 
-    function customButtonClick() {
+    function customButtonClick(buttonNumber: number, buttonUrl: string, e: MouseEvent) {
         sendEventToGa(GaEventActions.ClickCustomButton, s.exhibitor.name);
+
+        const data = {
+            externalId: s.exhibitor.externalId,
+            buttonNumber,
+            buttonUrl,
+            preventDefault: e.preventDefault.bind(e),
+        };
+        if (uiState.onExhibitorCustomButtonClick) {
+            uiState.onExhibitorCustomButtonClick(data);
+        }
     }
 
     function itemClick(action: GaEventActions) {
@@ -97,7 +109,7 @@ function ExhibitorComponent() {
             <>
                 <div className="exhibitor__bar">
                     <span onClick={() => store.toggleMapOverlay()}>
-                        <span>{exhibitor.name}</span>
+                        <span dir="auto">{exhibitor.name}</span>
                         {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                     </span>
                 </div>
@@ -108,18 +120,31 @@ function ExhibitorComponent() {
         );
 
         const rebooking = data.isRebooking ? (
-            <RebookingRadioGroup
-                options={defaultRebookingOptions}
-                checked={exhibitor.rebookingState.toString()}
-                onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value))}
-                showTitle={false}
-            />
+            <div>
+                <RebookingRadioGroup
+                    showTitle={false}
+                    options={defaultRebookingOptions}
+                    checked={exhibitor.rebookingState.toString()}
+                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), "")}
+                />
+                <div
+                    style={{ margin: "0 20px 20px 20px", whiteSpace: "pre-wrap" }}
+                    dangerouslySetInnerHTML={{ __html: exhibitor.rebookingNote }}
+                ></div>
+                <RebookingNotes
+                    state={"default"}
+                    value={exhibitor.rebookingNote}
+                    onClickSave={(val: string) =>
+                        store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
+                    }
+                />
+            </div>
         ) : null;
-
         const cls = classNames({
             exhibitor: true,
             "-exhibitor-featured": exhibitor.featured,
             bookmarked: exhibitor.bookmarked,
+            [uiState.responsiveClass]: true,
         });
 
         const expandDescription = () => {
@@ -127,11 +152,18 @@ function ExhibitorComponent() {
             setTimeout(s.updateOverlayContent);
         };
 
-        function renderButton(title: string, url: string) {
+        function renderButton(title: string, url: string, buttonNumber: number) {
             if (!title || !url || uiState.kiosk) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
-                    <Button link={url} inline={true} onClick={customButtonClick} target={isIframe ? "_blank" : "_self"}>
+                    <Button
+                        link={url}
+                        inline={true}
+                        onClick={(e) => {
+                            customButtonClick(buttonNumber, url, e);
+                        }}
+                        target={isIframe || uiState.onExhibitorCustomButtonClick ? "_blank" : "_self"}
+                    >
                         {title}
                     </Button>
                 </div>
@@ -155,7 +187,11 @@ function ExhibitorComponent() {
         }
 
         function shareButtonVisible() {
-            return !uiState.kiosk && window.location.host.endsWith(".expofp.com");
+            return !uiState.kiosk && window.location.host.endsWith(".expofp.com") && settings.EXPO !== "globalaltsmiami2024";
+        }
+
+        function onUpdateGallery() {
+            s.updateOverlayContent();
         }
 
         return (
@@ -171,7 +207,7 @@ function ExhibitorComponent() {
                     <>
                         <div className="exhibitor__buttons">
                             <SibebarActions
-                                showBookmark={!uiState.kiosk}
+                                showBookmark={!data.hideBookmarks && !uiState.kiosk}
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}
@@ -192,7 +228,14 @@ function ExhibitorComponent() {
                                 ) : (
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider hideFullScreenIcon={true} images={[exhibitor.leadingImageUrl]} />
+                                            <Gallery
+                                                className={uiState.responsiveClass}
+                                                onOpenGallery={() => store.openGallery()}
+                                                onCloseGallery={() => store.closeGallery()}
+                                                onImageLoadHeightUpdate={onUpdateGallery}
+                                                leading={true}
+                                                images={[exhibitor.leadingImageUrl]}
+                                            />
                                         </Suspense>
                                     </ErrorBoundary>
                                 )}
@@ -246,12 +289,16 @@ function ExhibitorComponent() {
                                     {exhibitor.description ? (
                                         <span
                                             className="exhibitor__description-html"
+                                            dir="auto"
                                             dangerouslySetInnerHTML={{ __html: getDescription(exhibitor.description) }}
                                             onClick={expandDescription}
                                         />
                                     ) : null}
                                 </div>
                             ) : null}
+                            {(!!exhibitor.schedule?.length || !!exhibitor.booths[0]?.schedule.length) && (
+                                <Schedule events={exhibitor.schedule || exhibitor.booths[0]?.schedule} />
+                            )}
                             {!uiState.kiosk && exhibitor.videoUrl && (
                                 <div className="exhibitor__video">
                                     <iframe
@@ -267,7 +314,13 @@ function ExhibitorComponent() {
                                 <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
-                                            <ImageSlider fillMode={FillMode.cover} images={exhibitor.gallery} />
+                                            <Gallery
+                                                className={uiState.responsiveClass}
+                                                onOpenGallery={() => store.openGallery()}
+                                                onCloseGallery={() => store.closeGallery()}
+                                                onImageLoadHeightUpdate={onUpdateGallery}
+                                                images={exhibitor.gallery}
+                                            />
                                         </Suspense>
                                     </ErrorBoundary>
                                 </div>
@@ -322,6 +375,7 @@ function ExhibitorComponent() {
                                             <i className="fas fa-phone" />
                                             <div>
                                                 <a
+                                                    dir="ltr"
                                                     href={"tel:" + exhibitor.phone1}
                                                     onClick={(e) => handleClick(e, GaEventActions.ClickPhone)}
                                                 >
@@ -422,9 +476,9 @@ function ExhibitorComponent() {
                                     </a>
                                 </div>
                             )}
-                            {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl)}
-                            {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url)}
-                            {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url)}
+                            {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl, 1)}
+                            {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2)}
+                            {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3)}
                         </div>
                     </>
                 ) : (

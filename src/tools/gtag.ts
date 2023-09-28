@@ -11,7 +11,9 @@ export default function gtag(...args: any[]) {
 
 export enum GaEventActions {
     Load = "Load floor plan",
-    View = "View",
+    ViewBooth = "View booth",
+    ViewExhibitor = "View exhibitor",
+    ViewCategory = "View category",
     Search = "Search",
     ClickCustomButton = "Click custom button",
     ViewVideo = "View video",
@@ -31,20 +33,22 @@ export enum GaEventActions {
     ClickDirections = "Click Directions",
 }
 
-export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string,) {
+export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string) {
     //for reference https://developers.google.com/analytics/devguides/collection/ga4/reference/events
     switch (action) {
-        case GaEventActions.View:
+        case GaEventActions.ViewBooth:
+        case GaEventActions.ViewExhibitor:
+        case GaEventActions.ViewCategory:
         case GaEventActions.ViewGallery:
         case GaEventActions.ViewVideo:
             gtag("event", "select_content", {
                 content_type: action,
-                content_id: label
+                content_id: label,
             });
             break;
         case GaEventActions.Search:
             gtag("event", "search", {
-                search_term: label
+                search_term: label,
             });
             break;
         case GaEventActions.ClickCustomButton:
@@ -61,13 +65,13 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
             gtag("event", "share", {
                 //method: action,
                 content_type: action,
-                content_id: label
+                content_id: label,
             });
             break;
         case GaEventActions.ClickDirections:
             gtag("event", "route", {
                 content_type: action,
-                content_id: label
+                content_id: label,
             });
             break;
         default:
@@ -76,10 +80,12 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
                 content_id: label,
             });
     }
-
 }
 
-const v = document.createElement("script");
+let v: HTMLScriptElement | null;
+let s: HTMLScriptElement | null;
+
+v = document.createElement("script");
 v.type = "text/javascript";
 v.async = true;
 v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
@@ -89,7 +95,7 @@ vx.parentNode.insertBefore(v, vx);
 gtag("js", new Date());
 
 if (data.gtag) {
-    const s = document.createElement("script");
+    s = document.createElement("script");
     s.type = "text/javascript";
     s.async = true;
     s.src = `https://www.googletagmanager.com/gtag/js?id=${data.gtag}`;
@@ -101,3 +107,15 @@ if (data.gtag) {
 gtag("config", ga_common_prop, { fp_key: settings.EXPO });
 
 window["gtag"] = gtag;
+
+export function destroyGtag() {
+    if (v && v.parentNode) {
+        v.parentNode.removeChild(v);
+        v = null;
+    }
+
+    if (s && s.parentNode) {
+        s.parentNode.removeChild(s);
+        s = null;
+    }
+}

@@ -7,6 +7,7 @@ import previewExhibitor from "../../utils/preview-exhibitor";
 import ExhibitorStore, { Exhibitor } from "../ExhibitorStore";
 import RootStore from "../RootStore";
 import settings from "../../tools/settings";
+import { isLocalStorageAvailable } from "../../utils/localStorage";
 
 export default function initExhibitors(store: RootStore) {
     if (previewExhibitor) {
@@ -46,6 +47,8 @@ export default function initExhibitors(store: RootStore) {
 
         (e["store"] as ExhibitorStore) = exhibitorStore;
         exhibitorStore.exhibitors.push(e as Exhibitor);
+        const schedule = store.scheduleStore.scheduleItems.filter((s) => s.exhibitorId === e.id);
+        e.schedule = schedule.length ? schedule : null;
     }
 
     // dispose
@@ -82,12 +85,16 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
 }
 
 function getFromLocalStorage() {
+    if (!isLocalStorageAvailable) return [];
+
     let ls = localStorage.getItem(`${settings.EXPO}-bookmarked`);
     if (!ls) ls = localStorage.getItem("bookmarked");
     return ls ? (JSON.parse(ls) as number[]) : [];
 }
 
 function saveToLocalStorage(ar: number[]) {
+    if (!isLocalStorageAvailable) return;
+
     logger.log("saveToLocalStorage", ar.length);
     // const dest = [...ar, ...(append ? getFromLocalStorage() : [])];
     // const unique = Array.from(new Set(dest));

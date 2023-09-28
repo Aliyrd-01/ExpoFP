@@ -70,7 +70,7 @@ function getStyle(): string {
     return fpGeo?.properties?.style || "light-v10";
 }
 
-function actualBoothColor(b: Booth) {
+export function actualBoothColor(b: Booth) {
     let defColor: string;
     if (b instanceof SpecialBooth) {
         defColor = b.color || settings.colors.booths.empty;
@@ -88,6 +88,10 @@ function actualBoothColor(b: Booth) {
     if (defColor === "#666" || defColor === "#666666") defColor = "rgba(0,0,0,0.172)";
 
     return defColor;
+}
+
+export function getBoothlabel(booth: Booth) {
+    return booth.noLabels ? null : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
 }
 
 function decimalToHex(input: string) {
@@ -165,6 +169,8 @@ export function moveToRect(
     pitch: number = props.initPitch,
     bearing: number = props.initBearing
 ) {
+    if (!map) return;
+
     const padding = (paddingPercent / 100) * Math.max(Math.abs(svgRect.x2 - svgRect.x1), Math.abs(svgRect.y2 - svgRect.y1)) || 0;
 
     var p1 = convertSvgPoint(svgRect.x1 - padding, svgRect.y1 - padding);
@@ -213,9 +219,6 @@ export function switchViewbox(showMapbox: boolean) {
 }
 
 export function setDataSource(booths: Booth[], logos: Img[]) {
-    const avgHeight = logos.map((l) => l.htmlImage.height).reduce((a, b) => a + b, 0) / logos.length;
-    const avgArea = logos.map((l) => l.bounds.width * l.bounds.height).reduce((a, b) => a + b, 0) / logos.length;
-
     fpGeo.features.forEach((f: Feature) => {
         f.properties.id = f.properties.id?.substring(1);
 
@@ -225,15 +228,15 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
             let booth = booths.filter((b) => b.name === f.properties.id)[0] as RegularBooth;
             if (booth) {
                 f.properties.color = actualBoothColor(booth);
-                f.properties.description = booth.noLabels
-                    ? null
-                    : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
+                f.properties.description = getBoothlabel(booth);
 
                 const logo = logos.find((l) => l?.name === booth.slug);
+
                 if (logo) {
-                    const scale = avgHeight / logo.htmlImage.height;
-                    const factor = Math.sqrt(Math.max(1, (logo.bounds.height * logo.bounds.width) / avgArea)) / 5;
-                    f.properties.scale = scale * factor;
+                    var diagonale = Math.max(booth.rect.w, booth.rect.h);
+                    var aRatio = diagonale / logo.htmlImage.width;
+                    f.properties.scale = Math.max(0.08, aRatio / 5);
+                    f.properties.scale1 = 5 * f.properties.scale;
 
                     var exhibitor = (booth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
                     if (exhibitor) f.properties.logo = booth.slug;
@@ -289,7 +292,7 @@ export function setLayers(layers: Layer[]): string[] {
         const images = fpGeo.images?.filter((i) => i.layer === layer.name) ?? [];
 
         images.forEach((image, index) => {
-            const bgLayer = layer.name + "-bg_" + index;
+            const bgLayer = layer.name + "--bg_" + index;
 
             layersNames.push(bgLayer);
             map.addSource(bgLayer, {
@@ -308,9 +311,9 @@ export function setLayers(layers: Layer[]): string[] {
             });
         });
 
-        layersNames.push(layer.name + "-other");
+        layersNames.push(layer.name + "--other");
         map.addLayer({
-            id: layer.name + "-other",
+            id: layer.name + "--other",
             type: "fill",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["!in", "value", "3D"]],
@@ -322,10 +325,10 @@ export function setLayers(layers: Layer[]): string[] {
             },
         });
 
-        layersNames.push(layer.name + "-other-3D");
+        layersNames.push(layer.name + "--other-3D");
 
         map.addLayer({
-            id: layer.name + "-other-3D",
+            id: layer.name + "--other-3D",
             type: "fill-extrusion",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["in", "value", "3D"]],
@@ -346,8 +349,8 @@ export function setLayers(layers: Layer[]): string[] {
 
         if (layerBooths.length) {
             layersNames.push(layer.name);
-            layersNames.push(layer.name + "-labels");
-            layersNames.push(layer.name + "-logos");
+            layersNames.push(layer.name + "--labels");
+            layersNames.push(layer.name + "--logos");
 
             map.addLayer({
                 id: layer.name,
@@ -360,12 +363,12 @@ export function setLayers(layers: Layer[]): string[] {
                 paint: {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
-                    "fill-extrusion-opacity": 0.8,
+                    "fill-extrusion-opacity": 1,
                 },
             });
 
             map.addLayer({
-                id: layer.name + "-labels",
+                id: layer.name + "--labels",
                 type: "symbol",
                 source: "data",
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["!has", "logo"]],
@@ -385,15 +388,16 @@ export function setLayers(layers: Layer[]): string[] {
             });
 
             map.addLayer({
-                id: layer.name + "-logos",
+                id: layer.name + "--logos",
                 type: "symbol",
                 source: "data",
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["has", "logo"]],
                 minzoom: 18,
                 layout: {
+                    "icon-size": ["interpolate", ["exponential", 2], ["zoom"], 18, ["get", "scale"], 22, ["get", "scale1"]],
                     "icon-image": ["get", "logo"],
                     "icon-anchor": "bottom",
-                    "icon-size": ["get", "scale"],
+                    //"icon-size": ["get", "scale"],
                     "icon-allow-overlap": true,
                     "icon-ignore-placement": true,
                     "icon-rotation-alignment": "viewport",

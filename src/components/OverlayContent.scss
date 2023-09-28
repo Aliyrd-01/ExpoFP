@@ -15,8 +15,28 @@
 
         .overlay.full & {
             overflow-y: scroll;
-            -webkit-overflow-scrolling: touch;
+            //-webkit-overflow-scrolling: touch;
         }
+    }
+}
+
+.overlay.-gallery-active {
+    top: 0 !important;
+    .overlay-content, .overlay-content__scrollable, .exhibitor__slider {
+        position: static;
+    }
+    .overlay-content__scrollable {
+        overflow: hidden;
+    }
+    .overlay-bar, .overlay-grip {
+        display: none;
+    }
+}
+
+.layout[dir="rtl"] {
+    .ps__thumb-y {
+        right: unset;
+        left: 2px;
     }
 }
 

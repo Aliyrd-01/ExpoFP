@@ -1,5 +1,5 @@
 .free {
-    position: fixed;
+    position: absolute;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -54,7 +54,7 @@
         &:hover {
             background: #69b7ff;
         }
-        margin-left: 0.5rem;
+        margin-inline-start: 0.5rem;
         @media print {
             display: none;
         }

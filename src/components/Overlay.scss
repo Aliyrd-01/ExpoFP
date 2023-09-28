@@ -1,7 +1,7 @@
 @import "../styles/helpers.scss";
 
 .overlay {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     z-index: 100;
 
@@ -20,7 +20,7 @@
         border-radius: 0.5rem 0.5rem 0 0;
     }
     &.-backdrop {
-        background-color: rgba(255, 255, 255, 0.3);
+        background-color: rgba(255, 255, 255, 0.6);
         -webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);
     }
@@ -30,6 +30,19 @@
 
     @media print {
         display: none;
+    }
+}
+
+.layout[dir="rtl"] {
+    .overlay.start {
+        left: unset;
+        right: 0;
+    }
+
+    &.efp-kiosk {
+        .overlay {
+            right: var(--k-app-gap) !important;
+        }
     }
 }
 

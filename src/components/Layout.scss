@@ -9,15 +9,18 @@
 }
 
 * {
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--app-font-family);
     -webkit-tap-highlight-color: transparent;
 }
 
 .layout {
     box-sizing: border-box;
+    position: relative;
+    height: 100%;
+    width: 100%;
 
     &__fixed {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
@@ -54,7 +57,11 @@ a:visited {
     font-size: calc(16px + 0.25vw);
 
     --k-color-primary: #3d91f7;
+    --k-color-primaryDark: #165eb6;
     --k-color-primaryLight: #e5f1ff;
+    --k-color-secondary: #fb3e59;
+    --k-color-secondaryDark: #ea2b46;
+    --k-color-secondaryLight: #ffd8de;
     --k-scale: 1;
     --k-scale-font: 1;
     --k-app-gap: calc(20px * var(--k-scale));
@@ -69,7 +76,7 @@ a:visited {
     --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
     --k-spacing-sm: calc(max(10px, 1.4vh) * var(--k-scale));
 
-    --k-searchBox-width: clamp(calc(340px * var(--k-scale)), calc(40vw * var(--k-scale)), calc(600px * var(--k-scale)));
+    --k-searchBox-width: clamp(calc(220px * var(--k-scale)), calc(65vw * var(--k-scale)), calc(600px * var(--k-scale)));
     --k-searchBox-height: clamp(60px, 8vmin, 90px);
     --k-mapControls-gap: clamp(14px * var(--k-scale), 1.4vmin * var(--k-scale), 18px * var(--k-scale));
     --k-mapControl-size: clamp(calc(54px * var(--k-scale)), calc(4.2vmax * var(--k-scale)), calc(70px * var(--k-scale)));

@@ -10,11 +10,16 @@ import { sortByName } from "../../utils";
 import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import RootStore from "../RootStore";
 import { isYahBooth } from "../../utils/yah";
+import { RawSpecialBooth } from "../../data/Data";
+import { Exhibitor } from "../ExhibitorStore";
+import { v4 as uuidv4 } from "uuid";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
 
 export function iniAllBooths(store: RootStore) {
+    const copyExh = parseInt(getQueryParam("copy_exh"));
+
     for (const raw of data.booths || []) {
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);
@@ -28,9 +33,12 @@ export function iniAllBooths(store: RootStore) {
         for (const exhibitorId of raw.exhibitors) {
             const exhibitor = store.exhibitorStore.exhibitorById.get(exhibitorId);
             boothReg.exhibitors.push(exhibitor);
+            if (copyExh) {
+                dublicateExhibitorsInBooth(exhibitor, boothReg, copyExh);
+            }
             exhibitor.booths.push(boothReg as RegularBooth);
         }
-
+        b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
         booths.push(b);
     }
 
@@ -103,6 +111,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
         booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor || "#FFFFFF";
         booth.borderWidth = parseFloat(rect.getAttribute("stroke-width") || rect.style.strokeWidth);
+        booth.labelColor = rect.getAttribute("data-label-color");
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
@@ -193,10 +202,22 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     }
 
     layerBooths
-        .filter((b) => (b.name.match(/^yah/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.defaultFrom)
+        .filter((b) => (b.name.match(/^yah_/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.defaultFrom)
         .forEach((btr) => layerBooths.splice(layerBooths.indexOf(btr), 1));
 
     return layerBooths;
+}
+
+function getQueryParam(name: string): string | null {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+}
+
+function dublicateExhibitorsInBooth(exhibitor: Exhibitor, booth: MutableRequired<RegularBooth>, times: number) {
+    for (let i = 0; i < times; i++) {
+        const copyExhibitor: MutableRequired<Exhibitor> = { ...exhibitor, id: uuidv4() };
+        booth.exhibitors.push(copyExhibitor as Exhibitor);
+    }
 }
 
 function fixCbre(b: Booth) {

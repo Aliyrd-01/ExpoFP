@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { reaction } from "mobx";
+import { IReactionDisposer, reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -23,7 +23,6 @@ function Ws() {
                 width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx}px` : "100%",
                 // todo: remove
                 opacity: uiState.wsStarted ? 1 : 0,
-                right: 0,
                 padding: `0 ${uiState.wsPaddingPx}px`,
             } as any;
 
@@ -34,15 +33,30 @@ function Ws() {
     }));
 
     useInit(() => {
+        let dispose: IReactionDisposer;
+        let isMounted = true;
+
         (async function () {
             s.all = shuffle(exhibitorStore.advertised);
             s.imgByExhbitorId = await loadExhbibitorImages();
+            if (!isMounted) return;
             setupNext();
             mouseout();
             uiState.wsStarted = true;
 
-            reaction(() => uiState.screenSize, setupNext);
+            dispose = reaction(() => uiState.screenSize, setupNext);
         })();
+
+        return () => {
+            isMounted = false;
+            if (dispose) {
+                dispose();
+            }
+            if (s.intervalId) {
+                window.clearInterval(s.intervalId);
+                s.intervalId = 0;
+            }
+        };
     });
 
     return useObserver(() => (
@@ -82,7 +96,7 @@ function Ws() {
         do {
             const e = s.all[s.index % s.all.length];
             const img = s.imgByExhbitorId.get(e.id);
-            const width = (img.width * uiState.wsImageHeightPx) / img.height + 20; //padding
+            const width = img ? (img.width * uiState.wsImageHeightPx) / img.height + 20 : 50; //padding
 
             if (filledWidth + width > maxWidth && adv.length) break;
 
@@ -112,15 +126,21 @@ function Ws() {
 
     async function loadExhbibitorImages(): Promise<Map<number, HTMLImageElement>> {
         const result = new Map<number, HTMLImageElement>();
+        let counter = 0;
         return new Promise((resolve, reject) => {
             s.all.forEach((x) => {
                 const img = new Image();
                 img.onload = () => {
                     result.set(x.id, img);
-                    if (result.size === s.all.length) {
-                        resolve(result);
-                    }
+                    counter++;
+                    if (counter === s.all.length) resolve(result);
                 };
+
+                img.onerror = () => {
+                    counter++;
+                    if (counter === s.all.length) resolve(result);
+                };
+
                 img.src = x.logo;
             });
         });

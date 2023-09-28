@@ -1,8 +1,9 @@
-import { RegularBooth } from "../store/BoothStore";
+import { Booth, RegularBooth } from "../store/BoothStore";
 import settings from "../tools/settings";
 import isDebug from "./is-debug";
 
 export type Img = {
+    booth: Booth;
     name?: string;
     htmlImage: HTMLImageElement;
     bounds: { x: number; y: number; width: number; height: number; angle: number };
@@ -58,6 +59,7 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                         name: booth.slug,
                         bounds: { x, y, width: w, height: h, angle: angle },
                         htmlImage: img,
+                        booth,
                     });
                 })
         )
@@ -81,6 +83,7 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
                                       angle: image.transform?.animVal[0]?.angle ?? 0,
                                   },
                                   htmlImage: img,
+                                  booth: null,
                               }
                             : null
                     );
@@ -96,7 +99,9 @@ function loadImage(src: string): Promise<HTMLImageElement> {
         img.onload = () => resolve(img);
         img.crossOrigin = "anonymous";
 
-        if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-        else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
+        img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
+
+        // if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
+        // else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
     });
 }

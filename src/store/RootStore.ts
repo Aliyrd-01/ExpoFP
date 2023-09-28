@@ -10,6 +10,7 @@ import MapboxStore from "./MapboxStore";
 import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
+import ScheduleStore from "./ScheduleStore";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -19,6 +20,8 @@ export default class RootStore {
     readonly routeStore: RouteStore;
     readonly mapboxStore: MapboxStore;
     readonly layerStore: LayerStore;
+    readonly scheduleStore: ScheduleStore;
+
     fp: FloorPlanReady;
 
     constructor() {
@@ -30,6 +33,7 @@ export default class RootStore {
         this.uiState = new UIState(this);
         this.mapboxStore = new MapboxStore(this);
         this.layerStore = new LayerStore();
+        this.scheduleStore = new ScheduleStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor) {

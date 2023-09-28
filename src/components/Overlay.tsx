@@ -8,7 +8,7 @@ import { OverlaySize } from "../store/UIState";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import Bookmarks from "./Bookmarks";
-import Booth from "./Booth";
+import Booth from "./Booth/Booth";
 import Category from "./Category";
 import Exhibitor from "./Exhibitor";
 import Menu from "./Menu";
@@ -33,6 +33,9 @@ export default observer(function Overlay() {
             }
             if (uiState.dimmed) {
                 classes += " -no-transition";
+            }
+            if (uiState.galleryActive) {
+                classes += " -gallery-active";
             }
             return classes;
             // if (!uiState.canvasStarted || !uiState.shouldUseBackdrop || uiState.dimmed) return "";
@@ -60,7 +63,7 @@ export default observer(function Overlay() {
         el.current.ontouchend = handleTouchEnd;
         el.current.ontouchcancel = handleTouchCancel;
 
-        autorun(position);
+        const disposer = autorun(position);
 
         function handleTouchStart(e: TouchEvent) {
             if (s.noMove) return;
@@ -129,6 +132,7 @@ export default observer(function Overlay() {
                     s.left = "0";
                     s.height = undefined;
                     setShowAll();
+                    resetCurrentTop();
                     break;
                 case "bottom":
                     s.left = "0";
@@ -136,6 +140,10 @@ export default observer(function Overlay() {
                     setHeight();
                     break;
             }
+        }
+
+        function resetCurrentTop() {
+            s.currentTop = undefined;
         }
 
         function setShowAll() {
@@ -182,11 +190,15 @@ export default observer(function Overlay() {
         //     //const backdrop =  shouldUseBackdrop && uiState.overlayLeft && settings.EXPO === "aweusa2020";
         //     s.backdropStarted = true;
         // }, 3000);
+
+        return () => disposer();
     }, [s]);
 
     return (
         <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition} ${s.collapsed}`}
+            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${
+                uiState.overlayPosition === "left" ? "start" : "bottom"
+            } ${s.collapsed}`}
             id="overlay"
             ref={el}
         >
@@ -210,9 +222,9 @@ function getTopForBottomPosition(size: OverlaySize): number {
         case "full":
             return remsToPixels(paddingRems);
         case "medium":
-            return window.innerHeight - remsToPixels(uiState.overlayMediumHeightRems);
+            return uiState.rootElement.clientHeight - remsToPixels(uiState.overlayMediumHeightRems);
         case "small":
-            return window.innerHeight - remsToPixels(miniSizeRems);
+            return uiState.rootElement.clientHeight - remsToPixels(miniSizeRems);
     }
 
     return null;

@@ -18,7 +18,7 @@ export default function Floors() {
         },
         get style() {
             return {
-                right: remsToPixels(0.5) + "px",
+                [uiState.rtl ? "left" : "right"]: remsToPixels(0.5) + "px",
                 top: uiState.mapVisibleTop + remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) + "px",
             };
         },
@@ -30,6 +30,7 @@ export default function Floors() {
         var layer = store.layerStore.layers.find((l) => l.description === name);
         if (store.layerStore.mode === LayersMode.Radio) {
             store.layerStore.updateVisibility(layer.name, true, true);
+            store.routeStore.currentRouteLayer = layer;
 
             if (store.mapboxStore.showMapbox) return;
 
@@ -49,6 +50,8 @@ export default function Floors() {
     return useObserver(() => {
         data = store.layerStore.layers
             .filter((l) => !l.frozen)
+            .concat(store.routeStore.layers)
+            .filter((value, index, array) => array.indexOf(value) === index)
             .map((l) => {
                 return {
                     shortName: l.shortName,
@@ -67,6 +70,7 @@ export default function Floors() {
                             key={f.description}
                             onClick={() => click(f.description)}
                             title={f.description}
+                            dir="auto"
                         >
                             {f.shortName}
                         </div>

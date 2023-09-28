@@ -1,7 +1,8 @@
 import _locales from "../public/locales/_locales";
+import { Data } from "./data/Data";
 import { CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
-import { loadCss, loadFont, loadJs } from "./tools/loaders";
+import { loadCss, loadFont, loadJs, loadCustomFonts } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
@@ -20,7 +21,9 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly offHistory: boolean;
 
+    protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
 
     get ready() {
@@ -36,6 +39,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
+    onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -48,7 +53,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectCurrentPosition(point: CurrentPosition, focus: boolean): void {
+    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         nr();
     }
 
@@ -56,12 +61,30 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    exhibitorsList(): any {
+        nr();
+    }
+
+    boothsList(): any {
+        nr();
+    }
+
+    categoriesList(): any {
+        nr();
+    }
+
+    unstable_destroy(): void {
+        nr();
+    }
+
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;
+        this.offHistory = !!options.offHistory;
 
         this.onBoothClick = options.onBoothClick;
         this.onDetails = options.onDetails;
+        this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
@@ -82,8 +105,22 @@ export default class FloorPlanLoader implements FloorPlan {
         this.eventId = eventId;
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
+        window["__efpElement"] = element;
+
+        window["__efpElement"] = element;
+        const classes = [...element.classList];
+        element.classList.remove(...classes);
+        element.classList.add("expofp-floorplan-default", ...classes);
+
+        const head = document.head || document.getElementsByTagName("head")[0];
+
+        const style = document.createElement("style");
+        head.prepend(style);
+        style.textContent = `.expofp-floorplan-default { width: 100%; height: 100%;}`;
 
         const shadowContainer = document.createElement("div");
+        shadowContainer.style.height = "100%";
+        shadowContainer.style.width = "100%";
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
@@ -100,6 +137,8 @@ export default class FloorPlanLoader implements FloorPlan {
         }
 
         const fpContainer = document.createElement("div");
+        fpContainer.style.height = "100%";
+        fpContainer.style.width = "100%";
         container.appendChild(fpContainer);
         if (useShadow) {
             Object.defineProperty(fpContainer, "ownerDocument", { value: container });
@@ -136,14 +175,17 @@ export default class FloorPlanLoader implements FloorPlan {
         ];
 
         let handledStyleElements = 0;
-        window.addEventListener("__efpStyleLoad", function (e: Event) {
+
+        this.efpStyleLoadHandler = function (e: Event) {
             const elements = window["__efpStyleElements"] as HTMLStyleElement[];
             while (handledStyleElements < elements.length) {
                 const el = elements[handledStyleElements];
                 container.appendChild(el);
                 handledStyleElements++;
             }
-        });
+        };
+
+        window.addEventListener("__efpStyleLoad", this.efpStyleLoadHandler);
 
         const self = this;
         (async function init() {
@@ -158,6 +200,20 @@ export default class FloorPlanLoader implements FloorPlan {
             const navLanguage = navigator.languages?.[0] || navigator.language;
             const navLocale = _locales.find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
+
+            if (data.customCss) {
+                const style = document.createElement("style");
+                style.textContent = data.customCss;
+                document.head.append(style);
+
+                if (useShadow) {
+                    const style2 = document.createElement("style");
+                    style2.textContent = data.customCss;
+                    container.append(style2);
+                }
+
+                await loadCustomFonts(data.customCss);
+            }
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");

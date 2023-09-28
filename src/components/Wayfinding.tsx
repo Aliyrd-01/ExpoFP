@@ -144,11 +144,13 @@ function Wayfinding() {
                             ? true
                             : false
                     }
-                    floors={store.routeStore.layers.map((l) => l.shortName)}
-                    currentFloor={store?.routeStore.layers.find((l) => l.visible)?.shortName}
-                    onClickFloor={(floor) =>
-                        store.layerStore.updateVisibility(store.layerStore.layers.find((l) => l.shortName === floor).name, true)
-                    }
+                    floors={store.routeStore.layers.map((l) => l?.shortName)}
+                    currentFloor={store.routeStore.currentRouteLayer?.shortName}
+                    onClickFloor={(floor) => {
+                        var layer = store.layerStore.layers.find((l) => l.shortName === floor);
+                        store.layerStore.updateVisibility(layer.name, true);
+                        store.routeStore.currentRouteLayer = layer;
+                    }}
                     routeFound={!routeNotFound}
                     options={options()}
                     fromValue={uiState.selectedRoute?.from?.name || ""}

@@ -1,3 +1,4 @@
+import { ScheduleItem } from "./../store/ScheduleStore";
 interface Data {
     noFeatured: boolean;
     expoFpAd: boolean;
@@ -30,12 +31,27 @@ interface Data {
     hideRegisterToAttendLink: boolean;
     hideDownloadPdfLink: boolean;
     hideBookmarksLink: boolean;
+    hideBookmarks: boolean;
     // hideLogoOverlay: boolean;
     autoTrackingGps: boolean;
     allow3dView: boolean;
     hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;
     isRebooking: boolean;
+    events: ScheduleItem[];
+    customCss: string;
+}
+
+interface ScheduleItem {
+    id: number;
+    name: string;
+    externalId: string;
+    description?: string;
+    exhibitorId?: number;
+    boothId?: number;
+    startDate: string;
+    endDate: string;
+    link?: string;
 }
 
 interface RawCategory {
@@ -56,9 +72,9 @@ interface RawRegularBooth extends RawBoothBase {
     buyUrl: string;
     reserveUrl: string;
     type: string;
+    labelColor: string;
     // onHold: boolean;
     // reserved: boolean;
-   
 }
 
 interface RawSpecialBooth extends RawBoothBase {
@@ -107,6 +123,7 @@ interface RawExhibitor {
     youtube: string;
     email: string; // new
     privateEmail: string;
+    order: number;
 
     //populated
     logo: string;
@@ -117,6 +134,7 @@ interface RawExhibitor {
     videoUrl: string;
 
     rebookingState: number;
+    rebookingNote: string;
 }
 
 interface PathInfo {

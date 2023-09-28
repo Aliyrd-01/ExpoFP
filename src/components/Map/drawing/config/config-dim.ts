@@ -9,7 +9,11 @@ export default function configDim(context: DrawerContext) {
     let cancelAnimation: () => void;
 
     if (context.updatable) {
-        reaction(() => uiState.dimmed, () => context.requireUpdate(update));
+        context.requireUpdate(update);
+        reaction(
+            () => uiState.dimmed,
+            () => context.requireUpdate(update)
+        );
         // store.watch(((s, g) => g.dimmed) as any, (v: boolean, oldV: boolean) => {
         //     // dim = v ? 1 : 0;
         //     // __logger.log('dim', dim);

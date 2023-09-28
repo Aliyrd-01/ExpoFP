@@ -27,7 +27,9 @@ export default async function configBg(
         .nodes() as SVGElement[];
 
     const fgElements = selected
-        .selectAll(":scope > g[data-is-editable='false'] path, :scope > path[data-tagname='ptext']")
+        .selectAll(
+            ":scope g[data-layer] > g[data-is-editable='false'] path, :scope > g[data-is-editable='false'] path, :scope > path[data-tagname='ptext']"
+        )
         .nodes() as SVGElement[];
 
     const fpImages = (
@@ -99,7 +101,7 @@ export default async function configBg(
     }
 
     function addObject(item: TrianglePainterObject, isFg: boolean) {
-        const suffix = isFg ? "FG" : "BG";
+        const suffix = isFg ? "_FG" : "_BG";
         const priority = isFg ? painterOrderPriority + 5 : painterOrderPriority;
 
         if (!isFg)

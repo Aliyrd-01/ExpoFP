@@ -79,7 +79,9 @@ function Menu() {
                     onClick={handleCategoryClick.bind(window, c)}
                 >
                     <div className="menu__cat-bullet">&bull;</div>
-                    <div className="menu__cat-title">{c.name}</div>
+                    <div className="menu__cat-title" dir="auto">
+                        {c.name}
+                    </div>
                     <div className="menu__cat-count">{numOfExhibitors(c.id)}</div>
                 </a>
             ))}
@@ -116,7 +118,7 @@ function Menu() {
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {!data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
+                    {!data.hideBookmarks && !data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
                                 {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
@@ -134,7 +136,9 @@ function Menu() {
                             className="menu__item -pdf"
                             target="_blank"
                             rel="noopener noreferrer"
-                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(",")}&layers=${
+                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
+                                ","
+                            )}&layers=${
                                 store.layerStore.layers > store.layerStore.visible
                                     ? store.layerStore.visible.map((l) => l.name).join(",")
                                     : ""

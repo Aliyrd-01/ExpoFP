@@ -4,7 +4,7 @@ export class FpSettings {
     boothLabelColor: string = "#fff";
     boothBorderColor: string = "#fff";
     backgroundColor: string = "#ebebeb";
-    boothBorderWidth:number;
+    boothBorderWidth: number;
 }
 
 class Settings extends FpSettings {
@@ -32,6 +32,7 @@ if (settings.EXPO === "jtrade19") {
 } else if (settings.EXPO === "ktrade20") {
     settings.borderless = true;
 }
+
 // else if (settings.EXPO === "eventtechlive2019") {
 //     settings.borderless = true;
 // }

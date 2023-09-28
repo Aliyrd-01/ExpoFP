@@ -23,6 +23,7 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import ResizeObserver from "resize-observer-polyfill";
 
 //console.log('isIframe', isIframe)
 
@@ -31,6 +32,7 @@ export default function Map() {
     let zoomAfTransform: ZoomTransform;
     // do not use useState unless really needed
     const el = useRef<HTMLCanvasElement>();
+    const resizeObserverRef = useRef<ResizeObserver>();
     // use mobx for everything
     const s = useLocalStore(() => ({
         animatePlease: false,
@@ -46,7 +48,12 @@ export default function Map() {
     }));
 
     // init
-    useEffect(init, []);
+    useEffect(() => {
+        init();
+
+        return () => resizeObserverRef.current.disconnect();
+    }, []);
+
     useReaction(
         () => uiState.devicePixelRatio,
         () => {
@@ -256,11 +263,16 @@ export default function Map() {
 
         // s.drawer.setVisibleRect((uiState.canvasVisibleRectPx as Rect).scale(uiState.devicePixelRatio));
         s.drawer.setPixelRatio(uiState.devicePixelRatio);
-        window.addEventListener("resize", () => {
-            // __logger.log('canvas change', canvas);
+
+        const resizeObserver = new ResizeObserver(() => {
             sizeCanvasToParentElement(el.current);
             s.drawer.resetCanvasSize();
         });
+
+        resizeObserverRef.current = resizeObserver;
+
+        resizeObserver.observe(uiState.rootElement);
+
         setZoomTransformAnimated(zoomIdentity, 0, null);
         s.$canvas.call(s.zoom as any);
 
@@ -274,7 +286,12 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);       
+        const { left, top } = uiState.rootElement.getBoundingClientRect();
+
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+
+        const b = getBoothIdFromClientXy(x, y, s.drawer);
         // console.log("handleMouseMoveAndOver", b);
         raiseBoothOver(b);
     }
@@ -288,8 +305,14 @@ export default function Map() {
         if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
             store.showMap();
         }
+
+        const { left, top } = uiState.rootElement.getBoundingClientRect();
+
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+
         // if (!this.props.onBoothClick) return;
-        const b = getBoothIdFromClientXy(e.clientX, e.clientY, s.drawer);
+        const b = getBoothIdFromClientXy(x, y, s.drawer);
         logger.log("click", b);
         store.clickBooth(b);
     }
@@ -344,7 +367,8 @@ export default function Map() {
     }
 
     function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number) {
-        const minPaddingPercent = 5;
+        const ratio = (svgRect.w * svgRect.h) / (svgArea.h * svgArea.w);
+        const minPaddingPercent = ratio > 0.1 ? 5 : 25;
 
         const targetRect = vRect.withPadding((vRect.w * minPaddingPercent) / 100, (vRect.h * minPaddingPercent) / 100);
 

@@ -45,10 +45,12 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             href={`?${exhibitor.slug}`}
             onClick={handleClick}
         >
-            <div className="exhibitor-row__lines">
-                {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
+            <div className={classNames("exhibitor-row__lines")}>
+                <div dir="auto">
+                    {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
+                </div>
             </div>
-            {data.isRebooking || uiState.kiosk ? null : (
+            {data.hideBookmarks || data.isRebooking || uiState.kiosk ? null : (
                 <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
                     <BookmarkSvg />
                 </div>

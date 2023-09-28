@@ -3,6 +3,8 @@ import schema from "../data.schema.json";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
+import { Data, RawRegularBooth, RawSpecialBooth } from "./Data";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {
@@ -44,7 +46,7 @@ export default function validateData(data: Data) {
 
     // if (isDebug && EFP_EXPO === "sydneybuildexpo") data.free = true;
 
-    const validationEnabled = isDebug || localStorage.getItem("validate") === "1";
+    const validationEnabled = isDebug || (isLocalStorageAvailable && localStorage.getItem("validate") === "1");
 
     if (validationEnabled) {
         const res = validate(data, schema);
@@ -87,7 +89,7 @@ export default function validateData(data: Data) {
     if (!data.homeUrl && EFP_EXPO === "jtrade19") data.homeUrl = "https://www.jtrade.co.uk/";
     // this is permanent
     if (!data.boothTerm) data.boothTerm = "Booth";
-    if (!data.levelTerm) data.levelTerm = "lvl";
+    if (!data.levelTerm) data.levelTerm = "";
     if (EFP_EXPO === "expo") {
         const expoExpoAds = [2567, 2704, 2681, 2592, 2740, 2709, 2482, 2609, 2734, 2696, 2840, 2566, 2736];
         data.exhibitors.filter((x) => x.logo && expoExpoAds.indexOf(x.id) !== -1).forEach((x) => (x.advertise = true));

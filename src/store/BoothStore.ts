@@ -1,3 +1,4 @@
+import { ScheduleItem } from "./ScheduleStore";
 import { lineLength, lineRectangleIntersections, pointInsideRectangle, Rect as Rectangle } from "simple-geometry";
 // import { observable } from 'mobx';
 import { computed, observable } from "mobx";
@@ -7,6 +8,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
 import data from "../data";
+import { PathInfo, RawRegularBooth } from "../data/Data";
 
 // interface BoothState {
 //     hover: boolean;
@@ -92,6 +94,8 @@ export abstract class BoothBase {
     readonly error: boolean;
     readonly description: string;
     readonly exhibitors: Exhibitor[];
+    readonly labelColor: string;
+    readonly schedule: ScheduleItem[];
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {
@@ -103,8 +107,8 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) public get fullName() {
-        if (this.layer) return (this.title || this.name) + ` ${data.levelTerm} ` + this.layer.description;
-        return this.title || this.name;
+        if (this.layer?.mode > 1) return this.name + ` ${data.levelTerm} ` + this.layer.description;
+        return this.name;
     }
 
     @computed({ keepAlive: true }) get visible() {

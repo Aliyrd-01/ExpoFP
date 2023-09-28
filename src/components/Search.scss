@@ -28,7 +28,7 @@
     .search__bar {
         & > input {
             height: var(--k-searchBox-height);
-            padding-right: 60px;
+            padding-inline-end: 60px;
             font-size: 1.2em;
         }
     }

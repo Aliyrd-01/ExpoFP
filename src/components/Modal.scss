@@ -3,7 +3,8 @@
 $modal: ".modal";
 
 #{$modal} {
-    position: fixed;
+    position: absolute;
+    z-index: 999;
     top: 0;
     left: 0;
     right: 0;
@@ -64,9 +65,14 @@ $modal: ".modal";
     }
 }
 
-@include media-breakpoint-down(sm) {
-    #{$modal} {
-        padding: rem(10px);
+@include responsive-classes-down-to($modal, sm) {
+    padding: rem(10px);
+}
+
+.layout[dir="rtl"] #{$modal} {
+    &__close {
+        right: unset;
+        left: 0;
     }
 }
 

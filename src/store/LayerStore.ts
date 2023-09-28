@@ -40,14 +40,14 @@ export class Layer {
     get shortName(): string {
         const parts = this.description.replace(/"/g, "").split(" ");
         if (parts.length === 1) return this.description.substring(0, 2).toUpperCase();
-    
+
         var name: string;
         if (Number.isInteger(parseInt(parts[0]))) {
             name = parts[0] + parts[1][0];
         } else if (Number.isInteger(parseInt(parts[1]))) {
             name = parts[0][0] + parts[1];
         } else name = parts[0][0] + parts[1][0];
-    
+
         return name.toLocaleUpperCase();
     }
 }
@@ -56,6 +56,7 @@ export default class LayerStore {
     @observable layers: Layer[] = [];
     @observable defaultLayer: Layer;
     @observable mode: LayersMode;
+    @observable layersLoaded: boolean = false;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.frozen || l.visible);
@@ -73,7 +74,7 @@ export default class LayerStore {
     @action updateVisibility(layerName: string, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 
-        const layer = this.layers.find((l) => l.name === layerName);
+        const layer = this.findLayer(layerName);
         if (!layer || layer.visible === visible) return;
 
         loadLayer(layer).then(() => {
@@ -91,6 +92,22 @@ export default class LayerStore {
                 if (!animated) layer.visible = visible;
                 else an(layer, visible);
             }
+        });
+    }
+
+    public findLayer(z: string | number): Layer {
+        if (!z) return null;
+        z = z.toString().toLowerCase();
+
+        return this.layers.find((l) => {
+            const extractedNumber = (l.name.match(/(-?[0-9]+)/) || "")[0];
+
+            return (
+                z === l?.name.toLowerCase() ||
+                z === l?.description.toLowerCase() ||
+                z === l?.shortName.toLowerCase() ||
+                z === extractedNumber
+            );
         });
     }
 }

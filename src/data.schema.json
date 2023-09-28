@@ -102,6 +102,25 @@
             "type": "boolean",
             "description": "Hide number if booth has exhibitor"
         },
+        "hideModeSwitchButton": {
+            "type": "boolean",
+            "description": "Hides the switch button between 2d and 3d version"
+        },
+        "hide3dMapDefault": {
+            "type": "boolean",
+            "description": "Depending on the value loads the map in 2d or 3d version"
+        },
+        "allow3dView": {
+            "type": "boolean",
+            "description": "Includes ability to view floorplan in 3d version"
+        },
+        "autoTrackingGps": {
+            "type": "boolean",
+            "description": "User’s GPS location will be shown on the map as a blue dot"
+        },
+        "isRebooking": {
+            "type": "boolean"
+        },
         "booths": {
             "type": "array",
             "items": {
@@ -124,7 +143,7 @@
                                 "type": "string"
                             },
                             "size":{
-                                "type":"string"
+                                "type": "string"
                             },
                             "externalId": {
                                 "type": "string"
@@ -155,9 +174,21 @@
                                 "type": "string",
                                 "enum": ["onhold", "reserved"]
                             },
+                            "onHold": {
+                                "type": "boolean"
+                            },
                             "reserved": {
                                 "type": "boolean",
                                 "description": "Show booth as reserved (hide company from it)"
+                            },
+                            "size": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            },
+                            "price": {
+                                "type": "string"
                             }
                         }
                     }, {
@@ -259,6 +290,12 @@
                     },
                     "logo": {
                         "type": "string"
+                    },
+                    "logoInBooth": {
+                        "type": "boolean"
+                    },
+                    "order": {
+                        "type": "number"
                     },
                     "gallery": {
                         "type": "array",
@@ -388,6 +425,43 @@
                     },
                     "sponsorship": {
                         "type": "boolean"
+                    }
+                }
+            }
+        },
+        "events": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["id", "name", "startDate", "endDate"],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "externalId": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "exhibitorId": {
+                        "type": "number"
+                    },
+                    "boothId": {
+                        "type": "number"
+                    },
+                    "startDate": {
+                        "type": "string"
+                    },
+                    "endDate": {
+                        "type": "string"
+                    },
+                    "link": {
+                        "type": "string"
                     }
                 }
             }

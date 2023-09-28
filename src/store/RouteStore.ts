@@ -8,7 +8,7 @@ import { getLayerSvg, svgArea } from "./../data/svg";
 import { RouteLine, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
 import { uiState } from "./index";
-import { Layer } from "./LayerStore";
+import { Layer, LayersMode } from "./LayerStore";
 import RootStore from "./RootStore";
 
 export default class RouteStore {
@@ -16,11 +16,15 @@ export default class RouteStore {
     @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
+    @observable iconType: number = 0;
     @observable tempToBooth: Booth = null;
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
+    @observable prevZ: string = null;
+
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
+    @observable currentRouteLayer: Layer = null;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -29,9 +33,7 @@ export default class RouteStore {
 
     @action selectRoute(route: Route) {
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
-
         if (route?.from && route?.to && route.from === route.to) route = null;
-
         let list = [];
 
         if (route?.from && route?.to)
@@ -57,14 +59,24 @@ export default class RouteStore {
             if (route && (!route.from || !route.to)) store.showOverlay();
             if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
                 this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
+
+            if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
         }, 200);
     }
 
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
+        let layerExists = this.rootStore.layerStore.findLayer(this.currentPosition.z);
+
         return (
             this.rootStore.boothStore.booths
-                .filter((b) => b.visible && b.rect)
+                .filter((b) => {
+                    if (layersStore.mode === LayersMode.Default || !layerExists) {
+                        return b.visible && b.rect;
+                    } else {
+                        return b.rect && ((!this.currentPosition.z && b.visible) || layerExists.name === b.layer?.name);
+                    }
+                })
                 .sort(
                     (b1, b2) =>
                         lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
@@ -74,7 +86,7 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
-        var layers = [];
+        var layers: string[] = [];
         store.routeStore.routeLines
             ?.map((rl) => rl.p0.layer)
             .reverse()
@@ -82,7 +94,7 @@ export default class RouteStore {
                 if (layers.indexOf(l) === -1) layers.push(l);
             });
 
-        return store.layerStore.layers.filter((l) => layers.indexOf(l.name) > -1);
+        return layers.map((l) => store.layerStore.layers.find((layer) => layer.name === l));
     }
 
     @action clickRoute(from: Booth, to: Booth) {
@@ -103,17 +115,21 @@ export default class RouteStore {
         //this.showMap();
     }
 
-    @action selectCurrentPosition(point: CurrentPosition, focus: boolean) {
-        focus = focus && this.focusEnabled;
-        if (this.focusEnabled) this.focusEnabled = false;
+    @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
+        focus = true; // Temp always "true" SDK compatility
 
+        focus = focus && (this.focusEnabled || this.prevZ != point?.z);
+        if (this.focusEnabled) this.focusEnabled = false;
+        this.prevZ = point?.z?.toString();
+
+        this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
         if (!p) {
             this.currentPosition = null;
             return;
         }
 
-        let layer = store.layerStore.layers.find((l) => l?.name === point.z?.toString());
+        let layer = store.layerStore.findLayer(point.z);
 
         if (focus) {
             if (layer && !layer?.visible) layersStore.updateVisibility(layer.name, true);
@@ -136,7 +152,9 @@ export default class RouteStore {
             if (!rect.intersects(svgArea)) return;
 
             uiState.moveToRect = rect;
-            layersStore.updateVisibility(store.routeStore.currentPosition?.z, true);
+
+            const layer = store.layerStore.findLayer(store.routeStore.currentPosition?.z);
+            layersStore.updateVisibility(layer.name, true);
         } else store.selectBooth(store.routeStore.defaultFrom);
     }
 
@@ -182,7 +200,7 @@ export class CurrentPosition extends Point {
     public constructor(
         public x: number,
         public y: number,
-        public z?: string,
+        public z?: number | string,
         public angle?: number,
         public lat?: number,
         public lng?: number

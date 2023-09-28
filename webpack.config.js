@@ -67,6 +67,19 @@ const config = {
                 },
             },
             {
+                test: /\.(png|jpg|gif)$/i,
+                use: [
+                    {
+                        loader: "url-loader",
+                        options: {
+                            limit: true,
+                        },
+                    },
+                ],
+
+                type: "javascript/auto",
+            },
+            {
                 test: /\.s[ac]ss$/i,
                 use: [
                     {

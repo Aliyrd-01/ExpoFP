@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Meta, Story } from "@storybook/react";
 import ToggleSwitch, { ToggleSwitchProps } from "../ToggleSwitch";
+import ResponsiveClassContext from "../../storybook/contexts/ResponsiveClassContext";
 
 export default {
     title: "Components/ToggleSwitch",
@@ -9,10 +10,11 @@ export default {
 
 const Template: Story<ToggleSwitchProps> = (args) => {
     const [value, setValue] = useState<boolean>(true);
+    const responsiveClass = useContext(ResponsiveClassContext);
 
     return (
         <div className="layout sb-layout">
-            <ToggleSwitch {...args} onChange={setValue} value={value} />
+            <ToggleSwitch {...args} className={responsiveClass} onChange={setValue} value={value} />
             <br />
             <br />
             <strong>Current checked: </strong>

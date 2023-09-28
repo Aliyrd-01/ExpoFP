@@ -1,4 +1,5 @@
 import React from "react";
+import { t } from "../utils/i18n";
 import Autocomplete, { OptionObject } from "./Autocomplete";
 import ToggleSwitch from "./ToggleSwitch";
 import WayfindingFloorSelector from "./WayfindingFloorSelector";
@@ -45,7 +46,6 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     onClickFloor,
     onAccessibleCheck,
 }) => {
-
     return (
         <div className="efp-wayfinding">
             {showForm && (
@@ -58,20 +58,25 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                         <div className="efp-wayfindingForm__controls">
                             <div style={{ marginBottom: 10 }}>
                                 <Autocomplete
-                                    placeholder="Choose starting point"
+                                    placeholder={t("Choose starting point")}
                                     options={options}
                                     value={fromValue}
                                     onChange={onChangeFrom}
                                 />
                             </div>
                             <div>
-                                <Autocomplete placeholder="Select to" options={options} value={toValue} onChange={onChangeTo} />
+                                <Autocomplete
+                                    placeholder={t("Choose destination point")}
+                                    options={options}
+                                    value={toValue}
+                                    onChange={onChangeTo}
+                                />
                             </div>
                         </div>
                         <button type="button" className="efp-wayfindingForm__switch" onClick={onSwitch}></button>
                     </div>
                     {showAccessible && (
-                        <div className="formGroup" style={{ marginLeft: 45 }}>
+                        <div className="formGroup" style={{ marginInlineStart: 20, marginBottom: 20 }}>
                             <ToggleSwitch
                                 name="onlyAccessible"
                                 label="Accessible"

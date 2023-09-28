@@ -13,6 +13,7 @@ import "./Search.scss";
 // import logger from "../tools/logger";
 import * as YouAreHere from "../utils/yah";
 import { kioskKey } from "../store/init/init-ui";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
@@ -27,11 +28,11 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
             alert(`"You are here" coordinantes: ${yah[0]} ${yah[1]}, scale ${yah[2]}`);
         } else if (commandValue === "none") {
             YouAreHere.removeYah();
-            localStorage.removeItem(kioskKey);
+            isLocalStorageAvailable && localStorage.removeItem(kioskKey);
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
             YouAreHere.setYah(commandValue.split(",")[0]);
-            localStorage.setItem(kioskKey, "1");
+            isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 2 || commandValue.split(",").length === 3) {
             const yahValues = commandValue.split(",");
@@ -41,7 +42,7 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
             if (commandValue.split(",").length === 3) scale = parseFloat(yahValues[2].trim());
             if (!!yahX && !!yahY) {
                 YouAreHere.setYah(`${yahX},${yahY},${scale}`);
-                localStorage.setItem(kioskKey, "1");
+                isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
                 if (forseRefresh) window.location.replace(url);
             }
         }
@@ -60,15 +61,24 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
                 .then((value) => alert(`${value.length} images loaded.`))
                 .catch((error) => alert(error));
         });
+    } else if (/^copy_exh=\d+/.test(text)) {
+        const match = text.match(/^copy_exh=(\d+)/);
+        if (match && !isNaN(parseInt(match[1]))) {
+            const currentURL = window.location.origin + window.location.pathname;
+            const newURL = `${currentURL}?${match[0]}`;
+            window.location.replace(newURL);
+        }
     }
     return false;
 }
 
 function Search() {
     const el = useRef<HTMLDivElement>();
+    const overlayContentRef = useRef<HTMLDivElement>();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
+        updateOverlayContent: null as () => void,
         get hideRealInput() {
             return uiState.overlayBottom ? this.elementTop > 50 || uiState.overlaySize !== "full" : false;
         },
@@ -98,6 +108,12 @@ function Search() {
     useAutorun(() => {
         if (uiState.overlaySize !== "full" && document.activeElement === getInput()) {
             getInput().blur();
+        }
+    });
+
+    useAutorun(() => {
+        if (uiState.menu && uiState.kiosk) {
+            uiState.searchFocused = false;
         }
     });
 
@@ -165,7 +181,15 @@ function Search() {
         );
         // console.log("Search", s.hideRealInput, s.text);
         return (
-            <OverlayContent onClose={handleClose} onBack={handleBack} backMode={s.backMode} hideClose={!s.showClose} bar={bar}>
+            <OverlayContent
+                onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
+                onClose={handleClose}
+                onBack={handleBack}
+                backMode={s.backMode}
+                hideClose={!s.showClose}
+                bar={bar}
+                passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
+            >
                 <List />
             </OverlayContent>
         );
@@ -191,7 +215,10 @@ function Search() {
         uiState.searchFocused = true;
     }
 
-    function handleBlur() {
+    function handleBlur(e: FocusEvent) {
+        if (overlayContentRef.current.contains(e.relatedTarget)) {
+            return;
+        }
         setTimeout(() => (uiState.searchFocused = false), 200);
     }
 
@@ -230,6 +257,9 @@ function Search() {
     }
 
     function handleBack() {
+        if (uiState.kiosk) {
+            uiState.searchFocused = false;
+        }
         getInput().value = "";
         setText();
         uiState.desiredOverlaySize = "medium";

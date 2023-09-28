@@ -15,4 +15,6 @@ export const initI18n = async (locale: string): Promise<TFunction> => {
     });
 };
 
+export const getLanguage = () => i18next.language;
+
 export const t = (template: string, options?: any) => i18next.t(template, options);

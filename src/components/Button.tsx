@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import classNames from "classnames";
+import cn from "classnames";
 import "./Button.scss";
 
 type targets = "_self" | "_blank" | "_parent";
@@ -11,14 +11,26 @@ export interface ButtonProps {
     link?: string;
     target?: targets;
     disabled?: boolean;
-    onClick?: () => void;
+    variant?: "primary" | "gray" | "gray-border";
+    size?: "sm" | "md" | "lg";
+    onClick?: (event) => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, inline = false, text, link, target = "_self", disabled = false, onClick }) => {
+const Button: React.FC<ButtonProps> = ({
+    children,
+    inline = false,
+    text,
+    link,
+    target = "_self",
+    disabled = false,
+    variant = "primary",
+    size = "lg",
+    onClick,
+}) => {
     return link ? (
         <a
             href={link}
-            className={classNames("efp-button", { "efp-button--inline": inline, "efp-button--disabled": disabled })}
+            className={cn("efp-button", `efp-button--${variant}`, `efp-button--${size}`, { "efp-button--inline": inline })}
             target={target}
             rel="noopener noreferrer"
             onClick={onClick}
@@ -28,7 +40,7 @@ const Button: React.FC<ButtonProps> = ({ children, inline = false, text, link, t
     ) : (
         <button
             type="button"
-            className={classNames("efp-button", { "efp-button--inline": inline })}
+            className={cn("efp-button", `efp-button--${variant}`, `efp-button--${size}`, { "efp-button--inline": inline })}
             disabled={disabled}
             onClick={onClick}
         >
