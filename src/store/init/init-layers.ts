@@ -12,6 +12,12 @@ export default function initLayers(store: RootStore) {
 
     const initLayer = new URLSearchParams(window.location.search).get("layer");
 
+    const isvisible = (layer: Layer, shortName: string): boolean => {
+        if (initLayer) return shortName.toLowerCase() === initLayer.toLowerCase();
+        if (layerStore.mode === LayersMode.Radio) return layer.mode == LayerMode.TurnedOn;
+        return layer.visible;
+    };
+
     let layers: Layer[] = [];
     if (fpLayers) {
         layers = fpLayers.map((layer) => {
@@ -19,7 +25,7 @@ export default function initLayers(store: RootStore) {
             l.name = layer.name;
             l.description = layer.description;
             l.frozen = layer.frozen;
-            l.visible = (initLayer && l.shortName === initLayer) || (!initLayer && layer.mode == LayerMode.TurnedOn);
+            l.visible = isvisible(layer, l.shortName);
             l.rect = layer.rect;
             l.mode = layer.mode || LayerMode.Unset;
             return l;
