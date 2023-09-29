@@ -38,6 +38,12 @@ export function iniAllBooths(store: RootStore) {
             }
             exhibitor.booths.push(boothReg as RegularBooth);
         }
+
+        // if not exhibitor and in url has ?copy_exh=number, create test exhibitor in booth
+        if (!raw.exhibitors.length && copyExh) {
+            dublicateExhibitorsInBooth(null, boothReg, copyExh);
+        }
+
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
         booths.push(b);
     }
@@ -213,9 +219,16 @@ function getQueryParam(name: string): string | null {
     return params.get(name);
 }
 
-function dublicateExhibitorsInBooth(exhibitor: Exhibitor, booth: MutableRequired<RegularBooth>, times: number) {
+function dublicateExhibitorsInBooth(exhibitor: Exhibitor | null, booth: MutableRequired<RegularBooth>, times: number) {
+    let exh = new Exhibitor() as MutableRequired<Exhibitor>;
+    exh.name = "EXHIBITOR NAME";
+    exh.slug = "exhibitor-name";
+    exh.booths = [];
+
+    exh = exhibitor || exh;
+
     for (let i = 0; i < times; i++) {
-        const copyExhibitor: MutableRequired<Exhibitor> = { ...exhibitor, id: uuidv4() };
+        const copyExhibitor: MutableRequired<Exhibitor> = { ...exh, id: uuidv4() };
         booth.exhibitors.push(copyExhibitor as Exhibitor);
     }
 }
