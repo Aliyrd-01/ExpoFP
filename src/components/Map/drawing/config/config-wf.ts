@@ -188,16 +188,16 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        // let visible =
-        //     store.layerStore.mode == LayersMode.Default
-        //         ? true
-        //         : store.layerStore.layers.find(
-        //               (l) =>
-        //                   l.name == store.routeStore.currentRouteLayer?.name &&
-        //                   store.routeStore.currentRouteLayer?.name === line.p0.layer
-        //           )?.visible || false;
+        let visible =
+            store.layerStore.mode == LayersMode.Default
+                ? true
+                : store.layerStore.layers.find(
+                      (l) =>
+                          l.name == store.routeStore.currentRouteLayer?.name &&
+                          store.routeStore.currentRouteLayer?.name === line.p0.layer
+                  )?.visible || false;
 
-        let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
+        //let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
 
         if (!line.virtual && visible) lines.push(line);
 
