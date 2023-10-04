@@ -13,6 +13,7 @@ import RootStore from "./RootStore";
 
 export default class RouteStore {
     rootStore: RootStore;
+    cpTimeout: number;
     @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
@@ -116,6 +117,8 @@ export default class RouteStore {
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
+        clearTimeout(this.cpTimeout);
+
         focus = true; // Temp always "true" SDK compatility
 
         focus = focus && (this.focusEnabled || this.prevZ != point?.z);
@@ -137,6 +140,10 @@ export default class RouteStore {
         }
 
         this.currentPosition = p;
+
+        this.cpTimeout = setTimeout(() => {
+            if (this.currentPosition) this.selectCurrentPosition(null, false);
+        }, 30 * 1000) as any;
     }
 
     @action findLocation() {
