@@ -24,6 +24,7 @@ import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
 import ResizeObserver from "resize-observer-polyfill";
+import { LayerMode } from "../../store/LayerStore";
 
 //console.log('isIframe', isIframe)
 
@@ -310,6 +311,16 @@ export default function Map() {
 
         const x = e.clientX - left;
         const y = e.clientY - top;
+
+        if (uiState.onGetCoordsClick) {
+            const pxSvgMatrix = s.drawer.getPxSvgMatrix();
+            const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);
+            const currentFloor = store.layerStore.layers.find(
+                (l) => l.visible && (l.mode === LayerMode.TurnedOn || l.mode === LayerMode.TurnedOff)
+            );
+
+            uiState.onGetCoordsClick({ x: xys[0], y: xys[1], z: currentFloor?.name || null });
+        }
 
         // if (!this.props.onBoothClick) return;
         const b = getBoothIdFromClientXy(x, y, s.drawer);

@@ -87,6 +87,10 @@ export default class UIState {
         return this.rootStore.fp.onExhibitorCustomButtonClick;
     }
 
+    get onGetCoordsClick() {
+        return this.rootStore.fp.onGetCoordsClick;
+    }
+
     @computed({ keepAlive: true }) get selectedExhibitor() {
         return this.details instanceof Exhibitor ? this.details : null;
     }

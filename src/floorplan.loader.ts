@@ -41,6 +41,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
 
+    onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -85,6 +87,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.onBoothClick = options.onBoothClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
+        this.onGetCoordsClick = options.onGetCoordsClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
