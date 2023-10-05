@@ -1,5 +1,6 @@
 import data from "../data";
 import settings from "../tools/settings";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 
 const ga_common_prop = "G-78CKLYWFJK";
 
@@ -34,11 +35,10 @@ export enum GaEventActions {
 }
 
 function hasUserConsent(allowConsent?: boolean): boolean {
-    if (allowConsent === false) return false;
-    if (allowConsent === true) return true;
+    if (allowConsent === false || allowConsent === true) return allowConsent;
 
     // if allowConsent === undefined
-    return localStorage.getItem("userCookieChoice") === "true";
+    return isLocalStorageAvailable ? localStorage.getItem("userCookieChoice") === "true" : false;
 }
 
 function deleteGaCookies() {
@@ -55,8 +55,8 @@ function deleteGaCookies() {
     }
 }
 
-export function setConsentSettings() {
-    let analyticsConsent = hasUserConsent() ? "granted" : "denied";
+export function setConsentSettings(allowConsent?: boolean) {
+    let analyticsConsent = hasUserConsent(allowConsent) ? "granted" : "denied";
 
     if (analyticsConsent === "denied") {
         deleteGaCookies();
@@ -136,7 +136,8 @@ let s: HTMLScriptElement | null;
 let isGtagInitialized = false;
 
 export function initializeGtag(allowConsent?: boolean) {
-    if (!hasUserConsent() || allowConsent === false) return;
+    console.error(allowConsent, hasUserConsent(allowConsent));
+    if (!hasUserConsent(allowConsent)) return;
 
     if (!v) {
         v = document.createElement("script");
@@ -160,7 +161,7 @@ export function initializeGtag(allowConsent?: boolean) {
     }
 
     if (!isGtagInitialized) {
-        setConsentSettings();
+        setConsentSettings(allowConsent);
         gtag("config", ga_common_prop, { fp_key: settings.EXPO });
         window["gtag"] = gtag;
         isGtagInitialized = true;

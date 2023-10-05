@@ -24,7 +24,8 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { destroyGtag, initializeGtag, setConsentSettings } from "../tools/gtag";
+import { initializeGtag, setConsentSettings } from "../tools/gtag";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -48,15 +49,15 @@ export default observer(function Layout({ allowConsent }: LayoutProps) {
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
 
-    const onCookieConcentAccept = () => {
-        localStorage.setItem("userCookieChoice", "true");
-        initializeGtag(allowConsent);
+    const acceptConsent = () => {
+        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "true");
+        initializeGtag();
         setConsentSettings();
         store.uiState.hideCookieConsent = true;
     };
 
-    const onCookieConcentReject = () => {
-        localStorage.setItem("userCookieChoice", "false");
+    const rejectConsent = () => {
+        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "false");
         store.uiState.hideCookieConsent = true;
         setConsentSettings();
     };
@@ -80,7 +81,7 @@ export default observer(function Layout({ allowConsent }: LayoutProps) {
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}
-                {!uiState.noOverlay && <Overlay />}
+                {!uiState.noOverlay && <Overlay allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
@@ -92,13 +93,9 @@ export default observer(function Layout({ allowConsent }: LayoutProps) {
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {!store.uiState.hideCookieConsent && allowConsent === undefined && (
+                {!uiState.hideCookieConsent && allowConsent === undefined && (
                     <Suspense fallback={null}>
-                        <CookieConsent
-                            link="https://expofp.com"
-                            onClickAccept={onCookieConcentAccept}
-                            onClickReject={onCookieConcentReject}
-                        />
+                        <CookieConsent link="https://expofp.com" onClickAccept={acceptConsent} onClickReject={rejectConsent} />
                     </Suspense>
                 )}
                 {isDebug ? (

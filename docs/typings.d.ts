@@ -6,6 +6,7 @@ class FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly allowConsent: boolean;
 
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
