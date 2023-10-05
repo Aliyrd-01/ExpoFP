@@ -6,6 +6,7 @@ class FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly offHistory: boolean;
 
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
@@ -16,6 +17,8 @@ class FloorPlan {
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
     onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
+    onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
 
     selectBooth(nameOrExternalId: string): void;
 
@@ -52,6 +55,7 @@ interface FloorPlanOptions {
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
     onExhibitorCustomButtonClick?: (e: FloorPlanCustomButtonEvent) => void;
+    onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
 }
 
 interface FloorPlanBoothBase {
@@ -94,6 +98,10 @@ interface FloorPlanCustomButtonEvent {
     buttonNumber: number;
     buttonUrl: string;
     preventDefault: () => void;
+}
+
+interface FloorPlanGetCoordsEvent extends Point {
+    z: string | null;
 }
 
 interface FloorPlanExhibitor {

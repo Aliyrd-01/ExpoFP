@@ -1,12 +1,12 @@
 import { createBrowserHistory } from "history";
-import { autorun } from "mobx";
+import { autorun, reaction } from "mobx";
 import { hanleCustomCommand } from "../components/Search";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import { Route } from "../store/RouteStore";
+import { CurrentPosition, Route } from "../store/RouteStore";
 import logger from "../tools/logger";
 // import settings from '@/settings';
 
@@ -175,6 +175,25 @@ export function initRouting(offHistory = false) {
             historyReplace(newSearch);
             store.uiState.hideOverlay = true;
         }
+    } else if (locationSearch.includes("?blue-dot")) {
+        const url = new URL(window.location.href);
+        const blueDotParams = url.searchParams.get("blue-dot").split(",");
+
+        if (blueDotParams[0] && blueDotParams[1]) {
+            reaction(
+                () => store.layerStore.layersLoaded,
+                () => {
+                    const currentPosition = new CurrentPosition(
+                        Number(blueDotParams[0]),
+                        Number(blueDotParams[1]),
+                        blueDotParams[2]
+                    );
+                    store.routeStore.selectCurrentPosition(currentPosition, false);
+                }
+            );
+        }
+
+        historyReplace("?");
     }
 
     // facebook and google  fix
