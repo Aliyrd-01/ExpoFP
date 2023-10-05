@@ -119,6 +119,18 @@ export default class RouteStore {
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
         clearTimeout(this.cpTimeout);
 
+        const replaceCommasWithDot = (value: string | number | undefined) => {
+            if (typeof value === "string") {
+                return Number(value.replace(",", "."));
+            }
+            return value;
+        };
+
+        point.x = replaceCommasWithDot(point.x);
+        point.y = replaceCommasWithDot(point.y);
+        point.lat = replaceCommasWithDot(point.lat);
+        point.lng = replaceCommasWithDot(point.lng);
+
         focus = true; // Temp always "true" SDK compatility
 
         focus = focus && (this.focusEnabled || this.prevZ != point?.z);
