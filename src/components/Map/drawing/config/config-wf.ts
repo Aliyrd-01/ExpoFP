@@ -95,10 +95,9 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         fpConfig = fpGeo.properties.config;
     }
 
-    let point: Point =
-        fpConfig && position.lat && position.lng
-            ? { ...convertGpsToLocal(position.lat, position.lng, fpConfig), lat: position.lat, lng: position.lng }
-            : position;
+    let point: Point;
+    if (fpConfig && position.lat && position.lng) point = convertGpsToLocal(position.lat, position.lng, fpConfig);
+    point = point || position;
 
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
