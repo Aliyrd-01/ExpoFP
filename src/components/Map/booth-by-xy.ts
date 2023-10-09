@@ -5,6 +5,8 @@ import { boothStore, layersStore } from "../../store";
 import { Booth } from "../../store/BoothStore";
 import logger from "../../tools/logger";
 import { Drawer } from "./drawing/Drawer1";
+import { getTrianglesFromFpPaths } from "../../data/svg";
+import { LayersMode } from "../../store/LayerStore";
 // import { getPxSvgMatrix } from "./matrix";
 
 let rectsToBooths = new Map<Rect, Booth>();
@@ -84,7 +86,32 @@ function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth 
         return booth.visible ? booth : null;
     }
 
+    // If the point is not found in a segment, we check for polygonal areas
+    for (const b of boothStore.booths.filter((b) => b.visible && b.paths)) {
+        for (const p of b.paths) {
+            for (const t of getTrianglesFromFpPaths(p.index, layersStore.mode !== LayersMode.Default ? b.layer.name : "")) {
+                if (pointInTriangle(xs, ys, t)) {
+                    return b;
+                }
+            }
+        }
+    }
+
     return null;
+}
+
+function pointInTriangle(x: number, y: number, triangle: number[][]): boolean {
+    const [x1, y1] = triangle[0];
+    const [x2, y2] = triangle[1];
+    const [x3, y3] = triangle[2];
+
+    // Check if the point is inside the triangle using barycentric coordinates
+    const denominator = (y2 - y3) * (x1 - x3) + (x3 - x2) * (y1 - y3);
+    const a = ((y2 - y3) * (x - x3) + (x3 - x2) * (y - y3)) / denominator;
+    const b = ((y3 - y1) * (x - x3) + (x1 - x3) * (y - y3)) / denominator;
+    const c = 1 - a - b;
+
+    return a >= 0 && a <= 1 && b >= 0 && b <= 1 && c >= 0 && c <= 1;
 }
 
 export default function getBoothIdFromClientXy(x: number, y: number, drawer: Drawer): Booth {
