@@ -3,7 +3,7 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import Rect from "../core/Rect";
 import store, { uiState } from "../store";
-import { LayersMode } from "../store/LayerStore";
+import { LayerMode, LayersMode } from "../store/LayerStore";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import "./Floors.scss";
@@ -50,7 +50,9 @@ export default function Floors() {
     return useObserver(() => {
         data = store.layerStore.layers
             .filter((l) => !l.frozen)
-            .concat(store.routeStore.layers.filter(l=>!l.frozen))
+            .concat(
+                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible)
+            )
             .filter((value, index, array) => array.indexOf(value) === index)
             .map((l) => {
                 return {
