@@ -103,16 +103,17 @@ export default class RouteStore {
         this.rootStore.uiState.menu = null;
         this.selectRoute(new Route(this.defaultFrom || from, to));
 
-        if (this.rootStore.uiState.onDirection) {
-            const e: FloorPlanDirectionEvent = {
-                from: undefined,
-                to: undefined,
-                lines: [],
-                distance: "",
-                time: 0,
-            };
-            this.rootStore.uiState.onDirection(e);
-        }
+        // if (this.rootStore.uiState.onDirection) {
+        //     const e: FloorPlanDirectionEvent = {
+        //         from: undefined,
+        //         to: undefined,
+        //         lines: [],
+        //         distance: "",
+        //         time: 0,
+        //     };
+        //     this.rootStore.uiState.onDirection(e);
+        // }
+
         //this.showMap();
     }
 
