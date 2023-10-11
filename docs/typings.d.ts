@@ -18,6 +18,8 @@ class FloorPlan {
 
     onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
 
+    onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
+
     selectBooth(nameOrExternalId: string): void;
 
     selectExhibitor(nameOrExternalId: string): void;
@@ -53,6 +55,7 @@ interface FloorPlanOptions {
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
     onExhibitorCustomButtonClick?: (e: FloorPlanCustomButtonEvent) => void;
+    onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
 }
 
 interface FloorPlanBoothBase {
@@ -97,6 +100,10 @@ interface FloorPlanCustomButtonEvent {
     preventDefault: () => void;
 }
 
+interface FloorPlanGetCoordsEvent extends Point {
+    z: string | null;
+}
+
 interface FloorPlanExhibitor {
     id: number;
     name: string;
@@ -108,6 +115,12 @@ interface FloorPlanCategory {
     id: number;
     name: string;
     exhibitors: number[];
+}
+
+interface ExpoData {
+    booths: FloorPlanBooth[];
+    exhibitors: FloorPlanExhibitor[];
+    categories: FloorPlanCategory[];
 }
 
 const ExpoFP: {

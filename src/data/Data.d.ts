@@ -40,6 +40,10 @@ interface Data {
     isRebooking: boolean;
     events: ScheduleItem[];
     customCss: string;
+    
+    showCategories: boolean;
+    showCompaniesAndBooths: boolean;
+    showOtherSpaces: boolean;
 }
 
 interface ScheduleItem {

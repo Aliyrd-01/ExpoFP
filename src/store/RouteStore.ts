@@ -13,6 +13,7 @@ import RootStore from "./RootStore";
 
 export default class RouteStore {
     rootStore: RootStore;
+    cpTimeout: number;
     @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
@@ -102,20 +103,35 @@ export default class RouteStore {
         this.rootStore.uiState.menu = null;
         this.selectRoute(new Route(this.defaultFrom || from, to));
 
-        if (this.rootStore.uiState.onDirection) {
-            const e: FloorPlanDirectionEvent = {
-                from: undefined,
-                to: undefined,
-                lines: [],
-                distance: "",
-                time: 0,
-            };
-            this.rootStore.uiState.onDirection(e);
-        }
+        // if (this.rootStore.uiState.onDirection) {
+        //     const e: FloorPlanDirectionEvent = {
+        //         from: undefined,
+        //         to: undefined,
+        //         lines: [],
+        //         distance: "",
+        //         time: 0,
+        //     };
+        //     this.rootStore.uiState.onDirection(e);
+        // }
+
         //this.showMap();
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
+        clearTimeout(this.cpTimeout);
+
+        const replaceCommasWithDot = (value: string | number | undefined) => {
+            if (typeof value === "string") {
+                return Number(value.replace(",", "."));
+            }
+            return value;
+        };
+
+        point.x = replaceCommasWithDot(point.x);
+        point.y = replaceCommasWithDot(point.y);
+        point.lat = replaceCommasWithDot(point.lat);
+        point.lng = replaceCommasWithDot(point.lng);
+
         focus = true; // Temp always "true" SDK compatility
 
         focus = focus && (this.focusEnabled || this.prevZ != point?.z);
@@ -137,6 +153,10 @@ export default class RouteStore {
         }
 
         this.currentPosition = p;
+
+        this.cpTimeout = setTimeout(() => {
+            if (this.currentPosition) this.selectCurrentPosition(null, false);
+        }, 30 * 1000) as any;
     }
 
     @action findLocation() {

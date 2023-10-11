@@ -1,5 +1,6 @@
 import { getLayerSvg } from "./../../data/svg";
 import { select } from "d3";
+import { floors } from "../../data/svg";
 import { Layer, LayerMode, LayersMode } from "../LayerStore";
 import RootStore from "../RootStore";
 
@@ -13,7 +14,7 @@ export default function initLayers(store: RootStore) {
 
     const isvisible = (layer: Layer, shortName: string): boolean => {
         if (initLayer) return shortName.toLowerCase() === initLayer.toLowerCase();
-        if (layerStore.mode === LayersMode.Radio) return layer.mode == LayerMode.TurnedOn;
+        if (layerStore.mode !== LayersMode.Default) return layer.mode == LayerMode.TurnedOn;
         return layer.visible;
     };
 
@@ -42,6 +43,7 @@ export default function initLayers(store: RootStore) {
                     l.visible = true;
                     l.description = layer.getAttribute("data-layer-description") || layerID;
                     l.frozen = layer.getAttribute("data-layer-isfrozen") === "true" ? true : false;
+                    l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
                     l.mode = LayerMode.Unset;
                     layers.push(l);
                 }
@@ -49,7 +51,7 @@ export default function initLayers(store: RootStore) {
     }
 
     // Backward compatibilitty. Remove for future
-    if (layerStore.mode === LayersMode.Radio) {
+    if (layerStore.mode !== LayersMode.Default) {
         layers.forEach((l) => {
             if (l.mode === LayerMode.AlwaysHidden) {
                 l.frozen = true;
