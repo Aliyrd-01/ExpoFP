@@ -14,7 +14,7 @@ export default function initLayers(store: RootStore) {
 
     const isvisible = (layer: Layer, shortName: string): boolean => {
         if (initLayer) return shortName.toLowerCase() === initLayer.toLowerCase();
-        if (layerStore.mode === LayersMode.Radio) return layer.mode == LayerMode.TurnedOn;
+        if (layerStore.mode !== LayersMode.Default) return layer.mode == LayerMode.TurnedOn;
         return layer.visible;
     };
 
@@ -51,7 +51,7 @@ export default function initLayers(store: RootStore) {
     }
 
     // Backward compatibilitty. Remove for future
-    if (layerStore.mode === LayersMode.Radio) {
+    if (layerStore.mode !== LayersMode.Default) {
         layers.forEach((l) => {
             if (l.mode === LayerMode.AlwaysHidden) {
                 l.frozen = true;
