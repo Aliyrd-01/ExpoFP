@@ -240,6 +240,8 @@ export default class UIState {
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;
         const isCategory = this.list.type === "category";
 
+        if (uiState.noOverlay) return false;
+
         return (
             (text || isCategory) &&
             exhibitors.length &&
