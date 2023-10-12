@@ -6,7 +6,7 @@ import FloorPlanLoader from "./floorplan.loader";
 import { initRouting, destroyHistory } from "./services/routing";
 import store from "./store";
 import { CurrentPosition, Route } from "./store/RouteStore";
-import { GaEventActions, sendEventToGa } from "./tools/gtag";
+import { GaEventActions, initializeGtag, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 import { resetGlobalVariables } from "./tools/reset";
 import reportError from "./tools/report-error";
@@ -32,9 +32,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
     protected init(): void {
         initRouting(this.offHistory);
         store.fp = this;
+        initializeGtag(this.allowConsent);
         ReactDOM.render(
             // <FpContext.Provider value={this}>
-            <Layout offHistory={this.offHistory} />,
+            <Layout offHistory={this.offHistory} allowConsent={this.allowConsent} />,
             // </FpContext.Provider>,
             this.renderTarget
         );
