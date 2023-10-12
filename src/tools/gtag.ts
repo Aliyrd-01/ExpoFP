@@ -1,6 +1,7 @@
 import data from "../data";
 import settings from "../tools/settings";
 import { isLocalStorageAvailable } from "../utils/localStorage";
+import isDebug from "../utils/is-debug";
 
 const ga_common_prop = "G-78CKLYWFJK";
 
@@ -43,13 +44,14 @@ function hasUserConsent(allowConsent?: boolean): boolean {
 
 function deleteGaCookies() {
     const cookies = document.cookie.split(";");
+    const domain = isDebug ? "localhost" : ".expofp.com";
 
     for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i];
         const eqPos = cookie.indexOf("=");
         const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
         if (name.startsWith("_ga")) {
-            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.expofp.com";
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`;
         }
     }
 }
