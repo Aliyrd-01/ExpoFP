@@ -20,6 +20,7 @@ import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGr
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
+import isMobile from "../utils/is-mobile";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -495,9 +496,7 @@ function ExhibitorComponent() {
             url: window.location.href,
         };
 
-        const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini/i.test(navigator.userAgent);
-
-        if (mobile && navigator?.canShare && navigator.canShare(data)) {
+        if (isMobile && navigator?.canShare && navigator.canShare(data)) {
             navigator.share(data);
         } else {
             store.toggleModal("share");
