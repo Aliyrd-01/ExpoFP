@@ -11,7 +11,7 @@ export interface ButtonProps {
     link?: string;
     target?: targets;
     disabled?: boolean;
-    variant?: "primary" | "gray" | "gray-border";
+    variant?: "primary" | "secondary" | "gray" | "gray-border";
     size?: "sm" | "md" | "lg";
     onClick?: (event) => void;
 }
