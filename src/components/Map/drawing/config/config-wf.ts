@@ -95,10 +95,9 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         fpConfig = fpGeo.properties.config;
     }
 
-    let point: Point =
-        fpConfig && position.lat && position.lng
-            ? { ...convertGpsToLocal(position.lat, position.lng, fpConfig), lat: position.lat, lng: position.lng }
-            : position;
+    let point: Point;
+    if (fpConfig && position.lat && position.lng) point = convertGpsToLocal(position.lat, position.lng, fpConfig);
+    point = point || position;
 
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
@@ -188,16 +187,16 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        // let visible =
-        //     store.layerStore.mode == LayersMode.Default
-        //         ? true
-        //         : store.layerStore.layers.find(
-        //               (l) =>
-        //                   l.name == store.routeStore.currentRouteLayer?.name &&
-        //                   store.routeStore.currentRouteLayer?.name === line.p0.layer
-        //           )?.visible || false;
+        let visible =
+            store.layerStore.mode == LayersMode.Default
+                ? true
+                : store.layerStore.layers.find(
+                      (l) =>
+                          l.name == store.routeStore.currentRouteLayer?.name &&
+                          store.routeStore.currentRouteLayer?.name === line.p0.layer
+                  )?.visible || false;
 
-        let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
+        //let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
 
         if (!line.virtual && visible) lines.push(line);
 
@@ -414,7 +413,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
+            const visible = layersStore.findLayer(position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
 
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {

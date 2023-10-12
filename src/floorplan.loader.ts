@@ -21,6 +21,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly offHistory: boolean;
     readonly allowConsent: boolean | undefined;
 
     protected efpStyleLoadHandler: (e: Event) => void;
@@ -40,6 +41,8 @@ export default class FloorPlanLoader implements FloorPlan {
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
     onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
+    onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
 
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
@@ -61,6 +64,18 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    exhibitorsList(): any {
+        nr();
+    }
+
+    boothsList(): any {
+        nr();
+    }
+
+    categoriesList(): any {
+        nr();
+    }
+
     unstable_destroy(): void {
         nr();
     }
@@ -68,11 +83,13 @@ export default class FloorPlanLoader implements FloorPlan {
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;
+        this.offHistory = !!options.offHistory;
         this.allowConsent = options.allowConsent;
 
         this.onBoothClick = options.onBoothClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
+        this.onGetCoordsClick = options.onGetCoordsClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {

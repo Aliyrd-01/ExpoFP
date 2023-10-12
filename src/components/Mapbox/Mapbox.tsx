@@ -40,10 +40,7 @@ export default function Mapbox() {
 
         get actualCurrentPosition(): CurrentPosition {
             const cp = store.routeStore.currentPosition;
-
-            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.layers.find((l) => l.name === cp.z)) > -1
-                ? cp
-                : null;
+            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.findLayer(cp.z)) > -1 ? cp : null;
         },
 
         get style() {
@@ -84,6 +81,12 @@ export default function Mapbox() {
                     ),
                 1500
             );
+
+            map.current.setLight({
+                anchor: "viewport",
+                color: "white",
+                intensity: 0,
+            });
 
             const logos = await loadLogos(store.boothStore.booths as RegularBooth[]);
 

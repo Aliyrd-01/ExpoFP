@@ -10,6 +10,14 @@ export default function initLayers(store: RootStore) {
     const fpLayers = window["__fpLayers"] as Layer[];
     layerStore.mode = window["__fpLayersMode"] || LayersMode.Default;
 
+    const initLayer = new URLSearchParams(window.location.search).get("layer");
+
+    const isvisible = (layer: Layer, shortName: string): boolean => {
+        if (initLayer) return shortName.toLowerCase() === initLayer.toLowerCase();
+        if (layerStore.mode === LayersMode.Radio) return layer.mode == LayerMode.TurnedOn;
+        return layer.visible;
+    };
+
     let layers: Layer[] = [];
     if (fpLayers) {
         layers = fpLayers.map((layer) => {
@@ -17,7 +25,7 @@ export default function initLayers(store: RootStore) {
             l.name = layer.name;
             l.description = layer.description;
             l.frozen = layer.frozen;
-            l.visible = layer.visible;
+            l.visible = isvisible(layer, l.shortName);
             l.rect = layer.rect;
             l.mode = layer.mode || LayerMode.Unset;
             return l;
@@ -50,9 +58,6 @@ export default function initLayers(store: RootStore) {
                 l.visible = false;
             } else if (l.mode === LayerMode.AlwaysVisible) {
                 l.frozen = l.visible = true;
-            } else if (l.mode === LayerMode.TurnedOn || l.mode === LayerMode.TurnedOff) {
-                l.frozen = false;
-                l.visible = l.mode === LayerMode.TurnedOn;
             }
         });
     }

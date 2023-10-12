@@ -42,8 +42,8 @@ export default function init(container: HTMLElement, data: ICommonData): Promise
         controls.enableZoom = true;
         controls.enableDamping = true;
         controls.zoomSpeed = 0.5;
-        controls.rotateSpeed = 0.2;
-        controls.panSpeed = 0.2;
+        controls.rotateSpeed = 0.5;
+        controls.panSpeed = 0.5;
         controls.target.set(x, y, 0);
         controls.mouseButtons = {
             LEFT: THREE.MOUSE.PAN,

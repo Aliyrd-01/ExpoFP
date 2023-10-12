@@ -60,15 +60,17 @@ logger.log("svgArea", svgArea, "svgViewBox", svgViewBox);
 
 settings.wayfinding = !data.hideDirections && window["__wfData"] ? true : false;
 
-let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[])
-    .map((f) => {
-        f.remove();
-        return {
-            name: f.dataset.floor,
-            rect: Rect.fromSvgRectElement(f),
-        };
-    })
-    .sort();
+let floors = window["__fpLayersMode"]
+    ? (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[])
+          .map((f) => {
+              f.remove();
+              return {
+                  name: f.dataset.floor,
+                  rect: Rect.fromSvgRectElement(f),
+              };
+          })
+          .sort()
+    : [];
 
 export { svgArea, svgViewBox, floors };
 

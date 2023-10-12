@@ -68,7 +68,10 @@ export function convertGpsToLocal(latitude: number, longitude: number, config: G
     let distToCenter = lineLength(locationPixel, lineCenter(config.p0, config.p2));
     let diagonale = lineLength(config.p0, config.p2);
 
-    if (distToCenter > 5 * diagonale) logger.warn("Current position too far");
+    if (distToCenter > 5 * diagonale) {
+        logger.warn("Current position too far");
+        return null;
+    }
 
     return locationPixel;
 }

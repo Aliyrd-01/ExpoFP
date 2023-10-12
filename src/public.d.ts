@@ -6,6 +6,7 @@ class FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly offHistory: boolean;
     readonly allowConsent: boolean;
 
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
@@ -17,6 +18,8 @@ class FloorPlan {
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
     onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
+    onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
 
     selectBooth(nameOrExternalId: string): void;
 
@@ -33,6 +36,12 @@ class FloorPlan {
 
     selectRoute(from: string, to: string, onlyAccessible: boolean): void;
 
+    exhibitorsList(): FloorPlanExhibitor[];
+
+    boothsList(): FloorPlanBooth[];
+
+    categoriesList(): FloorPlanCategory[];
+
     unstable_destroy(): void;
 }
 
@@ -41,21 +50,29 @@ interface FloorPlanOptions {
     eventId?: string;
     dataUrl?: string;
     noOverlay?: boolean;
+    offHistory?: boolean;
     allowConsent?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
     onExhibitorCustomButtonClick?: (e: FloorPlanCustomButtonEvent) => void;
+    onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
 }
 
-interface FloorPlanBooth {
+interface FloorPlanBoothBase {
     id: number;
     name: string;
 }
 
+interface FloorPlanBooth extends FloorPlanBoothBase {
+    externalId: string;
+    isSpecial: boolean;
+    exhibitors: number[];
+}
+
 interface FloorPlanBoothClickEvent {
-    target: FloorPlanBooth;
+    target: FloorPlanBoothBase;
 }
 
 interface Point {
@@ -64,8 +81,8 @@ interface Point {
 }
 
 interface FloorPlanDirectionEvent {
-    from: FloorPlanBooth;
-    to: FloorPlanBooth;
+    from: FloorPlanBoothBase;
+    to: FloorPlanBoothBase;
     lines: { p0: Point; p1: Point }[];
     distance: string;
     time: number;
@@ -83,6 +100,29 @@ interface FloorPlanCustomButtonEvent {
     buttonNumber: number;
     buttonUrl: string;
     preventDefault: () => void;
+}
+
+interface FloorPlanGetCoordsEvent extends Point {
+    z: string | null;
+}
+
+interface FloorPlanExhibitor {
+    id: number;
+    name: string;
+    externalId: string;
+    booths: number[];
+}
+
+interface FloorPlanCategory {
+    id: number;
+    name: string;
+    exhibitors: number[];
+}
+
+interface ExpoData {
+    booths: FloorPlanBooth[];
+    exhibitors: FloorPlanExhibitor[];
+    categories: FloorPlanCategory[];
 }
 
 const ExpoFP: {

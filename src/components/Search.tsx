@@ -61,6 +61,13 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
                 .then((value) => alert(`${value.length} images loaded.`))
                 .catch((error) => alert(error));
         });
+    } else if (/^copy_exh=\d+/.test(text)) {
+        const match = text.match(/^copy_exh=(\d+)/);
+        if (match && !isNaN(parseInt(match[1]))) {
+            const currentURL = window.location.origin + window.location.pathname;
+            const newURL = `${currentURL}?${match[0]}`;
+            window.location.replace(newURL);
+        }
     }
     return false;
 }

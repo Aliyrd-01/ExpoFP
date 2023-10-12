@@ -3,16 +3,16 @@ import ReactDOM from "react-dom";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
-import "./services/routing";
+import { initRouting, destroyHistory } from "./services/routing";
 import store from "./store";
 import { CurrentPosition, Route } from "./store/RouteStore";
 import { GaEventActions, initializeGtag, sendEventToGa } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 import { resetGlobalVariables } from "./tools/reset";
 import reportError from "./tools/report-error";
-import { destroyHistory } from "./services/routing";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { destroyGtag } from "./tools/gtag";
+import { SpecialBooth } from "./store/BoothStore";
 
 trackEvent("load");
 sendEventToGa(GaEventActions.Load, ``);
@@ -30,11 +30,12 @@ export default class FloorPlanReady extends FloorPlanLoader {
     //     super(options);
     // }
     protected init(): void {
+        initRouting(this.offHistory);
         store.fp = this;
         initializeGtag(this.allowConsent);
         ReactDOM.render(
             // <FpContext.Provider value={this}>
-            <Layout allowConsent={this.allowConsent} />,
+            <Layout offHistory={this.offHistory} allowConsent={this.allowConsent} />,
             // </FpContext.Provider>,
             this.renderTarget
         );
@@ -54,9 +55,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectExhibitor(nameOrExternalId: string | string[]) {
-        const exhibitors = store.exhibitorStore.exhibitors.filter(
-            (exh) => nameOrExternalId.indexOf(exh.name) > -1 || nameOrExternalId.indexOf(exh.externalId) > -1
-        );
+        const exhibitors = store.exhibitorStore.exhibitors.filter((exh) => {
+            if (typeof nameOrExternalId === "string") {
+                return exh.name === nameOrExternalId || exh.externalId === nameOrExternalId;
+            }
+            return nameOrExternalId.includes(exh.name) || nameOrExternalId.includes(exh.externalId);
+        });
+
         if (exhibitors && exhibitors.length > 0) {
             store.selectExhibitor(exhibitors[0]);
             store.moveToList([exhibitors[0]]);
@@ -75,6 +80,39 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     updateLayerVisibility(layer: string, visible: boolean): void {
         store.layerStore.updateVisibility(layer, visible);
+    }
+
+    exhibitorsList(): any {
+        return store.exhibitorStore.exhibitors.map((e) => {
+            return {
+                id: e.id,
+                name: e.name,
+                externalId: e.externalId,
+                booths: e.booths.map((b) => b.id),
+            };
+        });
+    }
+
+    boothsList(): any {
+        return store.boothStore.booths.map((b) => {
+            return {
+                id: b.id,
+                name: b.name,
+                externalId: b.externalId,
+                isSpecial: b instanceof SpecialBooth,
+                exhibitors: b.exhibitors.map((e) => e.id),
+            };
+        });
+    }
+
+    categoriesList(): any {
+        return store.categoryStore.categories.map((c) => {
+            return {
+                id: c.id,
+                name: c.name,
+                exhibitors: c.exhibitors.map((e) => e.id),
+            };
+        });
     }
 
     unstable_destroy() {

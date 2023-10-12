@@ -88,6 +88,10 @@ export default class UIState {
         return this.rootStore.fp.onExhibitorCustomButtonClick;
     }
 
+    get onGetCoordsClick() {
+        return this.rootStore.fp.onGetCoordsClick;
+    }
+
     @computed({ keepAlive: true }) get selectedExhibitor() {
         return this.details instanceof Exhibitor ? this.details : null;
     }
@@ -237,6 +241,8 @@ export default class UIState {
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;
         const isCategory = this.list.type === "category";
 
+        if (uiState.noOverlay) return false;
+
         return (
             (text || isCategory) &&
             exhibitors.length &&
@@ -257,24 +263,31 @@ export default class UIState {
         const boothsArray = boothStore.booths;
 
         if (!text) {
+            let combinedArray = [];
+            const cats = data.showCategories ? categoriesArray : [];
+
             const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
-            const combinedArray = [...exhibitorsArray, ...otherSpacesArray];
+
+            if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
+            if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
 
             return exhibitorsArray.length === 0
                 ? boothsArray
-                : combinedArray.sort((a, b) => {
-                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+                : cats.concat(
+                      combinedArray.sort((a, b) => {
+                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                      if (aFeatured !== bFeatured) {
-                          return aFeatured ? -1 : 1;
-                      }
+                          if (aFeatured !== bFeatured) {
+                              return aFeatured ? -1 : 1;
+                          }
 
-                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
-                  });
+                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
+                      })
+                  );
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {

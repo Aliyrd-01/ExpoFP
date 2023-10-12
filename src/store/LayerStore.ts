@@ -74,7 +74,7 @@ export default class LayerStore {
     @action updateVisibility(layerName: string, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 
-        const layer = this.layers.find((l) => l.name === layerName);
+        const layer = this.findLayer(layerName);
         if (!layer || layer.visible === visible) return;
 
         loadLayer(layer).then(() => {
@@ -92,6 +92,22 @@ export default class LayerStore {
                 if (!animated) layer.visible = visible;
                 else an(layer, visible);
             }
+        });
+    }
+
+    public findLayer(z: string | number): Layer {
+        if (!z) return null;
+        z = z.toString().toLowerCase();
+
+        return this.layers.find((l) => {
+            const extractedNumber = (l.name.match(/(-?[0-9]+)/) || "")[0];
+
+            return (
+                z === l?.name.toLowerCase() ||
+                z === l?.description.toLowerCase() ||
+                z === l?.shortName.toLowerCase() ||
+                z === extractedNumber
+            );
         });
     }
 }

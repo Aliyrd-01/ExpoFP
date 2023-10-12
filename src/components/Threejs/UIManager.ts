@@ -20,6 +20,7 @@ import logosFromBooths from "../../utils/imageloader";
 import isDebug from "../../utils/is-debug";
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import TextureMerger from "./utils/textureMerger";
+import canvasFromText from "./utils/canvasFromText";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -201,7 +202,11 @@ export default class UIManager {
         const logos = (await logosFromBooths(boothStore.booths as any)).filter((l) => !!l);
 
         var textureObj = new Map<string, THREE.Texture>();
-        logos.forEach((logo) => textureObj.set(logo.name, new THREE.Texture(logo.htmlImage)));
+        logos.forEach((logo) => textureObj.set(logo.name+ "_logo", new THREE.Texture(logo.htmlImage)));
+
+        store.boothStore.booths.forEach((b) => {
+            textureObj.set(b.slug, new THREE.Texture(canvasFromText(b.name)));
+        });
 
         var textureMerger = new TextureMerger(textureObj);
 
@@ -232,18 +237,14 @@ export default class UIManager {
                     z
                 );
 
-                let text = boothMesh.setText();
-                if (text) scene.add(text);
+                // let text = boothMesh.setText();
+                // if (text) scene.add(text);
 
                 var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
-                if (exhibitor)
-                    scene.add(
-                        boothMesh.setLogo(
-                            textureMerger,
-                            logos.find((l) => l.booth.name === name.substring(1)),
-                            material
-                        )
-                    );
+                if (exhibitor) {
+                    const img = logos.find((l) => l.booth.name === name.substring(1));
+                    scene.add(boothMesh.setLogo(textureMerger, img.htmlImage.width / img.htmlImage.height, material));
+                }
 
                 model.children[index] = boothMesh;
 
@@ -261,7 +262,7 @@ export default class UIManager {
 
         let z = 0;
         if (point.z) {
-            let layer = this.data.objLayers.find((l) => l.name === point.z);
+            let layer = this.data.objLayers.find((l) => l.name === point?.z.toString());
             if (layer) z = 1.5 * layer.z;
         }
 

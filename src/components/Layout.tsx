@@ -42,10 +42,11 @@ const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cookie-conse
 // });
 
 interface LayoutProps {
+    offHistory: boolean;
     allowConsent?: boolean;
 }
 
-export default observer(function Layout({ allowConsent }: LayoutProps) {
+export default observer(function Layout({ offHistory, allowConsent }: LayoutProps) {
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
@@ -114,7 +115,14 @@ export default observer(function Layout({ allowConsent }: LayoutProps) {
                 {uiState.modalActive.share ? (
                     <Suspense fallback={null}>
                         <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
-                            <Share title={uiState.selectedExhibitor?.name} url={window.location.href} />
+                            <Share
+                                title={uiState.selectedExhibitor?.name}
+                                url={
+                                    offHistory
+                                        ? `${window.location.origin}?${encodeURI(uiState.selectedExhibitor.slug)}`
+                                        : window.location.href
+                                }
+                            />
                         </Modal>
                     </Suspense>
                 ) : null}
