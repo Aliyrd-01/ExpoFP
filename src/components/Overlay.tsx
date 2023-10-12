@@ -17,7 +17,11 @@ import Search from "./Search";
 import Wayfinding from "./Wayfinding";
 const { uiState } = store;
 
-export default observer(function Overlay() {
+interface OverlayProps {
+    allowConsent?: boolean;
+}
+
+export default observer(function Overlay({ allowConsent }: OverlayProps) {
     // const overlayPosition = "1";
     const el = useRef<HTMLDivElement>(null);
 
@@ -203,7 +207,7 @@ export default observer(function Overlay() {
             ref={el}
         >
             {s.noMove}
-            <Menu />
+            <Menu allowConsent={allowConsent} />
             <Search />
             <Exhibitor />
             <Booth />

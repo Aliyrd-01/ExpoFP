@@ -1,5 +1,7 @@
 import data from "../data";
 import settings from "../tools/settings";
+import { isLocalStorageAvailable } from "../utils/localStorage";
+import isDebug from "../utils/is-debug";
 
 const ga_common_prop = "G-78CKLYWFJK";
 
@@ -31,6 +33,53 @@ export enum GaEventActions {
     ClickYoutube = "Click Youtube",
 
     ClickDirections = "Click Directions",
+}
+
+function hasUserConsent(allowConsent?: boolean): boolean {
+    if (allowConsent === false || allowConsent === true) return allowConsent;
+
+    // if allowConsent === undefined
+    return isLocalStorageAvailable ? localStorage.getItem("userCookieChoice") === "true" : false;
+}
+
+function deleteGaCookies() {
+    const cookies = document.cookie.split(";");
+    const domain = isDebug ? "localhost" : ".expofp.com";
+
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        if (name.startsWith("_ga")) {
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`;
+        }
+    }
+}
+
+export function setConsentSettings(allowConsent?: boolean) {
+    let analyticsConsent = hasUserConsent(allowConsent) ? "granted" : "denied";
+
+    if (analyticsConsent === "denied") {
+        deleteGaCookies();
+
+        if (data.gtag) {
+            window[`ga-disable-${data.gtag}`] = true;
+        }
+        window[`ga-disable-${ga_common_prop}`] = true;
+    } else {
+        if (data.gtag) {
+            window[`ga-disable-${data.gtag}`] = false;
+        }
+        window[`ga-disable-${ga_common_prop}`] = false;
+    }
+
+    gtag("consent", "default", {
+        ad_storage: "denied",
+        analytics_storage: analyticsConsent,
+        functionality_storage: "denied",
+        personalization_storage: "denied",
+        security_storage: "denied",
+    });
 }
 
 export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string) {
@@ -85,28 +134,39 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
 let v: HTMLScriptElement | null;
 let s: HTMLScriptElement | null;
 
-v = document.createElement("script");
-v.type = "text/javascript";
-v.async = true;
-v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
-const vx = document.getElementsByTagName("script")[0];
-vx.parentNode.insertBefore(v, vx);
+let isGtagInitialized = false;
 
-gtag("js", new Date());
+export function initializeGtag(allowConsent?: boolean) {
+    if (!hasUserConsent(allowConsent)) return;
 
-if (data.gtag) {
-    s = document.createElement("script");
-    s.type = "text/javascript";
-    s.async = true;
-    s.src = `https://www.googletagmanager.com/gtag/js?id=${data.gtag}`;
-    const x = document.getElementsByTagName("script")[0];
-    x.parentNode.insertBefore(s, x);
+    if (!v) {
+        v = document.createElement("script");
+        v.type = "text/javascript";
+        v.async = true;
+        v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
+        const vx = document.getElementsByTagName("script")[0];
+        vx.parentNode.insertBefore(v, vx);
+        gtag("js", new Date());
+    }
 
-    gtag("config", data.gtag, { fp_key: settings.EXPO });
+    if (data.gtag && !s) {
+        s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = `https://www.googletagmanager.com/gtag/js?id=${data.gtag}`;
+        const x = document.getElementsByTagName("script")[0];
+        x.parentNode.insertBefore(s, x);
+
+        gtag("config", data.gtag, { fp_key: settings.EXPO });
+    }
+
+    if (!isGtagInitialized) {
+        setConsentSettings(allowConsent);
+        gtag("config", ga_common_prop, { fp_key: settings.EXPO });
+        window["gtag"] = gtag;
+        isGtagInitialized = true;
+    }
 }
-gtag("config", ga_common_prop, { fp_key: settings.EXPO });
-
-window["gtag"] = gtag;
 
 export function destroyGtag() {
     if (v && v.parentNode) {

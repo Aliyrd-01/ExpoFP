@@ -58,6 +58,7 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
+    @observable hideCookieConsent = Boolean(isLocalStorageAvailable && localStorage.getItem("userCookieChoice"));
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
 
@@ -239,6 +240,8 @@ export default class UIState {
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;
         const isCategory = this.list.type === "category";
+
+        if (uiState.noOverlay) return false;
 
         return (
             (text || isCategory) &&

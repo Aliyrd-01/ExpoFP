@@ -42,6 +42,16 @@ a.efp-button {
         display: inline-flex;
         width: auto;
     }
+    &--secondary {
+        background: var(--color-primaryLight);
+        color: var(--color-primary);
+
+        &:hover,
+        &:active {
+            background: var(--color-primaryLight);
+            color: var(--color-primaryDark);
+        }
+    }
     &--gray {
         background: var(--color-grayUltraLight);
         color: var(--color-black);

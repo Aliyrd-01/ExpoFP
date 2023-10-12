@@ -24,6 +24,9 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
+import { initializeGtag, setConsentSettings } from "../tools/gtag";
+import { isLocalStorageAvailable } from "../utils/localStorage";
+import isMobile from "../utils/is-mobile";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -31,6 +34,7 @@ const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug")
 const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
 const ThreeComponent = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Threejs/ThreeComponent"));
 const Modal = React.lazy(() => import("./Modal"));
+const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cookie-consent" */ "./CookieConsent"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
@@ -39,12 +43,26 @@ const Modal = React.lazy(() => import("./Modal"));
 
 interface LayoutProps {
     offHistory: boolean;
+    allowConsent?: boolean;
 }
 
-export default observer(function Layout({ offHistory }: LayoutProps) {
+export default observer(function Layout({ offHistory, allowConsent }: LayoutProps) {
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
+
+    const acceptConsent = () => {
+        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "true");
+        initializeGtag();
+        setConsentSettings();
+        store.uiState.hideCookieConsent = true;
+    };
+
+    const rejectConsent = () => {
+        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "false");
+        store.uiState.hideCookieConsent = true;
+        setConsentSettings();
+    };
 
     return (
         <div
@@ -65,7 +83,7 @@ export default observer(function Layout({ offHistory }: LayoutProps) {
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}
-                {!uiState.noOverlay && <Overlay />}
+                {!uiState.noOverlay && <Overlay allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
@@ -77,6 +95,15 @@ export default observer(function Layout({ offHistory }: LayoutProps) {
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
+                {!uiState.hideCookieConsent && (allowConsent === undefined || !isMobile) && (
+                    <Suspense fallback={null}>
+                        <CookieConsent
+                            link="https://expofp.com/privacy"
+                            onClickAccept={acceptConsent}
+                            onClickReject={rejectConsent}
+                        />
+                    </Suspense>
+                )}
                 {isDebug ? (
                     <Suspense fallback={null}>
                         <Debug />
