@@ -137,7 +137,6 @@ let s: HTMLScriptElement | null;
 let isGtagInitialized = false;
 
 export function initializeGtag(allowConsent?: boolean) {
-    console.error(allowConsent, hasUserConsent(allowConsent));
     if (!hasUserConsent(allowConsent)) return;
 
     if (!v) {
