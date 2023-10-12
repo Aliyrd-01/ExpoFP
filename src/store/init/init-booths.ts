@@ -121,6 +121,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
+        booth.yah = isYahBooth(booth as Booth);
         if (boothReg) {
             boothReg.availColor = el.getAttribute("data-avail-color") || boothReg.availColor;
             boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
@@ -187,7 +188,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
-                    const color = isYahBooth(booth as Booth) ? el.style?.fill || path.style.fill : path.style.fill;
+                    const color = booth.yah ? el.style?.fill || path.style.fill : path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
                     booth.paths.push({
                         index: d,
@@ -208,7 +209,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     }
 
     layerBooths
-        .filter((b) => (b.name.match(/^yah_/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.defaultFrom)
+        .filter((b) => b.yah && b !== store.routeStore.defaultFrom)
         .forEach((btr) => layerBooths.splice(layerBooths.indexOf(btr), 1));
 
     return layerBooths;
