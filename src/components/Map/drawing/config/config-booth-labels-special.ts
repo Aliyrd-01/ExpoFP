@@ -3,7 +3,7 @@ import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import store, { uiState } from "./../../../../store/index";
+import store, { boothStore, uiState } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
@@ -47,7 +47,10 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // initDrawer(this.drawer);
 
         let r = this.booth.rect;
-        r = r.withPadding(r.w * 0.05, r.h * 0.05);
+
+        const pad = booth.borderWidth / 2 || boothStore.borderWidth / 2;
+
+        r = r.withPadding(r.w * 0.05 + pad, r.h * 0.05 + pad);
         const text = this.booth.title || this.booth.name;
 
         this.steps = cteateTextFitter(context.pixelRatio).getStepsForRect(text, r.w, r.h);

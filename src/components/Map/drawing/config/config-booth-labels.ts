@@ -103,7 +103,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             ? booth.exhibitors
             : booth.exhibitors.filter((e) => e.featured);
 
-        const pad = boothStore.borderWidth / 2;
+        const pad = booth.borderWidth / 2 || boothStore.borderWidth / 2;
 
         if (!exh.length) {
             this.addLabel(7, "XS", color);
