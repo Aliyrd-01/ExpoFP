@@ -237,8 +237,8 @@ export default class UIManager {
                     z
                 );
 
-                // let text = boothMesh.setText();
-                // if (text) scene.add(text);
+                let text = boothMesh.setText();
+                if (text) scene.add(text);
 
                 var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
                 if (exhibitor) {
