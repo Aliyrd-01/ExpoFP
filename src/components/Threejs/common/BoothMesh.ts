@@ -76,7 +76,7 @@ export class BoothMesh extends THREE.Group {
 
         mesh.position.x = rect.center.x;
         mesh.position.y = rect.center.y;
-        mesh.position.z = this.z;
+        mesh.position.z = this.z + 0.01;
         mesh.scale.y = -1;
         mesh.name = this.name;
         mesh.layers.set(this.threeLayer);

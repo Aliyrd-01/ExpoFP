@@ -7,7 +7,7 @@ export default function initMapbox(container: HTMLElement, style: string): Promi
 
         const map = new mapboxgl.Map({
             container: container,
-            style: `mapbox://styles/mapbox/${"streets-v12"}`,
+            style: `mapbox://styles/mapbox/${"light-v11"}`,
             //style: "mapbox://styles/mapbox/" + style,
             antialias: true,
             pitch: 50,

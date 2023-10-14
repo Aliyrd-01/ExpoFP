@@ -30,7 +30,7 @@ let routeIndex = 0;
 
 const booths: BoothMesh[] = [];
 
-let pointSize = 0.04;
+let pointSize = 0.2;
 
 let currentPositionMesh = new THREE.Mesh(
     new THREE.BoxGeometry(2 * pointSize, 2 * pointSize, 10 * pointSize),
