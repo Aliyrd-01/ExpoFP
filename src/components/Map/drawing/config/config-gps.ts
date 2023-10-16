@@ -22,6 +22,9 @@ function trackGPS() {
                     fpGeo.properties.config as GpsConfig
                 );
 
+                if(!localPoint) return;
+
+
                 const currentPosition = new CurrentPosition(
                     localPoint.x,
                     localPoint.y,
