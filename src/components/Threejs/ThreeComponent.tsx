@@ -6,7 +6,7 @@ import store, { boothStore, uiState } from "../../store";
 import { CurrentPosition } from "../../store/RouteStore";
 import { useReaction } from "../../utils/mobx";
 import "../Mapbox/Mapbox.scss";
-import { moveToLocation, moveToRect, switchViewbox, updateRouteLines } from "../Mapbox/utils/data";
+import { moveToLocation, moveToRect, switchViewbox, updateRouteLines, zoomMap } from "../Mapbox/utils/data";
 
 import UIManager from "./UIManager";
 
@@ -41,21 +41,16 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
         },
     }));
 
-    // // ZoomBy
-    // useReaction(
-    //     () => uiState.zoomBy,
-    //     () => {
-    //         if (!uiState.zoomBy || !store.mapboxStore.showMapbox) return;
-    //         const z = uiState.zoomBy;
-    //         uiState.zoomBy = null;
-    //         map.current.flyTo({
-    //             zoom: map.current.getZoom() + (z > 1 ? 0.5 : -0.5),
-    //             animate: true,
-    //             duration: 500,
-    //             essential: true,
-    //         });
-    //     }
-    // );
+    // ZoomBy
+    useReaction(
+        () => uiState.zoomBy,
+        () => {
+            if (!uiState.zoomBy || !store.mapboxStore.showMapbox) return;
+            const z = uiState.zoomBy;
+            uiState.zoomBy = null;
+            zoomMap(z > 1);
+        }
+    );
 
     // Update layers visibility, loading, selected route
     useReaction(

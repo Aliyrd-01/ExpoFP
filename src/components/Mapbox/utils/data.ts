@@ -201,6 +201,15 @@ export function moveToLocation(duration: number = 1000, pitch: number = props.in
     });
 }
 
+export function zoomMap(zoomIn: boolean) {
+    map.flyTo({
+        zoom: map.getZoom() + (zoomIn ? 0.5 : -0.5),
+        animate: true,
+        duration: 500,
+        essential: true,
+    });
+}
+
 export function switchViewbox(showMapbox: boolean) {
     let duration = 1200;
 

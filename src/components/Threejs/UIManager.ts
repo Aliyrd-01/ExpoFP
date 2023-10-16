@@ -36,8 +36,6 @@ const booths: BoothMesh[] = [];
 
 let pointSize = 0.5;
 
-const markers: SpriteMesh[] = [];
-
 export default class UIManager {
     expo: string;
     isMapbox: boolean;
