@@ -11,6 +11,7 @@ import { LayersMode } from "../../store/LayerStore";
 
 let rectsToBooths = new Map<Rect, Booth>();
 let rects: Rect[] = [];
+let boothsWithPaths: Booth[] = [];
 
 let segments: Rect[] = [];
 let segmentToRects = new Map<Rect, Rect[]>();
@@ -22,6 +23,8 @@ function calculate(booths: Booth[]) {
     segments = [];
     prevSegment = null;
     segmentToRects = new Map<Rect, Rect[]>();
+
+    boothsWithPaths = booths.filter((b) => b.paths);
 
     let superSegment = Rect.fromMultiple(booths.map((b) => b.rect));
     for (const b of booths) {
@@ -87,7 +90,7 @@ function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth 
     }
 
     // If the point is not found in a segment, we check for polygonal areas
-    for (const b of boothStore.booths.filter((b) => b.visible && b.paths)) {
+    for (const b of boothsWithPaths) {
         for (const p of b.paths) {
             for (const t of getTrianglesFromFpPaths(p.index, layersStore.mode !== LayersMode.Default ? b.layer.name : "")) {
                 if (pointInTriangle(xs, ys, t)) {
