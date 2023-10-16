@@ -79,7 +79,7 @@ export class BoothMesh extends THREE.Group {
 
         var angle = lineAngle(this.threeBooth.rect.p0, this.threeBooth.rect.p1) || 0;
 
-        if (rect.width < rect.height) angle -= 90;
+        if (1.5 * rect.width < rect.height) angle -= 90;
 
         mesh.rotateZ(-(angle * Math.PI) / 180);
 
