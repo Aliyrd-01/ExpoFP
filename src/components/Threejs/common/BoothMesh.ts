@@ -11,7 +11,16 @@ import settings from "../../../tools/settings";
 var { Text } = require("troika-three-text");
 
 const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
-const dimmedMaterial = new THREE.MeshPhongMaterial({ color: 0x333333, side: THREE.DoubleSide, name: "hovered" });
+
+const dimmedMaterial = new THREE.MeshPhongMaterial({
+    color: 0x333333,
+    side: THREE.DoubleSide,
+    name: "hovered",
+    opacity: 0.9,
+    transparent: true,
+    depthTest: true,
+    depthWrite: true,
+});
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
 
 export class BoothMesh extends THREE.Group {

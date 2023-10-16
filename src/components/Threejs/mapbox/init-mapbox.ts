@@ -11,7 +11,7 @@ export default function initMapbox(container: HTMLElement, style: string): Promi
             //style: "mapbox://styles/mapbox/" + style,
             antialias: true,
             pitch: 50,
-            maxPitch: 70,
+            //maxPitch: 70,
         });
 
         map.on("load", () => resolve(map));

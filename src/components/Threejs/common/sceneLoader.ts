@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { MeshPhongMaterial } from "three";
+import { MeshPhongMaterial, SRGBColorSpace } from "three";
 import Scene from "./Scene";
 
 export default async function sceneLoader(
@@ -29,8 +29,10 @@ export default async function sceneLoader(
         context: gl || undefined,
         antialias: true,
         precision: "highp",
-        premultipliedAlpha: true,
+        premultipliedAlpha: true
     });
+
+    renderer.outputColorSpace = SRGBColorSpace;
 
     if (!canvas && !gl) {
         renderer.setSize(container.clientWidth, container.clientHeight);
@@ -98,9 +100,6 @@ export default async function sceneLoader(
 
     scene.scale.x = -1;
 
-    // const plane = new SpriteMesh(yah);
-    // plane.rotateX(Math.PI / 2);
-    // scene.add(plane);
 
     return { scene, renderer };
 }

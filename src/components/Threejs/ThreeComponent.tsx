@@ -157,7 +157,11 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
     // Route lines
     useReaction(
         () => store.routeStore.routeLines,
-        () => uiManager.updateRouteLines(store.routeStore)
+        () => {
+            var point = store.routeStore.routeLines[0]?.p0;
+            uiManager.updateRouteLines(store.routeStore);
+            uiManager.setMarker("to", !point ? null : new CurrentPosition(point.x, point.y, point.layer));
+        }
     );
 
     // Current position

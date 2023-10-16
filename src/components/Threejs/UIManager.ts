@@ -21,6 +21,10 @@ import isDebug from "../../utils/is-debug";
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import TextureMerger from "./utils/textureMerger";
 import canvasFromText from "./utils/canvasFromText";
+import { SpriteMesh } from "./common/SpriteMesh";
+
+import to from "./assets/to.png";
+import yah from "./assets/yah.png";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -30,12 +34,9 @@ let routeIndex = 0;
 
 const booths: BoothMesh[] = [];
 
-let pointSize = 0.2;
+let pointSize = 0.5;
 
-let currentPositionMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(2 * pointSize, 2 * pointSize, 10 * pointSize),
-    new THREE.MeshPhongMaterial({ color: 0xff0000 })
-);
+const markers: SpriteMesh[] = [];
 
 export default class UIManager {
     expo: string;
@@ -111,8 +112,20 @@ export default class UIManager {
     }
 
     public setMarker(type: "from" | "to" | "yah" | "cp", point: CurrentPosition) {
-        const localPoint = this.convertPoint(point);
-        // currentPositionMesh.position.set(localPoint.x, localPoint.y, localPoint.z);
+        const name = `{sprite_${type}}`;
+        let sprite = this.scene.children.find((c) => c.name === name);
+
+        if (point) {
+            const localPoint = this.convertPoint(point);
+            if (!sprite) {
+                sprite = new SpriteMesh(to);
+                sprite.name = name;
+                this.scene.add(sprite);
+            }
+            sprite.position.set(localPoint.x, localPoint.y, localPoint.z+1);
+        } else if (sprite) {
+            this.scene.remove(sprite);
+        }
     }
 
     public interpolateColors(color1: string, color2: string, steps: number): string[] {
@@ -202,7 +215,7 @@ export default class UIManager {
         const logos = (await logosFromBooths(boothStore.booths as any)).filter((l) => !!l);
 
         var textureObj = new Map<string, THREE.Texture>();
-        logos.forEach((logo) => textureObj.set(logo.name+ "_logo", new THREE.Texture(logo.htmlImage)));
+        logos.forEach((logo) => textureObj.set(logo.name + "_logo", new THREE.Texture(logo.htmlImage)));
 
         store.boothStore.booths.forEach((b) => {
             textureObj.set(b.slug, new THREE.Texture(canvasFromText(b.name)));
