@@ -53,24 +53,33 @@ Base.args = {
     layersList: [
         {
             id: "layer1",
-            name: "Stats",
-        },
-        {
-            id: "layer2",
             name: "Sizes",
         },
         {
+            id: "layer2",
+            name: "General Building",
+        },
+        {
             id: "layer3",
-            name: "Technical",
+            name: "No Build",
         },
         {
             id: "layer4",
-            name: "Utillity Grid",
+            name: "Venue Walls & Bay Numbers",
         },
         {
             id: "layer5",
-            name: "Rigging",
+            name: "Booths",
+        },
+        {
+            id: "layer6",
+            name: "Grid",
+        },
+        {
+            id: "layer7",
+            name: "Mapbox",
         },
     ],
     layersActiveItems: ["layer4", "layer5"],
+    layersWidth: 200,
 };
