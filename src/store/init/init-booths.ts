@@ -48,6 +48,11 @@ export function iniAllBooths(store: RootStore) {
         booths.push(b);
     }
 
+    // sort booths by name
+    booths.sort((a, b) => {
+        return a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true });
+    });
+
     // sort booths of exhibitors
     for (const e of store.exhibitorStore.exhibitors) {
         sortByName(e.booths);
