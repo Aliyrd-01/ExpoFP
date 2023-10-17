@@ -115,14 +115,14 @@ export default class UIManager {
 
         if (point) {
             const localPoint = this.convertPoint(point);
-
+            let layer = this.data.objLayers.find((l) => l.name === point?.z.toString()) || this.data.objLayers[0];
             if (!sprite) {
-                let layer = this.data.objLayers.find((l) => l.name === point?.z.toString());
-                sprite = new SpriteMesh(to, (layer?.height || this.data.objLayers[0].height) * 8);
+                sprite = new SpriteMesh(to, layer.height * 8);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
-            sprite.position.set(localPoint.x, localPoint.y, localPoint.z);
+
+            sprite.position.set(localPoint.x, localPoint.y, localPoint.z + layer.height);
         } else if (sprite) {
             this.scene.remove(sprite);
         }
