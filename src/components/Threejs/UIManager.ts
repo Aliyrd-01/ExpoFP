@@ -34,7 +34,7 @@ let routeIndex = 0;
 
 const booths: BoothMesh[] = [];
 
-let pointSize = 0.5;
+const pointSize = (data: ICommonData): number => data.objLayers[0].height / 2;
 
 export default class UIManager {
     expo: string;
@@ -115,12 +115,14 @@ export default class UIManager {
 
         if (point) {
             const localPoint = this.convertPoint(point);
+
             if (!sprite) {
-                sprite = new SpriteMesh(to);
+                let layer = this.data.objLayers.find((l) => l.name === point?.z.toString());
+                sprite = new SpriteMesh(to, (layer?.height || this.data.objLayers[0].height) * 8);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
-            sprite.position.set(localPoint.x, localPoint.y, localPoint.z+1);
+            sprite.position.set(localPoint.x, localPoint.y, localPoint.z);
         } else if (sprite) {
             this.scene.remove(sprite);
         }
@@ -170,7 +172,7 @@ export default class UIManager {
             .concat(points)
             .reverse()
             .forEach((point, index) => {
-                const geometry = new THREE.SphereGeometry(pointSize);
+                const geometry = new THREE.SphereGeometry(pointSize(this.data));
                 const cube = new THREE.Mesh(geometry, defaultMaterial);
                 cube.position.set(point.x, point.y, z + 0.02);
                 routeMeshes.push(cube);
@@ -274,7 +276,7 @@ export default class UIManager {
         let z = 0;
         if (point.z) {
             let layer = this.data.objLayers.find((l) => l.name === point?.z.toString());
-            if (layer) z = 1.5 * layer.z;
+            if (layer) z = layer.height + layer.z;
         }
 
         x += m[0];
@@ -292,7 +294,7 @@ export default class UIManager {
     private linesToPoints(routeLines: RouteLine[]): THREE.Vector3[] {
         let routePoints = [];
 
-        let interval = Math.round(pointSize * (getLayerSvg().getAttribute("units") == "m" ? 300 : 900));
+        let interval = Math.round(pointSize(this.data) * (getLayerSvg().getAttribute("units") == "m" ? 300 : 900));
 
         let lines = [];
         for (let i = 0; i < routeLines.length; i++) {
