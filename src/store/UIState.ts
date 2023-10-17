@@ -285,7 +285,7 @@ export default class UIState {
                           const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
                           const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
+                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
                       })
                   );
         }
