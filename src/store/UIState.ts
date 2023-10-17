@@ -270,6 +270,7 @@ export default class UIState {
 
             if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
             if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+            if (uiState.kiosk && settings.EXPO == "imexamerica23") combinedArray = combinedArray.slice(0, 300);
 
             return exhibitorsArray.length === 0
                 ? boothsArray
