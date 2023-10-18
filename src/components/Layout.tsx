@@ -98,7 +98,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 {!uiState.hideCookieConsent && (allowConsent === undefined || !isMobile) && (
                     <Suspense fallback={null}>
                         <CookieConsent
-                            link="https://expofp.com/privacy"
+                            link="https://expofp.com/pages/viewer-cookie-consent"
                             onClickAccept={acceptConsent}
                             onClickReject={rejectConsent}
                         />
