@@ -117,12 +117,12 @@ export default class UIManager {
             const localPoint = this.convertPoint(point);
             let layer = this.data.objLayers.find((l) => l.name === point?.z.toString()) || this.data.objLayers[0];
             if (!sprite) {
-                sprite = new SpriteMesh(to, layer.height * 8);
+                sprite = new SpriteMesh(to, layer.height * 4);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
 
-            sprite.position.set(localPoint.x, localPoint.y, localPoint.z + layer.height);
+            sprite.position.set(localPoint.x, localPoint.y, layer.z + layer.height);
         } else if (sprite) {
             this.scene.remove(sprite);
         }
