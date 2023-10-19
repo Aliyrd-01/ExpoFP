@@ -53,7 +53,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     const acceptConsent = () => {
         if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "true");
-        initializeGtag();
         setConsentSettings();
         store.uiState.hideCookieConsent = true;
     };
