@@ -1,5 +1,5 @@
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import React, { CSSProperties, RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { uiState } from "../store";
 import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
@@ -11,81 +11,73 @@ import CategoryRow from "./CategoryRow";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 import { List as VirtualList, CellMeasurer, CellMeasurerCache, AutoSizer } from "react-virtualized";
+import { Virtuoso } from "react-virtuoso";
+import PerfectScrollbar from "perfect-scrollbar";
 
-const n = Math.ceil(
-    (Math.max(uiState.rootElement.clientHeight, uiState.rootElement.clientWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5)
-);
-logger.log("List n1:", n);
+type ScrollerProps = {
+    style: CSSProperties;
+};
+
+const Scroller: any = React.forwardRef<any, any>(({ children, style, ...props }, ref) => {
+    const ps = useRef<PerfectScrollbar>(null);
+
+    useEffect(() => {
+        if (!ref && (ref as any).current) return;
+        ps.current = new PerfectScrollbar((ref as any).current, { minScrollbarLength: 25, wheelSpeed: 20 });
+        return () => {
+            ps.current.destroy();
+        };
+    }, [ref]);
+
+    useEffect(() => {
+        if (ps.current) {
+            console.log("update");
+            // setTimeout(() => ps.current.update());
+        }
+    }, [uiState.listItems]);
+
+    return (
+        <div style={{ ...style, height: "100%" }} ref={ref} {...props}>
+            {children}
+        </div>
+    );
+});
 
 export default function List() {
-    const items = useMemo(() => {
-        if (uiState.overlayShowsAll || uiState.listItems.length <= n) return uiState.listItems;
-        return uiState.listItems.slice(0, n);
-    }, [uiState.overlayShowsAll, uiState.listItems, n]);
-
-    const listRef = useRef();
-    window["listRef"] = listRef;
-
-    const cache = new CellMeasurerCache({
-        fixedWidth: true,
-        defaultHeight: 67,
-    });
+    const listRef = useRef(null);
 
     useEffect(() => {
         const el = document.querySelector(".list-row.active");
         if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
     }, []);
 
-    function mapItem({ index, key, style, parent }: { index: number; key: any; style: any; parent: any }) {
-        const item: Exhibitor | Booth | Category = items[index];
+    const mapItem = ({ index }: { index: number }) => {
+        const item: Exhibitor | Booth | Category = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
         if (item instanceof Exhibitor) {
-            return (
-                <CellMeasurer key={key} cache={cache} columnIndex={0} rowIndex={index} parent={parent}>
-                    <div key={key} style={style}>
-                        <ExhibitorRow exhibitor={item} className={cls} />
-                    </div>
-                </CellMeasurer>
-            );
+            return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
         } else if (item instanceof BoothBase) {
-            return (
-                <CellMeasurer key={key} cache={cache} columnIndex={0} rowIndex={index} parent={parent}>
-                    <div key={key} style={style} className={cls}>
-                        <BoothRow className={cls} booth={item} />
-                    </div>
-                </CellMeasurer>
-            );
+            return <BoothRow key={index} className={cls} booth={item} />;
         } else if (item instanceof Category) {
-            return (
-                <CellMeasurer key={key} cache={cache} columnIndex={0} rowIndex={index} parent={parent}>
-                    <div key={key} style={style} className={cls}>
-                        <CategoryRow className={cls} category={item} />
-                    </div>
-                </CellMeasurer>
-            );
+            return <CategoryRow key={index} className={cls} category={item} />;
         }
-    }
+    };
 
     return !uiState.overlayCollapsed ? (
         <div style={{ height: "100%" }}>
-            <AutoSizer>
-                {({ width, height }) => (
-                    <>
-                        <VirtualList
-                            // style={{ overflow: "unset" }}
-                            ref={listRef}
-                            width={width}
-                            height={height}
-                            rowCount={items.length}
-                            rowHeight={cache.rowHeight}
-                            deferredMeasurementCache={cache}
-                            rowRenderer={mapItem}
-                        />
-                    </>
-                )}
-            </AutoSizer>
+            <Virtuoso
+                className="list-virtual"
+                style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
+                ref={listRef}
+                data={uiState.listItems}
+                itemContent={(index) => {
+                    return mapItem({ index });
+                }}
+                components={{ Scroller } as any}
+                defaultItemHeight={67}
+                totalCount={uiState.listItems.length}
+                initialTopMostItemIndex={uiState.activeListIndex}
+            />
         </div>
     ) : null;
-
-    // return useObserver(() => <div>{s.items.map(mapItem)}</div>);
 }

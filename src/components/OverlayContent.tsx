@@ -31,11 +31,6 @@ const OverlayContent: React.FC<{
     useLayoutEffect(() => {
         const sel = scrollable.current;
         const setScrolled = () => {
-            if (window["listRef"]?.current) {
-                window["listRef"].current.Grid.handleScrollEvent({
-                    scrollTop: sel.scrollTop,
-                });
-            }
             setScrolled1(sel.scrollTop > 0);
             // logger.log("scrolled", sel.scrollTop, scrolled);
         };
