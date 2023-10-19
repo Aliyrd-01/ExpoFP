@@ -6,7 +6,7 @@ import store, { boothStore, uiState } from "../../store";
 import { CurrentPosition } from "../../store/RouteStore";
 import { useReaction } from "../../utils/mobx";
 import "../Mapbox/Mapbox.scss";
-import { moveToLocation, moveToRect, switchViewbox, updateRouteLines, zoomMap } from "../Mapbox/utils/data";
+import { moveToLocation, moveToRect, switchViewbox, zoomMap } from "../Mapbox/utils/data";
 
 import UIManager from "./UIManager";
 
@@ -112,7 +112,6 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
         () => uiState.moveToBooths,
         () => {
             if (!uiState.moveToBooths || !store.mapboxStore.showMapbox) return;
-
             const rects = uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect);
             const rect = Rect.fromMultiple(rects);
             if (rects.length) moveToRect(rect);
@@ -152,17 +151,13 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
     // Route lines
     useReaction(
         () => store.routeStore.routeLines,
-        () => {
-            var point = store.routeStore.routeLines[0]?.p0;
-            uiManager.updateRouteLines(store.routeStore);
-            uiManager.setMarker("to", !point ? null : new CurrentPosition(point.x, point.y, point.layer));
-        }
+        () => uiManager.updateRouteLines(store.routeStore)
     );
 
     // Current position
     useReaction(
         () => ls.actualCurrentPosition,
-        () => uiManager.setMarker("cp", ls.actualCurrentPosition)
+        () => uiManager.setMarker("cp", ls.actualCurrentPosition.x, ls.actualCurrentPosition.x, ls.actualCurrentPosition.z)
     );
 
     return useObserver(() => {

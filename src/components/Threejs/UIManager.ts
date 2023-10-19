@@ -5,7 +5,7 @@ import { RouteLine } from "./../../utils/wayfinding";
 import { BoothMesh } from "./common/BoothMesh";
 
 import RouteStore, { CurrentPosition } from "../../store/RouteStore";
-import dataLoader, { ICommonData } from "./common/dataLoader";
+import dataLoader, { ICommonData, IObjLayer } from "./common/dataLoader";
 
 import loadModel from "./common/modelLoader";
 import Scene from "./common/Scene";
@@ -109,20 +109,21 @@ export default class UIManager {
         booths.forEach((b) => b.dimmed(selectedBooths.length && !selectedBooths.find((hb) => hb.name === b.name)));
     }
 
-    public setMarker(type: "from" | "to" | "yah" | "cp", point: CurrentPosition) {
+    public setMarker(type: "from" | "to" | "yah" | "cp", x: number, y: number, layer: string | number) {
         const name = `{sprite_${type}}`;
         let sprite = this.scene.children.find((c) => c.name === name);
+        let objLayer =
+            this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer).name) || this.data.objLayers[0];
 
-        if (point) {
-            const localPoint = this.convertPoint(point);
-            let layer = this.data.objLayers.find((l) => l.name === point?.z.toString()) || this.data.objLayers[0];
+        if (x && y) {
+            const localPoint = this.convertPoint(x, y);
             if (!sprite) {
-                sprite = new SpriteMesh(to, layer.height * 4);
+                sprite = new SpriteMesh(to, objLayer.height * 4);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
 
-            sprite.position.set(localPoint.x, localPoint.y, layer.z + layer.height);
+            sprite.position.set(localPoint.x, localPoint.y, objLayer.z + objLayer.height);
         } else if (sprite) {
             this.scene.remove(sprite);
         }
@@ -166,8 +167,6 @@ export default class UIManager {
             (l) => l.name === (layersStore.mode === LayersMode.Default ? "Default" : routeLines[0].p0.layer)
         );
 
-        //const colors = this.interpolateColors("#F28500", "#32CD32", points.length);
-
         []
             .concat(points)
             .reverse()
@@ -178,6 +177,8 @@ export default class UIManager {
                 routeMeshes.push(cube);
                 this.scene.add(cube);
             });
+
+        this.setMarker("to", routeLines[0].p0.x, routeLines[0].p0.y, routeLines[0].p0.layer);
     }
 
     public onBeforeRender(
@@ -268,16 +269,8 @@ export default class UIManager {
         scene.add(model);
     }
 
-    private convertPoint(point: CurrentPosition): THREE.Vector3 {
+    private convertPoint(x: number, y: number): THREE.Vector3 {
         var m = this.data.matrix;
-
-        let { x, y } = point;
-
-        let z = 0;
-        if (point.z) {
-            let layer = this.data.objLayers.find((l) => l.name === point?.z.toString());
-            if (layer) z = layer.height + layer.z;
-        }
 
         x += m[0];
         y += m[1];
@@ -288,7 +281,7 @@ export default class UIManager {
         x += m[4];
         y += m[5];
 
-        return new THREE.Vector3(x, y, z);
+        return new THREE.Vector3(x, y, 0);
     }
 
     private linesToPoints(routeLines: RouteLine[]): THREE.Vector3[] {
@@ -310,6 +303,6 @@ export default class UIManager {
             }
         }
 
-        return routePoints.map((p) => this.convertPoint(p));
+        return routePoints.map((p) => this.convertPoint(p.x, p.y));
     }
 }
