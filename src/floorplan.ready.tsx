@@ -15,7 +15,6 @@ import { destroyGtag } from "./tools/gtag";
 import { SpecialBooth } from "./store/BoothStore";
 
 trackEvent("load");
-sendEventToGa(GaEventActions.Load, ``);
 
 // initStore(store);
 
@@ -33,6 +32,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         initRouting(this.offHistory);
         store.fp = this;
         setConsentSettings(this.allowConsent);
+        sendEventToGa(GaEventActions.Load, ``);
         ReactDOM.render(
             // <FpContext.Provider value={this}>
             <Layout offHistory={this.offHistory} allowConsent={this.allowConsent} />,

@@ -7,7 +7,6 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
-import { initializeGtag } from "./tools/gtag";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -230,7 +229,6 @@ export default class FloorPlanLoader implements FloorPlan {
                 element.removeChild(element.firstChild);
             }
 
-            initializeGtag();
             //const fp = new FloorPlanReady.default(options);
             const fpReady = Object.setPrototypeOf(self, FloorPlanReady.prototype);
             fpReady.init();
