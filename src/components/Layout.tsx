@@ -24,7 +24,7 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { initializeGtag, setConsentSettings } from "../tools/gtag";
+import { setConsentSettings } from "../tools/gtag";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import isMobile from "../utils/is-mobile";
 
@@ -53,7 +53,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     const acceptConsent = () => {
         if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "true");
-        initializeGtag();
         setConsentSettings();
         store.uiState.hideCookieConsent = true;
     };

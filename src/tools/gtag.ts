@@ -73,7 +73,7 @@ export function setConsentSettings(allowConsent?: boolean) {
         window[`ga-disable-${ga_common_prop}`] = false;
     }
 
-    gtag("consent", "default", {
+    gtag("consent", "update", {
         ad_storage: "denied",
         analytics_storage: analyticsConsent,
         functionality_storage: "denied",
@@ -134,38 +134,38 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
 let v: HTMLScriptElement | null;
 let s: HTMLScriptElement | null;
 
-let isGtagInitialized = false;
-
-export function initializeGtag(allowConsent?: boolean) {
-
-    if (!v) {
-        v = document.createElement("script");
-        v.type = "text/javascript";
-        v.async = true;
-        v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
-        const vx = document.getElementsByTagName("script")[0];
-        vx.parentNode.insertBefore(v, vx);
-        gtag("js", new Date());
-    }
-
-    if (data.gtag && !s) {
-        s = document.createElement("script");
-        s.type = "text/javascript";
-        s.async = true;
-        s.src = `https://www.googletagmanager.com/gtag/js?id=${data.gtag}`;
-        const x = document.getElementsByTagName("script")[0];
-        x.parentNode.insertBefore(s, x);
-
-        gtag("config", data.gtag, { fp_key: settings.EXPO });
-    }
-
-    if (!isGtagInitialized) {
-        setConsentSettings(allowConsent);
-        gtag("config", ga_common_prop, { fp_key: settings.EXPO });
-        window["gtag"] = gtag;
-        isGtagInitialized = true;
-    }
+if (!v) {
+    v = document.createElement("script");
+    v.type = "text/javascript";
+    v.async = true;
+    v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
+    const vx = document.getElementsByTagName("script")[0];
+    vx.parentNode.insertBefore(v, vx);
+    gtag("js", new Date());
 }
+
+if (data.gtag && !s) {
+    s = document.createElement("script");
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${data.gtag}`;
+    const x = document.getElementsByTagName("script")[0];
+    x.parentNode.insertBefore(s, x);
+
+    gtag("config", data.gtag, { fp_key: settings.EXPO });
+}
+
+gtag("config", ga_common_prop, { fp_key: settings.EXPO });
+window["gtag"] = gtag;
+
+gtag("consent", "default", {
+    ad_storage: "denied",
+    analytics_storage: "denied",
+    functionality_storage: "denied",
+    personalization_storage: "denied",
+    security_storage: "denied",
+});
+
 
 export function destroyGtag() {
     if (v && v.parentNode) {
