@@ -112,11 +112,13 @@ export default class UIManager {
     public setMarker(type: "from" | "to" | "yah" | "cp", x: number, y: number, layer: string | number) {
         const name = `{sprite_${type}}`;
         let sprite = this.scene.children.find((c) => c.name === name);
-        let objLayer =
-            this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer).name) || this.data.objLayers[0];
 
         if (x && y) {
             const localPoint = this.convertPoint(x, y);
+
+            let objLayer =
+                this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer).name) || this.data.objLayers[0];
+
             if (!sprite) {
                 sprite = new SpriteMesh(to, objLayer.height * 4);
                 sprite.name = name;
@@ -159,7 +161,10 @@ export default class UIManager {
         routeMeshes.forEach((g) => this.scene.remove(g));
         routeMeshes.splice(0, routeMeshes.length);
 
-        if (!routeLines.length) return;
+        if (!routeLines.length) {
+            this.setMarker("to", null, null, null);
+            return;
+        }
 
         const points = this.linesToPoints(routeLines);
 
