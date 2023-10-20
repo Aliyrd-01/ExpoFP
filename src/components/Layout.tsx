@@ -26,7 +26,6 @@ import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
 import { setConsentSettings } from "../tools/gtag";
 import { isLocalStorageAvailable } from "../utils/localStorage";
-import isMobile from "../utils/is-mobile";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -94,7 +93,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {!uiState.hideCookieConsent && (allowConsent === undefined || !isMobile) && (
+                {!uiState.hideCookieConsent && allowConsent === undefined && (
                     <Suspense fallback={null}>
                         <CookieConsent
                             link="https://expofp.com/pages/viewer-cookie-consent"

@@ -8,6 +8,7 @@ import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, Route } from "../store/RouteStore";
 import logger from "../tools/logger";
+import { setConsentSettings } from "../tools/gtag";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -203,6 +204,14 @@ export function initRouting(offHistory = false) {
         /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
     ) {
         historyReplace("?");
+    }
+
+    if (locationSearch.includes("allowConsent")) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("allowConsent");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        historyReplace(newSearch);
     }
 
     if (uiState.previewExhibitor) {

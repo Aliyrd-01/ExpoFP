@@ -129,6 +129,14 @@ export default class FloorPlanLoader implements FloorPlan {
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
+        if (options.allowConsent === undefined) {
+            const url = new URL(window.location.href);
+            const cookieConsentParamValue = url.searchParams.get("allowConsent");
+            if (cookieConsentParamValue) {
+                this.allowConsent = cookieConsentParamValue === "true";
+            }
+        }
+
         if (useShadow) {
             container = shadowContainer.attachShadow({ mode: "open" });
             const containerObj = container as any;
