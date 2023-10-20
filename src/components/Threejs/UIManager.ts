@@ -117,7 +117,7 @@ export default class UIManager {
             const localPoint = this.convertPoint(x, y);
 
             let objLayer =
-                this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer).name) || this.data.objLayers[0];
+                this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer)?.name) || this.data.objLayers[0];
 
             if (!sprite) {
                 sprite = new SpriteMesh(to, objLayer.height * 4);
