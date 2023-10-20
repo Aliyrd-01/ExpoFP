@@ -7,6 +7,7 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import useShadow from "./utils/use-shadow";
+import isWebview from "./utils/is-webview";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -128,6 +129,10 @@ export default class FloorPlanLoader implements FloorPlan {
         shadowContainer.style.width = "100%";
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
+
+        if (eventId === "money2020usa23" && isWebview(navigator.userAgent)) {
+            this.allowConsent = true;
+        }
 
         if (options.allowConsent === undefined) {
             const url = new URL(window.location.href);
