@@ -39,8 +39,11 @@ function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefine
     if (allowConsent === false || allowConsent === true) return allowConsent ? "granted" : "denied";
 
     // if allowConsent === undefined
-    if (isLocalStorageAvailable && allowConsent !== undefined)
-        return localStorage.getItem("userCookieChoice") === "true" ? "granted" : "denied";
+    if (isLocalStorageAvailable) {
+        const userCookieChoice = localStorage.getItem("userCookieChoice");
+        if (userCookieChoice)
+            return userCookieChoice === "true" ? "granted" : "denied";
+    }
 
     return undefined;
 }
