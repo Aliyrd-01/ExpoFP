@@ -56,11 +56,18 @@ export function initRouting(offHistory = false) {
 
         if (hanleCustomCommand(slug, false)) {
         } else if (slug.startsWith("route")) {
-            const parts = slug.split(":");
-            const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
-            const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
-            store.routeStore.onlyAccessible = parts[3] === "true";
-            store.routeStore.selectRoute(new Route(from, to));
+            reaction(
+                () => store.layerStore.layersLoaded,
+                () => {
+                    const parts = slug.split(":");
+                    const from =
+                        store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
+                    const to =
+                        store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
+                    store.routeStore.onlyAccessible = parts[3] === "true";
+                    store.routeStore.selectRoute(new Route(from, to));
+                }
+            );
         } else if (slug === "bookmarks") {
             store.selectBookmarks();
         } else if (slug === "-pdf") {
@@ -68,18 +75,30 @@ export function initRouting(offHistory = false) {
         } else if (booth) {
             setTimeout(() => store.selectBooth(booth), 250);
         } else {
-            const exhibitor = store.exhibitorStore.exhibitors.find((x: Exhibitor) => x.slug === slug || x.externalId === slug);
-            if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
-            else {
-                const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
-                if (category) store.selectCategory(category);
-                else store.selectSearch(slug);
-            }
+            reaction(
+                () => store.layerStore.layersLoaded,
+                () => {
+                    const exhibitor = store.exhibitorStore.exhibitors.find(
+                        (x: Exhibitor) => x.slug === slug || x.externalId === slug
+                    );
+                    if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
+                    else {
+                        const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
+                        if (category) store.selectCategory(category);
+                        else store.selectSearch(slug);
+                    }
+                }
+            );
         }
 
-        disableStateToUrl = false;
-        stateToUrl();
-        setTitle();
+        reaction(
+            () => store.layerStore.layersLoaded,
+            () => {
+                disableStateToUrl = false;
+                stateToUrl();
+                setTitle();
+            }
+        );
     }
 
     function setTitle() {
