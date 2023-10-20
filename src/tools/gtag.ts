@@ -160,10 +160,16 @@ window["gtag"] = gtag;
 
 gtag("consent", "default", {
     ad_storage: "denied",
-    analytics_storage: "denied",
+    analytics_storage: "granted",
     functionality_storage: "denied",
     personalization_storage: "denied",
     security_storage: "denied",
+});
+
+gtag("consent", "default", {
+    analytics_storage: "denied",
+    'region': ["BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL", "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO",
+        "SI", "SK", "FI", "SE", "UK", "IS", "NO", "LI", "CH", "MK", "AL", "RS", "TR"]
 });
 
 
