@@ -31,7 +31,9 @@ export default class FloorPlanReady extends FloorPlanLoader {
     protected init(): void {
         initRouting(this.offHistory);
         store.fp = this;
-        setConsentSettings(this.allowConsent);
+        if (this.allowConsent !== undefined) {
+            setConsentSettings(this.allowConsent);
+        }
         sendEventToGa(GaEventActions.Load, ``);
         ReactDOM.render(
             // <FpContext.Provider value={this}>

@@ -57,27 +57,25 @@ function deleteGaCookies() {
 }
 
 export function setConsentSettings(allowConsent?: boolean) {
-    if (!!allowConsent) {
-        let analyticsConsent = hasUserConsent(allowConsent) ? "granted" : "denied";
+    let analyticsConsent = hasUserConsent(allowConsent) ? "granted" : "denied";
 
-        if (analyticsConsent === "denied") {
-            deleteGaCookies();
+    if (analyticsConsent === "denied") {
+        deleteGaCookies();
 
-            if (data.gtag) {
-                window[`ga-disable-${data.gtag}`] = true;
-            }
-            window[`ga-disable-${ga_common_prop}`] = true;
-        } else {
-            if (data.gtag) {
-                window[`ga-disable-${data.gtag}`] = false;
-            }
-            window[`ga-disable-${ga_common_prop}`] = false;
+        if (data.gtag) {
+            window[`ga-disable-${data.gtag}`] = true;
         }
-
-        gtag("consent", "update", {
-            analytics_storage: analyticsConsent,
-        });
+        window[`ga-disable-${ga_common_prop}`] = true;
+    } else {
+        if (data.gtag) {
+            window[`ga-disable-${data.gtag}`] = false;
+        }
+        window[`ga-disable-${ga_common_prop}`] = false;
     }
+
+    gtag("consent", "update", {
+        analytics_storage: analyticsConsent,
+    });
 }
 
 export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string) {
