@@ -118,7 +118,7 @@ export class BoothMesh extends THREE.Group {
 
             h = newH;
             w = newW;
-            angle = 90;
+            angle = -90;
         } else {
             angle = (-this.efpBooth.rotate * 180) / Math.PI;
         }
