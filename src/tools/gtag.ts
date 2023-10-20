@@ -35,11 +35,17 @@ export enum GaEventActions {
     ClickDirections = "Click Directions",
 }
 
-function hasUserConsent(allowConsent?: boolean): boolean {
-    if (allowConsent === false || allowConsent === true) return allowConsent;
+function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
+    if (allowConsent === false || allowConsent === true) return allowConsent ? "granted" : "denied";
 
     // if allowConsent === undefined
-    return isLocalStorageAvailable ? localStorage.getItem("userCookieChoice") === "true" : false;
+    if (isLocalStorageAvailable) {
+        const userCookieChoice = localStorage.getItem("userCookieChoice");
+        if (userCookieChoice)
+            return userCookieChoice === "true" ? "granted" : "denied";
+    }
+
+    return undefined;
 }
 
 function deleteGaCookies() {
@@ -57,29 +63,27 @@ function deleteGaCookies() {
 }
 
 export function setConsentSettings(allowConsent?: boolean) {
-    let analyticsConsent = hasUserConsent(allowConsent) ? "granted" : "denied";
+    let analyticsConsent = hasUserConsent(allowConsent);
 
-    if (analyticsConsent === "denied") {
-        deleteGaCookies();
+    if (analyticsConsent) {
+        if (analyticsConsent === "denied") {
+            deleteGaCookies();
 
-        if (data.gtag) {
-            window[`ga-disable-${data.gtag}`] = true;
+            if (data.gtag) {
+                window[`ga-disable-${data.gtag}`] = true;
+            }
+            window[`ga-disable-${ga_common_prop}`] = true;
+        } else {
+            if (data.gtag) {
+                window[`ga-disable-${data.gtag}`] = false;
+            }
+            window[`ga-disable-${ga_common_prop}`] = false;
         }
-        window[`ga-disable-${ga_common_prop}`] = true;
-    } else {
-        if (data.gtag) {
-            window[`ga-disable-${data.gtag}`] = false;
-        }
-        window[`ga-disable-${ga_common_prop}`] = false;
+
+        gtag("consent", "update", {
+            analytics_storage: analyticsConsent,
+        });
     }
-
-    gtag("consent", "update", {
-        ad_storage: "denied",
-        analytics_storage: analyticsConsent,
-        functionality_storage: "denied",
-        personalization_storage: "denied",
-        security_storage: "denied",
-    });
 }
 
 export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string) {
@@ -161,11 +165,12 @@ window["gtag"] = gtag;
 gtag("consent", "default", {
     ad_storage: "denied",
     analytics_storage: "denied",
+    'region': ["BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL", "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO",
+        "SI", "SK", "FI", "SE", "UK", "IS", "NO", "LI", "CH", "MK", "AL", "RS", "TR"],
     functionality_storage: "denied",
     personalization_storage: "denied",
     security_storage: "denied",
 });
-
 
 export function destroyGtag() {
     if (v && v.parentNode) {

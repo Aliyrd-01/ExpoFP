@@ -8,6 +8,7 @@ import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, Route } from "../store/RouteStore";
 import logger from "../tools/logger";
+import { setConsentSettings } from "../tools/gtag";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -55,11 +56,18 @@ export function initRouting(offHistory = false) {
 
         if (hanleCustomCommand(slug, false)) {
         } else if (slug.startsWith("route")) {
-            const parts = slug.split(":");
-            const from = store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
-            const to = store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
-            store.routeStore.onlyAccessible = parts[3] === "true";
-            store.routeStore.selectRoute(new Route(from, to));
+            reaction(
+                () => store.layerStore.layersLoaded,
+                () => {
+                    const parts = slug.split(":");
+                    const from =
+                        store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
+                    const to =
+                        store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
+                    store.routeStore.onlyAccessible = parts[3] === "true";
+                    store.routeStore.selectRoute(new Route(from, to));
+                }
+            );
         } else if (slug === "bookmarks") {
             store.selectBookmarks();
         } else if (slug === "-pdf") {
@@ -67,18 +75,30 @@ export function initRouting(offHistory = false) {
         } else if (booth) {
             setTimeout(() => store.selectBooth(booth), 250);
         } else {
-            const exhibitor = store.exhibitorStore.exhibitors.find((x: Exhibitor) => x.slug === slug || x.externalId === slug);
-            if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
-            else {
-                const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
-                if (category) store.selectCategory(category);
-                else store.selectSearch(slug);
-            }
+            reaction(
+                () => store.layerStore.layersLoaded,
+                () => {
+                    const exhibitor = store.exhibitorStore.exhibitors.find(
+                        (x: Exhibitor) => x.slug === slug || x.externalId === slug
+                    );
+                    if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
+                    else {
+                        const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
+                        if (category) store.selectCategory(category);
+                        else store.selectSearch(slug);
+                    }
+                }
+            );
         }
 
-        disableStateToUrl = false;
-        stateToUrl();
-        setTitle();
+        reaction(
+            () => store.layerStore.layersLoaded,
+            () => {
+                disableStateToUrl = false;
+                stateToUrl();
+                setTitle();
+            }
+        );
     }
 
     function setTitle() {
@@ -203,6 +223,14 @@ export function initRouting(offHistory = false) {
         /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
     ) {
         historyReplace("?");
+    }
+
+    if (locationSearch.includes("allowConsent")) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("allowConsent");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        historyReplace(newSearch);
     }
 
     if (uiState.previewExhibitor) {
