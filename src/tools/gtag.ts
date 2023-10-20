@@ -35,11 +35,14 @@ export enum GaEventActions {
     ClickDirections = "Click Directions",
 }
 
-function hasUserConsent(allowConsent?: boolean): boolean {
-    if (allowConsent === false || allowConsent === true) return allowConsent;
+function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
+    if (allowConsent === false || allowConsent === true) return allowConsent ? "granted" : "denied";
 
     // if allowConsent === undefined
-    return isLocalStorageAvailable ? localStorage.getItem("userCookieChoice") === "true" : false;
+    if (isLocalStorageAvailable ?? allowConsent !== undefined)
+        return localStorage.getItem("userCookieChoice") === "true" ? "granted" : "denied";
+
+    return undefined;
 }
 
 function deleteGaCookies() {
@@ -57,25 +60,27 @@ function deleteGaCookies() {
 }
 
 export function setConsentSettings(allowConsent?: boolean) {
-    let analyticsConsent = hasUserConsent(allowConsent) ? "granted" : "denied";
+    let analyticsConsent = hasUserConsent(allowConsent);
 
-    if (analyticsConsent === "denied") {
-        deleteGaCookies();
+    if (analyticsConsent) {
+        if (analyticsConsent === "denied") {
+            deleteGaCookies();
 
-        if (data.gtag) {
-            window[`ga-disable-${data.gtag}`] = true;
+            if (data.gtag) {
+                window[`ga-disable-${data.gtag}`] = true;
+            }
+            window[`ga-disable-${ga_common_prop}`] = true;
+        } else {
+            if (data.gtag) {
+                window[`ga-disable-${data.gtag}`] = false;
+            }
+            window[`ga-disable-${ga_common_prop}`] = false;
         }
-        window[`ga-disable-${ga_common_prop}`] = true;
-    } else {
-        if (data.gtag) {
-            window[`ga-disable-${data.gtag}`] = false;
-        }
-        window[`ga-disable-${ga_common_prop}`] = false;
+
+        gtag("consent", "update", {
+            analytics_storage: analyticsConsent,
+        });
     }
-
-    gtag("consent", "update", {
-        analytics_storage: analyticsConsent,
-    });
 }
 
 export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string) {
