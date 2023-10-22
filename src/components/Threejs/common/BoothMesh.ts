@@ -49,6 +49,8 @@ export class BoothMesh extends THREE.Group {
 
         // if (label.text !== "FACIL'iti") return;
 
+        //if (label.text.indexOf("LOW O2") == -1) return;
+
         const words: string[] = label.text.split(" ");
         const maxWordLength = Math.max(...words.map((w) => w.length));
 
@@ -56,10 +58,12 @@ export class BoothMesh extends THREE.Group {
         let maxDimension = Math.max(rect.width, rect.height);
         let minDimension = Math.min(rect.width, rect.height);
 
+        
+
         label.fontSize = minDimension;
 
         if (label.fontSize * label.text.length > maxDimension)
-            label.fontSize *= (1.5 * maxDimension) / (label.fontSize * label.text.length);
+            label.fontSize *= (1.1 * maxDimension) / (label.fontSize * label.text.length);
 
         if (label.fontSize / minDimension < 0.15) {
             label.maxWidth = 0.1;
