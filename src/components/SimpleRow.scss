@@ -34,7 +34,10 @@
 
 .efp-kiosk {
     .simple-row {
+        line-height: 1.65em;
+        padding: var(--k-itemsTopBottomPadding) 0;
         &__main {
+            height: auto;
         }
         &__sub {
             height: unset;

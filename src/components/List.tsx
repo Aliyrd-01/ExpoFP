@@ -1,50 +1,27 @@
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { CSSProperties, RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useObserver } from "mobx-react-lite";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { uiState } from "../store";
 import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import logger from "../tools/logger";
-import { remsToPixels } from "../utils";
 import BoothRow from "./BoothRow";
 import CategoryRow from "./CategoryRow";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
-import { List as VirtualList, CellMeasurer, CellMeasurerCache, AutoSizer } from "react-virtualized";
 import { Virtuoso } from "react-virtuoso";
-import PerfectScrollbar from "perfect-scrollbar";
 
-type ScrollerProps = {
-    style: CSSProperties;
-};
+interface ListProps {
+    updatedScrollableRef: RefObject<HTMLElement>;
+    updateScroll?: () => void;
+}
 
-const Scroller: any = React.forwardRef<any, any>(({ children, style, ...props }, ref) => {
-    const ps = useRef<PerfectScrollbar>(null);
-
-    useEffect(() => {
-        if (!ref && (ref as any).current) return;
-        ps.current = new PerfectScrollbar((ref as any).current, { minScrollbarLength: 25, wheelSpeed: 20 });
-        return () => {
-            ps.current.destroy();
-        };
-    }, [ref]);
-
-    useEffect(() => {
-        if (ps.current) {
-            console.log("update");
-            // setTimeout(() => ps.current.update());
-        }
-    }, [uiState.listItems]);
-
-    return (
-        <div style={{ ...style, height: "100%" }} ref={ref} {...props}>
-            {children}
-        </div>
-    );
-});
-
-export default function List() {
+export default function List({ updatedScrollableRef, updateScroll }: ListProps) {
+    const [scrollableRef, setScrollableRef] = useState<RefObject<HTMLElement>>(null);
     const listRef = useRef(null);
+
+    useEffect(() => {
+        setScrollableRef(updatedScrollableRef);
+    }, [updatedScrollableRef]);
 
     useEffect(() => {
         const el = document.querySelector(".list-row.active");
@@ -63,21 +40,19 @@ export default function List() {
         }
     };
 
-    return !uiState.overlayCollapsed ? (
+    return useObserver(() => (
         <div style={{ height: "100%" }}>
-            <Virtuoso
-                className="list-virtual"
-                style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
-                ref={listRef}
-                data={uiState.listItems}
-                itemContent={(index) => {
-                    return mapItem({ index });
-                }}
-                components={{ Scroller } as any}
-                defaultItemHeight={67}
-                totalCount={uiState.listItems.length}
-                initialTopMostItemIndex={uiState.activeListIndex}
-            />
+            {scrollableRef && (
+                <Virtuoso
+                    className="list-virtual"
+                    style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
+                    ref={listRef}
+                    itemContent={(index) => mapItem({ index })}
+                    totalListHeightChanged={() => updateScroll && updateScroll()}
+                    customScrollParent={scrollableRef.current}
+                    totalCount={uiState.listItems.length}
+                />
+            )}
         </div>
-    ) : null;
+    ));
 }

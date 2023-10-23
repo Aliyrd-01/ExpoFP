@@ -17,12 +17,31 @@ const OverlayContent: React.FC<{
     onBack?: () => void;
     onClose: () => void;
     onUpdateFuncSet?: (s: () => void) => void;
+    passScrollableRef?: (el: React.RefObject<HTMLDivElement>) => void;
     passRefToParent?: (el: React.RefObject<HTMLDivElement>) => void;
-}> = ({ bar, className, particles, backMode, hideClose, onBack, onClose, children, onUpdateFuncSet, passRefToParent }) => {
+    passPsToParent?: (el: PerfectScrollbar) => void;
+}> = ({
+    bar,
+    className,
+    particles,
+    backMode,
+    hideClose,
+    onBack,
+    onClose,
+    children,
+    onUpdateFuncSet,
+    passScrollableRef,
+    passRefToParent,
+    passPsToParent,
+}) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
     const [psInstance, setPsInstance] = useState<PerfectScrollbar>(null);
     const contentRef = useRef<HTMLDivElement>();
+
+    useLayoutEffect(() => {
+        if (passScrollableRef) passScrollableRef(scrollable);
+    }, [scrollable, passScrollableRef]);
 
     useLayoutEffect(() => {
         if (passRefToParent) passRefToParent(contentRef);
@@ -30,6 +49,7 @@ const OverlayContent: React.FC<{
 
     useLayoutEffect(() => {
         const sel = scrollable.current;
+        window["scrollable"] = sel;
         const setScrolled = () => {
             setScrolled1(sel.scrollTop > 0);
             // logger.log("scrolled", sel.scrollTop, scrolled);
@@ -52,6 +72,8 @@ const OverlayContent: React.FC<{
             update = setScrolled;
             sel.addEventListener("scroll", setScrolled);
         }
+
+        if (passPsToParent) passPsToParent(psInstance);
         if (onUpdateFuncSet) onUpdateFuncSet(update);
 
         window.addEventListener("resize", update);
