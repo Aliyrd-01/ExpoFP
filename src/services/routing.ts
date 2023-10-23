@@ -214,6 +214,9 @@ export function initRouting(offHistory = false) {
         }
 
         historyReplace("?");
+    } else if (locationSearch.startsWith("?mapbox=false")) {
+        store.mapboxStore.isMapbox = false;
+        historyReplace("?");
     }
 
     // facebook and google  fix

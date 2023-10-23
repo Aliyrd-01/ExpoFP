@@ -86,7 +86,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
                         {fpGeo?.properties?.mode === "threejs" ? (
-                            <ThreeComponent isMapbox={true} expo={settings.EXPO} />
+                            <ThreeComponent isMapbox={store.mapboxStore.isMapbox} expo={settings.EXPO} />
                         ) : (
                             <Mapbox />
                         )}
