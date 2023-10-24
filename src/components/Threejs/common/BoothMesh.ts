@@ -13,13 +13,9 @@ var { Text } = require("troika-three-text");
 const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
 
 const dimmedMaterial = new THREE.MeshPhongMaterial({
-    color: 0x333333,
+    color: 0x777777,
     side: THREE.DoubleSide,
     name: "hovered",
-    opacity: 0.9,
-    transparent: true,
-    depthTest: true,
-    depthWrite: true,
 });
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
 
@@ -53,6 +49,8 @@ export class BoothMesh extends THREE.Group {
 
         // if (label.text !== "FACIL'iti") return;
 
+        //if (label.text.indexOf("LOW O2") == -1) return;
+
         const words: string[] = label.text.split(" ");
         const maxWordLength = Math.max(...words.map((w) => w.length));
 
@@ -60,10 +58,12 @@ export class BoothMesh extends THREE.Group {
         let maxDimension = Math.max(rect.width, rect.height);
         let minDimension = Math.min(rect.width, rect.height);
 
+        
+
         label.fontSize = minDimension;
 
         if (label.fontSize * label.text.length > maxDimension)
-            label.fontSize *= (1.5 * maxDimension) / (label.fontSize * label.text.length);
+            label.fontSize *= (1.1 * maxDimension) / (label.fontSize * label.text.length);
 
         if (label.fontSize / minDimension < 0.15) {
             label.maxWidth = 0.1;
@@ -79,7 +79,7 @@ export class BoothMesh extends THREE.Group {
 
         var angle = lineAngle(this.threeBooth.rect.p0, this.threeBooth.rect.p1) || 0;
 
-        if (1.5 * rect.width < rect.height) angle -= 90;
+        if (1.5 * rect.width < rect.height) angle = 90;
 
         mesh.rotateZ(-(angle * Math.PI) / 180);
 
@@ -122,7 +122,7 @@ export class BoothMesh extends THREE.Group {
 
             h = newH;
             w = newW;
-            angle = 90;
+            angle = -90;
         } else {
             angle = (-this.efpBooth.rotate * 180) / Math.PI;
         }

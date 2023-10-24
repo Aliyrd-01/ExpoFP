@@ -6,7 +6,7 @@ import sceneLoader from "./common/sceneLoader";
 
 export default function init(container: HTMLElement, data: ICommonData): Promise<Scene> {
     return new Promise(async (resolve, reject) => {
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
 
         var { x, y } = data.viewbox.center;
 
@@ -40,8 +40,8 @@ export default function init(container: HTMLElement, data: ICommonData): Promise
         controls.enableRotate = true;
         controls.enablePan = true;
         controls.enableZoom = true;
-        controls.enableDamping = true;
-        controls.zoomSpeed = 0.5;
+        //controls.enableDamping = true;
+        controls.zoomSpeed = 1;
         controls.rotateSpeed = 0.5;
         controls.panSpeed = 0.5;
         controls.target.set(x, y, 0);

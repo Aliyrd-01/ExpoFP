@@ -13,7 +13,6 @@ import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
-import isMobile from "../utils/is-mobile";
 
 const logoUrl = /^https?:\/\//i.test(data.logo) ? data.logo : baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -152,7 +151,7 @@ function Menu({ allowConsent }: MenuProps) {
                             {t("Download PDF")}
                         </a>
                     )}
-                    {(allowConsent === undefined || !isMobile) && (
+                    {allowConsent === undefined && (
                         <a
                             href="/#"
                             className="menu__item -cookie-consent"

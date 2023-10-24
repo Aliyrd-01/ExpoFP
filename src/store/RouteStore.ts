@@ -127,10 +127,12 @@ export default class RouteStore {
             return value;
         };
 
-        point.x = replaceCommasWithDot(point.x);
-        point.y = replaceCommasWithDot(point.y);
-        point.lat = replaceCommasWithDot(point.lat);
-        point.lng = replaceCommasWithDot(point.lng);
+        if (point) {
+            point.x = replaceCommasWithDot(point.x);
+            point.y = replaceCommasWithDot(point.y);
+            point.lat = replaceCommasWithDot(point.lat);
+            point.lng = replaceCommasWithDot(point.lng);
+        }
 
         focus = true; // Temp always "true" SDK compatility
 

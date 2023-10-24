@@ -18,6 +18,8 @@ export default async function sceneLoader(
 
     camera.near = 0.1;
     camera.far = 10000;
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
 
     const light = new THREE.HemisphereLight(0xffffff, 10);
     light.castShadow = true;
@@ -29,7 +31,7 @@ export default async function sceneLoader(
         context: gl || undefined,
         antialias: true,
         precision: "highp",
-        premultipliedAlpha: true
+        premultipliedAlpha: true,
     });
 
     renderer.outputColorSpace = SRGBColorSpace;
@@ -99,7 +101,6 @@ export default async function sceneLoader(
     // #endregion mouse interaction
 
     scene.scale.x = -1;
-
 
     return { scene, renderer };
 }

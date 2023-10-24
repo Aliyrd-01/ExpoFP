@@ -96,6 +96,7 @@ export abstract class BoothBase {
     readonly exhibitors: Exhibitor[];
     readonly labelColor: string;
     readonly schedule: ScheduleItem[];
+    readonly yah: boolean;
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {
@@ -107,8 +108,10 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) public get fullName() {
-        if (this.layer?.mode > 1) return this.name + ` ${data.levelTerm} ` + this.layer.description;
-        return this.name;
+        if (this.layer?.mode > 1) {
+            return (this.yah ? this.title : this.name) + ` ${data.levelTerm} ` + this.layer.description;
+        }
+        return this.yah ? this.title : this.name;
     }
 
     @computed({ keepAlive: true }) get visible() {

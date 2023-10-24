@@ -17,6 +17,7 @@ export interface MapControlsProps {
     layersOpen?: boolean;
     layersList?: layersListItem[];
     layersActiveItems?: string[];
+    layersWidth?: number;
     onViewModeSwitch: () => void;
     onClickFindLocation: () => void;
     onClickZoomIn: () => void;
@@ -35,6 +36,7 @@ const MapControls: React.FC<MapControlsProps> = ({
     layersOpen,
     layersList,
     layersActiveItems,
+    layersWidth,
     onViewModeSwitch,
     onClickFindLocation,
     onClickZoomIn,
@@ -145,7 +147,11 @@ const MapControls: React.FC<MapControlsProps> = ({
                             />
                         </svg>
                     </button>
-                    {layersIsOpen ? <div className="checked-panel">{listItems(layersList)}</div> : null}
+                    {layersIsOpen ? (
+                        <div className="checked-panel" style={{ minWidth: layersWidth }}>
+                            {listItems(layersList)}
+                        </div>
+                    ) : null}
                 </div>
             ) : null}
         </div>

@@ -24,9 +24,8 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { initializeGtag, setConsentSettings } from "../tools/gtag";
+import { setConsentSettings } from "../tools/gtag";
 import { isLocalStorageAvailable } from "../utils/localStorage";
-import isMobile from "../utils/is-mobile";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -53,7 +52,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     const acceptConsent = () => {
         if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "true");
-        initializeGtag();
         setConsentSettings();
         store.uiState.hideCookieConsent = true;
     };
@@ -88,17 +86,17 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
                         {fpGeo?.properties?.mode === "threejs" ? (
-                            <ThreeComponent isMapbox={true} expo={settings.EXPO} />
+                            <ThreeComponent isMapbox={store.mapboxStore.isMapbox} expo={settings.EXPO} />
                         ) : (
                             <Mapbox />
                         )}
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {!uiState.hideCookieConsent && (allowConsent === undefined || !isMobile) && (
+                {!uiState.hideCookieConsent && allowConsent === undefined && (
                     <Suspense fallback={null}>
                         <CookieConsent
-                            link="https://expofp.com/privacy"
+                            link="https://expofp.com/pages/viewer-cookie-consent"
                             onClickAccept={acceptConsent}
                             onClickReject={rejectConsent}
                         />

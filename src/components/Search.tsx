@@ -32,7 +32,10 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
             YouAreHere.setYah(commandValue.split(",")[0]);
-            isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
+             if (isLocalStorageAvailable) {
+                localStorage.setItem(kioskKey, "1");
+                uiState.kiosk = true;
+            }
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 2 || commandValue.split(",").length === 3) {
             const yahValues = commandValue.split(",");
@@ -42,7 +45,10 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
             if (commandValue.split(",").length === 3) scale = parseFloat(yahValues[2].trim());
             if (!!yahX && !!yahY) {
                 YouAreHere.setYah(`${yahX},${yahY},${scale}`);
-                isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
+                if (isLocalStorageAvailable) {
+                    localStorage.setItem(kioskKey, "1");
+                    uiState.kiosk = true;
+                }
                 if (forseRefresh) window.location.replace(url);
             }
         }
