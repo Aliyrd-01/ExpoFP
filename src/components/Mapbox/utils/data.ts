@@ -102,7 +102,7 @@ function decimalToHex(input: string) {
 export const props = {
     token: "pk.eyJ1Ijoicm9kaW9ubmlrb2xhZXYiLCJhIjoiY2wwanE5aXB4MDM2NTNibGExd3k4bHhsaiJ9.wdpy8dJ1qktQXGtZYDNH3w",
     initBearing: getBearing() - 30,
-    initPitch: 45,
+    initPitch: 30,
     bearing: getBearing(),
     viewbox: getViewbox(),
     style: getStyle(),
@@ -164,7 +164,7 @@ export function convertSvgPoint(x: number, y: number) {
 
 export function moveToRect(
     svgRect: Rect,
-    paddingPercent: number = 100,
+    paddingPercent: number = 200,
     duration: number = 1000,
     pitch: number = props.initPitch,
     bearing: number = props.initBearing
@@ -182,6 +182,8 @@ export function moveToRect(
         pitch,
         bearing,
     });
+
+    uiState.moveToRect = null;
 }
 
 export function moveToLocation(duration: number = 1000, pitch: number = props.initPitch, bearing: number = props.initBearing) {

@@ -45,8 +45,12 @@ export default class RootStore {
         var invisible = exhibitor.booths.filter((b) => !b.visible);
         if (!visible.length && invisible.length) {
             this.layerStore.updateVisibility(invisible[0].layer.name, true);
-            this.moveToList(invisible);
         }
+
+        setTimeout(
+            () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+        );
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
@@ -147,7 +151,7 @@ export default class RootStore {
     @action clickBoothInList2(booth: Booth) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.hoveredBooth = null;
-        this.selectBooth(booth);
+        this.selectBooth(booth, false);
         window.setTimeout(
             () => {
                 this.moveToList([booth]);
@@ -194,7 +198,7 @@ export default class RootStore {
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
         this.selectExhibitor(exhibitor);
-        this.moveToExhibitor(exhibitor);
+        //this.moveToExhibitor(exhibitor);
         this.showMap();
         // dispatch("selectExhibitor", id);
         // dispatch("moveToExhibitor", id);
