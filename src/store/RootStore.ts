@@ -36,7 +36,7 @@ export default class RootStore {
         this.scheduleStore = new ScheduleStore(this);
     }
 
-    @action selectExhibitor(exhibitor: Exhibitor) {
+    @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
         // if (data.hideCompanies) return;
         this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
@@ -46,6 +46,7 @@ export default class RootStore {
         if (!visible.length && invisible.length) {
             this.layerStore.updateVisibility(invisible[0].layer.name, true);
         }
+        if (!focus) return;
 
         setTimeout(
             () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
@@ -189,7 +190,7 @@ export default class RootStore {
             booth.exhibitors.length === 1 &&
             ((booth instanceof SpecialBooth && !booth.description) || booth instanceof RegularBooth)
         ) {
-            this.selectExhibitor(booth.exhibitors[0]);
+            this.selectExhibitor(booth.exhibitors[0], false);
         } else {
             this.selectBooth(booth, false);
         }
@@ -197,7 +198,7 @@ export default class RootStore {
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
-        this.selectExhibitor(exhibitor);
+        this.selectExhibitor(exhibitor, true);
         //this.moveToExhibitor(exhibitor);
         this.showMap();
         // dispatch("selectExhibitor", id);
