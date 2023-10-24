@@ -1,4 +1,4 @@
-import { Booth } from "../store/BoothStore";
+import { BoothBase } from "../store/BoothStore";
 import { isLocalStorageAvailable } from "./localStorage";
 
 export const yahKey = "__yah";
@@ -11,8 +11,8 @@ export function removeYah() {
     isLocalStorageAvailable && localStorage.removeItem(yahKey);
 }
 
-export function isYahBooth(booth: Booth) {
-    return /^yah_/i.test(booth.name) || /You\s+are\s+here/gi.test(booth.title);
+export function isYahBooth(booth: BoothBase) {
+    return /^yah_/i.test(booth.name) || /^You\s+are\s+here$/i.test(booth.title?.trim());
 }
 
 export function getYah(): [number, number, number] | string {

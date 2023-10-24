@@ -14,6 +14,7 @@ import { getResponsiveClass } from "../utils/responsiveClass";
 import { getLanguage } from "../utils/i18n";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import data from "../data";
+import { hasUserConsent } from "../tools/gtag";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -58,7 +59,7 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
-    @observable hideCookieConsent = Boolean(isLocalStorageAvailable && localStorage.getItem("userCookieChoice"));
+    @observable hideCookieConsent = Boolean(hasUserConsent());
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
 
