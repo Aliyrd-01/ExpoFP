@@ -1,6 +1,5 @@
 import data from "../data";
 import settings from "../tools/settings";
-import { isLocalStorageAvailable } from "../utils/localStorage";
 import isDebug from "../utils/is-debug";
 
 const ga_common_prop = "G-78CKLYWFJK";
@@ -35,17 +34,26 @@ export enum GaEventActions {
     ClickDirections = "Click Directions",
 }
 
-function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
+export function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
     if (allowConsent === false || allowConsent === true) return allowConsent ? "granted" : "denied";
 
-    // if allowConsent === undefined
-    if (isLocalStorageAvailable) {
-        const userCookieChoice = localStorage.getItem("userCookieChoice");
-        if (userCookieChoice)
-            return userCookieChoice === "true" ? "granted" : "denied";
+    const consentCookie = document.cookie.split("; ").find((cookie) => cookie.startsWith("cookie_consent="));
+
+    if (consentCookie) {
+        const hasCookieConsent = consentCookie === "cookie_consent=true";
+        return hasCookieConsent ? "granted" : "denied";
     }
 
     return undefined;
+}
+
+export function setCookieConsent(cookieConsent: boolean) {
+    const monthInSeconds = 2592000;
+
+    const domain = isDebug ? "localhost" : ".expofp.com";
+    document.cookie = cookieConsent
+        ? `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; domain=${domain}; path=/`
+        : `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; path=/`;
 }
 
 function deleteGaCookies() {

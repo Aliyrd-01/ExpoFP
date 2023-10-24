@@ -24,8 +24,7 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { setConsentSettings } from "../tools/gtag";
-import { isLocalStorageAvailable } from "../utils/localStorage";
+import { setConsentSettings, setCookieConsent } from "../tools/gtag";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -51,15 +50,15 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
     else if (data.expoFpAd) freeOrDemo = <Free />;
 
     const acceptConsent = () => {
-        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "true");
+        setCookieConsent(true);
         setConsentSettings();
         store.uiState.hideCookieConsent = true;
     };
 
     const rejectConsent = () => {
-        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "false");
-        store.uiState.hideCookieConsent = true;
+        setCookieConsent(false);
         setConsentSettings();
+        store.uiState.hideCookieConsent = true;
     };
 
     return (
