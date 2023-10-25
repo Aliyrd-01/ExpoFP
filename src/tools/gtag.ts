@@ -34,6 +34,41 @@ export enum GaEventActions {
     ClickDirections = "Click Directions",
 }
 
+async function getIp(): Promise<string | null> {
+    const response = await fetch('https://api.ipify.org?format=json');
+    if (response.ok) {
+        const data = await response.json();
+        return data.ip;
+    }
+
+    return null;
+}
+
+export async function checkUserIsGDPR(): Promise<boolean | null> {
+    try {
+        const ip = await getIp();
+        if (ip) {
+            const fetchPromise = fetch(`https://expofp-verify-ip-65e97c18c089.herokuapp.com/api/verify-ip/is-in-gdpr?ip=${ip}`, {
+                method: 'GET',
+            });
+
+            const timeoutPromise = new Promise<boolean | null>((resolve) => {
+                setTimeout(() => {
+                    resolve(null);
+                }, 5000);
+            });
+
+            const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+            if (response instanceof Response && response.ok) {
+                const data: { result: boolean } = await response.json();
+                return data.result;
+            }
+        }
+    } catch (err) {}
+
+    return null;
+}
 export function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
     if (allowConsent === false || allowConsent === true) return allowConsent ? "granted" : "denied";
 

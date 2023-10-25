@@ -32,10 +32,11 @@ window.setTimeout(function () {
 }, 1500);
 
 interface MenuProps {
+    isGDPR: boolean;
     allowConsent?: boolean;
 }
 
-function Menu({ allowConsent }: MenuProps) {
+function Menu({ allowConsent, isGDPR }: MenuProps) {
     const s = useLocalStore(() => ({
         logoVisibility: "visible" as CSS.Property.Visibility,
         shown: false,
@@ -151,7 +152,7 @@ function Menu({ allowConsent }: MenuProps) {
                             {t("Download PDF")}
                         </a>
                     )}
-                    {allowConsent === undefined && (
+                    {allowConsent === undefined && isGDPR && (
                         <a
                             href="/#"
                             className="menu__item -cookie-consent"
@@ -213,5 +214,5 @@ function Menu({ allowConsent }: MenuProps) {
     }
 }
 
-export default ({ allowConsent }: MenuProps) =>
-    useObserver(() => <>{uiState.menu ? <Menu allowConsent={allowConsent} /> : null}</>);
+export default ({ isGDPR, allowConsent }: MenuProps) =>
+    useObserver(() => <>{uiState.menu ? <Menu isGDPR={isGDPR} allowConsent={allowConsent} /> : null}</>);
