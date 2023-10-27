@@ -27,7 +27,8 @@
 }
 
 .layout[dir="rtl"] .simple-row {
-    &__main, &__sub {
+    &__main,
+    &__sub {
         text-align: right;
     }
 }
@@ -35,6 +36,7 @@
 .efp-kiosk {
     .simple-row {
         &__main {
+            height: unset;
         }
         &__sub {
             height: unset;
