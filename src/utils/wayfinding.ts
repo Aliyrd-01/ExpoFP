@@ -1,6 +1,7 @@
 import { lineAngle, lineLength, Point, pointInsideRectangle, Rect } from "simple-geometry";
 import Polygon4 from "../core/Polygon";
 import { Booth } from "../store/BoothStore";
+import aStarPathSearch from "./a-star/a-star";
 
 const path = require("ngraph.path");
 const createGraph = require("ngraph.graph");
@@ -55,9 +56,15 @@ function buildPathFinder(oriented: boolean, onlyAccessible: boolean) {
 
     pathFinder.oriented = oriented;
     pathFinder.onlyAccessible = onlyAccessible;
-    pathFinder.finder = path.aStar(graph, {
+    pathFinder.finder = aStarPathSearch(graph, {
         oriented,
-        distance(fromNode, toNode, link) {
+        distance(openSet, fromNode, toNode, link) {
+            console.info(
+                openSet.data.concat([]).map((i) => i.node.id),
+                fromNode.id,
+                toNode.id
+            );
+
             return link.data.distance;
         },
     });
