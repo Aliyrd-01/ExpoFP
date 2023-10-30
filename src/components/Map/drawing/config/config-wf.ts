@@ -391,7 +391,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, false);
+            routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);

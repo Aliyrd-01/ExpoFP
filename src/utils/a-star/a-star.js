@@ -124,7 +124,7 @@ function aStarPathSearch(graph, options) {
                 return;
             }
 
-            var tentativeDistance = cameFrom.distanceToSource + distance(openSet, otherNode, cameFrom.node, link);
+            var tentativeDistance = cameFrom.distanceToSource + distance(otherNode, cameFrom, link);
 
             if (tentativeDistance >= otherSearchState.distanceToSource) {
                 // This would only make our path longer. Ignore this route.
