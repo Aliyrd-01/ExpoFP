@@ -59,10 +59,11 @@ function Booth() {
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
+
+        const exhibitors = s.booth.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+
         if (s.regular) {
             const b = s.regular;
-
-            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
             if (b.onHold) {
                 content = <BoothOnHold />;
@@ -82,7 +83,12 @@ function Booth() {
                 content = <>{exhibitors}</>;
             }
         } else {
-            content = <BoothSpecial booth={s.special} />;
+            content = (
+                <div className="booth__content -spec">
+                    <div className="booth__desc" dangerouslySetInnerHTML={{ __html: s.special.description }} />
+                    <>{exhibitors}</>
+                </div>
+            );
         }
 
         return (
