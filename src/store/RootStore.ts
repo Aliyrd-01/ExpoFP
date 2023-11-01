@@ -184,10 +184,7 @@ export default class RootStore {
             this.uiState.onBoothClick(e);
         }
 
-        if (
-            booth.exhibitors.length === 1 &&
-            ((booth instanceof SpecialBooth && !booth.description) || booth instanceof RegularBooth)
-        ) {
+        if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
             this.selectExhibitor(booth.exhibitors[0]);
         } else {
             this.selectBooth(booth, false);
