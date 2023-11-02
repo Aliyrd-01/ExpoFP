@@ -44,5 +44,10 @@
     "View switch": "מעבר תצוגה",
     "Zoom In": "להתמקד",
     "Zoom Out": "להתרחק",
-    "{{boothTerm}} Type": "סוג {{boothTerm}}"
+    "{{boothTerm}} Type": "סוג {{boothTerm}}",
+    "Cookie Consent": "Cookie Consent",
+    "We use cookies for analytics only": "We use cookies for analytics only.",
+    "Read More": "Read More",
+    "Accept cookies": "Accept cookies",
+    "Reject": "Reject"
 }

@@ -44,5 +44,10 @@
     "View switch": "Schakel weergave",
     "Zoom In": "Inzoomen",
     "Zoom Out": "Uitzoomen",
-    "{{boothTerm}} Type": "{{boothTerm}}-type"
+    "{{boothTerm}} Type": "{{boothTerm}}-type",
+    "Cookie Consent": "Cookie Consent",
+    "We use cookies for analytics only": "We use cookies for analytics only.",
+    "Read More": "Read More",
+    "Accept cookies": "Accept cookies",
+    "Reject": "Reject"
 }
