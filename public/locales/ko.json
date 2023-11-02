@@ -44,5 +44,10 @@
     "View switch": "뷰 전환",
     "Zoom In": "확대",
     "Zoom Out": "축소",
-    "{{boothTerm}} Type": "{{boothTerm}} 타입"
+    "{{boothTerm}} Type": "{{boothTerm}} 타입",
+    "Cookie Consent": "Cookie Consent",
+    "We use cookies for analytics only": "We use cookies for analytics only.",
+    "Read More": "Read More",
+    "Accept cookies": "Accept cookies",
+    "Reject": "Reject"
 }

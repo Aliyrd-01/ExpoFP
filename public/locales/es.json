@@ -44,5 +44,10 @@
     "View switch": "Cambiar vista",
     "Zoom In": "Ampliar",
     "Zoom Out": "Reducir",
-    "{{boothTerm}} Type": "Tipo de {{boothTerm}}"
+    "{{boothTerm}} Type": "Tipo de {{boothTerm}}",
+    "Cookie Consent": "Cookie Consent",
+    "We use cookies for analytics only": "We use cookies for analytics only.",
+    "Read More": "Read More",
+    "Accept cookies": "Accept cookies",
+    "Reject": "Reject"
 }

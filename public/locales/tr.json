@@ -44,5 +44,10 @@
     "View switch": "Görünümü değiştir",
     "Zoom In": "Yakınlaştır",
     "Zoom Out": "Uzaklaştır",
-    "{{boothTerm}} Type": "{{boothTerm}} Türü"
+    "{{boothTerm}} Type": "{{boothTerm}} Türü",
+    "Cookie Consent": "Cookie Consent",
+    "We use cookies for analytics only": "We use cookies for analytics only.",
+    "Read More": "Read More",
+    "Accept cookies": "Accept cookies",
+    "Reject": "Reject"
 }

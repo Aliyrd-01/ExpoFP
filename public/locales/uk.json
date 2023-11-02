@@ -45,5 +45,10 @@
     "View switch": "Перемкнути вигляд",
     "Zoom In": "Приблизити",
     "Zoom Out": "Віддалити",
-    "{{boothTerm}} Type": "{{boothTerm}} Тип"
+    "{{boothTerm}} Type": "{{boothTerm}} Тип",
+    "Cookie Consent": "Cookie Consent",
+    "We use cookies for analytics only": "We use cookies for analytics only.",
+    "Read More": "Read More",
+    "Accept cookies": "Accept cookies",
+    "Reject": "Reject"
 }

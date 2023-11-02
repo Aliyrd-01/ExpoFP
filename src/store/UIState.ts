@@ -343,7 +343,7 @@ export default class UIState {
                 if (
                     splittedTexts.some(
                         (text) =>
-                            containsIgnoreCase(b.title || b.name, text) || containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                            containsIgnoreCase(b.title || "", text) || containsIgnoreCase(b.name, text) || containsLevelIgnoreCase(b.layer?.name ?? null, text)
                     )
                 ) {
                     matchingBooths.add(b);
