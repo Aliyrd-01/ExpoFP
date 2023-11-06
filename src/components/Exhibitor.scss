@@ -546,6 +546,12 @@ $imageSliderClass: ".image-slider";
                     margin-inline-start: 10px;
                     font-size: 0.8em;
                     line-height: 1.2em;
+
+                    & > a {
+                        color: inherit;
+                        text-decoration: none;
+                        pointer-events: none;
+                    }
                 }
 
                 .fas {
