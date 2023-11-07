@@ -32,7 +32,7 @@ const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug")
 const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
 const ThreeComponent = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Threejs/ThreeComponent"));
 const Modal = React.lazy(() => import("./Modal"));
-const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cookieСonsent" */ "./CookieConsent"));
+const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cc-script" */ "./CookieConsent"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
