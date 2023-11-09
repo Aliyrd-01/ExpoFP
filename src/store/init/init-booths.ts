@@ -45,6 +45,7 @@ export function iniAllBooths(store: RootStore) {
         }
 
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
+        b.yah = isYahBooth(b as Booth);
         booths.push(b);
     }
 
@@ -126,7 +127,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
-        booth.yah = isYahBooth(booth as Booth);
+       
         if (boothReg) {
             boothReg.availColor = el.getAttribute("data-avail-color") || boothReg.availColor;
             boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
