@@ -41,18 +41,21 @@ function parseSvg(text: string, suffix: string = ""): SVGElement {
 
 let svg = parseSvg(window["__fp"]);
 
+const viewboxObj = window["__viewbox"];
 const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
 let svgArea: Rect;
-if (viewboxRect) {
+if (viewboxObj) {
+    svgArea = Rect.fromXywh(viewboxObj.x, viewboxObj.y, viewboxObj.width, viewboxObj.height);
+    viewboxRect?.remove();
+} else if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
     viewboxRect.remove();
 } else {
     svgArea = svgViewBox.withPadding(-svgViewBox.w * 0.05, -svgViewBox.h * 0.05);
 }
-
 d3.select(svg).attr("width", svgViewBox.w);
 d3.select(svg).attr("height", svgViewBox.h);
 
