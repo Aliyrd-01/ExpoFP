@@ -188,10 +188,14 @@ export function moveToRect(
 
 export function moveToLocation(duration: number = 1000, pitch: number = props.initPitch, bearing: number = props.initBearing) {
     const currentPosition = store.routeStore.currentPosition;
-    const { lng, lat } = currentPosition;
+    const { lng, lat, x, y } = currentPosition;
+
+    if (!(lng && lat) && !fpGeo.properties.config) return;
+
+    const [newLng, newLat] = lng && lat ? [lng, lat] : convertLocalToGps(x, y, fpGeo.properties.config);
 
     map.flyTo({
-        center: [lng, lat],
+        center: [newLng, newLat],
         essential: true,
         duration,
         pitch,
