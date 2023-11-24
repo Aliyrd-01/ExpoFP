@@ -175,8 +175,6 @@ export default class RouteStore {
 
             uiState.moveToRect = rect;
 
-            console.error(store.routeStore.currentPosition);
-
             const layer = store.layerStore.findLayer(store.routeStore.currentPosition?.z);
             if (layer) {
                 layersStore.updateVisibility(layer.name, true);
