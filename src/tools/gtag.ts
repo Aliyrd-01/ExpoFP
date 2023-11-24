@@ -32,6 +32,7 @@ export enum GaEventActions {
     ClickYoutube = "Click Youtube",
 
     ClickDirections = "Click Directions",
+    Rendered = "Floor plan rendered",
 }
 
 export function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
