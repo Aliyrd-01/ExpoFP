@@ -35,6 +35,24 @@ export enum GaEventActions {
     Rendered = "Floor plan rendered",
 }
 
+export async function checkUserIsGDPR(): Promise<boolean | null> {
+    const fetchPromise = fetch(`https://consent.expofp.com/api/verify-ip/is-in-gdpr`);
+
+    const timeoutPromise = new Promise<boolean | null>((resolve) => {
+        setTimeout(() => {
+            resolve(null);
+        }, 5000);
+    });
+
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+    if (response instanceof Response && response.ok) {
+        const data: { result: boolean } = await response.json();
+        return data.result;
+    }
+
+    return null;
+}
 export function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
     if (allowConsent === false || allowConsent === true) return allowConsent ? "granted" : "denied";
 

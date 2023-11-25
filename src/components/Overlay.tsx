@@ -18,10 +18,11 @@ import Wayfinding from "./Wayfinding";
 const { uiState } = store;
 
 interface OverlayProps {
+    isGDPR: boolean;
     allowConsent?: boolean;
 }
 
-export default observer(function Overlay({ allowConsent }: OverlayProps) {
+export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps) {
     // const overlayPosition = "1";
     const el = useRef<HTMLDivElement>(null);
 
@@ -207,7 +208,7 @@ export default observer(function Overlay({ allowConsent }: OverlayProps) {
             ref={el}
         >
             {s.noMove}
-            <Menu allowConsent={allowConsent} />
+            <Menu isGDPR={isGDPR} allowConsent={allowConsent} />
             <Search />
             <Exhibitor />
             <Booth />
