@@ -35,12 +35,16 @@
 
 .efp-kiosk {
     .simple-row {
+        padding: var(--k-itemsPadding-1);
+
         &__main {
             height: unset;
+            padding: 0;
         }
         &__sub {
             height: unset;
             margin: 0;
+            padding: 0;
             font-size: 0.8em;
         }
     }
