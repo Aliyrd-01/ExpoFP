@@ -16,7 +16,6 @@ import SidebarActions from "../SidebarActions";
 import { BoothOnHold } from "./BoothOnHold";
 import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
 import { BoothReserved } from "./BoothReserved";
-import { BoothSpecial } from "./BoothSpecial";
 
 function Booth() {
     const s = useLocalStore(() => ({
@@ -66,7 +65,7 @@ function Booth() {
             const b = s.regular;
 
             if (b.onHold) {
-                content = <BoothOnHold />;
+                content = <BoothOnHold booth={b} description={""} showBuy={false} showReserve={false} isRebooking={false} />;
             } else if (b.reserved) {
                 content = <BoothReserved />;
             } else if (b.exhibitors.length === 0) {
