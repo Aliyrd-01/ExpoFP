@@ -21,6 +21,7 @@ import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 import isMobile from "../utils/is-mobile";
+import { SpecialBooth } from "../store/BoothStore";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -256,7 +257,7 @@ function ExhibitorComponent() {
                                         }}
                                         className="exhibitor__categories-booth"
                                     >
-                                        {data.boothTerm} {booth.fullName}
+                                        {booth instanceof SpecialBooth ? "" : data.boothTerm} {booth.fullName}
                                     </a>
                                 ))}
                                 {exhibitor.categories.map((c) => (

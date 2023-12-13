@@ -26,7 +26,7 @@ export class SpriteMesh extends THREE.Mesh {
         super(geometry, material);
 
         this.onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
-            let { position } = camera.userData;
+            let position: any = camera.position.x && camera.position.y && camera.position.z ? camera.position : camera.userData.position;
             const angle = round(((lineAngle({ x: 0, y: 0 }, position) - 90) * Math.PI) / 180, 2);
             this.rotateZ(-1 * (angle - prevAngle));
             prevAngle = angle;

@@ -58,6 +58,12 @@ export default function initLayers(store: RootStore) {
                 l.visible = false;
             } else if (l.mode === LayerMode.AlwaysVisible) {
                 l.frozen = l.visible = true;
+            } else if (l.mode === LayerMode.TurnedOff) {
+                l.frozen = false;
+                l.visible = false;
+            } else if (l.mode === LayerMode.TurnedOn) {
+                l.frozen = false;
+                l.visible = true;
             }
         });
     }

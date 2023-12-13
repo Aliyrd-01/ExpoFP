@@ -44,5 +44,10 @@
     "View switch": "Byt vy",
     "Zoom In": "Zooma in",
     "Zoom Out": "Zooma ut",
-    "{{boothTerm}} Type": "Typ av {{boothTerm}}"
+    "{{boothTerm}} Type": "Typ av {{boothTerm}}",
+    "Cookie Consent": "Cookie Consent",
+    "We use cookies for analytics only": "We use cookies for analytics only.",
+    "Read More": "Read More",
+    "Accept cookies": "Accept cookies",
+    "Reject": "Reject"
 }

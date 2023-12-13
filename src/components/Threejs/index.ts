@@ -27,8 +27,8 @@ export default function init(container: HTMLElement, data: ICommonData): Promise
             camera,
             (x: number, y: number, raycaster: THREE.Raycaster) => {
                 const pointer = new THREE.Vector2();
-                pointer.x = (x / window.innerWidth) * 2 - 1;
-                pointer.y = -(y / window.innerHeight) * 2 + 1;
+                pointer.x = (x / container.clientWidth) * 2 - 1;
+                pointer.y = -(y / container.clientHeight) * 2 + 1;
                 raycaster.setFromCamera(pointer, camera);
             },
             () => {

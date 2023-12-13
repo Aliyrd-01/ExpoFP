@@ -16,7 +16,6 @@ import SidebarActions from "../SidebarActions";
 import { BoothOnHold } from "./BoothOnHold";
 import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
 import { BoothReserved } from "./BoothReserved";
-import { BoothSpecial } from "./BoothSpecial";
 
 function Booth() {
     const s = useLocalStore(() => ({
@@ -59,13 +58,14 @@ function Booth() {
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
+
+        const exhibitors = s.booth.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+
         if (s.regular) {
             const b = s.regular;
 
-            const exhibitors = b.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
-
             if (b.onHold) {
-                content = <BoothOnHold />;
+                content = <BoothOnHold booth={b} description={""} showBuy={false} showReserve={false} isRebooking={false} />;
             } else if (b.reserved) {
                 content = <BoothReserved />;
             } else if (b.exhibitors.length === 0) {
@@ -82,7 +82,12 @@ function Booth() {
                 content = <>{exhibitors}</>;
             }
         } else {
-            content = <BoothSpecial booth={s.special} />;
+            content = (
+                <div className="booth__content -spec">
+                    <div className="booth__desc" dangerouslySetInnerHTML={{ __html: s.special.description }} />
+                    <>{exhibitors}</>
+                </div>
+            );
         }
 
         return (

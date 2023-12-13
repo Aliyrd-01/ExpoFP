@@ -19,6 +19,10 @@
     }
     &__search-icon {
         display: none;
+
+        & > svg {
+            fill: var(--color-gray);
+        }
     }
 }
 .overlay-bar.scrolled {
@@ -53,6 +57,10 @@
             height: calc(var(--k-searchBox-height) - 10px);
             padding-inline-end: 14px;
             pointer-events: none;
+
+            & > svg {
+                fill: var(--k-color-primary);
+            }
         }
     }
 }

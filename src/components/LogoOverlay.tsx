@@ -90,7 +90,7 @@ export default function LogoOverlay() {
             )}
             {uiState.kiosk && (
                 <div
-                    className="qr"
+                    className={classNames("qr", { "qr--right": settings.EXPO === "metstrade-superyacht2023" })}
                     style={{
                         textAlign: "center",
                         bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5),

@@ -102,7 +102,7 @@ export default async function configBg(
 
     function addObject(item: TrianglePainterObject, isFg: boolean) {
         const suffix = isFg ? "_FG" : "_BG";
-        const priority = isFg ? painterOrderPriority + 5 : painterOrderPriority;
+        const priority = isFg ? painterOrderPriority + 7 : painterOrderPriority;
 
         if (!isFg)
             while (!bgPainter || !bgPainter.tryAddObject(item))
@@ -113,5 +113,5 @@ export default async function configBg(
     }
 
     const logos = (await images).filter((image) => !!image);
-    return configImg(context, layerID, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 6, false);
+    return configImg(context, layerID, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
 }

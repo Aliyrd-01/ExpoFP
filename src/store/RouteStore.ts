@@ -176,7 +176,9 @@ export default class RouteStore {
             uiState.moveToRect = rect;
 
             const layer = store.layerStore.findLayer(store.routeStore.currentPosition?.z);
-            layersStore.updateVisibility(layer.name, true);
+            if (layer) {
+                layersStore.updateVisibility(layer.name, true);
+            }
         } else store.selectBooth(store.routeStore.defaultFrom);
     }
 

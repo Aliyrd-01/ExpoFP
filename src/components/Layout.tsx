@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
 import data from "../data";
 import store, { layersStore, uiState } from "../store";
@@ -24,8 +24,7 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { setConsentSettings } from "../tools/gtag";
-import { isLocalStorageAvailable } from "../utils/localStorage";
+import { checkUserIsGDPR, hasUserConsent, setConsentSettings, setCookieConsent } from "../tools/gtag";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -33,7 +32,7 @@ const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug")
 const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
 const ThreeComponent = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Threejs/ThreeComponent"));
 const Modal = React.lazy(() => import("./Modal"));
-const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cookieСonsent" */ "./CookieConsent"));
+const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cc-script" */ "./CookieConsent"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
@@ -46,21 +45,40 @@ interface LayoutProps {
 }
 
 export default observer(function Layout({ offHistory, allowConsent }: LayoutProps) {
+    const [isGDPR , setIsGDPR] = useState(false);
+
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
 
     const acceptConsent = () => {
-        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "true");
+        setCookieConsent(true);
         setConsentSettings();
         store.uiState.hideCookieConsent = true;
     };
 
     const rejectConsent = () => {
-        if (isLocalStorageAvailable) localStorage.setItem("userCookieChoice", "false");
-        store.uiState.hideCookieConsent = true;
+        setCookieConsent(false);
         setConsentSettings();
+        store.uiState.hideCookieConsent = true;
     };
+
+    useEffect(() => {
+        async function checkConsent() {
+            const consentResult = await checkUserIsGDPR();
+            if (consentResult || consentResult === null) {
+                setIsGDPR(true);
+            } else {
+                setIsGDPR(false);
+            }
+        }
+
+        if (!Boolean(hasUserConsent(allowConsent))) {
+            checkConsent();
+        } else {
+            setIsGDPR(true);
+        }
+    }, []);
 
     return (
         <div
@@ -81,7 +99,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}
-                {!uiState.noOverlay && <Overlay allowConsent={allowConsent} />}
+                {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
@@ -93,7 +111,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {!uiState.hideCookieConsent && allowConsent === undefined && (
+                {!uiState.hideCookieConsent && isGDPR && allowConsent === undefined && (
                     <Suspense fallback={null}>
                         <CookieConsent
                             link="https://expofp.com/pages/viewer-cookie-consent"

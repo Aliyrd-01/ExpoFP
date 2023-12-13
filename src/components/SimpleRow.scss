@@ -27,21 +27,24 @@
 }
 
 .layout[dir="rtl"] .simple-row {
-    &__main, &__sub {
+    &__main,
+    &__sub {
         text-align: right;
     }
 }
 
 .efp-kiosk {
     .simple-row {
-        line-height: 1.65em;
-        padding: var(--k-itemsTopBottomPadding) 0;
+        padding: var(--k-itemsPadding-1);
+
         &__main {
-            height: auto;
+            height: unset;
+            padding: 0;
         }
         &__sub {
             height: unset;
             margin: 0;
+            padding: 0;
             font-size: 0.8em;
         }
     }
