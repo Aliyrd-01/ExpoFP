@@ -1,5 +1,5 @@
 import { useObserver } from "mobx-react-lite";
-import React from "react";
+import React, { useRef } from "react";
 import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
@@ -8,6 +8,8 @@ import List from "./List";
 import OverlayContent from "./OverlayContent";
 
 function Bookmarks() {
+    const scrollableRef = useRef<HTMLDivElement>();
+
     return useObserver(() => {
         const bar = (
             <div className="bar">
@@ -16,8 +18,16 @@ function Bookmarks() {
         );
 
         return (
-            <OverlayContent onClose={handleCloseBack} onBack={handleCloseBack} backMode="menu" bar={bar}>
-                <List />
+            <OverlayContent
+                passScrollableRef={(ref) => {
+                    scrollableRef.current = ref.current;
+                }}
+                onClose={handleCloseBack}
+                onBack={handleCloseBack}
+                backMode="menu"
+                bar={bar}
+            >
+                <List updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });

@@ -11,3 +11,7 @@
         }
     }
 }
+
+.list-virtual > [data-viewport-type="element"] {
+    position: relative !important;
+}

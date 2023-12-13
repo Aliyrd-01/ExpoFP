@@ -45,7 +45,12 @@
         height: auto;
         pointer-events: auto;
 
+        &.exhibitor {
+            height: auto;
+        }
+
         &__scrollable {
+            flex-grow: 0;
             top: var(--k-sidebarPositionTop);
             max-height: var(--k-sidebarMaxHeight);
             background: var(--color-white);

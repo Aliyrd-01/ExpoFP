@@ -32,7 +32,7 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
             YouAreHere.setYah(commandValue.split(",")[0]);
-            if (isLocalStorageAvailable) {
+             if (isLocalStorageAvailable) {
                 localStorage.setItem(kioskKey, "1");
                 uiState.kiosk = true;
             }
@@ -81,6 +81,7 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
 function Search() {
     const el = useRef<HTMLDivElement>();
     const overlayContentRef = useRef<HTMLDivElement>();
+    const scrollableRef = useRef<HTMLDivElement>();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
@@ -166,6 +167,10 @@ function Search() {
         [s]
     );
 
+    const updateContent = useCallback(() => {
+        if (s.updateOverlayContent) s.updateOverlayContent();
+    }, [s.updateOverlayContent]);
+
     return useObserver(() => {
         const fakeInput = s.hideRealInput ? (
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
@@ -195,8 +200,9 @@ function Search() {
                 hideClose={!s.showClose}
                 bar={bar}
                 passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
+                passScrollableRef={(ref) => (scrollableRef.current = ref.current)}
             >
-                <List />
+                <List updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });

@@ -1,5 +1,5 @@
 import { useObserver } from "mobx-react-lite";
-import React from "react";
+import React, { useRef } from "react";
 import store, { uiState } from "../store";
 import "./Category.scss";
 import List from "./List";
@@ -9,6 +9,8 @@ import { useAutorun } from "../utils/mobx";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 
 function Category() {
+    const scrollableRef = useRef<HTMLDivElement>();
+
     useAutorun(() => {
         if (uiState.selectedCategory && uiState.selectedCategory.name) {
             sendEventToGa(GaEventActions.ViewCategory, uiState.selectedCategory.name);
@@ -24,8 +26,16 @@ function Category() {
         );
 
         return (
-            <OverlayContent onClose={handleCloseBack} onBack={handleCloseBack} backMode="menu" bar={bar}>
-                <List />
+            <OverlayContent
+                passScrollableRef={(ref) => {
+                    scrollableRef.current = ref.current;
+                }}
+                onClose={handleCloseBack}
+                onBack={handleCloseBack}
+                backMode="menu"
+                bar={bar}
+            >
+                <List updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });

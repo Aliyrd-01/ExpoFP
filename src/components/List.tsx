@@ -1,44 +1,59 @@
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useEffect } from "react";
+import { useObserver } from "mobx-react-lite";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { uiState } from "../store";
 import { Booth, BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import logger from "../tools/logger";
-import { remsToPixels } from "../utils";
 import BoothRow from "./BoothRow";
 import CategoryRow from "./CategoryRow";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
+import { Virtuoso } from "react-virtuoso";
 
-const n = Math.ceil(
-    (Math.max(uiState.rootElement.clientHeight, uiState.rootElement.clientWidth) - remsToPixels(3.5 + 2)) / remsToPixels(3.5)
-);
-logger.log("List n1:", n);
+interface ListProps {
+    updatedScrollableRef: RefObject<HTMLElement>;
+    updateScroll?: () => void;
+}
 
-export default function List() {
-    const s = useLocalStore(() => ({
-        get items() {
-            if (uiState.overlayShowsAll || uiState.listItems.length <= n) return uiState.listItems;
-            return uiState.listItems.slice(0, n);
-        },
-    }));
+export default function List({ updatedScrollableRef, updateScroll }: ListProps) {
+    const [scrollableRef, setScrollableRef] = useState<RefObject<HTMLElement>>(null);
+    const listRef = useRef(null);
+
+    useEffect(() => {
+        setScrollableRef(updatedScrollableRef);
+    }, [updatedScrollableRef]);
 
     useEffect(() => {
         const el = document.querySelector(".list-row.active");
         if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
     }, []);
 
-    function mapItem(item: Booth | Category | Exhibitor, index: number) {
+    const mapItem = ({ index }: { index: number }) => {
+        const item: Exhibitor | Booth | Category = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
         if (item instanceof Exhibitor) {
-            return <ExhibitorRow exhibitor={item} key={`e${item.id}`} className={cls} />;
+            return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
         } else if (item instanceof BoothBase) {
-            return <BoothRow booth={item} key={`b${item.id}`} className={cls} />;
+            return <BoothRow key={index} className={cls} booth={item} />;
         } else if (item instanceof Category) {
-            return <CategoryRow category={item} key={`c${item.id}`} className={cls} />;
+            return <CategoryRow key={index} className={cls} category={item} />;
         }
-    }
+    };
 
-    return useObserver(() => <div>{s.items.map(mapItem)}</div>);
+    return useObserver(() => (
+        <div style={{ height: "100%" }}>
+            {scrollableRef && (
+                <Virtuoso
+                    className="list-virtual"
+                    style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
+                    ref={listRef}
+                    itemContent={(index) => mapItem({ index })}
+                    itemsRendered={() => updateScroll && setTimeout(updateScroll)}
+                    totalListHeightChanged={() => updateScroll && updateScroll()}
+                    customScrollParent={scrollableRef.current}
+                    totalCount={uiState.listItems.length}
+                />
+            )}
+        </div>
+    ));
 }
