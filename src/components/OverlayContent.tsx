@@ -49,7 +49,6 @@ const OverlayContent: React.FC<{
 
     useLayoutEffect(() => {
         const sel = scrollable.current;
-        window["scrollable"] = sel;
         const setScrolled = () => {
             setScrolled1(sel.scrollTop > 0);
             // logger.log("scrolled", sel.scrollTop, scrolled);
@@ -89,7 +88,7 @@ const OverlayContent: React.FC<{
             if (onUpdateFuncSet) onUpdateFuncSet(null);
             observer.disconnect();
         };
-    }, [scrollable, onUpdateFuncSet, psInstance]);
+    }, [scrollable, onUpdateFuncSet, psInstance, passPsToParent]);
 
     useEffect(() => {
         if (uiState.overlaySize !== "full" && scrollable.current.scrollTop !== 0) {

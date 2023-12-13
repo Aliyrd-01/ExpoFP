@@ -47,8 +47,8 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
                     className="list-virtual"
                     style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
                     ref={listRef}
-                    defaultItemHeight={0}
                     itemContent={(index) => mapItem({ index })}
+                    itemsRendered={() => updateScroll && setTimeout(updateScroll)}
                     totalListHeightChanged={() => updateScroll && updateScroll()}
                     customScrollParent={scrollableRef.current}
                     totalCount={uiState.listItems.length}
