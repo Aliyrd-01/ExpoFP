@@ -7,7 +7,7 @@ import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 
 export default function configGPS() {
 
-    if (data.autoTrackingGps && store.mapboxStore.mapBoxEnabled) {
+    if (data.autoTrackingGps) {
         trackGPS();
     }
 }
