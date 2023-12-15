@@ -45,7 +45,7 @@ interface LayoutProps {
 }
 
 export default observer(function Layout({ offHistory, allowConsent }: LayoutProps) {
-    const [isGDPR , setIsGDPR] = useState(false);
+    const [isGDPR, setIsGDPR] = useState(false);
 
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
@@ -95,7 +95,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                {settings.EXPO === "exhibitorlive2023" && uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}
