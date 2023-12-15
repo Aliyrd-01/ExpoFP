@@ -164,7 +164,7 @@ function ExhibitorComponent() {
                         onClick={(e) => {
                             customButtonClick(buttonNumber, url, e);
                         }}
-                        target={isIframe || uiState.onExhibitorCustomButtonClick ? "_blank" : "_self"}
+                        target="_blank"
                     >
                         {title}
                     </Button>
