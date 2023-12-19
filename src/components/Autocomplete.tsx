@@ -189,7 +189,6 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
                     "with-clear": showOptionsDropdown && showClear,
                 })}
             >
-                {input}
                 <div className={"efp-autocomplete__inner"}>
                     <input
                         type="search"
