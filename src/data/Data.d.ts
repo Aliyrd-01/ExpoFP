@@ -44,6 +44,7 @@ interface Data {
     showCategories: boolean;
     showCompaniesAndBooths: boolean;
     showOtherSpaces: boolean;
+    hideShareButton: boolean;
 }
 
 interface ScheduleItem {

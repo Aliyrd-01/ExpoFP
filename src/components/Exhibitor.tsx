@@ -189,7 +189,7 @@ function ExhibitorComponent() {
         }
 
         function shareButtonVisible() {
-            return !uiState.kiosk && window.location.host.endsWith(".expofp.com") && settings.EXPO !== "globalaltsmiami2024";
+            return !data.hideShareButton && !uiState.kiosk && window.location.host.endsWith(".expofp.com") && settings.EXPO !== "globalaltsmiami2024";
         }
 
         function onUpdateGallery() {
