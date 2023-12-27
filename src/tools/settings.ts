@@ -30,7 +30,7 @@ let settings = new Settings();
 
 if (settings.EXPO.startsWith("sxsw2024")) {
     settings.colors.booths.selected = "#FF6400";
-    settings.colors.booths.seectedLight="#FFFFFF";
+    settings.colors.booths.seectedLight = "#808080";
 }
 
 // else if (settings.EXPO === "eventtechlive2019") {
