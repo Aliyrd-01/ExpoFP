@@ -55,7 +55,7 @@ export default function configAll(context: DrawerContext = _context): void {
         const name = l?.name;
 
         if (name) {
-            store.layerStore.updateVisibility(name, true);
+            store.layerStore.updateVisibility(l, true);
             store.routeStore.currentRouteLayer = l;
 
             const booths =

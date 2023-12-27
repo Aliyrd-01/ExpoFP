@@ -59,7 +59,7 @@ export default class RouteStore {
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
             if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
-                this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
+                this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
             if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
         }, 200);
@@ -150,7 +150,7 @@ export default class RouteStore {
         let layer = store.layerStore.findLayer(point.z);
 
         if (focus) {
-            if (layer && !layer?.visible) layersStore.updateVisibility(layer.name, true);
+            if (layer && !layer?.visible) layersStore.updateVisibility(layer, true);
             this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 1000, 1000);
         }
 
@@ -177,7 +177,7 @@ export default class RouteStore {
 
             const layer = store.layerStore.findLayer(store.routeStore.currentPosition?.z);
             if (layer) {
-                layersStore.updateVisibility(layer.name, true);
+                layersStore.updateVisibility(layer, true);
             }
         } else store.selectBooth(store.routeStore.defaultFrom);
     }

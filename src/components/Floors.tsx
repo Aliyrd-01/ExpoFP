@@ -3,14 +3,14 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
 import Rect from "../core/Rect";
 import store, { uiState } from "../store";
-import { LayerMode, LayersMode } from "../store/LayerStore";
+import { Layer, LayerMode, LayersMode } from "../store/LayerStore";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import "./Floors.scss";
 
 var timeout = null;
 export default function Floors() {
-    var data: { shortName: string; active: boolean; description: string; disabled: boolean }[] = [];
+    var data: { layer: Layer; active: boolean; disabled: boolean }[] = [];
 
     const s = useLocalStore(() => ({
         get className() {
@@ -24,12 +24,13 @@ export default function Floors() {
         },
     }));
 
-    var click = (name: string) => {
+    var click = (layer: Layer) => {
         if (timeout) return;
         timeout = setTimeout(() => (timeout = null), 500);
-        var layer = store.layerStore.layers.find((l) => l.description === name);
+        var layer = store.layerStore.layers.find((l) => l.description === layer.description);
+        
         if (store.layerStore.mode === LayersMode.Radio) {
-            store.layerStore.updateVisibility(layer.name, true, true);
+            store.layerStore.updateVisibility(layer, true, true);
             store.routeStore.currentRouteLayer = layer;
 
             if (store.mapboxStore.showMapbox) return;
@@ -44,7 +45,7 @@ export default function Floors() {
                 if (i2 < i1) uiState.zoomBy = 0.95;
                 else uiState.zoomBy = 1.05;
             }
-        } else store.layerStore.updateVisibility(layer.name, !layer.visible);
+        } else store.layerStore.updateVisibility(layer, !layer.visible);
     };
 
     return useObserver(() => {
@@ -56,25 +57,26 @@ export default function Floors() {
             .filter((value, index, array) => array.indexOf(value) === index)
             .map((l) => {
                 return {
+                    layer: l,
                     shortName: l.shortName,
                     description: l.description,
                     active: l.visible,
                     disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
                 };
             });
-
+            
         return (
             (store.layerStore.mode === LayersMode.Radio || store.layerStore.mode === LayersMode.CheckBox) && (
                 <div className={s.className} style={s.style}>
-                    {data.map((f) => (
+                    {data.map((l) => (
                         <div
-                            className={classNames("item", { active: f.active, disabled: f.disabled })}
-                            key={f.description}
-                            onClick={() => click(f.description)}
-                            title={f.description}
+                            className={classNames("item", { active: l.active, disabled: l.disabled })}
+                            key={l.layer.description}
+                            onClick={() => click(l.layer)}
+                            title={l.layer.description}
                             dir="auto"
                         >
-                            {f.shortName}
+                            {l.layer.shortName}
                         </div>
                     ))}
                 </div>

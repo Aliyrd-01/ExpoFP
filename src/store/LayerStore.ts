@@ -71,16 +71,16 @@ export default class LayerStore {
         return this.mode !== LayersMode.Radio || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
-    @action updateVisibility(layerName: string, visible: boolean, animated: boolean = false): void {
+    @action updateVisibility(layerOrName: string | Layer, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 
-        const layer = this.findLayer(layerName);
+        const layer = layerOrName instanceof Layer ? layerOrName : this.findLayer(layerOrName);
         if (!layer || layer.visible === visible) return;
 
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
-                    if (l.name !== layerName && !l.frozen && l.visible) {
+                    if (l.name !== layer.name && !l.frozen && l.visible) {
                         if (!animated) l.visible = false;
                         else an(l, false);
                     }
@@ -118,7 +118,7 @@ export function setContext(context: DrawerContext) {
 }
 
 function an(layer: Layer, toVisible: boolean): void {
-    if (toVisible) store.layerStore.updateVisibility(layer.name, true);
+    if (toVisible) store.layerStore.updateVisibility(layer, true);
 
     animate(
         0,
@@ -128,6 +128,7 @@ function an(layer: Layer, toVisible: boolean): void {
         _context.requireUpdate.bind(_context),
         (v) => _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v)),
         () => {
+            layer.visible = toVisible;
             if (!toVisible) {
                 layer.visible = false;
                 _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = 1));

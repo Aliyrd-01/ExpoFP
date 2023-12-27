@@ -44,7 +44,7 @@ export default class RootStore {
         var visible = exhibitor.booths.filter((b) => b.visible);
         var invisible = exhibitor.booths.filter((b) => !b.visible);
         if (!visible.length && invisible.length) {
-            this.layerStore.updateVisibility(invisible[0].layer.name, true);
+            this.layerStore.updateVisibility(invisible[0].layer, true);
         }
         if (!focus) return;
 
@@ -60,7 +60,7 @@ export default class RootStore {
 
         if (focus) this.moveToList(b);
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
-            this.layerStore.updateVisibility(b[0].layer.name, true);
+            this.layerStore.updateVisibility(b[0].layer, true);
     }
 
     @action reset() {
