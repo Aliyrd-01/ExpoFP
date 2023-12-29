@@ -77,7 +77,7 @@ a:visited {
     --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
     --k-spacing-sm: calc(max(10px, 1.4vh) * var(--k-scale));
 
-    --k-searchBox-width: clamp(calc(220px * var(--k-scale)), calc(65vw * var(--k-scale)), calc(600px * var(--k-scale)));
+    --k-searchBox-width: clamp(calc(200px * var(--k-scale)), calc(64vw * var(--k-scale)), calc(560px * var(--k-scale)));
     --k-searchBox-height: clamp(60px, 8vmin, 90px);
     --k-mapControls-gap: clamp(14px * var(--k-scale), 1.4vmin * var(--k-scale), 18px * var(--k-scale));
     --k-mapControl-size: clamp(calc(54px * var(--k-scale)), calc(4.2vmax * var(--k-scale)), calc(70px * var(--k-scale)));
@@ -89,6 +89,6 @@ a:visited {
     --k-sidebarMenuTopHeight: clamp(200px * var(--k-scale), 10vmax * var(--k-scale), 400px * var(--k-scale));
     --k-itemsPadding-1: var(--k-spacing-lg) calc(max(26px, 1.4vw) * var(--k-scale));
     --k-bottomPadding-2: clamp(4px, 1vh, 6px) clamp(12px, 1.6vw, 20px);
-    --k-inputHeight: clamp(50px, 10vh, 68px);
+    --k-inputHeight: clamp(48px, 10vh, 62px);
     --k-imageHeight: clamp(120px, 12vh, 160px);
 }

@@ -36,12 +36,12 @@
 
 .efp-kiosk {
     .efp-wayInformation {
-        padding-left: var(--k-spacing-lg);
-        padding-right: var(--k-spacing-lg);
+        padding: var(--k-spacing-lg);
 
         &__item {
             span {
-                font-size: 0.9em;
+                padding: 0;
+                font-size: 0.8em;
             }
             strong {
                 font-size: 1.1em;
