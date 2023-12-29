@@ -137,6 +137,11 @@ $wayfindingError: ".efp-wayfindingError";
             }
         }
     }
+    #{$wayfinding} {
+        &__top {
+            margin-bottom: 0;
+        }
+    }
     #{$wayfindingForm} {
         align-items: unset;
         padding-inline-end: var(--k-spacing-lg);

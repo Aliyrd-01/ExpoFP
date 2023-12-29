@@ -37,6 +37,7 @@
 .efp-kiosk {
     .efp-wayInformation {
         padding: var(--k-spacing-lg);
+        border-top: 0;
 
         &__item {
             span {
