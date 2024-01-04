@@ -206,6 +206,13 @@ export default function Map() {
     ));
 
     function moveToRect(rect: Rect, maxZoomScale: number = 10, animate: boolean = true) {
+        rect = Rect.fromX1y1x2y2(
+            rect.x1 -  uiState.kioskRectPadding * rect.w,
+            rect.y1,
+            rect.x2,
+            rect.y2
+        );
+
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
         const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));

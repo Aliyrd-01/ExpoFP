@@ -161,6 +161,13 @@ export default class UIState {
     @computed get wsPaddingPx() {
         return remsToPixels(0.3);
     }
+
+    @computed get kioskRectPadding() {
+        return this.kiosk && this.overlayLeft && uiState.selectedRoute?.from && uiState.selectedRoute?.to
+            ? (1.7 * uiState.overlayWidthPx) / uiState.wsWidthPx
+            : 0;
+    }
+
     @computed get wsOccupiedHeightPx() {
         return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0;
     }
@@ -343,7 +350,9 @@ export default class UIState {
                 if (
                     splittedTexts.some(
                         (text) =>
-                            containsIgnoreCase(b.title || "", text) || containsIgnoreCase(b.name, text) || containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                            containsIgnoreCase(b.title || "", text) ||
+                            containsIgnoreCase(b.name, text) ||
+                            containsLevelIgnoreCase(b.layer?.name ?? null, text)
                     )
                 ) {
                     matchingBooths.add(b);
