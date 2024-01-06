@@ -125,19 +125,15 @@ export default function Map() {
             }
 
             var details = uiState.details as any;
+
             var data = {
-                type:
-                    uiState.details instanceof BoothBase
-                        ? "booth"
-                        : uiState.details instanceof Exhibitor
-                        ? "exhibitor"
-                        : ("route" as any),
+                type: details instanceof BoothBase ? "booth" : details instanceof Exhibitor ? "exhibitor" : ("route" as any),
                 name: details?.name,
                 id: details?.id,
                 externalId: details?.externalId,
             };
 
-            uiState.onDetails(data);
+            setTimeout(() => uiState.onDetails(data), 200);
         }
     );
 
@@ -206,12 +202,7 @@ export default function Map() {
     ));
 
     function moveToRect(rect: Rect, maxZoomScale: number = 10, animate: boolean = true) {
-        rect = Rect.fromX1y1x2y2(
-            rect.x1 -  uiState.kioskRectPadding * rect.w,
-            rect.y1,
-            rect.x2,
-            rect.y2
-        );
+        rect = Rect.fromX1y1x2y2(rect.x1 - uiState.kioskRectPadding * rect.w, rect.y1, rect.x2, rect.y2);
 
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;

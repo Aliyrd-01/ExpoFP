@@ -216,6 +216,18 @@ export default class RouteStore {
     }
 }
 
+export function extractRoute(from: string, to: string) {
+    let bFrom = store.boothStore.booths.find((b) => b.name === from || b.slug === from || b.externalId === from);
+    if (!bFrom)
+        bFrom = store.exhibitorStore.exhibitors.find((e) => e.name === from || e.slug === from || e.externalId === from)
+            ?.booths[0];
+
+    let bTo = store.boothStore.booths.find((b) => b.name === to || b.slug === to || b.externalId === to);
+    if (!bTo) bTo = store.exhibitorStore.exhibitors.find((e) => e.name === to || e.slug === to || e.externalId === to)?.booths[0];
+
+    return new Route(bFrom, bTo);
+}
+
 export class Route {
     public constructor(public from: Booth, public to: Booth) {}
 }

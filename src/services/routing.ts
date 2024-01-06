@@ -6,7 +6,7 @@ import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import { CurrentPosition, Route } from "../store/RouteStore";
+import { CurrentPosition, Route, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
 // import settings from '@/settings';
@@ -60,12 +60,8 @@ export function initRouting(offHistory = false) {
                 () => store.layerStore.layersLoaded,
                 () => {
                     const parts = slug.split(":");
-                    const from =
-                        store.boothStore.booths.find((x: Booth) => x.slug === parts[2] || x.externalId === parts[2]) || null;
-                    const to =
-                        store.boothStore.booths.find((x: Booth) => x.slug === parts[1] || x.externalId === parts[1]) || null;
                     store.routeStore.onlyAccessible = parts[3] === "true";
-                    store.routeStore.selectRoute(new Route(from, to));
+                    store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
                 }
             );
         } else if (slug === "bookmarks") {

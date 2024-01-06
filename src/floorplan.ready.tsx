@@ -5,7 +5,7 @@ import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
 import { initRouting, destroyHistory } from "./services/routing";
 import store from "./store";
-import { CurrentPosition, Route } from "./store/RouteStore";
+import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
 import { GaEventActions, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import trackEvent from "./tools/track-event";
 import { resetGlobalVariables } from "./tools/reset";
@@ -69,9 +69,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectRoute(from: string | { x: number; y: number }, to: string | { x: number; y: number }): void {
-        const bFrom = store.boothStore.booths.find((b) => b.name === from) || (from as any);
-        const bTo = store.boothStore.booths.find((b) => b.name === to) || (to as any);
-        store.routeStore.selectRoute(new Route(bFrom, bTo));
+        if (typeof from === "string" && typeof to === "string") store.routeStore.selectRoute(extractRoute(from, to));
+        else store.routeStore.selectRoute(new Route(from as any, to as any));
     }
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
