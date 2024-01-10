@@ -125,6 +125,7 @@
     &__desc {
         p,
         span {
+            overflow-wrap: break-word;
             background: transparent !important;
         }
     }
