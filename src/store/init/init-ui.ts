@@ -3,7 +3,7 @@ import Size from "../../core/Size";
 import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
-import ResizeObserver from "resize-observer-polyfill";
+import { ResizeObserver } from "resize-observer";
 import { isLocalStorageAvailable } from "../../utils/localStorage";
 
 export const kioskKey = "kiosk";

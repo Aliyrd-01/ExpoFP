@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
+import { install } from "resize-observer";
 // import initStore from "./store/init";
 import { initRouting, destroyHistory } from "./services/routing";
 import store from "./store";
@@ -13,6 +14,8 @@ import reportError from "./tools/report-error";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { destroyGtag } from "./tools/gtag";
 import { SpecialBooth } from "./store/BoothStore";
+
+install();
 
 trackEvent("load");
 

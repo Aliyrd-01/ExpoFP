@@ -23,7 +23,7 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import ResizeObserver from "resize-observer-polyfill";
+import { ResizeObserver } from "resize-observer";
 import { LayerMode } from "../../store/LayerStore";
 
 //console.log('isIframe', isIframe)

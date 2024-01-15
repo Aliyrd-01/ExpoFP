@@ -82,7 +82,7 @@
         "react-transition-group": "^4.3.0",
         "react-virtuoso": "^4.6.2",
         "react-zoom-pan-pinch-sr": "^0.2.0",
-        "resize-observer-polyfill": "^1.5.1",
+        "resize-observer": "^1.0.4",
         "sass-loader": "^8.0.0",
         "serve": "^11.2.0",
         "simple-geometry": "^1.0.5",
