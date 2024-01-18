@@ -20,7 +20,7 @@ export default async function loadLayer(
     if (layer.configured) return Promise.resolve(true);
 
     return new Promise(async (resolve, reject) => {
-        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
+        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`] && !layer.parent) {
             try {
                 await loadJs(`${window["__dataUrlBase"]}fp.svg.${layer.name}.js`);
             } catch {

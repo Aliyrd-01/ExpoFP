@@ -50,7 +50,7 @@ export default function Floors() {
 
     return useObserver(() => {
         data = store.layerStore.layers
-            .filter((l) => !l.frozen)
+            .filter((l) => !l.frozen && !l.parent)
             .concat(
                 store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible)
             )
