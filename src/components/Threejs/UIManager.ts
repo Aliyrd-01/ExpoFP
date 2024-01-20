@@ -25,6 +25,7 @@ import { SpriteMesh } from "./common/SpriteMesh";
 
 import to from "./assets/to.png";
 import yah from "./assets/yah.png";
+import { actualBoothColor } from "../Mapbox/utils/data";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -243,6 +244,12 @@ export default class UIManager {
             const efpBooth = store.boothStore.booths.find((b) => name && name[0] === "b" && b.name === name?.substring(1));
 
             if (efpBooth) {
+                (mesh as THREE.Mesh).material = new THREE.MeshPhongMaterial({
+                    color: actualBoothColor(efpBooth),
+                    side: THREE.DoubleSide,
+                    name: mesh.name,
+                });
+
                 let objLayer = this.data.objLayers.find((l) => l.name === (efpBooth.layer?.name || "Default"));
 
                 let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
