@@ -1,13 +1,12 @@
 import { lineAngle } from "simple-geometry";
 import * as THREE from "three";
-import { AdditiveBlending, Material, Mesh } from "three";
+import { Material, Mesh } from "three";
 import { Booth } from "../../../store/BoothStore";
 import { IBooth as ThreeBooth } from "../common/dataLoader";
 
+import settings from "../../../tools/settings";
 import { getBoothlabel } from "../../Mapbox/utils/data";
 import TextureMerger, { modifySphereUV } from "../utils/textureMerger";
-import { Img } from "../../../utils/imageloader";
-import settings from "../../../tools/settings";
 var { Text } = require("troika-three-text");
 
 const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
@@ -57,8 +56,6 @@ export class BoothMesh extends THREE.Group {
         const { rect } = this.threeBooth;
         let maxDimension = Math.max(rect.width, rect.height);
         let minDimension = Math.min(rect.width, rect.height);
-
-        
 
         label.fontSize = minDimension;
 
@@ -127,10 +124,13 @@ export class BoothMesh extends THREE.Group {
             angle = (-this.efpBooth.rotate * 180) / Math.PI;
         }
 
+        const range = textureMerger.ranges.get(this.efpBooth.slug + "_logo");
+        if (!range) return null;
+
         var plane = new THREE.Mesh(new THREE.PlaneGeometry(w, h), material);
         plane.layers.set(this.threeLayer);
 
-        modifySphereUV(plane, textureMerger.ranges.get(this.efpBooth.slug + "_logo"));
+        modifySphereUV(plane, range);
 
         plane.rotateZ(((angle || 0) * Math.PI) / 180);
 

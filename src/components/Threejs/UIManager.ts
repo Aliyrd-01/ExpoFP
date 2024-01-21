@@ -268,7 +268,8 @@ export default class UIManager {
                 var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
                 if (exhibitor) {
                     const img = logos.find((l) => l.booth.name === name.substring(1));
-                    scene.add(boothMesh.setLogo(textureMerger, img.htmlImage.width / img.htmlImage.height, material));
+                    const logo = boothMesh.setLogo(textureMerger, img.htmlImage.width / img.htmlImage.height, material);
+                    if (logo) scene.add(logo);
                 }
 
                 model.children[index] = boothMesh;
