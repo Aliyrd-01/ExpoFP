@@ -4,8 +4,8 @@ import { Booth, RegularBooth } from "./../../store/BoothStore";
 import { RouteLine } from "./../../utils/wayfinding";
 import { BoothMesh } from "./common/BoothMesh";
 
-import RouteStore, { CurrentPosition } from "../../store/RouteStore";
-import dataLoader, { ICommonData, IObjLayer } from "./common/dataLoader";
+import RouteStore from "../../store/RouteStore";
+import dataLoader, { ICommonData } from "./common/dataLoader";
 
 import loadModel from "./common/modelLoader";
 import Scene from "./common/Scene";
@@ -19,13 +19,12 @@ import { LayersMode } from "../../store/LayerStore";
 import logosFromBooths from "../../utils/imageloader";
 import isDebug from "../../utils/is-debug";
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
-import TextureMerger from "./utils/textureMerger";
-import canvasFromText from "./utils/canvasFromText";
 import { SpriteMesh } from "./common/SpriteMesh";
+import canvasFromText from "./utils/canvasFromText";
+import TextureMerger from "./utils/textureMerger";
 
-import to from "./assets/to.png";
-import yah from "./assets/yah.png";
 import { actualBoothColor } from "../Mapbox/utils/data";
+import to from "./assets/to.png";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
