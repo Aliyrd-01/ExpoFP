@@ -84,16 +84,36 @@ export default class LayerStore {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
                     if (l.name !== layer.name && !l.frozen && l.visible) {
-                        if (!animated) l.visible = false;
-                        else an(l, false);
+                        if (!animated) {
+                            l.visible = false;
+                            l.childLayers.forEach(child => {
+                                child.visible = false;
+                            })
+                        }
+                        else {
+                            an(l, false);
+                            layer.childLayers.forEach(child => {
+                                an(child, false);
+                            })
+                        }
                     }
                     //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
             if (layer) {
-                if (!animated) layer.visible = visible;
-                else an(layer, visible);
+                if (!animated) {
+                    layer.visible = visible;
+                    layer.childLayers.forEach(child => {
+                        child.visible = visible;
+                    })
+                }
+                else {
+                    an(layer, visible);
+                    layer.childLayers.forEach(child => {
+                        an(child, visible);
+                    })
+                }
             }
         });
     }

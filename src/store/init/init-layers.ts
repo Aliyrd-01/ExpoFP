@@ -61,7 +61,6 @@ export default function initLayers(store: RootStore) {
     let layers: Layer[] = [];
     let priority = 0;
     if (fpLayers) {
-        console.error("if fpLayers")
         fpLayers.forEach(layer => {
             priority += 15;
             let l = new Layer();
@@ -77,7 +76,7 @@ export default function initLayers(store: RootStore) {
             priority = childResult.priority;
             if (childResult.layers.length) {
                 l.childLayers = childResult.layers;
-                l.basePriority = childResult.layers[childResult.layers.length - 1].basePriority + 15;
+                // l.basePriority = childResult.layers[childResult.layers.length - 1].basePriority + 15;
                 layers.push(...childResult.layers);
             }
 
@@ -87,7 +86,6 @@ export default function initLayers(store: RootStore) {
             }
         });
     } else {
-        console.error("else fpLayers")
         select(getLayerSvg())
             .selectAll<SVGAElement, unknown>("svg  [data-layer]")
             .nodes()
@@ -107,7 +105,6 @@ export default function initLayers(store: RootStore) {
                     addedLayers.add(l.name);
                     layers.push(l);
                 }
-                console.error(2);
             });
     }
 
@@ -132,8 +129,6 @@ export default function initLayers(store: RootStore) {
     layers = layers.filter((l) => !l.frozen || (l.frozen && l.visible));
 
     layerStore.defaultLayer = layers.find((l) => l.name === window["__fpDefaultLayer"]);
-
-    console.error(layers);
 
     layerStore.layers.push(...layers);
 }
