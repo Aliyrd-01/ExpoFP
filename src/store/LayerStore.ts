@@ -92,9 +92,6 @@ export default class LayerStore {
                         }
                         else {
                             an(l, false);
-                            layer.childLayers.forEach(child => {
-                                an(child, false);
-                            })
                         }
                     }
                     //else if (l.rect) uiState.moveToRect = l.rect;
@@ -106,13 +103,17 @@ export default class LayerStore {
                     layer.visible = visible;
                     layer.childLayers.forEach(child => {
                         child.visible = visible;
-                    })
+                    });
                 }
                 else {
                     an(layer, visible);
                     layer.childLayers.forEach(child => {
-                        an(child, visible);
-                    })
+                        if (!animated) {
+                            child.visible = visible;
+                        } else {
+                            an(child, visible);
+                        }
+                    });
                 }
             }
         });
@@ -149,7 +150,10 @@ function an(layer: Layer, toVisible: boolean): void {
         easeLinear,
         toVisible ? interpolateNumber(0, 1) : interpolateNumber(1, 0),
         _context.requireUpdate.bind(_context),
-        (v) => _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v)),
+        (v) => {
+            layer.visible = toVisible;
+            _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v))
+        },
         () => {
             layer.visible = toVisible;
             if (!toVisible) {
