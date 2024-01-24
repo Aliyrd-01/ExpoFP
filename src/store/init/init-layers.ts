@@ -7,7 +7,7 @@ import RootStore from "../RootStore";
 // Создаем новый Set для отслеживания уже добавленных слоев
 const addedLayers = new Set();
 
-function getChildLayers(layer: Layer, currentPriority: number): { layers: Layer[]; priority: number } {
+export function getChildLayers(layer: Layer, currentPriority: number): { layers: Layer[]; priority: number } {
     const childLayers: Layer[] = [];
     let priority = currentPriority;
 

@@ -107,13 +107,6 @@ export default class LayerStore {
                 }
                 else {
                     an(layer, visible);
-                    layer.childLayers.forEach(child => {
-                        if (!animated) {
-                            child.visible = visible;
-                        } else {
-                            an(child, visible);
-                        }
-                    });
                 }
             }
         });
@@ -152,7 +145,8 @@ function an(layer: Layer, toVisible: boolean): void {
         _context.requireUpdate.bind(_context),
         (v) => {
             layer.visible = toVisible;
-            _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v))
+            layer.childLayers.forEach(l => l.visible = toVisible);
+            _context.getLayersPainters([layer.name, ...layer.childLayers.map(l => l.name)]).forEach((p) => ((p as RectPainter).alpha = v))
         },
         () => {
             layer.visible = toVisible;
