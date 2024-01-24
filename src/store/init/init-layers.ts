@@ -11,8 +11,8 @@ export function getChildLayers(layer: Layer, currentPriority: number): { layers:
     const childLayers: Layer[] = [];
     let priority = currentPriority;
 
-    const children = select(getLayerSvg(layer.name))
-        .selectAll<SVGAElement, unknown>(`svg > [data-layer="${layer.name}"] [data-layer]`)
+    const children = select(getLayerSvg(layer))
+        .selectAll<SVGAElement, unknown>(`svg [data-layer="${layer.name}"] > [data-layer]`)
         .nodes()
         .filter((n) => n.childNodes.length);
 
@@ -26,11 +26,10 @@ export function getChildLayers(layer: Layer, currentPriority: number): { layers:
         child.frozen = childLayer.getAttribute("data-layer-isfrozen") === "true" ? true : false;
         child.rect = layer.rect;
         child.mode = LayerMode.Unset;
-        child.child = true;
-        child.parent = layer.parent ? layer.parent : layer;
+        child.rootParent = layer.rootParent ? layer.rootParent : layer;
 
         const grandChildResult = getChildLayers(child, priority);
-        priority = grandChildResult.priority + 15; // увеличиваем приоритет после рекурсивного вызова
+        priority = grandChildResult.priority + 15;
         child.basePriority = priority;
 
         if (grandChildResult.layers.length) {
@@ -72,14 +71,6 @@ export default function initLayers(store: RootStore) {
             l.mode = layer.mode || LayerMode.Unset;
             l.basePriority = priority;
 
-            const childResult = getChildLayers(l, priority);
-            priority = childResult.priority;
-            if (childResult.layers.length) {
-                l.childLayers = childResult.layers;
-                // l.basePriority = childResult.layers[childResult.layers.length - 1].basePriority + 15;
-                layers.push(...childResult.layers);
-            }
-
             if (!addedLayers.has(l.name)) {
                 addedLayers.add(l.name);
                 layers.push(l);
@@ -87,7 +78,7 @@ export default function initLayers(store: RootStore) {
         });
     } else {
         select(getLayerSvg())
-            .selectAll<SVGAElement, unknown>("svg  [data-layer]")
+            .selectAll<SVGAElement, unknown>("svg > [data-layer]")
             .nodes()
             .filter((n) => n.childNodes.length)
             .forEach((layer) => {

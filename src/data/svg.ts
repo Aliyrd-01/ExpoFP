@@ -109,11 +109,13 @@ export let getLayerSvg = (layer: Layer | string = ""): SVGElement => {
         else return _svg.get("");
     }
 
-    if (layer.parent) {
-        if (_svg.has(layer.parent.name)) {
-            return _svg.get(layer.parent.name);
+    if (layer.rootParent) {
+        if (_svg.has(layer.rootParent.name)) {
+            return _svg.get("");
+        } else if (window[`__fp${layer.rootParent.name}`]) {
+            return parseSvg(window[`__fp${layer.rootParent.name}`], layer.rootParent.name);
         } else {
-            parseSvg(window[`__fp${layer.parent.name}`], layer.parent.name);
+            return _svg.get("");
         }
     } else if (window[`__fp${layer.name}`]) {
         return parseSvg(window[`__fp${layer.name}`], layer.name);

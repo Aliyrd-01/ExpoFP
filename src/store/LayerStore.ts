@@ -32,9 +32,8 @@ export class Layer {
     frozen: boolean;
     rect: Rect = null;
     configured: boolean;
-    child: boolean = false;
     childLayers: Layer[] = [];
-    parent: Layer;
+    rootParent: Layer = null;
     mode: LayerMode;
 
     @observable loaded: boolean;

@@ -19,30 +19,30 @@ function createChildLayers(layer: Layer) {
     if (layer.childLayers.length) return layer.childLayers;
 
     let childBasePriority = layer.basePriority;
-    // const childLayers = getChildLayers(layer, layer.basePriority).layers
-    // if (childLayers.length) {
-    //     layer.childLayers = childLayers;
-    // }
-    const childLayers = select(getLayerSvg(layer.name))
-        .selectAll<SVGAElement, unknown>(`svg [data-layer="${layer.name}"] [data-layer]`)
-        .nodes()
-        .filter((n) => n.childNodes.length)
-        .map((childLayer, i) => {
-            const layerID = childLayer.getAttribute("data-layer");
-
-            let child = new Layer();
-            child.name = childLayer.getAttribute("data-layer");
-            child.visible = layer.visible;
-            child.description = childLayer.getAttribute("data-layer-description") || layerID;
-            child.frozen = childLayer.getAttribute("data-layer-isfrozen") === "true";
-            child.rect = layer.rect;
-            child.mode = LayerMode.Unset;
-            child.child = true;
-            child.basePriority = childBasePriority + 15 * (i + 1);
-            child.parent = layer;
-
-            return child;
-        });
+    const childLayers = getChildLayers(layer, layer.basePriority).layers
+    if (childLayers.length) {
+        layer.childLayers = childLayers;
+    }
+    // const childLayers = select(getLayerSvg(layer.name))
+    //     .selectAll<SVGAElement, unknown>(`svg [data-layer="${layer.name}"] [data-layer]`)
+    //     .nodes()
+    //     .filter((n) => n.childNodes.length)
+    //     .map((childLayer, i) => {
+    //         const layerID = childLayer.getAttribute("data-layer");
+    //
+    //         let child = new Layer();
+    //         child.name = childLayer.getAttribute("data-layer");
+    //         child.visible = layer.visible;
+    //         child.description = childLayer.getAttribute("data-layer-description") || layerID;
+    //         child.frozen = childLayer.getAttribute("data-layer-isfrozen") === "true";
+    //         child.rect = layer.rect;
+    //         child.mode = LayerMode.Unset;
+    //         child.child = true;
+    //         child.basePriority = childBasePriority + 15 * (i + 1);
+    //         child.parent = layer;
+    //
+    //         return child;
+    //     });
 
     return childLayers;
 }
@@ -91,7 +91,7 @@ export default async function loadLayer(
     if (layer.configured) return Promise.resolve(true);
 
     return new Promise(async (resolve, reject) => {
-        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`] && !layer.parent) {
+        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`] && !layer.rootParent) {
             try {
                 await loadJs(`${window["__dataUrlBase"]}fp.svg.${layer.name}.js`);
             } catch {
@@ -103,7 +103,6 @@ export default async function loadLayer(
 
         if (childLayers.length) {
             layer.childLayers = childLayers;
-            // layer.basePriority = childLayers[childLayers.length - 1].basePriority + 15;
         }
 
         let { layers } = store.layerStore;
