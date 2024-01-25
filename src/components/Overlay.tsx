@@ -1,6 +1,6 @@
 import { easePolyOut } from "d3-ease";
 import { select } from "d3-selection";
-import { autorun } from "mobx";
+import { autorun, reaction } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
 import React, { useLayoutEffect, useRef } from "react";
 import store from "../store";
@@ -123,6 +123,16 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             // this will now transition to desired size
             position();
         }
+
+        reaction(
+            () => uiState.screenSize,
+            () => {
+                if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "medium") {
+                    const top = getTopForBottomPosition("medium", el.current);
+                    el.current.style.top = top + "px";
+                }
+            }
+        )
 
         function handleTouchCancel() {
             s.startedTouch = undefined;
