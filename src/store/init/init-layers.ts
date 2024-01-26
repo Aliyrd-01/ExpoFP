@@ -4,9 +4,6 @@ import { floors } from "../../data/svg";
 import { Layer, LayerMode, LayersMode } from "../LayerStore";
 import RootStore from "../RootStore";
 
-// Создаем новый Set для отслеживания уже добавленных слоев
-const addedLayers = new Set();
-
 export function getChildLayers(layer: Layer, currentPriority: number): { layers: Layer[]; priority: number } {
     const childLayers: Layer[] = [];
     let priority = currentPriority;
@@ -71,10 +68,7 @@ export default function initLayers(store: RootStore) {
             l.mode = layer.mode || LayerMode.Unset;
             l.basePriority = priority;
 
-            if (!addedLayers.has(l.name)) {
-                addedLayers.add(l.name);
-                layers.push(l);
-            }
+            layers.push(l);
         });
     } else {
         select(getLayerSvg())
@@ -83,7 +77,7 @@ export default function initLayers(store: RootStore) {
             .filter((n) => n.childNodes.length)
             .forEach((layer) => {
                 const layerID = layer.getAttribute("data-layer");
-                if (!layerID.startsWith("WF") && !addedLayers.has(layerID)) {
+                if (!layerID.startsWith("WF")) {
                     priority += 15;
                     let l = new Layer();
                     l.name = layerID;
@@ -93,7 +87,6 @@ export default function initLayers(store: RootStore) {
                     l.rect = floors.filter((f) => f.name === l.name || f.name === l.description)[0]?.rect;
                     l.mode = LayerMode.Unset;
                     l.basePriority = priority;
-                    addedLayers.add(l.name);
                     layers.push(l);
                 }
             });
@@ -123,5 +116,3 @@ export default function initLayers(store: RootStore) {
 
     layerStore.layers.push(...layers);
 }
-
-//
