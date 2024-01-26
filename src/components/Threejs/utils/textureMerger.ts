@@ -208,7 +208,7 @@ export default class TextureMerger {
         return null;
     }
 
-    public insert(node: Node, textureName: string, texturesObj: TextureObject) {
+    private insert(node: Node, textureName: string, texturesObj: TextureObject) {
         var texture = texturesObj.get(textureName);
         var res = this.isTextureAlreadyInserted(textureName, texturesObj);
 
@@ -286,7 +286,8 @@ export default class TextureMerger {
                     this.insert(node, newTextureName, texturesObj);
                 }
             } else {
-                throw new Error("Error: Try to use smaller textures.");
+                console.info(tw, th, textureName);
+                //throw new Error("Error: Try to use smaller textures.");
             }
         } else {
             // First node
@@ -310,7 +311,7 @@ export default class TextureMerger {
         }
     }
 
-    public makeCanvasPowerOfTwo(canvas?: HTMLCanvasElement) {
+    private makeCanvasPowerOfTwo(canvas?: HTMLCanvasElement) {
         var setCanvas = false;
         if (!canvas) {
             canvas = this.canvas;
@@ -329,7 +330,7 @@ export default class TextureMerger {
         }
     }
 
-    public calculateImageSize(texturesObj: TextureObject) {
+    private calculateImageSize(texturesObj: TextureObject) {
         var width = 0;
         var height = 0;
         for (var textureName of this.textureOffsets.keys()) {
@@ -348,9 +349,9 @@ export default class TextureMerger {
         return { width: width, height: height };
     }
 
-    public findNextTexture(texturesObj: TextureObject) {
+    private findNextTexture(texturesObj: TextureObject): string {
         var maxArea = -1;
-        var foundTexture;
+        var foundTexture = "";
         for (var textureName of texturesObj.keys()) {
             var texture = texturesObj.get(textureName);
             if (this.textureCache.indexOf(textureName) == -1) {
@@ -367,7 +368,7 @@ export default class TextureMerger {
         return foundTexture;
     }
 
-    public rescale(canvas: HTMLCanvasElement, scale: number) {
+    private rescale(canvas: HTMLCanvasElement, scale: number) {
         var resizedCanvas = document.createElement("canvas");
         resizedCanvas.width = canvas.width * scale;
         resizedCanvas.height = canvas.height * scale;
@@ -379,7 +380,6 @@ export default class TextureMerger {
 }
 export function modifySphereUV(mesh: THREE.Mesh, range: Range) {
     var uvAttrAry = (mesh.geometry.attributes.uv as THREE.BufferAttribute).array as number[];
-
     for (var i = 0; i < uvAttrAry.length; i += 2) {
         uvAttrAry[i] = uvAttrAry[i] * (range.endU - range.startU) + range.startU;
         uvAttrAry[i + 1] = uvAttrAry[i + 1] * (range.startV - range.endV) + range.endV;

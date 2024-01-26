@@ -1,6 +1,6 @@
 import { easePolyOut } from "d3-ease";
 import { select } from "d3-selection";
-import { autorun } from "mobx";
+import { autorun, reaction } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
 import React, { useLayoutEffect, useRef } from "react";
 import store from "../store";
@@ -99,8 +99,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             if (!rt) return;
             let diff = s.startedTouch.clientY - rt.clientY;
             // if (this.negateMove) diff = -diff;
-            const current = getTopForBottomPosition(uiState.overlaySize);
-            const medium = getTopForBottomPosition("medium");
+            const current = getTopForBottomPosition(uiState.overlaySize, el.current);
+            const medium = getTopForBottomPosition("medium", el.current);
             let newSize = uiState.overlaySize;
             if (diff < 0) {
                 if (uiState.overlaySize === "medium" || current + diff > medium) newSize = "small";
@@ -123,6 +123,16 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             // this will now transition to desired size
             position();
         }
+
+        reaction(
+            () => uiState.screenSize,
+            () => {
+                if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "medium") {
+                    const top = getTopForBottomPosition("medium", el.current);
+                    el.current.style.top = top + "px";
+                }
+            }
+        )
 
         function handleTouchCancel() {
             s.startedTouch = undefined;
@@ -152,7 +162,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         }
 
         function setShowAll() {
-            const all = uiState.overlayPosition === "left" || getTopForBottomPosition("full") + "px" === el.current.style.top;
+            const all = uiState.overlayPosition === "left" || getTopForBottomPosition("full", el.current) + "px" === el.current.style.top;
             uiState.overlayShowsAll = all;
         }
 
@@ -161,13 +171,13 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             // let's animate when no touch in progress
             if (uiState.overlayPosition === "left") return;
 
-            let newTop = getTopForBottomPosition(uiState.overlaySize);
+            let newTop = getTopForBottomPosition(uiState.overlaySize, el.current);
 
             let transition = true;
             if (s.touchDiff !== undefined) {
                 newTop -= s.touchDiff;
-                const maxTop = getTopForBottomPosition("small");
-                const minTop = getTopForBottomPosition("full");
+                const maxTop = getTopForBottomPosition("small", el.current);
+                const minTop = getTopForBottomPosition("full", el.current);
                 newTop = Math.min(Math.max(newTop, minTop), maxTop);
                 transition = false;
             } else if (s.currentTop === undefined) {
@@ -221,15 +231,15 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
 const miniSizeRems = 3.5;
 const paddingRems = 2;
-function getTopForBottomPosition(size: OverlaySize): number {
-    // const containerHeight = el.parentElement.getBoundingClientRect().height;
+function getTopForBottomPosition(size: OverlaySize, el: HTMLDivElement): number {
+    const containerHeight = el.parentElement.getBoundingClientRect().height;
     switch (size) {
         case "full":
             return remsToPixels(paddingRems);
         case "medium":
-            return uiState.rootElement.clientHeight - remsToPixels(uiState.overlayMediumHeightRems);
+            return containerHeight - remsToPixels(uiState.overlayMediumHeightRems);
         case "small":
-            return uiState.rootElement.clientHeight - remsToPixels(miniSizeRems);
+            return containerHeight - remsToPixels(miniSizeRems);
     }
 
     return null;

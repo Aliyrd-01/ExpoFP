@@ -4,8 +4,8 @@ import { Booth, RegularBooth } from "./../../store/BoothStore";
 import { RouteLine } from "./../../utils/wayfinding";
 import { BoothMesh } from "./common/BoothMesh";
 
-import RouteStore, { CurrentPosition } from "../../store/RouteStore";
-import dataLoader, { ICommonData, IObjLayer } from "./common/dataLoader";
+import RouteStore from "../../store/RouteStore";
+import dataLoader, { ICommonData } from "./common/dataLoader";
 
 import loadModel from "./common/modelLoader";
 import Scene from "./common/Scene";
@@ -19,12 +19,12 @@ import { LayersMode } from "../../store/LayerStore";
 import logosFromBooths from "../../utils/imageloader";
 import isDebug from "../../utils/is-debug";
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
-import TextureMerger from "./utils/textureMerger";
-import canvasFromText from "./utils/canvasFromText";
 import { SpriteMesh } from "./common/SpriteMesh";
+import canvasFromText from "./utils/canvasFromText";
+import TextureMerger from "./utils/textureMerger";
 
+import { actualBoothColor } from "../Mapbox/utils/data";
 import to from "./assets/to.png";
-import yah from "./assets/yah.png";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -243,6 +243,12 @@ export default class UIManager {
             const efpBooth = store.boothStore.booths.find((b) => name && name[0] === "b" && b.name === name?.substring(1));
 
             if (efpBooth) {
+                (mesh as THREE.Mesh).material = new THREE.MeshPhongMaterial({
+                    color: actualBoothColor(efpBooth),
+                    side: THREE.DoubleSide,
+                    name: mesh.name,
+                });
+
                 let objLayer = this.data.objLayers.find((l) => l.name === (efpBooth.layer?.name || "Default"));
 
                 let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
@@ -262,7 +268,8 @@ export default class UIManager {
                 var exhibitor = (efpBooth as RegularBooth)?.exhibitors?.find((e) => !!e.logo && e.logoInBooth);
                 if (exhibitor) {
                     const img = logos.find((l) => l.booth.name === name.substring(1));
-                    scene.add(boothMesh.setLogo(textureMerger, img.htmlImage.width / img.htmlImage.height, material));
+                    const logo = boothMesh.setLogo(textureMerger, img.htmlImage.width / img.htmlImage.height, material);
+                    if (logo) scene.add(logo);
                 }
 
                 model.children[index] = boothMesh;
