@@ -2,7 +2,7 @@ import { boothStore, layersStore } from "./../../../../store/index";
 import store from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
-import { Layer, LayerMode, LayersMode } from "../../../../store/LayerStore";
+import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
 import logosFromBooths from "../../../../utils/imageloader";
 import ImagePainter from "../painters/ImagePainter";
@@ -11,8 +11,6 @@ import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configSizes from "./config-sizes";
-import { select } from "d3-selection";
-import { getLayerSvg } from "../../../../data/svg";
 import { getChildLayers } from "../../../../store/init/init-layers";
 
 function createChildLayers(layer: Layer) {
