@@ -111,7 +111,7 @@ export let getLayerSvg = (layer: Layer | string = ""): SVGElement => {
 
     if (layer.rootParent) {
         if (_svg.has(layer.rootParent.name)) {
-            return _svg.get("");
+            return _svg.get(layer.rootParent.name);
         } else if (window[`__fp${layer.rootParent.name}`]) {
             return parseSvg(window[`__fp${layer.rootParent.name}`], layer.rootParent.name);
         } else {

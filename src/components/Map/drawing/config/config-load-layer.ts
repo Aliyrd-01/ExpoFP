@@ -18,31 +18,10 @@ import { getChildLayers } from "../../../../store/init/init-layers";
 function createChildLayers(layer: Layer) {
     if (layer.childLayers.length) return layer.childLayers;
 
-    let childBasePriority = layer.basePriority;
-    const childLayers = getChildLayers(layer, layer.basePriority).layers
+    const childLayers = getChildLayers(layer, layer.basePriority).layers;
     if (childLayers.length) {
         layer.childLayers = childLayers;
     }
-    // const childLayers = select(getLayerSvg(layer.name))
-    //     .selectAll<SVGAElement, unknown>(`svg [data-layer="${layer.name}"] [data-layer]`)
-    //     .nodes()
-    //     .filter((n) => n.childNodes.length)
-    //     .map((childLayer, i) => {
-    //         const layerID = childLayer.getAttribute("data-layer");
-    //
-    //         let child = new Layer();
-    //         child.name = childLayer.getAttribute("data-layer");
-    //         child.visible = layer.visible;
-    //         child.description = childLayer.getAttribute("data-layer-description") || layerID;
-    //         child.frozen = childLayer.getAttribute("data-layer-isfrozen") === "true";
-    //         child.rect = layer.rect;
-    //         child.mode = LayerMode.Unset;
-    //         child.child = true;
-    //         child.basePriority = childBasePriority + 15 * (i + 1);
-    //         child.parent = layer;
-    //
-    //         return child;
-    //     });
 
     return childLayers;
 }
@@ -107,7 +86,10 @@ export default async function loadLayer(
 
         let { layers } = store.layerStore;
 
-        store.layerStore.layers = [...layers, ...childLayers] as Layer[];
+        store.layerStore.layers = [
+            ...layers,
+            ...childLayers.filter((childLayer) => !layers.some((layer) => layer.name === childLayer.name)),
+        ] as Layer[];
 
         await configLayer(layer, context, withConfiguration);
         await Promise.all(childLayers.map((l) => configLayer(l, context, withConfiguration)));
