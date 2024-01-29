@@ -54,6 +54,7 @@
                 border: 5px solid var(--color-white);
             }
             & > .rebooking-radio__icon {
+                background: var(--color-white);
                 color: var(--rebooking-color-primary);
             }
         }
@@ -82,9 +83,9 @@
         align-items: center;
         width: 24px;
         height: 24px;
-        background: var(--color-white);
+        background: var(--rebooking-color-primary);
         border-radius: 50%;
-        color: #98a2b3;
+        color: var(--color-white);
 
         & > i {
             font-size: 18px;
