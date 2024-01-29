@@ -1,4 +1,3 @@
-import { defaultRebookingOptions } from "./../../../RebookingRadioGroup";
 import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
@@ -11,6 +10,7 @@ import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import { getTrianglesFromFpPaths } from "./../../../../data/svg";
+import { defaultRebookingOptions } from "./../../../RebookingRadioGroup";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 
 // let picked = 0;
@@ -24,6 +24,15 @@ export default function configBoothBg(
     // picked++;
     // if (picked > 1) return null;
     new BoothBgDrawer(context, layerID, booth, painterOrderPriority, visible);
+}
+
+function groupBy<T>(arr: T[]): T | null {
+    if (arr.length === 0) return null;
+
+    const firstValue = arr[0];
+    const isSame = arr.every((value) => value === firstValue);
+
+    return isSame ? firstValue : null;
 }
 
 let seq = 0;
@@ -163,7 +172,11 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
-            if (data.isRebooking) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color.primary;
+            if (data.isRebooking) {
+                if (!b.exhibitors?.length) return defaultRebookingOptions[0].color.primary;
+                const state = groupBy((b.exhibitors ?? []).map((e) => e.rebookingState));
+                return state ? defaultRebookingOptions[state].color.primary : "#000000";
+            }
 
             const settingsColors = settings.colors.booths;
             if (b.onHold) {

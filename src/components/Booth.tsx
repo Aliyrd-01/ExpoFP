@@ -57,6 +57,7 @@ function Booth() {
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
+
         if (s.regular) {
             const b = s.regular;
 
@@ -161,7 +162,7 @@ function Booth() {
 
         return (
             <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
-                {!data.isRebooking && content}
+                {content}
                 {!data.isRebooking && settings.wayfinding && (
                     <div
                         className="exhibitor__directions"
