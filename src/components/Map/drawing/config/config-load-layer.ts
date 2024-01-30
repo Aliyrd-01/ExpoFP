@@ -24,7 +24,7 @@ function createChildLayers(layer: Layer) {
     return childLayers;
 }
 
-function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolean): Promise<void> {
+function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolean): Promise<boolean> {
     return new Promise((resolve) => {
         const booths = initBooths(store, l);
         const logosBooths = boothStore.booths.filter(
@@ -43,8 +43,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
         if (layersStore.mode === LayersMode.CheckBox) configSizes(context, l.name, l.basePriority + 10, l.visible);
 
         if (!withConfiguration) {
-            resolve();
-            return;
+            return resolve(false);
         }
 
         l.configured = true;
@@ -55,8 +54,8 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
             if (imagePainter) {
                 imagePainter.visible = l.visible;
             }
-            resolve();
         });
+        resolve(true);
     });
 }
 
