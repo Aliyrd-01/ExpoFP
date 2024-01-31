@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
 import { install } from "resize-observer";
+import { reaction } from "mobx";
 // import initStore from "./store/init";
 import { initRouting, destroyHistory } from "./services/routing";
 import store from "./store";
@@ -43,7 +44,11 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.renderTarget
         );
         sendEventToGa(GaEventActions.Rendered, ``);
-        this.resolveReady();
+
+        reaction(
+            () => store.layerStore.layersLoaded,
+            () => this.resolveReady()
+        );
     }
 
     selectBooth(nameOrExternalId: string | string[]) {
