@@ -97,16 +97,17 @@ export function mapCurrentPosition(position: CurrentPosition): Point | null {
     }
 
     let point: Point;
-    if (fpConfig && position.lat && position.lng) point = convertGpsToLocal(position.lat, position.lng, fpConfig);
-    point = point || position;
 
-    if (
-        !(fpConfig &&
-        point.x >= fpConfig.p0.x &&
-        point.x <= fpConfig.p2.x &&
-        point.y >= fpConfig.p0.y &&
-        point.y <= fpConfig.p2.y)
-    ) {
+    if (fpConfig && position.x >= fpConfig.p0.x &&
+        position.x <= fpConfig.p2.x &&
+        position.y >= fpConfig.p0.y &&
+        position.y <= fpConfig.p2.y) {
+        point = { ...position };
+    } else if (fpConfig && position.lat && position.lng) {
+        point = convertGpsToLocal(position.lat, position.lng, fpConfig);
+    }
+
+    if (!point) {
         logger.warn("Current position too far");
         return null;
     }
