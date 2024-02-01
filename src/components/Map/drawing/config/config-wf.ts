@@ -13,6 +13,7 @@ import RectPainter from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createYahCanvas } from "./canvases";
+import logger from "../../../../tools/logger";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -33,7 +34,7 @@ let toColor = Color("#FF9E2C");
 
 // let initialDate = null;
 
-export function mapCurrentPosition(position: CurrentPosition): Point {
+export function mapCurrentPosition(position: CurrentPosition): Point | null {
     var mapping = null;
     var fpConfig: GpsConfig = null;
 
@@ -98,6 +99,17 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
     let point: Point;
     if (fpConfig && position.lat && position.lng) point = convertGpsToLocal(position.lat, position.lng, fpConfig);
     point = point || position;
+
+    if (
+        !(fpConfig &&
+        point.x >= fpConfig.p0.x &&
+        point.x <= fpConfig.p2.x &&
+        point.y >= fpConfig.p0.y &&
+        point.y <= fpConfig.p2.y)
+    ) {
+        logger.warn("Current position too far");
+        return null;
+    }
 
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
