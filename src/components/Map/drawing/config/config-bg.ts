@@ -53,7 +53,7 @@ export default async function configBg(
         const d = parseInt(svgPath.getAttribute("data-index"));
         if (svgPath.style.fill === "none") return;
         const color = Color(svgPath.style.fill).vec4();
-        const mesh = gtePathByIndex(d, store.layerStore.mode !== LayersMode.Default ? layer.name : "");
+        const mesh = gtePathByIndex(d, store.layerStore.mode !== LayersMode.Default ? layer.rootParent?.name || layer.name : "");
 
         // TODO: remove in future versions
         for (const p of mesh.positions) {
