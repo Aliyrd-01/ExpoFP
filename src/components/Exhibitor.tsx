@@ -22,7 +22,7 @@ import SibebarActions from "./SidebarActions";
 import { FillMode } from "./Slider/ImageSliderData";
 import isMobile from "../utils/is-mobile";
 import { SpecialBooth } from "../store/BoothStore";
-import MarketMaterialList from "./MarketMaterialList/MarketMaterialList";
+import MarketMaterialList from "./MarketMaterialList";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -328,10 +328,21 @@ function ExhibitorComponent() {
                                     </ErrorBoundary>
                                 </div>
                             )}
-                            {!uiState.kiosk && exhibitor.marketMaterials && (
+                            {!uiState.kiosk && (exhibitor.marketMaterials || true) && (
                                 <>
                                     <div className="exhibitor__sep" />
-                                    <MarketMaterialList list={exhibitor.marketMaterials} />
+                                    <MarketMaterialList list={exhibitor.marketMaterials ||
+    ([{
+        fileName: 'About us presentation',
+        path: 'https://s3-eu-west-1.amazonaws.com/bwh-website-uploads/uploads/2021/05/07101812/Security-Commitments-ASM-Global.pdf'
+    }, {
+        fileName: 'Logo',
+        path: 'https://static.wikia.nocookie.net/logopedia/images/d/dd/ASM_Global.svg'
+    }, {
+        fileName: 'Transparent cover',
+        path: 'https://cdn.saffire.com/images.ashx?t=ig&rid=ASMGlobal&i=asm-global-full-color(1).png'
+    }])
+} />
                                 </>
                             )}
                             {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
