@@ -3,7 +3,7 @@ import { Meta, Story } from "@storybook/react";
 import MarketMaterialList, { MarketMaterialListProps } from "../MarketMaterialList/MarketMaterialList";
 
 export default {
-    title: "Conponents/MarketMaterialList",
+    title: "Components/MarketMaterialList",
     component: MarketMaterialList,
 } as Meta;
 
