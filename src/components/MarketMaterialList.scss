@@ -1,21 +1,20 @@
-@import "../../styles/helpers.scss";
+@import "../styles/helpers.scss";
 
 .market-materials {
+    $this: &;
     margin: 1rem;
-    font-size: 0.9rem;
+    font-size: var(--text-size-2);
 
     &__title {
-        padding: 0.7rem 0;
+        padding-bottom: rem(12px);
     }
-
     &__list {
         display: flex;
         flex-direction: column;
+        row-gap: rem(8px);
     }
-
     &__item a {
         cursor: pointer;
-        margin-bottom: 0.4rem;
         color: var(--color-primary);
         text-decoration: none;
         display: flex;
@@ -24,16 +23,14 @@
 
         &:visited {
             color: var(--color-primary);
-            text-decoration: none;
         }
         &:hover {
             color: var(--color-primaryDark);
-            text-decoration: none;
 
-            .wrapper-file-icon {
+            #{$this}__item-file {
                 background-color: var(--color-primaryDark);
             }
-            .wrapper-download-icon {
+            #{$this}__item-download {
                 color: var(--color-primaryDark);
             }
         }
@@ -41,32 +38,23 @@
     &__item-name {
         display: flex;
         align-items: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        gap: rem(8px);
+
+        & > span {
+            flex: 1;
+        }
     }
     &__item-download-button {
-        width: 1.6rem;
-        min-width: 1.6rem;
-        height: 100%;
+        width: rem(20px);
+        height: rem(20px);
     }
 
-    .wrapper-file-icon {
+    &__item-file {
         background-color: var(--color-primary);
         color: var(--color-white);
         border-radius: 50%;
-        width: 1.4rem;
-        height: 1.4rem;
-        min-width: 1.4rem;
-        min-height: 1.4rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 0.3rem;
-    }
-
-    .wrapper-download-icon {
-        color: var(--color-primary);
+        width: rem(22px);
+        height: rem(22px);
         display: flex;
         align-items: center;
         justify-content: center;

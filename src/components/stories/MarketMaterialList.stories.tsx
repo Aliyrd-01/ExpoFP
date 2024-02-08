@@ -1,6 +1,6 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import MarketMaterialList, { MarketMaterialListProps } from "../MarketMaterialList/MarketMaterialList";
+import MarketMaterialList, { MarketMaterialListProps } from "../MarketMaterialList";
 
 export default {
     title: "Components/MarketMaterialList",
@@ -19,14 +19,18 @@ const Template: Story<MarketMaterialListProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
-    list: [{
-        fileName: 'About us presentation',
-        path: 'https://s3-eu-west-1.amazonaws.com/bwh-website-uploads/uploads/2021/05/07101812/Security-Commitments-ASM-Global.pdf'
-    }, {
-        fileName: 'Logo',
-        path: 'https://static.wikia.nocookie.net/logopedia/images/d/dd/ASM_Global.svg'
-    }, {
-        fileName: 'Transparent cover',
-        path: 'https://cdn.saffire.com/images.ashx?t=ig&rid=ASMGlobal&i=asm-global-full-color(1).png'
-    }],
+    list: [
+        {
+            fileName: "About us presentation",
+            path: "https://s3-eu-west-1.amazonaws.com/bwh-website-uploads/uploads/2021/05/07101812/Security-Commitments-ASM-Global.pdf",
+        },
+        {
+            fileName: "Logo",
+            path: "https://static.wikia.nocookie.net/logopedia/images/d/dd/ASM_Global.svg",
+        },
+        {
+            fileName: "Transparent cover",
+            path: "https://cdn.saffire.com/images.ashx?t=ig&rid=ASMGlobal&i=asm-global-full-color(1).png",
+        },
+    ],
 };
