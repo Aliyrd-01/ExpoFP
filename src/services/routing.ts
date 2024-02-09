@@ -53,7 +53,7 @@ export function initRouting(offHistory = false) {
         disableStateToUrl = true;
 
         const booth = store.boothStore.booths.find(
-            (x: Booth) => x.slug.toLowerCase() === slug.toLowerCase() || x.externalId.toLowerCase() === slug.toLowerCase()
+            (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
         );
 
         if (hanleCustomCommand(slug, false)) {
@@ -77,7 +77,7 @@ export function initRouting(offHistory = false) {
                 () => store.layerStore.layersLoaded,
                 () => {
                     const exhibitor = store.exhibitorStore.exhibitors.find(
-                        (x: Exhibitor) => x.slug.toLowerCase() === slug.toLowerCase() || x.externalId.toLowerCase() === slug.toLowerCase()
+                        (x: Exhibitor) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
                     );
                     if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
                     else {
