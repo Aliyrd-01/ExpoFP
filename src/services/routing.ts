@@ -52,7 +52,9 @@ export function initRouting(offHistory = false) {
         const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
         disableStateToUrl = true;
 
-        const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
+        const booth = store.boothStore.booths.find(
+            (x: Booth) => x.slug.toLowerCase() === slug.toLowerCase() || x.externalId.toLowerCase() === slug.toLowerCase()
+        );
 
         if (hanleCustomCommand(slug, false)) {
         } else if (slug.startsWith("route")) {
@@ -75,7 +77,7 @@ export function initRouting(offHistory = false) {
                 () => store.layerStore.layersLoaded,
                 () => {
                     const exhibitor = store.exhibitorStore.exhibitors.find(
-                        (x: Exhibitor) => x.slug === slug || x.externalId === slug
+                        (x: Exhibitor) => x.slug.toLowerCase() === slug.toLowerCase() || x.externalId.toLowerCase() === slug.toLowerCase()
                     );
                     if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
                     else {
