@@ -9,19 +9,17 @@ export type MarketMaterialListProps = {
 
 const MarketMaterialListItem: React.FC<MarketMaterial> = ({ fileName, path }) => {
     return (
-        <div className="market-materials__item">
-            <a href={path} target="_blank" rel="noopener noreferrer">
-                <div className="market-materials__item-name">
-                    <div className="market-materials__item-file">
-                        <FileIconSvg />
-                    </div>
-                    <span>{fileName}</span>
+        <a className="market-materials__item" href={path} target="_blank" rel="noopener noreferrer">
+            <div className="market-materials__item-name">
+                <div className="market-materials__item-file">
+                    <FileIconSvg />
                 </div>
-                <div className="market-materials__item-download">
-                    <DownloadIconSvg />
-                </div>
-            </a>
-        </div>
+                <span>{fileName}</span>
+            </div>
+            <div className="market-materials__item-download-button">
+                <DownloadIconSvg />
+            </div>
+        </a>
     );
 };
 
