@@ -3,6 +3,7 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
+import settings from "../../../../tools/settings";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -158,12 +159,36 @@ export function createExhibitorsDetailsCanvas(
 
     const primaryExhibitors = b.exhibitors.filter((e) => e.order === 0);
 
-    if (primaryExhibitors.length > 0) {
-        mainLines.push(...primaryExhibitors.map((e) => e.name));
-    } else if (onlyFeaturedExhibitors) {
-        mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
+    // @todo To clean up after the expo is over
+    if (settings.EXPO === "wineparis") {
+        if (primaryExhibitors.length > 0) {
+            mainLines.push(...primaryExhibitors.map((e) => e.name));
+            const countNotPrimaryExh = b.exhibitors.filter((e) => e.order !== 0).length;
+            if (countNotPrimaryExh > 0) {
+                mainLines.push(`and ${countNotPrimaryExh} more`);
+            }
+        } else if (onlyFeaturedExhibitors) {
+            const featuredExhibitors = b.exhibitors.filter((e) => e.featured).map((e) => e.name);
+            if (b.exhibitors.length > 5) {
+                mainLines.push(`${featuredExhibitors.length} exhibitors`);
+            } else {
+                mainLines.push(...featuredExhibitors);
+            }
+        } else {
+            if (b.exhibitors.length > 5) {
+                mainLines.push(`${b.exhibitors.length} exhibitors`);
+            } else {
+                mainLines.push(...b.exhibitors.map((e) => e.name));
+            }
+        }
     } else {
-        mainLines.push(...b.exhibitors.map((e) => e.name));
+        if (primaryExhibitors.length > 0) {
+            mainLines.push(...primaryExhibitors.map((e) => e.name));
+        } else if (onlyFeaturedExhibitors) {
+            mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
+        } else {
+            mainLines.push(...b.exhibitors.map((e) => e.name));
+        }
     }
 
     mainLines.forEach((text, i) => {

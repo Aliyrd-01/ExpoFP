@@ -70,6 +70,11 @@ export function setCookieConsent(cookieConsent: boolean) {
     const monthInSeconds = 2592000;
 
     const domain = isDebug ? "localhost" : ".expofp.com";
+
+    // Remove cookie_consent cookie before set
+    document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`;
+    document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+
     document.cookie = cookieConsent
         ? `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; domain=${domain}; path=/`
         : `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; path=/`;

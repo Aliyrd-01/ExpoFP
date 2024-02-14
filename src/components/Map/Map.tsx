@@ -126,6 +126,13 @@ export default function Map() {
 
             var details = uiState.details as any;
 
+            // @todo clear after event is complete
+            if (settings.EXPO === "wineparis") {
+                if (details instanceof Exhibitor) details = details.booths[0];
+                if (!details) return;
+            }
+            //
+
             var data = {
                 type: details instanceof BoothBase ? "booth" : details instanceof Exhibitor ? "exhibitor" : ("route" as any),
                 name: details?.name,
