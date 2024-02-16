@@ -105,6 +105,8 @@ export function mapCurrentPosition(position: CurrentPosition): Point | null {
         point = { ...position };
     } else if (fpConfig && position.lat && position.lng) {
         point = convertGpsToLocal(position.lat, position.lng, fpConfig);
+    } else if (!fpConfig) {
+        point = position;
     }
 
     if (!point) {
