@@ -69,24 +69,26 @@ function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth 
     } else {
         segm = segments.find((s) => s.containsPoint(xs, ys));
     }
+
     // find segment first
-    if (!segm) return null;
-    prevSegment = segm;
+    if (segm) {
+        prevSegment = segm;
+    }
 
     const rects = segmentToRects.get(segm);
-    if (!rects) return null;
-
-    const found = rects.filter((b) => b.containsPoint(xs, ys));
-    if (found.length) {
-        let foundOne: Rect;
-        if (found.length > 1) {
-            // pick the smallest one
-            foundOne = found.sort((a, b) => a.w - b.w)[0];
-        } else {
-            foundOne = found[0];
+    if (rects) {
+        const found = rects.filter((b) => b.containsPoint(xs, ys));
+        if (found.length) {
+            let foundOne: Rect;
+            if (found.length > 1) {
+                // pick the smallest one
+                foundOne = found.sort((a, b) => a.w - b.w)[0];
+            } else {
+                foundOne = found[0];
+            }
+            let booth = rectsToBooths.get(foundOne);
+            return booth.visible ? booth : null;
         }
-        let booth = rectsToBooths.get(foundOne);
-        return booth.visible ? booth : null;
     }
 
     // If the point is not found in a segment, we check for polygonal areas
@@ -94,7 +96,7 @@ function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth 
         for (const p of b.paths) {
             for (const t of getTrianglesFromFpPaths(p.index, layersStore.mode !== LayersMode.Default ? b.layer.name : "")) {
                 if (pointInTriangle(xs, ys, t)) {
-                    return b;
+                    return b.visible ? b : null;
                 }
             }
         }
