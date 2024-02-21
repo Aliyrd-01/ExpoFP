@@ -5,12 +5,14 @@ import { select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
+import { ResizeObserver } from "resize-observer";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
 import { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, BoothBase } from "../../store/BoothStore";
 import { Exhibitor } from "../../store/ExhibitorStore";
+import { LayerMode } from "../../store/LayerStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
@@ -23,8 +25,6 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import { ResizeObserver } from "resize-observer";
-import { LayerMode } from "../../store/LayerStore";
 
 //console.log('isIframe', isIframe)
 
@@ -138,6 +138,16 @@ export default function Map() {
                 name: details?.name,
                 id: details?.id,
                 externalId: details?.externalId,
+                boothsIds:
+                    details instanceof Exhibitor
+                        ? details.booths
+                              .map((b) => b.id)
+                              .sort((b1, b2) =>
+                                  b1 == store.routeStore.tempToBooth?.id ? -1 : b2 == store.routeStore.tempToBooth?.id ? 1 : 0
+                              )
+                        : details instanceof BoothBase
+                        ? [details.id]
+                        : [store.uiState.selectedRoute?.from?.id, store.uiState.selectedRoute?.to?.id].filter((id) => !!id),
             };
 
             setTimeout(() => uiState.onDetails(data), 200);
