@@ -152,15 +152,6 @@
         @include clearfix;
     }
 
-    &__market-materials {
-        margin: 1rem;
-        font-size: 0.9rem;
-
-        div {
-            word-break: break-all;
-        }
-    }
-
     &__description-html {
         overflow-wrap: break-word;
         text-align: left;

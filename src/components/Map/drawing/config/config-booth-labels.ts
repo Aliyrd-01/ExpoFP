@@ -9,6 +9,7 @@ import { uiState } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createDetailsCanvas, createExhibitorsDetailsCanvas, createLabelCanvas } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
+import isMobile from "../../../../utils/is-mobile";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
@@ -18,7 +19,11 @@ let fillStyle = settings.boothLabelColor;
 
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
-const prefixes = ["Dot", "XS", "S", "M", "L", "Details"] as const;
+let prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
+// @todo To clean up after the expo is over
+if (settings.EXPO === "wineparis" && isMobile) {
+    prefixes = ["Dot", "XS", "Details"];
+}
 
 // const updates = [];
 // let drawer: Painter;
@@ -107,9 +112,18 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         if (!exh.length) {
             this.addLabel(7, "XS", color);
-            this.addLabel(10, "S", color);
-            this.addLabel(12, "M", color);
-            this.addLabel(14, "L", color);
+            // @todo To clean up after the expo is over
+            if (settings.EXPO === "wineparis") {
+                if (!isMobile) {
+                    this.addLabel(10, "S", color);
+                    this.addLabel(12, "M", color);
+                    this.addLabel(14, "L", color);
+                }
+            } else {
+                this.addLabel(10, "S", color);
+                this.addLabel(12, "M", color);
+                this.addLabel(14, "L", color);
+            }
 
             const textAlign = uiState.rtl ? "right" : "left";
             const texPosition = uiState.rtl ? "righttop" : "lefttop";
@@ -128,10 +142,22 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             });
         } else {
             this.addExhibitorsLabel(7, "XS", pad, true, color);
-            this.addExhibitorsLabel(10, "S", pad, true, color);
-            this.addExhibitorsLabel(12, "M", pad, true, color);
-            this.addExhibitorsLabel(14, "L", pad, true, color);
-            this.addExhibitorsLabel(18, "Details", pad, false, color);
+            // @todo To clean up after the expo is over
+            if (settings.EXPO === "wineparis") {
+                if (!isMobile) {
+                    this.addExhibitorsLabel(10, "S", pad, true, color);
+                    this.addExhibitorsLabel(12, "M", pad, true, color);
+                    this.addExhibitorsLabel(14, "L", pad, true, color);
+                    this.addExhibitorsLabel(18, "Details", pad, false, color);
+                } else {
+                    this.addExhibitorsLabel(9, "Details", pad, false, color);
+                }
+            } else {
+                this.addExhibitorsLabel(10, "S", pad, true, color);
+                this.addExhibitorsLabel(12, "M", pad, true, color);
+                this.addExhibitorsLabel(14, "L", pad, true, color);
+                this.addExhibitorsLabel(18, "Details", pad, false, color);
+            }
         }
 
         this.calcFactors(exh.length > 0);
