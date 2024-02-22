@@ -1,20 +1,19 @@
 import React from "react";
+import { reaction } from "mobx";
 import ReactDOM from "react-dom";
+import { install } from "resize-observer";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
-import { install } from "resize-observer";
-import { reaction } from "mobx";
 // import initStore from "./store/init";
-import { initRouting, destroyHistory } from "./services/routing";
+import { destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
-import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
-import { GaEventActions, sendEventToGa, setConsentSettings } from "./tools/gtag";
-import trackEvent from "./tools/track-event";
-import { resetGlobalVariables } from "./tools/reset";
-import reportError from "./tools/report-error";
-import { destroyUiHandlers } from "./store/init/init-ui";
-import { destroyGtag } from "./tools/gtag";
 import { SpecialBooth } from "./store/BoothStore";
+import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
+import { destroyUiHandlers } from "./store/init/init-ui";
+import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
+import reportError from "./tools/report-error";
+import { resetGlobalVariables } from "./tools/reset";
+import trackEvent from "./tools/track-event";
 
 install();
 
@@ -77,7 +76,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectRoute(from: string | { x: number; y: number }, to: string | { x: number; y: number }): void {
-        if (typeof from === "string" && typeof to === "string") store.routeStore.selectRoute(extractRoute(from, to));
+        if ((typeof from === "string" || typeof from === "number") && (typeof to === "number" || typeof to === "string"))
+            store.routeStore.selectRoute(extractRoute(from, to));
         else store.routeStore.selectRoute(new Route(from as any, to as any));
     }
 
