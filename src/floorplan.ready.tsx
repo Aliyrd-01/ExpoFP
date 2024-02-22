@@ -76,8 +76,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectRoute(from: string | { x: number; y: number }, to: string | { x: number; y: number }): void {
-        if ((typeof from === "string" || typeof from === "number") && (typeof to === "number" || typeof to === "string"))
-            store.routeStore.selectRoute(extractRoute(from, to));
+        if (typeof from === "string" && typeof to === "string") store.routeStore.selectRoute(extractRoute(from, to));
         else store.routeStore.selectRoute(new Route(from as any, to as any));
     }
 

@@ -138,16 +138,18 @@ export default function Map() {
                 name: details?.name,
                 id: details?.id,
                 externalId: details?.externalId,
-                boothsIds:
+                boothsNames:
                     details instanceof Exhibitor
                         ? details.booths
-                              .map((b) => b.id)
+                              .map((b) => b.name)
                               .sort((b1, b2) =>
-                                  b1 == store.routeStore.tempToBooth?.id ? -1 : b2 == store.routeStore.tempToBooth?.id ? 1 : 0
+                                  b1 == store.routeStore.tempToBooth?.name ? -1 : b2 == store.routeStore.tempToBooth?.name ? 1 : 0
                               )
                         : details instanceof BoothBase
-                        ? [details.id]
-                        : [store.uiState.selectedRoute?.from?.id, store.uiState.selectedRoute?.to?.id].filter((id) => !!id),
+                        ? [details.name]
+                        : [store.uiState.selectedRoute?.from?.name, store.uiState.selectedRoute?.to?.name].filter(
+                              (name) => !!name
+                          ),
             };
 
             setTimeout(() => uiState.onDetails(data), 200);

@@ -238,24 +238,13 @@ export default class RouteStore {
 }
 
 export function extractRoute(from: string, to: string) {
-    from = from?.toString();
-    to = to?.toString();
-
-    let bFrom = store.boothStore.booths.find(
-        (b) => b.name === from || b.slug === from || b.externalId === from || b.id.toString() === from
-    );
+    let bFrom = store.boothStore.booths.find((b) => b.name === from || b.slug === from || b.externalId === from);
     if (!bFrom)
-        bFrom = store.exhibitorStore.exhibitors.find(
-            (e) => e.name === from || e.slug === from || e.externalId === from || e.id.toString() === from
-        )?.booths[0];
+        bFrom = store.exhibitorStore.exhibitors.find((e) => e.name === from || e.slug === from || e.externalId === from)
+            ?.booths[0];
 
-    let bTo = store.boothStore.booths.find(
-        (b) => b.name === to || b.slug === to || b.externalId === to || b.id.toString() === to
-    );
-    if (!bTo)
-        bTo = store.exhibitorStore.exhibitors.find(
-            (e) => e.name === to || e.slug === to || e.externalId === to || e.id.toString() === to
-        )?.booths[0];
+    let bTo = store.boothStore.booths.find((b) => b.name === to || b.slug === to || b.externalId === to);
+    if (!bTo) bTo = store.exhibitorStore.exhibitors.find((e) => e.name === to || e.slug === to || e.externalId === to)?.booths[0];
 
     return new Route(bFrom, bTo);
 }

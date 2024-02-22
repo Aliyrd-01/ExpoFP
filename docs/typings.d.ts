@@ -92,7 +92,7 @@ interface FloorPlanDetailsEvent {
     id: string;
     name: string;
     externalId: string;
-    boothsIds: number[];
+    boothsNames: number[];
 }
 
 interface FloorPlanCustomButtonEvent {
