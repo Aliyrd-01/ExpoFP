@@ -3,26 +3,24 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
+import { SpecialBooth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
-import isIframe from "../utils/is-iframe";
+import isMobile from "../utils/is-mobile";
 import { useAutorun, useReaction } from "../utils/mobx";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
+import MarketMaterialList from "./MarketMaterialList";
 import OverlayContent from "./OverlayContent";
 import RebookingNotes from "./RebookingNotes";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
-import { FillMode } from "./Slider/ImageSliderData";
-import isMobile from "../utils/is-mobile";
-import { SpecialBooth } from "../store/BoothStore";
-import MarketMaterialList from "./MarketMaterialList";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -190,7 +188,12 @@ function ExhibitorComponent() {
         }
 
         function shareButtonVisible() {
-            return !data.hideShareButton && !uiState.kiosk && window.location.host.endsWith(".expofp.com") && settings.EXPO !== "globalaltsmiami2024";
+            return (
+                !data.hideShareButton &&
+                !uiState.kiosk &&
+                window.location.host.endsWith(".expofp.com") &&
+                settings.EXPO !== "globalaltsmiami2024"
+            );
         }
 
         function onUpdateGallery() {
@@ -528,6 +531,7 @@ function ExhibitorComponent() {
 
     function bookmark() {
         s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
+        if (uiState.onBookmarkClick) uiState.onBookmarkClick({ name: s.exhibitor.name, bookmarked: s.exhibitor.bookmarked });
     }
 }
 

@@ -11,6 +11,8 @@ class FloorPlan {
 
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
+    onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+
     onFpConfigured: () => void;
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
@@ -31,6 +33,8 @@ class FloorPlan {
         focus?: boolean,
         icon?: number // 0- blue dot, 1- YAH icon
     ): void;
+
+    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void;
 
     updateLayerVisibility(layer: string, visible: boolean): void;
 
@@ -53,6 +57,7 @@ interface FloorPlanOptions {
     offHistory?: boolean;
     allowConsent?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
+    onBookmarkClick?: (e: FloorPlanBookmarkClickEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
@@ -78,6 +83,11 @@ interface FloorPlanBoothClickEvent {
 interface Point {
     x: number;
     y: number;
+}
+
+interface FloorPlanBookmarkClickEvent {
+    name: string;
+    bookmarked: boolean;
 }
 
 interface FloorPlanDirectionEvent {

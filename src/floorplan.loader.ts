@@ -36,6 +36,8 @@ export default class FloorPlanLoader implements FloorPlan {
     // options
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
+    onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+
     onFpConfigured: () => void;
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
@@ -59,6 +61,10 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
+        nr();
+    }
+
+    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void {
         nr();
     }
 
@@ -89,6 +95,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.allowConsent = options.allowConsent;
 
         this.onBoothClick = options.onBoothClick;
+        this.onBookmarkClick = options.onBookmarkClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onGetCoordsClick = options.onGetCoordsClick;

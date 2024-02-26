@@ -84,6 +84,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.routeStore.selectCurrentPosition(point, focus, icon);
     }
 
+    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void {
+        bookmarks.forEach((b) => {
+            const e = store.exhibitorStore.exhibitors.find((e) => e.name === b.name);
+            if (e) e.bookmarked = b.bookmarked;
+        });
+    }
+
     checkRoutes(): void {
         store.routeStore.checkRoutes();
     }

@@ -20,6 +20,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         e.stopPropagation();
         if (document.activeElement) (document.activeElement as HTMLDivElement).blur();
         exhibitor.bookmarked = !exhibitor.bookmarked;
+        if (uiState.onBookmarkClick) uiState.onBookmarkClick({ name: exhibitor.name, bookmarked: exhibitor.bookmarked });
     }
 
     const div = useRef();
