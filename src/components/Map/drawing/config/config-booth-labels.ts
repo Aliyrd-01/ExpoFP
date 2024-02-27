@@ -20,9 +20,9 @@ let fillStyle = settings.boothLabelColor;
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
 let prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
-// @todo To clean up after the expo is over
-if (settings.EXPO === "wineparis" && isMobile) {
-    prefixes = ["Dot", "XS", "Details"];
+
+if (isMobile) {
+    prefixes = ["Dot", "XS", "S", "Details"];
 }
 
 // const updates = [];
@@ -112,15 +112,9 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
 
         if (!exh.length) {
             this.addLabel(7, "XS", color);
-            // @todo To clean up after the expo is over
-            if (settings.EXPO === "wineparis") {
-                if (!isMobile) {
-                    this.addLabel(10, "S", color);
-                    this.addLabel(12, "M", color);
-                    this.addLabel(14, "L", color);
-                }
-            } else {
-                this.addLabel(10, "S", color);
+            this.addLabel(10, "S", color);
+
+            if (!isMobile) {
                 this.addLabel(12, "M", color);
                 this.addLabel(14, "L", color);
             }
@@ -142,21 +136,13 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             });
         } else {
             this.addExhibitorsLabel(7, "XS", pad, true, color);
-            // @todo To clean up after the expo is over
-            if (settings.EXPO === "wineparis") {
-                if (!isMobile) {
-                    this.addExhibitorsLabel(10, "S", pad, true, color);
-                    this.addExhibitorsLabel(12, "M", pad, true, color);
-                    this.addExhibitorsLabel(14, "L", pad, true, color);
-                    this.addExhibitorsLabel(18, "Details", pad, false, color);
-                } else {
-                    this.addExhibitorsLabel(9, "Details", pad, false, color);
-                }
-            } else {
-                this.addExhibitorsLabel(10, "S", pad, true, color);
+            this.addExhibitorsLabel(10, "S", pad, true, color);
+            if (!isMobile) {
                 this.addExhibitorsLabel(12, "M", pad, true, color);
                 this.addExhibitorsLabel(14, "L", pad, true, color);
                 this.addExhibitorsLabel(18, "Details", pad, false, color);
+            } else {
+                this.addExhibitorsLabel(14, "Details", pad, false, color);
             }
         }
 
