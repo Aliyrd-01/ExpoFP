@@ -3,8 +3,6 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
-import settings from "../../../../tools/settings";
-import isMobile from "../../../../utils/is-mobile";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
