@@ -11,11 +11,23 @@ var { Text } = require("troika-three-text");
 
 const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
 
-const dimmedMaterial = new THREE.MeshPhongMaterial({
-    color: 0x777777,
-    side: THREE.DoubleSide,
-    name: "hovered",
-});
+// const dimmedMaterial = new THREE.MeshPhongMaterial({
+//     color: 0x777777,
+//     side: THREE.DoubleSide,
+//     name: "hovered",
+// });
+
+const dimmedMaterial =new THREE.MeshPhysicalMaterial({
+    metalness: 0,
+    roughness: 1,
+    envMapIntensity: 0.5,
+    clearcoat: 0.5,
+    transparent: true,
+    transmission: .85,
+    opacity: 1,
+    reflectivity: 0.2,
+})
+
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
 
 export class BoothMesh extends THREE.Group {

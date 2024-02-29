@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { ICommonData } from "./common/dataLoader";
 import Scene from "./common/Scene";
+import { ICommonData } from "./common/dataLoader";
 import sceneLoader from "./common/sceneLoader";
 
 export default function init(container: HTMLElement, data: ICommonData): Promise<Scene> {
@@ -40,16 +40,19 @@ export default function init(container: HTMLElement, data: ICommonData): Promise
         controls.enableRotate = true;
         controls.enablePan = true;
         controls.enableZoom = true;
-        //controls.enableDamping = true;
-        controls.zoomSpeed = 1;
-        controls.rotateSpeed = 0.5;
-        controls.panSpeed = 0.5;
+        controls.enableDamping = true;
+        controls.zoomSpeed = 0.7;
+        controls.rotateSpeed = 1.5;
+        controls.panSpeed = 0.7;
         controls.target.set(x, y, 0);
         controls.mouseButtons = {
             LEFT: THREE.MOUSE.PAN,
             RIGHT: THREE.MOUSE.ROTATE,
             MIDDLE: THREE.MOUSE.DOLLY,
         };
+
+        controls.touches.ONE = THREE.TOUCH.PAN;
+        controls.touches.TWO = THREE.TOUCH.DOLLY_ROTATE;
 
         res.scene.background = new THREE.Color(0xc4c4c4);
         resolve(res.scene);

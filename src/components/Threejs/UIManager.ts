@@ -24,7 +24,10 @@ import canvasFromText from "./utils/canvasFromText";
 import TextureMerger from "./utils/textureMerger";
 
 import { actualBoothColor } from "../Mapbox/utils/data";
+
+import fr from "./assets/from.png";
 import to from "./assets/to.png";
+import yah from "./assets/yah.png";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -109,22 +112,30 @@ export default class UIManager {
         booths.forEach((b) => b.dimmed(selectedBooths.length && !selectedBooths.find((hb) => hb.name === b.name)));
     }
 
-    public setMarker(type: "from" | "to" | "yah" | "cp", x: number, y: number, layer: string | number) {
+    public setMarker(
+        type: "from" | "to" | "yah" | "cp",
+        x: number,
+        y: number,
+        layer: string | number,
+        inLocal: boolean = false,
+        scale: number = 1
+    ) {
         const name = `{sprite_${type}}`;
         let sprite = this.scene.children.find((c) => c.name === name);
 
-        if (x && y) {
-            const localPoint = this.convertPoint(x, y);
+        if (x != null && y != null) {
+            const localPoint = inLocal ? { x, y } : this.convertPoint(x, y, 0);
 
             let objLayer =
                 this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer)?.name) || this.data.objLayers[0];
 
             if (!sprite) {
-                sprite = new SpriteMesh(to, objLayer.height * 4);
+                if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 4);
+                else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 4);
+                else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 4);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
-
             sprite.position.set(localPoint.x, localPoint.y, objLayer.z + objLayer.height);
         } else if (sprite) {
             this.scene.remove(sprite);
@@ -162,6 +173,7 @@ export default class UIManager {
         routeMeshes.splice(0, routeMeshes.length);
 
         if (!routeLines.length) {
+            this.setMarker("from", null, null, null);
             this.setMarker("to", null, null, null);
             return;
         }
@@ -184,6 +196,12 @@ export default class UIManager {
             });
 
         this.setMarker("to", routeLines[0].p0.x, routeLines[0].p0.y, routeLines[0].p0.layer);
+        this.setMarker(
+            "from",
+            routeLines[routeLines.length - 1].p1.x,
+            routeLines[routeLines.length - 1].p1.y,
+            routeLines[routeLines.length - 1].p1.layer
+        );
     }
 
     public onBeforeRender(
@@ -281,7 +299,7 @@ export default class UIManager {
         scene.add(model);
     }
 
-    private convertPoint(x: number, y: number): THREE.Vector3 {
+    private convertPoint(x: number, y: number, z: number): THREE.Vector3 {
         var m = this.data.matrix;
 
         x += m[0];
@@ -293,7 +311,7 @@ export default class UIManager {
         x += m[4];
         y += m[5];
 
-        return new THREE.Vector3(x, y, 0);
+        return new THREE.Vector3(x, y, z);
     }
 
     private linesToPoints(routeLines: RouteLine[]): THREE.Vector3[] {
@@ -315,6 +333,6 @@ export default class UIManager {
             }
         }
 
-        return routePoints.map((p) => this.convertPoint(p.x, p.y));
+        return routePoints.map((p) => this.convertPoint(p.x, p.y, p.z));
     }
 }
