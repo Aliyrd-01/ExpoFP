@@ -25,10 +25,9 @@ import TextureMerger from "./utils/textureMerger";
 
 import { actualBoothColor } from "../Mapbox/utils/data";
 
-import cp from "./assets/cp.png";
 import fr from "./assets/from.png";
 import to from "./assets/to.png";
-import yah from "./assets/yah.png";
+import { default as cp, default as yah } from "./assets/yah.png";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -134,11 +133,15 @@ export default class UIManager {
                 if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 4);
                 else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 4);
                 else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 4);
-                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale * 4);
+                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale * 3.5);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
-            sprite.position.set(localPoint.x, localPoint.y, objLayer.z + objLayer.height);
+            sprite.position.set(
+                localPoint.x,
+                localPoint.y,
+                objLayer.z + (type === "from" || type === "to" ? objLayer.height : 0)
+            );
         } else if (sprite) {
             this.scene.remove(sprite);
         }
