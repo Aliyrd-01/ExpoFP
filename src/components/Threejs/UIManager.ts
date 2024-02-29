@@ -25,6 +25,7 @@ import TextureMerger from "./utils/textureMerger";
 
 import { actualBoothColor } from "../Mapbox/utils/data";
 
+import cp from "./assets/cp.png";
 import fr from "./assets/from.png";
 import to from "./assets/to.png";
 import yah from "./assets/yah.png";
@@ -133,6 +134,7 @@ export default class UIManager {
                 if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 4);
                 else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 4);
                 else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 4);
+                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale * 4);
                 sprite.name = name;
                 this.scene.add(sprite);
             }

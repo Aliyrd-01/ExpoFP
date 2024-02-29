@@ -78,12 +78,12 @@ export function mapCurrentPosition(position: CurrentPosition): Point | null {
         };
     }
 
-    if (settings.EXPO === "demo") {
-        fpConfig = {
-            p0: { lat: 38.255223, lng: -85.75678, x: 3309, y: 2702 },
-            p2: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725 },
-        };
-    }
+    // if (settings.EXPO === "demo") {
+    //     fpConfig = {
+    //         p0: { lat: 38.255223, lng: -85.75678, x: 3309, y: 2702 },
+    //         p2: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725 },
+    //     };
+    // }
 
     if (settings.EXPO === "bett2023") {
         fpConfig = {

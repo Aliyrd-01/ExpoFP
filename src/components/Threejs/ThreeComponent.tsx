@@ -157,7 +157,7 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
     // Current position
     useReaction(
         () => ls.actualCurrentPosition,
-        () => uiManager.setMarker("cp", ls.actualCurrentPosition.x, ls.actualCurrentPosition.x, ls.actualCurrentPosition.z)
+        () => uiManager.setMarker("cp", ls.actualCurrentPosition?.x, ls.actualCurrentPosition?.y, ls.actualCurrentPosition?.z)
     );
 
     return useObserver(() => {
