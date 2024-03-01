@@ -17,16 +17,16 @@ const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: TH
 //     name: "hovered",
 // });
 
-const dimmedMaterial =new THREE.MeshPhysicalMaterial({
+const dimmedMaterial = new THREE.MeshPhysicalMaterial({
     metalness: 0,
     roughness: 1,
     envMapIntensity: 0.5,
     clearcoat: 0.5,
     transparent: true,
-    transmission: .85,
+    transmission: 0.85,
     opacity: 1,
     reflectivity: 0.2,
-})
+});
 
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
 
@@ -88,9 +88,9 @@ export class BoothMesh extends THREE.Group {
 
         var angle = lineAngle(this.threeBooth.rect.p0, this.threeBooth.rect.p1) || 0;
 
-        if (1.5 * rect.width < rect.height) angle = 90;
+        if (1.5 * rect.width < rect.height) angle -= 90;
 
-        mesh.rotateZ(-(angle * Math.PI) / 180);
+        mesh.rotateZ((angle * Math.PI) / 180);
 
         mesh.position.x = rect.center.x;
         mesh.position.y = rect.center.y;
