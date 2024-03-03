@@ -317,8 +317,17 @@ export default class UIState {
 
         const splittedTexts = text.split("&").filter((s) => s);
 
+        function selectLettersSpacesNumbers(input: string): string {
+            return (
+                input
+                    ?.match(/\p{L}|\s|\d/giu)
+                    ?.join("")
+                    ?.replace(/\s\s+/g, " ") ?? input
+            );
+        }
+
         function containsIgnoreCase(str: string, searchTerm: string) {
-            return str.toLowerCase().includes(searchTerm.toLowerCase());
+            return selectLettersSpacesNumbers(str).toLowerCase().includes(selectLettersSpacesNumbers(searchTerm).toLowerCase());
         }
 
         function containsLevelIgnoreCase(str: string, searchTerm: string) {
