@@ -320,8 +320,7 @@ export default class UIState {
         function selectLettersSpacesNumbers(input: string): string {
             return (
                 input
-                    ?.match(/\p{L}|\s|\d/giu)
-                    ?.join("")
+                    ?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")              
                     ?.replace(/\s\s+/g, " ") ?? input
             );
         }
