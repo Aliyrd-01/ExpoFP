@@ -41,6 +41,7 @@ interface Data {
     events: ScheduleItem[];
     customCss: string;
     
+    showLevelLabel:boolean;
     showCategories: boolean;
     showCompaniesAndBooths: boolean;
     showOtherSpaces: boolean;
