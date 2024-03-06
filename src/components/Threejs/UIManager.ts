@@ -5,7 +5,7 @@ import { RouteLine } from "./../../utils/wayfinding";
 import { BoothMesh } from "./common/BoothMesh";
 
 import RouteStore from "../../store/RouteStore";
-import dataLoader, { ICommonData } from "./common/dataLoader";
+import dataLoader, { IBooth, ICommonData } from "./common/dataLoader";
 
 import loadModel from "./common/modelLoader";
 import Scene from "./common/Scene";
@@ -274,16 +274,12 @@ export default class UIManager {
 
                 let objLayer = this.data.objLayers.find((l) => l.name === (efpBooth.layer?.name || "Default"));
 
-                let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
+                let booth: IBooth = this.data.booths.find((b) => b.name === efpBooth.name);
+                booth.zScale = booth.zScale || 1;
 
-                const boothMesh = new BoothMesh(
-                    efpBooth,
-                    this.data.booths.find((b) => b.name === efpBooth.name),
-                    mesh as THREE.Mesh,
-                    name.substring(1),
-                    l,
-                    z
-                );
+                let z = objLayer.z + booth.zScale * objLayer.height + (objLayer.z + booth.zScale * objLayer.height) * 0.001;
+
+                const boothMesh = new BoothMesh(efpBooth, booth, mesh as THREE.Mesh, name.substring(1), l, z);
 
                 let text = boothMesh.setText();
                 if (text) scene.add(text);
