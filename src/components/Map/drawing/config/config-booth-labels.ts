@@ -15,6 +15,8 @@ import isMobile from "../../../../utils/is-mobile";
 // const dotW = dotCanvas.canvas.width / 2;
 // const dotH = dotCanvas.canvas.width / 2;
 
+const mobileOptimisationLevel = data.optimisationLabel || 3;
+
 let fillStyle = settings.boothLabelColor;
 
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
@@ -22,7 +24,19 @@ if (settings.EXPO === "tqs2021") fillStyle = "#000";
 let prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
 
 if (isMobile) {
-    prefixes = ["Dot", "XS", "S", "Details"];
+    switch (mobileOptimisationLevel) {
+        case 1:
+        case 2:
+            prefixes = ["Dot", "XS", "S", "Details"];
+            break;
+        case 3:
+        case 4:
+        case 5:
+            prefixes = ["Dot", "XS", "Details"];
+            break;
+        default:
+            prefixes = ["Dot", "XS", "S", "Details"];
+    }
 }
 
 // const updates = [];
@@ -102,6 +116,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false,
         });
 
+        const mobileLabelSizes = this.getMobileLabelSizes();
+
         let exh = data.hideExhibitors
             ? []
             : !data.onlyFeaturedExhibitors
@@ -111,10 +127,15 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const pad = booth.borderWidth / 2 || boothStore.borderWidth / 2;
 
         if (!exh.length) {
-            this.addLabel(7, "XS", color);
-            this.addLabel(10, "S", color);
-
-            if (!isMobile) {
+            if (isMobile) {
+                mobileLabelSizes.forEach(labelSize => {
+                    if (!labelSize.exhibitorsLabel) {
+                        this.addLabel(labelSize.fontSize, labelSize.sizeName, color);
+                    }
+                })
+            } else {
+                this.addLabel(7, "XS", color);
+                this.addLabel(10, "S", color);
                 this.addLabel(12, "M", color);
                 this.addLabel(14, "L", color);
             }
@@ -135,14 +156,16 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
                 visible: false,
             });
         } else {
-            this.addExhibitorsLabel(7, "XS", pad, true, color);
-            this.addExhibitorsLabel(10, "S", pad, true, color);
-            if (!isMobile) {
+            if (isMobile) {
+                mobileLabelSizes.forEach(labelSize => {
+                    this.addExhibitorsLabel(labelSize.fontSize, labelSize.sizeName, pad, !labelSize.exhibitorsLabel, color);
+                })
+            } else {
+                this.addExhibitorsLabel(7, "XS", pad, true, color);
+                this.addExhibitorsLabel(10, "S", pad, true, color);
                 this.addExhibitorsLabel(12, "M", pad, true, color);
                 this.addExhibitorsLabel(14, "L", pad, true, color);
                 this.addExhibitorsLabel(18, "Details", pad, false, color);
-            } else {
-                this.addExhibitorsLabel(14, "Details", pad, false, color);
             }
         }
 
@@ -160,6 +183,44 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             reaction(() => store.routeStore.routeLines, cru);
         }
         // updates.push(this.updateBound);
+    }
+
+    getMobileLabelSizes(): { fontSize: number; sizeName: string; exhibitorsLabel?: boolean }[] {
+        switch (mobileOptimisationLevel) {
+            case 1:
+                return [
+                    { fontSize: 7, sizeName: "XS" },
+                    { fontSize: 10, sizeName: "S" },
+                    { fontSize: 14, sizeName: "Details", exhibitorsLabel: true },
+                ];
+            case 2:
+                return [
+                    { fontSize: 7, sizeName: "XS" },
+                    { fontSize: 10, sizeName: "S" },
+                    { fontSize: 12, sizeName: "Details", exhibitorsLabel: true },
+                ];
+            case 3:
+                return [
+                    { fontSize: 7, sizeName: "XS" },
+                    { fontSize: 13, sizeName: "Details", exhibitorsLabel: true },
+                ];
+            case 4:
+                return [
+                    { fontSize: 7, sizeName: "XS" },
+                    { fontSize: 11, sizeName: "Details", exhibitorsLabel: true },
+                ];
+            case 5:
+                return [
+                    { fontSize: 7, sizeName: "XS" },
+                    { fontSize: 9, sizeName: "Details", exhibitorsLabel: true },
+                ];
+            default:
+                return [
+                    { fontSize: 7, sizeName: "XS" },
+                    { fontSize: 10, sizeName: "S" },
+                    { fontSize: 16, sizeName: "Details", exhibitorsLabel: true },
+                ];
+        }
     }
 
     calcFactors(exh: boolean) {
