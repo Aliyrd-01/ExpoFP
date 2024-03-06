@@ -3,6 +3,7 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
+import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -172,7 +173,7 @@ export function createExhibitorsDetailsCanvas(
         }
     } else {
         if (b.exhibitors.length > 5) {
-            mainLines.push(`${b.exhibitors.length} exhibitors`);
+            mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
         } else {
             mainLines.push(...b.exhibitors.map((e) => e.name));
         }

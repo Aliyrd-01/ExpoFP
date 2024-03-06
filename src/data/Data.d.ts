@@ -13,6 +13,7 @@ interface Data {
     levelTerm: string;
     reserveButtonTerm: string;
     exhibitorTerm: string;
+    exhibitorTermPlural: string;
     locale: string;
     booths: RawBooth[];
     exhibitors: RawExhibitor[];
