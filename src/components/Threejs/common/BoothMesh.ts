@@ -148,7 +148,7 @@ export class BoothMesh extends THREE.Group {
 
         plane.position.x = rect.center.x;
         plane.position.y = rect.center.y;
-        plane.position.z = this.z;
+        plane.position.z = this.z + 0.01 * this.z;
         plane.scale.y = -1;
 
         plane.material.map = textureMerger.mergedTexture;
