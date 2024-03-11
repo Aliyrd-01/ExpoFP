@@ -37,7 +37,7 @@ let routeIndex = 0;
 
 const booths: BoothMesh[] = [];
 
-const pointSize = (data: ICommonData): number => data.objLayers[0].height / 2;
+const pointSize = (data: ICommonData): number => data.objLayers[0].height / 7;
 
 export default class UIManager {
     expo: string;
