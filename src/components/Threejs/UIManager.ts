@@ -130,10 +130,10 @@ export default class UIManager {
                 this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer)?.name) || this.data.objLayers[0];
 
             if (!sprite) {
-                if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 4);
-                else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 4);
-                else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 4);
-                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale * 3.5);
+                if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 2);
+                else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 2);
+                else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 2);
+                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
