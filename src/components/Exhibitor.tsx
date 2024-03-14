@@ -128,13 +128,9 @@ function ExhibitorComponent() {
                     checked={exhibitor.rebookingState.toString()}
                     onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), "")}
                 />
-                <div
-                    style={{ margin: "0 20px 20px 20px", whiteSpace: "pre-wrap" }}
-                    dangerouslySetInnerHTML={{ __html: exhibitor.rebookingNote }}
-                ></div>
                 <RebookingNotes
                     state={"default"}
-                    value={exhibitor.rebookingNote}
+                    value={exhibitor.rebookingNote || ""}
                     onClickSave={(val: string) =>
                         store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
                     }
