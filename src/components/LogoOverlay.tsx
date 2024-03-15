@@ -105,7 +105,7 @@ export default function LogoOverlay() {
                     }}
                 >
                     <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
-                    <QRCode value={`https://${settings.EXPO}.expofp.com${point}`} size={100} />
+                    <QRCode value={`https://${settings.EXPO}.expofp.com/${point}`} size={100} />
                 </div>
             )}
         </div>
