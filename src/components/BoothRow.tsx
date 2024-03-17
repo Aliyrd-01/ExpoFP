@@ -1,3 +1,4 @@
+import { useObserver } from "mobx-react-lite";
 import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
@@ -9,17 +10,20 @@ const BoothRow: React.FC<{
     booth: Booth;
     className: string;
 }> = ({ booth, className }) => {
-    return (
-        <SimpleRow
-            className={className}
-            slug={booth.slug}
-            onClick={handleClick}
-            onMouseOut={handleMouseOut}
-            onMouseOver={handleMouseOver}
-            line1={booth.name.startsWith("yah") ? booth.title : booth.fullName}
-            line2={booth instanceof SpecialBooth ? "" : data.boothTerm}
-        />
-    );
+    return useObserver(() => {
+        return (
+            <SimpleRow
+                className={className}
+                slug={booth.slug}
+                onClick={handleClick}
+                onMouseOut={handleMouseOut}
+                onMouseOver={handleMouseOver}
+                line1={booth.name.startsWith("yah") ? booth.title : booth.fullName}
+                line2={booth instanceof SpecialBooth ? "" : data.boothTerm}
+            />
+        );
+    })
+
     function handleClick() {
         store.clickBoothInList2(booth);
     }
