@@ -1,6 +1,7 @@
 import data from "../data";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
+import trackEvent from "../tools/track-event";
 
 const ga_common_prop = "G-78CKLYWFJK";
 
@@ -135,6 +136,7 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
             gtag("event", "search", {
                 search_term: label,
             });
+            trackEvent("search", `${settings.EXPO}:${s.text}`);
             break;
         case GaEventActions.ClickCustomButton:
         case GaEventActions.ClickPhone:
