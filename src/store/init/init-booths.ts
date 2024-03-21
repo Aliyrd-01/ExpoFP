@@ -13,7 +13,6 @@ import { isYahBooth } from "../../utils/yah";
 import { RawSpecialBooth } from "../../data/Data";
 import { Exhibitor } from "../ExhibitorStore";
 import { v4 as uuidv4 } from "uuid";
-import { Layer } from "../LayerStore";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
@@ -69,8 +68,7 @@ export function iniAllBooths(store: RootStore) {
 
 const layers = [];
 
-export default function initBooths(store: RootStore, layer: Layer): Booth[] {
-    const layerID = layer.name;
+export default function initBooths(store: RootStore, layerID: string): Booth[] {
     if (layers.indexOf(layerID) > -1) return [];
     layers.push(layerID);
 
@@ -80,9 +78,9 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
     const layersEnabled = !!window["__fpLayers"];
 
     for (const el of d3
-        .select(getLayerSvg(layer))
+        .select(getLayerSvg(layerID))
         .selectAll(
-            `[data-layer='${layerID}'] > [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
+            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
         const layer = ((el as SVGGraphicsElement).closest("svg > [data-layer]") as SVGGraphicsElement).attributes["data-layer"]

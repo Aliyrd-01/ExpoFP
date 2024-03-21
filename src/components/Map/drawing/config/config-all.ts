@@ -34,7 +34,7 @@ export default function configAll(context: DrawerContext = _context): void {
     var duration = 10;
     var animated = false;
 
-    const promises = layers.filter(l => !l.rootParent).map((layer) => {
+    const promises = layers.map((layer) => {
         return loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
             if (!animated && configured) {
                 animated = true;

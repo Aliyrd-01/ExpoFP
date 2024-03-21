@@ -11,53 +11,6 @@ import { getContext } from "./config-all";
 import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configSizes from "./config-sizes";
-import { getChildLayers } from "../../../../store/init/init-layers";
-
-function createChildLayers(layer: Layer) {
-    if (layer.childLayers.length) return layer.childLayers;
-
-    const childLayers = getChildLayers(layer, layer.basePriority).layers;
-    if (childLayers.length) {
-        layer.childLayers = childLayers;
-    }
-
-    return childLayers;
-}
-
-function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolean): Promise<boolean> {
-    return new Promise((resolve) => {
-        const booths = initBooths(store, l);
-        const logosBooths = boothStore.booths.filter(
-            (b) => b.rect && (!b.layer || b.layer === l) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
-        ) as RegularBooth[];
-
-        logosBooths.forEach((b) => (b.noLabels = true));
-
-        if (booths.length) {
-            configBooths(context, l.name, booths, l.basePriority + 3, l.visible)();
-            context.getLayersPainters([l.name]).forEach((p) => p.preparePaint());
-        }
-
-        l.loaded = true;
-
-        if (layersStore.mode === LayersMode.CheckBox) configSizes(context, l.name, l.basePriority + 10, l.visible);
-
-        if (!withConfiguration) {
-            return resolve(false);
-        }
-
-        l.configured = true;
-
-        configBg(context, logosFromBooths(logosBooths), l, l.basePriority, l.visible).then(() => {
-            context.requireUpdate(null);
-            var imagePainter = context.getLayersPainters([l.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
-            if (imagePainter) {
-                imagePainter.visible = l.visible;
-            }
-        });
-        resolve(true);
-    });
-}
 
 export default async function loadLayer(
     layer: Layer,
@@ -67,7 +20,7 @@ export default async function loadLayer(
     if (layer.configured) return Promise.resolve(true);
 
     return new Promise(async (resolve, reject) => {
-        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`] && !layer.rootParent) {
+        if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`]) {
             try {
                 await loadJs(`${window["__dataUrlBase"]}fp.svg.${layer.name}.js`);
             } catch {
@@ -75,21 +28,33 @@ export default async function loadLayer(
             }
         }
 
-        const childLayers = createChildLayers(layer);
+        const booths = initBooths(store, layer.name);
 
-        if (childLayers.length) {
-            layer.childLayers = childLayers;
+        const logosBooths = boothStore.booths.filter(
+            (b) => b.rect && (!b.layer || b.layer === layer) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
+        ) as RegularBooth[];
+
+        logosBooths.forEach((b) => (b.noLabels = true));
+
+        if (booths.length) {
+            configBooths(context, layer.name, booths, layer.basePriority + 3, layer.visible)();
+            context.getLayersPainters([layer.name]).forEach((p) => p.preparePaint());
         }
 
-        let { layers } = store.layerStore;
+        layer.loaded = true;
 
-        store.layerStore.layers = [
-            ...layers,
-            ...childLayers.filter((childLayer) => !layers.some((layer) => layer.name === childLayer.name)),
-        ] as Layer[];
+        if (layersStore.mode === LayersMode.CheckBox) configSizes(context, layer.name, layer.basePriority + 10, layer.visible);
 
-        await configLayer(layer, context, withConfiguration);
-        await Promise.all(childLayers.map((l) => configLayer(l, context, withConfiguration)));
+        if (!withConfiguration) return resolve(false);
+
+        layer.configured = true;
+
+        configBg(context, logosFromBooths(logosBooths), layer.name, layer.basePriority, layer.visible).then(() => {
+            context.requireUpdate(null);
+            var imagePainter = context.getLayersPainters([layer.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
+            if (!imagePainter) return;
+            imagePainter.visible = layer.visible;
+        });
 
         context.requireUpdate(null);
         resolve(true);
