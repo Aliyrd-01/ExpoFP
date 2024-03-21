@@ -3,6 +3,7 @@ import data from ".";
 import Rect from "../core/Rect";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import { Layer } from "../store/LayerStore";
 
 const _svg = new Map<string, SVGElement>();
 
@@ -101,8 +102,24 @@ export let gtePathByIndex = (index: number, suffix: string = "") => {
     }
 };
 
-export let getLayerSvg = (suffix: string = ""): SVGElement => {
-    if (_svg.has(suffix)) return _svg.get(suffix);
-    if (window[`__fp${suffix}`]) return parseSvg(window[`__fp${suffix}`], suffix);
-    else return _svg.get("");
+export let getLayerSvg = (layer: Layer | string = ""): SVGElement => {
+    if (typeof layer === "string") {
+        if (_svg.has(layer)) return _svg.get(layer);
+        if (window[`__fp${layer}`]) return parseSvg(window[`__fp${layer}`], layer);
+        else return _svg.get("");
+    }
+
+    if (layer.rootParent) {
+        if (_svg.has(layer.rootParent.name)) {
+            return _svg.get(layer.rootParent.name);
+        } else if (window[`__fp${layer.rootParent.name}`]) {
+            return parseSvg(window[`__fp${layer.rootParent.name}`], layer.rootParent.name);
+        } else {
+            return _svg.get("");
+        }
+    } else if (window[`__fp${layer.name}`]) {
+        return parseSvg(window[`__fp${layer.name}`], layer.name);
+    }
+
+    return _svg.get("");
 };

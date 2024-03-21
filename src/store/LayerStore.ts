@@ -32,6 +32,8 @@ export class Layer {
     frozen: boolean;
     rect: Rect = null;
     configured: boolean;
+    childLayers: Layer[] = [];
+    rootParent: Layer = null;
     mode: LayerMode;
 
     @observable loaded: boolean;
@@ -81,16 +83,30 @@ export default class LayerStore {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
                     if (l.name !== layer.name && !l.frozen && l.visible) {
-                        if (!animated) l.visible = false;
-                        else an(l, false);
+                        if (!animated) {
+                            l.visible = false;
+                            l.childLayers.forEach(child => {
+                                child.visible = false;
+                            })
+                        }
+                        else {
+                            an(l, false);
+                        }
                     }
                     //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
             if (layer) {
-                if (!animated) layer.visible = visible;
-                else an(layer, visible);
+                if (!animated) {
+                    layer.visible = visible;
+                    layer.childLayers.forEach(child => {
+                        child.visible = visible;
+                    });
+                }
+                else {
+                    an(layer, visible);
+                }
             }
         });
     }
@@ -126,7 +142,11 @@ function an(layer: Layer, toVisible: boolean): void {
         easeLinear,
         toVisible ? interpolateNumber(0, 1) : interpolateNumber(1, 0),
         _context.requireUpdate.bind(_context),
-        (v) => _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v)),
+        (v) => {
+            layer.visible = toVisible;
+            layer.childLayers.forEach(l => l.visible = toVisible);
+            _context.getLayersPainters([layer.name, ...layer.childLayers.map(l => l.name)]).forEach((p) => ((p as RectPainter).alpha = v))
+        },
         () => {
             layer.visible = toVisible;
             if (!toVisible) {
