@@ -160,6 +160,7 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
                 content_type: action,
                 content_id: label,
             });
+            trackEvent("route", label);
             break;
         default:
             gtag("event", action, {
