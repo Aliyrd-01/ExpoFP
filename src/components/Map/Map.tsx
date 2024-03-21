@@ -5,12 +5,14 @@ import { select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
+import { ResizeObserver } from "resize-observer";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
 import { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, BoothBase } from "../../store/BoothStore";
 import { Exhibitor } from "../../store/ExhibitorStore";
+import { LayerMode } from "../../store/LayerStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
@@ -23,8 +25,6 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import { ResizeObserver } from "resize-observer";
-import { LayerMode } from "../../store/LayerStore";
 
 //console.log('isIframe', isIframe)
 
@@ -126,11 +126,30 @@ export default function Map() {
 
             var details = uiState.details as any;
 
+            // @todo clear after event is complete
+            if (settings.EXPO === "wineparis") {
+                if (details instanceof Exhibitor) details = details.booths[0];
+                if (!details) return;
+            }
+            //
+
             var data = {
                 type: details instanceof BoothBase ? "booth" : details instanceof Exhibitor ? "exhibitor" : ("route" as any),
                 name: details?.name,
                 id: details?.id,
                 externalId: details?.externalId,
+                boothsNames:
+                    details instanceof Exhibitor
+                        ? details.booths
+                              .map((b) => b.name)
+                              .sort((b1, b2) =>
+                                  b1 == store.routeStore.tempToBooth?.name ? -1 : b2 == store.routeStore.tempToBooth?.name ? 1 : 0
+                              )
+                        : details instanceof BoothBase
+                        ? [details.name]
+                        : [store.uiState.selectedRoute?.from?.name, store.uiState.selectedRoute?.to?.name].filter(
+                              (name) => !!name
+                          ),
             };
 
             setTimeout(() => uiState.onDetails(data), 200);

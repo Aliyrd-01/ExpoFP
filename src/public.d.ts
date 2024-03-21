@@ -11,6 +11,8 @@ class FloorPlan {
 
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
+    onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+
     onFpConfigured: () => void;
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
@@ -31,6 +33,8 @@ class FloorPlan {
         focus?: boolean,
         icon?: number // 0- blue dot, 1- YAH icon
     ): void;
+
+    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void;
 
     updateLayerVisibility(layer: string, visible: boolean): void;
 
@@ -53,6 +57,7 @@ interface FloorPlanOptions {
     offHistory?: boolean;
     allowConsent?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
+    onBookmarkClick?: (e: FloorPlanBookmarkClickEvent) => void;
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
@@ -80,6 +85,11 @@ interface Point {
     y: number;
 }
 
+interface FloorPlanBookmarkClickEvent {
+    name: string;
+    bookmarked: boolean;
+}
+
 interface FloorPlanDirectionEvent {
     from: FloorPlanBoothBase;
     to: FloorPlanBoothBase;
@@ -93,6 +103,11 @@ interface FloorPlanDetailsEvent {
     id: string;
     name: string;
     externalId: string;
+    /// Value depends on the type of event
+    /// if the type is 'booth' this value contains the same value as 'name'
+    /// if the type is 'exhibitor' this value contains the  assigned booths names (the first booth name takes from the onBoothClick event)
+    /// if the the type is 'route' this value contains "from" and "to" booths name.
+    boothsNames: string[];
 }
 
 interface FloorPlanCustomButtonEvent {

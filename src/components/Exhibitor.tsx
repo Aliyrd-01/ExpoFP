@@ -3,25 +3,24 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent, Suspense, useRef } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
+import { SpecialBooth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
 import { t } from "../utils/i18n";
-import isIframe from "../utils/is-iframe";
+import isMobile from "../utils/is-mobile";
 import { useAutorun, useReaction } from "../utils/mobx";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
+import MarketMaterialList from "./MarketMaterialList";
 import OverlayContent from "./OverlayContent";
 import RebookingNotes from "./RebookingNotes";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
-import { FillMode } from "./Slider/ImageSliderData";
-import isMobile from "../utils/is-mobile";
-import { SpecialBooth } from "../store/BoothStore";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -129,13 +128,9 @@ function ExhibitorComponent() {
                     checked={exhibitor.rebookingState.toString()}
                     onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), "")}
                 />
-                <div
-                    style={{ margin: "0 20px 20px 20px", whiteSpace: "pre-wrap" }}
-                    dangerouslySetInnerHTML={{ __html: exhibitor.rebookingNote }}
-                ></div>
                 <RebookingNotes
                     state={"default"}
-                    value={exhibitor.rebookingNote}
+                    value={exhibitor.rebookingNote || ""}
                     onClickSave={(val: string) =>
                         store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
                     }
@@ -189,7 +184,12 @@ function ExhibitorComponent() {
         }
 
         function shareButtonVisible() {
-            return !data.hideShareButton && !uiState.kiosk && window.location.host.endsWith(".expofp.com") && settings.EXPO !== "globalaltsmiami2024";
+            return (
+                !data.hideShareButton &&
+                !uiState.kiosk &&
+                window.location.host.endsWith(".expofp.com") &&
+                settings.EXPO !== "globalaltsmiami2024"
+            );
         }
 
         function onUpdateGallery() {
@@ -328,22 +328,10 @@ function ExhibitorComponent() {
                                 </div>
                             )}
                             {!uiState.kiosk && exhibitor.marketMaterials && (
-                                <div className="exhibitor__market-materials">
-                                    {exhibitor.marketMaterials.map((marketMaterial) => {
-                                        return (
-                                            <div key={marketMaterial.fileName}>
-                                                <a
-                                                    href={marketMaterial.path}
-                                                    key={marketMaterial.path}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {marketMaterial.fileName}
-                                                </a>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
+                                <>
+                                    <div className="exhibitor__sep" />
+                                    <MarketMaterialList list={exhibitor.marketMaterials} />
+                                </>
                             )}
                             {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
                             {!uiState.kiosk && s.showEdit && (
@@ -539,6 +527,7 @@ function ExhibitorComponent() {
 
     function bookmark() {
         s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
+        if (uiState.onBookmarkClick) uiState.onBookmarkClick({ name: s.exhibitor.name, bookmarked: s.exhibitor.bookmarked });
     }
 }
 

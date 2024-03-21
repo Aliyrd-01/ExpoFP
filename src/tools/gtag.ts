@@ -1,6 +1,7 @@
 import data from "../data";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
+import trackEvent from "../tools/track-event";
 
 const ga_common_prop = "G-78CKLYWFJK";
 
@@ -70,6 +71,11 @@ export function setCookieConsent(cookieConsent: boolean) {
     const monthInSeconds = 2592000;
 
     const domain = isDebug ? "localhost" : ".expofp.com";
+
+    // Remove cookie_consent cookie before set
+    document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`;
+    document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+
     document.cookie = cookieConsent
         ? `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; domain=${domain}; path=/`
         : `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; path=/`;
@@ -130,6 +136,7 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
             gtag("event", "search", {
                 search_term: label,
             });
+            trackEvent("search", label);
             break;
         case GaEventActions.ClickCustomButton:
         case GaEventActions.ClickPhone:
@@ -153,6 +160,7 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
                 content_type: action,
                 content_id: label,
             });
+            trackEvent("route", label);
             break;
         default:
             gtag("event", action, {

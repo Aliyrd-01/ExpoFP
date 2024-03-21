@@ -3,6 +3,7 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
+import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -158,12 +159,24 @@ export function createExhibitorsDetailsCanvas(
 
     const primaryExhibitors = b.exhibitors.filter((e) => e.order === 0);
 
+    const exhibitorsWithOrder = b.exhibitors.filter((e) => e.order);
+
     if (primaryExhibitors.length > 0) {
         mainLines.push(...primaryExhibitors.map((e) => e.name));
     } else if (onlyFeaturedExhibitors) {
         mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
+    } else if (exhibitorsWithOrder.length > 0) {
+        mainLines.push(...exhibitorsWithOrder.map((e) => e.name));
+        const exhibitorsWithoutOrder = b.exhibitors.filter((e) => e.order === undefined);
+        if (exhibitorsWithoutOrder.length > 0) {
+            mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
+        }
     } else {
-        mainLines.push(...b.exhibitors.map((e) => e.name));
+        if (b.exhibitors.length > 5) {
+            mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
+        } else {
+            mainLines.push(...b.exhibitors.map((e) => e.name));
+        }
     }
 
     mainLines.forEach((text, i) => {

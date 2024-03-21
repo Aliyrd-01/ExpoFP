@@ -1,15 +1,15 @@
 import { action, computed, observable } from "mobx";
-import { lineLength, Point } from "simple-geometry";
+import { Point, lineLength } from "simple-geometry";
 import store, { layersStore } from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { getLayerSvg, svgArea } from "./../data/svg";
-import { RouteLine, sublines } from "./../utils/wayfinding";
+import { RouteLine, getGraphLines, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
-import { uiState } from "./index";
 import { Layer, LayersMode } from "./LayerStore";
 import RootStore from "./RootStore";
+import { uiState } from "./index";
 
 export default class RouteStore {
     rootStore: RootStore;
@@ -213,6 +213,27 @@ export default class RouteStore {
             }, 100);
 
         this.routeDistance = distance;
+    }
+
+    @action checkRoutes() {
+        let booths = store.boothStore.booths;
+
+        console.info(`Route check started  ${booths.length}.... `);
+
+        for (let i = 0; i < booths.length; i++) {
+            const from = booths[i];
+            for (let j = i + 1; j < booths.length; j++) {
+                const to = booths[j];
+                const route = getGraphLines(from, to);
+                if (!route.length) {
+                    console.warn(`No route found from ${from.name} to ${to.name}`);
+                } else {
+                    //console.info(`Route found from ${from.name} to ${to.name}`);
+                }
+            }
+        }
+
+        console.info("Route check done....");
     }
 }
 

@@ -6,9 +6,8 @@ import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import { CurrentPosition, Route, extractRoute } from "../store/RouteStore";
+import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
-import { setConsentSettings } from "../tools/gtag";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -52,7 +51,9 @@ export function initRouting(offHistory = false) {
         const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
         disableStateToUrl = true;
 
-        const booth = store.boothStore.booths.find((x: Booth) => x.slug === slug || x.externalId === slug);
+        const booth = store.boothStore.booths.find(
+            (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+        );
 
         if (hanleCustomCommand(slug, false)) {
         } else if (slug.startsWith("route")) {
@@ -75,7 +76,8 @@ export function initRouting(offHistory = false) {
                 () => store.layerStore.layersLoaded,
                 () => {
                     const exhibitor = store.exhibitorStore.exhibitors.find(
-                        (x: Exhibitor) => x.slug === slug || x.externalId === slug
+                        (x: Exhibitor) =>
+                            x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
                     );
                     if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
                     else {
@@ -204,7 +206,7 @@ export function initRouting(offHistory = false) {
                         Number(blueDotParams[1]),
                         blueDotParams[2]
                     );
-                    store.routeStore.selectCurrentPosition(currentPosition, false);
+                    store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
                 }
             );
         }

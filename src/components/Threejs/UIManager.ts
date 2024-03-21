@@ -5,7 +5,7 @@ import { RouteLine } from "./../../utils/wayfinding";
 import { BoothMesh } from "./common/BoothMesh";
 
 import RouteStore from "../../store/RouteStore";
-import dataLoader, { ICommonData } from "./common/dataLoader";
+import dataLoader, { IBooth, ICommonData } from "./common/dataLoader";
 
 import loadModel from "./common/modelLoader";
 import Scene from "./common/Scene";
@@ -24,7 +24,10 @@ import canvasFromText from "./utils/canvasFromText";
 import TextureMerger from "./utils/textureMerger";
 
 import { actualBoothColor } from "../Mapbox/utils/data";
+
+import fr from "./assets/from.png";
 import to from "./assets/to.png";
+import { default as cp, default as yah } from "./assets/yah.png";
 
 const routeMeshes: THREE.Mesh[] = [];
 const defaultMaterial = new THREE.MeshPhongMaterial({ color: 0x30afeb });
@@ -34,7 +37,7 @@ let routeIndex = 0;
 
 const booths: BoothMesh[] = [];
 
-const pointSize = (data: ICommonData): number => data.objLayers[0].height / 2;
+const pointSize = (data: ICommonData): number => data.objLayers[0].height / 7;
 
 export default class UIManager {
     expo: string;
@@ -109,23 +112,36 @@ export default class UIManager {
         booths.forEach((b) => b.dimmed(selectedBooths.length && !selectedBooths.find((hb) => hb.name === b.name)));
     }
 
-    public setMarker(type: "from" | "to" | "yah" | "cp", x: number, y: number, layer: string | number) {
+    public setMarker(
+        type: "from" | "to" | "yah" | "cp",
+        x: number,
+        y: number,
+        layer: string | number,
+        inLocal: boolean = false,
+        scale: number = 1
+    ) {
         const name = `{sprite_${type}}`;
         let sprite = this.scene.children.find((c) => c.name === name);
 
-        if (x && y) {
-            const localPoint = this.convertPoint(x, y);
+        if (x != null && y != null) {
+            const localPoint = inLocal ? { x, y } : this.convertPoint(x, y, 0);
 
             let objLayer =
                 this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer)?.name) || this.data.objLayers[0];
 
             if (!sprite) {
-                sprite = new SpriteMesh(to, objLayer.height * 4);
+                if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 2);
+                else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 2);
+                else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 2);
+                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale);
                 sprite.name = name;
                 this.scene.add(sprite);
             }
-
-            sprite.position.set(localPoint.x, localPoint.y, objLayer.z + objLayer.height);
+            sprite.position.set(
+                localPoint.x,
+                localPoint.y,
+                objLayer.z + (type === "from" || type === "to" ? objLayer.height : 0)
+            );
         } else if (sprite) {
             this.scene.remove(sprite);
         }
@@ -162,6 +178,7 @@ export default class UIManager {
         routeMeshes.splice(0, routeMeshes.length);
 
         if (!routeLines.length) {
+            this.setMarker("from", null, null, null);
             this.setMarker("to", null, null, null);
             return;
         }
@@ -184,6 +201,12 @@ export default class UIManager {
             });
 
         this.setMarker("to", routeLines[0].p0.x, routeLines[0].p0.y, routeLines[0].p0.layer);
+        this.setMarker(
+            "from",
+            routeLines[routeLines.length - 1].p1.x,
+            routeLines[routeLines.length - 1].p1.y,
+            routeLines[routeLines.length - 1].p1.layer
+        );
     }
 
     public onBeforeRender(
@@ -251,16 +274,12 @@ export default class UIManager {
 
                 let objLayer = this.data.objLayers.find((l) => l.name === (efpBooth.layer?.name || "Default"));
 
-                let z = objLayer.z + objLayer.height + (objLayer.z + objLayer.height) * 0.001;
+                let booth: IBooth = this.data.booths.find((b) => b.name === efpBooth.name);
+                booth.zScale = booth.zScale || 1;
 
-                const boothMesh = new BoothMesh(
-                    efpBooth,
-                    this.data.booths.find((b) => b.name === efpBooth.name),
-                    mesh as THREE.Mesh,
-                    name.substring(1),
-                    l,
-                    z
-                );
+                let z = objLayer.z + booth.zScale * objLayer.height + (objLayer.z + booth.zScale * objLayer.height) * 0.001;
+
+                const boothMesh = new BoothMesh(efpBooth, booth, mesh as THREE.Mesh, name.substring(1), l, z);
 
                 let text = boothMesh.setText();
                 if (text) scene.add(text);
@@ -281,7 +300,7 @@ export default class UIManager {
         scene.add(model);
     }
 
-    private convertPoint(x: number, y: number): THREE.Vector3 {
+    private convertPoint(x: number, y: number, z: number): THREE.Vector3 {
         var m = this.data.matrix;
 
         x += m[0];
@@ -293,7 +312,7 @@ export default class UIManager {
         x += m[4];
         y += m[5];
 
-        return new THREE.Vector3(x, y, 0);
+        return new THREE.Vector3(x, y, z);
     }
 
     private linesToPoints(routeLines: RouteLine[]): THREE.Vector3[] {
@@ -315,6 +334,6 @@ export default class UIManager {
             }
         }
 
-        return routePoints.map((p) => this.convertPoint(p.x, p.y));
+        return routePoints.map((p) => this.convertPoint(p.x, p.y, p.z));
     }
 }

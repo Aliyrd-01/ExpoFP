@@ -1,19 +1,19 @@
 import React from "react";
+import { reaction } from "mobx";
 import ReactDOM from "react-dom";
+import { install } from "resize-observer";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
-import { install } from "resize-observer";
 // import initStore from "./store/init";
-import { initRouting, destroyHistory } from "./services/routing";
+import { destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
-import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
-import { GaEventActions, sendEventToGa, setConsentSettings } from "./tools/gtag";
-import trackEvent from "./tools/track-event";
-import { resetGlobalVariables } from "./tools/reset";
-import reportError from "./tools/report-error";
-import { destroyUiHandlers } from "./store/init/init-ui";
-import { destroyGtag } from "./tools/gtag";
 import { SpecialBooth } from "./store/BoothStore";
+import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
+import { destroyUiHandlers } from "./store/init/init-ui";
+import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
+import reportError from "./tools/report-error";
+import { resetGlobalVariables } from "./tools/reset";
+import trackEvent from "./tools/track-event";
 
 install();
 
@@ -43,7 +43,11 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.renderTarget
         );
         sendEventToGa(GaEventActions.Rendered, ``);
-        this.resolveReady();
+
+        reaction(
+            () => store.layerStore.layersLoaded,
+            () => this.resolveReady()
+        );
     }
 
     selectBooth(nameOrExternalId: string | string[]) {
@@ -78,6 +82,17 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         store.routeStore.selectCurrentPosition(point, focus, icon);
+    }
+
+    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void {
+        bookmarks.forEach((b) => {
+            const e = store.exhibitorStore.exhibitors.find((e) => e.name === b.name);
+            if (e) e.bookmarked = b.bookmarked;
+        });
+    }
+
+    checkRoutes(): void {
+        store.routeStore.checkRoutes();
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {

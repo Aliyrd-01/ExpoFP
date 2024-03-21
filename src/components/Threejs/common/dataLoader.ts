@@ -5,6 +5,7 @@ export interface IBooth {
     layer: string;
     rect: Rect;
     name: string;
+    zScale: number;
 }
 
 export interface IObjLayer {

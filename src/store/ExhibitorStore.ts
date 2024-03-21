@@ -1,12 +1,12 @@
 import { ScheduleItem } from "./ScheduleStore";
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
+import { MarketMaterial, RawExhibitor } from "../data/Data";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
 import { Booth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
-import { MarketMaterial, RawExhibitor } from "../data/Data";
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
@@ -43,11 +43,9 @@ export default class ExhibitorStore {
 
     @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
         exhibitor.rebookingState = state;
+        exhibitor.rebookingNote = rebookingNote;
 
-        if (rebookingNote?.length)
-            exhibitor.rebookingNote = (exhibitor.rebookingNote || "") + "\r\n" + "Rebooking note: " + rebookingNote;
-
-        fetch("https://app.expofp.com/api/v1/set-rebooking-state", {
+        fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

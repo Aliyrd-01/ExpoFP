@@ -11,11 +11,23 @@ var { Text } = require("troika-three-text");
 
 const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide, name: "selected" });
 
-const dimmedMaterial = new THREE.MeshPhongMaterial({
-    color: 0x777777,
-    side: THREE.DoubleSide,
-    name: "hovered",
+// const dimmedMaterial = new THREE.MeshPhongMaterial({
+//     color: 0x777777,
+//     side: THREE.DoubleSide,
+//     name: "hovered",
+// });
+
+const dimmedMaterial = new THREE.MeshPhysicalMaterial({
+    metalness: 0,
+    roughness: 1,
+    envMapIntensity: 0.5,
+    clearcoat: 0.5,
+    transparent: true,
+    transmission: 0.85,
+    opacity: 1,
+    reflectivity: 0.2,
 });
+
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
 
 export class BoothMesh extends THREE.Group {
@@ -76,9 +88,9 @@ export class BoothMesh extends THREE.Group {
 
         var angle = lineAngle(this.threeBooth.rect.p0, this.threeBooth.rect.p1) || 0;
 
-        if (1.5 * rect.width < rect.height) angle = 90;
+        if (1.5 * rect.width < rect.height) angle -= 90;
 
-        mesh.rotateZ(-(angle * Math.PI) / 180);
+        mesh.rotateZ((angle * Math.PI) / 180);
 
         mesh.position.x = rect.center.x;
         mesh.position.y = rect.center.y;
@@ -136,7 +148,7 @@ export class BoothMesh extends THREE.Group {
 
         plane.position.x = rect.center.x;
         plane.position.y = rect.center.y;
-        plane.position.z = this.z;
+        plane.position.z = this.z + 0.01 * this.z;
         plane.scale.y = -1;
 
         plane.material.map = textureMerger.mergedTexture;

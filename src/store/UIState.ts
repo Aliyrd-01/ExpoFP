@@ -1,20 +1,20 @@
 import { action, computed, observable } from "mobx";
-import store, { uiState } from ".";
+import { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
+import data from "../data";
+import { hasUserConsent } from "../tools/gtag";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import browser from "../utils/browser";
+import { getLanguage } from "../utils/i18n";
+import { isLocalStorageAvailable } from "../utils/localStorage";
+import { getResponsiveClass } from "../utils/responsiveClass";
 import { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
-import { getResponsiveClass } from "../utils/responsiveClass";
-import { getLanguage } from "../utils/i18n";
-import { isLocalStorageAvailable } from "../utils/localStorage";
-import data from "../data";
-import { hasUserConsent } from "../tools/gtag";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -75,6 +75,10 @@ export default class UIState {
 
     get onBoothClick() {
         return this.rootStore.fp.onBoothClick;
+    }
+
+    get onBookmarkClick() {
+        return this.rootStore.fp.onBookmarkClick;
     }
 
     get onDirection() {
@@ -313,8 +317,16 @@ export default class UIState {
 
         const splittedTexts = text.split("&").filter((s) => s);
 
+        function selectLettersSpacesNumbers(input: string): string {
+            return (
+                input
+                    ?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")              
+                    ?.replace(/\s\s+/g, " ") ?? input
+            );
+        }
+
         function containsIgnoreCase(str: string, searchTerm: string) {
-            return str.toLowerCase().includes(searchTerm.toLowerCase());
+            return selectLettersSpacesNumbers(str).toLowerCase().includes(selectLettersSpacesNumbers(searchTerm).toLowerCase());
         }
 
         function containsLevelIgnoreCase(str: string, searchTerm: string) {

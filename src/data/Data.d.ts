@@ -13,6 +13,7 @@ interface Data {
     levelTerm: string;
     reserveButtonTerm: string;
     exhibitorTerm: string;
+    exhibitorTermPlural: string;
     locale: string;
     booths: RawBooth[];
     exhibitors: RawExhibitor[];
@@ -41,6 +42,7 @@ interface Data {
     events: ScheduleItem[];
     customCss: string;
     
+    showLevelLabel:boolean;
     showCategories: boolean;
     showCompaniesAndBooths: boolean;
     showOtherSpaces: boolean;

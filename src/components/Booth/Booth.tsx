@@ -1,5 +1,5 @@
-import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
+import { useLocalStore, useObserver } from "mobx-react-lite";
 import data from "../../data";
 import store, { uiState } from "../../store";
 import { RegularBooth, SpecialBooth } from "../../store/BoothStore";
@@ -8,14 +8,14 @@ import settings from "../../tools/settings";
 import { remsToPixels } from "../../utils";
 import { t } from "../../utils/i18n";
 import { useAutorun } from "../../utils/mobx";
-import "./Booth.scss";
 import ExhibitorRow from "../ExhibitorRow";
 import OverlayContent from "../OverlayContent";
 import Schedule from "../Schedule";
 import SidebarActions from "../SidebarActions";
+import "./Booth.scss";
 import { BoothOnHold } from "./BoothOnHold";
-import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
 import { BoothReserved } from "./BoothReserved";
+import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
 
 function Booth() {
     const s = useLocalStore(() => ({
@@ -61,7 +61,9 @@ function Booth() {
 
         const exhibitors = s.booth.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
 
-        if (s.regular) {
+        if (data.isRebooking) {
+            content = <>{exhibitors}</>;
+        } else if (s.regular) {
             const b = s.regular;
 
             if (b.onHold) {
@@ -106,7 +108,7 @@ function Booth() {
                         />
                     </div>
                 )}
-                {!data.isRebooking && content}
+                {content}
                 {data.isRebooking && s.regular && s.regular.exhibitors.length === 0 && (
                     <BoothWithoutExhibitor
                         showBuy={false}
