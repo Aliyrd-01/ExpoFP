@@ -26,6 +26,7 @@ const dimmedMaterial = new THREE.MeshPhysicalMaterial({
     transmission: 0.85,
     opacity: 1,
     reflectivity: 0.2,
+    side: THREE.DoubleSide,
 });
 
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });
