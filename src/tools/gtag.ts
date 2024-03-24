@@ -136,7 +136,7 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
             gtag("event", "search", {
                 search_term: label,
             });
-            trackEvent("search", `${settings.EXPO}:${label}`);
+            trackEvent("search", label);
             break;
         case GaEventActions.ClickCustomButton:
         case GaEventActions.ClickPhone:
@@ -160,6 +160,7 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
                 content_type: action,
                 content_id: label,
             });
+            trackEvent("route", label);
             break;
         default:
             gtag("event", action, {
