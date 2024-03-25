@@ -96,7 +96,7 @@ export default class LayerStore {
     }
 
     public findLayer(z: string | number): Layer {
-        if (!z) return null;
+        if (z === null || z === undefined) return null;
         z = z.toString().toLowerCase();
 
         return this.layers.find((l) => {
