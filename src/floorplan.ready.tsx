@@ -1,5 +1,5 @@
-import React from "react";
 import { reaction } from "mobx";
+import React from "react";
 import ReactDOM from "react-dom";
 import { install } from "resize-observer";
 import Layout from "./components/Layout";
@@ -110,7 +110,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
-    boothsList(): any {
+    boothsList(): FloorPlanBooth[] {
         return store.boothStore.booths.map((b) => {
             return {
                 id: b.id,
@@ -118,6 +118,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 externalId: b.externalId,
                 isSpecial: b instanceof SpecialBooth,
                 exhibitors: b.exhibitors.map((e) => e.id),
+                layer:{
+                    name: b.layer.name,
+                    description: b.layer.description
+                }
             };
         });
     }

@@ -204,8 +204,20 @@ export default class RouteStore {
         if (store.fp.onDirection)
             setTimeout(() => {
                 store.fp.onDirection({
-                    from: route?.from ? { id: route.from.id, name: route.from.name } : null,
-                    to: route?.to ? { id: route.to.id, name: route.to.name } : null,
+                    from: route?.from
+                        ? {
+                              id: route.from.id,
+                              name: route.from.name,
+                              layer: { name: route.from?.layer.name, description: route.from?.layer.description },
+                          }
+                        : null,
+                    to: route?.to
+                        ? {
+                              id: route.to.id,
+                              name: route.to.name,
+                              layer: { name: route.to.layer.name, description: route.to.layer.description },
+                          }
+                        : null,
                     lines: routeLines,
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
