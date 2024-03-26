@@ -34,8 +34,8 @@ export default async function configBg(
 
     const fpImages = (
         window["__fpVersion"] > 5
-            ? selected.selectAll(":scope > image").nodes()
-            : selected.selectAll(":scope > g[data-is-editable='false'] > image").nodes()
+            ? selected.selectAll(":scope > image, :scope > g:not([data-layer]) image").nodes()
+            : selected.selectAll(":scope > g[data-is-editable='false'] image").nodes()
     ) as SVGImageElement[];
 
     for (const el of bgElements) {
