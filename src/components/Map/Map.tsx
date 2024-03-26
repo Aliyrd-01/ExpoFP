@@ -92,7 +92,6 @@ export default function Map() {
             if (!uiState.centerMap || store.mapboxStore.showMapbox) return;
             uiState.centerMap = false;
             var { rectangle } = store.layerStore;
-            console.error(rectangle);
             if (rectangle)
                 zoomTo(
                     getTramsformToCenterSvgRect(

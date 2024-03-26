@@ -145,13 +145,15 @@ function an(layer: Layer, toVisible: boolean): void {
         (v) => {
             layer.visible = toVisible;
             layer.childLayers.forEach(l => l.visible = toVisible);
-            _context.getLayersPainters([layer.name, ...layer.childLayers.map(l => l.name)]).forEach((p) => ((p as RectPainter).alpha = v))
+            const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map(l => l.name)]);
+            layersPainters.forEach((p) => ((p as RectPainter).alpha = v));
         },
         () => {
             layer.visible = toVisible;
+            layer.childLayers.forEach(l => l.visible = toVisible);
             if (!toVisible) {
-                layer.visible = false;
-                _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = 1));
+                const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map(l => l.name)]);
+                layersPainters.forEach((p) => ((p as RectPainter).alpha = 1));
             }
         }
     );
