@@ -126,7 +126,7 @@ function ExhibitorComponent() {
                     showTitle={false}
                     options={defaultRebookingOptions}
                     checked={exhibitor.rebookingState.toString()}
-                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), "")}
+                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), exhibitor.rebookingNote)}
                 />
                 <RebookingNotes
                     state={"default"}
