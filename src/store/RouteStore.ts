@@ -208,14 +208,14 @@ export default class RouteStore {
                         ? {
                               id: route.from.id,
                               name: route.from.name,
-                              layer: { name: route.from?.layer.name, description: route.from?.layer.description },
+                              layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
                           }
                         : null,
                     to: route?.to
                         ? {
                               id: route.to.id,
                               name: route.to.name,
-                              layer: { name: route.to.layer.name, description: route.to.layer.description },
+                              layer: { name: route.to.layer?.name, description: route.to.layer?.description },
                           }
                         : null,
                     lines: routeLines,

@@ -119,8 +119,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 isSpecial: b instanceof SpecialBooth,
                 exhibitors: b.exhibitors.map((e) => e.id),
                 layer:{
-                    name: b.layer.name,
-                    description: b.layer.description
+                    name: b.layer?.name,
+                    description: b.layer?.description
                 }
             };
         });
