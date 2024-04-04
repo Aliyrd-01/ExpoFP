@@ -8,6 +8,7 @@ import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
+import { setConsentSettings } from "../tools/gtag";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -138,18 +139,7 @@ function dispatchFromUrl() {
     setTitle();
 }
 
-export function initRouting(offHistory = false) {
-    disableHistoryManipulation = offHistory;
-
-    unlisten = history.listen((location, action) => {
-        if (disableHistoryManipulation) return;
-
-        logger.log("history", action, location);
-        if (action === "POP") {
-            dispatchFromUrl();
-        }
-    });
-
+function processURLParams() {
     const locationSearch = history.location.search;
 
     // preview fix
@@ -169,31 +159,36 @@ export function initRouting(offHistory = false) {
         const url = new URL(window.location.href);
         const noOverlayParamValue = url.searchParams.get("noOverlay");
 
+        url.searchParams.delete("noOverlay");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
         if (noOverlayParamValue === "true") {
-            url.searchParams.delete("noOverlay");
-
-            let newSearch = url.search;
-            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-
-            historyReplace(newSearch);
             store.uiState.hideOverlay = true;
+        } else if (noOverlayParamValue === "false") {
+            store.uiState.hideOverlay = false;
         }
+        historyReplace(newSearch);
     } else if (locationSearch.includes("?blue-dot")) {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
 
         if (blueDotParams[0] && blueDotParams[1]) {
-            reaction(
-                () => store.layerStore.layersLoaded,
-                () => {
-                    const currentPosition = new CurrentPosition(
-                        Number(blueDotParams[0]),
-                        Number(blueDotParams[1]),
-                        blueDotParams[2]
-                    );
-                    store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
-                }
+            const currentPosition = new CurrentPosition(
+                Number(blueDotParams[0]),
+                Number(blueDotParams[1]),
+                blueDotParams[2]
             );
+
+            if (!store.layerStore.layersLoaded) {
+                reaction(
+                    () => store.layerStore.layersLoaded,
+                    () => {
+                        store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
+                    }
+                );
+            } else {
+                store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
+            }
         }
 
         historyReplace("?");
@@ -213,9 +208,16 @@ export function initRouting(offHistory = false) {
 
     if (locationSearch.includes("allowConsent")) {
         const url = new URL(window.location.href);
+        const allowConsentValue = url.searchParams.get("allowConsent");
         url.searchParams.delete("allowConsent");
 
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (allowConsentValue === "true") {
+            setConsentSettings(true);
+        } else if (allowConsentValue === "false") {
+            setConsentSettings(false);
+        }
+
         historyReplace(newSearch);
     }
 
@@ -239,6 +241,21 @@ export function initRouting(offHistory = false) {
 
         historyReplace("?" + newSearch);
     }
+}
+
+export function initRouting(offHistory = false) {
+    disableHistoryManipulation = offHistory;
+
+    unlisten = history.listen((location, action) => {
+        if (disableHistoryManipulation) return;
+
+        logger.log("history", action, location);
+        if (action === "POP") {
+            dispatchFromUrl();
+        }
+    });
+
+    processURLParams();
 
     reaction(() => store.layerStore.layersLoaded,
         () => {
@@ -255,10 +272,12 @@ export function applyParameters(queryRaw: string = "") {
     if (!store.layerStore.layersLoaded) {
         reaction(() => store.layerStore.layersLoaded,
             () => {
+                processURLParams();
                 dispatchFromUrl();
             }
         );
     } else {
+        processURLParams();
         dispatchFromUrl();
     }
 }
