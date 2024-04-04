@@ -40,6 +40,8 @@ class FloorPlan {
 
     selectRoute(from: string, to: string, onlyAccessible: boolean): void;
 
+    applyParameters(queryRaw: string): void;
+
     exhibitorsList(): FloorPlanExhibitor[];
 
     boothsList(): FloorPlanBooth[];
