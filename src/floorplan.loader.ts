@@ -72,6 +72,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    applyParameters(parameters: string): void {
+        nr();
+    }
+
     exhibitorsList(): any {
         nr();
     }

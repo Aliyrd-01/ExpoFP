@@ -5,7 +5,7 @@ import { install } from "resize-observer";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
-import { destroyHistory, initRouting } from "./services/routing";
+import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { SpecialBooth } from "./store/BoothStore";
 import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
@@ -119,8 +119,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 isSpecial: b instanceof SpecialBooth,
                 exhibitors: b.exhibitors.map((e) => e.id),
                 layer:{
-                    name: b.layer.name,
-                    description: b.layer.description
+                    name: b.layer?.name,
+                    description: b.layer?.description
                 }
             };
         });
@@ -134,6 +134,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 exhibitors: c.exhibitors.map((e) => e.id),
             };
         });
+    }
+
+    applyParameters(queryRaw: string) {
+        applyParameters(queryRaw);
     }
 
     unstable_destroy() {

@@ -8,6 +8,7 @@ import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
+import { setConsentSettings } from "../tools/gtag";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -16,155 +17,129 @@ let savedSelectedExhibitor: Exhibitor | null = null;
 let savedSelectedBooth: Booth | null = null;
 let unlisten;
 
-export function initRouting(offHistory = false) {
-    disableHistoryManipulation = offHistory;
+const history = createBrowserHistory();
+const pathname = window.location.pathname;
 
-    const history = createBrowserHistory();
-    const pathname = window.location.pathname;
+function getHistoryUrl(search: string) {
+    return pathname + search;
+}
 
-    unlisten = history.listen((location, action) => {
-        if (disableHistoryManipulation) return;
+function historyPush(search: string) {
+    if (!disableHistoryManipulation) {
+        history.push(getHistoryUrl(search));
+    }
+}
 
-        logger.log("history", action, location);
-        if (action === "POP") {
-            dispatchFromUrl();
+function historyReplace(search: string) {
+    if (!disableHistoryManipulation) {
+        history.push(getHistoryUrl(search));
+    }
+}
+
+function stateToUrl() {
+    let queryRaw = "";
+    const exhibitor = uiState.selectedExhibitor;
+    const booth = uiState.selectedBooth;
+    const route = uiState.selectedRoute;
+
+    if (route) {
+        const from = route.from ? `:${route.from.slug}` : "";
+        const to = route.to ? `:${route.to.slug}` : "";
+        const accessible = store.routeStore.onlyAccessible ? ":true" : "";
+
+        queryRaw = `route${to}${from}${accessible}`;
+    } else if (exhibitor) {
+        queryRaw = exhibitor.slug;
+    } else if (booth) {
+        queryRaw = booth.slug;
+    } else {
+        switch (uiState.list.type) {
+            case "bookmarks":
+                queryRaw = "bookmarks";
+                break;
+            case "category":
+                queryRaw = uiState.selectedCategory.slug;
+                break;
+            case "search":
+                queryRaw = uiState.list.text;
+                break;
+            default:
+                throw new Error("Unkown list.type");
         }
-    });
-
-    function getHistoryUrl(search: string) {
-        return pathname + search;
     }
 
-    function historyPush(search: string) {
-        if (!disableHistoryManipulation) {
-            history.push(getHistoryUrl(search));
-        }
+    // put it here for autorun to continue capturing required observables
+    if (disableStateToUrl) return;
+
+    const newQuery = queryRaw ? "?" + encodeURIComponent(queryRaw) : "";
+
+    if (history.location.search === newQuery) return;
+
+    if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
+        // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
+        historyPush(newQuery);
+    } else {
+        // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
+        // logger.log('history replace', queryRaw);
+        historyReplace(newQuery);
     }
 
-    function historyReplace(search: string) {
-        if (!disableHistoryManipulation) {
-            history.push(getHistoryUrl(search));
-        }
-    }
+    savedSelectedExhibitor = exhibitor;
+    savedSelectedBooth = booth;
+}
 
-    function dispatchFromUrl() {
-        const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
-        disableStateToUrl = true;
+function setTitle() {
+    const exhibitor = uiState.selectedExhibitor;
+    let title = "";
+    if (exhibitor) title = exhibitor.name;
+    else if (uiState.list.type === "search" && uiState.list.text) title = "`" + uiState.list.text + "`";
 
-        const booth = store.boothStore.booths.find(
-            (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+    if (title.length) title += " – ";
+    title += data.title;
+    if (data.subtitle) title += " – " + data.subtitle;
+    title += " – Expo Floor Plan by ExpoFP";
+
+    document.title = title;
+}
+
+function dispatchFromUrl() {
+    const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
+    disableStateToUrl = true;
+
+    const booth = store.boothStore.booths.find(
+        (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+    );
+
+    if (hanleCustomCommand(slug, false)) {
+    } else if (slug.startsWith("route")) {
+        const parts = slug.split(":");
+        store.routeStore.onlyAccessible = parts[3] === "true";
+        store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
+    } else if (slug === "bookmarks") {
+        store.selectBookmarks();
+    } else if (slug === "-pdf") {
+        store.uiState.printingPdf = true;
+    } else if (booth) {
+        setTimeout(() => store.selectBooth(booth), 250);
+    } else {
+        const exhibitor = store.exhibitorStore.exhibitors.find(
+            (x: Exhibitor) =>
+                x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
         );
-
-        if (hanleCustomCommand(slug, false)) {
-        } else if (slug.startsWith("route")) {
-            reaction(
-                () => store.layerStore.layersLoaded,
-                () => {
-                    const parts = slug.split(":");
-                    store.routeStore.onlyAccessible = parts[3] === "true";
-                    store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
-                }
-            );
-        } else if (slug === "bookmarks") {
-            store.selectBookmarks();
-        } else if (slug === "-pdf") {
-            store.uiState.printingPdf = true;
-        } else if (booth) {
-            setTimeout(() => store.selectBooth(booth), 250);
-        } else {
-            reaction(
-                () => store.layerStore.layersLoaded,
-                () => {
-                    const exhibitor = store.exhibitorStore.exhibitors.find(
-                        (x: Exhibitor) =>
-                            x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
-                    );
-                    if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
-                    else {
-                        const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
-                        if (category) store.selectCategory(category);
-                        else store.selectSearch(slug);
-                    }
-                }
-            );
+        if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
+        else {
+            const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
+            if (category) store.selectCategory(category);
+            else store.selectSearch(slug);
         }
-
-        reaction(
-            () => store.layerStore.layersLoaded,
-            () => {
-                disableStateToUrl = false;
-                stateToUrl();
-                setTitle();
-            }
-        );
     }
 
-    function setTitle() {
-        const exhibitor = uiState.selectedExhibitor;
-        let title = "";
-        if (exhibitor) title = exhibitor.name;
-        else if (uiState.list.type === "search" && uiState.list.text) title = "`" + uiState.list.text + "`";
+    disableStateToUrl = false;
+    stateToUrl();
+    setTitle();
+}
 
-        if (title.length) title += " – ";
-        title += data.title;
-        if (data.subtitle) title += " – " + data.subtitle;
-        title += " – Expo Floor Plan by ExpoFP";
-
-        document.title = title;
-    }
-
-    function stateToUrl() {
-        let queryRaw = "";
-        const exhibitor = uiState.selectedExhibitor;
-        const booth = uiState.selectedBooth;
-        const route = uiState.selectedRoute;
-
-        if (route) {
-            const from = route.from ? `:${route.from.slug}` : "";
-            const to = route.to ? `:${route.to.slug}` : "";
-            const accessible = store.routeStore.onlyAccessible ? ":true" : "";
-
-            queryRaw = `route${to}${from}${accessible}`;
-        } else if (exhibitor) {
-            queryRaw = exhibitor.slug;
-        } else if (booth) {
-            queryRaw = booth.slug;
-        } else {
-            switch (uiState.list.type) {
-                case "bookmarks":
-                    queryRaw = "bookmarks";
-                    break;
-                case "category":
-                    queryRaw = uiState.selectedCategory.slug;
-                    break;
-                case "search":
-                    queryRaw = uiState.list.text;
-                    break;
-                default:
-                    throw new Error("Unkown list.type");
-            }
-        }
-
-        // put it here for autorun to continue capturing required observables
-        if (disableStateToUrl) return;
-
-        const newQuery = queryRaw ? "?" + encodeURIComponent(queryRaw) : "";
-
-        if (history.location.search === newQuery) return;
-
-        if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
-            // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
-            historyPush(newQuery);
-        } else {
-            // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
-            // logger.log('history replace', queryRaw);
-            historyReplace(newQuery);
-        }
-
-        savedSelectedExhibitor = exhibitor;
-        savedSelectedBooth = booth;
-    }
-
+function processURLParams() {
     const locationSearch = history.location.search;
 
     // preview fix
@@ -184,31 +159,36 @@ export function initRouting(offHistory = false) {
         const url = new URL(window.location.href);
         const noOverlayParamValue = url.searchParams.get("noOverlay");
 
+        url.searchParams.delete("noOverlay");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
         if (noOverlayParamValue === "true") {
-            url.searchParams.delete("noOverlay");
-
-            let newSearch = url.search;
-            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-
-            historyReplace(newSearch);
             store.uiState.hideOverlay = true;
+        } else if (noOverlayParamValue === "false") {
+            store.uiState.hideOverlay = false;
         }
+        historyReplace(newSearch);
     } else if (locationSearch.includes("?blue-dot")) {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
 
         if (blueDotParams[0] && blueDotParams[1]) {
-            reaction(
-                () => store.layerStore.layersLoaded,
-                () => {
-                    const currentPosition = new CurrentPosition(
-                        Number(blueDotParams[0]),
-                        Number(blueDotParams[1]),
-                        blueDotParams[2]
-                    );
-                    store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
-                }
+            const currentPosition = new CurrentPosition(
+                Number(blueDotParams[0]),
+                Number(blueDotParams[1]),
+                blueDotParams[2]
             );
+
+            if (!store.layerStore.layersLoaded) {
+                reaction(
+                    () => store.layerStore.layersLoaded,
+                    () => {
+                        store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
+                    }
+                );
+            } else {
+                store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
+            }
         }
 
         historyReplace("?");
@@ -228,9 +208,16 @@ export function initRouting(offHistory = false) {
 
     if (locationSearch.includes("allowConsent")) {
         const url = new URL(window.location.href);
+        const allowConsentValue = url.searchParams.get("allowConsent");
         url.searchParams.delete("allowConsent");
 
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (allowConsentValue === "true") {
+            setConsentSettings(true);
+        } else if (allowConsentValue === "false") {
+            setConsentSettings(false);
+        }
+
         historyReplace(newSearch);
     }
 
@@ -254,10 +241,45 @@ export function initRouting(offHistory = false) {
 
         historyReplace("?" + newSearch);
     }
+}
 
-    dispatchFromUrl();
-    autorun(setTitle);
-    autorun(stateToUrl);
+export function initRouting(offHistory = false) {
+    disableHistoryManipulation = offHistory;
+
+    unlisten = history.listen((location, action) => {
+        if (disableHistoryManipulation) return;
+
+        logger.log("history", action, location);
+        if (action === "POP") {
+            dispatchFromUrl();
+        }
+    });
+
+    processURLParams();
+
+    reaction(() => store.layerStore.layersLoaded,
+        () => {
+            dispatchFromUrl();
+            autorun(setTitle);
+            autorun(stateToUrl);
+        }
+    );
+}
+
+export function applyParameters(queryRaw: string = "") {
+    historyReplace("?" + decodeURIComponent(queryRaw.toString()));
+
+    if (!store.layerStore.layersLoaded) {
+        reaction(() => store.layerStore.layersLoaded,
+            () => {
+                processURLParams();
+                dispatchFromUrl();
+            }
+        );
+    } else {
+        processURLParams();
+        dispatchFromUrl();
+    }
 }
 
 export function destroyHistory() {
