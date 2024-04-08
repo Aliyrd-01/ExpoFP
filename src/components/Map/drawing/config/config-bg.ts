@@ -3,7 +3,7 @@ import { select } from "d3-selection";
 import Rect from "../../../../core/Rect";
 import { getLayerSvg, gtePathByIndex } from "../../../../data/svg";
 import store from "../../../../store";
-import { LayersMode } from "../../../../store/LayerStore";
+import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { Img, loadIcons } from "../../../../utils/imageloader";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
@@ -12,7 +12,7 @@ import configImg from "./config-img";
 export default async function configBg(
     context: DrawerContext,
     images: Promise<Img[]>,
-    layerID: string,
+    layer: Layer,
     painterOrderPriority: number,
     visible: boolean
 ): Promise<void> {
@@ -20,7 +20,7 @@ export default async function configBg(
     let fgPainter: TrianglePainter = null;
     let drawerSeq = 0;
 
-    const selected = select(getLayerSvg(layerID)).select(`[data-layer="${layerID}"]`);
+    const selected = select(getLayerSvg(layer)).select(`[data-layer="${layer.name}"]`);
 
     const bgElements = selected
         .selectAll(":scope > *:not([data-tagname='efp-booth']):not(g[data-is-editable='false']) path, :scope > path")
@@ -34,7 +34,7 @@ export default async function configBg(
 
     const fpImages = (
         window["__fpVersion"] > 5
-            ? selected.selectAll(":scope image").nodes()
+            ? selected.selectAll(":scope > image, :scope > g:not([data-layer]) image").nodes()
             : selected.selectAll(":scope > g[data-is-editable='false'] image").nodes()
     ) as SVGImageElement[];
 
@@ -53,7 +53,7 @@ export default async function configBg(
         const d = parseInt(svgPath.getAttribute("data-index"));
         if (svgPath.style.fill === "none") return;
         const color = Color(svgPath.style.fill).vec4();
-        const mesh = gtePathByIndex(d, store.layerStore.mode !== LayersMode.Default ? layerID : "");
+        const mesh = gtePathByIndex(d, store.layerStore.mode !== LayersMode.Default ? layer.rootParent?.name || layer.name : "");
 
         // TODO: remove in future versions
         for (const p of mesh.positions) {
@@ -106,12 +106,12 @@ export default async function configBg(
 
         if (!isFg)
             while (!bgPainter || !bgPainter.tryAddObject(item))
-                bgPainter = context.requirePainter(`${layerID}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
+                bgPainter = context.requirePainter(`${layer.name}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
         else
             while (!fgPainter || !fgPainter.tryAddObject(item))
-                fgPainter = context.requirePainter(`${layerID}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
+                fgPainter = context.requirePainter(`${layer.name}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
 
     const logos = (await images).filter((image) => !!image);
-    return configImg(context, layerID, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
+    return configImg(context, layer.name, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
 }
