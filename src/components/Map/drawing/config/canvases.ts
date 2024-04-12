@@ -33,7 +33,8 @@ export function createLabelCanvas(
     fontSize *= pixelRatio;
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
-    const font = getFont(fontSize, fontWeight);
+    const weight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-main-weight"));
+    const font = getFont(fontSize, weight || fontWeight);
     const width = measureText(font, text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A")) + 3 + 3; //
     const vPad = 4;
     const height = fontSize + vPad;
@@ -89,8 +90,12 @@ export function createDetailsCanvas(
 
     const boothFontSize = fontSize * pixelRatio;
     const detailFontSize = 0.9 * fontSize * pixelRatio;
-    const boothFont = getFont(boothFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
+
+    const boothWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-main-weight"));
+    const detailWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-details-weight"));
+
+    const boothFont = getFont(boothFontSize, boothWeight || 500);
+    const detailFont = getFont(detailFontSize, detailWeight || 300);
     const boothPadding = 1 * pixelRatio;
 
     let mainLine = b.name;
@@ -143,7 +148,7 @@ export function createExhibitorsDetailsCanvas(
     b: RegularBooth,
     pixelRatio: number,
     color: string = "#fff",
-    frontSize: number,
+    fontSize: number,
     onlyMain: boolean,
     onlyFeaturedExhibitors: boolean,
     textAlign: CanvasTextAlign = "start"
@@ -151,11 +156,14 @@ export function createExhibitorsDetailsCanvas(
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
 
-    const mainFontSize = frontSize * pixelRatio;
-    const detailFontSize = 0.9 * frontSize * pixelRatio;
+    const mainFontSize = fontSize * pixelRatio;
+    const detailFontSize = 0.9 * fontSize * pixelRatio;
 
-    const mainFont = getFont(mainFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
+    const mainExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-main-weight"));
+    const detailExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-details-weight"));
+
+    const mainFont = getFont(mainFontSize, mainExhibitorDetailsWeight || 500);
+    const detailFont = getFont(detailFontSize, detailExhibitorDetailsWeight || 300);
 
     const primaryExhibitors = b.exhibitors.filter((e) => e.order === 0);
 
@@ -553,7 +561,8 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
         draw(c) {
             c.textAlign = "center";
             c.textBaseline = "alphabetic";
-            c.font = getFont(fontSize);
+            const weight =  Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-special-weight"));
+            c.font = getFont(fontSize, weight || 500);
 
             const totalHeight = lines.length * lineHeight;
             const startFrom = height / 2 - totalHeight / 2 - fontSize * 0.1;
