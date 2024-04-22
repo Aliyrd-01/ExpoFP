@@ -20,7 +20,6 @@ export default function configAll(context: DrawerContext = _context): void {
     configCanvas(context);
     configYah(context);
 
-    let basePriority = 6;
     let { layers, defaultLayer } = store.layerStore;
 
     if (defaultLayer) {
@@ -65,8 +64,6 @@ export default function configAll(context: DrawerContext = _context): void {
         }
     });
 
-    basePriority = 20 * (layers.length + 2);
-
     var cb = () => {
         if (context.updatable)
             if (store.layerStore.mode === LayersMode.Radio) {
@@ -80,6 +77,8 @@ export default function configAll(context: DrawerContext = _context): void {
             }
     };
 
-    configWf(context, basePriority++, true);
+    const WfBasePriority = 100 * (layers.length);
+
+    configWf(context, WfBasePriority, true);
     configGPS();
 }
