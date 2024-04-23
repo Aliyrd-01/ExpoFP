@@ -150,6 +150,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
         destroyUiHandlers();
         destroyGtag();
 
+        const scripts = [...document.getElementsByTagName("script")]
+            .filter((x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1);
+        scripts.forEach((sc) => sc.remove());
+
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
     }
