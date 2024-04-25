@@ -172,22 +172,27 @@ function processURLParams() {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
 
-        if (blueDotParams[0] && blueDotParams[1]) {
+        if (blueDotParams.length > 1) {
+            const layerName = store.layerStore.findLayer(blueDotParams[2])?.shortName;
+
             const currentPosition = new CurrentPosition(
-                Number(blueDotParams[0]),
-                Number(blueDotParams[1]),
-                blueDotParams[2]
+                Number(blueDotParams[0]) || undefined,
+                Number(blueDotParams[1]) || undefined,
+                layerName,
+                undefined,
+                Number(blueDotParams[3]) || undefined,
+                Number(blueDotParams[4]) || undefined
             );
 
             if (!store.layerStore.layersLoaded) {
                 reaction(
                     () => store.layerStore.layersLoaded,
                     () => {
-                        store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
+                        store.routeStore.selectCurrentPosition(currentPosition, false, 0);
                     }
                 );
             } else {
-                store.routeStore.selectCurrentPosition(currentPosition, false, Number(blueDotParams[3]) || 0);
+                store.routeStore.selectCurrentPosition(currentPosition, false, 0);
             }
         }
 
