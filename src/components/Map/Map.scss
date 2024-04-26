@@ -1,3 +1,8 @@
 canvas.moving {
     cursor: move;
 }
+
+canvas.hidden {
+    opacity: 0;
+    visibility: hidden;
+}

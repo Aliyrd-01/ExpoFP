@@ -210,7 +210,7 @@ export default function Map() {
     return useObserver(() => (
         <canvas
             ref={el}
-            className={classNames({ map: true, moving: s.moving })}
+            className={classNames({ map: true, moving: s.moving, hidden: store.mapboxStore.showMapbox })}
             onMouseMove={handleMouseMoveAndOver}
             onClick={handleClick}
             onMouseOver={handleMouseMoveAndOver}
