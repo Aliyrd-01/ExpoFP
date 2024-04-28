@@ -95,6 +95,8 @@ export default class UIManager {
         if (!this.isInit) return;
         const l = this.scene.getlayer(layer);
 
+        if (l == undefined) return;
+
         if (isVisible) {
             this.scene.camera.layers.enable(l);
             this.scene.raycaster.layers.enable(l);
