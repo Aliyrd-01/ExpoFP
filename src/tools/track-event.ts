@@ -10,6 +10,10 @@ export default function trackEvent(type: "load" | "exview" | "search" | "route" 
         url += url.indexOf("?") === -1 ? "?" : "&";
         url += "type=" + encodeURIComponent(type);
         if (value !== undefined) url += "&value=" + encodeURIComponent(value);
-        fetch(url, { cache: "no-store" }).catch();
+        fetch(url, {
+            cache: "no-store", headers: {
+                "X-href": window.location.href,
+            },
+        }).catch();
     } catch (e) { }
 }
