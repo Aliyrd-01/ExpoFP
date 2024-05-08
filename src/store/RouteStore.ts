@@ -53,6 +53,13 @@ export default class RouteStore {
 
         if (!route && store.fp.onDirection) store.fp.onDirection(null);
 
+        if(route?.from && route?.to) 
+            sendEventToGa(
+                GaEventActions.ClickDirections,
+                `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
+            );
+
+
         setTimeout(() => {
             this.rootStore.moveToList(list);
             var id = uiState.selectedRoute?.from?.id;
@@ -195,11 +202,6 @@ export default class RouteStore {
         routeLines.forEach((line) => (distance += lineLength(line.p0, line.p1)));
 
         distance = Math.round(distance / 10.0);
-
-        sendEventToGa(
-            GaEventActions.ClickDirections,
-            `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
-        );
 
         if (store.fp.onDirection)
             setTimeout(() => {
