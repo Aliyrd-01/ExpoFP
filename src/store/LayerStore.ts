@@ -3,9 +3,9 @@ import { interpolateNumber } from "d3";
 import { easeLinear } from "d3-ease";
 import { action, computed, observable } from "mobx";
 import store from ".";
+import { DrawerContext } from "../components/Map/drawing/Drawer1";
 import animate from "../components/Map/drawing/config/animate";
 import loadLayer from "../components/Map/drawing/config/config-load-layer";
-import { DrawerContext } from "../components/Map/drawing/Drawer1";
 import RectPainter from "../components/Map/drawing/painters/RectPainter";
 
 import Rect from "../core/Rect";
@@ -85,11 +85,10 @@ export default class LayerStore {
                     if (l.name !== layer.name && !l.frozen && l.visible) {
                         if (!animated) {
                             l.visible = false;
-                            l.childLayers.forEach(child => {
+                            l.childLayers.forEach((child) => {
                                 child.visible = false;
-                            })
-                        }
-                        else {
+                            });
+                        } else {
                             an(l, false);
                         }
                     }
@@ -100,11 +99,10 @@ export default class LayerStore {
             if (layer) {
                 if (!animated) {
                     layer.visible = visible;
-                    layer.childLayers.forEach(child => {
+                    layer.childLayers.forEach((child) => {
                         child.visible = visible;
                     });
-                }
-                else {
+                } else {
                     an(layer, visible);
                 }
             }
@@ -115,7 +113,9 @@ export default class LayerStore {
         if (z === null || z === undefined) return null;
         z = z.toString().toLowerCase();
 
-        return this.layers.find((l) => {
+        const layers = this.layers.filter((l) => !l.rootParent);
+
+        var l = layers.find((l) => {
             const extractedNumber = (l.name.match(/(-?[0-9]+)/) || "")[0];
 
             return (
@@ -125,6 +125,12 @@ export default class LayerStore {
                 z === extractedNumber
             );
         });
+
+        if (!l && !/\D/.test(z)) {
+            l = layers.filter((k) => !k.frozen)[parseInt(z)];
+        }
+
+        return l;
     }
 }
 
@@ -144,15 +150,15 @@ function an(layer: Layer, toVisible: boolean): void {
         _context.requireUpdate.bind(_context),
         (v) => {
             layer.visible = toVisible;
-            layer.childLayers.forEach(l => l.visible = toVisible);
-            const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map(l => l.name)]);
+            layer.childLayers.forEach((l) => (l.visible = toVisible));
+            const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
             layersPainters.forEach((p) => ((p as RectPainter).alpha = v));
         },
         () => {
             layer.visible = toVisible;
-            layer.childLayers.forEach(l => l.visible = toVisible);
+            layer.childLayers.forEach((l) => (l.visible = toVisible));
             if (!toVisible) {
-                const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map(l => l.name)]);
+                const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
                 layersPainters.forEach((p) => ((p as RectPainter).alpha = 1));
             }
         }
