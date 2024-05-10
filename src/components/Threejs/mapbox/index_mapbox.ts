@@ -19,7 +19,7 @@ export async function init(container: HTMLElement, data: ICommonData): Promise<S
 
         let l: THREE.Matrix4;
 
-        map.setBearing(geoConfig.bearing + 35);
+        map.setBearing(geoConfig.bearing -30);
         map.setCenter(geoConfig.center);
         map.setZoom(16);
 
