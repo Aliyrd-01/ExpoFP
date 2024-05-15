@@ -1,6 +1,6 @@
-import React, { useState } from "react";
 import classNames from "classnames";
 import dateFormat from "dateformat";
+import React, { useState } from "react";
 import sanitizeHTML from "../utils/sanitizeHtml";
 import Button from "./Button";
 import "./Schedule.scss";
@@ -24,8 +24,6 @@ function isCurrent(from: Date | string, to: Date | string) {
 }
 
 const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength = 200 }) => {
-    events = events.filter((event) => new Date(event.endDate).getTime() > new Date().getTime());
-
     const sortByDate = events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     const grouped = sortByDate.reduce((acc, curr) => {
         const date = new Date(curr.startDate).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });

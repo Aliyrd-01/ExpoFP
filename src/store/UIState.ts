@@ -15,6 +15,7 @@ import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
+import { ScheduleItem } from "./ScheduleStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -25,7 +26,7 @@ type ListType =
     | { type: "category"; category: Category };
 export type OverlaySize = "full" | "medium" | "small";
 // export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category;
+export type ListItem = Booth | Exhibitor | Category | ScheduleItem;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -268,11 +269,12 @@ export default class UIState {
         let text = this.list.text.trim().toLowerCase() as string;
         // let words = text.split(/\s+/).filter(x => x);
 
-        const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, scheduleStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
+        const eventsArray = scheduleStore.scheduleItems;
 
         if (!text) {
             let combinedArray = [];
@@ -314,6 +316,7 @@ export default class UIState {
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
         const matchingCategories = new Set<Category>();
+        const matchingEvents = new Set<ScheduleItem>();
 
         const splittedTexts = text.split("&").filter((s) => s);
 
@@ -372,6 +375,17 @@ export default class UIState {
             }
         });
 
+        eventsArray.forEach((e) => {
+            if (
+                splittedTexts.some(
+                    (text) => containsIgnoreCase(e.name || "", text) || containsIgnoreCase(e.description || "", text)
+                )
+            ) {
+                matchingEvents.add(e);
+            }
+        });
+
+        items.push(...matchingEvents);
         items.push(...matchingCategories);
         items.push(...matchingExhibitors);
         items.push(...matchingBooths);
