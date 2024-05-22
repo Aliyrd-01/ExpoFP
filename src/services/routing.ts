@@ -200,6 +200,19 @@ function processURLParams() {
     } else if (locationSearch.startsWith("?mapbox=false")) {
         store.mapboxStore.isMapbox = false;
         historyReplace("?");
+    } else if (locationSearch.startsWith("?heatmap")) {
+        const url = new URL(window.location.href);
+        const heatmapParamValue = url.searchParams.get("heatmap");
+
+        if (heatmapParamValue === "true") {
+            url.searchParams.delete("heatmap");
+
+            let newSearch = url.search;
+            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+
+            historyReplace(newSearch);
+            store.uiState.heatmap = true;
+        }
     }
 
     // facebook and google  fix
@@ -245,19 +258,6 @@ function processURLParams() {
             .join("&");
 
         historyReplace("?" + newSearch);
-    }
-} else if (locationSearch.startsWith("?heatmap")) {
-    const url = new URL(window.location.href);
-    const heatmapParamValue = url.searchParams.get("heatmap");
-
-    if (heatmapParamValue === "true") {
-        url.searchParams.delete("heatmap");
-
-        let newSearch = url.search;
-        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-
-        historyReplace(newSearch);
-        store.uiState.heatmap = true;
     }
 }
 

@@ -1,4 +1,4 @@
-import { boothStore, layersStore } from "./../../../../store/index";
+import { boothStore, layersStore, uiState } from "./../../../../store/index";
 import store from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
@@ -28,7 +28,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
     return new Promise((resolve) => {
         const booths = initBooths(store, l);
         const logosBooths = boothStore.booths.filter(
-            (b) => b.rect && (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
+            (b) => b.rect && (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo) && !uiState.heatmap
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));

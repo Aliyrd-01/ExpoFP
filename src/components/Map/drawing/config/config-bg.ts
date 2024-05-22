@@ -2,7 +2,7 @@ import Color from "color";
 import { select } from "d3-selection";
 import Rect from "../../../../core/Rect";
 import { getLayerSvg, gtePathByIndex } from "../../../../data/svg";
-import store from "../../../../store";
+import store, { uiState } from "../../../../store";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { Img, loadIcons } from "../../../../utils/imageloader";
 import { DrawerContext } from "../Drawer1";
@@ -52,7 +52,7 @@ export default async function configBg(
         if (!svgPath.style.fill) return;
         const d = parseInt(svgPath.getAttribute("data-index"));
         if (svgPath.style.fill === "none") return;
-        const color = Color(svgPath.style.fill).vec4();
+        const color = uiState.heatmap ? Color(svgPath.style.fill).grayscale().vec4() : Color(svgPath.style.fill).vec4();
         const mesh = gtePathByIndex(d, store.layerStore.mode !== LayersMode.Default ? layer.rootParent?.name || layer.name : "");
 
         // TODO: remove in future versions
