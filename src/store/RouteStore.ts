@@ -1,18 +1,19 @@
 import { action, computed, observable } from "mobx";
-import { lineLength, Point } from "simple-geometry";
+import { Point, lineLength } from "simple-geometry";
 import store, { layersStore } from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
 import Rect from "../core/Rect";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import { getLayerSvg, svgArea } from "./../data/svg";
-import { RouteLine, sublines } from "./../utils/wayfinding";
+import { RouteLine, getGraphLines, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
-import { uiState } from "./index";
 import { Layer, LayersMode } from "./LayerStore";
 import RootStore from "./RootStore";
+import { uiState } from "./index";
 
 export default class RouteStore {
     rootStore: RootStore;
+    cpTimeout: number;
     @observable routeLines: RouteLine[] = [];
     @observable routeDistance: number = null;
     @observable currentPosition: CurrentPosition = null;
@@ -20,6 +21,8 @@ export default class RouteStore {
     @observable tempToBooth: Booth = null;
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
+    @observable prevZ: string = null;
+
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
     @observable currentRouteLayer: Layer = null;
@@ -50,13 +53,20 @@ export default class RouteStore {
 
         if (!route && store.fp.onDirection) store.fp.onDirection(null);
 
+        if(route?.from && route?.to) 
+            sendEventToGa(
+                GaEventActions.ClickDirections,
+                `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
+            );
+
+
         setTimeout(() => {
             this.rootStore.moveToList(list);
             var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
             if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
-                this.rootStore.layerStore.updateVisibility(route.from.layer.name, true);
+                this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
             if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
         }, 200);
@@ -64,14 +74,15 @@ export default class RouteStore {
 
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
-        let layerExists = this.rootStore.layerStore.layers.some((layer) => layer.name === this.currentPosition.z);
+        let layerExists = this.rootStore.layerStore.findLayer(this.currentPosition.z);
+
         return (
             this.rootStore.boothStore.booths
                 .filter((b) => {
                     if (layersStore.mode === LayersMode.Default || !layerExists) {
                         return b.visible && b.rect;
                     } else {
-                        return b.rect && ((!this.currentPosition.z && b.visible) || this.currentPosition.z === b.layer?.name);
+                        return b.rect && ((!this.currentPosition.z && b.visible) || layerExists.name === b.layer?.name);
                     }
                 })
                 .sort(
@@ -99,22 +110,43 @@ export default class RouteStore {
         this.rootStore.uiState.menu = null;
         this.selectRoute(new Route(this.defaultFrom || from, to));
 
-        if (this.rootStore.uiState.onDirection) {
-            const e: FloorPlanDirectionEvent = {
-                from: undefined,
-                to: undefined,
-                lines: [],
-                distance: "",
-                time: 0,
-            };
-            this.rootStore.uiState.onDirection(e);
-        }
+        // if (this.rootStore.uiState.onDirection) {
+        //     const e: FloorPlanDirectionEvent = {
+        //         from: undefined,
+        //         to: undefined,
+        //         lines: [],
+        //         distance: "",
+        //         time: 0,
+        //     };
+        //     this.rootStore.uiState.onDirection(e);
+        // }
+
         //this.showMap();
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
-        focus = focus && this.focusEnabled;
+        clearTimeout(this.cpTimeout);
+
+        const replaceCommasWithDot = (value: string | number | undefined) => {
+            if (typeof value === "string") {
+                return Number(value.replace(",", "."));
+            }
+            return value;
+        };
+
+        if (point) {
+            point.x = replaceCommasWithDot(point.x);
+            point.y = replaceCommasWithDot(point.y);
+            point.lat = replaceCommasWithDot(point.lat);
+            point.lng = replaceCommasWithDot(point.lng);
+        }
+
+        focus = true; // Temp always "true" SDK compatility
+
+        focus = focus && (this.focusEnabled || this.prevZ != point?.z);
         if (this.focusEnabled) this.focusEnabled = false;
+        this.prevZ = point?.z?.toString();
+
         this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
         if (!p) {
@@ -122,14 +154,18 @@ export default class RouteStore {
             return;
         }
 
-        let layer = store.layerStore.layers.find((l) => l?.name === point.z?.toString());
+        let layer = store.layerStore.findLayer(point.z);
 
         if (focus) {
-            if (layer && !layer?.visible) layersStore.updateVisibility(layer.name, true);
+            if (layer && !layer?.visible) layersStore.updateVisibility(layer, true);
             this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 1000, 1000);
         }
 
         this.currentPosition = p;
+
+        this.cpTimeout = setTimeout(() => {
+            if (this.currentPosition) this.selectCurrentPosition(null, false);
+        }, 30 * 1000) as any;
     }
 
     @action findLocation() {
@@ -145,7 +181,11 @@ export default class RouteStore {
             if (!rect.intersects(svgArea)) return;
 
             uiState.moveToRect = rect;
-            layersStore.updateVisibility(store.routeStore.currentPosition?.z, true);
+
+            const layer = store.layerStore.findLayer(store.routeStore.currentPosition?.z);
+            if (layer) {
+                layersStore.updateVisibility(layer, true);
+            }
         } else store.selectBooth(store.routeStore.defaultFrom);
     }
 
@@ -163,16 +203,23 @@ export default class RouteStore {
 
         distance = Math.round(distance / 10.0);
 
-        sendEventToGa(
-            GaEventActions.ClickDirections,
-            `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
-        );
-
         if (store.fp.onDirection)
             setTimeout(() => {
                 store.fp.onDirection({
-                    from: route?.from ? { id: route.from.id, name: route.from.name } : null,
-                    to: route?.to ? { id: route.to.id, name: route.to.name } : null,
+                    from: route?.from
+                        ? {
+                              id: route.from.id,
+                              name: route.from.name,
+                              layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
+                          }
+                        : null,
+                    to: route?.to
+                        ? {
+                              id: route.to.id,
+                              name: route.to.name,
+                              layer: { name: route.to.layer?.name, description: route.to.layer?.description },
+                          }
+                        : null,
                     lines: routeLines,
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
@@ -181,6 +228,39 @@ export default class RouteStore {
 
         this.routeDistance = distance;
     }
+
+    @action checkRoutes() {
+        let booths = store.boothStore.booths;
+
+        console.info(`Route check started  ${booths.length}.... `);
+
+        for (let i = 0; i < booths.length; i++) {
+            const from = booths[i];
+            for (let j = i + 1; j < booths.length; j++) {
+                const to = booths[j];
+                const route = getGraphLines(from, to);
+                if (!route.length) {
+                    console.warn(`No route found from ${from.name} to ${to.name}`);
+                } else {
+                    //console.info(`Route found from ${from.name} to ${to.name}`);
+                }
+            }
+        }
+
+        console.info("Route check done....");
+    }
+}
+
+export function extractRoute(from: string, to: string) {
+    let bFrom = store.boothStore.booths.find((b) => b.name === from || b.slug === from || b.externalId === from);
+    if (!bFrom)
+        bFrom = store.exhibitorStore.exhibitors.find((e) => e.name === from || e.slug === from || e.externalId === from)
+            ?.booths[0];
+
+    let bTo = store.boothStore.booths.find((b) => b.name === to || b.slug === to || b.externalId === to);
+    if (!bTo) bTo = store.exhibitorStore.exhibitors.find((e) => e.name === to || e.slug === to || e.externalId === to)?.booths[0];
+
+    return new Route(bFrom, bTo);
 }
 
 export class Route {
@@ -191,7 +271,7 @@ export class CurrentPosition extends Point {
     public constructor(
         public x: number,
         public y: number,
-        public z?: string,
+        public z?: number | string,
         public angle?: number,
         public lat?: number,
         public lng?: number

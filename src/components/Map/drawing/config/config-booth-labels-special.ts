@@ -3,7 +3,7 @@ import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import store, { heatmapStore, uiState } from "./../../../../store/index";
+import store, { heatmapStore, uiState, boothStore } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
@@ -47,12 +47,15 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         // initDrawer(this.drawer);
 
         let r = this.booth.rect;
-        r = r.withPadding(r.w * 0.05, r.h * 0.05);
+
+        const pad = booth.borderWidth / 2 || boothStore.borderWidth / 2;
+
+        r = r.withPadding(r.w * 0.05 + pad, r.h * 0.05 + pad);
+
         let text = this.booth.title || this.booth.name;
 
         const clicks = heatmapStore.getClicksByItem(this.booth);
         const clickText = `Clicks: ${clicks}`;
-
         text = uiState.heatmap ? `${text} - ${clickText}` : text;
 
         this.steps = createTextFitter(context.pixelRatio).getStepsForRect(text, r.w, r.h);

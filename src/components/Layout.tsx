@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
 import data from "../data";
 import store, { layersStore, uiState, heatmapStore } from "../store";
@@ -22,22 +22,63 @@ import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
+import LayersLoading from "./LayersLoading";
+import { fpGeo } from "./Mapbox/utils/fpGeo";
+import { checkUserIsGDPR, hasUserConsent, setConsentSettings, setCookieConsent } from "../tools/gtag";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
 const Debug = React.lazy(() => import(/* webpackChunkName: "debug" */ "./Debug"));
 const Mapbox = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Mapbox/Mapbox"));
+const ThreeComponent = React.lazy(() => import(/* webpackChunkName: "mapbox" */ "./Threejs/ThreeComponent"));
 const Modal = React.lazy(() => import("./Modal"));
+const CookieConsent = React.lazy(() => import(/* webpackChunkName: "cc-script" */ "./CookieConsent"));
 // const LargeMessage = React.lazy(() => import(/* webpackChunkName: "large-message" */ "./LargeMessage"));
 
 // document.body.addEventListener("touchstart", x => {
 //     console.log("body touchstart")
 // });
 
-export default observer(function Layout() {
+interface LayoutProps {
+    offHistory: boolean;
+    allowConsent?: boolean;
+}
+
+export default observer(function Layout({ offHistory, allowConsent }: LayoutProps) {
+    const [isGDPR, setIsGDPR] = useState(false);
+
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
     else if (data.expoFpAd) freeOrDemo = <Free />;
+
+    const acceptConsent = () => {
+        setCookieConsent(true);
+        setConsentSettings();
+        store.uiState.hideCookieConsent = true;
+    };
+
+    const rejectConsent = () => {
+        setCookieConsent(false);
+        setConsentSettings();
+        store.uiState.hideCookieConsent = true;
+    };
+
+    useEffect(() => {
+        async function checkConsent() {
+            const consentResult = await checkUserIsGDPR();
+            if (consentResult || consentResult === null) {
+                setIsGDPR(true);
+            } else {
+                setIsGDPR(false);
+            }
+        }
+
+        if (!Boolean(hasUserConsent(allowConsent))) {
+            checkConsent();
+        } else {
+            setIsGDPR(true);
+        }
+    }, []);
 
     return (
         <div
@@ -54,18 +95,31 @@ export default observer(function Layout() {
                 <LogoOverlay />
                 <Ws />
                 <Controls />
-                {settings.EXPO === "exhibitorlive2023" && uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && <Floors />}
-                {!uiState.noOverlay && <Overlay />}
+                {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
                     <Suspense fallback={<MapLoader />}>
-                        <Mapbox />
+                        {fpGeo?.properties?.mode === "threejs" ? (
+                            <ThreeComponent isMapbox={store.mapboxStore.isMapbox} expo={settings.EXPO} />
+                        ) : (
+                            <Mapbox />
+                        )}
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
+                {!uiState.hideCookieConsent && isGDPR && allowConsent === undefined && (
+                    <Suspense fallback={null}>
+                        <CookieConsent
+                            link="https://expofp.com/pages/viewer-cookie-consent"
+                            onClickAccept={acceptConsent}
+                            onClickReject={rejectConsent}
+                        />
+                    </Suspense>
+                )}
                 {isDebug ? (
                     <Suspense fallback={null}>
                         <Debug />
@@ -77,10 +131,18 @@ export default observer(function Layout() {
                 {uiState.modalActive.share ? (
                     <Suspense fallback={null}>
                         <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
-                            <Share title={uiState.selectedExhibitor?.name} url={window.location.href} />
+                            <Share
+                                title={uiState.selectedExhibitor?.name}
+                                url={
+                                    offHistory
+                                        ? `${window.location.origin}?${encodeURI(uiState.selectedExhibitor.slug)}`
+                                        : window.location.href
+                                }
+                            />
                         </Modal>
                     </Suspense>
                 ) : null}
+                <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
             </div>
         </div>

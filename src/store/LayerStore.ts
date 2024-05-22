@@ -3,9 +3,9 @@ import { interpolateNumber } from "d3";
 import { easeLinear } from "d3-ease";
 import { action, computed, observable } from "mobx";
 import store from ".";
+import { DrawerContext } from "../components/Map/drawing/Drawer1";
 import animate from "../components/Map/drawing/config/animate";
 import loadLayer from "../components/Map/drawing/config/config-load-layer";
-import { DrawerContext } from "../components/Map/drawing/Drawer1";
 import RectPainter from "../components/Map/drawing/painters/RectPainter";
 
 import Rect from "../core/Rect";
@@ -32,6 +32,8 @@ export class Layer {
     frozen: boolean;
     rect: Rect = null;
     configured: boolean;
+    childLayers: Layer[] = [];
+    rootParent: Layer = null;
     mode: LayerMode;
 
     @observable loaded: boolean;
@@ -40,14 +42,14 @@ export class Layer {
     get shortName(): string {
         const parts = this.description.replace(/"/g, "").split(" ");
         if (parts.length === 1) return this.description.substring(0, 2).toUpperCase();
-    
+
         var name: string;
         if (Number.isInteger(parseInt(parts[0]))) {
             name = parts[0] + parts[1][0];
         } else if (Number.isInteger(parseInt(parts[1]))) {
             name = parts[0][0] + parts[1];
         } else name = parts[0][0] + parts[1][0];
-    
+
         return name.toLocaleUpperCase();
     }
 }
@@ -56,6 +58,7 @@ export default class LayerStore {
     @observable layers: Layer[] = [];
     @observable defaultLayer: Layer;
     @observable mode: LayersMode;
+    @observable layersLoaded: boolean = false;
 
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.frozen || l.visible);
@@ -67,31 +70,67 @@ export default class LayerStore {
 
     @computed({ keepAlive: true }) get rectangle() {
         var l = this.visible.filter((l) => !l.frozen).map((l) => l.rect);
-        return this.mode === LayersMode.Default || !l.length ? null : Rect.fromMultiple(l) || null;
+        return this.mode !== LayersMode.Radio || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
-    @action updateVisibility(layerName: string, visible: boolean, animated: boolean = false): void {
+    @action updateVisibility(layerOrName: string | Layer, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 
-        const layer = this.layers.find((l) => l.name === layerName);
+        const layer = layerOrName instanceof Layer ? layerOrName : this.findLayer(layerOrName);
         if (!layer || layer.visible === visible) return;
 
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
-                    if (l.name !== layerName && !l.frozen && l.visible) {
-                        if (!animated) l.visible = false;
-                        else an(l, false);
+                    if (l.name !== layer.name && !l.frozen && l.visible) {
+                        if (!animated) {
+                            l.visible = false;
+                            l.childLayers.forEach((child) => {
+                                child.visible = false;
+                            });
+                        } else {
+                            an(l, false);
+                        }
                     }
                     //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
             if (layer) {
-                if (!animated) layer.visible = visible;
-                else an(layer, visible);
+                if (!animated) {
+                    layer.visible = visible;
+                    layer.childLayers.forEach((child) => {
+                        child.visible = visible;
+                    });
+                } else {
+                    an(layer, visible);
+                }
             }
         });
+    }
+
+    public findLayer(z: string | number): Layer {
+        if (z === null || z === undefined) return null;
+        z = z.toString().toLowerCase();
+
+        const layers = this.layers.filter((l) => !l.rootParent);
+
+        var l = layers.find((l) => {
+            const extractedNumber = (l.name.match(/(-?[0-9]+)/) || "")[0];
+
+            return (
+                z === l?.name.toLowerCase() ||
+                z === l?.description.toLowerCase() ||
+                z === l?.shortName.toLowerCase() ||
+                z === extractedNumber
+            );
+        });
+
+        if (!l && !/\D/.test(z)) {
+            l = layers.filter((k) => !k.frozen)[parseInt(z)];
+        }
+
+        return l;
     }
 }
 
@@ -101,7 +140,7 @@ export function setContext(context: DrawerContext) {
 }
 
 function an(layer: Layer, toVisible: boolean): void {
-    if (toVisible) store.layerStore.updateVisibility(layer.name, true);
+    if (toVisible) store.layerStore.updateVisibility(layer, true);
 
     animate(
         0,
@@ -109,11 +148,18 @@ function an(layer: Layer, toVisible: boolean): void {
         easeLinear,
         toVisible ? interpolateNumber(0, 1) : interpolateNumber(1, 0),
         _context.requireUpdate.bind(_context),
-        (v) => _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v)),
+        (v) => {
+            layer.visible = toVisible;
+            layer.childLayers.forEach((l) => (l.visible = toVisible));
+            const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
+            layersPainters.forEach((p) => ((p as RectPainter).alpha = v));
+        },
         () => {
+            layer.visible = toVisible;
+            layer.childLayers.forEach((l) => (l.visible = toVisible));
             if (!toVisible) {
-                layer.visible = false;
-                _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = 1));
+                const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
+                layersPainters.forEach((p) => ((p as RectPainter).alpha = 1));
             }
         }
     );

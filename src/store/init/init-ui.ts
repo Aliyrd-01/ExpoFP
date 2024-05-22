@@ -3,9 +3,12 @@ import Size from "../../core/Size";
 import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
-import ResizeObserver from "resize-observer-polyfill";
+import { ResizeObserver } from "resize-observer";
+import { isLocalStorageAvailable } from "../../utils/localStorage";
 
 export const kioskKey = "kiosk";
+
+let resizeObserver;
 
 export default function initUi(store: RootStore) {
     const { uiState, exhibitorStore } = store;
@@ -13,7 +16,7 @@ export default function initUi(store: RootStore) {
 
     updateScreenSize(uiState.rootElement.clientWidth, uiState.rootElement.clientHeight);
 
-    const resizeObserver = new ResizeObserver((entries) => {
+    resizeObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
             updateScreenSize(entry.contentRect.width, entry.contentRect.height);
         });
@@ -50,7 +53,7 @@ export default function initUi(store: RootStore) {
 
     if (!uiState.wsShown) uiState.wsStarted = true;
 
-    uiState.kiosk = localStorage.getItem(kioskKey) === "1";
+    uiState.kiosk = isLocalStorageAvailable && localStorage.getItem(kioskKey) === "1";
 
     if (uiState.kiosk) {
         var time;
@@ -82,10 +85,10 @@ export default function initUi(store: RootStore) {
         const l = uiState.list;
         if (l.type === "search") {
             if (l.text === "kkiosk") {
-                localStorage.setItem(kioskKey, "1");
+                isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
                 uiState.kiosk = true;
             } else if (l.text === "nokkiosk") {
-                localStorage.removeItem(kioskKey);
+                isLocalStorageAvailable && localStorage.removeItem(kioskKey);
                 uiState.kiosk = false;
             }
         }
@@ -95,5 +98,12 @@ export default function initUi(store: RootStore) {
         runInAction("uiState.screenSize", () => {
             uiState.screenSize = new Size(width, height);
         });
+    }
+}
+
+export function destroyUiHandlers() {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
     }
 }

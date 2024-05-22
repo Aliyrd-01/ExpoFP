@@ -13,6 +13,7 @@ interface Data {
     levelTerm: string;
     reserveButtonTerm: string;
     exhibitorTerm: string;
+    exhibitorTermPlural: string;
     locale: string;
     booths: RawBooth[];
     exhibitors: RawExhibitor[];
@@ -39,6 +40,13 @@ interface Data {
     hideModeSwitchButton: boolean;
     isRebooking: boolean;
     events: ScheduleItem[];
+    customCss: string;
+    
+    showLevelLabel:boolean;
+    showCategories: boolean;
+    showCompaniesAndBooths: boolean;
+    showOtherSpaces: boolean;
+    hideShareButton: boolean;
 }
 
 interface ScheduleItem {
@@ -122,6 +130,7 @@ interface RawExhibitor {
     youtube: string;
     email: string; // new
     privateEmail: string;
+    order: number;
 
     //populated
     logo: string;

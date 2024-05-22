@@ -13,6 +13,7 @@ import RectPainter from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createYahCanvas } from "./canvases";
+import logger from "../../../../tools/logger";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -33,7 +34,7 @@ let toColor = Color("#FF9E2C");
 
 // let initialDate = null;
 
-export function mapCurrentPosition(position: CurrentPosition): Point {
+export function mapCurrentPosition(position: CurrentPosition): Point | null {
     var mapping = null;
     var fpConfig: GpsConfig = null;
 
@@ -77,12 +78,12 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         };
     }
 
-    if (settings.EXPO === "demo") {
-        fpConfig = {
-            p0: { lat: 38.255223, lng: -85.75678, x: 3309, y: 2702 },
-            p2: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725 },
-        };
-    }
+    // if (settings.EXPO === "demo") {
+    //     fpConfig = {
+    //         p0: { lat: 38.255223, lng: -85.75678, x: 3309, y: 2702 },
+    //         p2: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725 },
+    //     };
+    // }
 
     if (settings.EXPO === "bett2023") {
         fpConfig = {
@@ -95,10 +96,23 @@ export function mapCurrentPosition(position: CurrentPosition): Point {
         fpConfig = fpGeo.properties.config;
     }
 
-    let point: Point =
-        fpConfig && position.lat && position.lng
-            ? { ...convertGpsToLocal(position.lat, position.lng, fpConfig), lat: position.lat, lng: position.lng }
-            : position;
+    let point: Point;
+
+    if (fpConfig && position.x >= fpConfig.p0.x &&
+        position.x <= fpConfig.p2.x &&
+        position.y >= fpConfig.p0.y &&
+        position.y <= fpConfig.p2.y) {
+        point = { ...position };
+    } else if (fpConfig && position.lat && position.lng) {
+        point = convertGpsToLocal(position.lat, position.lng, fpConfig);
+    } else if (!fpConfig) {
+        point = position;
+    }
+
+    if (!point) {
+        logger.warn("Current position too far");
+        return null;
+    }
 
     var shift: { x: number; y: number } =
         mapping && position?.z && mapping[position.z.toString()] ? mapping[position.z.toString()] : null;
@@ -188,16 +202,16 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     for (let i = 0; i < routeLines.length; i++) {
         let line = routeLines[i];
 
-        // let visible =
-        //     store.layerStore.mode == LayersMode.Default
-        //         ? true
-        //         : store.layerStore.layers.find(
-        //               (l) =>
-        //                   l.name == store.routeStore.currentRouteLayer?.name &&
-        //                   store.routeStore.currentRouteLayer?.name === line.p0.layer
-        //           )?.visible || false;
+        let visible =
+            store.layerStore.mode == LayersMode.Default
+                ? true
+                : store.layerStore.layers.find(
+                      (l) =>
+                          l.name == store.routeStore.currentRouteLayer?.name &&
+                          store.routeStore.currentRouteLayer?.name === line.p0.layer
+                  )?.visible || false;
 
-        let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
+        //let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
 
         if (!line.virtual && visible) lines.push(line);
 
@@ -242,7 +256,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }
 
-function splitPolyLine(lines: Line[], interval: number): Point[] {
+export function splitPolyLine(lines: Line[], interval: number): Point[] {
     const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
     const asin = (sin: number) => (Math.asin(sin) * 180) / Math.PI;
 
@@ -392,7 +406,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, false);
+            routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);
@@ -414,7 +428,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            const visible = layersStore.layers.find((l) => l.name === position.z)?.visible ?? true;
+            const visible = layersStore.findLayer(position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
 
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {

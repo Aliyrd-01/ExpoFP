@@ -1,0 +1,127 @@
+import React from "react";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import data from "../../data";
+import store, { uiState } from "../../store";
+import { RegularBooth, SpecialBooth } from "../../store/BoothStore";
+import { GaEventActions, sendEventToGa } from "../../tools/gtag";
+import settings from "../../tools/settings";
+import { remsToPixels } from "../../utils";
+import { t } from "../../utils/i18n";
+import { useAutorun } from "../../utils/mobx";
+import ExhibitorRow from "../ExhibitorRow";
+import OverlayContent from "../OverlayContent";
+import Schedule from "../Schedule";
+import SidebarActions from "../SidebarActions";
+import "./Booth.scss";
+import { BoothOnHold } from "./BoothOnHold";
+import { BoothReserved } from "./BoothReserved";
+import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
+
+function Booth() {
+    const s = useLocalStore(() => ({
+        get booth() {
+            return uiState.selectedBooth;
+        },
+        get regular() {
+            return this.booth instanceof RegularBooth ? this.booth : null;
+        },
+        get special() {
+            return this.booth instanceof SpecialBooth ? this.booth : null;
+        },
+        get showReserve() {
+            return (
+                !uiState.kiosk &&
+                this.regular &&
+                ((this.regular.price === "0" && !!this.regular.buyUrl) || !!this.regular.reserveUrl)
+            );
+        },
+        get showBuy() {
+            return !uiState.kiosk && this.regular && this.regular.buyUrl && this.regular.price && this.regular.price !== "0";
+        },
+        get title() {
+            return this.booth.fullName;
+        },
+        get reserveTitle() {
+            return data.reserveButtonTerm || t("Reserve");
+        },
+        get descriptionCombined() {
+            return this.booth.description || data.reserveInstructions || "";
+        },
+    }));
+
+    useAutorun(() => {
+        if (s.booth) {
+            sendEventToGa(GaEventActions.ViewBooth, s.booth.name);
+        }
+    });
+
+    return useObserver(() => {
+        const bar = <div className="booth__bar">{s.title}</div>;
+        let content: JSX.Element = null;
+
+        const exhibitors = s.booth.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+
+        if (data.isRebooking) {
+            content = <>{exhibitors}</>;
+        } else if (s.regular) {
+            const b = s.regular;
+
+            if (b.onHold) {
+                content = <BoothOnHold booth={b} description={""} showBuy={false} showReserve={false} isRebooking={false} />;
+            } else if (b.reserved) {
+                content = <BoothReserved />;
+            } else if (b.exhibitors.length === 0) {
+                content = (
+                    <BoothWithoutExhibitor
+                        booth={b}
+                        description={s.descriptionCombined}
+                        showBuy={s.showBuy}
+                        showReserve={s.showReserve}
+                        isRebooking={false}
+                    />
+                );
+            } else {
+                content = <>{exhibitors}</>;
+            }
+        } else {
+            content = (
+                <div className="booth__content -spec">
+                    <div className="booth__desc" dangerouslySetInnerHTML={{ __html: s.special.description }} />
+                    <>{exhibitors}</>
+                </div>
+            );
+        }
+
+        return (
+            <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
+                {!data.isRebooking && settings.wayfinding && (
+                    <div
+                        className="exhibitor__directions"
+                        style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(1) }}
+                    >
+                        <SidebarActions
+                            showBookmark={false}
+                            showShare={false}
+                            onClickDirections={() => {
+                                store.routeStore.clickRoute(null, s.booth);
+                            }}
+                        />
+                    </div>
+                )}
+                {content}
+                {data.isRebooking && s.regular && s.regular.exhibitors.length === 0 && (
+                    <BoothWithoutExhibitor
+                        showBuy={false}
+                        description={s.descriptionCombined}
+                        showReserve={false}
+                        booth={s.regular}
+                        isRebooking={data.isRebooking}
+                    />
+                )}
+                {!!s.booth.schedule?.length && <Schedule events={s.booth.schedule} />}
+            </OverlayContent>
+        );
+    });
+}
+
+export default () => useObserver(() => (!uiState.menu && uiState.selectedBooth ? <Booth /> : null));

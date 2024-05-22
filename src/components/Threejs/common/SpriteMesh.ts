@@ -1,0 +1,35 @@
+import { lineAngle, round } from "simple-geometry";
+import * as THREE from "three";
+
+export class SpriteMesh extends THREE.Mesh {
+    constructor(texture: string, height: number) {
+        const geometry = new THREE.PlaneGeometry(1, 1);
+        const material = new THREE.MeshBasicMaterial({
+            transparent: true,
+            side: THREE.DoubleSide,
+            alphaTest: 0.8,
+            toneMapped: true,
+            precision: "highp",
+        });
+
+        var prevAngle = 0;
+
+        new THREE.TextureLoader().load(texture, (text) => {
+            material.map = text;
+            var scale = height / text.image.height;
+            geometry.scale(text.image.width * scale, text.image.height * scale, 1);
+            geometry.translate(0, (text.image.height * scale) / 2, 0);
+            geometry.rotateX(Math.PI / 2);
+            material.needsUpdate = true;
+        });
+
+        super(geometry, material);
+
+        this.onBeforeRender = (renderer, scene, camera, geometry, material, group) => {
+            let position: any = camera.position.x && camera.position.y && camera.position.z ? camera.position : camera.userData.position;
+            const angle = round(((lineAngle({ x: 0, y: 0 }, position) - 90) * Math.PI) / 180, 2);
+            this.rotateZ(-1 * (angle - prevAngle));
+            prevAngle = angle;
+        };
+    }
+}

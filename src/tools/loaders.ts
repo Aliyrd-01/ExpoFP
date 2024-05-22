@@ -1,6 +1,7 @@
 import browser from "../utils/browser";
 import isFromDesigner from "../utils/is-from-designer";
 import baseUrl from "./base-url";
+import FontFaceObserver from "fontfaceobserver";
 import logger from "./logger";
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
@@ -34,7 +35,6 @@ export async function loadJs(url: string) {
     });
 }
 
-declare const FontFace: any;
 export async function loadFont(family: string, url: string, d?) {
     url = goodUrl(url);
     d = { style: "normal", weight: "normal", ...(d || {}) };
@@ -78,4 +78,21 @@ export function injectFontFace(fontFamily: string, src: string, d) {
     );
     div.innerHTML = "Oswald";
     document.body.appendChild(div);
+}
+
+export async function loadCustomFonts(customCss: string) {
+    const fontFaceRaw =
+        getComputedStyle(document.documentElement).getPropertyValue("--expofp-font-face") ||
+        customCss.match(/--expofp-font-face:\s*([^;]*)/)?.[1];
+
+    if (!fontFaceRaw) return;
+
+    const fontFaces = fontFaceRaw
+        .replace(/"/g, "")
+        .split(", ")
+        .map((x) => x.trim());
+
+    const fontObservers = fontFaces.map((fontFace) => new FontFaceObserver(fontFace).load());
+
+    return Promise.allSettled(fontObservers);
 }

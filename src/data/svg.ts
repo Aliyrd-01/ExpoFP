@@ -3,6 +3,7 @@ import data from ".";
 import Rect from "../core/Rect";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import { Layer } from "../store/LayerStore";
 
 const _svg = new Map<string, SVGElement>();
 
@@ -41,18 +42,21 @@ function parseSvg(text: string, suffix: string = ""): SVGElement {
 
 let svg = parseSvg(window["__fp"]);
 
+const viewboxObj = window["__viewbox"];
 const viewboxRect = d3.select(svg).select("rect#VIEWBOX").node() as SVGRectElement;
 const viewBoxBaseVal = (svg as any).viewBox.baseVal;
 const svgViewBox = Rect.fromXywh(viewBoxBaseVal.x, viewBoxBaseVal.y, viewBoxBaseVal.width, viewBoxBaseVal.height);
 
 let svgArea: Rect;
-if (viewboxRect) {
+if (viewboxObj) {
+    svgArea = Rect.fromXywh(viewboxObj.x, viewboxObj.y, viewboxObj.width, viewboxObj.height);
+    viewboxRect?.remove();
+} else if (viewboxRect) {
     svgArea = Rect.fromSvgRectElement(viewboxRect);
     viewboxRect.remove();
 } else {
     svgArea = svgViewBox.withPadding(-svgViewBox.w * 0.05, -svgViewBox.h * 0.05);
 }
-
 d3.select(svg).attr("width", svgViewBox.w);
 d3.select(svg).attr("height", svgViewBox.h);
 
@@ -60,15 +64,17 @@ logger.log("svgArea", svgArea, "svgViewBox", svgViewBox);
 
 settings.wayfinding = !data.hideDirections && window["__wfData"] ? true : false;
 
-let floors = (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[])
-    .map((f) => {
-        f.remove();
-        return {
-            name: f.dataset.floor,
-            rect: Rect.fromSvgRectElement(f),
-        };
-    })
-    .sort();
+let floors = window["__fpLayersMode"]
+    ? (d3.select(svg).selectAll("[data-floor]").nodes() as SVGRectElement[])
+          .map((f) => {
+              f.remove();
+              return {
+                  name: f.dataset.floor,
+                  rect: Rect.fromSvgRectElement(f),
+              };
+          })
+          .sort()
+    : [];
 
 export { svgArea, svgViewBox, floors };
 
@@ -96,8 +102,24 @@ export let gtePathByIndex = (index: number, suffix: string = "") => {
     }
 };
 
-export let getLayerSvg = (suffix: string = ""): SVGElement => {
-    if (_svg.has(suffix)) return _svg.get(suffix);
-    if (window[`__fp${suffix}`]) return parseSvg(window[`__fp${suffix}`], suffix);
-    else return _svg.get("");
+export let getLayerSvg = (layer: Layer | string = ""): SVGElement => {
+    if (typeof layer === "string") {
+        if (_svg.has(layer)) return _svg.get(layer);
+        if (window[`__fp${layer}`]) return parseSvg(window[`__fp${layer}`], layer);
+        else return _svg.get("");
+    }
+
+    if (layer.rootParent) {
+        if (_svg.has(layer.rootParent.name)) {
+            return _svg.get(layer.rootParent.name);
+        } else if (window[`__fp${layer.rootParent.name}`]) {
+            return parseSvg(window[`__fp${layer.rootParent.name}`], layer.rootParent.name);
+        } else {
+            return _svg.get("");
+        }
+    } else if (window[`__fp${layer.name}`]) {
+        return parseSvg(window[`__fp${layer.name}`], layer.name);
+    }
+
+    return _svg.get("");
 };

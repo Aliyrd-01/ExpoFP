@@ -15,7 +15,7 @@
     --color-primaryLight: #e0f6ff;
     --color-primaryDark: #1f9bcf;
     --color-secondary: #fb3e59;
-    --color-secondaryLight: #ff6e83;
+    --color-secondaryLight: #ffd8de;
     --color-secondaryDark: #ea2b46;
     --color-info: #479cea;
     --color-infoLight: #e3f2fd;
@@ -23,6 +23,7 @@
     --color-successLight: #e6f9ee;
     --color-warning: #ffbf21;
     --color-warningLight: #fff4e1;
+    --color-warningDark: #d89a00;
     --color-error: #fb5758;
     --color-errorLight: #fff0ec;
 
@@ -31,6 +32,8 @@
     --shadow-large: 0px 6px 24px rgba(0, 0, 0, 0.18);
 
     --default-font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+
+    --app-font-family: var(--expofp-font-face, var(--default-font-family));
 
     --heading-size-1: 26px;
     --heading-size-2: 22px;

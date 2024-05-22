@@ -2,10 +2,12 @@ import _locales from "../public/locales/_locales";
 import { Data } from "./data/Data";
 import { CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
-import { loadCss, loadFont, loadJs } from "./tools/loaders";
+import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
+import isWebview from "./utils/is-webview";
+import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
 import { getAllClicks } from "./tools/firebase";
 
@@ -22,7 +24,10 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly eventId: string;
     readonly dataUrl: string;
     readonly noOverlay: boolean;
+    readonly offHistory: boolean;
+    readonly allowConsent: boolean | undefined;
 
+    protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
 
     get ready() {
@@ -32,6 +37,8 @@ export default class FloorPlanLoader implements FloorPlan {
     // options
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
+    onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+
     onFpConfigured: () => void;
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
@@ -39,6 +46,8 @@ export default class FloorPlanLoader implements FloorPlan {
     onDetails: (e: FloorPlanDetailsEvent) => void;
 
     onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+
+    onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
 
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
@@ -56,17 +65,45 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void {
+        nr();
+    }
+
     updateLayerVisibility(layer: string, visible: boolean): void {
+        nr();
+    }
+
+    applyParameters(parameters: string): void {
+        nr();
+    }
+
+    exhibitorsList(): any {
+        nr();
+    }
+
+    boothsList(): any {
+        nr();
+    }
+
+    categoriesList(): any {
+        nr();
+    }
+
+    unstable_destroy(): void {
         nr();
     }
 
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;
+        this.offHistory = !!options.offHistory;
+        this.allowConsent = options.allowConsent;
 
         this.onBoothClick = options.onBoothClick;
+        this.onBookmarkClick = options.onBookmarkClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
+        this.onGetCoordsClick = options.onGetCoordsClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
@@ -106,6 +143,18 @@ export default class FloorPlanLoader implements FloorPlan {
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
+        if (eventId === "money2020usa23" && isWebview(navigator.userAgent)) {
+            this.allowConsent = true;
+        }
+
+        if (options.allowConsent === undefined) {
+            const url = new URL(window.location.href);
+            const cookieConsentParamValue = url.searchParams.get("allowConsent");
+            if (cookieConsentParamValue) {
+                this.allowConsent = cookieConsentParamValue === "true";
+            }
+        }
+
         if (useShadow) {
             container = shadowContainer.attachShadow({ mode: "open" });
             const containerObj = container as any;
@@ -136,6 +185,8 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
+        const dataInternalUrl = dataUrlBase + "data-internal.js";
+
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
@@ -157,14 +208,17 @@ export default class FloorPlanLoader implements FloorPlan {
         ];
 
         let handledStyleElements = 0;
-        window.addEventListener("__efpStyleLoad", function (e: Event) {
+
+        this.efpStyleLoadHandler = function (e: Event) {
             const elements = window["__efpStyleElements"] as HTMLStyleElement[];
             while (handledStyleElements < elements.length) {
                 const el = elements[handledStyleElements];
                 container.appendChild(el);
                 handledStyleElements++;
             }
-        });
+        };
+
+        window.addEventListener("__efpStyleLoad", this.efpStyleLoadHandler);
 
         const self = this;
         (async function init() {
@@ -183,6 +237,25 @@ export default class FloorPlanLoader implements FloorPlan {
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {
                 window["__heatmapData"] = await getAllClicks(eventId);
+            }
+
+            if (data.isRebooking) {
+                await loadJs(dataInternalUrl);
+                mergeExhibitors(window["__data"] as Data, window["__internalData"] as Data);
+            }
+
+            if (data.customCss) {
+                const style = document.createElement("style");
+                style.textContent = data.customCss;
+                document.head.append(style);
+
+                if (useShadow) {
+                    const style2 = document.createElement("style");
+                    style2.textContent = data.customCss;
+                    container.append(style2);
+                }
+
+                await loadCustomFonts(data.customCss);
             }
 
             logger.log("Data loaded");

@@ -8,6 +8,7 @@ export default class MapboxStore {
     rootStore: RootStore;
 
     @observable mapBoxSelected = true;
+    @observable isMapbox = true;
 
     @observable mapBoxActivated = !data.hide3dMapDefault;
     @observable mapBoxEnabled = !!fpGeo && data.allow3dView && !uiState.kiosk && window.navigator.onLine;

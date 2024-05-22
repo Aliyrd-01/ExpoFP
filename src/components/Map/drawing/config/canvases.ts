@@ -4,6 +4,7 @@ import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
 import { boothStore, heatmapStore, uiState } from "../../../../store";
+import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -33,7 +34,8 @@ export function createLabelCanvas(
     fontSize *= pixelRatio;
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
-    const font = getFont(fontSize, fontWeight);
+    const weight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-main-weight"));
+    const font = getFont(fontSize, weight || fontWeight);
     const width = measureText(font, text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A")) + 3 + 3; //
     const vPad = 4;
     const height = fontSize + vPad;
@@ -94,8 +96,12 @@ export function createDetailsCanvas(
 
     const boothFontSize = fontSize * pixelRatio;
     const detailFontSize = 0.9 * fontSize * pixelRatio;
-    const boothFont = getFont(boothFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
+
+    const boothWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-main-weight"));
+    const detailWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-details-weight"));
+
+    const boothFont = getFont(boothFontSize, boothWeight || 500);
+    const detailFont = getFont(detailFontSize, detailWeight || 300);
     const boothPadding = 1 * pixelRatio;
 
     let mainLine = b.name;
@@ -148,7 +154,7 @@ export function createExhibitorsDetailsCanvas(
     b: RegularBooth,
     pixelRatio: number,
     color: string = "#fff",
-    frontSize: number,
+    fontSize: number,
     onlyMain: boolean,
     onlyFeaturedExhibitors: boolean,
     textAlign: CanvasTextAlign = "start"
@@ -156,14 +162,36 @@ export function createExhibitorsDetailsCanvas(
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
 
-    const mainFontSize = frontSize * pixelRatio;
-    const detailFontSize = 0.9 * frontSize * pixelRatio;
+    const mainFontSize = fontSize * pixelRatio;
+    const detailFontSize = 0.9 * fontSize * pixelRatio;
 
-    const mainFont = getFont(mainFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
+    const mainExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-main-weight"));
+    const detailExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-details-weight"));
 
-    if (onlyFeaturedExhibitors) mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
-    else mainLines.push(...b.exhibitors.map((e) => e.name));
+    const mainFont = getFont(mainFontSize, mainExhibitorDetailsWeight || 500);
+    const detailFont = getFont(detailFontSize, detailExhibitorDetailsWeight || 300);
+
+    const primaryExhibitors = b.exhibitors.filter((e) => e.order === 0);
+
+    const exhibitorsWithOrder = b.exhibitors.filter((e) => e.order);
+
+    if (primaryExhibitors.length > 0) {
+        mainLines.push(...primaryExhibitors.map((e) => e.name));
+    } else if (onlyFeaturedExhibitors) {
+        mainLines.push(...b.exhibitors.filter((e) => e.featured).map((e) => e.name));
+    } else if (exhibitorsWithOrder.length > 0) {
+        mainLines.push(...exhibitorsWithOrder.map((e) => e.name));
+        const exhibitorsWithoutOrder = b.exhibitors.filter((e) => e.order === undefined);
+        if (exhibitorsWithoutOrder.length > 0) {
+            mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
+        }
+    } else {
+        if (b.exhibitors.length > 5) {
+            mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
+        } else {
+            mainLines.push(...b.exhibitors.map((e) => e.name));
+        }
+    }
 
     mainLines.forEach((text, i) => {
         // Adding an invisible character to display punctuation marks correctly in the right-to-left version
@@ -519,12 +547,13 @@ export function canvarFromPath(paths: PathInfo[], scale: number = 0.5, suffix: s
 }
 
 export function getFont(px: number, weight: number = 500) {
-    return (
-        weight +
-        " " +
-        px +
-        'px Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
-    );
+    const customFont = getComputedStyle(document.body).getPropertyValue("--expofp-font-face");
+    const defaultFont =
+        'Oswald, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+
+    const font = customFont ? `${customFont}, ${defaultFont}` : defaultFont;
+
+    return weight + " " + px + `px ${font}`;
 }
 
 export function createMultilineTextCanvas(lines: string[], inputWidth: number, fontSize: number, color: string = "#fff") {
@@ -543,7 +572,8 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
         draw(c) {
             c.textAlign = "center";
             c.textBaseline = "alphabetic";
-            c.font = getFont(fontSize);
+            const weight =  Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-special-weight"));
+            c.font = getFont(fontSize, weight || 500);
 
             const totalHeight = lines.length * lineHeight;
             const startFrom = height / 2 - totalHeight / 2 - fontSize * 0.1;

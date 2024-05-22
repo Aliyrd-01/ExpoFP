@@ -11,11 +11,16 @@ import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import RootStore from "../RootStore";
 import { isYahBooth } from "../../utils/yah";
 import { RawSpecialBooth } from "../../data/Data";
+import { Exhibitor } from "../ExhibitorStore";
+import { v4 as uuidv4 } from "uuid";
+import { Layer } from "../LayerStore";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
 
 export function iniAllBooths(store: RootStore) {
+    const copyExh = parseInt(getQueryParam("copy_exh"));
+
     for (const raw of data.booths || []) {
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);
@@ -29,11 +34,26 @@ export function iniAllBooths(store: RootStore) {
         for (const exhibitorId of raw.exhibitors) {
             const exhibitor = store.exhibitorStore.exhibitorById.get(exhibitorId);
             boothReg.exhibitors.push(exhibitor);
+            if (copyExh) {
+                dublicateExhibitorsInBooth(exhibitor, boothReg, copyExh);
+            }
             exhibitor.booths.push(boothReg as RegularBooth);
         }
+
+        // if not exhibitor and in url has ?copy_exh=number, create test exhibitor in booth
+        if (!raw.exhibitors.length && copyExh) {
+            dublicateExhibitorsInBooth(null, boothReg, copyExh);
+        }
+
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
+        b.yah = isYahBooth(b as Booth);
         booths.push(b);
     }
+
+    // sort booths by name
+    booths.sort((a, b) => {
+        return a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true });
+    });
 
     // sort booths of exhibitors
     for (const e of store.exhibitorStore.exhibitors) {
@@ -49,7 +69,8 @@ export function iniAllBooths(store: RootStore) {
 
 const layers = [];
 
-export default function initBooths(store: RootStore, layerID: string): Booth[] {
+export default function initBooths(store: RootStore, layer: Layer): Booth[] {
+    const layerID = layer.name;
     if (layers.indexOf(layerID) > -1) return [];
     layers.push(layerID);
 
@@ -59,9 +80,9 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     const layersEnabled = !!window["__fpLayers"];
 
     for (const el of d3
-        .select(getLayerSvg(layerID))
+        .select(getLayerSvg(layer))
         .selectAll(
-            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
+            `[data-layer='${layerID}'] > [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
         const layer = ((el as SVGGraphicsElement).closest("svg > [data-layer]") as SVGGraphicsElement).attributes["data-layer"]
@@ -108,6 +129,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
+       
         if (boothReg) {
             boothReg.availColor = el.getAttribute("data-avail-color") || boothReg.availColor;
             boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
@@ -161,11 +183,6 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         const exhibitorsWithLogoInBooths = booth.exhibitors.filter((ex) => ex.logoInBooth);
         logoInBooth = exhibitorsWithLogoInBooths.length > 0;
 
-        if (!booth.rotate && booth.rect.h > booth.rect.w * 2.0 && (booth.title || booth.name).length > 5 && !logoInBooth) {
-            booth.rotate = (90 * Math.PI) / 180;
-            booth.rect = booth.rect.getRotated90();
-        }
-
         if (el.tagName === "g") {
             booth.paths = [];
             booth.pathsWithRect = pathsWithRect;
@@ -174,7 +191,7 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
-                    const color = isYahBooth(booth as Booth) ? el.style?.fill || path.style.fill : path.style.fill;
+                    const color = booth.yah ? el.style?.fill || path.style.fill : path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
                     booth.paths.push({
                         index: d,
@@ -195,10 +212,29 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     }
 
     layerBooths
-        .filter((b) => (b.name.match(/^yah_/i) || b.title?.match(/You\s+are\s+here/gi)) && b !== store.routeStore.defaultFrom)
+        .filter((b) => b.yah && b !== store.routeStore.defaultFrom)
         .forEach((btr) => layerBooths.splice(layerBooths.indexOf(btr), 1));
 
     return layerBooths;
+}
+
+function getQueryParam(name: string): string | null {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+}
+
+function dublicateExhibitorsInBooth(exhibitor: Exhibitor | null, booth: MutableRequired<RegularBooth>, times: number) {
+    let exh = new Exhibitor() as MutableRequired<Exhibitor>;
+    exh.name = "EXHIBITOR NAME";
+    exh.slug = "exhibitor-name";
+    exh.booths = [];
+
+    exh = exhibitor || exh;
+
+    for (let i = 0; i < times; i++) {
+        const copyExhibitor: MutableRequired<Exhibitor> = { ...exh, id: uuidv4() };
+        booth.exhibitors.push(copyExhibitor as Exhibitor);
+    }
 }
 
 function fixCbre(b: Booth) {

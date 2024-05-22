@@ -13,7 +13,7 @@ a.efp-button {
     outline: none;
     cursor: pointer;
     color: $color-white;
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--app-font-family);
     font-weight: 600;
     text-decoration: none;
     transition: background 0.1s ease-in-out;
@@ -41,6 +41,16 @@ a.efp-button {
     &--inline {
         display: inline-flex;
         width: auto;
+    }
+    &--secondary {
+        background: var(--color-primaryLight);
+        color: var(--color-primary);
+
+        &:hover,
+        &:active {
+            background: var(--color-primaryLight);
+            color: var(--color-primaryDark);
+        }
     }
     &--gray {
         background: var(--color-grayUltraLight);

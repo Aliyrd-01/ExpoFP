@@ -4,7 +4,7 @@ import { ScheduleItem } from "../ScheduleStore";
 
 export function iniSchedule(store: RootStore) {
     (data.events || [])
-        .filter((e) => e.startDate && e.endDate)
+        .filter((e) => e.startDate && e.endDate && new Date(e.endDate).getTime() > new Date().getTime())
         .forEach((event) => {
             const sI = new ScheduleItem(
                 event.id,

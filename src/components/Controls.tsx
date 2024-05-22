@@ -3,7 +3,7 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as React from "react";
 import { svgArea } from "../data/svg";
 import store, { layersStore, uiState } from "../store";
-import { LayersMode } from "../store/LayerStore";
+import { LayerMode, LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import "./Controls.scss";
@@ -25,6 +25,7 @@ export default function Controls() {
 
         get layers(): any {
             return layersStore.layers
+                .filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible)
                 .map((l) => ({ id: l.name, name: l.description, visible: l.visible }))
                 .concat([])
                 .reverse();

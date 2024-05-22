@@ -5,12 +5,14 @@ import { select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { useEffect, useRef } from "react";
+import { ResizeObserver } from "resize-observer";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
 import { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, BoothBase } from "../../store/BoothStore";
 import { Exhibitor } from "../../store/ExhibitorStore";
+import { LayerMode } from "../../store/LayerStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
@@ -23,7 +25,6 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import ResizeObserver from "resize-observer-polyfill";
 
 //console.log('isIframe', isIframe)
 
@@ -32,6 +33,7 @@ export default function Map() {
     let zoomAfTransform: ZoomTransform;
     // do not use useState unless really needed
     const el = useRef<HTMLCanvasElement>();
+    const resizeObserverRef = useRef<ResizeObserver>();
     // use mobx for everything
     const s = useLocalStore(() => ({
         animatePlease: false,
@@ -47,7 +49,12 @@ export default function Map() {
     }));
 
     // init
-    useEffect(init, []);
+    useEffect(() => {
+        init();
+
+        return () => resizeObserverRef.current.disconnect();
+    }, []);
+
     useReaction(
         () => uiState.devicePixelRatio,
         () => {
@@ -118,19 +125,34 @@ export default function Map() {
             }
 
             var details = uiState.details as any;
+
+            // @todo clear after event is complete
+            if (settings.EXPO === "wineparis") {
+                if (details instanceof Exhibitor) details = details.booths[0];
+                if (!details) return;
+            }
+            //
+
             var data = {
-                type:
-                    uiState.details instanceof BoothBase
-                        ? "booth"
-                        : uiState.details instanceof Exhibitor
-                        ? "exhibitor"
-                        : ("route" as any),
+                type: details instanceof BoothBase ? "booth" : details instanceof Exhibitor ? "exhibitor" : ("route" as any),
                 name: details?.name,
                 id: details?.id,
                 externalId: details?.externalId,
+                boothsNames:
+                    details instanceof Exhibitor
+                        ? details.booths
+                              .map((b) => b.name)
+                              .sort((b1, b2) =>
+                                  b1 == store.routeStore.tempToBooth?.name ? -1 : b2 == store.routeStore.tempToBooth?.name ? 1 : 0
+                              )
+                        : details instanceof BoothBase
+                        ? [details.name]
+                        : [store.uiState.selectedRoute?.from?.name, store.uiState.selectedRoute?.to?.name].filter(
+                              (name) => !!name
+                          ),
             };
 
-            uiState.onDetails(data);
+            setTimeout(() => uiState.onDetails(data), 200);
         }
     );
 
@@ -188,7 +210,7 @@ export default function Map() {
     return useObserver(() => (
         <canvas
             ref={el}
-            className={classNames({ map: true, moving: s.moving })}
+            className={classNames({ map: true, moving: s.moving, hidden: store.mapboxStore.showMapbox })}
             onMouseMove={handleMouseMoveAndOver}
             onClick={handleClick}
             onMouseOver={handleMouseMoveAndOver}
@@ -199,6 +221,8 @@ export default function Map() {
     ));
 
     function moveToRect(rect: Rect, maxZoomScale: number = 10, animate: boolean = true) {
+        rect = Rect.fromX1y1x2y2(rect.x1 - uiState.kioskRectPadding * rect.w, rect.y1, rect.x2, rect.y2);
+
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
         const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
@@ -263,6 +287,8 @@ export default function Map() {
             s.drawer.resetCanvasSize();
         });
 
+        resizeObserverRef.current = resizeObserver;
+
         resizeObserver.observe(uiState.rootElement);
 
         setZoomTransformAnimated(zoomIdentity, 0, null);
@@ -302,6 +328,16 @@ export default function Map() {
 
         const x = e.clientX - left;
         const y = e.clientY - top;
+
+        if (uiState.onGetCoordsClick) {
+            const pxSvgMatrix = s.drawer.getPxSvgMatrix();
+            const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);
+            const currentFloor = store.layerStore.layers.find(
+                (l) => l.visible && (l.mode === LayerMode.TurnedOn || l.mode === LayerMode.TurnedOff)
+            );
+
+            uiState.onGetCoordsClick({ x: xys[0], y: xys[1], z: currentFloor?.name || null });
+        }
 
         // if (!this.props.onBoothClick) return;
         const b = getBoothIdFromClientXy(x, y, s.drawer);
@@ -359,7 +395,8 @@ export default function Map() {
     }
 
     function getTramsformToCenterSvgRect(svgRect: Rect, vRect: Rect, maxZoom: number) {
-        const minPaddingPercent = 5;
+        const ratio = (svgRect.w * svgRect.h) / (svgArea.h * svgArea.w);
+        const minPaddingPercent = ratio > 0.1 ? 5 : 25;
 
         const targetRect = vRect.withPadding((vRect.w * minPaddingPercent) / 100, (vRect.h * minPaddingPercent) / 100);
 

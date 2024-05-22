@@ -11,7 +11,7 @@
         width: 100%;
     }
 
-    &.invert{
+    &.invert {
         filter: invert(1);
     }
 }
@@ -21,4 +21,15 @@
     background-color: white;
     padding: 10px;
     box-shadow: var(--k-box-shadow-1);
+
+    &--right {
+        left: unset !important;
+        right: 10px;
+    }
+}
+
+.efp-kiosk {
+    .logo-overlay {
+        pointer-events: none;
+    }
 }

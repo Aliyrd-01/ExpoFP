@@ -40,10 +40,7 @@ export default function Mapbox() {
 
         get actualCurrentPosition(): CurrentPosition {
             const cp = store.routeStore.currentPosition;
-
-            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.layers.find((l) => l.name === cp.z)) > -1
-                ? cp
-                : null;
+            return !cp?.z || store.layerStore.visible.indexOf(store.layerStore.findLayer(cp.z)) > -1 ? cp : null;
         },
 
         get style() {
@@ -85,6 +82,12 @@ export default function Mapbox() {
                 1500
             );
 
+            map.current.setLight({
+                anchor: "viewport",
+                color: "white",
+                intensity: 0,
+            });
+
             const logos = await loadLogos(store.boothStore.booths as RegularBooth[]);
 
             setDataSource(store.boothStore.booths, logos);
@@ -100,7 +103,7 @@ export default function Mapbox() {
 
             activeLayers = setLayers(store.layerStore.layers);
 
-            const boothsLayers = activeLayers.filter((l) => l.indexOf("-") === -1);
+            const boothsLayers = activeLayers.filter((l) => l.indexOf("--") === -1);
 
             updateRouteLines(store.routeStore);
 
@@ -147,7 +150,7 @@ export default function Mapbox() {
         () => [store.layerStore.loaded, store.layerStore.visible, uiState.selectedRoute],
         () => {
             activeLayers.forEach((l: string) => {
-                const layerName = l.split("-")[0];
+                const layerName = l.split("--")[0];
                 const layer = store.layerStore.layers.find((l) => l.name === layerName);
 
                 if (layer.visible ? "visible" : "none" !== map.current.getLayoutProperty(l, "visibility"))

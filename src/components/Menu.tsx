@@ -31,7 +31,12 @@ window.setTimeout(function () {
     // document.head.appendChild(link);
 }, 1500);
 
-function Menu() {
+interface MenuProps {
+    isGDPR: boolean;
+    allowConsent?: boolean;
+}
+
+function Menu({ allowConsent, isGDPR }: MenuProps) {
     const s = useLocalStore(() => ({
         logoVisibility: "visible" as CSS.Property.Visibility,
         shown: false,
@@ -147,7 +152,18 @@ function Menu() {
                             {t("Download PDF")}
                         </a>
                     )}
-
+                    {allowConsent === undefined && isGDPR && (
+                        <a
+                            href="/#"
+                            className="menu__item -cookie-consent"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                uiState.hideCookieConsent = false;
+                            }}
+                        >
+                            Review Cookie Consent
+                        </a>
+                    )}
                     {!data.hideCategoriesLink && categories}
                 </div>
             </OverlayContent>
@@ -198,4 +214,5 @@ function Menu() {
     }
 }
 
-export default () => useObserver(() => <>{uiState.menu ? <Menu /> : null}</>);
+export default ({ isGDPR, allowConsent }: MenuProps) =>
+    useObserver(() => <>{uiState.menu ? <Menu isGDPR={isGDPR} allowConsent={allowConsent} /> : null}</>);

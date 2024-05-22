@@ -1,5 +1,4 @@
 import { action } from "mobx";
-import { floors } from "../data/svg";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -40,7 +39,7 @@ export default class RootStore {
         this.heatmapStore = new HeatmapStore(this);
     }
 
-    @action selectExhibitor(exhibitor: Exhibitor) {
+    @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
         // if (data.hideCompanies) return;
         this.uiState.hoveredExhibitor = null;
         this.uiState.details = exhibitor;
@@ -48,9 +47,14 @@ export default class RootStore {
         var visible = exhibitor.booths.filter((b) => b.visible);
         var invisible = exhibitor.booths.filter((b) => !b.visible);
         if (!visible.length && invisible.length) {
-            this.layerStore.updateVisibility(invisible[0].layer.name, true);
-            this.moveToList(invisible);
+            this.layerStore.updateVisibility(invisible[0].layer, true);
         }
+        if (!focus) return;
+
+        setTimeout(
+            () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
+            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+        );
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
@@ -59,7 +63,7 @@ export default class RootStore {
 
         if (focus) this.moveToList(b);
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
-            this.layerStore.updateVisibility(b[0].layer.name, true);
+            this.layerStore.updateVisibility(b[0].layer, true);
     }
 
     @action reset() {
@@ -131,13 +135,6 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
-    @action clickFloor(floor: string) {
-        if (window["__resett"]) window["__resett"]();
-        var rect = floors.filter((f) => f.name === floor)[0]?.rect;
-        if (rect) this.uiState.moveToRect = rect;
-        this.showMap();
-    }
-
     @action clickSeminars() {
         this.clickCategory(this.categoryStore.seminarsCategory);
     }
@@ -158,7 +155,7 @@ export default class RootStore {
     @action clickBoothInList2(booth: Booth) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.hoveredBooth = null;
-        this.selectBooth(booth);
+        this.selectBooth(booth, false);
         window.setTimeout(
             () => {
                 this.moveToList([booth]);
@@ -200,15 +197,11 @@ export default class RootStore {
             this.heatmapStore.recordUserClickBooth(booth.id);
         }
 
-        if (
-            booth.exhibitors.length === 1 &&
-            ((booth instanceof SpecialBooth && !booth.description) || booth instanceof RegularBooth)
-        ) {
-            this.selectExhibitor(booth.exhibitors[0]);
+        if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
+            this.selectExhibitor(booth.exhibitors[0], false);
         } else {
             this.selectBooth(booth, false);
         }
-
         this.showMap();
     }
 
@@ -216,9 +209,8 @@ export default class RootStore {
         if (!this.uiState.heatmap) {
             this.heatmapStore.recordUserClickExhibitor(exhibitor.id);
         }
-
-        this.selectExhibitor(exhibitor);
-        this.moveToExhibitor(exhibitor);
+        this.selectExhibitor(exhibitor, true);
+        //this.moveToExhibitor(exhibitor);
         this.showMap();
         // dispatch("selectExhibitor", id);
         // dispatch("moveToExhibitor", id);

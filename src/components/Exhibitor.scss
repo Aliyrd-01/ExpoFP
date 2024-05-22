@@ -19,53 +19,60 @@
 }
 
 .exhibitor {
-    // &__booth {
-    //     margin: 0 1rem 0.2rem;
-    //     color: #777;
-    // }
     &__categories {
-        margin-inline-start: 0.7rem;
-        margin-inline-end: 1rem;
-        margin-bottom: 1rem;
-        font-size: 0.9rem;
+        display: flex;
+        flex-flow: row wrap;
+        margin: 0 1rem 1rem;
+        font-size: var(--text-size-2);
+        gap: 0.3rem;
 
-        // display: flex;
-        // flex-direction: column;
-        // align-items: flex-start;
         > a {
             display: inline-block;
-
-            color: #fff !important;
-            font-size: 0.8rem;
             padding: 0.3rem 0.6rem;
             word-break: break-all;
             border-radius: 1em;
-            margin-top: 0.3rem;
-            margin-inline-start: 0.3rem;
             text-decoration: none !important;
         }
 
         &-cat {
-            background: #41b6e7;
+            background: var(--color-primaryLight);
+            color: var(--color-primaryDark);
 
-            &:hover {
-                background: #1598d0;
+            &:hover,
+            &:visited:hover {
+                background: var(--color-primaryDark);
+                color: var(--color-white);
+            }
+            &:visited {
+                color: var(--color-primary);
             }
         }
 
         &-sponsorship {
-            background: #ff8c00;
+            background: #fee8ce;
+            color: #e87f00;
 
-            &:hover {
+            &:hover,
+            &:visited:hover {
                 background: #e87f00;
+                color: var(--color-white);
+            }
+            &:visited {
+                color: #ff8c00;
             }
         }
 
         &-booth {
-            background: #fb3e59;
+            background: var(--color-secondaryLight);
+            color: var(--color-secondaryDark);
 
-            &:hover {
-                background: #ea2b46;
+            &:hover,
+            &:visited:hover {
+                background: var(--color-secondaryDark);
+                color: var(--color-white);
+            }
+            &:visited {
+                color: var(--color-secondary);
             }
         }
     }
@@ -81,6 +88,7 @@
         border-radius: 5px;
         overflow: hidden;
         display: flex;
+        justify-content: center;
         align-items: center;
         position: relative;
         z-index: 2;
@@ -142,15 +150,6 @@
         }
 
         @include clearfix;
-    }
-
-    &__market-materials {
-        margin: 1rem;
-        font-size: 0.9rem;
-
-        div {
-            word-break: break-all;
-        }
     }
 
     &__description-html {
@@ -504,6 +503,16 @@ $imageSliderClass: ".image-slider";
             border: 1px solid var(--k-color-primary);
             color: var(--color-white) !important;
         }
+        &__categories-booth {
+            background: var(--k-color-secondary);
+            border: 1px solid var(--k-color-secondary);
+            color: var(--color-white) !important;
+        }
+        &__categories-sponsorship {
+            background: #e87f00;
+            border: 1px solid #e87f00;
+            color: var(--color-white) !important;
+        }
         &__description {
             margin: var(--k-spacing-md) var(--k-spacing-lg);
             font-size: 0.86em;
@@ -516,6 +525,7 @@ $imageSliderClass: ".image-slider";
             height: var(--k-imageHeight);
             margin: 0 0 var(--k-spacing-md);
             padding: calc(min(2vh, 12px)) calc(min(4vw, 20px));
+            float: none;
         }
         &__meta {
             padding-bottom: 4px;
@@ -528,6 +538,12 @@ $imageSliderClass: ".image-slider";
                     margin-inline-start: 10px;
                     font-size: 0.8em;
                     line-height: 1.2em;
+
+                    & > a {
+                        color: inherit;
+                        text-decoration: none;
+                        pointer-events: none;
+                    }
                 }
 
                 .fas {

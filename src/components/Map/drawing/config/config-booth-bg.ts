@@ -1,4 +1,3 @@
-import { defaultRebookingOptions } from "./../../../RebookingRadioGroup";
 import Color from "color";
 import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
@@ -11,6 +10,7 @@ import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
 import { getTrianglesFromFpPaths } from "./../../../../data/svg";
+import { defaultRebookingOptions } from "./../../../RebookingRadioGroup";
 import { BoothDrawerBaseWithoutPainter } from "./BoothDrawerBase";
 
 // let picked = 0;
@@ -24,6 +24,15 @@ export default function configBoothBg(
     // picked++;
     // if (picked > 1) return null;
     new BoothBgDrawer(context, layerID, booth, painterOrderPriority, visible);
+}
+
+function groupBy<T>(arr: T[]): T | null {
+    if (arr.length === 0) return null;
+
+    const firstValue = arr[0];
+    const isSame = arr.every((value) => value === firstValue);
+
+    return isSame ? firstValue : null;
 }
 
 let seq = 0;
@@ -138,7 +147,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         const s = this.booth; //store.getBoothState(this.booth);
         let colorInfo = Color(defaultColor).hsl();
         let lightness = colorInfo.lightness();
-        if (lightness > 90 || lightness < 30) return colorInfo;
+        if (lightness > 90 || lightness < 16) return colorInfo;
 
         if (s.selected) {
             const selColor = Color(settings.colors.booths.selected).hsl();
@@ -165,7 +174,11 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         if (b instanceof SpecialBooth) {
             defColor = b.color || settings.colors.booths.empty;
         } else if (b instanceof RegularBooth) {
-            if (data.isRebooking) return defaultRebookingOptions[b.exhibitors[0]?.rebookingState ?? 0].color.primary;
+            if (data.isRebooking) {
+                if (!b.exhibitors?.length) return defaultRebookingOptions[0].color.primary;
+                const state = groupBy((b.exhibitors ?? []).map((e) => e.rebookingState));
+                return state !== null ? defaultRebookingOptions[state].color.primary : "#000000";
+            }
 
             const settingsColors = settings.colors.booths;
             if (b.onHold) {
@@ -183,7 +196,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     }
 
     @computed get selectedColorInterpolateFunc() {
-        const color0 = !Color(this.booth.labelColor || settings.boothLabelColor).isLight() ? "#fff" : "#000";
+        const color0 =
+            settings.colors.booths.seectedLight ||
+            (!Color(this.booth.labelColor || settings.boothLabelColor).isLight() ? "#fff" : "#000");
         const color1 = uiState.heatmap ? store.heatmapStore.getColorByClicks(this.booth) : settings.colors.booths.selected;
         return colorInterpolate([color0, color1]);
     }

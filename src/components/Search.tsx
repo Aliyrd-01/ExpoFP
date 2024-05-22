@@ -13,6 +13,7 @@ import "./Search.scss";
 // import logger from "../tools/logger";
 import * as YouAreHere from "../utils/yah";
 import { kioskKey } from "../store/init/init-ui";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
@@ -27,11 +28,14 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
             alert(`"You are here" coordinantes: ${yah[0]} ${yah[1]}, scale ${yah[2]}`);
         } else if (commandValue === "none") {
             YouAreHere.removeYah();
-            localStorage.removeItem(kioskKey);
+            isLocalStorageAvailable && localStorage.removeItem(kioskKey);
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
             YouAreHere.setYah(commandValue.split(",")[0]);
-            localStorage.setItem(kioskKey, "1");
+             if (isLocalStorageAvailable) {
+                localStorage.setItem(kioskKey, "1");
+                uiState.kiosk = true;
+            }
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 2 || commandValue.split(",").length === 3) {
             const yahValues = commandValue.split(",");
@@ -41,7 +45,10 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
             if (commandValue.split(",").length === 3) scale = parseFloat(yahValues[2].trim());
             if (!!yahX && !!yahY) {
                 YouAreHere.setYah(`${yahX},${yahY},${scale}`);
-                localStorage.setItem(kioskKey, "1");
+                if (isLocalStorageAvailable) {
+                    localStorage.setItem(kioskKey, "1");
+                    uiState.kiosk = true;
+                }
                 if (forseRefresh) window.location.replace(url);
             }
         }
@@ -60,6 +67,13 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
                 .then((value) => alert(`${value.length} images loaded.`))
                 .catch((error) => alert(error));
         });
+    } else if (/^copy_exh=\d+/.test(text)) {
+        const match = text.match(/^copy_exh=(\d+)/);
+        if (match && !isNaN(parseInt(match[1]))) {
+            const currentURL = window.location.origin + window.location.pathname;
+            const newURL = `${currentURL}?${match[0]}`;
+            window.location.replace(newURL);
+        }
     }
     return false;
 }
@@ -67,6 +81,7 @@ export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean
 function Search() {
     const el = useRef<HTMLDivElement>();
     const overlayContentRef = useRef<HTMLDivElement>();
+    const scrollableRef = useRef<HTMLDivElement>();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
@@ -152,6 +167,10 @@ function Search() {
         [s]
     );
 
+    const updateContent = useCallback(() => {
+        if (s.updateOverlayContent) s.updateOverlayContent();
+    }, [s.updateOverlayContent]);
+
     return useObserver(() => {
         const fakeInput = s.hideRealInput ? (
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
@@ -181,8 +200,9 @@ function Search() {
                 hideClose={!s.showClose}
                 bar={bar}
                 passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
+                passScrollableRef={(ref) => (scrollableRef.current = ref.current)}
             >
-                <List />
+                <List updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });

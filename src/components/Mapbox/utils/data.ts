@@ -70,7 +70,7 @@ function getStyle(): string {
     return fpGeo?.properties?.style || "light-v10";
 }
 
-function actualBoothColor(b: Booth) {
+export function actualBoothColor(b: Booth) {
     let defColor: string;
     if (b instanceof SpecialBooth) {
         defColor = b.color || settings.colors.booths.empty;
@@ -90,6 +90,10 @@ function actualBoothColor(b: Booth) {
     return defColor;
 }
 
+export function getBoothlabel(booth: Booth) {
+    return booth.noLabels ? null : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
+}
+
 function decimalToHex(input: string) {
     var h = parseInt(input).toString(16);
     return h.length === 1 ? "0" + h : h;
@@ -97,8 +101,8 @@ function decimalToHex(input: string) {
 
 export const props = {
     token: "pk.eyJ1Ijoicm9kaW9ubmlrb2xhZXYiLCJhIjoiY2wwanE5aXB4MDM2NTNibGExd3k4bHhsaiJ9.wdpy8dJ1qktQXGtZYDNH3w",
-    initBearing: getBearing() - 30,
-    initPitch: 45,
+    initBearing: getBearing() + 30,
+    initPitch: 30,
     bearing: getBearing(),
     viewbox: getViewbox(),
     style: getStyle(),
@@ -160,11 +164,13 @@ export function convertSvgPoint(x: number, y: number) {
 
 export function moveToRect(
     svgRect: Rect,
-    paddingPercent: number = 100,
+    paddingPercent: number = 200,
     duration: number = 1000,
     pitch: number = props.initPitch,
     bearing: number = props.initBearing
 ) {
+    if (!map) return;
+
     const padding = (paddingPercent / 100) * Math.max(Math.abs(svgRect.x2 - svgRect.x1), Math.abs(svgRect.y2 - svgRect.y1)) || 0;
 
     var p1 = convertSvgPoint(svgRect.x1 - padding, svgRect.y1 - padding);
@@ -176,14 +182,20 @@ export function moveToRect(
         pitch,
         bearing,
     });
+
+    uiState.moveToRect = null;
 }
 
 export function moveToLocation(duration: number = 1000, pitch: number = props.initPitch, bearing: number = props.initBearing) {
     const currentPosition = store.routeStore.currentPosition;
-    const { lng, lat } = currentPosition;
+    const { lng, lat, x, y } = currentPosition;
+
+    if (!(lng && lat) && !fpGeo.properties.config) return;
+
+    const [newLng, newLat] = lng && lat ? [lng, lat] : convertLocalToGps(x, y, fpGeo.properties.config);
 
     map.flyTo({
-        center: [lng, lat],
+        center: [newLng, newLat],
         essential: true,
         duration,
         pitch,
@@ -192,6 +204,15 @@ export function moveToLocation(duration: number = 1000, pitch: number = props.in
 
     map.once("moveend", () => {
         uiState.moveToLocation = false;
+    });
+}
+
+export function zoomMap(zoomIn: boolean) {
+    map.flyTo({
+        zoom: map.getZoom() + (zoomIn ? 0.5 : -0.5),
+        animate: true,
+        duration: 500,
+        essential: true,
     });
 }
 
@@ -222,9 +243,7 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
             let booth = booths.filter((b) => b.name === f.properties.id)[0] as RegularBooth;
             if (booth) {
                 f.properties.color = actualBoothColor(booth);
-                f.properties.description = booth.noLabels
-                    ? null
-                    : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
+                f.properties.description = getBoothlabel(booth);
 
                 const logo = logos.find((l) => l?.name === booth.slug);
 
@@ -288,7 +307,7 @@ export function setLayers(layers: Layer[]): string[] {
         const images = fpGeo.images?.filter((i) => i.layer === layer.name) ?? [];
 
         images.forEach((image, index) => {
-            const bgLayer = layer.name + "-bg_" + index;
+            const bgLayer = layer.name + "--bg_" + index;
 
             layersNames.push(bgLayer);
             map.addSource(bgLayer, {
@@ -307,9 +326,9 @@ export function setLayers(layers: Layer[]): string[] {
             });
         });
 
-        layersNames.push(layer.name + "-other");
+        layersNames.push(layer.name + "--other");
         map.addLayer({
-            id: layer.name + "-other",
+            id: layer.name + "--other",
             type: "fill",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["!in", "value", "3D"]],
@@ -321,10 +340,10 @@ export function setLayers(layers: Layer[]): string[] {
             },
         });
 
-        layersNames.push(layer.name + "-other-3D");
+        layersNames.push(layer.name + "--other-3D");
 
         map.addLayer({
-            id: layer.name + "-other-3D",
+            id: layer.name + "--other-3D",
             type: "fill-extrusion",
             source: "data",
             filter: ["all", ["in", "type", featureTypes.other], ["in", "layer", layer.name], ["in", "value", "3D"]],
@@ -345,8 +364,8 @@ export function setLayers(layers: Layer[]): string[] {
 
         if (layerBooths.length) {
             layersNames.push(layer.name);
-            layersNames.push(layer.name + "-labels");
-            layersNames.push(layer.name + "-logos");
+            layersNames.push(layer.name + "--labels");
+            layersNames.push(layer.name + "--logos");
 
             map.addLayer({
                 id: layer.name,
@@ -359,12 +378,12 @@ export function setLayers(layers: Layer[]): string[] {
                 paint: {
                     "fill-extrusion-color": ["get", "color"],
                     "fill-extrusion-height": ["get", "height"],
-                    "fill-extrusion-opacity": 0.8,
+                    "fill-extrusion-opacity": 1,
                 },
             });
 
             map.addLayer({
-                id: layer.name + "-labels",
+                id: layer.name + "--labels",
                 type: "symbol",
                 source: "data",
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["!has", "logo"]],
@@ -384,7 +403,7 @@ export function setLayers(layers: Layer[]): string[] {
             });
 
             map.addLayer({
-                id: layer.name + "-logos",
+                id: layer.name + "--logos",
                 type: "symbol",
                 source: "data",
                 filter: ["all", ["in", "type", featureTypes.booth], ["in", "layer", layer.name], ["has", "logo"]],

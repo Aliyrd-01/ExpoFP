@@ -1,21 +1,22 @@
-import { Booth } from "../store/BoothStore";
+import { BoothBase } from "../store/BoothStore";
+import { isLocalStorageAvailable } from "./localStorage";
 
 export const yahKey = "__yah";
 
 export function setYah(value: string): void {
-    localStorage.setItem(yahKey, value);
+    isLocalStorageAvailable && localStorage.setItem(yahKey, value);
 }
 
 export function removeYah() {
-    localStorage.removeItem(yahKey);
+    isLocalStorageAvailable && localStorage.removeItem(yahKey);
 }
 
-export function isYahBooth(booth: Booth) {
-    return /^yah_/i.test(booth.name) || /You\s+are\s+here/gi.test(booth.title);
+export function isYahBooth(booth: BoothBase) {
+    return /^yah_/i.test(booth.name) || /^You\s+are\s+here$/i.test(booth.title?.trim());
 }
 
 export function getYah(): [number, number, number] | string {
-    if (localStorage.getItem(yahKey)) {
+    if (isLocalStorageAvailable && localStorage.getItem(yahKey)) {
         const yahValues = localStorage.getItem(yahKey).split(",");
         if (yahValues.length === 3) return [parseFloat(yahValues[0]), parseFloat(yahValues[1]), parseFloat(yahValues[2])];
         if (yahValues.length === 1) return yahValues[0];

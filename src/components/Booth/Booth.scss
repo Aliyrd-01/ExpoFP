@@ -1,10 +1,11 @@
-@import "../styles/helpers.scss";
+@import "../../styles/helpers.scss";
 
 .booth {
     &__bar {
         line-height: 1.5rem;
         color: #333;
         font-weight: 600;
+        padding: 1rem 0;
         margin-inline-start: 1rem;
         font-size: 1.1em;
         overflow-wrap: break-word;
@@ -38,8 +39,8 @@
         background: #e1ecf1;
         border-radius: 4px;
         /* flex-grow: 1;
-        flex-basis: 1px;
-        text-align: center; */
+		flex-basis: 1px;
+		text-align: center; */
         /* border: solid 1px #aaa; */
         /* margin: 0 $im; */
         padding: 1rem 0;
@@ -86,6 +87,19 @@
             /* color: #000; */
             padding-inline-end: 1rem;
         }
+        &.is-onhold {
+            background: var(--color-grayUltraLight);
+
+            & > i {
+                color: var(--color-gray);
+            }
+            .booth__info-title {
+                color: var(--color-gray);
+            }
+            .booth__info-val {
+                color: var(--color-grayDark);
+            }
+        }
     }
 
     &__buy {
@@ -111,6 +125,7 @@
     &__desc {
         p,
         span {
+            overflow-wrap: break-word;
             background: transparent !important;
         }
     }
@@ -119,6 +134,7 @@
 .efp-kiosk {
     .booth {
         &__bar {
+            padding: 0;
             margin-inline-start: var(--k-spacing-lg);
         }
     }

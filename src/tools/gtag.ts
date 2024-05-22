@@ -1,5 +1,7 @@
 import data from "../data";
 import settings from "../tools/settings";
+import isDebug from "../utils/is-debug";
+import trackEvent from "../tools/track-event";
 
 const ga_common_prop = "G-78CKLYWFJK";
 
@@ -31,25 +33,125 @@ export enum GaEventActions {
     ClickYoutube = "Click Youtube",
 
     ClickDirections = "Click Directions",
+    Rendered = "Floor plan rendered",
 }
 
-export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string,) {
+export async function checkUserIsGDPR(): Promise<boolean | null> {
+    const fetchPromise = fetch(`https://consent.expofp.com/api/verify-ip/is-in-gdpr`);
+
+    const timeoutPromise = new Promise<boolean | null>((resolve) => {
+        setTimeout(() => {
+            resolve(null);
+        }, 5000);
+    });
+
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+    if (response instanceof Response && response.ok) {
+        const data: { result: boolean } = await response.json();
+        return data.result;
+    }
+
+    return null;
+}
+export function hasUserConsent(allowConsent?: boolean): "granted" | "denied" | undefined {
+    if (allowConsent === false || allowConsent === true) return allowConsent ? "granted" : "denied";
+
+    const consentCookie = document.cookie.split("; ").find((cookie) => cookie.startsWith("cookie_consent="));
+
+    if (consentCookie) {
+        const hasCookieConsent = consentCookie === "cookie_consent=true";
+        return hasCookieConsent ? "granted" : "denied";
+    }
+
+    return undefined;
+}
+
+export function setCookieConsent(cookieConsent: boolean) {
+    const monthInSeconds = 2592000;
+
+    const domain = isDebug ? "localhost" : ".expofp.com";
+
+    // Remove cookie_consent cookie before set
+    document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`;
+    document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+
+    document.cookie = cookieConsent
+        ? `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; domain=${domain}; path=/`
+        : `cookie_consent=${cookieConsent}; max-age=${monthInSeconds}; path=/`;
+}
+
+function deleteGaCookies() {
+    const cookies = document.cookie.split(";");
+    const domain = isDebug ? "localhost" : ".expofp.com";
+
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        if (name.startsWith("_ga")) {
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`;
+        }
+    }
+}
+
+export function setConsentSettings(allowConsent?: boolean) {
+    let userChoice = hasUserConsent(allowConsent);
+
+    if (userChoice) {
+        if (userChoice === "denied") {
+            deleteGaCookies();
+
+            if (data.gtag) {
+                window[`ga-disable-${data.gtag}`] = true;
+            }
+            window[`ga-disable-${ga_common_prop}`] = true;
+        } else {
+            if (data.gtag) {
+                window[`ga-disable-${data.gtag}`] = false;
+            }
+            window[`ga-disable-${ga_common_prop}`] = false;
+        }
+
+        gtag("consent", "update", {
+            analytics_storage: userChoice,
+            ad_personalization: userChoice
+        });
+    }
+}
+
+export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string) {
     //for reference https://developers.google.com/analytics/devguides/collection/ga4/reference/events
     switch (action) {
-        case GaEventActions.ViewBooth:
+        case GaEventActions.ViewBooth: {
+            gtag("event", "select_content", {
+                content_type: action,
+                content_id: label,
+            });
+            trackEvent("booview", label);
+            break;
+        }
+        case GaEventActions.ViewCategory: {
+            gtag("event", "select_content", {
+                content_type: action,
+                content_id: label,
+            });
+            trackEvent("catview", label);
+            break;
+        }
         case GaEventActions.ViewExhibitor:
-        case GaEventActions.ViewCategory:
         case GaEventActions.ViewGallery:
         case GaEventActions.ViewVideo:
             gtag("event", "select_content", {
                 content_type: action,
-                content_id: label
+                content_id: label,
             });
             break;
         case GaEventActions.Search:
             gtag("event", "search", {
-                search_term: label
+                search_term: label,
             });
+            trackEvent("search", label);
             break;
         case GaEventActions.ClickCustomButton:
         case GaEventActions.ClickPhone:
@@ -65,14 +167,16 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
             gtag("event", "share", {
                 //method: action,
                 content_type: action,
-                content_id: label
+                content_id: label,
             });
+            trackEvent("share", label);
             break;
         case GaEventActions.ClickDirections:
             gtag("event", "route", {
                 content_type: action,
-                content_id: label
+                content_id: label,
             });
+            trackEvent("route", label);
             break;
         default:
             gtag("event", action, {
@@ -80,20 +184,23 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
                 content_id: label,
             });
     }
-
 }
 
-const v = document.createElement("script");
-v.type = "text/javascript";
-v.async = true;
-v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
-const vx = document.getElementsByTagName("script")[0];
-vx.parentNode.insertBefore(v, vx);
+let v: HTMLScriptElement | null;
+let s: HTMLScriptElement | null;
 
-gtag("js", new Date());
+if (!v) {
+    v = document.createElement("script");
+    v.type = "text/javascript";
+    v.async = true;
+    v.src = `https://www.googletagmanager.com/gtag/js?id=${ga_common_prop}`;
+    const vx = document.getElementsByTagName("script")[0];
+    vx.parentNode.insertBefore(v, vx);
+    gtag("js", new Date());
+}
 
-if (data.gtag) {
-    const s = document.createElement("script");
+if (data.gtag && !s) {
+    s = document.createElement("script");
     s.type = "text/javascript";
     s.async = true;
     s.src = `https://www.googletagmanager.com/gtag/js?id=${data.gtag}`;
@@ -102,6 +209,29 @@ if (data.gtag) {
 
     gtag("config", data.gtag, { fp_key: settings.EXPO });
 }
-gtag("config", ga_common_prop, { fp_key: settings.EXPO });
 
+gtag("config", ga_common_prop, { fp_key: settings.EXPO });
 window["gtag"] = gtag;
+
+gtag("consent", "default", {
+    ad_storage: "denied",
+    analytics_storage: "denied",
+    'region': ["BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL", "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT", "RO",
+        "SI", "SK", "FI", "SE", "UK", "IS", "NO", "LI", "CH", "MK", "AL", "RS", "TR"],
+    functionality_storage: "denied",
+    personalization_storage: "denied",
+    security_storage: "denied",
+    ad_personalization: "denied"
+});
+
+export function destroyGtag() {
+    if (v && v.parentNode) {
+        v.parentNode.removeChild(v);
+        v = null;
+    }
+
+    if (s && s.parentNode) {
+        s.parentNode.removeChild(s);
+        s = null;
+    }
+}

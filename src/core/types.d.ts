@@ -6,3 +6,4 @@ type Triangle = [Vec2, Vec2, Vec2];
 type MutableRequired<T> = { -readonly [P in keyof T]-?: T[P] }; 
 
 declare module "*.txt";
+declare module "*.png";

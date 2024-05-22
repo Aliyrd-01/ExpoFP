@@ -1,9 +1,8 @@
 import { lineAngle, lineLength, Point, pointInsideRectangle, Rect } from "simple-geometry";
 import Polygon4 from "../core/Polygon";
 import { Booth } from "../store/BoothStore";
-
-const path = require("ngraph.path");
-const createGraph = require("ngraph.graph");
+import aStarPathSearch from "./a-star/a-star";
+import createGraph from "ngraph.graph";
 
 export class RouteLine {
     constructor(
@@ -31,10 +30,16 @@ const sameLine = (l: RouteLine, p0: RoutePoint, p1: RoutePoint): boolean =>
     (samePoint(l.p0, p0) && samePoint(l.p1, p1) && l.p0.layer === p0.layer && l.p1.layer === p1.layer) ||
     (samePoint(l.p0, p1) && samePoint(l.p1, p0) && l.p0.layer === p1.layer && l.p1.layer === p0.layer);
 
+function parseId(id: string): [string, number, number] {
+    const parts = id.split("_");
+    return [parts[0], parseFloat(parts[1]), parseFloat(parts[2])];
+}
+
 export let sublines = (): Sublines => window["__wfData"];
 let pathFinder = { finder: null, oriented: true, onlyAccessible: false };
 
-function buildPathFinder(oriented: boolean, onlyAccessible: boolean) {
+
+function buildPathFinder(oriented: boolean, onlyAccessible: boolean, noVirtuals: boolean = false) {
     const graph = createGraph();
     const t0 = performance.now();
 
@@ -43,22 +48,39 @@ function buildPathFinder(oriented: boolean, onlyAccessible: boolean) {
     lines.forEach((line) => {
         if (!onlyAccessible || !line.unaccessible) {
             graph.addLink(pointId(line.p0), pointId(line.p1), {
-                distance: line.virtual ? 0 : lineLength(line.p0, line.p1) / (line.weight || 4),
+                distance: line.virtual ? (noVirtuals ? Number.MAX_VALUE : 0) : lineLength(line.p0, line.p1) / (line.weight || 4),
             });
 
             if (oriented && !line.unidirection)
                 graph.addLink(pointId(line.p1), pointId(line.p0), {
-                    distance: line.virtual ? 0 : lineLength(line.p1, line.p0) / (line.weight || 4),
+                    distance: line.virtual
+                        ? noVirtuals
+                            ? Number.MAX_VALUE
+                            : 0
+                        : lineLength(line.p1, line.p0) / (line.weight || 4),
                 });
         }
     });
 
     pathFinder.oriented = oriented;
     pathFinder.onlyAccessible = onlyAccessible;
-    pathFinder.finder = path.aStar(graph, {
+    pathFinder.finder = aStarPathSearch(graph, {
         oriented,
         distance(fromNode, toNode, link) {
-            return link.data.distance;
+            var coef = 1;
+
+            if (toNode.parent) {
+                const parentP = parseId(toNode.parent?.node.id);
+                const toP = parseId(toNode.node.id);
+                const fromP = parseId(fromNode.id);
+
+                var ang1 = lineAngle({ x: parentP[1], y: parentP[2] }, { x: toP[1], y: toP[2] });
+                var ang2 = lineAngle({ x: toP[1], y: toP[2] }, { x: fromP[1], y: fromP[2] });
+
+                if (ang1 !== ang2) coef = 1.01;
+            }
+
+            return coef * link.data.distance;
         },
     });
 
@@ -70,12 +92,7 @@ function getLineByPoints(lines: RouteLine[], p0: RoutePoint, p1: RoutePoint): Ro
     return lines.filter((l) => sameLine(l, p0, p1))[0];
 }
 
-export function getGraphLines(
-    fromBooth: Booth,
-    toBooth: Booth,
-    onlyAccessible: boolean = false,
-    disableCache: boolean = false
-): RouteLine[] {
+export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: boolean = false): RouteLine[] {
     let t0 = performance.now();
 
     const p1 = Polygon4.fromRect(fromBooth.rect).rotate(fromBooth.rotate, fromBooth.rect.cx, fromBooth.rect.cy);
@@ -84,9 +101,9 @@ export function getGraphLines(
     const fromRect = new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     const toRect = new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4));
 
-    if (!pathFinder.finder || pathFinder.onlyAccessible !== onlyAccessible || disableCache)
-        buildPathFinder(pathFinder.oriented, onlyAccessible);
+    if (!pathFinder.finder || pathFinder.onlyAccessible !== onlyAccessible) buildPathFinder(pathFinder.oriented, onlyAccessible);
 
+    // Every booth can contains many connection points
     const from: RoutePoint[] = [];
     const to: RoutePoint[] = [];
 
@@ -102,19 +119,29 @@ export function getGraphLines(
         if (t) to.push(lineEnd);
     }
 
-    const routePoints: RoutePoint[][] = [];
+    const routePoints: { distance: number; points: RoutePoint[] }[] = [];
 
     for (let i = 0; i < from.length; i++) {
         for (let j = 0; j < to.length; j++) {
             try {
                 const p = pathFinder.finder.find(pointId(from[i]), pointId(to[j]));
-                if (p.length)
-                    routePoints.push(
-                        p.map(
-                            (p) =>
-                                new RoutePoint(p.id.split("_")[0], parseFloat(p.id.split("_")[1]), parseFloat(p.id.split("_")[2]))
-                        )
-                    );
+                if (!p.length) continue;
+
+                let distance: number = 0;
+                let points: RoutePoint[] = [];
+
+                for (let i = 0; i < p.length; i++) {
+                    const element = p[i];
+                    const nextElement = p[i + 1];
+
+                    const id = element.id;
+                    const parts = parseId(id);
+                    points.push(new RoutePoint(parts[0], parts[1], parts[2]));
+
+                    if (nextElement)
+                        distance += element.links.find((l) => l.toId === id && l.fromId === nextElement.id).data.distance;
+                }
+                routePoints.push({ distance, points });
             } catch (e) {
                 console.warn(e);
             }
@@ -126,16 +153,8 @@ export function getGraphLines(
         return [];
     }
 
+    const points = routePoints.sort((a, b) => a.distance - b.distance)[0].points;
     let _lines: RouteLine[] = [];
-    var distances = [];
-
-    for (let i = 0; i < routePoints.length; i++) {
-        var d = 0;
-        for (let j = 0; j < routePoints[i].length - 1; j++) d += lineLength(routePoints[i][j], routePoints[i][j + 1]);
-        distances.push(d);
-    }
-
-    const points = routePoints[distances.indexOf(Math.min(...distances))];
 
     for (let i = 1; i < points.length; i++) {
         const pp = points[i - 1];

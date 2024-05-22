@@ -21,6 +21,7 @@ class Settings extends FpSettings {
         // base: "#ebebeb",
         booths: {
             default: "#41b6e7",
+            seectedLight: null,
             selected: "#fb3e59", //'#002cff',
             empty: "rgba(0,0,0,0.205)", // this is #aaa for default BG #d6d6d6d
         },
@@ -30,11 +31,11 @@ class Settings extends FpSettings {
 // console.log("aaa", window["__efpEvent"]);
 let settings = new Settings();
 
-if (settings.EXPO === "jtrade19") {
-    settings.colors.booths.selected = "#dc6533";
-} else if (settings.EXPO === "ktrade20") {
-    settings.borderless = true;
+if (settings.EXPO.startsWith("sxsw2024")) {
+    settings.colors.booths.selected = "#FF6400";
+    settings.colors.booths.seectedLight = "#808080";
 }
+
 // else if (settings.EXPO === "eventtechlive2019") {
 //     settings.borderless = true;
 // }

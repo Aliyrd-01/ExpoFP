@@ -2,16 +2,20 @@ import { action, computed, observable } from "mobx";
 import { uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
+import data from "../data";
+import { hasUserConsent } from "../tools/gtag";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import browser from "../utils/browser";
+import { getLanguage } from "../utils/i18n";
+import { isLocalStorageAvailable } from "../utils/localStorage";
+import { getResponsiveClass } from "../utils/responsiveClass";
 import { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
-import { getResponsiveClass } from "../utils/responsiveClass";
-import { getlanguage } from "../utils/i18n";
+import { ScheduleItem } from "./ScheduleStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -22,7 +26,7 @@ type ListType =
     | { type: "category"; category: Category };
 export type OverlaySize = "full" | "medium" | "small";
 // export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category;
+export type ListItem = Booth | Exhibitor | Category | ScheduleItem;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -56,8 +60,9 @@ export default class UIState {
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
+    @observable hideCookieConsent = Boolean(hasUserConsent());
     @observable heatmap = false;
-    rtl = getlanguage() === "ar" || getlanguage() === "he";
+    rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
 
     overlayMediumHeightRems = 10;
@@ -74,6 +79,10 @@ export default class UIState {
         return this.rootStore.fp.onBoothClick;
     }
 
+    get onBookmarkClick() {
+        return this.rootStore.fp.onBookmarkClick;
+    }
+
     get onDirection() {
         return this.rootStore.fp.onDirection;
     }
@@ -84,6 +93,10 @@ export default class UIState {
 
     get onExhibitorCustomButtonClick() {
         return this.rootStore.fp.onExhibitorCustomButtonClick;
+    }
+
+    get onGetCoordsClick() {
+        return this.rootStore.fp.onGetCoordsClick;
     }
 
     @computed({ keepAlive: true }) get selectedExhibitor() {
@@ -154,6 +167,13 @@ export default class UIState {
     @computed get wsPaddingPx() {
         return remsToPixels(0.3);
     }
+
+    @computed get kioskRectPadding() {
+        return this.kiosk && this.overlayLeft && uiState.selectedRoute?.from && uiState.selectedRoute?.to
+            ? (1.7 * uiState.overlayWidthPx) / uiState.wsWidthPx
+            : 0;
+    }
+
     @computed get wsOccupiedHeightPx() {
         return this.wsShown ? this.wsImageHeightPx + this.wsPaddingPx * 2 : 0;
     }
@@ -185,6 +205,9 @@ export default class UIState {
     @computed get mapVisibleStart() {
         return this.overlayLeft ? this.overlayWidthPx : 0;
     }
+    @computed get mapVisibleLeft() {
+        return this.overlayLeft ? this.overlayWidthPx : 0;
+    }
 
     // visible rect
     @computed get canvasVisibleRectPx(): Rect {
@@ -208,7 +231,7 @@ export default class UIState {
     // misc
     @computed({ keepAlive: true }) get shouldUseBackdrop() {
         if (uiState.overlayCollapsed) return false;
-        if (localStorage.getItem("forcebackdrop") === "1") return true;
+        if (isLocalStorageAvailable && localStorage.getItem("forcebackdrop") === "1") return true;
         if (this.overlayBottom) return false;
         if (this.selectedExhibitor?.leadingImageUrl && !this.selectedExhibitor?.leadingImageLinkUrl) return false;
         // if (settings.EXPO !== "aweusa2020" && settings.EXPO !== "expo") return false;
@@ -229,19 +252,17 @@ export default class UIState {
     @computed get dimmed() {
         const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
-        const booths = this.rootStore.boothStore.booths;
-        const hasExhibitors = exhibitors.length > 0;
+        let text = (this.list as any)?.text?.trim().toLowerCase() as string;
+        const isCategory = this.list.type === "category";
 
-        const itemCountsNotMatch = (items: ListItem[]) => this.listItems.length !== [...exhibitors, ...items].length;
+        if (uiState.noOverlay) return false;
 
-        const itemIsNotExhibitorOrBooth = (boothClass: typeof BoothBase | typeof SpecialBooth) =>
-            this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof boothClass));
-
-        if (this.heatmap) {
-            return hasExhibitors && (itemCountsNotMatch(booths) || itemIsNotExhibitorOrBooth(BoothBase));
-        }
-
-        return hasExhibitors && (itemCountsNotMatch(specialBooths) || itemIsNotExhibitorOrBooth(SpecialBooth));
+        return (
+            (text || isCategory) &&
+            exhibitors.length &&
+            (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
+                this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
+        );
     }
 
     @computed get searchItems(): ListItem[] {
@@ -249,15 +270,22 @@ export default class UIState {
         let text = this.list.text.trim().toLowerCase() as string;
         // let words = text.split(/\s+/).filter(x => x);
 
-        const { exhibitorStore, categoryStore, boothStore, heatmapStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
+        const eventsArray = scheduleStore.scheduleItems;
 
         if (!text) {
+            let combinedArray = [];
+            const cats = data.showCategories ? categoriesArray : [];
+
             const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
-            const combinedArray = [...exhibitorsArray, ...otherSpacesArray];
+
+            if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
+            if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+            if (uiState.kiosk && settings.EXPO == "imexamerica23") combinedArray = combinedArray.slice(0, 300);
 
             if (this.heatmap) {
                 const allItems = [...exhibitorsArray, ...boothsArray];
@@ -266,19 +294,21 @@ export default class UIState {
 
             return exhibitorsArray.length === 0
                 ? boothsArray
-                : combinedArray.sort((a, b) => {
-                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+                : cats.concat(
+                      combinedArray.sort((a, b) => {
+                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                      if (aFeatured !== bFeatured) {
-                          return aFeatured ? -1 : 1;
-                      }
+                          if (aFeatured !== bFeatured) {
+                              return aFeatured ? -1 : 1;
+                          }
 
-                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base" });
-                  });
+                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
+                      })
+                  );
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
@@ -292,17 +322,38 @@ export default class UIState {
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
         const matchingCategories = new Set<Category>();
+        const matchingEvents = new Set<ScheduleItem>();
 
         const splittedTexts = text.split("&").filter((s) => s);
 
+        function selectLettersSpacesNumbers(input: string): string {
+            return (
+                input
+                    ?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")              
+                    ?.replace(/\s\s+/g, " ") ?? input
+            );
+        }
+
         function containsIgnoreCase(str: string, searchTerm: string) {
-            return str.toLowerCase().includes(searchTerm.toLowerCase());
+            return selectLettersSpacesNumbers(str).toLowerCase().includes(selectLettersSpacesNumbers(searchTerm).toLowerCase());
+        }
+
+        function containsLevelIgnoreCase(str: string, searchTerm: string) {
+            return !str
+                ? false
+                : containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
         }
 
         exhibitorsArray.forEach((e) => {
             if (
                 splittedTexts.some(
-                    (text) => containsIgnoreCase(e.name, text) || e.booths.some((b) => containsIgnoreCase(b.name, text))
+                    (text) =>
+                        containsIgnoreCase(e.name, text) ||
+                        e.booths.some(
+                            (b) =>
+                                (!text && containsIgnoreCase(b.name, text)) ||
+                                containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                        )
                 )
             ) {
                 matchingExhibitors.add(e);
@@ -320,13 +371,29 @@ export default class UIState {
                 ? true
                 : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-            if (addBoothCondition && splittedTexts.some((text) => containsIgnoreCase(b.title || b.name, text))) {
+            if (addBoothCondition && 
+                splittedTexts.some((text) => 
+                    containsIgnoreCase(b.title || "", text) ||
+                    containsIgnoreCase(b.name, text) ||
+                    containsLevelIgnoreCase(b.layer?.name ?? null, text))
+                ) {
                 matchingBooths.add(b);
             }
         });
 
-        items.push(...matchingExhibitors);
+        eventsArray.forEach((e) => {
+            if (
+                splittedTexts.some(
+                    (text) => containsIgnoreCase(e.name || "", text) || containsIgnoreCase(e.description || "", text)
+                )
+            ) {
+                matchingEvents.add(e);
+            }
+        });
+
+        items.push(...matchingEvents);
         items.push(...matchingCategories);
+        items.push(...matchingExhibitors);
         items.push(...matchingBooths);
 
         if (this.heatmap) {
