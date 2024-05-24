@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { heatmapStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
@@ -51,7 +51,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                     {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                 </div>
             </div>
-            {data.hideBookmarks || data.isRebooking || uiState.kiosk ? null : (
+            {uiState.disableBookmarked || data.hideBookmarks || data.isRebooking || uiState.kiosk ? null : (
                 <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
                     <BookmarkSvg />
                 </div>

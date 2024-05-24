@@ -155,7 +155,21 @@ function processURLParams() {
         const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
         if (exhibitor) historyReplace("?" + exhibitor.slug);
         else historyReplace("?bookmarks");
-    } else if (locationSearch.includes("noOverlay")) {
+    } else if (locationSearch.startsWith("?mapbox=false")) {
+        store.mapboxStore.isMapbox = false;
+        historyReplace("?");
+    }
+
+    // facebook and google  fix
+    else if (
+        locationSearch.startsWith("?fbclid") ||
+        locationSearch.startsWith("?_ga") ||
+        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
+    ) {
+        historyReplace("?");
+    }
+
+    if (locationSearch.includes("noOverlay")) {
         const url = new URL(window.location.href);
         const noOverlayParamValue = url.searchParams.get("noOverlay");
 
@@ -168,7 +182,9 @@ function processURLParams() {
             store.uiState.hideOverlay = false;
         }
         historyReplace(newSearch);
-    } else if (locationSearch.includes("?blue-dot")) {
+    }
+
+    if (locationSearch.includes("blue-dot")) {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
 
@@ -197,18 +213,6 @@ function processURLParams() {
         }
 
         historyReplace("?");
-    } else if (locationSearch.startsWith("?mapbox=false")) {
-        store.mapboxStore.isMapbox = false;
-        historyReplace("?");
-    }
-
-    // facebook and google  fix
-    else if (
-        locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga") ||
-        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
-    ) {
-        historyReplace("?");
     }
 
     if (locationSearch.includes("allowConsent")) {
@@ -234,8 +238,6 @@ function processURLParams() {
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
         if (value === "true") {
             uiState.hideHeaderLogo = true;
-        } else if (value === "false") {
-            uiState.hideHeaderLogo = false;
         }
 
         historyReplace(newSearch);
@@ -249,8 +251,6 @@ function processURLParams() {
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
         if (value === "true") {
             uiState.hideLogoInBooth = true;
-        } else if (value === "false") {
-            uiState.hideLogoInBooth = false;
         }
 
         historyReplace(newSearch);
@@ -263,13 +263,38 @@ function processURLParams() {
 
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
         if (value === "true") {
-            uiState.disableFeatured = true;
-        } else if (value === "false") {
-            uiState.hideLogoInBooth = false;
+            store.exhibitorStore.exhibitors.forEach(ex => ex.featured = false);
         }
 
         historyReplace(newSearch);
     }
+
+    if (locationSearch.includes("disableBookmarked")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableBookmarked");
+        url.searchParams.delete("disableBookmarked");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableBookmarked = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("monochrome")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("monochrome");
+        url.searchParams.delete("monochrome");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.monochrome = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
 
     if (uiState.previewExhibitor) {
         historyReplace("?" + uiState.previewExhibitor.slug);
