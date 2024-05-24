@@ -226,6 +226,51 @@ function processURLParams() {
         historyReplace(newSearch);
     }
 
+    if (locationSearch.includes("hideHeaderLogo")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideHeaderLogo");
+        url.searchParams.delete("hideHeaderLogo");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideHeaderLogo = true;
+        } else if (value === "false") {
+            uiState.hideHeaderLogo = false;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("hideLogoInBooth")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideLogoInBooth");
+        url.searchParams.delete("hideLogoInBooth");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideLogoInBooth = true;
+        } else if (value === "false") {
+            uiState.hideLogoInBooth = false;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("disableFeatured")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableFeatured");
+        url.searchParams.delete("disableFeatured");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableFeatured = true;
+        } else if (value === "false") {
+            uiState.hideLogoInBooth = false;
+        }
+
+        historyReplace(newSearch);
+    }
+
     if (uiState.previewExhibitor) {
         historyReplace("?" + uiState.previewExhibitor.slug);
     }
