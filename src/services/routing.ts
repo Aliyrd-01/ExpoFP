@@ -130,7 +130,7 @@ function dispatchFromUrl() {
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);
-            else store.selectSearch(slug);
+            else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
         }
     }
 
@@ -209,6 +209,7 @@ function processURLParams() {
 
             let newSearch = url.search;
             newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+            disableHistoryManipulation = true;
 
             historyReplace(newSearch);
             store.uiState.heatmap = true;
@@ -238,6 +239,54 @@ function processURLParams() {
 
         historyReplace(newSearch);
     }
+
+    if (locationSearch.includes("hideHeaderLogo")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideHeaderLogo");
+        url.searchParams.delete("hideHeaderLogo");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideHeaderLogo = true;
+        } else if (value === "false") {
+            uiState.hideHeaderLogo = false;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("hideLogoInBooth")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideLogoInBooth");
+        url.searchParams.delete("hideLogoInBooth");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideLogoInBooth = true;
+        } else if (value === "false") {
+            uiState.hideLogoInBooth = false;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("disableFeatured")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableFeatured");
+        url.searchParams.delete("disableFeatured");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableFeatured = true;
+        } else if (value === "false") {
+            uiState.hideLogoInBooth = false;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    // https://heatmap.expofp.com/?heatmap=true&noOverlay=true&hideHeaderLogo=true&hideLogoInBooth=true&disableFeatured=true&disableBookmarked=true
+
 
     if (uiState.previewExhibitor) {
         historyReplace("?" + uiState.previewExhibitor.slug);
