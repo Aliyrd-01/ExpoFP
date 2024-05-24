@@ -93,7 +93,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 <Header />
                 {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
                 <LogoOverlay />
-                <Ws />
+                {!uiState.hideHeaderLogo && <Ws />}
                 <Controls />
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}

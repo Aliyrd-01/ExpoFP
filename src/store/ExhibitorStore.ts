@@ -74,7 +74,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly id: number;
     readonly name: string;
     readonly externalId: string;
-    readonly featured: boolean; //new
+    @observable featured: boolean; //new
     readonly advertise: boolean;
     readonly description: string;
     readonly address: string;

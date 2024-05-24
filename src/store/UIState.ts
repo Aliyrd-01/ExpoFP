@@ -63,7 +63,6 @@ export default class UIState {
     @observable hideCookieConsent = Boolean(hasUserConsent());
     @observable hideHeaderLogo = false;
     @observable hideLogoInBooth = false;
-    @observable disableFeatured = false;
     @observable disableBookmarked = false;
     @observable monochrome = false;
     @observable heatmap = false;
