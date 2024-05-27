@@ -16,7 +16,7 @@ import { getChildLayers } from "../../../../store/init/init-layers";
 function createChildLayers(layer: Layer) {
     if (layer.childLayers.length) return layer.childLayers;
 
-    const childLayers = getChildLayers(layer, layer.basePriority).layers;
+    const childLayers = getChildLayers(layer, layer.basePriority, 15).layers;
     if (childLayers.length) {
         layer.childLayers = childLayers;
     }
