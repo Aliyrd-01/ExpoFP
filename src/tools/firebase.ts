@@ -42,18 +42,14 @@ export async function getAllClicks(floorplanId: string) {
 
 export async function recordClick(floorplanId: string, boothId: number, type: "booths" | "exhibitors") {
     try {
-        // Get a reference to the document
         const floorplanDocRef = doc(db, "heatmaps", floorplanId);
         const docRef = doc(collection(floorplanDocRef, type), boothId.toString());
 
-        // Check if document exists
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            // If document exists, increment the click count
             await setDoc(docRef, { clickCount: docSnap.data().clickCount + 1 }, { merge: true });
         } else {
-            // If document does not exist, initialize it with a click count of 1
             await setDoc(docRef, { clickCount: 1 });
         }
         logger.log("Success update click");
