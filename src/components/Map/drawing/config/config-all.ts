@@ -77,8 +77,8 @@ export default function configAll(context: DrawerContext = _context): void {
             }
     };
 
-    const WfBasePriority = 100 * (layers.length);
+    const wfBasePriority = 10000 * (layers.length);
 
-    configWf(context, WfBasePriority, true);
+    configWf(context, wfBasePriority, true);
     configGPS();
 }
