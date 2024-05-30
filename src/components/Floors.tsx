@@ -55,6 +55,7 @@ export default function Floors() {
                 store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible)
             )
             .filter((value, index, array) => array.indexOf(value) === index)
+            .reverse()
             .map((l) => {
                 return {
                     layer: l,
