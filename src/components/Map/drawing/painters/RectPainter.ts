@@ -99,6 +99,25 @@ export default class RectPainter implements Painter {
         if (item.id) this.objectsById.set(item.id, item);
     }
 
+    removeObject(id: string) {
+        const obj = this.objectsById.get(id);
+        if (!obj) return;
+
+        this.updateVisible(obj.id, false);
+
+        const index = this.objects.indexOf(obj);
+        if (index > -1) {
+            this.objects.splice(index, 1);
+        }
+
+        const sortedIndex = this.sortedObjects.indexOf(obj);
+        if (sortedIndex > -1) {
+            this.sortedObjects.splice(sortedIndex, 1);
+        }
+
+        this.objectsById.delete(id);
+    }
+
     getObject(id): DrawerObject {
         return this.objectsById.get(id);
     }
@@ -155,6 +174,11 @@ export default class RectPainter implements Painter {
             this.objectsById.get(id).rotateRadians = rotateRadians;
             this.rotateDirty = true;
         }
+    }
+
+    reinitializeBuffers() {
+        this.buffersInitialized = true;
+        this.ensureBuffersAndGroupsInternal();
     }
 
     private ensureBuffersAndGroupsInternal() {

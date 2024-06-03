@@ -11,6 +11,13 @@ import { Layer, LayersMode } from "./LayerStore";
 import RootStore from "./RootStore";
 import { uiState } from "./index";
 
+const replaceCommasWithDot = (value: string | number | undefined) => {
+    if (typeof value === "string") {
+        return Number(value.replace(",", "."));
+    }
+    return value;
+};
+
 export default class RouteStore {
     rootStore: RootStore;
     cpTimeout: number;
@@ -22,6 +29,8 @@ export default class RouteStore {
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
     @observable prevZ: string = null;
+    @observable bluedots: Bluedot[] = [];
+    @observable prevBluedots: Bluedot[] = [];
 
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
@@ -124,15 +133,18 @@ export default class RouteStore {
         //this.showMap();
     }
 
+    @action setBluedots(bluedots: Bluedot[]) {
+        this.bluedots = bluedots.map(dot => {
+            dot.x = replaceCommasWithDot(dot.x);
+            dot.y = replaceCommasWithDot(dot.y);
+            dot.lat = replaceCommasWithDot(dot.lat);
+            dot.lng = replaceCommasWithDot(dot.lng);
+            return dot;
+        });
+    }
+
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
         clearTimeout(this.cpTimeout);
-
-        const replaceCommasWithDot = (value: string | number | undefined) => {
-            if (typeof value === "string") {
-                return Number(value.replace(",", "."));
-            }
-            return value;
-        };
 
         if (point) {
             point.x = replaceCommasWithDot(point.x);
@@ -278,4 +290,8 @@ export class CurrentPosition extends Point {
     ) {
         super(x, y);
     }
+}
+
+export interface Bluedot extends CurrentPosition {
+    id: string;
 }

@@ -1,6 +1,6 @@
 import _locales from "../public/locales/_locales";
 import { Data } from "./data/Data";
-import { CurrentPosition } from "./store/RouteStore";
+import { Bluedot, CurrentPosition } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -48,6 +48,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
 
+    onBluedotClick: (e: FloorPlanBluedotEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -65,6 +67,10 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void {
+        nr();
+    }
+
+    setBluedots(bluedots: Bluedot[]): void {
         nr();
     }
 
@@ -103,6 +109,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onGetCoordsClick = options.onGetCoordsClick;
+        this.onBluedotClick = options.onBluedotClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
