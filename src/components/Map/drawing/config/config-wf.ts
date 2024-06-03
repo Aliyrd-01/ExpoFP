@@ -308,6 +308,43 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     pointSize = pointCanvas.width;
 
+    function drawBluedots() {
+        if (!store.routeStore.bluedots.length) return;
+        const bluedots = store.routeStore.bluedots;
+
+        bluedots.forEach((dot, index) => {
+            const id = `Bluedot_${dot.id}`;
+            wfDrawer.addObject({
+                id: id,
+                center: [0, 0],
+                deltas: [0, 0, 0, 0],
+                deltaPts: [
+                    -currentLocationCanvas.width / 2,
+                    -currentLocationCanvas.height / 2,
+                    currentLocationCanvas.width,
+                    currentLocationCanvas.height,
+                ],
+                canvasTmp: currentLocationCanvas,
+                texPosition: "lefttop",
+                visible: false,
+            });
+        });
+    }
+
+    function updateBluedots(updateBuffers: boolean) {
+        if (!store.routeStore.bluedots.length) return;
+
+        store.routeStore.bluedots.forEach((dot) => {
+            const visible = layersStore.findLayer(dot.z)?.visible ?? true;
+
+            wfDrawer.updateVisible(`Bluedot_${dot.id}`, visible);
+            wfDrawer.updateSkipdim(`Bluedot_${dot.id}`, visible);
+            wfDrawer.updateCenter(`Bluedot_${dot.id}`, [dot.x, dot.y]);
+        })
+
+        if (updateBuffers) wfDrawer.reinitializeBuffers();
+    }
+
     for (let i = 0; i < totalPoints; i++) {
         wfDrawer.addObject({
             id: `Dot_${i.toString()}`,
@@ -521,6 +558,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 counter = 0;
                 context.requireUpdate(updateRoute);
                 blink(context, blinkDrawer, updateCurrentPosition());
+                updateBluedots(false);
             }
         );
         reaction(
@@ -536,6 +574,17 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => store.routeStore.currentPosition,
             () => {
                 context.requireUpdate(() => blink(context, blinkDrawer, updateCurrentPosition()));
+            }
+        );
+
+        reaction(
+            () => store.routeStore.bluedots,
+            (value) => {
+                store.routeStore.prevBluedots.forEach(dot => wfDrawer.removeObject(`Bluedot_${dot.id}`));
+                store.routeStore.prevBluedots = store.routeStore.bluedots;
+
+                context.requireUpdate(drawBluedots);
+                context.requireUpdate(() => updateBluedots(true));
             }
         );
 
