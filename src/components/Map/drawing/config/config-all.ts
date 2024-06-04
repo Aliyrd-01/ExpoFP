@@ -9,6 +9,7 @@ import configYah from "./config-yah";
 import configGPS from "./config-gps";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
+import { configMarkers } from "./config-markers";
 
 let _context: DrawerContext;
 export let getContext = () => _context;
@@ -80,5 +81,6 @@ export default function configAll(context: DrawerContext = _context): void {
     const wfBasePriority = 10000 * (layers.length);
 
     configWf(context, wfBasePriority, true);
+    configMarkers(context, wfBasePriority, true);
     configGPS();
 }

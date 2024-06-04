@@ -29,8 +29,8 @@ export default class RouteStore {
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
     @observable prevZ: string = null;
-    @observable bluedots: Bluedot[] = [];
-    @observable prevBluedots: Bluedot[] = [];
+    @observable markers: Marker[] = [];
+    @observable prevMarkers: Marker[] = [];
 
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
@@ -102,6 +102,36 @@ export default class RouteStore {
         );
     }
 
+    @action setMarkers(markers: Marker[]) {
+        this.markers = markers.map(dot => {
+            dot.x = replaceCommasWithDot(dot.x);
+            dot.y = replaceCommasWithDot(dot.y);
+            dot.lat = replaceCommasWithDot(dot.lat);
+            dot.lng = replaceCommasWithDot(dot.lng);
+            return dot;
+        });
+    }
+
+    @action selectMarker(id: string, focus: boolean) {
+        const marker = this.markers.find(marker => marker.id === id);
+        this.markers.forEach(marker => marker.active = false);
+
+        if (marker) {
+            marker.active = true;
+        }
+
+        let layer = store.layerStore.findLayer(marker?.z);
+
+        if (focus) {
+            if (layer && !layer?.visible) layersStore.updateVisibility(layer, true);
+            this.rootStore.uiState.moveToRect = Rect.fromCxcywh(marker?.x, marker?.y, 1000, 1000);
+        }
+    }
+
+    @computed({ keepAlive: true }) get selectedMarkers() {
+        return this.markers.filter(marker => marker.active);
+    }
+
     @computed({ keepAlive: true }) get layers(): Layer[] {
         var layers: string[] = [];
         store.routeStore.routeLines
@@ -131,16 +161,6 @@ export default class RouteStore {
         // }
 
         //this.showMap();
-    }
-
-    @action setBluedots(bluedots: Bluedot[]) {
-        this.bluedots = bluedots.map(dot => {
-            dot.x = replaceCommasWithDot(dot.x);
-            dot.y = replaceCommasWithDot(dot.y);
-            dot.lat = replaceCommasWithDot(dot.lat);
-            dot.lng = replaceCommasWithDot(dot.lng);
-            return dot;
-        });
     }
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
@@ -292,6 +312,7 @@ export class CurrentPosition extends Point {
     }
 }
 
-export interface Bluedot extends CurrentPosition {
+export interface Marker extends CurrentPosition {
     id: string;
+    active?: boolean;
 }
