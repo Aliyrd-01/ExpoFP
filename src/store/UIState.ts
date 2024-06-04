@@ -78,8 +78,8 @@ export default class UIState {
         return this.rootStore.fp.onBoothClick;
     }
 
-    get onBluedotClick() {
-        return this.rootStore.fp.onBluedotClick;
+    get onMarkerClick() {
+        return this.rootStore.fp.onMarkerClick;
     }
 
     get onBookmarkClick() {
