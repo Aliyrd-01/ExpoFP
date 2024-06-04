@@ -8,7 +8,7 @@ import FloorPlanLoader from "./floorplan.loader";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { SpecialBooth } from "./store/BoothStore";
-import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
+import { CurrentPosition, Route, extractRoute, Bluedot } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import reportError from "./tools/report-error";
@@ -89,6 +89,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
             const e = store.exhibitorStore.exhibitors.find((e) => e.name === b.name);
             if (e) e.bookmarked = b.bookmarked;
         });
+    }
+
+    setBluedots(bluedots: Bluedot[]): void {
+        store.routeStore.setBluedots(bluedots);
     }
 
     checkRoutes(): void {

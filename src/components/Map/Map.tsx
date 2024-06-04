@@ -25,6 +25,7 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import { getBluedotFromClientXy } from "./bluedot-by-xy";
 
 //console.log('isIframe', isIframe)
 
@@ -337,6 +338,11 @@ export default function Map() {
             );
 
             uiState.onGetCoordsClick({ x: xys[0], y: xys[1], z: currentFloor?.name || null });
+        }
+
+        if (uiState.onBluedotClick) {
+            const bluedot = getBluedotFromClientXy(x, y, s.drawer);
+            uiState.onBluedotClick({...bluedot});
         }
 
         // if (!this.props.onBoothClick) return;
