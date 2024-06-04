@@ -54,8 +54,6 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
         store.routeStore.markers.forEach((marker) => {
             const visible = layersStore.findLayer(marker.z)?.visible ?? true;
 
-            console.error(marker, visible, layersStore.findLayer(marker.z)?.visible)
-
             if (marker.active) {
                 markersDrawer.updateVisible(`Marker_${marker.id}_selected`, visible);
                 markersDrawer.updateSkipdim(`Marker_${marker.id}_selected`, visible);
