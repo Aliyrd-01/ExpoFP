@@ -14,6 +14,7 @@ export default class RectPainter implements Painter {
     private rotateDirty = true;
     private skipdimDirty = true;
     private stretchDirty = true;
+    private scaleDisable = false;
 
     private readonly programInfo: any;
     private readonly program: WebGLProgram;
@@ -179,6 +180,10 @@ export default class RectPainter implements Painter {
     reinitializeBuffers() {
         this.buffersInitialized = true;
         this.ensureBuffersAndGroupsInternal();
+    }
+
+    disableScale() {
+        this.scaleDisable = true;
     }
 
     private ensureBuffersAndGroupsInternal() {
@@ -582,12 +587,14 @@ export default class RectPainter implements Painter {
         this.enableBuffer(this.fixdeltaptBuffer, this.fixdeltaptLocation, 2);
         this.enableBuffer(this.fixdeltamaxptBuffer, this.fixdeltamaxptLocation, 2);
 
+        const scale = this.scaleDisable ? 1 : this.ptscale;
+
         for (let group of this.groups) {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
 
             const uniforms = {
                 u_matrix: this.matrix,
-                u_ptscale: [this.ptscale, this.ptscale],
+                u_ptscale: [scale, scale],
                 u_dim: this.dim,
                 u_alpha: this.alpha,
             } as any;

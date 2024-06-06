@@ -63,6 +63,7 @@ export default class UIState {
     @observable hideCookieConsent = Boolean(hasUserConsent());
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
+    @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
 
     overlayMediumHeightRems = 10;
 

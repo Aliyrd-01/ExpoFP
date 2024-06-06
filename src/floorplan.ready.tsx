@@ -99,6 +99,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.routeStore.selectMarker(id, focus);
     }
 
+    drawCircles(circles: { x: number, y: number, radius: number, color?: string }[]) {
+        store.uiState.debugCircles = circles;
+    }
+
     checkRoutes(): void {
         store.routeStore.checkRoutes();
     }
