@@ -410,6 +410,21 @@ export function createTargetCanvas(
     };
 }
 
+export function createImageCanvas(
+    image: HTMLImageElement,
+    width: number,
+    height: number,
+    pixelRatio: number
+): CanvasDescriptor {
+    return {
+        width: width * pixelRatio,
+        height: height * pixelRatio,
+        draw(ctx: CanvasRenderingContext2D) {
+            ctx.drawImage(image, 0, 0, width * pixelRatio, height * pixelRatio);
+        }
+    };
+}
+
 export function createYahCanvas(
     pixelRatio: number,
     color: string = "#ff4343",

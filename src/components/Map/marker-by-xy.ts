@@ -2,39 +2,33 @@ import { Drawer } from "./drawing/Drawer1";
 import { m4 } from "twgl.js";
 import store from "../../store";
 
-type IconType = "bluedot";
-
-function isPointInCircle(x: number, y: number, circleX: number, circleY: number, radius: number) {
-    const distance = Math.sqrt((x - circleX) ** 2 + (y - circleY) ** 2);
-    return distance <= radius;
-}
-
-function getRadius(drawer: Drawer, iconType: IconType) {
-    if (iconType === "bluedot") {
-        const scale = Math.max(drawer.ptscale < 1 ? Math.round(drawer.ptscale * 10) / 10 : Math.round(drawer.ptscale), 0.3);
-        return 70 * (drawer.pixelRatio * 0.4) * scale / 2;
-    }
-}
-
-
-export function getMarkerFromClientXy(iconType: IconType, x: number, y: number, drawer: Drawer) {
+export function getMarkerFromClientXy(x: number, y: number, drawer: Drawer) {
     const pxSvgMatrix = drawer.getPxSvgMatrix();
     const xys = m4.transformPoint(pxSvgMatrix, [x, y, 1], null);
     const xs = xys[0];
     const ys = xys[1];
 
+    for (const marker of store.routeStore.markersData.markers) {
+        const icon = store.routeStore.markersData.icons.find(icon => icon.name === marker.icon);
+        if (!icon) continue;
 
+        const iconWidth = icon.width * drawer.ptscale * drawer.pixelRatio; // Adjust for pixel ratio
+        const iconHeight = icon.height * drawer.ptscale * drawer.pixelRatio; // Adjust for pixel ratio
 
-    const result = store.routeStore.markers.find(marker => {
-        const radius = getRadius(drawer, iconType);
-        let layer = store.layerStore.findLayer(marker.z);
-
-        if (!layer) {
-            return isPointInCircle(xs, ys, marker.x, marker.y, radius);
+        if (isPointInMarker(xs, ys, marker.x, marker.y, iconWidth, iconHeight)) {
+            const layer = store.layerStore.findLayer(marker.z);
+            if (!layer || (layer && layer.visible)) {
+                return marker;
+            }
         }
+    }
 
-        return isPointInCircle(xs, ys, marker.x, marker.y, radius) && layer && layer.visible;
-    })
+    return null;
+}
 
-    return result;
+function isPointInMarker(x: number, y: number, markerX: number, markerY: number, iconWidth: number, iconHeight: number) {
+    const halfWidth = iconWidth / 2;
+    const halfHeight = iconHeight / 2;
+    return x >= markerX - halfWidth && x <= markerX + halfWidth &&
+        y >= markerY - halfHeight && y <= markerY + halfHeight;
 }

@@ -18,6 +18,18 @@ const replaceCommasWithDot = (value: string | number | undefined) => {
     return value;
 };
 
+export interface MarkerIcon {
+    name: string,
+    content: string,
+    width: number,
+    height: number
+}
+
+export interface MarkersData {
+    icons: MarkerIcon[],
+    markers: Marker[]
+}
+
 export default class RouteStore {
     rootStore: RootStore;
     cpTimeout: number;
@@ -29,7 +41,7 @@ export default class RouteStore {
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
     @observable prevZ: string = null;
-    @observable markers: Marker[] = [];
+    @observable markersData: MarkersData = { icons: [], markers: [] };
     @observable prevMarkers: Marker[] = [];
 
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
@@ -102,19 +114,20 @@ export default class RouteStore {
         );
     }
 
-    @action setMarkers(markers: Marker[]) {
-        this.markers = markers.map(dot => {
+    @action setMarkers(data: MarkersData) {
+        this.markersData.markers = data.markers.map(dot => {
             dot.x = replaceCommasWithDot(dot.x);
             dot.y = replaceCommasWithDot(dot.y);
             dot.lat = replaceCommasWithDot(dot.lat);
             dot.lng = replaceCommasWithDot(dot.lng);
             return dot;
         });
+        this.markersData.icons = data.icons;
     }
 
     @action selectMarker(id: string, focus: boolean) {
-        const marker = this.markers.find(marker => marker.id === id);
-        this.markers.forEach(marker => marker.active = false);
+        const marker = this.markersData.markers.find(marker => marker.id === id);
+        this.markersData.markers.forEach(marker => marker.active = false);
 
         if (marker) {
             marker.active = true;
@@ -129,7 +142,7 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get selectedMarkers() {
-        return this.markers.filter(marker => marker.active);
+        return this.markersData.markers.filter(marker => marker.active);
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
@@ -314,5 +327,7 @@ export class CurrentPosition extends Point {
 
 export interface Marker extends CurrentPosition {
     id: string;
+    icon: string,
+    selectedIcon: string,
     active?: boolean;
 }

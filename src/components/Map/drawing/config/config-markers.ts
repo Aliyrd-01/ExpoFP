@@ -1,47 +1,91 @@
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { createCurrentCanvas } from "./canvases";
-import Color from "color";
+import { CanvasDescriptor, createImageCanvas } from "./canvases";
 import store, { layersStore } from "../../../../store";
 import { reaction } from "mobx";
+import { MarkerIcon } from "../../../../store/RouteStore";
 
 export function configMarkers(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
+    const iconMap = new Map<string, { width: number, height: number, img: HTMLImageElement }>();
+    const canvasCache = new Map<string, CanvasDescriptor>();
+
     const markersDrawer = context.requirePainter("MARKERS", RectPainter, painterOrderPriority, visible);
-    const markerCanvas = createCurrentCanvas(context.pixelRatio, Color("#30AFEB").hex());
-    const selectedMarkerCanvas = createCurrentCanvas(context.pixelRatio, Color("#C4001F").hex());
+
+    async function loadIcons(icons: MarkerIcon[]): Promise<void> {
+        const promises: Promise<void>[] = [];
+
+        icons.forEach(icon => {
+            const { name, content, width, height } = icon;
+            if (iconMap.has(name)) return;
+
+            const img = new Image();
+            const promise = new Promise<void>((resolve, reject) => {
+                img.onload = () => {
+                    iconMap.set(name, { img, width, height });
+                    resolve();
+                };
+                img.onerror = (error) => {
+                    reject(error);
+                };
+            });
+
+            promises.push(promise);
+            img.src = content;
+        });
+
+        await Promise.all(promises);
+    }
 
     function drawMarkers() {
-        if (!store.routeStore.markers.length) return;
-        const markers = store.routeStore.markers;
+        if (!store.routeStore.markersData.markers.length) return;
+        const markers = store.routeStore.markersData.markers;
 
         markers.forEach((marker, index) => {
             const id = `Marker_${marker.id}`;
+            const icon = iconMap.get(marker.icon);
+            if (!icon) return;
+
+            const cacheKey = `${marker.icon}_${context.pixelRatio}`;
+            if (!canvasCache.has(cacheKey)) {
+                const imageCanvas = createImageCanvas(icon.img, icon.width, icon.height, context.pixelRatio);
+                canvasCache.set(cacheKey, imageCanvas);
+            }
+            const imageCanvas = canvasCache.get(cacheKey);
+
             markersDrawer.addObject({
                 id: id,
                 center: [0, 0],
                 deltas: [0, 0, 0, 0],
                 deltaPts: [
-                    -markerCanvas.width / 2,
-                    -markerCanvas.height / 2,
-                    markerCanvas.width,
-                    markerCanvas.height,
+                    -imageCanvas.width / 2,
+                    -imageCanvas.height / 2,
+                    imageCanvas.width,
+                    imageCanvas.height,
                 ],
-                canvasTmp: markerCanvas,
+                canvasTmp: imageCanvas,
                 texPosition: "lefttop",
                 visible: false,
             });
+
+            const selectedIcon = iconMap.get(marker.selectedIcon);
+            const selectedCacheKey = `${marker.selectedIcon}_${context.pixelRatio}`;
+            if (!canvasCache.has(selectedCacheKey)) {
+                const selectedImageCanvas = createImageCanvas(selectedIcon.img, selectedIcon.width, selectedIcon.height, context.pixelRatio);
+                canvasCache.set(selectedCacheKey, selectedImageCanvas);
+            }
+            const selectedImageCanvas = canvasCache.get(selectedCacheKey);
 
             markersDrawer.addObject({
                 id: `${id}_selected`,
                 center: [0, 0],
                 deltas: [0, 0, 0, 0],
                 deltaPts: [
-                    -selectedMarkerCanvas.width / 2,
-                    -selectedMarkerCanvas.height / 2,
-                    selectedMarkerCanvas.width,
-                    selectedMarkerCanvas.height,
+                    -selectedImageCanvas.width / 2,
+                    -selectedImageCanvas.height / 2,
+                    selectedImageCanvas.width,
+                    selectedImageCanvas.height,
                 ],
-                canvasTmp: selectedMarkerCanvas,
+                canvasTmp: selectedImageCanvas,
                 texPosition: "lefttop",
                 visible: false,
             });
@@ -49,9 +93,9 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
     }
 
     function updateMarkers() {
-        if (!store.routeStore.markers.length) return;
+        if (!store.routeStore.markersData.markers.length) return;
 
-        store.routeStore.markers.forEach((marker) => {
+        store.routeStore.markersData.markers.forEach((marker) => {
             const visible = layersStore.findLayer(marker.z)?.visible ?? true;
 
             if (marker.active) {
@@ -76,16 +120,18 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
 
     if (context.updatable) {
         reaction(
-            () => [store.routeStore.markers, store.routeStore.selectedMarkers, store.layerStore.loaded, store.layerStore.visible],
+            () => [store.routeStore.markersData, store.routeStore.selectedMarkers, store.layerStore.loaded, store.layerStore.visible],
             () => {
-                store.routeStore.prevMarkers.forEach(dot => {
-                    markersDrawer.removeObject(`Marker_${dot.id}`);
-                    markersDrawer.removeObject(`Marker_${dot.id}_selected`);
-                });
-                store.routeStore.prevMarkers = store.routeStore.markers;
+                loadIcons(store.routeStore.markersData.icons).then(() => {
+                    store.routeStore.prevMarkers.forEach(dot => {
+                        markersDrawer.removeObject(`Marker_${dot.id}`);
+                        markersDrawer.removeObject(`Marker_${dot.id}_selected`);
+                    });
+                    store.routeStore.prevMarkers = store.routeStore.markersData.markers;
 
-                context.requireUpdate(drawMarkers);
-                context.requireUpdate(updateMarkers);
+                    context.requireUpdate(drawMarkers);
+                    context.requireUpdate(updateMarkers);
+                })
             }
         );
     }

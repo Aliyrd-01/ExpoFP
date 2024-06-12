@@ -1,6 +1,6 @@
 import _locales from "../public/locales/_locales";
 import { Data } from "./data/Data";
-import { Marker, CurrentPosition } from "./store/RouteStore";
+import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -70,11 +70,15 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    setMarkers(markers: Marker[]): void {
+    setMarkers(markersData: MarkersData): void {
         nr();
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {
+        nr();
+    }
+
+    getCenterCoordinates() {
         nr();
     }
 

@@ -48,10 +48,12 @@ export default function Map() {
         //     return  rect;//rect.withPadding(rect.w * 0.05, rect.h * 0.05);
         // }
     }));
-
+    
     // init
     useEffect(() => {
         init();
+
+        store.fp.getCenterCoordinates = getCenterCoordinates;
 
         return () => resizeObserverRef.current.disconnect();
     }, []);
@@ -304,6 +306,18 @@ export default function Map() {
         uiState.hoveredBooth = b;
     }
 
+    function getCenterCoordinates() {
+        const { width, height } = s.$canvas.node().getBoundingClientRect();
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        const pxSvgMatrix = s.drawer.getPxSvgMatrix();
+        const [x, y] = m4.transformPoint(pxSvgMatrix, [centerX, centerY, 0]);
+
+        return { x, y };
+    }
+
     function handleMouseMoveAndOver(e) {
         const { left, top } = uiState.rootElement.getBoundingClientRect();
 
@@ -341,8 +355,8 @@ export default function Map() {
         }
 
         if (uiState.onMarkerClick) {
-            const marker = getMarkerFromClientXy("bluedot", x, y, s.drawer);
-            uiState.onMarkerClick({...marker});
+            const marker = getMarkerFromClientXy(x, y, s.drawer);
+            uiState.onMarkerClick(marker);
         }
 
         // if (!this.props.onBoothClick) return;

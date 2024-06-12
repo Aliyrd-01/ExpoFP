@@ -2,7 +2,6 @@ import classNames from "classnames";
 import React, { MouseEvent, useEffect, useState } from "react";
 import store from "../store";
 import "./OverlayBarBack.scss";
-const { uiState } = store;
 
 type BackMode = "back" | "menu" | "none";
 
@@ -48,7 +47,7 @@ const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ 
     function handleClick(e: MouseEvent) {
         e.preventDefault();
         if (showBack) onBack();
-        else uiState.menu = true;
+        else store.uiState.menu = true;
     }
 };
 
