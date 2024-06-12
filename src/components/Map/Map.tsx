@@ -309,13 +309,16 @@ export default function Map() {
     function getCenterCoordinates() {
         const { width, height } = s.$canvas.node().getBoundingClientRect();
 
+        const activeLayer = store.layerStore.visible.find(layer => layer.mode === LayerMode.TurnedOff || layer.mode === LayerMode.TurnedOn);
+        const z = activeLayer?.name || null;
+
         const centerX = width / 2;
         const centerY = height / 2;
 
         const pxSvgMatrix = s.drawer.getPxSvgMatrix();
         const [x, y] = m4.transformPoint(pxSvgMatrix, [centerX, centerY, 0]);
 
-        return { x, y };
+        return { x, y, z };
     }
 
     function handleMouseMoveAndOver(e) {
