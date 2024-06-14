@@ -338,13 +338,16 @@ export function createCurrentCanvas(
     scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
     return {
-        width: 70 * scale,
-        height: 70 * scale,
+        // width: 70 * scale,
+        // height: 70 * scale,
+        width: 95 * scale,
+        height: 95 * scale,
 
         draw(ctx) {
             ctx.scale(scale, scale);
 
-            // #path833
+            // WHITE
+            // // #path833
             ctx.beginPath();
             ctx.fillStyle = "#FFFFFF";
             ctx.moveTo(0.0, 35.0);
@@ -354,6 +357,7 @@ export function createCurrentCanvas(
             ctx.bezierCurveTo(15.670034, 0.0, 0.0, 15.670034, 0.0, 35.0);
             ctx.fill();
 
+            // BLUE
             // #path835
             ctx.beginPath();
             ctx.fillStyle = color;
@@ -362,6 +366,16 @@ export function createCurrentCanvas(
             ctx.bezierCurveTo(48.807119, 60.0, 60.0, 48.807119, 60.0, 35.0);
             ctx.bezierCurveTo(60.0, 21.192881, 48.807119, 10.0, 35.0, 10.0);
             ctx.bezierCurveTo(21.192881, 10.0, 10.0, 21.192881, 10.0, 35.0);
+            ctx.fill();
+
+            // // ARROW
+            ctx.beginPath();
+            ctx.fillStyle = color; // Color of the arrow
+            ctx.moveTo(75, 15);  // Start point at the center, slightly above the circle
+            ctx.lineTo(95, 35); // Line to the right edge of the circle
+            ctx.lineTo(75, 55); // Line back to the center, slightly below the circle
+            ctx.lineTo(80, 35); // Tip of the arrow, to the right of the circle
+            ctx.closePath();
             ctx.fill();
         },
     };
@@ -395,16 +409,6 @@ export function createTargetCanvas(
             ctx.bezierCurveTo(3.1, 15.9, 16.3, 2.6, 32.6, 2.6);
             ctx.bezierCurveTo(48.8, 2.6, 62.0, 15.9, 62.0, 32.1);
             ctx.bezierCurveTo(62.0, 54.2, 39.9, 76.3, 32.6, 91.1);
-            ctx.fill();
-
-            // #path1442
-            ctx.beginPath();
-            ctx.fillStyle = "rgb(255, 255, 255)";
-            ctx.moveTo(16.2, 32.6);
-            ctx.bezierCurveTo(16.2, 41.6, 23.5, 48.9, 32.5, 48.9);
-            ctx.bezierCurveTo(41.5, 48.9, 48.8, 41.6, 48.8, 32.6);
-            ctx.bezierCurveTo(48.8, 23.6, 41.5, 16.3, 32.5, 16.3);
-            ctx.bezierCurveTo(23.5, 16.3, 16.2, 23.6, 16.2, 32.6);
             ctx.fill();
         },
     };

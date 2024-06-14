@@ -319,6 +319,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         });
     }
 
+
     for (let i = 0; i < blinkCounter; i++) {
         blinkDrawer.addObject({
             id: `Blink_${i.toString()}`,
@@ -359,6 +360,23 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         texPosition: "lefttop",
         visible: isDebug,
     });
+
+    // CUT ARROW
+    // wfDrawer.addObject({
+    //     id: "currentLocation",
+    //     center: [0, 0],
+    //     deltas: [0, 0, 0, 0],
+    //     deltaPts: [
+    //         -currentLocationCanvas.width / 2,
+    //         -currentLocationCanvas.height / 2,
+    //         currentLocationCanvas.width / 2 - 10,
+    //         currentLocationCanvas.height,
+    //     ],
+    //     canvasTmp: sourceLocationCanvas,
+    //     texPosition: "lefttop",
+    //     visible: isDebug,
+    //     rotateRadians: 1.5708
+    // });
 
     wfDrawer.addObject({
         id: "currentLocation",
