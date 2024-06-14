@@ -56,15 +56,9 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
             markersDrawer.addObject({
                 id: id,
                 center: [0, 0],
-                deltas: [0, 0, 0, 0],
-                deltaPts: [
-                    -imageCanvas.width / 2,
-                    -imageCanvas.height / 2,
-                    imageCanvas.width,
-                    imageCanvas.height,
-                ],
+                deltaPts: [-imageCanvas.width, -imageCanvas.height, imageCanvas.width, imageCanvas.height],
+                texPosition: "centertop",
                 canvasTmp: imageCanvas,
-                texPosition: "lefttop",
                 visible: false,
             });
 
@@ -79,7 +73,6 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
             markersDrawer.addObject({
                 id: `${id}_selected`,
                 center: [0, 0],
-                deltas: [0, 0, 0, 0],
                 deltaPts: [
                     -selectedImageCanvas.width / 2,
                     -selectedImageCanvas.height / 2,
@@ -87,7 +80,7 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
                     selectedImageCanvas.height,
                 ],
                 canvasTmp: selectedImageCanvas,
-                texPosition: "lefttop",
+                texPosition: "centertop",
                 visible: false,
             });
         });
