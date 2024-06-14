@@ -160,30 +160,6 @@ function processURLParams() {
         historyReplace("?");
     }
 
-    // facebook and google  fix
-    else if (
-        locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga") ||
-        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
-    ) {
-        historyReplace("?");
-    }
-
-    if (locationSearch.includes("noOverlay")) {
-        const url = new URL(window.location.href);
-        const noOverlayParamValue = url.searchParams.get("noOverlay");
-
-        url.searchParams.delete("noOverlay");
-        let newSearch = url.search;
-        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-        if (noOverlayParamValue === "true") {
-            store.uiState.hideOverlay = true;
-        } else if (noOverlayParamValue === "false") {
-            store.uiState.hideOverlay = false;
-        }
-        historyReplace(newSearch);
-    }
-
     if (locationSearch.includes("blue-dot")) {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
@@ -212,7 +188,25 @@ function processURLParams() {
             }
         }
 
-        historyReplace("?");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("noOverlay")) {
+        const url = new URL(window.location.href);
+        const noOverlayParamValue = url.searchParams.get("noOverlay");
+
+        url.searchParams.delete("noOverlay");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+        if (noOverlayParamValue === "true") {
+            store.uiState.hideOverlay = true;
+        } else if (noOverlayParamValue === "false") {
+            store.uiState.hideOverlay = false;
+        }
+        historyReplace(newSearch);
     }
 
     if (locationSearch.includes("allowConsent")) {
@@ -295,6 +289,14 @@ function processURLParams() {
         historyReplace(newSearch);
     }
 
+    // facebook and google  fix
+    if (
+        locationSearch.startsWith("?fbclid") ||
+        locationSearch.startsWith("?_ga") ||
+        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
+    ) {
+        historyReplace("?");
+    }
 
     if (uiState.previewExhibitor) {
         historyReplace("?" + uiState.previewExhibitor.slug);

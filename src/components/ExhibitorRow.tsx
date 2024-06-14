@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
 import React, { MouseEvent, useEffect, useRef } from "react";
 import data from "../data";
-import store, { heatmapStore, uiState } from "../store";
+import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
