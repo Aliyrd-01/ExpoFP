@@ -73,12 +73,7 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
             markersDrawer.addObject({
                 id: `${id}_selected`,
                 center: [0, 0],
-                deltaPts: [
-                    -selectedImageCanvas.width / 2,
-                    -selectedImageCanvas.height / 2,
-                    selectedImageCanvas.width,
-                    selectedImageCanvas.height,
-                ],
+                deltaPts: [-imageCanvas.width, -imageCanvas.height, imageCanvas.width, imageCanvas.height],
                 canvasTmp: selectedImageCanvas,
                 texPosition: "centertop",
                 visible: false,
