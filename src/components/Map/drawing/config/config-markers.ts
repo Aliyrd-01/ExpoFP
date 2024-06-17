@@ -63,7 +63,6 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
                     imageCanvas.width / 2,
                     0,
                 ],
-                scalePts: context.pixelRatio,
                 texPosition: "centertop",
                 canvasTmp: imageCanvas,
                 visible: false,
