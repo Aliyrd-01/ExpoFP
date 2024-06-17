@@ -28,7 +28,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
     return new Promise((resolve) => {
         const booths = initBooths(store, l);
         const logosBooths = boothStore.booths.filter(
-            (b) => b.rect && (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo)
+            (b) => b.rect && (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo) && !store.uiState.hideLogoInBooth
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));

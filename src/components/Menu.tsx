@@ -123,7 +123,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {!data.hideBookmarks && !data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
+                    {!uiState.disableBookmarked && !data.hideBookmarks && !data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
                         <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                             <span>
                                 {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
