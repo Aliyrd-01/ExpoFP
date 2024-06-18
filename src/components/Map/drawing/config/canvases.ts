@@ -332,17 +332,38 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
     return res;
 }
 
+export function createArrowCurrentCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.4
+): CanvasDescriptor {
+    return {
+        width: 95 * scale,
+        height: 95 * scale,
+
+        draw(ctx) {
+            ctx.scale(scale, scale);
+
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(75, 15);
+            ctx.lineTo(95, 35);
+            ctx.lineTo(75, 55);
+            ctx.lineTo(80, 35);
+            ctx.closePath();
+            ctx.fill();
+        },
+    };
+}
+
 export function createCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
     scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
     return {
-        // width: 70 * scale,
-        // height: 70 * scale,
         width: 95 * scale,
         height: 95 * scale,
-
         draw(ctx) {
             ctx.scale(scale, scale);
 
@@ -366,16 +387,6 @@ export function createCurrentCanvas(
             ctx.bezierCurveTo(48.807119, 60.0, 60.0, 48.807119, 60.0, 35.0);
             ctx.bezierCurveTo(60.0, 21.192881, 48.807119, 10.0, 35.0, 10.0);
             ctx.bezierCurveTo(21.192881, 10.0, 10.0, 21.192881, 10.0, 35.0);
-            ctx.fill();
-
-            // // ARROW
-            ctx.beginPath();
-            ctx.fillStyle = color; // Color of the arrow
-            ctx.moveTo(75, 15);  // Start point at the center, slightly above the circle
-            ctx.lineTo(95, 35); // Line to the right edge of the circle
-            ctx.lineTo(75, 55); // Line back to the center, slightly below the circle
-            ctx.lineTo(80, 35); // Tip of the arrow, to the right of the circle
-            ctx.closePath();
             ctx.fill();
         },
     };
