@@ -373,8 +373,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -currentLocationCanvas.width / 2 + (5 * devicePixelRatio),
-            -currentLocationCanvas.height / 2 + (5 * devicePixelRatio),
+            -currentLocationCanvas.width / 2 + (5 * context.pixelRatio),
+            -currentLocationCanvas.height / 2 + (5 * context.pixelRatio),
             currentLocationCanvas.width,
             currentLocationCanvas.height,
         ],
@@ -388,8 +388,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -arrowCurrentCanvas.width / 2 + (5 * devicePixelRatio),
-            -arrowCurrentCanvas.height / 2 + (5 * devicePixelRatio),
+            -arrowCurrentCanvas.width / 2 + (5 * context.pixelRatio),
+            -arrowCurrentCanvas.height / 2 + (5 * context.pixelRatio),
             arrowCurrentCanvas.width,
             arrowCurrentCanvas.height,
         ],
@@ -449,7 +449,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     }
 
     function updateCurrentPosition(): number {
-        // wfDrawer.reinitializeBuffers();
         let position = store.routeStore.currentPosition;
 
         if (position) {
@@ -534,7 +533,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             } else lines.push(line);
         }
 
-        if (shortestrPerp.l < 200) wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
+        if (shortestrPerp.l < 200) {
+            wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
+            wfDrawer.updateCenter("currentLocation_arrow", [shortestrPerp.p.x, shortestrPerp.p.y]);
+        };
 
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
 
