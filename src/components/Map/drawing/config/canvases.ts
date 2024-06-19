@@ -421,6 +421,16 @@ export function createTargetCanvas(
             ctx.bezierCurveTo(48.8, 2.6, 62.0, 15.9, 62.0, 32.1);
             ctx.bezierCurveTo(62.0, 54.2, 39.9, 76.3, 32.6, 91.1);
             ctx.fill();
+
+            // #path1442
+            ctx.beginPath();
+            ctx.fillStyle = "rgb(255, 255, 255)";
+            ctx.moveTo(16.2, 32.6);
+            ctx.bezierCurveTo(16.2, 41.6, 23.5, 48.9, 32.5, 48.9);
+            ctx.bezierCurveTo(41.5, 48.9, 48.8, 41.6, 48.8, 32.6);
+            ctx.bezierCurveTo(48.8, 23.6, 41.5, 16.3, 32.5, 16.3);
+            ctx.bezierCurveTo(23.5, 16.3, 16.2, 23.6, 16.2, 32.6);
+            ctx.fill();
         },
     };
 }
