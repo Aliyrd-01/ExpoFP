@@ -188,7 +188,7 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get wsShown() {
-        return this.rootStore.exhibitorStore.advertised.length > 0;
+        return !this.hideHeaderLogo && this.rootStore.exhibitorStore.advertised.length > 0;
     }
 
     @computed get wsDesktopPosition() {
