@@ -12,6 +12,7 @@ export interface EventI {
     startDate: string;
     endDate?: string;
     link?: string;
+    isEnded?: boolean;
 }
 export interface ScheduleProps {
     events: EventI[];
@@ -52,13 +53,13 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
     const transformDescription = (desc: string, show: boolean) =>
         desc.length > descriptionMaxLength && show === false ? desc.slice(0, descriptionMaxLength) + "..." : desc;
 
-    const EventWrapper = ({ children, link, current }) => {
+    const EventWrapper = ({ children, link, current, ended }) => {
         return link.length !== 0 ? (
-            <a href={link} className={classNames("schedule__event", current)} target="_blank" rel="noopener noreferrer">
+            <a href={link} className={classNames("schedule__event", current, ended)} target="_blank" rel="noopener noreferrer">
                 {children}
             </a>
         ) : (
-            <div className="schedule__event">{children}</div>
+            <div className={classNames("schedule__event", { ended })}>{children}</div>
         );
     };
 
@@ -78,6 +79,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                     <div key={event.id}>
                                         <EventWrapper
                                             link={event.link ? event.link : ""}
+                                            ended={event.isEnded}
                                             current={isCurrent(event.startDate, event.endDate)}
                                         >
                                             <span>

@@ -23,8 +23,8 @@ const ScheduleItemRow: React.FC<{
     );
 
     function handleClick() {
-        if (item.boothId) store.clickBooth(boothStore.booths.find((b) => b.id === item.boothId));
-        else if (item.exhibitorId) store.clickExhibitor(exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId));
+        if (item.boothId) store.selectBooth(boothStore.booths.find((b) => b.id === item.boothId));
+        else if (item.exhibitorId) store.selectExhibitor(exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId));
     }
 };
 
