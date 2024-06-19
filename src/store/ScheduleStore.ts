@@ -1,6 +1,5 @@
 // import { observable } from 'mobx';
 import RootStore from "./RootStore";
-import { computed } from "mobx";
 
 export default class CategoryStore {
     private readonly rootStore: RootStore;
@@ -24,4 +23,8 @@ export class ScheduleItem {
         public readonly endDate: string,
         public readonly link?: string
     ) {}
+
+    public get isEnded(): boolean {
+        return this.endDate && new Date(this.endDate).getTime() < new Date().getTime();
+    }
 }
