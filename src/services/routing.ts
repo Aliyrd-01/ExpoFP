@@ -155,20 +155,12 @@ function processURLParams() {
         const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
         if (exhibitor) historyReplace("?" + exhibitor.slug);
         else historyReplace("?bookmarks");
-    } else if (locationSearch.includes("noOverlay")) {
-        const url = new URL(window.location.href);
-        const noOverlayParamValue = url.searchParams.get("noOverlay");
+    } else if (locationSearch.startsWith("?mapbox=false")) {
+        store.mapboxStore.isMapbox = false;
+        historyReplace("?");
+    }
 
-        url.searchParams.delete("noOverlay");
-        let newSearch = url.search;
-        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-        if (noOverlayParamValue === "true") {
-            store.uiState.hideOverlay = true;
-        } else if (noOverlayParamValue === "false") {
-            store.uiState.hideOverlay = false;
-        }
-        historyReplace(newSearch);
-    } else if (locationSearch.includes("?blue-dot")) {
+    if (locationSearch.includes("blue-dot")) {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
 
@@ -196,19 +188,25 @@ function processURLParams() {
             }
         }
 
-        historyReplace("?");
-    } else if (locationSearch.startsWith("?mapbox=false")) {
-        store.mapboxStore.isMapbox = false;
-        historyReplace("?");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+
+        historyReplace(newSearch);
     }
 
-    // facebook and google  fix
-    else if (
-        locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga") ||
-        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
-    ) {
-        historyReplace("?");
+    if (locationSearch.includes("noOverlay")) {
+        const url = new URL(window.location.href);
+        const noOverlayParamValue = url.searchParams.get("noOverlay");
+
+        url.searchParams.delete("noOverlay");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+        if (noOverlayParamValue === "true") {
+            store.uiState.hideOverlay = true;
+        } else if (noOverlayParamValue === "false") {
+            store.uiState.hideOverlay = false;
+        }
+        historyReplace(newSearch);
     }
 
     if (locationSearch.includes("allowConsent")) {
@@ -224,6 +222,80 @@ function processURLParams() {
         }
 
         historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("hideHeaderLogo")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideHeaderLogo");
+        url.searchParams.delete("hideHeaderLogo");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideHeaderLogo = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("hideLogoInBooth")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideLogoInBooth");
+        url.searchParams.delete("hideLogoInBooth");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideLogoInBooth = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("disableFeatured")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableFeatured");
+        url.searchParams.delete("disableFeatured");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            store.exhibitorStore.exhibitors.forEach(ex => ex.featured = false);
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("disableBookmarked")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableBookmarked");
+        url.searchParams.delete("disableBookmarked");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableBookmarked = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("monochrome")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("monochrome");
+        url.searchParams.delete("monochrome");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.monochrome = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    // facebook and google  fix
+    if (
+        locationSearch.startsWith("?fbclid") ||
+        locationSearch.startsWith("?_ga") ||
+        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
+    ) {
+        historyReplace("?");
     }
 
     if (uiState.previewExhibitor) {

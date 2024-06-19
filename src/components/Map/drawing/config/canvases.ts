@@ -332,19 +332,43 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
     return res;
 }
 
+export function createArrowCurrentCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.4
+): CanvasDescriptor {
+    return {
+        width: 95 * scale,
+        height: 95 * scale,
+
+        draw(ctx) {
+            ctx.scale(scale, scale);
+
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(75, 15);
+            ctx.lineTo(95, 35);
+            ctx.lineTo(75, 55);
+            ctx.lineTo(80, 35);
+            ctx.closePath();
+            ctx.fill();
+        },
+    };
+}
+
 export function createCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
     scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
     return {
-        width: 70 * scale,
-        height: 70 * scale,
-
+        width: 95 * scale,
+        height: 95 * scale,
         draw(ctx) {
             ctx.scale(scale, scale);
 
-            // #path833
+            // WHITE
+            // // #path833
             ctx.beginPath();
             ctx.fillStyle = "#FFFFFF";
             ctx.moveTo(0.0, 35.0);
@@ -354,6 +378,7 @@ export function createCurrentCanvas(
             ctx.bezierCurveTo(15.670034, 0.0, 0.0, 15.670034, 0.0, 35.0);
             ctx.fill();
 
+            // BLUE
             // #path835
             ctx.beginPath();
             ctx.fillStyle = color;
@@ -407,6 +432,21 @@ export function createTargetCanvas(
             ctx.bezierCurveTo(23.5, 16.3, 16.2, 23.6, 16.2, 32.6);
             ctx.fill();
         },
+    };
+}
+
+export function createImageCanvas(
+    image: HTMLImageElement,
+    width: number,
+    height: number,
+    pixelRatio: number
+): CanvasDescriptor {
+    return {
+        width: width * pixelRatio,
+        height: height * pixelRatio,
+        draw(ctx: CanvasRenderingContext2D) {
+            ctx.drawImage(image, 0, 0, width * pixelRatio, height * pixelRatio);
+        }
     };
 }
 

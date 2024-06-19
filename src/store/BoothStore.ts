@@ -9,6 +9,7 @@ import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
 import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
+import { uiState } from "./index";
 
 // interface BoothState {
 //     hover: boolean;
@@ -100,7 +101,7 @@ export abstract class BoothBase {
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {
-        return !!this.exhibitors.find((x) => x.bookmarked);
+        return !uiState.disableBookmarked && !!this.exhibitors.find((x) => x.bookmarked);
     }
 
     @computed({ keepAlive: true }) private get uiState() {

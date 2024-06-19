@@ -64,7 +64,7 @@ interface FloorPlanOptions {
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
     onExhibitorCustomButtonClick?: (e: FloorPlanCustomButtonEvent) => void;
-    onBluedotClick?: (e: FloorPlanBluedotEvent | undefined) => void;
+    onMarkerClick?: (e: FloorPlanMarkerEvent | undefined) => void;
     onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
 }
 
@@ -130,7 +130,7 @@ interface FloorPlanGetCoordsEvent extends Point {
     z: string | null;
 }
 
-interface FloorPlanBluedotEvent extends Point{
+interface FloorPlanMarkerEvent extends Point{
     id: string;
     z?: number | string;
 }

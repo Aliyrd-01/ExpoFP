@@ -61,8 +61,14 @@ export default class UIState {
     @observable galleryActive = false;
     @observable hideOverlay = false;
     @observable hideCookieConsent = Boolean(hasUserConsent());
+    @observable hideHeaderLogo = false;
+    @observable hideLogoInBooth = false;
+    @observable disableBookmarked = false;
+    @observable monochrome = false;
+    @observable heatmap = false;
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
+    @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
 
     overlayMediumHeightRems = 10;
 
@@ -78,8 +84,8 @@ export default class UIState {
         return this.rootStore.fp.onBoothClick;
     }
 
-    get onBluedotClick() {
-        return this.rootStore.fp.onBluedotClick;
+    get onMarkerClick() {
+        return this.rootStore.fp.onMarkerClick;
     }
 
     get onBookmarkClick() {
