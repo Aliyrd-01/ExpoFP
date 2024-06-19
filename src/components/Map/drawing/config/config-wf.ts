@@ -368,13 +368,15 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
+    const currentLocationPad = 5 * context.pixelRatio;
+
     wfDrawer.addObject({
         id: "currentLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -currentLocationCanvas.width / 2 + (5 * context.pixelRatio),
-            -currentLocationCanvas.height / 2 + (5 * context.pixelRatio),
+            -currentLocationCanvas.width / 2 + currentLocationPad,
+            -currentLocationCanvas.height / 2 + currentLocationPad,
             currentLocationCanvas.width,
             currentLocationCanvas.height,
         ],
@@ -388,8 +390,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -arrowCurrentCanvas.width / 2 + (5 * context.pixelRatio),
-            -arrowCurrentCanvas.height / 2 + (5 * context.pixelRatio),
+            -arrowCurrentCanvas.width / 2 + currentLocationPad,
+            -arrowCurrentCanvas.height / 2 + currentLocationPad,
             arrowCurrentCanvas.width,
             arrowCurrentCanvas.height,
         ],
