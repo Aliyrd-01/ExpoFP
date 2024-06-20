@@ -64,6 +64,7 @@ export default class UIState {
     @observable hideHeaderLogo = false;
     @observable hideLogoInBooth = false;
     @observable disableBookmarked = false;
+    @observable disableGps = false;
     @observable monochrome = false;
     @observable heatmap = false;
     rtl = getLanguage() === "ar" || getLanguage() === "he";
@@ -78,6 +79,10 @@ export default class UIState {
 
     @computed({ keepAlive: true }) get noOverlay() {
         return this.rootStore.fp.noOverlay || this.hideOverlay;
+    }
+
+    @computed({ keepAlive: true }) get gpsEnabled() {
+        return data.autoTrackingGps && !this.disableGps;
     }
 
     get onBoothClick() {

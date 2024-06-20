@@ -276,6 +276,19 @@ function processURLParams() {
         historyReplace(newSearch);
     }
 
+    if (locationSearch.includes("disableGps")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableGps");
+        url.searchParams.delete("disableGps");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableGps = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
     if (locationSearch.includes("monochrome")) {
         const url = new URL(window.location.href);
         const value = url.searchParams.get("monochrome");
