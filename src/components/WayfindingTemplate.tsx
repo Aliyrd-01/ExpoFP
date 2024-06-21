@@ -17,13 +17,13 @@ export interface WayfindingTemplateProps {
     routeFound?: boolean;
     infoItems?: WayInformationItem[];
     infoAccessible?: boolean;
-    floors?: string[];
-    currentFloor?: string;
+    floors?: { id: number, name: string }[];
+    currentFloor?: { id: number, name: string };
     onChangeFrom?: (val: string) => void;
     onChangeTo?: (val: string) => void;
     onSwitch?: () => void;
     onClickInfo?: () => void;
-    onClickFloor?: (val: string) => void;
+    onClickFloor?: ({ id: number, name: string }) => void;
     onAccessibleCheck: (checked: boolean) => void;
 }
 

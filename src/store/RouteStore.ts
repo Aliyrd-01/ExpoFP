@@ -93,6 +93,25 @@ export default class RouteStore {
         }, 200);
     }
 
+    @computed({ keepAlive: true }) get pathLayers() {
+        const layers: {id: number, name: string}[] = [];
+        store.routeStore.routeLines
+            ?.map((rl) => rl.p0.layer)
+            .reverse()
+            .forEach((l, index, array) => {
+                if (index === 0 || l !== array[index - 1]) {
+                    layers.push({ id: index + 1, name: l });
+                }
+            });
+
+        return layers.map((l) => {
+            return {
+                id: l.id,
+                layer: store.layerStore.layers.find((layer) => layer.name === l.name)
+            }
+        } );
+    }
+
     @computed({ keepAlive: true }) get nearestBooth() {
         if (!this.currentPosition) return null;
         let layerExists = this.rootStore.layerStore.findLayer(this.currentPosition.z);
