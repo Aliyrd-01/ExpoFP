@@ -2,7 +2,7 @@ import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { hanleCustomCommand } from "../components/Search";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { layersStore, uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
@@ -19,6 +19,11 @@ let unlisten;
 
 const history = createBrowserHistory();
 const pathname = window.location.pathname;
+const routeHistory: string[] = [];
+
+export function getLocationHistory() {
+    return routeHistory;
+}
 
 function getHistoryUrl(search: string) {
     return pathname + search;
@@ -336,8 +341,14 @@ function processURLParams() {
 export function initRouting(offHistory = false) {
     disableHistoryManipulation = offHistory;
 
+    if (!disableHistoryManipulation && getHistoryUrl(history.location.search) === pathname) {
+        routeHistory.push(getHistoryUrl(history.location.search));
+    }
+
     unlisten = history.listen((location, action) => {
         if (disableHistoryManipulation) return;
+
+        routeHistory.push(getHistoryUrl(location.search));
 
         logger.log("history", action, location);
         if (action === "POP") {
