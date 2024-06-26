@@ -17,8 +17,6 @@ import trackEvent from "./tools/track-event";
 
 install();
 
-trackEvent("load");
-
 // initStore(store);
 
 // export default function renderFloorPlan(el: Element) {
@@ -33,6 +31,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     // }
     protected init(): void {
         initRouting(this.offHistory);
+        trackEvent("load");
         store.fp = this;
         setConsentSettings(this.allowConsent);
         sendEventToGa(GaEventActions.Load, ``);

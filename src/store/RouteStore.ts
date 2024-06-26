@@ -74,12 +74,6 @@ export default class RouteStore {
 
         if (!route && store.fp.onDirection) store.fp.onDirection(null);
 
-        if(route?.from && route?.to) 
-            sendEventToGa(
-                GaEventActions.ClickDirections,
-                `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
-            );
-
 
         setTimeout(() => {
             this.rootStore.moveToList(list);
@@ -90,6 +84,12 @@ export default class RouteStore {
                 this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
             if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
+
+            if (route?.from && route?.to)
+                sendEventToGa(
+                    GaEventActions.ClickDirections,
+                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
+                );
         }, 200);
     }
 
