@@ -2,7 +2,7 @@ import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { hanleCustomCommand } from "../components/Search";
 import data from "../data";
-import store, { layersStore, uiState } from "../store";
+import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
