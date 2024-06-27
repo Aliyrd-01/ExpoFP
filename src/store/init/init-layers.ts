@@ -4,7 +4,9 @@ import { floors } from "../../data/svg";
 import { Layer, LayerMode, LayersMode } from "../LayerStore";
 import RootStore from "../RootStore";
 
-export function getChildLayers(layer: Layer, currentPriority: number): { layers: Layer[]; priority: number } {
+const STEP_PRIORITY = 1000;
+
+export function getChildLayers(layer: Layer, currentPriority: number, priorityStep: number): { layers: Layer[]; priority: number } {
     const childLayers: Layer[] = [];
     let priority = currentPriority;
 
@@ -25,8 +27,8 @@ export function getChildLayers(layer: Layer, currentPriority: number): { layers:
         child.mode = LayerMode.Unset;
         child.rootParent = layer.rootParent ? layer.rootParent : layer;
 
-        const grandChildResult = getChildLayers(child, priority);
-        priority = grandChildResult.priority + 15;
+        const grandChildResult = getChildLayers(child, priority, priorityStep);
+        priority = grandChildResult.priority + priorityStep;
         child.basePriority = priority;
 
         if (grandChildResult.layers.length) {
@@ -58,7 +60,7 @@ export default function initLayers(store: RootStore) {
     let priority = 0;
     if (fpLayers) {
         fpLayers.forEach(layer => {
-            priority += 15;
+            priority += STEP_PRIORITY;
             let l = new Layer();
             l.name = layer.name;
             l.description = layer.description;
@@ -78,7 +80,7 @@ export default function initLayers(store: RootStore) {
             .forEach((layer) => {
                 const layerID = layer.getAttribute("data-layer");
                 if (!layerID.startsWith("WF")) {
-                    priority += 15;
+                    priority += STEP_PRIORITY;
                     let l = new Layer();
                     l.name = layerID;
                     l.visible = true;

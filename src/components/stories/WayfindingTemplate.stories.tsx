@@ -11,7 +11,7 @@ export default {
 const Template: Story<WayfindingTemplateProps> = (args) => {
     const [from, setFrom] = useState(args.options[1].value);
     const [to, setTo] = useState(args.options[6].value);
-    const [currentFloor, setCurrentFloor] = useState<string>(args.currentFloor);
+    const [currentFloor, setCurrentFloor] = useState<{id: number, name: string}>(args.currentFloor);
 
     const getWayInformation = (distance) => {
         const info = [];
@@ -55,7 +55,7 @@ const Template: Story<WayfindingTemplateProps> = (args) => {
         action("onSwitch")(true);
     };
 
-    const onChangeFloor = (val: string) => {
+    const onChangeFloor = (val: { id: number, name: string }) => {
         setCurrentFloor(val);
         action("onClickFloor")(val);
     };
@@ -131,6 +131,30 @@ Base.args = {
     ],
     showInfo: true,
     routeFound: true,
-    floors: ["1", "2", "3", "4", "5"],
-    currentFloor: "1",
-}; 
+    floors: [
+        {
+            id: 1,
+            name: "1"
+        },
+        {
+            id: 2,
+            name: "2"
+        },
+        {
+            id: 3,
+            name: "3"
+        },
+        {
+            id: 4,
+            name: "4"
+        },
+        {
+            id: 5,
+            name: "5"
+        }
+    ],
+    currentFloor: {
+        id: 1,
+        name: "1"
+    }
+};

@@ -111,9 +111,15 @@ export default class LayerStore {
 
     public findLayer(z: string | number): Layer {
         if (z === null || z === undefined) return null;
-        z = z.toString().toLowerCase();
 
         const layers = this.layers.filter((l) => !l.rootParent);
+
+        if (typeof z === "number") {
+            l = layers.filter((k) => !k.frozen)[z];
+            if (l) return l;
+        }
+
+        z = z.toString().toLowerCase();
 
         var l = layers.find((l) => {
             const extractedNumber = (l.name.match(/(-?[0-9]+)/) || "")[0];

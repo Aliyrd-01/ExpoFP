@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { uiState } from ".";
+import { boothStore, exhibitorStore, uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import data from "../data";
@@ -64,10 +64,12 @@ export default class UIState {
     @observable hideHeaderLogo = false;
     @observable hideLogoInBooth = false;
     @observable disableBookmarked = false;
+    @observable disableGps = false;
     @observable monochrome = false;
     @observable heatmap = false;
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
+    @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
 
     overlayMediumHeightRems = 10;
 
@@ -79,8 +81,16 @@ export default class UIState {
         return this.rootStore.fp.noOverlay || this.hideOverlay;
     }
 
+    @computed({ keepAlive: true }) get gpsEnabled() {
+        return data.autoTrackingGps && !this.disableGps;
+    }
+
     get onBoothClick() {
         return this.rootStore.fp.onBoothClick;
+    }
+
+    get onMarkerClick() {
+        return this.rootStore.fp.onMarkerClick;
     }
 
     get onBookmarkClick() {
@@ -183,7 +193,7 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get wsShown() {
-        return this.rootStore.exhibitorStore.advertised.length > 0;
+        return !this.hideHeaderLogo && this.rootStore.exhibitorStore.advertised.length > 0;
     }
 
     @computed get wsDesktopPosition() {
@@ -331,11 +341,7 @@ export default class UIState {
         const splittedTexts = text.split("&").filter((s) => s);
 
         function selectLettersSpacesNumbers(input: string): string {
-            return (
-                input
-                    ?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")              
-                    ?.replace(/\s\s+/g, " ") ?? input
-            );
+            return input?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
         }
 
         function containsIgnoreCase(str: string, searchTerm: string) {
@@ -428,6 +434,9 @@ export default class UIState {
                 arr.push(...item.booths);
             } else if (item instanceof BoothBase) {
                 arr.push(item as Booth);
+            } else if (item instanceof ScheduleItem) {
+                if (item.boothId) arr.push(boothStore.booths.find((b) => b.id === item.boothId));
+                if (item.exhibitorId) arr.push(...exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId).booths);
             }
         });
         return new Set(arr);

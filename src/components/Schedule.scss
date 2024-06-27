@@ -54,6 +54,11 @@
         transition: background var(--transition-duration) ease;
         text-decoration: none;
 
+        &.ended {
+            color: var(--color-gray);
+            opacity: 0.7;
+        }
+
         &.current {
             background: #e1e1e1;
         }

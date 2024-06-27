@@ -19,6 +19,11 @@ let unlisten;
 
 const history = createBrowserHistory();
 const pathname = window.location.pathname;
+const routeHistory: string[] = [];
+
+export function getLocationHistory() {
+    return routeHistory;
+}
 
 function getHistoryUrl(search: string) {
     return pathname + search;
@@ -176,30 +181,6 @@ function processURLParams() {
         historyReplace("?");
     }
 
-    // facebook and google  fix
-    else if (
-        locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga") ||
-        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
-    ) {
-        historyReplace("?");
-    }
-
-    if (locationSearch.includes("noOverlay")) {
-        const url = new URL(window.location.href);
-        const noOverlayParamValue = url.searchParams.get("noOverlay");
-
-        url.searchParams.delete("noOverlay");
-        let newSearch = url.search;
-        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-        if (noOverlayParamValue === "true") {
-            store.uiState.hideOverlay = true;
-        } else if (noOverlayParamValue === "false") {
-            store.uiState.hideOverlay = false;
-        }
-        historyReplace(newSearch);
-    }
-
     if (locationSearch.includes("blue-dot")) {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
@@ -228,7 +209,25 @@ function processURLParams() {
             }
         }
 
-        historyReplace("?");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("noOverlay")) {
+        const url = new URL(window.location.href);
+        const noOverlayParamValue = url.searchParams.get("noOverlay");
+
+        url.searchParams.delete("noOverlay");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+        if (noOverlayParamValue === "true") {
+            store.uiState.hideOverlay = true;
+        } else if (noOverlayParamValue === "false") {
+            store.uiState.hideOverlay = false;
+        }
+        historyReplace(newSearch);
     }
 
     if (locationSearch.includes("allowConsent")) {
@@ -298,6 +297,19 @@ function processURLParams() {
         historyReplace(newSearch);
     }
 
+    if (locationSearch.includes("disableGps")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableGps");
+        url.searchParams.delete("disableGps");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableGps = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
     if (locationSearch.includes("monochrome")) {
         const url = new URL(window.location.href);
         const value = url.searchParams.get("monochrome");
@@ -311,6 +323,14 @@ function processURLParams() {
         historyReplace(newSearch);
     }
 
+    // facebook and google  fix
+    if (
+        locationSearch.startsWith("?fbclid") ||
+        locationSearch.startsWith("?_ga") ||
+        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
+    ) {
+        historyReplace("?");
+    }
 
     if (uiState.previewExhibitor) {
         historyReplace("?" + uiState.previewExhibitor.slug);
@@ -337,8 +357,14 @@ function processURLParams() {
 export function initRouting(offHistory = false) {
     disableHistoryManipulation = offHistory;
 
+    if (!disableHistoryManipulation && getHistoryUrl(history.location.search) === pathname) {
+        routeHistory.push(getHistoryUrl(history.location.search));
+    }
+
     unlisten = history.listen((location, action) => {
         if (disableHistoryManipulation) return;
+
+        routeHistory.push(getHistoryUrl(location.search));
 
         logger.log("history", action, location);
         if (action === "POP") {

@@ -1,8 +1,8 @@
-import { Img } from "./../../../utils/imageloader";
 import Color from "color";
 import { Feature, FeatureCollection } from "geojson";
 import mapboxgl, { GeoJSONSource, Map } from "mapbox-gl";
 import Rect from "../../../core/Rect";
+import data from "../../../data";
 import { svgArea } from "../../../data/svg";
 import store, { uiState } from "../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../store/BoothStore";
@@ -10,8 +10,9 @@ import { Layer } from "../../../store/LayerStore";
 import RouteStore, { CurrentPosition } from "../../../store/RouteStore";
 import settings from "../../../tools/settings";
 import { bearing } from "../../../utils/geolib";
-import logosFromBooths from "../../../utils/imageloader";
 import { convertLocalToGps } from "../../../utils/gps";
+import logosFromBooths from "../../../utils/imageloader";
+import { Img } from "./../../../utils/imageloader";
 import { fpGeo } from "./fpGeo";
 
 type Polygon = GeoJSON.FeatureCollection<GeoJSON.Polygon>;
@@ -91,7 +92,13 @@ export function actualBoothColor(b: Booth) {
 }
 
 export function getBoothlabel(booth: Booth) {
-    return booth.noLabels ? null : ((booth as RegularBooth)?.exhibitors || [])[0]?.name || booth.title || booth.name;
+    let exh = data.hideExhibitors
+        ? []
+        : !data.onlyFeaturedExhibitors
+        ? booth.exhibitors
+        : booth.exhibitors.filter((e) => e.featured);
+
+    return booth.noLabels ? null : (exh || [])[0]?.name || booth.title || booth.name;
 }
 
 function decimalToHex(input: string) {

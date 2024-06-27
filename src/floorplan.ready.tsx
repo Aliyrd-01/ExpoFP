@@ -8,7 +8,7 @@ import FloorPlanLoader from "./floorplan.loader";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { SpecialBooth } from "./store/BoothStore";
-import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
+import { CurrentPosition, Route, extractRoute, Marker, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import reportError from "./tools/report-error";
@@ -16,8 +16,6 @@ import { resetGlobalVariables } from "./tools/reset";
 import trackEvent from "./tools/track-event";
 
 install();
-
-trackEvent("load");
 
 // initStore(store);
 
@@ -33,6 +31,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     // }
     protected init(): void {
         initRouting(this.offHistory);
+        trackEvent("load");
         store.fp = this;
         setConsentSettings(this.allowConsent);
         sendEventToGa(GaEventActions.Load, ``);
@@ -91,12 +90,28 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
+    setMarkers(markersData: MarkersData): void {
+        store.routeStore.setMarkers(markersData);
+    }
+
+    selectMarker(id: string, focus = true): void {
+        store.routeStore.selectMarker(id, focus);
+    }
+
+    drawCircles(circles: { x: number, y: number, radius: number, color?: string }[]) {
+        store.uiState.debugCircles = circles;
+    }
+
     checkRoutes(): void {
         store.routeStore.checkRoutes();
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {
         store.layerStore.updateVisibility(layer, visible);
+    }
+
+    getCenterCoordinates() {
+        return store.fp.getCenterCoordinates();
     }
 
     exhibitorsList(): any {

@@ -1,4 +1,3 @@
-import data from "../../../../data";
 import store from "../../../../store";
 import { CurrentPosition } from "../../../../store/RouteStore";
 import logger from "../../../../tools/logger";
@@ -6,7 +5,7 @@ import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 
 export default function configGPS() {
-    if (data.autoTrackingGps) {
+    if (store.uiState.gpsEnabled) {
         trackGPS();
     }
 }

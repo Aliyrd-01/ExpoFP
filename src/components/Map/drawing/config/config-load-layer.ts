@@ -16,7 +16,7 @@ import { getChildLayers } from "../../../../store/init/init-layers";
 function createChildLayers(layer: Layer) {
     if (layer.childLayers.length) return layer.childLayers;
 
-    const childLayers = getChildLayers(layer, layer.basePriority).layers;
+    const childLayers = getChildLayers(layer, layer.basePriority, 15).layers;
     if (childLayers.length) {
         layer.childLayers = childLayers;
     }
@@ -28,7 +28,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
     return new Promise((resolve) => {
         const booths = initBooths(store, l);
         const logosBooths = boothStore.booths.filter(
-            (b) => b.rect && (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo) && !uiState.hideLogoInBooth
+            (b) => b.rect && (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo) && !store.uiState.hideLogoInBooth
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));
