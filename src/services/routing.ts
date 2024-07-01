@@ -1,6 +1,6 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
-import { hanleCustomCommand } from "../components/Search";
+import { handleCustomCommand } from "../components/Search";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -107,6 +107,11 @@ function setTitle() {
     document.title = title;
 }
 
+function executeCustomCommand() {
+    const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
+    return handleCustomCommand(slug, false);
+}
+
 function dispatchFromUrl() {
     const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
     disableStateToUrl = true;
@@ -115,7 +120,7 @@ function dispatchFromUrl() {
         (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
     );
 
-    if (hanleCustomCommand(slug, false)) {
+    if (executeCustomCommand()) {
     } else if (slug.startsWith("route")) {
         const parts = slug.split(":");
         store.routeStore.onlyAccessible = parts[3] === "true";
@@ -357,7 +362,7 @@ export function initRouting(offHistory = false) {
     });
 
     processURLParams();
-
+    executeCustomCommand();
     reaction(() => store.layerStore.layersLoaded,
         () => {
             dispatchFromUrl();
@@ -371,6 +376,7 @@ export function applyParameters(queryRaw: string = "") {
     historyReplace("?" + decodeURIComponent(queryRaw.toString()));
 
     if (!store.layerStore.layersLoaded) {
+        executeCustomCommand();
         reaction(() => store.layerStore.layersLoaded,
             () => {
                 processURLParams();
