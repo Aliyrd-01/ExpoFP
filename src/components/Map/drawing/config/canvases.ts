@@ -86,7 +86,7 @@ export function createDetailsCanvas(
         if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
         if (b.price && b.price !== "0") lines.push(b.price);
     } else {
-        const clicks = heatmapStore.getClicksByItem(b);
+        const clicks = heatmapStore.getTotalClicksByBooth(b);
         lines.push("Clicks: " + clicks);
     }
 
@@ -208,7 +208,7 @@ export function createExhibitorsDetailsCanvas(
     if (!onlyMain) detailsLines.push(b.name);
 
     if (uiState.heatmap) {
-        const clicks = heatmapStore.getClicksByItem(b);
+        const clicks = heatmapStore.getTotalClicksByBooth(b);
         detailsLines.push("Clicks: " + clicks);
     }
 

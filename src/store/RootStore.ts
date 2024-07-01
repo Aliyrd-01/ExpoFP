@@ -2,7 +2,7 @@ import { action } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
-import BoothStore, { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
+import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 
@@ -189,14 +189,6 @@ export default class RootStore {
             this.uiState.onBoothClick(e);
         }
 
-        if (
-            this.uiState.selectedBooth?.id !== booth.id &&
-            ![...this.uiState.selectedBooths].some((b) => b.id === booth.id) &&
-            !this.uiState.heatmap
-        ) {
-            this.heatmapStore.recordUserClickBooth(booth.id);
-        }
-
         if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
             this.selectExhibitor(booth.exhibitors[0], false);
         } else {
@@ -206,9 +198,6 @@ export default class RootStore {
     }
 
     @action clickExhibitor2(exhibitor: Exhibitor) {
-        if (!this.uiState.heatmap) {
-            this.heatmapStore.recordUserClickExhibitor(exhibitor.id);
-        }
         this.selectExhibitor(exhibitor, true);
         //this.moveToExhibitor(exhibitor);
         this.showMap();

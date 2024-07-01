@@ -9,7 +9,6 @@ import { initI18n } from "./utils/i18n";
 import isWebview from "./utils/is-webview";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
-import { getAllClicks } from "./tools/firebase";
 
 function nr() {
     throw new Error("FloorPlan not ready");
@@ -247,7 +246,10 @@ export default class FloorPlanLoader implements FloorPlan {
 
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {
-                window["__heatmapData"] = await getAllClicks(eventId);
+                const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
+                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(res => res.json());
+                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(res => res.json());
+                window["__heatmapData"] = { booths, exhibitors };
             }
 
             if (data.isRebooking) {

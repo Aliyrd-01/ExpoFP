@@ -1,5 +1,6 @@
 import Color from "color";
 import settings from "./settings";
+import store from "../store";
 
 Color.prototype.vec4 = function () {
     const r = this.rgb().object();
@@ -7,22 +8,30 @@ Color.prototype.vec4 = function () {
     return [r.r / 255, r.g / 255, r.b / 255, a];
 };
 
-export function getColorFromGradient(countClicks: number) {
-    const colors = settings.heatmapColors.map((color) => Color(color));
+export function getColorFromGradient(clickCount: number) {
+    const { min, max } = store.heatmapStore.minAndMaxClicks;
 
-    let t = (countClicks - settings.minClicks) / (settings.maxClicks - settings.minClicks);
+    const colorPalette = settings.heatmapColors.map((color) => Color(color));
 
-    t = Math.max(0, Math.min(t, 1));
+    // Normalize the value to the range [0, 1]
+    let normalizedValue = (clickCount - min) / (max - min) || 0;
 
-    let i = Math.floor(t * (colors.length - 1));
-    i = Math.max(0, Math.min(i, colors.length - 2));
+    normalizedValue = Math.max(0, Math.min(normalizedValue, 1));
 
-    t = t * (colors.length - 1) - i;
+    // Use a nonlinear function to improve distinguishability on the lower end of the spectrum
+    let scaledValue = Math.sqrt(normalizedValue);
 
-    let color1 = colors[i];
-    let color2 = colors[i + 1];
+    // Find the color index in the palette
+    let colorIndex = Math.floor(scaledValue * (colorPalette.length - 1));
+    colorIndex = Math.max(0, Math.min(colorIndex, colorPalette.length - 1));
 
-    let resultColor = color1.mix(color2, t);
+    // Determine the start and end colors for interpolation
+    let colorStart = colorPalette[colorIndex];
+    let colorEnd = colorPalette[Math.min(colorIndex + 1, colorPalette.length - 1)];
+    let interpolationFactor = scaledValue * (colorPalette.length - 1) - colorIndex;
 
-    return resultColor.hex();
+    // Return the interpolated color
+    let interpolatedColor = colorStart.mix(colorEnd, interpolationFactor);
+
+    return interpolatedColor.hex();
 }

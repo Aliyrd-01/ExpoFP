@@ -31,7 +31,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
     }, [div]);
 
     const clicks = heatmapStore.getClicksByItem(exhibitor);
-    const background = heatmapStore.getColorFromClickCount(clicks);
+    const background = heatmapStore.getColorByClicks(clicks);
     return useObserver(() => (
         <a
             className={`exhibitor-row ${className} ${classNames({

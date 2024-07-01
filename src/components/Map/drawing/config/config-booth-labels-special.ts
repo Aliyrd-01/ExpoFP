@@ -54,7 +54,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
 
         let text = this.booth.title || this.booth.name;
 
-        const clicks = heatmapStore.getClicksByItem(this.booth);
+        const clicks = heatmapStore.getTotalClicksByBooth(this.booth);
         const clickText = `Clicks: ${clicks}`;
         text = uiState.heatmap ? `${text} - ${clickText}` : text;
 

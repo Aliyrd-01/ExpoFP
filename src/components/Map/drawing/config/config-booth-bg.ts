@@ -199,35 +199,44 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         const color0 =
             settings.colors.booths.seectedLight ||
             (!Color(this.booth.labelColor || settings.boothLabelColor).isLight() ? "#fff" : "#000");
-        const color1 = uiState.heatmap ? store.heatmapStore.getColorByClicks(this.booth) : settings.colors.booths.selected;
+        const color1 = settings.colors.booths.selected;
         return colorInterpolate([color0, color1]);
     }
 
     getBoothColor() {
-        const b = this.booth;
+        const booth = this.booth;
+        let color;
 
         if (uiState.heatmap) {
-            const heatmapColor = store.heatmapStore.getColorByClicks(b);
+            const totalClicks = store.heatmapStore.getTotalClicksByBooth(booth);
+            const heatmapColor = Color(store.heatmapStore.getColorByClicks(totalClicks));
 
-            if (b.selected) {
-                const color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
-                return Color(color);
+            if (booth.selected) {
+                color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
+                return Color(color === "none" ? "#f33" : color);
             }
 
-            return Color(heatmapColor);
+            if (booth.hover) {
+                return heatmapColor.darken(0.2).alpha(heatmapColor.alpha() * 1.5);
+            }
+
+            return heatmapColor;
         }
 
-        let color: string;
-        if (b.error) color = "#f33";
-        else if (data.isRebooking) color = this.defaultColor;
-        else if (b.selected) {
+        if (booth.error) {
+            color = "#f33";
+        } else if (data.isRebooking) {
+            color = this.defaultColor;
+        } else if (booth.selected) {
             color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
-        } else color = this.defaultColor;
+        } else {
+            color = this.defaultColor;
+        }
 
         let colorInfo = Color(color === "none" ? "#f33" : color);
-        if ((b.hover && !b.selected) || (b.selected && data.isRebooking)) {
-            const a = colorInfo.alpha();
-            colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
+
+        if ((booth.hover && !booth.selected) || (booth.selected && data.isRebooking)) {
+            colorInfo = colorInfo.darken(0.2).alpha(colorInfo.alpha() * 1.5);
         }
 
         return colorInfo;

@@ -11,7 +11,7 @@ const BoothRow: React.FC<{
     className: string;
 }> = ({ booth, className }) => {
     const clicks = heatmapStore.getClicksByItem(booth);
-    const background = heatmapStore.getColorFromClickCount(clicks);
+    const background = heatmapStore.getColorByClicks(clicks);
 
     return useObserver(() => {
         return (
