@@ -18,7 +18,7 @@ import settings from "../tools/settings";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
-export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean {
+export function handleCustomCommand(text: string, forseRefresh: boolean): boolean {
     text = text.trim();
 
     if (text.startsWith(`${YouAreHere.yahKey}`)) {
@@ -250,7 +250,7 @@ function Search() {
             case "Enter":
                 e.preventDefault();
                 store.openActiveListItem();
-                hanleCustomCommand(getInput().value, true);
+                handleCustomCommand(getInput().value, true);
                 return;
         }
         if (delta) {
