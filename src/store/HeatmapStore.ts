@@ -17,7 +17,7 @@ export default class HeatmapStore {
         this.rootStore = rootStore;
     }
 
-    @computed get minAndMaxClicks() {
+    @computed({ keepAlive: true }) get minAndMaxClicks() {
         if (!this.heatmapData || !this.heatmapData.booths || !this.heatmapData.exhibitors) {
             return { min: 0, max: 0 };
         }
@@ -71,7 +71,8 @@ export default class HeatmapStore {
     }
 
     getColorByClicks(clicks: number) {
-        return getColorFromGradient(clicks);
+        const { min, max } = this.minAndMaxClicks;
+        return getColorFromGradient(clicks, min, max);
     }
 }
 

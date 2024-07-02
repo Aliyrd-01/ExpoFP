@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
-import React, { MouseEvent, useEffect, useRef } from "react";
+import React, { MouseEvent, useEffect, useMemo, useRef } from "react";
 import data from "../data";
 import store, { heatmapStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
@@ -30,8 +30,9 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
-    const clicks = heatmapStore.getClicksByItem(exhibitor);
-    const background = heatmapStore.getColorByClicks(clicks);
+    const clicks = useMemo(() => heatmapStore.getClicksByItem(exhibitor), [exhibitor]);
+    const background = useMemo(() => heatmapStore.getColorByClicks(clicks), [clicks]);
+
     return useObserver(() => (
         <a
             className={`exhibitor-row ${className} ${classNames({
