@@ -8,7 +8,7 @@ import FloorPlanLoader from "./floorplan.loader";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { SpecialBooth } from "./store/BoothStore";
-import { CurrentPosition, Route, extractRoute, Marker, MarkersData } from "./store/RouteStore";
+import { CurrentPosition, Route, extractRoute, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import reportError from "./tools/report-error";

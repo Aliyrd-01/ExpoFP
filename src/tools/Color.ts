@@ -1,6 +1,5 @@
 import Color from "color";
 import settings from "./settings";
-import store from "../store";
 
 Color.prototype.vec4 = function () {
     const r = this.rgb().object();
