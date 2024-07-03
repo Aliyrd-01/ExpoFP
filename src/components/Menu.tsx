@@ -144,7 +144,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
                                 ","
                             )}&layers=${
-                                store.layerStore.layers > store.layerStore.visible
+                                store.layerStore.layers.length >= store.layerStore.visible.length
                                     ? store.layerStore.visible.map((l) => l.name).join(",")
                                     : ""
                             }`}
