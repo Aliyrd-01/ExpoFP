@@ -1,13 +1,16 @@
 .simple-row {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     text-decoration: none !important;
     color: #333 !important;
     $p: 1rem;
 
-    &__main {
+    &__col {
         padding: 0 $p 0;
+    }
+
+    &__main {
         height: 1.3125rem;
         white-space: nowrap;
         overflow: hidden;
@@ -19,10 +22,19 @@
     &__sub {
         font-size: 0.7rem;
         color: rgba(0, 0, 0, 0.4); //#aaa
-        padding: 0 $p;
         height: 0.7rem;
         margin: -2px 0;
         text-align: left;
+    }
+
+    &__end {
+        padding-inline-end: 1rem;
+        min-width: 4rem;
+        text-align: end;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #555;
+        overflow-wrap: break-word;
     }
 }
 

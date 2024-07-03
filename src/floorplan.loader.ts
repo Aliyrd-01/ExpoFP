@@ -244,6 +244,14 @@ export default class FloorPlanLoader implements FloorPlan {
             const navLocale = _locales.find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
 
+            const isHeatmap = window.location.search.startsWith("?heatmap=true");
+            if (isHeatmap) {
+                const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
+                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(res => res.json());
+                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(res => res.json());
+                window["__heatmapData"] = { booths, exhibitors };
+            }
+
             if (data.isRebooking) {
                 await loadJs(dataInternalUrl);
                 mergeExhibitors(window["__data"] as Data, window["__internalData"] as Data);

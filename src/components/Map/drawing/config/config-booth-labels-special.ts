@@ -3,14 +3,14 @@ import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import store, { boothStore, uiState } from "./../../../../store/index";
+import store, { heatmapStore, uiState, boothStore } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
 import TextFitter, { TextFitData } from "./TextFitter";
 
 const textFitters = new Map<number, TextFitter>();
-function cteateTextFitter(pixelRatio: number) {
+function createTextFitter(pixelRatio: number) {
     let d = textFitters.get(pixelRatio);
     if (!d) {
         const allowedFontSizes = [18, 16, 14, 12, 10, 7].map((f) => f * pixelRatio);
@@ -51,9 +51,15 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
         const pad = booth.borderWidth / 2 || boothStore.borderWidth / 2;
 
         r = r.withPadding(r.w * 0.05 + pad, r.h * 0.05 + pad);
-        const text = this.booth.title || this.booth.name;
 
-        this.steps = cteateTextFitter(context.pixelRatio).getStepsForRect(text, r.w, r.h);
+        let text = this.booth.title || this.booth.name;
+
+        const clicks = heatmapStore.getTotalClicksByBooth(this.booth);
+        const clickText = `Clicks: ${clicks}`;
+        text = uiState.heatmap ? `${text} - ${clickText}` : text;
+
+        this.steps = createTextFitter(context.pixelRatio).getStepsForRect(text, r.w, r.h);
+
         this.ids = [];
 
         const color = booth.labelColor || settings.boothLabelColor;

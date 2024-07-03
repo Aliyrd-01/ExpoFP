@@ -178,11 +178,6 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
             }
         }
 
-        let logoInBooth = false;
-
-        const exhibitorsWithLogoInBooths = booth.exhibitors.filter((ex) => ex.logoInBooth);
-        logoInBooth = exhibitorsWithLogoInBooths.length > 0;
-
         if (el.tagName === "g") {
             booth.paths = [];
             booth.pathsWithRect = pathsWithRect;

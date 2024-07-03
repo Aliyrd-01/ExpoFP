@@ -1,7 +1,7 @@
 import { useObserver } from "mobx-react-lite";
-import React from "react";
+import React, { useMemo } from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { heatmapStore, uiState } from "../store";
 import { Booth, SpecialBooth } from "../store/BoothStore";
 import "./BoothRow.scss";
 import SimpleRow from "./SimpleRow";
@@ -10,9 +10,17 @@ const BoothRow: React.FC<{
     booth: Booth;
     className: string;
 }> = ({ booth, className }) => {
+    const clicks = useMemo(() => heatmapStore.getClicksByItem(booth), [booth]);
+    const background = useMemo(() => heatmapStore.getColorByClicks(clicks), [clicks]);
+
     return useObserver(() => {
         return (
             <SimpleRow
+                style={{
+                    background: uiState.heatmap
+                        ? `linear-gradient(to right, transparent 98%, ${background} 93%) center / 100% 99% no-repeat`
+                        : null,
+                }}
                 className={className}
                 slug={booth.slug}
                 onClick={handleClick}
@@ -20,9 +28,10 @@ const BoothRow: React.FC<{
                 onMouseOver={handleMouseOver}
                 line1={booth.name.startsWith("yah") ? booth.title : booth.fullName}
                 line2={booth instanceof SpecialBooth ? "" : data.boothTerm}
+                lineEnd={uiState.heatmap ? clicks.toString() : null}
             />
         );
-    })
+    });
 
     function handleClick() {
         store.clickBoothInList2(booth);

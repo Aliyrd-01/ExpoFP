@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
-import React, { MouseEvent, useEffect, useRef } from "react";
+import React, { MouseEvent, useEffect, useMemo, useRef } from "react";
 import data from "../data";
-import store, { uiState } from "../store";
+import store, { heatmapStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
@@ -30,6 +30,9 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
 
+    const clicks = useMemo(() => heatmapStore.getClicksByItem(exhibitor), [exhibitor]);
+    const background = useMemo(() => heatmapStore.getColorByClicks(clicks), [clicks]);
+
     return useObserver(() => (
         <a
             className={`exhibitor-row ${className} ${classNames({
@@ -39,6 +42,9 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
             style={{
                 borderLeft: data.isRebooking
                     ? `5px solid ${defaultRebookingOptions[exhibitor.rebookingState].color.primary}`
+                    : null,
+                background: uiState.heatmap
+                    ? `linear-gradient(to right, transparent 98%, ${background} 93%) center / 100% 99% no-repeat`
                     : null,
             }}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
@@ -56,10 +62,8 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                     <BookmarkSvg />
                 </div>
             )}
-            <div className="exhibitor-row__booth">
-                {exhibitor.booths.map((booth) => (
-                    <div key={booth.id}>{booth.fullName}</div>
-                ))}
+            <div className="exhibitor-row__info">
+                {uiState.heatmap ? clicks : exhibitor.booths.map((booth) => <div key={booth.id}>{booth.fullName}</div>)}
             </div>
         </a>
     ));

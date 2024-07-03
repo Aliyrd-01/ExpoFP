@@ -8,6 +8,7 @@ import { isLocalStorageAvailable } from "../utils/localStorage";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {
+    console.log(data);
     const EFP_EXPO = settings.EXPO;
     // before data validation
     if (!data.exhibitors) data.exhibitors = [];

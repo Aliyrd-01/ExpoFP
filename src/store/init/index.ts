@@ -5,6 +5,7 @@ import initExhibitors from "./init-exhibitors";
 import initLayers from "./init-layers";
 import { iniSchedule } from "./init-schedule";
 import initUi from "./init-ui";
+import { initHeatmap } from "./init-heatmap";
 
 export default function initStore(store: RootStore) {
     initLayers(store);
@@ -12,5 +13,6 @@ export default function initStore(store: RootStore) {
     initExhibitors(store);
     initCategories(store);
     iniAllBooths(store);
+    initHeatmap(store);
     initUi(store);
 }

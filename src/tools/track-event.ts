@@ -2,11 +2,13 @@ import data from "../data";
 import logger from "./logger";
 import { yahKey } from "../utils/yah"
 import { getLocationHistory } from "../services/routing";
+import { uiState } from "../store";
 
 export default function trackEvent(type: "load" | "exview" | "search" | "route" | "share" | "booview" | "catview", value?: any) {
     logger.log("trackEvent", type, value);
     if (!data.trackerUrl) return;
     if (process.env.NODE_ENV !== "production") return;
+    if (uiState.heatmap) return;
     try {
         let url = data.trackerUrl;
         const yah = localStorage.getItem(yahKey)

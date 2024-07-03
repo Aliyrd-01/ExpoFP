@@ -3,6 +3,7 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
+import { boothStore, heatmapStore, uiState } from "../../../../store";
 import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
@@ -71,18 +72,23 @@ export function createDetailsCanvas(
     //const br = !b.special ? (b as RegularBooth) : undefined;
     // if (b.special === false) {
 
-    if (b.onHold) {
-        lines.push(t("On Hold"));
-    } else if (b.reserved) {
-        lines.push(t("Reserved"));
-    } /*else if (b.exhibitors.length) {
+    if (!uiState.heatmap) {
+        if (b.onHold) {
+            lines.push(t("On Hold"));
+        } else if (b.reserved) {
+            lines.push(t("Reserved"));
+        } /*else if (b.exhibitors.length) {
 <<<<<<< HEAD
         lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } */ else if (!onlyId) {
-        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+            lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+        }
+        if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
+        if (b.price && b.price !== "0") lines.push(b.price);
+    } else {
+        const clicks = heatmapStore.getTotalClicksByBooth(b);
+        lines.push("Clicks: " + clicks);
     }
-    if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
-    if (b.price && b.price !== "0") lines.push(b.price);
 
     // }
 
@@ -200,6 +206,11 @@ export function createExhibitorsDetailsCanvas(
     });
 
     if (!onlyMain) detailsLines.push(b.name);
+
+    if (uiState.heatmap) {
+        const clicks = heatmapStore.getTotalClicksByBooth(b);
+        detailsLines.push("Clicks: " + clicks);
+    }
 
     const maxTextWidth = Math.max(
         ...mainLines.map((x) => measureText(mainFont, x)),

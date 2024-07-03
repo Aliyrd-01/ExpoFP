@@ -3,7 +3,7 @@ import colorInterpolate from "color-interpolate";
 import { computed } from "mobx";
 import Polygon4 from "../../../../core/Polygon";
 import data from "../../../../data";
-import store, { boothStore } from "../../../../store";
+import store, { boothStore, uiState } from "../../../../store";
 import { Booth, RegularBooth, SpecialBooth } from "../../../../store/BoothStore";
 import { LayersMode } from "../../../../store/LayerStore";
 import settings from "../../../../tools/settings";
@@ -204,19 +204,39 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
     }
 
     getBoothColor() {
-        const b = this.booth;
+        const booth = this.booth;
+        let color;
 
-        let color: string;
-        if (b.error) color = "#f33";
-        else if (data.isRebooking) color = this.defaultColor;
-        else if (b.selected) {
+        if (uiState.heatmap) {
+            const totalClicks = store.heatmapStore.getTotalClicksByBooth(booth);
+            const heatmapColor = Color(store.heatmapStore.getColorByClicks(totalClicks));
+
+            if (booth.selected) {
+                color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
+                return Color(color === "none" ? "#f33" : color);
+            }
+
+            if (booth.hover) {
+                return heatmapColor.darken(0.2).alpha(heatmapColor.alpha() * 1.5);
+            }
+
+            return heatmapColor;
+        }
+
+        if (booth.error) {
+            color = "#f33";
+        } else if (data.isRebooking) {
+            color = this.defaultColor;
+        } else if (booth.selected) {
             color = this.selectedColorInterpolateFunc(this.shape.selectBgAnimationPart);
-        } else color = this.defaultColor;
+        } else {
+            color = this.defaultColor;
+        }
 
         let colorInfo = Color(color === "none" ? "#f33" : color);
-        if ((b.hover && !b.selected) || (b.selected && data.isRebooking)) {
-            const a = colorInfo.alpha();
-            colorInfo = colorInfo.darken(0.2).alpha(a * 1.5);
+
+        if ((booth.hover && !booth.selected) || (booth.selected && data.isRebooking)) {
+            colorInfo = colorInfo.darken(0.2).alpha(colorInfo.alpha() * 1.5);
         }
 
         return colorInfo;

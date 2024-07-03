@@ -140,7 +140,7 @@ function dispatchFromUrl() {
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);
-            else store.selectSearch(slug);
+            else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
         }
     }
 
@@ -151,6 +151,22 @@ function dispatchFromUrl() {
 
 function processURLParams() {
     const locationSearch = history.location.search;
+
+    if (locationSearch.includes("heatmap")) {
+        const url = new URL(window.location.href);
+        const heatmapParamValue = url.searchParams.get("heatmap");
+
+        if (heatmapParamValue === "true") {
+            url.searchParams.delete("heatmap");
+
+            let newSearch = url.search;
+            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+            disableHistoryManipulation = true;
+
+            historyReplace(newSearch);
+            store.uiState.heatmap = true;
+        }
+    }
 
     // preview fix
     if (locationSearch.startsWith("?preview=")) {

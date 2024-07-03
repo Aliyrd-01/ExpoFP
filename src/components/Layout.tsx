@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { layersStore, uiState } from "../store";
+import store, { layersStore, uiState, heatmapStore } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported } from "../utils";
 import isDebug from "../utils/is-debug";

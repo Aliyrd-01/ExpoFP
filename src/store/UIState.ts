@@ -284,7 +284,7 @@ export default class UIState {
         let text = this.list.text.trim().toLowerCase() as string;
         // let words = text.split(/\s+/).filter(x => x);
 
-        const { exhibitorStore, categoryStore, boothStore, scheduleStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories;
@@ -300,6 +300,11 @@ export default class UIState {
             if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
             if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
             if (uiState.kiosk && settings.EXPO == "imexamerica23") combinedArray = combinedArray.slice(0, 300);
+
+            if (this.heatmap) {
+                const allItems = [...exhibitorsArray, ...boothsArray];
+                return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+            }
 
             return exhibitorsArray.length === 0
                 ? boothsArray
@@ -372,17 +377,17 @@ export default class UIState {
         });
 
         boothsArray.forEach((b) => {
-            if (!(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b))) {
-                if (
-                    splittedTexts.some(
-                        (text) =>
-                            containsIgnoreCase(b.title || "", text) ||
-                            containsIgnoreCase(b.name, text) ||
-                            containsLevelIgnoreCase(b.layer?.name ?? null, text)
-                    )
+            const addBoothCondition = this.heatmap
+                ? true
+                : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
+
+            if (addBoothCondition && 
+                splittedTexts.some((text) => 
+                    containsIgnoreCase(b.title || "", text) ||
+                    containsIgnoreCase(b.name, text) ||
+                    containsLevelIgnoreCase(b.layer?.name ?? null, text))
                 ) {
-                    matchingBooths.add(b);
-                }
+                matchingBooths.add(b);
             }
         });
 
@@ -400,6 +405,10 @@ export default class UIState {
         items.push(...matchingCategories);
         items.push(...matchingExhibitors);
         items.push(...matchingBooths);
+
+        if (this.heatmap) {
+            return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        }
 
         return items;
     }

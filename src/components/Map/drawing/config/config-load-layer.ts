@@ -1,4 +1,4 @@
-import { boothStore, layersStore } from "./../../../../store/index";
+import { boothStore, layersStore, uiState } from "./../../../../store/index";
 import store from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
