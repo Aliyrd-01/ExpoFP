@@ -183,8 +183,12 @@ export default class RootStore {
         } else this.routeStore.tempToBooth = booth;
 
         if (this.uiState.onBoothClick) {
+                const layer = {
+                    name: "",
+                    description: "",
+                }
             const e: FloorPlanBoothClickEvent = {
-                target: booth,
+                target: { ...booth, layer: booth.layer || layer },
             };
             this.uiState.onBoothClick(e);
         }
