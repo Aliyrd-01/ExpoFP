@@ -12,6 +12,7 @@ import configBg from "./config-bg";
 import configBooths from "./config-booths";
 import configSizes from "./config-sizes";
 import { getChildLayers } from "../../../../store/init/init-layers";
+import { chunkArray } from "../../../../utils";
 
 function createChildLayers(layer: Layer) {
     if (layer.childLayers.length) return layer.childLayers;
@@ -33,9 +34,13 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
 
         logosBooths.forEach((b) => (b.noLabels = true));
 
+        const boothChunks = chunkArray(booths, 500);
+
         if (booths.length) {
-            configBooths(context, l.name, booths, l.basePriority + 3, l.visible)();
-            context.getLayersPainters([l.name]).forEach((p) => p.preparePaint());
+            boothChunks.forEach((chunk, i) => {
+                configBooths(context, l.name + `:chunk${i}`, chunk, l.basePriority + 3, l.visible)();
+                context.getLayersPainters([l.name + `:chunk${i}`]).forEach((p) => p.preparePaint());
+            })
         }
 
         l.loaded = true;

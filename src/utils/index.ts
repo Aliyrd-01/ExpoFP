@@ -3,6 +3,14 @@ export function remsToPixels(rem: number): number {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+    const chunks: T[][] = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+}
+
 export function sortByName<T extends { name: string }>(arr: T[]) {
     arr.sort(function(a: T, b: T) {
         var x = a.name.toLowerCase();
