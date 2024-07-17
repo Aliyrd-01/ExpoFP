@@ -14,6 +14,8 @@ import { RawSpecialBooth } from "../../data/Data";
 import { Exhibitor } from "../ExhibitorStore";
 import { v4 as uuidv4 } from "uuid";
 import { Layer } from "../LayerStore";
+import { uiState } from "../index";
+import Color from "color";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
@@ -125,6 +127,14 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
         booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
         booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor || "#FFFFFF";
         booth.borderWidth = parseFloat(rect.getAttribute("stroke-width") || rect.style.strokeWidth);
+        // if (uiState.heatmap) {
+        //     const totalClicks = store.heatmapStore.getTotalClicksByBooth(booth as Booth);
+        //     const heatmapColor = Color(store.heatmapStore.getColorByClicks(totalClicks));
+        //     booth.labelColor = heatmapColor.darken(0.3).isLight() ? "#555" : "#fff";
+        // } else {
+        //     booth.labelColor = rect.getAttribute("data-label-color");
+        // }
+
         booth.labelColor = rect.getAttribute("data-label-color");
 
         booth.rect = Rect.fromSvgRectElement(rect);

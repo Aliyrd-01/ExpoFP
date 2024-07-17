@@ -24,7 +24,7 @@ function round(value: number) {
 };
 
 const HeatmapLegend: React.FC<HeatmapLegendProps> = ({ colors, min, max, className, style }) => {
-    const numValues = 4;
+    const numValues = 5;
 
     const values = useMemo(() => {
         return Array.from({ length: numValues }, (_, index) => {
@@ -43,7 +43,7 @@ const HeatmapLegend: React.FC<HeatmapLegendProps> = ({ colors, min, max, classNa
         <div className={classNames("heatmap-legend", className)} style={style}>
             <div className="heatmap-legend__colors" style={{
                 background: `linear-gradient(to right, ${interpolatedColors.join(", ")})`
-            }}></div>
+            }} />
             <div className="heatmap-legend__values">
                 {values.map((value, index) => (
                     <div key={index} className="heatmap-legend__value">{value}</div>
