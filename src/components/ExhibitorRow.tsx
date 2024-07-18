@@ -1,15 +1,18 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
-import React, { MouseEvent, useEffect, useMemo, useRef } from "react";
+import React, { MouseEvent, useEffect, useRef } from "react";
 import data from "../data";
-import store, { heatmapStore, uiState } from "../store";
+import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
 import { defaultRebookingOptions } from "./RebookingRadioGroup";
+import useHeatmapData from "../utils/useHeatmapData";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
+    const { clicks, background } = useHeatmapData(exhibitor);
+
     function handleClick(e: MouseEvent) {
         e.preventDefault();
         store.clickExhibitor(exhibitor);
@@ -29,9 +32,6 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         if (!div.current) return;
         (div.current as HTMLAnchorElement).tabIndex = 0;
     }, [div]);
-
-    const clicks = useMemo(() => heatmapStore.getClicksByItem(exhibitor), [exhibitor]);
-    const background = useMemo(() => heatmapStore.getColorByClicks(clicks), [clicks]);
 
     return useObserver(() => (
         <a

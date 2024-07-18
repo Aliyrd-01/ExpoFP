@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, ReactNode } from "react";
 import "./OverlayBar.scss";
 import OverlayBarBack from "./OverlayBarBack";
 
@@ -7,9 +7,11 @@ const OverlayBar: React.FC<{
     scrolled: boolean;
     backMode: "back" | "menu" | "none";
     hideClose: boolean;
+    overlayBarStyle?: React.CSSProperties;
+    overlayBarEndContent?: ReactNode;
     onBack: () => void;
     onClose: () => void;
-}> = ({ scrolled, backMode, hideClose, onBack, onClose, children }) => {
+}> = ({ scrolled, backMode, hideClose, onBack, onClose, children, overlayBarEndContent, overlayBarStyle }) => {
     function handleClose(e: MouseEvent) {
         onClose();
     }
@@ -17,7 +19,7 @@ const OverlayBar: React.FC<{
     // console.log('OverlayBar', { scrolled, backMode, hideClose, onBack, onClose, children })
 
     return (
-        <div className={`overlay-bar ${classNames({ scrolled })}`}>
+        <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`}>
             <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
             {hideClose ? (
@@ -38,6 +40,7 @@ const OverlayBar: React.FC<{
             ) : (
                 <button className="far fa-times overlay-bar__close" onClick={handleClose} />
             )}
+            {overlayBarEndContent}
         </div>
     );
 };

@@ -13,6 +13,8 @@ const OverlayContent: React.FC<{
     className?: string;
     particles?: boolean;
     backMode: "back" | "menu" | "none";
+    overlayBarEndContent?: ReactNode;
+    overlayBarStyle?: React.CSSProperties
     hideClose?: boolean;
     onBack?: () => void;
     onClose: () => void;
@@ -29,6 +31,8 @@ const OverlayContent: React.FC<{
     onBack,
     onClose,
     children,
+    overlayBarStyle,
+    overlayBarEndContent,
     onUpdateFuncSet,
     passScrollableRef,
     passRefToParent,
@@ -101,7 +105,7 @@ const OverlayContent: React.FC<{
         <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}>
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
-            <OverlayBar scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>
+            <OverlayBar overlayBarStyle={overlayBarStyle} overlayBarEndContent={overlayBarEndContent} scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>
                 {bar}
             </OverlayBar>
 
