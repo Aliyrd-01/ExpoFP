@@ -21,6 +21,7 @@ import RebookingNotes from "./RebookingNotes";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
+import useHeatmapOverlay from "../utils/useHeatmapOverlay";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -64,6 +65,7 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
+    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, s.exhibitor.featured ? "#999" : "#555");
 
     useAutorun(() => {
         if (s.exhibitor) {
@@ -200,6 +202,8 @@ function ExhibitorComponent() {
             <OverlayContent
                 className={cls}
                 backMode="none"
+                overlayBarEndContent={heatmapBar}
+                overlayBarStyle={overlayBarStyle}
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}

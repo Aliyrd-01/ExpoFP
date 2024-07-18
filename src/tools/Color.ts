@@ -7,7 +7,7 @@ Color.prototype.vec4 = function () {
     return [r.r / 255, r.g / 255, r.b / 255, a];
 };
 
-export function getColorFromGradient(clickCount: number, min: number, max: number) {
+export function getColorFromGradient(clickCount: number, min: number, max: number): string {
 
     const colorPalette = settings.heatmapColors.map((color) => Color(color));
 

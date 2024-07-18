@@ -16,6 +16,7 @@ import "./Booth.scss";
 import { BoothOnHold } from "./BoothOnHold";
 import { BoothReserved } from "./BoothReserved";
 import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
+import useHeatmapOverlay from "../../utils/useHeatmapOverlay";
 
 function Booth() {
     const s = useLocalStore(() => ({
@@ -48,6 +49,7 @@ function Booth() {
             return this.booth.description || data.reserveInstructions || "";
         },
     }));
+    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth);
 
     useAutorun(() => {
         if (s.booth) {
@@ -93,7 +95,13 @@ function Booth() {
         }
 
         return (
-            <OverlayContent bar={bar} backMode="none" onClose={() => store.selectNone()}>
+            <OverlayContent
+                overlayBarEndContent={heatmapBar}
+                overlayBarStyle={overlayBarStyle}
+                bar={bar}
+                backMode="none"
+                onClose={() => store.selectNone()}
+            >
                 {!data.isRebooking && settings.wayfinding && (
                     <div
                         className="exhibitor__directions"
