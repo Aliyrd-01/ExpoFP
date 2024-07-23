@@ -81,8 +81,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         }
     }, []);
 
-    const minMaxClicks = store.heatmapStore.minAndMaxClicks;
-
     return (
         <div
             className={cn("layout", {
@@ -153,8 +151,8 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                             bottom: uiState.overlayPosition === "bottom" ? null : "30px",
                         }}
                         className={uiState.responsiveClass}
-                        max={minMaxClicks.max}
-                        min={minMaxClicks.min}
+                        max={heatmapStore.minAndMaxClicks.max}
+                        min={heatmapStore.minAndMaxClicks.min}
                         colors={settings.heatmapColors}
                     />
                 ) : null}

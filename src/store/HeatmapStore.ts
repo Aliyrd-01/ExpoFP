@@ -5,37 +5,38 @@ import { Category } from "./CategoryStore";
 import { getColorFromGradient } from "../tools/Color";
 import { ScheduleItem } from "./ScheduleStore";
 import { computed } from "mobx";
+import { CurrentPosition } from "./RouteStore";
 
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
-    heatmapData: HeatmapData = {
-        booths: [],
-        exhibitors: [],
-    };
+    heatmapData: HeatmapData = {};
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
 
     @computed({ keepAlive: true }) get minAndMaxClicks() {
-        if (!this.heatmapData || !this.heatmapData.booths || !this.heatmapData.exhibitors) {
+        const { booths = [], exhibitors = [], yah = [] } = this.heatmapData;
+
+        const allItems = [...booths, ...exhibitors, ...yah];
+        if (allItems.length === 0) {
             return { min: 0, max: 0 };
         }
-        const getMinMax = (data: HeatmapItem[], field: string) => {
-            return data.reduce((acc, obj) => {
-                if (obj[field] > acc.max) acc.max = obj[field];
-                if (obj[field] < acc.min) acc.min = obj[field];
-                return acc;
-            }, { min: data[0][field], max: data[0][field] });
+
+        const getMinMax = (data: HeatmapItem[]): { min: number, max: number } => {
+            return data.reduce(
+                (acc, item) => {
+                    if (item.viewCount > acc.max) acc.max = item.viewCount;
+                    if (item.viewCount < acc.min) acc.min = item.viewCount;
+                    return acc;
+                },
+                { min: data[0].viewCount, max: data[0].viewCount }
+            );
         };
 
-        const { min: minClicksBooth, max: maxClicksBooth } = getMinMax(this.heatmapData.booths, 'viewCount');
-        const { min: minClicksExhibitor, max: maxClicksExhibitor } = getMinMax(this.heatmapData.exhibitors, 'viewCount');
+        const { min, max } = getMinMax(allItems);
 
-        return {
-            min: Math.min(minClicksBooth, minClicksExhibitor),
-            max: Math.max(maxClicksBooth, maxClicksExhibitor)
-        };
+        return { min, max };
     }
 
     getClicksByType(item: Exhibitor | BoothBase | Category | ScheduleItem) {
@@ -52,11 +53,11 @@ export default class HeatmapStore {
 
     getClicksByItem(item: Exhibitor | BoothBase) {
         if (item instanceof Exhibitor) {
-            return this.heatmapData?.exhibitors.find((a) => a.id === item.id)?.viewCount || 0;
+            return this.heatmapData?.exhibitors?.find((a) => a.id === item.id)?.viewCount || 0;
         }
 
         if (item instanceof BoothBase) {
-            return this.heatmapData?.booths.find((a) => a.id === item.id)?.viewCount || 0;
+            return this.heatmapData?.booths?.find((a) => a.id === item.id)?.viewCount || 0;
         }
     }
 
@@ -77,11 +78,14 @@ export default class HeatmapStore {
 }
 
 export interface HeatmapData {
-    booths: HeatmapItem[];
-    exhibitors: HeatmapItem[];
+    booths?: HeatmapItem[];
+    exhibitors?: HeatmapItem[];
+    yah?: HeatmapYahItem[];
 }
 
+export interface HeatmapYahItem extends CurrentPosition, HeatmapItem {}
+
 export interface HeatmapItem {
-    id: number;
+    id: number | string;
     viewCount: number;
 }

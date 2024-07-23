@@ -66,7 +66,9 @@ export default class UIState {
     @observable disableBookmarked = false;
     @observable disableGps = false;
     @observable monochrome = false;
+    // TODO Consider the use of one variable with different versions
     @observable heatmap = false;
+    @observable heatmapYah = false;
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
     @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];

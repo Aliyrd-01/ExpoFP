@@ -250,6 +250,17 @@ export default class FloorPlanLoader implements FloorPlan {
                 const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(res => res.json());
                 const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(res => res.json());
                 window["__heatmapData"] = { booths, exhibitors };
+            } else if (window.location.search.startsWith("?heatmapYah=true")) {
+                window["__heatmapDataYah"] = {
+                    yah: [
+                        { id: "yah_1", x: 44000, y: 13500, viewCount: 430 },
+                        { id: "yah_2", x: 46000, y: 13500, viewCount: 901 },
+                        { id: "yah_3", x: 48000, y: 13500, viewCount: 1358 },
+                        { id: "yah_4", x: 46000, y: 12500, viewCount: 330 },
+                        { id: "yah_5", x: 44000, y: 11500, viewCount: 867 },
+                        { id: "yah_6", x: 48000, y: 11500, viewCount: 114 }
+                    ]
+                };
             }
 
             if (data.isRebooking) {

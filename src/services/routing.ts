@@ -140,7 +140,7 @@ function dispatchFromUrl() {
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);
-            else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
+            else if (!slug.includes("heatmap=true") && !slug.includes("heatmapYah=true")) store.selectSearch(slug);
         }
     }
 
@@ -152,7 +152,28 @@ function dispatchFromUrl() {
 function processURLParams() {
     const locationSearch = history.location.search;
 
-    if (locationSearch.includes("heatmap")) {
+    if (locationSearch.includes("heatmapYah")) {
+        const url = new URL(window.location.href);
+        const heatmapParamValue = url.searchParams.get("heatmapYah");
+
+        if (heatmapParamValue === "true") {
+            url.searchParams.delete("heatmapYah");
+
+            let newSearch = url.search;
+            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+            disableHistoryManipulation = true;
+
+            historyReplace(newSearch);
+
+            // TODO REVISE
+            store.uiState.heatmapYah = true;
+            store.uiState.monochrome = true;
+            store.uiState.hideLogoInBooth = true;
+            store.uiState.hideHeaderLogo = true;
+            store.uiState.disableBookmarked = true;
+            // store.exhibitorStore.exhibitors.forEach(ex => ex.featured = false);
+        }
+    } else if (locationSearch.includes("heatmap")) {
         const url = new URL(window.location.href);
         const heatmapParamValue = url.searchParams.get("heatmap");
 
@@ -368,7 +389,6 @@ export function initRouting(offHistory = false) {
 
     unlisten = history.listen((location, action) => {
         if (disableHistoryManipulation) return;
-
         routeHistory.push(getHistoryUrl(location.search));
 
         logger.log("history", action, location);
