@@ -16,6 +16,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
+import { HeatmapYah } from "./HeatmapStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -26,7 +27,7 @@ type ListType =
     | { type: "category"; category: Category };
 export type OverlaySize = "full" | "medium" | "small";
 // export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category | ScheduleItem;
+export type ListItem = Booth | Exhibitor | Category | ScheduleItem | HeatmapYah;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -306,6 +307,8 @@ export default class UIState {
             if (this.heatmap) {
                 const allItems = [...exhibitorsArray, ...boothsArray];
                 return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+            } else if (this.heatmapYah) {
+                return heatmapStore.heatmapData.yah.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
             }
 
             return exhibitorsArray.length === 0
@@ -333,14 +336,22 @@ export default class UIState {
             }, 1000);
         }
 
+        const splittedTexts = text.split("&").filter((s) => s);
+
+        if (this.heatmapYah) {
+            const result =  heatmapStore.heatmapData.yah.filter((c) => {
+                return splittedTexts.some((text) => containsIgnoreCase(c.id.toString(), text));
+            });
+
+            return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        }
+
         const items: ListItem[] = [];
 
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
         const matchingCategories = new Set<Category>();
         const matchingEvents = new Set<ScheduleItem>();
-
-        const splittedTexts = text.split("&").filter((s) => s);
 
         function selectLettersSpacesNumbers(input: string): string {
             return input?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;

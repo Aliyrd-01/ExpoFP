@@ -5,7 +5,6 @@ import { Category } from "./CategoryStore";
 import { getColorFromGradient } from "../tools/Color";
 import { ScheduleItem } from "./ScheduleStore";
 import { computed } from "mobx";
-import { CurrentPosition } from "./RouteStore";
 
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
@@ -39,32 +38,39 @@ export default class HeatmapStore {
         return { min, max };
     }
 
-    getClicksByType(item: Exhibitor | BoothBase | Category | ScheduleItem) {
+    getClicksByType(item: Exhibitor | BoothBase | Category | ScheduleItem | HeatmapYah) {
         if (item instanceof Category) {
             // -1 is returned for Categories to ensure they appear last in sorted methods
             return -1;
         } else if (item instanceof Exhibitor) {
-            return this.getClicksByItem(item);
+            return this.getClicksByItem(item, "exhibitor");
+        } else if (item instanceof HeatmapYah) {
+            return this.getClicksByItem(item, "yah");
         } else if (item instanceof ScheduleItem) {
             return 0;
         }
-        return this.getClicksByItem(item);
+
+        return this.getClicksByItem(item, "booth");
     }
 
-    getClicksByItem(item: Exhibitor | BoothBase) {
-        if (item instanceof Exhibitor) {
+    getClicksByItem(item: Omit<HeatmapItem, "viewCount">, type: "booth" | "exhibitor" | "yah") {
+        if (type === "exhibitor") {
             return this.heatmapData?.exhibitors?.find((a) => a.id === item.id)?.viewCount || 0;
         }
 
-        if (item instanceof BoothBase) {
+        if (type === "booth") {
             return this.heatmapData?.booths?.find((a) => a.id === item.id)?.viewCount || 0;
+        }
+
+        if (type === "yah") {
+            return this.heatmapData?.yah?.find((a) => a.id === item.id)?.viewCount || 0;
         }
     }
 
     getTotalClicksByBooth(b: BoothBase) {
-        let totalClicks = this.getClicksByItem(b);
+        let totalClicks = this.getClicksByItem(b, "booth");
         for (const exhibitor of b.exhibitors) {
-            const clicks = this.getClicksByItem(exhibitor);
+            const clicks = this.getClicksByItem(exhibitor, "exhibitor");
             totalClicks += clicks;
         }
 
@@ -80,10 +86,18 @@ export default class HeatmapStore {
 export interface HeatmapData {
     booths?: HeatmapItem[];
     exhibitors?: HeatmapItem[];
-    yah?: HeatmapYahItem[];
+    yah?: HeatmapYah[];
 }
 
-export interface HeatmapYahItem extends CurrentPosition, HeatmapItem {}
+export class HeatmapYah {
+    readonly id: number | string;
+    readonly viewCount: number;
+    readonly x: number;
+    readonly y: number;
+    readonly z?: number | string;
+}
+
+// export interface HeatmapYahItem extends CurrentPosition, HeatmapItem {}
 
 export interface HeatmapItem {
     id: number | string;

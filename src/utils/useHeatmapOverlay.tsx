@@ -1,11 +1,9 @@
 import React, { useMemo } from "react";
 import { uiState } from "../store";
 import useHeatmapData from "./useHeatmapData";
-import { Exhibitor } from "../store/ExhibitorStore";
-import { BoothBase } from "../store/BoothStore";
 
-const useHeatmapOverlay = (entity: Exhibitor | BoothBase, color: string = "#555") => {
-    const { clicks, background } = useHeatmapData(entity);
+const useHeatmapOverlay = (entity: { id: string | number }, type: "booth" | "exhibitor" | "yah", color: string = "#555") => {
+    const { clicks, background } = useHeatmapData(entity, type);
 
     const heatmapBar = useMemo(() => {
         return uiState.heatmap ? (

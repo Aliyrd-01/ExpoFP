@@ -11,7 +11,7 @@ import { defaultRebookingOptions } from "./RebookingRadioGroup";
 import useHeatmapData from "../utils/useHeatmapData";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
-    const { clicks, background } = useHeatmapData(exhibitor);
+    const { clicks, background } = useHeatmapData(exhibitor, "exhibitor");
 
     function handleClick(e: MouseEvent) {
         e.preventDefault();

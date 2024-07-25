@@ -49,7 +49,7 @@ function Booth() {
             return this.booth.description || data.reserveInstructions || "";
         },
     }));
-    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth);
+    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth, "booth");
 
     useAutorun(() => {
         if (s.booth) {

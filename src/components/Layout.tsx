@@ -143,7 +143,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                         </Modal>
                     </Suspense>
                 ) : null}
-                {uiState.heatmap ? (
+                {uiState.heatmap || uiState.heatmapYah ? (
                     <HeatmapLegend
                         style={{
                             left: `calc(50% + ${store.uiState.mapVisibleStart / 2}px)`,

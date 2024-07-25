@@ -1,5 +1,5 @@
 import { useObserver } from "mobx-react-lite";
-import React, { useMemo } from "react";
+import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth, SpecialBooth } from "../store/BoothStore";
@@ -11,7 +11,7 @@ const BoothRow: React.FC<{
     booth: Booth;
     className: string;
 }> = ({ booth, className }) => {
-    const { clicks, background } = useHeatmapData(booth);
+    const { clicks, background } = useHeatmapData(booth, "booth");
 
     return useObserver(() => {
         return (

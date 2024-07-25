@@ -11,6 +11,8 @@ import CategoryRow from "./CategoryRow";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 import ScheduleItemRow from "./ScheduleRow";
+import { HeatmapYah } from "../store/HeatmapStore";
+import YahRow from "./YahRow";
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -31,7 +33,7 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
     }, []);
 
     const mapItem = ({ index }: { index: number }) => {
-        const item: Exhibitor | Booth | Category | ScheduleItem = uiState.listItems[index];
+        const item: Exhibitor | Booth | Category | ScheduleItem | HeatmapYah = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
         if (item instanceof Exhibitor) {
             return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
@@ -41,6 +43,8 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
             return <CategoryRow key={index} className={cls} category={item} />;
         } else if (item instanceof ScheduleItem) {
             return <ScheduleItemRow key={index} className={cls} item={item} />;
+        } else if (item instanceof HeatmapYah) {
+            return <YahRow key={index} yah={item} className={cls} />
         }
     };
 
