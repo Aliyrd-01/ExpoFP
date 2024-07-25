@@ -124,7 +124,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.element = element;
         if (element["__expofp"]) throw new Error("Element already in use");
         element["__expofp"] = this;
-        const eventId =
+        const eventId = "demo" ||
             options.eventId ||
             element.getAttribute("data-event-id") ||
             element.getAttribute("data-event") || // legacy remove 2020-12-12

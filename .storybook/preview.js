@@ -1,3 +1,4 @@
+import React from "react";
 import "../src/styles/storybook.global.scss";
 import StoryWrapper from "../src/storybook/decorators/StoryWrapper";
 import WithResize from "../src/storybook/decorators/WithResize";
