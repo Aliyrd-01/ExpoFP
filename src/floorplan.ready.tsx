@@ -153,7 +153,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     selectCategory(slug: string) {
         const category = store.categoryStore.categories.find((x) => x.slug === slug);
-        if (category) store.selectCategory(category);
+
+        if (!category) {
+            console.error(`Category with the slug '${slug}' not found.`);
+            return;
+        }
+
+        store.selectCategory(category);
     }
 
     applyParameters(queryRaw: string) {
