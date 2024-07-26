@@ -151,11 +151,14 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
-    selectCategory(slug: string) {
-        const category = store.categoryStore.categories.find((x) => x.slug === slug);
+    selectCategory(nameOrSlug: string) {
+        const str = nameOrSlug?.toLowerCase();
+        const category = store.categoryStore.categories.find(
+            ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str
+        );
 
         if (!category) {
-            console.error(`Category with the slug '${slug}' not found.`);
+            console.error(`Category ${nameOrSlug} not found.`);
             return;
         }
 
