@@ -98,6 +98,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    selectCategory(nameOrSlug: string): void {
+        nr();
+    }
+
     unstable_destroy(): void {
         nr();
     }
