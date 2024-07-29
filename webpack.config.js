@@ -30,6 +30,12 @@ function createConfig(env) {
         resolve: {
             extensions: [".js", ".jsx", ".ts", ".tsx"],
         },
+        performance: {
+            maxAssetSize: 500000,
+            assetFilter: function (assetFilename) {
+                return assetFilename.endsWith(".js");
+            },
+        },
         module: {
             rules: [
                 {
@@ -78,26 +84,6 @@ function createConfig(env) {
                 "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo),
             }),
         ],
-        devServer: {
-            port: 8080,
-            open: true,
-            hot: true,
-            compress: true,
-            client: {
-                overlay: {
-                    errors: true,
-                    warnings: false,
-                    runtimeErrors: true,
-                },
-            },
-            static: {
-                directory: path.join(__dirname, 'public'),
-            },
-            headers: {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, HEAD",
-            },
-        },
     };
 
     if (isProd) {
