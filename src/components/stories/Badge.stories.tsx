@@ -1,5 +1,5 @@
 import React from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import Badge from "../Badge";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     component: Badge,
 } as Meta;
 
-const Template: Story = (args) => {
+const Template: StoryFn = (args) => {
     return (
         <>
             <Badge {...args}>

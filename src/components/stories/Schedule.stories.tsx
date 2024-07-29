@@ -1,5 +1,5 @@
 import React from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import Schedule, { ScheduleProps } from "../Schedule";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     component: Schedule,
 } as Meta;
 
-const Template: Story<ScheduleProps> = (args) => {
+const Template: StoryFn<ScheduleProps> = (args) => {
     return (
         <div className="map layout">
             <aside className="sidebar">

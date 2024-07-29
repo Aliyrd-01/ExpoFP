@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import RebookingRadioGroup, { defaultRebookingOptions } from "../RebookingRadioGroup";
 import RebookingNotes, { RebookingNotesProps } from "../RebookingNotes";
 
@@ -8,7 +8,7 @@ export default {
     component: RebookingNotes,
 } as Meta;
 
-const Template: Story<RebookingNotesProps> = (args) => {
+const Template: StoryFn<RebookingNotesProps> = (args) => {
     const [checkedOption, setCheckedOption] = useState<string>(defaultRebookingOptions[1].value);
 
     const onChangeOption = (event) => {

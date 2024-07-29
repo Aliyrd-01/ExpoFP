@@ -1,5 +1,5 @@
 import React from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import MarketMaterialList, { MarketMaterialListProps } from "../MarketMaterialList";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     component: MarketMaterialList,
 } as Meta;
 
-const Template: Story<MarketMaterialListProps> = (args) => {
+const Template: StoryFn<MarketMaterialListProps> = (args) => {
     return (
         <div className="map layout">
             <aside className="sidebar">

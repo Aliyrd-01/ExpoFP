@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import RebookingRadioGroup, { defaultRebookingOptions, RebookingRadioGroupProps } from "../RebookingRadioGroup";
 import { useToast } from "../Toast/index";
@@ -9,7 +9,7 @@ export default {
     component: RebookingRadioGroup,
 } as Meta;
 
-const Template: Story<RebookingRadioGroupProps> = (args) => {
+const Template: StoryFn<RebookingRadioGroupProps> = (args) => {
     const [checkedOption, setCheckedOption] = useState<string>(args.options[1].value);
     const toast = useToast();
 

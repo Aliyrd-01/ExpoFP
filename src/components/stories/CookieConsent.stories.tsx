@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { action } from "@storybook/addon-actions";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import CookieConsent from "../CookieConsent";
 
 export default {
@@ -8,7 +8,7 @@ export default {
     component: CookieConsent,
 } as Meta;
 
-const Template: Story = (args) => {
+const Template: StoryFn = (args) => {
     const [showCookieConsent, setShowCookieConsent] = useState<Boolean>(true);
     const cookieHandler = (chosen) => {
         setShowCookieConsent(false);
