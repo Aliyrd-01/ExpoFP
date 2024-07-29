@@ -3,7 +3,7 @@ import { select } from "d3-selection";
 import { autorun, reaction } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
 import React, { useLayoutEffect, useRef } from "react";
-import store from "../store";
+import { uiState } from "../store";
 import { OverlaySize } from "../store/UIState";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
@@ -15,7 +15,6 @@ import Menu from "./Menu";
 import "./Overlay.scss";
 import Search from "./Search";
 import Wayfinding from "./Wayfinding";
-const { uiState } = store;
 
 interface OverlayProps {
     isGDPR: boolean;
