@@ -98,7 +98,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.routeStore.selectMarker(id, focus);
     }
 
-    drawCircles(circles: { x: number, y: number, radius: number, color?: string }[]) {
+    drawCircles(circles: { x: number; y: number; radius: number; color?: string }[]) {
         store.uiState.debugCircles = circles;
     }
 
@@ -133,10 +133,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 externalId: b.externalId,
                 isSpecial: b instanceof SpecialBooth,
                 exhibitors: b.exhibitors.map((e) => e.id),
-                layer:{
+                layer: {
                     name: b.layer?.name,
-                    description: b.layer?.description
-                }
+                    description: b.layer?.description,
+                },
             };
         });
     }
@@ -149,6 +149,20 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 exhibitors: c.exhibitors.map((e) => e.id),
             };
         });
+    }
+
+    selectCategory(nameOrSlug: string) {
+        const str = nameOrSlug?.toLowerCase();
+        const category = store.categoryStore.categories.find(
+            ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str
+        );
+
+        if (!category) {
+            console.error(`Category ${nameOrSlug} not found.`);
+            return;
+        }
+
+        store.selectCategory(category);
     }
 
     applyParameters(queryRaw: string) {
@@ -165,8 +179,9 @@ export default class FloorPlanReady extends FloorPlanLoader {
         destroyUiHandlers();
         destroyGtag();
 
-        const scripts = [...document.getElementsByTagName("script")]
-            .filter((x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1);
+        const scripts = [...document.getElementsByTagName("script")].filter(
+            (x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1
+        );
         scripts.forEach((sc) => sc.remove());
 
         ReactDOM.unmountComponentAtNode(this.renderTarget);

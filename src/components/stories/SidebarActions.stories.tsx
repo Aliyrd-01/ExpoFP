@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import SidebarActions, { SidebarActionsProps } from "../SidebarActions";
 
@@ -8,7 +8,7 @@ export default {
     component: SidebarActions,
 } as Meta;
 
-const Template: Story<SidebarActionsProps> = (args) => {
+const Template: StoryFn<SidebarActionsProps> = (args) => {
     const [inBookmarks, setInBookmarks] = useState(args.inBookmark);
 
     const addToBookmarks = () => {

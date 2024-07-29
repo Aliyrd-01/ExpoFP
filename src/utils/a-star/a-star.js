@@ -45,7 +45,6 @@ function aStarPathSearch(graph, options) {
     if (!blocked) blocked = defaultSettings.blocked;
 
     var heuristic = options.heuristic;
-    ``;
     if (!heuristic) heuristic = defaultSettings.heuristic;
 
     var distance = options.distance;

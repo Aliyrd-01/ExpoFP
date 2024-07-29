@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import Checkbox, { CheckboxProps } from "../Checkbox";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     component: Checkbox,
 } as Meta;
 
-const Template: Story<CheckboxProps> = (args) => {
+const Template: StoryFn<CheckboxProps> = (args) => {
     const [value, setValue] = useState<boolean>(true);
 
     return (

@@ -12,7 +12,6 @@ import RootStore from "../RootStore";
 import { isYahBooth } from "../../utils/yah";
 import { RawSpecialBooth } from "../../data/Data";
 import { Exhibitor } from "../ExhibitorStore";
-import { v4 as uuidv4 } from "uuid";
 import { Layer } from "../LayerStore";
 import { uiState } from "../index";
 import Color from "color";
@@ -236,7 +235,7 @@ function dublicateExhibitorsInBooth(exhibitor: Exhibitor | null, booth: MutableR
     exh = exhibitor || exh;
 
     for (let i = 0; i < times; i++) {
-        const copyExhibitor: MutableRequired<Exhibitor> = { ...exh, id: uuidv4() };
+        const copyExhibitor: MutableRequired<Exhibitor> = { ...exh, id: Date.now() };
         booth.exhibitors.push(copyExhibitor as Exhibitor);
     }
 }

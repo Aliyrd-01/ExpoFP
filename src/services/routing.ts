@@ -352,8 +352,7 @@ function processURLParams() {
     // facebook and google  fix
     if (
         locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga") ||
-        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
+        locationSearch.startsWith("?_ga")
     ) {
         historyReplace("?");
     }

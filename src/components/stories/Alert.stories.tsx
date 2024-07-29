@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import Alert, { AlertProps } from "../Alert";
 
@@ -8,7 +8,7 @@ export default {
     component: Alert,
 } as Meta;
 
-const Template: Story<AlertProps> = (args) => {
+const Template: StoryFn<AlertProps> = (args) => {
     const [alertOpen, setAlertOpen] = useState<boolean>(true);
 
     const toggleAlert = () => {

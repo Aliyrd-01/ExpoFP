@@ -14,7 +14,7 @@ export default function configBoothBookmark(
     visible: boolean
 ) {
     if (uiState.kiosk) return;
-    return new BoothBookmarkDrawer(context, layerID, booth, painterOrderPriority, visible);
+    return new BoothBookmarkDrawer(context, layerID, booth, painterOrderPriority + 100, visible);
 }
 
 class BoothBookmarkDrawer extends BoothDrawerBase<RectPainter> {

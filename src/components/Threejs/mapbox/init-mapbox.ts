@@ -15,6 +15,7 @@ export default function initMapbox(container: HTMLElement, style: string): Promi
             antialias: true,
             pitch: 30,
             maxPitch: 70,
+            minZoom: 17
         });
 
         map.on("load", () => resolve(map));
