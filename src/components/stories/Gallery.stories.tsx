@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import Gallery from "../Gallery/Gallery";
 
 export default {

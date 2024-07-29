@@ -1,5 +1,5 @@
 import React, { useContext, useState, CSSProperties } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import MapControls, { MapControlsProps } from "../MapControls";
 import ResponsiveClassContext from "../../storybook/contexts/ResponsiveClassContext";
@@ -9,7 +9,7 @@ export default {
     component: MapControls,
 } as Meta;
 
-const Template: Story<MapControlsProps> = (args) => {
+const Template: StoryFn<MapControlsProps> = (args) => {
     const [activeItems, setActiveItems] = useState(args.layersActiveItems);
     const responsiveClass = useContext(ResponsiveClassContext);
 

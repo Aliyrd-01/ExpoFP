@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import Autocomplete, { AutocompleteProps } from "../Autocomplete";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     component: Autocomplete,
 } as Meta;
 
-const Template: Story<AutocompleteProps> = (args) => {
+const Template: StoryFn<AutocompleteProps> = (args) => {
     const [value, setValue] = useState<string>("02");
     return (
         <div className="layout sb-layout">

@@ -1,5 +1,5 @@
 import React from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import WayInformation, { WayInformationProps } from "../WayInformation";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     component: WayInformation,
 } as Meta;
 
-const Template: Story<WayInformationProps> = (args) => {
+const Template: StoryFn<WayInformationProps> = (args) => {
     return (
         <div className="map">
             <aside className="sidebar">

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import WayfindingTemplate, { WayfindingTemplateProps } from "../WayfindingTemplate";
 
@@ -8,7 +8,7 @@ export default {
     component: WayfindingTemplate,
 } as Meta;
 
-const Template: Story<WayfindingTemplateProps> = (args) => {
+const Template: StoryFn<WayfindingTemplateProps> = (args) => {
     const [from, setFrom] = useState(args.options[1].value);
     const [to, setTo] = useState(args.options[6].value);
     const [currentFloor, setCurrentFloor] = useState<{id: number, name: string}>(args.currentFloor);

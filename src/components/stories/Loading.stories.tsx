@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import LayersLoading from "../LayersLoading";
 
 export default {
@@ -7,7 +7,7 @@ export default {
     component: LayersLoading,
 } as Meta;
 
-const Template: Story = (args) => {
+const Template: StoryFn = (args) => {
     const [loadingActive, setLoadingActive] = useState<boolean>(false);
 
     useEffect(() => {

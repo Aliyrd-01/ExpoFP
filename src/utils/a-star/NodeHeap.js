@@ -24,11 +24,11 @@ function NodeHeap(data, options) {
   this.setNodeId = options.setNodeId || noop;
 
   if (this.length > 0) {
-    for (var i = (this.length >> 1); i >= 0; i--) this._down(i);
+    for (let i = (this.length >> 1); i >= 0; i--) this._down(i);
   }
 
   if (options.setNodeId) {
-    for (var i = 0; i < this.length; ++i) {
+    for (let i = 0; i < this.length; ++i) {
       this.setNodeId(this.data[i], i);
     }
   }
