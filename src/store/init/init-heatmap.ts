@@ -19,10 +19,11 @@ export function initHeatmap(store: RootStore) {
 
         const icons = store.heatmapStore.heatmapData.yah.map(yah => {
             const color = store.heatmapStore.getColorByClicks(yah.viewCount);
-            const canvas = createCurrentCanvas(1, color, 95, 110, yah.viewCount.toString());
+            const canvas = createCurrentCanvas(store.uiState.devicePixelRatio, color, 95, 110, yah.viewCount.toString());
             const base64 = getBase64CanvasImage(canvas);
             return {
                 name: yah.id.toString(),
+                scale: 1,
                 width: canvas.width,
                 height: canvas.height,
                 content: base64

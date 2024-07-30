@@ -477,13 +477,14 @@ export function createImageCanvas(
     image: HTMLImageElement,
     width: number,
     height: number,
-    pixelRatio: number
+    scale: number
 ): CanvasDescriptor {
     return {
-        width: width * pixelRatio,
-        height: height * pixelRatio,
+        width: width * scale,
+        height: height * scale,
         draw(ctx: CanvasRenderingContext2D) {
-            ctx.drawImage(image, 0, 0, width * pixelRatio, height * pixelRatio);
+            ctx.scale(scale, scale);
+            ctx.drawImage(image, 0, 0, width, height);
         }
     };
 }

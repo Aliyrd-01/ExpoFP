@@ -18,18 +18,6 @@ const replaceCommasWithDot = (value: string | number | undefined) => {
     return value;
 };
 
-export interface MarkerIcon {
-    name: string,
-    content: string,
-    width: number,
-    height: number
-}
-
-export interface MarkersData {
-    icons: MarkerIcon[],
-    markers: Marker[]
-}
-
 export default class RouteStore {
     rootStore: RootStore;
     cpTimeout: number;
@@ -351,4 +339,17 @@ export interface Marker extends CurrentPosition {
     selectedIcon: string,
     position: "centertop" | "lefttop",
     active?: boolean;
+}
+
+export interface MarkerIcon {
+    name: string,
+    content: string,
+    width: number,
+    height: number
+    scale?: number
+}
+
+export interface MarkersData {
+    icons: MarkerIcon[],
+    markers: Marker[]
 }
