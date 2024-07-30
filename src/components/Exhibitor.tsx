@@ -65,7 +65,7 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
-    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, "exhibitor", s.exhibitor.featured ? "#999" : "#555");
+    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, s.exhibitor.featured ? "#999" : "#555");
 
     useAutorun(() => {
         if (s.exhibitor) {

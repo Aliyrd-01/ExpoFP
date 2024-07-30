@@ -424,7 +424,6 @@ export function createCurrentCanvas(
                 ctx.font = getFont(38);
                 ctx.fillStyle = textColor;
 
-                // TODO dynamic calculation x
                 ctx.fillText(text, 35, height, width);
             }
         },

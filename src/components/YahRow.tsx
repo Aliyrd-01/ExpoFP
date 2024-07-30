@@ -11,7 +11,7 @@ const YahRow: React.FC<{
     yah: HeatmapYah;
     className: string;
 }> = ({ yah, className }) => {
-    const { clicks, background } = useHeatmapData(yah, "yah");
+    const { clicks, background } = useHeatmapData(yah);
 
     return useObserver(() => {
         return (
@@ -24,7 +24,7 @@ const YahRow: React.FC<{
                 className={className}
                 slug={yah.id.toString()}
                 onClick={handleClick}
-                line1={yah.id.toString()}
+                line1={yah.name}
                 line2=""
                 lineEnd={clicks.toString()}
             />

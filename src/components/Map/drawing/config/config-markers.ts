@@ -55,35 +55,37 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
 
             // TODO Handle processing of different objects for rendering
 
-            // markersDrawer.addObject({
-            //     id,
-            //     center: [0, 0],
-            //     deltas: [0, 0, 0, 0],
-            //     deltaPts: [
-            //         -imageCanvas.width / 2,
-            //         -imageCanvas.height,
-            //         imageCanvas.width / 2,
-            //         0,
-            //     ],
-            //     texPosition: "centertop",
-            //     canvasTmp: imageCanvas,
-            //     visible: false,
-            // });
-
-            markersDrawer.addObject({
-                id,
-                center: [0, 0],
-                deltas: [0, 0, 0, 0],
-                deltaPts: [
-                    -imageCanvas.width / 2,
-                    -imageCanvas.height / 2,
-                    imageCanvas.width,
-                    imageCanvas.height,
-                ],
-                canvasTmp: imageCanvas,
-                texPosition: "lefttop",
-                visible: false,
-            });
+            if (marker.position === "centertop") {
+                markersDrawer.addObject({
+                    id,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -imageCanvas.width / 2,
+                        -imageCanvas.height,
+                        imageCanvas.width / 2,
+                        0,
+                    ],
+                    texPosition: "centertop",
+                    canvasTmp: imageCanvas,
+                    visible: false,
+                });
+            } else if (marker.position === "lefttop") {
+                markersDrawer.addObject({
+                    id,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -imageCanvas.width / 2,
+                        -imageCanvas.height / 2,
+                        imageCanvas.width,
+                        imageCanvas.height,
+                    ],
+                    canvasTmp: imageCanvas,
+                    texPosition: "lefttop",
+                    visible: false,
+                });
+            }
 
             const selectedIcon = iconMap.get(marker.selectedIcon);
             const selectedCacheKey = `${marker.selectedIcon}_${context.pixelRatio}`;
@@ -93,37 +95,37 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
             }
             const selectedImageCanvas = canvasCache.get(selectedCacheKey);
 
-            // TODO Handle processing of different objects for rendering
-
-            markersDrawer.addObject({
-                id: `${id}_selected`,
-                center: [0, 0],
-                deltas: [0, 0, 0, 0],
-                deltaPts: [
-                    -selectedImageCanvas.width / 2,
-                    -selectedImageCanvas.height,
-                    selectedImageCanvas.width / 2,
-                    0,
-                ],
-                canvasTmp: selectedImageCanvas,
-                texPosition: "centertop",
-                visible: false,
-            });
-
-            // markersDrawer.addObject({
-            //     id: `${id}_selected`,
-            //     center: [0, 0],
-            //     deltas: [0, 0, 0, 0],
-            //     deltaPts: [
-            //         -selectedImageCanvas.width / 2,
-            //         -selectedImageCanvas.height / 2,
-            //         selectedImageCanvas.width,
-            //         selectedImageCanvas.height,
-            //     ],
-            //     canvasTmp: selectedImageCanvas,
-            //     texPosition: "lefttop",
-            //     visible: false,
-            // });
+            if (marker.position === "centertop") {
+                markersDrawer.addObject({
+                    id: `${id}_selected`,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -selectedImageCanvas.width / 2,
+                        -selectedImageCanvas.height,
+                        selectedImageCanvas.width / 2,
+                        0,
+                    ],
+                    canvasTmp: selectedImageCanvas,
+                    texPosition: "centertop",
+                    visible: false,
+                });
+            } else if (marker.position === "lefttop") {
+                markersDrawer.addObject({
+                    id: `${id}_selected`,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -selectedImageCanvas.width / 2,
+                        -selectedImageCanvas.height / 2,
+                        selectedImageCanvas.width,
+                        selectedImageCanvas.height,
+                    ],
+                    canvasTmp: selectedImageCanvas,
+                    texPosition: "lefttop",
+                    visible: false,
+                });
+            }
         });
     }
 

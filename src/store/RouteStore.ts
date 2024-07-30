@@ -139,6 +139,7 @@ export default class RouteStore {
             dot.y = replaceCommasWithDot(dot.y);
             dot.lat = replaceCommasWithDot(dot.lat);
             dot.lng = replaceCommasWithDot(dot.lng);
+            dot.position = dot.position || "centertop";
             return dot;
         });
         this.markersData.icons = data.icons;
@@ -348,5 +349,6 @@ export interface Marker extends CurrentPosition {
     id: string;
     icon: string,
     selectedIcon: string,
+    position: "centertop" | "lefttop",
     active?: boolean;
 }

@@ -11,7 +11,7 @@ const BoothRow: React.FC<{
     booth: Booth;
     className: string;
 }> = ({ booth, className }) => {
-    const { clicks, background } = useHeatmapData(booth, "booth");
+    const { clicks, background } = useHeatmapData(booth);
 
     return useObserver(() => {
         return (

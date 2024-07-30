@@ -256,12 +256,12 @@ export default class FloorPlanLoader implements FloorPlan {
             } else if (window.location.search.startsWith("?heatmapYah=true")) {
                 window["__heatmapDataYah"] = {
                     yah: [
-                        { id: "yah_1", x: 44000, y: 13500, z: "1", viewCount: 430 },
-                        { id: "yah_2", x: 46000, y: 13500, z: "2", viewCount: 901 },
-                        { id: "yah_3", x: 48000, y: 13500, z: "3", viewCount: 1358 },
-                        { id: "yah_4", x: 46000, y: 12500, viewCount: 330 },
-                        { id: "yah_5", x: 44000, y: 11500, viewCount: 867 },
-                        { id: "yah_6", x: 48000, y: 11500, viewCount: 114 }
+                        { id: "yah_1", name: "QR CODE 1 (level 2)", x: 44000, y: 13500, z: "2", viewCount: 430 },
+                        { id: "yah_2", name: "QR CODE 2 (level 3)", x: 46000, y: 13500, z: "3", viewCount: 901 },
+                        { id: "yah_3", name: "QR CODE 3 (level 1)", x: 48000, y: 13500, z: "1", viewCount: 1358 },
+                        { id: "yah_4", name: "QR CODE 4", x: 46000, y: 12500, viewCount: 330 },
+                        { id: "yah_5", name: "QR CODE 5", x: 44000, y: 11500, viewCount: 867 },
+                        { id: "yah_6", name: "QR CODE 6", x: 48000, y: 11500, viewCount: 114 }
                     ]
                 };
             }

@@ -43,34 +43,34 @@ export default class HeatmapStore {
             // -1 is returned for Categories to ensure they appear last in sorted methods
             return -1;
         } else if (item instanceof Exhibitor) {
-            return this.getClicksByItem(item, "exhibitor");
+            return this.getClicksByItem(item);
         } else if (item instanceof HeatmapYah) {
-            return this.getClicksByItem(item, "yah");
+            return this.getClicksByItem(item);
         } else if (item instanceof ScheduleItem) {
             return 0;
         }
 
-        return this.getClicksByItem(item, "booth");
+        return this.getClicksByItem(item);
     }
 
-    getClicksByItem(item: Omit<HeatmapItem, "viewCount">, type: "booth" | "exhibitor" | "yah") {
-        if (type === "exhibitor") {
+    getClicksByItem(item: Exhibitor | BoothBase | HeatmapYah) {
+        if (item instanceof Exhibitor) {
             return this.heatmapData?.exhibitors?.find((a) => a.id === item.id)?.viewCount || 0;
         }
 
-        if (type === "booth") {
+        if (item instanceof BoothBase) {
             return this.heatmapData?.booths?.find((a) => a.id === item.id)?.viewCount || 0;
         }
 
-        if (type === "yah") {
+        if (item instanceof HeatmapYah) {
             return this.heatmapData?.yah?.find((a) => a.id === item.id)?.viewCount || 0;
         }
     }
 
     getTotalClicksByBooth(b: BoothBase) {
-        let totalClicks = this.getClicksByItem(b, "booth");
+        let totalClicks = this.getClicksByItem(b);
         for (const exhibitor of b.exhibitors) {
-            const clicks = this.getClicksByItem(exhibitor, "exhibitor");
+            const clicks = this.getClicksByItem(exhibitor);
             totalClicks += clicks;
         }
 
@@ -91,13 +91,12 @@ export interface HeatmapData {
 
 export class HeatmapYah {
     readonly id: number | string;
+    readonly name: string;
     readonly viewCount: number;
     readonly x: number;
     readonly y: number;
     readonly z?: number | string;
 }
-
-// export interface HeatmapYahItem extends CurrentPosition, HeatmapItem {}
 
 export interface HeatmapItem {
     id: number | string;

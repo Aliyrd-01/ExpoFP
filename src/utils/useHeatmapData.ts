@@ -1,10 +1,13 @@
 import { useMemo } from "react";
 import store from "../store";
+import { BoothBase } from "../store/BoothStore";
+import { Exhibitor } from "../store/ExhibitorStore";
+import { HeatmapYah } from "../store/HeatmapStore";
 
-type TypeUseHeatmapData = (item: { id: string | number }, type: "booth" | "exhibitor" | "yah") => { background: string; clicks: number }
+type TypeUseHeatmapData = (item: BoothBase | Exhibitor | HeatmapYah) => { background: string; clicks: number }
 
-const useHeatmapData: TypeUseHeatmapData = (item, type) => {
-    const clicks = useMemo(() => store.heatmapStore.getClicksByItem(item, type), [item, type]);
+const useHeatmapData: TypeUseHeatmapData = (item) => {
+    const clicks = useMemo(() => store.heatmapStore.getClicksByItem(item), [item]);
     const background = useMemo(() => store.heatmapStore.getColorByClicks(clicks), [clicks]);
     return { clicks, background };
 };

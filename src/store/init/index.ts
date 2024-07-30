@@ -13,6 +13,6 @@ export default function initStore(store: RootStore) {
     initExhibitors(store);
     initCategories(store);
     iniAllBooths(store);
-    initHeatmap(store);
     initUi(store);
+    initHeatmap(store);
 }
