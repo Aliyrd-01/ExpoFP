@@ -8,6 +8,7 @@ import { OverlaySize } from "../store/UIState";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import Bookmarks from "./Bookmarks";
+import Language from "./Language";
 import Booth from "./Booth/Booth";
 import Category from "./Category";
 import Exhibitor from "./Exhibitor";
@@ -222,6 +223,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             <Exhibitor />
             <Booth />
             <Bookmarks />
+            <Language />
             <Category />
             <Wayfinding />
         </div>

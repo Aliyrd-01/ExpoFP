@@ -33,6 +33,8 @@ interface Data {
     hideDownloadPdfLink: boolean;
     hideBookmarksLink: boolean;
     hideBookmarks: boolean;
+    hideLanguage: boolean;
+    hideLanguageLink: boolean;
     // hideLogoOverlay: boolean;
     autoTrackingGps: boolean;
     allow3dView: boolean;
@@ -41,7 +43,6 @@ interface Data {
     isRebooking: boolean;
     events: ScheduleItem[];
     customCss: string;
-    
     showLevelLabel:boolean;
     showCategories: boolean;
     showCompaniesAndBooths: boolean;

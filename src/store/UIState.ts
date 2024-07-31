@@ -16,6 +16,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
+import { Language } from "./LanguageStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -23,10 +24,12 @@ import { ScheduleItem } from "./ScheduleStore";
 type ListType =
     | { type: "search"; text: string; focused: boolean }
     | { type: "bookmarks" }
-    | { type: "category"; category: Category };
+    | { type: "category"; category: Category }
+    | { type: "language" };
 export type OverlaySize = "full" | "medium" | "small";
 // export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category | ScheduleItem;
+// TODO: refactor this (create an item type)
+export type ListItem = Booth | Exhibitor | Category | ScheduleItem | Language;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -64,6 +67,7 @@ export default class UIState {
     @observable hideHeaderLogo = false;
     @observable hideLogoInBooth = false;
     @observable disableBookmarked = false;
+    @observable hideLanguage = false;
     @observable disableGps = false;
     @observable monochrome = false;
     @observable heatmap = false;
@@ -381,8 +385,8 @@ export default class UIState {
                 ? true
                 : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-            if (addBoothCondition && 
-                splittedTexts.some((text) => 
+            if (addBoothCondition &&
+                splittedTexts.some((text) =>
                     containsIgnoreCase(b.title || "", text) ||
                     containsIgnoreCase(b.name, text) ||
                     containsLevelIgnoreCase(b.layer?.name ?? null, text))
@@ -423,6 +427,8 @@ export default class UIState {
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
                 return this.list.category.exhibitors;
+            case "language":
+                return this.rootStore.languageStore.languages;
         }
         throw new Error("Unknown list.type");
     }

@@ -133,6 +133,15 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             ) : null}
                         </a>
                     )}
+                    {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
+                        <a href="?language" onClick={handleLanguage} className="menu__item -language">
+                            {/* TODO: styles */}
+                            <span>
+                                <span>{t("Language")} </span>
+                                <span>{store.languageStore.language}</span>
+                            </span>
+                        </a>
+                    )}
                     {!data.hideDownloadPdfLink && !uiState.kiosk && (
                         // <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
                         //     {t("Download PDF")}
@@ -201,6 +210,11 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         e.preventDefault();
         store.clickBookmarks();
         store.moveToList();
+    }
+
+    function handleLanguage(e: MouseEvent) {
+        e.preventDefault();
+        store.clickLanguage();
     }
 
     // function handlePdf(e: MouseEvent) {

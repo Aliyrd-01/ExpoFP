@@ -12,6 +12,7 @@ import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 import ScheduleStore from "./ScheduleStore";
 import HeatmapStore from "./HeatmapStore";
+import LanguageStore from "./LanguageStore";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -23,6 +24,7 @@ export default class RootStore {
     readonly layerStore: LayerStore;
     readonly scheduleStore: ScheduleStore;
     readonly heatmapStore: HeatmapStore;
+    readonly languageStore: LanguageStore;
 
     fp: FloorPlanReady;
 
@@ -37,6 +39,7 @@ export default class RootStore {
         this.layerStore = new LayerStore();
         this.scheduleStore = new ScheduleStore(this);
         this.heatmapStore = new HeatmapStore(this);
+        this.languageStore = new LanguageStore();
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
@@ -97,6 +100,11 @@ export default class RootStore {
         this.uiState.list = { type: "bookmarks" };
     }
 
+    @action selectLanguage() {
+        this.uiState.details = null;
+        this.uiState.list = { type: "language" };
+    }
+
     @action selectCategory(category: Category) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
@@ -121,6 +129,12 @@ export default class RootStore {
         // dispatch("selectBookmarks");
         // dispatch("moveToList");
         // dispatch("showMap", id);
+    }
+
+    @action clickLanguage() {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.menu = false;
+        this.selectLanguage();
     }
 
     @action clickCategory(category: Category) {

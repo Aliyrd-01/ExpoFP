@@ -5,6 +5,7 @@ import { Category } from "./CategoryStore";
 import { getColorFromGradient } from "../tools/Color";
 import { ScheduleItem } from "./ScheduleStore";
 import { computed } from "mobx";
+import { Language } from "./LanguageStore";
 
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
@@ -38,13 +39,16 @@ export default class HeatmapStore {
         };
     }
 
-    getClicksByType(item: Exhibitor | BoothBase | Category | ScheduleItem) {
+    // TODO: refactor this (create an item type)
+    getClicksByType(item: Exhibitor | BoothBase | Category | ScheduleItem | Language) {
         if (item instanceof Category) {
             // -1 is returned for Categories to ensure they appear last in sorted methods
             return -1;
         } else if (item instanceof Exhibitor) {
             return this.getClicksByItem(item);
         } else if (item instanceof ScheduleItem) {
+            return 0;
+        } else if (item instanceof Language) {
             return 0;
         }
         return this.getClicksByItem(item);
