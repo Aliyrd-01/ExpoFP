@@ -10,7 +10,7 @@ const StoryWrapper = ({ render }) => {
             let resources = {};
 
             const navLanguage = navigator.languages?.[0] || navigator.language;
-            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
+            const navLocale = Object.keys(_locales).find((x) => navLanguage.startsWith(x));
             const locale = navLocale || "en";
 
             if (locale !== "en") {

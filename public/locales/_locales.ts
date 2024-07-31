@@ -1,1 +1,20 @@
-export default ["de", "en", "es", "fr", "it", "ko", "nl", "pt", "ru", "tr", "zh", "sv", "ar", "th", "vi", "uk", "he", "kk"];
+export default {
+    "de": "Deutsch",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano",
+    "ko": "한국어",
+    "nl": "Nederlands",
+    "pt": "Português",
+    "ru": "Русский",
+    "tr": "Türkçe",
+    "zh": "中文",
+    "sv": "Svenska",
+    "ar": "العربية",
+    "th": "ไทย",
+    "vi": "Tiếng Việt",
+    "uk": "Українська",
+    "he": "עברית",
+    "kk": "Қазақша",
+};
