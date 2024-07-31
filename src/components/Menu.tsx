@@ -13,6 +13,7 @@ import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
+import Badge from "./Badge";
 
 const logoUrl = /^https?:\/\//i.test(data.logo) ? data.logo : baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -123,23 +124,29 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {!uiState.disableBookmarked && !data.hideBookmarks && !data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
-                        <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
-                            <span>
-                                {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
-                            </span>
-                            {exhibitorStore.bookmarked.length ? (
-                                <button onClick={shareBookmarks} className="fas fa-share-square" title={t("Share bookmarks")} />
-                            ) : null}
-                        </a>
-                    )}
+                    {!uiState.disableBookmarked &&
+                        !data.hideBookmarks &&
+                        !data.hideBookmarksLink &&
+                        !uiState.kiosk &&
+                        exhibitorStore.exhibitors.length > 0 && (
+                            <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
+                                <span>
+                                    {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                                </span>
+                                {exhibitorStore.bookmarked.length ? (
+                                    <button
+                                        onClick={shareBookmarks}
+                                        className="fas fa-share-square"
+                                        title={t("Share bookmarks")}
+                                    />
+                                ) : null}
+                            </a>
+                        )}
                     {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
                         <a href="?language" onClick={handleLanguage} className="menu__item -language">
                             {/* TODO: styles */}
-                            <span>
-                                <span>{t("Language")} </span>
-                                <span>{store.languageStore.language}</span>
-                            </span>
+                            <span>{t("Language")} </span>
+                            <Badge variant="gray">{store.languageStore.language}</Badge>
                         </a>
                     )}
                     {!data.hideDownloadPdfLink && !uiState.kiosk && (
@@ -151,7 +158,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             target="_blank"
                             rel="noopener noreferrer"
                             href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
-                                ","
+                                ",",
                             )}&layers=${
                                 store.layerStore.layers.length >= store.layerStore.visible.length
                                     ? store.layerStore.visible.map((l) => l.name).join(",")

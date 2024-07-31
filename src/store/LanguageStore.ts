@@ -1,10 +1,15 @@
-import i18next from "i18next";
-import { computed } from "mobx";
+import { getLanguage, changeLanguage } from "../utils/i18n";
+
 export default class LanguageStore {
     readonly languages: Language[] = [];
 
-    @computed get language() {
-        return i18next.language;
+   get language() {
+        const lang = this.languages.find(l => l.id === getLanguage());
+        return lang?.name;
+    }
+
+    async changeLanguage(id: string) {
+        return changeLanguage(id);
     }
 }
 

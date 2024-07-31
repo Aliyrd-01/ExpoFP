@@ -16,20 +16,10 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
-import { Language } from "./LanguageStore";
+import type { ListType, OverlaySize, ListItem } from "./types";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
-
-type ListType =
-    | { type: "search"; text: string; focused: boolean }
-    | { type: "bookmarks" }
-    | { type: "category"; category: Category }
-    | { type: "language" };
-export type OverlaySize = "full" | "medium" | "small";
-// export type ScreenSize = { width: number; height: number };
-// TODO: refactor this (create an item type)
-export type ListItem = Booth | Exhibitor | Category | ScheduleItem | Language;
 
 export default class UIState {
     private readonly rootStore: RootStore;

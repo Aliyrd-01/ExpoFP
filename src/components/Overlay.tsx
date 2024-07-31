@@ -4,7 +4,7 @@ import { autorun, reaction } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
 import React, { useLayoutEffect, useRef } from "react";
 import { uiState } from "../store";
-import { OverlaySize } from "../store/UIState";
+import type { OverlaySize } from "../store/types";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import Bookmarks from "./Bookmarks";

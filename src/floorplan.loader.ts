@@ -1,8 +1,8 @@
-import _locales from "../public/locales/_locales";
+import locales from "./locales";
 import { Data } from "./data/Data";
 import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
-import { loadCss, loadCustomFonts, loadFont, loadJs, loadJson } from "./tools/loaders";
+import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
@@ -244,9 +244,8 @@ export default class FloorPlanLoader implements FloorPlan {
             const data = window["__data"] as Data;
 
             const navLanguage = navigator.languages?.[0] || navigator.language;
-            const navLocale = Object.keys(_locales).find((x) => navLanguage.startsWith(x));
+            const navLocale = Object.keys(locales).find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
-            window["__languageData"] = _locales;
 
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {

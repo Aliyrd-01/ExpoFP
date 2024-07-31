@@ -1,9 +1,11 @@
 import i18next, { TFunction } from "i18next";
 import { loadJson } from "../tools/loaders";
 
+const loadLocale = async (locale: string) => await loadJson(`locales/${locale}.json`);
+
 export const initI18n = async (locale: string): Promise<TFunction> => {
     let resources = {};
-    if (locale !== "en") resources[locale] = { translation: await loadJson(`locales/${locale}.json`) };
+    if (locale !== "en") resources[locale] = { translation: await loadLocale(locale) };
 
     return await i18next.init({
         resources,
@@ -18,3 +20,14 @@ export const initI18n = async (locale: string): Promise<TFunction> => {
 export const getLanguage = () => i18next.language;
 
 export const t = (template: string, options?: any) => i18next.t(template, options);
+
+export const changeLanguage = (locale: string) => {
+    if (i18next.hasResourceBundle(locale, "translation")) {
+        return i18next.changeLanguage(locale);
+    }
+
+    return loadLocale(locale).then(json => {
+        i18next.addResourceBundle(locale, "translation", json, true, true);
+        return i18next.changeLanguage(locale);
+    });
+};

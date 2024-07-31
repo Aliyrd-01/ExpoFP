@@ -13,6 +13,7 @@ import "./List.scss";
 import ScheduleItemRow from "./ScheduleRow";
 import { Language } from "../store/LanguageStore";
 import LanguageRow from "./LanguageRow";
+import type { ListItem } from "../store/types";
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -33,8 +34,7 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
     }, []);
 
     const mapItem = ({ index }: { index: number }) => {
-        // TODO: refactor this (create an item type)
-        const item: Exhibitor | Booth | Category | ScheduleItem | Language = uiState.listItems[index];
+        const item: ListItem = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
         if (item instanceof Exhibitor) {
             return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
