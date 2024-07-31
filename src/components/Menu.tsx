@@ -144,9 +144,10 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                         )}
                     {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
                         <a href="?language" onClick={handleLanguage} className="menu__item -language">
-                            {/* TODO: styles */}
                             <span>{t("Language")} </span>
-                            <Badge variant="gray">{store.languageStore.language}</Badge>
+                            <Badge variant="gray" noMargins>
+                                {store.languageStore.language?.name}
+                            </Badge>
                         </a>
                     )}
                     {!data.hideDownloadPdfLink && !uiState.kiosk && (

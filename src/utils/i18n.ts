@@ -21,13 +21,12 @@ export const getLanguage = () => i18next.language;
 
 export const t = (template: string, options?: any) => i18next.t(template, options);
 
-export const changeLanguage = (locale: string) => {
-    if (i18next.hasResourceBundle(locale, "translation")) {
-        return i18next.changeLanguage(locale);
+export const changeLanguage = async (locale: string) => {
+    if (locale.toLowerCase() !== "en" && !i18next.hasResourceBundle(locale, "translation")) {
+        const json = await loadLocale(locale);
+        i18next.addResourceBundle(locale, "translation", json, true, true);
     }
 
-    return loadLocale(locale).then(json => {
-        i18next.addResourceBundle(locale, "translation", json, true, true);
-        return i18next.changeLanguage(locale);
-    });
+    await i18next.changeLanguage(locale);
+    localStorage.setItem("language", locale);
 };

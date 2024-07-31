@@ -245,7 +245,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
             const navLanguage = navigator.languages?.[0] || navigator.language;
             const navLocale = Object.keys(locales).find((x) => navLanguage.startsWith(x));
-            await initI18n(navLocale || data.locale || "en");
+            await initI18n(localStorage.getItem("language") || navLocale || data.locale || "en");
 
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {

@@ -40,7 +40,7 @@ export default class RootStore {
         this.layerStore = new LayerStore();
         this.scheduleStore = new ScheduleStore(this);
         this.heatmapStore = new HeatmapStore(this);
-        this.languageStore = new LanguageStore();
+        this.languageStore = new LanguageStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {

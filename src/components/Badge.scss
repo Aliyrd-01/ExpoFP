@@ -13,7 +13,11 @@
         color: var(--color-black);
     }
     &--gray {
-        background: var(--color-grayUltraLight);
+        background: var(--color-grayLight); // var(--color-grayUltraLight);
         color: var(--color-grayDark);
+    }
+
+    &--no-margins {
+        margin: 0;
     }
 }

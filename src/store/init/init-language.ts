@@ -3,9 +3,6 @@ import RootStore from "../RootStore";
 import locales from "../../locales";
 
 export default function initLanguage(store: RootStore) {
-    for (const key in locales) {
-        store.languageStore.languages.push(
-            new Language(key, locales[key])
-        );
-    }
+    const savedLang = localStorage.getItem("language");
+    store.languageStore.languages = Object.entries(locales).map(([id, name]) => new Language(id, name, id === savedLang));
 }
