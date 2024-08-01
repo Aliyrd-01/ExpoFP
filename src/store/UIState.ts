@@ -149,7 +149,8 @@ export default class UIState {
             !this.selectedCategory &&
             !this.selectedExhibitor &&
             this.list.type !== "bookmarks" &&
-            !(this.list as any).text.length
+            this.list.type !== "language" &&
+            !(this.list as any).text?.length
         );
     }
 

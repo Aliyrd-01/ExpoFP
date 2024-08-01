@@ -5,6 +5,7 @@ import { t } from "../utils/i18n";
 import List from "./List";
 import OverlayContent from "./OverlayContent";
 import React, { useRef } from "react";
+import "./Language.scss";
 
 const Language = observer(() => {
     const scrollableRef = useRef<HTMLDivElement>();
