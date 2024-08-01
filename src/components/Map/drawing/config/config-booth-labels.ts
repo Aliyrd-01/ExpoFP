@@ -15,7 +15,7 @@ import isMobile from "../../../../utils/is-mobile";
 // const dotW = dotCanvas.canvas.width / 2;
 // const dotH = dotCanvas.canvas.width / 2;
 
-const mobileOptimisationLevel = data.labelOptimisationLevel;
+const mobileOptimisationLevel = data.viewOptimizationLevel;
 
 let fillStyle = settings.boothLabelColor;
 

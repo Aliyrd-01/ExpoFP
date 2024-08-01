@@ -48,7 +48,7 @@ interface Data {
     showOtherSpaces: boolean;
     hideShareButton: boolean;
 
-    labelOptimisationLevel: number;
+    viewOptimizationLevel: number;
 }
 
 interface ScheduleItem {
