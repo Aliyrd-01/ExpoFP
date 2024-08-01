@@ -133,21 +133,28 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                                 <span>
                                     {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
                                 </span>
-                                {exhibitorStore.bookmarked.length ? (
-                                    <button
-                                        onClick={shareBookmarks}
-                                        className="fas fa-share-square"
-                                        title={t("Share bookmarks")}
-                                    />
-                                ) : null}
+
+                                <span className="menu__icons">
+                                    {exhibitorStore.bookmarked.length ? (
+                                        <button
+                                            onClick={shareBookmarks}
+                                            className="fas fa-share-square"
+                                            title={t("Share bookmarks")}
+                                        />
+                                    ) : null}
+                                    <i className="fas fa-chevron-right" />
+                                </span>
                             </a>
                         )}
                     {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
                         <a href="?language" onClick={handleLanguage} className="menu__item -language">
                             <span>{t("Language")} </span>
-                            <Badge variant="gray" noMargins>
-                                {store.languageStore.language?.name}
-                            </Badge>
+                            <span className="menu__icons">
+                                <Badge variant="gray" noMargins>
+                                    {store.languageStore.language?.name}
+                                </Badge>
+                                <i className="fas fa-chevron-right" />
+                            </span>
                         </a>
                     )}
                     {!data.hideDownloadPdfLink && !uiState.kiosk && (

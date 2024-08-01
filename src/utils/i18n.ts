@@ -1,9 +1,22 @@
 import i18next, { TFunction } from "i18next";
 import { loadJson } from "../tools/loaders";
+import { isLocalStorageAvailable } from "./localStorage";
+import { Data } from "../data/Data";
+import locales from "../locales";
 
 const loadLocale = async (locale: string) => await loadJson(`locales/${locale}.json`);
 
-export const initI18n = async (locale: string): Promise<TFunction> => {
+export const getLocale = () => {
+    const data = window["__data"] as Data;
+    const navLanguage = navigator.languages?.[0] || navigator.language;
+    const navLocale = Object.keys(locales).find((x) => navLanguage.startsWith(x));
+    const savedLang = isLocalStorageAvailable ? localStorage.getItem("language") : null;
+    return savedLang || navLocale || data.locale || "en";
+}
+
+export const initI18n = async (defaultLocale?: string): Promise<TFunction> => {
+    const locale = defaultLocale || getLocale();
+
     let resources = {};
     if (locale !== "en") resources[locale] = { translation: await loadLocale(locale) };
 
@@ -28,5 +41,7 @@ export const changeLanguage = async (locale: string) => {
     }
 
     await i18next.changeLanguage(locale);
-    localStorage.setItem("language", locale);
+    if (isLocalStorageAvailable) {
+        localStorage.setItem("language", locale);
+    }
 };

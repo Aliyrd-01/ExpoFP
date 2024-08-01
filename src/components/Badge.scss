@@ -12,8 +12,14 @@
     &--ghost {
         color: var(--color-black);
     }
+
+    &--lightgray {
+        background: var(--color-grayUltraLight);
+        color: var(--color-grayDark);
+    }
+
     &--gray {
-        background: var(--color-grayLight); // var(--color-grayUltraLight);
+        background: var(--color-grayLight);
         color: var(--color-grayDark);
     }
 

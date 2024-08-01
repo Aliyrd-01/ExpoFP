@@ -4,7 +4,7 @@ import "./Badge.scss";
 
 export interface BadgeProps {
     children?: ReactNode;
-    variant?: "gray" | "ghost";
+    variant?: "lightgray" | "gray" | "ghost";
     noMargins?: boolean;
 }
 

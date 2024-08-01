@@ -1,13 +1,11 @@
 @import "../styles/helpers.scss";
 
 .radio {
-    display: grid;
+    display: inline-grid;
     cursor: pointer;
     grid-auto-flow: column;
     place-content: center start;
     gap: rem(12px);
-    padding: rem(19px 15px);
-    border-top: rem(1px) solid #eaecf0;
 
     &__input {
         display: none;

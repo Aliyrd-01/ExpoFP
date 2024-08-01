@@ -16,6 +16,9 @@ export default {
         label: "Text",
         onChange: fn(),
     },
+    parameters: {
+        layout: "centered",
+    },
 } as Meta;
 
 export const Base = {};
@@ -24,15 +27,4 @@ export const Checked = {
     args: {
         checked: true,
     },
-};
-
-export const Multiple = {
-    decorators: [
-        (Story) => (
-            <div style={{ display: "flex", flexDirection: "column" }}>
-                <Story />
-                <Story />
-            </div>
-        ),
-    ],
 };

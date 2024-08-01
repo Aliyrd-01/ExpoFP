@@ -105,14 +105,11 @@
             padding-inline-end: 0.5rem;
         }
         &.-bookmarks {
-            > span {
-                flex-grow: 1;
-                > span {
-                    color: #999;
-                    font-weight: normal;
-                }
-            }
-            > button {
+            display: grid;
+            grid-auto-flow: column;
+            place-content: center space-between;
+
+            button {
                 padding: 0 0.4rem 0 0.4rem;
                 margin-right: -0.4rem;
                 border: none;
@@ -136,6 +133,18 @@
 
         .overlay-bottom &.-print {
             display: none;
+        }
+    }
+
+    &__icons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: rem(18px);
+
+        & i {
+            font-weight: 400;
+            color: var(--color-gray);
         }
     }
 

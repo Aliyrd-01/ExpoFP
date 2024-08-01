@@ -1,4 +1,3 @@
-import locales from "./locales";
 import { Data } from "./data/Data";
 import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
@@ -243,9 +242,7 @@ export default class FloorPlanLoader implements FloorPlan {
             }
             const data = window["__data"] as Data;
 
-            const navLanguage = navigator.languages?.[0] || navigator.language;
-            const navLocale = Object.keys(locales).find((x) => navLanguage.startsWith(x));
-            await initI18n(localStorage.getItem("language") || navLocale || data.locale || "en");
+            await initI18n();
 
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {
