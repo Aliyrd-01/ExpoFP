@@ -2,9 +2,9 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { layersStore, uiState } from "../store";
+import store, { layersStore, uiState, heatmapStore } from "../store";
 import settings from "../tools/settings";
-import { isWebGlSupported } from "../utils";
+import { isWebGlSupported, remsToPixels } from "../utils";
 import isDebug from "../utils/is-debug";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
@@ -25,6 +25,7 @@ import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
 import { checkUserIsGDPR, hasUserConsent, setConsentSettings, setCookieConsent } from "../tools/gtag";
+import HeatmapLegend from "./HeatmapLegend";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -80,6 +81,8 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         }
     }, []);
 
+    const minMaxClicks = store.heatmapStore.minAndMaxClicks;
+
     return (
         <div
             className={cn("layout", {
@@ -93,7 +96,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 <Header />
                 {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
                 <LogoOverlay />
-                <Ws />
+                {!uiState.hideHeaderLogo && <Ws />}
                 <Controls />
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
@@ -111,7 +114,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     </Suspense>
                 )}
                 {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
-                {!uiState.hideCookieConsent && isGDPR && allowConsent === undefined && (
+                {!uiState.hideCookieConsent && !uiState.kiosk && isGDPR && allowConsent === undefined && (
                     <Suspense fallback={null}>
                         <CookieConsent
                             link="https://expofp.com/pages/viewer-cookie-consent"
@@ -141,6 +144,19 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                             />
                         </Modal>
                     </Suspense>
+                ) : null}
+                {uiState.heatmap ? (
+                    <HeatmapLegend
+                        style={{
+                            left: `calc(50% + ${store.uiState.mapVisibleStart / 2}px)`,
+                            top: uiState.overlayPosition === "bottom" ? uiState.mapVisibleTop + remsToPixels(0.7) + "px" : null,
+                            bottom: uiState.overlayPosition === "bottom" ? null : "30px",
+                        }}
+                        className={uiState.responsiveClass}
+                        max={minMaxClicks.max}
+                        min={minMaxClicks.min}
+                        colors={settings.heatmapColors}
+                    />
                 ) : null}
                 <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />

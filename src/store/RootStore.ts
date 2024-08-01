@@ -2,7 +2,7 @@ import { action } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
-import BoothStore, { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
+import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 
@@ -11,6 +11,7 @@ import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 import ScheduleStore from "./ScheduleStore";
+import HeatmapStore from "./HeatmapStore";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -21,6 +22,7 @@ export default class RootStore {
     readonly mapboxStore: MapboxStore;
     readonly layerStore: LayerStore;
     readonly scheduleStore: ScheduleStore;
+    readonly heatmapStore: HeatmapStore;
 
     fp: FloorPlanReady;
 
@@ -34,6 +36,7 @@ export default class RootStore {
         this.mapboxStore = new MapboxStore(this);
         this.layerStore = new LayerStore();
         this.scheduleStore = new ScheduleStore(this);
+        this.heatmapStore = new HeatmapStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
@@ -180,8 +183,12 @@ export default class RootStore {
         } else this.routeStore.tempToBooth = booth;
 
         if (this.uiState.onBoothClick) {
+                const layer = {
+                    name: "",
+                    description: "",
+                }
             const e: FloorPlanBoothClickEvent = {
-                target: booth,
+                target: { ...booth, layer: booth.layer || layer },
             };
             this.uiState.onBoothClick(e);
         }

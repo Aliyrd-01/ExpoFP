@@ -1,6 +1,6 @@
-import React, { useState } from "react";
 import classNames from "classnames";
 import dateFormat from "dateformat";
+import React, { useState } from "react";
 import sanitizeHTML from "../utils/sanitizeHtml";
 import Button from "./Button";
 import "./Schedule.scss";
@@ -12,6 +12,7 @@ export interface EventI {
     startDate: string;
     endDate?: string;
     link?: string;
+    isEnded?: boolean;
 }
 export interface ScheduleProps {
     events: EventI[];
@@ -24,8 +25,6 @@ function isCurrent(from: Date | string, to: Date | string) {
 }
 
 const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength = 200 }) => {
-    events = events.filter((event) => new Date(event.endDate).getTime() > new Date().getTime());
-
     const sortByDate = events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
     const grouped = sortByDate.reduce((acc, curr) => {
         const date = new Date(curr.startDate).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
@@ -54,13 +53,13 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
     const transformDescription = (desc: string, show: boolean) =>
         desc.length > descriptionMaxLength && show === false ? desc.slice(0, descriptionMaxLength) + "..." : desc;
 
-    const EventWrapper = ({ children, link, current }) => {
+    const EventWrapper = ({ children, link, current, ended }) => {
         return link.length !== 0 ? (
-            <a href={link} className={classNames("schedule__event", current)} target="_blank" rel="noopener noreferrer">
+            <a href={link} className={classNames("schedule__event", current, ended)} target="_blank" rel="noopener noreferrer">
                 {children}
             </a>
         ) : (
-            <div className="schedule__event">{children}</div>
+            <div className={classNames("schedule__event", { ended })}>{children}</div>
         );
     };
 
@@ -80,6 +79,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                     <div key={event.id}>
                                         <EventWrapper
                                             link={event.link ? event.link : ""}
+                                            ended={event.isEnded}
                                             current={isCurrent(event.startDate, event.endDate)}
                                         >
                                             <span>

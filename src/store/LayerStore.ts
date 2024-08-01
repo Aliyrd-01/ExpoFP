@@ -3,9 +3,9 @@ import { interpolateNumber } from "d3";
 import { easeLinear } from "d3-ease";
 import { action, computed, observable } from "mobx";
 import store from ".";
+import { DrawerContext } from "../components/Map/drawing/Drawer1";
 import animate from "../components/Map/drawing/config/animate";
 import loadLayer from "../components/Map/drawing/config/config-load-layer";
-import { DrawerContext } from "../components/Map/drawing/Drawer1";
 import RectPainter from "../components/Map/drawing/painters/RectPainter";
 
 import Rect from "../core/Rect";
@@ -32,6 +32,8 @@ export class Layer {
     frozen: boolean;
     rect: Rect = null;
     configured: boolean;
+    childLayers: Layer[] = [];
+    rootParent: Layer = null;
     mode: LayerMode;
 
     @observable loaded: boolean;
@@ -81,25 +83,45 @@ export default class LayerStore {
             if (this.mode === LayersMode.Radio) {
                 this.layers.forEach((l) => {
                     if (l.name !== layer.name && !l.frozen && l.visible) {
-                        if (!animated) l.visible = false;
-                        else an(l, false);
+                        if (!animated) {
+                            l.visible = false;
+                            l.childLayers.forEach((child) => {
+                                child.visible = false;
+                            });
+                        } else {
+                            an(l, false);
+                        }
                     }
                     //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
             if (layer) {
-                if (!animated) layer.visible = visible;
-                else an(layer, visible);
+                if (!animated) {
+                    layer.visible = visible;
+                    layer.childLayers.forEach((child) => {
+                        child.visible = visible;
+                    });
+                } else {
+                    an(layer, visible);
+                }
             }
         });
     }
 
     public findLayer(z: string | number): Layer {
-        if (!z) return null;
+        if (z === null || z === undefined) return null;
+
+        const layers = this.layers.filter((l) => !l.rootParent);
+
+        if (typeof z === "number") {
+            l = layers.filter((k) => !k.frozen)[z];
+            if (l) return l;
+        }
+
         z = z.toString().toLowerCase();
 
-        return this.layers.find((l) => {
+        var l = layers.find((l) => {
             const extractedNumber = (l.name.match(/(-?[0-9]+)/) || "")[0];
 
             return (
@@ -109,6 +131,12 @@ export default class LayerStore {
                 z === extractedNumber
             );
         });
+
+        if (!l && !/\D/.test(z)) {
+            l = layers.filter((k) => !k.frozen)[parseInt(z)];
+        }
+
+        return l;
     }
 }
 
@@ -126,12 +154,18 @@ function an(layer: Layer, toVisible: boolean): void {
         easeLinear,
         toVisible ? interpolateNumber(0, 1) : interpolateNumber(1, 0),
         _context.requireUpdate.bind(_context),
-        (v) => _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = v)),
+        (v) => {
+            layer.visible = toVisible;
+            layer.childLayers.forEach((l) => (l.visible = toVisible));
+            const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
+            layersPainters.forEach((p) => ((p as RectPainter).alpha = v));
+        },
         () => {
             layer.visible = toVisible;
+            layer.childLayers.forEach((l) => (l.visible = toVisible));
             if (!toVisible) {
-                layer.visible = false;
-                _context.getLayersPainters([layer.name]).forEach((p) => ((p as RectPainter).alpha = 1));
+                const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
+                layersPainters.forEach((p) => ((p as RectPainter).alpha = 1));
             }
         }
     );

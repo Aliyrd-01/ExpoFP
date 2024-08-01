@@ -37,7 +37,7 @@ let routeIndex = 0;
 
 const booths: BoothMesh[] = [];
 
-const pointSize = (data: ICommonData): number => data.objLayers[0].height / 2;
+const pointSize = (data: ICommonData): number => (data.area.width + data.area.height) / 1200;
 
 export default class UIManager {
     expo: string;
@@ -95,6 +95,8 @@ export default class UIManager {
         if (!this.isInit) return;
         const l = this.scene.getlayer(layer);
 
+        if (l == undefined) return;
+
         if (isVisible) {
             this.scene.camera.layers.enable(l);
             this.scene.raycaster.layers.enable(l);
@@ -130,10 +132,10 @@ export default class UIManager {
                 this.data.objLayers.find((l) => l.name === store.layerStore.findLayer(layer)?.name) || this.data.objLayers[0];
 
             if (!sprite) {
-                if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 4);
-                else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 4);
-                else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 4);
-                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale * 3.5);
+                if (type === "from") sprite = new SpriteMesh(fr, objLayer.height * scale * 2);
+                else if (type === "to") sprite = new SpriteMesh(to, objLayer.height * scale * 2);
+                else if (type === "yah") sprite = new SpriteMesh(yah, objLayer.height * scale * 2);
+                else if (type === "cp") sprite = new SpriteMesh(cp, objLayer.height * scale);
                 sprite.name = name;
                 this.scene.add(sprite);
             }

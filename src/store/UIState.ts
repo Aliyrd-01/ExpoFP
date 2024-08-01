@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { uiState } from ".";
+import { boothStore, exhibitorStore, uiState } from ".";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import data from "../data";
@@ -15,6 +15,7 @@ import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
+import { ScheduleItem } from "./ScheduleStore";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -25,7 +26,7 @@ type ListType =
     | { type: "category"; category: Category };
 export type OverlaySize = "full" | "medium" | "small";
 // export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category;
+export type ListItem = Booth | Exhibitor | Category | ScheduleItem;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -60,8 +61,15 @@ export default class UIState {
     @observable galleryActive = false;
     @observable hideOverlay = false;
     @observable hideCookieConsent = Boolean(hasUserConsent());
+    @observable hideHeaderLogo = false;
+    @observable hideLogoInBooth = false;
+    @observable disableBookmarked = false;
+    @observable disableGps = false;
+    @observable monochrome = false;
+    @observable heatmap = false;
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
+    @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
 
     overlayMediumHeightRems = 10;
 
@@ -73,8 +81,16 @@ export default class UIState {
         return this.rootStore.fp.noOverlay || this.hideOverlay;
     }
 
+    @computed({ keepAlive: true }) get gpsEnabled() {
+        return data.autoTrackingGps && !this.disableGps;
+    }
+
     get onBoothClick() {
         return this.rootStore.fp.onBoothClick;
+    }
+
+    get onMarkerClick() {
+        return this.rootStore.fp.onMarkerClick;
     }
 
     get onBookmarkClick() {
@@ -177,7 +193,7 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get wsShown() {
-        return this.rootStore.exhibitorStore.advertised.length > 0;
+        return !this.hideHeaderLogo && this.rootStore.exhibitorStore.advertised.length > 0;
     }
 
     @computed get wsDesktopPosition() {
@@ -268,11 +284,12 @@ export default class UIState {
         let text = this.list.text.trim().toLowerCase() as string;
         // let words = text.split(/\s+/).filter(x => x);
 
-        const { exhibitorStore, categoryStore, boothStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories;
         const boothsArray = boothStore.booths;
+        const eventsArray = scheduleStore.scheduleItems;
 
         if (!text) {
             let combinedArray = [];
@@ -283,6 +300,11 @@ export default class UIState {
             if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
             if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
             if (uiState.kiosk && settings.EXPO == "imexamerica23") combinedArray = combinedArray.slice(0, 300);
+
+            if (this.heatmap) {
+                const allItems = [...exhibitorsArray, ...boothsArray];
+                return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+            }
 
             return exhibitorsArray.length === 0
                 ? boothsArray
@@ -314,15 +336,12 @@ export default class UIState {
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
         const matchingCategories = new Set<Category>();
+        const matchingEvents = new Set<ScheduleItem>();
 
         const splittedTexts = text.split("&").filter((s) => s);
 
         function selectLettersSpacesNumbers(input: string): string {
-            return (
-                input
-                    ?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")              
-                    ?.replace(/\s\s+/g, " ") ?? input
-            );
+            return input?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
         }
 
         function containsIgnoreCase(str: string, searchTerm: string) {
@@ -358,23 +377,38 @@ export default class UIState {
         });
 
         boothsArray.forEach((b) => {
-            if (!(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b))) {
-                if (
-                    splittedTexts.some(
-                        (text) =>
-                            containsIgnoreCase(b.title || "", text) ||
-                            containsIgnoreCase(b.name, text) ||
-                            containsLevelIgnoreCase(b.layer?.name ?? null, text)
-                    )
+            const addBoothCondition = this.heatmap
+                ? true
+                : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
+
+            if (addBoothCondition && 
+                splittedTexts.some((text) => 
+                    containsIgnoreCase(b.title || "", text) ||
+                    containsIgnoreCase(b.name, text) ||
+                    containsLevelIgnoreCase(b.layer?.name ?? null, text))
                 ) {
-                    matchingBooths.add(b);
-                }
+                matchingBooths.add(b);
             }
         });
 
+        eventsArray.forEach((e) => {
+            if (
+                splittedTexts.some(
+                    (text) => containsIgnoreCase(e.name || "", text) || containsIgnoreCase(e.description || "", text)
+                )
+            ) {
+                matchingEvents.add(e);
+            }
+        });
+
+        items.push(...matchingEvents);
         items.push(...matchingCategories);
         items.push(...matchingExhibitors);
         items.push(...matchingBooths);
+
+        if (this.heatmap) {
+            return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        }
 
         return items;
     }
@@ -400,6 +434,9 @@ export default class UIState {
                 arr.push(...item.booths);
             } else if (item instanceof BoothBase) {
                 arr.push(item as Booth);
+            } else if (item instanceof ScheduleItem) {
+                if (item.boothId) arr.push(boothStore.booths.find((b) => b.id === item.boothId));
+                if (item.exhibitorId) arr.push(...exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId).booths);
             }
         });
         return new Set(arr);

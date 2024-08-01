@@ -12,7 +12,9 @@ import RootStore from "../RootStore";
 import { isYahBooth } from "../../utils/yah";
 import { RawSpecialBooth } from "../../data/Data";
 import { Exhibitor } from "../ExhibitorStore";
-import { v4 as uuidv4 } from "uuid";
+import { Layer } from "../LayerStore";
+import { uiState } from "../index";
+import Color from "color";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
@@ -68,7 +70,8 @@ export function iniAllBooths(store: RootStore) {
 
 const layers = [];
 
-export default function initBooths(store: RootStore, layerID: string): Booth[] {
+export default function initBooths(store: RootStore, layer: Layer): Booth[] {
+    const layerID = layer.name;
     if (layers.indexOf(layerID) > -1) return [];
     layers.push(layerID);
 
@@ -78,9 +81,9 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
     const layersEnabled = !!window["__fpLayers"];
 
     for (const el of d3
-        .select(getLayerSvg(layerID))
+        .select(getLayerSvg(layer))
         .selectAll(
-            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
+            `[data-layer='${layerID}'] > [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
         .nodes() as (SVGRectElement | SVGPathElement)[]) {
         const layer = ((el as SVGGraphicsElement).closest("svg > [data-layer]") as SVGGraphicsElement).attributes["data-layer"]
@@ -123,7 +126,14 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
         booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
         booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor || "#FFFFFF";
         booth.borderWidth = parseFloat(rect.getAttribute("stroke-width") || rect.style.strokeWidth);
-        booth.labelColor = rect.getAttribute("data-label-color");
+
+        if (!uiState.heatmap) {
+            booth.labelColor = rect.getAttribute("data-label-color");
+        } else {
+            const totalClicks = store.heatmapStore.getTotalClicksByBooth(booth as Booth);
+            const heatmapColor = Color(store.heatmapStore.getColorByClicks(totalClicks));
+            booth.labelColor = heatmapColor.darken(0.3).isLight() ? "#555" : "#fff";
+        }
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
@@ -176,11 +186,6 @@ export default function initBooths(store: RootStore, layerID: string): Booth[] {
             }
         }
 
-        let logoInBooth = false;
-
-        const exhibitorsWithLogoInBooths = booth.exhibitors.filter((ex) => ex.logoInBooth);
-        logoInBooth = exhibitorsWithLogoInBooths.length > 0;
-
         if (el.tagName === "g") {
             booth.paths = [];
             booth.pathsWithRect = pathsWithRect;
@@ -230,7 +235,7 @@ function dublicateExhibitorsInBooth(exhibitor: Exhibitor | null, booth: MutableR
     exh = exhibitor || exh;
 
     for (let i = 0; i < times; i++) {
-        const copyExhibitor: MutableRequired<Exhibitor> = { ...exh, id: uuidv4() };
+        const copyExhibitor: MutableRequired<Exhibitor> = { ...exh, id: Date.now() };
         booth.exhibitors.push(copyExhibitor as Exhibitor);
     }
 }

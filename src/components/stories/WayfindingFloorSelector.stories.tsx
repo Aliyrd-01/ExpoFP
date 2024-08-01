@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import WayfindingFloorSelector, { WayfindingFloorSelectorProps } from "../WayfindingFloorSelector";
 
@@ -8,9 +8,9 @@ export default {
     component: WayfindingFloorSelector,
 } as Meta;
 
-const Template: Story<WayfindingFloorSelectorProps> = (args) => {
-    const [currentFloor, setCurrentFloor] = useState<string>(args.current);
-    const changeFloor = (val: string) => {
+const Template: StoryFn<WayfindingFloorSelectorProps> = (args) => {
+    const [currentFloor, setCurrentFloor] = useState<{id: number, name: string}>(args.current);
+    const changeFloor = (val: {id: number, name: string}) => {
         setCurrentFloor(val);
         action("onClickFloor")(val);
     };
@@ -26,6 +26,30 @@ const Template: Story<WayfindingFloorSelectorProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
-    floors: ["1", "2", "3", "4"],
-    current: "2",
+    floors: [
+        {
+            id: 1,
+            name: "1"
+        },
+        {
+            id: 2,
+            name: "2"
+        },
+        {
+            id: 3,
+            name: "3"
+        },
+        {
+            id: 4,
+            name: "4"
+        },
+        {
+            id: 5,
+            name: "5"
+        }
+    ],
+    current: {
+        id: 2,
+        name: "2"
+    },
 };

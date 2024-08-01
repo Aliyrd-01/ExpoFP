@@ -25,6 +25,7 @@ import "./Map.scss";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import { getMarkerFromClientXy } from "./marker-by-xy";
 
 //console.log('isIframe', isIframe)
 
@@ -47,10 +48,12 @@ export default function Map() {
         //     return  rect;//rect.withPadding(rect.w * 0.05, rect.h * 0.05);
         // }
     }));
-
+    
     // init
     useEffect(() => {
         init();
+
+        store.fp.getCenterCoordinates = getCenterCoordinates;
 
         return () => resizeObserverRef.current.disconnect();
     }, []);
@@ -210,7 +213,7 @@ export default function Map() {
     return useObserver(() => (
         <canvas
             ref={el}
-            className={classNames({ map: true, moving: s.moving })}
+            className={classNames({ map: true, moving: s.moving, hidden: store.mapboxStore.showMapbox })}
             onMouseMove={handleMouseMoveAndOver}
             onClick={handleClick}
             onMouseOver={handleMouseMoveAndOver}
@@ -303,6 +306,21 @@ export default function Map() {
         uiState.hoveredBooth = b;
     }
 
+    function getCenterCoordinates() {
+        const { width, height } = s.$canvas.node().getBoundingClientRect();
+
+        const activeLayer = store.layerStore.visible.find(layer => layer.mode === LayerMode.TurnedOff || layer.mode === LayerMode.TurnedOn);
+        const z = activeLayer?.name || null;
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        const pxSvgMatrix = s.drawer.getPxSvgMatrix();
+        const [x, y] = m4.transformPoint(pxSvgMatrix, [centerX, centerY, 0]);
+
+        return { x, y, z };
+    }
+
     function handleMouseMoveAndOver(e) {
         const { left, top } = uiState.rootElement.getBoundingClientRect();
 
@@ -337,6 +355,11 @@ export default function Map() {
             );
 
             uiState.onGetCoordsClick({ x: xys[0], y: xys[1], z: currentFloor?.name || null });
+        }
+
+        if (uiState.onMarkerClick) {
+            const marker = getMarkerFromClientXy(x, y, s.drawer);
+            uiState.onMarkerClick(marker);
         }
 
         // if (!this.props.onBoothClick) return;

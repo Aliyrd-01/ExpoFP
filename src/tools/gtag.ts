@@ -1,6 +1,7 @@
 import data from "../data";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
+import trackEvent from "../tools/track-event";
 
 const ga_common_prop = "G-78CKLYWFJK";
 
@@ -95,10 +96,10 @@ function deleteGaCookies() {
 }
 
 export function setConsentSettings(allowConsent?: boolean) {
-    let analyticsConsent = hasUserConsent(allowConsent);
+    let userChoice = hasUserConsent(allowConsent);
 
-    if (analyticsConsent) {
-        if (analyticsConsent === "denied") {
+    if (userChoice) {
+        if (userChoice === "denied") {
             deleteGaCookies();
 
             if (data.gtag) {
@@ -113,7 +114,8 @@ export function setConsentSettings(allowConsent?: boolean) {
         }
 
         gtag("consent", "update", {
-            analytics_storage: analyticsConsent,
+            analytics_storage: userChoice,
+            ad_personalization: userChoice
         });
     }
 }
@@ -121,9 +123,23 @@ export function setConsentSettings(allowConsent?: boolean) {
 export function sendEventToGa(action: GaEventActions, label: string, eventCategory?: string) {
     //for reference https://developers.google.com/analytics/devguides/collection/ga4/reference/events
     switch (action) {
-        case GaEventActions.ViewBooth:
+        case GaEventActions.ViewBooth: {
+            gtag("event", "select_content", {
+                content_type: action,
+                content_id: label,
+            });
+            trackEvent("booview", label);
+            break;
+        }
+        case GaEventActions.ViewCategory: {
+            gtag("event", "select_content", {
+                content_type: action,
+                content_id: label,
+            });
+            trackEvent("catview", label);
+            break;
+        }
         case GaEventActions.ViewExhibitor:
-        case GaEventActions.ViewCategory:
         case GaEventActions.ViewGallery:
         case GaEventActions.ViewVideo:
             gtag("event", "select_content", {
@@ -135,6 +151,7 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
             gtag("event", "search", {
                 search_term: label,
             });
+            trackEvent("search", label);
             break;
         case GaEventActions.ClickCustomButton:
         case GaEventActions.ClickPhone:
@@ -152,12 +169,14 @@ export function sendEventToGa(action: GaEventActions, label: string, eventCatego
                 content_type: action,
                 content_id: label,
             });
+            trackEvent("share", label);
             break;
         case GaEventActions.ClickDirections:
             gtag("event", "route", {
                 content_type: action,
                 content_id: label,
             });
+            trackEvent("route", label);
             break;
         default:
             gtag("event", action, {
@@ -202,6 +221,7 @@ gtag("consent", "default", {
     functionality_storage: "denied",
     personalization_storage: "denied",
     security_storage: "denied",
+    ad_personalization: "denied"
 });
 
 export function destroyGtag() {

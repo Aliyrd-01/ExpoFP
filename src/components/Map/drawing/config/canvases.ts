@@ -3,6 +3,8 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
+import { boothStore, heatmapStore, uiState } from "../../../../store";
+import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -32,7 +34,8 @@ export function createLabelCanvas(
     fontSize *= pixelRatio;
     // const canvas = document.createElement("canvas");
     // const c = canvas.getContext("2d");
-    const font = getFont(fontSize, fontWeight);
+    const weight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-main-weight"));
+    const font = getFont(fontSize, weight || fontWeight);
     const width = measureText(font, text.replace(/[0-9]/g, "3").replace(/[A-Z]/g, "A")) + 3 + 3; //
     const vPad = 4;
     const height = fontSize + vPad;
@@ -69,18 +72,23 @@ export function createDetailsCanvas(
     //const br = !b.special ? (b as RegularBooth) : undefined;
     // if (b.special === false) {
 
-    if (b.onHold) {
-        lines.push(t("On Hold"));
-    } else if (b.reserved) {
-        lines.push(t("Reserved"));
-    } /*else if (b.exhibitors.length) {
+    if (!uiState.heatmap) {
+        if (b.onHold) {
+            lines.push(t("On Hold"));
+        } else if (b.reserved) {
+            lines.push(t("Reserved"));
+        } /*else if (b.exhibitors.length) {
 <<<<<<< HEAD
         lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } */ else if (!onlyId) {
-        lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+            lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
+        }
+        if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
+        if (b.price && b.price !== "0") lines.push(b.price);
+    } else {
+        const clicks = heatmapStore.getTotalClicksByBooth(b);
+        lines.push("Clicks: " + clicks);
     }
-    if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
-    if (b.price && b.price !== "0") lines.push(b.price);
 
     // }
 
@@ -88,8 +96,12 @@ export function createDetailsCanvas(
 
     const boothFontSize = fontSize * pixelRatio;
     const detailFontSize = 0.9 * fontSize * pixelRatio;
-    const boothFont = getFont(boothFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
+
+    const boothWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-main-weight"));
+    const detailWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-details-weight"));
+
+    const boothFont = getFont(boothFontSize, boothWeight || 500);
+    const detailFont = getFont(detailFontSize, detailWeight || 300);
     const boothPadding = 1 * pixelRatio;
 
     let mainLine = b.name;
@@ -142,7 +154,7 @@ export function createExhibitorsDetailsCanvas(
     b: RegularBooth,
     pixelRatio: number,
     color: string = "#fff",
-    frontSize: number,
+    fontSize: number,
     onlyMain: boolean,
     onlyFeaturedExhibitors: boolean,
     textAlign: CanvasTextAlign = "start"
@@ -150,11 +162,14 @@ export function createExhibitorsDetailsCanvas(
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
 
-    const mainFontSize = frontSize * pixelRatio;
-    const detailFontSize = 0.9 * frontSize * pixelRatio;
+    const mainFontSize = fontSize * pixelRatio;
+    const detailFontSize = 0.9 * fontSize * pixelRatio;
 
-    const mainFont = getFont(mainFontSize, 500);
-    const detailFont = getFont(detailFontSize, 300);
+    const mainExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-main-weight"));
+    const detailExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-details-weight"));
+
+    const mainFont = getFont(mainFontSize, mainExhibitorDetailsWeight || 500);
+    const detailFont = getFont(detailFontSize, detailExhibitorDetailsWeight || 300);
 
     const primaryExhibitors = b.exhibitors.filter((e) => e.order === 0);
 
@@ -172,7 +187,7 @@ export function createExhibitorsDetailsCanvas(
         }
     } else {
         if (b.exhibitors.length > 5) {
-            mainLines.push(`${b.exhibitors.length} exhibitors`);
+            mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
         } else {
             mainLines.push(...b.exhibitors.map((e) => e.name));
         }
@@ -191,6 +206,11 @@ export function createExhibitorsDetailsCanvas(
     });
 
     if (!onlyMain) detailsLines.push(b.name);
+
+    if (uiState.heatmap) {
+        const clicks = heatmapStore.getTotalClicksByBooth(b);
+        detailsLines.push("Clicks: " + clicks);
+    }
 
     const maxTextWidth = Math.max(
         ...mainLines.map((x) => measureText(mainFont, x)),
@@ -323,19 +343,43 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
     return res;
 }
 
+export function createArrowCurrentCanvas(
+    pixelRatio: number,
+    color: string = "#c8248b",
+    scale: number = pixelRatio * 0.4
+): CanvasDescriptor {
+    return {
+        width: 95 * scale,
+        height: 95 * scale,
+
+        draw(ctx) {
+            ctx.scale(scale, scale);
+
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            ctx.moveTo(75, 15);
+            ctx.lineTo(95, 35);
+            ctx.lineTo(75, 55);
+            ctx.lineTo(80, 35);
+            ctx.closePath();
+            ctx.fill();
+        },
+    };
+}
+
 export function createCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
     scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
     return {
-        width: 70 * scale,
-        height: 70 * scale,
-
+        width: 95 * scale,
+        height: 95 * scale,
         draw(ctx) {
             ctx.scale(scale, scale);
 
-            // #path833
+            // WHITE
+            // // #path833
             ctx.beginPath();
             ctx.fillStyle = "#FFFFFF";
             ctx.moveTo(0.0, 35.0);
@@ -345,6 +389,7 @@ export function createCurrentCanvas(
             ctx.bezierCurveTo(15.670034, 0.0, 0.0, 15.670034, 0.0, 35.0);
             ctx.fill();
 
+            // BLUE
             // #path835
             ctx.beginPath();
             ctx.fillStyle = color;
@@ -398,6 +443,21 @@ export function createTargetCanvas(
             ctx.bezierCurveTo(23.5, 16.3, 16.2, 23.6, 16.2, 32.6);
             ctx.fill();
         },
+    };
+}
+
+export function createImageCanvas(
+    image: HTMLImageElement,
+    width: number,
+    height: number,
+    pixelRatio: number
+): CanvasDescriptor {
+    return {
+        width: width * pixelRatio,
+        height: height * pixelRatio,
+        draw(ctx: CanvasRenderingContext2D) {
+            ctx.drawImage(image, 0, 0, width * pixelRatio, height * pixelRatio);
+        }
     };
 }
 
@@ -552,7 +612,8 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
         draw(c) {
             c.textAlign = "center";
             c.textBaseline = "alphabetic";
-            c.font = getFont(fontSize);
+            const weight =  Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-special-weight"));
+            c.font = getFont(fontSize, weight || 500);
 
             const totalHeight = lines.length * lineHeight;
             const startFrom = height / 2 - totalHeight / 2 - fontSize * 0.1;

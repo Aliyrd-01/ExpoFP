@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import ToggleSwitch, { ToggleSwitchProps } from "../ToggleSwitch";
 import ResponsiveClassContext from "../../storybook/contexts/ResponsiveClassContext";
 
@@ -8,7 +8,7 @@ export default {
     component: ToggleSwitch,
 } as Meta;
 
-const Template: Story<ToggleSwitchProps> = (args) => {
+const Template: StoryFn<ToggleSwitchProps> = (args) => {
     const [value, setValue] = useState<boolean>(true);
     const responsiveClass = useContext(ResponsiveClassContext);
 

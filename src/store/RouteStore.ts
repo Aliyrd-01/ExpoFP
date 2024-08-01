@@ -11,6 +11,25 @@ import { Layer, LayersMode } from "./LayerStore";
 import RootStore from "./RootStore";
 import { uiState } from "./index";
 
+const replaceCommasWithDot = (value: string | number | undefined) => {
+    if (typeof value === "string") {
+        return Number(value.replace(",", "."));
+    }
+    return value;
+};
+
+export interface MarkerIcon {
+    name: string,
+    content: string,
+    width: number,
+    height: number
+}
+
+export interface MarkersData {
+    icons: MarkerIcon[],
+    markers: Marker[]
+}
+
 export default class RouteStore {
     rootStore: RootStore;
     cpTimeout: number;
@@ -22,6 +41,8 @@ export default class RouteStore {
     @observable defaultFrom: Booth = null;
     @observable focusEnabled: boolean = true;
     @observable prevZ: string = null;
+    @observable markersData: MarkersData = { icons: [], markers: [] };
+    @observable prevMarkers: Marker[] = [];
 
     @observable showAccessible: boolean = !!sublines()?.lines?.find((l) => l.unaccessible);
     @observable onlyAccessible: boolean = false;
@@ -53,6 +74,7 @@ export default class RouteStore {
 
         if (!route && store.fp.onDirection) store.fp.onDirection(null);
 
+
         setTimeout(() => {
             this.rootStore.moveToList(list);
             var id = uiState.selectedRoute?.from?.id;
@@ -62,7 +84,32 @@ export default class RouteStore {
                 this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
             if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
+
+            if (route?.from && route?.to)
+                sendEventToGa(
+                    GaEventActions.ClickDirections,
+                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
+                );
         }, 200);
+    }
+
+    @computed({ keepAlive: true }) get pathLayers() {
+        const layers: {id: number, name: string}[] = [];
+        store.routeStore.routeLines
+            ?.map((rl) => rl.p0.layer)
+            .reverse()
+            .forEach((l, index, array) => {
+                if (index === 0 || l !== array[index - 1]) {
+                    layers.push({ id: index + 1, name: l });
+                }
+            });
+
+        return layers.map((l) => {
+            return {
+                id: l.id,
+                layer: store.layerStore.layers.find((layer) => layer.name === l.name)
+            }
+        } );
     }
 
     @computed({ keepAlive: true }) get nearestBooth() {
@@ -84,6 +131,37 @@ export default class RouteStore {
                         lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
                 )[0] || null
         );
+    }
+
+    @action setMarkers(data: MarkersData) {
+        this.markersData.markers = data.markers.map(dot => {
+            dot.x = replaceCommasWithDot(dot.x);
+            dot.y = replaceCommasWithDot(dot.y);
+            dot.lat = replaceCommasWithDot(dot.lat);
+            dot.lng = replaceCommasWithDot(dot.lng);
+            return dot;
+        });
+        this.markersData.icons = data.icons;
+    }
+
+    @action selectMarker(id: string, focus: boolean) {
+        const marker = this.markersData.markers.find(marker => marker.id === id);
+        this.markersData.markers.forEach(marker => marker.active = false);
+
+        if (marker) {
+            marker.active = true;
+        }
+
+        let layer = store.layerStore.findLayer(marker?.z);
+
+        if (focus) {
+            if (layer && !layer?.visible) layersStore.updateVisibility(layer, true);
+            this.rootStore.uiState.moveToRect = Rect.fromCxcywh(marker?.x, marker?.y, 1000, 1000);
+        }
+    }
+
+    @computed({ keepAlive: true }) get selectedMarkers() {
+        return this.markersData.markers.filter(marker => marker.active);
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
@@ -119,13 +197,6 @@ export default class RouteStore {
 
     @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
         clearTimeout(this.cpTimeout);
-
-        const replaceCommasWithDot = (value: string | number | undefined) => {
-            if (typeof value === "string") {
-                return Number(value.replace(",", "."));
-            }
-            return value;
-        };
 
         if (point) {
             point.x = replaceCommasWithDot(point.x);
@@ -196,16 +267,23 @@ export default class RouteStore {
 
         distance = Math.round(distance / 10.0);
 
-        sendEventToGa(
-            GaEventActions.ClickDirections,
-            `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
-        );
-
         if (store.fp.onDirection)
             setTimeout(() => {
                 store.fp.onDirection({
-                    from: route?.from ? { id: route.from.id, name: route.from.name } : null,
-                    to: route?.to ? { id: route.to.id, name: route.to.name } : null,
+                    from: route?.from
+                        ? {
+                              id: route.from.id,
+                              name: route.from.name,
+                              layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
+                          }
+                        : null,
+                    to: route?.to
+                        ? {
+                              id: route.to.id,
+                              name: route.to.name,
+                              layer: { name: route.to.layer?.name, description: route.to.layer?.description },
+                          }
+                        : null,
                     lines: routeLines,
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
@@ -264,4 +342,11 @@ export class CurrentPosition extends Point {
     ) {
         super(x, y);
     }
+}
+
+export interface Marker extends CurrentPosition {
+    id: string;
+    icon: string,
+    selectedIcon: string,
+    active?: boolean;
 }

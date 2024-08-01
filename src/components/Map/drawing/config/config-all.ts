@@ -9,6 +9,8 @@ import configYah from "./config-yah";
 import configGPS from "./config-gps";
 import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
+import { configMarkers } from "./config-markers";
+import { configDebugCircles } from "./config-debug-circles";
 
 let _context: DrawerContext;
 export let getContext = () => _context;
@@ -20,7 +22,6 @@ export default function configAll(context: DrawerContext = _context): void {
     configCanvas(context);
     configYah(context);
 
-    let basePriority = 6;
     let { layers, defaultLayer } = store.layerStore;
 
     if (defaultLayer) {
@@ -34,7 +35,7 @@ export default function configAll(context: DrawerContext = _context): void {
     var duration = 10;
     var animated = false;
 
-    const promises = layers.map((layer) => {
+    const promises = layers.filter(l => !l.rootParent).map((layer) => {
         return loadLayer(layer, layer.visible || layer === defaultLayer, context).then((configured) => {
             if (!animated && configured) {
                 animated = true;
@@ -65,8 +66,6 @@ export default function configAll(context: DrawerContext = _context): void {
         }
     });
 
-    basePriority = 20 * (layers.length + 2);
-
     var cb = () => {
         if (context.updatable)
             if (store.layerStore.mode === LayersMode.Radio) {
@@ -80,6 +79,10 @@ export default function configAll(context: DrawerContext = _context): void {
             }
     };
 
-    configWf(context, basePriority++, true);
+    const wfBasePriority = 10000 * (layers.length);
+
+    configWf(context, wfBasePriority, true);
+    configMarkers(context, wfBasePriority, true);
+    configDebugCircles(context, wfBasePriority);
     configGPS();
 }

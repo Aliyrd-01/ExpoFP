@@ -1,13 +1,11 @@
-import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
-import { CurrentPosition } from "../../../../store/RouteStore";
 import store from "../../../../store";
+import { CurrentPosition } from "../../../../store/RouteStore";
 import logger from "../../../../tools/logger";
-import data from "../../../../data";
+import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 
 export default function configGPS() {
-
-    if (data.autoTrackingGps) {
+    if (store.uiState.gpsEnabled) {
         trackGPS();
     }
 }
@@ -16,14 +14,15 @@ function trackGPS() {
     let watcher = navigator.geolocation.watchPosition(
         (pos) => {
             try {
+                if (!fpGeo) return;
+
                 const localPoint = convertGpsToLocal(
                     pos.coords.latitude,
                     pos.coords.longitude,
                     fpGeo.properties.config as GpsConfig
                 );
 
-                if(!localPoint) return;
-
+                if (!localPoint) return;
 
                 const currentPosition = new CurrentPosition(
                     localPoint.x,

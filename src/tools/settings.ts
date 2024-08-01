@@ -5,6 +5,7 @@ export class FpSettings {
     boothBorderColor: string = "#fff";
     backgroundColor: string = "#ebebeb";
     boothBorderWidth: number;
+    heatmapColors: string[] = ["#FDE7C7", "#FDDBAE", "#FDC48D", "#FCB37C", "#FCA26D", "#F67B5B", "#EB483E", "#E03143", "#6C0022"];
 }
 
 class Settings extends FpSettings {

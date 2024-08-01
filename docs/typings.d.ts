@@ -29,7 +29,7 @@ class FloorPlan {
 
     selectCurrentPosition(
         //
-        point: { x: number; y: number; angle?: number; z?: string; lat?: number; lng?: number },
+        point: { x: number; y: number; angle?: number; z?: string | number; lat?: number; lng?: number },
         focus?: boolean,
         icon?: number // 0- blue dot, 1- YAH icon
     ): void;
@@ -39,6 +39,8 @@ class FloorPlan {
     updateLayerVisibility(layer: string, visible: boolean): void;
 
     selectRoute(from: string, to: string, onlyAccessible: boolean): void;
+
+    applyParameters(queryRaw: string): void;
 
     exhibitorsList(): FloorPlanExhibitor[];
 
@@ -65,9 +67,15 @@ interface FloorPlanOptions {
     onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
 }
 
+interface Layer {
+    name: string;
+    description: string;
+}
+
 interface FloorPlanBoothBase {
     id: number;
     name: string;
+    layer: Layer;
 }
 
 interface FloorPlanBooth extends FloorPlanBoothBase {

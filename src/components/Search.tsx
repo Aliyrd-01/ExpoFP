@@ -14,10 +14,11 @@ import "./Search.scss";
 import * as YouAreHere from "../utils/yah";
 import { kioskKey } from "../store/init/init-ui";
 import { isLocalStorageAvailable } from "../utils/localStorage";
+import settings from "../tools/settings";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
-export function hanleCustomCommand(text: string, forseRefresh: boolean): boolean {
+export function handleCustomCommand(text: string, forseRefresh: boolean): boolean {
     text = text.trim();
 
     if (text.startsWith(`${YouAreHere.yahKey}`)) {
@@ -101,7 +102,8 @@ function Search() {
         get backMode() {
             return this.text ? "back" : "menu";
         },
-        get placeHolder() {
+        get placeHolder() {            
+            if (settings.EXPO.startsWith("jetlag")) return "Search location or artist";
             return exhibitorStore.exhibitors.length === 0
                 ? t("Search {{boothTerm}}", { boothTerm: data.boothTerm.toLowerCase() })
                 : t("Search company, {{boothTerm}} or category", { boothTerm: data.boothTerm.toLowerCase() });
@@ -248,7 +250,7 @@ function Search() {
             case "Enter":
                 e.preventDefault();
                 store.openActiveListItem();
-                hanleCustomCommand(getInput().value, true);
+                handleCustomCommand(getInput().value, true);
                 return;
         }
         if (delta) {

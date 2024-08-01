@@ -1,18 +1,18 @@
+import classNames from "classnames";
 import Color from "color";
-import { useLocalStore, useObserver } from "mobx-react-lite";
 import React from "react";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import QRCode from "react-qr-code";
+import data from "../data";
 import store, { uiState } from "../store";
+import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
 import Alert from "./Alert";
-import QRCode from "react-qr-code";
 import "./Alert.scss";
 import "./LogoOverlay.scss";
-import data from "../data";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import classNames from "classnames";
-import settings from "../tools/settings";
 
 export default function LogoOverlay() {
     const s = useLocalStore(() => ({
@@ -60,6 +60,13 @@ export default function LogoOverlay() {
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
     var showWarning = isFromDesigner && dataSize >= 10;
     var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk;
+    
+    let point = "";
+    if (uiState.kiosk && store.routeStore.defaultFrom?.paths) {
+        let paths = store.routeStore.defaultFrom?.paths;
+        const p = (point = (paths[0] as any).triangles[0][0]);
+        point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
+    }
 
     return useObserver(() => (
         <div>
@@ -98,7 +105,7 @@ export default function LogoOverlay() {
                     }}
                 >
                     <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
-                    <QRCode value={`https://${settings.EXPO}.expofp.com`} size={100} />
+                    <QRCode value={`https://${settings.EXPO}.expofp.com/${point}`} size={100} />
                 </div>
             )}
         </div>

@@ -1,6 +1,6 @@
 import _locales from "../public/locales/_locales";
 import { Data } from "./data/Data";
-import { CurrentPosition } from "./store/RouteStore";
+import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -48,6 +48,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
 
+    onMarkerClick: (e: FloorPlanMarkerEvent) => void;
+
     selectBooth(nameOrExternalId: string | string[]) {
         nr();
     }
@@ -68,7 +70,19 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    setMarkers(markersData: MarkersData): void {
+        nr();
+    }
+
     updateLayerVisibility(layer: string, visible: boolean): void {
+        nr();
+    }
+
+    getCenterCoordinates() {
+        nr();
+    }
+
+    applyParameters(parameters: string): void {
         nr();
     }
 
@@ -81,6 +95,10 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     categoriesList(): any {
+        nr();
+    }
+
+    selectCategory(nameOrSlug: string): void {
         nr();
     }
 
@@ -99,6 +117,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onGetCoordsClick = options.onGetCoordsClick;
+        this.onMarkerClick = options.onMarkerClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this._ready = new Promise((resolve, reject) => {
@@ -109,8 +128,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.element = element;
         if (element["__expofp"]) throw new Error("Element already in use");
         element["__expofp"] = this;
-        const eventId =
-            options.eventId ||
+        const eventId = options.eventId ||
             element.getAttribute("data-event-id") ||
             element.getAttribute("data-event") || // legacy remove 2020-12-12
             (document.location.hostname.endsWith(".expofp.com")
@@ -228,6 +246,14 @@ export default class FloorPlanLoader implements FloorPlan {
             const navLanguage = navigator.languages?.[0] || navigator.language;
             const navLocale = _locales.find((x) => navLanguage.startsWith(x));
             await initI18n(navLocale || data.locale || "en");
+
+            const isHeatmap = window.location.search.startsWith("?heatmap=true");
+            if (isHeatmap) {
+                const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
+                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(res => res.json());
+                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(res => res.json());
+                window["__heatmapData"] = { booths, exhibitors };
+            }
 
             if (data.isRebooking) {
                 await loadJs(dataInternalUrl);

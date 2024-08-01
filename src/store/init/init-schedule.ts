@@ -1,10 +1,13 @@
 import data from "../../data";
+import settings from "../../tools/settings";
 import RootStore from "../RootStore";
 import { ScheduleItem } from "../ScheduleStore";
 
 export function iniSchedule(store: RootStore) {
+    const hideEndedEvents = !settings.EXPO.startsWith("jetlag");
+
     (data.events || [])
-        .filter((e) => e.startDate && e.endDate)
+        .filter((e) => e.startDate && (!hideEndedEvents || !e.endDate || new Date(e.endDate).getTime() > new Date().getTime()))
         .forEach((event) => {
             const sI = new ScheduleItem(
                 event.id,

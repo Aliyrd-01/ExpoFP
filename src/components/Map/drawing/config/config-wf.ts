@@ -12,7 +12,13 @@ import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
-import { createCircleCanvas, createCurrentCanvas, createTargetCanvas, createYahCanvas } from "./canvases";
+import {
+    createArrowCurrentCanvas,
+    createCircleCanvas,
+    createCurrentCanvas,
+    createTargetCanvas,
+    createYahCanvas
+} from "./canvases";
 import logger from "../../../../tools/logger";
 
 let routePoints: Point[] = [];
@@ -304,6 +310,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
+    const arrowCurrentCanvas = createArrowCurrentCanvas(context.pixelRatio, fromColor.hex());
     const currentLocationCanvas_2 = createYahCanvas(context.pixelRatio);
 
     pointSize = pointCanvas.width;
@@ -318,6 +325,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             visible: isDebug,
         });
     }
+
 
     for (let i = 0; i < blinkCounter; i++) {
         blinkDrawer.addObject({
@@ -360,17 +368,34 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
+    const currentLocationPad = 5 * context.pixelRatio;
+
     wfDrawer.addObject({
         id: "currentLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -currentLocationCanvas.width / 2,
-            -currentLocationCanvas.height / 2,
+            -currentLocationCanvas.width / 2 + currentLocationPad,
+            -currentLocationCanvas.height / 2 + currentLocationPad,
             currentLocationCanvas.width,
             currentLocationCanvas.height,
         ],
         canvasTmp: sourceLocationCanvas,
+        texPosition: "lefttop",
+        visible: isDebug,
+    });
+
+    wfDrawer.addObject({
+        id: "currentLocation_arrow",
+        center: [0, 0],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -arrowCurrentCanvas.width / 2 + currentLocationPad,
+            -arrowCurrentCanvas.height / 2 + currentLocationPad,
+            arrowCurrentCanvas.width,
+            arrowCurrentCanvas.height,
+        ],
+        canvasTmp: arrowCurrentCanvas,
         texPosition: "lefttop",
         visible: isDebug,
     });
@@ -393,6 +418,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
     wfDrawer.updateSkipdim("currentLocation", false);
+    wfDrawer.updateSkipdim("currentLocation_arrow", false);
     wfDrawer.updateSkipdim("currentLocation_2", false);
 
     function updateRoute() {
@@ -437,8 +463,20 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer.updateVisible("currentLocation", visible);
                 wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
+
+                const rotateRadians = position?.angle * Math.PI / 180 || null;
+
+                if (rotateRadians !== undefined && rotateRadians !== null) {
+                    wfDrawer.updateVisible("currentLocation_arrow", visible);
+                    wfDrawer.updateSkipdim("currentLocation_arrow", visible);
+                    wfDrawer.updateCenter("currentLocation_arrow", [position.x, position.y]);
+                    wfDrawer.updateRotation("currentLocation_arrow", rotateRadians);
+                } else {
+                    wfDrawer.updateVisible("currentLocation_arrow", false);
+                }
             } else {
                 wfDrawer.updateVisible("currentLocation", false);
+                wfDrawer.updateVisible("currentLocation_arrow", false);
 
                 wfDrawer.updateSkipdim("currentLocation_2", visible);
                 wfDrawer.updateVisible("currentLocation_2", visible);
@@ -446,6 +484,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             }
         } else {
             wfDrawer.updateVisible("currentLocation", false);
+            wfDrawer.updateVisible("currentLocation_arrow", false);
             wfDrawer.updateVisible("currentLocation_2", false);
         }
 
@@ -496,7 +535,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             } else lines.push(line);
         }
 
-        if (shortestrPerp.l < 200) wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
+        if (shortestrPerp.l < 200) {
+            wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
+            wfDrawer.updateCenter("currentLocation_arrow", [shortestrPerp.p.x, shortestrPerp.p.y]);
+        };
 
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
 

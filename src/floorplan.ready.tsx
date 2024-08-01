@@ -1,14 +1,14 @@
-import React from "react";
 import { reaction } from "mobx";
+import React from "react";
 import ReactDOM from "react-dom";
 import { install } from "resize-observer";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
-import { destroyHistory, initRouting } from "./services/routing";
+import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { SpecialBooth } from "./store/BoothStore";
-import { CurrentPosition, Route, extractRoute } from "./store/RouteStore";
+import { CurrentPosition, Route, extractRoute, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import reportError from "./tools/report-error";
@@ -16,8 +16,6 @@ import { resetGlobalVariables } from "./tools/reset";
 import trackEvent from "./tools/track-event";
 
 install();
-
-trackEvent("load");
 
 // initStore(store);
 
@@ -33,6 +31,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     // }
     protected init(): void {
         initRouting(this.offHistory);
+        trackEvent("load");
         store.fp = this;
         setConsentSettings(this.allowConsent);
         sendEventToGa(GaEventActions.Load, ``);
@@ -91,12 +90,28 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
+    setMarkers(markersData: MarkersData): void {
+        store.routeStore.setMarkers(markersData);
+    }
+
+    selectMarker(id: string, focus = true): void {
+        store.routeStore.selectMarker(id, focus);
+    }
+
+    drawCircles(circles: { x: number; y: number; radius: number; color?: string }[]) {
+        store.uiState.debugCircles = circles;
+    }
+
     checkRoutes(): void {
         store.routeStore.checkRoutes();
     }
 
     updateLayerVisibility(layer: string, visible: boolean): void {
         store.layerStore.updateVisibility(layer, visible);
+    }
+
+    getCenterCoordinates() {
+        return store.fp.getCenterCoordinates();
     }
 
     exhibitorsList(): any {
@@ -110,7 +125,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
-    boothsList(): any {
+    boothsList(): FloorPlanBooth[] {
         return store.boothStore.booths.map((b) => {
             return {
                 id: b.id,
@@ -118,6 +133,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 externalId: b.externalId,
                 isSpecial: b instanceof SpecialBooth,
                 exhibitors: b.exhibitors.map((e) => e.id),
+                layer: {
+                    name: b.layer?.name,
+                    description: b.layer?.description,
+                },
             };
         });
     }
@@ -132,6 +151,24 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
+    selectCategory(nameOrSlug: string) {
+        const str = nameOrSlug?.toLowerCase();
+        const category = store.categoryStore.categories.find(
+            ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str
+        );
+
+        if (!category) {
+            console.error(`Category ${nameOrSlug} not found.`);
+            return;
+        }
+
+        store.selectCategory(category);
+    }
+
+    applyParameters(queryRaw: string) {
+        applyParameters(queryRaw);
+    }
+
     unstable_destroy() {
         let efpElement = window["__efpElement"].firstChild;
         resetGlobalVariables();
@@ -141,6 +178,11 @@ export default class FloorPlanReady extends FloorPlanLoader {
         destroyHistory();
         destroyUiHandlers();
         destroyGtag();
+
+        const scripts = [...document.getElementsByTagName("script")].filter(
+            (x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1
+        );
+        scripts.forEach((sc) => sc.remove());
 
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();

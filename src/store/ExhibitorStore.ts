@@ -43,9 +43,7 @@ export default class ExhibitorStore {
 
     @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
         exhibitor.rebookingState = state;
-
-        if (rebookingNote?.length)
-            exhibitor.rebookingNote = (exhibitor.rebookingNote || "") + "\r\n" + "Rebooking note: " + rebookingNote;
+        exhibitor.rebookingNote = rebookingNote;
 
         fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
             method: "POST",
@@ -76,7 +74,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly id: number;
     readonly name: string;
     readonly externalId: string;
-    readonly featured: boolean; //new
+    @observable featured: boolean; //new
     readonly advertise: boolean;
     readonly description: string;
     readonly address: string;

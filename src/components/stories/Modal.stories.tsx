@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Meta, Story } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import Modal, { ModalProps } from "../Modal";
 import Button from "../Button";
@@ -10,7 +10,7 @@ export default {
     component: Modal,
 } as Meta;
 
-const Template: Story<ModalProps> = (args) => {
+const Template: StoryFn<ModalProps> = (args) => {
     const [isOpen, setIsOpen] = useState<boolean>(args.open);
     const responsiveClass = useContext(ResponsiveClassContext);
 

@@ -1,12 +1,12 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
-import { hanleCustomCommand } from "../components/Search";
+import { handleCustomCommand } from "../components/Search";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
-import { CurrentPosition, Route, extractRoute } from "../store/RouteStore";
+import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
 // import settings from '@/settings';
@@ -17,155 +17,156 @@ let savedSelectedExhibitor: Exhibitor | null = null;
 let savedSelectedBooth: Booth | null = null;
 let unlisten;
 
-export function initRouting(offHistory = false) {
-    disableHistoryManipulation = offHistory;
+const history = createBrowserHistory();
+const pathname = window.location.pathname;
+const routeHistory: string[] = [];
 
-    const history = createBrowserHistory();
-    const pathname = window.location.pathname;
+export function getLocationHistory() {
+    return routeHistory;
+}
 
-    unlisten = history.listen((location, action) => {
-        if (disableHistoryManipulation) return;
+function getHistoryUrl(search: string) {
+    return pathname + search;
+}
 
-        logger.log("history", action, location);
-        if (action === "POP") {
-            dispatchFromUrl();
+function historyPush(search: string) {
+    if (!disableHistoryManipulation) {
+        history.push(getHistoryUrl(search));
+    }
+}
+
+function historyReplace(search: string) {
+    if (!disableHistoryManipulation) {
+        history.push(getHistoryUrl(search));
+    }
+}
+
+function stateToUrl() {
+    let queryRaw = "";
+    const exhibitor = uiState.selectedExhibitor;
+    const booth = uiState.selectedBooth;
+    const route = uiState.selectedRoute;
+
+    if (route) {
+        const from = route.from ? `:${route.from.slug}` : "";
+        const to = route.to ? `:${route.to.slug}` : "";
+        const accessible = store.routeStore.onlyAccessible ? ":true" : "";
+
+        queryRaw = `route${to}${from}${accessible}`;
+    } else if (exhibitor) {
+        queryRaw = exhibitor.slug;
+    } else if (booth) {
+        queryRaw = booth.slug;
+    } else {
+        switch (uiState.list.type) {
+            case "bookmarks":
+                queryRaw = "bookmarks";
+                break;
+            case "category":
+                queryRaw = uiState.selectedCategory.slug;
+                break;
+            case "search":
+                queryRaw = uiState.list.text;
+                break;
+            default:
+                throw new Error("Unkown list.type");
         }
-    });
-
-    function getHistoryUrl(search: string) {
-        return pathname + search;
     }
 
-    function historyPush(search: string) {
-        if (!disableHistoryManipulation) {
-            history.push(getHistoryUrl(search));
-        }
+    // put it here for autorun to continue capturing required observables
+    if (disableStateToUrl) return;
+
+    const newQuery = queryRaw ? "?" + encodeURIComponent(queryRaw) : "";
+
+    if (history.location.search === newQuery) return;
+
+    if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
+        // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
+        historyPush(newQuery);
+    } else {
+        // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
+        // logger.log('history replace', queryRaw);
+        historyReplace(newQuery);
     }
 
-    function historyReplace(search: string) {
-        if (!disableHistoryManipulation) {
-            history.push(getHistoryUrl(search));
-        }
-    }
+    savedSelectedExhibitor = exhibitor;
+    savedSelectedBooth = booth;
+}
 
-    function dispatchFromUrl() {
-        const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
-        disableStateToUrl = true;
+function setTitle() {
+    const exhibitor = uiState.selectedExhibitor;
+    let title = "";
+    if (exhibitor) title = exhibitor.name;
+    else if (uiState.list.type === "search" && uiState.list.text) title = "`" + uiState.list.text + "`";
 
-        const booth = store.boothStore.booths.find(
-            (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+    if (title.length) title += " – ";
+    title += data.title;
+    if (data.subtitle) title += " – " + data.subtitle;
+    title += " – Expo Floor Plan by ExpoFP";
+
+    document.title = title;
+}
+
+function executeCustomCommand() {
+    const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
+    return handleCustomCommand(slug, false);
+}
+
+function dispatchFromUrl() {
+    const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
+    disableStateToUrl = true;
+
+    const booth = store.boothStore.booths.find(
+        (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+    );
+
+    if (executeCustomCommand()) {
+    } else if (slug.startsWith("route")) {
+        const parts = slug.split(":");
+        store.routeStore.onlyAccessible = parts[3] === "true";
+        store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
+    } else if (slug === "bookmarks") {
+        store.selectBookmarks();
+    } else if (slug === "-pdf") {
+        store.uiState.printingPdf = true;
+    } else if (booth) {
+        setTimeout(() => store.selectBooth(booth), 250);
+    } else {
+        const exhibitor = store.exhibitorStore.exhibitors.find(
+            (x: Exhibitor) =>
+                x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
         );
-
-        if (hanleCustomCommand(slug, false)) {
-        } else if (slug.startsWith("route")) {
-            reaction(
-                () => store.layerStore.layersLoaded,
-                () => {
-                    const parts = slug.split(":");
-                    store.routeStore.onlyAccessible = parts[3] === "true";
-                    store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
-                }
-            );
-        } else if (slug === "bookmarks") {
-            store.selectBookmarks();
-        } else if (slug === "-pdf") {
-            store.uiState.printingPdf = true;
-        } else if (booth) {
-            setTimeout(() => store.selectBooth(booth), 250);
-        } else {
-            reaction(
-                () => store.layerStore.layersLoaded,
-                () => {
-                    const exhibitor = store.exhibitorStore.exhibitors.find(
-                        (x: Exhibitor) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
-                    );
-                    if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
-                    else {
-                        const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
-                        if (category) store.selectCategory(category);
-                        else store.selectSearch(slug);
-                    }
-                }
-            );
+        if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
+        else {
+            const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
+            if (category) store.selectCategory(category);
+            else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
         }
-
-        reaction(
-            () => store.layerStore.layersLoaded,
-            () => {
-                disableStateToUrl = false;
-                stateToUrl();
-                setTitle();
-            }
-        );
     }
 
-    function setTitle() {
-        const exhibitor = uiState.selectedExhibitor;
-        let title = "";
-        if (exhibitor) title = exhibitor.name;
-        else if (uiState.list.type === "search" && uiState.list.text) title = "`" + uiState.list.text + "`";
+    disableStateToUrl = false;
+    stateToUrl();
+    setTitle();
+}
 
-        if (title.length) title += " – ";
-        title += data.title;
-        if (data.subtitle) title += " – " + data.subtitle;
-        title += " – Expo Floor Plan by ExpoFP";
-
-        document.title = title;
-    }
-
-    function stateToUrl() {
-        let queryRaw = "";
-        const exhibitor = uiState.selectedExhibitor;
-        const booth = uiState.selectedBooth;
-        const route = uiState.selectedRoute;
-
-        if (route) {
-            const from = route.from ? `:${route.from.slug}` : "";
-            const to = route.to ? `:${route.to.slug}` : "";
-            const accessible = store.routeStore.onlyAccessible ? ":true" : "";
-
-            queryRaw = `route${to}${from}${accessible}`;
-        } else if (exhibitor) {
-            queryRaw = exhibitor.slug;
-        } else if (booth) {
-            queryRaw = booth.slug;
-        } else {
-            switch (uiState.list.type) {
-                case "bookmarks":
-                    queryRaw = "bookmarks";
-                    break;
-                case "category":
-                    queryRaw = uiState.selectedCategory.slug;
-                    break;
-                case "search":
-                    queryRaw = uiState.list.text;
-                    break;
-                default:
-                    throw new Error("Unkown list.type");
-            }
-        }
-
-        // put it here for autorun to continue capturing required observables
-        if (disableStateToUrl) return;
-
-        const newQuery = queryRaw ? "?" + encodeURIComponent(queryRaw) : "";
-
-        if (history.location.search === newQuery) return;
-
-        if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
-            // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
-            historyPush(newQuery);
-        } else {
-            // logger.log('history replace', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
-            // logger.log('history replace', queryRaw);
-            historyReplace(newQuery);
-        }
-
-        savedSelectedExhibitor = exhibitor;
-        savedSelectedBooth = booth;
-    }
-
+function processURLParams() {
     const locationSearch = history.location.search;
+
+    if (locationSearch.includes("heatmap")) {
+        const url = new URL(window.location.href);
+        const heatmapParamValue = url.searchParams.get("heatmap");
+
+        if (heatmapParamValue === "true") {
+            url.searchParams.delete("heatmap");
+
+            let newSearch = url.search;
+            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+            disableHistoryManipulation = true;
+
+            historyReplace(newSearch);
+            store.uiState.heatmap = true;
+        }
+    }
 
     // preview fix
     if (locationSearch.startsWith("?preview=")) {
@@ -180,58 +181,159 @@ export function initRouting(offHistory = false) {
         const exhibitor = store.exhibitorStore.exhibitorById.get(ba);
         if (exhibitor) historyReplace("?" + exhibitor.slug);
         else historyReplace("?bookmarks");
-    } else if (locationSearch.includes("noOverlay")) {
-        const url = new URL(window.location.href);
-        const noOverlayParamValue = url.searchParams.get("noOverlay");
-
-        if (noOverlayParamValue === "true") {
-            url.searchParams.delete("noOverlay");
-
-            let newSearch = url.search;
-            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-
-            historyReplace(newSearch);
-            store.uiState.hideOverlay = true;
-        }
-    } else if (locationSearch.includes("?blue-dot")) {
-        const url = new URL(window.location.href);
-        const blueDotParams = url.searchParams.get("blue-dot").split(",");
-
-        if (blueDotParams[0] && blueDotParams[1]) {
-            reaction(
-                () => store.layerStore.layersLoaded,
-                () => {
-                    const currentPosition = new CurrentPosition(
-                        Number(blueDotParams[0]),
-                        Number(blueDotParams[1]),
-                        blueDotParams[2]
-                    );
-                    store.routeStore.selectCurrentPosition(currentPosition, false);
-                }
-            );
-        }
-
-        historyReplace("?");
     } else if (locationSearch.startsWith("?mapbox=false")) {
         store.mapboxStore.isMapbox = false;
         historyReplace("?");
     }
 
-    // facebook and google  fix
-    else if (
-        locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga") ||
-        /^\?\S{1,10}(=|%3D)/i.test(locationSearch)
-    ) {
-        historyReplace("?");
+    if (locationSearch.includes("blue-dot")) {
+        const url = new URL(window.location.href);
+        const blueDotParams = url.searchParams.get("blue-dot").split(",");
+        url.searchParams.delete("blue-dot");
+
+        if (blueDotParams.length > 1) {
+            const layerName = store.layerStore.findLayer(blueDotParams[2])?.shortName;
+
+            const currentPosition = new CurrentPosition(
+                Number(blueDotParams[0]) || undefined,
+                Number(blueDotParams[1]) || undefined,
+                layerName,
+                undefined,
+                Number(blueDotParams[3]) || undefined,
+                Number(blueDotParams[4]) || undefined
+            );
+
+            if (!store.layerStore.layersLoaded) {
+                reaction(
+                    () => store.layerStore.layersLoaded,
+                    () => {
+                        store.routeStore.selectCurrentPosition(currentPosition, false, 0);
+                    }
+                );
+            } else {
+                store.routeStore.selectCurrentPosition(currentPosition, false, 0);
+            }
+        }
+
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("noOverlay")) {
+        const url = new URL(window.location.href);
+        const noOverlayParamValue = url.searchParams.get("noOverlay");
+
+        url.searchParams.delete("noOverlay");
+        let newSearch = url.search;
+        newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+        if (noOverlayParamValue === "true") {
+            store.uiState.hideOverlay = true;
+        } else if (noOverlayParamValue === "false") {
+            store.uiState.hideOverlay = false;
+        }
+        historyReplace(newSearch);
     }
 
     if (locationSearch.includes("allowConsent")) {
         const url = new URL(window.location.href);
+        const allowConsentValue = url.searchParams.get("allowConsent");
         url.searchParams.delete("allowConsent");
 
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (allowConsentValue === "true") {
+            setConsentSettings(true);
+        } else if (allowConsentValue === "false") {
+            setConsentSettings(false);
+        }
+
         historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("hideHeaderLogo")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideHeaderLogo");
+        url.searchParams.delete("hideHeaderLogo");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideHeaderLogo = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("hideLogoInBooth")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("hideLogoInBooth");
+        url.searchParams.delete("hideLogoInBooth");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.hideLogoInBooth = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("disableFeatured")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableFeatured");
+        url.searchParams.delete("disableFeatured");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            store.exhibitorStore.exhibitors.forEach(ex => ex.featured = false);
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("disableBookmarked")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableBookmarked");
+        url.searchParams.delete("disableBookmarked");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableBookmarked = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("disableGps")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("disableGps");
+        url.searchParams.delete("disableGps");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.disableGps = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("monochrome")) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get("monochrome");
+        url.searchParams.delete("monochrome");
+
+        const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
+        if (value === "true") {
+            uiState.monochrome = true;
+        }
+
+        historyReplace(newSearch);
+    }
+
+    // facebook and google  fix
+    if (
+        locationSearch.startsWith("?fbclid") ||
+        locationSearch.startsWith("?_ga")
+    ) {
+        historyReplace("?");
     }
 
     if (uiState.previewExhibitor) {
@@ -254,10 +356,52 @@ export function initRouting(offHistory = false) {
 
         historyReplace("?" + newSearch);
     }
+}
 
-    dispatchFromUrl();
-    autorun(setTitle);
-    autorun(stateToUrl);
+export function initRouting(offHistory = false) {
+    disableHistoryManipulation = offHistory;
+
+    if (!disableHistoryManipulation && getHistoryUrl(history.location.search) === pathname) {
+        routeHistory.push(getHistoryUrl(history.location.search));
+    }
+
+    unlisten = history.listen((location, action) => {
+        if (disableHistoryManipulation) return;
+
+        routeHistory.push(getHistoryUrl(location.search));
+
+        logger.log("history", action, location);
+        if (action === "POP") {
+            dispatchFromUrl();
+        }
+    });
+
+    processURLParams();
+    executeCustomCommand();
+    reaction(() => store.layerStore.layersLoaded,
+        () => {
+            dispatchFromUrl();
+            autorun(setTitle);
+            autorun(stateToUrl);
+        }
+    );
+}
+
+export function applyParameters(queryRaw: string = "") {
+    historyReplace("?" + decodeURIComponent(queryRaw.toString()));
+
+    if (!store.layerStore.layersLoaded) {
+        executeCustomCommand();
+        reaction(() => store.layerStore.layersLoaded,
+            () => {
+                processURLParams();
+                dispatchFromUrl();
+            }
+        );
+    } else {
+        processURLParams();
+        dispatchFromUrl();
+    }
 }
 
 export function destroyHistory() {

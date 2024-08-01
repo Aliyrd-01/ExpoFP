@@ -21,6 +21,7 @@ import RebookingNotes from "./RebookingNotes";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
+import useHeatmapOverlay from "../utils/useHeatmapOverlay";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -64,6 +65,7 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
+    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, s.exhibitor.featured ? "#999" : "#555");
 
     useAutorun(() => {
         if (s.exhibitor) {
@@ -126,15 +128,11 @@ function ExhibitorComponent() {
                     showTitle={false}
                     options={defaultRebookingOptions}
                     checked={exhibitor.rebookingState.toString()}
-                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), "")}
+                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), exhibitor.rebookingNote)}
                 />
-                <div
-                    style={{ margin: "0 20px 20px 20px", whiteSpace: "pre-wrap" }}
-                    dangerouslySetInnerHTML={{ __html: exhibitor.rebookingNote }}
-                ></div>
                 <RebookingNotes
                     state={"default"}
-                    value={exhibitor.rebookingNote}
+                    value={exhibitor.rebookingNote || ""}
                     onClickSave={(val: string) =>
                         store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
                     }
@@ -204,6 +202,8 @@ function ExhibitorComponent() {
             <OverlayContent
                 className={cls}
                 backMode="none"
+                overlayBarEndContent={heatmapBar}
+                overlayBarStyle={overlayBarStyle}
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
@@ -213,7 +213,7 @@ function ExhibitorComponent() {
                     <>
                         <div className="exhibitor__buttons">
                             <SibebarActions
-                                showBookmark={!data.hideBookmarks && !uiState.kiosk}
+                                showBookmark={!uiState.disableBookmarked && !data.hideBookmarks && !uiState.kiosk}
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}

@@ -8,8 +8,11 @@ import { t } from "../utils/i18n";
 import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
 import { defaultRebookingOptions } from "./RebookingRadioGroup";
+import useHeatmapData from "../utils/useHeatmapData";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
+    const { clicks, background } = useHeatmapData(exhibitor);
+
     function handleClick(e: MouseEvent) {
         e.preventDefault();
         store.clickExhibitor(exhibitor);
@@ -40,6 +43,9 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                 borderLeft: data.isRebooking
                     ? `5px solid ${defaultRebookingOptions[exhibitor.rebookingState].color.primary}`
                     : null,
+                background: uiState.heatmap
+                    ? `linear-gradient(to right, transparent 98%, ${background} 93%) center / 100% 99% no-repeat`
+                    : null,
             }}
             onMouseOver={() => (uiState.hoveredExhibitor = exhibitor)}
             onMouseOut={() => (uiState.hoveredExhibitor = null)}
@@ -51,15 +57,13 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
                     {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
                 </div>
             </div>
-            {data.hideBookmarks || data.isRebooking || uiState.kiosk ? null : (
+            {uiState.disableBookmarked || data.hideBookmarks || data.isRebooking || uiState.kiosk ? null : (
                 <div className="exhibitor-row__bookmark" onClick={handleBookmark} title={t("Toggle bookmark")} ref={div}>
                     <BookmarkSvg />
                 </div>
             )}
-            <div className="exhibitor-row__booth">
-                {exhibitor.booths.map((booth) => (
-                    <div key={booth.id}>{booth.fullName}</div>
-                ))}
+            <div className="exhibitor-row__info">
+                {uiState.heatmap ? clicks : exhibitor.booths.map((booth) => <div key={booth.id}>{booth.fullName}</div>)}
             </div>
         </a>
     ));
