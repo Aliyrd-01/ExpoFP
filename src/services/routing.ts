@@ -225,6 +225,13 @@ function processURLParams() {
         historyReplace(newSearch);
     }
 
+    if (locationSearch.includes("copy_exh")) {
+        const url = new URL(window.location.href);
+        const noOverlayParamValue = url.searchParams.get("copy_exh");
+        url.searchParams.delete("copy_exh");
+        historyReplace("?");
+    }
+
     if (locationSearch.includes("noOverlay")) {
         const url = new URL(window.location.href);
         const noOverlayParamValue = url.searchParams.get("noOverlay");
