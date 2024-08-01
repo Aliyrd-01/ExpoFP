@@ -103,7 +103,7 @@ export default class RootStore {
 
     @action selectLanguage() {
         this.uiState.details = null;
-        this.uiState.list = { type: "language" };
+        this.uiState.list = { type: "language", id: this.languageStore.language?.id };
         this.uiState.resetRtl();
     }
 

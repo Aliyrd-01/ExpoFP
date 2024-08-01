@@ -9,9 +9,6 @@ import React, { useRef } from "react";
 const Language = observer(() => {
     const scrollableRef = useRef<HTMLDivElement>();
     const handleCloseBack = () => store.selectSearch();
-
-    // FIXME: The bar is not updated when the language is changed
-
     return (
         !data.hideLanguage &&
         !uiState.details &&

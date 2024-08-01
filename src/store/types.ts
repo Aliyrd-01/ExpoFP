@@ -8,7 +8,7 @@ export type ListType =
     | { type: "search"; text: string; focused: boolean }
     | { type: "bookmarks" }
     | { type: "category"; category: Category }
-    | { type: "language" };
+    | { type: "language", id: string };
 
 export type OverlaySize = "full" | "medium" | "small";
 
