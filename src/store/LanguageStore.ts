@@ -32,7 +32,9 @@ export default class LanguageStore {
 export class Language {
     readonly id: string;
     readonly name: string;
-    @observable selected: boolean;
+
+    @observable
+    selected: boolean;
 
     constructor(id: string, name: string, selected = false) {
         this.id = id;

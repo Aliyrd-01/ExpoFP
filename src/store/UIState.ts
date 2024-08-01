@@ -61,7 +61,7 @@ export default class UIState {
     @observable disableGps = false;
     @observable monochrome = false;
     @observable heatmap = false;
-    rtl = getLanguage() === "ar" || getLanguage() === "he";
+    @observable rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
     @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
 
@@ -469,6 +469,10 @@ export default class UIState {
     @action toggleMapOverlay() {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
+    }
+
+    @action resetRtl() {
+        this.rtl = getLanguage() === "ar" || getLanguage() === "he";
     }
 
     ///////////////////////////////////////////////////////////////////////////

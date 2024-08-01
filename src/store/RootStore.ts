@@ -104,6 +104,7 @@ export default class RootStore {
     @action selectLanguage() {
         this.uiState.details = null;
         this.uiState.list = { type: "language" };
+        this.uiState.resetRtl();
     }
 
     @action selectCategory(category: Category) {
