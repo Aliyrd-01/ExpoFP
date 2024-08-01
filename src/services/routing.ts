@@ -136,9 +136,7 @@ function dispatchFromUrl() {
         store.uiState.printingPdf = true;
     } else if (booth) {
         setTimeout(() => store.selectBooth(booth), 250);
-    } else if (slug.includes("language")) {
-        store.selectLanguage();
-    } else {
+    }  else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
                 x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
