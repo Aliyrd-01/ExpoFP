@@ -210,6 +210,7 @@ function processURLParams() {
     if (locationSearch.includes("blue-dot")) {
         const url = new URL(window.location.href);
         const blueDotParams = url.searchParams.get("blue-dot").split(",");
+        url.searchParams.delete("blue-dot");
 
         if (blueDotParams.length > 1) {
             const layerName = store.layerStore.findLayer(blueDotParams[2])?.shortName;
@@ -237,8 +238,14 @@ function processURLParams() {
 
         let newSearch = url.search;
         newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-
         historyReplace(newSearch);
+    }
+
+    if (locationSearch.includes("copy_exh")) {
+        const url = new URL(window.location.href);
+        const noOverlayParamValue = url.searchParams.get("copy_exh");
+        url.searchParams.delete("copy_exh");
+        historyReplace("?");
     }
 
     if (locationSearch.includes("noOverlay")) {
