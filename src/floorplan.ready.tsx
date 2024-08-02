@@ -8,7 +8,7 @@ import FloorPlanLoader from "./floorplan.loader";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { SpecialBooth } from "./store/BoothStore";
-import { CurrentPosition, Route, extractRoute, MarkersData } from "./store/RouteStore";
+import { CurrentPosition, Route, findBooth, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import reportError from "./tools/report-error";
@@ -39,13 +39,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
             // <FpContext.Provider value={this}>
             <Layout offHistory={this.offHistory} allowConsent={this.allowConsent} />,
             // </FpContext.Provider>,
-            this.renderTarget
+            this.renderTarget,
         );
         sendEventToGa(GaEventActions.Rendered, ``);
 
         reaction(
             () => store.layerStore.layersLoaded,
-            () => this.resolveReady()
+            () => this.resolveReady(),
         );
     }
 
@@ -74,9 +74,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
         }
     }
 
-    selectRoute(from: string | { x: number; y: number }, to: string | { x: number; y: number }): void {
-        if (typeof from === "string" && typeof to === "string") store.routeStore.selectRoute(extractRoute(from, to));
-        else store.routeStore.selectRoute(new Route(from as any, to as any));
+    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
+        store.routeStore.selectRoute(
+            new Route(
+                typeof from === "string" ? findBooth(from) : store.routeStore.getNearestBooth(from),
+                typeof to === "string" ? findBooth(to) : store.routeStore.getNearestBooth(to),
+            ),
+        );
     }
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
@@ -154,7 +158,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     selectCategory(nameOrSlug: string) {
         const str = nameOrSlug?.toLowerCase();
         const category = store.categoryStore.categories.find(
-            ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str
+            ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str,
         );
 
         if (!category) {
@@ -180,7 +184,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         destroyGtag();
 
         const scripts = [...document.getElementsByTagName("script")].filter(
-            (x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1
+            (x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1,
         );
         scripts.forEach((sc) => sc.remove());
 

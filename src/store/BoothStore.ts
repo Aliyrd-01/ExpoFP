@@ -75,6 +75,10 @@ export default class BoothStore {
             return pointInsideRectangle(point, r);
         });
     }
+
+    findBooth(str: string) {
+       return this.booths.find((b) => b.name === str || b.slug === str || b.externalId === str);
+    }
 }
 
 export abstract class BoothBase {
