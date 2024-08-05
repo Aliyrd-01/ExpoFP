@@ -12,6 +12,8 @@ import RouteStore from "./RouteStore";
 import UIState, { ListItem } from "./UIState";
 import ScheduleStore from "./ScheduleStore";
 import HeatmapStore from "./HeatmapStore";
+import { isLocalStorageAvailable } from "../utils/localStorage";
+import { HIDE_CONTROLS_KEY } from "../constants";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -297,5 +299,19 @@ export default class RootStore {
         //         dispatch("clickBoothInList", item.obj.id);
         //         break;
         // }
+    }
+
+    @action showControls() {
+        this.uiState.hideHeaderLogo = false;
+        this.uiState.mapControlsHidden = false;
+        this.uiState.floorsControlHidden = false;
+        isLocalStorageAvailable && localStorage.removeItem(HIDE_CONTROLS_KEY);
+    }
+
+    @action hideControls() {
+        this.uiState.hideHeaderLogo = true;
+        this.uiState.mapControlsHidden = true;
+        this.uiState.floorsControlHidden = true;
+        isLocalStorageAvailable && localStorage.setItem(HIDE_CONTROLS_KEY, "1");
     }
 }

@@ -70,6 +70,8 @@ export default class UIState {
     rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
     @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
+    @observable mapControlsHidden = false;
+    @observable floorsControlHidden = false;
 
     overlayMediumHeightRems = 10;
 
@@ -381,8 +383,8 @@ export default class UIState {
                 ? true
                 : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-            if (addBoothCondition && 
-                splittedTexts.some((text) => 
+            if (addBoothCondition &&
+                splittedTexts.some((text) =>
                     containsIgnoreCase(b.title || "", text) ||
                     containsIgnoreCase(b.name, text) ||
                     containsLevelIgnoreCase(b.layer?.name ?? null, text))

@@ -9,6 +9,7 @@ import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
+import { HIDE_CONTROLS_KEY, SHOW_CONTROLS_KEY } from "../constants";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -129,6 +130,10 @@ function dispatchFromUrl() {
         store.selectBookmarks();
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
+    } else if (slug === SHOW_CONTROLS_KEY) {
+        store.showControls();
+    } else if (slug === HIDE_CONTROLS_KEY) {
+        store.hideControls();
     } else if (booth) {
         setTimeout(() => store.selectBooth(booth), 250);
     } else {

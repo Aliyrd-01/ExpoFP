@@ -1,10 +1,11 @@
-import { autorun, runInAction } from "mobx";
+import { autorun, runInAction, reaction } from "mobx";
 import Size from "../../core/Size";
 import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import { ResizeObserver } from "resize-observer";
 import { isLocalStorageAvailable } from "../../utils/localStorage";
+import { HIDE_CONTROLS_KEY } from "../../constants";
 
 export const kioskKey = "kiosk";
 
@@ -93,6 +94,13 @@ export default function initUi(store: RootStore) {
             }
         }
     });
+
+    if (isLocalStorageAvailable) {
+        const hideControls  = JSON.parse(localStorage.getItem(HIDE_CONTROLS_KEY));
+        uiState.hideHeaderLogo = hideControls;
+        uiState.mapControlsHidden = hideControls;
+        uiState.floorsControlHidden = hideControls;
+    }
 
     function updateScreenSize(width, height) {
         runInAction("uiState.screenSize", () => {

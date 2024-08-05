@@ -191,4 +191,12 @@ export default class FloorPlanReady extends FloorPlanLoader {
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
     }
+
+    showControls(): void {
+        store.showControls();
+    }
+
+    hideControls(): void {
+        store.hideControls();
+    }
 }

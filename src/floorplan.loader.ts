@@ -106,6 +106,14 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    showControls(): void {
+        nr();
+    }
+
+    hideControls(): void {
+        nr();
+    }
+
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;
