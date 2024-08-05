@@ -143,11 +143,10 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             rel="noopener noreferrer"
                             href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
                                 ","
-                            )}&layers=${
-                                store.layerStore.layers.length >= store.layerStore.visible.length
-                                    ? store.layerStore.visible.map((l) => l.name).join(",")
-                                    : ""
-                            }`}
+                            )}&layers=${(store.layerStore.layers.length >= store.layerStore.visible.length
+                                ? store.layerStore.visible.map((l) => l.name).join(",")
+                                : ""
+                            ).replace(/&/g, "%26")}`}
                         >
                             {t("Download PDF")}
                         </a>
