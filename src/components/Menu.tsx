@@ -13,6 +13,7 @@ import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
 import OverlayContent from "./OverlayContent";
+import Badge from "./Badge";
 
 const logoUrl = /^https?:\/\//i.test(data.logo) ? data.logo : baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -123,14 +124,37 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             <i className="fas fa-external-link" />
                         </a>
                     )}
-                    {!uiState.disableBookmarked && !data.hideBookmarks && !data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
-                        <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
-                            <span>
-                                {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                    {!uiState.disableBookmarked &&
+                        !data.hideBookmarks &&
+                        !data.hideBookmarksLink &&
+                        !uiState.kiosk &&
+                        exhibitorStore.exhibitors.length > 0 && (
+                            <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
+                                <span>
+                                    {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                                </span>
+
+                                <span className="menu__icons">
+                                    {exhibitorStore.bookmarked.length ? (
+                                        <button
+                                            onClick={shareBookmarks}
+                                            className="fas fa-share-square"
+                                            title={t("Share bookmarks")}
+                                        />
+                                    ) : null}
+                                    <i className="fas fa-chevron-right" />
+                                </span>
+                            </a>
+                        )}
+                    {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
+                        <a href="?language" onClick={handleLanguage} className="menu__item -language">
+                            <span>{t("Language")} </span>
+                            <span className="menu__icons">
+                                <Badge variant="gray" noMargins>
+                                    {store.languageStore.language?.name}
+                                </Badge>
+                                <i className="fas fa-chevron-right" />
                             </span>
-                            {exhibitorStore.bookmarked.length ? (
-                                <button onClick={shareBookmarks} className="fas fa-share-square" title={t("Share bookmarks")} />
-                            ) : null}
                         </a>
                     )}
                     {!data.hideDownloadPdfLink && !uiState.kiosk && (
@@ -200,6 +224,11 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         e.preventDefault();
         store.clickBookmarks();
         store.moveToList();
+    }
+
+    function handleLanguage(e: MouseEvent) {
+        e.preventDefault();
+        store.clickLanguage();
     }
 
     // function handlePdf(e: MouseEvent) {

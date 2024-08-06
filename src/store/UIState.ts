@@ -16,17 +16,10 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
+import type { ListType, OverlaySize, ListItem } from "./types";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
-
-type ListType =
-    | { type: "search"; text: string; focused: boolean }
-    | { type: "bookmarks" }
-    | { type: "category"; category: Category };
-export type OverlaySize = "full" | "medium" | "small";
-// export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category | ScheduleItem;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -64,10 +57,11 @@ export default class UIState {
     @observable hideHeaderLogo = false;
     @observable hideLogoInBooth = false;
     @observable disableBookmarked = false;
+    @observable hideLanguage = false;
     @observable disableGps = false;
     @observable monochrome = false;
     @observable heatmap = false;
-    rtl = getLanguage() === "ar" || getLanguage() === "he";
+    @observable rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
     @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
 
@@ -155,7 +149,8 @@ export default class UIState {
             !this.selectedCategory &&
             !this.selectedExhibitor &&
             this.list.type !== "bookmarks" &&
-            !(this.list as any).text.length
+            this.list.type !== "language" &&
+            !(this.list as any).text?.length
         );
     }
 
@@ -381,8 +376,8 @@ export default class UIState {
                 ? true
                 : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-            if (addBoothCondition && 
-                splittedTexts.some((text) => 
+            if (addBoothCondition &&
+                splittedTexts.some((text) =>
                     containsIgnoreCase(b.title || "", text) ||
                     containsIgnoreCase(b.name, text) ||
                     containsLevelIgnoreCase(b.layer?.name ?? null, text))
@@ -423,6 +418,8 @@ export default class UIState {
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
                 return this.list.category.exhibitors;
+            case "language":
+                return this.rootStore.languageStore.languages;
         }
         throw new Error("Unknown list.type");
     }
@@ -473,6 +470,10 @@ export default class UIState {
     @action toggleMapOverlay() {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
+    }
+
+    @action resetRtl() {
+        this.rtl = getLanguage() === "ar" || getLanguage() === "he";
     }
 
     ///////////////////////////////////////////////////////////////////////////

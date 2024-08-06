@@ -68,6 +68,9 @@ function stateToUrl() {
             case "search":
                 queryRaw = uiState.list.text;
                 break;
+            case "language":
+                queryRaw = uiState.list.type;
+                break;
             default:
                 throw new Error("Unkown list.type");
         }
@@ -127,6 +130,8 @@ function dispatchFromUrl() {
         store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
+    } else if (slug === "language") {
+        store.selectLanguage();
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
     } else if (booth) {
