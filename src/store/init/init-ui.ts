@@ -97,9 +97,7 @@ export default function initUi(store: RootStore) {
 
     if (isLocalStorageAvailable) {
         store.toggleUI(
-            JSON.parse(
-                localStorage.getItem(HIDE_CONTROLS_STORAGE_KEY),
-            ) || [],
+            JSON.parse(localStorage.getItem(HIDE_CONTROLS_STORAGE_KEY)) || [],
         );
     }
 
