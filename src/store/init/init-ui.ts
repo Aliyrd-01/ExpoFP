@@ -99,7 +99,7 @@ export default function initUi(store: RootStore) {
         store.toggleUI(
             JSON.parse(
                 localStorage.getItem(HIDE_CONTROLS_STORAGE_KEY),
-            ),
+            ) || [],
         );
     }
 
