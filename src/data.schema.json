@@ -86,6 +86,10 @@
             "type": "boolean",
             "description": "Hide the 'Bookmarks' link"
         },
+        "hideLanguageLink": {
+            "type": "boolean",
+            "description": "Hide the 'Language' link"
+        },
         "hideDownloadPdfLink": {
             "type": "boolean",
             "description": "Hide the 'Download PDF' link"
