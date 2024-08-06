@@ -15,6 +15,7 @@ For information on testing high-load floorplans, please read the details in the 
 
 ## Deploy
 Sometimes you need to do some custom stuff for a particular plan without affecting the rest of the plan. To do this, go to the repository https://github.com/expofp/efp-app-deploy and in the `custom` object (https://github.com/expofp/efp-app-deploy/blob/master/deploy.js#L14) add a pair `[key]: [value]`, where key is the name of the plan and value is the name of the git branch in the `efp-app` repository. After that, run the `/deploy` command in slack in any channel. This will start the deploy process https://github.com/expofp/efp-app-deploy/actions.
+> For example, we can use [demo-staging.expofp.com](https://demo-staging.expofp.com/) for testing purposes.
 
 ## Custom CSS
 
