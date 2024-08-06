@@ -25,7 +25,9 @@ export default class LanguageStore {
             l.selected = l.id === id;
         });
 
-        this.rootStore.selectLanguage();
+        this.rootStore.uiState.resetRtl();
+        this.rootStore.selectSearch();
+        this.rootStore.uiState.menu = true;
     }
 }
 
