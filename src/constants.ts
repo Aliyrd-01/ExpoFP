@@ -1,2 +1,1 @@
-export const SHOW_CONTROLS_KEY = "showControls";
-export const HIDE_CONTROLS_KEY = "hideControls";
+export const HIDE_CONTROLS_STORAGE_KEY = "hideControls";

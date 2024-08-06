@@ -13,3 +13,5 @@ export type ListType =
 export type OverlaySize = "full" | "medium" | "small";
 
 export type ListItem = Booth | Exhibitor | Category | ScheduleItem | Language;
+
+export type ToggleUIFlags = ["controls", "header", "overlay"];

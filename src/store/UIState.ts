@@ -66,6 +66,7 @@ export default class UIState {
     @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
     @observable mapControlsHidden = false;
     @observable floorsControlHidden = false;
+    @observable hideFreeOrDemo = false;
 
     overlayMediumHeightRems = 10;
 

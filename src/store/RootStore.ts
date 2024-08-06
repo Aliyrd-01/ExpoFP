@@ -10,12 +10,12 @@ import MapboxStore from "./MapboxStore";
 import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState from "./UIState";
-import type { ListItem } from "./types";
+import type { ListItem, ToggleUIFlags } from "./types";
 import ScheduleStore from "./ScheduleStore";
 import HeatmapStore from "./HeatmapStore";
 import LanguageStore from "./LanguageStore";
 import { isLocalStorageAvailable } from "../utils/localStorage";
-import { HIDE_CONTROLS_KEY } from "../constants";
+import { HIDE_CONTROLS_STORAGE_KEY } from "../constants";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -316,17 +316,19 @@ export default class RootStore {
         // }
     }
 
-    @action showControls() {
-        this.uiState.hideHeaderLogo = false;
-        this.uiState.mapControlsHidden = false;
-        this.uiState.floorsControlHidden = false;
-        isLocalStorageAvailable && localStorage.removeItem(HIDE_CONTROLS_KEY);
-    }
+    @action toggleUI(flags: ToggleUIFlags) {
+        const hideControls = flags.includes("controls");
+        const hideHeader = flags.includes("header");
+        const hideOverlay = flags.includes("overlay");
 
-    @action hideControls() {
-        this.uiState.hideHeaderLogo = true;
-        this.uiState.mapControlsHidden = true;
-        this.uiState.floorsControlHidden = true;
-        isLocalStorageAvailable && localStorage.setItem(HIDE_CONTROLS_KEY, "1");
+        this.uiState.mapControlsHidden = hideControls;
+        this.uiState.floorsControlHidden = hideControls;
+
+        this.uiState.hideHeaderLogo = hideHeader;
+        this.uiState.hideFreeOrDemo = hideHeader;
+
+        this.uiState.hideOverlay = hideOverlay;
+
+        isLocalStorageAvailable && localStorage.setItem(HIDE_CONTROLS_STORAGE_KEY, JSON.stringify(flags));
     }
 }

@@ -14,6 +14,7 @@ import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "
 import reportError from "./tools/report-error";
 import { resetGlobalVariables } from "./tools/reset";
 import trackEvent from "./tools/track-event";
+import { ToggleUIFlags } from "./store/types";
 
 install();
 
@@ -173,6 +174,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
         applyParameters(queryRaw);
     }
 
+    toggleUI(flags: ToggleUIFlags): void {
+        store.toggleUI(flags);
+    }
+
     unstable_destroy() {
         let efpElement = window["__efpElement"].firstChild;
         resetGlobalVariables();
@@ -190,13 +195,5 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
-    }
-
-    showControls(): void {
-        store.showControls();
-    }
-
-    hideControls(): void {
-        store.hideControls();
     }
 }

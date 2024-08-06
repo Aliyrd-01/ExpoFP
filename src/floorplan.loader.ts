@@ -1,5 +1,6 @@
 import { Data } from "./data/Data";
 import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
+import { ToggleUIFlags } from "./store/types";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -101,15 +102,11 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    toggleUI(flags: ToggleUIFlags): void {
+        nr();
+    }
+
     unstable_destroy(): void {
-        nr();
-    }
-
-    showControls(): void {
-        nr();
-    }
-
-    hideControls(): void {
         nr();
     }
 

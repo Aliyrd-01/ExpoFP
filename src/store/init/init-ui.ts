@@ -5,7 +5,7 @@ import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import { ResizeObserver } from "resize-observer";
 import { isLocalStorageAvailable } from "../../utils/localStorage";
-import { HIDE_CONTROLS_KEY } from "../../constants";
+import { HIDE_CONTROLS_STORAGE_KEY } from "../../constants";
 
 export const kioskKey = "kiosk";
 
@@ -96,10 +96,11 @@ export default function initUi(store: RootStore) {
     });
 
     if (isLocalStorageAvailable) {
-        const hideControls  = JSON.parse(localStorage.getItem(HIDE_CONTROLS_KEY));
-        uiState.hideHeaderLogo = hideControls;
-        uiState.mapControlsHidden = hideControls;
-        uiState.floorsControlHidden = hideControls;
+        store.toggleUI(
+            JSON.parse(
+                localStorage.getItem(HIDE_CONTROLS_STORAGE_KEY),
+            ),
+        );
     }
 
     function updateScreenSize(width, height) {
