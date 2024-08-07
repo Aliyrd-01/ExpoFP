@@ -102,7 +102,31 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    getVisibility(): any {
+        nr();
+    }
+
     setVisibility(visibility: Visibility): void {
+        nr();
+    }
+
+    findLocation(): void {
+        nr();
+    }
+
+    zoomIn(): void {
+        nr();
+    }
+
+    zoomOut(): void {
+        nr();
+    }
+
+    switchView(): void {
+        nr();
+    }
+
+    fitBounds(): void {
         nr();
     }
 

@@ -174,8 +174,33 @@ export default class FloorPlanReady extends FloorPlanLoader {
         applyParameters(queryRaw);
     }
 
+    getVisibility(): Visibility {
+        return store.uiState.visibility;
+    }
+
     setVisibility(visibility: Visibility): void {
         store.uiState.setVisibility(visibility);
+    }
+
+    findLocation(): void {
+        if (!store.routeStore.canFindLocation) return;
+        store.routeStore.findLocation();
+    }
+
+    zoomIn(): void {
+        store.uiState.zoomIn();
+    }
+
+    zoomOut(): void {
+        store.uiState.zoomOut();
+    }
+
+    switchView(): void {
+        store.mapboxStore.activateMapbox();
+    }
+
+    fitBounds(): void {
+        store.uiState.fitBounds();
     }
 
     unstable_destroy() {

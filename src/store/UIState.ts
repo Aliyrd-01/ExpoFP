@@ -18,6 +18,7 @@ import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListType, OverlaySize, ListItem, Visibility } from "./types";
 import { VISIBILITY_STORAGE_KEY } from "../constants";
+import { svgArea } from "../data/svg";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -477,11 +478,19 @@ export default class UIState {
     }
 
     @action setVisibility(visibility: Visibility) {
-        const flags = { ...this.visibility, ...visibility };
+        const flags: Visibility = {
+            ...Object.keys(this.visibility)
+                .reduce((acc, key) => ({ ...acc, [key]: true }), {}),
 
-        for (const key in flags) {
-            if (this.visibility.hasOwnProperty(key)) continue;
-            delete flags[key];
+            ...Object.keys(visibility)
+                .filter(k => this.visibility.hasOwnProperty(k))
+                .reduce((acc, key) => ({ ...acc, [key]: visibility[key] }), {}),
+        };
+
+        if (Object.values(flags).every(Boolean)) {
+            isLocalStorageAvailable && localStorage.removeItem(VISIBILITY_STORAGE_KEY);
+        } else {
+            isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(flags));
         }
 
         this.mapControlsHidden = !flags.controls;
@@ -489,12 +498,6 @@ export default class UIState {
         this.hideHeaderLogo = !flags.header;
         this.hideFreeOrDemo = !flags.header;
         this.hideOverlay = !flags.overlay;
-
-        if (Object.values(flags).every(Boolean)) {
-            isLocalStorageAvailable && localStorage.removeItem(VISIBILITY_STORAGE_KEY);
-        } else {
-            isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(flags));
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -508,6 +511,22 @@ export default class UIState {
 
     @action resetRtl() {
         this.rtl = getLanguage() === "ar" || getLanguage() === "he";
+    }
+
+    @action changeZoom(zoom: number) {
+        this.zoomBy = zoom;
+    }
+
+    @action zoomIn() {
+        this.changeZoom(1.5);
+    }
+
+    @action zoomOut() {
+        this.changeZoom(0.66);
+    }
+
+    @action fitBounds() {
+        this.moveToRect = this.rootStore.layerStore.rectangle || svgArea;
     }
 
     ///////////////////////////////////////////////////////////////////////////

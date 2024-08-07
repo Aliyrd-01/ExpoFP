@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as React from "react";
-import { svgArea } from "../data/svg";
 import store, { layersStore, uiState } from "../store";
 import { LayerMode, LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
@@ -43,13 +42,13 @@ export default function Controls() {
                 style={s.style}
                 titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("View switch"), t("Fit to screen"), t("Layers")]}
                 onClickFindLocation={() => store.routeStore.findLocation()}
-                onClickZoomIn={() => (uiState.zoomBy = 1.5)}
-                onClickZoomOut={() => (uiState.zoomBy = 0.66)}
-                onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
+                onClickZoomIn={() => uiState.zoomIn()}
+                onClickZoomOut={() => uiState.zoomOut()}
+                onClickByWidth={() => uiState.fitBounds()}
                 onViewModeSwitch={() => store.mapboxStore.activateMapbox()}
                 viewModeSwitch={store.mapboxStore.mapBoxEnabled && !store.mapboxStore.hideModeSwitchButton}
                 viewMode={store.mapboxStore.showMapbox}
-                findLocation={!!store.routeStore.defaultFrom || !!store.routeStore.currentPosition}
+                findLocation={store.routeStore.canFindLocation}
                 layersActiveItems={s.visible}
                 layersList={layersStore.mode === LayersMode.CheckBox ? s.layers : null}
                 onChangeLayers={(layer) => {

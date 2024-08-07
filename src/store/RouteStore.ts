@@ -53,6 +53,10 @@ export default class RouteStore {
         this.focusEnabled = !window.location.search;
     }
 
+    @computed get canFindLocation() {
+        return !!this.defaultFrom || !!this.currentPosition;
+    }
+
     @action selectRoute(route: Route) {
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
         if (route?.from && route?.to && route.from === route.to) route = null;
