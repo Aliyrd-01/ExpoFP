@@ -477,22 +477,23 @@ export default class UIState {
     }
 
     @action setVisibility(visibility: Visibility) {
-        if (!visibility) return;
+        const flags = { ...this.visibility, ...visibility };
 
-        const fn = key => visibility.hasOwnProperty(key) && !visibility[key];
+        for (const key in flags) {
+            if (this.visibility.hasOwnProperty(key)) continue;
+            delete flags[key];
+        }
 
-        this.mapControlsHidden = fn("controls");
-        this.floorsControlHidden = fn("levels");
+        this.mapControlsHidden = !flags.controls;
+        this.floorsControlHidden = !flags.levels;
+        this.hideHeaderLogo = !flags.header;
+        this.hideFreeOrDemo = !flags.header;
+        this.hideOverlay = !flags.overlay;
 
-        this.hideHeaderLogo = fn("header");
-        this.hideFreeOrDemo = fn("header");
-
-        this.hideOverlay = fn("overlay");
-
-        if (Object.keys(visibility).length){
-            isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(visibility));
-        } else {
+        if (Object.values(flags).every(Boolean)) {
             isLocalStorageAvailable && localStorage.removeItem(VISIBILITY_STORAGE_KEY);
+        } else {
+            isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(flags));
         }
     }
 
