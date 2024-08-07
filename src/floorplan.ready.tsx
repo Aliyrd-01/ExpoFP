@@ -174,8 +174,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         applyParameters(queryRaw);
     }
 
-    setVisibility(flags: Visibility): void {
-        store.uiState.setVisibility(flags);
+    setVisibility(visibility: Visibility): void {
+        store.uiState.setVisibility(visibility);
     }
 
     unstable_destroy() {

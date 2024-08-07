@@ -469,22 +469,31 @@ export default class UIState {
 
     @computed get visibility(): Visibility {
         return {
-            controls: !this.hideHeaderLogo,
+            controls: !this.mapControlsHidden,
+            levels: !this.floorsControlHidden,
             header: !this.hideHeaderLogo,
-            overlay: !this.noOverlay,
+            overlay: !this.hideOverlay,
         };
     }
 
     @action setVisibility(visibility: Visibility) {
-        this.mapControlsHidden = visibility.controls ?? false;
-        this.floorsControlHidden = visibility.levels ?? false;
+        if (!visibility) return;
 
-        this.hideHeaderLogo = visibility.header ?? false;
-        this.hideFreeOrDemo = visibility.header ?? false;
+        const fn = key => visibility.hasOwnProperty(key) && !visibility[key];
 
-        this.hideOverlay = visibility.overlay ?? false;
+        this.mapControlsHidden = fn("controls");
+        this.floorsControlHidden = fn("levels");
 
-        isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(visibility));
+        this.hideHeaderLogo = fn("header");
+        this.hideFreeOrDemo = fn("header");
+
+        this.hideOverlay = fn("overlay");
+
+        if (Object.keys(visibility).length){
+            isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(visibility));
+        } else {
+            isLocalStorageAvailable && localStorage.removeItem(VISIBILITY_STORAGE_KEY);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

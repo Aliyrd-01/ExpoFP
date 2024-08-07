@@ -140,7 +140,7 @@ function dispatchFromUrl() {
                 .get("hide")
                 .split(",")
                 .filter(Boolean)
-                .reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+                .reduce((acc, curr) => ({ ...acc, [curr]: false }), {})
         );
     } else if (booth) {
         setTimeout(() => store.selectBooth(booth), 250);

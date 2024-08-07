@@ -102,7 +102,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    setVisibility(flags: Visibility): void {
+    setVisibility(visibility: Visibility): void {
         nr();
     }
 
