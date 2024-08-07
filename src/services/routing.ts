@@ -9,7 +9,6 @@ import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
-import { ToggleUIFlags } from "../store/types";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -136,9 +135,13 @@ function dispatchFromUrl() {
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
     } else if (slug.startsWith("hide")) {
-        const query = new URLSearchParams(slug);
-        const flags = query.get("hide").split(",").filter(Boolean).map(x => x.trim()) as ToggleUIFlags;
-        store.toggleUI(flags);
+        store.uiState.setVisibility(
+            new URLSearchParams(slug)
+                .get("hide")
+                .split(",")
+                .filter(Boolean)
+                .reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+        );
     } else if (booth) {
         setTimeout(() => store.selectBooth(booth), 250);
     } else {

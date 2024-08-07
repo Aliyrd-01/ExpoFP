@@ -10,12 +10,10 @@ import MapboxStore from "./MapboxStore";
 import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
 import UIState from "./UIState";
-import type { ListItem, ToggleUIFlags } from "./types";
+import type { ListItem } from "./types";
 import ScheduleStore from "./ScheduleStore";
 import HeatmapStore from "./HeatmapStore";
 import LanguageStore from "./LanguageStore";
-import { isLocalStorageAvailable } from "../utils/localStorage";
-import { HIDE_CONTROLS_STORAGE_KEY } from "../constants";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -314,21 +312,5 @@ export default class RootStore {
         //         dispatch("clickBoothInList", item.obj.id);
         //         break;
         // }
-    }
-
-    @action toggleUI(flags: ToggleUIFlags) {
-        const hideControls = flags.includes("controls");
-        const hideHeader = flags.includes("header");
-        const hideOverlay = flags.includes("overlay");
-
-        this.uiState.mapControlsHidden = hideControls;
-        this.uiState.floorsControlHidden = hideControls;
-
-        this.uiState.hideHeaderLogo = hideHeader;
-        this.uiState.hideFreeOrDemo = hideHeader;
-
-        this.uiState.hideOverlay = hideOverlay;
-
-        isLocalStorageAvailable && localStorage.setItem(HIDE_CONTROLS_STORAGE_KEY, JSON.stringify(flags));
     }
 }

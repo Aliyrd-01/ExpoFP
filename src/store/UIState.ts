@@ -16,7 +16,8 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
-import type { ListType, OverlaySize, ListItem } from "./types";
+import type { ListType, OverlaySize, ListItem, Visibility } from "./types";
+import { VISIBILITY_STORAGE_KEY } from "../constants";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -464,6 +465,26 @@ export default class UIState {
         if (this.hoveredBooth) arr = [this.hoveredBooth];
         else if (this.hoveredExhibitor) arr = this.hoveredExhibitor.booths;
         return new Set(arr);
+    }
+
+    @computed get visibility(): Visibility {
+        return {
+            controls: !this.hideHeaderLogo,
+            header: !this.hideHeaderLogo,
+            overlay: !this.noOverlay,
+        };
+    }
+
+    @action setVisibility(visibility: Visibility) {
+        this.mapControlsHidden = visibility.controls ?? false;
+        this.floorsControlHidden = visibility.levels ?? false;
+
+        this.hideHeaderLogo = visibility.header ?? false;
+        this.hideFreeOrDemo = visibility.header ?? false;
+
+        this.hideOverlay = visibility.overlay ?? false;
+
+        isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(visibility));
     }
 
     ///////////////////////////////////////////////////////////////////////////

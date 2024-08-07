@@ -5,7 +5,7 @@ import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import { ResizeObserver } from "resize-observer";
 import { isLocalStorageAvailable } from "../../utils/localStorage";
-import { HIDE_CONTROLS_STORAGE_KEY } from "../../constants";
+import { VISIBILITY_STORAGE_KEY } from "../../constants";
 
 export const kioskKey = "kiosk";
 
@@ -96,8 +96,8 @@ export default function initUi(store: RootStore) {
     });
 
     if (isLocalStorageAvailable) {
-        store.toggleUI(
-            JSON.parse(localStorage.getItem(HIDE_CONTROLS_STORAGE_KEY)) || [],
+        uiState.setVisibility(
+            JSON.parse(localStorage.getItem(VISIBILITY_STORAGE_KEY)) || [],
         );
     }
 

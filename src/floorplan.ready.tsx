@@ -14,7 +14,7 @@ import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "
 import reportError from "./tools/report-error";
 import { resetGlobalVariables } from "./tools/reset";
 import trackEvent from "./tools/track-event";
-import { ToggleUIFlags } from "./store/types";
+import { Visibility } from "./store/types";
 
 install();
 
@@ -174,8 +174,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         applyParameters(queryRaw);
     }
 
-    toggleUI(flags: ToggleUIFlags): void {
-        store.toggleUI(flags);
+    setVisibility(flags: Visibility): void {
+        store.uiState.setVisibility(flags);
     }
 
     unstable_destroy() {
