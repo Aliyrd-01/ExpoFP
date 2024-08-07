@@ -183,7 +183,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     findLocation(): void {
-        if (!store.routeStore.canFindLocation) return;
         store.routeStore.findLocation();
     }
 

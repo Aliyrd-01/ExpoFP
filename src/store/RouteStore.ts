@@ -241,6 +241,8 @@ export default class RouteStore {
     }
 
     @action findLocation() {
+        if (!this.canFindLocation) return;
+
         if (store.mapboxStore.showMapbox) {
             uiState.moveToLocation = true;
             return;
