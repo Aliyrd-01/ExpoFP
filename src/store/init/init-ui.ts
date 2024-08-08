@@ -1,4 +1,4 @@
-import { autorun, runInAction, reaction } from "mobx";
+import { autorun, runInAction } from "mobx";
 import Size from "../../core/Size";
 import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
