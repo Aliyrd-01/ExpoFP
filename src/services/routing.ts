@@ -134,6 +134,14 @@ function dispatchFromUrl() {
         store.selectLanguage();
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
+    } else if (slug.startsWith("hide")) {
+        store.uiState.setVisibility(
+            new URLSearchParams(slug)
+                .get("hide")
+                .split(",")
+                .filter(Boolean)
+                .reduce((acc, curr) => ({ ...acc, [curr]: false }), {})
+        );
     } else if (booth) {
         setTimeout(() => store.selectBooth(booth), 250);
     } else {

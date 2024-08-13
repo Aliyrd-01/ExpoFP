@@ -13,3 +13,10 @@ export type ListType =
 export type OverlaySize = "full" | "medium" | "small";
 
 export type ListItem = Booth | Exhibitor | Category | ScheduleItem | Language;
+
+export interface Visibility {
+    controls?: boolean;
+    levels?: boolean;
+    header?: boolean;
+    overlay?: boolean;
+}

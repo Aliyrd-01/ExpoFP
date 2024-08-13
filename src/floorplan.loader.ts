@@ -1,5 +1,6 @@
 import { Data } from "./data/Data";
 import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
+import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -98,6 +99,34 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     selectCategory(nameOrSlug: string): void {
+        nr();
+    }
+
+    getVisibility(): any {
+        nr();
+    }
+
+    setVisibility(visibility: Visibility): void {
+        nr();
+    }
+
+    findLocation(): void {
+        nr();
+    }
+
+    zoomIn(): void {
+        nr();
+    }
+
+    zoomOut(): void {
+        nr();
+    }
+
+    switchView(): void {
+        nr();
+    }
+
+    fitBounds(): void {
         nr();
     }
 

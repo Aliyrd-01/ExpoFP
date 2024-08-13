@@ -14,6 +14,7 @@ import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "
 import reportError from "./tools/report-error";
 import { resetGlobalVariables } from "./tools/reset";
 import trackEvent from "./tools/track-event";
+import { Visibility } from "./store/types";
 
 install();
 
@@ -171,6 +172,34 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     applyParameters(queryRaw: string) {
         applyParameters(queryRaw);
+    }
+
+    getVisibility(): Visibility {
+        return store.uiState.visibility;
+    }
+
+    setVisibility(visibility: Visibility): void {
+        store.uiState.setVisibility(visibility);
+    }
+
+    findLocation(): void {
+        store.routeStore.findLocation();
+    }
+
+    zoomIn(): void {
+        store.uiState.zoomIn();
+    }
+
+    zoomOut(): void {
+        store.uiState.zoomOut();
+    }
+
+    switchView(): void {
+        store.mapboxStore.activateMapbox();
+    }
+
+    fitBounds(): void {
+        store.uiState.fitBounds();
     }
 
     unstable_destroy() {
