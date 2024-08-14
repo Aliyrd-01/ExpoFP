@@ -6,6 +6,7 @@ import { getColorFromGradient } from "../tools/Color";
 import { ScheduleItem } from "./ScheduleStore";
 import { computed } from "mobx";
 import type { ListItem } from "./types";
+import type { GaEventActions } from "../tools/gtag";
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
     heatmapData: HeatmapData = {
@@ -16,6 +17,9 @@ export default class HeatmapStore {
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
+
+    // don't observe this
+    forceTrack: { action: GaEventActions; label: string } | null = null;
 
     @computed({ keepAlive: true }) get minAndMaxClicks() {
         if (!this.heatmapData || !this.heatmapData.booths || !this.heatmapData.exhibitors) {

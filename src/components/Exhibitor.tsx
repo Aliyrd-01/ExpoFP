@@ -68,7 +68,10 @@ function ExhibitorComponent() {
     const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, s.exhibitor.featured ? "#999" : "#555");
 
     useAutorun(() => {
-        if (s.exhibitor) {
+        if (store.heatmapStore.forceTrack) {
+            sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
+            store.heatmapStore.forceTrack = null;
+        } else if (s.exhibitor) {
             trackEvent("exview", s.exhibitor.id);
             sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
         }
