@@ -208,11 +208,11 @@ export default class RootStore {
             this.uiState.onBoothClick(e);
         }
 
-        // if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
-        //     this.selectExhibitor(booth.exhibitors[0], false);
-        // } else {
-        this.selectBooth(booth, false);
-        // }
+        if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
+            this.selectExhibitor(booth.exhibitors[0], false);
+        } else {
+            this.selectBooth(booth, false);
+        }
         this.showMap();
     }
 
