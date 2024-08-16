@@ -15,6 +15,9 @@ import reportError from "./tools/report-error";
 import { resetGlobalVariables } from "./tools/reset";
 import trackEvent from "./tools/track-event";
 import { Visibility } from "./store/types";
+import { fpGeo } from "./components/Mapbox/utils/fpGeo";
+import { convertLocalToGps } from "./utils/gps";
+import Rect from "./core/Rect";
 
 install();
 
@@ -200,6 +203,17 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     fitBounds(): void {
         store.uiState.fitBounds();
+    }
+
+    getBoothRect(name: string): Rect {
+        return findBooth(name)?.rect;
+    }
+
+    convertToGeo(x: number, y: number): [number, number] | never {
+        if (!fpGeo?.properties?.config) {
+            throw new Error("The coordinates cannot be converted because the GPS configuration is not defined.");
+        }
+        return convertLocalToGps(x, y, fpGeo.properties.config);
     }
 
     unstable_destroy() {

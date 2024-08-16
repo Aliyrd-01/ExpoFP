@@ -130,6 +130,14 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    getBoothRect(name: string): any {
+        nr();
+    }
+
+    convertToGeo(x: number, y: number): any {
+        nr();
+    }
+
     unstable_destroy(): void {
         nr();
     }
