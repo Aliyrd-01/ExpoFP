@@ -14,6 +14,7 @@ import type { ListItem } from "./types";
 import ScheduleStore from "./ScheduleStore";
 import HeatmapStore from "./HeatmapStore";
 import LanguageStore from "./LanguageStore";
+import { GaEventActions } from "../tools/gtag";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -209,6 +210,8 @@ export default class RootStore {
         }
 
         if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
+            // We need to select an exhibitor and track the booth click.
+            this.heatmapStore.forceTrack = { action: GaEventActions.ViewBooth, label: booth.name };
             this.selectExhibitor(booth.exhibitors[0], false);
         } else {
             this.selectBooth(booth, false);
