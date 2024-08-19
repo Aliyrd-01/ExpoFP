@@ -6,7 +6,7 @@ on: push
 # Trigger on push to specific branches
 # push:
 #     branches:
-#       - oldstable
+#       - master
 
 jobs:
   build:
