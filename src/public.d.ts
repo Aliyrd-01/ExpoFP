@@ -54,6 +54,7 @@ class FloorPlan {
 interface FloorPlanOptions {
     element?: HTMLDivElement;
     eventId?: string;
+    mode?: "preview";
     dataUrl?: string;
     noOverlay?: boolean;
     offHistory?: boolean;
@@ -130,7 +131,7 @@ interface FloorPlanGetCoordsEvent extends Point {
     z: string | null;
 }
 
-interface FloorPlanMarkerEvent extends Point{
+interface FloorPlanMarkerEvent extends Point {
     id: string;
     z?: number | string;
 }

@@ -155,7 +155,7 @@ function ExhibitorComponent() {
         };
 
         function renderButton(title: string, url: string, buttonNumber: number) {
-            if (!title || !url || uiState.kiosk) return null;
+            if (!title || !url || uiState.kiosk || uiState.previewMode) return null;
             return (
                 <div className="exhibitor__custom-btn-area">
                     <Button
