@@ -40,7 +40,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "*efp-app* was deployed by ${{ github.event.commits[0].author.name || github.event.pull_request.user.login  || 'unknown' }}.\n ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  "text": "*efp-app* deployed by ${{ github.event.commits[0].author.name || github.event.pull_request.user.login  || 'unknown' }} \n ${{ github.event.head_commit.message }} \n ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
                 }
               }
             ]
