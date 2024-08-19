@@ -25,13 +25,16 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly noOverlay: boolean;
     readonly offHistory: boolean;
     readonly allowConsent: boolean | undefined;
-    readonly previewMode: boolean;
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
 
     get ready() {
         return this._ready;
+    }
+
+    get previewMode() {
+        return this.options.previewMode || this.element.hasAttribute("data-preview-mode");
     }
 
     // options
@@ -175,8 +178,6 @@ export default class FloorPlanLoader implements FloorPlan {
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
         window["__efpElement"] = element;
-
-        this.previewMode = options.mode === "preview" || element.getAttribute("data-mode") === "preview";
 
         window["__efpElement"] = element;
         const classes = [...element.classList];
