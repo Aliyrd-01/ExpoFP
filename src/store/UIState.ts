@@ -422,7 +422,6 @@ export default class UIState {
             case "bookmarks":
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
-                console.warn("this.list.category.exhibitors", this.list.category.exhibitors)
                 return this.list.category.exhibitors;
             case "language":
                 return this.rootStore.languageStore.languages;
