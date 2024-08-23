@@ -138,6 +138,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    selectSearch(text?: string): void {
+        nr();
+    }
+
     unstable_destroy(): void {
         nr();
     }

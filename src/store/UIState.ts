@@ -269,7 +269,7 @@ export default class UIState {
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;
         const isCategory = this.list.type === "category";
 
-        if (uiState.noOverlay) return false;
+        if (uiState.noOverlay && !isCategory) return false;
 
         return (
             (text || isCategory) &&
@@ -309,20 +309,20 @@ export default class UIState {
             return exhibitorsArray.length === 0
                 ? boothsArray
                 : cats.concat(
-                      combinedArray.sort((a, b) => {
-                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+                    combinedArray.sort((a, b) => {
+                        const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                        const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                          if (aFeatured !== bFeatured) {
-                              return aFeatured ? -1 : 1;
-                          }
+                        if (aFeatured !== bFeatured) {
+                            return aFeatured ? -1 : 1;
+                        }
 
-                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                        const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                        const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
-                      })
-                  );
+                        return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
+                    })
+                );
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
@@ -386,7 +386,7 @@ export default class UIState {
                     containsIgnoreCase(b.title || "", text) ||
                     containsIgnoreCase(b.name, text) ||
                     containsLevelIgnoreCase(b.layer?.name ?? null, text))
-                ) {
+            ) {
                 matchingBooths.add(b);
             }
         });
@@ -422,6 +422,7 @@ export default class UIState {
             case "bookmarks":
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
+                console.warn("this.list.category.exhibitors", this.list.category.exhibitors)
                 return this.list.category.exhibitors;
             case "language":
                 return this.rootStore.languageStore.languages;
