@@ -53,6 +53,10 @@ export default class RouteStore {
         this.focusEnabled = !window.location.search;
     }
 
+    @computed get canFindLocation() {
+        return !!this.defaultFrom || !!this.currentPosition;
+    }
+
     @action selectRoute(route: Route) {
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
         if (route?.from && route?.to && route.from === route.to) route = null;
@@ -113,22 +117,26 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get nearestBooth() {
-        if (!this.currentPosition) return null;
-        let layerExists = this.rootStore.layerStore.findLayer(this.currentPosition.z);
+        return this.getNearestBooth(this.currentPosition);
+    }
 
+    getNearestBooth(position: CurrentPosition) {
+        if (!position) return null;
+
+        let layerExists = this.rootStore.layerStore.findLayer(position.z);
         return (
             this.rootStore.boothStore.booths
                 .filter((b) => {
                     if (layersStore.mode === LayersMode.Default || !layerExists) {
                         return b.visible && b.rect;
                     } else {
-                        return b.rect && ((!this.currentPosition.z && b.visible) || layerExists.name === b.layer?.name);
+                        return b.rect && ((!position.z && b.visible) || layerExists.name === b.layer?.name);
                     }
                 })
                 .sort(
                     (b1, b2) =>
-                        lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
-                        lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+                        lineLength(position, { x: b1.rect.cx, y: b1.rect.cy }) -
+                        lineLength(position, { x: b2.rect.cx, y: b2.rect.cy })
                 )[0] || null
         );
     }
@@ -233,6 +241,8 @@ export default class RouteStore {
     }
 
     @action findLocation() {
+        if (!this.canFindLocation) return;
+
         if (store.mapboxStore.showMapbox) {
             uiState.moveToLocation = true;
             return;
@@ -315,16 +325,12 @@ export default class RouteStore {
     }
 }
 
+export function findBooth(str: string) {
+    return store.boothStore.findBooth(str) || store.exhibitorStore.findExhibitor(str)?.booths[0];
+}
+
 export function extractRoute(from: string, to: string) {
-    let bFrom = store.boothStore.booths.find((b) => b.name === from || b.slug === from || b.externalId === from);
-    if (!bFrom)
-        bFrom = store.exhibitorStore.exhibitors.find((e) => e.name === from || e.slug === from || e.externalId === from)
-            ?.booths[0];
-
-    let bTo = store.boothStore.booths.find((b) => b.name === to || b.slug === to || b.externalId === to);
-    if (!bTo) bTo = store.exhibitorStore.exhibitors.find((e) => e.name === to || e.slug === to || e.externalId === to)?.booths[0];
-
-    return new Route(bFrom, bTo);
+    return new Route(findBooth(from), findBooth(to));
 }
 
 export class Route {

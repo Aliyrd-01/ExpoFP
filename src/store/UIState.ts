@@ -16,17 +16,12 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
+import type { ListType, OverlaySize, ListItem, Visibility } from "./types";
+import { VISIBILITY_STORAGE_KEY } from "../constants";
+import { svgArea } from "../data/svg";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
-
-type ListType =
-    | { type: "search"; text: string; focused: boolean }
-    | { type: "bookmarks" }
-    | { type: "category"; category: Category };
-export type OverlaySize = "full" | "medium" | "small";
-// export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category | ScheduleItem;
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -64,12 +59,16 @@ export default class UIState {
     @observable hideHeaderLogo = false;
     @observable hideLogoInBooth = false;
     @observable disableBookmarked = false;
+    @observable hideLanguage = false;
     @observable disableGps = false;
     @observable monochrome = false;
     @observable heatmap = false;
-    rtl = getLanguage() === "ar" || getLanguage() === "he";
+    @observable rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
     @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
+    @observable mapControlsHidden = false;
+    @observable floorsControlHidden = false;
+    @observable hideFreeOrDemo = false;
 
     overlayMediumHeightRems = 10;
 
@@ -155,7 +154,8 @@ export default class UIState {
             !this.selectedCategory &&
             !this.selectedExhibitor &&
             this.list.type !== "bookmarks" &&
-            !(this.list as any).text.length
+            this.list.type !== "language" &&
+            !(this.list as any).text?.length
         );
     }
 
@@ -381,8 +381,8 @@ export default class UIState {
                 ? true
                 : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-            if (addBoothCondition && 
-                splittedTexts.some((text) => 
+            if (addBoothCondition &&
+                splittedTexts.some((text) =>
                     containsIgnoreCase(b.title || "", text) ||
                     containsIgnoreCase(b.name, text) ||
                     containsLevelIgnoreCase(b.layer?.name ?? null, text))
@@ -423,6 +423,8 @@ export default class UIState {
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
                 return this.list.category.exhibitors;
+            case "language":
+                return this.rootStore.languageStore.languages;
         }
         throw new Error("Unknown list.type");
     }
@@ -466,6 +468,38 @@ export default class UIState {
         return new Set(arr);
     }
 
+    @computed get visibility(): Visibility {
+        return {
+            controls: !this.mapControlsHidden,
+            levels: !this.floorsControlHidden,
+            header: !this.hideHeaderLogo,
+            overlay: !this.hideOverlay,
+        };
+    }
+
+    @action setVisibility(visibility: Visibility) {
+        const flags: Visibility = {
+            ...Object.keys(this.visibility)
+                .reduce((acc, key) => ({ ...acc, [key]: true }), {}),
+
+            ...Object.keys(visibility)
+                .filter(k => this.visibility.hasOwnProperty(k))
+                .reduce((acc, key) => ({ ...acc, [key]: visibility[key] }), {}),
+        };
+
+        if (Object.values(flags).every(Boolean)) {
+            isLocalStorageAvailable && localStorage.removeItem(VISIBILITY_STORAGE_KEY);
+        } else {
+            isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(flags));
+        }
+
+        this.mapControlsHidden = !flags.controls;
+        this.floorsControlHidden = !flags.levels;
+        this.hideHeaderLogo = !flags.header;
+        this.hideFreeOrDemo = !flags.header;
+        this.hideOverlay = !flags.overlay;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
@@ -473,6 +507,26 @@ export default class UIState {
     @action toggleMapOverlay() {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
+    }
+
+    @action resetRtl() {
+        this.rtl = getLanguage() === "ar" || getLanguage() === "he";
+    }
+
+    @action changeZoom(zoom: number) {
+        this.zoomBy = zoom;
+    }
+
+    @action zoomIn() {
+        this.changeZoom(1.5);
+    }
+
+    @action zoomOut() {
+        this.changeZoom(0.66);
+    }
+
+    @action fitBounds() {
+        this.moveToRect = this.rootStore.layerStore.rectangle || svgArea;
     }
 
     ///////////////////////////////////////////////////////////////////////////

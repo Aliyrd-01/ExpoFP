@@ -97,11 +97,11 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
                 <LogoOverlay />
                 {!uiState.hideHeaderLogo && <Ws />}
-                <Controls />
+                {!uiState.mapControlsHidden && <Controls />}
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {/* <Layers /> */}
                 {/*<Areas />*/}
-                {layersStore.mode == LayersMode.Radio && <Floors />}
+                {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
                 {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
@@ -113,7 +113,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                         )}
                     </Suspense>
                 )}
-                {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
+                {freeOrDemo && !uiState.hideFreeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
                 {!uiState.hideCookieConsent && !uiState.kiosk && isGDPR && allowConsent === undefined && (
                     <Suspense fallback={null}>
                         <CookieConsent

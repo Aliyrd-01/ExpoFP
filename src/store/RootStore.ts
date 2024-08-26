@@ -9,9 +9,12 @@ import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import MapboxStore from "./MapboxStore";
 import LayerStore, { LayersMode } from "./LayerStore";
 import RouteStore from "./RouteStore";
-import UIState, { ListItem } from "./UIState";
+import UIState from "./UIState";
+import type { ListItem } from "./types";
 import ScheduleStore from "./ScheduleStore";
 import HeatmapStore from "./HeatmapStore";
+import LanguageStore from "./LanguageStore";
+import { GaEventActions } from "../tools/gtag";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -23,6 +26,7 @@ export default class RootStore {
     readonly layerStore: LayerStore;
     readonly scheduleStore: ScheduleStore;
     readonly heatmapStore: HeatmapStore;
+    readonly languageStore: LanguageStore;
 
     fp: FloorPlanReady;
 
@@ -37,6 +41,7 @@ export default class RootStore {
         this.layerStore = new LayerStore();
         this.scheduleStore = new ScheduleStore(this);
         this.heatmapStore = new HeatmapStore(this);
+        this.languageStore = new LanguageStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
@@ -97,6 +102,11 @@ export default class RootStore {
         this.uiState.list = { type: "bookmarks" };
     }
 
+    @action selectLanguage() {
+        this.uiState.details = null;
+        this.uiState.list = { type: "language", id: this.languageStore.language?.id };
+    }
+
     @action selectCategory(category: Category) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
@@ -121,6 +131,12 @@ export default class RootStore {
         // dispatch("selectBookmarks");
         // dispatch("moveToList");
         // dispatch("showMap", id);
+    }
+
+    @action clickLanguage() {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.menu = false;
+        this.selectLanguage();
     }
 
     @action clickCategory(category: Category) {
@@ -194,6 +210,8 @@ export default class RootStore {
         }
 
         if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
+            // We need to select an exhibitor and track the booth click.
+            this.heatmapStore.forceTrack = { action: GaEventActions.ViewBooth, label: booth.name };
             this.selectExhibitor(booth.exhibitors[0], false);
         } else {
             this.selectBooth(booth, false);

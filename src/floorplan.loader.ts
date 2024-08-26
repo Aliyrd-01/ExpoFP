@@ -1,6 +1,6 @@
-import _locales from "../public/locales/_locales";
 import { Data } from "./data/Data";
 import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
+import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
@@ -58,7 +58,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(from: string, to: string, onlyAccessible: boolean): void {
+    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
         nr();
     }
 
@@ -99,6 +99,42 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     selectCategory(nameOrSlug: string): void {
+        nr();
+    }
+
+    getVisibility(): any {
+        nr();
+    }
+
+    setVisibility(visibility: Visibility): void {
+        nr();
+    }
+
+    findLocation(): void {
+        nr();
+    }
+
+    zoomIn(): void {
+        nr();
+    }
+
+    zoomOut(): void {
+        nr();
+    }
+
+    switchView(): void {
+        nr();
+    }
+
+    fitBounds(): void {
+        nr();
+    }
+
+    getBoothRect(name: string): any {
+        nr();
+    }
+
+    convertToGeo(x: number, y: number): any {
         nr();
     }
 
@@ -243,9 +279,7 @@ export default class FloorPlanLoader implements FloorPlan {
             }
             const data = window["__data"] as Data;
 
-            const navLanguage = navigator.languages?.[0] || navigator.language;
-            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
-            await initI18n(navLocale || data.locale || "en");
+            await initI18n();
 
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {

@@ -8,6 +8,7 @@
     opacity: 0;
     box-shadow: var(--shadow-medium);
     transition: 3s opacity ease;
+    inset-inline-end: 0.5rem;
 
     &.-ready {
         opacity: 1;
@@ -38,6 +39,7 @@
             background: var(--color-grayUltraLight);
             color: var(--color-black);
         }
+
         &.active {
             background: var(--color-primaryLight);
             color: var(--color-primaryDark);
@@ -51,6 +53,7 @@
                 height: 100%;
                 background: var(--color-primary);
             }
+
             &:hover {
                 color: var(--color-primaryDark);
             }
@@ -76,7 +79,7 @@
 .efp-kiosk {
     .levels {
         top: calc(var(--k-mapControl-size) * 3 + var(--k-mapControls-gap) * 3 + var(--k-app-gap)) !important;
-        right: var(--k-app-gap) !important;
+        inset-inline-end: var(--k-app-gap);
         overflow: hidden;
         background: var(--color-white);
         border-radius: var(--k-border-radius-3);
@@ -111,6 +114,7 @@
                     height: 100%;
                     background: var(--k-color-primary);
                 }
+
                 &:hover {
                     color: var(--k-color-primaryDark);
                 }
@@ -122,6 +126,7 @@
             }
         }
     }
+
     &.efp-layers-mode {
         .levels {
             top: calc(var(--k-mapControl-size) * 4 + var(--k-mapControls-gap) * 4 + var(--k-app-gap)) !important;

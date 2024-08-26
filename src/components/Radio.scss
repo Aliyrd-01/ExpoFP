@@ -1,0 +1,39 @@
+@import "../styles/helpers.scss";
+
+.radio {
+    display: inline-grid;
+    cursor: pointer;
+    grid-auto-flow: column;
+    place-content: center start;
+    gap: rem(12px);
+
+    &__input {
+        display: none;
+    }
+
+    &__control {
+        display: inline-grid;
+        width: rem(18px);
+        height: rem(18px);
+        border-radius: rem(100px);
+        border: rem(1px) solid $color-gray;
+    }
+
+    &__label {
+        font-size: rem(16px);
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        line-height: 1;
+        color: $color-darkgray;
+    }
+
+    &--checked {
+        & .radio__control {
+            border: rem(4px) solid $color-primary;
+        }
+
+        & .radio__label {
+            color: $color-black;
+        }
+    }
+}

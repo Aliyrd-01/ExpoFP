@@ -8,12 +8,16 @@ import FloorPlanLoader from "./floorplan.loader";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { SpecialBooth } from "./store/BoothStore";
-import { CurrentPosition, Route, extractRoute, MarkersData } from "./store/RouteStore";
+import { CurrentPosition, Route, findBooth, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import reportError from "./tools/report-error";
 import { resetGlobalVariables } from "./tools/reset";
 import trackEvent from "./tools/track-event";
+import { Visibility } from "./store/types";
+import { fpGeo } from "./components/Mapbox/utils/fpGeo";
+import { convertLocalToGps } from "./utils/gps";
+import Rect from "./core/Rect";
 
 install();
 
@@ -39,13 +43,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
             // <FpContext.Provider value={this}>
             <Layout offHistory={this.offHistory} allowConsent={this.allowConsent} />,
             // </FpContext.Provider>,
-            this.renderTarget
+            this.renderTarget,
         );
         sendEventToGa(GaEventActions.Rendered, ``);
 
         reaction(
             () => store.layerStore.layersLoaded,
-            () => this.resolveReady()
+            () => this.resolveReady(),
         );
     }
 
@@ -74,9 +78,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
         }
     }
 
-    selectRoute(from: string | { x: number; y: number }, to: string | { x: number; y: number }): void {
-        if (typeof from === "string" && typeof to === "string") store.routeStore.selectRoute(extractRoute(from, to));
-        else store.routeStore.selectRoute(new Route(from as any, to as any));
+    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
+        store.routeStore.selectRoute(
+            new Route(
+                typeof from === "string" ? findBooth(from) : store.routeStore.getNearestBooth(from),
+                typeof to === "string" ? findBooth(to) : store.routeStore.getNearestBooth(to),
+            ),
+        );
     }
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
@@ -154,7 +162,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     selectCategory(nameOrSlug: string) {
         const str = nameOrSlug?.toLowerCase();
         const category = store.categoryStore.categories.find(
-            ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str
+            ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str,
         );
 
         if (!category) {
@@ -169,6 +177,45 @@ export default class FloorPlanReady extends FloorPlanLoader {
         applyParameters(queryRaw);
     }
 
+    getVisibility(): Visibility {
+        return store.uiState.visibility;
+    }
+
+    setVisibility(visibility: Visibility): void {
+        store.uiState.setVisibility(visibility);
+    }
+
+    findLocation(): void {
+        store.routeStore.findLocation();
+    }
+
+    zoomIn(): void {
+        store.uiState.zoomIn();
+    }
+
+    zoomOut(): void {
+        store.uiState.zoomOut();
+    }
+
+    switchView(): void {
+        store.mapboxStore.activateMapbox();
+    }
+
+    fitBounds(): void {
+        store.uiState.fitBounds();
+    }
+
+    getBoothRect(name: string): Rect {
+        return findBooth(name)?.rect;
+    }
+
+    convertToGeo(x: number, y: number): [number, number] | never {
+        if (!fpGeo?.properties?.config) {
+            throw new Error("The coordinates cannot be converted because the GPS configuration is not defined.");
+        }
+        return convertLocalToGps(x, y, fpGeo.properties.config);
+    }
+
     unstable_destroy() {
         let efpElement = window["__efpElement"].firstChild;
         resetGlobalVariables();
@@ -180,7 +227,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         destroyGtag();
 
         const scripts = [...document.getElementsByTagName("script")].filter(
-            (x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1
+            (x) => x.src.indexOf("/fp.svg") > -1 || x.src.indexOf("/wf.data.js") > -1 || x.src.indexOf("/data.js") > -1,
         );
         scripts.forEach((sc) => sc.remove());
 

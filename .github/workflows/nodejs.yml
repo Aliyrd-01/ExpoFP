@@ -6,7 +6,7 @@ on: push
 # Trigger on push to specific branches
 # push:
 #     branches:
-#       - oldstable
+#       - master
 
 jobs:
   build:
@@ -29,6 +29,26 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: yarn install
     - run: yarn run build+deploy
+    - name: Send Slack message
+      id: slack
+      uses: slackapi/slack-github-action@v1.26.0
+      with:
+        payload: |
+          {
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "*efp-app* deployed by ${{ github.event.commits[0].author.name || github.event.pull_request.user.login  || 'unknown' }} \n ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                }
+              }
+            ]
+          }
+
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
     env:
         CI: true
         AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}

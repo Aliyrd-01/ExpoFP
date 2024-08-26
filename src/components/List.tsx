@@ -11,6 +11,9 @@ import CategoryRow from "./CategoryRow";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 import ScheduleItemRow from "./ScheduleRow";
+import { Language } from "../store/LanguageStore";
+import LanguageRow from "./LanguageRow";
+import type { ListItem } from "../store/types";
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -31,7 +34,7 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
     }, []);
 
     const mapItem = ({ index }: { index: number }) => {
-        const item: Exhibitor | Booth | Category | ScheduleItem = uiState.listItems[index];
+        const item: ListItem = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
         if (item instanceof Exhibitor) {
             return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
@@ -41,6 +44,8 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
             return <CategoryRow key={index} className={cls} category={item} />;
         } else if (item instanceof ScheduleItem) {
             return <ScheduleItemRow key={index} className={cls} item={item} />;
+        } else if (item instanceof Language) {
+            return <LanguageRow key={index} item={item} />;
         }
     };
 

@@ -5,6 +5,7 @@ import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import { ResizeObserver } from "resize-observer";
 import { isLocalStorageAvailable } from "../../utils/localStorage";
+import { VISIBILITY_STORAGE_KEY } from "../../constants";
 
 export const kioskKey = "kiosk";
 
@@ -93,6 +94,12 @@ export default function initUi(store: RootStore) {
             }
         }
     });
+
+    if (isLocalStorageAvailable) {
+        uiState.setVisibility(
+            JSON.parse(localStorage.getItem(VISIBILITY_STORAGE_KEY)) || {},
+        );
+    }
 
     function updateScreenSize(width, height) {
         runInAction("uiState.screenSize", () => {

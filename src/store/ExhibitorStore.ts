@@ -67,6 +67,10 @@ export default class ExhibitorStore {
                 alert("Error sending rebooking state");
             });
     }
+
+    findExhibitor(str: string) {
+        return this.exhibitors.find((e) => e.name === str || e.slug === str || e.externalId === str);
+    }
 }
 
 export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
