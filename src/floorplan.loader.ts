@@ -98,7 +98,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectCategory(nameOrSlug: string): void {
+    selectCategory(nameOrSlug?: string): void {
         nr();
     }
 
@@ -135,10 +135,6 @@ export default class FloorPlanLoader implements FloorPlan {
     }
 
     convertToGeo(x: number, y: number): any {
-        nr();
-    }
-
-    selectSearch(text?: string): void {
         nr();
     }
 

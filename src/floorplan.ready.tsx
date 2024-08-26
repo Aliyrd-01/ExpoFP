@@ -61,10 +61,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
             return nameOrExternalId.includes(b.name) || nameOrExternalId.includes(b.externalId);
         });
 
-        if (this.noOverlay) {
-            this.selectSearch();
-        }
-
         store.selectBooth(booths);
     }
 
@@ -75,10 +71,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
             }
             return nameOrExternalId.includes(exh.name) || nameOrExternalId.includes(exh.externalId);
         });
-
-        if (this.noOverlay) {
-            this.selectSearch();
-        }
 
         if (exhibitors && exhibitors.length > 0) {
             store.selectExhibitor(exhibitors[0]);
@@ -167,7 +159,12 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
-    selectCategory(nameOrSlug: string) {
+    selectCategory(nameOrSlug?: string) {
+        if (nameOrSlug == null) {
+            store.selectSearch();
+            return;
+        }
+
         const str = nameOrSlug?.toLowerCase();
         const category = store.categoryStore.categories.find(
             ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str,
@@ -226,10 +223,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
             throw new Error("The coordinates cannot be converted because the GPS configuration is not defined.");
         }
         return convertLocalToGps(x, y, fpGeo.properties.config);
-    }
-
-    selectSearch(text?: string): void {
-        store.selectSearch(text);
     }
 
     unstable_destroy() {
