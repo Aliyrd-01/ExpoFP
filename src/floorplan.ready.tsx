@@ -160,7 +160,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectCategory(nameOrSlug?: string) {
-        if (nameOrSlug == null) {
+        if (nameOrSlug == null || typeof nameOrSlug !== "string") {
             store.selectSearch();
             return;
         }
