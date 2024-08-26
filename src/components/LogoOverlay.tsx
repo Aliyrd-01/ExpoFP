@@ -63,9 +63,9 @@ export default function LogoOverlay() {
     
     let point = "";
     if (uiState.kiosk && store.routeStore.defaultFrom?.paths) {
-        let paths = store.routeStore.defaultFrom?.paths;
-        const p = (point = (paths[0] as any).triangles[0][0]);
-        point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
+        //   let paths = store.routeStore.defaultFrom?.paths;
+        // const p = (point = (paths[0] as any).triangles[0][0]);
+        // point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
     }
 
     return useObserver(() => (
