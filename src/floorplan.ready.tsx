@@ -159,7 +159,12 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
-    selectCategory(nameOrSlug: string) {
+    selectCategory(nameOrSlug?: string) {
+        if (nameOrSlug == null || typeof nameOrSlug !== "string") {
+            store.selectSearch();
+            return;
+        }
+
         const str = nameOrSlug?.toLowerCase();
         const category = store.categoryStore.categories.find(
             ({ name, slug }) => name?.toLowerCase() === str || slug?.toLowerCase() === str,
@@ -170,7 +175,11 @@ export default class FloorPlanReady extends FloorPlanLoader {
             return;
         }
 
-        store.selectCategory(category);
+        if (this.noOverlay) {
+            store.clickCategory(category);
+        } else {
+            store.selectCategory(category);
+        }
     }
 
     applyParameters(queryRaw: string) {
