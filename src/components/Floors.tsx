@@ -51,7 +51,7 @@ export default function Floors() {
         data = store.layerStore.layers
             .filter((l) => !l.frozen && !l.rootParent)
             .concat(
-                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible)
+                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible),
             )
             .filter((value, index, array) => array.indexOf(value) === index)
             .reverse()
@@ -76,7 +76,7 @@ export default function Floors() {
                             title={l.layer.description}
                             dir="auto"
                         >
-                            {l.layer.shortName}
+                            <span>{l.layer.shortName}</span>
                         </div>
                     ))}
                 </div>
