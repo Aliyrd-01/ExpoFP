@@ -59,8 +59,8 @@ export default function LogoOverlay() {
 
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
     var showWarning = isFromDesigner && dataSize >= 10;
-    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk;
-    
+    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk && !uiState.heatmap;
+
     let point = "";
     if (uiState.kiosk && store.routeStore.defaultFrom?.paths) {
         //   let paths = store.routeStore.defaultFrom?.paths;
