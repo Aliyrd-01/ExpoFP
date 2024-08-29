@@ -1,15 +1,15 @@
 @import "../styles/helpers.scss";
 
-$wayfinding: ".efp-wayfinding";
-$wayfindingForm: ".efp-wayfindingForm";
-$wayfindingError: ".efp-wayfindingError";
-
-#{$wayfinding} {
+.efp-wayfinding {
     &__top {
-        margin-bottom: rem(30px);
+        margin-bottom: rem(20px);
+    }
+    &.isCollapsed &__top {
+        margin-bottom: rem(10px);
     }
 }
-#{$wayfindingForm} {
+
+.efp-wayfindingForm {
     display: flex;
     align-items: center;
     margin-bottom: rem(18px);
@@ -23,42 +23,30 @@ $wayfindingError: ".efp-wayfindingError";
         width: 45px;
         height: 110px;
         padding-inline-start: rem(15px);
-
-        &:after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 50%;
-            margin-inline-start: 1px;
-            width: 4px;
-            height: 18px;
-            background: url("../../public/icons/dots.svg");
-        }
-        &-item {
-            display: flex;
-            align-items: center;
-            height: 50px;
-
-            &.is-from {
-                &:before {
-                    content: "";
-                    width: 21px;
-                    height: 21px;
-                    background: url("../../public/icons/from.svg");
-                    background-size: cover;
-                }
-            }
-            &.is-to {
-                &:before {
-                    content: "";
-                    width: 20px;
-                    height: 25px;
-                    background: url("../../public/icons/to.svg");
-                    background-size: cover;
-                }
-            }
-        }
+    }
+    &__from,
+    &__to,
+    &__dots {
+        display: flex;
+        align-items: center;
+        height: 50px;
+    }
+    &__from > svg {
+        width: 21px;
+        height: 21px;
+    }
+    &__to > svg {
+        width: 20px;
+        height: 25px;
+    }
+    &__dots {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 50%;
+        margin-inline-start: 1px;
+        width: 4px;
+        height: 18px;
     }
     &__controls {
         flex: 1;
@@ -88,7 +76,7 @@ $wayfindingError: ".efp-wayfindingError";
     }
 }
 
-#{$wayfindingError} {
+.efp-wayfindingError {
     padding: rem(20px 15px);
     border-top: 1px solid #e4e4e4;
     font-size: var(--text-size-1);
@@ -137,12 +125,14 @@ $wayfindingError: ".efp-wayfindingError";
             }
         }
     }
-    #{$wayfinding} {
+
+    .efp-wayfinding {
         &__top {
             margin-bottom: 0;
         }
     }
-    #{$wayfindingForm} {
+
+    .efp-wayfindingForm {
         align-items: unset;
         padding-inline-end: var(--k-spacing-lg);
 
@@ -158,6 +148,7 @@ $wayfindingError: ".efp-wayfindingError";
                 height: 28px;
             }
         }
+
         &__icons {
             width: 56px;
             height: unset;
@@ -178,7 +169,7 @@ $wayfindingError: ".efp-wayfindingError";
     }
 }
 
-.layout[dir="rtl"] #{$wayfindingForm} {
+.layout[dir="rtl"] .efp-wayfindingForm {
     &__icons:after {
         right: 50%;
     }
