@@ -65,40 +65,21 @@
     .levels {
         top: calc(var(--k-mapControl-size) * 3 + var(--k-mapControls-gap) * 3 + var(--k-app-gap)) !important;
         inset-inline-end: var(--k-app-gap);
-        overflow: hidden;
-        background: var(--color-white);
-        border-radius: var(--k-border-radius-3);
-        box-shadow: var(--k-box-shadow-1);
 
         & > .item {
             display: flex;
             justify-content: center;
             align-items: center;
             width: var(--k-mapControl-size);
-            height: calc(var(--k-mapControl-size) - 4px);
-            box-shadow: unset;
-            border-top: 1px solid var(--color-grayLight);
+            height: var(--k-mapControl-size);
             font-size: 1.1em;
             font-weight: 500;
             color: var(--k-color-primary);
 
-            &:first-child {
-                border-top: 0;
-            }
-
             &.active {
                 background: var(--k-color-primaryLight);
+                box-shadow: var(--k-box-shadow-1-active);
                 color: var(--k-color-primaryDark);
-
-                &:before {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 4px;
-                    height: 100%;
-                    background: var(--k-color-primary);
-                }
 
                 &:hover {
                     color: var(--k-color-primaryDark);

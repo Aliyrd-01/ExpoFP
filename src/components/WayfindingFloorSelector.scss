@@ -20,13 +20,13 @@
     }
     &__list {
         display: flex;
-        gap: rem(6px);
+        gap: rem(8px);
 
         & > button {
             position: relative;
-            min-width: rem(36px);
+            min-width: rem(38px);
             max-width: rem(100px);
-            height: rem(36px);
+            height: rem(38px);
             margin-left: -1px;
             padding: rem(0 6px);
             background: var(--color-white);
@@ -52,6 +52,26 @@
                 white-space: nowrap;
             }
         }
+    }
+}
+
+.item-walk {
+    position: absolute;
+    bottom: rem(-6px);
+    right: rem(-4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: rem(16px);
+    height: rem(16px);
+    border-radius: var(--border-radius-full);
+    background: var(--color-white);
+    border: 1px solid var(--color-primary);
+
+    & > svg {
+        width: rem(7px);
+        height: rem(11px);
+        fill: var(--color-primary);
     }
 }
 
@@ -82,23 +102,18 @@
 
 .efp-kiosk {
     .efp-wayfinding-floor__list > button {
-        width: clamp(40px, 4vw, 52px);
-        height: clamp(40px, 6vh, 46px);
+        width: clamp(40px, 6vw, 52px);
+        height: clamp(40px, 6vw, 52px);
         color: var(--k-color-primary);
         font-weight: var(--font-bold);
+    }
+    .item-walk {
+        width: clamp(14px, 3vw, 20px);
+        height: clamp(14px, 3vw, 20px);
 
-        &:first-child {
-            padding-left: 10px;
-            border-top-left-radius: var(--k-border-radius-3);
-            border-bottom-left-radius: var(--k-border-radius-3);
-        }
-        &:last-child {
-            padding-right: 10px;
-            border-top-right-radius: var(--k-border-radius-3);
-            border-bottom-right-radius: var(--k-border-radius-3);
-        }
-        &.isCurrent {
-            color: var(--k-color-darkGray);
+        & > svg {
+            width: 50%;
+            height: auto;
         }
     }
 }
