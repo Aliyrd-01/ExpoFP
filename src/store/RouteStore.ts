@@ -98,22 +98,11 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get pathLayers() {
-        const layers: {id: number, name: string}[] = [];
-        store.routeStore.routeLines
-            ?.map((rl) => rl.p0.layer)
+        return store.routeStore.routeLines
+            ?.map(line => line.p0.layer)
+            ?.filter((name, i, self) => self.indexOf(name) === i)
             .reverse()
-            .forEach((l, index, array) => {
-                if (index === 0 || l !== array[index - 1]) {
-                    layers.push({ id: index + 1, name: l });
-                }
-            });
-
-        return layers.map((l) => {
-            return {
-                id: l.id,
-                layer: store.layerStore.layers.find((layer) => layer.name === l.name)
-            }
-        } );
+            .map((name, i) => ({ id: i + 1, layer: store.layerStore.findLayer(name) }));
     }
 
     @computed({ keepAlive: true }) get nearestBooth() {
@@ -282,17 +271,17 @@ export default class RouteStore {
                 store.fp.onDirection({
                     from: route?.from
                         ? {
-                              id: route.from.id,
-                              name: route.from.name,
-                              layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
-                          }
+                            id: route.from.id,
+                            name: route.from.name,
+                            layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
+                        }
                         : null,
                     to: route?.to
                         ? {
-                              id: route.to.id,
-                              name: route.to.name,
-                              layer: { name: route.to.layer?.name, description: route.to.layer?.description },
-                          }
+                            id: route.to.id,
+                            name: route.to.name,
+                            layer: { name: route.to.layer?.name, description: route.to.layer?.description },
+                        }
                         : null,
                     lines: routeLines,
                     distance: `${distance}${units}`,
@@ -334,7 +323,7 @@ export function extractRoute(from: string, to: string) {
 }
 
 export class Route {
-    public constructor(public from: Booth, public to: Booth) {}
+    public constructor(public from: Booth, public to: Booth) { }
 }
 
 export class CurrentPosition extends Point {

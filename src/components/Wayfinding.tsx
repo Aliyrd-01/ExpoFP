@@ -13,7 +13,7 @@ import "./Wayfinding.scss";
 import WayfindingTemplate from "./WayfindingTemplate";
 
 function Wayfinding() {
-    const floors = store.routeStore.pathLayers.map(l => ({ id: l.id, name: l.layer?.shortName }));
+    const floors = store.routeStore.pathLayers.map(l => ({ id: l.id, name: l.layer?.shortName, description: l.layer?.description }));
     const [currentFloor, setCurrentFloor] = useState<{ id: number, name: string }>();
 
     useEffect(() => {
@@ -146,9 +146,9 @@ function Wayfinding() {
                     showForm={!mobileShowForm() ? true : false}
                     showInfo={
                         !data.hideWayInformation &&
-                        settings.EXPO !== "bloomberg" &&
-                        uiState.selectedRoute?.from &&
-                        uiState.selectedRoute?.to
+                            settings.EXPO !== "bloomberg" &&
+                            uiState.selectedRoute?.from &&
+                            uiState.selectedRoute?.to
                             ? true
                             : false
                     }
