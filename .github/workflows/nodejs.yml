@@ -56,11 +56,12 @@ jobs:
                             "type": "section",
                             "text": {
                               "type": "mrkdwn",
-                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository:* ${{ github.event.repository.html_url }}\n*Author:* https://github.com/${{ github.actor }}"
+                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository:* <${{ github.event.repository.html_url }}>\n*Commit:* <${{ github.event.repository.html_url }}/commit/${{ github.sha }}>\n*Author:* <https://github.com/${{ github.actor }}>"
                             }
                           }
                         ]
                       }
+
             - name: Send Slack message on PR merge
               if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
               uses: slackapi/slack-github-action@v1.26.0
