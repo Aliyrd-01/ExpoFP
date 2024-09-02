@@ -56,7 +56,7 @@ jobs:
                             "type": "section",
                             "text": {
                               "type": "mrkdwn",
-                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository:* <${{ github.event.repository.html_url }}>\n*Commit:* <${{ github.event.repository.html_url }}/commit/${{ github.sha }}>\n*Author:* <https://github.com/${{ github.actor }}>\n*Date and Time:* `${{ github.event.head_commit.timestamp }}`"
+                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository:* ${{ github.event.repository.html_url }}\n*Commit:* ${{ github.event.repository.html_url }}/commit/${{ github.sha }}\n*Author:* https://github.com/${{ github.actor }}\n*Date and Time:* `${{ github.event.head_commit.timestamp }}`"
                             }
                           }
                         ]
@@ -73,7 +73,7 @@ jobs:
                             "type": "section",
                             "text": {
                               "type": "mrkdwn",
-                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository:* <${{ github.event.repository.html_url }}>\n*Pull Request:* <${{ github.event.pull_request.html_url }}>\n*Commit:* <${{ github.event.repository.html_url }}/commit/${{ github.event.pull_request.head.sha }}>\n*Author:* <https://github.com/${{ github.actor }}>\n*Date and Time:* `${{ github.event.pull_request.merged_at }}`"
+                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository:* ${{ github.event.repository.html_url }}\n*Pull Request:* ${{ github.event.pull_request.html_url }}\n*Commit:* ${{ github.event.repository.html_url }}/commit/${{ github.event.pull_request.head.sha }}\n*Author:* https://github.com/${{ github.actor }}\n*Date and Time:* `${{ github.event.pull_request.merged_at }}`"
                             }
                           }
                         ]
