@@ -25,8 +25,7 @@ jobs:
 
       - name: Extract branch name
         shell: bash
-        run: echo "::set-env name=AWS_FOLDER_NAME::$(echo ${GITHUB_REF#refs/heads/})"
-        # run: echo "AWS_FOLDER_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        run: echo "AWS_FOLDER_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
