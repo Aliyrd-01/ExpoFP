@@ -20,6 +20,15 @@ jobs:
       matrix:
         node-version: [20.x]
 
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      CI: true
+      AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AwsSecretAccessKey }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AwsCloudFrontDistributionID }}
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
     steps:
       - uses: actions/checkout@v2
 
@@ -28,7 +37,7 @@ jobs:
         run: echo "AWS_FOLDER_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -36,27 +45,19 @@ jobs:
 
       - run: yarn run build+deploy
 
-      - name: Send Slack message
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*efp-app* \n ${{ toJson(github.event) }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-          CI: true
-          AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AwsSecretAccessKey }}
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AwsCloudFrontDistributionID }}
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      # - name: Send Slack message
+      #   if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+      #   uses: slackapi/slack-github-action@v1.26.0
+      #   with:
+      #     payload: |
+      #       {
+      #         "blocks": [
+      #           {
+      #             "type": "section",
+      #             "text": {
+      #               "type": "mrkdwn",
+      #               "text": "${{ github.event.repo.url }}"
+      #             }
+      #           }
+      #         ]
+      #       }
