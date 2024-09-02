@@ -11,7 +11,7 @@ export const getLocale = () => {
     const navLanguage = navigator.languages?.[0] || navigator.language;
     const navLocale = Object.keys(locales).find((x) => navLanguage.startsWith(x));
     const savedLang = isLocalStorageAvailable ? localStorage.getItem("language") : null;
-    return savedLang || navLocale || data.locale || "en";
+    return savedLang || data.locale || navLocale || "en";
 }
 
 export const initI18n = async (defaultLocale?: string): Promise<TFunction> => {
