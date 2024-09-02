@@ -56,7 +56,11 @@ jobs:
                             "type": "section",
                             "text": {
                               "type": "mrkdwn",
-                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository URL:* <${{ github.event.repository.html_url }}>\n*Pull Request URL:* <${{ github.event.pull_request.html_url }}>\n*Commit URL:* <${{ github.event.repository.html_url }}/commit/${{ github.event.pull_request.head.sha }}>\n*Author URL:* <${{ github.event.pull_request.user.html_url }}>"
+                              "text": "*Event Type:* `${{ github.event_name }}`\n*Repository URL:* <${{ github.event.repository.html_url }}>\n${
+                                github.event_name == 'pull_request' ? '*Pull Request URL:* <${{ github.event.pull_request.html_url }}>\n*Author URL:* <${{ github.event.pull_request.user.html_url }}>\n' : ''
+                              }${
+                                github.event_name == 'push' ? '*Commit URL:* <${{ github.event.repository.html_url }}/commit/${{ github.sha }}>\n' : ''
+                              }"
                             }
                           }
                         ]
