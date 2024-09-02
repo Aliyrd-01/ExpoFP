@@ -45,19 +45,19 @@ jobs:
 
       - run: yarn run build+deploy
 
-      - name: Send Slack message
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "${{ github.event.repo.url }}"
-                  }
-                }
-              ]
-            }
+      # - name: Send Slack message
+      #   if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+      #   uses: slackapi/slack-github-action@v1.26.0
+      #   with:
+      #     payload: |
+      #       {
+      #         "blocks": [
+      #           {
+      #             "type": "section",
+      #             "text": {
+      #               "type": "mrkdwn",
+      #               "text": "${{ github.event.repo.url }}"
+      #             }
+      #           }
+      #         ]
+      #       }
