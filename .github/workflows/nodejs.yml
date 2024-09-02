@@ -56,7 +56,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*efp-app* \n ${{ toJson(github.event) }}"
+                    "text": "${{ github.event.repo.url }}"
                   }
                 }
               ]
