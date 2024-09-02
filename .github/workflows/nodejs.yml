@@ -28,7 +28,7 @@ jobs:
         run: echo "AWS_FOLDER_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -52,11 +52,11 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-          CI: true
-          AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AwsSecretAccessKey }}
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AwsCloudFrontDistributionID }}
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      CI: true
+      AWS_ACCESS_KEY_ID: ${{ secrets.AwsAccessKeyId }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AwsSecretAccessKey }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AwsCloudFrontDistributionID }}
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
