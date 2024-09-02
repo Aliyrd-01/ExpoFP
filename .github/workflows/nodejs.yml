@@ -1,6 +1,7 @@
 name: Deploy CI
 
 # Trigger on any push
+on: push
 # on:
 #   push:
 #     branches:
@@ -27,7 +28,7 @@ jobs:
         run: echo "AWS_FOLDER_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
 
