@@ -1,15 +1,13 @@
 name: Deploy CI
 
-# Trigger on any push
-on: push
-# on:
-#     push:
-#         branches:
-#             - master
-#     pull_request:
-#         branches:
-#             - master
-#         types: [closed]
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+        types: [closed]
 
 jobs:
     build:
