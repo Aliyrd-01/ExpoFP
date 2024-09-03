@@ -60,8 +60,8 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                                         fill="white"
                                     />
                                     <path
-                                        fill-rule="evenodd"
-                                        clip-rule="evenodd"
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
                                         d="M9 13.375C11.4162 13.375 13.375 11.4162 13.375 9C13.375 6.58375 11.4162 4.625 9 4.625C6.58375 4.625 4.625 6.58375 4.625 9C4.625 11.4162 6.58375 13.375 9 13.375ZM9 16C12.866 16 16 12.866 16 9C16 5.13401 12.866 2 9 2C5.13401 2 2 5.13401 2 9C2 12.866 5.13401 16 9 16Z"
                                         fill="#30AFEB"
                                     />
@@ -70,8 +70,8 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                             <div className="efp-wayfindingForm__to">
                                 <svg width="18" height="25" viewBox="0 0 18 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path
-                                        fill-rule="evenodd"
-                                        clip-rule="evenodd"
+                                        fillRule="evenodd"
+                                        clipRule="evenodd"
                                         d="M9 24.1571L10.5475 22.267C11.0023 21.7114 11.4571 21.1656 11.9041 20.6291C13.2939 18.9611 14.6088 17.3829 15.6182 15.8814C16.988 13.8436 18 11.668 18 9.125C18 4.09562 14.0267 0 9 0C3.97332 0 0 4.09562 0 9.125C0 11.668 1.01202 13.8436 2.38182 15.8814C3.39116 17.3829 4.70613 18.9611 6.09588 20.6291C6.54291 21.1656 6.99767 21.7114 7.45249 22.267L9 24.1571Z"
                                         fill="white"
                                     />

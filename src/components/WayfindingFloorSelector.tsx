@@ -3,7 +3,7 @@ import cn from "classnames";
 import "./WayfindingFloorSelector.scss";
 
 export interface WayfindingFloorSelectorProps {
-    floors: { id: number; name: string }[];
+    floors: { id: number; name: string, description?: string }[];
     current?: { id: number; name: string };
     onClickFloor?: ({ id: number, name: string }) => void;
 }
@@ -21,6 +21,7 @@ const WayfindingFloorSelector: React.FC<WayfindingFloorSelectorProps> = ({ floor
                             })}
                             onClick={() => onClickFloor({ id: floor.id, name: floor.name })}
                             key={index}
+                            title={floor.description}
                         >
                             <span>{floor.name}</span>
                             {floor?.id === current?.id && (
