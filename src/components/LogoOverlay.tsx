@@ -59,13 +59,13 @@ export default function LogoOverlay() {
 
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
     var showWarning = isFromDesigner && dataSize >= 10;
-    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk;
-    
+    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk && !uiState.heatmap;
+
     let point = "";
     if (uiState.kiosk && store.routeStore.defaultFrom?.paths) {
-        let paths = store.routeStore.defaultFrom?.paths;
-        const p = (point = (paths[0] as any).triangles[0][0]);
-        point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
+        //   let paths = store.routeStore.defaultFrom?.paths;
+        // const p = (point = (paths[0] as any).triangles[0][0]);
+        // point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
     }
 
     return useObserver(() => (

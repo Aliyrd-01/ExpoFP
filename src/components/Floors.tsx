@@ -18,7 +18,6 @@ export default function Floors() {
         },
         get style() {
             return {
-                [uiState.rtl ? "left" : "right"]: remsToPixels(0.5) + "px",
                 top: uiState.mapVisibleTop + remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) + "px",
             };
         },
@@ -28,7 +27,7 @@ export default function Floors() {
         if (timeout) return;
         timeout = setTimeout(() => (timeout = null), 500);
         var layer = store.layerStore.layers.find((l) => l.description === layer.description);
-        
+
         if (store.layerStore.mode === LayersMode.Radio) {
             store.layerStore.updateVisibility(layer, true, true);
             store.routeStore.currentRouteLayer = layer;
@@ -52,7 +51,7 @@ export default function Floors() {
         data = store.layerStore.layers
             .filter((l) => !l.frozen && !l.rootParent)
             .concat(
-                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible)
+                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible),
             )
             .filter((value, index, array) => array.indexOf(value) === index)
             .reverse()
@@ -65,7 +64,7 @@ export default function Floors() {
                     disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
                 };
             });
-            
+
         return (
             (store.layerStore.mode === LayersMode.Radio || store.layerStore.mode === LayersMode.CheckBox) && (
                 <div className={s.className} style={s.style}>
@@ -77,7 +76,7 @@ export default function Floors() {
                             title={l.layer.description}
                             dir="auto"
                         >
-                            {l.layer.shortName}
+                            <span>{l.layer.shortName}</span>
                         </div>
                     ))}
                 </div>

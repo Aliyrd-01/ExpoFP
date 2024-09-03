@@ -6,7 +6,7 @@
     align-items: center;
     max-width: 800px;
     margin: 0 auto;
-    padding: rem(20px 15px);
+    padding: rem(10px 15px 20px);
     border-top: 1px solid var(--color-grayLight);
 
     &__item {
@@ -14,39 +14,34 @@
 
         span {
             display: flex;
-            padding-bottom: rem(4px);
-            font-size: rem(14px);
+            font-size: rem(13px);
             color: var(--color-gray);
             font-weight: 500;
         }
         strong {
-            font-size: rem(18px);
+            font-size: rem(17px);
             color: var(--color-black);
             font-weight: 600;
         }
-        &.is-accessible {
-            strong {
-                position: relative;
-                display: flex;
-                color: var(--color-primary);
-            }
+        &.is-accessible strong {
+            color: var(--color-primary);
+            display: flex;
+            position: relative;
         }
     }
 }
 
-.efp-kiosk {
-    .efp-wayInformation {
-        padding: var(--k-spacing-lg);
-        border-top: 0;
+.efp-kiosk .efp-wayInformation {
+    padding: var(--k-spacing-lg);
+    border-top: 0;
 
-        &__item {
-            span {
-                padding: 0;
-                font-size: 0.8em;
-            }
-            strong {
-                font-size: 1.1em;
-            }
+    &__item {
+        span {
+            padding: 0;
+            font-size: 0.8em;
+        }
+        strong {
+            font-size: 1.1em;
         }
     }
 }

@@ -102,7 +102,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectCategory(nameOrSlug: string): void {
+    selectCategory(nameOrSlug?: string): void {
         nr();
     }
 

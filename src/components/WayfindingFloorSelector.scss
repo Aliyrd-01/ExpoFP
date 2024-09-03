@@ -1,73 +1,149 @@
 @import "../styles/helpers.scss";
 
 .efp-wayfinding-floor {
+    position: relative;
     display: flex;
     align-items: center;
-    padding: rem(0 15px);
+    width: 100%;
+    padding: rem(0 15px 10px 15px);
 
+    &__body,
+    &__list {
+        position: relative;
+        width: 100%;
+    }
     &__title {
         padding-right: rem(12px);
         font-size: var(--text-size-2);
         color: var(--color-gray);
         font-weight: var(--font-bold);
     }
-
     &__list {
+        display: flex;
+        gap: rem(8px);
+
         & > button {
             position: relative;
-            z-index: 1;
-            width: rem(30px);
-            height: rem(30px);
+            min-width: rem(38px);
+            max-width: rem(100px);
+            height: rem(38px);
             margin-left: -1px;
+            padding: rem(0 6px);
             background: var(--color-white);
             border: 1px solid var(--color-grayLight);
+            border-radius: var(--border-radius-full);
             color: var(--color-black);
+            font-weight: var(--font-bold);
             outline: none;
             cursor: pointer;
 
-            &:first-child {
-                border-top-left-radius: var(--border-radius-1);
-                border-bottom-left-radius: var(--border-radius-1);
-            }
-
-            &:last-child {
-                border-top-right-radius: var(--border-radius-1);
-                border-bottom-right-radius: var(--border-radius-1);
-            }
-
             &.isCurrent {
                 z-index: 2;
-                background: var(--color-grayLight);
-                border-color: var(--color-grayLight);
+                background: var(--color-primaryLight);
+                border: 1px solid var(--color-primary);
+                color: var(--color-primary);
                 font-weight: var(--font-bold);
+            }
+            & > span {
+                display: block;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    }
+}
+
+.item-walk {
+    position: absolute;
+    bottom: rem(-6px);
+    right: rem(-4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: rem(16px);
+    height: rem(16px);
+    border-radius: var(--border-radius-full);
+    background: var(--color-white);
+    border: 1px solid var(--color-primary);
+
+    & > svg {
+        width: rem(7px);
+        height: rem(11px);
+        fill: var(--color-primary);
+    }
+}
+
+.line-arrows {
+    position: absolute;
+    top: 50%;
+    margin-top: rem(-12px);
+    right: rem(-10px);
+    animation: ArrowsfadeInOut 8s ease-in-out infinite;
+
+    & > svg {
+        width: rem(18px);
+        height: rem(10px);
+        fill: var(--color-primary);
+
+        & > path {
+            animation: arrowWave 1s infinite;
+            animation-direction: alternate;
+
+            @for $i from 1 through 10 {
+                &:nth-child(#{$i}) {
+                    animation-delay: #{0.5 * ($i - 1)}s;
+                }
             }
         }
     }
 }
 
 .efp-kiosk {
-    .efp-wayfinding-floor {
-        &__list {
-            & > button {
-                width: clamp(40px, 4vw, 52px);
-                height: clamp(40px, 6vh, 46px);
-                color: var(--k-color-primary);
-                font-weight: var(--font-bold);
+    .efp-wayfinding-floor__list > button {
+        width: clamp(40px, 6vw, 52px);
+        height: clamp(40px, 6vw, 52px);
+        color: var(--k-color-primary);
+        font-weight: var(--font-bold);
+    }
+    .item-walk {
+        width: clamp(14px, 3vw, 20px);
+        height: clamp(14px, 3vw, 20px);
 
-                &.isCurrent {
-                    color: var(--k-color-darkGray);
-                }
-                &:first-child {
-                    padding-left: 10px;
-                    border-top-left-radius: var(--k-border-radius-3);
-                    border-bottom-left-radius: var(--k-border-radius-3);
-                }
-                &:last-child {
-                    padding-right: 10px;
-                    border-top-right-radius: var(--k-border-radius-3);
-                    border-bottom-right-radius: var(--k-border-radius-3);
-                }
-            }
+        & > svg {
+            width: 50%;
+            height: auto;
         }
+    }
+}
+
+@keyframes ArrowsfadeInOut {
+    0% {
+        opacity: 0;
+    }
+    5% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    55% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes arrowWave {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
     }
 }
