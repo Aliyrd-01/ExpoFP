@@ -41,8 +41,8 @@ export class Layer {
 
     get shortName(): string {
         return this.description
-            .replace(/"/g, "")
             .split(" ")
+            .map(x => x.replace(/[^A-Z0-9]/ig, ""))
             .map(x => x.substring(0, 1).toLocaleUpperCase())
             .join("");
     }
