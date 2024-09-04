@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import { RegularBooth } from "../../store/BoothStore";
 import data from "../../data";
 import Badge from "../Badge";
+import { uiState } from "../../store";
 
 interface BoothWithoutExhibitorProps {
     booth: RegularBooth;
@@ -39,7 +40,7 @@ export const BoothOnHold: FC<BoothWithoutExhibitorProps> = ({ booth }) => {
                         <div className="booth__info-val">{booth.size}</div>
                     </div>
                 )}
-                {booth.price && booth.price !== "0" && (
+                {booth.price && booth.price !== "0" && !uiState.previewMode && (
                     <div className="booth__info is-onhold">
                         <i className="fas fa-tag" />
                         <div className="booth__info-title">{t("Price")}</div>
