@@ -529,20 +529,10 @@ export default class UIState {
         this.moveToRect = this.rootStore.layerStore.rectangle || svgArea;
     }
 
-    @observable _previewMode = false;
+    // @observable _previewMode = false;
     @computed get previewMode() {
         const previewMode = isLocalStorageAvailable && localStorage.getItem(PREVIEW_MODE_STORAGE_KEY) === "1";
-        return this._previewMode || previewMode || this.rootStore.fp.previewMode;
-    }
-
-    @action setPreviewMode(value: boolean) {
-        this._previewMode = value;
-
-        if (value) {
-            isLocalStorageAvailable && localStorage.setItem(PREVIEW_MODE_STORAGE_KEY, "1");
-        } else {
-            isLocalStorageAvailable && localStorage.removeItem(PREVIEW_MODE_STORAGE_KEY);
-        }
+        return previewMode || this.rootStore.fp.previewMode;
     }
 
     ///////////////////////////////////////////////////////////////////////////

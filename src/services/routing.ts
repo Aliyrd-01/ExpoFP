@@ -9,7 +9,8 @@ import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
-import { PREVIEW_MODE_QUERY } from "../constants";
+import { PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -360,12 +361,11 @@ function processURLParams() {
     const previewMode = PREVIEW_MODE_QUERY;
     if (locationSearch.includes(previewMode)) {
         const url = new URL(window.location.href);
-
         const value = url.searchParams.get(previewMode);
         if (value === "true") {
-            uiState.setPreviewMode(true);
+            isLocalStorageAvailable && localStorage.setItem(PREVIEW_MODE_STORAGE_KEY, "1");
         } else if (value === "false") {
-            uiState.setPreviewMode(false);
+            isLocalStorageAvailable && localStorage.removeItem(PREVIEW_MODE_STORAGE_KEY);
         }
 
         url.searchParams.delete(previewMode);
