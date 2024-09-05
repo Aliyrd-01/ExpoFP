@@ -37,6 +37,7 @@ interface Data {
     hideLanguageLink: boolean;
     // hideLogoOverlay: boolean;
     autoTrackingGps: boolean;
+    enableIPS: boolean;
     allow3dView: boolean;
     hide3dMapDefault: boolean;
     hideModeSwitchButton: boolean;

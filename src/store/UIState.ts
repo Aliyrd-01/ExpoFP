@@ -81,7 +81,7 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get gpsEnabled() {
-        return data.autoTrackingGps && !this.disableGps;
+        return data.autoTrackingGps && !this.disableGps && !data.enableIPS;
     }
 
     get onBoothClick() {
