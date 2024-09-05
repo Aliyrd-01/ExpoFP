@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import data from "../data";
 import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
@@ -13,13 +13,21 @@ import "./Wayfinding.scss";
 import WayfindingTemplate from "./WayfindingTemplate";
 
 function Wayfinding() {
-    const floors = store.routeStore.pathLayers.map(l => ({ id: l.id, name: l.layer?.shortName, description: l.layer?.description }));
+    const floors = useMemo(() => (
+        store.routeStore.pathLayers.map(l => ({ id: l.id, name: l.layer?.shortName, description: l.layer?.description }))
+    ), [store.routeStore.pathLayers]);
+
     const [currentFloor, setCurrentFloor] = useState<{ id: number, name: string }>();
 
     useEffect(() => {
         if (currentFloor) return;
         setCurrentFloor(floors[0]);
-    }, [store.routeStore.pathLayers]);
+    }, [store.routeStore.pathLayers, floors]);
+
+    useEffect(() => {
+        const floor = floors.find(f => f.description?.toLowerCase() === store.routeStore.currentRouteLayer?.description?.toLowerCase());
+        floor && setCurrentFloor(floor);
+    }, [store.routeStore.currentRouteLayer, floors]);
 
     const routeSelected = () => {
         const { from, to } = uiState.selectedRoute;
@@ -158,7 +166,6 @@ function Wayfinding() {
                         var layer = store.layerStore.layers.find((l) => l.shortName === floor.name);
                         store.layerStore.updateVisibility(layer, true);
                         store.routeStore.currentRouteLayer = layer;
-                        setCurrentFloor(floor);
                     }}
                     routeFound={!routeNotFound}
                     options={options()}
