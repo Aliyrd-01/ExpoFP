@@ -22,10 +22,10 @@ import { useReaction } from "../../utils/mobx";
 import getBoothIdFromClientXy from "./booth-by-xy";
 import createDrawer, { Drawer } from "./drawing/Drawer1";
 import "./Map.scss";
+import { getMarkerFromClientXy } from "./marker-by-xy";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import { getMarkerFromClientXy } from "./marker-by-xy";
 
 //console.log('isIframe', isIframe)
 
@@ -48,7 +48,7 @@ export default function Map() {
         //     return  rect;//rect.withPadding(rect.w * 0.05, rect.h * 0.05);
         // }
     }));
-    
+
     // init
     useEffect(() => {
         init();
@@ -288,6 +288,12 @@ export default function Map() {
         const resizeObserver = new ResizeObserver(() => {
             sizeCanvasToParentElement(el.current);
             s.drawer.resetCanvasSize();
+
+            if (settings.EXPO === "ess-expo") {
+                setTimeout(() => {
+                    if (uiState.selectedBooths) store.moveToList(Array.from(uiState.selectedBooths));
+                }, 100);
+            }
         });
 
         resizeObserverRef.current = resizeObserver;
@@ -309,7 +315,9 @@ export default function Map() {
     function getCenterCoordinates() {
         const { width, height } = s.$canvas.node().getBoundingClientRect();
 
-        const activeLayer = store.layerStore.visible.find(layer => layer.mode === LayerMode.TurnedOff || layer.mode === LayerMode.TurnedOn);
+        const activeLayer = store.layerStore.visible.find(
+            (layer) => layer.mode === LayerMode.TurnedOff || layer.mode === LayerMode.TurnedOn
+        );
         const z = activeLayer?.name || null;
 
         const centerX = width / 2;
