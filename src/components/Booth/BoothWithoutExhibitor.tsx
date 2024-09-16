@@ -4,6 +4,7 @@ import data from "../../data";
 import Button from "../Button";
 import isIframe from "../../utils/is-iframe";
 import React, { FC } from "react";
+import { uiState } from "../../store";
 
 interface BoothWithoutExhibitorProps {
     booth: RegularBooth;
@@ -28,7 +29,7 @@ export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
                 url.searchParams.append("type", booth.type);
             }
 
-            if (!url.searchParams.has("price") && booth.price) {
+            if (!url.searchParams.has("price") && booth.price && !uiState.previewMode) {
                 url.searchParams.append("price", booth.price);
             }
             return url;
@@ -57,7 +58,7 @@ export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
                         <div className="booth__info-val">{booth.size}</div>
                     </div>
                 )}
-                {!isRebooking && booth.price && booth.price !== "0" && (
+                {!isRebooking && booth.price && booth.price !== "0" && !uiState.previewMode && (
                     <div className="booth__info">
                         <i className="fas fa-tag" />
                         <div className="booth__info-title">{t("Price")}</div>

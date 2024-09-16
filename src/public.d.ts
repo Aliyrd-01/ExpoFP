@@ -54,6 +54,7 @@ class FloorPlan {
 interface FloorPlanOptions {
     element?: HTMLDivElement;
     eventId?: string;
+    previewMode?: boolean;
     dataUrl?: string;
     noOverlay?: boolean;
     offHistory?: boolean;

@@ -1,3 +1,4 @@
+import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
 import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
@@ -31,6 +32,10 @@ export default class FloorPlanLoader implements FloorPlan {
 
     get ready() {
         return this._ready;
+    }
+
+    get previewMode() {
+        return this.options.previewMode || this.element.hasAttribute(PREVIEW_MODE_ATTRIBUTE);
     }
 
     // options

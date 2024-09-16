@@ -84,7 +84,7 @@ export function createDetailsCanvas(
             lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
         }
         if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
-        if (b.price && b.price !== "0") lines.push(b.price);
+        if (b.price && b.price !== "0" && !uiState.previewMode) lines.push(b.price);
     } else {
         const clicks = heatmapStore.getTotalClicksByBooth(b);
         lines.push("Clicks: " + clicks);
@@ -612,7 +612,7 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
         draw(c) {
             c.textAlign = "center";
             c.textBaseline = "alphabetic";
-            const weight =  Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-special-weight"));
+            const weight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-special-weight"));
             c.font = getFont(fontSize, weight || 500);
 
             const totalHeight = lines.length * lineHeight;

@@ -9,6 +9,8 @@ import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
+import { PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -354,6 +356,19 @@ function processURLParams() {
         locationSearch.startsWith("?_ga")
     ) {
         historyReplace("?");
+    }
+
+    if (locationSearch.includes(PREVIEW_MODE_QUERY)) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get(PREVIEW_MODE_QUERY);
+        if (value === "true") {
+            isLocalStorageAvailable && localStorage.setItem(PREVIEW_MODE_STORAGE_KEY, "1");
+        } else if (value === "false") {
+            isLocalStorageAvailable && localStorage.removeItem(PREVIEW_MODE_STORAGE_KEY);
+        }
+
+        url.searchParams.delete(PREVIEW_MODE_QUERY);
+        historyReplace(url.search.replace(/=&/g, "&").replace(/=$/, ""));
     }
 
     if (uiState.previewExhibitor) {

@@ -17,7 +17,7 @@ import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListType, OverlaySize, ListItem, Visibility } from "./types";
-import { VISIBILITY_STORAGE_KEY } from "../constants";
+import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import { svgArea } from "../data/svg";
 
 // logger.log("Browser", browser.getBrowser());
@@ -531,6 +531,11 @@ export default class UIState {
 
     @action fitBounds() {
         this.moveToRect = this.rootStore.layerStore.rectangle || svgArea;
+    }
+
+    @computed get previewMode() {
+        const previewMode = isLocalStorageAvailable && localStorage.getItem(PREVIEW_MODE_STORAGE_KEY) === "1";
+        return previewMode || this.rootStore.fp.previewMode;
     }
 
     ///////////////////////////////////////////////////////////////////////////

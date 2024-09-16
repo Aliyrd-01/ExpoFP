@@ -77,8 +77,8 @@ function Booth() {
                     <BoothWithoutExhibitor
                         booth={b}
                         description={s.descriptionCombined}
-                        showBuy={s.showBuy}
-                        showReserve={s.showReserve}
+                        showBuy={!uiState.previewMode && s.showBuy}
+                        showReserve={!uiState.previewMode && s.showReserve}
                         isRebooking={false}
                     />
                 );
