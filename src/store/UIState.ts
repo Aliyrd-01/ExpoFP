@@ -96,6 +96,10 @@ export default class UIState {
         return this.rootStore.fp.onBookmarkClick;
     }
 
+    get onCategoryClick() {
+        return this.rootStore.fp.onCategoryClick;
+    }
+
     get onDirection() {
         return this.rootStore.fp.onDirection;
     }

@@ -38,6 +38,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
 
+    onCategoryClick: (e: FloorPlanCategoryClickEvent) => void;
+
     onFpConfigured: () => void;
 
     onDirection: (e: FloorPlanDirectionEvent) => void;
@@ -150,6 +152,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onBookmarkClick = options.onBookmarkClick;
+        this.onCategoryClick = options.onCategoryClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onGetCoordsClick = options.onGetCoordsClick;

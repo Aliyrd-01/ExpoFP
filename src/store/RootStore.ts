@@ -6,15 +6,15 @@ import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 
-import MapboxStore from "./MapboxStore";
-import LayerStore, { LayersMode } from "./LayerStore";
-import RouteStore from "./RouteStore";
-import UIState from "./UIState";
-import type { ListItem } from "./types";
-import ScheduleStore from "./ScheduleStore";
+import { GaEventActions } from "../tools/gtag";
 import HeatmapStore from "./HeatmapStore";
 import LanguageStore from "./LanguageStore";
-import { GaEventActions } from "../tools/gtag";
+import LayerStore, { LayersMode } from "./LayerStore";
+import MapboxStore from "./MapboxStore";
+import RouteStore from "./RouteStore";
+import ScheduleStore from "./ScheduleStore";
+import UIState from "./UIState";
+import type { ListItem } from "./types";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -112,6 +112,12 @@ export default class RootStore {
         this.uiState.details = null;
         this.uiState.list = { type: "category", category };
         this.uiState.desiredOverlaySize = "full";
+        if (this.uiState.onCategoryClick)
+            this.uiState.onCategoryClick({
+                id: category.id,
+                name: category.name,
+                exhibitors: category.exhibitors.map((e) => e.id),
+            });
     }
 
     @action selectSearch(text?: string) {
@@ -199,10 +205,10 @@ export default class RootStore {
         } else this.routeStore.tempToBooth = booth;
 
         if (this.uiState.onBoothClick) {
-                const layer = {
-                    name: "",
-                    description: "",
-                }
+            const layer = {
+                name: "",
+                description: "",
+            };
             const e: FloorPlanBoothClickEvent = {
                 target: { ...booth, layer: booth.layer || layer },
             };
