@@ -9,7 +9,7 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import trackEvent from "../tools/track-event";
-import { t } from "../utils/i18n";
+import { t, getLocale } from "../utils/i18n";
 import isMobile from "../utils/is-mobile";
 import { useAutorun, useReaction } from "../utils/mobx";
 import Button from "./Button";
@@ -176,7 +176,7 @@ function ExhibitorComponent() {
             if (description === null) return "";
 
             const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
-            const lang = `!*//||^^${navigator.language.substring(0, 2)}^^//||*!`;
+            const lang = `!*//||^^${getLocale()}^^//||*!`;
 
             const result = descriptions.find((p) => p.startsWith(lang));
             if (result != null) {
