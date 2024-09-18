@@ -16,6 +16,7 @@ import Menu from "./Menu";
 import "./Overlay.scss";
 import Search from "./Search";
 import Wayfinding from "./Wayfinding";
+import Filter from "./Filter";
 
 interface OverlayProps {
     isGDPR: boolean;
@@ -211,9 +212,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
     return (
         <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${
-                uiState.overlayPosition === "left" ? "start" : "bottom"
-            } ${s.collapsed}`}
+            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition === "left" ? "start" : "bottom"
+                } ${s.collapsed}`}
             id="overlay"
             ref={el}
         >
@@ -226,6 +226,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             <Language />
             <Category />
             <Wayfinding />
+            <Filter />
         </div>
     );
 });

@@ -73,6 +73,9 @@ function stateToUrl() {
             case "language":
                 queryRaw = uiState.list.type;
                 break;
+            case "filter":
+                queryRaw = `${uiState.list.query.key}=${uiState.list.query.value}`;
+                break;
             default:
                 throw new Error("Unkown list.type");
         }
@@ -151,7 +154,11 @@ function dispatchFromUrl() {
             (x: Exhibitor) =>
                 x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
         );
-        if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
+
+        if (slug.startsWith("exhibitors")) {
+            const exhibitors = slug.split("=")[1].split(",");
+            setTimeout(() => store.fp.selectExhibitor(exhibitors), 250);
+        } else if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);
