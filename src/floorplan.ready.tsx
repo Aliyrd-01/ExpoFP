@@ -92,6 +92,9 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         store.layerStore.updateVisibility(mostFrequent, true, true);
 
+        store.uiState.menu = false;
+        store.uiState.details = null;
+
         store.uiState.list = {
             type: "filter",
             items: exhibitors,
