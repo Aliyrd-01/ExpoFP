@@ -14,8 +14,8 @@ export const getLocale = () => {
     return savedLang || data.locale || navLocale || "en";
 }
 
-export const initI18n = async (defaultLocale?: string): Promise<TFunction> => {
-    const locale = defaultLocale || getLocale();
+export const initI18n = async (): Promise<TFunction> => {
+    const locale = getLocale();
 
     let resources = {};
     if (locale !== "en") resources[locale] = { translation: await loadLocale(locale) };
