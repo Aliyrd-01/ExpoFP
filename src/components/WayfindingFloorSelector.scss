@@ -5,7 +5,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: rem(0 15px 10px 15px);
+    padding: rem(5px 15px 10px 15px);
 
     &__body,
     &__list {
@@ -19,11 +19,13 @@
         font-weight: var(--font-bold);
     }
     &__list {
+        --gap: 8px;
         display: flex;
-        gap: rem(8px);
+        gap: var(--gap);
 
         & > button {
             position: relative;
+            z-index: 3;
             min-width: rem(38px);
             max-width: rem(100px);
             height: rem(38px);
@@ -37,12 +39,33 @@
             outline: none;
             cursor: pointer;
 
+            &:nth-child(2) {
+                animation: blinkBlue 1.4s linear 3s forwards;
+                animation-delay: 4s;
+            }
             &.isCurrent {
                 z-index: 2;
                 background: var(--color-primaryLight);
                 border: 1px solid var(--color-primary);
                 color: var(--color-primary);
                 font-weight: var(--font-bold);
+            }
+            &.isCurrent:first-child {
+                &:after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: var(--color-primaryLight);
+                    border: 1px solid var(--color-primary);
+                    border-radius: var(--border-radius-full);
+                    z-index: 2;
+                    animation: moveCopy 2s ease-in-out forwards;
+                    animation-delay: 3s;
+                    opacity: 0;
+                }
             }
             & > span {
                 display: block;
@@ -101,6 +124,10 @@
 }
 
 .efp-kiosk {
+    .efp-wayfinding-floor {
+        padding-top: rem(14px);
+        padding-bottom: 0;
+    }
     .efp-wayfinding-floor__list > button {
         width: clamp(40px, 6vw, 52px);
         height: clamp(40px, 6vw, 52px);
@@ -115,6 +142,37 @@
             width: 50%;
             height: auto;
         }
+    }
+}
+
+@keyframes moveCopy {
+    0% {
+        transform: translateX(0);
+        opacity: 0;
+    }
+    60% {
+        transform: translateX(calc(100% + var(--gap)));
+        opacity: 0.7;
+    }
+    100% {
+        transform: translateX(calc(100% + var(--gap)));
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes blinkBlue {
+    0%,
+    0%,
+    100% {
+        box-shadow: none;
+    }
+    25%,
+    75% {
+        box-shadow: 0 0 10px 2px rgba(65, 182, 231, 0.3);
+        background: var(--color-primaryLight);
+        border: 1px solid var(--color-primary);
+        color: var(--color-primary);
     }
 }
 
