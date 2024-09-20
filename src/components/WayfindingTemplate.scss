@@ -1,18 +1,18 @@
 @import "../styles/helpers.scss";
 
 .efp-wayfinding {
-    &__top {
-        margin-bottom: rem(20px);
-    }
-    &.isCollapsed &__top {
-        margin-bottom: rem(10px);
+    display: flex;
+    flex-flow: column wrap;
+    gap: rem(14px);
+
+    &.isCollapsed {
+        gap: 0;
     }
 }
 
 .efp-wayfindingForm {
     display: flex;
     align-items: center;
-    margin-bottom: rem(18px);
     padding-inline-end: rem(10px);
 
     &__icons {
@@ -126,9 +126,17 @@
         }
     }
 
+    .main-wayfinding.hidden {
+        .efp-wayfinding__top {
+            padding: 0;
+        }
+    }
+
     .efp-wayfinding {
+        gap: 0;
+
         &__top {
-            margin-bottom: 0;
+            padding-bottom: rem(30px);
         }
     }
 

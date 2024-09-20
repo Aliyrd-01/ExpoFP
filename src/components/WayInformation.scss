@@ -1,5 +1,15 @@
 @import "../styles/helpers.scss";
 
+.efp-wayfinding.isCollapsed {
+    .efp-wayInformation {
+        padding-top: rem(4px);
+        border-top: 0;
+    }
+    .efp-wayInformation__item strong {
+        margin-top: -2px;
+    }
+}
+
 .efp-wayInformation {
     display: flex;
     justify-content: space-between;
@@ -19,6 +29,7 @@
             font-weight: 500;
         }
         strong {
+            display: block;
             font-size: rem(17px);
             color: var(--color-black);
             font-weight: 600;
