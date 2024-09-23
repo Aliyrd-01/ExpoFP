@@ -342,7 +342,8 @@ export default class UIState {
         const matchingCategories = new Set<Category>();
         const matchingEvents = new Set<ScheduleItem>();
 
-        const splittedTexts = text.split("&").filter((s) => s);
+        // a&b&foo=1&bar=2 => a&b
+        const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
 
         function selectLettersSpacesNumbers(input: string): string {
             return input?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
