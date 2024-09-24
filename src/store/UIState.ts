@@ -272,11 +272,12 @@ export default class UIState {
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;
         const isCategory = this.list.type === "category";
+        const isFilter = this.list.type === "filter";
 
-        if (uiState.noOverlay && !isCategory) return false;
+        if (uiState.noOverlay && (!isCategory || !isFilter)) return false;
 
         return (
-            (text || isCategory) &&
+            (text || isCategory || isFilter) &&
             exhibitors.length &&
             (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
                 this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
@@ -429,6 +430,8 @@ export default class UIState {
                 return this.list.category.exhibitors;
             case "language":
                 return this.rootStore.languageStore.languages;
+            case "filter":
+                return this.list.items;
         }
         throw new Error("Unknown list.type");
     }
