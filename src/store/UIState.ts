@@ -347,6 +347,7 @@ export default class UIState {
         const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
 
         function selectLettersSpacesNumbers(input: string): string {
+            // Without & because of names that contain & (e.g. "A&B")
             return input?.replace(/[!@#$%^*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
         }
 
