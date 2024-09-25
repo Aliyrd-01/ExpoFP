@@ -347,7 +347,7 @@ export default class UIState {
         const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
 
         function selectLettersSpacesNumbers(input: string): string {
-            return input?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
+            return input?.replace(/[!@#$%^*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
         }
 
         function containsIgnoreCase(str: string, searchTerm: string) {
