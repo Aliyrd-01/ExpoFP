@@ -65,6 +65,11 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectExhibitor(nameOrExternalId: string | string[]) {
+        if (!nameOrExternalId?.length) {
+            store.selectSearch();
+            return;
+        }
+
         const exhibitors = store.exhibitorStore.exhibitors.filter((exh) => {
             if (typeof nameOrExternalId === "string") {
                 return exh.name === nameOrExternalId || exh.externalId === nameOrExternalId;
@@ -72,10 +77,36 @@ export default class FloorPlanReady extends FloorPlanLoader {
             return nameOrExternalId.includes(exh.name) || nameOrExternalId.includes(exh.externalId);
         });
 
-        if (exhibitors && exhibitors.length > 0) {
+        if (!exhibitors?.length) return;
+
+        if (typeof nameOrExternalId === "string") {
             store.selectExhibitor(exhibitors[0]);
             store.moveToList([exhibitors[0]]);
+            return;
         }
+
+        const layers = exhibitors.flatMap(e => e.booths.map(b => b.layer));
+        const { description: mostFrequent } = layers.reduce((acc, l) => {
+            acc.freq[l.description] = (acc.freq[l.description] || 0) + 1;
+            if (acc.freq[l.description] > acc.maxCount) {
+                acc.maxCount = acc.freq[l.description];
+                acc.mostFrequent = l;
+            }
+            return acc;
+        }, { freq: {} as Record<string, number>, mostFrequent: layers[0], maxCount: 0 }).mostFrequent;
+
+        store.layerStore.updateVisibility(mostFrequent, true, true);
+
+        store.uiState.menu = false;
+        store.uiState.details = null;
+
+        store.uiState.list = {
+            type: "filter",
+            items: exhibitors,
+            query: { key: "exhibitors", value: exhibitors.map((e) => e.externalId).join(",") },
+        };
+
+        store.moveToList();
     }
 
     selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
