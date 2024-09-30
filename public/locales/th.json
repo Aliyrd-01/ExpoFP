@@ -40,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "ส่งคำแนะนำการเข้าสู่ระบบไปที่ {{email}} เพื่อแก้ไขโปรไฟล์?",
     "Share bookmarks": "แชร์บุ๊กมาร์ก",
     "Size": "ขนาด",
+    "Show More": "แสดงเพิ่มเติม",
     "This is a FREE floor plan": "นี่คือแผนผังชั้นฟรี",
     "Toggle bookmark": "สลับบุ๊กมาร์ก",
     "Use {{keyCode}} + scroll to zoom": "ใช้ {{keyCode}} + เลื่อนเพื่อซูม",
