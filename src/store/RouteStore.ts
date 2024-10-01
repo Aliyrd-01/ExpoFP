@@ -2,8 +2,10 @@ import { action, computed, observable } from "mobx";
 import { Point, lineLength } from "simple-geometry";
 import store, { layersStore } from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
+import { fpGeo } from "../components/Mapbox/utils/fpGeo";
 import Rect from "../core/Rect";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import { GpsConfig, convertGpsToLocal } from "../utils/gps";
 import { getLayerSvg, svgArea } from "./../data/svg";
 import { RouteLine, getGraphLines, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
@@ -19,15 +21,15 @@ const replaceCommasWithDot = (value: string | number | undefined) => {
 };
 
 export interface MarkerIcon {
-    name: string,
-    content: string,
-    width: number,
-    height: number
+    name: string;
+    content: string;
+    width: number;
+    height: number;
 }
 
 export interface MarkersData {
-    icons: MarkerIcon[],
-    markers: Marker[]
+    icons: MarkerIcon[];
+    markers: Marker[];
 }
 
 export default class RouteStore {
@@ -78,7 +80,6 @@ export default class RouteStore {
 
         if (!route && store.fp.onDirection) store.fp.onDirection(null);
 
-
         setTimeout(() => {
             this.rootStore.moveToList(list);
             var id = uiState.selectedRoute?.from?.id;
@@ -99,7 +100,7 @@ export default class RouteStore {
 
     @computed({ keepAlive: true }) get pathLayers() {
         return store.routeStore.routeLines
-            ?.map(line => line.p0.layer)
+            ?.map((line) => line.p0.layer)
             ?.filter((name, i, self) => self.indexOf(name) === i)
             .reverse()
             .map((name, i) => ({ id: i + 1, layer: store.layerStore.findLayer(name) }));
@@ -113,6 +114,12 @@ export default class RouteStore {
         if (!position) return null;
 
         let layerExists = this.rootStore.layerStore.findLayer(position.z);
+
+        const localPoint =
+            position.lat && position.lng
+                ? convertGpsToLocal(position.lat, position.lng, fpGeo.properties.config as GpsConfig)
+                : position;
+
         return (
             this.rootStore.boothStore.booths
                 .filter((b) => {
@@ -124,14 +131,14 @@ export default class RouteStore {
                 })
                 .sort(
                     (b1, b2) =>
-                        lineLength(position, { x: b1.rect.cx, y: b1.rect.cy }) -
-                        lineLength(position, { x: b2.rect.cx, y: b2.rect.cy })
+                        lineLength(localPoint, { x: b1.rect.cx, y: b1.rect.cy }) -
+                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy })
                 )[0] || null
         );
     }
 
     @action setMarkers(data: MarkersData) {
-        this.markersData.markers = data.markers.map(dot => {
+        this.markersData.markers = data.markers.map((dot) => {
             dot.x = replaceCommasWithDot(dot.x);
             dot.y = replaceCommasWithDot(dot.y);
             dot.lat = replaceCommasWithDot(dot.lat);
@@ -142,8 +149,8 @@ export default class RouteStore {
     }
 
     @action selectMarker(id: string, focus: boolean) {
-        const marker = this.markersData.markers.find(marker => marker.id === id);
-        this.markersData.markers.forEach(marker => marker.active = false);
+        const marker = this.markersData.markers.find((marker) => marker.id === id);
+        this.markersData.markers.forEach((marker) => (marker.active = false));
 
         if (marker) {
             marker.active = true;
@@ -158,7 +165,7 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get selectedMarkers() {
-        return this.markersData.markers.filter(marker => marker.active);
+        return this.markersData.markers.filter((marker) => marker.active);
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
@@ -271,17 +278,17 @@ export default class RouteStore {
                 store.fp.onDirection({
                     from: route?.from
                         ? {
-                            id: route.from.id,
-                            name: route.from.name,
-                            layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
-                        }
+                              id: route.from.id,
+                              name: route.from.name,
+                              layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
+                          }
                         : null,
                     to: route?.to
                         ? {
-                            id: route.to.id,
-                            name: route.to.name,
-                            layer: { name: route.to.layer?.name, description: route.to.layer?.description },
-                        }
+                              id: route.to.id,
+                              name: route.to.name,
+                              layer: { name: route.to.layer?.name, description: route.to.layer?.description },
+                          }
                         : null,
                     lines: routeLines,
                     distance: `${distance}${units}`,
@@ -323,7 +330,7 @@ export function extractRoute(from: string, to: string) {
 }
 
 export class Route {
-    public constructor(public from: Booth, public to: Booth) { }
+    public constructor(public from: Booth, public to: Booth) {}
 }
 
 export class CurrentPosition extends Point {
@@ -341,7 +348,7 @@ export class CurrentPosition extends Point {
 
 export interface Marker extends CurrentPosition {
     id: string;
-    icon: string,
-    selectedIcon: string,
+    icon: string;
+    selectedIcon: string;
     active?: boolean;
 }
