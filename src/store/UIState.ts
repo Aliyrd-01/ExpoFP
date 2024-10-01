@@ -1,8 +1,10 @@
 import { action, computed, observable } from "mobx";
 import { boothStore, exhibitorStore, uiState } from ".";
+import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import data from "../data";
+import { svgArea } from "../data/svg";
 import { hasUserConsent } from "../tools/gtag";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
@@ -16,9 +18,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
-import type { ListType, OverlaySize, ListItem, Visibility } from "./types";
-import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
-import { svgArea } from "../data/svg";
+import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -65,7 +65,7 @@ export default class UIState {
     @observable heatmap = false;
     @observable rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
-    @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
+    @observable debugCircles: { x: number; y: number; radius: number; color?: string }[] = [];
     @observable mapControlsHidden = false;
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
@@ -274,6 +274,8 @@ export default class UIState {
         const isCategory = this.list.type === "category";
         const isFilter = this.list.type === "filter";
 
+        if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
+
         if (uiState.noOverlay && (!isCategory || !isFilter)) return false;
 
         return (
@@ -314,20 +316,20 @@ export default class UIState {
             return exhibitorsArray.length === 0
                 ? boothsArray
                 : cats.concat(
-                    combinedArray.sort((a, b) => {
-                        const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                        const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+                      combinedArray.sort((a, b) => {
+                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                        if (aFeatured !== bFeatured) {
-                            return aFeatured ? -1 : 1;
-                        }
+                          if (aFeatured !== bFeatured) {
+                              return aFeatured ? -1 : 1;
+                          }
 
-                        const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                        const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                        return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
-                    })
-                );
+                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
+                      })
+                  );
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
@@ -388,11 +390,14 @@ export default class UIState {
                 ? true
                 : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-            if (addBoothCondition &&
-                splittedTexts.some((text) =>
-                    containsIgnoreCase(b.title || "", text) ||
-                    containsIgnoreCase(b.name, text) ||
-                    containsLevelIgnoreCase(b.layer?.name ?? null, text))
+            if (
+                addBoothCondition &&
+                splittedTexts.some(
+                    (text) =>
+                        containsIgnoreCase(b.title || "", text) ||
+                        containsIgnoreCase(b.name, text) ||
+                        containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                )
             ) {
                 matchingBooths.add(b);
             }
@@ -488,11 +493,10 @@ export default class UIState {
 
     @action setVisibility(visibility: Visibility) {
         const flags: Visibility = {
-            ...Object.keys(this.visibility)
-                .reduce((acc, key) => ({ ...acc, [key]: true }), {}),
+            ...Object.keys(this.visibility).reduce((acc, key) => ({ ...acc, [key]: true }), {}),
 
             ...Object.keys(visibility)
-                .filter(k => this.visibility.hasOwnProperty(k))
+                .filter((k) => this.visibility.hasOwnProperty(k))
                 .reduce((acc, key) => ({ ...acc, [key]: visibility[key] }), {}),
         };
 

@@ -7,9 +7,10 @@ import data from "../data";
 import { PathInfo, RawRegularBooth } from "../data/Data";
 import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
+import { uiState } from "./index";
 import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
-import { uiState } from "./index";
+import { Route } from "./RouteStore";
 
 // interface BoothState {
 //     hover: boolean;
@@ -77,7 +78,7 @@ export default class BoothStore {
     }
 
     findBooth(str: string) {
-       return this.booths.find((b) => b.name === str || b.slug === str || b.externalId === str);
+        return this.booths.find((b) => b.name === str || b.slug === str || b.externalId === str);
     }
 }
 
@@ -124,7 +125,17 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) private get inList() {
-        return this.uiState.listBooths.has(this as unknown as Booth);
+        const array: Booth[] = [];
+        if (this.uiState.details) {
+            if (this.uiState.details instanceof Exhibitor) array.push(...this.uiState.details.booths);
+            // else if (this.uiState.details instanceof BoothBase) array.push(this.uiState.details as Booth);
+            if (this.uiState.details instanceof Route) {
+                array.push(this.uiState.details.from as Booth);
+                array.push(this.uiState.details.to as Booth);
+            }
+        } else array.push(...this.uiState.listBooths);
+
+        return array.includes(this as unknown as Booth);
     }
 
     @computed({ keepAlive: true }) get hover() {
@@ -147,6 +158,9 @@ export abstract class BoothBase {
         ) {
             return false;
         }
+
+        const inList = this.inList;
+        if (this.uiState.details && !inList) return false;
 
         return (
             this.inList ||

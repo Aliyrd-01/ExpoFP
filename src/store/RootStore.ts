@@ -112,6 +112,10 @@ export default class RootStore {
         this.uiState.details = null;
         this.uiState.list = { type: "category", category };
         this.uiState.desiredOverlaySize = "full";
+
+        const visible = category.exhibitors.find((e) => e.booths.find((b) => b.visible));
+        if (!visible) this.layerStore.updateVisibility(category.exhibitors[0]?.booths[0]?.layer, true, false);
+
         if (this.uiState.onCategoryClick)
             this.uiState.onCategoryClick({
                 id: category.id,
@@ -149,8 +153,11 @@ export default class RootStore {
         if (window["__resett"]) window["__resett"]();
         this.uiState.menu = false;
         this.selectCategory(category);
-        this.moveToList();
-        this.showMap();
+
+        setTimeout(() => {
+            this.moveToList();
+            this.showMap();
+        }, 100);
         // commit("setMenu", false);
         // dispatch("selectCategory", id);
         // dispatch("moveToList");
@@ -267,6 +274,7 @@ export default class RootStore {
     @action moveToList(items?: ListItem[]) {
         // take only to booths and exhibitors, ignore categories
         items = items || this.uiState.listItems;
+
         const booths = [];
         items.forEach((item) => {
             if (item instanceof Exhibitor) {
