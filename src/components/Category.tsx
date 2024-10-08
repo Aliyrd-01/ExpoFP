@@ -45,4 +45,4 @@ function Category() {
     }
 }
 
-export default () => useObserver(() => !uiState.menu && !uiState.details && !!uiState.selectedCategory && <Category />);
+export default () => useObserver(() => !uiState.menu && !!uiState.selectedCategory && <Category />);

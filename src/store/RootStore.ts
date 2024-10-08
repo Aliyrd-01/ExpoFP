@@ -94,7 +94,7 @@ export default class RootStore {
 
     @action selectNone() {
         if (window["__resett"]) window["__resett"]();
-        this.uiState.details = null;
+        this.uiState.details = this.uiState.selectedCategory;
     }
 
     @action selectBookmarks() {
@@ -109,19 +109,12 @@ export default class RootStore {
 
     @action selectCategory(category: Category) {
         if (window["__resett"]) window["__resett"]();
-        this.uiState.details = null;
+        this.uiState.details = category;
         this.uiState.list = { type: "category", category };
         this.uiState.desiredOverlaySize = "full";
 
         const visible = category.exhibitors.find((e) => e.booths.find((b) => b.visible));
         if (!visible) this.layerStore.updateVisibility(category.exhibitors[0]?.booths[0]?.layer, true, false);
-
-        if (this.uiState.onCategoryClick)
-            this.uiState.onCategoryClick({
-                id: category.id,
-                name: category.name,
-                exhibitors: category.exhibitors.map((e) => e.id),
-            });
     }
 
     @action selectSearch(text?: string) {
@@ -153,6 +146,13 @@ export default class RootStore {
         if (window["__resett"]) window["__resett"]();
         this.uiState.menu = false;
         this.selectCategory(category);
+
+        if (this.uiState.onCategoryClick)
+            this.uiState.onCategoryClick({
+                id: category.id,
+                name: category.name,
+                exhibitors: category.exhibitors.map((e) => e.id),
+            });
 
         setTimeout(() => {
             this.moveToList();

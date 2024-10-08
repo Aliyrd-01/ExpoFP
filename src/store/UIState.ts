@@ -27,7 +27,7 @@ export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
-    @observable.ref details: Booth | Exhibitor | Route = null;
+    @observable.ref details: Booth | Exhibitor | Route | Category = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
@@ -426,7 +426,7 @@ export default class UIState {
     }
 
     @computed get listItems(): ListItem[] {
-        if (this.details instanceof Route && this.details.from && this.details.to) return [this.details.from, this.details.to];
+        if (this.details instanceof Route) return [this.details.from, this.details.to].filter((x) => x);
 
         switch (this.list.type) {
             case "search":

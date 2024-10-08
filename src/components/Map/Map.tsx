@@ -11,8 +11,10 @@ import Rect from "../../core/Rect";
 import { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, BoothBase } from "../../store/BoothStore";
+import { Category } from "../../store/CategoryStore";
 import { Exhibitor } from "../../store/ExhibitorStore";
 import { LayerMode } from "../../store/LayerStore";
+import { Route } from "../../store/RouteStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
@@ -136,23 +138,33 @@ export default function Map() {
             }
             //
 
+            let type = null;
+            let boothsNames = [];
+
+            if (details instanceof Exhibitor) {
+                type = "exhibitor";
+                boothsNames = details.booths
+                    .map((b) => b.name)
+                    .sort((b1, b2) =>
+                        b1 == store.routeStore.tempToBooth?.name ? -1 : b2 == store.routeStore.tempToBooth?.name ? 1 : 0
+                    );
+            } else if (details instanceof BoothBase) {
+                type = "booth";
+                boothsNames = [details.name];
+            } else if (details instanceof Route) {
+                type = "route";
+                boothsNames = [details.from?.name, details.to?.name].filter((name) => !!name);
+            } else if (details instanceof Category) {
+                type = "category";
+                boothsNames = details.exhibitors.map((e) => e.booths.map((b) => b.name)).flat();
+            }
+
             var data = {
-                type: details instanceof BoothBase ? "booth" : details instanceof Exhibitor ? "exhibitor" : ("route" as any),
+                type: type,
                 name: details?.name,
                 id: details?.id,
                 externalId: details?.externalId,
-                boothsNames:
-                    details instanceof Exhibitor
-                        ? details.booths
-                              .map((b) => b.name)
-                              .sort((b1, b2) =>
-                                  b1 == store.routeStore.tempToBooth?.name ? -1 : b2 == store.routeStore.tempToBooth?.name ? 1 : 0
-                              )
-                        : details instanceof BoothBase
-                        ? [details.name]
-                        : [store.uiState.selectedRoute?.from?.name, store.uiState.selectedRoute?.to?.name].filter(
-                              (name) => !!name
-                          ),
+                boothsNames: boothsNames,
             };
 
             setTimeout(() => uiState.onDetails(data), 200);

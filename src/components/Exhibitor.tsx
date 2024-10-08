@@ -500,7 +500,7 @@ function ExhibitorComponent() {
     }
 
     function handleCategoryClick(c: Category) {
-        store.selectCategory(c);
+        store.clickCategory(c);
     }
 
     function sendLoginLink(e: MouseEvent<HTMLButtonElement>) {

@@ -112,7 +112,7 @@ interface FloorPlanDirectionEvent {
 }
 
 interface FloorPlanDetailsEvent {
-    type: "booth" | "exhibitor" | "route";
+    type: "booth" | "exhibitor" | "route" | "category";
     id: string;
     name: string;
     externalId: string;

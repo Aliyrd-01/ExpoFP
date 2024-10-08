@@ -6,6 +6,7 @@ import Rect from "../core/Rect";
 import data from "../data";
 import { PathInfo, RawRegularBooth } from "../data/Data";
 import settings from "../tools/settings";
+import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import { uiState } from "./index";
 import { Layer } from "./LayerStore";
@@ -132,6 +133,9 @@ export abstract class BoothBase {
             if (this.uiState.details instanceof Route) {
                 array.push(this.uiState.details.from as Booth);
                 array.push(this.uiState.details.to as Booth);
+            }
+            if (this.uiState.details instanceof Category) {
+                array.push(...(this.uiState.details as Category).exhibitors.map((e) => e.booths).flat());
             }
         } else array.push(...this.uiState.listBooths);
 
