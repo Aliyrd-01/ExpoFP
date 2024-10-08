@@ -96,9 +96,7 @@ export default function initUi(store: RootStore) {
     });
 
     if (isLocalStorageAvailable) {
-        uiState.setVisibility(
-            JSON.parse(localStorage.getItem(VISIBILITY_STORAGE_KEY)) || {},
-        );
+        uiState.setVisibility(JSON.parse(localStorage.getItem(VISIBILITY_STORAGE_KEY)) || {});
     }
 
     function updateScreenSize(width, height) {

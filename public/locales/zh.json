@@ -40,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "发送登录说明至 {{email}} 以编辑配置文件？",
     "Share bookmarks": "分享书签",
     "Size": "尺寸",
+    "Show More": "显示更多",
     "This is a FREE floor plan": "这是免费的平面布置图",
     "Toggle bookmark": "切换书签",
     "Use {{keyCode}} + scroll to zoom": "使用 {{keyCode}} 和鼠标滚动进行缩放",

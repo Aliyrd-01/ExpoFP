@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, Suspense, useRef } from "react";
+import React, { MouseEvent, Suspense, useRef, useState, useEffect } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { SpecialBooth } from "../store/BoothStore";
@@ -40,7 +40,7 @@ function ExhibitorComponent() {
         get anySocial() {
             if (uiState.kiosk) return false;
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
-                (s) => this.exhibitor[s]
+                (s) => this.exhibitor[s],
             );
         },
         get anyAddress() {
@@ -66,6 +66,20 @@ function ExhibitorComponent() {
         },
     }));
     const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, s.exhibitor.featured ? "#999" : "#555");
+    const [isContentOverflowing, setIsContentOverflowing] = useState(false);
+    const [showKioskDetails, setShowKioskDetails] = useState<boolean>(false);
+    const detailsRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const checkHeight = () => {
+            if (detailsRef.current) {
+                const height = detailsRef.current.offsetHeight;
+                setIsContentOverflowing(height > 300);
+            }
+        };
+
+        checkHeight();
+    }, []);
 
     useAutorun(() => {
         if (store.heatmapStore.forceTrack) {
@@ -82,7 +96,7 @@ function ExhibitorComponent() {
         () => {
             if (el.current) el.current.parentElement.scrollTop = 0;
             s.collapsed = true;
-        }
+        },
     );
 
     function handleClick(e: any, action: GaEventActions) {
@@ -131,7 +145,9 @@ function ExhibitorComponent() {
                     showTitle={false}
                     options={defaultRebookingOptions}
                     checked={exhibitor.rebookingState.toString()}
-                    onChange={(e) => store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), exhibitor.rebookingNote)}
+                    onChange={(e) =>
+                        store.exhibitorStore.setRebookingState(exhibitor, parseInt(e.target.value), exhibitor.rebookingNote)
+                    }
                 />
                 <RebookingNotes
                     state={"default"}
@@ -251,7 +267,12 @@ function ExhibitorComponent() {
                             </div>
                         ) : null}
 
-                        <div className="exhibitor__details">
+                        <div
+                            className={classNames("exhibitor__details", {
+                                "details-hidden": uiState.kiosk && isContentOverflowing && !showKioskDetails,
+                            })}
+                            ref={detailsRef}
+                        >
                             <div className="exhibitor__categories">
                                 {exhibitor.booths.map((booth) => (
                                     <a
@@ -477,10 +498,28 @@ function ExhibitorComponent() {
                             {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2)}
                             {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3)}
                         </div>
+                        {uiState.kiosk && isContentOverflowing && !showKioskDetails ? (
+                            <div className="show-details-button">
+                                <button type="button" onClick={() => setShowKioskDetails(true)}>
+                                    {t("Show More")}
+                                </button>
+                            </div>
+                        ) : null}
                     </>
                 ) : (
                     rebooking
                 )}
+                {uiState.kiosk && isContentOverflowing && showKioskDetails ? (
+                    <button type="button" className="hide-details-button" onClick={() => setShowKioskDetails(false)}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M20.8945 14.4472C20.6475 14.9412 20.0468 15.1414 19.5528 14.8945L12 11.1181L4.44724 14.8945C3.95326 15.1414 3.35259 14.9412 3.1056 14.4472C2.85861 13.9533 3.05883 13.3526 3.55281 13.1056L11.5528 9.1056C11.8343 8.96483 12.1657 8.96483 12.4472 9.1056L20.4472 13.1056C20.9412 13.3526 21.1414 13.9533 20.8945 14.4472Z"
+                            />
+                        </svg>
+                    </button>
+                ) : null}
             </OverlayContent>
         );
     });

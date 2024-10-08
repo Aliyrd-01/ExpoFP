@@ -97,14 +97,12 @@ export default function LogoOverlay() {
             )}
             {uiState.kiosk && (
                 <div
-                    className={classNames("qr", { "qr--right": settings.EXPO === "metstrade-superyacht2023" })}
+                    className={classNames("qr", { "qr--right": settings.EXPO === "metstrade-superyacht2023" || uiState.rtl })}
                     style={{
-                        textAlign: "center",
                         bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5),
-                        [uiState.rtl ? "right" : "left"]: remsToPixels(0.5),
                     }}
                 >
-                    <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
+                    <div>View Map on Phone</div>
                     <QRCode value={`https://${settings.EXPO}.expofp.com/${point}`} size={100} />
                 </div>
             )}

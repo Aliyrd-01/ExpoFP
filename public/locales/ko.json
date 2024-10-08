@@ -40,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "프로필 수정을 위한 로그인 안내를 {{email}} 이메일로 전송해 드릴까요?",
     "Share bookmarks": "북마크 공유",
     "Size": "크기",
+    "Show More": "더 보기",
     "This is a FREE floor plan": "무료 이벤트 배치도입니다",
     "Toggle bookmark": "북마크 토글",
     "Use {{keyCode}} + scroll to zoom": "{{keyCode}} + 스크롤을 사용하여 확대",
