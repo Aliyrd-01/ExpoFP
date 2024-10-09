@@ -49,7 +49,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         reaction(
             () => store.layerStore.layersLoaded,
-            () => this.resolveReady(),
+            () => {
+                this.resolveReady();
+                this.onInit?.(this);
+            },
         );
     }
 
