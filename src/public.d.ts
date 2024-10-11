@@ -16,6 +16,10 @@ class FloorPlan {
 
     onCategoryClick(e: FloorPlanCategoryClickEvent): void;
 
+    /**
+     * @deprecated 
+     * The onFpConfigured method is deprecated. Use onInit instead. 
+     */
     onFpConfigured(): void;
 
     onDirection(e: FloorPlanDirectionEvent): void;
@@ -86,6 +90,10 @@ interface FloorPlanOptions {
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onBookmarkClick?: (e: FloorPlanBookmarkClickEvent) => void;
     onCategoryClick?: (e: FloorPlanCategoryClickEvent) => void;
+    /**
+     * @deprecated 
+     * The onFpConfigured method is deprecated. Use onInit instead. 
+     */
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
