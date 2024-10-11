@@ -58,6 +58,10 @@
             cursor: default;
             pointer-events: none;
         }
+
+        &.full-name {
+            max-width: unset;
+        }
     }
 }
 
@@ -89,6 +93,10 @@
             &.disabled {
                 opacity: 0.8;
                 color: var(--color-gray);
+            }
+
+            &.full-name {
+                width: unset;
             }
         }
     }
