@@ -26,7 +26,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly noOverlay: boolean;
     readonly offHistory: boolean;
     readonly allowConsent: boolean | undefined;
-    readonly onInit;
+    readonly onInit: (fp: FloorPlan) => void;
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
