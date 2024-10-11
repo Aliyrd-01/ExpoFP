@@ -68,6 +68,7 @@ interface FloorPlanOptions {
     onExhibitorCustomButtonClick?: (e: FloorPlanCustomButtonEvent) => void;
     onMarkerClick?: (e: FloorPlanMarkerEvent | undefined) => void;
     onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
+    onInit?: (fp: FloorPlan) => void;
 }
 
 interface Layer {

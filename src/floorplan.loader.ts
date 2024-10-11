@@ -26,6 +26,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly noOverlay: boolean;
     readonly offHistory: boolean;
     readonly allowConsent: boolean | undefined;
+    readonly onInit;
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
@@ -164,6 +165,8 @@ export default class FloorPlanLoader implements FloorPlan {
         this.onMarkerClick = options.onMarkerClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
+        this.onInit = options.onInit;
+
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;
         });
