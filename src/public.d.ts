@@ -42,7 +42,7 @@ class FloorPlan {
 
     updateLayerVisibility(layer: string, visible: boolean): void;
 
-    getCenterCoordinates(): { x: number, y: number, z: string | null };
+    getCenterCoordinates(): FloorPlanGetCoordsEvent;
 
     applyParameters(queryRaw: string): void;
 
