@@ -86,7 +86,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    getCenterCoordinates() {
+    getCenterCoordinates(): any {
         nr();
     }
 

@@ -152,7 +152,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.layerStore.updateVisibility(layer, visible);
     }
 
-    getCenterCoordinates() {
+    getCenterCoordinates(): { x: number, y: number, z: string | null } {
         return store.fp.getCenterCoordinates();
     }
 
