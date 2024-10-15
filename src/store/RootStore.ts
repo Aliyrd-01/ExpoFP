@@ -60,7 +60,7 @@ export default class RootStore {
 
         setTimeout(
             () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
-            isMobile || isWebview(navigator.userAgent) ? 400 : 50
+            isMobile || isWebview(navigator.userAgent) ? 600 : 50
         );
     }
 
