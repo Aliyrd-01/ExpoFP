@@ -7,6 +7,8 @@ import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 
 import { GaEventActions } from "../tools/gtag";
+import isMobile from "../utils/is-mobile";
+import isWebview from "../utils/is-webview";
 import HeatmapStore from "./HeatmapStore";
 import LanguageStore from "./LanguageStore";
 import LayerStore, { LayersMode } from "./LayerStore";
@@ -58,7 +60,7 @@ export default class RootStore {
 
         setTimeout(
             () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
-            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+            isMobile || isWebview(navigator.userAgent) ? 400 : 50
         );
     }
 
