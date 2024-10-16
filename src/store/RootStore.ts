@@ -58,19 +58,17 @@ export default class RootStore {
         }
         if (!focus) return;
 
-        setTimeout(
-            () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
-            isWebview(navigator.userAgent) ? 1000 : isMobile ? 600 : 50
-        );
+        setTimeout(() => this.moveToList(exhibitor.booths.filter((b) => b.visible)), isWebview ? 1000 : isMobile ? 600 : 50);
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
 
-        if (focus) this.moveToList(b);
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
             this.layerStore.updateVisibility(b[0].layer, true);
+
+        if (focus) setTimeout(() => this.moveToList(b), isWebview ? 1000 : isMobile ? 600 : 50);
     }
 
     @action reset() {

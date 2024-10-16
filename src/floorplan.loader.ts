@@ -1,6 +1,6 @@
 import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
-import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
+import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
@@ -175,7 +175,8 @@ export default class FloorPlanLoader implements FloorPlan {
         this.element = element;
         if (element["__expofp"]) throw new Error("Element already in use");
         element["__expofp"] = this;
-        const eventId = options.eventId ||
+        const eventId =
+            options.eventId ||
             element.getAttribute("data-event-id") ||
             element.getAttribute("data-event") || // legacy remove 2020-12-12
             (document.location.hostname.endsWith(".expofp.com")
@@ -203,7 +204,7 @@ export default class FloorPlanLoader implements FloorPlan {
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
-        if (eventId === "money2020usa23" && isWebview(navigator.userAgent)) {
+        if (eventId === "money2020usa23" && isWebview) {
             this.allowConsent = true;
         }
 
@@ -295,8 +296,12 @@ export default class FloorPlanLoader implements FloorPlan {
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {
                 const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
-                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(res => res.json());
-                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(res => res.json());
+                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(
+                    (res) => res.json()
+                );
+                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(
+                    (res) => res.json()
+                );
                 window["__heatmapData"] = { booths, exhibitors };
             }
 
