@@ -5,6 +5,7 @@ import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 import { DrawerObject } from "./RectPainter";
 import Sprite from "./Sprite";
+import { logTexture } from "../../../../tools/texture-logger";
 
 export default class ImagePainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -203,6 +204,7 @@ export default class ImagePainter implements Painter {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, source);
+        logTexture(source.width, source.height, 2);
         return texture;
     }
 
@@ -254,6 +256,7 @@ export default class ImagePainter implements Painter {
         {
             gl.bindTexture(gl.TEXTURE_2D, this.fallBackTexture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+            logTexture(1, 1, 4);
         }
 
         for (let w of this.objects) {
