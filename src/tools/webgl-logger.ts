@@ -4,14 +4,23 @@ let loadedBytes = 0;
 let loggedMb = 0;
 const loggedByCategory = new Map<string, number>();
 
+let logFinishedTimeout = 0;
+
 export function logBuffer(bytes: number, category: string) {
     loadedBytes += bytes;
     let categoryBytes = loggedByCategory.get(category) || 0;
     loggedByCategory.set(category, categoryBytes + bytes);
 
+    log(false);
+
+    if (logFinishedTimeout) clearTimeout(logFinishedTimeout);
+    logFinishedTimeout = setTimeout(() => log(true), 5000);
+}
+
+function log(finished: boolean) {
     const loadedMbRounded = Math.floor(loadedBytes / 1024 / 1024);
     // log every 10MB
-    if (loadedMbRounded > loggedMb + 10) {
+    if (finished || loadedMbRounded > loggedMb + 10) {
         loggedMb = loadedMbRounded;
 
         const catLogMessage = Array.from(
@@ -21,17 +30,8 @@ export function logBuffer(bytes: number, category: string) {
             })
         ).join(", ");
 
-        logger.log(`GPU Allocated: ${loadedMbRounded}MB, ${catLogMessage}`);
+        logger.log(`${finished ? "Finished " : ""}GPU: ${loadedMbRounded}MB, ${catLogMessage}`);
     }
 }
 
-// export function logTexture(width: number, height: number, bytesPerPixel: number) {
-//     const length = width * height * bytesPerPixel;
-//     loadedBytes += length;
-//     const loadedMbRounded = Math.floor(loadedBytes / 1024 / 1024);
-//     // log every 10MB
-//     if (loadedMbRounded > loggedMb + 10) {
-//         loggedMb = loadedMbRounded;
-//         logger.log(`Textures: ${loadedMbRounded} MB`);
-//     }
-// }
+//4029410018626614;
