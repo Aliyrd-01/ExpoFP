@@ -5,7 +5,7 @@ import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 import { DrawerObject } from "./RectPainter";
 import Sprite from "./Sprite";
-import { logTexture } from "../../../../tools/texture-logger";
+import { logBuffer } from "../../../../tools/webgl-logger";
 
 export default class ImagePainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -204,7 +204,7 @@ export default class ImagePainter implements Painter {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, source);
-        logTexture(source.width, source.height, 2);
+        logBuffer(source.width * source.height * 2, "image-painter-canvas/imag");
         return texture;
     }
 
@@ -256,7 +256,6 @@ export default class ImagePainter implements Painter {
         {
             gl.bindTexture(gl.TEXTURE_2D, this.fallBackTexture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-            logTexture(1, 1, 4);
         }
 
         for (let w of this.objects) {
@@ -511,6 +510,7 @@ export default class ImagePainter implements Painter {
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
+        logBuffer(data.length * 4, "image-painter-buffer");
     }
 
     private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 3 | 4) {

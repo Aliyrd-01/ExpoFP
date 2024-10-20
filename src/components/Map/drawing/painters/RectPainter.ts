@@ -4,7 +4,7 @@ import { CanvasDescriptor } from "../config/canvases";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 import Sprite, { SpriteItem } from "./Sprite";
-import { logTexture } from "../../../../tools/texture-logger";
+import { logBuffer } from "../../../../tools/webgl-logger";
 
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -267,7 +267,7 @@ export default class RectPainter implements Painter {
 
             const canvas = c();
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, canvas);
-            logTexture(canvas.width, canvas.height, 2);
+            logBuffer(canvas.width * canvas.height * 2, "rect-painter-canvas");
             canvasIdToTexture.set(canvas.id, texture);
         }
 
@@ -275,7 +275,6 @@ export default class RectPainter implements Painter {
         {
             gl.bindTexture(gl.TEXTURE_2D, this.fallBackTexture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-            logTexture(1, 1, 4);
         }
 
         for (let w of this.objects) {
@@ -559,6 +558,7 @@ export default class RectPainter implements Painter {
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
+        logBuffer(data.length * 4, "rect-painter-buffer");
     }
 
     private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 3 | 4) {
