@@ -1,6 +1,4 @@
 import { Booth, RegularBooth } from "../store/BoothStore";
-import settings from "../tools/settings";
-import isDebug from "./is-debug";
 
 export type Img = {
     booth: Booth;
@@ -96,12 +94,38 @@ function loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve) => {
         var img = new Image();
         img.onerror = () => resolve(null);
-        img.onload = () => resolve(img);
+        img.onload = () => resolve(resizeImage(img, 150, 150));
         img.crossOrigin = "anonymous";
+        img.src = src; //.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
+    });
+}
 
-        img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
+async function resizeImage(image: HTMLImageElement, maxWidth: number, maxHeight: number): Promise<HTMLImageElement> {
+    return new Promise<HTMLImageElement>((resolve, reject) => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        let width = image.width;
+        let height = image.height;
 
-        // if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-        // else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
+        if (width > maxWidth || height > maxHeight) {
+            const widthRatio = maxWidth / width;
+            const heightRatio = maxHeight / height;
+            const resizeRatio = Math.min(widthRatio, heightRatio);
+
+            width = width * resizeRatio;
+            height = height * resizeRatio;
+        } else {
+            return resolve(image);
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.drawImage(image, 0, 0, width, height);
+
+        var dataURL = canvas.toDataURL("image/png");
+        var newImage = new Image();
+        newImage.onload = () => resolve(newImage);
+        newImage.src = dataURL;
     });
 }
