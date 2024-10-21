@@ -4,7 +4,7 @@ let loadedBytes = 0;
 let loggedMb = 0;
 const loggedByCategory = new Map<string, number>();
 
-let logFinishedTimeout = 0;
+let logFinishedTimeout: NodeJS.Timeout;
 
 export function logBuffer(bytes: number, category: string) {
     loadedBytes += bytes;
@@ -23,12 +23,12 @@ function log(finished: boolean) {
     if (finished || loadedMbRounded > loggedMb + 10) {
         loggedMb = loadedMbRounded;
 
-        const catLogMessage = Array.from(
-            loggedByCategory.entries().map(([key, value]) => {
+        const catLogMessage = Array.from(loggedByCategory.entries())
+            .map(([key, value]) => {
                 const roundedMb = Math.floor(value / 1024 / 1024);
                 return `${key}: ${roundedMb}MB`;
             })
-        ).join(", ");
+            .join(", ");
 
         logger.log(`${finished ? "Finished " : ""}GPU: ${loadedMbRounded}MB, ${catLogMessage}`);
     }
