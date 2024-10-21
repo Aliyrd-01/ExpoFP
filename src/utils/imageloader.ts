@@ -17,7 +17,7 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                     if (!src) return resolve(null);
                     const rect = booth.rect;
 
-                    var img = await loadImage(src);
+                    var img = await loadImage(src, true);
                     if (!img) return resolve(null);
 
                     const ratioBooth = rect.w / rect.h;
@@ -69,7 +69,7 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
         svgImages.map(
             (image) =>
                 new Promise<Img>(async (resolve, reject) => {
-                    var img = await loadImage(image.href.animVal);
+                    var img = await loadImage(image.href.animVal, false);
                     resolve(
                         img
                             ? {
@@ -90,11 +90,11 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
     );
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
+function loadImage(src: string, withResize: boolean): Promise<HTMLImageElement> {
     return new Promise((resolve) => {
         var img = new Image();
         img.onerror = () => resolve(null);
-        img.onload = () => resolve(resizeImage(img, 150, 150));
+        img.onload = () => resolve(withResize ? resizeImage(img, 150, 150) : img);
         img.crossOrigin = "anonymous";
         img.src = src; //.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
     });
