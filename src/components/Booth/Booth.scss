@@ -137,5 +137,10 @@
             padding: 0;
             margin-inline-start: var(--k-spacing-lg);
         }
+        &__desc {
+            a {
+                pointer-events: none;
+            }
+        }
     }
 }
