@@ -23,6 +23,7 @@ window.setTimeout(function () {
     img.onload = () => {
         logger.log("Logo image loaded");
     };
+    img.crossOrigin = "anonymous";
     img.src = logoUrl;
 
     // const link = document.createElement("link");
