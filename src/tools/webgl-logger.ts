@@ -4,7 +4,7 @@ let loadedBytes = 0;
 let loggedMb = 0;
 const loggedByCategory = new Map<string, number>();
 
-let logFinishedTimeout: NodeJS.Timeout;
+let logFinishedTimeout;
 
 export function logBuffer(bytes: number, category: string) {
     loadedBytes += bytes;
