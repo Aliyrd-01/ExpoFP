@@ -130,6 +130,7 @@ function Ws() {
         return new Promise((resolve, reject) => {
             s.all.forEach((x) => {
                 const img = new Image();
+                img.crossOrigin = "anonymous";
                 img.onload = () => {
                     result.set(x.id, img);
                     counter++;

@@ -17,7 +17,7 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                     if (!src) return resolve(null);
                     const rect = booth.rect;
 
-                    var img = await loadImage(src, true);
+                    var img = await loadImage(src);
                     if (!img) return resolve(null);
 
                     const ratioBooth = rect.w / rect.h;
@@ -69,7 +69,7 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
         svgImages.map(
             (image) =>
                 new Promise<Img>(async (resolve, reject) => {
-                    var img = await loadImage(image.href.animVal, false);
+                    var img = await loadImage(image.href.animVal);
                     resolve(
                         img
                             ? {
@@ -90,42 +90,12 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
     );
 }
 
-function loadImage(src: string, withResize: boolean): Promise<HTMLImageElement> {
+function loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve) => {
         var img = new Image();
         img.onerror = () => resolve(null);
-        img.onload = () => resolve(withResize ? resizeImage(img, 150, 150) : img);
+        img.onload = () => resolve(img);
         img.crossOrigin = "anonymous";
-        img.src = src; //.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-    });
-}
-
-async function resizeImage(image: HTMLImageElement, maxWidth: number, maxHeight: number): Promise<HTMLImageElement> {
-    return new Promise<HTMLImageElement>((resolve, reject) => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        let width = image.width;
-        let height = image.height;
-
-        if (width > maxWidth || height > maxHeight) {
-            const widthRatio = maxWidth / width;
-            const heightRatio = maxHeight / height;
-            const resizeRatio = Math.min(widthRatio, heightRatio);
-
-            width = width * resizeRatio;
-            height = height * resizeRatio;
-        } else {
-            return resolve(image);
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        ctx.drawImage(image, 0, 0, width, height);
-
-        var dataURL = canvas.toDataURL("image/png");
-        var newImage = new Image();
-        newImage.onload = () => resolve(newImage);
-        newImage.src = dataURL;
+        img.src = src;
     });
 }
