@@ -67,6 +67,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     onError={() => (s.logoVisibility = "hidden")}
                     style={{ visibility: s.logoVisibility }}
                     alt=""
+                    crossOrigin="anonymous"
                 />
             </a>
         </div>

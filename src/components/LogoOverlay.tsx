@@ -79,7 +79,7 @@ export default function LogoOverlay() {
                 style={s.style}
                 rel="noopener noreferrer"
             >
-                <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} />
+                <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} crossOrigin="anonymous" />
             </a>
             {showWarning && (
                 <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
