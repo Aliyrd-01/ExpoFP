@@ -208,12 +208,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             console.error(`Category ${nameOrSlug} not found.`);
             return;
         }
-
-        if (this.noOverlay) {
-            store.clickCategory(category);
-        } else {
-            store.selectCategory(category);
-        }
+            store.selectCategory(category)
     }
 
     applyParameters(queryRaw: string) {

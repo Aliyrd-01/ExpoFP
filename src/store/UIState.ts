@@ -276,8 +276,6 @@ export default class UIState {
 
         if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
 
-        if (uiState.noOverlay && (!isCategory || !isFilter)) return false;
-
         return (
             (text || isCategory || isFilter) &&
             exhibitors.length &&
