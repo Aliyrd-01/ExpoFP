@@ -12,7 +12,7 @@ function Debug() {
         <div className="debug__canvas" id={item.toDataURL()} key={item.toDataURL()}>
             {item.width}x{item.height}={item.width * item.height}
             <br />
-            <img src={item.toDataURL()} alt="" />
+            <img src={item.toDataURL()} alt="" crossOrigin="anonymous" />
         </div>
     ));
 

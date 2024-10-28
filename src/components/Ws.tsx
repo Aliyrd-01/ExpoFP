@@ -79,7 +79,7 @@ function Ws() {
                                 select(e.e);
                             }}
                         >
-                            <img src={e.e.logo} alt={e.e.name} />
+                            <img src={e.e.logo} alt={e.e.name} crossOrigin="anonymous" />
                         </a>
                     </CSSTransition>
                 ))}
