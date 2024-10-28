@@ -187,6 +187,9 @@ export default class FloorPlanLoader implements FloorPlan {
         window["__efpBaseUrl"] = baseUrl;
         window["__efpElement"] = element;
 
+        // eurotier feature toggle
+        window["DELAYED_IMAGES"] = eventId?.startsWith("eurotier");
+
         window["__efpElement"] = element;
         const classes = [...element.classList];
         element.classList.remove(...classes);

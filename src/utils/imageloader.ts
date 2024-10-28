@@ -90,7 +90,7 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
     );
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
+export function loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve) => {
         var img = new Image();
         img.onerror = () => resolve(null);

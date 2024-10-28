@@ -112,6 +112,8 @@ export default async function configBg(
                 fgPainter = context.requirePainter(`${layer.name}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
 
-    const logos = (await images).filter((image) => !!image);
-    return configImg(context, layer.name, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
+    if (!window["DELAYED_IMAGES"]) {
+        const logos = (await images).filter((image) => !!image);
+        configImg(context, layer.name, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
+    }
 }
