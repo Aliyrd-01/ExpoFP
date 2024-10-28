@@ -8,6 +8,7 @@ import Sprite from "./Sprite";
 import { logBuffer } from "../../../../tools/webgl-logger";
 import isMobile from "../../../../utils/is-mobile";
 import data from "../../../../data";
+import isWebview from "../../../../utils/is-webview";
 
 const mobileCanvasSize = data.viewOptimizationLevel >= 5 ? 48 : 64;
 
@@ -218,7 +219,7 @@ export default class ImagePainter implements Painter {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-        if (isMobile) {
+        if (isMobile || isWebview) {
             offscreenCanvasCtx.drawImage(source, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, offscreenCanvas);
             offscreenCanvasCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
