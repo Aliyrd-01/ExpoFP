@@ -248,7 +248,7 @@ function ExhibitorComponent() {
                             <div className="exhibitor__leading-image-container exhibitor__slider">
                                 {exhibitor.leadingImageLinkUrl ? (
                                     <a href={exhibitor.leadingImageLinkUrl} target="_blank" rel="noopener noreferrer">
-                                        <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" />
+                                        <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" crossOrigin="anonymous" />
                                     </a>
                                 ) : (
                                     <ErrorBoundary>
@@ -313,7 +313,7 @@ function ExhibitorComponent() {
                                 >
                                     {exhibitor.logo ? (
                                         <div className="exhibitor__logo-container" v-if="exhibitor.logo">
-                                            <img src={exhibitor.logo} className="exhibitor__logo" alt={exhibitor.name} />
+                                            <img src={exhibitor.logo} className="exhibitor__logo" alt={exhibitor.name} crossOrigin="anonymous" />
                                         </div>
                                     ) : null}
                                     {exhibitor.description ? (

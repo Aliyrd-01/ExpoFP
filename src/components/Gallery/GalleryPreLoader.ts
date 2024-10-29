@@ -11,6 +11,7 @@ class GalleryPreLoader {
                 resolve(image);
             } else {
                 image = new Image();
+                image.crossOrigin = "anonymous";
                 image.src = url;
                 image.onload = () => {
                     if (this.cache.length > 10) this.cache.shift();
