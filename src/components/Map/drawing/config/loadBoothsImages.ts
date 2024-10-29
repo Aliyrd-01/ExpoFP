@@ -2,7 +2,7 @@ import store from "../../../../store";
 import { DrawerContext } from "../Drawer1";
 import { loadImagesInBatchesById } from "../../../../utils/loadImagesInBatches";
 import { Img, loadIcons } from "../../../../utils/imageloader";
-import ImagePainter, { DrawerObjectEx as DrawerObject } from "../painters/ImagePainter";
+import ImagePainter, { DrawerObjectEx } from "../painters/ImagePainter";
 import type { Booth } from "../../../../store/BoothStore";
 import { getLayerSvg } from "../../../../data/svg";
 import isMobile from "../../../../utils/is-mobile";
@@ -26,28 +26,17 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             .filter(Boolean) as [number, string][],
     );
 
-    const keys = Array.from(boothsLogosUrlsById.keys());
-    const values = Array.from(boothsLogosUrlsById.values());
-    const totalChunks = Math.ceil(boothsLogosUrlsById.size / chunkSize);
-
-    let chunks = [];
-    for (let i = 0; i < totalChunks; i++) {
-        const chunk = new Map();
-        for (let j = i * chunkSize; j < Math.min((i + 1) * chunkSize, keys.length); j++) {
-            chunk.set(keys[j], values[j]);
-        }
-        chunks[i] = chunk;
-    }
+    const chunks = Array.from({ length: Math.ceil(boothsLogosUrlsById.size / chunkSize) }, (_, i) =>
+        new Map(Array.from(boothsLogosUrlsById).slice(i * chunkSize, (i + 1) * chunkSize))
+    );
 
     const maxBasePriority = Math.max(...store.layerStore.layers.map((item) => item.basePriority));
-
     const visibleLayerNames = new Set(store.layerStore.layers.filter((layer) => layer.visible).map((layer) => layer.name));
 
-    const painterLayers = new Map<string, DrawerObject[]>();
+    const painterLayers = new Map<string, DrawerObjectEx[]>();
     const painterLayersPriorities = new Map<string, number>();
 
-    const chunksEntries = chunks.entries();
-    for (const [i, chunk] of chunksEntries) {
+    for (const [i, chunk] of chunks.entries()) {
         const loaded = await loadImagesInBatchesById(chunk, chunkSize, DELAY);
 
         for (const [boothId, image] of loaded) {
@@ -58,26 +47,20 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
 
             if (!painterLayers.has(layerName)) {
                 painterLayers.set(layerName, []);
-            }
-            painterLayers.get(layerName).push(createObject(createImg(booth, image)));
-
-            if (!painterLayersPriorities.has(layerName)) {
                 painterLayersPriorities.set(
                     layerName,
                     areLayersEnabled() ? booth.layer?.basePriority + maxBasePriority : maxBasePriority,
                 );
             }
+            painterLayers.get(layerName).push(createObject(createImg(booth, image)));
         }
 
         painterLayers.forEach((objects, name) => {
-            const end = name.indexOf(SEPARATOR);
-            const layerName = name.slice(0, end);
-
             const painter = context.requirePainter(
                 name,
                 ImagePainter,
                 painterLayersPriorities.get(name),
-                areLayersEnabled() ? visibleLayerNames.has(layerName) : true,
+                areLayersEnabled() ? visibleLayerNames.has(name.split(SEPARATOR)[0]) : true,
             );
 
             objects.forEach((obj) => painter.addObject(obj));
@@ -86,22 +69,23 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         context.requireUpdate(null);
     }
 
-    const layersEntries = store.layerStore.layers.entries();
-    for (const [i, layer] of layersEntries) {
-        const icons = getIcons(layer);
-        const loadedIcons = await loadIcons(icons);
+    await Promise.all(
+        store.layerStore.layers.map(async (layer, i) => {
+            const icons = getIcons(layer);
+            const loadedIcons = await loadIcons(icons);
 
-        const painter = context.requirePainter(
-            genLayerId(layer.name, "icons", i),
-            ImagePainter,
-            layer.basePriority + maxBasePriority,
-            layer.visible,
-        );
+            const painter = context.requirePainter(
+                genLayerId(layer.name, "icons", i),
+                ImagePainter,
+                layer.basePriority + maxBasePriority,
+                layer.visible,
+            );
 
-        loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
+            loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
+        })
+    );
 
-        context.requireUpdate(null);
-    }
+    context.requireUpdate(null);
 }
 
 function genLayerId(baseLayerName: string, suffix: string, i: number): string {
@@ -122,12 +106,8 @@ function getIcons(layer: Layer): SVGImageElement[] {
     ).filter(Boolean) as SVGImageElement[];
 }
 
-function createObject(img: Img): DrawerObject {
-    const x = img.bounds.x;
-    const y = img.bounds.y;
-    const width = img.bounds.width;
-    const height = img.bounds.height;
-    const angle = img.bounds.angle;
+function createObject(img: Img): DrawerObjectEx {
+    const { x, y, width, height, angle } = img.bounds;
 
     return {
         id: `${x}${y}${width}${height}`,
@@ -140,16 +120,14 @@ function createObject(img: Img): DrawerObject {
         texPosition: "center",
         stretch: true,
         rotateRadians: angle ? (-angle * Math.PI) / 180.0 : null,
-    } as DrawerObject;
+    } as DrawerObjectEx;
 }
 
 function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
     const rect = booth.rect;
     const ratioBooth = rect.w / rect.h;
     const ratio = htmlImage.width / htmlImage.height;
-    let w = 0;
-    let h = 0;
-    let angle: number;
+    let w, h, angle;
 
     if (ratioBooth > ratio) {
         h = rect.h * 0.9;
@@ -159,17 +137,9 @@ function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
         h = w / ratio;
     }
 
-    if (ratio >= 2 && !booth.rotate && booth.rect.h >= booth.rect.w * 2.0) {
-        let newH = rect.w * 0.9;
-        let newW = newH * ratio;
-
-        while (newW > rect.h - 2) {
-            newH--;
-            newW = newH * ratio;
-        }
-
-        h = newH;
-        w = newW;
+    if (ratio >= 2 && !booth.rotate && rect.h >= rect.w * 2.0) {
+        h = rect.w * 0.9;
+        w = h * ratio;
         angle = -90;
     } else {
         angle = (-booth.rotate * 180) / Math.PI;
@@ -180,7 +150,7 @@ function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
 
     return {
         name: booth.slug,
-        bounds: { x, y, width: w, height: h, angle: angle },
+        bounds: { x, y, width: w, height: h, angle },
         htmlImage,
         booth,
     };
