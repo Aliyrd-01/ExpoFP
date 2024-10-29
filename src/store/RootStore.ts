@@ -115,6 +115,12 @@ export default class RootStore {
 
         const visible = category.exhibitors.find((e) => e.booths.find((b) => b.visible));
         if (!visible) this.layerStore.updateVisibility(category.exhibitors[0]?.booths[0]?.layer, true, false);
+
+        setTimeout(() => {
+            this.uiState.moveToBooths = category.exhibitors
+                .filter((e) => e.booths.find((b) => b.visible))
+                .flatMap((e) => e.booths);
+        }, 200);
     }
 
     @action selectSearch(text?: string) {
