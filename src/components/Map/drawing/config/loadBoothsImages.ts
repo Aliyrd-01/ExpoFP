@@ -12,19 +12,19 @@ import isWebview from "../../../../utils/is-webview";
 
 const CHUNK_SIZE = isMobile || isWebview ? 8 : 128;
 const DELAY = isMobile || isWebview ? 8 : 4;
-const SEPARATOR = "|";
+const SEPARATOR = ":";
 
 export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK_SIZE): Promise<void> {
     if (store.uiState.hideLogoInBooth) return;
 
     const boothsLogosUrlsById = new Map(
         store.boothStore.booths
-            .map(b => {
-                const exhibitor = b.rect && b.exhibitors.find(e => e.logoInBooth && e.logo);
+            .map((b) => {
+                const exhibitor = b.rect && b.exhibitors.find((e) => e.logoInBooth && e.logo);
                 return exhibitor ? [b.id, exhibitor.logo] : null;
             })
-            .filter(Boolean) as [number, string][]
-    )
+            .filter(Boolean) as [number, string][],
+    );
 
     const keys = Array.from(boothsLogosUrlsById.keys());
     const values = Array.from(boothsLogosUrlsById.values());
@@ -39,11 +39,12 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         chunks[i] = chunk;
     }
 
-    const visibleLayerNames = new Set(
-        store.layerStore.layers.filter(layer => layer.visible).map(layer => layer.name),
-    );
+    const maxBasePriority = Math.max(...store.layerStore.layers.map((item) => item.basePriority));
+
+    const visibleLayerNames = new Set(store.layerStore.layers.filter((layer) => layer.visible).map((layer) => layer.name));
 
     const painterLayers = new Map<string, DrawerObject[]>();
+    const painterLayersPriorities = new Map<string, number>();
 
     const chunksEntries = chunks.entries();
     for (const [i, chunk] of chunksEntries) {
@@ -59,22 +60,27 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 painterLayers.set(layerName, []);
             }
             painterLayers.get(layerName).push(createObject(createImg(booth, image)));
+
+            if (!painterLayersPriorities.has(layerName)) {
+                painterLayersPriorities.set(
+                    layerName,
+                    areLayersEnabled() ? booth.layer?.basePriority + maxBasePriority : maxBasePriority,
+                );
+            }
         }
 
         painterLayers.forEach((objects, name) => {
-            const end = name.indexOf("|");
+            const end = name.indexOf(SEPARATOR);
             const layerName = name.slice(0, end);
 
-            const painter = getPainter(
-                context,
-                {
-                    name,
-                    visible: areLayersEnabled() ? visibleLayerNames.has(layerName) : true,
-                    // TODO basePriority
-                } as Layer,
+            const painter = context.requirePainter(
+                name,
+                ImagePainter,
+                painterLayersPriorities.get(name),
+                areLayersEnabled() ? visibleLayerNames.has(layerName) : true,
             );
 
-            objects.forEach(obj => painter.addObject(obj));
+            objects.forEach((obj) => painter.addObject(obj));
         });
 
         context.requireUpdate(null);
@@ -85,22 +91,18 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         const icons = getIcons(layer);
         const loadedIcons = await loadIcons(icons);
 
-        const painter = getPainter(
-            context,
-            {
-                name: genLayerId(layer.name, "icons", i),
-                visible: layer.visible,
-                basePriority: layer.basePriority,
-            } as Layer,
+        const painter = context.requirePainter(
+            genLayerId(layer.name, "icons", i),
+            ImagePainter,
+            layer.basePriority + maxBasePriority,
+            layer.visible,
         );
 
-        loadedIcons.filter(Boolean).forEach(
-            img => painter.addObject(createObject(img)),
-        );
+        loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
 
         context.requireUpdate(null);
     }
-};
+}
 
 function genLayerId(baseLayerName: string, suffix: string, i: number): string {
     const defaultLayerName = "default";
@@ -109,12 +111,6 @@ function genLayerId(baseLayerName: string, suffix: string, i: number): string {
 
 function areLayersEnabled() {
     return !!window["__fpLayers"];
-}
-
-function getPainter(context: DrawerContext, layer: Layer): ImagePainter {
-    const priority = layer.basePriority || 99999;
-    const magicNum = 8;
-    return context.requirePainter(layer.name, ImagePainter, priority + magicNum, layer.visible);
 }
 
 function getIcons(layer: Layer): SVGImageElement[] {
@@ -144,7 +140,7 @@ function createObject(img: Img): DrawerObject {
         texPosition: "center",
         stretch: true,
         rotateRadians: angle ? (-angle * Math.PI) / 180.0 : null,
-    } as DrawerObject
+    } as DrawerObject;
 }
 
 function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
