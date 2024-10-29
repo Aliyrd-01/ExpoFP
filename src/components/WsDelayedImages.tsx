@@ -18,7 +18,7 @@ const Ws = React.memo(() => {
         keySeq: 0,
         index: 0,
         imgByExhibitorId: new Map<number, HTMLImageElement>(),
-        batchSize: 100,
+        batchSize: 50,
         loading: false,
         intervalId: 0,
         get sectionStyle() {
