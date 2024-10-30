@@ -205,7 +205,7 @@ function createGl(canvas: HTMLCanvasElement) {
     logger.log("GPU vendor:", vendor);
     logger.log("GPU renderer:", renderer);
     logger.log("GL version:", gl.getParameter(gl.VERSION));
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
     gl.enable(gl.BLEND);
