@@ -540,7 +540,7 @@ export default class UIState {
         this.moveToRect = this.rootStore.layerStore.rectangle || svgArea;
     }
 
-    @computed get previewMode() {
+    get previewMode() {
         const previewMode = isLocalStorageAvailable && localStorage.getItem(PREVIEW_MODE_STORAGE_KEY) === "1";
         return previewMode || this.rootStore.fp.previewMode;
     }

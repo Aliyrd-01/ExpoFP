@@ -11,6 +11,7 @@ import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
 import { configMarkers } from "./config-markers";
 import { configDebugCircles } from "./config-debug-circles";
+import { loadBoothsImages } from "./loadBoothsImages";
 
 let _context: DrawerContext;
 export let getContext = () => _context;
@@ -44,7 +45,9 @@ export default function configAll(context: DrawerContext = _context): void {
         });
     });
 
-    Promise.all(promises).then(() => {
+    Promise.all(promises)
+        .then(() => window["DELAYED_IMAGES"] ? loadBoothsImages(context) : null)
+        .then(() => {
         layersStore.layersLoaded = true;
 
         const l =

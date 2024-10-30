@@ -186,7 +186,7 @@ export function createExhibitorsDetailsCanvas(
             mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
         }
     } else {
-        const shouldOptimize = data.viewOptimizationLevel >= 5;
+        const shouldOptimize = data.viewOptimizationLevel >= 3;
         const limit = shouldOptimize ? 1 : 3;
         const textLen = 10;
         const truncateText = (text) => text?.length > textLen ? `${text.slice(0, textLen).trim()}...` : text;

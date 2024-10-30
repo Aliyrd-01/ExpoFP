@@ -1,4 +1,4 @@
-import { action } from "mobx";
+import { action, observable } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -31,6 +31,8 @@ export default class RootStore {
     readonly languageStore: LanguageStore;
 
     fp: FloorPlanReady;
+
+    @observable initialized = false;
 
     constructor() {
         // this.fp = fp;

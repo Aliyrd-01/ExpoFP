@@ -51,6 +51,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             () => store.layerStore.layersLoaded,
             () => {
                 this.resolveReady();
+                store.initialized = true;
                 this.onInit?.(this);
             },
         );
