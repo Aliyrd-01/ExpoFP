@@ -281,7 +281,7 @@ function ExhibitorComponent() {
                                         onClick={(e) => {
                                             e.preventDefault();
                                             store.toggleMapOverlay();
-                                            if (uiState.overlayPosition !== "bottom") store.selectBooth(booth);
+                                            store.selectBooth(booth);
                                         }}
                                         className="exhibitor__categories-booth"
                                     >
