@@ -51,7 +51,12 @@ export default class FloorPlanReady extends FloorPlanLoader {
             () => store.layerStore.layersLoaded,
             () => {
                 this.resolveReady();
-                this.onInit?.(this);
+
+                if (!store.initialized) {
+                    this._addCustomCss();
+                    this.onInit?.(this);
+                }
+                store.initialized = true;
             },
         );
     }
@@ -152,7 +157,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.layerStore.updateVisibility(layer, visible);
     }
 
-    getCenterCoordinates() {
+    getCenterCoordinates(): FloorPlanGetCoordsEvent {
         return store.fp.getCenterCoordinates();
     }
 
@@ -208,12 +213,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             console.error(`Category ${nameOrSlug} not found.`);
             return;
         }
-
-        if (this.noOverlay) {
-            store.clickCategory(category);
-        } else {
-            store.selectCategory(category);
-        }
+            store.selectCategory(category)
     }
 
     applyParameters(queryRaw: string) {

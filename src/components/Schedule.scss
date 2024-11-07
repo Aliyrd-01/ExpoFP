@@ -97,3 +97,14 @@
         }
     }
 }
+
+.-exhibitor-featured {
+    .schedule__event > span,
+    .schedule__event-desc,
+    .schedule__date > div {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    .schedule__event:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}

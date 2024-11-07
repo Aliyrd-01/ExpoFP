@@ -420,7 +420,7 @@ export function initRouting(offHistory = false) {
 
     processURLParams();
     executeCustomCommand();
-    reaction(() => store.layerStore.layersLoaded,
+    reaction(() => store.layerStore.layers,
         () => {
             dispatchFromUrl();
             autorun(setTitle);

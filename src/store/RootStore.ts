@@ -1,4 +1,4 @@
-import { action } from "mobx";
+import { action, observable } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -7,6 +7,8 @@ import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 
 import { GaEventActions } from "../tools/gtag";
+import isMobile from "../utils/is-mobile";
+import isWebview from "../utils/is-webview";
 import HeatmapStore from "./HeatmapStore";
 import LanguageStore from "./LanguageStore";
 import LayerStore, { LayersMode } from "./LayerStore";
@@ -29,6 +31,8 @@ export default class RootStore {
     readonly languageStore: LanguageStore;
 
     fp: FloorPlanReady;
+
+    @observable initialized = false;
 
     constructor() {
         // this.fp = fp;
@@ -56,19 +60,17 @@ export default class RootStore {
         }
         if (!focus) return;
 
-        setTimeout(
-            () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
-            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
-        );
+        setTimeout(() => this.moveToList(exhibitor.booths.filter((b) => b.visible)), isWebview || isMobile ? 500 : 50);
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
 
-        if (focus) this.moveToList(b);
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
             this.layerStore.updateVisibility(b[0].layer, true);
+
+        if (focus) setTimeout(() => this.moveToList(b), isWebview || isMobile ? 500 : 50);
     }
 
     @action reset() {
@@ -115,6 +117,12 @@ export default class RootStore {
 
         const visible = category.exhibitors.find((e) => e.booths.find((b) => b.visible));
         if (!visible) this.layerStore.updateVisibility(category.exhibitors[0]?.booths[0]?.layer, true, false);
+
+        setTimeout(() => {
+            this.uiState.moveToBooths = category.exhibitors
+                .filter((e) => e.booths.find((b) => b.visible))
+                .flatMap((e) => e.booths);
+        }, 200);
     }
 
     @action selectSearch(text?: string) {
@@ -207,6 +215,8 @@ export default class RootStore {
 
         if (!booth) {
             this.uiState.details = null;
+            if (this.uiState.noOverlay && this.uiState.list.type == "category")
+                this.uiState.list = { type: "search", text: "", focused: false };
             if (this.uiState.onBoothClick) this.uiState.onBoothClick({ target: null });
             return;
         } else this.routeStore.tempToBooth = booth;

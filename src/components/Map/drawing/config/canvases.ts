@@ -186,10 +186,17 @@ export function createExhibitorsDetailsCanvas(
             mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
         }
     } else {
-        if (b.exhibitors.length > 5) {
+        const shouldOptimize = data.viewOptimizationLevel >= 3;
+        const limit = shouldOptimize ? 1 : 3;
+        const textLen = 10;
+        const truncateText = (text) => text?.length > textLen ? `${text.slice(0, textLen).trim()}...` : text;
+
+        if (b.exhibitors.length > limit) {
             mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
         } else {
-            mainLines.push(...b.exhibitors.map((e) => e.name));
+            mainLines.push(...b.exhibitors.map(
+                (e) => shouldOptimize ? truncateText(e.name) : e.name
+            ));
         }
     }
 

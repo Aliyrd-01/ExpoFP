@@ -1,6 +1,4 @@
 import { Booth, RegularBooth } from "../store/BoothStore";
-import settings from "../tools/settings";
-import isDebug from "./is-debug";
 
 export type Img = {
     booth: Booth;
@@ -92,16 +90,12 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
     );
 }
 
-function loadImage(src: string): Promise<HTMLImageElement> {
+export function loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve) => {
         var img = new Image();
         img.onerror = () => resolve(null);
         img.onload = () => resolve(img);
         img.crossOrigin = "anonymous";
-
-        img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-
-        // if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-        // else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
+        img.src = src;
     });
 }

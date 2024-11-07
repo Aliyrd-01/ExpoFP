@@ -194,7 +194,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
-                    const color = booth.yah ? el.style?.fill || path.style.fill : path.style.fill;
+                    const color = booth.yah ? el.style?.fill?.replace("none", "") || path.style.fill : path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
                     booth.paths.push({
                         index: d,

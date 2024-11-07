@@ -1,6 +1,6 @@
 import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
-import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
+import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
@@ -26,7 +26,7 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly noOverlay: boolean;
     readonly offHistory: boolean;
     readonly allowConsent: boolean | undefined;
-    readonly onInit;
+    readonly onInit: (fp: FloorPlan) => void;
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
@@ -86,7 +86,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    getCenterCoordinates() {
+    getCenterCoordinates(): any {
         nr();
     }
 
@@ -150,6 +150,8 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    protected _addCustomCss = () => { };
+
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;
@@ -175,7 +177,8 @@ export default class FloorPlanLoader implements FloorPlan {
         this.element = element;
         if (element["__expofp"]) throw new Error("Element already in use");
         element["__expofp"] = this;
-        const eventId = options.eventId ||
+        const eventId =
+            options.eventId ||
             element.getAttribute("data-event-id") ||
             element.getAttribute("data-event") || // legacy remove 2020-12-12
             (document.location.hostname.endsWith(".expofp.com")
@@ -185,6 +188,9 @@ export default class FloorPlanLoader implements FloorPlan {
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
         window["__efpElement"] = element;
+
+        // eurotier feature toggle
+        window["DELAYED_IMAGES"] = eventId?.startsWith("eurotier");
 
         window["__efpElement"] = element;
         const classes = [...element.classList];
@@ -203,7 +209,7 @@ export default class FloorPlanLoader implements FloorPlan {
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
-        if (eventId === "money2020usa23" && isWebview(navigator.userAgent)) {
+        if (eventId === "money2020usa23" && isWebview) {
             this.allowConsent = true;
         }
 
@@ -250,21 +256,21 @@ export default class FloorPlanLoader implements FloorPlan {
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
-        loadCss("vendor/fa/css/fontawesome-all.min.css", container);
-        loadCss("vendor/sanitize-css/sanitize.css", container);
-        loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
-        loadCss("vendor/mapbox/mapbox-gl.css", container);
-        // loadCss("fonts/fonts.css", container);
-
-        loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
-
-        const fontPromises = [
+        const promises = [
+            loadCss("vendor/fa/css/fontawesome-all.min.css", container),
+            loadCss("vendor/sanitize-css/sanitize.css", container),
+            loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
+            loadCss("vendor/mapbox/mapbox-gl.css", container),
+            loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2"),
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
             loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
             loadFont("efp", "fonts/efp.woff", { weight: 400 }),
+            loadJs(wfDataUrl),
+            loadJs(dataUrl),
+            loadJs(fpUrl)
         ];
 
         let handledStyleElements = 0;
@@ -282,7 +288,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(wfDataUrl), loadJs(dataUrl), loadJs(fpUrl)]);
+            await Promise.all(promises);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);
@@ -295,8 +301,12 @@ export default class FloorPlanLoader implements FloorPlan {
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {
                 const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
-                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(res => res.json());
-                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(res => res.json());
+                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(
+                    (res) => res.json()
+                );
+                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(
+                    (res) => res.json()
+                );
                 window["__heatmapData"] = { booths, exhibitors };
             }
 
@@ -306,17 +316,19 @@ export default class FloorPlanLoader implements FloorPlan {
             }
 
             if (data.customCss) {
-                const style = document.createElement("style");
-                style.textContent = data.customCss;
-                document.head.append(style);
+                self._addCustomCss = async () => {
+                    const style = document.createElement("style");
+                    style.textContent = data.customCss;
+                    document.head.append(style);
 
-                if (useShadow) {
-                    const style2 = document.createElement("style");
-                    style2.textContent = data.customCss;
-                    container.append(style2);
+                    if (useShadow) {
+                        const style2 = document.createElement("style");
+                        style2.textContent = data.customCss;
+                        container.append(style2);
+                    }
+
+                    await loadCustomFonts(data.customCss);
                 }
-
-                await loadCustomFonts(data.customCss);
             }
 
             logger.log("Data loaded");

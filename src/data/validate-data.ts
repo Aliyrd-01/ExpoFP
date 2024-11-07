@@ -1,10 +1,8 @@
-import { validate } from "jsonschema"; // TODO: import and validate conditionally
-import schema from "../data.schema.json";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import isDebug from "../utils/is-debug";
-import { Data, RawRegularBooth, RawSpecialBooth } from "./Data";
 import { isLocalStorageAvailable } from "../utils/localStorage";
+import { Data, RawRegularBooth, RawSpecialBooth } from "./Data";
 // import baseUrl from "./base-data-url";
 
 export default function validateData(data: Data) {
@@ -23,43 +21,25 @@ export default function validateData(data: Data) {
         }
     }
 
-    // if (EFP_EXPO === "miblive2020") {
-    //     data.booths
-    //         .filter((b: any) => b.special !== true)
-    //         .forEach((b: any) => {
-    //             b.reserved = true;
-    //             delete b.exhibitors;
-    //         });
-    //     data.exhibitors = [];
-    // }
-    //  if (EFP_EXPO === "ktrade20") data.hideCompanies = true;
-    // if (EFP_EXPO === "sbexpo") data.hideCompanies = true;
-    // if (EFP_EXPO === "miblive2020") data.hideCompanies = true;
-    // if (localStorage.getItem("hideCompanies")) data.hideCompanies = true;
-    // data.hideCompanies = !!data.hideCompanies;
-    //if (isDebug) data.registerUrl = "http://google.com";
-
     if (data["free"]) {
         data.noFeatured = true;
         data.expoFpAd = true;
     }
 
-    // if (isDebug && EFP_EXPO === "sydneybuildexpo") data.free = true;
-
     const validationEnabled = isDebug || (isLocalStorageAvailable && localStorage.getItem("validate") === "1");
 
-    if (validationEnabled) {
-        const res = validate(data, schema);
-        if (res.errors.length) {
-            console.error("data jsonschema validation errors: ", res);
-        } else {
-            console.log("data jsonschema is valid", res);
-        }
-    } else {
-        console.log(
-            "data JSON Schema validation disabled. Run `localStorage.setItem('validate', 1)` in Console to enable validation.`"
-        );
-    }
+    // if (validationEnabled) {
+    //     const res = validate(data, schema);
+    //     if (res.errors.length) {
+    //         console.error("data jsonschema validation errors: ", res);
+    //     } else {
+    //         console.log("data jsonschema is valid", res);
+    //     }
+    // } else {
+    //     console.log(
+    //         "data JSON Schema validation disabled. Run `localStorage.setItem('validate', 1)` in Console to enable validation.`"
+    //     );
+    // }
 
     // validation is a heavy process (using Url.parse) - so let's disable by default for all
     if (validationEnabled) {

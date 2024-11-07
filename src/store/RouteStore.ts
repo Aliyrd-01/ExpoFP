@@ -59,7 +59,8 @@ export default class RouteStore {
         return !!this.defaultFrom || !!this.currentPosition;
     }
 
-    @action selectRoute(route: Route) {
+    @action selectRoute(route: Route) {        
+        uiState.list = { type: "search", text: "", focused: false };
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
         if (route?.from && route?.to && route.from === route.to) route = null;
         let list = [];

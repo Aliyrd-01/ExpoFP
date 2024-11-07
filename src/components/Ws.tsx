@@ -79,7 +79,7 @@ function Ws() {
                                 select(e.e);
                             }}
                         >
-                            <img src={e.e.logo} alt={e.e.name} />
+                            <img src={e.e.logo} alt={e.e.name} crossOrigin="anonymous" />
                         </a>
                     </CSSTransition>
                 ))}
@@ -130,6 +130,7 @@ function Ws() {
         return new Promise((resolve, reject) => {
             s.all.forEach((x) => {
                 const img = new Image();
+                img.crossOrigin = "anonymous";
                 img.onload = () => {
                     result.set(x.id, img);
                     counter++;

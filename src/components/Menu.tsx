@@ -23,6 +23,7 @@ window.setTimeout(function () {
     img.onload = () => {
         logger.log("Logo image loaded");
     };
+    img.crossOrigin = "anonymous";
     img.src = logoUrl;
 
     // const link = document.createElement("link");
@@ -67,6 +68,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     onError={() => (s.logoVisibility = "hidden")}
                     style={{ visibility: s.logoVisibility }}
                     alt=""
+                    crossOrigin="anonymous"
                 />
             </a>
         </div>

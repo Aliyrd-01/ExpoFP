@@ -32,11 +32,6 @@ export default async function configBg(
         )
         .nodes() as SVGElement[];
 
-    const fpImages = (
-        window["__fpVersion"] > 5
-            ? selected.selectAll(":scope > image, :scope > g:not([data-layer]) image").nodes()
-            : selected.selectAll(":scope > g[data-is-editable='false'] image").nodes()
-    ) as SVGImageElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") addPath(el as SVGPathElement);
@@ -112,6 +107,15 @@ export default async function configBg(
                 fgPainter = context.requirePainter(`${layer.name}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
 
-    const logos = (await images).filter((image) => !!image);
-    return configImg(context, layer.name, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
+    if (!window["DELAYED_IMAGES"]) {
+        const logos = (await images).filter((image) => !!image);
+
+        const fpImages = (
+            window["__fpVersion"] > 5
+                ? selected.selectAll(":scope > image, :scope > g:not([data-layer]) image").nodes()
+                : selected.selectAll(":scope > g[data-is-editable='false'] image").nodes()
+        ) as SVGImageElement[];
+
+        configImg(context, layer.name, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
+    }
 }

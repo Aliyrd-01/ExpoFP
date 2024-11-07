@@ -276,8 +276,6 @@ export default class UIState {
 
         if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
 
-        if (uiState.noOverlay && (!isCategory || !isFilter)) return false;
-
         return (
             (text || isCategory || isFilter) &&
             exhibitors.length &&
@@ -294,7 +292,7 @@ export default class UIState {
         const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
-        const categoriesArray = categoryStore.categories;
+        const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
         const boothsArray = boothStore.booths;
         const eventsArray = scheduleStore.scheduleItems;
 
@@ -542,7 +540,7 @@ export default class UIState {
         this.moveToRect = this.rootStore.layerStore.rectangle || svgArea;
     }
 
-    @computed get previewMode() {
+    get previewMode() {
         const previewMode = isLocalStorageAvailable && localStorage.getItem(PREVIEW_MODE_STORAGE_KEY) === "1";
         return previewMode || this.rootStore.fp.previewMode;
     }
