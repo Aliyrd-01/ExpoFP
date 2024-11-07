@@ -10,6 +10,8 @@ import { useInit } from "../utils/mobx";
 import "./Ws.scss";
 import { loadImagesInBatchesById } from "../utils/loadImagesInBatches";
 
+const DELAY = 8000;
+
 const Ws = React.memo(() => {
     const s = useLocalStore(() => ({
         el: null as HTMLElement | null,
@@ -21,7 +23,7 @@ const Ws = React.memo(() => {
         batchSize: 100,
         loading: false,
         leftToNextLoad: 0,
-        intervalId: 0,
+        timeoutId: 0,
         get sectionStyle() {
             return {
                 width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx}px` : "100%",
@@ -57,7 +59,12 @@ const Ws = React.memo(() => {
 
     const loadExhibitorImages = useCallback(async (): Promise<Map<number, HTMLImageElement>> => {
         s.loading = true;
-        const batch = s.all.slice(s.index, s.index + s.batchSize).concat(s.all.slice(0, Math.max(0, s.batchSize - s.all.length)));
+
+        let batch = s.all.slice(s.index, s.index + s.batchSize);
+        if (batch.length < s.batchSize) {
+            batch = batch.concat(s.all.slice(0, s.batchSize - batch.length));
+        }
+
         const result = await loadImagesInBatchesById(
             new Map(batch.map((x) => [x.id, x.logo]))
         );
@@ -66,17 +73,23 @@ const Ws = React.memo(() => {
         return result;
     }, [s]);
 
-    const startInterval = useCallback(() => {
-        clearInterval(s.intervalId);
-        s.intervalId = window.setInterval(async () => {
-            if (s.loading) return;
+    const startTimer = useCallback(() => {
+        const fn = async () => {
+            if (s.loading) {
+                s.timeoutId = window.setTimeout(fn, DELAY);
+                return;
+            }
 
             if (s.leftToNextLoad <= s.adv.length) {
                 s.imgByExhibitorId = await loadExhibitorImages();
             }
 
             setupNext();
-        }, 8000);
+            s.timeoutId = window.setTimeout(fn, DELAY);
+        };
+
+        clearTimeout(s.timeoutId);
+        s.timeoutId = window.setTimeout(fn, DELAY);
     }, [loadExhibitorImages, setupNext]);
 
     useInit(() => {
@@ -88,7 +101,7 @@ const Ws = React.memo(() => {
             s.imgByExhibitorId = await loadExhibitorImages();
             if (!isMounted) return;
             setupNext();
-            startInterval();
+            startTimer();
             uiState.wsStarted = true;
             dispose = reaction(() => uiState.screenSize, setupNext);
         })();
@@ -96,7 +109,7 @@ const Ws = React.memo(() => {
         return () => {
             isMounted = false;
             dispose?.();
-            clearInterval(s.intervalId);
+            clearInterval(s.timeoutId);
         };
     });
 
@@ -104,8 +117,8 @@ const Ws = React.memo(() => {
         <section
             className={classNames("ws")}
             ref={(n) => (s.el = n)}
-            onMouseOver={() => clearInterval(s.intervalId)}
-            onMouseOut={startInterval}
+            onMouseOver={() => clearInterval(s.timeoutId)}
+            onMouseOut={startTimer}
             style={s.sectionStyle}
         >
             <TransitionGroup component={null}>
