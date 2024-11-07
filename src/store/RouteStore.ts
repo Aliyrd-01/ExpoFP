@@ -267,12 +267,14 @@ export default class RouteStore {
 
         const route = uiState.selectedRoute;
 
-        const units = getLayerSvg().getAttribute("units");
+        const l = getLayerSvg();
+        const units = l.getAttribute("units");        
+        const isNewVersion = l.getAttribute("fp-ver")?.startsWith("5") ?? false;
         let distance = 0;
 
         routeLines.forEach((line) => (distance += lineLength(line.p0, line.p1)));
 
-        distance = Math.round(distance / 10.0);
+        distance = Math.round(distance / (isNewVersion ? 1 : 10.0));
 
         if (store.fp.onDirection)
             setTimeout(() => {
