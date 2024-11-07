@@ -18,8 +18,9 @@ const Ws = React.memo(() => {
         keySeq: 0,
         index: 0,
         imgByExhibitorId: new Map<number, HTMLImageElement>(),
-        batchSize: 50,
+        batchSize: 100,
         loading: false,
+        leftToNextLoad: 0,
         intervalId: 0,
         get sectionStyle() {
             return {
@@ -51,6 +52,7 @@ const Ws = React.memo(() => {
         } while (true);
 
         s.adv = adv;
+        s.leftToNextLoad = Math.max(0, s.leftToNextLoad - adv.length);
     }, [s]);
 
     const loadExhibitorImages = useCallback(async (): Promise<Map<number, HTMLImageElement>> => {
@@ -59,6 +61,7 @@ const Ws = React.memo(() => {
         const result = await loadImagesInBatchesById(
             new Map(batch.map((x) => [x.id, x.logo]))
         );
+        s.leftToNextLoad = result.size;
         s.loading = false;
         return result;
     }, [s]);
@@ -67,7 +70,11 @@ const Ws = React.memo(() => {
         clearInterval(s.intervalId);
         s.intervalId = window.setInterval(async () => {
             if (s.loading) return;
-            s.imgByExhibitorId = await loadExhibitorImages();
+
+            if (s.leftToNextLoad <= s.adv.length) {
+                s.imgByExhibitorId = await loadExhibitorImages();
+            }
+
             setupNext();
         }, 8000);
     }, [loadExhibitorImages, setupNext]);
