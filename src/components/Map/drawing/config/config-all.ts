@@ -45,10 +45,12 @@ export default function configAll(context: DrawerContext = _context): void {
         });
     });
 
-    Promise.all(promises)
-        .then(() => window["DELAYED_IMAGES"] ? loadBoothsImages(context) : null)
-        .then(() => {
+    Promise.all(promises).then(() => {
         layersStore.layersLoaded = true;
+
+        if (window["DELAYED_IMAGES"]) {
+            loadBoothsImages(context);
+        }
 
         const l =
             [...uiState.selectedBooths][0]?.layer ||

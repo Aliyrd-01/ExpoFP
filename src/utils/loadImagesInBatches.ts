@@ -1,7 +1,9 @@
 import { loadImage } from "./imageloader";
+import isMobile from "./is-mobile";
+import isWebview from "./is-webview";
 
-const BATCH_SIZE = 8;
-const DELAY = 8;
+const BATCH_SIZE = isMobile || isWebview ? 8 : 128;
+const DELAY = isMobile || isWebview ? 250 : 10;
 
 export async function loadImagesInBatches(
     urls: string[],
