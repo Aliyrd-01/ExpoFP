@@ -11,7 +11,7 @@ import type { Layer } from "../../../../store/LayerStore";
 import isWebview from "../../../../utils/is-webview";
 
 const CHUNK_SIZE = isMobile || isWebview ? 8 : 128;
-const DELAY = isMobile || isWebview ? 8 : 4;
+const DELAY = isMobile || isWebview ? 250 : 10;
 const SEPARATOR = ":";
 
 export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK_SIZE): Promise<void> {
