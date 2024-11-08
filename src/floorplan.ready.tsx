@@ -50,12 +50,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         reaction(
             () => store.layerStore.layersLoaded,
             () => {
-                // eurotier feature toggle
-                if (window["DELAYED_IMAGES"]) {
-                    setTimeout(() => this.resolveReady, 2000);
-                } else {
-                    this.resolveReady();
-                }
+                this.resolveReady();
 
                 if (!store.initialized) {
                     this._addCustomCss();
