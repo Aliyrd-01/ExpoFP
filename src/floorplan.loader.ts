@@ -150,6 +150,8 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    protected _addCustomCss = () => { };
+
     constructor(options?: FloorPlanOptions) {
         this.options = options;
         this.noOverlay = !!options.noOverlay;
@@ -188,7 +190,7 @@ export default class FloorPlanLoader implements FloorPlan {
         window["__efpElement"] = element;
 
         // eurotier feature toggle
-        window["DELAYED_IMAGES"] = eventId?.startsWith("eurotier");
+        window["DELAYED_IMAGES"] = eventId?.toLowerCase().startsWith("eurotier");
 
         window["__efpElement"] = element;
         const classes = [...element.classList];
@@ -314,17 +316,19 @@ export default class FloorPlanLoader implements FloorPlan {
             }
 
             if (data.customCss) {
-                const style = document.createElement("style");
-                style.textContent = data.customCss;
-                document.head.append(style);
+                self._addCustomCss = async () => {
+                    const style = document.createElement("style");
+                    style.textContent = data.customCss;
+                    document.head.append(style);
 
-                if (useShadow) {
-                    const style2 = document.createElement("style");
-                    style2.textContent = data.customCss;
-                    container.append(style2);
+                    if (useShadow) {
+                        const style2 = document.createElement("style");
+                        style2.textContent = data.customCss;
+                        container.append(style2);
+                    }
+
+                    await loadCustomFonts(data.customCss);
                 }
-
-                await loadCustomFonts(data.customCss);
             }
 
             logger.log("Data loaded");
