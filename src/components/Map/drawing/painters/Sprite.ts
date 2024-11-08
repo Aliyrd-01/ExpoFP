@@ -12,14 +12,9 @@ type ContainerCanvasInfo = {
     items: SpriteItemEx[];
 };
 
-let canvas;
-if (typeof window.OffscreenCanvas !== "undefined") {
-    canvas = new OffscreenCanvas(maxWidth, maxHeight);
-} else {
-    canvas = document.createElement("canvas");
-    canvas.width = maxWidth;
-    canvas.height = maxHeight;
-}
+const canvas = document.createElement("canvas");
+canvas.width = maxWidth;
+canvas.height = maxHeight;
 const c = canvas.getContext("2d");
 
 
