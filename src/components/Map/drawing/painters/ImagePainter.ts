@@ -13,14 +13,9 @@ import isWebview from "../../../../utils/is-webview";
 const mobileCanvasSize = data.viewOptimizationLevel >= 5 ? 48 : 64;
 const reduceImageQuality = (isMobile || isWebview) && data.viewOptimizationLevel >= 4;
 
-let offscreenCanvas;
-if (typeof window.OffscreenCanvas !== "undefined") {
-    offscreenCanvas = new OffscreenCanvas(mobileCanvasSize, mobileCanvasSize);
-} else {
-    offscreenCanvas = document.createElement("canvas");
-    offscreenCanvas.width = mobileCanvasSize;
-    offscreenCanvas.height = mobileCanvasSize;
-}
+const offscreenCanvas = document.createElement("canvas");
+offscreenCanvas.width = mobileCanvasSize;
+offscreenCanvas.height = mobileCanvasSize;
 const offscreenCanvasCtx = offscreenCanvas.getContext("2d");
 
 export default class ImagePainter implements Painter {
