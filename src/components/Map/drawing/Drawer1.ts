@@ -195,7 +195,7 @@ function createGl(canvas: HTMLCanvasElement) {
     let gl = canvas.getContext("webgl2", options) as WebGLRenderingContext;
     if (!gl) {
         gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
-        if (!gl) return;
+        if (!gl) throw new Error("WebGL not supported");
         const ext = gl.getExtension("OES_element_index_uint");
         if (!ext) logger.warn("OES_element_index_uint not supported");
     }
