@@ -5,6 +5,8 @@ import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
 import { boothStore, heatmapStore, uiState } from "../../../../store";
 import data from "../../../../data";
+import isMobile from "../../../../utils/is-mobile";
+import isWebview from "../../../../utils/is-webview";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -186,7 +188,7 @@ export function createExhibitorsDetailsCanvas(
             mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
         }
     } else {
-        const shouldOptimize = data.viewOptimizationLevel >= 3;
+        const shouldOptimize = (isMobile || isWebview) && data.viewOptimizationLevel >= 3;
         const limit = shouldOptimize ? 1 : 3;
         const textLen = 10;
         const truncateText = (text) => text?.length > textLen ? `${text.slice(0, textLen).trim()}...` : text;

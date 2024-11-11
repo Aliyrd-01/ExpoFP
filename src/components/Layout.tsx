@@ -9,7 +9,6 @@ import isDebug from "../utils/is-debug";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
 import Floors from "./Floors";
-import Header from "./Header";
 import LargeMessage from "./LargeMessage";
 import "../styles/index.scss";
 import "./Layout.scss";
@@ -17,7 +16,6 @@ import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import { MapLoader } from "./Mapbox/MapLoader";
 import Overlay from "./Overlay";
-import Pdf from "./Pdf";
 import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
@@ -94,16 +92,12 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
             dir={uiState.rtl ? "rtl" : "ltr"}
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
-                <Header />
-                {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
                 <LogoOverlay />
                 {!uiState.hideHeaderLogo && store.initialized && (
                     window["DELAYED_IMAGES"] ? <WsDelayedImages /> : <Ws />
                 )}
                 {!uiState.mapControlsHidden && <Controls />}
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
-                {/* <Layers /> */}
-                {/*<Areas />*/}
                 {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
                 {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
@@ -132,8 +126,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     </Suspense>
                 ) : null}
                 {isIframe && <LargeMessage />}
-                {/* {isIframe && <TouchHover />} */}
-                <Pdf />
                 {uiState.modalActive.share ? (
                     <Suspense fallback={null}>
                         <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
