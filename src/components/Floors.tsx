@@ -7,6 +7,7 @@ import { Layer, LayerMode, LayersMode } from "../store/LayerStore";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import "./Floors.scss";
+import appData from "../data";
 
 var timeout = null;
 export default function Floors() {
@@ -70,13 +71,16 @@ export default function Floors() {
                 <div className={s.className} style={s.style}>
                     {data.map((l) => (
                         <div
-                            className={classNames("item", { active: l.active, disabled: l.disabled })}
+                            className={classNames("item", {
+                                active: l.active, disabled: l.disabled,
+                                "full-name": appData.showFullLevelName,
+                            })}
                             key={l.layer.description}
                             onClick={() => click(l.layer)}
                             title={l.layer.description}
                             dir="auto"
                         >
-                            <span>{l.layer.shortName}</span>
+                            <span>{appData.showFullLevelName ? l.layer.description : l.layer.shortName}</span>
                         </div>
                     ))}
                 </div>
