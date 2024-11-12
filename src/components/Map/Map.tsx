@@ -342,6 +342,8 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
+        if (!uiState?.rootElement || !s?.drawer) return;
+
         const { left, top } = uiState.rootElement.getBoundingClientRect();
 
         const x = e.clientX - left;
@@ -357,6 +359,8 @@ export default function Map() {
     }
 
     function handleClick(e: React.MouseEvent) {
+        if (!uiState?.rootElement || !s?.drawer) return;
+
         if (window["__resett"]) window["__resett"]();
         if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
             store.showMap();
