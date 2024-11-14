@@ -215,7 +215,7 @@ export default class UIState {
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
     }
     @computed get mapVisibleBottom() {
-        if (this.overlayLeft) {
+        if (this.overlayLeft || this.noOverlay) {
             return this.wsPosition === "bottom" ? this.wsOccupiedHeightPx : 0;
         }
         return remsToPixels(this.overlayMediumHeightRems);
