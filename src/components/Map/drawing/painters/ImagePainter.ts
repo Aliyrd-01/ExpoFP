@@ -546,9 +546,8 @@ export default class ImagePainter implements Painter {
     paint() {
         if (this.alpha < 0.05 || !this.visible) return;
         const gl = this.gl;
-
         this.preparePaint();
-
+        isDebug && console.log("ImagePainter.paint", `Layer id: ${this.id}, groups ${this.groups.length}`);
         this.enableBuffer(this.centerBuffer, this.centerLocation, 2);
         this.enableBuffer(this.deltaBuffer, this.deltaLocation, 2);
         this.enableBuffer(this.deltaptBuffer, this.deltaptLocation, 2);
@@ -560,21 +559,17 @@ export default class ImagePainter implements Painter {
         this.enableBuffer(this.fixdeltaBuffer, this.fixdeltaLocation, 2);
         this.enableBuffer(this.fixdeltaptBuffer, this.fixdeltaptLocation, 2);
         this.enableBuffer(this.fixdeltamaxptBuffer, this.fixdeltamaxptLocation, 2);
-
-        for (let group of this.groups) {
+        for (const group of this.groups) {
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, group.indexBuffer);
-
             const uniforms = {
                 u_matrix: this.matrix,
                 u_ptscale: [this.ptscale, this.ptscale],
                 u_dim: this.dim,
                 u_alpha: this.alpha,
             } as any;
-
             if (group.texture) {
                 uniforms.u_texture = group.texture;
                 uniforms.u_texsize = group.texsize;
-
                 gl.bindTexture(gl.TEXTURE_2D, group.texture);
                 if (group.rotated) {
                     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -586,9 +581,7 @@ export default class ImagePainter implements Painter {
             } else {
                 uniforms.u_texture = this.fallBackTexture;
             }
-
             twgl.setUniforms(this.programInfo, uniforms);
-
             // console.log("zzz", group.numElements, group.indexBufferIsUint);
             gl.drawElements(gl.TRIANGLES, group.numElements, this.indexBuffersAreUint ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
         }
