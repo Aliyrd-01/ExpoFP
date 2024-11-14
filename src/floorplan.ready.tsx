@@ -53,7 +53,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 this.resolveReady();
 
                 if (!store.initialized) {
-                    this._addCustomCss();
+                    // this._addCustomCss();
                     this.onInit?.(this);
                 }
                 store.initialized = true;

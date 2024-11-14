@@ -150,7 +150,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    protected _addCustomCss = () => { };
+    // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {
         this.options = options;
@@ -316,7 +316,9 @@ export default class FloorPlanLoader implements FloorPlan {
             }
 
             if (data.customCss) {
-                self._addCustomCss = async () => {
+                // TODO: 
+                // Enable self._addCustomCss and rerender map after css load
+                // self._addCustomCss = async () => {
                     const style = document.createElement("style");
                     style.textContent = data.customCss;
                     document.head.append(style);
@@ -328,7 +330,7 @@ export default class FloorPlanLoader implements FloorPlan {
                     }
 
                     await loadCustomFonts(data.customCss);
-                }
+                // }
             }
 
             logger.log("Data loaded");
