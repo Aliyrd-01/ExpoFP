@@ -79,15 +79,13 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
     const layerBooths = [];
 
     const layersEnabled = !!window["__fpLayers"];
-    const layerSvg = getLayerSvg(layer);
-    const layerNodes = d3
-        .select(layerSvg)
-        .selectAll(
-            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`,
-        )
-        .nodes() as (SVGRectElement | SVGPathElement)[];
 
-    for (const el of layerNodes) {
+    for (const el of d3
+        .select(getLayerSvg(layer))
+        .selectAll(
+            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
+        )
+        .nodes() as (SVGRectElement | SVGPathElement)[]) {
         const layer = ((el as SVGGraphicsElement).closest("svg > [data-layer]") as SVGGraphicsElement).attributes["data-layer"]
             ?.value;
 
@@ -125,7 +123,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
             layerBooths.push(booth);
         } else layerBooths.push(booth);
 
-        booth.layer = layerStore.layers.find((l) => l.name === layer);        
+        booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
         booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor || "#FFFFFF";
         booth.borderWidth = parseFloat(rect.getAttribute("stroke-width") || rect.style.strokeWidth);
 
@@ -139,7 +137,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
 
         booth.rect = Rect.fromSvgRectElement(rect);
         booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
-
+       
         if (boothReg) {
             boothReg.availColor = el.getAttribute("data-avail-color") || boothReg.availColor;
             boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
@@ -172,7 +170,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
                     booth.rotate = (-rotate * Math.PI) / 180;
                 } else {
                     const mm = transform.match(
-                        /matrix\(\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*\)/,
+                        /matrix\(\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*\)/
                     );
                     if (mm) {
                         booth.rotate = Math.asin(-parseFloat(mm[2]));
