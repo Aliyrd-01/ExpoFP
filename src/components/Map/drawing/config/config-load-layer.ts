@@ -13,6 +13,7 @@ import configBooths from "./config-booths";
 import configSizes from "./config-sizes";
 import { getChildLayers } from "../../../../store/init/init-layers";
 import { chunkArray } from "../../../../utils";
+import isDebug from "../../../../utils/is-debug";
 
 function createChildLayers(layer: Layer) {
     if (layer.childLayers.length) return layer.childLayers;
@@ -29,7 +30,11 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
     return new Promise((resolve) => {
         const booths = initBooths(store, l);
         const logosBooths = boothStore.booths.filter(
-            (b) => b.rect && (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) && b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo) && !store.uiState.hideLogoInBooth
+            (b) =>
+                b.rect &&
+                (!b.layer || b.layer === l || b.layer.childLayers.includes(l)) &&
+                b.exhibitors.find((e) => !!e.logoInBooth && !!e.logo) &&
+                !store.uiState.hideLogoInBooth,
         ) as RegularBooth[];
 
         logosBooths.forEach((b) => (b.noLabels = true));
@@ -40,7 +45,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
             boothChunks.forEach((chunk, i) => {
                 configBooths(context, l.name + `:chunk${i}`, chunk, l.basePriority + 3, l.visible)();
                 context.getLayersPainters([l.name + `:chunk${i}`]).forEach((p) => p.preparePaint());
-            })
+            });
         }
 
         l.loaded = true;
@@ -53,6 +58,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
 
         l.configured = true;
 
+        isDebug && console.log("configLayer", l, logosBooths);
         const logos = window["DELAYED_IMAGES"] ? Promise.resolve([]) : logosFromBooths(logosBooths);
         configBg(context, logos, l, l.basePriority, l.visible).then(() => {
             if (window["DELAYED_IMAGES"]) {
@@ -72,7 +78,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
 export default async function loadLayer(
     layer: Layer,
     withConfiguration: boolean = true,
-    context: DrawerContext = getContext()
+    context: DrawerContext = getContext(),
 ): Promise<boolean> {
     if (layer.configured) return Promise.resolve(true);
 
