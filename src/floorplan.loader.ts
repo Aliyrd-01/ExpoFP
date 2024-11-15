@@ -150,6 +150,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    highlightExhibitors(externalIs: string[]) {
+        nr();
+    }
+
     // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {

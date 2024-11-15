@@ -69,6 +69,7 @@ export default class UIState {
     @observable mapControlsHidden = false;
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
+    @observable forcedDimming = false;
 
     overlayMediumHeightRems = 10;
 
@@ -268,6 +269,8 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
+        if (this.forcedDimming) return true;
+
         const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;

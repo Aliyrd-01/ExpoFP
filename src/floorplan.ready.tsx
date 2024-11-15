@@ -277,4 +277,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
     }
+
+    highlightExhibitors(externalIs: string[]) {
+        // TODO
+        const exhibitors = store.exhibitorStore.exhibitors.filter(e => externalIs.includes(e.externalId));
+        store.uiState.forcedDimming = Boolean(exhibitors.length);
+    }
 }
