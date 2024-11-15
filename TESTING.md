@@ -14,6 +14,5 @@ Developers can view all textures with their sizes that are rendered on the plan.
 
 ![Search Menu](https://img001.prntscr.com/file/img001/jl4epDSKR2GiAlBK0bIjMw.png)
 
-
 This will open a window with all the textures and their information, including the Total square. Typically, if a plan has a Total square greater than 38,000,000, this can indicate potential crashes on iPhone devices.
 ![Total Square](https://img001.prntscr.com/file/img001/cZighgsRQRO81BLne2DPLg.png)
