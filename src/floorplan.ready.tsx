@@ -294,6 +294,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             b.isHighlighted = highlightedBoothIds.has(b.id);
         });
 
+        // TODO: Do we need this?
         // store.moveToList(exhibitors);
     }
 }
