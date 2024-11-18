@@ -104,6 +104,7 @@ export abstract class BoothBase {
     readonly labelColor: string;
     readonly schedule: ScheduleItem[];
     readonly yah: boolean;
+    @observable isHighlighted: boolean;
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {
@@ -151,6 +152,10 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
+        if (this.isHighlighted) {
+            return false;
+        }
+
         const { selectedRoute } = this.uiState;
 
         if (

@@ -7,7 +7,7 @@ import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
-import { SpecialBooth } from "./store/BoothStore";
+import { RegularBooth, SpecialBooth } from "./store/BoothStore";
 import { CurrentPosition, Route, findBooth, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
@@ -279,8 +279,15 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     highlightExhibitors(externalIs: string[]) {
-        // TODO
         const exhibitors = store.exhibitorStore.exhibitors.filter(e => externalIs.includes(e.externalId));
         store.uiState.forcedDimming = Boolean(exhibitors.length);
+
+        const highlightedBoothIds = exhibitors
+            .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+            .map(b => b.id);
+
+        store.boothStore.booths.forEach(b => {
+            b.isHighlighted = !highlightedBoothIds.includes(b.id);
+        });
     }
 }
