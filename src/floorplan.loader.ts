@@ -74,7 +74,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void {
+    setBookmarks(bookmarks: { name?: string; externalId?: string; bookmarked: boolean }[]): void {
         nr();
     }
 
