@@ -279,15 +279,21 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     highlightExhibitors(externalIs: string[]) {
-        const exhibitors = store.exhibitorStore.exhibitors.filter(e => externalIs.includes(e.externalId));
-        store.uiState.forcedDimming = Boolean(exhibitors.length);
+        const externalIsSet = new Set(externalIs);
 
-        const highlightedBoothIds = exhibitors
-            .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-            .map(b => b.id);
+        const highlightedBoothIds = new Set(
+            store.exhibitorStore.exhibitors
+                .filter(e => externalIsSet.has(e.externalId))
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .map(b => b.id),
+        );
+
+        store.uiState.forcedDimming = highlightedBoothIds.size > 0;
 
         store.boothStore.booths.forEach(b => {
-            b.isHighlighted = !highlightedBoothIds.includes(b.id);
+            b.isHighlighted = highlightedBoothIds.has(b.id);
         });
+
+        // store.moveToList(exhibitors);
     }
 }
