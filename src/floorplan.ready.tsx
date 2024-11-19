@@ -18,6 +18,7 @@ import { Visibility } from "./store/types";
 import { fpGeo } from "./components/Mapbox/utils/fpGeo";
 import { convertLocalToGps } from "./utils/gps";
 import Rect from "./core/Rect";
+import { Exhibitor } from "./store/ExhibitorStore";
 
 install();
 
@@ -72,9 +73,25 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.selectBooth(booths);
     }
 
+    private exhibitorNameOrExternalId: string | string[] = [];
+
     selectExhibitor(nameOrExternalId: string | string[]) {
         if (!nameOrExternalId?.length) {
             store.selectSearch();
+
+            this.highlightExhibitors(
+                store.exhibitorStore.exhibitors
+                    .filter(
+                        e => e.booths.filter(b => b.isHighlighted).length
+                            && (
+                                Array.isArray(this.exhibitorNameOrExternalId)
+                                    ? !this.exhibitorNameOrExternalId.includes(e.externalId)
+                                    : e.externalId !== this.exhibitorNameOrExternalId
+                            ),
+                    )
+                    .map(e => e.externalId)
+            );
+
             return;
         }
 
@@ -86,6 +103,16 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
 
         if (!exhibitors?.length) return;
+
+        this.exhibitorNameOrExternalId = nameOrExternalId;
+
+        this.highlightExhibitors([
+            ...store.exhibitorStore.exhibitors
+                .filter(e => e.booths.filter(b => b.isHighlighted).length)
+                .map(e => e.externalId),
+
+            ...(Array.isArray(nameOrExternalId) ? nameOrExternalId : [nameOrExternalId]),
+        ]);
 
         if (typeof nameOrExternalId === "string") {
             store.selectExhibitor(exhibitors[0]);

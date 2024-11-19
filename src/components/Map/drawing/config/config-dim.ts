@@ -1,6 +1,6 @@
 import { interpolateNumber } from "d3-interpolate";
 import { reaction } from "mobx";
-import store, { uiState } from "../../../../store";
+import { uiState } from "../../../../store";
 import { DrawerContext } from "../Drawer1";
 import animate from "./animate";
 
@@ -19,11 +19,6 @@ export default function configDim(context: DrawerContext) {
         //     // __logger.log('dim', dim);
 
         // });
-
-        reaction(
-            () => uiState.details,
-            () => store.fp?.highlightExhibitors([]),
-        );
     }
 
     function update() {
