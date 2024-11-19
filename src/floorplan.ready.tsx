@@ -74,18 +74,23 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectExhibitor(nameOrExternalId: string | string[]) {
-        if (!nameOrExternalId?.length) {
-            store.selectSearch();
-            this.selectedExhibitors.forEach(value => this.highlightedExhibitors.delete(value));
-            this.highlightExhibitors(Array.from(this.highlightedExhibitors));
-            return;
-        }
-
         this.selectedExhibitors.clear();
         if (Array.isArray(nameOrExternalId)) {
             nameOrExternalId.forEach(e => this.selectedExhibitors.add(e));
         } else {
             this.selectedExhibitors.add(nameOrExternalId);
+        }
+
+        if (!nameOrExternalId?.length) {
+            if (this.selectedExhibitors.size) {
+                this.selectedExhibitors.forEach(value => this.highlightedExhibitors.delete(value));
+                this.highlightExhibitors(Array.from(this.highlightedExhibitors));
+            } else {
+                this.highlightExhibitors([]);
+            }
+
+            store.selectSearch();
+            return;
         }
 
         const exhibitors = store.exhibitorStore.exhibitors.filter((exh) => {
@@ -97,10 +102,12 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         if (!exhibitors?.length) return;
 
-        this.highlightExhibitors([
-            ...Array.from(this.highlightedExhibitors),
-            ...(Array.isArray(nameOrExternalId) ? nameOrExternalId : [nameOrExternalId]),
-        ]);
+        if (this.highlightedExhibitors.size) {
+            this.highlightExhibitors([
+                ...Array.from(this.highlightedExhibitors),
+                ...(Array.isArray(nameOrExternalId) ? nameOrExternalId : [nameOrExternalId]),
+            ]);
+        }
 
         if (typeof nameOrExternalId === "string") {
             store.selectExhibitor(exhibitors[0]);
@@ -138,7 +145,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         const highlightedBoothIds = new Set(
             store.exhibitorStore.exhibitors
-                .filter(e => this.highlightedExhibitors.has(e.externalId))
+                .filter(e => this.highlightedExhibitors.has(e.externalId) || this.selectedExhibitors.has(e.externalId))
                 .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
                 .map(b => b.id),
         );
