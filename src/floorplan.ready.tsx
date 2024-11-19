@@ -308,6 +308,14 @@ export default class FloorPlanReady extends FloorPlanLoader {
     highlightExhibitors(externalIs: string[]) {
         const externalIsSet = new Set(externalIs);
 
+        if (!externalIsSet.size) {
+            if (Array.isArray(this.exhibitorNameOrExternalId)) {
+                this.exhibitorNameOrExternalId.forEach(e => externalIsSet.add(e));
+            } else if (typeof this.exhibitorNameOrExternalId === "string") {
+                externalIsSet.add(this.exhibitorNameOrExternalId);
+            }
+        }
+
         const highlightedBoothIds = new Set(
             store.exhibitorStore.exhibitors
                 .filter(e => externalIsSet.has(e.externalId))
@@ -320,8 +328,5 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.boothStore.booths.forEach(b => {
             b.isHighlighted = highlightedBoothIds.has(b.id);
         });
-
-        // TODO: Do we need this?
-        // store.moveToList(exhibitors);
     }
 }
