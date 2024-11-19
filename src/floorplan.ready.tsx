@@ -73,26 +73,19 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.selectBooth(booths);
     }
 
-    private exhibitorNameOrExternalId: string | string[] = [];
-
     selectExhibitor(nameOrExternalId: string | string[]) {
         if (!nameOrExternalId?.length) {
             store.selectSearch();
-
-            this.highlightExhibitors(
-                store.exhibitorStore.exhibitors
-                    .filter(
-                        e => e.booths.filter(b => b.isHighlighted).length
-                            && (
-                                Array.isArray(this.exhibitorNameOrExternalId)
-                                    ? !this.exhibitorNameOrExternalId.includes(e.externalId)
-                                    : e.externalId !== this.exhibitorNameOrExternalId
-                            ),
-                    )
-                    .map(e => e.externalId)
-            );
-
+            this.selectedExhibitors.forEach(value => this.highlightedExhibitors.delete(value));
+            this.highlightExhibitors(Array.from(this.highlightedExhibitors));
             return;
+        }
+
+        this.selectedExhibitors.clear();
+        if (Array.isArray(nameOrExternalId)) {
+            nameOrExternalId.forEach(e => this.selectedExhibitors.add(e));
+        } else {
+            this.selectedExhibitors.add(nameOrExternalId);
         }
 
         const exhibitors = store.exhibitorStore.exhibitors.filter((exh) => {
@@ -104,13 +97,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         if (!exhibitors?.length) return;
 
-        this.exhibitorNameOrExternalId = nameOrExternalId;
-
         this.highlightExhibitors([
-            ...store.exhibitorStore.exhibitors
-                .filter(e => e.booths.filter(b => b.isHighlighted).length)
-                .map(e => e.externalId),
-
+            ...Array.from(this.highlightedExhibitors),
             ...(Array.isArray(nameOrExternalId) ? nameOrExternalId : [nameOrExternalId]),
         ]);
 
@@ -142,6 +130,24 @@ export default class FloorPlanReady extends FloorPlanLoader {
         };
 
         store.moveToList();
+    }
+
+    highlightExhibitors(externalIs: string[]) {
+        this.highlightedExhibitors.clear();
+        externalIs.forEach(e => this.highlightedExhibitors.add(e));
+
+        const highlightedBoothIds = new Set(
+            store.exhibitorStore.exhibitors
+                .filter(e => this.highlightedExhibitors.has(e.externalId))
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .map(b => b.id),
+        );
+
+        store.uiState.forcedDimming = highlightedBoothIds.size > 0;
+
+        store.boothStore.booths.forEach(b => {
+            b.isHighlighted = highlightedBoothIds.has(b.id);
+        });
     }
 
     selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
@@ -303,30 +309,5 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
-    }
-
-    highlightExhibitors(externalIs: string[]) {
-        const externalIsSet = new Set(externalIs);
-
-        if (!externalIsSet.size) {
-            if (Array.isArray(this.exhibitorNameOrExternalId)) {
-                this.exhibitorNameOrExternalId.forEach(e => externalIsSet.add(e));
-            } else if (typeof this.exhibitorNameOrExternalId === "string") {
-                externalIsSet.add(this.exhibitorNameOrExternalId);
-            }
-        }
-
-        const highlightedBoothIds = new Set(
-            store.exhibitorStore.exhibitors
-                .filter(e => externalIsSet.has(e.externalId))
-                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .map(b => b.id),
-        );
-
-        store.uiState.forcedDimming = highlightedBoothIds.size > 0;
-
-        store.boothStore.booths.forEach(b => {
-            b.isHighlighted = highlightedBoothIds.has(b.id);
-        });
     }
 }
