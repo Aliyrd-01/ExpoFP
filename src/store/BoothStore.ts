@@ -104,7 +104,6 @@ export abstract class BoothBase {
     readonly labelColor: string;
     readonly schedule: ScheduleItem[];
     readonly yah: boolean;
-    @observable isHighlighted: boolean;
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {
@@ -152,10 +151,6 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
-        if (this.isHighlighted != null) {
-            return this.isHighlighted;
-        }
-
         const { selectedRoute } = this.uiState;
 
         if (
@@ -170,6 +165,10 @@ export abstract class BoothBase {
 
         const inList = this.inList;
         if (this.uiState.details && !inList) return false;
+
+        if (this.uiState.highlightedAndSelectedBooths.size) {
+            return this.uiState.highlightedAndSelectedBooths.has(this.id);
+        }
 
         return (
             this.inList ||

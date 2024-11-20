@@ -69,7 +69,29 @@ export default class UIState {
     @observable mapControlsHidden = false;
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
-    @observable forcedDimming = false;
+
+    @observable highlightedBooths = [];
+
+    @computed get highlightedAndSelectedBooths() {
+        if (
+            this.list?.type === "category" ||
+            this.details instanceof Route ||
+            this.details instanceof RegularBooth ||
+            this.details instanceof Exhibitor
+        ) {
+            return new Set<number>(this.highlightedBooths);
+        }
+
+        const booths = new Set<number>(this.highlightedBooths);
+
+        if (this.list?.type === "filter") {
+            this.list.items
+                .flatMap(e => (e as Exhibitor).booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id));
+        }
+
+        return booths;
+    }
 
     overlayMediumHeightRems = 10;
 
@@ -269,8 +291,6 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
-        if (this.forcedDimming) return true;
-
         const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
         let text = (this.list as any)?.text?.trim().toLowerCase() as string;
@@ -279,7 +299,7 @@ export default class UIState {
 
         if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
 
-        return (
+        return this.highlightedAndSelectedBooths.size || (
             (text || isCategory || isFilter) &&
             exhibitors.length &&
             (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
