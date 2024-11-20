@@ -30,8 +30,6 @@ export default class FloorPlanLoader implements FloorPlan {
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
-    protected readonly selectedExhibitors = new Set<string>();
-    protected readonly highlightedExhibitors = new Set<string>();
 
     get ready() {
         return this._ready;
