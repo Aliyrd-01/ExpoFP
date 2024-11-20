@@ -73,41 +73,41 @@ export default class UIState {
     @computed get highlightedBooths() {
         const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
 
-        const booths = new Set<number>(
+        const booths = new Set<string>(
             this.rootStore.exhibitorStore.exhibitors
                 .filter(e => externalIsSet.has(e.externalId))
                 .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .map(b => b.id)
+                .map(b => b.id.toString())
         );
 
         if (this.list?.type === "search" && this.list?.text?.trim().length > 0) {
-            this.listBooths.forEach(b => booths.add(b.id));
+            this.listBooths.forEach(b => booths.add(b.id.toString()));
         }
 
         if (this.list?.type === "filter") {
             (this.list.items as Exhibitor[])
                 .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .forEach(b => booths.add(b.id));
+                .forEach(b => booths.add(b.id.toString()));
         }
 
         if (this.list?.type === "category") {
             this.list.category.exhibitors
                 .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .forEach(b => booths.add(b.id));
+                .forEach(b => booths.add(b.id.toString()));
         }
 
         if (this.details instanceof Route) {
             booths.clear();
-            booths.add(this.details.from?.id);
-            booths.add(this.details.to?.id);
+            booths.add(this.details.from?.id.toString());
+            booths.add(this.details.to?.id.toString());
         }
 
         if (this.details instanceof RegularBooth && booths.size > 0) {
-            booths.add(this.details.id);
+            booths.add(this.details.id.toString());
         }
 
         if (this.details instanceof Exhibitor && booths.size > 0) {
-            this.details.booths.filter(b => b instanceof RegularBooth).forEach(b => booths.add(b.id));
+            this.details.booths.filter(b => b instanceof RegularBooth).forEach(b => booths.add(b.id.toString()));
         }
 
         booths.delete(undefined);

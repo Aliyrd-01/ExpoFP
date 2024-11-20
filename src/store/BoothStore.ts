@@ -151,7 +151,7 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
-        return this.uiState.highlightedBooths.has(this.id);
+        return this.uiState.highlightedBooths.has(this.id.toString());
 
         // const { selectedRoute } = this.uiState;
 

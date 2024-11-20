@@ -28,6 +28,7 @@ import { getMarkerFromClientXy } from "./marker-by-xy";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
+import ImagePainter from "./drawing/painters/ImagePainter";
 
 //console.log('isIframe', isIframe)
 
@@ -221,6 +222,16 @@ export default function Map() {
     //         uiState.moveToRect = store.layerStore.rectangle;
     //     }
     // );
+
+    useReaction(
+        () => store.uiState.highlightedBooths,
+        (highlightedBooths) => {
+            const painter = (s.drawer as any).allPainters.find(p => p instanceof ImagePainter);
+            painter?.objects.forEach(o => {
+                painter?.updateSkipdim(o.id, highlightedBooths.has(o.id));
+            });
+        }
+    );
 
     return useObserver(() => (
         <canvas
