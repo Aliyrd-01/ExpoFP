@@ -118,11 +118,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     highlightExhibitors(externalIs: string[]) {
-        const externalIsSet = new Set(externalIs);
-        store.uiState.highlightedBooths = store.exhibitorStore.exhibitors
-            .filter(e => externalIsSet.has(e.externalId))
-            .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-            .map(b => b.id);
+        store.exhibitorStore.highlightedByExternalIds = [...externalIs];
     }
 
     selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {

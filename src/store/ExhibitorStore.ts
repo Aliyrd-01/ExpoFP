@@ -16,6 +16,8 @@ export default class ExhibitorStore {
         this.rootStore = rootStore;
     }
 
+    @observable highlightedByExternalIds = [];
+
     @computed({ keepAlive: true }) get exhibitorById() {
         return new Map<number, Exhibitor>(this.exhibitors.map((c) => [c.id, c]));
     }

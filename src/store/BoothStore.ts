@@ -125,22 +125,22 @@ export abstract class BoothBase {
         return this.layer?.visible ?? true;
     }
 
-    @computed({ keepAlive: true }) private get inList() {
-        const array: Booth[] = [];
-        if (this.uiState.details) {
-            if (this.uiState.details instanceof Exhibitor) array.push(...this.uiState.details.booths);
-            // else if (this.uiState.details instanceof BoothBase) array.push(this.uiState.details as Booth);
-            if (this.uiState.details instanceof Route) {
-                array.push(this.uiState.details.from as Booth);
-                array.push(this.uiState.details.to as Booth);
-            }
-            if (this.uiState.details instanceof Category) {
-                array.push(...(this.uiState.details as Category).exhibitors.map((e) => e.booths).flat());
-            }
-        } else array.push(...this.uiState.listBooths);
+    // @computed({ keepAlive: true }) private get inList() {
+    //     const array: Booth[] = [];
+    //     if (this.uiState.details) {
+    //         if (this.uiState.details instanceof Exhibitor) array.push(...this.uiState.details.booths);
+    //         // else if (this.uiState.details instanceof BoothBase) array.push(this.uiState.details as Booth);
+    //         if (this.uiState.details instanceof Route) {
+    //             array.push(this.uiState.details.from as Booth);
+    //             array.push(this.uiState.details.to as Booth);
+    //         }
+    //         if (this.uiState.details instanceof Category) {
+    //             array.push(...(this.uiState.details as Category).exhibitors.map((e) => e.booths).flat());
+    //         }
+    //     } else array.push(...this.uiState.listBooths);
 
-        return array.includes(this as unknown as Booth);
-    }
+    //     return array.includes(this as unknown as Booth);
+    // }
 
     @computed({ keepAlive: true }) get hover() {
         return this.uiState.hoveredBooths.has(this as unknown as Booth);
@@ -151,37 +151,30 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
-        const { selectedRoute } = this.uiState;
+        return this.uiState.highlightedBooths.has(this.id);
 
-        if (
-            selectedRoute &&
-            selectedRoute.from &&
-            selectedRoute.from.id !== this.id &&
-            selectedRoute.to &&
-            selectedRoute.to.id !== this.id
-        ) {
-            return false;
-        }
+        // const { selectedRoute } = this.uiState;
 
-        const inList = this.inList;
-        if (this.uiState.details && !inList) return false;
+        // if (
+        //     selectedRoute &&
+        //     selectedRoute.from &&
+        //     selectedRoute.from.id !== this.id &&
+        //     selectedRoute.to &&
+        //     selectedRoute.to.id !== this.id
+        // ) {
+        //     return false;
+        // }
 
-        if (this.uiState.highlightedAndSelectedBooths.size) {
-            return this.uiState.highlightedAndSelectedBooths.has(this.id);
-        }
+        // const inList = this.inList;
+        // if (this.uiState.details && !inList) return false;
 
-        return (
-            this.inList ||
-            this.selected ||
-            this.store.rootStore.routeStore.defaultFrom?.id === this.id ||
-            (this.uiState.list.type === "search" && this.uiState.list.text.trim().length === 0)
-        );
+        // return (
+        //     this.inList ||
+        //     this.selected ||
+        //     this.store.rootStore.routeStore.defaultFrom?.id === this.id ||
+        //     (this.uiState.list.type === "search" && this.uiState.list.text.trim().length === 0)
+        // );
     }
-
-    // // skipDim: boolean;
-    // empty: boolean;
-    // //onhold: boolean;
-    // bookmarked: boolean;
 }
 
 export type Booth = RegularBooth | SpecialBooth;

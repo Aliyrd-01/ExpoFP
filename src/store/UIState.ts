@@ -70,25 +70,48 @@ export default class UIState {
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
 
-    @observable highlightedBooths = [];
+    @computed get highlightedBooths() {
+        const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
 
-    @computed get highlightedAndSelectedBooths() {
-        if (
-            this.list?.type === "category" ||
-            this.details instanceof Route ||
-            this.details instanceof RegularBooth ||
-            this.details instanceof Exhibitor
-        ) {
-            return new Set<number>(this.highlightedBooths);
+        const booths = new Set<number>(
+            this.rootStore.exhibitorStore.exhibitors
+                .filter(e => externalIsSet.has(e.externalId))
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .map(b => b.id)
+        );
+
+        if (this.list?.type === "search" && this.list?.text?.trim().length > 0) {
+            this.listBooths.forEach(b => booths.add(b.id));
         }
-
-        const booths = new Set<number>(this.highlightedBooths);
 
         if (this.list?.type === "filter") {
-            this.list.items
-                .flatMap(e => (e as Exhibitor).booths.filter(b => b instanceof RegularBooth))
+            (this.list.items as Exhibitor[])
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
                 .forEach(b => booths.add(b.id));
         }
+
+        if (this.list?.type === "category") {
+            this.list.category.exhibitors
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id));
+        }
+
+        if (this.details instanceof Route) {
+            booths.clear();
+            booths.add(this.details.from?.id);
+            booths.add(this.details.to?.id);
+        }
+
+        if (this.details instanceof RegularBooth && booths.size > 0) {
+            booths.add(this.details.id);
+        }
+
+        if (this.details instanceof Exhibitor && booths.size > 0) {
+            this.details.booths.filter(b => b instanceof RegularBooth).forEach(b => booths.add(b.id));
+        }
+
+        booths.delete(undefined);
+        booths.delete(null);
 
         return booths;
     }
@@ -291,20 +314,22 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
-        const exhibitors = this.rootStore.exhibitorStore.exhibitors;
-        const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
-        let text = (this.list as any)?.text?.trim().toLowerCase() as string;
-        const isCategory = this.list.type === "category";
-        const isFilter = this.list.type === "filter";
+        return this.highlightedBooths.size > 0;
 
-        if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
+        // const exhibitors = this.rootStore.exhibitorStore.exhibitors;
+        // const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
+        // let text = (this.list as any)?.text?.trim().toLowerCase() as string;
+        // const isCategory = this.list.type === "category";
+        // const isFilter = this.list.type === "filter";
 
-        return this.highlightedAndSelectedBooths.size || (
-            (text || isCategory || isFilter) &&
-            exhibitors.length &&
-            (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
-                this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
-        );
+        // if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
+
+        // return (
+        //     (text || isCategory || isFilter) &&
+        //     exhibitors.length &&
+        //     (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
+        //         this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
+        // );
     }
 
     @computed get searchItems(): ListItem[] {
