@@ -24,8 +24,7 @@ export default function configImg(
             var img = boothImage.htmlImage;
 
             addObject({
-                // id: `${x}${y}${width}${height}`,
-                id: boothImage.booth.id.toString(),
+                id: boothImage.booth?.id?.toString() ?? `${x}${y}${width}${height}`,
                 center: [x + width / 2, y + height / 2],
                 deltas: [-width / 2, -height / 2, width / 2, height / 2],
                 deltaPts: [0, 0, 0, 0],
