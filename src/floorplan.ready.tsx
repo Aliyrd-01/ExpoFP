@@ -130,16 +130,16 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
         store.uiState.forcedDimming = highlightedBoothIds.size > 0;
 
-        store.boothStore.booths.forEach(b => {
-            let selected = new Set<number>();
-            if (store.uiState.list.type === "filter") {
-                selected = new Set(
-                    store.uiState.list.items
-                        .flatMap(e => (e as Exhibitor).booths.filter(b => b instanceof RegularBooth))
-                        .map(b => b.id),
-                );
-            }
+        let selected = new Set<number>();
+        if (store.uiState.list.type === "filter") {
+            selected = new Set(
+                store.uiState.list.items
+                    .flatMap(e => (e as Exhibitor).booths.filter(b => b instanceof RegularBooth))
+                    .map(b => b.id),
+            );
+        }
 
+        store.boothStore.booths.forEach(b => {
             b.isHighlighted = highlightedBoothIds.has(b.id) || selected.has(b.id);
         });
     }
