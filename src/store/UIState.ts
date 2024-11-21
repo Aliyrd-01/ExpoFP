@@ -314,7 +314,10 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
-        return this.highlightedBooths.size > 0;
+        return (
+            this.highlightedBooths.size > 0
+            || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
+        );
 
         // const exhibitors = this.rootStore.exhibitorStore.exhibitors;
         // const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
