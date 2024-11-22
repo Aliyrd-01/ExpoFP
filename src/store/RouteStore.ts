@@ -59,7 +59,7 @@ export default class RouteStore {
         return !!this.defaultFrom || !!this.currentPosition;
     }
 
-    @action selectRoute(route: Route) {        
+    @action selectRoute(route: Route) {
         uiState.list = { type: "search", text: "", focused: false };
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
         if (route?.from && route?.to && route.from === route.to) route = null;
@@ -70,7 +70,7 @@ export default class RouteStore {
                 () => {
                     this.rootStore.showMap();
                 },
-                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
+                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50,
             );
 
         if (route?.from?.visible) list.push(route.from);
@@ -94,7 +94,7 @@ export default class RouteStore {
             if (route?.from && route?.to)
                 sendEventToGa(
                     GaEventActions.ClickDirections,
-                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
+                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`,
                 );
         }, 200);
     }
@@ -133,7 +133,7 @@ export default class RouteStore {
                 .sort(
                     (b1, b2) =>
                         lineLength(localPoint, { x: b1.rect.cx, y: b1.rect.cy }) -
-                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy })
+                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy }),
                 )[0] || null
         );
     }
@@ -226,7 +226,10 @@ export default class RouteStore {
         let layer = store.layerStore.findLayer(point.z);
 
         if (focus) {
-            if (layer && !layer?.visible) layersStore.updateVisibility(layer, true);
+            if (layer && !layer?.visible) {
+                layersStore.updateVisibility(layer, true);
+                store.routeStore.currentRouteLayer = layer;
+            }
             this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 1000, 1000);
         }
 
@@ -268,7 +271,7 @@ export default class RouteStore {
         const route = uiState.selectedRoute;
 
         const l = getLayerSvg();
-        const units = l.getAttribute("units");        
+        const units = l.getAttribute("units");
         const isNewVersion = l.getAttribute("fp-ver")?.startsWith("5") ?? false;
         let distance = 0;
 
@@ -333,7 +336,10 @@ export function extractRoute(from: string, to: string) {
 }
 
 export class Route {
-    public constructor(public from: Booth, public to: Booth) {}
+    public constructor(
+        public from: Booth,
+        public to: Booth,
+    ) {}
 }
 
 export class CurrentPosition extends Point {
@@ -343,7 +349,7 @@ export class CurrentPosition extends Point {
         public z?: number | string,
         public angle?: number,
         public lat?: number,
-        public lng?: number
+        public lng?: number,
     ) {
         super(x, y);
     }
