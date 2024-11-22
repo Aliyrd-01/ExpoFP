@@ -229,7 +229,7 @@ export default function Map() {
             (s.drawer as DrawerImpl).allPainters
                 .filter(p => p instanceof ImagePainter)
                 .forEach(
-                    p => (p as ImagePainter)?.setDimmingForObjects(objectId => highlightedBooths.has(objectId)),
+                    p => (p as ImagePainter)?.setDimmingForObjects?.(objectId => highlightedBooths.has(objectId)),
             );
         }
     );
