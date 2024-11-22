@@ -22,7 +22,7 @@ import isIframe from "../../utils/is-iframe";
 import isMac from "../../utils/is-mac";
 import { useReaction } from "../../utils/mobx";
 import getBoothIdFromClientXy from "./booth-by-xy";
-import createDrawer, { Drawer } from "./drawing/Drawer1";
+import createDrawer, { Drawer, DrawerImpl } from "./drawing/Drawer1";
 import "./Map.scss";
 import { getMarkerFromClientXy } from "./marker-by-xy";
 import { sizeCanvasToParentElement } from "./utils";
@@ -226,10 +226,11 @@ export default function Map() {
     useReaction(
         () => store.uiState.highlightedBooths,
         (highlightedBooths) => {
-            const painter = (s.drawer as any).allPainters.find(p => p instanceof ImagePainter);
-            painter?.objects.forEach(o => {
-                painter?.updateSkipdim(o.id, highlightedBooths.has(o.id));
-            });
+            (s.drawer as DrawerImpl).allPainters
+                .filter(p => p instanceof ImagePainter)
+                .forEach(
+                    p => (p as ImagePainter)?.setDimmingForObjects(objectId => highlightedBooths.has(objectId)),
+            );
         }
     );
 

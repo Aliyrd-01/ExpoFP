@@ -80,7 +80,8 @@ export default class UIState {
                 .map(b => b.id.toString())
         );
 
-        if (this.list?.type === "search" && this.list?.text?.trim().length > 0) {
+        const isSearch = this.list?.type === "search" && this.list?.text?.trim().length;
+        if (isSearch) {
             this.listBooths.forEach(b => booths.add(b.id.toString()));
         }
 
@@ -102,11 +103,13 @@ export default class UIState {
             booths.add(this.details.to?.id.toString());
         }
 
-        if (this.details instanceof RegularBooth && booths.size > 0) {
+        const hasNoSearchResult = (isSearch && !this.listBooths.size);
+
+        if (this.details instanceof RegularBooth && (hasNoSearchResult || booths.size)) {
             booths.add(this.details.id.toString());
         }
 
-        if (this.details instanceof Exhibitor && booths.size > 0) {
+        if (this.details instanceof Exhibitor && (hasNoSearchResult || booths.size)) {
             this.details.booths.filter(b => b instanceof RegularBooth).forEach(b => booths.add(b.id.toString()));
         }
 

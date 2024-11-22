@@ -132,6 +132,11 @@ export default class ImagePainter implements Painter {
         }
     }
 
+    setDimmingForObjects(cb: (objectId: string) => boolean) {
+        if (!cb) return;
+        this.objects.forEach(o => this.updateSkipdim(o.id, cb(o.id)));
+    }
+
     updateStretch(id: string, stretch: boolean) {
         const obj = this.objectsById.get(id);
         if (obj.stretch !== stretch) {
