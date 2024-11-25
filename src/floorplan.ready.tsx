@@ -7,7 +7,7 @@ import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
-import { SpecialBooth } from "./store/BoothStore";
+import { RegularBooth, SpecialBooth } from "./store/BoothStore";
 import { CurrentPosition, Route, findBooth, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
@@ -115,6 +115,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
         };
 
         store.moveToList();
+    }
+
+    highlightExhibitors(externalIs: string[]) {
+        store.exhibitorStore.highlightedByExternalIds = [...externalIs];
     }
 
     selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {

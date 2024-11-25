@@ -70,6 +70,55 @@ export default class UIState {
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
 
+    @computed get highlightedBooths() {
+        const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
+
+        const booths = new Set<string>(
+            this.rootStore.exhibitorStore.exhibitors
+                .filter(e => externalIsSet.has(e.externalId))
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .map(b => b.id.toString())
+        );
+
+        const isSearch = this.list?.type === "search" && this.list?.text?.trim().length;
+        if (isSearch) {
+            this.listBooths.forEach(b => booths.add(b.id.toString()));
+        }
+
+        if (this.list?.type === "filter") {
+            (this.list.items as Exhibitor[])
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id.toString()));
+        }
+
+        if (this.list?.type === "category") {
+            this.list.category.exhibitors
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id.toString()));
+        }
+
+        if (this.details instanceof Route) {
+            booths.clear();
+            booths.add(this.details.from?.id.toString());
+            booths.add(this.details.to?.id.toString());
+        }
+
+        const hasNoSearchResult = (isSearch && !this.listBooths.size);
+
+        if (this.details instanceof RegularBooth && (hasNoSearchResult || booths.size)) {
+            booths.add(this.details.id.toString());
+        }
+
+        if (this.details instanceof Exhibitor && (hasNoSearchResult || booths.size)) {
+            this.details.booths.filter(b => b instanceof RegularBooth).forEach(b => booths.add(b.id.toString()));
+        }
+
+        booths.delete(undefined);
+        booths.delete(null);
+
+        return booths;
+    }
+
     overlayMediumHeightRems = 10;
 
     constructor(rootStore: RootStore) {
@@ -268,20 +317,25 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
-        const exhibitors = this.rootStore.exhibitorStore.exhibitors;
-        const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
-        let text = (this.list as any)?.text?.trim().toLowerCase() as string;
-        const isCategory = this.list.type === "category";
-        const isFilter = this.list.type === "filter";
-
-        if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
-
         return (
-            (text || isCategory || isFilter) &&
-            exhibitors.length &&
-            (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
-                this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
+            this.highlightedBooths.size > 0
+            || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
         );
+
+        // const exhibitors = this.rootStore.exhibitorStore.exhibitors;
+        // const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
+        // let text = (this.list as any)?.text?.trim().toLowerCase() as string;
+        // const isCategory = this.list.type === "category";
+        // const isFilter = this.list.type === "filter";
+
+        // if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
+
+        // return (
+        //     (text || isCategory || isFilter) &&
+        //     exhibitors.length &&
+        //     (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
+        //         this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
+        // );
     }
 
     @computed get searchItems(): ListItem[] {

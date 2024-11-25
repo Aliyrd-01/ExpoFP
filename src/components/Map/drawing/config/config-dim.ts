@@ -27,7 +27,7 @@ export default function configDim(context: DrawerContext) {
         if (cancelAnimation) cancelAnimation();
         if (targetDim === 1) {
             cancelAnimation = animate(
-                0,
+                250,
                 200,
                 null,
                 interpolateNumber(0, targetDim),
