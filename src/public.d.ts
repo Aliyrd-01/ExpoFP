@@ -132,6 +132,7 @@ interface Point {
 interface FloorPlanBookmarkClickEvent {
     name: string;
     bookmarked: boolean;
+    externalId: string;
 }
 
 interface FloorPlanCategoryClickEvent extends FloorPlanCategory {}
