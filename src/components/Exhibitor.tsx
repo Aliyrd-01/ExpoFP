@@ -573,7 +573,7 @@ function ExhibitorComponent() {
 
     function bookmark() {
         s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
-        if (uiState.onBookmarkClick) uiState.onBookmarkClick({ name: s.exhibitor.name, bookmarked: s.exhibitor.bookmarked });
+        if (uiState.onBookmarkClick) uiState.onBookmarkClick({ name: s.exhibitor.name, bookmarked: s.exhibitor.bookmarked, externalId: s.exhibitor.externalId });
     }
 }
 
