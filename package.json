@@ -26,6 +26,7 @@
         "@babel/preset-react": "^7.24.7",
         "@babel/preset-typescript": "^7.24.7",
         "@chromatic-com/storybook": "3.2.2",
+        "@storybook/addon-actions": "^8.4.5",
         "@storybook/addon-essentials": "8.4.5",
         "@storybook/addon-interactions": "8.4.5",
         "@storybook/addon-links": "^8.4.5",

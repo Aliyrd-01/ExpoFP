@@ -95,7 +95,7 @@ export default function LogoOverlay() {
                     </a>
                 </Alert>
             )}
-            {uiState.kiosk && (
+            {uiState.kiosk && !uiState.selectedRoute?.to && !uiState.selectedRoute?.from && (
                 <div
                     className={classNames("qr", { "qr--right": settings.EXPO === "metstrade-superyacht2023" || uiState.rtl })}
                     style={{

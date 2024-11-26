@@ -6,6 +6,7 @@ import ToggleSwitch from "./ToggleSwitch";
 import WayfindingFloorSelector from "./WayfindingFloorSelector";
 import "./WayfindingTemplate.scss";
 import WayInformation, { WayInformationItem } from "./WayInformation";
+import RouteQR from "./RouteQR";
 
 export interface WayfindingTemplateProps {
     options: string[] | (OptionObject | any)[];
@@ -20,6 +21,8 @@ export interface WayfindingTemplateProps {
     infoAccessible?: boolean;
     floors?: { id: number; name: string }[];
     currentFloor?: { id: number; name: string };
+    routeUrl?: string;
+    isKiosk?: boolean;
     onChangeFrom?: (val: string) => void;
     onChangeTo?: (val: string) => void;
     onSwitch?: () => void;
@@ -40,6 +43,8 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     infoAccessible,
     floors,
     currentFloor,
+    routeUrl,
+    isKiosk,
     onChangeFrom,
     onChangeTo,
     onSwitch,
@@ -124,7 +129,10 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
             {showInfo && (
                 <div className="efp-wayfindingInfo">
                     {routeFound ? (
-                        <WayInformation items={infoItems} accessible={infoAccessible} onClick={onClickInfo} />
+                        <>
+                            <WayInformation items={infoItems} accessible={infoAccessible} onClick={onClickInfo} />
+                            {isKiosk && <RouteQR url={routeUrl} />}
+                        </>
                     ) : (
                         <div className="efp-wayfindingError">Route not found</div>
                     )}
