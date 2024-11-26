@@ -43,3 +43,6 @@ bundle-report.prev.html
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+/storybook-static
+*storybook.log

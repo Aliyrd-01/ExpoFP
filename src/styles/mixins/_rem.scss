@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @function rem-separator($list, $separator: false) {
     @if $separator == "comma" or $separator == "space" {
         @return append($list, null, $separator);
@@ -16,7 +18,7 @@
 }
 
 @mixin rem-baseline($zoom: 100%) {
-    font-size: ($zoom / 16px) * $rem-baseline-px;
+    font-size: math.div($zoom, 16px) * $rem-baseline-px;
 }
 
 @function rem-convert($to, $values...) {
@@ -25,9 +27,9 @@
 
     @each $value in $values {
         @if type-of($value) == "number" and unit($value) == "rem" and $to == "px" {
-            $result: append($result, ($value / 1rem) * $rem-baseline-px, $separator);
+            $result: append($result, math.div($value, 1rem) * $rem-baseline-px, $separator);
         } @else if type-of($value) == "number" and unit($value) == "px" and $to == "rem" {
-            $result: append($result, ($value / $rem-baseline-px) * 1rem, $separator);
+            $result: append($result, math.div($value, $rem-baseline-px) * 1rem, $separator);
         } @else if type-of($value) == "list" {
             $value-separator: rem-separator($value);
             $value: rem-convert($to, $value...);

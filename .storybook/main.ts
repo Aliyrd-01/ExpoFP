@@ -1,17 +1,23 @@
-const path = require("path");
+import type { StorybookConfig } from "@storybook/react-webpack5";
+import path from "path";
 
-module.exports = {
-    stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
-    addons: ["@storybook/addon-links", "@storybook/addon-essentials", "storybook-dark-mode"],
+const config: StorybookConfig = {
+    stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+    addons: [
+        "@storybook/addon-webpack5-compiler-swc",
+        "@storybook/addon-essentials",
+        "@chromatic-com/storybook",
+        "@storybook/addon-interactions",
+        "@storybook/addon-links",
+        "storybook-dark-mode",
+    ],
     staticDirs: ["../public"],
-
     framework: {
         name: "@storybook/react-webpack5",
         options: {},
     },
-
     webpackFinal: async (config) => {
-        config.module.rules.push({
+        config.module?.rules?.push({
             test: /\.scss$/,
             use: [
                 "style-loader",
@@ -26,7 +32,7 @@ module.exports = {
             include: path.resolve(__dirname, "../src/"),
         });
 
-        config.module.rules.push({
+        config.module?.rules?.push({
             test: /\.(js|jsx|ts|tsx)$/,
             exclude: /node_modules/,
             use: [
@@ -40,12 +46,17 @@ module.exports = {
             ],
         });
 
-        config.resolve.extensions.push(".js", ".jsx", ".ts", ".tsx");
-        config.resolve.alias = {
-            ...config.resolve.alias,
-            "@": path.resolve(__dirname, "../src/"),
+        config.resolve = {
+            ...config.resolve,
+            extensions: [...(config.resolve?.extensions || []), ".js", ".jsx", ".ts", ".tsx"],
+            alias: {
+                ...(config.resolve?.alias || {}),
+                "@": path.resolve(__dirname, "../src/"),
+            },
         };
 
         return config;
     },
 };
+
+export default config;
