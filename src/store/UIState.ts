@@ -321,21 +321,6 @@ export default class UIState {
             this.highlightedBooths.size > 0
             || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
         );
-
-        // const exhibitors = this.rootStore.exhibitorStore.exhibitors;
-        // const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
-        // let text = (this.list as any)?.text?.trim().toLowerCase() as string;
-        // const isCategory = this.list.type === "category";
-        // const isFilter = this.list.type === "filter";
-
-        // if (/*this.details ||*/ this.selectedRoute?.from && this.selectedRoute?.to) return true;
-
-        // return (
-        //     (text || isCategory || isFilter) &&
-        //     exhibitors.length &&
-        //     (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
-        //         this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
-        // );
     }
 
     @computed get searchItems(): ListItem[] {

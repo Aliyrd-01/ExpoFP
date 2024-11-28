@@ -64,8 +64,9 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
             if (imagePainter) {
                 imagePainter.visible = l.visible;
             }
+        }).finally(() => {
+            resolve(true);
         });
-        resolve(true);
     });
 }
 
@@ -100,6 +101,10 @@ export default async function loadLayer(
 
         await configLayer(layer, context, withConfiguration);
         await Promise.all(childLayers.map((l) => configLayer(l, context, withConfiguration)));
+
+        context.getLayersPainters([layer.name]).forEach((p) => {
+            p.dim = uiState.dimmed ? 1 : 0;
+        });
 
         context.requireUpdate(null);
         resolve(true);
