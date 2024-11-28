@@ -168,7 +168,6 @@ function Wayfinding() {
                     onClickFloor={(floor) => {
                         var layer = store.layerStore.layers.find((l) => l.shortName === floor.name);
                         store.layerStore.updateVisibility(layer, true);
-                        store.routeStore.currentRouteLayer = layer;
                     }}
                     routeFound={!routeNotFound}
                     options={options()}

@@ -42,8 +42,8 @@ export class Layer {
     get shortName(): string {
         return this.description
             .split(" ")
-            .map(x => x.replace(/[^A-Z0-9]/ig, ""))
-            .map(x => x.substring(0, 1).toLocaleUpperCase())
+            .map((x) => x.replace(/[^A-Z0-9]/gi, ""))
+            .map((x) => x.substring(0, 1).toLocaleUpperCase())
             .join("");
     }
 }
@@ -86,7 +86,6 @@ export default class LayerStore {
                             an(l, false);
                         }
                     }
-                    //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
@@ -96,8 +95,12 @@ export default class LayerStore {
                     layer.childLayers.forEach((child) => {
                         child.visible = visible;
                     });
+
+                    if (visible) store.routeStore.currentRouteLayer = layer;
                 } else {
-                    an(layer, visible);
+                    an(layer, visible, () => {
+                        if (visible) store.routeStore.currentRouteLayer = layer;
+                    });
                 }
             }
         });
@@ -139,7 +142,7 @@ export function setContext(context: DrawerContext) {
     _context = context;
 }
 
-function an(layer: Layer, toVisible: boolean): void {
+function an(layer: Layer, toVisible: boolean, callback: () => void = null): void {
     if (toVisible) store.layerStore.updateVisibility(layer, true);
 
     animate(
@@ -161,6 +164,8 @@ function an(layer: Layer, toVisible: boolean): void {
                 const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
                 layersPainters.forEach((p) => ((p as RectPainter).alpha = 1));
             }
-        }
+
+            callback?.();
+        },
     );
 }

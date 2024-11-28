@@ -6,7 +6,6 @@ import { getLayerSvg } from "../../../../data/svg";
 import store, { layersStore, uiState } from "../../../../store";
 import { LayersMode } from "../../../../store/LayerStore";
 import logger from "../../../../tools/logger";
-import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
@@ -46,60 +45,6 @@ let isNewVersion = false;
 export function mapCurrentPosition(position: CurrentPosition): Point | null {
     var mapping = null;
     var fpConfig: GpsConfig = null;
-
-    if (settings.EXPO === "money2020usa") {
-        mapping = {
-            "1": { x: 6150, y: 570 },
-            "2": { x: 6150, y: 570 },
-            "3": { x: 6150, y: 570 },
-            "4": { x: 6150, y: 570 },
-            "5": { x: 6150, y: 570 },
-        };
-    }
-
-    if (settings.EXPO === "all-energy") {
-        mapping = { "1": { x: 2399, y: 1998 }, "2": { x: 2000, y: 3300 } };
-    }
-
-    if (settings.EXPO === "autumnfair2022") {
-        mapping = { "0": { x: 7330, y: 1190 } };
-    }
-
-    // if (settings.EXPO.indexOf("cannes") > -1) {
-    //     mapping = {
-    //         "-1": { x: 10460, y: 12534 },
-    //         "0": { x: 10511, y: 9568 },
-    //         "1": { x: 10480, y: 7625 },
-    //         "3": { x: 10480, y: 5094 },
-    //         "4": { x: 10460, y: 3360 },
-    //     };
-
-    //     fpConfig = {
-    //         p0: { lat: 43.55353615016951, lng: 7.013889203828078, x: 8689, y: 13886 },
-    //         p2: { lat: 43.54734764989136, lng: 7.016619938071303, x: 14167, y: 17840 },
-    //     };
-    // }
-
-    if (settings.EXPO.indexOf("xpmusic-conference22") > -1) {
-        fpConfig = {
-            p0: { lat: 24.744760034152826, lng: 46.535945439716905, x: 550, y: 1350 },
-            p2: { lat: 24.74514840379901, lng: 46.53809617234901, x: 2626, y: 505 },
-        };
-    }
-
-    // if (settings.EXPO === "demo") {
-    //     fpConfig = {
-    //         p0: { lat: 38.255223, lng: -85.75678, x: 3309, y: 2702 },
-    //         p2: { lat: 38.253537, lng: -85.753878, x: 3799, y: 1725 },
-    //     };
-    // }
-
-    if (settings.EXPO === "bett2023") {
-        fpConfig = {
-            p0: { lat: 51.50924604464074, lng: 0.026175553161736653, x: 8629, y: 7416 },
-            p2: { lat: 51.50715813053298, lng: 0.03452882241528408, x: 16272, y: 1033 },
-        };
-    }
 
     if (!fpConfig && fpGeo) {
         fpConfig = fpGeo.properties.config;
@@ -584,17 +529,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 if (!store.layerStore.layersLoaded) return;
                 counter = 0;
-                context.requireUpdate(() => updateRoute(store.routeStore.currentRouteLayer));
-                blink(context, blinkDrawer, updateCurrentPosition());
-            }
-        );
-
-        reaction(
-            () => [store.layerStore.visible],
-            () => {
-                if (!store.layerStore.layersLoaded) return;
-                counter = 0;
-                context.requireUpdate(updateRoute);
+                context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 50));
                 blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
