@@ -5,7 +5,6 @@ import Rectangle from "../../../../core/Rect";
 import { getLayerSvg } from "../../../../data/svg";
 import store, { layersStore, uiState } from "../../../../store";
 import { LayersMode } from "../../../../store/LayerStore";
-import logger from "../../../../tools/logger";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
@@ -19,7 +18,7 @@ import {
     createCircleCanvas,
     createCurrentCanvas,
     createTargetCanvas,
-    createYahCanvas
+    createYahCanvas,
 } from "./canvases";
 
 let routePoints: Point[] = [];
@@ -220,7 +219,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
                 : store.layerStore.layers.find(
                       (l) =>
                           l.name == store.routeStore.currentRouteLayer?.name &&
-                          store.routeStore.currentRouteLayer?.name === line.p0.layer
+                          store.routeStore.currentRouteLayer?.name === line.p0.layer,
                   )?.visible || false;
 
         //let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
@@ -429,18 +428,20 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("currentLocation_arrow", false);
     wfDrawer.updateSkipdim("currentLocation_2", false);
 
-    function updateRoute() {
+    function updateRoute(currentRouteLayer: Layer = null) {
         var layers = store.layerStore.visible.map((l) => l.name);
 
         for (let i = 0; i < routePoints.length; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
 
-        routeLines = routePoints = [];
+        routePoints = [];
+
+        if (!currentRouteLayer) routeLines = [];
 
         if (layers.length && uiState.selectedRoute?.from?.rect && uiState.selectedRoute?.to?.rect) {
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible);
+            if (!routeLines.length && !currentRouteLayer) routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);
@@ -472,11 +473,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
-                const rotateRadians = (
-                    settings.EXPO === "demo"
-                        ? (position?.angle * Math.PI / 180 || null)
-                        : null
-                );
+                const rotateRadians = position?.angle * Math.PI / 180 || null;
 
                 if (rotateRadians !== undefined && rotateRadians !== null) {
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
@@ -550,7 +547,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (shortestrPerp.l < 200) {
             wfDrawer.updateCenter("currentLocation", [shortestrPerp.p.x, shortestrPerp.p.y]);
             wfDrawer.updateCenter("currentLocation_arrow", [shortestrPerp.p.x, shortestrPerp.p.y]);
-        };
+        }
 
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
 
@@ -569,31 +566,52 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 scale = s;
                 drawLines(wfDrawer, s);
                 blink(context, blinkDrawer, updateCurrentPosition());
-            }
+            },
         );
 
         reaction(
-            () => [store.layerStore.loaded, store.layerStore.visible, store.routeStore.currentRouteLayer],
+            () => [store.layerStore.layersLoaded],
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);
                 blink(context, blinkDrawer, updateCurrentPosition());
-            }
+            },
         );
+
+        reaction(
+            () => [store.routeStore.currentRouteLayer],
+            () => {
+                if (!store.layerStore.layersLoaded) return;
+                counter = 0;
+                context.requireUpdate(() => updateRoute(store.routeStore.currentRouteLayer));
+                blink(context, blinkDrawer, updateCurrentPosition());
+            },
+        );
+
+        reaction(
+            () => [store.layerStore.visible],
+            () => {
+                if (!store.layerStore.layersLoaded) return;
+                counter = 0;
+                context.requireUpdate(updateRoute);
+                blink(context, blinkDrawer, updateCurrentPosition());
+            },
+        );
+
         reaction(
             () => [uiState.selectedRoute, store.routeStore.onlyAccessible],
             () => {
                 context.requireUpdate(updateRoute);
                 counter = 0;
                 blink(context, blinkDrawer, updateCurrentPosition());
-            }
+            },
         );
 
         reaction(
             () => store.routeStore.currentPosition,
             () => {
                 context.requireUpdate(() => blink(context, blinkDrawer, updateCurrentPosition()));
-            }
+            },
         );
 
         updateRoute();
