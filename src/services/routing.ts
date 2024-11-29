@@ -148,7 +148,7 @@ function dispatchFromUrl() {
                 .reduce((acc, curr) => ({ ...acc, [curr]: false }), {})
         );
     } else if (booth) {
-        setTimeout(() => store.selectBooth(booth), 250);
+        store.selectBooth(booth);
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
@@ -157,8 +157,8 @@ function dispatchFromUrl() {
 
         if (slug.startsWith("exhibitors")) {
             const exhibitors = slug.split("=")[1].split(",");
-            setTimeout(() => store.fp.selectExhibitor(exhibitors), 250);
-        } else if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
+            store.fp.selectExhibitor(exhibitors);
+        } else if (exhibitor) store.clickExhibitor(exhibitor);
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);
@@ -420,7 +420,7 @@ export function initRouting(offHistory = false) {
 
     processURLParams();
     executeCustomCommand();
-    reaction(() => store.layerStore.layers,
+    reaction(() => store.layerStore.layersLoaded,
         () => {
             dispatchFromUrl();
             autorun(setTitle);
