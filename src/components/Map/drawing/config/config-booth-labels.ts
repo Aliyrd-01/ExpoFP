@@ -4,7 +4,7 @@ import store, { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
-import RectPainter from "../painters/RectPainter";
+import RectPainter, { RectPainterOptions } from "../painters/RectPainter";
 import { uiState } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createDetailsCanvas, createExhibitorsDetailsCanvas, createLabelCanvas } from "./canvases";
@@ -77,7 +77,7 @@ export default function configBoothLabels(
 //     return color;
 // }
 
-class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
+class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> {
     private readonly factors: number[] = [];
     private previousVisiblePrefix: typeof prefixes[number];
     private previousSkipDim: boolean;
@@ -86,7 +86,17 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     // private readonly detailsHeight: number;
 
     constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean) {
-        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible);
+        super(
+            context,
+            booth,
+            layerID + "booth-label",
+            RectPainter,
+            painterOrderPriority,
+            visible,
+            new RectPainterOptions({
+                color: booth.labelColor || fillStyle,
+            }),
+        );
         this.locked = context.updatable;
         // initPainter(this.painter);
 

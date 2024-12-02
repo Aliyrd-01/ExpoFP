@@ -142,15 +142,16 @@ export class DrawerImpl extends Matrix {
         this.requireRedraw();
     }
 
-    requirePainter<T extends Painter>(
+    requirePainter<T extends Painter, U = {}>(
         id: string,
-        TypeClass: new (gl: WebGLRenderingContext) => T,
+        TypeClass: new (gl: WebGLRenderingContext, options?: U) => T,
         painterOrderPriority: number,
-        visible: boolean
+        visible: boolean,
+        options?: U,
     ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
-            d = new TypeClass(this.gl);
+            d = new TypeClass(this.gl, options);
             d.id = id;
             d.orderPriority = painterOrderPriority;
             d.visible = visible;

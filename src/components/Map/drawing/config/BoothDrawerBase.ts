@@ -53,7 +53,7 @@ export abstract class BoothDrawerBaseWithoutPainter {
     }
 }
 
-export default abstract class BoothDrawerBase<T extends Painter | TrianglePainter> extends BoothDrawerBaseWithoutPainter {
+export default abstract class BoothDrawerBase<T extends Painter | TrianglePainter, U = {}> extends BoothDrawerBaseWithoutPainter {
     protected readonly painter: T;
 
     constructor(
@@ -62,10 +62,11 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
         layerId: string,
         painterClass: new (gl: WebGLRenderingContext) => T,
         painterOrderPriority: number,
-        visible: boolean
+        visible: boolean,
+        options?: U,
     ) {
         super(context, booth);
-        this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible);
+        this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible, options);
     }
     protected getId(name: string) {
         return (
