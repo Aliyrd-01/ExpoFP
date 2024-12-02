@@ -132,6 +132,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         store.routeStore.selectCurrentPosition(point, focus, icon);
+        this.onCurrentPositionChanged?.(point);
     }
 
     setBookmarks(bookmarks: { name?: string; externalId?: string; bookmarked: boolean }[]): void {
