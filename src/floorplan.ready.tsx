@@ -18,6 +18,7 @@ import { Visibility } from "./store/types";
 import { fpGeo } from "./components/Mapbox/utils/fpGeo";
 import { convertLocalToGps } from "./utils/gps";
 import Rect from "./core/Rect";
+import settings from "./tools/settings";
 
 install();
 
@@ -132,6 +133,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         store.routeStore.selectCurrentPosition(point, focus, icon);
+
+        if (settings.EXPO === "demo") {
+            this.onCurrentPositionChanged?.(point);
+        }
     }
 
     setBookmarks(bookmarks: { name?: string; externalId?: string; bookmarked: boolean }[]): void {

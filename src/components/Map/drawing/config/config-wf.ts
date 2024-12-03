@@ -472,7 +472,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
-                const rotateRadians = position?.angle * Math.PI / 180 || null;
+                const rotateRadians = (
+                    settings.EXPO === "demo"
+                        ? (position?.angle * Math.PI / 180 || null)
+                        : null
+                );
 
                 if (rotateRadians !== undefined && rotateRadians !== null) {
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
