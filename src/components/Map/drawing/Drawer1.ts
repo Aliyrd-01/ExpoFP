@@ -209,7 +209,7 @@ function createGl(canvas: HTMLCanvasElement) {
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // gl.colorMask(true, true, true, false);
     return gl;
