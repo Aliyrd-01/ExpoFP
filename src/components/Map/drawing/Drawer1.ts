@@ -200,6 +200,10 @@ function createGl(canvas: HTMLCanvasElement) {
         const ext = gl.getExtension("OES_element_index_uint");
         if (!ext) logger.warn("OES_element_index_uint not supported");
     }
+
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
     const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
     const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
     const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
@@ -210,7 +214,7 @@ function createGl(canvas: HTMLCanvasElement) {
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // gl.colorMask(true, true, true, false);
     return gl;
