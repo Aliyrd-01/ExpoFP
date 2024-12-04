@@ -90,7 +90,6 @@ export default class RectPainter implements Painter {
         this.fixdeltaptBuffer = gl.createBuffer();
         this.fixdeltamaxptBuffer = gl.createBuffer();
         this.fallBackTexture = gl.createTexture();
-
         this.setOptions({});
     }
 

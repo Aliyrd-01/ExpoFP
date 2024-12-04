@@ -62,7 +62,7 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
         layerId: string,
         painterClass: new (gl: WebGLRenderingContext) => T,
         painterOrderPriority: number,
-        visible: boolean,
+        visible: boolean
     ) {
         super(context, booth);
         this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible);

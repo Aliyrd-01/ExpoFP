@@ -146,7 +146,7 @@ export class DrawerImpl extends Matrix {
         id: string,
         TypeClass: new (gl: WebGLRenderingContext) => T,
         painterOrderPriority: number,
-        visible: boolean,
+        visible: boolean
     ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
