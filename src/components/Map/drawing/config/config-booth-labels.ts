@@ -86,9 +86,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     // private readonly detailsHeight: number;
 
     constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean) {
-        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible,);
+        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible);
         this.painter.setOptions({ color: booth.labelColor || fillStyle });
-
         this.locked = context.updatable;
         // initPainter(this.painter);
 
