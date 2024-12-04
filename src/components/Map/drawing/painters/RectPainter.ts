@@ -50,8 +50,7 @@ export default class RectPainter implements Painter {
     private readonly indexBufferPool: WebGLBuffer[] = [];
     private readonly fallBackTexture: WebGLTexture;
     private indexBuffersAreUint: boolean;
-
-    private readonly options: RectPainterOptions;
+    private color: Vec4;
 
     // to be set externally
     public id: string;
@@ -62,7 +61,7 @@ export default class RectPainter implements Painter {
     public dim = 0;
     public alpha = 1;
 
-    constructor(gl: WebGLRenderingContext, options?: RectPainterOptions) {
+    constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
         this.program = this.programInfo.program;
@@ -91,7 +90,8 @@ export default class RectPainter implements Painter {
         this.fixdeltaptBuffer = gl.createBuffer();
         this.fixdeltamaxptBuffer = gl.createBuffer();
         this.fallBackTexture = gl.createTexture();
-        this.options = options || new RectPainterOptions({});
+
+        this.setOptions({});
     }
 
     addObject(obj: DrawerObject) {
@@ -603,7 +603,7 @@ export default class RectPainter implements Painter {
                 u_ptscale: [scale, scale],
                 u_dim: this.dim,
                 u_alpha: this.alpha,
-                u_color: this.options.color,
+                u_color: this.color,
             } as any;
 
             if (group.texture) {
@@ -627,6 +627,72 @@ export default class RectPainter implements Painter {
             // console.log("zzz", group.numElements, group.indexBufferIsUint);
             gl.drawElements(gl.TRIANGLES, group.numElements, this.indexBuffersAreUint ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
         }
+    }
+
+    setOptions(options: RectPainterOptions) {
+        this.color = this.parseColor(options?.color) || [1.0, 1.0, 1.0, 1.0];
+    }
+
+    /**
+     * Parses the provided color value into a Vec4.
+     * Accepts color formats: HEX (#RRGGBB or #RRGGBBAA) and RGBA (rgba(r, g, b, a)).
+     * 
+     * @param color - The color value to parse.
+     * @returns A Vec4 representation of the color or `undefined` if parsing fails.
+     */
+    private parseColor(color: unknown): Vec4 | undefined {
+        if (typeof color !== "string" || !color.trim()) {
+            return undefined;
+        }
+
+        const normalizedColor = color.trim().toLowerCase();
+
+        // Match hex format: #RRGGBB or #RRGGBBAA
+        const hexMatch = normalizedColor.match(/^#([a-f0-9]{6})([a-f0-9]{2})?$/);
+        if (hexMatch) {
+            return this.hexToVec4(hexMatch[1], hexMatch[2]);
+        }
+
+        // Match rgba or rgb format
+        const rgbaMatch = normalizedColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)$/);
+        if (rgbaMatch) {
+            return this.rgbaToVec4(rgbaMatch);
+        }
+
+        if (isDebug) {
+            console.warn(`RectPainter: Unsupported color format: "${color}"`);
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Converts a HEX color to Vec4.
+     * 
+     * @param hex - The HEX color value (e.g., "RRGGBB").
+     * @param alphaHex - The optional HEX alpha value (e.g., "AA").
+     * @returns A Vec4 representation of the color.
+     */
+    private hexToVec4(hex: string, alphaHex?: string): Vec4 {
+        const r = parseInt(hex.slice(0, 2), 16) / 255;
+        const g = parseInt(hex.slice(2, 4), 16) / 255;
+        const b = parseInt(hex.slice(4, 6), 16) / 255;
+        const a = alphaHex ? parseInt(alphaHex, 16) / 255 : 1.0;
+        return [r, g, b, a];
+    }
+
+    /**
+     * Converts an RGBA match array to Vec4.
+     * 
+     * @param match - The RGBA match array from the regex.
+     * @returns A Vec4 representation of the color.
+     */
+    private rgbaToVec4(match: RegExpMatchArray): Vec4 {
+        const r = parseInt(match[1], 10) / 255;
+        const g = parseInt(match[2], 10) / 255;
+        const b = parseInt(match[3], 10) / 255;
+        const a = match[4] !== undefined ? parseFloat(match[4]) : 1.0;
+        return [r, g, b, a];
     }
 }
 
@@ -672,6 +738,10 @@ interface DrawerGroup {
     indexBuffer: WebGLBuffer;
     numElements: number;
     rotated: boolean;
+}
+
+export interface RectPainterOptions {
+    color?: string;
 }
 
 const vertexShaderSource = `attribute vec2 a_center;
@@ -765,73 +835,3 @@ void main() {
     }
     gl_FragColor = col;
 }`;
-
-export class RectPainterOptions {
-    readonly color: Vec4;
-
-    constructor(options: Record<string, unknown>) {
-        this.color = this.parseColor(options.color) || [1.0, 1.0, 1.0, 1.0];
-    }
-
-    /**
-     * Parses the provided color value into a Vec4.
-     * Accepts color formats: HEX (#RRGGBB or #RRGGBBAA) and RGBA (rgba(r, g, b, a)).
-     * 
-     * @param color - The color value to parse.
-     * @returns A Vec4 representation of the color or `undefined` if parsing fails.
-     */
-    private parseColor(color: unknown): Vec4 | undefined {
-        if (typeof color !== "string" || !color.trim()) {
-            return undefined;
-        }
-
-        const normalizedColor = color.trim().toLowerCase();
-
-        // Match hex format: #RRGGBB or #RRGGBBAA
-        const hexMatch = normalizedColor.match(/^#([a-f0-9]{6})([a-f0-9]{2})?$/);
-        if (hexMatch) {
-            return this.hexToVec4(hexMatch[1], hexMatch[2]);
-        }
-
-        // Match rgba or rgb format
-        const rgbaMatch = normalizedColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)$/);
-        if (rgbaMatch) {
-            return this.rgbaToVec4(rgbaMatch);
-        }
-
-        if (isDebug) {
-            console.warn(`RectPainterOptions: Unsupported color format: "${color}"`);
-        }
-
-        return undefined;
-    }
-
-    /**
-     * Converts a HEX color to Vec4.
-     * 
-     * @param hex - The HEX color value (e.g., "RRGGBB").
-     * @param alphaHex - The optional HEX alpha value (e.g., "AA").
-     * @returns A Vec4 representation of the color.
-     */
-    private hexToVec4(hex: string, alphaHex?: string): Vec4 {
-        const r = parseInt(hex.slice(0, 2), 16) / 255;
-        const g = parseInt(hex.slice(2, 4), 16) / 255;
-        const b = parseInt(hex.slice(4, 6), 16) / 255;
-        const a = alphaHex ? parseInt(alphaHex, 16) / 255 : 1.0;
-        return [r, g, b, a];
-    }
-
-    /**
-     * Converts an RGBA match array to Vec4.
-     * 
-     * @param match - The RGBA match array from the regex.
-     * @returns A Vec4 representation of the color.
-     */
-    private rgbaToVec4(match: RegExpMatchArray): Vec4 {
-        const r = parseInt(match[1], 10) / 255;
-        const g = parseInt(match[2], 10) / 255;
-        const b = parseInt(match[3], 10) / 255;
-        const a = match[4] !== undefined ? parseFloat(match[4]) : 1.0;
-        return [r, g, b, a];
-    }
-}
