@@ -819,12 +819,7 @@ void main() {
     if (v_color.w != 0.0) {
         col = v_color; 
     } else {
-        float alpha = texture2D(u_texture, v_texcoord).a;
-        if (alpha == 0.0) {
-            discard;
-        }
-            
-        col = vec4(u_color.rgb, alpha);
+        col = vec4(u_color.rgb, texture2D(u_texture, v_texcoord).a);
     }
     if (v_dim > 0.0) {
         col = dimColor(col, v_dim);
