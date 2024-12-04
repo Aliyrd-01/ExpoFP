@@ -751,7 +751,11 @@ void main() {
         col = v_color; 
     } else {
         float alpha = texture2D(u_texture, v_texcoord).a;
-        col = vec4(mix(col.rgb, u_color.rgb, alpha), alpha);
+        if (alpha == 0.0) {
+            discard;
+        }
+            
+        col = vec4(u_color.rgb, alpha);
     }
     if (v_dim > 0.0) {
         col = dimColor(col, v_dim);
