@@ -144,13 +144,14 @@ export class DrawerImpl extends Matrix {
 
     requirePainter<T extends Painter>(
         id: string,
-        TypeClass: new (gl: WebGLRenderingContext) => T,
+        TypeClass: new (gl: WebGLRenderingContext, options?: Record<string, unknown>) => T,
         painterOrderPriority: number,
-        visible: boolean
+        visible: boolean,
+        options?: Record<string, unknown>,
     ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
-            d = new TypeClass(this.gl);
+            d = new TypeClass(this.gl, options);
             d.id = id;
             d.orderPriority = painterOrderPriority;
             d.visible = visible;
@@ -205,6 +206,7 @@ function createGl(canvas: HTMLCanvasElement) {
     logger.log("GPU vendor:", vendor);
     logger.log("GPU renderer:", renderer);
     logger.log("GL version:", gl.getParameter(gl.VERSION));
+    logger.log("GL MAX_TEXTURE_SIZE", gl.getParameter(gl.MAX_TEXTURE_SIZE));
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);

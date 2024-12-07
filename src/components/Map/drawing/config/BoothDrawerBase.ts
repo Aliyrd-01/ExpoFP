@@ -60,16 +60,27 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
         context: DrawerContext,
         booth: Booth,
         layerId: string,
-        painterClass: new (gl: WebGLRenderingContext) => T,
+        painterClass: new (gl: WebGLRenderingContext, options?: Record<string, unknown>) => T,
         painterOrderPriority: number,
-        visible: boolean
+        visible: boolean,
+        options?: Record<string, unknown>,
     ) {
         super(context, booth);
-        this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible);
+        this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible, options);
     }
     protected getId(name: string) {
         return (
             this.getIdMap.get(name) || ((this.getIdMap.set(name, `b${this.booth.id}${name}`) || true) && this.getIdMap.get(name))
         );
+    }
+
+    protected getReducedPixelRatio(factor: number): number {
+        return this.context.pixelRatio / (factor || 1);
+    }
+
+    protected scaleByRatio(value: number, newRatio: number): number {
+        return newRatio > 0 && value !== 0
+            ? value * this.getReducedPixelRatio(newRatio)
+            : value;
     }
 }

@@ -10,8 +10,7 @@ import { select } from "d3";
 import type { Layer } from "../../../../store/LayerStore";
 import isWebview from "../../../../utils/is-webview";
 
-const CHUNK_SIZE = isMobile || isWebview ? 8 : 128;
-const DELAY = isMobile || isWebview ? 8 : 4;
+const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
 const SEPARATOR = ":";
 
 export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK_SIZE): Promise<void> {
@@ -37,7 +36,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
     const painterLayersPriorities = new Map<string, number>();
 
     for (const [i, chunk] of chunks.entries()) {
-        const loaded = await loadImagesInBatchesById(chunk, chunkSize, DELAY);
+        const loaded = await loadImagesInBatchesById(chunk, chunkSize);
 
         for (const [boothId, image] of loaded) {
             const booth = store.boothStore.boothById.get(boothId);

@@ -3,10 +3,8 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
-import { boothStore, heatmapStore, uiState } from "../../../../store";
+import { heatmapStore, uiState } from "../../../../store";
 import data from "../../../../data";
-import isMobile from "../../../../utils/is-mobile";
-import isWebview from "../../../../utils/is-webview";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -159,7 +157,8 @@ export function createExhibitorsDetailsCanvas(
     fontSize: number,
     onlyMain: boolean,
     onlyFeaturedExhibitors: boolean,
-    textAlign: CanvasTextAlign = "start"
+    textAlign: CanvasTextAlign = "start",
+    linesLimit = 3,
 ): CanvasDescriptor {
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
@@ -188,17 +187,10 @@ export function createExhibitorsDetailsCanvas(
             mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
         }
     } else {
-        const shouldOptimize = (isMobile || isWebview) && data.viewOptimizationLevel >= 3;
-        const limit = shouldOptimize ? 1 : 3;
-        const textLen = 10;
-        const truncateText = (text) => text?.length > textLen ? `${text.slice(0, textLen).trim()}...` : text;
-
-        if (b.exhibitors.length > limit) {
+        if (b.exhibitors.length > linesLimit) {
             mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
         } else {
-            mainLines.push(...b.exhibitors.map(
-                (e) => shouldOptimize ? truncateText(e.name) : e.name
-            ));
+            mainLines.push(...b.exhibitors.map(e => e.name));
         }
     }
 
