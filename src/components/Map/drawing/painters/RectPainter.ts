@@ -53,6 +53,7 @@ export default class RectPainter implements Painter {
     private readonly fallBackTexture: WebGLTexture;
     private indexBuffersAreUint: boolean;
     private area: number;
+    private baseColor?: Vec4;
 
     // to be set externally
     public id: string;
@@ -70,6 +71,7 @@ export default class RectPainter implements Painter {
         if (options?.color) {
             const [r, g, b, a] = this.parseColor(options.color);
             fragmentShader = `#define BASE_COLOR vec4(${r},${g},${b},${a})\n${fragmentSharedSource}`;
+            this.baseColor = [r, g, b, a];
         }
 
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentShader]);
@@ -280,7 +282,13 @@ export default class RectPainter implements Painter {
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             const canvas = c();
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, gl.ALPHA, gl.UNSIGNED_BYTE, canvas);
+
+            if (this.baseColor) {
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, gl.ALPHA, gl.UNSIGNED_BYTE, canvas);
+            } else {
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, canvas);
+            }
+
             logBuffer(canvas.width * canvas.height * 2, "rect-painter-canvas");
             canvasIdToTexture.set(canvas.id, texture);
         }
@@ -288,7 +296,7 @@ export default class RectPainter implements Painter {
         // eslint-disable-next-line
         {
             gl.bindTexture(gl.TEXTURE_2D, this.fallBackTexture);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, 1, 1, 0, gl.ALPHA, gl.UNSIGNED_BYTE, new Uint8Array([255]));
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
         }
 
         for (let w of this.objects) {
