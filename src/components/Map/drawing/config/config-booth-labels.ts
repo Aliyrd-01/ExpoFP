@@ -182,13 +182,6 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
     }
 
     getMobileLabelSizes(): { fontSize: number; sizeName: string; exhibitorsLabel?: boolean }[] {
-        if (this.painter.optimizationLevel) {
-            return [
-                { fontSize: 7, sizeName: "XS" },
-                { fontSize: 9, sizeName: "Details", exhibitorsLabel: true },
-            ];
-        }
-
         return [
             { fontSize: 7, sizeName: "XS" },
             { fontSize: 10, sizeName: "S" },
