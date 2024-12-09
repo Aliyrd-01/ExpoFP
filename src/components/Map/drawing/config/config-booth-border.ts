@@ -14,11 +14,16 @@ export default function configBoothBorder(
     layerID: string,
     booth: Booth,
     painterOrderPriority: number,
-    visible: boolean
+    visible: boolean,
 ) {
     // if (EFP_EXPO === "vaughanribfest19") return null;
     if (settings.EXPO === "confex20") return;
-    if (booth.borderColor === "none" || booth.borderWidth === 0 || (booth.paths && !booth.pathsWithRect)) return;
+    if (
+        booth.borderColor === "none" ||
+        (booth.borderWidth === 0 && !boothStore.borderWidth) ||
+        (booth.paths && !booth.pathsWithRect)
+    )
+        return;
     new BoothBorderDrawer(context, layerID, booth, painterOrderPriority, visible);
 }
 
@@ -33,7 +38,11 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
         const triangles: Triangle[] = [];
 
         function addTriangles(cx, cy, w, h) {
-            triangles.push(...Polygon4.fromRect(Rect.fromCxcywh(cx, cy, w, h)).rotate(booth.rotate, r.cx, r.cy).toTriangles());
+            triangles.push(
+                ...Polygon4.fromRect(Rect.fromCxcywh(cx, cy, w, h))
+                    .rotate(booth.rotate, r.cx, r.cy)
+                    .toTriangles(),
+            );
         }
 
         addTriangles(r.cx, r.cy - r.h / 2, r.w + width, width);
