@@ -726,8 +726,8 @@ export default class RectPainter implements Painter {
     }
 
     get optimizationLevel(): number {
-        const limit = 1000;
-        const maxLevel = window.devicePixelRatio;
+        const limit = 10000;
+        const maxLevel = 3;
         const mobileMinLevel = 1;
         const level = Math.min(Math.floor(this.area / limit), maxLevel);
         return (isMobile || isWebview) ? Math.max(mobileMinLevel, level) : level;
