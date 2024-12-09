@@ -140,8 +140,6 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
             const deltaPts: [number, number, number, number] = uiState.rtl ? [1, 3, -3, -3] : [3, 3, -1, -1];
 
             const { pRatio, fSize } = this.adjustRatioAndFontSize(18);
-            const canvas = createDetailsCanvas(booth, pRatio, color, fSize, !!booth.exhibitors.length, textAlign)
-
             this.painter.addObject({
                 id: this.getId("Details"),
                 rotateRadians: booth.rotate,
@@ -149,7 +147,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
                 deltaPts,
                 scalePts: context.pixelRatio,
-                canvasTmp: canvas,
+                canvasTmp: createDetailsCanvas(booth, pRatio, color, fSize, !!booth.exhibitors.length, textAlign),
                 texPosition,
                 visible: false,
             });
@@ -313,10 +311,14 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
     }
 
     adjustRatioAndFontSize(fontSize: number): { pRatio: number; fSize: number } {
+        let pRatio = this.context.pixelRatio;
+        let fSize = fontSize;
+
         if (isMobileDevice && this.painter.optimizationLevel) {
-            const pRatio = this.getReducedPixelRatio(this.painter.optimizationLevel);
-            return { pRatio, fSize: this.scaleByRatio(fontSize, pRatio) };
+            pRatio = Math.max(1, pRatio - this.painter.optimizationLevel);
+            fSize = Math.max(fontSize, fontSize * (this.context.pixelRatio / pRatio));
         }
-        return { pRatio: this.context.pixelRatio, fSize: fontSize };
+
+        return { pRatio, fSize };
     }
 }

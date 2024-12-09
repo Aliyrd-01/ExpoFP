@@ -721,12 +721,16 @@ export default class RectPainter implements Painter {
     }
 
     private calcArea(width: number, height: number): number {
-        return Math.floor((Math.max(0, width) * Math.max(0, height)) / 1000);
+        const magicNumber = 1000; // Just to reduce the number.
+        return Math.floor((Math.max(0, width) * Math.max(0, height)) / magicNumber);
     }
 
     get optimizationLevel(): number {
-        const level = Math.min(Math.floor(this.area / 1000), 3);
-        return (isMobile || isWebview) ? Math.max(1, level) : level;
+        const limit = 1000;
+        const maxLevel = window.devicePixelRatio;
+        const mobileMinLevel = 1;
+        const level = Math.min(Math.floor(this.area / limit), maxLevel);
+        return (isMobile || isWebview) ? Math.max(mobileMinLevel, level) : level;
     }
 }
 

@@ -73,14 +73,4 @@ export default abstract class BoothDrawerBase<T extends Painter | TrianglePainte
             this.getIdMap.get(name) || ((this.getIdMap.set(name, `b${this.booth.id}${name}`) || true) && this.getIdMap.get(name))
         );
     }
-
-    protected getReducedPixelRatio(factor: number): number {
-        return this.context.pixelRatio / (factor || 1);
-    }
-
-    protected scaleByRatio(value: number, newRatio: number): number {
-        return newRatio > 0 && value !== 0
-            ? value * this.getReducedPixelRatio(newRatio)
-            : value;
-    }
 }
