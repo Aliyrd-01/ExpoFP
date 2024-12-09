@@ -221,7 +221,6 @@ export default class ImagePainter implements Painter {
         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
         if (reduceImageQuality) {
-            offscreenCanvasCtx.imageSmoothingEnabled = false;
             offscreenCanvasCtx.drawImage(source, 0, 0, offscreenCanvas.width, offscreenCanvas.height);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, offscreenCanvas);
             offscreenCanvasCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);

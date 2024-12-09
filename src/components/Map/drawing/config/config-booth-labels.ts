@@ -196,42 +196,6 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             { fontSize: 10, sizeName: "S" },
             { fontSize: 16, sizeName: "Details", exhibitorsLabel: true },
         ];
-
-        // switch (mobileOptimisationLevel) {
-        //     case 1:
-        //         return [
-        //             { fontSize: 7, sizeName: "XS" },
-        //             { fontSize: 10, sizeName: "S" },
-        //             { fontSize: 14, sizeName: "Details", exhibitorsLabel: true },
-        //         ];
-        //     case 2:
-        //         return [
-        //             { fontSize: 7, sizeName: "XS" },
-        //             { fontSize: 10, sizeName: "S" },
-        //             { fontSize: 12, sizeName: "Details", exhibitorsLabel: true },
-        //         ];
-        //     case 3:
-        //         return [
-        //             { fontSize: 7, sizeName: "XS" },
-        //             { fontSize: 13, sizeName: "Details", exhibitorsLabel: true },
-        //         ];
-        //     case 4:
-        //         return [
-        //             { fontSize: 7, sizeName: "XS" },
-        //             { fontSize: 11, sizeName: "Details", exhibitorsLabel: true },
-        //         ];
-        //     case 5:
-        //         return [
-        //             { fontSize: 7, sizeName: "XS" },
-        //             { fontSize: 9, sizeName: "Details", exhibitorsLabel: true },
-        //         ];
-        //     default:
-        //         return [
-        //             { fontSize: 7, sizeName: "XS" },
-        //             { fontSize: 10, sizeName: "S" },
-        //             { fontSize: 16, sizeName: "Details", exhibitorsLabel: true },
-        //         ];
-        // }
     }
 
     calcFactors(exh: boolean) {
