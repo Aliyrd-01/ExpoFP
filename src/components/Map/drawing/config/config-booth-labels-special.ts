@@ -36,7 +36,7 @@ export default function configBoothLabelsSpecial(
     return new BoothLabelSpecialDrawer(context, id, booth, painterOrderPriority, visible, { color });
 }
 
-class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
+class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> {
     private readonly steps: TextFitData[];
     private readonly ids: string[];
     private previousVisibleId: string;

@@ -774,7 +774,7 @@ interface DrawerGroup {
     rotated: boolean;
 }
 
-export interface RectPainterOptions extends Record<string, unknown> {
+export interface RectPainterOptions {
     color?: string;
 }
 

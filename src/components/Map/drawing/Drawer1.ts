@@ -4,7 +4,7 @@ import logger from "../../../tools/logger";
 import isDebug from "../../../utils/is-debug";
 import configAll from "./config/config-all";
 import Matrix from "./Matrix";
-import Painter from "./painters/Painter";
+import Painter, { PainterConstructor } from "./painters/Painter";
 
 export type Drawer = Pick<
     DrawerImpl,
@@ -142,12 +142,12 @@ export class DrawerImpl extends Matrix {
         this.requireRedraw();
     }
 
-    requirePainter<T extends Painter>(
+    requirePainter<T extends Painter, U>(
         id: string,
-        TypeClass: new (gl: WebGLRenderingContext, options?: Record<string, unknown>) => T,
+        TypeClass: PainterConstructor<T, U>,
         painterOrderPriority: number,
         visible: boolean,
-        options?: Record<string, unknown>,
+        options?: U,
     ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {

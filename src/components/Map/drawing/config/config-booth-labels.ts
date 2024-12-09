@@ -68,7 +68,7 @@ export default function configBoothLabels(
 //     return color;
 // }
 
-class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
+class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> {
     private readonly factors: number[] = [];
     private previousVisiblePrefix: typeof prefixes[number];
     private previousSkipDim: boolean;
