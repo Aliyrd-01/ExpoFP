@@ -19,7 +19,7 @@ export default function configBoothBg(
     layerID: string,
     booth: Booth,
     painterOrderPriority: number,
-    visible: boolean
+    visible: boolean,
 ) {
     // picked++;
     // if (picked > 1) return null;
@@ -63,7 +63,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                         // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                     },
                     painterOrderPriority,
-                    visible
+                    visible,
                 );
             }
         }
@@ -76,19 +76,19 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                 if (colored) pathsColors.add(p.color);
                 for (const t of getTrianglesFromFpPaths(
                     p.index,
-                    store.layerStore.mode !== LayersMode.Default ? booth.layer.name : ""
+                    store.layerStore.mode !== LayersMode.Default ? booth.layer.name : "",
                 )) {
                     this.addObject(
                         layerID,
                         {
                             id: colored ? this.getId("bg-" + p.color) : this.getId("bg-def"),
                             groupId: this.getId("bg"),
-                            p0: t[0],
-                            p1: t[1],
-                            p2: t[2],
+                            p0: t[0] as Vec2,
+                            p1: t[1] as Vec2,
+                            p2: t[2] as Vec2,
                         },
                         painterOrderPriority,
-                        visible
+                        visible,
                     );
                 }
             }
@@ -112,7 +112,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                         // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                     },
                     painterOrderPriority,
-                    visible
+                    visible,
                 );
             }
         }

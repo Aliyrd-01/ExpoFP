@@ -154,6 +154,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    onCurrentPositionChanged(point: CurrentPosition) {
+        nr();
+    }
+
     // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {
@@ -172,6 +176,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
         this.onInit = options.onInit;
+        this.onCurrentPositionChanged = options.onCurrentPositionChanged;
 
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;

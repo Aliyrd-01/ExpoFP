@@ -2,8 +2,10 @@ import Color from "color";
 import { reaction } from "mobx";
 import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
+import { getLayerSvg } from "../../../../data/svg";
 import store, { layersStore, uiState } from "../../../../store";
 import { LayersMode } from "../../../../store/LayerStore";
+import logger from "../../../../tools/logger";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
@@ -19,7 +21,6 @@ import {
     createTargetCanvas,
     createYahCanvas
 } from "./canvases";
-import logger from "../../../../tools/logger";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -34,6 +35,8 @@ const blinkCounter = 5;
 
 let fromColor = Color("#30AFEB");
 let toColor = Color("#FF9E2C");
+
+let isNewVersion = false;
 
 // const timeoutToChangeRoute = 15000; // 15 sec
 // const distanceToChangeRoute = 200;
@@ -104,10 +107,13 @@ export function mapCurrentPosition(position: CurrentPosition): Point | null {
 
     let point: Point;
 
-    if (fpConfig && position.x >= fpConfig.p0.x &&
+    if (
+        fpConfig &&
+        position.x >= fpConfig.p0.x &&
         position.x <= fpConfig.p2.x &&
         position.y >= fpConfig.p0.y &&
-        position.y <= fpConfig.p2.y) {
+        position.y <= fpConfig.p2.y
+    ) {
         point = { ...position };
     } else if (fpConfig && position.lat && position.lng) {
         point = convertGpsToLocal(position.lat, position.lng, fpConfig);
@@ -313,6 +319,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const arrowCurrentCanvas = createArrowCurrentCanvas(context.pixelRatio, fromColor.hex());
     const currentLocationCanvas_2 = createYahCanvas(context.pixelRatio);
 
+    const l = getLayerSvg();
+    isNewVersion = l.getAttribute("fp-ver")?.startsWith("5") ?? false;
+
     pointSize = pointCanvas.width;
 
     for (let i = 0; i < totalPoints; i++) {
@@ -325,7 +334,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             visible: isDebug,
         });
     }
-
 
     for (let i = 0; i < blinkCounter; i++) {
         blinkDrawer.addObject({
@@ -464,7 +472,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
-                const rotateRadians = position?.angle * Math.PI / 180 || null;
+                const rotateRadians = (
+                    settings.EXPO === "demo"
+                        ? (position?.angle * Math.PI / 180 || null)
+                        : null
+                );
 
                 if (rotateRadians !== undefined && rotateRadians !== null) {
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
@@ -549,7 +561,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                let s = Math.max(context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale), 0.3);
+                let s = Math.max(
+                    context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
+                    isNewVersion ? 0.05 : 0.3,
+                );
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);

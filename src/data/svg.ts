@@ -78,7 +78,7 @@ let floors = window["__fpLayersMode"]
 
 export { svgArea, svgViewBox, floors };
 
-export function getTrianglesFromFpPaths(index: number, suffix: string) {
+export function getTrianglesFromFpPaths(index: number, suffix: string): number[][][] {
     const mesh = gtePathByIndex(index, suffix);
     // TODO: remove in future versions
     for (const p of mesh.positions) {

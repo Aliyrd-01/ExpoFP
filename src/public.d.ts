@@ -101,6 +101,7 @@ interface FloorPlanOptions {
     onMarkerClick?: (e: FloorPlanMarkerEvent | undefined) => void;
     onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
     onInit?: (fp: FloorPlan) => void;
+    onCurrentPositionChanged?: (point: CurrentPosition) => void;
 }
 
 interface Layer {
