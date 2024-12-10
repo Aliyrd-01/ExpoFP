@@ -51,7 +51,7 @@ interface Data {
     hideShareButton: boolean;
 
     viewOptimizationLevel: number;
-    showFullLevelName: boolean;
+    shortLevelName: boolean;
 }
 
 interface ScheduleItem {

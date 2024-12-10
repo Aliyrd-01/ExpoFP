@@ -73,14 +73,14 @@ export default function Floors() {
                         <div
                             className={classNames("item", {
                                 active: l.active, disabled: l.disabled,
-                                "full-name": appData.showFullLevelName,
+                                "full-name": !appData.shortLevelName,
                             })}
                             key={l.layer.description}
                             onClick={() => click(l.layer)}
                             title={l.layer.description}
                             dir="auto"
                         >
-                            <span>{appData.showFullLevelName ? l.layer.description : l.layer.shortName}</span>
+                            <span>{appData.shortLevelName ? l.layer.shortName : l.layer.description}</span>
                         </div>
                     ))}
                 </div>
