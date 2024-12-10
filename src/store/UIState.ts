@@ -459,7 +459,26 @@ export default class UIState {
             return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         }
 
-        return items;
+        const itemsMap = new Map(items.map(item => [item.id, item]));
+        const hasDigits = /\d/.test(text);
+        return items
+            .map(({ id, name }) => {
+                if (!name) return null;
+                const lowerCaseName = name.toLowerCase();
+
+                // If the search text doesn't contain digits, ignore names with digits
+                if (!hasDigits && /\d/.test(lowerCaseName)) return null;
+
+                // Find the position of the first occurrence
+                const position = lowerCaseName.indexOf(text);
+                if (position === -1) return null;
+
+                return { id, position, lowerCaseName };
+            })
+            .filter(Boolean)
+            // Sort by position, then lexicographically
+            .sort((a, b) => a.position - b.position || a.lowerCaseName.localeCompare(b.lowerCaseName))
+            .map(({ id }) => itemsMap.get(id));
     }
 
     @computed get listItems(): ListItem[] {
