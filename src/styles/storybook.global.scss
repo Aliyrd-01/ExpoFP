@@ -15,6 +15,7 @@ body {
     width: 100vw;
     height: 100vh;
     background: gray;
+    font-size: 16px;
 }
 .sidebar {
     overflow: auto;
@@ -26,6 +27,22 @@ body {
 
     @include media-breakpoint-down(sm) {
         max-width: 100%;
+    }
+}
+.efp-kiosk {
+    font-size: calc(16px + 0.25vw);
+    --k-scale: 1;
+    --k-spacing-lg: calc(max(18px, 1.8vh) * var(--k-scale));
+    --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
+    --k-spacing-sm: calc(max(10px, 1.4vh) * var(--k-scale));
+    --k-routeQr-size: clamp(80px, 12vh, 180px);
+
+    .sidebar {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(4px);
     }
 }
 .sidebar-container {

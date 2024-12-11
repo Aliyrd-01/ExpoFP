@@ -5,8 +5,10 @@
     justify-content: center;
     background: #ab40a0;
     background: linear-gradient(90deg, #e5175c, #5c17e5);
-
     min-height: 2rem;
+    transition: all 0.5s;
+    opacity: 1;
+    bottom: 0;
 
     > section {
         display: flex;
@@ -14,17 +16,16 @@
         user-select: none;
         padding: 0.2rem 0.5rem;
     }
-
     &__message {
         color: #fff;
         display: flex;
         align-items: center;
+
         a {
             color: #fff;
             text-decoration: underline;
         }
     }
-
     &.bottom {
         .free__message {
             font-size: 1.5rem;
@@ -40,46 +41,41 @@
             padding: 0.5rem 1rem;
         }
     }
-
     &__dismiss {
         display: flex;
         align-items: center;
+        margin-inline-start: 0.5rem;
+        padding: 0.1rem 0.8rem;
         background: #1378d5;
         color: #fff !important;
-        padding: 0.1rem 0.8rem;
         text-decoration: none !important;
         border-radius: 2px;
         font-weight: 500;
         font-size: 0.8rem;
+
         &:hover {
             background: #69b7ff;
         }
-        margin-inline-start: 0.5rem;
         @media print {
             display: none;
         }
     }
-
-    transition: all 0.5s;
-    opacity: 1;
-    bottom: 0;
     &.top {
         bottom: unset;
         min-height: 2.5rem;
         top: 0;
         width: 100%;
+
         > section {
             flex-grow: 1;
         }
         span {
             display: inline-block;
         }
-
         .free__message {
             flex-grow: 1;
         }
     }
-
     &.hidden {
         transform: translate(0, 100%);
     }

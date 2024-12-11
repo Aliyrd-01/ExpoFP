@@ -3,7 +3,6 @@
 .overlay-bar {
     display: flex;
     align-items: center;
-    /* background-color: #fff; */
     z-index: 1;
     transition: box-shadow 300ms;
 
@@ -13,9 +12,9 @@
     }
 
     &__close {
+        align-self: flex-start;
         @include like-anchor;
         @include overlay-bar-icon;
-        align-self: flex-start;
     }
     &__search-icon {
         display: none;

@@ -111,6 +111,7 @@ interface Layer {
 
 interface FloorPlanBoothBase {
     id: number;
+    externalId: string;
     name: string;
     layer: Layer;
 }

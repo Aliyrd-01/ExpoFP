@@ -1,0 +1,50 @@
+@import "../styles/helpers.scss";
+
+.route-qr {
+    padding: rem(0 15px 14px);
+
+    &__body {
+        display: flex;
+        align-items: center;
+        flex-flow: row wrap;
+        gap: rem(16px);
+        padding-top: rem(10px);
+        border-top: 1px solid var(--color-grayLight);
+    }
+
+    &__code {
+        display: inline-flex;
+        width: rem(80px);
+
+        & > svg {
+            width: 100%;
+            height: auto;
+        }
+    }
+    &__label {
+        flex: 1;
+        font-size: rem(16px);
+        font-weight: var(--font-medium);
+        color: var(--color-black);
+    }
+}
+
+.efp-kiosk .route-qr {
+    padding: 0 var(--k-spacing-lg) var(--k-spacing-lg);
+
+    &__body {
+        gap: rem(24px);
+        padding-top: var(--k-spacing-md);
+        border-color: var(--color-white);
+    }
+    &__code {
+        width: var(--k-routeQr-size);
+        padding: rem(8px);
+        border-radius: rem(10px);
+        background: var(--color-white);
+    }
+    &__label {
+        font-size: rem(20px);
+        line-height: rem(22px);
+    }
+}

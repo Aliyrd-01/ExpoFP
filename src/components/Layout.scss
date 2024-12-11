@@ -95,6 +95,7 @@ a:visited {
     --k-inputHeight: clamp(48px, 10vh, 62px);
     --k-inputFontSize: 1.2em;
     --k-imageHeight: clamp(120px, 12vh, 160px);
+    --k-routeQr-size: clamp(80px, 12vh, 180px);
 }
 
 @include media-breakpoint-down(lg) {
