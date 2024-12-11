@@ -5,8 +5,6 @@ import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 import Sprite, { SpriteItem } from "./Sprite";
 import { logBuffer } from "../../../../tools/webgl-logger";
-import isMobile from "../../../../utils/is-mobile";
-import isWebview from "../../../../utils/is-webview";
 import data from "../../../../data";
 
 export default class RectPainter implements Painter {

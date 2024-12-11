@@ -263,7 +263,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
             data.hideExhibitorBoothNumber || short,
             data.onlyFeaturedExhibitors,
             textAlign,
-            isMobileDevice && this.painter.optimizationLevel ? 1 : 3,
+            isMobileDevice && this.painter.optimizationLevel >= 3 ? 1 : 3,
         );
 
         const pad = padding;
@@ -307,7 +307,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
         let pRatio = this.context.pixelRatio;
         let fSize = fontSize;
 
-        if (isMobileDevice && this.painter.optimizationLevel) {
+        if (isMobileDevice && this.painter.optimizationLevel >= 2) {
             pRatio = Math.max(1, pRatio - this.painter.optimizationLevel);
             fSize = Math.max(fontSize, fontSize * (this.context.pixelRatio / pRatio));
         }
