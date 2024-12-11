@@ -107,7 +107,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
             visible: false,
         });
 
-        if (isMobileDevice && this.painter.optimizationLevel) {
+        if (isMobileDevice && this.painter.optimizationLevel >= 3) {
             prefixes = ["Dot", "XS", "Details"];
         }
 

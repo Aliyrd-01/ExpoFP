@@ -7,6 +7,7 @@ import Sprite, { SpriteItem } from "./Sprite";
 import { logBuffer } from "../../../../tools/webgl-logger";
 import isMobile from "../../../../utils/is-mobile";
 import isWebview from "../../../../utils/is-webview";
+import data from "../../../../data";
 
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -726,10 +727,15 @@ export default class RectPainter implements Painter {
     }
 
     get optimizationLevel(): number {
-        const limit = 10000;
+        const limit = 5000;
         const maxLevel = 3;
         const mobileMinLevel = 1;
-        const level = Math.min(Math.floor(this.area / limit), maxLevel);
+
+        const level = Math.min(
+            data.viewOptimizationLevel ? data.viewOptimizationLevel : Math.floor(this.area / limit),
+            maxLevel
+        );
+
         return (isMobile || isWebview) ? Math.max(mobileMinLevel, level) : level;
     }
 }
