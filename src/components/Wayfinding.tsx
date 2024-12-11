@@ -13,11 +13,12 @@ import "./Wayfinding.scss";
 import WayfindingTemplate from "./WayfindingTemplate";
 
 function Wayfinding() {
-    const floors = useMemo(() => (
-        store.routeStore.pathLayers.map(l => ({ id: l.id, name: l.layer?.shortName, description: l.layer?.description }))
-    ), [store.routeStore.pathLayers]);
+    const floors = useMemo(
+        () => store.routeStore.pathLayers.map((l) => ({ id: l.id, name: l.layer?.shortName, description: l.layer?.description })),
+        [store.routeStore.pathLayers]
+    );
 
-    const [currentFloor, setCurrentFloor] = useState<{ id: number, name: string }>();
+    const [currentFloor, setCurrentFloor] = useState<{ id: number; name: string }>();
 
     useEffect(() => {
         if (currentFloor) return;
@@ -25,7 +26,9 @@ function Wayfinding() {
     }, [store.routeStore.pathLayers, floors]);
 
     useEffect(() => {
-        const floor = floors.find(f => f.description?.toLowerCase() === store.routeStore.currentRouteLayer?.description?.toLowerCase());
+        const floor = floors.find(
+            (f) => f.description?.toLowerCase() === store.routeStore.currentRouteLayer?.description?.toLowerCase()
+        );
         floor && setCurrentFloor(floor);
     }, [store.routeStore.currentRouteLayer, floors]);
 
@@ -154,9 +157,9 @@ function Wayfinding() {
                     showForm={!mobileShowForm() ? true : false}
                     showInfo={
                         !data.hideWayInformation &&
-                            settings.EXPO !== "bloomberg" &&
-                            uiState.selectedRoute?.from &&
-                            uiState.selectedRoute?.to
+                        settings.EXPO !== "bloomberg" &&
+                        uiState.selectedRoute?.from &&
+                        uiState.selectedRoute?.to
                             ? true
                             : false
                     }
@@ -179,6 +182,10 @@ function Wayfinding() {
                     showAccessible={store.routeStore.showAccessible}
                     onAccessibleCheck={(checked) => (store.routeStore.onlyAccessible = checked)}
                     onClickInfo={() => store.showOverlay()}
+                    routeUrl={`https://${settings.EXPO}.expofp.com/?route%3A${encodeURIComponent(
+                        uiState.selectedRoute?.to?.name || ""
+                    )}%3A${encodeURIComponent(uiState.selectedRoute?.from?.name || "")}`}
+                    isKiosk={uiState.kiosk}
                 />
             </OverlayContent>
         );

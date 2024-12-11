@@ -134,19 +134,18 @@
         }
 
         &.collapsed > .exhibitor__description-html {
+            display: block;
+            height: 6.5em;
+            overflow: hidden;
             cursor: pointer;
+            opacity: 0.8;
+            text-overflow: ellipsis;
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
+            mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
 
             &:hover {
                 opacity: 1;
             }
-
-            opacity: 0.8;
-            height: 6.5em;
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
-            mask-image: linear-gradient(rgba(0, 0, 0, 1) 35%, transparent 90%);
         }
 
         @include clearfix;
@@ -199,15 +198,11 @@
 
     &__social {
         margin: 0 1rem 2rem;
-
         display: flex;
 
-        // justify-content: space-between;
-        // padding-top: 1rem;
         > a {
             font-size: 2rem;
             text-decoration: none;
-
             margin-inline-end: 1rem;
             margin-bottom: 0.5rem;
             color: #eee;
@@ -235,8 +230,6 @@
         font-size: 1.1em;
         flex-grow: 1;
 
-        // display: flex;
-        // align-items: center;
         .fa-gem {
             color: #02a8ff;
             margin-inline-start: 0.2rem;
@@ -280,7 +273,6 @@
         right: 0;
         top: 0;
         padding: 0 1rem 1rem 1rem;
-        /* align-self: stretch; */
     }
 
     &__edit {
