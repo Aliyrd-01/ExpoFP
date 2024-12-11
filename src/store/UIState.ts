@@ -433,6 +433,7 @@ export default class UIState {
                     (text) =>
                         containsIgnoreCase(b.title || "", text) ||
                         containsIgnoreCase(b.name, text) ||
+                        containsIgnoreCase(b.fullName, text) ||
                         containsLevelIgnoreCase(b.layer?.name ?? null, text)
                 )
             ) {
@@ -461,15 +462,20 @@ export default class UIState {
 
         const itemsMap = new Map(items.map(item => [item.id, item]));
         return items
-            .map(({ id, name }) => {
-                if (!name) return null;
-                const lowerCaseName = name.toLowerCase();
+            .map(item => {
+                if (!item.name) return null;
+
+                const lowerCaseName = (
+                    item instanceof BoothBase
+                        ? (item.fullName.toLowerCase() || item.name.toLowerCase())
+                        : item.name.toLowerCase()
+                );
 
                 // Find the position of the first occurrence
                 const position = lowerCaseName.indexOf(text);
                 if (position === -1) return null;
 
-                return { id, position, lowerCaseName };
+                return { id: item.id, position, lowerCaseName };
             })
             .filter(Boolean)
             // Sort by position, then lexicographically
