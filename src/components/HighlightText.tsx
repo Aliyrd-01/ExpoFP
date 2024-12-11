@@ -1,9 +1,8 @@
 import React, { Fragment } from "react";
 import { uiState } from "../store";
-import data from "../data";
 
 const HighlightText = ({ text }) => {
-    if (!data.viewOptimizationLevel || uiState.list.type !== "search" || !uiState.list.text) {
+    if (uiState.list.type !== "search" || !uiState.list.text) {
         return <>{text}</>
     };
 
