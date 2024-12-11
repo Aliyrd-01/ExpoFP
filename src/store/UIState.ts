@@ -459,7 +459,22 @@ export default class UIState {
             return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         }
 
-        return items;
+        const itemsMap = new Map(items.map(item => [item.id, item]));
+        return items
+            .map(({ id, name }) => {
+                if (!name) return null;
+                const lowerCaseName = name.toLowerCase();
+
+                // Find the position of the first occurrence
+                const position = lowerCaseName.indexOf(text);
+                if (position === -1) return null;
+
+                return { id, position, lowerCaseName };
+            })
+            .filter(Boolean)
+            // Sort by position, then lexicographically
+            .sort((a, b) => a.position - b.position || a.lowerCaseName.localeCompare(b.lowerCaseName))
+            .map(({ id }) => itemsMap.get(id));
     }
 
     @computed get listItems(): ListItem[] {
