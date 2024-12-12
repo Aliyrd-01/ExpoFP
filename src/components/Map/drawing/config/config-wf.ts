@@ -5,6 +5,7 @@ import Rectangle from "../../../../core/Rect";
 import { getLayerSvg } from "../../../../data/svg";
 import store, { layersStore, uiState } from "../../../../store";
 import { LayersMode } from "../../../../store/LayerStore";
+import logger from "../../../../tools/logger";
 import settings from "../../../../tools/settings";
 import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
@@ -219,7 +220,7 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
                 : store.layerStore.layers.find(
                       (l) =>
                           l.name == store.routeStore.currentRouteLayer?.name &&
-                          store.routeStore.currentRouteLayer?.name === line.p0.layer,
+                          store.routeStore.currentRouteLayer?.name === line.p0.layer
                   )?.visible || false;
 
         //let visible = store.layerStore.layers.find((l) => l.name === line.p0.layer)?.visible ?? true;
@@ -473,7 +474,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
-                const rotateRadians = position?.angle * Math.PI / 180 || null;
+                const rotateRadians = (position?.angle * Math.PI) / 180 || null;
 
                 if (rotateRadians !== undefined && rotateRadians !== null) {
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
@@ -560,13 +561,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 let s = Math.max(
                     context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
-                    isNewVersion ? 0.05 : 0.3,
+                    isNewVersion ? 0.05 : 0.3
                 );
                 if (s === scale) return;
                 scale = s;
                 drawLines(wfDrawer, s);
                 blink(context, blinkDrawer, updateCurrentPosition());
-            },
+            }
         );
 
         reaction(
@@ -575,7 +576,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 counter = 0;
                 context.requireUpdate(updateRoute);
                 blink(context, blinkDrawer, updateCurrentPosition());
-            },
+            }
         );
 
         reaction(
@@ -585,7 +586,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 counter = 0;
                 context.requireUpdate(() => updateRoute(store.routeStore.currentRouteLayer));
                 blink(context, blinkDrawer, updateCurrentPosition());
-            },
+            }
         );
 
         reaction(
@@ -595,7 +596,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 counter = 0;
                 context.requireUpdate(updateRoute);
                 blink(context, blinkDrawer, updateCurrentPosition());
-            },
+            }
         );
 
         reaction(
@@ -604,14 +605,14 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 context.requireUpdate(updateRoute);
                 counter = 0;
                 blink(context, blinkDrawer, updateCurrentPosition());
-            },
+            }
         );
 
         reaction(
             () => store.routeStore.currentPosition,
             () => {
                 context.requireUpdate(() => blink(context, blinkDrawer, updateCurrentPosition()));
-            },
+            }
         );
 
         updateRoute();
