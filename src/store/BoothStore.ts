@@ -116,7 +116,7 @@ export abstract class BoothBase {
 
     @computed({ keepAlive: true }) public get fullName() {
         if (this.layer?.mode > 1 && data.showLevelLabel) {
-            return (this.yah ? this.title : this.name) + ` ${data.levelTerm} ` + this.layer.description;
+            return `${this.yah ? this.title : this.name} ${data.levelTerm} ${this.layer.description}`.replace(/\s+/g, " ").trim();
         }
         return this.yah ? this.title : this.name;
     }
