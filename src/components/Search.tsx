@@ -135,6 +135,7 @@ function Search() {
 
     useEffect(() => {
         const setTop = () => {
+            if (!el.current) return;
             s.elementTop = el.current.getBoundingClientRect().top;
         };
         setTop();
