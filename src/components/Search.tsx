@@ -135,7 +135,7 @@ function Search() {
 
     useEffect(() => {
         const setTop = () => {
-            s.elementTop = el.current.getBoundingClientRect().top;
+            s.elementTop = el?.current?.getBoundingClientRect().top;
         };
         setTop();
         const intervalId = window.setInterval(setTop, 50);

@@ -529,7 +529,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 if (!store.layerStore.layersLoaded) return;
                 counter = 0;
-                context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 50));
+                context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 100));
                 blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
