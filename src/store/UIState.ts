@@ -116,7 +116,7 @@ export default class UIState {
         booths.delete(undefined);
         booths.delete(null);
 
-        return booths;
+        return booths as ReadonlySet<string>;
     }
 
     overlayMediumHeightRems = 10;

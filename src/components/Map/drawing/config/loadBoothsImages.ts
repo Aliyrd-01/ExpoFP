@@ -62,7 +62,8 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 painterLayersPriorities.get(name),
                 areLayersEnabled() ? visibleLayerNames.has(name.split(SEPARATOR)[0]) : true,
             );
-
+            // TODO skipDim
+            painter.dim = Number(store.uiState.dimmed);
             objects.forEach((obj) => painter.addObject(obj));
         });
 
@@ -80,7 +81,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 layer.basePriority + maxBasePriority,
                 layer.visible,
             );
-
+            painter.dim = Number(store.uiState.dimmed);
             loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
         })
     );
@@ -108,9 +109,9 @@ function getIcons(layer: Layer): SVGImageElement[] {
 
 function createObject(img: Img): DrawerObjectEx {
     const { x, y, width, height, angle } = img.bounds;
-
+    const prefix = img.booth ? `${img.booth.id}${SEPARATOR}` : "";
     return {
-        id: `${x}${y}${width}${height}`,
+        id: `${prefix}${x}${y}${width}${height}`,
         center: [x + width / 2, y + height / 2],
         deltas: [-width / 2, -height / 2, width / 2, height / 2],
         deltaPts: [0, 0, 0, 0],
