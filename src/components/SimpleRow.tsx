@@ -1,6 +1,7 @@
 import React from "react";
 import data from "../data";
 import "./SimpleRow.scss";
+import HighlightText from "./HighlightText";
 
 const SimpleRow: React.FC<{
     line1: string;
@@ -25,7 +26,7 @@ const SimpleRow: React.FC<{
         >
             <div className="simple-row__col">
                 <div className="simple-row__main" dir="auto">
-                    {line1}
+                    <HighlightText text={line1} />
                 </div>
                 <div className="simple-row__sub" dir="auto">
                     {line2}
