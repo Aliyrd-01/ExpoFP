@@ -2,11 +2,16 @@ import { loadImage } from "./imageloader";
 import isMobile from "./is-mobile";
 import isWebview from "./is-webview";
 
-const BATCH_SIZE = isMobile || isWebview ? 8 : 128;
-const DELAY = isMobile || isWebview ? 250 : 10;
+const BATCH_SIZE = isMobile || isWebview ? 8 : 512;
+const DELAY = 0;
+
+export interface ImageUrls {
+    preferred?: string;
+    fallback: string;
+}
 
 export async function loadImagesInBatches(
-    urls: string[],
+    urls: ImageUrls[],
     batchSize = BATCH_SIZE,
     delay = DELAY,
 ): Promise<HTMLImageElement[]> {
@@ -15,7 +20,18 @@ export async function loadImagesInBatches(
     const loadedImages: HTMLImageElement[] = [];
 
     for (let i = 0; i < urls.length; i += batchSize) {
-        const batch = urls.slice(i, i + batchSize).map(loadImage);
+        const batch = urls.slice(i, i + batchSize).map(async ({ preferred, fallback }) => {
+            let img;
+
+            if (preferred) {
+                img = await loadImage(preferred);
+            }
+
+            if (!img) {
+                img = await loadImage(fallback);
+            }
+            return img;
+        });
 
         const results = await Promise.all(batch);
         loadedImages.push(...results.filter((img): img is HTMLImageElement => img !== null));
@@ -27,7 +43,7 @@ export async function loadImagesInBatches(
 }
 
 export async function loadImagesInBatchesById(
-    logosUrls: Map<number, string>,
+    logosUrls: Map<number, ImageUrls>,
     batchSize = BATCH_SIZE,
     delay = DELAY,
 ): Promise<Map<number, HTMLImageElement>> {

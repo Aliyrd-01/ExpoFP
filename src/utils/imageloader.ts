@@ -1,4 +1,5 @@
 import { Booth, RegularBooth } from "../store/BoothStore";
+import { getLogoUrl } from "./getLogoUrl";
 
 export type Img = {
     booth: Booth;
@@ -7,6 +8,7 @@ export type Img = {
     bounds: { x: number; y: number; width: number; height: number; angle: number };
 };
 
+/** @deprecated use loadBoothsImages instead */
 export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> {
     return Promise.all(
         booths.map(
@@ -17,7 +19,11 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                     if (!src) return resolve(null);
                     const rect = booth.rect;
 
-                    var img = await loadImage(src);
+                    let img = await loadImage(getLogoUrl(src));
+                    if (!img) {
+                        img = await loadImage(src);
+                    }
+
                     if (!img) return resolve(null);
 
                     const ratioBooth = rect.w / rect.h;

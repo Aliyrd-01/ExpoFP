@@ -1,6 +1,6 @@
 import store from "../../../../store";
 import { DrawerContext } from "../Drawer1";
-import { loadImagesInBatchesById } from "../../../../utils/loadImagesInBatches";
+import { ImageUrls, loadImagesInBatchesById } from "../../../../utils/loadImagesInBatches";
 import { Img, loadIcons } from "../../../../utils/imageloader";
 import ImagePainter, { DrawerObjectEx } from "../painters/ImagePainter";
 import type { Booth } from "../../../../store/BoothStore";
@@ -9,9 +9,9 @@ import isMobile from "../../../../utils/is-mobile";
 import { select } from "d3";
 import type { Layer } from "../../../../store/LayerStore";
 import isWebview from "../../../../utils/is-webview";
+import { getLogoUrl } from "../../../../utils/getLogoUrl";
 
-const CHUNK_SIZE = isMobile || isWebview ? 8 : 128;
-const DELAY = isMobile || isWebview ? 8 : 4;
+const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
 const SEPARATOR = ":";
 
 export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK_SIZE): Promise<void> {
@@ -21,9 +21,9 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         store.boothStore.booths
             .map((b) => {
                 const exhibitor = b.rect && b.exhibitors.find((e) => e.logoInBooth && e.logo);
-                return exhibitor ? [b.id, exhibitor.logo] : null;
+                return exhibitor ? [b.id, { preferred: getLogoUrl(exhibitor.logo), fallback: exhibitor.logo }] : null;
             })
-            .filter(Boolean) as [number, string][],
+            .filter(Boolean) as [number, ImageUrls][],
     );
 
     const chunks = Array.from({ length: Math.ceil(boothsLogosUrlsById.size / chunkSize) }, (_, i) =>
@@ -37,7 +37,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
     const painterLayersPriorities = new Map<string, number>();
 
     for (const [i, chunk] of chunks.entries()) {
-        const loaded = await loadImagesInBatchesById(chunk, chunkSize, DELAY);
+        const loaded = await loadImagesInBatchesById(chunk, chunkSize);
 
         for (const [boothId, image] of loaded) {
             const booth = store.boothStore.boothById.get(boothId);

@@ -4,8 +4,6 @@ import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
-import logosFromBooths from "../../../../utils/imageloader";
-import ImagePainter from "../painters/ImagePainter";
 import { DrawerContext } from "./../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
@@ -53,20 +51,7 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
 
         l.configured = true;
 
-        const logos = window["DELAYED_IMAGES"] ? Promise.resolve([]) : logosFromBooths(logosBooths);
-        configBg(context, logos, l, l.basePriority, l.visible).then(() => {
-            if (window["DELAYED_IMAGES"]) {
-                return;
-            }
-
-            context.requireUpdate(null);
-            var imagePainter = context.getLayersPainters([l.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
-            if (imagePainter) {
-                imagePainter.visible = l.visible;
-            }
-        }).finally(() => {
-            resolve(true);
-        });
+        configBg(context, l, l.basePriority, l.visible).finally(() => resolve(true));
     });
 }
 
