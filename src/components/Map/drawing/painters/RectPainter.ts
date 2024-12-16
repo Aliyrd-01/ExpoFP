@@ -6,6 +6,11 @@ import Painter from "./Painter";
 import Sprite, { SpriteItem } from "./Sprite";
 import { logBuffer } from "../../../../tools/webgl-logger";
 import data from "../../../../data";
+import isMobile from "../../../../utils/is-mobile";
+import isWebview from "../../../../utils/is-webview";
+
+const isMobileDevice = isMobile || isWebview;
+
 
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -67,11 +72,11 @@ export default class RectPainter implements Painter {
         this.gl = gl;
 
         let fragmentShader = fragmentSharedSource;
-        // if (options?.color) {
-        //     const [r, g, b, a] = this.parseColor(options.color);
-        //     fragmentShader = `#define BASE_COLOR vec4(${r},${g},${b},${a})\n${fragmentSharedSource}`;
-        //     this.baseColor = [r, g, b, a];
-        // }
+        if (data.viewOptimizationLevel && isMobileDevice && options?.color) {
+            const [r, g, b, a] = this.parseColor(options.color);
+            fragmentShader = `#define BASE_COLOR vec4(${r},${g},${b},${a})\n${fragmentSharedSource}`;
+            this.baseColor = [r, g, b, a];
+        }
 
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentShader]);
         this.program = this.programInfo.program;
