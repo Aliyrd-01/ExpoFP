@@ -307,7 +307,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
         let pRatio = this.context.pixelRatio;
         let fSize = fontSize;
 
-        if (isMobileDevice && this.painter.optimizationLevel >= 2) {
+        if (data.viewOptimizationLevel && isMobileDevice && this.painter.optimizationLevel >= 2) {
             pRatio = Math.max(1, pRatio - this.painter.optimizationLevel);
             fSize = Math.max(fontSize, fontSize * (this.context.pixelRatio / pRatio));
         }
