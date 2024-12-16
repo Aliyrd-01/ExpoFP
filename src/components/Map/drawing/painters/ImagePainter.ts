@@ -10,7 +10,7 @@ import isMobile from "../../../../utils/is-mobile";
 import data from "../../../../data";
 import isWebview from "../../../../utils/is-webview";
 
-const mobileCanvasSize = data.viewOptimizationLevel >= 5 ? 48 : 64;
+const mobileCanvasSize = data.viewOptimizationLevel >= 5 ? 64 : 128;
 const reduceImageQuality = (isMobile || isWebview) && data.viewOptimizationLevel >= 4;
 
 const offscreenCanvas = document.createElement("canvas");
