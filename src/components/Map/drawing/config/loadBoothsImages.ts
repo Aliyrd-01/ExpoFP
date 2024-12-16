@@ -62,8 +62,6 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 painterLayersPriorities.get(name),
                 areLayersEnabled() ? visibleLayerNames.has(name.split(SEPARATOR)[0]) : true,
             );
-            // TODO skipDim
-            painter.dim = Number(store.uiState.dimmed);
             objects.forEach((obj) => painter.addObject(obj));
         });
 
@@ -81,7 +79,6 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 layer.basePriority + maxBasePriority,
                 layer.visible,
             );
-            painter.dim = Number(store.uiState.dimmed);
             loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
         })
     );
@@ -109,9 +106,9 @@ function getIcons(layer: Layer): SVGImageElement[] {
 
 function createObject(img: Img): DrawerObjectEx {
     const { x, y, width, height, angle } = img.bounds;
-    const prefix = img.booth ? `${img.booth.id}${SEPARATOR}` : "";
+    const id = img.booth?.id?.toString() ?? `${x}${y}${width}${height}`;
     return {
-        id: `${prefix}${x}${y}${width}${height}`,
+        id,
         center: [x + width / 2, y + height / 2],
         deltas: [-width / 2, -height / 2, width / 2, height / 2],
         deltaPts: [0, 0, 0, 0],
@@ -121,6 +118,7 @@ function createObject(img: Img): DrawerObjectEx {
         texPosition: "center",
         stretch: true,
         rotateRadians: angle ? (-angle * Math.PI) / 180.0 : null,
+        skipdim: store.uiState.highlightedBooths.has(id),
     } as DrawerObjectEx;
 }
 
