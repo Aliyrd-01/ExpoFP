@@ -62,6 +62,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 painterLayersPriorities.get(name),
                 areLayersEnabled() ? visibleLayerNames.has(name.split(SEPARATOR)[0]) : true,
             );
+            painter.dim = Number(store.uiState.dimmed);
             objects.forEach((obj) => painter.addObject(obj));
         });
 
@@ -79,6 +80,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 layer.basePriority + maxBasePriority,
                 layer.visible,
             );
+            painter.dim = Number(store.uiState.dimmed);
             loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
         })
     );
