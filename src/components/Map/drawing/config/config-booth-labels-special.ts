@@ -2,7 +2,7 @@ import { reaction } from "mobx";
 import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
-import RectPainter from "../painters/RectPainter";
+import RectPainter, { RectPainterOptions } from "../painters/RectPainter";
 import store, { heatmapStore, uiState, boothStore } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createMultilineTextCanvas, getFont } from "./canvases";
@@ -31,18 +31,20 @@ export default function configBoothLabelsSpecial(
     visible: boolean
 ) {
     if (!(booth instanceof SpecialBooth) || booth.noLabels) return;
-    return new BoothLabelSpecialDrawer(context, layerID, booth, painterOrderPriority, visible);
+    const color = booth.labelColor || settings.boothLabelColor;
+    const id = `${layerID}-booth-label-special-${color}`
+    return new BoothLabelSpecialDrawer(context, id, booth, painterOrderPriority, visible, { color });
 }
 
-class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter> {
+class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> {
     private readonly steps: TextFitData[];
     private readonly ids: string[];
     private previousVisibleId: string;
     private previousSkipDim: boolean;
     public locked: boolean;
 
-    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
-        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible);
+    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean, options: RectPainterOptions) {
+        super(context, booth, layerID, RectPainter, painterOrderPriority, visible, options);
         this.locked = context.updatable;
         // initDrawer(this.drawer);
 

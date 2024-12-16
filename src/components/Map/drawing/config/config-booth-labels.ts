@@ -4,40 +4,29 @@ import store, { boothStore } from "../../../../store";
 import { Booth, RegularBooth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
-import RectPainter from "../painters/RectPainter";
+import RectPainter, { RectPainterOptions } from "../painters/RectPainter";
 import { uiState } from "./../../../../store/index";
 import BoothDrawerBase from "./BoothDrawerBase";
 import { createCircleCanvas, createDetailsCanvas, createExhibitorsDetailsCanvas, createLabelCanvas } from "./canvases";
 import { NumberObserver } from "./NumberObserver";
 import isMobile from "../../../../utils/is-mobile";
+import isWebview from "../../../../utils/is-webview";
 
 // const dotCanvas = createCircleCanvas(1.5, "#fff");
 // const dotW = dotCanvas.canvas.width / 2;
 // const dotH = dotCanvas.canvas.width / 2;
 
-const mobileOptimisationLevel = data.viewOptimizationLevel;
-
 let fillStyle = settings.boothLabelColor;
 
 if (settings.EXPO === "tqs2021") fillStyle = "#000";
 
-let prefixes = ["Dot", "XS", "S", "M", "L", "Details"];
+const isMobileDevice = isMobile || isWebview;
 
-if (isMobile) {
-    switch (mobileOptimisationLevel) {
-        case 1:
-        case 2:
-            prefixes = ["Dot", "XS", "S", "Details"];
-            break;
-        case 3:
-        case 4:
-        case 5:
-            prefixes = ["Dot", "XS", "Details"];
-            break;
-        default:
-            prefixes = ["Dot", "XS", "S", "Details"];
-    }
-}
+let prefixes = (
+    isMobileDevice
+        ? ["Dot", "XS", "S", "Details"]
+        : ["Dot", "XS", "S", "M", "L", "Details"]
+);
 
 // const updates = [];
 // let drawer: Painter;
@@ -62,7 +51,9 @@ export default function configBoothLabels(
     visible: boolean
 ) {
     if (!(booth instanceof RegularBooth) || booth.noLabels) return;
-    return new BoothLabelDrawer(context, layerID, booth, painterOrderPriority, visible);
+    const color = booth.labelColor || fillStyle;
+    const id = `${layerID}-booth-label-regular-${color}`;
+    return new BoothLabelDrawer(context, id, booth, painterOrderPriority, visible, { color });
 }
 
 // function replaceColorTmp(color: string) {
@@ -77,7 +68,7 @@ export default function configBoothLabels(
 //     return color;
 // }
 
-class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
+class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> {
     private readonly factors: number[] = [];
     private previousVisiblePrefix: typeof prefixes[number];
     private previousSkipDim: boolean;
@@ -85,8 +76,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     // private readonly labelColor: string;
     // private readonly detailsHeight: number;
 
-    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean) {
-        super(context, booth, layerID + "booth-label", RectPainter, painterOrderPriority, visible);
+    constructor(context: DrawerContext, layerID: string, booth: RegularBooth, painterOrderPriority: number, visible: boolean, options: RectPainterOptions) {
+        super(context, booth, layerID, RectPainter, painterOrderPriority, visible, options);
         this.locked = context.updatable;
         // initPainter(this.painter);
 
@@ -116,6 +107,10 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             visible: false,
         });
 
+        if (isMobileDevice && this.painter.optimizationLevel >= 3) {
+            prefixes = ["Dot", "XS", "Details"];
+        }
+
         const mobileLabelSizes = this.getMobileLabelSizes();
 
         let exh = data.hideExhibitors
@@ -127,7 +122,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const pad = booth.borderWidth / 2 || boothStore.borderWidth / 2;
 
         if (!exh.length) {
-            if (isMobile) {
+            if (isMobileDevice) {
                 mobileLabelSizes.forEach(labelSize => {
                     if (!labelSize.exhibitorsLabel) {
                         this.addLabel(labelSize.fontSize, labelSize.sizeName, color);
@@ -144,6 +139,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             const texPosition = uiState.rtl ? "righttop" : "lefttop";
             const deltaPts: [number, number, number, number] = uiState.rtl ? [1, 3, -3, -3] : [3, 3, -1, -1];
 
+            const { pRatio, fSize } = this.adjustRatioAndFontSize(18);
             this.painter.addObject({
                 id: this.getId("Details"),
                 rotateRadians: booth.rotate,
@@ -151,12 +147,12 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
                 deltas: [-r.w / 2 + pad, -r.h / 2 + pad, r.w / 2 - pad, r.h / 2 - pad],
                 deltaPts,
                 scalePts: context.pixelRatio,
-                canvasTmp: createDetailsCanvas(booth, context.pixelRatio, color, 18, !!booth.exhibitors.length, textAlign),
+                canvasTmp: createDetailsCanvas(booth, pRatio, color, fSize, !!booth.exhibitors.length, textAlign),
                 texPosition,
                 visible: false,
             });
         } else {
-            if (isMobile) {
+            if (isMobileDevice) {
                 mobileLabelSizes.forEach(labelSize => {
                     this.addExhibitorsLabel(labelSize.fontSize, labelSize.sizeName, pad, !labelSize.exhibitorsLabel, color);
                 })
@@ -186,41 +182,11 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
     }
 
     getMobileLabelSizes(): { fontSize: number; sizeName: string; exhibitorsLabel?: boolean }[] {
-        switch (mobileOptimisationLevel) {
-            case 1:
-                return [
-                    { fontSize: 7, sizeName: "XS" },
-                    { fontSize: 10, sizeName: "S" },
-                    { fontSize: 14, sizeName: "Details", exhibitorsLabel: true },
-                ];
-            case 2:
-                return [
-                    { fontSize: 7, sizeName: "XS" },
-                    { fontSize: 10, sizeName: "S" },
-                    { fontSize: 12, sizeName: "Details", exhibitorsLabel: true },
-                ];
-            case 3:
-                return [
-                    { fontSize: 7, sizeName: "XS" },
-                    { fontSize: 13, sizeName: "Details", exhibitorsLabel: true },
-                ];
-            case 4:
-                return [
-                    { fontSize: 7, sizeName: "XS" },
-                    { fontSize: 11, sizeName: "Details", exhibitorsLabel: true },
-                ];
-            case 5:
-                return [
-                    { fontSize: 7, sizeName: "XS" },
-                    { fontSize: 9, sizeName: "Details", exhibitorsLabel: true },
-                ];
-            default:
-                return [
-                    { fontSize: 7, sizeName: "XS" },
-                    { fontSize: 10, sizeName: "S" },
-                    { fontSize: 16, sizeName: "Details", exhibitorsLabel: true },
-                ];
-        }
+        return [
+            { fontSize: 7, sizeName: "XS" },
+            { fontSize: 10, sizeName: "S" },
+            { fontSize: 16, sizeName: "Details", exhibitorsLabel: true },
+        ];
     }
 
     calcFactors(exh: boolean) {
@@ -287,14 +253,17 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const texPosition = uiState.rtl ? "righttop" : "lefttop";
         const deltaPts: [number, number, number, number] = uiState.rtl ? [1, 3, -3, -3] : [3, 3, -1, -1];
 
+
+        const { pRatio, fSize } = this.adjustRatioAndFontSize(fontSize);
         const canvas = createExhibitorsDetailsCanvas(
             b as RegularBooth,
-            this.context.pixelRatio,
+            pRatio,
             color,
-            fontSize,
+            fSize,
             data.hideExhibitorBoothNumber || short,
             data.onlyFeaturedExhibitors,
-            textAlign
+            textAlign,
+            isMobileDevice && this.painter.optimizationLevel >= 3 ? 1 : 3,
         );
 
         const pad = padding;
@@ -317,7 +286,8 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
         const b = this.booth;
         const r = b.rect;
 
-        const canvas = createLabelCanvas(b.name, fontSize, this.context.pixelRatio, color, 500);
+        const { pRatio, fSize } = this.adjustRatioAndFontSize(fontSize);
+        const canvas = createLabelCanvas(b.name, fSize, pRatio, color, 500);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 
@@ -331,5 +301,17 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter> {
             texPosition: "center",
             visible: false,
         });
+    }
+
+    adjustRatioAndFontSize(fontSize: number): { pRatio: number; fSize: number } {
+        let pRatio = this.context.pixelRatio;
+        let fSize = fontSize;
+
+        if (isMobileDevice && this.painter.optimizationLevel >= 2) {
+            pRatio = Math.max(1, pRatio - this.painter.optimizationLevel);
+            fSize = Math.max(fontSize, fontSize * (this.context.pixelRatio / pRatio));
+        }
+
+        return { pRatio, fSize };
     }
 }
