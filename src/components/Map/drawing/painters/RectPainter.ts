@@ -67,11 +67,11 @@ export default class RectPainter implements Painter {
         this.gl = gl;
 
         let fragmentShader = fragmentSharedSource;
-        if (options?.color) {
-            const [r, g, b, a] = this.parseColor(options.color);
-            fragmentShader = `#define BASE_COLOR vec4(${r},${g},${b},${a})\n${fragmentSharedSource}`;
-            this.baseColor = [r, g, b, a];
-        }
+        // if (options?.color) {
+        //     const [r, g, b, a] = this.parseColor(options.color);
+        //     fragmentShader = `#define BASE_COLOR vec4(${r},${g},${b},${a})\n${fragmentSharedSource}`;
+        //     this.baseColor = [r, g, b, a];
+        // }
 
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentShader]);
         this.program = this.programInfo.program;
