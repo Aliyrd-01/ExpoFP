@@ -97,16 +97,17 @@ export default function Map() {
         () => {
             if (!uiState.centerMap || store.mapboxStore.showMapbox) return;
             uiState.centerMap = false;
-            var { rectangle } = store.layerStore;
-            if (rectangle)
-                zoomTo(
-                    getTramsformToCenterSvgRect(
-                        rectangle,
-                        uiState.canvasVisibleRectPx,
-                        Math.max(zoomTransform(s.$canvas.node()).k, 4)
-                    )
-                );
-            else zoomTo(zoomIdentity);
+            // var { rectangle } = store.layerStore;
+            // if (rectangle)
+            //     zoomTo(
+            //         getTramsformToCenterSvgRect(
+            //             rectangle,
+            //             uiState.canvasVisibleRectPx,
+            //             Math.max(zoomTransform(s.$canvas.node()).k, 4)
+            //         )
+            //     );
+            // else 
+            zoomTo(zoomIdentity);
         }
     );
 
