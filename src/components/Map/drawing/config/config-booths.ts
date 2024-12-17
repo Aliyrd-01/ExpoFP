@@ -68,7 +68,7 @@ export default function configBooths(
         defaultFrom?.layer?.name === lId ||
         defaultFrom?.layer?.childLayers.find((l) => l.name === lId)
     ) {
-        configScaledBoot(context, lId, defaultFrom, painterOrderPriority + 20, visible);
+        configScaledBoot(context, lId, defaultFrom, painterOrderPriority + 40, visible);
     }
 
     return function () {

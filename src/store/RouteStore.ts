@@ -334,7 +334,7 @@ export function findBooth(str: string) {
 }
 
 export function extractRoute(from: string, to: string) {
-    return new Route(findBooth(from), findBooth(to));
+    return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to));
 }
 
 export class Route {

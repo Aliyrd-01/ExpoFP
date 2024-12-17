@@ -17,6 +17,7 @@ import RouteStore from "./RouteStore";
 import ScheduleStore from "./ScheduleStore";
 import UIState from "./UIState";
 import type { ListItem } from "./types";
+import { svgArea } from "../data/svg";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -89,7 +90,7 @@ export default class RootStore {
             if (this.routeStore.defaultFrom && !this.routeStore.defaultFrom?.visible)
                 this.selectBooth(this.routeStore.defaultFrom);
 
-            this.uiState.centerMap = true;
+            this.uiState.moveToRect = svgArea;
             this.uiState.inIdle = true;
         }, 1000);
     }
