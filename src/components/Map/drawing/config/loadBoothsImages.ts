@@ -30,8 +30,6 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         new Map(Array.from(boothsLogosUrlsById).slice(i * chunkSize, (i + 1) * chunkSize))
     );
 
-    const visibleLayerNames = new Set(store.layerStore.layers.filter((layer) => layer.visible).map((layer) => layer.name));
-
     const painterLayers = new Map<string, DrawerObjectEx[]>();
     const painterLayersPriorities = new Map<string, number>();
 
@@ -67,6 +65,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             painterLayers.get(layerName).push(createObject(createImg(booth, image)));
         }
 
+        const visibleLayerNames = new Set(store.layerStore.layers.filter((layer) => layer.visible).map((layer) => layer.name));
         painterLayers.forEach((objects, name) => {
             const painter = context.requirePainter(
                 name,
