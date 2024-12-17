@@ -2,8 +2,10 @@ import { loadImage } from "./imageloader";
 import isMobile from "./is-mobile";
 import isWebview from "./is-webview";
 
-const BATCH_SIZE = isMobile || isWebview ? 8 : 512;
-const DELAY = 0;
+const isMobileDevice = isMobile || isWebview;
+
+const BATCH_SIZE = isMobileDevice ? 8 : 512;
+const DELAY = isMobileDevice ? 100 : 0;
 
 export interface ImageUrls {
     preferred?: string;
