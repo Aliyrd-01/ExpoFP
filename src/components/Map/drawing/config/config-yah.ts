@@ -10,7 +10,14 @@ export default function configYah(context: DrawerContext) {
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
 
-    const yah = getYah();
+    let yah = getYah();
+
+    //hotfix for yah in url in kiosks
+    const slug = window.location.search.length > 1 ? decodeURIComponent(window.location.search.substring(1)) : "";
+    if (!yah && slug.startsWith("route")) {
+        const yahPart = slug.split(":").find((p) => p.startsWith("yah_"));
+        if (yahPart) yah = yahPart;
+    }
 
     const isArray = Array.isArray(yah) || false;
 

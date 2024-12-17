@@ -89,7 +89,7 @@ export default class RouteStore {
             if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
                 this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
-            if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
+            if (!this.currentRouteLayer && route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
 
             if (route?.from && route?.to)
                 sendEventToGa(
@@ -218,6 +218,7 @@ export default class RouteStore {
 
         this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
+
         if (!p) {
             this.currentPosition = null;
             return;
@@ -228,7 +229,6 @@ export default class RouteStore {
         if (focus) {
             if (layer && !layer?.visible) {
                 layersStore.updateVisibility(layer, true);
-                store.routeStore.currentRouteLayer = layer;
             }
             this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 1000, 1000);
         }
@@ -334,7 +334,7 @@ export function findBooth(str: string) {
 }
 
 export function extractRoute(from: string, to: string) {
-    return new Route(findBooth(from), findBooth(to));
+    return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to));
 }
 
 export class Route {

@@ -1,15 +1,15 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
+import { PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
-import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
-import { PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 // import settings from '@/settings';
 

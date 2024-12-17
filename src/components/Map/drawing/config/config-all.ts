@@ -59,8 +59,6 @@ export default function configAll(context: DrawerContext = _context): void {
 
         if (name) {
             store.layerStore.updateVisibility(l, true);
-            store.routeStore.currentRouteLayer = l;
-
             const booths =
                 store.uiState.selectedExhibitor?.booths.filter((b) => b.layer?.name === name) ||
                 [...store.uiState.selectedBooths].filter((b) => b.layer?.name === name);

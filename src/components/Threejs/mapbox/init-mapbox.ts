@@ -16,7 +16,7 @@ export default function initMapbox(container: HTMLElement, style: string): Promi
             antialias: true,
             pitch: 30,
             maxPitch: 70,
-            minZoom: settings.EXPO.indexOf("riocentro") == -1 ? 17 : 14,
+            minZoom: 14,
         });
 
         map.on("load", () => resolve(map));
