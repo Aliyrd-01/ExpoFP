@@ -71,7 +71,12 @@ export default class LayerStore {
         if (this.mode === LayersMode.Radio && !visible) return;
 
         const layer = layerOrName instanceof Layer ? layerOrName : this.findLayer(layerOrName);
-        if (!layer || layer.visible === visible) return;
+        if (!layer || layer.visible === visible) {
+            if (layer && store.routeStore.currentRouteLayer !== layer) {
+                store.routeStore.currentRouteLayer = layer;
+            }
+            return;
+        }
 
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {
@@ -166,6 +171,6 @@ function an(layer: Layer, toVisible: boolean, callback: () => void = null): void
             }
 
             callback?.();
-        },
+        }
     );
 }
