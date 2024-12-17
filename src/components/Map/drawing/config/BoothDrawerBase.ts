@@ -1,7 +1,7 @@
 import { autorun } from "mobx";
 import { Booth } from "../../../../store/BoothStore";
 import { DrawerContext } from "../Drawer1";
-import Painter from "../painters/Painter";
+import Painter, { PainterConstructor } from "../painters/Painter";
 import TrianglePainter from "../painters/TrianglePainter";
 import BoothShape from "./BoothShape";
 
@@ -53,19 +53,20 @@ export abstract class BoothDrawerBaseWithoutPainter {
     }
 }
 
-export default abstract class BoothDrawerBase<T extends Painter | TrianglePainter> extends BoothDrawerBaseWithoutPainter {
+export default abstract class BoothDrawerBase<T extends Painter | TrianglePainter, U = Record<string, unknown>> extends BoothDrawerBaseWithoutPainter {
     protected readonly painter: T;
 
     constructor(
         context: DrawerContext,
         booth: Booth,
         layerId: string,
-        painterClass: new (gl: WebGLRenderingContext) => T,
+        painterClass: PainterConstructor<T, U>,
         painterOrderPriority: number,
-        visible: boolean
+        visible: boolean,
+        options?: U,
     ) {
         super(context, booth);
-        this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible);
+        this.painter = context.requirePainter(layerId, painterClass, painterOrderPriority, visible, options);
     }
     protected getId(name: string) {
         return (

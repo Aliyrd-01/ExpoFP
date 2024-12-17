@@ -1,10 +1,12 @@
 import Rect from "../../../../core/Rect";
 import debugCanvases from "../../../../tools/debugCanvases";
 import isDebug from "../../../../utils/is-debug";
+import isMobile from "../../../../utils/is-mobile";
+import isWebview from "../../../../utils/is-webview";
 import { CanvasDescriptor } from "../config/canvases";
 
-const maxHeight = 2000;
-const maxWidth = 2000;
+const maxHeight = (isMobile || isWebview) ? 1024 : 2000;
+const maxWidth = (isMobile || isWebview) ? 1024 : 2000;
 
 type ContainerCanvasInfo = {
     width: number;
