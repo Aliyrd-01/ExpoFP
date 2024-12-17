@@ -10,9 +10,9 @@ import { select } from "d3";
 import type { Layer } from "../../../../store/LayerStore";
 import isWebview from "../../../../utils/is-webview";
 import { getLogoUrl } from "../../../../utils/getLogoUrl";
+import { BOOTHS_PAINTER_MARKER, LAYER_ICONS_MARKER, LAYER_LOGOS_MARKER, SEPARATOR } from "../../../../constants";
 
 const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
-const SEPARATOR = ":";
 
 export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK_SIZE): Promise<void> {
     if (store.uiState.hideLogoInBooth) return;
@@ -30,11 +30,19 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         new Map(Array.from(boothsLogosUrlsById).slice(i * chunkSize, (i + 1) * chunkSize))
     );
 
-    const maxBasePriority = Math.max(...store.layerStore.layers.map((item) => item.basePriority));
     const visibleLayerNames = new Set(store.layerStore.layers.filter((layer) => layer.visible).map((layer) => layer.name));
 
     const painterLayers = new Map<string, DrawerObjectEx[]>();
     const painterLayersPriorities = new Map<string, number>();
+
+    const boothsPaintersById = new Map(
+        context.allPainters
+            .filter(p => p.id.includes(BOOTHS_PAINTER_MARKER))
+            .map(p => [
+                p.id.includes(SEPARATOR) ? p.id.split(SEPARATOR)[0] : p.id,
+                p,
+            ])
+    );
 
     for (const [i, chunk] of chunks.entries()) {
         const loaded = await loadImagesInBatchesById(chunk, chunkSize);
@@ -43,14 +51,18 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             const booth = store.boothStore.boothById.get(boothId);
             if (!booth) continue;
 
-            const layerName = genLayerId(booth.layer?.name, "logos", i);
+            const boothLayerName = booth.layer?.name;
+            const layerName = genImageLayerId(boothLayerName, LAYER_LOGOS_MARKER, i);
+
+            const orderPriority = (
+                areLayersEnabled()
+                    ? boothsPaintersById.get(boothLayerName)?.orderPriority
+                    : boothsPaintersById.values().next().value?.orderPriority
+            );
 
             if (!painterLayers.has(layerName)) {
                 painterLayers.set(layerName, []);
-                painterLayersPriorities.set(
-                    layerName,
-                    areLayersEnabled() ? booth.layer?.basePriority + maxBasePriority : maxBasePriority,
-                );
+                painterLayersPriorities.set(layerName, orderPriority);
             }
             painterLayers.get(layerName).push(createObject(createImg(booth, image)));
         }
@@ -75,9 +87,9 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             const loadedIcons = await loadIcons(icons);
 
             const painter = context.requirePainter(
-                genLayerId(layer.name, "icons", i),
+                genImageLayerId(layer.name, LAYER_ICONS_MARKER, i),
                 ImagePainter,
-                layer.basePriority + maxBasePriority,
+                layer.basePriority,
                 layer.visible,
             );
             painter.dim = Number(store.uiState.dimmed);
@@ -88,9 +100,8 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
     context.requireUpdate(null);
 }
 
-function genLayerId(baseLayerName: string, suffix: string, i: number): string {
-    const defaultLayerName = "default";
-    return `${areLayersEnabled() ? baseLayerName : defaultLayerName}${SEPARATOR}${suffix}${SEPARATOR}${i}`;
+function genImageLayerId(baseLayerName: string, suffix: string, i: number): string {
+    return `${areLayersEnabled() ? baseLayerName : BOOTHS_PAINTER_MARKER}${SEPARATOR}${suffix}${SEPARATOR}${i}`;
 }
 
 function areLayersEnabled() {

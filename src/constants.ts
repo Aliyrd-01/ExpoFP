@@ -2,3 +2,7 @@ export const VISIBILITY_STORAGE_KEY = "___visibility";
 export const PREVIEW_MODE_QUERY = "previewMode";
 export const PREVIEW_MODE_STORAGE_KEY = "___preview_mode";
 export const PREVIEW_MODE_ATTRIBUTE = "data-preview-mode";
+export const BOOTHS_PAINTER_MARKER = "booths";
+export const SEPARATOR = ":";
+export const LAYER_LOGOS_MARKER = "logos";
+export const LAYER_ICONS_MARKER = "icons";
