@@ -36,7 +36,7 @@ class FloorPlan {
 
     selectExhibitor(nameOrExternalId: string): void;
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void;
+    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition, waypoints?: Array<string | CurrentPosition>): void;
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void
 
