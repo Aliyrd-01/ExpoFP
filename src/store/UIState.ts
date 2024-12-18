@@ -475,11 +475,16 @@ export default class UIState {
                 const position = lowerCaseName.indexOf(text);
                 if (position === -1) return null;
 
-                return { id: item.id, position, lowerCaseName };
+                return { id: item.id, position, lowerCaseName, featured: item instanceof Exhibitor && item.featured };
             })
             .filter(Boolean)
-            // Sort by position, then lexicographically
-            .sort((a, b) => a.position - b.position || a.lowerCaseName.localeCompare(b.lowerCaseName))
+            // Sort by featured status (featured first), 
+            // then by position, and finally lexicographically by name.
+            .sort((a, b) => (
+                (a.featured !== b.featured ? (a.featured ? -1 : 1) : 0) ||
+                (a.position - b.position) ||
+                a.lowerCaseName.localeCompare(b.lowerCaseName)
+            ))
             .map(({ id }) => itemsMap.get(id));
     }
 
