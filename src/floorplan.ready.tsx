@@ -122,11 +122,12 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.exhibitorStore.highlightedByExternalIds = [...externalIs];
     }
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
+    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition, waypoints: Array<string | CurrentPosition> = []): void {
         store.routeStore.selectRoute(
             new Route(
                 typeof from === "string" ? findBooth(from) : store.routeStore.getNearestBooth(from),
                 typeof to === "string" ? findBooth(to) : store.routeStore.getNearestBooth(to),
+                waypoints.map(wp => typeof wp === "string" ? findBooth(wp) : store.routeStore.getNearestBooth(wp)),
             ),
         );
     }

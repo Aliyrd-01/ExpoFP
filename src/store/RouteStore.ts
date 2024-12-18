@@ -333,14 +333,15 @@ export function findBooth(str: string) {
     return store.boothStore.findBooth(str) || store.exhibitorStore.findExhibitor(str)?.booths[0];
 }
 
-export function extractRoute(from: string, to: string) {
-    return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to));
+export function extractRoute(from: string, to: string, waypoints?: string[]) {
+    return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to), waypoints?.map((w) => findBooth(w)));
 }
 
 export class Route {
     public constructor(
         public from: Booth,
         public to: Booth,
+        public waypoints?: Booth[],
     ) {}
 }
 
