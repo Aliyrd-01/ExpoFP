@@ -66,7 +66,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition, waypoints: Array<string | CurrentPosition> = []): void {
+    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition, waypoints?: Array<string | CurrentPosition>): void {
         nr();
     }
 

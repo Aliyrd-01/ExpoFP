@@ -333,7 +333,7 @@ export function findBooth(str: string) {
     return store.boothStore.findBooth(str) || store.exhibitorStore.findExhibitor(str)?.booths[0];
 }
 
-export function extractRoute(from: string, to: string, waypoints?: string[]) {
+export function extractRoute(from: string, to: string, waypoints: string[]) {
     return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to), waypoints?.map((w) => findBooth(w)));
 }
 
