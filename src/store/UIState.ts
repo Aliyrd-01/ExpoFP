@@ -19,6 +19,7 @@ import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
+import { sanitizeStr } from "../utils/sanitizeText";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -465,26 +466,39 @@ export default class UIState {
             .map(item => {
                 if (!item.name) return null;
 
-                const lowerCaseName = (
+                const lowerCaseName = sanitizeStr((
                     item instanceof BoothBase
                         ? (item.fullName.toLowerCase() || item.name.toLowerCase())
                         : item.name.toLowerCase()
-                );
+                ));
 
                 // Find the position of the first occurrence
-                const position = lowerCaseName.indexOf(text);
+                const position = lowerCaseName.indexOf(sanitizeStr(text));
                 if (position === -1) return null;
 
-                return { id: item.id, position, lowerCaseName, featured: item instanceof Exhibitor && item.featured };
+                const result = { id: item.id, position, lowerCaseName, featured: false };
+                if (item instanceof Exhibitor) {
+                    result.featured = item.featured;
+                }
+                return result;
             })
             .filter(Boolean)
             // Sort by featured status (featured first), 
             // then by position, and finally lexicographically by name.
-            .sort((a, b) => (
-                (a.featured !== b.featured ? (a.featured ? -1 : 1) : 0) ||
-                (a.position - b.position) ||
-                a.lowerCaseName.localeCompare(b.lowerCaseName)
-            ))
+            .sort((a, b) => {
+                if (a.featured && b.featured && (a.featured !== b.featured)) {
+                    return a.featured ? -1 : 1;
+                }
+
+                if (a.position !== b.position) {
+                    return a.position - b.position;
+                }
+
+                return (
+                    a.lowerCaseName.localeCompare(b.lowerCaseName) ||
+                    String(a.id).localeCompare(String(b.id)) // For stability
+                );
+            })
             .map(({ id }) => itemsMap.get(id));
     }
 
