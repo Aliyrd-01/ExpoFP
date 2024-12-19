@@ -486,7 +486,7 @@ export default class UIState {
             // Sort by featured status (featured first), 
             // then by position, and finally lexicographically by name.
             .sort((a, b) => {
-                if (a.featured !== b.featured) {
+                if ((a.featured || b.featured) && (a.featured !== b.featured)) {
                     return a.featured ? -1 : 1;
                 }
 
