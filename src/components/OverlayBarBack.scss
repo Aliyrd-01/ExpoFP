@@ -1,8 +1,8 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .overlay-bar-back {
-    min-width: 3rem;
-    height: $overlay-height;
+    min-width: rem(48px);
+    height: rem(56px);
     align-self: flex-start;
     position: relative;
     display: flex;
@@ -46,7 +46,7 @@
 
 .efp-kiosk {
     .overlay-bar-back {
-        width: 70px;
+        width: rem(70px);
         height: calc(var(--k-searchBox-height) - 10px);
         padding-inline-start: 10px;
         justify-content: center;

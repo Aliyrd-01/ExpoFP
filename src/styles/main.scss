@@ -1,0 +1,87 @@
+@use "@styles/utils" as *;
+
+.layout {
+    --font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    --app-font-family: var(--expofp-font-face, var(--font-family));
+
+    --font-size-xs: #{rem(11px)};
+    --font-size-sm: #{rem(12px)};
+    --font-size-md: #{rem(13px)};
+    --font-size-lg: #{rem(14px)};
+    --font-size-xl: #{rem(16px)};
+    --font-size-xxl: #{rem(18px)};
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 600;
+
+    --color-white: #ffffff;
+    --color-black: #16171a;
+
+    --color-gray-100: #f9fafb;
+    --color-gray-200: #f2f4f7;
+    --color-gray-300: #eaecf0;
+    --color-gray-400: #d7d9dc;
+    --color-gray-500: #b5b7bc;
+    --color-gray-600: #81858c;
+    --color-gray-700: #57595d;
+    --color-gray-800: #3f4144;
+    --color-gray-900: #28292c;
+
+    --color-primary-ultra-light: #e1eeff;
+    --color-primary-light: #7bb6ff;
+    --color-primary: #2382f4;
+    --color-primary-dark: #165eb6;
+    --color-primary-ultra-dark: #00316c;
+
+    --color-green-ultra-light: #affbd2;
+    --color-green-light: #58e499;
+    --color-green: #1fd171;
+    --color-green-dark: #1c8f51;
+    --color-green-ultra-dark: #14673c;
+
+    --color-orange-ultra-light: #fcefc9;
+    --color-orange-light: #f8dd8f;
+    --color-orange: #f9cb5d;
+    --color-orange-dark: #ea9016;
+    --color-orange-ultra-dark: #d56b0a;
+
+    --color-red-ultra-light: #ffcdc8;
+    --color-red-light: #f97165;
+    --color-red: #e1463c;
+    --color-red-dark: #a51c12;
+    --color-red-ultra-dark: #912a23;
+
+    --shadow-xs: 0px 1px 3px 0px rgba(16, 24, 40, 0.16);
+    --shadow-sm: 0px 2px 8px -2px rgba(16, 24, 40, 0.2);
+    --shadow-md: 0px 6px 16px -2px rgba(16, 24, 40, 0.16), 0px 0px 1px 0px rgba(16, 24, 40, 0.16);
+    --shadow-lg: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px 10px 28px -2px rgba(16, 24, 40, 0.2);
+    --shadow-inverted-xs: 0px -1px 3px 0px rgba(16, 24, 40, 0.16);
+    --shadow-inverted-sm: 0px -2px 8px -2px rgba(16, 24, 40, 0.2);
+    --shadow-inverted-md: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px -6px 16px -2px rgba(16, 24, 40, 0.18);
+    --shadow-inverted-lg: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px -10px 28px -2px rgba(16, 24, 40, 0.2);
+
+    --border-radius-xs: #{rem(4px)};
+    --border-radius-sm: #{rem(6px)};
+    --border-radius-md: #{rem(8px)};
+    --border-radius-lg: #{rem(12px)};
+    --border-radius-xl: #{rem(16px)};
+    --border-radius-full: #{rem(50px)};
+
+    --backdrop-blur-md: blur(12px);
+    --backdrop-blur-lg: blur(14px);
+
+    --transition-duration: 0.1s;
+
+    // --color-secondary: #fb3e59;
+    // --color-secondaryLight: #ffd8de;
+    // --color-secondaryDark: #ea2b46;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+@import "icons";

@@ -1,8 +1,8 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .schedule {
     padding: 1rem;
-    font-size: var(--text-size-1);
+    font-size: var(--font-size-xl);
 
     &__item {
         position: relative;
@@ -29,16 +29,16 @@
 
         & > div {
             &:nth-child(1) {
-                font-size: var(--heading-size-2);
-                font-weight: var(--font-medium);
+                font-size: var(--font-size-xxl);
+                font-weight: var(--font-weight-medium);
             }
             &:nth-child(2) {
-                font-size: var(--text-size-2);
-                font-weight: var(--font-medium);
+                font-size: var(--font-size-lg);
+                font-weight: var(--font-weight-medium);
                 color: #54585f;
             }
             &:nth-child(3) {
-                font-size: var(--text-size-2);
+                font-size: var(--font-size-lg);
                 color: #54585f;
             }
         }
@@ -50,7 +50,7 @@
     &__event {
         display: block;
         padding: 8px 12px;
-        border-radius: var(--border-radius-2);
+        border-radius: var(--border-radius-sm);
         transition: background var(--transition-duration) ease;
         text-decoration: none;
 
@@ -68,19 +68,19 @@
         }
         & > span {
             display: block;
-            font-size: var(--text-size-2);
+            font-size: var(--font-size-lg);
             color: #54585f;
         }
         & > strong {
             display: block;
             padding-top: 2px;
-            font-weight: var(--font-bold);
+            font-weight: var(--font-weight-bold);
         }
     }
     &__event[href] {
         &:hover {
             & > strong {
-                color: var(--color-primaryDark);
+                color: var(--color-primary-dark);
             }
         }
         & > strong {
@@ -89,8 +89,8 @@
     }
     &__event-desc {
         margin: 6px 0;
-        font-size: var(--text-size-2);
-        color: var(--color-grayDark);
+        font-size: var(--font-size-lg);
+        color: var(--color-gray-700);
 
         & > p {
             margin: 6px 0;

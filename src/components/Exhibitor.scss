@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .expo-jtrade19 .exhibitor__categories-booth {
     background: #e9522a; //#fb3e59;
@@ -23,7 +23,7 @@
         display: flex;
         flex-flow: row wrap;
         margin: 0 1rem 1rem;
-        font-size: var(--text-size-2);
+        font-size: var(--font-size-lg);
         gap: 0.3rem;
 
         > a {
@@ -35,12 +35,12 @@
         }
 
         &-cat {
-            background: var(--color-primaryLight);
-            color: var(--color-primaryDark);
+            background: var(--color-primary-ultra-light);
+            color: var(--color-primary-dark);
 
             &:hover,
             &:visited:hover {
-                background: var(--color-primaryDark);
+                background: var(--color-primary-dark);
                 color: var(--color-white);
             }
             &:visited {
@@ -63,17 +63,17 @@
         }
 
         &-booth {
-            background: var(--color-secondaryLight);
-            color: var(--color-secondaryDark);
+            background: var(--color-primary-light);
+            color: var(--color-black);
 
             &:hover,
             &:visited:hover {
-                background: var(--color-secondaryDark);
+                background: var(--color-primary-dark);
                 color: var(--color-white);
             }
-            &:visited {
-                color: var(--color-secondary);
-            }
+            // &:visited {
+            //     color: var(--color-secondary);
+            // }
         }
     }
 
@@ -301,7 +301,7 @@
         text-align: center;
         margin: 2rem 0;
 
-        @include button;
+        // @include button;
 
         > .video-chat-btn {
             &.disabled {
@@ -630,7 +630,7 @@ $imageSliderClass: ".image-slider";
     justify-content: center;
     width: 100%;
     height: 30px;
-    background: var(--color-grayLight);
+    background: var(--color-gray-400);
     border: 0;
     cursor: pointer;
 

@@ -1,9 +1,9 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .market-materials {
     $this: &;
     margin: 1rem;
-    font-size: var(--text-size-2);
+    font-size: var(--font-size-lg);
 
     &__title {
         padding-bottom: rem(12px);
@@ -30,13 +30,13 @@
             color: var(--color-primary);
         }
         &:hover {
-            color: var(--color-primaryDark);
+            color: var(--color-primary-dark);
 
             #{$this}__item-file {
-                background-color: var(--color-primaryDark);
+                background-color: var(--color-primary-dark);
             }
             #{$this}__item-download {
-                color: var(--color-primaryDark);
+                color: var(--color-primary-dark);
             }
         }
     }

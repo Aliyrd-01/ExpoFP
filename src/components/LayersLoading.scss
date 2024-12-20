@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .layers-loading {
     position: absolute;

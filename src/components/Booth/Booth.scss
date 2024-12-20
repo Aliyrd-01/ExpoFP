@@ -1,4 +1,4 @@
-@import "../../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .booth {
     &__bar {
@@ -88,7 +88,7 @@
             padding-inline-end: 1rem;
         }
         &.is-onhold {
-            background: var(--color-grayUltraLight);
+            background: var(--color-gray-200);
 
             & > i {
                 color: var(--color-gray);
@@ -97,7 +97,7 @@
                 color: var(--color-gray);
             }
             .booth__info-val {
-                color: var(--color-grayDark);
+                color: var(--color-gray-700);
             }
         }
     }

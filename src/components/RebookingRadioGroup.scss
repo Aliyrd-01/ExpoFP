@@ -1,12 +1,12 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .rebooking-radio-group {
     padding: 1rem;
 
     &__title {
         padding-bottom: 10px;
-        font-size: var(--text-size-2);
-        font-weight: var(--font-medium);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-medium);
     }
     &__options {
         display: flex;
@@ -60,12 +60,12 @@
         }
         &:disabled {
             & ~ label {
-                background: var(--color-grayUltraLight);
+                background: var(--color-gray-200);
                 color: var(--color-gray);
                 cursor: default;
 
                 &:before {
-                    border-color: var(--color-grayLight);
+                    border-color: var(--color-gray-400);
                 }
                 & > .rebooking-radio__icon {
                     color: var(--color-gray);
@@ -74,8 +74,8 @@
         }
     }
     &__label {
-        font-size: var(--text-size-1);
-        font-weight: var(--font-medium);
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-medium);
     }
     &__icon {
         display: flex;

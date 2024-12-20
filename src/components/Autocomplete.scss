@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 $autocomplete: ".efp-autocomplete";
 $input-height: 50px;
@@ -21,19 +21,19 @@ $input-height: 50px;
         @include icon();
         content: $icon-chevron-down;
         font-size: 18px;
-        color: var(--color-grayDark);
+        color: var(--color-gray-700);
     }
     &__input {
         width: 100%;
         height: rem($input-height);
         padding-inline-start: 14px;
         padding-inline-end: 30px;
-        background: $color-white;
-        border: 1px solid $color-lightgray;
+        background: var(--color-white);
+        border: 1px solid var(--color-gray-300);
         outline: none;
-        font-size: var(--text-size-1);
-        font-weight: var(--font-bold);
-        border-radius: var(--border-radius-1);
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        border-radius: var(--border-radius-md);
         -webkit-appearance: none !important;
 
         &::-webkit-search-decoration,
@@ -52,7 +52,7 @@ $input-height: 50px;
         align-items: center;
         height: rem($input-height);
         cursor: pointer;
-        color: var(--color-grayDark);
+        color: var(--color-gray-700);
 
         &:before {
             content: "";
@@ -69,7 +69,7 @@ $input-height: 50px;
 
         #{$this}__inner {
             max-height: unset;
-            box-shadow: var(--shadow-large);
+            box-shadow: var(--shadow-lg);
         }
         #{$this}__input {
             border-bottom-right-radius: 0;
@@ -98,7 +98,7 @@ $input-height: 50px;
         max-height: 45vh;
         overflow-y: auto;
         background: var(--color-white);
-        border: 1px solid var(--color-grayLight);
+        border: 1px solid var(--color-gray-400);
         border-top: 0;
         width: 100%;
 
@@ -109,17 +109,17 @@ $input-height: 50px;
 
             li {
                 padding: rem(6px 15px);
-                color: var(--color-grayDark);
+                color: var(--color-gray-700);
                 cursor: pointer;
 
                 &.is-active {
-                    background: var(--color-grayLight);
+                    background: var(--color-gray-400);
                 }
                 &.is-focus {
-                    background: var(--color-grayUltraLight);
+                    background: var(--color-gray-200);
                 }
                 &:hover {
-                    background: var(--color-grayUltraLight);
+                    background: var(--color-gray-200);
                 }
             }
         }
@@ -128,7 +128,7 @@ $input-height: 50px;
             background-color: var(--color-white);
         }
         &::-webkit-scrollbar-track {
-            background-color: var(--color-grayLight);
+            background-color: var(--color-gray-400);
         }
         &::-webkit-scrollbar-thumb {
             background-color: #babac0;
@@ -144,7 +144,7 @@ $input-height: 50px;
     }
     &__empty {
         padding: rem(10px 15px);
-        color: var(--color-grayDark);
+        color: var(--color-gray-700);
     }
 }
 

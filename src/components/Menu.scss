@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .menu.shown .menu__title > img {
     opacity: 1;

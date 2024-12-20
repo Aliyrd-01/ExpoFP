@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 $speed: 2.2s;
 $speedInOut: 8.8s;

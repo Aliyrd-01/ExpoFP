@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 $share: ".share";
 $shareSocial: ".share-social";
@@ -9,7 +9,7 @@ $shareSocial: ".share-social";
         font-weight: 600;
         font-size: rem(18px);
         line-height: rem(22px);
-        color: $color-black;
+        color: var(--color-black);
         text-align: center;
     }
     &__socials {
@@ -22,15 +22,15 @@ $shareSocial: ".share-social";
             display: block;
             margin-bottom: rem(6px);
             font-size: rem(13px);
-            color: $color-darkgray;
+            color: var(--color-gray-600);
         }
     }
     &__copy-input {
         display: flex;
         align-items: center;
         height: 40px;
-        border: 1px solid $color-lightgray;
-        border-radius: $border-radius;
+        border: 1px solid var(--color-gray-300);
+        border-radius: var(--border-radius-xs);
 
         & > input {
             flex: 1;
@@ -39,7 +39,7 @@ $shareSocial: ".share-social";
             border: 0;
             outline: none;
             font-size: rem(14px);
-            color: $color-darkgray;
+            color: var(--color-gray-600);
         }
         & > button {
             min-width: 68px;
@@ -49,19 +49,19 @@ $shareSocial: ".share-social";
             border: 0;
             cursor: pointer;
             font-size: rem(14px);
-            color: $color-secondary;
+            color: var(--color-primary);
             font-weight: 500;
             text-align: center;
 
             &.isCopied {
-                color: $color-gray;
+                color: var(--color-gray-500);
 
                 &:hover {
-                    color: $color-gray;
+                    color: var(--color-gray-500);
                 }
             }
             &:hover {
-                color: $color-secondaryLight;
+                color: var(--color-primary) Light;
             }
         }
     }
@@ -99,7 +99,7 @@ $shareSocial: ".share-social";
     }
     &__title {
         margin-top: rem(4px);
-        color: $color-black;
+        color: var(--color-black);
         font-size: rem(14px);
         transition: color 0.1s ease-in-out;
     }
@@ -146,7 +146,7 @@ $shareSocial: ".share-social";
             }
         }
         #{$shareSocial}__title {
-            color: $color-secondary;
+            color: var(--color-primary);
         }
     }
 }

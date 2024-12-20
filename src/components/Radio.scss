@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .radio {
     display: inline-grid;
@@ -16,7 +16,7 @@
         width: rem(18px);
         height: rem(18px);
         border-radius: rem(100px);
-        border: rem(1px) solid $color-gray;
+        border: rem(1px) solid var(--color-gray-500);
     }
 
     &__label {
@@ -24,16 +24,16 @@
         font-weight: 400;
         letter-spacing: 0.02em;
         line-height: 1;
-        color: $color-darkgray;
+        color: var(--color-gray-600);
     }
 
     &--checked {
         & .radio__control {
-            border: rem(4px) solid $color-primary;
+            border: rem(4px) solid var(--color-primary);
         }
 
         & .radio__label {
-            color: $color-black;
+            color: var(--color-black);
         }
     }
 }

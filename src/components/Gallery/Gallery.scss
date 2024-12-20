@@ -1,4 +1,4 @@
-@import "../../styles/helpers.scss";
+@use "@styles/utils" as *;
 @import "~swiper/swiper.min.css";
 
 .gallery {

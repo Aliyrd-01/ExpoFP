@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .efp-wayfinding.isCollapsed {
     .efp-wayInformation {
@@ -17,7 +17,7 @@
     max-width: 800px;
     margin: 0 auto;
     padding: rem(10px 15px 20px);
-    border-top: 1px solid var(--color-grayLight);
+    border-top: 1px solid var(--color-gray-400);
 
     &__item {
         padding: rem(0 10px);

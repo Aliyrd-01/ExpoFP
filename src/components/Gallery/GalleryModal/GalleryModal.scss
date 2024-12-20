@@ -1,126 +1,131 @@
-@import "../../../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .gallery-modal {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: 999;
-	background: black;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: black;
 
-	& .icon {
-		fill: none;
-	}
+    & .icon {
+        fill: none;
+    }
 }
 
 .gallery-slider {
-	width: 100%;
-	height: 100%;
+    width: 100%;
+    height: 100%;
 
-	& .swiper-slide {
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-	}
+    & .swiper-slide {
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
 
-	.gallery__img {
-		background-position: center center;
-	}
+    .gallery__img {
+        background-position: center center;
+    }
 
-	&__controls {
-		position: absolute;
-		top: 30px;
-		inset-inline-end: 30px;
-		z-index: 10;
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-	}
+    &__controls {
+        position: absolute;
+        top: 30px;
+        inset-inline-end: 30px;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 
-	&__btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 60px;
-		height: 60px;
-		background: rgba(48, 48, 48, 0.56);
-		backdrop-filter: blur(5px);
-		border-radius: 50%;
-		border: none;
-		cursor: pointer;
-		padding: 0;
-		transition: background 0.2s;
+    &__btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: rgba(48, 48, 48, 0.56);
+        backdrop-filter: blur(5px);
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        transition: background 0.2s;
 
-		&:hover {
-			background: rgba(48, 48, 48, 0.4);
-		}
+        &:hover {
+            background: rgba(48, 48, 48, 0.4);
+        }
 
-		&.next, &.prev {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			z-index: 11;
-		}
+        &.next,
+        &.prev {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 11;
+        }
 
-		&.next {
-			inset-inline-end: 30px;
-		}
+        &.next {
+            inset-inline-end: 30px;
+        }
 
-		&.prev {
-			inset-inline-start: 30px;
-		}
+        &.prev {
+            inset-inline-start: 30px;
+        }
 
-		&:disabled {
-			display: none;
-		}
-	}
+        &:disabled {
+            display: none;
+        }
+    }
 }
 
 .gallery-slider__zoom {
-	overflow: visible;
-	width: 100%;
-	height: 100%;
+    overflow: visible;
+    width: 100%;
+    height: 100%;
 }
 
 .gallery-slider__zoom-content {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	transform-origin: 0 0;
-	height: 100%;
-	width: 100%;
-	padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-origin: 0 0;
+    height: 100%;
+    width: 100%;
+    padding: 40px;
 }
 
 @include responsive-classes-down-to(".gallery-modal", md) {
-	.gallery-slider {
-		&__controls {
-			top: 20px;
-			inset-inline-end: 20px;
-		}
+    .gallery-slider {
+        &__controls {
+            top: 20px;
+            inset-inline-end: 20px;
+        }
 
-		&__btn {
-			width: 50px;
-			height: 50px;
+        &__btn {
+            width: 50px;
+            height: 50px;
 
-			&.zoom-in, &.zoom-out, &.next, &.prev {
-				display: none;
-			}
-		}
-	}
+            &.zoom-in,
+            &.zoom-out,
+            &.next,
+            &.prev {
+                display: none;
+            }
+        }
+    }
 
-	.gallery-slider__zoom-content {
-		padding: 20px;
-	}
+    .gallery-slider__zoom-content {
+        padding: 20px;
+    }
 }
 
 .layout[dir="rtl"] {
-	.gallery-slider {
-		&__btn {
-			&.next, &.prev {
-				transform: scaleX(-1);
-			}
-		}
-	}
+    .gallery-slider {
+        &__btn {
+            &.next,
+            &.prev {
+                transform: scaleX(-1);
+            }
+        }
+    }
 }

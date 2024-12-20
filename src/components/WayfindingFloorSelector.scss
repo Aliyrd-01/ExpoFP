@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .efp-wayfinding-floor {
     position: relative;
@@ -14,9 +14,9 @@
     }
     &__title {
         padding-right: rem(12px);
-        font-size: var(--text-size-2);
+        font-size: var(--font-size-lg);
         color: var(--color-gray);
-        font-weight: var(--font-bold);
+        font-weight: var(--font-weight-bold);
     }
     &__list {
         --gap: 8px;
@@ -32,10 +32,10 @@
             margin-left: -1px;
             padding: rem(0 6px);
             background: var(--color-white);
-            border: 1px solid var(--color-grayLight);
+            border: 1px solid var(--color-gray-400);
             border-radius: var(--border-radius-full);
             color: var(--color-black);
-            font-weight: var(--font-bold);
+            font-weight: var(--font-weight-bold);
             outline: none;
             cursor: pointer;
 
@@ -45,10 +45,10 @@
             }
             &.isCurrent {
                 z-index: 2;
-                background: var(--color-primaryLight);
+                background: var(--color-primary-ultra-light);
                 border: 1px solid var(--color-primary);
                 color: var(--color-primary);
-                font-weight: var(--font-bold);
+                font-weight: var(--font-weight-bold);
             }
             &.isCurrent:first-child {
                 &:after {
@@ -58,7 +58,7 @@
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background: var(--color-primaryLight);
+                    background: var(--color-primary-ultra-light);
                     border: 1px solid var(--color-primary);
                     border-radius: var(--border-radius-full);
                     z-index: 2;
@@ -132,7 +132,7 @@
         width: clamp(40px, 6vw, 52px);
         height: clamp(40px, 6vw, 52px);
         color: var(--k-color-primary);
-        font-weight: var(--font-bold);
+        font-weight: var(--font-weight-bold);
     }
     .item-walk {
         width: clamp(14px, 3vw, 20px);
@@ -170,7 +170,7 @@
     25%,
     75% {
         box-shadow: 0 0 10px 2px rgba(65, 182, 231, 0.3);
-        background: var(--color-primaryLight);
+        background: var(--color-primary-ultra-light);
         border: 1px solid var(--color-primary);
         color: var(--color-primary);
     }

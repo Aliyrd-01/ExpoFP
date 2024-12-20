@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 $alert: ".efp-alert";
 
@@ -6,7 +6,7 @@ $alert: ".efp-alert";
     display: flex;
     align-items: center;
     padding: rem(12px 14px);
-    border-radius: var(--border-radius-1);
+    border-radius: var(--border-radius-md);
 
     &.isInline {
         display: inline-flex;
@@ -23,7 +23,7 @@ $alert: ".efp-alert";
     }
     &__content {
         flex: 1;
-        font-size: var(--text-size-2);
+        font-size: var(--font-size-lg);
         color: var(--color-black);
 
         a {
@@ -33,13 +33,13 @@ $alert: ".efp-alert";
             transition: color var(--transition-duration) ease, border var(--transition-duration) ease;
 
             &:hover {
-                color: var(--color-primaryDark);
-                border-color: var(--color-primaryDark);
+                color: var(--color-primary-dark);
+                border-color: var(--color-primary-dark);
             }
         }
     }
     &__title {
-        font-weight: var(--font-bold);
+        font-weight: var(--font-weight-bold);
     }
     &__close {
         position: relative;
@@ -53,7 +53,7 @@ $alert: ".efp-alert";
         padding: 0;
         background: transparent;
         border: 0;
-        border-radius: var(--border-radius-1);
+        border-radius: var(--border-radius-md);
         cursor: pointer;
         transition: background var(--transition-duration) ease;
 
@@ -71,7 +71,7 @@ $alert: ".efp-alert";
     &--topRight,
     &--bottomRight {
         position: fixed;
-        box-shadow: var(--shadow-medium);
+        box-shadow: var(--shadow-md);
     }
     &--topRight {
         top: rem(10px);
@@ -83,31 +83,31 @@ $alert: ".efp-alert";
     }
     // Variant
     &--info {
-        background: var(--color-infoLight);
+        background: var(--color-primary-ultra-light);
 
         #{$alert}__icon {
             background: var(--color-info);
         }
     }
     &--success {
-        background: var(--color-successLight);
+        background: var(--color-greenLight);
 
         #{$alert}__icon {
-            background: var(--color-success);
+            background: var(--color-green);
         }
     }
     &--warning {
-        background: var(--color-warningLight);
+        background: var(--color-orange-ultra-light);
 
         #{$alert}__icon {
             background: var(--color-warning);
         }
     }
     &--error {
-        background: var(--color-errorLight);
+        background: var(--color-redLight);
 
         #{$alert}__icon {
-            background: var(--color-error);
+            background: var(--color-red);
         }
     }
 }

@@ -42,7 +42,7 @@ const Alert: React.FC<AlertProps> = ({
         <div className={cn("efp-alert", `efp-alert--${variant}`, { isInline: inline, [`efp-alert--${position}`]: position })}>
             {showIcon ? (
                 <div className="efp-alert__icon">
-                    <i className={cn(alertIcon(), "size-20")}></i>
+                    <i className={cn(alertIcon())}></i>
                 </div>
             ) : null}
             <div className="efp-alert__content">

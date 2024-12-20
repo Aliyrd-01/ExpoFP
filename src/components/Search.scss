@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .search {
     &__bar {
@@ -6,7 +6,7 @@
             border: none;
             border-radius: 0.5rem;
             outline: none;
-            height: $overlay-height;
+            height: var(56px);
             -webkit-appearance: none;
             -webkit-tap-highlight-color: transparent;
             width: 100%;

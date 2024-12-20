@@ -1,4 +1,4 @@
-@import "index";
+@import "main";
 
 @font-face {
     font-family: "#{$icons-font-family}";
@@ -74,7 +74,7 @@ body {
         cursor: pointer;
 
         &:hover {
-            background: var(--color-grayDark);
+            background: var(--color-gray-700);
         }
     }
 }

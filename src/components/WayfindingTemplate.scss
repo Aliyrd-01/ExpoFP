@@ -1,4 +1,4 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .efp-wayfinding {
     display: flex;
@@ -58,8 +58,8 @@
         padding: 0;
         background: transparent;
         border: 0;
-        border-radius: var(--border-radius-1);
-        color: var(--color-grayDark);
+        border-radius: var(--border-radius-md);
+        color: var(--color-gray-700);
         cursor: pointer;
         transition: all var(--transition-duration) ease;
 
@@ -70,7 +70,7 @@
             line-height: 1.2;
         }
         &:hover {
-            background: var(--color-grayUltraLight);
+            background: var(--color-gray-200);
             color: var(--color-black);
         }
     }
@@ -79,9 +79,9 @@
 .efp-wayfindingError {
     padding: rem(20px 15px);
     border-top: 1px solid #e4e4e4;
-    font-size: var(--text-size-1);
-    color: var(--color-grayDark);
-    font-weight: var(--font-bold);
+    font-size: var(--font-size-xl);
+    color: var(--color-gray-700);
+    font-weight: var(--font-weight-bold);
     text-align: center;
 }
 

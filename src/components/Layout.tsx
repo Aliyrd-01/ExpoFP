@@ -10,7 +10,7 @@ import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
 import Floors from "./Floors";
 import LargeMessage from "./LargeMessage";
-import "../styles/index.scss";
+import "../styles/main.scss";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
@@ -93,9 +93,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <LogoOverlay />
-                {!uiState.hideHeaderLogo && store.initialized && (
-                    window["DELAYED_IMAGES"] ? <WsDelayedImages /> : <Ws />
-                )}
+                {!uiState.hideHeaderLogo && store.initialized && (window["DELAYED_IMAGES"] ? <WsDelayedImages /> : <Ws />)}
                 {!uiState.mapControlsHidden && <Controls />}
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
@@ -110,7 +108,9 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                         )}
                     </Suspense>
                 )}
-                {freeOrDemo && !uiState.hideFreeOrDemo && !uiState.heatmap ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
+                {freeOrDemo && !uiState.hideFreeOrDemo && !uiState.heatmap ? (
+                    <Suspense fallback={null}>{freeOrDemo}</Suspense>
+                ) : null}
                 {!uiState.hideCookieConsent && !uiState.kiosk && isGDPR && allowConsent === undefined && (
                     <Suspense fallback={null}>
                         <CookieConsent

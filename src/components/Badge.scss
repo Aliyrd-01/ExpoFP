@@ -5,22 +5,22 @@
     gap: 8px;
     margin-bottom: 10px;
     padding: 10px;
-    border-radius: var(--border-radius-1);
-    font-size: var(--text-size-1);
-    font-weight: var(--font-medium);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-medium);
 
     &--ghost {
         color: var(--color-black);
     }
 
     &--lightgray {
-        background: var(--color-grayUltraLight);
-        color: var(--color-grayDark);
+        background: var(--color-gray-200);
+        color: var(--color-gray-700);
     }
 
     &--gray {
-        background: var(--color-grayLight);
-        color: var(--color-grayDark);
+        background: var(--color-gray-400);
+        color: var(--color-gray-700);
     }
 
     &--no-margins {
