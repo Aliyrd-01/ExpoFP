@@ -52,7 +52,7 @@ function stateToUrl() {
     if (route) {
         const from = route.from ? `:${route.from.slug}` : "";
         const to = route.to ? `:${route.to.slug}` : "";
-        const accessible = store.routeStore.onlyAccessible ? ":true" : "";
+        const accessible = store.routeStore.onlyAccessible ? ":true" : ":false";
         const waypoints = route.waypoints?.map((w) => `:${w.slug}`).join("");
         queryRaw = `route${to}${from}${accessible}${waypoints || ""}`;
     } else if (exhibitor) {
