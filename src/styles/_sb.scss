@@ -1,4 +1,6 @@
-@import "main";
+@use "@styles/vars" as *;
+@use "@styles/utils" as *;
+@import "@styles/main";
 
 @font-face {
     font-family: "#{$icons-font-family}";
@@ -14,7 +16,7 @@ body {
 .map {
     width: 100vw;
     height: 100vh;
-    background: gray;
+    background: var(--color-gray-200);
     font-size: 16px;
 }
 .sidebar {
@@ -23,7 +25,7 @@ body {
     max-width: 376px;
     height: 100vh;
     padding-top: 20px;
-    background: #fff;
+    background: var(--color-white);
 
     @include media-breakpoint-down(sm) {
         max-width: 100%;
@@ -49,12 +51,14 @@ body {
     padding: 20px 15px;
 }
 .sb-layout {
-    padding: rem(20px);
+    width: 100vw;
+    height: 100vh;
+    background: var(--color-gray-200);
 }
 .sb-data {
     margin-top: 40px;
     padding: 14px;
-    background: #e6e6e6;
+    background: var(--color-gray-400);
     border-radius: 4px;
     font-size: 13px;
 
@@ -82,4 +86,7 @@ body {
     width: 100%;
     height: 100vh;
     border: 0;
+}
+.sb-padding {
+    padding: rem(20px);
 }

@@ -1,15 +1,16 @@
-@use "@styles/utils" as *;
+@use "@styles/utils";
+@import "@styles/icons";
 
 .layout {
     --font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
     --app-font-family: var(--expofp-font-face, var(--font-family));
 
-    --font-size-xs: #{rem(11px)};
-    --font-size-sm: #{rem(12px)};
-    --font-size-md: #{rem(13px)};
-    --font-size-lg: #{rem(14px)};
-    --font-size-xl: #{rem(16px)};
-    --font-size-xxl: #{rem(18px)};
+    --font-size-xs: #{utils.rem(11px)};
+    --font-size-sm: #{utils.rem(12px)};
+    --font-size-md: #{utils.rem(13px)};
+    --font-size-lg: #{utils.rem(14px)};
+    --font-size-xl: #{utils.rem(16px)};
+    --font-size-xxl: #{utils.rem(18px)};
 
     --font-weight-normal: 400;
     --font-weight-medium: 500;
@@ -52,6 +53,13 @@
     --color-red-dark: #a51c12;
     --color-red-ultra-dark: #912a23;
 
+    --color-exhibitor: #2ca6ff;
+    --color-booth: #516eff;
+    --color-event: #9044f6;
+    --color-speaker: #f28a0f;
+    --color-category: #707172;
+    --color-other: #16b095;
+
     --shadow-xs: 0px 1px 3px 0px rgba(16, 24, 40, 0.16);
     --shadow-sm: 0px 2px 8px -2px rgba(16, 24, 40, 0.2);
     --shadow-md: 0px 6px 16px -2px rgba(16, 24, 40, 0.16), 0px 0px 1px 0px rgba(16, 24, 40, 0.16);
@@ -61,21 +69,17 @@
     --shadow-inverted-md: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px -6px 16px -2px rgba(16, 24, 40, 0.18);
     --shadow-inverted-lg: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px -10px 28px -2px rgba(16, 24, 40, 0.2);
 
-    --border-radius-xs: #{rem(4px)};
-    --border-radius-sm: #{rem(6px)};
-    --border-radius-md: #{rem(8px)};
-    --border-radius-lg: #{rem(12px)};
-    --border-radius-xl: #{rem(16px)};
-    --border-radius-full: #{rem(50px)};
+    --border-radius-xs: #{utils.rem(4px)};
+    --border-radius-sm: #{utils.rem(6px)};
+    --border-radius-md: #{utils.rem(8px)};
+    --border-radius-lg: #{utils.rem(12px)};
+    --border-radius-xl: #{utils.rem(16px)};
+    --border-radius-full: #{utils.rem(50px)};
 
     --backdrop-blur-md: blur(12px);
     --backdrop-blur-lg: blur(14px);
 
     --transition-duration: 0.1s;
-
-    // --color-secondary: #fb3e59;
-    // --color-secondaryLight: #ffd8de;
-    // --color-secondaryDark: #ea2b46;
 }
 
 *,
@@ -83,5 +87,3 @@
 *:after {
     box-sizing: border-box;
 }
-
-@import "icons";

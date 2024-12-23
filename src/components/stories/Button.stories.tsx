@@ -9,11 +9,7 @@ export default {
 } as Meta;
 
 const Template: StoryFn<ButtonProps> = (args) => {
-    return (
-        <div className="layout sb-layout">
-            <Button {...args} onClick={() => action("onClick")(true)} />
-        </div>
-    );
+    return <Button {...args} onClick={() => action("onClick")(true)} />;
 };
 
 export const Base = Template.bind({});

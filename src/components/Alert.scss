@@ -1,3 +1,4 @@
+@use "@styles/vars";
 @use "@styles/utils" as *;
 
 $alert: ".efp-alert";
@@ -6,7 +7,7 @@ $alert: ".efp-alert";
     display: flex;
     align-items: center;
     padding: rem(12px 14px);
-    border-radius: var(--border-radius-md);
+    border-radius: var(--border-radius-lg);
 
     &.isInline {
         display: inline-flex;
@@ -18,7 +19,7 @@ $alert: ".efp-alert";
         width: rem(30px);
         height: rem(30px);
         margin-right: rem(14px);
-        border-radius: 50%;
+        border-radius: var(--border-radius-full);
         color: var(--color-white);
     }
     &__content {
@@ -28,13 +29,11 @@ $alert: ".efp-alert";
 
         a {
             color: var(--color-primary);
-            text-decoration: none;
-            border-bottom: 1px solid var(--color-primary);
+            text-decoration: underline;
             transition: color var(--transition-duration) ease, border var(--transition-duration) ease;
 
             &:hover {
-                color: var(--color-primary-dark);
-                border-color: var(--color-primary-dark);
+                color: var(--color-black);
             }
         }
     }
@@ -59,7 +58,7 @@ $alert: ".efp-alert";
 
         &:before {
             @include icon();
-            content: $icon-close;
+            content: vars.$icon-close;
             font-size: 20px;
             color: var(--color-black);
         }
@@ -67,7 +66,7 @@ $alert: ".efp-alert";
             background: rgba(51, 51, 51, 0.08);
         }
     }
-    // Position
+
     &--topRight,
     &--bottomRight {
         position: fixed;
@@ -81,17 +80,23 @@ $alert: ".efp-alert";
         bottom: rem(10px);
         right: rem(10px);
     }
-    // Variant
+
     &--info {
         background: var(--color-primary-ultra-light);
 
+        a {
+            color: var(--color-primary-dark);
+        }
         #{$alert}__icon {
-            background: var(--color-info);
+            background: var(--color-primary);
         }
     }
     &--success {
-        background: var(--color-greenLight);
+        background: var(--color-green-ultra-light);
 
+        a {
+            color: var(--color-green-dark);
+        }
         #{$alert}__icon {
             background: var(--color-green);
         }
@@ -99,13 +104,19 @@ $alert: ".efp-alert";
     &--warning {
         background: var(--color-orange-ultra-light);
 
+        a {
+            color: var(--color-orange-ultra-dark);
+        }
         #{$alert}__icon {
-            background: var(--color-warning);
+            background: var(--color-orange-dark);
         }
     }
     &--error {
-        background: var(--color-redLight);
+        background: var(--color-red-ultra-light);
 
+        a {
+            color: var(--color-red-dark);
+        }
         #{$alert}__icon {
             background: var(--color-red);
         }

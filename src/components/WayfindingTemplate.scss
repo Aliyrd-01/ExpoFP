@@ -1,3 +1,4 @@
+@use "@styles/vars";
 @use "@styles/utils" as *;
 
 .efp-wayfinding {
@@ -65,7 +66,7 @@
 
         &:before {
             @include icon();
-            content: $icon-swap;
+            content: vars.$icon-switch-vertical;
             font-size: 20px;
             line-height: 1.2;
         }

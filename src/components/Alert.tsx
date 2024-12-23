@@ -28,13 +28,13 @@ const Alert: React.FC<AlertProps> = ({
     const alertIcon = () => {
         switch (variant) {
             case "error":
-                return "icon-close-circle";
+                return "icon-close-solid";
             case "success":
-                return "icon-checked-circle";
+                return "icon-checkmark-solid";
             case "warning":
-                return "icon-warning-circle";
+                return "icon-warning-solid";
             default:
-                return "icon-info-circle";
+                return "icon-info-solid";
         }
     };
 

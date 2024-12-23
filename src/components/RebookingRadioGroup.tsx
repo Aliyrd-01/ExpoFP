@@ -36,7 +36,7 @@ export const defaultRebookingOptions = [
         name: "offer",
         value: "1",
         label: "Accepted",
-        iconName: "icon-checked",
+        iconName: "icon-checkmark",
         disabled: false,
         color: {
             primary: "#32B175",

@@ -1,5 +1,5 @@
+@use "@styles/vars";
 @use "sass:math";
-@import "variables";
 
 @function rem-separator($list, $separator: false) {
     @if $separator == "comma" or $separator == "space" {
@@ -19,7 +19,7 @@
 }
 
 @mixin rem-baseline($zoom: 100%) {
-    font-size: math.div($zoom, 16px) * $rem-baseline-px;
+    font-size: math.div($zoom, 16px) * vars.$rem-baseline-px;
 }
 
 @function rem-convert($to, $values...) {
@@ -28,9 +28,9 @@
 
     @each $value in $values {
         @if type-of($value) == "number" and unit($value) == "rem" and $to == "px" {
-            $result: append($result, math.div($value, 1rem) * $rem-baseline-px, $separator);
+            $result: append($result, math.div($value, 1rem) * vars.$rem-baseline-px, $separator);
         } @else if type-of($value) == "number" and unit($value) == "px" and $to == "rem" {
-            $result: append($result, math.div($value, $rem-baseline-px) * 1rem, $separator);
+            $result: append($result, math.div($value, vars.$rem-baseline-px) * 1rem, $separator);
         } @else if type-of($value) == "list" {
             $value-separator: rem-separator($value);
             $value: rem-convert($to, $value...);
@@ -45,7 +45,7 @@
 }
 
 @function rem($values...) {
-    @if $rem-px-only {
+    @if vars.$rem-px-only {
         @return rem-convert(px, $values...);
     } @else {
         @return rem-convert(rem, $values...);
@@ -59,17 +59,17 @@
         }
     } @else {
         @each $property in $properties {
-            @if $rem-fallback or $rem-px-only {
+            @if vars.$rem-fallback or vars.$rem-px-only {
                 #{$property}: rem-convert(px, $values...);
             }
-            @if not $rem-px-only {
+            @if not vars.$rem-px-only {
                 #{$property}: rem-convert(rem, $values...);
             }
         }
     }
 }
 
-@function breakpoint-next($name, $breakpoints: $grid-breakpoints, $breakpoint-names: map-keys($breakpoints)) {
+@function breakpoint-next($name, $breakpoints: vars.$grid-breakpoints, $breakpoint-names: map-keys($breakpoints)) {
     $n: index($breakpoint-names, $name);
     @if not $n {
         @error "breakpoint `#{$name}` not found in `#{$breakpoints}`";
@@ -77,17 +77,17 @@
     @return if($n < length($breakpoint-names), nth($breakpoint-names, $n + 1), null);
 }
 
-@function breakpoint-min($name, $breakpoints: $grid-breakpoints) {
+@function breakpoint-min($name, $breakpoints: vars.$grid-breakpoints) {
     $min: map-get($breakpoints, $name);
     @return if($min != 0, $min, null);
 }
 
-@function breakpoint-max($name, $breakpoints: $grid-breakpoints) {
+@function breakpoint-max($name, $breakpoints: vars.$grid-breakpoints) {
     $next: breakpoint-next($name, $breakpoints);
     @return if($next, breakpoint-min($next, $breakpoints), null);
 }
 
-@mixin media-breakpoint-down($name, $breakpoints: $grid-breakpoints) {
+@mixin media-breakpoint-down($name, $breakpoints: vars.$grid-breakpoints) {
     $max: breakpoint-max($name, $breakpoints);
     @if $max {
         @media (max-width: $max) {
@@ -98,7 +98,7 @@
     }
 }
 
-@mixin media-breakpoint-up($name, $breakpoints: $grid-breakpoints) {
+@mixin media-breakpoint-up($name, $breakpoints: vars.$grid-breakpoints) {
     $min: breakpoint-min($name, $breakpoints);
     @if $min {
         @media (min-width: $min) {
@@ -109,7 +109,7 @@
     }
 }
 
-@mixin responsive-classes-down-to($class, $name, $breakpoints: $grid-breakpoints) {
+@mixin responsive-classes-down-to($class, $name, $breakpoints: vars.$grid-breakpoints) {
     $max: breakpoint-max($name, $breakpoints);
     $keys: map-keys($breakpoints);
     $index: index($keys, $name);
@@ -141,7 +141,7 @@
 }
 
 @mixin icon {
-    font-family: "efp" !important;
+    font-family: "efp-symbols" !important;
     speak: never;
     font-size: 24px;
     font-style: normal;

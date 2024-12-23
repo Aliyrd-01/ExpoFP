@@ -1,3 +1,4 @@
+@use "@styles/vars";
 @use "@styles/utils" as *;
 
 $autocomplete: ".efp-autocomplete";
@@ -19,7 +20,7 @@ $input-height: 50px;
         height: rem($input-height);
         pointer-events: none;
         @include icon();
-        content: $icon-chevron-down;
+        content: vars.$icon-chevron-down;
         font-size: 18px;
         color: var(--color-gray-700);
     }
@@ -57,7 +58,7 @@ $input-height: 50px;
         &:before {
             content: "";
             @include icon();
-            content: $icon-close;
+            content: vars.$icon-close;
             font-size: 18px;
         }
         &:hover {
