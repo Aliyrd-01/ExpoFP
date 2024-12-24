@@ -80,6 +80,15 @@
     --backdrop-blur-lg: blur(14px);
 
     --transition-duration: 0.1s;
+
+    --icon-size-xxxs: #{utils.rem(12px)};
+    --icon-size-xxs: #{utils.rem(14px)};
+    --icon-size-xs: #{utils.rem(16px)};
+    --icon-size-sm: #{utils.rem(18px)};
+    --icon-size-md: #{utils.rem(20px)};
+    --icon-size-lg: #{utils.rem(22px)};
+    --icon-size-xl: #{utils.rem(24px)};
+    --icon-size-xxl: #{utils.rem(26px)};
 }
 
 *,

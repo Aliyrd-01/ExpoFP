@@ -21,6 +21,10 @@ $alert: ".efp-alert";
         margin-right: rem(14px);
         border-radius: var(--border-radius-full);
         color: var(--color-white);
+
+        & > i {
+            font-size: var(--icon-size-lg);
+        }
     }
     &__content {
         flex: 1;

@@ -6,13 +6,9 @@ import Alert, { AlertProps } from "../Alert";
 export default {
     title: "Components/Alert",
     component: Alert,
-    decorators: [
-        (Story) => (
-            <div className="sb-padding">
-                <Story />
-            </div>
-        ),
-    ],
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn<AlertProps> = (args) => {

@@ -5,6 +5,9 @@ import Autocomplete, { AutocompleteProps } from "../Autocomplete";
 export default {
     title: "Components/Autocomplete",
     component: Autocomplete,
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn<AutocompleteProps> = (args) => {

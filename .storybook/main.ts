@@ -24,9 +24,6 @@ const config: StorybookConfig = {
                 "css-loader",
                 {
                     loader: "sass-loader",
-                    // options: {
-                    //     additionalData: `@import "@/styles/_vars.scss";`,
-                    // },
                 },
             ],
             include: path.resolve(__dirname, "../src/"),

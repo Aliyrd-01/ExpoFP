@@ -14,54 +14,24 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-checkmark-solid {
-    &:before {
-        content: vars.$icon-checkmark-solid;
-    }
-}
-.icon-booths {
-    &:before {
-        content: vars.$icon-booths;
-    }
-}
-.icon-booth-solid {
-    &:before {
-        content: vars.$icon-booth-solid;
-    }
-}
-.icon-box-3d {
-    &:before {
-        content: vars.$icon-box-3d;
-    }
-}
-.icon-castle {
-    &:before {
-        content: vars.$icon-castle;
-    }
-}
-.icon-castle-solid {
-    &:before {
-        content: vars.$icon-castle-solid;
-    }
-}
-.icon-categories {
-    &:before {
-        content: vars.$icon-categories;
-    }
-}
-.icon-category-solid {
-    &:before {
-        content: vars.$icon-category-solid;
-    }
-}
 .icon-checkmark {
     &:before {
         content: vars.$icon-checkmark;
     }
 }
+.icon-checkmark-solid {
+    &:before {
+        content: vars.$icon-checkmark-solid;
+    }
+}
 .icon-chevron-down {
     &:before {
         content: vars.$icon-chevron-down;
+    }
+}
+.icon-chevron-down-narrow {
+    &:before {
+        content: vars.$icon-chevron-down-narrow;
     }
 }
 .icon-chevron-left {
@@ -77,6 +47,11 @@
 .icon-chevron-up {
     &:before {
         content: vars.$icon-chevron-up;
+    }
+}
+.icon-chevron-up-narrow {
+    &:before {
+        content: vars.$icon-chevron-up-narrow;
     }
 }
 .icon-church-solid {
@@ -169,9 +144,24 @@
         content: vars.$icon-eye-off;
     }
 }
+.icon-eye-off-1 {
+    &:before {
+        content: vars.$icon-eye-off-1;
+    }
+}
 .icon-facebook {
     &:before {
         content: vars.$icon-facebook;
+    }
+}
+.icon-file {
+    &:before {
+        content: vars.$icon-file;
+    }
+}
+.icon-file-solid {
+    &:before {
+        content: vars.$icon-file-solid;
     }
 }
 .icon-globe {
@@ -247,6 +237,11 @@
 .icon-mail {
     &:before {
         content: vars.$icon-mail;
+    }
+}
+.icon-man-walking-solid {
+    &:before {
+        content: vars.$icon-man-walking-solid;
     }
 }
 .icon-map {
@@ -482,5 +477,40 @@
 .icon-bookmark-solid {
     &:before {
         content: vars.$icon-bookmark-solid;
+    }
+}
+.icon-booths {
+    &:before {
+        content: vars.$icon-booths;
+    }
+}
+.icon-booth-solid {
+    &:before {
+        content: vars.$icon-booth-solid;
+    }
+}
+.icon-box-3d {
+    &:before {
+        content: vars.$icon-box-3d;
+    }
+}
+.icon-castle {
+    &:before {
+        content: vars.$icon-castle;
+    }
+}
+.icon-castle-solid {
+    &:before {
+        content: vars.$icon-castle-solid;
+    }
+}
+.icon-categories {
+    &:before {
+        content: vars.$icon-categories;
+    }
+}
+.icon-category-solid {
+    &:before {
+        content: vars.$icon-category-solid;
     }
 }

@@ -5,6 +5,9 @@ import Badge from "../Badge";
 export default {
     title: "Components/Badge",
     component: Badge,
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn = (args) => {

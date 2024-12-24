@@ -5,6 +5,9 @@ import Checkbox, { CheckboxProps } from "../Checkbox";
 export default {
     title: "Components/Checkbox",
     component: Checkbox,
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn<CheckboxProps> = (args) => {

@@ -7,9 +7,12 @@ import ToastProvider from "../src/components/Toast/ToastProvider";
 
 const preview: Preview = {
     decorators: [
-        (Story) => {
+        (Story, context) => {
+            const { usePadding } = context.parameters;
+            const className = `layout sb-layout${usePadding ? " with-padding" : ""}`;
+
             return (
-                <div className="layout sb-layout">
+                <div className={className}>
                     <ToastProvider>
                         <StoryWrapper render={(init: boolean) => (init ? <Story /> : "Loading")} />
                     </ToastProvider>

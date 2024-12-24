@@ -19,8 +19,8 @@ $checkedPanel: ".checked-panel";
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 38px;
-    height: 38px;
+    width: rem(38px);
+    height: rem(38px);
     padding: 0;
     background: var(--color-white);
     border: 0;
@@ -29,19 +29,18 @@ $checkedPanel: ".checked-panel";
     outline: none;
     cursor: pointer;
 
-    & > svg {
-        width: 20px;
-        height: 20px;
-        fill: var(--color-gray-700);
+    & > i {
+        font-size: var(--icon-size-md);
+        color: var(--color-gray-700);
     }
     &:hover {
-        & > svg {
-            fill: var(--color-black);
+        & > i {
+            color: var(--color-black);
         }
     }
     &.isActive {
-        & > svg {
-            fill: var(--color-primary);
+        & > i {
+            color: var(--color-primary);
             opacity: 1;
         }
     }

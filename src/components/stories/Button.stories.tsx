@@ -6,6 +6,9 @@ import Button, { ButtonProps } from "../Button";
 export default {
     title: "Components/Button",
     component: Button,
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn<ButtonProps> = (args) => {

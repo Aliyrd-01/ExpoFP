@@ -54,6 +54,10 @@ body {
     width: 100vw;
     height: 100vh;
     background: var(--color-gray-200);
+
+    &.with-padding {
+        padding: rem(20px);
+    }
 }
 .sb-data {
     margin-top: 40px;
@@ -87,6 +91,7 @@ body {
     height: 100vh;
     border: 0;
 }
-.sb-padding {
-    padding: rem(20px);
+.sb-entity-list {
+    display: flex;
+    flex-flow: column wrap;
 }
