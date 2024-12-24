@@ -20,6 +20,11 @@ export class RoutePoint {
     constructor(public layer: string, public x: number, public y: number) {}
 }
 
+interface RouteSegment {
+    distance: number;
+    points: RoutePoint[];
+}
+
 type Sublines = { lines: RouteLine[]; lineEnds: RoutePoint[] };
 
 const pointId = (p: RoutePoint): string => `${p.layer}_${p.x}_${p.y}`;
@@ -92,7 +97,7 @@ function getLineByPoints(lines: RouteLine[], p0: RoutePoint, p1: RoutePoint): Ro
     return lines.filter((l) => sameLine(l, p0, p1))[0];
 }
 
-export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: boolean = false): RouteLine[] {
+export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: boolean = false, waypoints: Booth[] = []): RouteLine[] {
     let t0 = performance.now();
 
     const p1 = Polygon4.fromRect(fromBooth.rect).rotate(fromBooth.rotate, fromBooth.rect.cx, fromBooth.rect.cy);
@@ -100,6 +105,19 @@ export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: 
 
     const fromRect = new Rect(new Point(p1.x1, p1.y1), new Point(p1.x2, p1.y2), new Point(p1.x3, p1.y3), new Point(p1.x4, p1.y4));
     const toRect = new Rect(new Point(p2.x1, p2.y1), new Point(p2.x2, p2.y2), new Point(p2.x3, p2.y3), new Point(p2.x4, p2.y4));
+
+    const waypointsRectsById = new Map(waypoints.map((w) => {
+        const p = Polygon4.fromRect(w.rect).rotate(w.rotate, w.rect.cx, w.rect.cy);
+        return [
+            w.id,
+            new Rect(
+                new Point(p.x1, p.y1),
+                new Point(p.x2, p.y2),
+                new Point(p.x3, p.y3),
+                new Point(p.x4, p.y4),
+            ),
+        ];
+    }));
 
     if (!pathFinder.finder || pathFinder.onlyAccessible !== onlyAccessible) buildPathFinder(pathFinder.oriented, onlyAccessible);
 
@@ -119,7 +137,71 @@ export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: 
         if (t) to.push(lineEnd);
     }
 
-    const routePoints: { distance: number; points: RoutePoint[] }[] = [];
+    const routePoints: RouteSegment[] = [];
+    const pointsArr: RoutePoint[][] = [
+        from,
+        ...waypoints.reduce<RoutePoint[][]>((acc, wp) => {
+            const rect = waypointsRectsById.get(wp.id);
+            if (rect) {
+                const filteredPoints = lineEnds.filter(
+                    (lineEnd) =>
+                        (lineEnd.layer === wp.layer?.name || !wp.layer) &&
+                        pointInsideRectangle(lineEnd, rect)
+                );
+                if (filteredPoints.length > 0) {
+                    acc.push(filteredPoints);
+                }
+            }
+            return acc;
+        }, []),
+        to,
+    ];
+
+    routePoints.push(
+        ...pointsArr
+            .slice(1)
+            .map((point, i) => findRoutePoints(pointsArr[i], point))
+            .reverse()
+            .flat()
+    );
+
+    if (!routePoints.length) {
+        console.debug(`WF. Get graph lines: 0 ~ ${performance.now() - t0}ms.`);
+        return [];
+    }
+
+    const points = routePoints.flatMap(rp => rp.points);
+    let _lines: RouteLine[] = [];
+
+    for (let i = 1; i < points.length; i++) {
+        const pp = points[i - 1];
+        const cp = points[i];
+
+        let line = getLineByPoints(lines, pp, cp);
+
+        if (!line) continue;
+
+        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
+
+        if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
+            l.p0 = pp;
+            l.p1 = cp;
+        }
+
+        const prevLine = _lines[_lines.length - 1];
+        const prevAngle = prevLine ? lineAngle(prevLine.p0, prevLine.p1) : null;
+        const angle = lineAngle(l.p0, l.p1);
+
+        if (!prevLine || prevLine.virtual !== l.virtual || Math.abs(angle - prevAngle) > 5) _lines.push(l);
+        else prevLine.p1 = l.p1;
+    }
+
+    console.debug(`WF. Get graph lines: ${_lines.length} ~ ${performance.now() - t0}ms.`);
+    return _lines;
+}
+
+function findRoutePoints(from: RoutePoint[], to: RoutePoint[]): RouteSegment[] {
+    const routePoints: RouteSegment[] = [];
 
     for (let i = 0; i < from.length; i++) {
         for (let j = 0; j < to.length; j++) {
@@ -148,37 +230,5 @@ export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: 
         }
     }
 
-    if (!routePoints.length) {
-        console.debug(`WF. Get graph lines: 0 ~ ${performance.now() - t0}ms.`);
-        return [];
-    }
-
-    const points = routePoints.sort((a, b) => a.distance - b.distance)[0].points;
-    let _lines: RouteLine[] = [];
-
-    for (let i = 1; i < points.length; i++) {
-        const pp = points[i - 1];
-        const cp = points[i];
-
-        let line = getLineByPoints(lines, pp, cp);
-
-        if (!line) continue;
-
-        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
-
-        if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
-            l.p0 = pp;
-            l.p1 = cp;
-        }
-
-        const prevLine = _lines[_lines.length - 1];
-        const prevAngle = prevLine ? lineAngle(prevLine.p0, prevLine.p1) : null;
-        const angle = lineAngle(l.p0, l.p1);
-
-        if (!prevLine || prevLine.virtual !== l.virtual || Math.abs(angle - prevAngle) > 5) _lines.push(l);
-        else prevLine.p1 = l.p1;
-    }
-
-    console.debug(`WF. Get graph lines: ${_lines.length} ~ ${performance.now() - t0}ms.`);
-    return _lines;
+    return routePoints.sort((a, b) => a.distance - b.distance).slice(0, 1);
 }

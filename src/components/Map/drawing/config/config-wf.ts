@@ -20,7 +20,6 @@ import {
     createTargetCanvas,
     createYahCanvas,
 } from "./canvases";
-import { Booth } from "../../../../store/BoothStore";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -388,18 +387,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            if (!routeLines.length && !currentRouteLayer) {
-                if (uiState.selectedRoute.waypoints?.length) {
-                    let point = { ...from } as Booth;
-                    uiState.selectedRoute.waypoints.forEach(wp => {
-                        routeLines = routeLines.concat(getGraphLines(point, wp, store.routeStore.onlyAccessible));
-                        point = wp;
-                    });
-                    routeLines = routeLines.concat(getGraphLines(point, to, store.routeStore.onlyAccessible));
-                } else {
-                    routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible);
-                }
-            }
+            if (!routeLines.length && !currentRouteLayer) routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, uiState.selectedRoute.waypoints);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);
