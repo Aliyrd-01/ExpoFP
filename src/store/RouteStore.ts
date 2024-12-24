@@ -70,7 +70,7 @@ export default class RouteStore {
                 () => {
                     this.rootStore.showMap();
                 },
-                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50,
+                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             );
 
         if (route?.from?.visible) list.push(route.from);
@@ -86,7 +86,7 @@ export default class RouteStore {
             var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
-            if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
+            if (route?.to && route?.from?.layer)
                 this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
             if (!this.currentRouteLayer && route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
@@ -94,7 +94,7 @@ export default class RouteStore {
             if (route?.from && route?.to)
                 sendEventToGa(
                     GaEventActions.ClickDirections,
-                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`,
+                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
                 );
         }, 200);
     }
@@ -133,7 +133,7 @@ export default class RouteStore {
                 .sort(
                     (b1, b2) =>
                         lineLength(localPoint, { x: b1.rect.cx, y: b1.rect.cy }) -
-                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy }),
+                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy })
                 )[0] || null
         );
     }
@@ -352,7 +352,7 @@ export class CurrentPosition extends Point {
         public z?: number | string,
         public angle?: number,
         public lat?: number,
-        public lng?: number,
+        public lng?: number
     ) {
         super(x, y);
     }

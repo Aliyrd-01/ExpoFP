@@ -6,17 +6,17 @@ import Painter from "./Painter";
 import { DrawerObject } from "./RectPainter";
 import Sprite from "./Sprite";
 import { logBuffer } from "../../../../tools/webgl-logger";
-import isMobile from "../../../../utils/is-mobile";
 import data from "../../../../data";
+import isMobile from "../../../../utils/is-mobile";
 import isWebview from "../../../../utils/is-webview";
 
-const mobileCanvasSize = data.viewOptimizationLevel >= 5 ? 64 : 128;
-const reduceImageQuality = (isMobile || isWebview) && data.viewOptimizationLevel >= 4;
-
+const mobileCanvasSize = data.viewOptimizationLevel >= 4 ? 64 : 256;
 const offscreenCanvas = document.createElement("canvas");
 offscreenCanvas.width = mobileCanvasSize;
 offscreenCanvas.height = mobileCanvasSize;
 const offscreenCanvasCtx = offscreenCanvas.getContext("2d");
+
+const reduceImageQuality = (isMobile || isWebview) && data.viewOptimizationLevel >= 4;
 
 export default class ImagePainter implements Painter {
     readonly gl: WebGLRenderingContext;
