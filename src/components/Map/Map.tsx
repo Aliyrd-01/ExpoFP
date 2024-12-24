@@ -29,6 +29,8 @@ import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
 import ImagePainter from "./drawing/painters/ImagePainter";
+import isMobile from "../../utils/is-mobile";
+import isWebview from "../../utils/is-webview";
 
 //console.log('isIframe', isIframe)
 
@@ -225,8 +227,16 @@ export default function Map() {
     // );
 
     useReaction(
-        () => store.uiState.highlightedBooths,
-        (highlightedBooths) => {
+        () => ({
+            highlightedBooths: store.uiState.highlightedBooths,
+            hideLogo: store.uiState.hideLogoInBooth,
+            booths: store.boothStore.booths,
+        }),
+        ({ highlightedBooths, hideLogo, booths }) => {
+            // TODO: Remove this check after the issue is resolved.
+            // Mobile Safari freezes when trying to highlight booths.
+            if ((isMobile || isWebview) && !hideLogo && booths.filter((b) => b.noLabels).length > 500) return;
+
             (s.drawer as DrawerImpl).allPainters
                 .filter(p => p instanceof ImagePainter)
                 .forEach(
