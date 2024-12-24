@@ -127,7 +127,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             new Route(
                 typeof from === "string" ? findBooth(from) : store.routeStore.getNearestBooth(from),
                 typeof to === "string" ? findBooth(to) : store.routeStore.getNearestBooth(to),
-                waypoints?.map(wp => typeof wp === "string" ? findBooth(wp) : store.routeStore.getNearestBooth(wp)),
+                waypoints?.filter(Boolean).map(wp => typeof wp === "string" ? findBooth(wp) : store.routeStore.getNearestBooth(wp)),
             ),
         );
     }
