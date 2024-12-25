@@ -24,8 +24,8 @@ body {
     width: 100%;
     max-width: 376px;
     height: 100vh;
-    padding-top: 20px;
     background: var(--color-white);
+    box-shadow: var(--shadow-md);
 
     @include media-breakpoint-down(sm) {
         max-width: 100%;
@@ -53,7 +53,7 @@ body {
 .sb-layout {
     width: 100vw;
     height: 100vh;
-    background: var(--color-gray-200);
+    background: var(--color-gray-300);
 
     &.with-padding {
         padding: rem(20px);
