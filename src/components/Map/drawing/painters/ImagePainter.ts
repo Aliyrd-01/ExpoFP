@@ -17,7 +17,7 @@ offscreenCanvas.height = mobileCanvasSize;
 const offscreenCanvasCtx = offscreenCanvas.getContext("2d");
 
 const reduceImageQuality = (isMobile || isWebview) && data.viewOptimizationLevel >= 4;
-const maxImagesSize = 2028;
+const maxImagesSize = 2048;
 
 export default class ImagePainter implements Painter {
     readonly gl: WebGLRenderingContext;
