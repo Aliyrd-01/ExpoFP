@@ -80,6 +80,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         context.requireUpdate(null);
     }
 
+    const magicNum = 8;
     await Promise.all(
         store.layerStore.layers.map(async (layer, i) => {
             const icons = getIcons(layer);
@@ -88,7 +89,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             const painter = context.requirePainter(
                 genImageLayerId(layer.name, LAYER_ICONS_MARKER, i),
                 ImagePainter,
-                layer.basePriority,
+                layer.basePriority + magicNum,
                 layer.visible,
             );
             painter.dim = Number(store.uiState.dimmed);
