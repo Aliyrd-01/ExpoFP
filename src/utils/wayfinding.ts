@@ -170,31 +170,7 @@ export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: 
         return [];
     }
 
-    const points = routePoints.flatMap(rp => rp.points);
-    let _lines: RouteLine[] = [];
-
-    for (let i = 1; i < points.length; i++) {
-        const pp = points[i - 1];
-        const cp = points[i];
-
-        let line = getLineByPoints(lines, pp, cp);
-
-        if (!line) continue;
-
-        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
-
-        if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
-            l.p0 = pp;
-            l.p1 = cp;
-        }
-
-        const prevLine = _lines[_lines.length - 1];
-        const prevAngle = prevLine ? lineAngle(prevLine.p0, prevLine.p1) : null;
-        const angle = lineAngle(l.p0, l.p1);
-
-        if (!prevLine || prevLine.virtual !== l.virtual || Math.abs(angle - prevAngle) > 5) _lines.push(l);
-        else prevLine.p1 = l.p1;
-    }
+    const _lines: RouteLine[] = routePoints.flatMap(rp => createRouteLines(rp.points, lines));
 
     console.debug(`WF. Get graph lines: ${_lines.length} ~ ${performance.now() - t0}ms.`);
     return _lines;
@@ -231,4 +207,33 @@ function findRoutePoints(from: RoutePoint[], to: RoutePoint[]): RouteSegment[] {
     }
 
     return routePoints.sort((a, b) => a.distance - b.distance).slice(0, 1);
+}
+
+function createRouteLines(points: RoutePoint[], lines: RouteLine[]): RouteLine[] {
+    let _lines: RouteLine[] = [];
+
+    for (let i = 1; i < points.length; i++) {
+        const pp = points[i - 1];
+        const cp = points[i];
+
+        let line = getLineByPoints(lines, pp, cp);
+
+        if (!line) continue;
+
+        let l = new RouteLine(pp, cp, line.unaccessible, line.unidirection, line.virtual, line.ended, line.weight);
+
+        if (lineLength(line.p0, cp) < lineLength(line.p0, pp)) {
+            l.p0 = pp;
+            l.p1 = cp;
+        }
+
+        const prevLine = _lines[_lines.length - 1];
+        const prevAngle = prevLine ? lineAngle(prevLine.p0, prevLine.p1) : null;
+        const angle = lineAngle(l.p0, l.p1);
+
+        if (!prevLine || prevLine.virtual !== l.virtual || Math.abs(angle - prevAngle) > 5) _lines.push(l);
+        else prevLine.p1 = l.p1;
+    }
+
+    return _lines;
 }

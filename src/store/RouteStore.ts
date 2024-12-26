@@ -342,7 +342,9 @@ export class Route {
         public from: Booth,
         public to: Booth,
         public waypoints?: Booth[],
-    ) {}
+    ) {
+        this.waypoints = waypoints?.filter(wp => wp && (wp.id !== from?.id && wp.id !== to?.id));
+    }
 }
 
 export class CurrentPosition extends Point {
