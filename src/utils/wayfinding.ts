@@ -170,7 +170,19 @@ export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: 
         return [];
     }
 
-    const _lines: RouteLine[] = routePoints.flatMap(rp => createRouteLines(rp.points, lines));
+    const _lines: RouteLine[] = [...new Map(
+        routePoints
+            .flatMap(rp => createRouteLines(rp.points, lines))
+            .reverse()
+            .map(line => {
+                const key = [
+                    `${line.p0.layer},${line.p0.x},${line.p0.y}`,
+                    `${line.p1.layer},${line.p1.x},${line.p1.y}`,
+                ].sort().join('|');
+                return [key, line];
+            }))
+        .values(),
+    ].reverse();
 
     console.debug(`WF. Get graph lines: ${_lines.length} ~ ${performance.now() - t0}ms.`);
     return _lines;
