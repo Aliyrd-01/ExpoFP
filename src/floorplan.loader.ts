@@ -66,11 +66,11 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(startOrWaypoints: RoutePoint | RoutePoint[], to?: RoutePoint): void {
+    selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {
         nr();
     }
 
-    getOptimizedRoutes(waypoints: RoutePoint[]): RouteInfo[] {
+    getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[] {
         nr();
     }
 

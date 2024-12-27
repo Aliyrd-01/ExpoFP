@@ -237,3 +237,64 @@ function createRouteLines(points: RoutePoint[], lines: RouteLine[]): RouteLine[]
 
     return _lines;
 }
+
+export class DistanceOptimizedRoute {
+    private readonly rectMap: Map<string, { cx: number; cy: number }>;
+    public readonly waypoints: string[];
+
+    constructor(
+        data: [string, { cx: number; cy: number }][],
+        private distanceMetric: (
+            x1: number,
+            y1: number,
+            x2: number,
+            y2: number
+        ) => number = DistanceOptimizedRoute.defaultManhattanDistance
+    ) {
+        this.rectMap = new Map(data);
+        this.waypoints = this.getSortedByDistance(Array.from(this.rectMap.keys()));
+        this.rectMap.clear();
+        Object.freeze(this);
+    }
+
+    private static defaultManhattanDistance(
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+    ): number {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+
+    private getSortedByDistance(waypoints: readonly string[]): string[] {
+        if (!waypoints.length) return [];
+
+        const uniqueWaypoints = Array.from(new Set(waypoints));
+        const from = this.rectMap.get(uniqueWaypoints[0]);
+        if (!from) return [];
+
+        uniqueWaypoints.sort((a, b) => {
+            const rectA = this.rectMap.get(a);
+            const rectB = this.rectMap.get(b);
+
+            if (!rectA || !rectB) return 0;
+
+            const distanceA = this.distanceMetric(
+                from.cx,
+                from.cy,
+                rectA.cx,
+                rectA.cy
+            );
+            const distanceB = this.distanceMetric(
+                from.cx,
+                from.cy,
+                rectB.cx,
+                rectB.cy
+            );
+
+            return distanceA - distanceB;
+        });
+
+        return uniqueWaypoints;
+    }
+}

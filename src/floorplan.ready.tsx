@@ -19,6 +19,7 @@ import { fpGeo } from "./components/Mapbox/utils/fpGeo";
 import { convertLocalToGps } from "./utils/gps";
 import Rect from "./core/Rect";
 import settings from "./tools/settings";
+import { DistanceOptimizedRoute } from "./utils/wayfinding";
 
 install();
 
@@ -122,10 +123,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.exhibitorStore.highlightedByExternalIds = [...externalIs];
     }
 
-    selectRoute(startOrWaypoints: RoutePoint | RoutePoint[], to?: RoutePoint): void {
+    selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {
         if (!startOrWaypoints) return;
-
-        const getBooth = (x: RoutePoint) => typeof x === "string" ? findBooth(x) : store.routeStore.getNearestBooth(x);
 
         if (Array.isArray(startOrWaypoints)) {
             const points = [...startOrWaypoints];
@@ -139,6 +138,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
         }
 
         store.routeStore.selectRoute(new Route(getBooth(startOrWaypoints), getBooth(to)));
+    }
+
+    getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[] {
+        const booths = waypoints.map(getBooth).filter(Boolean);
+        return [
+            new DistanceOptimizedRoute(booths.map(b => [b.name, b.rect])),
+        ];
     }
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
@@ -296,4 +302,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
     }
+}
+
+function getBooth(x: RouteWaypoint) {
+    return typeof x === "string" ? findBooth(x) : store.routeStore.getNearestBooth(x);
 }
