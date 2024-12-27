@@ -40,6 +40,8 @@ class FloorPlan {
     
     selectRoute(waypoints: (string | CurrentPosition)[]): void;
 
+    getOptimizedRoutes(waypoints: (string | CurrentPosition)[]): RouteInfo[];
+
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void
 
     setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void;
@@ -188,6 +190,10 @@ interface FloorPlanCategory {
     id: number;
     name: string;
     exhibitors: number[];
+}
+
+interface RouteInfo {
+    waypoints: (string | CurrentPosition)[];
 }
 
 interface ExpoData {
