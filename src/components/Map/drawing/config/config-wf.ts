@@ -27,7 +27,7 @@ let routeLines: RouteLine[] = [];
 let pointSize: number = null;
 let scale: number = null;
 
-const totalPoints = 700;
+const totalPoints = 2000;
 const isDebug = false;
 
 const blinkCounter = 5;
