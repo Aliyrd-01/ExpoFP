@@ -123,17 +123,18 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectRoute(startOrWaypoints: RoutePoint | RoutePoint[], to?: RoutePoint): void {
+        if (!startOrWaypoints) return;
+
         const getBooth = (x: RoutePoint) => typeof x === "string" ? findBooth(x) : store.routeStore.getNearestBooth(x);
 
         if (Array.isArray(startOrWaypoints)) {
-            const points = startOrWaypoints?.slice() || [];
+            const points = [...startOrWaypoints];
             const from = points.shift();
             const to = points.pop();
 
-            store.routeStore.selectRoute(
-                new Route(getBooth(from), getBooth(to), points.map(getBooth)),
-            );
+            if (!from || !to) return;
 
+            store.routeStore.selectRoute(new Route(getBooth(from), getBooth(to), points.map(getBooth)));
             return;
         }
 
