@@ -122,14 +122,22 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.exhibitorStore.highlightedByExternalIds = [...externalIs];
     }
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition, waypoints?: Array<string | CurrentPosition>): void {
-        store.routeStore.selectRoute(
-            new Route(
-                typeof from === "string" ? findBooth(from) : store.routeStore.getNearestBooth(from),
-                typeof to === "string" ? findBooth(to) : store.routeStore.getNearestBooth(to),
-                waypoints?.map(wp => typeof wp === "string" ? findBooth(wp) : store.routeStore.getNearestBooth(wp)),
-            ),
-        );
+    selectRoute(startOrWaypoints: RoutePoint | RoutePoint[], to?: RoutePoint): void {
+        const getBooth = (x: RoutePoint) => typeof x === "string" ? findBooth(x) : store.routeStore.getNearestBooth(x);
+
+        if (Array.isArray(startOrWaypoints)) {
+            const points = startOrWaypoints?.slice() || [];
+            const from = points.shift();
+            const to = points.pop();
+
+            store.routeStore.selectRoute(
+                new Route(getBooth(from), getBooth(to), points.map(getBooth)),
+            );
+
+            return;
+        }
+
+        store.routeStore.selectRoute(new Route(getBooth(startOrWaypoints), getBooth(to)));
     }
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {

@@ -11,7 +11,7 @@ import isWebview from "./utils/is-webview";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
 
-function nr() {
+function nr(): never {
     throw new Error("FloorPlan not ready");
 }
 
@@ -66,7 +66,11 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition, waypoints?: Array<string | CurrentPosition>): void {
+    selectRoute(startOrWaypoints: RoutePoint | RoutePoint[], to?: RoutePoint): void {
+        nr();
+    }
+
+    getOptimizedRoutes(waypoints: RoutePoint[]): RouteInfo[] {
         nr();
     }
 
