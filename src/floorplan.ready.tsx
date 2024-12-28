@@ -7,7 +7,7 @@ import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
-import { RegularBooth, SpecialBooth } from "./store/BoothStore";
+import { Booth, SpecialBooth } from "./store/BoothStore";
 import { CurrentPosition, Route, findBooth, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
@@ -141,11 +141,29 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[] {
-        const booths = waypoints.map(getBooth).filter(Boolean);
-        return [
-            new DistanceOptimizedRoute(booths.map(b => [b.name, b.rect])),
-        ];
-    }
+        const booths = waypoints.map(getBooth).filter((booth): booth is Booth => Boolean(booth));
+
+        const grouped = booths.reduce((map, booth) => {
+            const layerName = booth.layer?.name;
+            if (layerName) {
+                if (!map.has(layerName)) {
+                    map.set(layerName, new Set<Booth>());
+                }
+                map.get(layerName)!.add(booth);
+            }
+            return map;
+        }, new Map<string, Set<Booth>>());
+
+        if (grouped.size) {
+            return Array.from(grouped.values(), boothsSet =>
+                new DistanceOptimizedRoute(
+                    Array.from(boothsSet, booth => [booth.name, booth.rect])
+                )
+            );
+        }
+
+        return [new DistanceOptimizedRoute(booths.map(booth => [booth.name, booth.rect]))];
+    }    
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         store.routeStore.selectCurrentPosition(point, focus, icon);
