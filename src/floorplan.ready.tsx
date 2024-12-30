@@ -143,6 +143,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
     getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[] {
         const booths = waypoints.map(getBooth).filter((booth): booth is Booth => Boolean(booth));
 
+        if (!booths.length) {
+            return waypoints;
+        }
+
         const grouped = booths.reduce((map, booth) => {
             const layerName = booth.layer?.name;
             if (layerName) {
@@ -154,15 +158,17 @@ export default class FloorPlanReady extends FloorPlanLoader {
             return map;
         }, new Map<string, Set<Booth>>());
 
+        let sortedWaypoints: RouteWaypoint[] = waypoints;
+
         if (grouped.size) {
-            return Array.from(grouped.values(), boothsSet =>
-                new DistanceOptimizedRoute(
-                    Array.from(boothsSet, booth => [booth.name, booth.rect])
-                )
-            );
+            sortedWaypoints = Array.from(grouped.values(), boothsSet =>
+                new DistanceOptimizedRoute(Array.from(boothsSet, booth => [booth.name, booth.rect])),
+            ).flatMap(route => route.waypoints);
+        } else {
+            sortedWaypoints = new DistanceOptimizedRoute(booths.map(booth => [booth.name, booth.rect])).waypoints
         }
 
-        return [new DistanceOptimizedRoute(booths.map(booth => [booth.name, booth.rect]))];
+        return [{ waypoints: sortedWaypoints }];
     }    
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
