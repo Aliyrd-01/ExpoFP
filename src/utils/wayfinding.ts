@@ -170,19 +170,9 @@ export function getGraphLines(fromBooth: Booth, toBooth: Booth, onlyAccessible: 
         return [];
     }
 
-    const _lines: RouteLine[] = [...new Map(
-        routePoints
-            .flatMap(rp => createRouteLines(rp.points, lines))
-            .reverse()
-            .map(line => {
-                const key = [
-                    `${line.p0.layer},${line.p0.x},${line.p0.y}`,
-                    `${line.p1.layer},${line.p1.x},${line.p1.y}`,
-                ].sort().join('|');
-                return [key, line];
-            }))
-        .values(),
-    ].reverse();
+    const _lines: RouteLine[] = filterCollinearAndContainedLines(
+        routePoints.flatMap(rp => createRouteLines(rp.points, lines)).reverse()
+    ).reverse();
 
     console.debug(`WF. Get graph lines: ${_lines.length} ~ ${performance.now() - t0}ms.`);
     return _lines;
@@ -309,4 +299,41 @@ export class DistanceOptimizedRoute {
 
         return uniqueWaypoints;
     }
+}
+
+function filterCollinearAndContainedLines(lines: RouteLine[]): RouteLine[] {
+    const filtered: RouteLine[] = [];
+
+    for (const line of lines) {
+        // Check if the current line is contained within any line in the filtered list
+        let isContained = false;
+        for (const existingLine of filtered) {
+            const { p0: p1Start, p1: p1End } = line;
+            const { p0: p2Start, p1: p2End } = existingLine;
+
+            if (isPointOnLine(p1Start, p2Start, p2End) && isPointOnLine(p1End, p2Start, p2End)) {
+                isContained = true;
+                break;
+            }
+        }
+
+        if (!isContained) {
+            filtered.push(line);
+        }
+    }
+
+    return filtered;
+}
+
+// Check if a point lies on a line segment defined by two endpoints
+function isPointOnLine(point: { x: number; y: number }, lineStart: { x: number; y: number }, lineEnd: { x: number; y: number }): boolean {
+    // Check if the point is collinear using the cross product
+    const crossProduct = (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
+    if (Math.abs(crossProduct) > 1e-10) return false;
+
+    // Check if the point lies within the bounds of the line segment
+    const withinX = Math.min(lineStart.x, lineEnd.x) <= point.x && point.x <= Math.max(lineStart.x, lineEnd.x);
+    const withinY = Math.min(lineStart.y, lineEnd.y) <= point.y && point.y <= Math.max(lineStart.y, lineEnd.y);
+
+    return withinX && withinY;
 }
