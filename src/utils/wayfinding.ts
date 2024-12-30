@@ -329,6 +329,12 @@ function filterCollinearAndContainedLines(lines: RouteLine[]): RouteLine[] {
 function isPointOnLine(point: { x: number; y: number }, lineStart: { x: number; y: number }, lineEnd: { x: number; y: number }): boolean {
     // Check if the point is collinear using the cross product
     const crossProduct = (lineEnd.x - lineStart.x) * (point.y - lineStart.y) - (lineEnd.y - lineStart.y) * (point.x - lineStart.x);
+
+    // If the cross product is greater than a small threshold, the point is not collinear 
+    // (tolerance for floating-point errors). For example:
+    // Line: (0, 0) -> (10, 10)
+    // Point: (5.0000000001, 5.0000000001) -> Collinear with small error (cross product ≈ 1e-12)
+    // Point: (5.1, 5.1) -> Not collinear (cross product > 1e-10)
     if (Math.abs(crossProduct) > 1e-10) return false;
 
     // Check if the point lies within the bounds of the line segment
