@@ -156,7 +156,7 @@ function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
         h = w / ratio;
     }
 
-    const rotate = booth.rotate ?? 0;
+    const rotate = booth.rotate || 0;
     if (ratio >= 2 && !rotate && rect.h >= rect.w * 2.0) {
         h = rect.w * SCALE_FACTOR;
         w = h * ratio;
