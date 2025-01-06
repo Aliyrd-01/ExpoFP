@@ -42,6 +42,11 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             ])
     );
 
+    const highestPriorityLayer = store.layerStore.layers.reduce((max, layer) =>
+        layer.basePriority > max.basePriority ? layer : max,
+        store.layerStore.layers[0]
+    );
+
     for (const [i, chunk] of chunks.entries()) {
         const loaded = await loadImagesInBatchesById(chunk, chunkSize);
 
@@ -55,7 +60,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             const orderPriority = (
                 areLayersEnabled()
                     ? boothsPaintersById.get(boothLayerName)?.orderPriority
-                    : boothsPaintersById.values().next().value?.orderPriority
+                    : highestPriorityLayer.basePriority
             );
 
             if (!painterLayers.has(layerName)) {
@@ -155,6 +160,16 @@ function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
         angle = -90;
     } else {
         angle = (-booth.rotate * 180) / Math.PI;
+    }
+
+    // Width and height should not exceed the booth's width and height
+    if (w > rect.w) {
+        w = rect.w;
+        h = w / ratio;
+    }
+    if (h > rect.h) {
+        h = rect.h;
+        w = h * ratio;
     }
 
     const x = rect.cx - w / 2;
