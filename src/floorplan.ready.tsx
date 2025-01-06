@@ -124,14 +124,16 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {
-        if (!startOrWaypoints) return;
-
         if (Array.isArray(startOrWaypoints)) {
             const points = [...startOrWaypoints];
             const from = points.shift();
             const to = points.pop();
 
-            if (!from || !to) return;
+            if (!from || !to) {
+                throw new Error(
+                    "Invalid route format: When providing an array, it must include at least two points: a start and a destination."
+                );
+            }
 
             store.routeStore.selectRoute(new Route(getBooth(from), getBooth(to), points.map(getBooth)));
             return;
