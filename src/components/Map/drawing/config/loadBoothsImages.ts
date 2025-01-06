@@ -42,6 +42,11 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             ])
     );
 
+    const highestPriorityLayer = store.layerStore.layers.reduce((max, layer) =>
+        layer.basePriority > max.basePriority ? layer : max,
+        store.layerStore.layers[0]
+    );
+
     for (const [i, chunk] of chunks.entries()) {
         const loaded = await loadImagesInBatchesById(chunk, chunkSize);
 
@@ -55,7 +60,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             const orderPriority = (
                 areLayersEnabled()
                     ? boothsPaintersById.get(boothLayerName)?.orderPriority
-                    : boothsPaintersById.values().next().value?.orderPriority
+                    : highestPriorityLayer.basePriority
             );
 
             if (!painterLayers.has(layerName)) {
@@ -137,24 +142,37 @@ function createObject(img: Img): DrawerObjectEx {
 
 function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
     const rect = booth.rect;
-    const ratioBooth = rect.w / rect.h;
-    const ratio = htmlImage.width / htmlImage.height;
+    const ratioBooth = rect.h ? rect.w / rect.h : 1;
+    const ratio = htmlImage.height ? htmlImage.width / htmlImage.height : 1;
     let w, h, angle;
 
+    const SCALE_FACTOR = 0.9;
+
     if (ratioBooth > ratio) {
-        h = rect.h * 0.9;
+        h = rect.h * SCALE_FACTOR;
         w = h * ratio;
     } else {
-        w = rect.w * 0.9;
+        w = rect.w * SCALE_FACTOR;
         h = w / ratio;
     }
 
-    if (ratio >= 2 && !booth.rotate && rect.h >= rect.w * 2.0) {
-        h = rect.w * 0.9;
+    const rotate = booth.rotate || 0;
+    if (ratio >= 2 && !rotate && rect.h >= rect.w * 2.0) {
+        h = rect.w * SCALE_FACTOR;
         w = h * ratio;
         angle = -90;
     } else {
-        angle = (-booth.rotate * 180) / Math.PI;
+        angle = (-rotate * 180) / Math.PI;
+    }
+
+    // Width and height should not exceed the booth's width and height
+    if (w > rect.w) {
+        w = rect.w;
+        h = w / ratio;
+    }
+    if (h > rect.h) {
+        h = rect.h;
+        w = h * ratio;
     }
 
     const x = rect.cx - w / 2;
