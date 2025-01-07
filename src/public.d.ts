@@ -36,7 +36,11 @@ class FloorPlan {
 
     selectExhibitor(nameOrExternalId: string): void;
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void;
+    selectRoute(from: RouteWaypoint, to: RouteWaypoint): void;
+    
+    selectRoute(waypoints: RouteWaypoint[]): void;
+
+    getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[];
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void
 
@@ -186,6 +190,12 @@ interface FloorPlanCategory {
     id: number;
     name: string;
     exhibitors: number[];
+}
+
+type RouteWaypoint = string | CurrentPosition;
+
+interface RouteInfo {
+    waypoints: RouteWaypoint[];
 }
 
 interface ExpoData {

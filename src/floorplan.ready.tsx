@@ -7,7 +7,7 @@ import FloorPlanLoader from "./floorplan.loader";
 // import initStore from "./store/init";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
-import { RegularBooth, SpecialBooth } from "./store/BoothStore";
+import { Booth, SpecialBooth } from "./store/BoothStore";
 import { CurrentPosition, Route, findBooth, MarkersData } from "./store/RouteStore";
 import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
@@ -19,6 +19,7 @@ import { fpGeo } from "./components/Mapbox/utils/fpGeo";
 import { convertLocalToGps } from "./utils/gps";
 import Rect from "./core/Rect";
 import settings from "./tools/settings";
+import { DistanceOptimizedRoute } from "./utils/wayfinding";
 
 install();
 
@@ -122,14 +123,55 @@ export default class FloorPlanReady extends FloorPlanLoader {
         store.exhibitorStore.highlightedByExternalIds = [...externalIs];
     }
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
-        store.routeStore.selectRoute(
-            new Route(
-                typeof from === "string" ? findBooth(from) : store.routeStore.getNearestBooth(from),
-                typeof to === "string" ? findBooth(to) : store.routeStore.getNearestBooth(to),
-            ),
-        );
+    selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {
+        if (Array.isArray(startOrWaypoints)) {
+            const points = [...startOrWaypoints];
+            const from = points.shift();
+            const to = points.pop();
+
+            if (!from || !to) {
+                throw new Error(
+                    "Invalid route format: When providing an array, it must include at least two points: a start and a destination."
+                );
+            }
+
+            store.routeStore.selectRoute(new Route(getBooth(from), getBooth(to), points.map(getBooth)));
+            return;
+        }
+
+        store.routeStore.selectRoute(new Route(getBooth(startOrWaypoints), getBooth(to)));
     }
+
+    getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[] {
+        const booths = waypoints.map(getBooth).filter((booth): booth is Booth => Boolean(booth));
+
+        if (!booths.length) {
+            return waypoints;
+        }
+
+        const grouped = booths.reduce((map, booth) => {
+            const layerName = booth.layer?.name;
+            if (layerName) {
+                if (!map.has(layerName)) {
+                    map.set(layerName, new Set<Booth>());
+                }
+                map.get(layerName)!.add(booth);
+            }
+            return map;
+        }, new Map<string, Set<Booth>>());
+
+        let sortedWaypoints: RouteWaypoint[] = waypoints;
+
+        if (grouped.size) {
+            sortedWaypoints = Array.from(grouped.values(), boothsSet =>
+                new DistanceOptimizedRoute(Array.from(boothsSet, booth => [booth.name, booth.rect])),
+            ).flatMap(route => route.waypoints);
+        } else {
+            sortedWaypoints = new DistanceOptimizedRoute(booths.map(booth => [booth.name, booth.rect])).waypoints
+        }
+
+        return [{ waypoints: sortedWaypoints }];
+    }    
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
         store.routeStore.selectCurrentPosition(point, focus, icon);
@@ -286,4 +328,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
         ReactDOM.unmountComponentAtNode(this.renderTarget);
         efpElement.remove();
     }
+}
+
+function getBooth(x: RouteWaypoint) {
+    return typeof x === "string" ? findBooth(x) : store.routeStore.getNearestBooth(x);
 }

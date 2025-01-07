@@ -27,7 +27,7 @@ let routeLines: RouteLine[] = [];
 let pointSize: number = null;
 let scale: number = null;
 
-const totalPoints = 700;
+const totalPoints = 2000;
 const isDebug = false;
 
 const blinkCounter = 5;
@@ -215,34 +215,68 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
 
 export function splitPolyLine(lines: Line[], interval: number): Point[] {
     const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
-    const asin = (sin: number) => (Math.asin(sin) * 180) / Math.PI;
+    const asin = (value: number) => {
+        // Clamp the value to the range [-1, 1] to avoid invalid inputs for Math.asin
+        const clampedValue = Math.max(-1, Math.min(1, value));
+        return (Math.asin(clampedValue) * 180) / Math.PI;
+    };
 
-    let basePoint: Point = lines[0].p0;
-
-    const points: Point[] = [basePoint];
-
-    let delta = 0;
+    const points: Point[] = [lines[0].p0]; // Initialize points with the starting point of the first line
+    let delta = 0; // Remaining offset to carry over to the next segment
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        let lineLen = lineLength(line.p0, line.p1);
-        let lineAng = Math.round(lineAngle(line.p0, line.p1));
+        const lineLengthValue = lineLength(line.p0, line.p1); // Calculate the length of the current segment
+        const lineAngleValue = lineAngle(line.p0, line.p1); // Calculate the angle of the current segment
 
         let steps = 0;
-        while (delta + steps * interval <= lineLen) {
-            let point = shiftPoint(line.p0, delta + steps * interval, lineAng);
+
+        // Generate points along the current line segment
+        while (delta + steps * interval <= lineLengthValue) {
+            const point = shiftPoint(line.p0, delta + steps * interval, lineAngleValue);
             points.push(point);
             steps++;
         }
 
-        const ostatok = lineLen - ((steps - 1) * interval + delta);
+        // Calculate the remaining length after the last point
+        let remainingLength = lineLengthValue - ((steps - 1) * interval + delta);
+
+        // Ensure remainingLength is not negative
+        if (remainingLength < 0) {
+            remainingLength = 0;
+        }
 
         if (i < lines.length - 1) {
-            let nextAngle = Math.round(lineAngle(lines[i + 1].p0, lines[i + 1].p1));
-            let alpha = 180 - Math.abs(lineAng - nextAngle);
+            // Calculate the angle between the current and next segments
+            const nextAngle = lineAngle(lines[i + 1].p0, lines[i + 1].p1);
+            let angleBetween = Math.abs(lineAngleValue - nextAngle);
+            if (angleBetween > 180) angleBetween = 360 - angleBetween;
 
-            delta = (interval * sin(180 - alpha - asin((ostatok * sin(alpha)) / interval))) / sin(alpha);
-        } else delta = interval - ostatok;
+            const alpha = 180 - angleBetween;
+            const sinAlpha = sin(alpha);
+
+            if (sinAlpha === 0) {
+                // If the segments are collinear, keep the interval
+                delta = interval;
+            } else {
+                // Calculate the offset delta for the next segment
+                const sinComponent = (remainingLength * sinAlpha) / interval;
+                const adjustedAsin = asin(sinComponent);
+                delta = (interval * sin(180 - alpha - adjustedAsin)) / sinAlpha;
+
+                if (isNaN(delta) || delta < 0) {
+                    delta = interval;
+                }
+            }
+        } else {
+            // Final segment: calculate the delta based on the remaining length
+            delta = interval - remainingLength;
+        }
+
+        // Ensure delta is not negative
+        if (delta < 0) {
+            delta = 0;
+        }
     }
 
     return points;
@@ -387,7 +421,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            if (!routeLines.length && !currentRouteLayer) routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible);
+            if (!routeLines.length && !currentRouteLayer) routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, uiState.selectedRoute.waypoints);
 
             if (!routeLines.length) {
                 store.routeStore.updateRoutePoints(routeLines);
