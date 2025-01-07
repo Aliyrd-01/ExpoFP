@@ -252,14 +252,17 @@ export function splitPolyLine(lines: Line[], interval: number): Point[] {
             let angleBetween = Math.abs(lineAngleValue - nextAngle);
             if (angleBetween > 180) angleBetween = 360 - angleBetween;
 
-            const sinAngle = sin(angleBetween);
-            if (sinAngle === 0) {
+            const alpha = 180 - angleBetween;
+            const sinAlpha = sin(alpha);
+
+            if (sinAlpha === 0) {
                 // If the segments are collinear, keep the interval
                 delta = interval;
             } else {
                 // Calculate the offset delta for the next segment
-                const sinComponent = (remainingLength * sinAngle) / interval;
-                delta = (interval * sin(180 - angleBetween - asin(sinComponent))) / sinAngle;
+                const sinComponent = (remainingLength * sinAlpha) / interval;
+                const adjustedAsin = asin(sinComponent);
+                delta = (interval * sin(180 - alpha - adjustedAsin)) / sinAlpha;
 
                 if (isNaN(delta) || delta < 0) {
                     delta = interval;
