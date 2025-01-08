@@ -26,10 +26,10 @@ const Ws = React.memo(() => {
         timeoutId: 0,
         get sectionStyle() {
             return {
-                width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx}px` : "100%",
+                width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx - 30}px` : "100%",
                 opacity: uiState.wsStarted ? 1 : 0,
                 padding: `0 ${uiState.wsPaddingPx}px`,
-                ...(uiState.wsPosition === "top" ? { top: uiState.headerHeightPx + "px" } : { bottom: 0 }),
+                ...(uiState.wsPosition === "top" ? { top: uiState.headerHeightPx + 10 + "px" } : { bottom: 0 }),
             };
         },
     }));

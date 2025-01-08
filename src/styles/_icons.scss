@@ -1,13 +1,5 @@
 @use "@styles/vars";
 
-@font-face {
-    font-family: "#{vars.$icons-font-family}";
-    src: url("#{vars.$icons-font-path}/#{vars.$icons-font-family}.woff?1ff345") format("woff");
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
-}
-
 [class^="icon-"],
 [class*=" icon-"] {
     font-family: "#{vars.$icons-font-family}" !important;

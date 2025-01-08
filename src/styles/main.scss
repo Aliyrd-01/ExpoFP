@@ -2,8 +2,7 @@
 @import "@styles/icons";
 
 .layout {
-    --font-family: "Inter", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", Arial,
-        sans-serif;
+    --font-family: "Inter", -apple-system, system-ui, sans-serif;
     --app-font-family: var(--expofp-font-face, var(--font-family));
 
     --font-size-xs: #{utils.rem(11px)};
