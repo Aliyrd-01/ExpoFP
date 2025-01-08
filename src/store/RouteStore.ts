@@ -70,7 +70,7 @@ export default class RouteStore {
                 () => {
                     this.rootStore.showMap();
                 },
-                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50,
+                navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
             );
 
         if (route?.from?.visible) list.push(route.from);
@@ -86,7 +86,7 @@ export default class RouteStore {
             var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
-            if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
+            if (route?.to && route?.from?.layer)
                 this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
             if (!this.currentRouteLayer && route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
@@ -94,7 +94,7 @@ export default class RouteStore {
             if (route?.from && route?.to)
                 sendEventToGa(
                     GaEventActions.ClickDirections,
-                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`,
+                    `${route?.from ? "From " + route.from.name : ""} ${route?.to ? "To " + route.to.name : ""}`
                 );
         }, 200);
     }
@@ -133,7 +133,7 @@ export default class RouteStore {
                 .sort(
                     (b1, b2) =>
                         lineLength(localPoint, { x: b1.rect.cx, y: b1.rect.cy }) -
-                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy }),
+                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy })
                 )[0] || null
         );
     }
@@ -333,15 +333,18 @@ export function findBooth(str: string) {
     return store.boothStore.findBooth(str) || store.exhibitorStore.findExhibitor(str)?.booths[0];
 }
 
-export function extractRoute(from: string, to: string) {
-    return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to));
+export function extractRoute(from: string, to: string, waypoints: string[]) {
+    return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to), waypoints?.map((w) => findBooth(w)));
 }
 
 export class Route {
     public constructor(
         public from: Booth,
         public to: Booth,
-    ) {}
+        public waypoints?: Booth[],
+    ) {
+        this.waypoints = waypoints?.filter(wp => wp && (wp.id !== from?.id && wp.id !== to?.id));
+    }
 }
 
 export class CurrentPosition extends Point {
@@ -351,7 +354,7 @@ export class CurrentPosition extends Point {
         public z?: number | string,
         public angle?: number,
         public lat?: number,
-        public lng?: number,
+        public lng?: number
     ) {
         super(x, y);
     }

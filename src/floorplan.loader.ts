@@ -11,7 +11,7 @@ import isWebview from "./utils/is-webview";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
 
-function nr() {
+function nr(): never {
     throw new Error("FloorPlan not ready");
 }
 
@@ -66,7 +66,11 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(from: string | CurrentPosition, to: string | CurrentPosition): void {
+    selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {
+        nr();
+    }
+
+    getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[] {
         nr();
     }
 
@@ -197,10 +201,6 @@ export default class FloorPlanLoader implements FloorPlan {
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
         window["__efpElement"] = element;
-
-        // eurotier feature toggle
-        window["DELAYED_IMAGES"] = eventId?.toLowerCase().startsWith("eurotier");
-
         window["__efpElement"] = element;
         const classes = [...element.classList];
         element.classList.remove(...classes);

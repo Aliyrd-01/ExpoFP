@@ -52,9 +52,9 @@ function stateToUrl() {
     if (route) {
         const from = route.from ? `:${route.from.slug}` : "";
         const to = route.to ? `:${route.to.slug}` : "";
-        const accessible = store.routeStore.onlyAccessible ? ":true" : "";
-
-        queryRaw = `route${to}${from}${accessible}`;
+        const accessible = store.routeStore.onlyAccessible ? ":true" : ":false";
+        const waypoints = route.waypoints?.map((w) => `:${w.slug}`).join("");
+        queryRaw = `route${to}${from}${accessible}${waypoints || ""}`;
     } else if (exhibitor) {
         queryRaw = exhibitor.slug;
     } else if (booth) {
@@ -132,7 +132,7 @@ function dispatchFromUrl() {
     } else if (slug.startsWith("route")) {
         const parts = slug.split(":");
         store.routeStore.onlyAccessible = parts[3] === "true";
-        store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
+        store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "language") {

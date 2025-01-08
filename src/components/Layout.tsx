@@ -24,7 +24,6 @@ import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
 import { checkUserIsGDPR, hasUserConsent, setConsentSettings, setCookieConsent } from "../tools/gtag";
 import HeatmapLegend from "./HeatmapLegend";
-import WsDelayedImages from "./WsDelayedImages";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -93,7 +92,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 <LogoOverlay />
-                {!uiState.hideHeaderLogo && store.initialized && (window["DELAYED_IMAGES"] ? <WsDelayedImages /> : <Ws />)}
+                {!uiState.hideHeaderLogo && store.initialized && <Ws />}
                 {!uiState.mapControlsHidden && <Controls />}
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
                 {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}

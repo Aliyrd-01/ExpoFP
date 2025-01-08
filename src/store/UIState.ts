@@ -102,6 +102,7 @@ export default class UIState {
             booths.clear();
             booths.add(this.details.from?.id.toString());
             booths.add(this.details.to?.id.toString());
+            this.details.waypoints?.forEach(w => booths.add(w.id.toString()));
         }
 
         const hasNoSearchResult = (isSearch && !this.listBooths.size);
@@ -117,7 +118,7 @@ export default class UIState {
         booths.delete(undefined);
         booths.delete(null);
 
-        return booths;
+        return booths as ReadonlySet<string>;
     }
 
     overlayMediumHeightRems = 10;
@@ -546,6 +547,7 @@ export default class UIState {
 
         if (route?.from) arr.push(route.from);
         if (route?.to) arr.push(route.to);
+        if (route?.waypoints) route?.waypoints?.forEach(wp => arr.push(wp));
 
         return new Set(arr);
     }
