@@ -40,7 +40,7 @@ function ExhibitorComponent() {
         get anySocial() {
             if (uiState.kiosk) return false;
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
-                (s) => this.exhibitor[s],
+                (s) => this.exhibitor[s]
             );
         },
         get anyAddress() {
@@ -96,7 +96,7 @@ function ExhibitorComponent() {
         () => {
             if (el.current) el.current.parentElement.scrollTop = 0;
             s.collapsed = true;
-        },
+        }
     );
 
     function handleClick(e: any, action: GaEventActions) {
@@ -130,7 +130,7 @@ function ExhibitorComponent() {
                 <div className="exhibitor__bar">
                     <span onClick={() => store.toggleMapOverlay()}>
                         <span dir="auto">{exhibitor.name}</span>
-                        {exhibitor.featured ? <i className="fas fa-gem" /> : null}
+                        {exhibitor.featured ? <i className="icon-diamond" /> : null}
                     </span>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
@@ -248,7 +248,12 @@ function ExhibitorComponent() {
                             <div className="exhibitor__leading-image-container exhibitor__slider">
                                 {exhibitor.leadingImageLinkUrl ? (
                                     <a href={exhibitor.leadingImageLinkUrl} target="_blank" rel="noopener noreferrer">
-                                        <img src={exhibitor.leadingImageUrl} className="exhibitor__leading-image" alt="" crossOrigin="anonymous" />
+                                        <img
+                                            src={exhibitor.leadingImageUrl}
+                                            className="exhibitor__leading-image"
+                                            alt=""
+                                            crossOrigin="anonymous"
+                                        />
                                     </a>
                                 ) : (
                                     <ErrorBoundary>
@@ -313,7 +318,12 @@ function ExhibitorComponent() {
                                 >
                                     {exhibitor.logo ? (
                                         <div className="exhibitor__logo-container" v-if="exhibitor.logo">
-                                            <img src={exhibitor.logo} className="exhibitor__logo" alt={exhibitor.name} crossOrigin="anonymous" />
+                                            <img
+                                                src={exhibitor.logo}
+                                                className="exhibitor__logo"
+                                                alt={exhibitor.name}
+                                                crossOrigin="anonymous"
+                                            />
                                         </div>
                                     ) : null}
                                     {exhibitor.description ? (
@@ -364,14 +374,16 @@ function ExhibitorComponent() {
                             {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
                             {!uiState.kiosk && s.showEdit && (
                                 <div className="exhibitor__edit">
-                                    <button className="far fa-pencil" title={t("Edit")} onClick={sendLoginLink} />
+                                    <button title={t("Edit")} onClick={sendLoginLink}>
+                                        Edit
+                                    </button>
                                 </div>
                             )}
                             {s.anyAddress && (
                                 <div className="exhibitor__meta">
                                     {!!(exhibitor.address || exhibitor.address2) && (
                                         <div>
-                                            <i className="fas fa-map-marker" />
+                                            <i className="icon-marker-pin-solid"></i>
                                             <div className="exhibitor__address">
                                                 {exhibitor.address}
                                                 {!!exhibitor.address2 && <div>{exhibitor.address2}</div>}
@@ -390,7 +402,7 @@ function ExhibitorComponent() {
                                     )}
                                     {!!exhibitor.phone1 && (
                                         <div>
-                                            <i className="fas fa-phone" />
+                                            <i className="icon-phone-solid"></i>
                                             <div>
                                                 <a
                                                     dir="ltr"
@@ -404,7 +416,7 @@ function ExhibitorComponent() {
                                     )}
                                     {!!exhibitor.website && (
                                         <div>
-                                            <i className="fas fa-globe" />
+                                            <i className="icon-globe-solid"></i>
                                             <div>
                                                 <a
                                                     href={exhibitor.website}
@@ -419,7 +431,7 @@ function ExhibitorComponent() {
                                     )}
                                     {!!exhibitor.email && (
                                         <div v-if="exhibitor.email">
-                                            <i className="fas fa-at" />
+                                            <i className="icon-mail-at-solid"></i>
                                             <div>
                                                 <a
                                                     href={"mailto:" + exhibitor.email}
@@ -442,7 +454,7 @@ function ExhibitorComponent() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <i className="fab fa-facebook" />
+                                        <i className="icon-facebook" />
                                     </a>
                                     <a
                                         href={exhibitor.instagram}
@@ -450,7 +462,7 @@ function ExhibitorComponent() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <i className="fab fa-instagram" />
+                                        <i className="icon-instagram" />
                                     </a>
                                     <a
                                         href={exhibitor.linkedin}
@@ -458,7 +470,7 @@ function ExhibitorComponent() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <i className="fab fa-linkedin" />
+                                        <i className="icon-linkedin" />
                                     </a>
                                     <a
                                         href={exhibitor.twitter}
@@ -466,15 +478,7 @@ function ExhibitorComponent() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <i className="fab fa-twitter" />
-                                    </a>
-                                    <a
-                                        href={exhibitor.googlePlus}
-                                        onClick={() => itemClick(GaEventActions.ClickGooglePlus)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <i className="fab fa-google-plus" />
+                                        <i className="icon-twitter-x" />
                                     </a>
                                     <a
                                         href={exhibitor.xing}
@@ -482,7 +486,7 @@ function ExhibitorComponent() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <i className="fab fa-xing" />
+                                        <i className="icon-xing" />
                                     </a>
                                     <a
                                         href={exhibitor.youtube}
@@ -490,7 +494,7 @@ function ExhibitorComponent() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        <i className="fab fa-youtube" />
+                                        <i className="icon-youtube" />
                                     </a>
                                 </div>
                             )}
@@ -511,13 +515,7 @@ function ExhibitorComponent() {
                 )}
                 {uiState.kiosk && isContentOverflowing && showKioskDetails ? (
                     <button type="button" className="hide-details-button" onClick={() => setShowKioskDetails(false)}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                fill-rule="evenodd"
-                                clip-rule="evenodd"
-                                d="M20.8945 14.4472C20.6475 14.9412 20.0468 15.1414 19.5528 14.8945L12 11.1181L4.44724 14.8945C3.95326 15.1414 3.35259 14.9412 3.1056 14.4472C2.85861 13.9533 3.05883 13.3526 3.55281 13.1056L11.5528 9.1056C11.8343 8.96483 12.1657 8.96483 12.4472 9.1056L20.4472 13.1056C20.9412 13.3526 21.1414 13.9533 20.8945 14.4472Z"
-                            />
-                        </svg>
+                        <i className="icon-chevron-up-narrow"></i>
                     </button>
                 ) : null}
             </OverlayContent>
@@ -573,7 +571,12 @@ function ExhibitorComponent() {
 
     function bookmark() {
         s.exhibitor.bookmarked = !s.exhibitor.bookmarked;
-        if (uiState.onBookmarkClick) uiState.onBookmarkClick({ name: s.exhibitor.name, bookmarked: s.exhibitor.bookmarked, externalId: s.exhibitor.externalId });
+        if (uiState.onBookmarkClick)
+            uiState.onBookmarkClick({
+                name: s.exhibitor.name,
+                bookmarked: s.exhibitor.bookmarked,
+                externalId: s.exhibitor.externalId,
+            });
     }
 }
 

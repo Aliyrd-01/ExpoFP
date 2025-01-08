@@ -20,13 +20,13 @@ function Ws() {
         intervalId: 0,
         get sectionStyle() {
             const style = {
-                width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx}px` : "100%",
+                width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx - 30}px` : "100%",
                 // todo: remove
                 opacity: uiState.wsStarted ? 1 : 0,
                 padding: `0 ${uiState.wsPaddingPx}px`,
             } as any;
 
-            if (uiState.wsPosition === "top") style.top = uiState.headerHeightPx + "px";
+            if (uiState.wsPosition === "top") style.top = uiState.headerHeightPx + 10 + "px";
             else style.bottom = 0;
             return style;
         },

@@ -24,9 +24,9 @@
             text-overflow: ellipsis;
         }
 
-        & .fa-gem {
+        & .icon-diamond {
             color: var(--color-primary);
-            font-size: 0.9rem;
+            font-size: var(--icon-size-sm);
         }
     }
 

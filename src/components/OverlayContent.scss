@@ -15,7 +15,11 @@
 
         .overlay.full & {
             overflow-y: scroll;
-            //-webkit-overflow-scrolling: touch;
+        }
+    }
+    &.menu {
+        .overlay-bar__close {
+            align-self: flex-start;
         }
     }
 }

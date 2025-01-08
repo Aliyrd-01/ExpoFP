@@ -13,7 +13,7 @@ $input-height: 50px;
         content: "";
         position: absolute;
         top: 0;
-        right: 10px;
+        right: rem(10px);
         z-index: 10;
         display: flex;
         align-items: center;
@@ -21,19 +21,18 @@ $input-height: 50px;
         pointer-events: none;
         @include icon();
         content: vars.$icon-chevron-down;
-        font-size: 18px;
+        font-size: var(--icon-size-sm);
         color: var(--color-gray-700);
     }
     &__input {
         width: 100%;
         height: rem($input-height);
-        padding-inline-start: 14px;
-        padding-inline-end: 30px;
+        padding-inline-start: rem(14px);
+        padding-inline-end: rem(30px);
         background: var(--color-white);
         border: 1px solid var(--color-gray-300);
         outline: none;
         font-size: var(--font-size-xl);
-        font-weight: var(--font-weight-bold);
         border-radius: var(--border-radius-md);
         -webkit-appearance: none !important;
 
@@ -48,7 +47,7 @@ $input-height: 50px;
         position: absolute;
         z-index: 10;
         top: 0;
-        right: 32px;
+        right: rem(32px);
         display: flex;
         align-items: center;
         height: rem($input-height);
@@ -59,7 +58,7 @@ $input-height: 50px;
             content: "";
             @include icon();
             content: vars.$icon-close;
-            font-size: 18px;
+            font-size: var(--icon-size-sm);
         }
         &:hover {
             color: var(--color-black);
@@ -70,6 +69,7 @@ $input-height: 50px;
 
         #{$this}__inner {
             max-height: unset;
+            border-radius: var(--border-radius-md);
             box-shadow: var(--shadow-lg);
         }
         #{$this}__input {
@@ -114,7 +114,7 @@ $input-height: 50px;
                 cursor: pointer;
 
                 &.is-active {
-                    background: var(--color-gray-400);
+                    background: var(--color-gray-300);
                 }
                 &.is-focus {
                     background: var(--color-gray-200);
@@ -152,7 +152,7 @@ $input-height: 50px;
 .layout[dir="rtl"] #{$autocomplete} {
     &:before {
         right: unset;
-        left: 10px;
+        left: rem(10px);
     }
 }
 

@@ -9,12 +9,19 @@
 }
 
 .overlay-content.-exhibitor-featured {
-    background: #230762;
-    color: #fff;
+    background: var(--color-primary-ultra-dark);
+    color: var(--color-white);
 
     .exhibitor__bar,
     .exhibitor__meta {
-        color: #fff;
+        color: var(--color-white);
+    }
+    .overlay-bar__close {
+        color: var(--color-gray-400);
+
+        &:hover {
+            color: var(--color-white);
+        }
     }
 }
 
@@ -28,23 +35,38 @@
 
         > a {
             display: inline-block;
-            padding: 0.3rem 0.6rem;
+            padding: rem(6px 10px 7px);
             word-break: break-all;
-            border-radius: 1em;
+            border-radius: var(--border-radius-full);
             text-decoration: none !important;
+        }
+
+        &-booth {
+            background: var(--color-secondary-ultra-light);
+            color: var(--color-secondary-ultra-dark);
+
+            &:hover,
+            &:visited:hover {
+                background: var(--color-secondary-light);
+                color: var(--color-black);
+            }
+            &:visited {
+                background: var(--color-secondary-ultra-light);
+                color: var(--color-secondary-ultra-dark);
+            }
         }
 
         &-cat {
             background: var(--color-primary-ultra-light);
-            color: var(--color-primary-dark);
+            color: var(--color-primary-ultra-dark);
 
             &:hover,
             &:visited:hover {
-                background: var(--color-primary-dark);
-                color: var(--color-white);
+                background: var(--color-primary-light);
+                color: var(--color-black);
             }
             &:visited {
-                color: var(--color-primary);
+                color: var(--color-primary-ultra-dark);
             }
         }
 
@@ -60,20 +82,6 @@
             &:visited {
                 color: #ff8c00;
             }
-        }
-
-        &-booth {
-            background: var(--color-primary-light);
-            color: var(--color-black);
-
-            &:hover,
-            &:visited:hover {
-                background: var(--color-primary-dark);
-                color: var(--color-white);
-            }
-            // &:visited {
-            //     color: var(--color-secondary);
-            // }
         }
     }
 
@@ -175,13 +183,9 @@
             margin: 0.8rem 1rem;
             overflow: hidden;
 
-            > .fas,
-            > .far {
-                text-align: center;
-                min-width: 0.8rem;
-                margin-top: 0.2rem;
-                color: #ccc;
-                font-size: 0.8rem;
+            [class^="icon-"] {
+                color: var(--color-gray-500);
+                font-size: var(--icon-size-sm);
             }
 
             > div {
@@ -230,10 +234,10 @@
         font-size: 1.1em;
         flex-grow: 1;
 
-        .fa-gem {
+        .icon-diamond {
             color: var(--color-primary);
             margin-inline-start: 0.2rem;
-            font-size: 0.85rem;
+            font-size: var(--icon-size-lg);
             line-height: 1.5rem;
         }
 
@@ -349,79 +353,6 @@
     }
 }
 
-$imageSliderClass: ".image-slider";
-
-#{$imageSliderClass} {
-    &__nav-btn {
-        position: absolute;
-        top: 50%;
-        transform: translate(0, -50%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 30px;
-        height: 40px;
-        margin: 0 6px;
-        background: rgba(0, 0, 0, 0.3);
-        border: 0;
-        border-radius: 10px;
-        outline: none;
-        cursor: pointer;
-
-        svg {
-            fill: var(--color-white);
-        }
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.6);
-
-            svg {
-                fill: var(--color-gray);
-            }
-        }
-    }
-
-    &__toggle {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        background: rgba(0, 0, 0, 0.3);
-        border: 0;
-        border-radius: 10px;
-        cursor: pointer;
-
-        & > svg {
-            width: 90%;
-            fill: var(--color-white);
-        }
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.6);
-
-            svg {
-                fill: var(--color-gray);
-            }
-        }
-    }
-
-    &.is-full {
-        #{$imageSliderClass}__nav-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-        }
-
-        #{$imageSliderClass}__toggle {
-            width: 54px;
-            height: 54px;
-            background: transparent;
-        }
-    }
-}
-
 .layout[dir="rtl"] .exhibitor {
     &__bar > span > span {
         text-align: right;
@@ -434,32 +365,6 @@ $imageSliderClass: ".image-slider";
     }
     &__bar > span {
         gap: 5px;
-    }
-}
-
-@include responsive-classes-down-to(".exhibitor", sm) {
-    #{$imageSliderClass}.is-full {
-        #{$imageSliderClass}__nav-btn {
-            top: 100%;
-            transform: translate(0, -120px);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-
-            & > svg {
-                height: 30px !important;
-            }
-
-            &.nav-btn-left {
-                left: 50% !important;
-                margin-left: -60px;
-            }
-
-            &.nav-btn-right {
-                right: 50% !important;
-                margin-right: -60px;
-            }
-        }
     }
 }
 
@@ -537,10 +442,6 @@ $imageSliderClass: ".image-slider";
                         pointer-events: none;
                     }
                 }
-
-                .fas {
-                    font-size: 0.8em;
-                }
             }
         }
         &__bar {
@@ -559,25 +460,6 @@ $imageSliderClass: ".image-slider";
             margin: var(--k-spacing-lg);
         }
     }
-
-    #{$imageSliderClass} {
-        &__nav-btn {
-            width: 40px;
-            height: 50px;
-        }
-        &__toggle {
-            width: 40px;
-            height: 40px;
-        }
-        &.is-full {
-            #{$imageSliderClass}__toggle,
-            #{$imageSliderClass}__nav-btn {
-                width: var(--k-mapControl-size);
-                height: var(--k-mapControl-size);
-            }
-        }
-    }
-
     .gallery {
         &__badge {
             font-size: 1.1em;
@@ -634,16 +516,16 @@ $imageSliderClass: ".image-slider";
     border: 0;
     cursor: pointer;
 
-    & > svg {
-        fill: var(--color-black);
+    & > i {
+        color: var(--color-black);
     }
 }
 .-exhibitor-featured {
     .hide-details-button {
         background: #3c198a;
 
-        & > svg {
-            fill: var(--color-white);
+        & > i {
+            color: var(--color-white);
         }
     }
 }

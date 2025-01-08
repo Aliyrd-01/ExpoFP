@@ -11,10 +11,6 @@ $entity-item: ".efp-entity-item";
     &:hover {
         background: var(--color-gray-200);
     }
-    &.is-bookmarked {
-        background: var(--color-bookmarked-bg);
-        border-color: var(--color-bookmarked);
-    }
     &.is-featured {
         background-color: var(--color-primary-ultra-light);
         border-color: var(--color-primary);

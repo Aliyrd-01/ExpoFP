@@ -1,15 +1,5 @@
 @use "@styles/utils" as *;
 
-:host,
-:root {
-    --error-color: red;
-    --color: #34a1e6;
-    --color-light: #44aef1;
-    --color-dark: #337caa;
-    --link-color: #3a87ba;
-    --link-color-hover: #2f75a3;
-}
-
 * {
     font-family: var(--app-font-family);
     -webkit-tap-highlight-color: transparent;
@@ -32,14 +22,14 @@
 }
 
 a {
-    color: var(--link-color);
+    color: var(--color-primar);
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
 }
 
 a:hover,
 a:visited {
-    color: var(--link-color-hover);
+    color: var(--color-primary-dark);
     text-decoration: underline;
 }
 
@@ -49,10 +39,6 @@ a:visited {
     right: 10px;
     font-size: 10px;
     z-index: 999;
-}
-
-.fa-phone {
-    transform: scaleX(-1);
 }
 
 .efp-kiosk {

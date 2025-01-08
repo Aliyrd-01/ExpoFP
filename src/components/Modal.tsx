@@ -21,7 +21,9 @@ const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClick
     return open ? (
         <div className={classNames("modal", `modal--${type}`, { isOpen: isOpen }, className)} onClick={onClickClose}>
             <div className="modal__content" onClick={(e) => e.stopPropagation()}>
-                <div className="far fa-times modal__close" onClick={onClickClose}></div>
+                <div className="modal__close" onClick={onClickClose}>
+                    <i className="icon-close"></i>
+                </div>
                 {children}
             </div>
         </div>

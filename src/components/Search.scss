@@ -4,15 +4,14 @@
     &__bar {
         input {
             border: none;
-            border-radius: 0.5rem;
             outline: none;
-            height: var(56px);
+            height: rem(56px);
             -webkit-appearance: none;
             -webkit-tap-highlight-color: transparent;
             width: 100%;
         }
         input::placeholder {
-            color: rgba(0, 0, 0, 0.3); //#bbb;
+            color: var(--color-gray-500);
         }
 
         input.fixed {
@@ -28,7 +27,7 @@
     .search__bar {
         & > input {
             height: var(--k-searchBox-height);
-            padding-inline-end: 60px;
+            padding-inline-end: rem(60px);
             font-size: var(--k-inputFontSize);
 
             &::placeholder {

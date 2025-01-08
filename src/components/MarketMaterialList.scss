@@ -41,11 +41,12 @@
         }
     }
     &__item-name {
-        display: grid;
-        grid-template-columns: rem(22px) 1fr;
-        grid-gap: rem(8px);
+        display: flex;
+        align-items: center;
+        gap: rem(6px);
 
         & > span {
+            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -53,22 +54,24 @@
             max-width: 100%;
         }
     }
-    &__item-download-button {
-        width: rem(20px);
-        height: rem(20px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    &__item-download {
+        & > i {
+            font-size: var(--icon-size-md);
+        }
     }
 
     &__item-file {
         background-color: var(--color-primary);
         color: var(--color-white);
-        border-radius: 50%;
-        width: rem(22px);
-        height: rem(22px);
+        border-radius: var(--border-radius-full);
+        width: rem(24px);
+        height: rem(24px);
         display: flex;
         align-items: center;
         justify-content: center;
+
+        & > i {
+            font-size: var(--icon-size-xs);
+        }
     }
 }

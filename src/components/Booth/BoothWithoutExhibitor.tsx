@@ -46,23 +46,35 @@ export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
             <div className="booth__infos">
                 {booth.type && (
                     <div className="booth__info">
-                        <i className="fas fa-cube" />
-                        <div className="booth__info-title">{t("{{boothTerm}} Type", { boothTerm: data.boothTerm })}</div>
-                        <div className="booth__info-val">{booth.type}</div>
+                        <div className="booth__info-icon">
+                            <i className="icon-box-3d"></i>
+                        </div>
+                        <div className="booth__info-body">
+                            <div className="booth__info-title">{t("{{boothTerm}} Type", { boothTerm: data.boothTerm })}</div>
+                            <div className="booth__info-val">{booth.type}</div>
+                        </div>
                     </div>
                 )}
                 {booth.size && (
                     <div className="booth__info">
-                        <i className="fas fa-expand-alt" />
-                        <div className="booth__info-title">{t("Size")}</div>
-                        <div className="booth__info-val">{booth.size}</div>
+                        <div className="booth__info-icon">
+                            <i className="icon-size" />
+                        </div>
+                        <div className="booth__info-body">
+                            <div className="booth__info-title">{t("Size")}</div>
+                            <div className="booth__info-val">{booth.size}</div>
+                        </div>
                     </div>
                 )}
                 {!isRebooking && booth.price && booth.price !== "0" && !uiState.previewMode && (
                     <div className="booth__info">
-                        <i className="fas fa-tag" />
-                        <div className="booth__info-title">{t("Price")}</div>
-                        <div className="booth__info-val">{booth.price}</div>
+                        <div className="booth__info-icon">
+                            <i className="icon-tag" />
+                        </div>
+                        <div className="booth__info-body">
+                            <div className="booth__info-title">{t("Price")}</div>
+                            <div className="booth__info-val">{booth.price}</div>
+                        </div>
                     </div>
                 )}
             </div>

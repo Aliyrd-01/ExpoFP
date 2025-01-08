@@ -22,27 +22,12 @@ const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ 
     if (backMode === "none") return null;
 
     return (
-        <div className={`overlay-bar-back ${divClass()}`}>
-            <i className={`overlay-bar-back__icon1 far ${icon1Class()}`} />
-            <button className={`overlay-bar-back__icon2 far ${icon2Class()}`} onClick={handleClick}></button>
+        <div className="overlay-bar-back">
+            <button className="overlay-bar-back__button" onClick={handleClick}>
+                <i className={showBack ? "icon-chevron-left" : "icon-menu"}></i>
+            </button>
         </div>
     );
-
-    function divClass() {
-        return classNames({
-            anim: true,
-            end: animationEnded,
-            start: !animationEnded
-        });
-    }
-
-    function icon1Class() {
-        return !showBack ? "fa-chevron-left" : "fa-bars";
-    }
-
-    function icon2Class() {
-        return showBack ? "fa-chevron-left" : "fa-bars";
-    }
 
     function handleClick(e: MouseEvent) {
         e.preventDefault();

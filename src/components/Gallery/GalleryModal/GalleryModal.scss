@@ -7,7 +7,7 @@
     left: 0;
     right: 0;
     z-index: 999;
-    background: black;
+    background: var(--color-black);
 
     & .icon {
         fill: none;
@@ -23,30 +23,27 @@
         display: flex;
         align-items: center;
     }
-
     .gallery__img {
         background-position: center center;
     }
-
     &__controls {
         position: absolute;
-        top: 30px;
-        inset-inline-end: 30px;
+        top: rem(30px);
+        inset-inline-end: rem(30px);
         z-index: 10;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: rem(8px);
     }
-
     &__btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 60px;
-        height: 60px;
+        width: rem(50px);
+        height: rem(50px);
         background: rgba(48, 48, 48, 0.56);
         backdrop-filter: blur(5px);
-        border-radius: 50%;
+        border-radius: var(--border-radius-full);
         border: none;
         cursor: pointer;
         padding: 0;
@@ -55,7 +52,6 @@
         &:hover {
             background: rgba(48, 48, 48, 0.4);
         }
-
         &.next,
         &.prev {
             position: absolute;
@@ -63,15 +59,12 @@
             transform: translateY(-50%);
             z-index: 11;
         }
-
         &.next {
-            inset-inline-end: 30px;
+            inset-inline-end: rem(30px);
         }
-
         &.prev {
-            inset-inline-start: 30px;
+            inset-inline-start: rem(30px);
         }
-
         &:disabled {
             display: none;
         }
@@ -91,19 +84,19 @@
     transform-origin: 0 0;
     height: 100%;
     width: 100%;
-    padding: 40px;
+    padding: rem(40px);
 }
 
 @include responsive-classes-down-to(".gallery-modal", md) {
     .gallery-slider {
         &__controls {
-            top: 20px;
-            inset-inline-end: 20px;
+            top: rem(20px);
+            inset-inline-end: rem(20px);
         }
 
         &__btn {
-            width: 50px;
-            height: 50px;
+            width: rem(50px);
+            height: rem(50px);
 
             &.zoom-in,
             &.zoom-out,

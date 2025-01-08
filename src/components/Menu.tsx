@@ -117,13 +117,13 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
-                            <i className="fas fa-external-link" />
+                            <i className="icon-link-external" />
                         </a>
                     )}
                     {!data.hideRegisterToAttendLink && !uiState.kiosk && !isIframe && !!data.registerUrl && (
                         <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Register to Attend").replace(/ /g, "\u00A0")}&nbsp;
-                            <i className="fas fa-external-link" />
+                            <i className="icon-link-external" />
                         </a>
                     )}
                     {!uiState.disableBookmarked &&
@@ -138,13 +138,11 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
 
                                 <span className="menu__icons">
                                     {exhibitorStore.bookmarked.length ? (
-                                        <button
-                                            onClick={shareBookmarks}
-                                            className="fas fa-share-square"
-                                            title={t("Share bookmarks")}
-                                        />
+                                        <button onClick={shareBookmarks} title={t("Share bookmarks")}>
+                                            <i className="icon-link-external-solid"></i>
+                                        </button>
                                     ) : null}
-                                    <i className="fas fa-chevron-right" />
+                                    <i className="icon-chevron-right" />
                                 </span>
                             </a>
                         )}
@@ -152,10 +150,10 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                         <a href="?language" onClick={handleLanguage} className="menu__item -language">
                             <span>{t("Language")} </span>
                             <span className="menu__icons">
-                                <Badge variant="gray" noMargins>
+                                <Badge variant="gray" size="md" noMargins>
                                     {store.languageStore.language?.name}
                                 </Badge>
-                                <i className="fas fa-chevron-right" />
+                                <i className="icon-chevron-right" />
                             </span>
                         </a>
                     )}

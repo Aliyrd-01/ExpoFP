@@ -68,7 +68,6 @@ const EntityItem: React.FC<EntityItemProps> = ({
     return (
         <div
             className={cn("efp-entity-item", {
-                "is-bookmarked": bookmarked && !featured,
                 "is-featured": featured,
             })}
             style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}

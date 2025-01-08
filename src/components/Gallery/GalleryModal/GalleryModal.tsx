@@ -60,44 +60,12 @@ const GalleryModal: React.FC<GalleryModalProps> = (props) => {
                 ) : null}
                 {images.length > 1 && (
                     <button ref={nextRef} title={t("Next slide")} aria-label="˃" className="gallery-slider__btn next">
-                        <svg
-                            className="icon"
-                            width="30"
-                            height="30"
-                            viewBox="0 0 30 30"
-                            fill="none"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M11.25 7.5L18.75 15L11.25 22.5"
-                                stroke="#E4E4E4"
-                                strokeWidth="1.875"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        <i className="icon-chevron-right"></i>
                     </button>
                 )}
                 {images.length > 1 && (
                     <button ref={prevRef} title={t("Prev slide")} aria-label="˂" className="gallery-slider__btn prev">
-                        <svg
-                            className="icon"
-                            width="30"
-                            height="30"
-                            viewBox="0 0 30 30"
-                            fill="none"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M18.75 22.5L11.25 15L18.75 7.5"
-                                stroke="#E4E4E4"
-                                strokeWidth="1.875"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                        <i className="icon-chevron-left"></i>
                     </button>
                 )}
                 {images.map((url, i) => (

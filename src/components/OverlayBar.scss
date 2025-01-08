@@ -12,15 +12,26 @@
     }
 
     &__close {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         align-self: flex-start;
-        @include like-anchor;
-        @include overlay-bar-icon;
+        width: rem(40px);
+        height: rem(60px);
+        padding: 0;
+        border: 0;
+        color: var(--color-gray-600);
+        cursor: pointer;
+
+        &:hover {
+            color: var(--color-black);
+        }
     }
     &__search-icon {
         display: none;
 
-        & > svg {
-            fill: var(--color-gray);
+        & > i {
+            color: var(--color-gray);
         }
     }
 }
@@ -57,8 +68,8 @@
             padding-inline-end: 14px;
             pointer-events: none;
 
-            & > svg {
-                fill: var(--k-color-primary);
+            & > i {
+                color: var(--k-color-primary);
             }
         }
     }

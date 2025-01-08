@@ -133,7 +133,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     el.current.style.top = top + "px";
                 }
             }
-        )
+        );
 
         function handleTouchCancel() {
             s.startedTouch = undefined;
@@ -144,8 +144,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             switch (uiState.overlayPosition) {
                 case "left":
                     s.width = uiState.overlayWidthPx + "px";
-                    s.top = uiState.headerHeightPx + "px";
-                    s.left = "0";
+                    // s.top = uiState.headerHeightPx + "px";
+                    // s.left = "0";
                     s.height = undefined;
                     setShowAll();
                     resetCurrentTop();
@@ -163,7 +163,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         }
 
         function setShowAll() {
-            const all = uiState.overlayPosition === "left" || getTopForBottomPosition("full", el.current) + "px" === el.current.style.top;
+            const all =
+                uiState.overlayPosition === "left" || getTopForBottomPosition("full", el.current) + "px" === el.current.style.top;
             uiState.overlayShowsAll = all;
         }
 
@@ -212,8 +213,9 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
     return (
         <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${uiState.overlayPosition === "left" ? "start" : "bottom"
-                } ${s.collapsed}`}
+            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${
+                uiState.overlayPosition === "left" ? "start" : "bottom"
+            } ${s.collapsed}`}
             id="overlay"
             ref={el}
         >

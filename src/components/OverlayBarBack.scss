@@ -7,39 +7,28 @@
     position: relative;
     display: flex;
 
-    &__icon2 {
-        @include like-anchor;
-    }
-    &__icon1,
-    &__icon2 {
-        position: absolute;
-        @include overlay-bar-icon;
-    }
+    &__button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        outline: none;
+        cursor: pointer;
+        color: var(--color-gray-600);
 
-    &.anim.end > &__icon1 {
-        transition: all 0.3s;
-        transform: rotate(-180deg);
-    }
-    &.end > &__icon1,
-    &.start > &__icon2 {
-        opacity: 0;
-    }
-
-    &.anim.end > &__icon1.fa-chevron-left,
-    &.anim.start > &__icon2.fa-chevron-left {
-        transform: rotate(180deg);
-    }
-
-    &.start > &__icon2.fa-bars {
-        transform: rotate(-180deg);
-    }
-    &.anim.end > &__icon2 {
-        transition: all 0.3s;
+        & > i {
+            font-size: var(--icon-size-xl);
+        }
+        &:hover {
+            color: var(--color-black);
+        }
     }
 }
 
 .layout[dir="rtl"] .overlay-bar-back {
-    &__icon2 {
+    .icon-chevron-left {
         transform: rotateY(180deg);
     }
 }

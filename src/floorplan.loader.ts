@@ -266,17 +266,12 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            loadCss("vendor/fa/css/fontawesome-all.min.css", container),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
-            loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2"),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
-            loadFont("efp", "fonts/efp-symbols.woff", { weight: 400 }),
+            loadFont("efp-symbols", "fonts/efp-symbols.woff", { weight: 400 }),
             loadJs(wfDataUrl),
             loadJs(dataUrl),
             loadJs(fpUrl),
