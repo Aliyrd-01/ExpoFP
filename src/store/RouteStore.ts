@@ -302,7 +302,7 @@ export default class RouteStore {
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
                 });
-            }, 100);
+            }, 200);
 
         this.routeDistance = distance;
     }

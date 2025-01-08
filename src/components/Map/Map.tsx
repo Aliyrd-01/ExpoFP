@@ -171,7 +171,7 @@ export default function Map() {
                 boothsNames: boothsNames,
             };
 
-            setTimeout(() => uiState.onDetails(data), 200);
+            setTimeout(() => uiState.onDetails(data), 400);
         }
     );
 
