@@ -48,13 +48,16 @@
         box-shadow: var(--k-box-shadow-1);
 
         &__close {
-            width: 80px;
+            width: rem(80px);
             height: calc(var(--k-searchBox-height));
-            font-size: 1.4em;
             color: var(--k-color-primary) !important;
 
             &:hover {
                 color: var(--color-black) !important;
+            }
+            & > i {
+                color: var(--k-color-primary);
+                font-size: rem(30px);
             }
         }
         &__search-icon {
@@ -63,13 +66,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 60px;
+            width: rem(60px);
             height: calc(var(--k-searchBox-height) - 10px);
             padding-inline-end: 14px;
             pointer-events: none;
 
             & > i {
                 color: var(--k-color-primary);
+                font-size: rem(30px);
             }
         }
     }

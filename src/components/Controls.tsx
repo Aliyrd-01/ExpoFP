@@ -14,9 +14,12 @@ export default function Controls() {
         },
         get style() {
             return {
-                [uiState.rtl ? "right" : "left"]: uiState.overlayCollapsed
-                    ? remsToPixels(0.9)
-                    : (uiState.kiosk ? 10 : 0) + uiState.mapVisibleStart + remsToPixels(0.7) + 10 + "px",
+                [uiState.rtl ? "right" : "left"]:
+                    uiState.overlayPosition == "left"
+                        ? uiState.overlayCollapsed
+                            ? remsToPixels(0.9)
+                            : (uiState.kiosk ? 10 : 0) + uiState.mapVisibleStart + remsToPixels(0.7) + 10 + "px"
+                        : "10px",
                 top: uiState.overlayCollapsed ? remsToPixels(5) : uiState.mapVisibleTop + remsToPixels(0.7) + 10 + "px",
             };
         },

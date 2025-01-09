@@ -2,6 +2,7 @@
     $h: 1rem;
     $w: 3rem;
     $s: 0.2rem;
+
     display: block;
     position: absolute;
     left: 0;
@@ -11,21 +12,22 @@
     height: $h;
     z-index: 2;
 
-    > svg{
+    > svg {
         width: $w;
         height: $h;
         display: block;
-        > path{
-            stroke: #bbb;
-            stroke-width: 90;
+
+        > path {
+            stroke: var(--color-gray-500);
+            stroke-width: 70;
             fill: none;
             stroke-linecap: round;
-            &:first-child{
+            &:first-child {
                 display: none;
             }
         }
     }
-     &.arr > svg > path {
+    &.arr > svg > path {
         &:first-child {
             display: inherit;
         }

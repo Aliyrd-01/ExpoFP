@@ -17,7 +17,7 @@
         display: flex;
         align-items: center;
         background: var(--color-white);
-        margin: 0.3rem 0;
+        margin: rem(5px 0);
 
         > img {
             max-height: 100%;
@@ -61,10 +61,17 @@
         height: var(--k-ws-height);
         max-height: var(--k-ws-height);
         align-items: center;
+        border-radius: 0;
     }
 }
 
 .layout[dir="rtl"] .ws {
-    right: unset;
-    left: 0;
+    right: unset !important;
+    left: 10px;
+}
+
+@media (max-width: 550px) {
+    .ws {
+        border-radius: 0;
+    }
 }

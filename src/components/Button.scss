@@ -6,15 +6,15 @@ a.efp-button {
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 400px;
+    max-width: rem(400px);
     background: var(--color-primary);
     border: 0;
-    border-radius: 30px;
+    border-radius: var(--border-radius-full);
     outline: none;
     cursor: pointer;
     color: var(--color-white);
     font-family: var(--app-font-family);
-    font-weight: 600;
+    font-weight: var(--font-weight-medium);
     text-decoration: none;
     transition: background 0.1s ease-in-out;
 
@@ -75,21 +75,21 @@ a.efp-button {
         }
     }
     &--lg {
-        min-width: 160px;
-        min-height: 44px;
-        padding: 10px 20px;
-        font-size: rem(16px);
+        min-width: rem(160px);
+        min-height: rem(42px);
+        padding: rem(10px 20px);
+        font-size: var(--font-size-xl);
     }
     &--md {
-        min-width: 140px;
-        min-height: 38px;
-        padding: 8px 18px;
-        font-size: rem(14px);
+        min-width: rem(140px);
+        min-height: rem(38px);
+        padding: rem(8px 18px);
+        font-size: var(--font-size-lg);
     }
     &--sm {
-        min-width: 100px;
-        min-height: 30px;
-        padding: 4px 16px;
-        font-size: rem(14px);
+        min-width: rem(100px);
+        min-height: rem(30px);
+        padding: rem(4px 16px);
+        font-size: var(--font-size-xl);
     }
 }

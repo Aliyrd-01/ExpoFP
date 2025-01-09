@@ -24,13 +24,26 @@ const Ws = React.memo(() => {
         loading: false,
         leftToNextLoad: 0,
         timeoutId: 0,
-        get sectionStyle() {
-            return {
-                width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx - 30}px` : "100%",
-                opacity: uiState.wsStarted ? 1 : 0,
-                padding: `0 ${uiState.wsPaddingPx}px`,
-                ...(uiState.wsPosition === "top" ? { top: uiState.headerHeightPx + 10 + "px" } : { bottom: 0 }),
+        get sectionStyle(): Record<string, string | number> {
+            const { overlayPosition, wsWidthPx, wsStarted, wsPaddingPx, wsPosition, headerHeightPx } = uiState;
+
+            const isLeft = overlayPosition === "left";
+            const isTop = wsPosition === "top";
+
+            const style: Record<string, string | number> = {
+                right: isLeft ? "10px" : "0",
+                width: isLeft ? `${wsWidthPx - 30}px` : "100%",
+                opacity: wsStarted ? 1 : 0,
+                padding: `0 ${wsPaddingPx}px`,
             };
+
+            if (isTop) {
+                style.top = isLeft ? `${headerHeightPx + 10}px` : 0;
+            } else {
+                style.bottom = isLeft ? "10px" : 0;
+            }
+
+            return style;
         },
     }));
 

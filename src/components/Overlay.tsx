@@ -144,8 +144,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             switch (uiState.overlayPosition) {
                 case "left":
                     s.width = uiState.overlayWidthPx + "px";
-                    // s.top = uiState.headerHeightPx + "px";
-                    // s.left = "0";
+                    s.top = uiState.headerHeightPx + 10 + "px";
+                    s.left = "10px";
                     s.height = undefined;
                     setShowAll();
                     resetCurrentTop();

@@ -35,7 +35,7 @@
 .layout[dir="rtl"] {
     .overlay.start {
         left: unset;
-        right: 0;
+        right: 10px;
     }
     &.efp-kiosk {
         .overlay {
@@ -52,6 +52,7 @@
         background: transparent;
         box-shadow: unset;
         pointer-events: none;
+        overflow: unset;
 
         &.-backdrop {
             background: transparent;
