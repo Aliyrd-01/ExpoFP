@@ -13,7 +13,7 @@ import { getLogoUrl } from "../../../../utils/getLogoUrl";
 import { BOOTHS_PAINTER_MARKER, LAYER_ICONS_MARKER, LAYER_LOGOS_MARKER, SEPARATOR } from "../../../../constants";
 
 const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
-// const magicNum = 8;
+const magicNum = 8;
 
 export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK_SIZE): Promise<void> {
     if (store.uiState.hideLogoInBooth) return;
@@ -74,7 +74,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 )
                 : boothsPaintersById.get(boothLayerName)?.orderPriority || 0;
 
-            const orderPriority = (areLayersEnabled() ? priority : highestPriority); // + magicNum;
+            const orderPriority = (areLayersEnabled() ? priority : highestPriority) + magicNum;
 
             if (!painterLayers.has(layerName)) {
                 painterLayers.set(layerName, []);
@@ -107,7 +107,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
                 layer.childLayers || [],
                 (child) => child.basePriority,
                 layer.basePriority
-            ); // + magicNum;
+            ) + magicNum;
 
             const painter = context.requirePainter(
                 genImageLayerId(layer.name, LAYER_ICONS_MARKER, i),
