@@ -1,3 +1,5 @@
+@use "@styles/utils" as *;
+
 .exhibitor-row {
     display: flex;
     align-items: center;
@@ -7,15 +9,14 @@
 
     &.featured {
         .exhibitor-row__lines {
-            font-weight: 700;
+            font-weight: var(--font-weight-bold);
         }
     }
 
     &__lines {
-        padding-inline-start: 1rem;
-        padding-inline-end: 0.1rem;
+        padding-inline-start: rem(16px);
+        padding-inline-end: rem(2px);
         flex-grow: 1;
-
         overflow: hidden;
         text-overflow: ellipsis;
 
@@ -23,23 +24,20 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         & .icon-diamond {
             color: var(--color-primary);
             font-size: var(--icon-size-sm);
         }
     }
-
     &__info {
-        padding-inline-end: 1rem;
-        min-width: 4rem;
+        padding-inline-end: rem(16px);
+        min-width: rem(64px);
         text-align: end;
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: #555;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-lg);
+        color: var(--color-gray-800);
         overflow-wrap: break-word;
     }
-
     &__bookmark {
         align-self: stretch;
         padding-inline-start: 1rem;
