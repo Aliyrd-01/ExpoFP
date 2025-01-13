@@ -104,6 +104,7 @@ export abstract class BoothBase {
     readonly labelColor: string;
     readonly schedule: ScheduleItem[];
     readonly yah: boolean;
+    readonly meta: Record<string, string>;
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {
@@ -116,7 +117,13 @@ export abstract class BoothBase {
 
     @computed({ keepAlive: true }) public get fullName() {
         if (this.layer?.mode > 1 && data.showLevelLabel) {
-            return `${this.yah ? this.title : this.name} ${data.levelTerm} ${this.layer.description}`.replace(/\s+/g, " ").trim();
+            const meta = this.meta
+                ? Object.entries(this.meta)
+                    .filter(([key]) => !key.startsWith("_"))
+                    .map(([key, value]) => `${key} ${value}`)
+                    .join(" ")
+                : "";
+            return `${this.yah ? this.title : this.name} ${data.levelTerm} ${this.layer.description} ${meta}`.replace(/\s+/g, " ").trim();
         }
         return this.yah ? this.title : this.name;
     }
