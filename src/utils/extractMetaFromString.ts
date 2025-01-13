@@ -1,10 +1,10 @@
 import { STRING_META_DELIMITER } from "../constants";
 
-export function extractMetaFromString(input: string): { text: string; meta: Record<string, string> | null } {
+export function extractMetaFromString(input: string): { text: string; meta: Record<string, string> } {
     const parts = input.split(STRING_META_DELIMITER);
 
     if (parts.length !== 2) {
-        return { text: input, meta: null };
+        return { text: input, meta: {} };
     }
 
     const [text, metaPart] = parts;

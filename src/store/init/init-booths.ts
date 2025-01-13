@@ -28,9 +28,7 @@ export function iniAllBooths(store: RootStore) {
         raw.name = text;
         // TODO: Do we need to change the externalId?
         // raw.externalId = text;
-        if (meta) {
-            raw.meta = meta;
-        }
+        raw.meta = meta;
 
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);

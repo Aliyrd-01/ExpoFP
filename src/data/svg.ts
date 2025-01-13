@@ -133,28 +133,22 @@ function processElementsWithMeta(element: Element): void {
         .each(function () {
             const el = this as SVGGraphicsElement;
 
-            let combinedMeta: Record<string, any> = {};
+            let combinedMeta: Record<string, string> = {};
 
             const dataName = el.getAttribute("data-name");
             if (dataName && dataName.includes(STRING_META_DELIMITER)) {
                 const { text: nameText, meta: nameMeta } = extractMetaFromString(dataName);
-                if (nameMeta) {
-                    combinedMeta = { ...combinedMeta, ...nameMeta };
-                    el.setAttribute("data-name", nameText);
-                }
+                combinedMeta = { ...combinedMeta, ...nameMeta };
+                el.setAttribute("data-name", nameText);
             }
 
             const id = el.getAttribute("id");
             if (id && id.includes(STRING_META_DELIMITER)) {
                 const { text: idText, meta: idMeta } = extractMetaFromString(id);
-                if (idMeta) {
-                    combinedMeta = { ...combinedMeta, ...idMeta };
-                    el.setAttribute("id", idText);
-                }
+                combinedMeta = { ...combinedMeta, ...idMeta };
+                el.setAttribute("id", idText);
             }
 
-            if (Object.keys(combinedMeta).length) {
-                el.setAttribute("data-meta", JSON.stringify(combinedMeta));
-            }
+            el.setAttribute("data-meta", JSON.stringify(combinedMeta));
         });
 }
