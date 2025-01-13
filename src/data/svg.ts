@@ -38,8 +38,9 @@ function parseSvg(text: string, suffix: string = ""): SVGElement {
             el.style.fill = classFill.get(el.className.baseVal);
         });
 
-    _svg.set(suffix, element);
     processElementsWithMeta(element);
+
+    _svg.set(suffix, element);
     return element;
 }
 
