@@ -31,6 +31,9 @@ body {
         max-width: 100%;
     }
 }
+.sidebar-container {
+    padding: rem(16px);
+}
 .efp-kiosk {
     font-size: calc(16px + 0.25vw);
     --k-scale: 1;

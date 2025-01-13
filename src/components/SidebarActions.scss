@@ -7,7 +7,7 @@ $actionButton: ".efp-actionButton";
     display: flex;
     flex-flow: row wrap;
     align-items: center;
-    gap: rem(10px);
+    gap: rem(8px);
     width: 100%;
     margin-bottom: rem(18px);
 }
@@ -18,13 +18,13 @@ $actionButton: ".efp-actionButton";
     align-items: center;
     gap: rem(6px);
     overflow: hidden;
-    height: rem(38px);
+    height: rem(40px);
     padding: rem(0 12px 0 8px);
     background: var(--color-white);
     border: 1px solid var(--color-primary);
     border-radius: var(--border-radius-full);
-    font-size: var(--font-size-lg);
     font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-lg);
     color: var(--color-primary);
     cursor: pointer;
     transition: background 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
@@ -39,18 +39,8 @@ $actionButton: ".efp-actionButton";
     [class^="icon-"] {
         font-size: var(--icon-size-sm);
     }
-    &--bookmark {
-        flex-grow: 1;
-        flex-shrink: 0;
-
-        &.isActive {
-            [class^="icon-"] {
-                color: var(--color-bookmarked);
-            }
-        }
-    }
     &--directions {
-        flex-grow: 1;
+        flex-grow: 4;
         flex-shrink: 0.5;
         background: var(--color-primary);
         color: var(--color-white);
@@ -62,12 +52,30 @@ $actionButton: ".efp-actionButton";
             fill: var(--color-white);
         }
     }
+    &--bookmark {
+        width: rem(40px);
+        padding: 0;
+
+        &.isActive {
+            border-color: var(--color-bookmarked);
+
+            &:hover {
+                background: var(--color-gray-100);
+            }
+            [class^="icon-"] {
+                color: var(--color-bookmarked);
+            }
+        }
+    }
     &--share {
-        flex-shrink: 0.2;
+        width: rem(40px);
+        padding: 0;
     }
-    &--directions ~ &--share {
-        flex-grow: 1;
-    }
+}
+
+.efp-visited-btn {
+    flex-grow: 1;
+    flex-shrink: 0;
 }
 
 .efp-kiosk {
