@@ -26,8 +26,6 @@ export function iniAllBooths(store: RootStore) {
     for (const raw of data.booths || []) {
         const { text, meta } = extractMetaFromString(raw.name);
         raw.name = text;
-        // TODO: Do we need to change the externalId?
-        // raw.externalId = text;
         raw.meta = meta;
 
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
