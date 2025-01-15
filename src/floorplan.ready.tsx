@@ -235,6 +235,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
                     name: b.layer?.name,
                     description: b.layer?.description,
                 },
+                description: b.description || "",
             };
         });
     }

@@ -124,6 +124,7 @@ interface FloorPlanBooth extends FloorPlanBoothBase {
     externalId: string;
     isSpecial: boolean;
     exhibitors: number[];
+    description: string;
 }
 
 interface FloorPlanBoothClickEvent {
