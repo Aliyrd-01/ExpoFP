@@ -102,6 +102,7 @@ interface RawBoothBase {
     title: string;
     externalId: string;
     exhibitors: number[];
+    meta: Record<string, string>;
     // special?: true;
     // rect: Rect;
     // noLabels: boolean;
