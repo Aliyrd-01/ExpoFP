@@ -345,7 +345,7 @@ export default class FloorPlanLoader implements FloorPlan {
                 // }
             }
 
-            self.icons.direction = await loadImage("/icons/bluedot-arrow.svg");
+            self.icons.direction = await loadImage("icons/bluedot-arrow.svg");
 
             logger.log("Data loaded");
             const { default: FloorPlanReady } = await import(/* webpackChunkName: "floorplan" */ "./floorplan.ready");
