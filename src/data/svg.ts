@@ -4,6 +4,8 @@ import Rect from "../core/Rect";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import { Layer } from "../store/LayerStore";
+import { STRING_META_DELIMITER } from "../constants";
+import { extractMetaFromString } from "../utils/extractMetaFromString";
 
 const _svg = new Map<string, SVGElement>();
 
@@ -35,6 +37,8 @@ function parseSvg(text: string, suffix: string = ""): SVGElement {
             const el = this as SVGGraphicsElement;
             el.style.fill = classFill.get(el.className.baseVal);
         });
+
+    processElementsWithMeta(element);
 
     _svg.set(suffix, element);
     return element;
@@ -123,3 +127,29 @@ export let getLayerSvg = (layer: Layer | string = ""): SVGElement => {
 
     return _svg.get("");
 };
+
+function processElementsWithMeta(element: Element): void {
+    d3.select(element)
+        .selectAll("[id], [data-name]")
+        .each(function () {
+            const el = this as SVGGraphicsElement;
+
+            let combinedMeta: Record<string, string> = {};
+
+            const dataName = el.getAttribute("data-name");
+            if (dataName && dataName.includes(STRING_META_DELIMITER)) {
+                const { text: nameText, meta: nameMeta } = extractMetaFromString(dataName);
+                combinedMeta = { ...combinedMeta, ...nameMeta };
+                el.setAttribute("data-name", nameText);
+            }
+
+            const id = el.getAttribute("id");
+            if (id && id.includes(STRING_META_DELIMITER)) {
+                const { text: idText, meta: idMeta } = extractMetaFromString(id);
+                combinedMeta = { ...combinedMeta, ...idMeta };
+                el.setAttribute("id", idText);
+            }
+
+            el.setAttribute("data-meta", JSON.stringify(combinedMeta));
+        });
+}
