@@ -1,5 +1,6 @@
 import { Booth, RegularBooth } from "../store/BoothStore";
 import { getLogoUrl } from "./getLogoUrl";
+import { loadImage } from "./loadImage";
 
 export type Img = {
     booth: Booth;
@@ -94,14 +95,4 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
                 })
         )
     );
-}
-
-export function loadImage(src: string): Promise<HTMLImageElement> {
-    return new Promise((resolve) => {
-        var img = new Image();
-        img.onerror = () => resolve(null);
-        img.onload = () => resolve(img);
-        img.crossOrigin = "anonymous";
-        img.src = src;
-    });
 }

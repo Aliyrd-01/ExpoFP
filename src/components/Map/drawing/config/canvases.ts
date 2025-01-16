@@ -347,7 +347,8 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
 export function createArrowCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
-    scale: number = pixelRatio * 0.4
+    img: HTMLImageElement,
+    scale: number = pixelRatio * 0.4,
 ): CanvasDescriptor {
     return {
         width: 95 * scale,
@@ -356,14 +357,18 @@ export function createArrowCurrentCanvas(
         draw(ctx) {
             ctx.scale(scale, scale);
 
-            ctx.beginPath();
-            ctx.fillStyle = color;
-            ctx.moveTo(75, 15);
-            ctx.lineTo(95, 35);
-            ctx.lineTo(75, 55);
-            ctx.lineTo(80, 35);
-            ctx.closePath();
-            ctx.fill();
+            if (img) {
+                ctx.drawImage(img, 0, 0, 95 * scale, 95 * scale);
+            } else {
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.moveTo(75, 15);
+                ctx.lineTo(95, 35);
+                ctx.lineTo(75, 55);
+                ctx.lineTo(80, 35);
+                ctx.closePath();
+                ctx.fill();
+            }
         },
     };
 }

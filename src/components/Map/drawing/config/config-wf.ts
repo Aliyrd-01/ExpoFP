@@ -295,7 +295,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
-    const arrowCurrentCanvas = createArrowCurrentCanvas(context.pixelRatio, fromColor.hex());
+    const arrowCurrentCanvas = createArrowCurrentCanvas(context.pixelRatio, fromColor.hex(), store.fp.icons.direction);
     const currentLocationCanvas_2 = createYahCanvas(context.pixelRatio);
 
     const l = getLayerSvg();
@@ -449,13 +449,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
                 wfDrawer.updateVisible("currentLocation_2", false);
 
-                wfDrawer.updateVisible("currentLocation", visible);
-                wfDrawer.updateSkipdim("currentLocation", visible);
+                wfDrawer.updateVisible("currentLocation", store.fp.icons.direction ? false : visible);
+                wfDrawer.updateSkipdim("currentLocation", store.fp.icons.direction ? false : visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
                 const rotateRadians = (position?.angle * Math.PI) / 180 || null;
 
-                if (rotateRadians !== undefined && rotateRadians !== null) {
+                if (rotateRadians != null) {
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
                     wfDrawer.updateSkipdim("currentLocation_arrow", visible);
                     wfDrawer.updateCenter("currentLocation_arrow", [position.x, position.y]);
