@@ -15,6 +15,7 @@ import { Exhibitor } from "../ExhibitorStore";
 import { Layer } from "../LayerStore";
 import RootStore from "../RootStore";
 import { uiState } from "../index";
+import { extractMetaFromString } from "../../utils/extractMetaFromString";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
@@ -23,6 +24,10 @@ export function iniAllBooths(store: RootStore) {
     const copyExh = parseInt(getQueryParam("copy_exh"));
 
     for (const raw of data.booths || []) {
+        const { text, meta } = extractMetaFromString(raw.name);
+        raw.name = text;
+        raw.meta = meta;
+
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);
 
@@ -80,12 +85,14 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
 
     const layersEnabled = !!window["__fpLayers"];
 
-    for (const el of d3
+    const d3Nodes = d3
         .select(getLayerSvg(layer))
         .selectAll(
             `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`,
         )
-        .nodes() as (SVGRectElement | SVGPathElement)[]) {
+        .nodes() as (SVGRectElement | SVGPathElement)[];
+
+    for (const el of d3Nodes) {
         const layer = ((el as SVGGraphicsElement).closest("svg > [data-layer]") as SVGGraphicsElement).attributes["data-layer"]
             ?.value;
 
