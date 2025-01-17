@@ -43,9 +43,17 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             ])
     );
 
-    const highestPriorityLayer = store.layerStore.layers.reduce((max, layer) =>
-        layer.basePriority > max.basePriority ? layer : max,
-        store.layerStore.layers[0]
+    const highestPriority = calculateHighestPriority(
+        store.layerStore.layers,
+        (layer) => {
+            const highestChildPriority = calculateHighestPriority(
+                layer.childLayers || [],
+                (child) => child.basePriority,
+                layer.basePriority
+            );
+            return Math.max(layer.basePriority, highestChildPriority);
+        },
+        store.layerStore.layers[0]?.basePriority || 0
     );
 
     for (const [i, chunk] of chunks.entries()) {
@@ -58,15 +66,19 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             const boothLayerName = booth.layer?.name;
             const layerName = genImageLayerId(boothLayerName, LAYER_LOGOS_MARKER, i);
 
-            const orderPriority = (
-                areLayersEnabled()
-                    ? boothsPaintersById.get(boothLayerName)?.orderPriority
-                    : highestPriorityLayer.basePriority
-            );
+            const priority = booth.layer?.childLayers
+                ? calculateHighestPriority(
+                    booth.layer.childLayers,
+                    (layer) => boothsPaintersById.get(layer.name)?.orderPriority || 0,
+                    boothsPaintersById.get(boothLayerName)?.orderPriority || 0
+                )
+                : boothsPaintersById.get(boothLayerName)?.orderPriority || 0;
+
+            const orderPriority = (areLayersEnabled() ? priority : highestPriority) + magicNum;
 
             if (!painterLayers.has(layerName)) {
                 painterLayers.set(layerName, []);
-                painterLayersPriorities.set(layerName, orderPriority + magicNum);
+                painterLayersPriorities.set(layerName, orderPriority);
             }
             painterLayers.get(layerName).push(createObject(createImg(booth, image)));
         }
@@ -91,10 +103,16 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             const icons = getIcons(layer);
             const loadedIcons = await loadIcons(icons);
 
+            const priority = calculateHighestPriority(
+                layer.childLayers || [],
+                (child) => child.basePriority,
+                layer.basePriority
+            ) + magicNum;
+
             const painter = context.requirePainter(
                 genImageLayerId(layer.name, LAYER_ICONS_MARKER, i),
                 ImagePainter,
-                layer.basePriority + magicNum,
+                priority,
                 layer.visible,
             );
             painter.dim = Number(store.uiState.dimmed);
@@ -184,4 +202,15 @@ function createImg(booth: Booth, htmlImage: HTMLImageElement): Img {
         htmlImage,
         booth,
     };
+}
+
+function calculateHighestPriority<T>(
+    layers: T[],
+    getPriority: (layer: T) => number,
+    initialPriority: number = 0
+): number {
+    return layers.reduce((maxPriority, layer) => {
+        const priority = getPriority(layer);
+        return Math.max(maxPriority, priority);
+    }, initialPriority);
 }

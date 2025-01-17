@@ -6,3 +6,4 @@ export const BOOTHS_PAINTER_MARKER = "booths";
 export const SEPARATOR = ":";
 export const LAYER_LOGOS_MARKER = "logos";
 export const LAYER_ICONS_MARKER = "icons";
+export const STRING_META_DELIMITER = "$$";
