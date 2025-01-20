@@ -47,14 +47,14 @@ a {
     --font-size-xxl: #{rem(22px)};
     --font-size-xxxl: #{rem(24px)};
 
-    --icon-size-xxxs: #{rem(16px)};
-    --icon-size-xxs: #{rem(18px)};
-    --icon-size-xs: #{rem(20px)};
-    --icon-size-sm: #{rem(22px)};
-    --icon-size-md: #{rem(24px)};
-    --icon-size-lg: #{rem(26px)};
-    --icon-size-xl: #{rem(28px)};
-    --icon-size-xxl: #{rem(30px)};
+    --icon-size-xxxs: calc(#{rem(18px)} * var(--k-scale));
+    --icon-size-xxs: calc(#{rem(20px)} * var(--k-scale));
+    --icon-size-xs: calc(#{rem(22px)} * var(--k-scale));
+    --icon-size-sm: calc(#{rem(24px)} * var(--k-scale));
+    --icon-size-md: calc(#{rem(26px)} * var(--k-scale));
+    --icon-size-lg: calc(#{rem(28px)} * var(--k-scale));
+    --icon-size-xl: calc(#{rem(30px)} * var(--k-scale));
+    --icon-size-xxl: calc(#{rem(32px)} * var(--k-scale));
 
     --k-app-gap: calc(20px * var(--k-scale));
     --k-border-radius-1: clamp(20px, 1.2vmax, 40px);

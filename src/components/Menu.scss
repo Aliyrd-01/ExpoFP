@@ -188,6 +188,7 @@
 
     @include kiosk {
         height: calc(100% - (var(--k-app-gap)));
+        background: transparent;
 
         &__item {
             padding: var(--k-itemsPadding-1);
@@ -217,6 +218,7 @@
         .overlay-content__scrollable {
             top: unset;
             max-height: unset;
+            background: var(--color-gray-200);
             border-top-left-radius: 0;
             border-top-right-radius: 0;
         }

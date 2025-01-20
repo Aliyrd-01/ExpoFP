@@ -3,7 +3,7 @@
 [class^="icon-"],
 [class*=" icon-"] {
     font-family: "#{vars.$icons-font-family}" !important;
-    font-size: 24px;
+    font-size: var(--icon-size-xl);
     speak: never;
     font-style: normal;
     font-weight: normal;
