@@ -1,44 +1,42 @@
-.simple-row {
+@use "@styles/utils" as *;
+
+.efp-simple-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    text-decoration: none !important;
-    color: #333 !important;
-    $p: 1rem;
+    font-size: var(--font-size-xl);
+    color: var(--color-black);
 
     &__col {
-        padding: 0 $p 0;
+        padding: rem(0 16px 0);
     }
-
     &__main {
-        height: 1.3125rem;
+        height: rem(20px);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         text-align: left;
     }
-
     &__sub {
-        font-size: 0.7rem;
-        color: rgba(0, 0, 0, 0.4); //#aaa
-        height: 0.7rem;
-        margin: -2px 0;
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-600);
+        height: rem(12px);
+        margin: rem(-2px 0);
         text-align: left;
     }
-
     &__end {
-        padding-inline-end: 1rem;
-        min-width: 4rem;
+        padding-inline-end: rem(16px);
+        min-width: rem(64px);
         text-align: end;
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: #555;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-lg);
+        color: var(--color-gray-600);
         overflow-wrap: break-word;
     }
 }
 
-.layout[dir="rtl"] .simple-row {
+.layout[dir="rtl"] .efp-simple-row {
     &__main,
     &__sub {
         text-align: right;
@@ -46,7 +44,7 @@
 }
 
 .efp-kiosk {
-    .simple-row {
+    .efp-simple-row {
         padding: var(--k-itemsPadding-1);
 
         &__main {

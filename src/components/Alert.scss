@@ -46,7 +46,7 @@ $alert: ".efp-alert";
     }
     &__close {
         position: relative;
-        right: -4px;
+        right: rem(-4px);
         display: inline-flex;
         justify-content: center;
         align-items: center;
@@ -63,7 +63,7 @@ $alert: ".efp-alert";
         &:before {
             @include icon();
             content: vars.$icon-close;
-            font-size: 20px;
+            font-size: var(--icon-size-md);
             color: var(--color-black);
         }
         &:hover {

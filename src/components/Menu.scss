@@ -55,8 +55,8 @@
         }
     }
 }
-
 /* END */
+
 .menu {
     background: var(--color-gray-200);
     $p: rem(16px);
@@ -88,6 +88,7 @@
         display: flex;
         align-items: center;
         color: var(--color-gray-800);
+        font-size: var(--font-size-xl);
 
         &:hover {
             color: var(--color-black);

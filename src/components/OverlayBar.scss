@@ -8,9 +8,9 @@
 
     &__slot {
         flex-grow: 1;
-        max-width: calc(100% - 3rem);
+        max-width: calc(100% - rem(48px));
+        height: 100%;
     }
-
     &__close {
         display: flex;
         justify-content: center;

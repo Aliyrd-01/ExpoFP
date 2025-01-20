@@ -3,8 +3,7 @@
 .exhibitor-row {
     display: flex;
     align-items: center;
-    text-decoration: none !important;
-    color: #333 !important;
+    color: var(--color-black);
     text-align: left;
 
     &.featured {
@@ -19,6 +18,7 @@
         flex-grow: 1;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-size: var(--font-size-xl);
 
         & > div {
             overflow: hidden;
@@ -34,14 +34,14 @@
         min-width: rem(64px);
         text-align: end;
         font-weight: var(--font-weight-bold);
-        font-size: var(--font-size-lg);
+        font-size: var(--font-size-md);
         color: var(--color-gray-800);
         overflow-wrap: break-word;
     }
     &__bookmark {
         align-self: stretch;
-        padding-inline-start: 1rem;
-        padding-inline-end: 0.5rem;
+        padding-inline-start: rem(16px);
+        padding-inline-end: rem(8px);
         outline: none;
     }
 }
@@ -56,11 +56,11 @@
 
         &__lines {
             padding-inline-start: 0;
-            font-size: 1.14em;
+            font-size: 1em;
         }
         &__info {
             padding-inline-end: 0;
-            font-size: 1em;
+            font-size: 0.9em;
         }
     }
 }

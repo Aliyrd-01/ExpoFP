@@ -5,7 +5,6 @@ import { t } from "../utils/i18n";
 import List from "./List";
 import OverlayContent from "./OverlayContent";
 import React, { useRef } from "react";
-import "./Language.scss";
 
 const Language = observer(() => {
     const scrollableRef = useRef<HTMLDivElement>();
@@ -21,7 +20,7 @@ const Language = observer(() => {
                 onClose={handleCloseBack}
                 onBack={handleCloseBack}
                 backMode="menu"
-                bar={<div className="bar">{t("Language")}</div>}
+                bar={<div className="bar bar--language">{t("Language")}</div>}
             >
                 <List updatedScrollableRef={scrollableRef} />
             </OverlayContent>

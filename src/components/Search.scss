@@ -6,20 +6,20 @@
             border: none;
             outline: none;
             height: rem(56px);
-            font-size: 16px;
+            font-size: var(--font-size-xl);
             -webkit-appearance: none;
             -webkit-tap-highlight-color: transparent;
             width: 100%;
-        }
-        input::placeholder {
-            color: var(--color-gray-500);
-        }
 
-        input.fixed {
-            opacity: 0;
-            pointer-events: none;
-            position: fixed;
-            top: -100px;
+            &::placeholder {
+                color: var(--color-gray-500);
+            }
+            &.fixed {
+                opacity: 0;
+                pointer-events: none;
+                position: fixed;
+                top: -100px;
+            }
         }
     }
 }

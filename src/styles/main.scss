@@ -13,6 +13,8 @@
     --font-size-xxl: #{utils.rem(16px)};
     --font-size-xxxl: #{utils.rem(18px)};
 
+    --line-height-lg: 1.3;
+
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-bold: 600;
@@ -68,6 +70,9 @@
     --color-other: #16b095;
     --color-bookmarked: #fdbf2b;
     --color-bookmarked-bg: #fcfaf3;
+    --color-sponsorship-light: #fee8ce;
+    --color-sponsorship: #e87f00;
+    --color-sponsorship-dark: #ff8c00;
 
     --shadow-xs: 0px 1px 3px 0px rgba(16, 24, 40, 0.3);
     --shadow-sm: 0px 2px 8px -2px rgba(16, 24, 40, 0.4);

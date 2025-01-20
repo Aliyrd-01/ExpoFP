@@ -22,15 +22,7 @@
 }
 
 a {
-    color: var(--color-primar);
     text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-a:hover,
-a:visited {
-    color: var(--color-primary-dark);
-    text-decoration: underline;
 }
 
 #fps {
