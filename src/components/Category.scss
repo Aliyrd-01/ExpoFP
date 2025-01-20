@@ -1,33 +1,31 @@
-.bar {
-    min-height: 2.5rem;
-    margin-top: 1rem;
-    font-size: 1.1em;
-    font-weight: 600;
+@use "@styles/utils" as *;
+
+.efp-bar {
+    min-height: rem(40px);
+    margin-top: rem(16px);
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-bold);
     color: var(--color-black);
 
     &--language {
         display: flex;
         align-items: center;
+        height: 100%;
         margin: 0;
     }
     > span {
-        color: rgba(0, 0, 0, 0.35);
-        font-weight: 400;
+        color: var(--color-gray-600);
+        font-weight: var(--font-weight-normal);
     }
-}
-.note {
-    font-size: 0.7rem;
-    color: rgba(0, 0, 0, 0.35);
-    display: block;
-    font-weight: normal;
-    margin-top: -0.2rem;
-}
 
-.efp-kiosk {
-    .bar {
+    @include kiosk {
         margin-top: 0;
     }
-    .note {
-        font-size: 0.7em;
-    }
+}
+.efp-note {
+    display: block;
+    margin-top: rem(-2px);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-gray-600);
 }

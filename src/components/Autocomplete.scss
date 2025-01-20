@@ -122,6 +122,10 @@ $input-height: 50px;
                 &:hover {
                     background: var(--color-gray-200);
                 }
+
+                @include kiosk {
+                    padding: clamp(6px, 2vh, 12px) clamp(10px, 2vw, 18px);
+                }
             }
         }
         &::-webkit-scrollbar {
@@ -153,17 +157,5 @@ $input-height: 50px;
     &:before {
         right: unset;
         left: rem(10px);
-    }
-}
-
-.efp-kiosk {
-    #{$autocomplete} {
-        &__options {
-            & > ul {
-                li {
-                    padding: clamp(4px, 2vh, 10px) clamp(10px, 2vw, 18px);
-                }
-            }
-        }
     }
 }

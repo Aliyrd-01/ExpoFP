@@ -6,6 +6,13 @@
     z-index: 1;
     transition: box-shadow 300ms;
 
+    &.scrolled {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+
+        @include kiosk {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+    }
     &__slot {
         flex-grow: 1;
         max-width: calc(100% - rem(48px));
@@ -34,13 +41,8 @@
             color: var(--color-gray);
         }
     }
-}
-.overlay-bar.scrolled {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
 
-.efp-kiosk {
-    .overlay-bar {
+    @include kiosk {
         position: absolute;
         width: var(--k-searchBox-width);
         background: var(--color-white);
@@ -50,14 +52,13 @@
         &__close {
             width: rem(80px);
             height: calc(var(--k-searchBox-height));
-            color: var(--k-color-primary) !important;
+            color: var(--color-primary) !important;
 
             &:hover {
                 color: var(--color-black) !important;
             }
             & > i {
-                color: var(--k-color-primary);
-                font-size: rem(30px);
+                color: var(--color-primary);
             }
         }
         &__search-icon {
@@ -68,15 +69,18 @@
             align-items: center;
             width: rem(60px);
             height: calc(var(--k-searchBox-height) - 10px);
-            padding-inline-end: 14px;
+            padding-inline-end: rem(16px);
             pointer-events: none;
 
             & > i {
-                color: var(--k-color-primary);
-                font-size: rem(30px);
+                color: var(--color-primary);
+                font-size: var(--icon-size-xl);
             }
         }
     }
+}
+.overlay-bar.scrolled {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .efp-kiosk[dir="rtl"] .overlay-bar {

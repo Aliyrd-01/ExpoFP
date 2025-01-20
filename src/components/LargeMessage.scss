@@ -9,17 +9,15 @@
     opacity: 0;
     transition: opacity 300ms;
     pointer-events: none;
-    //
 
     &.-visible {
         opacity: 1;
     }
-
     &__text {
         text-align: center;
         color: #eee;
         margin-top: 45vh;
         font-size: 1.8rem;
-        font-weight: 400;
+        font-weight: var(--font-weight-normal);
     }
 }

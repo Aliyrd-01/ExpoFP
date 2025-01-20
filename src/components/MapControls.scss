@@ -18,6 +18,17 @@ $checkedPanel: ".checked-panel";
     &.-ready {
         opacity: 1;
     }
+
+    @include kiosk {
+        position: absolute;
+        left: unset !important;
+        top: var(--k-app-gap) !important;
+        right: var(--k-app-gap) !important;
+        overflow: unset;
+        width: unset;
+        box-shadow: unset;
+        row-gap: var(--k-mapControls-gap);
+    }
 }
 #{$mapFixedControls} {
     position: fixed;
@@ -51,6 +62,24 @@ $checkedPanel: ".checked-panel";
         & > i {
             color: var(--color-primary);
             opacity: 1;
+        }
+    }
+
+    @include kiosk {
+        width: var(--k-mapControl-size);
+        height: var(--k-mapControl-size);
+        border-radius: var(--k-border-radius-2);
+        box-shadow: var(--k-box-shadow-1);
+        padding: var(--k-mapControl-padding);
+        transition: all 0.1s ease;
+
+        & > i {
+            color: var(--color-primary);
+            opacity: 1;
+        }
+        &:hover {
+            background: var(--color-primary-ultra-light);
+            box-shadow: var(--k-box-shadow-1-active);
         }
     }
 }
@@ -150,37 +179,6 @@ $checkedPanel: ".checked-panel";
         }
         &__title {
             padding: rem(6px 16px);
-        }
-    }
-}
-
-.efp-kiosk {
-    #{$mapControls} {
-        position: absolute;
-        left: unset !important;
-        top: var(--k-app-gap) !important;
-        right: var(--k-app-gap) !important;
-        overflow: unset;
-        width: unset;
-        box-shadow: unset;
-        row-gap: var(--k-mapControls-gap);
-    }
-    #{$mapControl} {
-        width: var(--k-mapControl-size);
-        height: var(--k-mapControl-size);
-        border-radius: var(--k-border-radius-2);
-        box-shadow: var(--k-box-shadow-1);
-        padding: var(--k-mapControl-padding);
-        transition: all 0.1s ease;
-
-        & > i {
-            font-size: rem(30px);
-            color: var(--k-color-primary);
-            opacity: 1;
-        }
-        &:hover {
-            background: var(--k-color-primaryLight);
-            box-shadow: var(--k-box-shadow-1-active);
         }
     }
 }

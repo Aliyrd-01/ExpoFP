@@ -179,32 +179,20 @@
     &__cat-title {
         flex-grow: 1;
         text-align: left;
+        font-size: var(--font-size-xl);
     }
     &__cat-count {
-        color: var(--color-gray-600);
-        font-size: 0.9em;
+        font-size: var(--font-size-md);
+        color: var(--color-gray-700);
     }
-}
-div.menu__item {
-    border-top: solid 1px var(--color-gray-400);
-    padding-bottom: 0;
-}
 
-.layout[dir="rtl"] .menu {
-    &__cat-title {
-        text-align: right;
-    }
-}
-
-.efp-kiosk {
-    .menu {
+    @include kiosk {
         height: calc(100% - (var(--k-app-gap)));
 
         &__item {
             padding: var(--k-itemsPadding-1);
         }
         &__title {
-            background: transparent;
             border-top-left-radius: var(--k-border-radius-1);
             border-top-right-radius: var(--k-border-radius-1);
         }
@@ -232,5 +220,16 @@ div.menu__item {
             border-top-left-radius: 0;
             border-top-right-radius: 0;
         }
+    }
+}
+
+div.menu__item {
+    border-top: solid 1px var(--color-gray-400);
+    padding-bottom: 0;
+}
+
+.layout[dir="rtl"] .menu {
+    &__cat-title {
+        text-align: right;
     }
 }

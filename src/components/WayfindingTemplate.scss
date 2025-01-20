@@ -9,6 +9,14 @@
     &.isCollapsed {
         gap: 0;
     }
+
+    @include kiosk {
+        gap: 0;
+
+        &__top {
+            padding-bottom: rem(30px);
+        }
+    }
 }
 
 .efp-wayfindingForm {
@@ -67,29 +75,64 @@
         &:before {
             @include icon();
             content: vars.$icon-switch-vertical;
-            font-size: 20px;
-            line-height: 1.2;
+            font-size: var(--icon-size-md);
         }
         &:hover {
             background: var(--color-gray-200);
             color: var(--color-black);
         }
     }
+
+    @include kiosk {
+        align-items: unset;
+        padding-inline-end: var(--k-spacing-lg);
+
+        &__icons-item {
+            height: var(--k-inputHeight);
+
+            &.is-from::before {
+                width: rem(24px);
+                height: rem(24px);
+            }
+            &.is-to::before {
+                width: rem(22px);
+                height: rem(28px);
+            }
+        }
+        &__icons {
+            width: rem(56px);
+            height: unset;
+            padding-left: var(--k-spacing-lg);
+        }
+        &__controls {
+            padding-right: rem(16px);
+        }
+        &__switch {
+            align-self: center;
+            width: clamp(30px, 4vw, 38px);
+            height: rem(50px);
+        }
+    }
 }
 
 .efp-wayfindingError {
     padding: rem(20px 15px);
-    border-top: 1px solid #e4e4e4;
+    border-top: 1px solid var(--color-gray-300);
     font-size: var(--font-size-xl);
     color: var(--color-gray-700);
     font-weight: var(--font-weight-bold);
     text-align: center;
 }
 
-.efp-kiosk {
-    .main-wayfinding {
+.main-wayfinding {
+    @include kiosk {
         max-height: calc(100vh - (var(--k-app-gap) * 2));
 
+        &.hidden {
+            .efp-wayfinding__top {
+                padding: 0;
+            }
+        }
         .overlay-bar {
             position: relative;
             box-shadow: unset;
@@ -110,7 +153,6 @@
         .efp-autocomplete__input {
             height: var(--k-inputHeight);
             background: rgba(255, 255, 255, 0.6);
-            font-size: 0.9em;
         }
         .efp-autocomplete {
             min-height: var(--k-inputHeight);
@@ -118,61 +160,9 @@
             &::before,
             &::after {
                 height: var(--k-inputHeight);
-                font-size: 1.2em;
             }
             &__input {
                 height: var(--k-inputHeight);
-                font-size: 0.9em;
-            }
-        }
-    }
-
-    .main-wayfinding.hidden {
-        .efp-wayfinding__top {
-            padding: 0;
-        }
-    }
-
-    .efp-wayfinding {
-        gap: 0;
-
-        &__top {
-            padding-bottom: rem(30px);
-        }
-    }
-
-    .efp-wayfindingForm {
-        align-items: unset;
-        padding-inline-end: var(--k-spacing-lg);
-
-        &__icons-item {
-            height: var(--k-inputHeight);
-
-            &.is-from::before {
-                width: 24px;
-                height: 24px;
-            }
-            &.is-to::before {
-                width: 22px;
-                height: 28px;
-            }
-        }
-
-        &__icons {
-            width: 56px;
-            height: unset;
-            padding-left: var(--k-spacing-lg);
-        }
-        &__controls {
-            padding-right: 16px;
-        }
-        &__switch {
-            align-self: center;
-            width: clamp(30px, 4vw, 38px);
-            height: 50px;
-
-            &::before {
-                font-size: 1.3em;
             }
         }
     }

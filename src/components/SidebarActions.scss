@@ -10,6 +10,10 @@ $actionButton: ".efp-actionButton";
     gap: rem(8px);
     width: 100%;
     margin-bottom: rem(18px);
+
+    @include kiosk {
+        margin-bottom: var(--k-spacing-md);
+    }
 }
 
 #{$actionButton} {
@@ -71,33 +75,20 @@ $actionButton: ".efp-actionButton";
         width: rem(40px);
         padding: 0;
     }
+
+    @include kiosk {
+        height: clamp(52px, 6.2vh, 74px);
+        background: var(--color-primary-dark);
+        box-shadow: var(--k-box-shadow-1);
+        border: 0;
+        border-radius: var(--border-radius-full);
+        color: var(--color-white);
+    }
 }
 
 .efp-visited-btn {
     flex-grow: 1;
     flex-shrink: 0;
-}
-
-.efp-kiosk {
-    #{$sidebarActions} {
-        margin-bottom: var(--k-spacing-md);
-    }
-    #{$actionButton} {
-        height: clamp(52px, 6.2vh, 74px);
-        background: var(--k-color-primaryDark);
-        box-shadow: var(--k-box-shadow-1);
-        border: 0;
-        border-radius: 60px;
-        font-size: 1.2em;
-        color: var(--color-white);
-
-        & > .icon {
-            width: 30px;
-            height: 30px;
-            fill: var(--color-white);
-            margin-right: 10px;
-        }
-    }
 }
 
 .layout[dir="rtl"] #{$actionButton} {

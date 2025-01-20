@@ -17,12 +17,12 @@
         padding: 0.2rem 0.5rem;
     }
     &__message {
-        color: #fff;
+        color: var(--color-white);
         display: flex;
         align-items: center;
 
         a {
-            color: #fff;
+            color: var(--color-white);
             text-decoration: underline;
         }
     }
@@ -31,11 +31,11 @@
         align-items: center;
         margin-inline-start: 0.5rem;
         background: #1378d5;
-        color: #fff !important;
+        color: var(--color-white) !important;
         padding: 0.1rem 0.8rem;
         text-decoration: none !important;
         border-radius: 2px;
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         font-size: 0.8rem;
 
         &:hover {

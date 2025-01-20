@@ -74,6 +74,24 @@
             font-size: var(--icon-size-md);
         }
     }
+
+    @include kiosk {
+        .gallery {
+            &__badge {
+                font-size: 1.1em;
+                height: 40px;
+
+                &-fullscreen {
+                    width: 40px;
+                }
+
+                & .icon {
+                    width: 22px;
+                    height: 22px;
+                }
+            }
+        }
+    }
 }
 
 @include responsive-classes-down-to(".gallery", md) {

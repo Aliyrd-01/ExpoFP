@@ -5,22 +5,13 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    color: #555;
-    font-weight: 700;
-
-    @include media-breakpoint-down(sm) {
-        width: rem(220px);
-    }
-
-    @include media-breakpoint-down(xs) {
-        width: rem(180px);
-    }
+    color: var(--color-gray-700);
+    font-weight: var(--font-weight-bold);
 
     &__colors {
-        height: 20px;
-        margin-bottom: 2px;
+        height: rem(20px);
+        margin-bottom: rem(2px);
     }
-
     &__values {
         display: flex;
         justify-content: space-between;
@@ -28,5 +19,13 @@
         @include media-breakpoint-down(xs) {
             font-size: 0.85em;
         }
+    }
+
+    @include media-breakpoint-down(sm) {
+        width: rem(220px);
+    }
+
+    @include media-breakpoint-down(xs) {
+        width: rem(180px);
     }
 }

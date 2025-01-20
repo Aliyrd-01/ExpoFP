@@ -1,18 +1,20 @@
+@use "@styles/utils" as *;
+
 .logo-overlay {
     display: block;
     position: absolute;
-    /* bottom: 1rem; */
-    /* right: 0.5rem; */
-    /* opacity: 0; */
     transition: opacity 0.5s;
 
     > img {
         display: block;
         width: 100%;
     }
-
     &.invert {
         filter: invert(1);
+    }
+
+    @include kiosk {
+        pointer-events: none;
     }
 }
 
@@ -31,19 +33,13 @@
     }
     & > div {
         position: relative;
-        top: -0.2rem;
-        padding-bottom: 0.4rem;
-        font-size: 0.9em;
+        top: rem(-3px);
+        padding-bottom: rem(6px);
+        font-size: var(--font-size-xxl);
         font-weight: var(--font-weight-medium);
     }
     & > svg {
         width: clamp(150px, 10vw, 100px);
         height: clamp(150px, 10vw, 100px);
-    }
-}
-
-.efp-kiosk {
-    .logo-overlay {
-        pointer-events: none;
     }
 }

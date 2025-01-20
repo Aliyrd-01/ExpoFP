@@ -140,6 +140,12 @@
     }
 }
 
+@mixin kiosk {
+    .efp-kiosk & {
+        @content;
+    }
+}
+
 @mixin icon {
     font-family: "efp-symbols" !important;
     speak: never;

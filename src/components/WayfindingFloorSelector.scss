@@ -76,6 +76,20 @@
             }
         }
     }
+
+    @include kiosk {
+        padding-top: rem(14px);
+        padding-bottom: 0;
+
+        &__list {
+            & > button {
+                width: clamp(40px, 6vw, 52px);
+                height: clamp(40px, 6vw, 52px);
+                color: var(--color-primary);
+                font-weight: var(--font-weight-bold);
+            }
+        }
+    }
 }
 
 .item-walk {
@@ -95,6 +109,16 @@
         width: rem(7px);
         height: rem(11px);
         fill: var(--color-primary);
+    }
+
+    @include kiosk {
+        width: clamp(14px, 3vw, 20px);
+        height: clamp(14px, 3vw, 20px);
+
+        & > svg {
+            width: 50%;
+            height: auto;
+        }
     }
 }
 
@@ -119,28 +143,6 @@
                     animation-delay: #{0.5 * ($i - 1)}s;
                 }
             }
-        }
-    }
-}
-
-.efp-kiosk {
-    .efp-wayfinding-floor {
-        padding-top: rem(14px);
-        padding-bottom: 0;
-    }
-    .efp-wayfinding-floor__list > button {
-        width: clamp(40px, 6vw, 52px);
-        height: clamp(40px, 6vw, 52px);
-        color: var(--k-color-primary);
-        font-weight: var(--font-weight-bold);
-    }
-    .item-walk {
-        width: clamp(14px, 3vw, 20px);
-        height: clamp(14px, 3vw, 20px);
-
-        & > svg {
-            width: 50%;
-            height: auto;
         }
     }
 }

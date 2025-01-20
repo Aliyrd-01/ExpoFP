@@ -23,28 +23,24 @@
     }
     &__label {
         flex: 1;
-        font-size: rem(16px);
+        font-size: var(--font-size-xxl);
         font-weight: var(--font-weight-medium);
         color: var(--color-black);
     }
-}
 
-.efp-kiosk .route-qr {
-    padding: 0 var(--k-spacing-lg) var(--k-spacing-lg);
+    @include kiosk {
+        padding: 0 var(--k-spacing-lg) var(--k-spacing-lg);
 
-    &__body {
-        gap: rem(24px);
-        padding-top: var(--k-spacing-md);
-        border-color: var(--color-white);
-    }
-    &__code {
-        width: var(--k-routeQr-size);
-        padding: rem(8px);
-        border-radius: rem(10px);
-        background: var(--color-white);
-    }
-    &__label {
-        font-size: rem(20px);
-        line-height: rem(22px);
+        &__body {
+            gap: rem(24px);
+            padding-top: var(--k-spacing-md);
+            border-color: var(--color-white);
+        }
+        &__code {
+            width: var(--k-routeQr-size);
+            padding: rem(8px);
+            border-radius: rem(10px);
+            background: var(--color-white);
+        }
     }
 }

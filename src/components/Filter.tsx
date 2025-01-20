@@ -13,7 +13,7 @@ function Filter() {
         const list = uiState.list as FilterType;
 
         const bar = (
-            <div className="bar">
+            <div className="efp-bar">
                 {t(`${list.query.key.charAt(0).toUpperCase()}${list.query.key.slice(1)}`)}&nbsp;<span>({list.items.length})</span>
             </div>
         );

@@ -33,7 +33,7 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
             YouAreHere.setYah(commandValue.split(",")[0]);
-             if (isLocalStorageAvailable) {
+            if (isLocalStorageAvailable) {
                 localStorage.setItem(kioskKey, "1");
                 uiState.kiosk = true;
             }
@@ -102,7 +102,7 @@ function Search() {
         get backMode() {
             return this.text ? "back" : "menu";
         },
-        get placeHolder() {            
+        get placeHolder() {
             if (settings.EXPO.startsWith("jetlag")) return "Search location or artist";
             return exhibitorStore.exhibitors.length === 0
                 ? t("Search {{boothTerm}}", { boothTerm: data.boothTerm.toLowerCase() })
@@ -179,7 +179,7 @@ function Search() {
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
         ) : null;
         const bar = (
-            <div className="search__bar" ref={el}>
+            <div className="efp-search-bar" ref={el}>
                 <input
                     type="search"
                     className={classNames({ fixed: s.hideRealInput })}

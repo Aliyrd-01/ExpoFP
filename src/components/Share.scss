@@ -6,9 +6,8 @@ $shareSocial: ".share-social";
 #{$share} {
     & > h3 {
         margin: 0;
-        font-weight: 600;
-        font-size: rem(18px);
-        line-height: rem(22px);
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-xxxl);
         color: var(--color-black);
         text-align: center;
     }
@@ -21,36 +20,36 @@ $shareSocial: ".share-social";
         & > span {
             display: block;
             margin-bottom: rem(6px);
-            font-size: rem(13px);
+            font-size: var(--font-size-md);
             color: var(--color-gray-600);
         }
     }
     &__copy-input {
         display: flex;
         align-items: center;
-        height: 40px;
+        height: rem(40px);
         border: 1px solid var(--color-gray-300);
         border-radius: var(--border-radius-xs);
 
         & > input {
             flex: 1;
-            height: 38px;
+            height: rem(38px);
             padding-inline-start: rem(14px);
             border: 0;
             outline: none;
-            font-size: rem(14px);
+            font-size: var(--font-size-lg);
             color: var(--color-gray-600);
         }
         & > button {
-            min-width: 68px;
-            height: 38px;
+            min-width: rem(68px);
+            height: rem(38px);
             padding: rem(0 8px);
             background: transparent;
             border: 0;
             cursor: pointer;
-            font-size: rem(14px);
+            font-size: var(--font-size-lg);
             color: var(--color-primary);
-            font-weight: 500;
+            font-weight: var(--font-weight-medium);
             text-align: center;
 
             &.isCopied {
@@ -61,7 +60,7 @@ $shareSocial: ".share-social";
                 }
             }
             &:hover {
-                color: var(--color-primary) Light;
+                color: var(--color-primary);
             }
         }
     }
@@ -71,7 +70,7 @@ $shareSocial: ".share-social";
     display: flex;
     flex-flow: column wrap;
     align-items: center;
-    margin: 0 15px;
+    margin: rem(0 15px);
     text-decoration: none;
 
     &__icon {
@@ -100,7 +99,7 @@ $shareSocial: ".share-social";
     &__title {
         margin-top: rem(4px);
         color: var(--color-black);
-        font-size: rem(14px);
+        font-size: var(--font-size-lg);
         transition: color 0.1s ease-in-out;
     }
     &.facebook {

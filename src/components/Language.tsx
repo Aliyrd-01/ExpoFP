@@ -20,7 +20,7 @@ const Language = observer(() => {
                 onClose={handleCloseBack}
                 onBack={handleCloseBack}
                 backMode="menu"
-                bar={<div className="bar bar--language">{t("Language")}</div>}
+                bar={<div className="efp-bar efp-bar--language">{t("Language")}</div>}
             >
                 <List updatedScrollableRef={scrollableRef} />
             </OverlayContent>

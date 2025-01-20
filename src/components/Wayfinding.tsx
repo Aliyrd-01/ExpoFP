@@ -46,7 +46,7 @@ function Wayfinding() {
     };
 
     return useObserver(() => {
-        const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
+        const bar = <div className="wayfinding__bar efp-bar">{t("Directions")}</div>;
         const boothsIDs = [];
 
         const booths = () =>

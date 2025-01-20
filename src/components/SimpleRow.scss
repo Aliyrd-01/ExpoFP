@@ -34,17 +34,8 @@
         color: var(--color-gray-600);
         overflow-wrap: break-word;
     }
-}
 
-.layout[dir="rtl"] .efp-simple-row {
-    &__main,
-    &__sub {
-        text-align: right;
-    }
-}
-
-.efp-kiosk {
-    .efp-simple-row {
+    @include kiosk {
         padding: var(--k-itemsPadding-1);
 
         &__main {
@@ -55,7 +46,16 @@
             height: unset;
             margin: 0;
             padding: 0;
-            font-size: 0.8em;
         }
+        &__col {
+            padding: 0;
+        }
+    }
+}
+
+.layout[dir="rtl"] .efp-simple-row {
+    &__main,
+    &__sub {
+        text-align: right;
     }
 }

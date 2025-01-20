@@ -7,15 +7,15 @@
     z-index: 999;
     display: flex;
     flex-flow: column wrap;
-    gap: 8px;
+    gap: rem(8px);
 }
 .toast {
     display: none;
-    padding: 12px 18px;
+    padding: rem(12px 18px);
     background: rgba(18, 19, 19, 0.9);
-    border-radius: 100px;
-    font-size: 16px;
-    color: #ffffff;
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-xl);
+    color: var(--color-white);
     line-height: 1;
     cursor: pointer;
 

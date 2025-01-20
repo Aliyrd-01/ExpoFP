@@ -94,10 +94,8 @@ $im: 0.4rem;
             background: transparent !important;
         }
     }
-}
 
-.efp-kiosk {
-    .booth {
+    @include kiosk {
         &__bar {
             padding: 0;
             margin-inline-start: var(--k-spacing-lg);

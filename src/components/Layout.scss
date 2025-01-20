@@ -36,15 +36,26 @@ a {
 .efp-kiosk {
     font-size: calc(16px + 0.25vw);
 
-    --k-color-primary: #3d91f7;
-    --k-color-primaryDark: #165eb6;
-    --k-color-primaryLight: #e5f1ff;
-    --k-color-secondary: #fb3e59;
-    --k-color-secondaryDark: #ea2b46;
-    --k-color-secondaryLight: #ffd8de;
-    --k-color-darkGray: #727272;
     --k-scale: 1;
     --k-scale-font: 1;
+
+    --font-size-xs: #{rem(15px)};
+    --font-size-sm: #{rem(16px)};
+    --font-size-md: #{rem(17px)};
+    --font-size-lg: #{rem(18px)};
+    --font-size-xl: #{rem(20px)};
+    --font-size-xxl: #{rem(22px)};
+    --font-size-xxxl: #{rem(24px)};
+
+    --icon-size-xxxs: #{rem(16px)};
+    --icon-size-xxs: #{rem(18px)};
+    --icon-size-xs: #{rem(20px)};
+    --icon-size-sm: #{rem(22px)};
+    --icon-size-md: #{rem(24px)};
+    --icon-size-lg: #{rem(26px)};
+    --icon-size-xl: #{rem(28px)};
+    --icon-size-xxl: #{rem(30px)};
+
     --k-app-gap: calc(20px * var(--k-scale));
     --k-border-radius-1: clamp(20px, 1.2vmax, 40px);
     --k-border-radius-2: 100%;
@@ -53,10 +64,9 @@ a {
     --k-box-shadow-1-active: 0px 10px 16px rgba(61, 145, 247, 0.4);
     --k-box-shadow-2: 0px 6px 10px rgba(0, 0, 0, 0.2);
 
-    // spacing defaults
-    --k-spacing-lg: calc(max(18px, 1.8vh) * var(--k-scale));
-    --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
     --k-spacing-sm: calc(max(10px, 1.4vh) * var(--k-scale));
+    --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
+    --k-spacing-lg: calc(max(18px, 1.8vh) * var(--k-scale));
 
     --k-searchBox-width: clamp(calc(200px * var(--k-scale)), calc(64vw * var(--k-scale)), calc(560px * var(--k-scale)));
     --k-searchBox-height: clamp(60px, 8vmin, 90px);

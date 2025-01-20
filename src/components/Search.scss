@@ -1,39 +1,28 @@
 @use "@styles/utils" as *;
 
-.search {
-    &__bar {
-        input {
-            border: none;
-            outline: none;
-            height: rem(56px);
-            font-size: var(--font-size-xl);
-            -webkit-appearance: none;
-            -webkit-tap-highlight-color: transparent;
-            width: 100%;
+.efp-search-bar {
+    & > input {
+        width: 100%;
+        height: rem(56px);
+        border: none;
+        outline: none;
+        font-size: var(--font-size-xl);
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
 
-            &::placeholder {
-                color: var(--color-gray-500);
-            }
-            &.fixed {
-                opacity: 0;
-                pointer-events: none;
-                position: fixed;
-                top: -100px;
-            }
+        &::placeholder {
+            color: var(--color-gray-500);
         }
-    }
-}
+        &.fixed {
+            opacity: 0;
+            pointer-events: none;
+            position: fixed;
+            top: -100px;
+        }
 
-.efp-kiosk {
-    .search__bar {
-        & > input {
+        @include kiosk {
             height: var(--k-searchBox-height);
             padding-inline-end: rem(60px);
-            font-size: var(--k-inputFontSize);
-
-            &::placeholder {
-                color: var(--k-color-darkGray);
-            }
         }
     }
 }

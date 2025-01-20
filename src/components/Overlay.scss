@@ -30,22 +30,8 @@
     @media print {
         display: none;
     }
-}
 
-.layout[dir="rtl"] {
-    .overlay.start {
-        left: unset;
-        right: 10px;
-    }
-    &.efp-kiosk {
-        .overlay {
-            right: var(--k-app-gap) !important;
-        }
-    }
-}
-
-.efp-kiosk {
-    .overlay {
+    @include kiosk {
         top: var(--k-app-gap) !important;
         left: var(--k-app-gap) !important;
         width: var(--k-searchBox-width) !important;
@@ -57,6 +43,18 @@
         &.-backdrop {
             background: transparent;
             backdrop-filter: unset;
+        }
+    }
+}
+
+.layout[dir="rtl"] {
+    .overlay.start {
+        left: unset;
+        right: 10px;
+    }
+    &.efp-kiosk {
+        .overlay {
+            right: var(--k-app-gap) !important;
         }
     }
 }

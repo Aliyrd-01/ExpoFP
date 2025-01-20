@@ -25,31 +25,27 @@
             color: var(--color-black);
         }
     }
-}
 
-.layout[dir="rtl"] .overlay-bar-back {
-    .icon-chevron-left {
-        transform: rotateY(180deg);
-    }
-}
-
-.efp-kiosk {
-    .overlay-bar-back {
+    @include kiosk {
         width: rem(70px);
         height: calc(var(--k-searchBox-height) - 10px);
         padding-inline-start: 10px;
         justify-content: center;
         align-items: center;
         align-self: center;
-    }
-    .overlay-bar-back__button {
-        color: var(--k-color-primary) !important;
 
-        &:hover {
-            color: var(--color-black) !important;
+        &__button {
+            color: var(--color-primary) !important;
+
+            &:hover {
+                color: var(--color-black) !important;
+            }
         }
-        & > i {
-            font-size: rem(32px);
-        }
+    }
+}
+
+.layout[dir="rtl"] .overlay-bar-back {
+    .icon-chevron-left {
+        transform: rotateY(180deg);
     }
 }
