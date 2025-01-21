@@ -116,16 +116,20 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) public get fullName() {
+        let result = `${this.yah ? this.title : this.name}`;
+
         if (this.layer?.mode > 1 && data.showLevelLabel) {
-            const meta = this.meta
-                ? Object.entries(this.meta)
-                    .filter(([key]) => !key.startsWith("_"))
-                    .map(([key, value]) => `${key} ${value}`)
-                    .join(" ")
-                : "";
-            return `${this.yah ? this.title : this.name} ${data.levelTerm} ${this.layer.description} ${meta}`.replace(/\s+/g, " ").trim();
+            result = `${result} ${data.levelTerm} ${this.layer.description}`;
         }
-        return this.yah ? this.title : this.name;
+
+        const meta = this.meta
+            ? Object.entries(this.meta)
+                .filter(([key]) => !key.startsWith("_"))
+                .map(([key, value]) => `${key} ${value}`)
+                .join(" ")
+            : "";
+
+        return `${result} ${meta}`.replace(/\s+/g, " ").trim();
     }
 
     @computed({ keepAlive: true }) get visible() {
