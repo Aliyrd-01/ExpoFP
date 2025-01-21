@@ -3,34 +3,37 @@
     $w: 3rem;
     $s: 0.2rem;
 
-    display: block;
     position: absolute;
-    left: 0;
     right: 0;
-    margin: 0 auto;
+    left: 0;
+    z-index: 2;
+    display: block;
     width: $w;
     height: $h;
-    z-index: 2;
+    margin: 0 auto;
 
     > svg {
+        display: block;
         width: $w;
         height: $h;
-        display: block;
 
         > path {
-            stroke: var(--color-gray-500);
-            stroke-width: 70;
             fill: none;
+            stroke: var(--color-gray-500);
             stroke-linecap: round;
+            stroke-width: 70;
+
             &:first-child {
                 display: none;
             }
         }
     }
+
     &.arr > svg > path {
         &:first-child {
             display: inherit;
         }
+
         &:last-child {
             display: none;
         }

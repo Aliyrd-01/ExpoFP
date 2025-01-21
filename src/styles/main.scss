@@ -4,7 +4,6 @@
 .layout {
     --font-family: "Inter", -apple-system, system-ui, sans-serif;
     --app-font-family: var(--expofp-font-face, var(--font-family));
-
     --font-size-xs: #{utils.rem(11px)};
     --font-size-sm: #{utils.rem(12px)};
     --font-size-md: #{utils.rem(13px)};
@@ -12,16 +11,12 @@
     --font-size-xl: #{utils.rem(15px)};
     --font-size-xxl: #{utils.rem(16px)};
     --font-size-xxxl: #{utils.rem(17px)};
-
     --line-height-lg: 1.3;
-
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-bold: 600;
-
-    --color-white: #ffffff;
+    --color-white: #fff;
     --color-black: #16171a;
-
     --color-gray-100: #f9fafb;
     --color-gray-200: #f2f4f7;
     --color-gray-300: #eaecf0;
@@ -31,37 +26,31 @@
     --color-gray-700: #57595d;
     --color-gray-800: #3f4144;
     --color-gray-900: #28292c;
-
     --color-primary-ultra-light: #e1eeff;
     --color-primary-light: #7bb6ff;
     --color-primary: #2382f4;
     --color-primary-dark: #165eb6;
     --color-primary-ultra-dark: #00316c;
-
     --color-secondary-ultra-light: #ffe2e8;
     --color-secondary-light: #ff9cb7;
     --color-secondary: #f41767;
     --color-secondary-dark: #cd0351;
     --color-secondary-ultra-dark: #920947;
-
     --color-green-ultra-light: #affbd2;
     --color-green-light: #58e499;
     --color-green: #1fd171;
     --color-green-dark: #1c8f51;
     --color-green-ultra-dark: #14673c;
-
     --color-orange-ultra-light: #fcefc9;
     --color-orange-light: #f8dd8f;
     --color-orange: #f9cb5d;
     --color-orange-dark: #ea9016;
     --color-orange-ultra-dark: #d56b0a;
-
     --color-red-ultra-light: #ffcdc8;
     --color-red-light: #f97165;
     --color-red: #e1463c;
     --color-red-dark: #a51c12;
     --color-red-ultra-dark: #912a23;
-
     --color-exhibitor: #2ca6ff;
     --color-booth: #516eff;
     --color-event: #9044f6;
@@ -73,30 +62,25 @@
     --color-sponsorship-light: #fee8ce;
     --color-sponsorship: #e87f00;
     --color-sponsorship-dark: #ff8c00;
-
-    --shadow-xs: 0px 1px 3px 0px rgba(16, 24, 40, 0.3);
-    --shadow-sm: 0px 2px 8px -2px rgba(16, 24, 40, 0.4);
-    --shadow-md: 0px 6px 16px -2px rgba(16, 24, 40, 0.2), 0px 0px 1px 0px rgba(16, 24, 40, 0.4);
-    --shadow-lg: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px 10px 28px -2px rgba(16, 24, 40, 0.4);
-    --shadow-inverted-xs: 0px -1px 3px 0px rgba(16, 24, 40, 0.16);
-    --shadow-inverted-sm: 0px -2px 8px -2px rgba(16, 24, 40, 0.2);
-    --shadow-inverted-md: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px -6px 16px -2px rgba(16, 24, 40, 0.18);
-    --shadow-inverted-lg: 0px 0px 1px 0px rgba(16, 24, 40, 0.14), 0px -10px 28px -2px rgba(16, 24, 40, 0.2);
-
+    --shadow-xs: 0px 1px 3px 0px rgb(16 24 40 / 30%);
+    --shadow-sm: 0px 2px 8px -2px rgb(16 24 40 / 40%);
+    --shadow-md: 0px 6px 16px -2px rgb(16 24 40 / 20%), 0px 0px 1px 0px rgb(16 24 40 / 40%);
+    --shadow-lg: 0px 0px 1px 0px rgb(16 24 40 / 14%), 0px 10px 28px -2px rgb(16 24 40 / 40%);
+    --shadow-inverted-xs: 0px -1px 3px 0px rgb(16 24 40 / 16%);
+    --shadow-inverted-sm: 0px -2px 8px -2px rgb(16 24 40 / 20%);
+    --shadow-inverted-md: 0px 0px 1px 0px rgb(16 24 40 / 14%), 0px -6px 16px -2px rgb(16 24 40 / 18%);
+    --shadow-inverted-lg: 0px 0px 1px 0px rgb(16 24 40 / 14%), 0px -10px 28px -2px rgb(16 24 40 / 20%);
     --border-radius-xs: #{utils.rem(4px)};
     --border-radius-sm: #{utils.rem(6px)};
     --border-radius-md: #{utils.rem(8px)};
     --border-radius-lg: #{utils.rem(12px)};
     --border-radius-xl: #{utils.rem(16px)};
     --border-radius-full: #{utils.rem(50px)};
-
     --backdrop-blur-ex: blur(8px);
     --backdrop-blur-sm: blur(10px);
     --backdrop-blur-md: blur(12px);
     --backdrop-blur-lg: blur(14px);
-
     --transition-duration: 0.1s;
-
     --icon-size-xxxs: #{utils.rem(12px)};
     --icon-size-xxs: #{utils.rem(14px)};
     --icon-size-xs: #{utils.rem(16px)};
@@ -108,7 +92,7 @@
 }
 
 *,
-*:before,
-*:after {
+*::before,
+*::after {
     box-sizing: border-box;
 }

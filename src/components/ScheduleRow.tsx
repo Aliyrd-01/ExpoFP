@@ -2,7 +2,6 @@ import dateFormat from "dateformat";
 import React from "react";
 import store, { boothStore, exhibitorStore } from "../store";
 import { ScheduleItem } from "../store/ScheduleStore";
-import "./CategoryRow.scss";
 import SimpleRow from "./SimpleRow";
 
 const ScheduleItemRow: React.FC<{

@@ -6,50 +6,53 @@
     color: var(--color-black);
     text-align: left;
 
-    &.featured {
-        .exhibitor-row__lines {
-            font-weight: var(--font-weight-bold);
-        }
-    }
     &__lines {
-        padding-inline-start: rem(16px);
-        padding-inline-end: rem(2px);
         flex-grow: 1;
         overflow: hidden;
-        text-overflow: ellipsis;
         font-size: var(--font-size-xl);
+        text-overflow: ellipsis;
+        padding-inline: rem(16px) rem(2px);
 
         & > div {
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .icon-diamond {
-            color: var(--color-primary);
             font-size: var(--icon-size-sm);
+            color: var(--color-primary);
         }
     }
+
     &__info {
-        padding-inline-end: rem(16px);
         min-width: rem(64px);
-        text-align: end;
-        font-weight: var(--font-weight-bold);
         font-size: var(--font-size-md);
+        font-weight: var(--font-weight-bold);
         color: var(--color-gray-800);
+        text-align: end;
         overflow-wrap: break-word;
+        padding-inline-end: rem(16px);
     }
+
     &__bookmark {
         align-self: stretch;
-        padding-inline-start: rem(16px);
-        padding-inline-end: rem(8px);
+        padding-inline: rem(16px) rem(8px);
         outline: none;
     }
 
+    &.featured {
+        .exhibitor-row__lines {
+            font-weight: var(--font-weight-bold);
+        }
+    }
+
     @include kiosk {
-        padding: var(--k-itemsPadding-1);
+        padding: var(--k-items-padding-1);
 
         &__lines {
             padding-inline-start: 0;
         }
+
         &__info {
             padding-inline-end: 0;
         }

@@ -1,10 +1,11 @@
 .bookmark-svg {
     display: block;
-    fill: rgba(0, 0, 0, 0.135);
+    fill: rgb(0 0 0 / 13.5%);
 
     .-exhibitor-featured & {
         fill: #ddd;
     }
+
     .bookmarked & {
         fill: var(--color-bookmarked);
     }

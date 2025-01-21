@@ -11,6 +11,7 @@
     }
 
     $test-list: ();
+
     @each $item in $list {
         $test-list: append($test-list, $item, space);
     }
@@ -62,6 +63,7 @@
             @if vars.$rem-fallback or vars.$rem-px-only {
                 #{$property}: rem-convert(px, $values...);
             }
+
             @if not vars.$rem-px-only {
                 #{$property}: rem-convert(rem, $values...);
             }
@@ -71,24 +73,29 @@
 
 @function breakpoint-next($name, $breakpoints: vars.$grid-breakpoints, $breakpoint-names: map-keys($breakpoints)) {
     $n: index($breakpoint-names, $name);
+
     @if not $n {
         @error "breakpoint `#{$name}` not found in `#{$breakpoints}`";
     }
+
     @return if($n < length($breakpoint-names), nth($breakpoint-names, $n + 1), null);
 }
 
 @function breakpoint-min($name, $breakpoints: vars.$grid-breakpoints) {
     $min: map-get($breakpoints, $name);
+
     @return if($min != 0, $min, null);
 }
 
 @function breakpoint-max($name, $breakpoints: vars.$grid-breakpoints) {
     $next: breakpoint-next($name, $breakpoints);
+
     @return if($next, breakpoint-min($next, $breakpoints), null);
 }
 
 @mixin media-breakpoint-down($name, $breakpoints: vars.$grid-breakpoints) {
     $max: breakpoint-max($name, $breakpoints);
+
     @if $max {
         @media (max-width: $max) {
             @content;
@@ -100,6 +107,7 @@
 
 @mixin media-breakpoint-up($name, $breakpoints: vars.$grid-breakpoints) {
     $min: breakpoint-min($name, $breakpoints);
+
     @if $min {
         @media (min-width: $min) {
             @content;
@@ -147,14 +155,14 @@
 }
 
 @mixin icon {
-    font-family: "efp-symbols" !important;
-    speak: never;
+    font-family: efp-symbols !important;
     font-size: 24px;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
-    text-transform: none;
     line-height: 1;
+    text-transform: none;
+    speak: never;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

@@ -1,13 +1,13 @@
 @use "@styles/utils" as *;
 
-$sidebarActions: ".efp-sidebarActions";
-$actionButton: ".efp-actionButton";
+$sidebar-actions: ".efp-sidebarActions";
+$action-button: ".efp-actionButton";
 
-#{$sidebarActions} {
+#{$sidebar-actions} {
     display: flex;
     flex-flow: row wrap;
-    align-items: center;
     gap: rem(8px);
+    align-items: center;
     width: 100%;
     margin-bottom: rem(18px);
 
@@ -16,19 +16,19 @@ $actionButton: ".efp-actionButton";
     }
 }
 
-#{$actionButton} {
+#{$action-button} {
     display: flex;
-    justify-content: center;
-    align-items: center;
     gap: rem(6px);
-    overflow: hidden;
+    align-items: center;
+    justify-content: center;
     height: rem(40px);
     padding: rem(0 12px 0 8px);
+    overflow: hidden;
     background: var(--color-white);
     border: 1px solid var(--color-primary);
     border-radius: var(--border-radius-full);
-    font-weight: var(--font-weight-medium);
     font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
     color: var(--color-primary);
     cursor: pointer;
     transition: background 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
@@ -36,13 +36,16 @@ $actionButton: ".efp-actionButton";
     &:hover {
         background: var(--color-primary-ultra-light);
     }
+
     &:active {
         background: var(--color-primary-ultra-light);
-        box-shadow: 0px 0px 8px rgba(61, 145, 247, 0.3);
+        box-shadow: 0 0 8px rgb(61 145 247 / 30%);
     }
+
     [class^="icon-"] {
         font-size: var(--icon-size-sm);
     }
+
     &--directions {
         flex-grow: 4;
         flex-shrink: 0.5;
@@ -52,10 +55,12 @@ $actionButton: ".efp-actionButton";
         &:hover {
             background: var(--color-primary-dark);
         }
+
         & > .icon {
             fill: var(--color-white);
         }
     }
+
     &--bookmark {
         width: rem(40px);
         padding: 0;
@@ -66,11 +71,13 @@ $actionButton: ".efp-actionButton";
             &:hover {
                 background: var(--color-gray-100);
             }
+
             [class^="icon-"] {
                 color: var(--color-bookmarked);
             }
         }
     }
+
     &--share {
         width: rem(40px);
         padding: 0;
@@ -79,9 +86,9 @@ $actionButton: ".efp-actionButton";
     @include kiosk {
         height: clamp(52px, 6.2vh, 74px);
         background: var(--color-primary-dark);
-        box-shadow: var(--k-box-shadow-1);
         border: 0;
         border-radius: var(--border-radius-full);
+        box-shadow: var(--k-box-shadow-1);
         color: var(--color-white);
     }
 }
@@ -91,7 +98,7 @@ $actionButton: ".efp-actionButton";
     flex-shrink: 0;
 }
 
-.layout[dir="rtl"] #{$actionButton} {
+.layout[dir="rtl"] #{$action-button} {
     &--directions .icon {
         transform: scaleX(-1);
     }

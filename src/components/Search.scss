@@ -7,21 +7,22 @@
         border: none;
         outline: none;
         font-size: var(--font-size-xl);
-        -webkit-appearance: none;
+        appearance: none;
         -webkit-tap-highlight-color: transparent;
 
         &::placeholder {
             color: var(--color-gray-600);
         }
+
         &.fixed {
-            opacity: 0;
-            pointer-events: none;
             position: fixed;
             top: -100px;
+            opacity: 0;
+            pointer-events: none;
         }
 
         @include kiosk {
-            height: var(--k-searchBox-height);
+            height: var(--k-searchbox-height);
             padding-inline-end: rem(60px);
         }
     }

@@ -1,18 +1,18 @@
 @use "@styles/vars";
 @use "@styles/utils" as *;
 
-$mapControls: ".map-controls";
-$mapFixedControls: ".fixed-controls";
-$mapControl: ".map-control";
-$layersButton: ".layers-button";
-$checkedPanel: ".checked-panel";
+$map-controls: ".map-controls";
+$map-fixed-controls: ".fixed-controls";
+$map-control: ".map-control";
+$layers-button: ".layers-button";
+$checked-panel: ".checked-panel";
 
-#{$mapControls} {
+#{$map-controls} {
     position: absolute;
+    z-index: 101;
     display: grid;
     row-gap: rem(6px);
     width: rem(36px);
-    z-index: 101;
     opacity: 0;
 
     &.-ready {
@@ -21,36 +21,37 @@ $checkedPanel: ".checked-panel";
 
     @include kiosk {
         position: absolute;
-        left: unset !important;
         top: var(--k-app-gap) !important;
         right: var(--k-app-gap) !important;
-        overflow: unset;
+        left: unset !important;
+        row-gap: var(--k-mapcontrols-gap);
         width: unset;
+        overflow: unset;
         box-shadow: unset;
-        row-gap: var(--k-mapControls-gap);
     }
 }
-#{$mapFixedControls} {
+#{$map-fixed-controls} {
     position: fixed;
 }
-#{$mapControl} {
+#{$map-control} {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     width: rem(38px);
     height: rem(38px);
     padding: 0;
     background: var(--color-white);
     border: 0;
     border-radius: var(--border-radius-full);
-    box-shadow: var(--shadow-md);
     outline: none;
+    box-shadow: var(--shadow-md);
     cursor: pointer;
 
     & > i {
         font-size: var(--icon-size-md);
         color: var(--color-gray-800);
     }
+
     &:hover {
         background: var(--color-gray-200);
 
@@ -58,26 +59,28 @@ $checkedPanel: ".checked-panel";
             color: var(--color-black);
         }
     }
+
     &.isActive {
         & > i {
-            color: var(--color-primary);
             opacity: 1;
+            color: var(--color-primary);
         }
     }
 
     @include kiosk {
-        width: var(--k-mapControl-size);
-        height: var(--k-mapControl-size);
+        width: var(--k-mapcontrol-size);
+        height: var(--k-mapcontrol-size);
+        padding: 0;
         border-radius: var(--k-border-radius-2);
         box-shadow: var(--k-box-shadow-1);
-        padding: 0;
         transition: all 0.1s ease;
 
         & > i {
-            color: var(--color-primary);
-            font-size: var(--icon-size-lg);
             opacity: 1;
+            font-size: var(--icon-size-lg);
+            color: var(--color-primary);
         }
+
         &:hover,
         &.isActive {
             background: var(--color-primary-ultra-light);
@@ -86,10 +89,10 @@ $checkedPanel: ".checked-panel";
     }
 }
 
-#{$checkedPanel} {
+#{$checked-panel} {
     position: absolute;
-    left: rem(44px);
     top: 0;
+    left: rem(44px);
     min-width: rem(150px);
     background: var(--color-white);
     border-radius: var(--border-radius-sm);
@@ -101,17 +104,19 @@ $checkedPanel: ".checked-panel";
         background-color: var(--color-white);
         box-shadow: var(--shadow-md);
     }
-    &:before {
+
+    &::before {
         content: "";
         position: absolute;
         top: rem(12px);
         left: -1px;
-        transform: translateX(-50%);
+        z-index: 1;
+        border-top: rem(8px) solid transparent;
         border-right: rem(8px) solid var(--color-white);
         border-bottom: rem(8px) solid transparent;
-        border-top: rem(8px) solid transparent;
-        z-index: 1;
+        transform: translateX(-50%);
     }
+
     &__title {
         display: flex;
         align-items: center;
@@ -121,11 +126,12 @@ $checkedPanel: ".checked-panel";
         font-weight: var(--font-weight-bold);
         user-select: none;
     }
+
     & > ul {
         margin: 0;
         padding: rem(6px 0);
-        list-style: none;
         border-radius: var(--border-radius-sm);
+        list-style: none;
 
         & > li {
             input[type="checkbox"] {
@@ -135,30 +141,33 @@ $checkedPanel: ".checked-panel";
                     position: relative;
                     display: flex;
                     align-items: center;
-                    padding: rem(6px 16px 6px 40px);
                     width: 100%;
+                    padding: rem(6px 16px 6px 40px);
                     font-size: var(--font-size-lg);
                     color: var(--color-gray-700);
-                    user-select: none;
                     cursor: pointer;
+                    user-select: none;
 
-                    &:before {
+                    &::before {
+                        content: vars.$icon-eye-off;
                         position: absolute;
                         top: rem(9px);
                         left: rem(14px);
-                        @include icon();
-                        content: vars.$icon-eye-off;
                         font-size: var(--icon-size-ex);
                         color: var(--color-gray-400);
+
+                        @include icon;
                     }
+
                     &:hover {
                         background: var(--color-gray-200);
                     }
                 }
+
                 &:checked ~ label {
                     color: var(--color-black);
 
-                    &:before {
+                    &::before {
                         content: vars.$icon-eye;
                         color: var(--color-primary);
                     }
@@ -168,18 +177,19 @@ $checkedPanel: ".checked-panel";
     }
 
     @include kiosk {
+        right: calc(var(--k-mapcontrol-size) + rem(14px));
         left: unset;
-        right: calc(var(--k-mapControl-size) + rem(14px));
 
-        &:before {
-            top: calc(var(--k-mapControl-size) / 2 - rem(8px));
-            left: unset;
+        &::before {
+            top: calc(var(--k-mapcontrol-size) / 2 - rem(8px));
             right: rem(-12px);
-            border-right: unset;
-            border-left: rem(8px) solid var(--color-white);
-            border-bottom: rem(8px) solid transparent;
+            left: unset;
             border-top: rem(8px) solid transparent;
+            border-right: unset;
+            border-bottom: rem(8px) solid transparent;
+            border-left: rem(8px) solid var(--color-white);
         }
+
         & > ul {
             width: 100%;
 
@@ -188,7 +198,7 @@ $checkedPanel: ".checked-panel";
                     & ~ label {
                         padding: rem(10px 16px 10px 40px);
 
-                        &:before {
+                        &::before {
                             top: rem(12px);
                         }
                     }
@@ -198,18 +208,19 @@ $checkedPanel: ".checked-panel";
     }
 }
 
-#{$layersButton} {
+#{$layers-button} {
     position: relative;
     display: inline-flex;
 }
 
-@include responsive-classes-down-to($mapControls, sm) {
-    #{$checkedPanel} {
+@include responsive-classes-down-to($map-controls, sm) {
+    #{$checked-panel} {
         left: rem(40px);
 
-        &:before {
+        &::before {
             top: rem(8px);
         }
+
         &__title {
             padding: rem(6px 16px);
         }

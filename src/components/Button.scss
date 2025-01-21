@@ -11,22 +11,24 @@ a.efp-button {
     border: 0;
     border-radius: var(--border-radius-full);
     outline: none;
-    cursor: pointer;
-    color: var(--color-white);
     font-family: var(--app-font-family);
     font-weight: var(--font-weight-medium);
+    color: var(--color-white);
     text-decoration: none;
+    cursor: pointer;
     transition: background 0.1s ease-in-out;
 
     &:hover {
         background: var(--color-primary-dark);
         color: var(--color-white);
     }
+
     &:active {
         background: var(--color-primary);
-        box-shadow: 0px 0px 8px rgba(61, 145, 247, 0.3);
+        box-shadow: 0 0 8px rgb(61 145 247 / 30%);
         color: var(--color-white);
     }
+
     &:disabled,
     &--disabled {
         background: var(--color-gray-500);
@@ -38,10 +40,12 @@ a.efp-button {
             box-shadow: unset;
         }
     }
+
     &--inline {
         display: inline-flex;
         width: auto;
     }
+
     &--secondary {
         background: var(--color-primary-ultra-light);
         color: var(--color-primary);
@@ -52,6 +56,7 @@ a.efp-button {
             color: var(--color-primary-dark);
         }
     }
+
     &--gray {
         background: var(--color-gray-200);
         color: var(--color-black);
@@ -62,6 +67,7 @@ a.efp-button {
             color: var(--color-black);
         }
     }
+
     &--gray-border {
         background: var(--color-white);
         border: 1px solid var(--color-gray-400);
@@ -74,18 +80,21 @@ a.efp-button {
             color: var(--color-black);
         }
     }
+
     &--lg {
         min-width: rem(160px);
         min-height: rem(42px);
         padding: rem(10px 20px);
         font-size: var(--font-size-xl);
     }
+
     &--md {
         min-width: rem(140px);
         min-height: rem(38px);
         padding: rem(8px 18px);
         font-size: var(--font-size-lg);
     }
+
     &--sm {
         min-width: rem(100px);
         min-height: rem(30px);

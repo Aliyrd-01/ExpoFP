@@ -12,13 +12,13 @@
             min-width: rem(18px);
             min-height: rem(18px);
             padding-left: rem(30px);
-            color: var(--color-gray-800);
             font-size: rem(16px);
             font-weight: var(--font-weight-medium);
+            color: var(--color-gray-800);
             cursor: pointer;
             user-select: none;
 
-            &:before {
+            &::before {
                 content: "";
                 position: absolute;
                 top: 1px;
@@ -29,23 +29,27 @@
                 border: 1px solid var(--color-gray-400);
                 border-radius: var(--border-radius-sm);
             }
-            &:after {
+
+            &::after {
                 content: "";
+                content: vars.$icon-checkmark;
                 position: absolute;
                 top: 2px;
                 left: 1px;
-                @include icon();
-                content: vars.$icon-checkmark;
+                opacity: 0;
                 font-size: var(--icon-size-sm);
                 color: var(--color-primary);
-                opacity: 0;
+
+                @include icon;
             }
         }
+
         &:checked ~ label {
-            &:before {
+            &::before {
                 border-color: var(--color-primary);
             }
-            &:after {
+
+            &::after {
                 opacity: 1;
             }
         }

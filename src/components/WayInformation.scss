@@ -1,19 +1,9 @@
 @use "@styles/utils" as *;
 
-.efp-wayfinding.isCollapsed {
-    .efp-wayInformation {
-        padding-top: rem(4px);
-        border-top: 0;
-    }
-    .efp-wayInformation__item strong {
-        margin-top: rem(-2px);
-    }
-}
-
 .efp-wayInformation {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     max-width: rem(800px);
     margin: 0 auto;
     padding: rem(10px 15px 20px);
@@ -25,19 +15,21 @@
         span {
             display: flex;
             font-size: var(--font-size-md);
-            color: var(--color-gray);
             font-weight: var(--font-weight-medium);
+            color: var(--color-gray);
         }
+
         strong {
             display: block;
             font-size: var(--font-size-xxl);
-            color: var(--color-black);
             font-weight: var(--font-weight-bold);
+            color: var(--color-black);
         }
+
         &.is-accessible strong {
-            color: var(--color-primary);
-            display: flex;
             position: relative;
+            display: flex;
+            color: var(--color-primary);
         }
     }
 
@@ -50,5 +42,16 @@
                 padding: 0;
             }
         }
+    }
+}
+
+.efp-wayfinding.isCollapsed {
+    .efp-wayInformation {
+        padding-top: rem(4px);
+        border-top: 0;
+    }
+
+    .efp-wayInformation__item strong {
+        margin-top: rem(-2px);
     }
 }

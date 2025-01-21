@@ -2,14 +2,14 @@
 
 .layers-loading {
     position: absolute;
-    bottom: 60px;
     right: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease;
-    pointer-events: none;
+    bottom: 60px;
     z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: all 0.3s ease;
 
     &.is-hidden {
         opacity: 0;
@@ -23,11 +23,11 @@
 
         & > circle {
             fill: none;
-            stroke: rgba(65, 182, 231, 1);
-            stroke-width: 2;
+            stroke: rgb(65 182 231 / 100%);
             stroke-dasharray: 1, 200;
             stroke-dashoffset: 0;
             stroke-linecap: round;
+            stroke-width: 2;
             animation: dash 1.5s ease-in-out infinite;
         }
 
@@ -57,10 +57,12 @@
         stroke-dasharray: 1, 200;
         stroke-dashoffset: 0;
     }
+
     50% {
         stroke-dasharray: 90, 200;
         stroke-dashoffset: -35px;
     }
+
     100% {
         stroke-dashoffset: -125px;
     }

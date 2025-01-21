@@ -2,7 +2,6 @@ $rem-baseline: 16;
 $rem-baseline-px: 16px;
 $rem-fallback: false;
 $rem-px-only: false;
-
 $grid-breakpoints: (
     xs: 0,
     sm: 480px,
@@ -10,10 +9,8 @@ $grid-breakpoints: (
     lg: 998px,
     xl: 1100px,
 );
-
 $icons-font-family: "efp-symbols" !default;
 $icons-font-path: "../../public/fonts" !default;
-
 $icon-share: "\e900";
 $icon-share-second: "\e901";
 $icon-shopping-bag: "\e902";

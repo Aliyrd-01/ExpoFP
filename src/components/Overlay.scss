@@ -6,27 +6,30 @@
     left: 10px;
     z-index: 103;
     height: calc(100vh - 20px);
+    overflow: hidden;
     background: var(--color-white);
     border-radius: var(--border-radius-xl);
-    transition: background-color 0.5s;
     box-shadow: var(--shadow-md);
-    overflow: hidden;
+    transition: background-color 0.5s;
 
     &.collapsed {
         bottom: unset;
     }
+
     &.medium.bottom,
     &.small.bottom {
         border-radius: 0.5rem 0.5rem 0 0;
     }
+
     &.-backdrop {
-        background-color: rgba(255, 255, 255, 0.6);
-        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        background-color: rgb(255 255 255 / 60%);
         backdrop-filter: saturate(180%) blur(20px);
     }
+
     &.-no-transition {
         transition: none;
     }
+
     @media print {
         display: none;
     }
@@ -34,11 +37,11 @@
     @include kiosk {
         top: var(--k-app-gap) !important;
         left: var(--k-app-gap) !important;
-        width: var(--k-searchBox-width) !important;
+        width: var(--k-searchbox-width) !important;
+        overflow: unset;
         background: transparent;
         box-shadow: unset;
         pointer-events: none;
-        overflow: unset;
 
         &.-backdrop {
             background: transparent;
@@ -49,9 +52,10 @@
 
 .layout[dir="rtl"] {
     .overlay.start {
-        left: unset;
         right: 10px;
+        left: unset;
     }
+
     &.efp-kiosk {
         .overlay {
             right: var(--k-app-gap) !important;

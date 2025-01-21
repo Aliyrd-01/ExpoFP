@@ -1,45 +1,5 @@
 @use "@styles/utils" as *;
 
-.efp-toggle-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: rem(6px);
-    min-height: rem(42px);
-    max-width: rem(400px);
-    padding: rem(0 14px);
-    background: var(--color-white);
-    border: 1px solid var(--color-gray-500);
-    border-radius: var(--border-radius-full);
-    outline: none;
-    cursor: pointer;
-    color: var(--color-gray-600);
-    font-family: var(--app-font-family);
-    font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-lg);
-    text-decoration: none;
-    transition: background 0.1s ease-in-out;
-
-    &:hover {
-        background: var(--color-gray-100);
-        border-color: var(--color-gray-600);
-    }
-    &.toggled {
-        border-color: var(--color-primary);
-        color: var(--color-primary);
-
-        &:hover {
-            border-color: var(--color-primary-dark);
-        }
-        .efp-toggle-switch {
-            background: var(--color-primary);
-        }
-        .efp-toggle-switch__slider {
-            transform: translateX(rem(10px));
-        }
-    }
-}
-
 .efp-toggle-switch {
     position: relative;
     width: rem(26px);
@@ -57,5 +17,48 @@
         background: var(--color-white);
         border-radius: var(--border-radius-full);
         transition: transform 0.2s;
+    }
+}
+
+.efp-toggle-button {
+    display: flex;
+    gap: rem(6px);
+    align-items: center;
+    justify-content: center;
+    max-width: rem(400px);
+    min-height: rem(42px);
+    padding: rem(0 14px);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-500);
+    border-radius: var(--border-radius-full);
+    outline: none;
+    font-family: var(--app-font-family);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-gray-600);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.1s ease-in-out;
+
+    &:hover {
+        background: var(--color-gray-100);
+        border-color: var(--color-gray-600);
+    }
+
+    &.toggled {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+
+        &:hover {
+            border-color: var(--color-primary-dark);
+        }
+
+        .efp-toggle-switch {
+            background: var(--color-primary);
+        }
+
+        .efp-toggle-switch__slider {
+            transform: translateX(rem(10px));
+        }
     }
 }

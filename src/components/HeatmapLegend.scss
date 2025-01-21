@@ -1,17 +1,18 @@
 @use "@styles/utils" as *;
 
 .heatmap-legend {
-    width: rem(400px);
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
-    color: var(--color-gray-700);
+    width: rem(400px);
     font-weight: var(--font-weight-bold);
+    color: var(--color-gray-700);
+    transform: translateX(-50%);
 
     &__colors {
         height: rem(20px);
         margin-bottom: rem(2px);
     }
+
     &__values {
         display: flex;
         justify-content: space-between;

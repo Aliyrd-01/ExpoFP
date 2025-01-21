@@ -9,7 +9,7 @@
         display: flex;
         border-top: 1px solid #d7d9dc;
 
-        &:before {
+        &::before {
             content: "";
             position: absolute;
             top: -1px;
@@ -19,11 +19,12 @@
             background: #7f828a;
         }
     }
+
     &__date {
         display: flex;
         flex-flow: column wrap;
-        align-items: center;
         gap: 1px;
+        align-items: center;
         width: 44px;
         padding: 14px 0 18px;
 
@@ -32,31 +33,35 @@
                 font-size: var(--font-size-xxl);
                 font-weight: var(--font-weight-medium);
             }
+
             &:nth-child(2) {
                 font-size: var(--font-size-lg);
                 font-weight: var(--font-weight-medium);
                 color: #54585f;
             }
+
             &:nth-child(3) {
                 font-size: var(--font-size-lg);
                 color: #54585f;
             }
         }
     }
+
     &__events {
         flex: 1;
         padding: 10px 0 10px 18px;
     }
+
     &__event {
         display: block;
         padding: 8px 12px;
         border-radius: var(--border-radius-sm);
-        transition: background var(--transition-duration) ease;
         text-decoration: none;
+        transition: background var(--transition-duration) ease;
 
         &.ended {
-            color: var(--color-gray);
             opacity: 0.7;
+            color: var(--color-gray);
         }
 
         &.current {
@@ -66,27 +71,32 @@
         &:hover {
             background: #f2f4f7;
         }
+
         & > span {
             display: block;
             font-size: var(--font-size-lg);
             color: #54585f;
         }
+
         & > strong {
             display: block;
             padding-top: 2px;
             font-weight: var(--font-weight-bold);
         }
     }
+
     &__event[href] {
+        & > strong {
+            color: var(--color-primary);
+        }
+
         &:hover {
             & > strong {
                 color: var(--color-primary-dark);
             }
         }
-        & > strong {
-            color: var(--color-primary);
-        }
     }
+
     &__event-desc {
         margin: 6px 0;
         font-size: var(--font-size-lg);
@@ -102,9 +112,10 @@
     .schedule__event > span,
     .schedule__event-desc,
     .schedule__date > div {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgb(255 255 255 / 70%);
     }
+
     .schedule__event:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgb(255 255 255 / 10%);
     }
 }

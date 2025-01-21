@@ -2,31 +2,35 @@
 
 .radio {
     display: inline-grid;
-    cursor: pointer;
     grid-auto-flow: column;
-    place-content: center start;
     gap: rem(12px);
+    place-content: center start;
+    cursor: pointer;
 
     &:hover {
         background: var(--color-gray-100);
     }
+
     &__input {
         display: none;
     }
+
     &__control {
         display: inline-grid;
         width: rem(18px);
         height: rem(18px);
-        border-radius: var(--border-radius-full);
         border: 1px solid var(--color-gray-500);
+        border-radius: var(--border-radius-full);
     }
+
     &__label {
         font-size: var(--font-size-xl);
         font-weight: var(--font-weight-normal);
-        letter-spacing: 0.02em;
         line-height: 1;
         color: var(--color-gray-800);
+        letter-spacing: 0.02em;
     }
+
     &--checked {
         background: var(--color-gray-100);
 

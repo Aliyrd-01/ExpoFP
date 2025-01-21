@@ -1,14 +1,15 @@
 @use "@styles/utils" as *;
 
 .logo-overlay {
-    display: block;
     position: absolute;
+    display: block;
     transition: opacity 0.5s;
 
     > img {
         display: block;
         width: 100%;
     }
+
     &.invert {
         filter: invert(1);
     }
@@ -28,9 +29,10 @@
     text-align: center;
 
     &--right {
-        left: unset;
         right: var(--k-app-gap);
+        left: unset;
     }
+
     & > div {
         position: relative;
         top: rem(-3px);
@@ -38,6 +40,7 @@
         font-size: var(--font-size-xxl);
         font-weight: var(--font-weight-medium);
     }
+
     & > svg {
         width: clamp(150px, 10vw, 100px);
         height: clamp(150px, 10vw, 100px);

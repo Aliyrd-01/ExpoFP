@@ -2,10 +2,7 @@
 
 .gallery-modal {
     position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    inset: 0;
     z-index: 999;
     background: var(--color-black);
 
@@ -19,13 +16,15 @@
     height: 100%;
 
     & .swiper-slide {
-        overflow: hidden;
         display: flex;
         align-items: center;
+        overflow: hidden;
     }
+
     .gallery__img {
         background-position: center center;
     }
+
     &__controls {
         position: absolute;
         top: rem(30px);
@@ -35,36 +34,41 @@
         flex-direction: column;
         gap: rem(8px);
     }
+
     &__btn {
         display: flex;
         align-items: center;
         justify-content: center;
         width: rem(50px);
         height: rem(50px);
-        background: rgba(48, 48, 48, 0.56);
-        backdrop-filter: blur(5px);
-        border-radius: var(--border-radius-full);
-        border: none;
-        cursor: pointer;
         padding: 0;
+        background: rgb(48 48 48 / 56%);
+        border: none;
+        border-radius: var(--border-radius-full);
+        cursor: pointer;
         transition: background 0.2s;
+        backdrop-filter: blur(5px);
 
         &:hover {
-            background: rgba(48, 48, 48, 0.4);
+            background: rgb(48 48 48 / 40%);
         }
+
         &.next,
         &.prev {
             position: absolute;
             top: 50%;
-            transform: translateY(-50%);
             z-index: 11;
+            transform: translateY(-50%);
         }
+
         &.next {
             inset-inline-end: rem(30px);
         }
+
         &.prev {
             inset-inline-start: rem(30px);
         }
+
         &:disabled {
             display: none;
         }
@@ -72,19 +76,19 @@
 }
 
 .gallery-slider__zoom {
-    overflow: visible;
     width: 100%;
     height: 100%;
+    overflow: visible;
 }
 
 .gallery-slider__zoom-content {
     display: flex;
-    justify-content: center;
     align-items: center;
-    transform-origin: 0 0;
-    height: 100%;
+    justify-content: center;
     width: 100%;
+    height: 100%;
     padding: rem(40px);
+    transform-origin: 0 0;
 }
 
 @include responsive-classes-down-to(".gallery-modal", md) {

@@ -1,128 +1,153 @@
 @use "@styles/utils" as *;
 
 $speed: 2.2s;
-$speedInOut: 8.8s;
+$speed-in-out: 8.8s;
 
 .touch-hand {
     position: fixed;
     top: 0;
     left: 0;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
     pointer-events: none;
 }
+
 .touch-hand-icon {
     width: 60vw;
     max-width: 400px;
-    animation: $speedInOut linear 0s infinite fadeInOut;
+    animation: $speed-in-out linear 0s infinite fade-in-out;
 }
+
 .touchon-hand-fill {
-    fill: #ffffff;
-    filter: drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 6px 10px rgb(0 0 0 / 50%));
+    fill: #fff;
 }
+
 .touchon-hand-stroke {
-    fill: #ffffff;
-    stroke: #333333;
-    stroke-width: 12;
+    fill: #fff;
+    stroke: #333;
     stroke-linecap: round;
     stroke-linejoin: round;
+    stroke-width: 12;
 }
+
 .touchon-hand-fill,
 .touchon-hand-stroke {
-    animation: $speed linear 0.6s infinite handTouch;
     transform-origin: 50% 50%;
+    animation: $speed linear 0.6s infinite hand-touch;
 }
+
 .hand-touch-1,
 .hand-touch-2,
 .hand-touch-3 {
-    stroke: #ffffff;
-    stroke-width: 14;
+    filter: drop-shadow(0 6px 10px rgb(0 0 0 / 40%));
     fill: transparent;
-    filter: drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.4));
+    stroke: #fff;
+    stroke-width: 14;
 }
+
 .hand-touch-1 {
     animation: $speed linear 0s infinite touch-1;
 }
+
 .hand-touch-2 {
+    opacity: 0;
     animation: $speed linear 0s infinite touch-2;
-    opacity: 0;
 }
+
 .hand-touch-3 {
-    animation: $speed linear 0s infinite touch-3;
     opacity: 0;
+    animation: $speed linear 0s infinite touch-3;
 }
 
 @keyframes touch-1 {
     0% {
         r: 0;
     }
+
     70% {
         r: 0;
     }
+
     80% {
         r: 50;
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
 }
+
 @keyframes touch-2 {
     0% {
         r: 0;
     }
+
     50% {
         r: 0;
     }
+
     80% {
         r: 110;
         opacity: 0.9;
     }
+
     95% {
         opacity: 0;
     }
 }
+
 @keyframes touch-3 {
     30% {
         r: 0;
         opacity: 0;
     }
+
     80% {
         r: 160;
         opacity: 0.8;
     }
+
     90% {
         opacity: 0;
     }
 }
 
-@keyframes handTouch {
+@keyframes hand-touch {
     0% {
         transform: scale(1, 1);
     }
+
     10% {
         transform: scale(0.7, 0.7);
     }
+
     20% {
         transform: scale(1, 1);
     }
 }
-@keyframes fadeInOut {
+
+@keyframes fade-in-out {
     0% {
         opacity: 0;
     }
+
     10% {
         opacity: 1;
     }
+
     48% {
         opacity: 1;
     }
+
     53% {
         opacity: 0;
     }
+
     100% {
         opacity: 0;
     }

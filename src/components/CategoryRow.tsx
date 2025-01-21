@@ -1,7 +1,6 @@
 import React from "react";
 import store from "../store";
 import { Category } from "../store/CategoryStore";
-import "./CategoryRow.scss";
 import SimpleRow from "./SimpleRow";
 import { t } from "../utils/i18n";
 

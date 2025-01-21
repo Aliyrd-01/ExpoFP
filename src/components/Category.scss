@@ -13,15 +13,17 @@
         height: 100%;
         margin: 0;
     }
+
     > span {
-        color: var(--color-gray-600);
         font-weight: var(--font-weight-normal);
+        color: var(--color-gray-600);
     }
 
     @include kiosk {
         margin-top: 0;
     }
 }
+
 .efp-note {
     display: block;
     margin-top: rem(-2px);

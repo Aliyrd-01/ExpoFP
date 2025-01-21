@@ -13,34 +13,37 @@
     &.-ready {
         opacity: 1;
     }
+
     > .item {
         position: relative;
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         min-width: rem(38px);
         max-width: rem(80px);
         height: rem(38px);
         padding: rem(0 6px);
-        text-align: center;
         background: var(--color-white);
-        outline: none;
         border-radius: var(--border-radius-full);
+        outline: none;
+        box-shadow: var(--shadow-md);
         font-size: var(--font-size-xxl);
         font-weight: var(--font-weight-bold);
         color: var(--color-gray-700);
+        text-align: center;
         cursor: pointer;
-        box-shadow: var(--shadow-md);
 
         & > span {
+            overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            overflow: hidden;
         }
+
         &:hover {
             background: var(--color-gray-200);
             color: var(--color-black);
         }
+
         &.active {
             background: var(--color-primary-ultra-light);
             border: 1px solid var(--color-primary);
@@ -54,8 +57,8 @@
         &.disabled {
             background: var(--color-gray-200);
             color: var(--color-gray);
-            cursor: default;
             pointer-events: none;
+            cursor: default;
         }
 
         &.full-name {
@@ -64,21 +67,22 @@
     }
 
     @include kiosk {
-        top: calc(var(--k-mapControl-size) * 3 + var(--k-mapControls-gap) * 3 + var(--k-app-gap)) !important;
+        top: calc(var(--k-mapcontrol-size) * 3 + var(--k-mapcontrols-gap) * 3 + var(--k-app-gap)) !important;
         inset-inline-end: var(--k-app-gap);
 
         & > .item {
             display: flex;
-            justify-content: center;
             align-items: center;
-            width: var(--k-mapControl-size);
-            height: var(--k-mapControl-size);
+            justify-content: center;
+            width: var(--k-mapcontrol-size);
+            height: var(--k-mapcontrol-size);
             color: var(--color-primary);
 
             &:hover {
                 background: var(--color-primary-ultra-light);
                 box-shadow: var(--k-box-shadow-1-active);
             }
+
             &.active {
                 background: var(--color-primary-ultra-light);
                 box-shadow: var(--k-box-shadow-1-active);
@@ -88,10 +92,12 @@
                     color: var(--color-primary-dark);
                 }
             }
+
             &.disabled {
                 opacity: 0.8;
                 color: var(--color-gray);
             }
+
             &.full-name {
                 width: unset;
             }
@@ -100,7 +106,7 @@
 
     &.efp-layers-mode {
         .levels {
-            top: calc(var(--k-mapControl-size) * 4 + var(--k-mapControls-gap) * 4 + var(--k-app-gap)) !important;
+            top: calc(var(--k-mapcontrol-size) * 4 + var(--k-mapcontrols-gap) * 4 + var(--k-app-gap)) !important;
         }
     }
 }
