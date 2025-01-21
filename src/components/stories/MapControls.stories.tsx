@@ -29,7 +29,7 @@ const Template: StoryFn<MapControlsProps> = (args) => {
     };
 
     return (
-        <div className="map layout">
+        <>
             <aside className="sidebar">Hops& Highways Lounge</aside>
             <MapControls
                 {...args}
@@ -41,7 +41,7 @@ const Template: StoryFn<MapControlsProps> = (args) => {
                 onClickByWidth={() => action("onClickByWidth")(true)}
                 onChangeLayers={(id) => onChangeLayers(id)}
             />
-        </div>
+        </>
     );
 };
 

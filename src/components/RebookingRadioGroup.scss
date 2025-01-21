@@ -1,95 +1,104 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .rebooking-radio-group {
-    padding: 1rem;
+    padding: rem(16px);
 
     &__title {
-        padding-bottom: 10px;
-        font-size: var(--text-size-2);
-        font-weight: var(--font-medium);
+        padding-bottom: rem(10px);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-medium);
     }
+
     &__options {
         display: flex;
         flex-flow: column wrap;
-        gap: 10px;
+        gap: rem(10px);
     }
 }
+
 .rebooking-radio {
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: rem(24px);
+        height: rem(24px);
+        background: var(--rebooking-color-primary);
+        border-radius: var(--border-radius-full);
+        color: var(--color-white);
+
+        & > i {
+            font-size: 18px;
+            line-height: 0;
+        }
+    }
+
+    &__label {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-medium);
+    }
+
     & > input {
         display: none;
 
         & ~ label {
             position: relative;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px 14px 12px 48px;
-            background: #eaecf0;
-            border-radius: 8px;
+            justify-content: space-between;
+            padding: rem(12px 14px 12px 48px);
+            background: var(--color-gray-200);
+            border-radius: var(--border-radius-md);
             line-height: 1;
+            color: var(--color-black);
             cursor: pointer;
             user-select: none;
-            color: var(--color-black);
 
-            &:before {
+            &::before {
                 content: "";
                 position: absolute;
                 top: 50%;
-                left: 14px;
-                width: 20px;
-                height: 20px;
-                margin-top: -10px;
+                left: rem(14px);
+                width: rem(20px);
+                height: rem(20px);
+                margin-top: rem(-10px);
                 border: 2px solid #98a2b3;
                 border-radius: 50%;
             }
+
             &:hover {
                 background: #eaecf0;
             }
         }
+
         &:checked ~ label {
             background: var(--rebooking-color-primary);
             color: var(--color-white);
 
-            &:before {
+            &::before {
                 border: 5px solid var(--color-white);
             }
+
             & > .rebooking-radio__icon {
                 background: var(--color-white);
                 color: var(--rebooking-color-primary);
             }
         }
+
         &:disabled {
             & ~ label {
-                background: var(--color-grayUltraLight);
+                background: var(--color-gray-200);
                 color: var(--color-gray);
                 cursor: default;
 
-                &:before {
-                    border-color: var(--color-grayLight);
+                &::before {
+                    border-color: var(--color-gray-400);
                 }
+
                 & > .rebooking-radio__icon {
                     color: var(--color-gray);
                 }
             }
-        }
-    }
-    &__label {
-        font-size: var(--text-size-1);
-        font-weight: var(--font-medium);
-    }
-    &__icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 24px;
-        height: 24px;
-        background: var(--rebooking-color-primary);
-        border-radius: 50%;
-        color: var(--color-white);
-
-        & > i {
-            font-size: 18px;
-            line-height: 0;
         }
     }
 }

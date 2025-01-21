@@ -10,24 +10,34 @@ export default {
 
 const Template: StoryFn<SidebarActionsProps> = (args) => {
     const [inBookmarks, setInBookmarks] = useState(args.inBookmark);
+    const [visited, setVisited] = useState(args.visited);
 
     const addToBookmarks = () => {
         action("onClickBookmark")(true);
         setInBookmarks(!inBookmarks);
     };
 
+    const addToVisited = () => {
+        action("onClickVisited")(true);
+        setVisited(!visited);
+    };
+
     return (
         <>
             <div className="map layout">
                 <aside className="sidebar">
-                    <SidebarActions
-                        {...args}
-                        inBookmark={inBookmarks}
-                        onClickBookmark={addToBookmarks}
-                        onClickDirections={() => action("onClickDirections")(true)}
-                        onClickShare={() => action("onClickShare")(true)}
-                    />
-                    content
+                    <div className="sidebar-container">
+                        <SidebarActions
+                            {...args}
+                            inBookmark={inBookmarks}
+                            visited={visited}
+                            onClickBookmark={addToBookmarks}
+                            onClickVisited={addToVisited}
+                            onClickDirections={() => action("onClickDirections")(true)}
+                            onClickShare={() => action("onClickShare")(true)}
+                        />
+                        content
+                    </div>
                 </aside>
             </div>
         </>
@@ -37,6 +47,8 @@ const Template: StoryFn<SidebarActionsProps> = (args) => {
 export const Base = Template.bind({});
 Base.args = {
     inBookmark: false,
+    visited: false,
     showDirections: true,
     showShare: true,
+    showVisited: true,
 };

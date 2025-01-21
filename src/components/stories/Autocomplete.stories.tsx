@@ -5,18 +5,21 @@ import Autocomplete, { AutocompleteProps } from "../Autocomplete";
 export default {
     title: "Components/Autocomplete",
     component: Autocomplete,
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn<AutocompleteProps> = (args) => {
     const [value, setValue] = useState<string>("02");
     return (
-        <div className="layout sb-layout">
+        <>
             <Autocomplete {...args} onChange={setValue} value={value} />
             <div className="sb-data">
                 <strong>Current value: </strong>
                 {value}
             </div>
-        </div>
+        </>
     );
 };
 

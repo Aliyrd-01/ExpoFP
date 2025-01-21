@@ -4,17 +4,19 @@ import "./Badge.scss";
 
 export interface BadgeProps {
     children?: ReactNode;
-    variant?: "lightgray" | "gray" | "ghost";
+    variant?: "lightgray" | "gray" | "ghost" | "orange";
+    size?: "md" | "lg";
     noMargins?: boolean;
 }
 
-const Badge: React.FC<BadgeProps> = ({ children, variant = "ghost", noMargins }) => {
+const Badge: React.FC<BadgeProps> = ({ children, variant = "ghost", size = "lg", noMargins }) => {
     return (
         <div className="layout sb-layout">
             <div
                 className={cn({
                     "efp-badge": true,
                     [`efp-badge--${variant}`]: true,
+                    [`efp-badge--${size}`]: true,
                     "efp-badge--no-margins": noMargins,
                 })}
             >

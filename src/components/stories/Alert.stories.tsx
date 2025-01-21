@@ -6,6 +6,9 @@ import Alert, { AlertProps } from "../Alert";
 export default {
     title: "Components/Alert",
     component: Alert,
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn<AlertProps> = (args) => {
@@ -17,7 +20,7 @@ const Template: StoryFn<AlertProps> = (args) => {
     };
 
     return (
-        <div className="sb-layout layout">
+        <>
             <div className="sb-data sb-data--top">
                 <button onClick={() => setAlertOpen(!alertOpen)}>{alertOpen ? "Hide alert" : "Show alert"}</button>
             </div>
@@ -28,7 +31,7 @@ const Template: StoryFn<AlertProps> = (args) => {
                     </a>
                 </Alert>
             ) : null}
-        </div>
+        </>
     );
 };
 

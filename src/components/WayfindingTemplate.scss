@@ -1,4 +1,5 @@
-@import "../styles/helpers.scss";
+@use "@styles/vars";
+@use "@styles/utils" as *;
 
 .efp-wayfinding {
     display: flex;
@@ -7,6 +8,14 @@
 
     &.isCollapsed {
         gap: 0;
+    }
+
+    @include kiosk {
+        gap: 0;
+
+        &__top {
+            padding-bottom: rem(30px);
+        }
     }
 }
 
@@ -24,6 +33,7 @@
         height: 110px;
         padding-inline-start: rem(15px);
     }
+
     &__from,
     &__to,
     &__dots {
@@ -31,74 +41,122 @@
         align-items: center;
         height: 50px;
     }
+
     &__from > svg {
         width: 21px;
         height: 21px;
     }
+
     &__to > svg {
         width: 20px;
         height: 25px;
     }
+
     &__dots {
         position: absolute;
         top: 50%;
-        transform: translateY(-50%);
         left: 50%;
-        margin-inline-start: 1px;
         width: 4px;
         height: 18px;
+        transform: translateY(-50%);
+        margin-inline-start: 1px;
     }
+
     &__controls {
         flex: 1;
         padding-inline-end: rem(10px);
     }
+
     &__switch {
         width: rem(30px);
         height: rem(34px);
         padding: 0;
         background: transparent;
         border: 0;
-        border-radius: var(--border-radius-1);
-        color: var(--color-grayDark);
+        border-radius: var(--border-radius-md);
+        color: var(--color-gray-700);
         cursor: pointer;
         transition: all var(--transition-duration) ease;
 
-        &:before {
-            @include icon();
-            content: $icon-swap;
-            font-size: 20px;
-            line-height: 1.2;
+        &::before {
+            @include icon;
+
+            content: vars.$icon-switch-vertical;
+            font-size: var(--icon-size-md);
         }
+
         &:hover {
-            background: var(--color-grayUltraLight);
+            background: var(--color-gray-200);
             color: var(--color-black);
+        }
+    }
+
+    @include kiosk {
+        align-items: unset;
+        padding-inline-end: var(--k-spacing-lg);
+
+        &__icons-item {
+            height: var(--k-input-height);
+
+            &.is-from::before {
+                width: rem(24px);
+                height: rem(24px);
+            }
+
+            &.is-to::before {
+                width: rem(22px);
+                height: rem(28px);
+            }
+        }
+
+        &__icons {
+            width: rem(56px);
+            height: unset;
+            padding-left: var(--k-spacing-lg);
+        }
+
+        &__controls {
+            padding-right: rem(16px);
+        }
+
+        &__switch {
+            align-self: center;
+            width: clamp(30px, 4vw, 38px);
+            height: rem(50px);
         }
     }
 }
 
 .efp-wayfindingError {
     padding: rem(20px 15px);
-    border-top: 1px solid #e4e4e4;
-    font-size: var(--text-size-1);
-    color: var(--color-grayDark);
-    font-weight: var(--font-bold);
+    border-top: 1px solid var(--color-gray-300);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray-700);
     text-align: center;
 }
 
-.efp-kiosk {
-    .main-wayfinding {
+.main-wayfinding {
+    @include kiosk {
         max-height: calc(100vh - (var(--k-app-gap) * 2));
+
+        &.hidden {
+            .efp-wayfinding__top {
+                padding: 0;
+            }
+        }
 
         .overlay-bar {
             position: relative;
-            box-shadow: unset;
-            border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+            box-shadow: unset;
 
             &.scrolled {
                 box-shadow: var(--k-box-shadow-1);
             }
         }
+
         .overlay-content__scrollable {
             top: unset;
             max-height: unset;
@@ -106,79 +164,25 @@
             border-top-left-radius: 0;
             border-top-right-radius: 0;
         }
-        .efp-autocomplete__input {
-            height: var(--k-inputHeight);
-            background: rgba(255, 255, 255, 0.6);
-            font-size: 0.9em;
-        }
+
         .efp-autocomplete {
-            min-height: var(--k-inputHeight);
+            min-height: var(--k-input-height);
 
             &::before,
             &::after {
-                height: var(--k-inputHeight);
-                font-size: 1.2em;
+                height: var(--k-input-height);
             }
+
             &__input {
-                height: var(--k-inputHeight);
-                font-size: 0.9em;
-            }
-        }
-    }
-
-    .main-wayfinding.hidden {
-        .efp-wayfinding__top {
-            padding: 0;
-        }
-    }
-
-    .efp-wayfinding {
-        gap: 0;
-
-        &__top {
-            padding-bottom: rem(30px);
-        }
-    }
-
-    .efp-wayfindingForm {
-        align-items: unset;
-        padding-inline-end: var(--k-spacing-lg);
-
-        &__icons-item {
-            height: var(--k-inputHeight);
-
-            &.is-from::before {
-                width: 24px;
-                height: 24px;
-            }
-            &.is-to::before {
-                width: 22px;
-                height: 28px;
-            }
-        }
-
-        &__icons {
-            width: 56px;
-            height: unset;
-            padding-left: var(--k-spacing-lg);
-        }
-        &__controls {
-            padding-right: 16px;
-        }
-        &__switch {
-            align-self: center;
-            width: clamp(30px, 4vw, 38px);
-            height: 50px;
-
-            &::before {
-                font-size: 1.3em;
+                height: var(--k-input-height);
+                background: rgb(255 255 255 / 60%);
             }
         }
     }
 }
 
 .layout[dir="rtl"] .efp-wayfindingForm {
-    &__icons:after {
+    &__icons::after {
         right: 50%;
     }
 }

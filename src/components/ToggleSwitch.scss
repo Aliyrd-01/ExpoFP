@@ -1,6 +1,7 @@
-@import "../styles/helpers.scss";
-$switchWidth: 36px;
-$switchHeight: 20px;
+@use "@styles/utils" as *;
+
+$switch-width: 36px;
+$switch-height: 20px;
 
 .toggleSwitch {
     $this: &;
@@ -10,26 +11,27 @@ $switchHeight: 20px;
 
         & + label {
             position: relative;
-            user-select: none;
             display: inline-block;
-            min-height: $switchHeight;
             box-sizing: border-box;
+            min-height: $switch-height;
             border-radius: 50%;
+            user-select: none;
 
-            &:before {
+            &::before {
                 content: "";
                 position: absolute;
                 top: 2px;
                 left: 0;
-                width: $switchWidth;
-                height: $switchHeight;
-                background: $color-white;
-                border: 1px solid $color-lightgray;
+                width: $switch-width;
+                height: $switch-height;
+                background: var(--color-white);
+                border: 1px solid var(--color-gray-300);
                 border-radius: 30px;
                 cursor: pointer;
                 transition: background 0.3s ease-in-out;
             }
-            &:after {
+
+            &::after {
                 content: "";
                 position: absolute;
                 top: 5px;
@@ -41,23 +43,26 @@ $switchHeight: 20px;
                 cursor: pointer;
                 transition: left 0.3s cubic-bezier(0.5, 1.5, 0.5, 1), right 0.3s cubic-bezier(0.5, 1.5, 0.5, 1);
             }
+
             span {
                 display: flex;
                 padding-inline-start: 45px;
-                font-size: rem(16px);
-                color: $color-black;
+                font-size: var(--font-size-xl);
+                color: var(--color-black);
                 cursor: pointer;
                 user-select: none;
             }
         }
+
         &:checked {
             & + label {
-                &:before {
-                    border-color: $color-primary;
+                &::before {
+                    border-color: var(--color-primary);
                 }
-                &:after {
+
+                &::after {
                     left: 18px;
-                    background: $color-primary;
+                    background: var(--color-primary);
                 }
             }
         }
@@ -67,24 +72,28 @@ $switchHeight: 20px;
 @include responsive-classes-down-to(".toggleSwitch", sm) {
     input[type="checkbox"] {
         background: red;
+
         & + label {
-            &:before {
+            &::before {
                 top: 0;
                 width: 40px;
                 height: 24px;
             }
-            &:after {
+
+            &::after {
                 top: 3px;
                 width: 18px;
                 height: 18px;
             }
+
             span {
                 padding-left: 50px;
             }
         }
+
         &:checked {
             & + label {
-                &:after {
+                &::after {
                     left: 18px;
                 }
             }
@@ -94,19 +103,19 @@ $switchHeight: 20px;
 
 .layout[dir="rtl"] .toggleSwitch {
     & input[type="checkbox"] + label {
-        &:before {
-            left: unset;
+        &::before {
             right: 0;
+            left: unset;
         }
 
-        &:after {
-            left: unset;
+        &::after {
             right: 3px;
+            left: unset;
         }
     }
 
     & input[type="checkbox"]:checked + label {
-        &:after {
+        &::after {
             right: 18px;
         }
     }

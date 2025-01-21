@@ -1,68 +1,64 @@
+@use "@styles/utils" as *;
+
 .exhibitor-row {
     display: flex;
     align-items: center;
-    text-decoration: none !important;
-    color: #333 !important;
+    color: var(--color-black);
     text-align: left;
 
-    &.featured {
-        .exhibitor-row__lines {
-            font-weight: 700;
-        }
-    }
-
     &__lines {
-        padding-inline-start: 1rem;
-        padding-inline-end: 0.1rem;
         flex-grow: 1;
-
         overflow: hidden;
+        font-size: var(--font-size-xl);
         text-overflow: ellipsis;
+        padding-inline: rem(16px) rem(2px);
 
         & > div {
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        & .fa-gem {
-            color: #02a8ff;
-            font-size: 0.9rem;
+        .icon-diamond {
+            font-size: var(--icon-size-sm);
+            color: var(--color-primary);
         }
     }
 
     &__info {
-        padding-inline-end: 1rem;
-        min-width: 4rem;
+        min-width: rem(64px);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-gray-800);
         text-align: end;
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: #555;
         overflow-wrap: break-word;
+        padding-inline-end: rem(16px);
     }
 
     &__bookmark {
         align-self: stretch;
-        padding-inline-start: 1rem;
-        padding-inline-end: 0.5rem;
+        padding-inline: rem(16px) rem(8px);
         outline: none;
+    }
+
+    &.featured {
+        .exhibitor-row__lines {
+            font-weight: var(--font-weight-bold);
+        }
+    }
+
+    @include kiosk {
+        padding: var(--k-items-padding-1);
+
+        &__lines {
+            padding-inline-start: 0;
+        }
+
+        &__info {
+            padding-inline-end: 0;
+        }
     }
 }
 
 .layout[dir="rtl"] .exhibitor-row {
     text-align: right;
-}
-
-.efp-kiosk {
-    .exhibitor-row {
-        padding: var(--k-itemsPadding-1);
-
-        &__lines {
-            padding-inline-start: 0;
-            font-size: 1.14em;
-        }
-        &__info {
-            padding-inline-end: 0;
-            font-size: 1em;
-        }
-    }
 }

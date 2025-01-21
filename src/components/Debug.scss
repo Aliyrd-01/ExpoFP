@@ -1,27 +1,30 @@
 .debug {
     position: fixed;
-    z-index: 999;
-    background: #fff;
-    width: calc(100vw - 2rem);
-    height: calc(100vh - 2rem);
     top: 1rem;
     left: 1vw;
+    z-index: 999;
+    width: calc(100vw - 2rem);
+    height: calc(100vh - 2rem);
     padding: 1rem;
-    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
     overflow: scroll;
+    background: var(--color-white);
+    box-shadow: 0 0 1rem rgb(0 0 0 / 50%);
+
     label {
         display: block;
-        font-weight: 500;
+        font-weight: var(--font-weight-bold);
     }
 
     &__canvas {
         display: inline-block;
         padding: 2px;
         vertical-align: top;
+
         > img {
-            background: #aaa;
+            background: var(--color-gray-300);
         }
     }
+
     /* textarea {
         width: 100%;
         display: block;

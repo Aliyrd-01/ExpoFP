@@ -1,58 +1,57 @@
-@import "../styles/helpers.scss";
-
-.efp-wayfinding.isCollapsed {
-    .efp-wayInformation {
-        padding-top: rem(4px);
-        border-top: 0;
-    }
-    .efp-wayInformation__item strong {
-        margin-top: -2px;
-    }
-}
+@use "@styles/utils" as *;
 
 .efp-wayInformation {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    max-width: 800px;
+    justify-content: space-between;
+    max-width: rem(800px);
     margin: 0 auto;
     padding: rem(10px 15px 20px);
-    border-top: 1px solid var(--color-grayLight);
+    border-top: 1px solid var(--color-gray-400);
 
     &__item {
         padding: rem(0 10px);
 
         span {
             display: flex;
-            font-size: rem(13px);
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-medium);
             color: var(--color-gray);
-            font-weight: 500;
         }
+
         strong {
             display: block;
-            font-size: rem(17px);
+            font-size: var(--font-size-xxl);
+            font-weight: var(--font-weight-bold);
             color: var(--color-black);
-            font-weight: 600;
         }
+
         &.is-accessible strong {
-            color: var(--color-primary);
-            display: flex;
             position: relative;
+            display: flex;
+            color: var(--color-primary);
+        }
+    }
+
+    @include kiosk {
+        padding: var(--k-spacing-lg);
+        border-top: 0;
+
+        &__item {
+            span {
+                padding: 0;
+            }
         }
     }
 }
 
-.efp-kiosk .efp-wayInformation {
-    padding: var(--k-spacing-lg);
-    border-top: 0;
+.efp-wayfinding.isCollapsed {
+    .efp-wayInformation {
+        padding-top: rem(4px);
+        border-top: 0;
+    }
 
-    &__item {
-        span {
-            padding: 0;
-            font-size: 0.8em;
-        }
-        strong {
-            font-size: 1.1em;
-        }
+    .efp-wayInformation__item strong {
+        margin-top: rem(-2px);
     }
 }

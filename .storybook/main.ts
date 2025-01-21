@@ -24,9 +24,6 @@ const config: StorybookConfig = {
                 "css-loader",
                 {
                     loader: "sass-loader",
-                    options: {
-                        additionalData: `@import "@/styles/helpers.scss";`,
-                    },
                 },
             ],
             include: path.resolve(__dirname, "../src/"),
@@ -52,6 +49,7 @@ const config: StorybookConfig = {
             alias: {
                 ...(config.resolve?.alias || {}),
                 "@": path.resolve(__dirname, "../src/"),
+                "@styles": path.resolve(__dirname, "../src/styles/"),
             },
         };
 

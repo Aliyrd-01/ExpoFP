@@ -19,9 +19,9 @@ function Category() {
 
     return useObserver(() => {
         const bar = (
-            <div className="bar">
+            <div className="efp-bar">
                 {uiState.selectedCategory.name}&nbsp;<span>({uiState.selectedCategory.exhibitors.length})</span>
-                <div className="note">{t("Category")}</div>
+                <div className="efp-note">{t("Category")}</div>
             </div>
         );
 

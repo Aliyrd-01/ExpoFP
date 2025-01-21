@@ -2,33 +2,38 @@
     $h: 1rem;
     $w: 3rem;
     $s: 0.2rem;
-    display: block;
+
     position: absolute;
-    left: 0;
     right: 0;
-    margin: 0 auto;
+    left: 0;
+    z-index: 2;
+    display: block;
     width: $w;
     height: $h;
-    z-index: 2;
+    margin: 0 auto;
 
-    > svg{
+    > svg {
+        display: block;
         width: $w;
         height: $h;
-        display: block;
-        > path{
-            stroke: #bbb;
-            stroke-width: 90;
+
+        > path {
             fill: none;
+            stroke: var(--color-gray-500);
             stroke-linecap: round;
-            &:first-child{
+            stroke-width: 70;
+
+            &:first-child {
                 display: none;
             }
         }
     }
-     &.arr > svg > path {
+
+    &.arr > svg > path {
         &:first-child {
             display: inherit;
         }
+
         &:last-child {
             display: none;
         }

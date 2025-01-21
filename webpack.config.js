@@ -3,12 +3,12 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const S3Plugin = require("webpack-s3-plugin");
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const AWS = require("aws-sdk");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const ESLintPlugin = require('eslint-webpack-plugin');
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 function createConfig(env) {
     const isProd = process.env.NODE_ENV === "production";
@@ -29,6 +29,9 @@ function createConfig(env) {
         },
         resolve: {
             extensions: [".js", ".jsx", ".ts", ".tsx"],
+            alias: {
+                "@styles": path.resolve(__dirname, "src/styles/"),
+            },
         },
         performance: {
             maxAssetSize: 500000,
@@ -63,7 +66,7 @@ function createConfig(env) {
                         {
                             loader: "style-loader",
                             options: {
-                                insert: require.resolve('./style-injector.js'),
+                                insert: require.resolve("./style-injector.js"),
                             },
                         },
                         "css-loader",
@@ -114,13 +117,13 @@ function createConfig(env) {
                 },
             },
             static: {
-                directory: path.join(__dirname, 'public'),
+                directory: path.join(__dirname, "public"),
             },
             headers: {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, HEAD",
             },
-        }
+        };
         config.devtool = "cheap-module-source-map";
     }
 

@@ -1,26 +1,43 @@
+@use "@styles/utils" as *;
+
 .efp-badge {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: var(--border-radius-1);
-    font-size: var(--text-size-1);
-    font-weight: var(--font-medium);
+    justify-content: center;
+    margin-bottom: rem(10px);
+    font-weight: var(--font-weight-medium);
 
     &--ghost {
         color: var(--color-black);
     }
 
     &--lightgray {
-        background: var(--color-grayUltraLight);
-        color: var(--color-grayDark);
+        background: var(--color-gray-200);
+        color: var(--color-gray-700);
     }
 
     &--gray {
-        background: var(--color-grayLight);
-        color: var(--color-grayDark);
+        background: var(--color-gray-400);
+        color: var(--color-gray-700);
+    }
+
+    &--orange {
+        background: var(--color-orange);
+        color: var(--color-black);
+    }
+
+    &--lg {
+        gap: rem(8px);
+        padding: rem(10px);
+        border-radius: var(--border-radius-md);
+        font-size: var(--font-size-xl);
+    }
+
+    &--md {
+        gap: rem(6px);
+        padding: rem(6px 8px);
+        border-radius: var(--border-radius-md);
+        font-size: var(--font-size-lg);
     }
 
     &--no-margins {

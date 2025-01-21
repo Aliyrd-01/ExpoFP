@@ -1,109 +1,86 @@
-@import "../../styles/helpers.scss";
+@use "@styles/utils" as *;
+
+$im: 0.4rem;
 
 .booth {
     &__bar {
-        line-height: 1.5rem;
-        color: #333;
-        font-weight: 600;
-        padding: 1rem 0;
-        margin-inline-start: 1rem;
-        font-size: 1.1em;
+        padding: rem(16px 0);
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        line-height: rem(24px);
+        color: var(--color-black);
         overflow-wrap: break-word;
+        margin-inline-start: rem(16px);
     }
 
     &__content {
-        margin: 0 1rem;
+        margin: rem(0 16px);
     }
-
-    // &__buy-note {
-    //     font-weight: 700;
-    //     font-size: 0.75rem;
-    //     margin-top: 0.2rem;
-    //     color: #555;
-    // }
 
     &__title {
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
     }
 
-    $im: 0.4rem;
-    // &__infos {
-    //     display: flex;
-    //     margin: 0 -1rem;
-    //     padding: 0 $im;
-    //     background: #fff;
-    // }
-
     &__info {
-        /* min-height: 6rem; */
-        background: #e1ecf1;
-        border-radius: 4px;
-        /* flex-grow: 1;
-		flex-basis: 1px;
-		text-align: center; */
-        /* border: solid 1px #aaa; */
-        /* margin: 0 $im; */
-        padding: 1rem 0;
-
-        display: grid;
-        grid-template-columns: 5rem auto;
+        display: flex;
+        gap: rem(12px);
         align-items: center;
-        /* flex-direction: column; */
-        /* justify-content: center; */
-        margin-bottom: 1rem;
+        margin-bottom: rem(10px);
+        padding: rem(12px);
+        background: var(--color-gray-100);
+        border: 1px solid var(--color-gray-300);
+        border-radius: var(--border-radius-lg);
 
-        > i {
-            font-size: 2.1rem;
-            /* padding-bottom: 0.5rem; */
-            color: #71b7d4;
-            opacity: 0.7;
-            /* grid-column-start: 1; */
-            /* grid-column-end: 1; */
-            /* grid-row-start: 1; */
-            grid-row: 1 / span 2;
+        &-icon {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            /* justify-content: center; */
+            justify-content: center;
+            width: rem(46px);
+            height: rem(46px);
+            background: var(--color-primary-ultra-light);
+            border-radius: var(--border-radius-full);
+            color: var(--color-primary);
+
+            & > i {
+                font-size: var(--icon-size-md);
+            }
+        }
+
+        &-body {
+            flex: 1;
         }
 
         &-title {
-            grid-column: 2;
-            font-size: 0.7em;
-            font-weight: 600;
-            color: #557988;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-gray-600);
             text-transform: uppercase;
         }
 
         &-val {
-            grid-column: 2;
-            /* grid-column-end: 2; */
-            grid-row: 2;
-            /* grid-row-end: 2; */
-            /* text-transform: uppercase; */
-            /* font-weight: 500; */
-            font-size: 1rem;
-            font-weight: 600;
-            /* color: #000; */
-            padding-inline-end: 1rem;
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-medium);
+            color: var(--color-gray-black);
         }
-        &.is-onhold {
-            background: var(--color-grayUltraLight);
 
-            & > i {
-                color: var(--color-gray);
+        &.is-onhold {
+            .booth__info-icon {
+                background: var(--color-gray-300);
+                color: var(--color-gray-600);
             }
+
             .booth__info-title {
-                color: var(--color-gray);
+                color: var(--color-gray-600);
             }
+
             .booth__info-val {
-                color: var(--color-grayDark);
+                color: var(--color-gray-700);
             }
         }
     }
 
     &__buy {
-        margin: 2rem 0 0.5rem;
+        margin: rem(32px 0 8px);
 
         a {
             width: 100%;
@@ -111,7 +88,7 @@
     }
 
     &__directions {
-        margin: 0.5rem 0;
+        margin: rem(8px 0);
 
         > button {
             cursor: pointer;
@@ -125,18 +102,17 @@
     &__desc {
         p,
         span {
-            overflow-wrap: break-word;
             background: transparent !important;
+            overflow-wrap: break-word;
         }
     }
-}
 
-.efp-kiosk {
-    .booth {
+    @include kiosk {
         &__bar {
             padding: 0;
             margin-inline-start: var(--k-spacing-lg);
         }
+
         &__desc {
             a {
                 pointer-events: none;

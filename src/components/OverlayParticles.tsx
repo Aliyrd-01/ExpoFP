@@ -37,7 +37,7 @@ function OverlayParticles() {
                 maxParticles: 50,
                 speed: 0.4,
                 sizeVariations: 4,
-                color: "#557988",
+                color: "#0C5AB8",
                 connectParticles: true,
             });
             setVisible(true);

@@ -1,63 +1,66 @@
-.simple-row {
+@use "@styles/utils" as *;
+
+.efp-simple-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    text-decoration: none !important;
-    color: #333 !important;
-    $p: 1rem;
+    justify-content: space-between;
+    font-size: var(--font-size-xl);
+    color: var(--color-black);
 
     &__col {
-        padding: 0 $p 0;
+        padding: rem(0 16px 0);
     }
 
     &__main {
-        height: 1.3125rem;
-        white-space: nowrap;
+        height: rem(20px);
         overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: 500;
+        font-weight: var(--font-weight-medium);
         text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     &__sub {
-        font-size: 0.7rem;
-        color: rgba(0, 0, 0, 0.4); //#aaa
-        height: 0.7rem;
-        margin: -2px 0;
+        height: rem(12px);
+        margin: rem(-2px 0);
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-600);
         text-align: left;
     }
 
     &__end {
-        padding-inline-end: 1rem;
-        min-width: 4rem;
+        min-width: rem(64px);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-gray-600);
         text-align: end;
-        font-weight: 700;
-        font-size: 0.9rem;
-        color: #555;
         overflow-wrap: break-word;
+        padding-inline-end: rem(16px);
     }
-}
 
-.layout[dir="rtl"] .simple-row {
-    &__main,
-    &__sub {
-        text-align: right;
-    }
-}
-
-.efp-kiosk {
-    .simple-row {
-        padding: var(--k-itemsPadding-1);
+    @include kiosk {
+        padding: var(--k-items-padding-1);
 
         &__main {
             height: unset;
             padding: 0;
         }
+
         &__sub {
             height: unset;
             margin: 0;
             padding: 0;
-            font-size: 0.8em;
         }
+
+        &__col {
+            padding: 0;
+        }
+    }
+}
+
+.layout[dir="rtl"] .efp-simple-row {
+    &__main,
+    &__sub {
+        text-align: right;
     }
 }

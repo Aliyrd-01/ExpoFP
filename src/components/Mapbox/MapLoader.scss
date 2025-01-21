@@ -1,25 +1,22 @@
 .map-loader {
-    touch-action: none;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    background: #ebebeb;
     position: absolute;
+    inset: 0;
+    background: #ebebeb;
+    touch-action: none;
 
-    @media (max-width: 820px) and (min-width: 500px) {
+    @media (width <= 820px) and (width >= 500px) {
         html {
             font-size: 13px;
         }
     }
 
     .lds-grid {
-        top: 42vh;
-        margin: 0 auto;
-        display: block;
         position: relative;
+        top: 42vh;
+        display: block;
         width: 64px;
         height: 64px;
+        margin: 0 auto;
     }
 
     .lds-grid div {
@@ -28,6 +25,7 @@
         height: 13px;
         background: #aaa;
         border-radius: 50%;
+
         /* border: solid 1px #fff; */
         animation: lds-grid 1.2s linear infinite;
     }

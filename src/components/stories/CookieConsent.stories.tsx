@@ -16,12 +16,12 @@ const Template: StoryFn = (args) => {
     };
 
     return (
-        <div className="layout">
+        <>
             <iframe src="https://canneslions2023.expofp.com/" className="sb-iframe" title="test"></iframe>
             {showCookieConsent ? (
                 <CookieConsent {...args} onClickAccept={() => cookieHandler(true)} onClickReject={() => cookieHandler(false)} />
             ) : null}
-        </div>
+        </>
     );
 };
 

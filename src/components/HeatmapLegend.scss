@@ -1,33 +1,32 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .heatmap-legend {
-  width: rem(400px);
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #555;
-  font-weight: 700;
+    position: absolute;
+    left: 50%;
+    width: rem(400px);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray-700);
+    transform: translateX(-50%);
 
-  @include media-breakpoint-down(sm) {
-    width: rem(220px);
-  }
+    &__colors {
+        height: rem(20px);
+        margin-bottom: rem(2px);
+    }
 
-  @include media-breakpoint-down(xs) {
-    width: rem(180px);
-  }
+    &__values {
+        display: flex;
+        justify-content: space-between;
 
-  &__colors {
-    height: 20px;
-    margin-bottom: 2px;
-  }
+        @include media-breakpoint-down(xs) {
+            font-size: 0.85em;
+        }
+    }
 
-  &__values {
-    display: flex;
-    justify-content: space-between;
+    @include media-breakpoint-down(sm) {
+        width: rem(220px);
+    }
 
     @include media-breakpoint-down(xs) {
-      font-size: 0.85em;
+        width: rem(180px);
     }
-  }
 }
-

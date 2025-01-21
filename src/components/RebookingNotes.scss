@@ -1,8 +1,10 @@
+@use "@styles/utils" as *;
+
 .rebooking-notes {
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
-    padding: 0rem 1rem;
+    padding: rem(0 16px);
 
     &__edit {
         display: flex;
@@ -10,55 +12,58 @@
         justify-content: right;
         width: 100%;
     }
+
     &__val {
-        padding: 0 0 14px;
         width: 100%;
+        padding: rem(0 0 14px);
 
         & > textarea {
-            border: none;
-            overflow: auto;
-            outline: none;
-            -webkit-box-shadow: none;
-            -moz-box-shadow: none;
-            box-shadow: none;
             width: 100%;
             max-width: 100%;
             min-height: 140px;
-            padding: 10px;
-            border: 1px solid var(--color-grayLight);
-            border-radius: var(--border-radius-1);
+            padding: rem(10px);
+            overflow: auto;
+            border: none;
+            border: 1px solid var(--color-gray-400);
+            border-radius: var(--border-radius-md);
+            outline: none;
+            box-shadow: none;
             font-family: var(--app-font-family);
-            font-size: 16px;
+            font-size: var(--font-size-xl);
 
             &:focus {
                 border-color: var(--color-gray);
             }
         }
     }
+
     &__view {
         display: flex;
         flex-flow: row wrap;
+        gap: rem(14px);
         justify-content: center;
-        gap: 14px;
         width: 100%;
     }
+
     &__view-header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         width: 100%;
-        padding-bottom: 14px;
+        padding-bottom: rem(14px);
 
         & > span {
-            font-size: 14px;
-            color: var(--color-grayDark);
+            font-size: var(--font-size-md);
+            color: var(--color-gray-700);
         }
     }
+
     &__view-text {
         width: 100%;
     }
+
     &__buttons {
         display: flex;
-        gap: 10px;
+        gap: rem(10px);
     }
 }

@@ -1,66 +1,52 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .overlay-bar-back {
-    min-width: 3rem;
-    height: $overlay-height;
-    align-self: flex-start;
     position: relative;
     display: flex;
+    align-self: flex-start;
+    min-width: rem(48px);
+    height: rem(56px);
 
-    &__icon2 {
-        @include like-anchor;
-    }
-    &__icon1,
-    &__icon2 {
-        position: absolute;
-        @include overlay-bar-icon;
-    }
-
-    &.anim.end > &__icon1 {
-        transition: all 0.3s;
-        transform: rotate(-180deg);
-    }
-    &.end > &__icon1,
-    &.start > &__icon2 {
-        opacity: 0;
-    }
-
-    &.anim.end > &__icon1.fa-chevron-left,
-    &.anim.start > &__icon2.fa-chevron-left {
-        transform: rotate(180deg);
-    }
-
-    &.start > &__icon2.fa-bars {
-        transform: rotate(-180deg);
-    }
-    &.anim.end > &__icon2 {
-        transition: all 0.3s;
-    }
-}
-
-.layout[dir="rtl"] .overlay-bar-back {
-    &__icon2 {
-        transform: rotateY(180deg);
-    }
-}
-
-.efp-kiosk {
-    .overlay-bar-back {
-        width: 70px;
-        height: calc(var(--k-searchBox-height) - 10px);
-        padding-inline-start: 10px;
+    &__button {
+        display: flex;
+        align-items: center;
         justify-content: center;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        outline: none;
+        color: var(--color-gray-600);
+        cursor: pointer;
+
+        & > i {
+            font-size: var(--icon-size-xl);
+        }
+
+        &:hover {
+            color: var(--color-black);
+        }
+    }
+
+    @include kiosk {
         align-items: center;
         align-self: center;
+        justify-content: center;
+        width: rem(70px);
+        height: calc(var(--k-searchbox-height) - 10px);
+        padding-inline-start: 10px;
 
-        &__icon1,
-        &__icon2 {
-            font-size: 1.4em;
-            color: var(--k-color-primary) !important;
+        &__button {
+            color: var(--color-primary) !important;
 
             &:hover {
                 color: var(--color-black) !important;
             }
         }
+    }
+}
+
+.layout[dir="rtl"] .overlay-bar-back {
+    .icon-chevron-left {
+        transform: rotateY(180deg);
     }
 }

@@ -7,7 +7,7 @@ export function MapLoader() {
     const ls = useLocalStore(() => ({
         get style() {
             return {
-                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleStart + "px",
+                left: 0,
             };
         },
     }));
