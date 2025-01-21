@@ -27,9 +27,11 @@ const OverlayBar: React.FC<{
                     <i className="icon-search"></i>
                 </div>
             ) : (
-                <button className="overlay-bar__close" onClick={handleClose}>
-                    <i className="icon-close"></i>
-                </button>
+                <div className="overlay-bar__close">
+                    <button onClick={handleClose}>
+                        <i className="icon-close"></i>
+                    </button>
+                </div>
             )}
             {overlayBarEndContent}
         </div>

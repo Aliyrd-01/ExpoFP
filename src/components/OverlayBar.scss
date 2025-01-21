@@ -14,24 +14,34 @@
         }
     }
     &__slot {
-        flex-grow: 1;
-        max-width: calc(100% - rem(48px));
+        flex: 1;
+        max-width: 100%;
         height: 100%;
     }
     &__close {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: rem(12px);
         align-self: flex-start;
-        width: rem(40px);
-        height: rem(60px);
-        padding: 0;
-        border: 0;
-        color: var(--color-gray-600);
-        cursor: pointer;
 
-        &:hover {
-            color: var(--color-black);
+        & > button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: rem(32px);
+            height: rem(32px);
+            padding: 0;
+            border: 0;
+            border-radius: var(--border-radius-full);
+            background: var(--color-gray-200);
+            color: var(--color-gray-700);
+            cursor: pointer;
+
+            &:hover {
+                background: var(--color-gray-300);
+                color: var(--color-black);
+            }
+            & > i {
+                font-size: var(--icon-size-md);
+            }
         }
     }
     &__search-icon {
@@ -50,15 +60,22 @@
         box-shadow: var(--k-box-shadow-1);
 
         &__close {
-            width: rem(80px);
+            display: flex;
+            align-items: center;
             height: calc(var(--k-searchBox-height));
             color: var(--color-primary) !important;
 
             &:hover {
                 color: var(--color-black) !important;
             }
-            & > i {
-                color: var(--color-primary);
+            & > button {
+                width: rem(54px);
+                height: rem(54px);
+
+                & > i {
+                    font-size: var(--icon-size-lg);
+                    color: var(--color-primary);
+                }
             }
         }
         &__search-icon {
@@ -81,6 +98,11 @@
 }
 .overlay-bar.scrolled {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.layout[dir="rtl"] .overlay-content.menu .overlay-bar__close {
+    right: unset;
+    left: 0;
 }
 
 .efp-kiosk[dir="rtl"] .overlay-bar {

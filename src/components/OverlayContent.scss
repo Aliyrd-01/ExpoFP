@@ -21,7 +21,9 @@
     }
     &.menu {
         .overlay-bar__close {
-            align-self: flex-start;
+            position: absolute;
+            top: 0;
+            right: 0;
         }
     }
 
