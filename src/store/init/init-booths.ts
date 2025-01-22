@@ -25,7 +25,6 @@ export function iniAllBooths(store: RootStore) {
 
     for (const raw of data.booths || []) {
         const { text, meta } = extractMetaFromString(raw.name);
-        raw.name = text;
         raw.meta = meta;
 
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
@@ -53,6 +52,7 @@ export function iniAllBooths(store: RootStore) {
 
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
         b.yah = isYahBooth(b as Booth);
+        b.name = text;
         booths.push(b);
     }
 
