@@ -9,13 +9,13 @@ import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { generateUniqueSlug } from "../../tools/slug";
 import { sortByName } from "../../utils";
+import { extractMetaFromString } from "../../utils/extractMetaFromString";
 import { isYahBooth } from "../../utils/yah";
 import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import { Exhibitor } from "../ExhibitorStore";
 import { Layer } from "../LayerStore";
 import RootStore from "../RootStore";
 import { uiState } from "../index";
-import { extractMetaFromString } from "../../utils/extractMetaFromString";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
@@ -51,8 +51,9 @@ export function iniAllBooths(store: RootStore) {
         }
 
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
+        b.poiType = store.poiTypeStore.poiTypes.find((p) => p.id === raw.poiTypeId);
         b.yah = isYahBooth(b as Booth);
-        b.name = text;
+        b.name = b.poiType?.name ?? text;
         booths.push(b);
     }
 
@@ -88,7 +89,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
     const d3Nodes = d3
         .select(getLayerSvg(layer))
         .selectAll(
-            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`,
+            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
         .nodes() as (SVGRectElement | SVGPathElement)[];
 
@@ -177,7 +178,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
                     booth.rotate = (-rotate * Math.PI) / 180;
                 } else {
                     const mm = transform.match(
-                        /matrix\(\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*\)/,
+                        /matrix\(\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*(?:,|\s)\s*([-0-9.]+)\s*\)/
                     );
                     if (mm) {
                         booth.rotate = Math.asin(-parseFloat(mm[2]));

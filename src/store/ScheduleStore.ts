@@ -1,7 +1,7 @@
 // import { observable } from 'mobx';
 import RootStore from "./RootStore";
 
-export default class CategoryStore {
+export default class ScheduleStore {
     private readonly rootStore: RootStore;
 
     readonly scheduleItems: ScheduleItem[] = [];

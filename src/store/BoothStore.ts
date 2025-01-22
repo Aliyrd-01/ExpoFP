@@ -4,14 +4,12 @@ import { ScheduleItem } from "./ScheduleStore";
 import { computed, observable } from "mobx";
 import Rect from "../core/Rect";
 import data from "../data";
-import { PathInfo, RawRegularBooth } from "../data/Data";
+import { PathInfo, RawPoiType, RawRegularBooth } from "../data/Data";
 import settings from "../tools/settings";
-import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import { uiState } from "./index";
 import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
-import { Route } from "./RouteStore";
 
 // interface BoothState {
 //     hover: boolean;
@@ -103,6 +101,8 @@ export abstract class BoothBase {
     readonly exhibitors: Exhibitor[];
     readonly labelColor: string;
     readonly schedule: ScheduleItem[];
+    readonly poiTypeId: number;
+    readonly poiType: RawPoiType;
     readonly yah: boolean;
     readonly meta: Record<string, string>;
     @observable layer: Layer;
@@ -124,9 +124,9 @@ export abstract class BoothBase {
 
         const meta = this.meta
             ? Object.entries(this.meta)
-                .filter(([key]) => !key.startsWith("_"))
-                .map(([key, value]) => `${key} ${value}`)
-                .join(" ")
+                  .filter(([key]) => !key.startsWith("_"))
+                  .map(([key, value]) => `${key} ${value}`)
+                  .join(" ")
             : "";
 
         return `${result} ${meta}`.replace(/\s+/g, " ").trim();
