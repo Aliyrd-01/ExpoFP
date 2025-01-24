@@ -36,26 +36,26 @@
         justify-content: center;
         height: rem(32px);
         background: rgb(31 31 31 / 60%);
+        backdrop-filter: blur(3px);
         border-radius: 6px;
         font-size: var(--font-size-lg);
         color: var(--color-white);
-        backdrop-filter: blur(3px);
 
         &:hover {
             background: rgb(48 48 48 / 80%);
         }
 
         &-count {
+            inset-inline-start: rem(15px);
             top: rem(15px);
             padding: rem(0 10px);
             pointer-events: none;
-            inset-inline-start: rem(15px);
         }
 
         &-fullscreen {
+            inset-inline-end: rem(15px);
             top: rem(15px);
             width: rem(32px);
-            inset-inline-end: rem(15px);
 
             @include media-breakpoint-down(md) {
                 display: none;

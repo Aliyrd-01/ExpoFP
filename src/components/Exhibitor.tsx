@@ -173,7 +173,7 @@ function ExhibitorComponent() {
         function renderButton(title: string, url: string, buttonNumber: number) {
             if (!title || !url || uiState.kiosk || uiState.previewMode) return null;
             return (
-                <div className="exhibitor__custom-btn-area">
+                <div className="exhibitor-custom-button">
                     <Button
                         link={url}
                         inline={true}
@@ -187,6 +187,17 @@ function ExhibitorComponent() {
                 </div>
             );
         }
+
+        const ExhibitorCustomButtons = ({ exhibitor }: { exhibitor: any }) => {
+            const buttons = [
+                renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl, 1),
+                renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2),
+                renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3),
+            ];
+            const validButtons = buttons.filter(Boolean);
+            if (validButtons.length === 0) return null;
+            return <div className="exhibitor-custom-buttons">{validButtons}</div>;
+        };
 
         function getDescription(description: String) {
             if (description === null) return "";
@@ -245,7 +256,7 @@ function ExhibitorComponent() {
                         </div>
 
                         {exhibitor.leadingImageUrl ? (
-                            <div className="exhibitor__leading-image-container exhibitor__slider">
+                            <div className="exhibitor__leading-image-container exhibitor-slider">
                                 {exhibitor.leadingImageLinkUrl ? (
                                     <a href={exhibitor.leadingImageLinkUrl} target="_blank" rel="noopener noreferrer">
                                         <img
@@ -278,7 +289,7 @@ function ExhibitorComponent() {
                             })}
                             ref={detailsRef}
                         >
-                            <div className="exhibitor__categories">
+                            <div className="exhibitor-categories">
                                 {exhibitor.booths.map((booth) => (
                                     <a
                                         href={`?${booth.slug}`}
@@ -288,7 +299,7 @@ function ExhibitorComponent() {
                                             store.toggleMapOverlay();
                                             store.selectBooth(booth);
                                         }}
-                                        className="exhibitor__categories-booth"
+                                        className="exhibitor-categories__booth"
                                     >
                                         {booth instanceof SpecialBooth ? "" : data.boothTerm} {booth.fullName}
                                     </a>
@@ -302,7 +313,7 @@ function ExhibitorComponent() {
                                             handleCategoryClick(c);
                                         }}
                                         className={
-                                            c.sponsorship ? "exhibitor__categories-sponsorship" : "exhibitor__categories-cat"
+                                            c.sponsorship ? "exhibitor-categories__sponsorship" : "exhibitor-categories__cat"
                                         }
                                     >
                                         {c.name}
@@ -311,24 +322,18 @@ function ExhibitorComponent() {
                             </div>
                             {exhibitor.description || exhibitor.logo ? (
                                 <div
-                                    className={classNames({
-                                        exhibitor__description: true,
+                                    className={classNames("exhibitor-description", {
                                         collapsed: s.collapsed && !s.disableCollapse,
                                     })}
                                 >
                                     {exhibitor.logo ? (
-                                        <div className="exhibitor__logo-container" v-if="exhibitor.logo">
-                                            <img
-                                                src={exhibitor.logo}
-                                                className="exhibitor__logo"
-                                                alt={exhibitor.name}
-                                                crossOrigin="anonymous"
-                                            />
+                                        <div className="exhibitor-description__logo" v-if="exhibitor.logo">
+                                            <img src={exhibitor.logo} alt={exhibitor.name} crossOrigin="anonymous" />
                                         </div>
                                     ) : null}
                                     {exhibitor.description ? (
                                         <span
-                                            className="exhibitor__description-html"
+                                            className="exhibitor-description__content"
                                             dir="auto"
                                             dangerouslySetInnerHTML={{ __html: getDescription(exhibitor.description) }}
                                             onClick={expandDescription}
@@ -340,10 +345,9 @@ function ExhibitorComponent() {
                                 <Schedule events={exhibitor.schedule || exhibitor.booths[0]?.schedule} />
                             )}
                             {!uiState.kiosk && exhibitor.videoUrl && (
-                                <div className="exhibitor__video">
+                                <div className="exhibitor-video">
                                     <iframe
                                         src={exhibitor.videoUrl}
-                                        frameBorder="0"
                                         data-allow="encrypted-media; autoplay; fullscreen"
                                         title="Exhibitor Video"
                                         allowFullScreen
@@ -351,7 +355,7 @@ function ExhibitorComponent() {
                                 </div>
                             )}
                             {exhibitor.gallery && (
-                                <div className="exhibitor__slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
+                                <div className="exhibitor-slider" onClick={() => itemClick(GaEventActions.ViewGallery)}>
                                     <ErrorBoundary>
                                         <Suspense fallback={null}>
                                             <Gallery
@@ -367,24 +371,26 @@ function ExhibitorComponent() {
                             )}
                             {!uiState.kiosk && exhibitor.marketMaterials && (
                                 <>
-                                    <div className="exhibitor__sep" />
+                                    <div className="exhibitor-sep" />
                                     <MarketMaterialList list={exhibitor.marketMaterials} />
                                 </>
                             )}
-                            {(s.showEdit || s.anyAddress || s.anySocial) && <div className="exhibitor__sep" />}
+                            {s.showEdit && <div className="exhibitor-sep" />}
                             {!uiState.kiosk && s.showEdit && (
-                                <div className="exhibitor__edit">
-                                    <button title={t("Edit")} onClick={sendLoginLink}>
-                                        Edit
-                                    </button>
+                                <div className="exhibitor-edit">
+                                    <Button size="sm" variant="secondary" onClick={sendLoginLink}>
+                                        {t("Edit")}
+                                    </Button>
                                 </div>
                             )}
                             {s.anyAddress && (
-                                <div className="exhibitor__meta">
+                                <div className="exhibitor-meta">
                                     {!!(exhibitor.address || exhibitor.address2) && (
-                                        <div>
-                                            <i className="icon-marker-pin-solid"></i>
-                                            <div className="exhibitor__address">
+                                        <div className="exhibitor-meta__item">
+                                            <div className="exhibitor-meta__icon">
+                                                <i className="icon-marker-pin-solid"></i>
+                                            </div>
+                                            <div className="exhibitor-meta__content">
                                                 {exhibitor.address}
                                                 {!!exhibitor.address2 && <div>{exhibitor.address2}</div>}
                                                 {!!(exhibitor.city || exhibitor.state || exhibitor.zip) && (
@@ -401,12 +407,15 @@ function ExhibitorComponent() {
                                         </div>
                                     )}
                                     {!!exhibitor.phone1 && (
-                                        <div>
-                                            <i className="icon-phone-solid"></i>
-                                            <div>
+                                        <div className="exhibitor-meta__item">
+                                            <div className="exhibitor-meta__icon">
+                                                <i className="icon-phone-solid"></i>
+                                            </div>
+                                            <div className="exhibitor-meta__content">
                                                 <a
                                                     dir="ltr"
                                                     href={"tel:" + exhibitor.phone1}
+                                                    className="exhibitor-meta__link"
                                                     onClick={(e) => handleClick(e, GaEventActions.ClickPhone)}
                                                 >
                                                     {exhibitor.phone1}
@@ -415,13 +424,16 @@ function ExhibitorComponent() {
                                         </div>
                                     )}
                                     {!!exhibitor.website && (
-                                        <div>
-                                            <i className="icon-globe-solid"></i>
-                                            <div>
+                                        <div className="exhibitor-meta__item">
+                                            <div className="exhibitor-meta__icon">
+                                                <i className="icon-globe-solid"></i>
+                                            </div>
+                                            <div className="exhibitor-meta__content">
                                                 <a
                                                     href={exhibitor.website}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
+                                                    className="exhibitor-meta__link"
                                                     onClick={(e) => handleClick(e, GaEventActions.ClickWebsite)}
                                                 >
                                                     {s.websiteTrimmed}
@@ -430,13 +442,16 @@ function ExhibitorComponent() {
                                         </div>
                                     )}
                                     {!!exhibitor.email && (
-                                        <div v-if="exhibitor.email">
-                                            <i className="icon-mail-at-solid"></i>
-                                            <div>
+                                        <div className="exhibitor-meta__item">
+                                            <div className="exhibitor-meta__icon">
+                                                <i className="icon-mail-at-solid"></i>
+                                            </div>
+                                            <div className="exhibitor-meta__content">
                                                 <a
                                                     href={"mailto:" + exhibitor.email}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
+                                                    className="exhibitor-meta__link"
                                                     onClick={(e) => handleClick(e, GaEventActions.ClickEmail)}
                                                 >
                                                     {exhibitor.email}
@@ -444,63 +459,68 @@ function ExhibitorComponent() {
                                             </div>
                                         </div>
                                     )}
+
+                                    {s.anySocial && (
+                                        <div className="exhibitor-meta__socials">
+                                            <a
+                                                href={exhibitor.facebook}
+                                                className="exhibitor-meta__social"
+                                                onClick={() => itemClick(GaEventActions.ClickFacebook)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className="icon-facebook" />
+                                            </a>
+                                            <a
+                                                href={exhibitor.instagram}
+                                                className="exhibitor-meta__social"
+                                                onClick={() => itemClick(GaEventActions.ClickInstagaram)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className="icon-instagram" />
+                                            </a>
+                                            <a
+                                                href={exhibitor.linkedin}
+                                                className="exhibitor-meta__social"
+                                                onClick={() => itemClick(GaEventActions.ClickLinkedin)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className="icon-linkedin" />
+                                            </a>
+                                            <a
+                                                href={exhibitor.twitter}
+                                                className="exhibitor-meta__social"
+                                                onClick={() => itemClick(GaEventActions.ClickTwitter)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className="icon-twitter-x" />
+                                            </a>
+                                            <a
+                                                href={exhibitor.xing}
+                                                className="exhibitor-meta__social"
+                                                onClick={() => itemClick(GaEventActions.ClickXing)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className="icon-xing" />
+                                            </a>
+                                            <a
+                                                href={exhibitor.youtube}
+                                                className="exhibitor-meta__social"
+                                                onClick={() => itemClick(GaEventActions.ClickYoutube)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className="icon-youtube" />
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
                             )}
-                            {s.anySocial && (
-                                <div className="exhibitor__social">
-                                    <a
-                                        href={exhibitor.facebook}
-                                        onClick={() => itemClick(GaEventActions.ClickFacebook)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <i className="icon-facebook" />
-                                    </a>
-                                    <a
-                                        href={exhibitor.instagram}
-                                        onClick={() => itemClick(GaEventActions.ClickInstagaram)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <i className="icon-instagram" />
-                                    </a>
-                                    <a
-                                        href={exhibitor.linkedin}
-                                        onClick={() => itemClick(GaEventActions.ClickLinkedin)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <i className="icon-linkedin" />
-                                    </a>
-                                    <a
-                                        href={exhibitor.twitter}
-                                        onClick={() => itemClick(GaEventActions.ClickTwitter)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <i className="icon-twitter-x" />
-                                    </a>
-                                    <a
-                                        href={exhibitor.xing}
-                                        onClick={() => itemClick(GaEventActions.ClickXing)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <i className="icon-xing" />
-                                    </a>
-                                    <a
-                                        href={exhibitor.youtube}
-                                        onClick={() => itemClick(GaEventActions.ClickYoutube)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <i className="icon-youtube" />
-                                    </a>
-                                </div>
-                            )}
-                            {renderButton(exhibitor.customButtonTitle, exhibitor.customButtonUrl, 1)}
-                            {renderButton(exhibitor.customButton2Title, exhibitor.customButton2Url, 2)}
-                            {renderButton(exhibitor.customButton3Title, exhibitor.customButton3Url, 3)}
+                            <ExhibitorCustomButtons exhibitor={exhibitor} />
                         </div>
                         {uiState.kiosk && isContentOverflowing && !showKioskDetails ? (
                             <div className="show-details-button">

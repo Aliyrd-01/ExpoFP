@@ -12,6 +12,7 @@ import { t } from "../utils/i18n";
 import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
+import "./Menu_custom.scss";
 import OverlayContent from "./OverlayContent";
 import Badge from "./Badge";
 

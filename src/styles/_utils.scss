@@ -154,6 +154,12 @@
     }
 }
 
+@mixin rtl {
+    .layout[dir="rtl"] & {
+        @content;
+    }
+}
+
 @mixin icon {
     font-family: efp-symbols !important;
     font-size: 24px;

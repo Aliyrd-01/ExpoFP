@@ -31,9 +31,9 @@ $share-social: ".share-social";
         display: flex;
         align-items: center;
         height: rem(40px);
+        overflow: hidden;
         border: 1px solid var(--color-gray-400);
         border-radius: var(--border-radius-sm);
-        overflow: hidden;
 
         & > input {
             flex: 1;
@@ -97,6 +97,7 @@ $share-social: ".share-social";
             transition: all 0.2s ease-in-out;
             transform: scale(1);
         }
+
         & > i {
             position: relative;
             z-index: 1;
@@ -113,6 +114,7 @@ $share-social: ".share-social";
     &.facebook {
         #{$share-social}__icon {
             color: #1877f2;
+
             &::before {
                 background: #d9eaff;
             }
@@ -121,7 +123,8 @@ $share-social: ".share-social";
 
     &.xcom {
         #{$share-social}__icon {
-            color: #000000;
+            color: #000;
+
             &::before {
                 background: #e2e2e2;
             }

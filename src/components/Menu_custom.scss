@@ -1,0 +1,58 @@
+@use "@styles/utils" as *;
+
+.expo-jtrade19 .menu__title {
+    background: #2b2a29;
+}
+
+.expo-awslondon19 .menu__title,
+.expo-awsamsterdam19 .menu__title,
+.expo-awsstockholm19 .menu__title {
+    padding-top: rem(24px);
+    padding-bottom: rem(24px);
+    background: rgb(47 7 122);
+    background: linear-gradient(207deg, rgb(47 7 122 / 100%) 0%, rgb(175 60 119 / 100%) 47%, rgb(235 97 60 / 100%) 100%);
+}
+
+.expo-atxcws20 .menu__title {
+    padding: rem(16px 0);
+
+    & > img {
+        max-height: rem(150px);
+    }
+}
+
+.expo-expo .menu__title > img {
+    padding-right: rem(32px);
+}
+
+.expo-vaughanribfest19 .menu__title > img {
+    width: auto;
+}
+
+.expo-sydneybuildexpo {
+    .menu.shown .overlay-bar__close {
+        color: #555 !important;
+    }
+
+    .menu__title {
+        padding-top: 0;
+        padding-bottom: rem(8px);
+
+        > img {
+            width: auto;
+            max-height: rem(150px);
+        }
+    }
+}
+
+.expo-sync2020 {
+    .menu__title {
+        padding-top: 0;
+        padding-bottom: 0;
+
+        & > img {
+            width: auto;
+            max-height: rem(150px);
+        }
+    }
+}

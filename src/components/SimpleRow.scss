@@ -30,12 +30,12 @@
 
     &__end {
         min-width: rem(64px);
+        padding-inline-end: rem(16px);
         font-size: var(--font-size-lg);
         font-weight: var(--font-weight-bold);
         color: var(--color-gray-600);
         text-align: end;
         overflow-wrap: break-word;
-        padding-inline-end: rem(16px);
     }
 
     @include kiosk {

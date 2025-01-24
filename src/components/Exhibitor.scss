@@ -1,255 +1,22 @@
 @use "@styles/utils" as *;
 
-.overlay-content.-exhibitor-featured {
-    background: var(--color-primary-ultra-dark);
-    color: var(--color-white);
-
-    .exhibitor__bar,
-    .exhibitor__meta,
-    .exhibitor__description,
-    .exhibitor__description-html {
-        color: var(--color-white);
-    }
-
-    .overlay-bar__close {
-        color: var(--color-gray-400);
-
-        &:hover {
-            color: var(--color-white);
-        }
-    }
-}
-
 .exhibitor {
-    &__categories {
-        display: flex;
-        flex-flow: row wrap;
-        gap: rem(4px);
-        margin: rem(0 16px 16px);
-        font-size: var(--font-size-lg);
-
-        > a {
-            display: inline-block;
-            padding: rem(6px 10px 7px);
-            border-radius: var(--border-radius-full);
-            font-size: var(--font-size-md);
-            word-break: break-all;
-        }
-
-        &-booth {
-            background: var(--color-secondary-ultra-light);
-            color: var(--color-secondary-ultra-dark);
-
-            &:hover,
-            &:visited:hover {
-                background: var(--color-secondary-light);
-                color: var(--color-black);
-            }
-
-            &:visited {
-                background: var(--color-secondary-ultra-light);
-                color: var(--color-secondary-ultra-dark);
-            }
-        }
-
-        &-cat {
-            background: var(--color-primary-ultra-light);
-            color: var(--color-primary-ultra-dark);
-
-            &:hover,
-            &:visited:hover {
-                background: var(--color-primary-light);
-                color: var(--color-black);
-            }
-
-            &:visited {
-                color: var(--color-primary-ultra-dark);
-            }
-        }
-
-        &-sponsorship {
-            background: var(--color-sponsorship-light);
-            color: var(--color-sponsorship);
-
-            &:hover,
-            &:visited:hover {
-                background: var(--color-sponsorship);
-                color: var(--color-white);
-            }
-
-            &:visited {
-                color: var(--color-sponsorship-dark);
-            }
-        }
-    }
-
-    &__logo-container {
-        position: relative;
-        z-index: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        float: left;
-        width: rem(74px);
-        height: rem(74px);
-        margin-top: rem(6px);
-        margin-bottom: rem(6px);
-        overflow: hidden;
-        background: var(--color-white);
-        border: 1px solid var(--color-gray-400);
-        border-radius: var(--border-radius-sm);
-        margin-inline-end: rem(12px);
-    }
-
-    &__logo {
-        max-width: 100%;
-        max-height: 100%;
-    }
-
-    &__description,
-    &__slider {
-        position: relative;
-        margin: rem(16px);
-        font-size: var(--font-size-lg);
-
-        &-html {
-            > *:first-child {
-                margin-top: 0;
-                padding-top: 0;
-            }
-
-            > *:last-child {
-                margin-bottom: 0;
-                padding-bottom: 0;
-            }
-        }
-
-        &.collapsed > .exhibitor__description-html {
-            display: block;
-            height: 6.5em;
-            overflow: hidden;
-            opacity: 0.8;
-            text-overflow: ellipsis;
-            cursor: pointer;
-            mask-image: linear-gradient(rgb(0 0 0 / 100%) 35%, transparent 90%);
-
-            &:hover {
-                opacity: 1;
-            }
-        }
-
-        &::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-    }
-
-    &__description-html {
-        font-size: var(--font-size-lg);
-        line-height: var(--line-height-lg);
-        color: var(--color-gray-900);
-        text-align: left;
-        overflow-wrap: break-word;
-
-        a {
-            color: var(--color-primary);
-
-            &:hover {
-                color: var(--color-primary-dark);
-                text-decoration: underline;
-            }
-        }
-
-        ol,
-        ul {
-            padding-inline-start: rem(20px);
-            display: grid;
-        }
-    }
-
-    &__sep {
-        margin: rem(16px);
-        border-top: dotted 1px var(--color-gray-300);
-    }
-
-    &__meta {
-        color: var(--color-gray-800);
-
-        > div {
-            display: flex;
-            margin: rem(12px 16px);
-            overflow: hidden;
-
-            [class^="icon-"] {
-                font-size: var(--icon-size-sm);
-                color: var(--color-gray-500);
-            }
-
-            > div {
-                overflow: hidden;
-                font-size: var(--font-size-md);
-                text-overflow: ellipsis;
-                margin-inline-start: rem(8px);
-            }
-        }
-
-        a {
-            color: var(--color-primary);
-
-            &:hover {
-                color: var(--color-primary-dark);
-                text-decoration: underline;
-            }
-        }
-    }
-
-    &__social {
-        display: flex;
-        gap: rem(10px);
-        margin: rem(20px 16px 20px);
-
-        > a {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            width: rem(38px);
-            height: rem(38px);
-            border: 1px solid var(--color-primary);
-            border-radius: var(--border-radius-full);
-            color: var(--color-primary);
-
-            &:hover {
-                border-color: var(--color-primary-dark);
-                color: var(--color-primary-dark);
-            }
-
-            &[href] {
-                display: flex;
-            }
-
-            & > i {
-                font-size: var(--icon-size-md);
-            }
-        }
-    }
-
     &__bar {
         position: relative;
         flex-grow: 1;
         min-height: rem(40px);
+        margin-inline-start: rem(16px);
         padding-top: rem(16px);
         font-size: var(--font-size-xxxl);
         font-weight: var(--font-weight-medium);
         line-height: rem(24px);
         color: var(--color-black);
-        margin-inline-start: rem(16px);
 
         .icon-diamond {
+            margin-inline-start: rem(4px);
             font-size: var(--icon-size-lg);
             line-height: rem(24px);
             color: var(--color-primary);
-            margin-inline-start: rem(4px);
         }
 
         > span {
@@ -267,6 +34,7 @@
     &__bar-booth {
         display: block;
         height: rem(16px);
+        margin-inline-start: rem(16px);
         overflow: hidden;
         opacity: 0;
         font-size: var(--font-size-sm);
@@ -276,7 +44,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         transition: opacity 200ms;
-        margin-inline-start: rem(16px);
 
         .overlay-bar.scrolled & {
             opacity: 1;
@@ -290,48 +57,14 @@
         padding: rem(0 16px 16px 16px);
     }
 
-    &__edit {
-        position: relative;
-        display: none;
-
-        > button {
-            position: absolute;
-            right: rem(16px);
-            padding: rem(0 0 16px 16px);
-            border: 0;
-            color: var(--color-gray-300);
-            cursor: pointer;
-
-            &:hover {
-                color: var(--color-gray-400);
-            }
-        }
-
-        .overlay-content__scrollable:hover & {
-            display: block;
-        }
-    }
-
-    &__video-chat {
-        margin: rem(16px 0);
-        text-align: center;
-
-        > .video-chat-btn {
-            &.disabled {
-                background: var(--color-gray-300);
-            }
-        }
-    }
-
-    &__custom-btn-area {
-        margin: rem(32px 16px);
-        text-align: center;
+    &__buttons {
+        margin: rem(10px 16px 0 16px);
     }
 
     &__leading-image-container {
         margin: rem(0 0 16px 0);
 
-        > a {
+        a {
             display: block;
         }
     }
@@ -342,22 +75,32 @@
         background: var(--color-white);
     }
 
-    &__buttons {
-        margin: rem(10px 16px 0 16px);
+    &__details {
+        display: flex;
+        flex-flow: column wrap;
+        gap: rem(16px);
+        padding: rem(0 16px 24px);
     }
 
-    &__video {
-        position: relative;
-        height: 0;
-        margin: rem(16px);
-        padding-bottom: 51.5%;
+    @include rtl {
+        &__bar {
+            margin-left: var(--k-spacing-lg);
 
-        > iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            > span {
+                gap: rem(6px);
+
+                > span {
+                    text-align: right;
+                }
+            }
+        }
+
+        &__bar-booth {
+            margin-left: var(--k-spacing-lg);
+        }
+
+        &__buttons {
+            margin: 0 var(--k-spacing-lg);
         }
     }
 
@@ -400,68 +143,336 @@
             padding: calc(min(2vh, 12px)) calc(min(4vw, 20px));
         }
 
+        &__details {
+            display: block;
+            padding-bottom: var(--k-spacing-lg);
+        }
+
         &__description {
             margin: var(--k-spacing-md) var(--k-spacing-lg);
         }
     }
 }
 
-.layout[dir="rtl"] .exhibitor {
-    &__bar > span > span {
-        text-align: right;
+.exhibitor-categories {
+    display: flex;
+    flex-flow: row wrap;
+    gap: rem(4px);
+    font-size: var(--font-size-lg);
+
+    &__booth,
+    &__cat,
+    &__sponsorship {
+        display: inline-flex;
+        align-items: center;
+        padding: rem(6px 10px 7px);
+        border-radius: var(--border-radius-full);
+        font-size: var(--font-size-md);
+        word-break: break-all;
     }
 
-    &__description-html {
-        text-align: right;
+    &__booth {
+        background: var(--color-secondary-ultra-light);
+        color: var(--color-secondary-ultra-dark);
+
+        &:visited {
+            background: var(--color-secondary-ultra-light);
+            color: var(--color-secondary-ultra-dark);
+        }
+
+        &:hover,
+        &:visited:hover {
+            background: var(--color-secondary-light);
+            color: var(--color-black);
+        }
     }
 
-    &__logo-container {
-        float: right;
+    &__cat {
+        background: var(--color-primary-ultra-light);
+        color: var(--color-primary-ultra-dark);
+
+        &:visited {
+            color: var(--color-primary-ultra-dark);
+        }
+
+        &:hover,
+        &:visited:hover {
+            background: var(--color-primary-light);
+            color: var(--color-black);
+        }
     }
 
-    &__bar > span {
-        gap: rem(6px);
+    &__sponsorship {
+        background: var(--color-sponsorship-light);
+        color: var(--color-sponsorship);
+
+        &:visited {
+            color: var(--color-sponsorship-dark);
+        }
+
+        &:hover,
+        &:visited:hover {
+            background: var(--color-sponsorship);
+            color: var(--color-white);
+        }
     }
 
-    &__meta {
-        padding-bottom: 4px;
+    @include rtl {
+        margin: 0 var(--k-spacing-lg) var(--k-spacing-md);
+    }
 
-        & > div {
-            margin: var(--k-spacing-sm) var(--k-spacing-lg);
+    @include kiosk {
+        padding: var(--k-spacing-sm) 0;
+        gap: rem(8px);
 
-            & > div {
-                margin-inline-start: 10px;
-                font-size: 0.8em;
-                line-height: 1.2em;
+        &__booth,
+        &__cat,
+        &__sponsorship {
+            padding: var(--k-bottom-padding-2);
+        }
+    }
+}
 
-                & > a {
-                    color: inherit;
-                    text-decoration: none;
-                    pointer-events: none;
-                }
+.exhibitor-description {
+    position: relative;
+    font-size: var(--font-size-lg);
+
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    &__logo {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        float: left;
+        width: rem(74px);
+        height: rem(74px);
+        margin-inline-end: rem(12px);
+        margin-top: rem(6px);
+        margin-bottom: rem(6px);
+        overflow: hidden;
+        background: var(--color-white);
+        border: 1px solid var(--color-gray-400);
+        border-radius: var(--border-radius-sm);
+
+        & > img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    }
+
+    &__content {
+        font-size: var(--font-size-lg);
+        line-height: var(--line-height-lg);
+        color: var(--color-gray-900);
+        text-align: left;
+        overflow-wrap: break-word;
+
+        > *:first-child {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        > *:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        a {
+            color: var(--color-primary);
+
+            &:hover {
+                color: var(--color-primary-dark);
+                text-decoration: underline;
+            }
+        }
+
+        ol,
+        ul {
+            display: grid;
+            padding-inline-start: rem(20px);
+        }
+    }
+
+    &.collapsed {
+        .exhibitor-description__content {
+            display: block;
+            height: 6.5em;
+            overflow: hidden;
+            opacity: 0.8;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            mask-image: linear-gradient(rgb(0 0 0 / 100%) 35%, transparent 90%);
+
+            &:hover {
+                opacity: 1;
             }
         }
     }
 
-    &__bar {
-        margin-left: var(--k-spacing-lg);
+    @include rtl {
+        &__logo {
+            float: right;
+        }
     }
 
-    &__bar-booth {
-        margin-left: var(--k-spacing-lg);
+    @include kiosk {
+        margin: var(--k-spacing-md) 0;
+
+        &__logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            float: none;
+            width: 100%;
+            height: var(--k-image-height);
+            margin: 0 0 var(--k-spacing-md);
+            padding: calc(min(2vh, 12px)) calc(min(4vw, 20px));
+        }
+    }
+}
+
+.exhibitor-video {
+    position: relative;
+    height: 0;
+    padding-bottom: 51.5%;
+
+    & > iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+}
+
+.exhibitor-slider {
+    position: relative;
+    font-size: var(--font-size-lg);
+
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+.exhibitor-sep {
+    border-top: solid 1px var(--color-gray-300);
+}
+
+.exhibitor-edit {
+    padding: rem(4px 0 8px);
+}
+
+.exhibitor-meta {
+    width: 100%;
+    margin-top: rem(10px);
+    padding: rem(0 12px);
+    border: 1px solid var(--color-gray-300);
+    border-radius: var(--border-radius-lg);
+
+    &__item {
+        display: flex;
+        gap: rem(12px);
+        align-items: center;
+        padding: rem(12px 0);
+        border-bottom: 1px solid var(--color-gray-300);
+
+        &:last-child {
+            border: 0;
+        }
     }
 
-    &__buttons {
-        margin: 0 var(--k-spacing-lg);
+    &__icon {
+        display: flex;
+        align-items: center;
+        align-self: flex-start;
+        justify-content: center;
+        width: rem(30px);
+        height: rem(30px);
+        background: var(--color-primary-ultra-light);
+        border-radius: var(--border-radius-full);
+
+        & > i {
+            font-size: var(--icon-size-xs);
+            color: var(--color-primary);
+        }
     }
 
-    &__categories {
-        margin: 0 var(--k-spacing-lg) var(--k-spacing-md);
+    &__content {
+        flex: 1;
+        overflow: hidden;
+        font-size: var(--font-size-md);
+        color: var(--color-gray-900);
+        text-overflow: ellipsis;
     }
 
-    &__sep {
-        margin: var(--k-spacing-lg);
+    &__link {
+        overflow: hidden;
+        color: var(--color-primary);
+        text-overflow: ellipsis;
+
+        &:hover {
+            color: var(--color-primary-dark);
+            text-decoration: underline;
+        }
     }
+
+    &__socials {
+        display: flex;
+        gap: rem(10px);
+        justify-content: center;
+        padding: rem(12px 0);
+    }
+
+    &__social {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: rem(38px);
+        height: rem(38px);
+        background: var(--color-white);
+        border: 1px solid var(--color-primary);
+        border-radius: var(--border-radius-full);
+        color: var(--color-primary);
+
+        &[href] {
+            display: flex;
+        }
+
+        &:hover {
+            border-color: var(--color-primary-dark);
+            color: var(--color-primary-dark);
+        }
+
+        > i {
+            font-size: var(--icon-size-md);
+        }
+    }
+
+    @include kiosk {
+        margin-top: rem(30px);
+
+        &__icon {
+            width: rem(42px);
+            height: rem(42px);
+        }
+    }
+}
+
+.exhibitor-custom-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    gap: rem(14px);
+    justify-content: center;
+    margin-top: rem(10px);
 }
 
 .details-hidden {
@@ -495,6 +506,7 @@
 .hide-details-button {
     position: sticky;
     bottom: 0;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -519,10 +531,44 @@
     }
 }
 
-.expo-jtrade19 .exhibitor__categories-booth {
-    background: #e9522a;
+.overlay-content.-exhibitor-featured {
+    background: var(--color-primary-ultra-dark);
+    color: var(--color-white);
 
-    &:hover {
-        background: #e9522a;
+    .exhibitor__bar,
+    .exhibitor-description,
+    .exhibitor-description__content {
+        color: var(--color-white);
+    }
+
+    .exhibitor-meta {
+        border-color: rgb(242 244 247 / 30%);
+
+        &__item {
+            border-color: rgb(242 244 247 / 30%);
+        }
+
+        &__content {
+            color: var(--color-white);
+        }
+
+        &__link {
+            color: var(--color-white);
+
+            &:hover {
+                color: var(--color-white);
+            }
+        }
+    }
+
+    .overlay-bar__close {
+        & > button {
+            background: transparent;
+            color: var(--color-gray-200);
+
+            &:hover {
+                color: var(--color-white);
+            }
+        }
     }
 }
