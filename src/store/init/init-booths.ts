@@ -53,7 +53,7 @@ export function iniAllBooths(store: RootStore) {
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
         b.poiType = store.poiTypeStore.poiTypes.find((p) => p.id === raw.poiTypeId);
         b.yah = isYahBooth(b as Booth);
-        b.name = b.poiType?.name ?? text;
+        b.name = text;
         booths.push(b);
     }
 
