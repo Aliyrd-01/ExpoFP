@@ -10,6 +10,7 @@
 
 html {
     line-height: 1.15; /* 1 */
+    -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%; /* 2 */
 }
 
@@ -198,6 +199,7 @@ button,
 [type="button"],
 [type="reset"],
 [type="submit"] {
+    -webkit-appearance: button;
     appearance: button;
 }
 
@@ -290,8 +292,9 @@ textarea {
    */
 
 [type="search"] {
-    appearance: textfield; /* 1 */
     outline-offset: -2px; /* 2 */
+    -webkit-appearance: textfield;
+    appearance: textfield; /* 1 */
 }
 
 /**
@@ -299,6 +302,7 @@ textarea {
    */
 
 [type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
     appearance: none;
 }
 
@@ -308,8 +312,9 @@ textarea {
    */
 
 ::-webkit-file-upload-button {
-    appearance: button; /* 1 */
     font: inherit; /* 2 */
+    -webkit-appearance: button;
+    appearance: button; /* 1 */
 }
 
 /* Interactive

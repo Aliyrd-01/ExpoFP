@@ -2,13 +2,13 @@
 
 .levels {
     position: absolute;
+    inset-inline-end: rem(8px);
     z-index: 100;
     display: flex;
     flex-flow: column wrap;
     gap: rem(6px);
     opacity: 0;
     transition: 3s opacity ease;
-    inset-inline-end: rem(8px);
 
     &.-ready {
         opacity: 1;
@@ -55,8 +55,8 @@
         }
 
         &.disabled {
-            background: var(--color-gray-200);
-            color: var(--color-gray);
+            background: var(--color-gray-400);
+            color: var(--color-gray-600);
             pointer-events: none;
             cursor: default;
         }
@@ -67,15 +67,17 @@
     }
 
     @include kiosk {
-        top: calc(var(--k-mapcontrol-size) * 3 + var(--k-mapcontrols-gap) * 3 + var(--k-app-gap)) !important;
         inset-inline-end: var(--k-app-gap);
+        top: calc(var(--k-mapcontrol-size) * 4 + var(--k-mapcontrols-gap) * 3 + var(--k-app-gap)) !important;
+        row-gap: var(--k-mapcontrols-gap);
 
         & > .item {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: var(--k-mapcontrol-size);
+            min-width: var(--k-mapcontrol-size);
             height: var(--k-mapcontrol-size);
+            box-shadow: var(--k-box-shadow-1);
             color: var(--color-primary);
 
             &:hover {

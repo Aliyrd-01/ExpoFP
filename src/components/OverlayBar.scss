@@ -71,8 +71,8 @@
             justify-content: center;
             width: rem(60px);
             height: calc(var(--k-searchbox-height) - 10px);
-            pointer-events: none;
             padding-inline-end: rem(16px);
+            pointer-events: none;
 
             & > i {
                 font-size: var(--icon-size-xl);

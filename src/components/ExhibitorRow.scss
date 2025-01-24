@@ -8,10 +8,10 @@
 
     &__lines {
         flex-grow: 1;
+        padding-inline: rem(16px) rem(2px);
         overflow: hidden;
         font-size: var(--font-size-xl);
         text-overflow: ellipsis;
-        padding-inline: rem(16px) rem(2px);
 
         & > div {
             overflow: hidden;
@@ -26,12 +26,12 @@
 
     &__info {
         min-width: rem(64px);
+        padding-inline-end: rem(16px);
         font-size: var(--font-size-md);
         font-weight: var(--font-weight-bold);
         color: var(--color-gray-800);
         text-align: end;
         overflow-wrap: break-word;
-        padding-inline-end: rem(16px);
     }
 
     &__bookmark {

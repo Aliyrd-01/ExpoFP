@@ -95,9 +95,9 @@ $checked-panel: ".checked-panel";
     left: rem(44px);
     min-width: rem(150px);
     background: var(--color-white);
+    backdrop-filter: var(--backdrop-blur-ex);
     border-radius: var(--border-radius-sm);
     box-shadow: var(--shadow-md);
-    backdrop-filter: var(--backdrop-blur-ex);
 
     ul {
         position: absolute;

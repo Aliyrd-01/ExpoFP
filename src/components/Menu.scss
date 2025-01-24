@@ -1,79 +1,9 @@
 @use "@styles/utils" as *;
 
-.menu.shown .menu__title > img {
-    opacity: 1;
-}
-
-/* CUSTOM SHOW RULES */
-.expo-jtrade19 .menu__title {
-    background: #2b2a29;
-}
-
-.expo-awslondon19 .menu__title,
-.expo-awsamsterdam19 .menu__title,
-.expo-awsstockholm19 .menu__title {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-    background: rgb(47 7 122);
-    background: linear-gradient(207deg, rgb(47 7 122 / 100%) 0%, rgb(175 60 119 / 100%) 47%, rgb(235 97 60 / 100%) 100%);
-}
-
-.expo-atxcws20 .menu__title {
-    padding: rem(16px 0);
-
-    > img {
-        max-height: rem(150px);
-    }
-}
-
-.expo-expo .menu__title > img {
-    padding-right: 2rem;
-}
-
-.expo-vaughanribfest19 .menu__title > img {
-    width: auto;
-}
-
-.expo-sydneybuildexpo {
-    .menu.shown .overlay-bar__close {
-        color: #555 !important;
-    }
-
-    .menu__title {
-        padding-top: 0;
-        padding-bottom: 0.5rem;
-
-        > img {
-            width: auto;
-            max-height: 150px;
-        }
-    }
-}
-
-.expo-sync2020 {
-    .menu__title {
-        padding-top: 0;
-        padding-bottom: 0;
-
-        > img {
-            width: auto;
-            max-height: 150px;
-        }
-    }
-}
-
-/* END */
-
 .menu {
     background: var(--color-gray-200);
 
     $p: rem(16px);
-
-    &__bar.-empty {
-        height: rem(56px);
-        margin-right: rem(-48px);
-        background: var(--color-white);
-    }
 
     &__title {
         display: block;
@@ -82,7 +12,7 @@
         font-size: var(--font-size-xxxl);
         text-align: center;
 
-        img {
+        & > img {
             max-width: calc(100% - #{2 * $p});
             max-height: rem(110px);
             opacity: 0;
@@ -110,10 +40,10 @@
 
         > i {
             min-width: rem(28px);
+            padding-inline-end: rem(8px);
             font-size: var(--icon-size-xxxs);
             color: var(--color-gray-600);
             text-align: center;
-            padding-inline-end: rem(8px);
         }
 
         &.-bookmarks {
@@ -207,6 +137,20 @@
     &__cat-count {
         font-size: var(--font-size-md);
         color: var(--color-gray-700);
+    }
+
+    &__bar.-empty {
+        height: rem(56px);
+        margin-right: rem(-48px);
+        background: var(--color-white);
+    }
+
+    &.shown {
+        .menu__title {
+            & > img {
+                opacity: 1;
+            }
+        }
     }
 
     @include kiosk {

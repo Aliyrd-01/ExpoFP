@@ -4,13 +4,13 @@ $im: 0.4rem;
 
 .booth {
     &__bar {
+        margin-inline-start: rem(16px);
         padding: rem(16px 0);
         font-size: var(--font-size-xl);
         font-weight: var(--font-weight-bold);
         line-height: rem(24px);
         color: var(--color-black);
         overflow-wrap: break-word;
-        margin-inline-start: rem(16px);
     }
 
     &__content {
@@ -109,8 +109,8 @@ $im: 0.4rem;
 
     @include kiosk {
         &__bar {
-            padding: 0;
             margin-inline-start: var(--k-spacing-lg);
+            padding: 0;
         }
 
         &__desc {
