@@ -79,7 +79,7 @@
         display: flex;
         flex-flow: column wrap;
         gap: rem(16px);
-        padding: rem(0 16px);
+        padding: rem(0 16px 24px);
     }
 
     @include rtl {
@@ -223,6 +223,7 @@
 
     @include kiosk {
         padding: var(--k-spacing-sm) 0;
+        gap: rem(8px);
 
         &__booth,
         &__cat,
@@ -455,6 +456,15 @@
             font-size: var(--icon-size-md);
         }
     }
+
+    @include kiosk {
+        margin-top: rem(30px);
+
+        &__icon {
+            width: rem(42px);
+            height: rem(42px);
+        }
+    }
 }
 
 .exhibitor-custom-buttons {
@@ -496,6 +506,7 @@
 .hide-details-button {
     position: sticky;
     bottom: 0;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;

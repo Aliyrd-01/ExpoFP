@@ -68,7 +68,7 @@
 
     @include kiosk {
         inset-inline-end: var(--k-app-gap);
-        top: calc(var(--k-mapcontrol-size) * 4 + var(--k-mapcontrols-gap) * 3 + var(--k-app-gap)) !important;
+        top: calc(var(--k-mapcontrol-size) * 4 + var(--k-mapcontrols-gap) * 5 + var(--k-app-gap)) !important;
         row-gap: var(--k-mapcontrols-gap);
 
         & > .item {
