@@ -1,3 +1,4 @@
+import { PoiType } from "../store/PoiTypeStore";
 import { ScheduleItem } from "./../store/ScheduleStore";
 interface Data {
     noFeatured: boolean;
@@ -18,6 +19,7 @@ interface Data {
     booths: RawBooth[];
     exhibitors: RawExhibitor[];
     categories: RawCategory[];
+    poiTypes: RawPoiType[];
     reserveInstructions: string;
     sendLoginLinkUrl: string;
     trackerUrl: string;
@@ -44,7 +46,7 @@ interface Data {
     isRebooking: boolean;
     events: ScheduleItem[];
     customCss: string;
-    showLevelLabel:boolean;
+    showLevelLabel: boolean;
     showCategories: boolean;
     showCompaniesAndBooths: boolean;
     showOtherSpaces: boolean;
@@ -72,10 +74,17 @@ interface RawCategory {
     sponsorship: boolean;
 }
 
+interface RawPoiType {
+    id: number;
+    name: string;
+    parentId: number;
+}
+
 type RawBooth = RawRegularBooth | RawSpecialBooth;
 
 interface RawRegularBooth extends RawBoothBase {
     exhibitors: number[];
+    poiTypeId: number;
     // populated
     size: string; // comes from svg or data.js
     price: string; // comes from svg or data.js
@@ -103,6 +112,7 @@ interface RawBoothBase {
     externalId: string;
     exhibitors: number[];
     meta: Record<string, string>;
+    poiTypeId: number;
     // special?: true;
     // rect: Rect;
     // noLabels: boolean;

@@ -92,6 +92,8 @@ export function actualBoothColor(b: Booth) {
 }
 
 export function getBoothlabel(booth: Booth) {
+    if (booth.noLabels) return null;
+
     if (booth instanceof SpecialBooth) return booth.title || booth.name;
 
     let exh = data.hideExhibitors
@@ -100,7 +102,7 @@ export function getBoothlabel(booth: Booth) {
         ? booth.exhibitors
         : booth.exhibitors.filter((e) => e.featured);
 
-    return booth.noLabels ? null : (exh || [])[0]?.name || booth.title || booth.name;
+    return (exh || [])[0]?.name || booth.title || booth.name;
 }
 
 function decimalToHex(input: string) {
