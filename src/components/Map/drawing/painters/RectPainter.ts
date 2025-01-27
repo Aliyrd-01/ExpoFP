@@ -110,6 +110,11 @@ export default class RectPainter implements Painter {
 
     addObject(obj: DrawerObject) {
         const item = obj as DrawerObjectEx;
+
+        if (this.objectsById.has(item.id)) {
+            return;
+        }
+
         if (typeof item.visible === "undefined") item.visible = true;
         item.skipdim = !!item.skipdim;
         item.stretch = !!item.stretch;

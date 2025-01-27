@@ -32,7 +32,9 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
     constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
         super(context, booth, layerID + "booth-border", TrianglePainter, painterOrderPriority, visible);
 
-        const borderColor = Color(booth.borderColor).vec4();
+        const borderColor = Color(
+            booth.selected ? settings.colors.booths.selectedBorder : booth.borderColor
+        ).vec4(); 
         const r = this.booth.rect;
         const width = booth.borderWidth || boothStore.borderWidth;
 
@@ -68,5 +70,11 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
     update() {
         const skipDimm = this.booth.skipDim;
         this.painter.updateSkipdim(this.getId("border"), skipDimm);
+        this.painter.updateColor(
+            this.getId("border"),
+            Color(
+                this.booth.selected ? settings.colors.booths.selectedBorder : this.booth.borderColor
+            ).vec4(),
+        );
     }
 }

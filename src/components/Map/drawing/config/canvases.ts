@@ -347,7 +347,6 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
 export function createArrowCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
-    img: HTMLImageElement,
     scale: number = pixelRatio * 0.4,
 ): CanvasDescriptor {
     return {
@@ -357,18 +356,15 @@ export function createArrowCurrentCanvas(
         draw(ctx) {
             ctx.scale(scale, scale);
 
-            if (img) {
-                ctx.drawImage(img, 0, 0, 95 * scale, 95 * scale);
-            } else {
-                ctx.beginPath();
-                ctx.fillStyle = color;
-                ctx.moveTo(75, 15);
-                ctx.lineTo(95, 35);
-                ctx.lineTo(75, 55);
-                ctx.lineTo(80, 35);
-                ctx.closePath();
-                ctx.fill();
-            }
+            ctx.beginPath();
+            ctx.fillStyle = color;
+
+            ctx.moveTo(75, 15);
+            ctx.lineTo(95, 35);
+            ctx.lineTo(75, 55);
+            ctx.lineTo(80, 35);
+            ctx.closePath();
+            ctx.fill();
         },
     };
 }
@@ -458,11 +454,23 @@ export function createImageCanvas(
     height: number,
     pixelRatio: number
 ): CanvasDescriptor {
+    const aspectRatio = image.width / image.height;
+    let scaledWidth = width * pixelRatio;
+    let scaledHeight = height * pixelRatio;
+
+    if (width / height > aspectRatio) {
+        // Width is too wide, adjust to match height
+        scaledWidth = scaledHeight * aspectRatio;
+    } else {
+        // Height is too tall, adjust to match width
+        scaledHeight = scaledWidth / aspectRatio;
+    }
+
     return {
-        width: width * pixelRatio,
-        height: height * pixelRatio,
+        width: scaledWidth,
+        height: scaledHeight,
         draw(ctx: CanvasRenderingContext2D) {
-            ctx.drawImage(image, 0, 0, width * pixelRatio, height * pixelRatio);
+            ctx.drawImage(image, 0, 0, scaledWidth, scaledHeight);
         }
     };
 }

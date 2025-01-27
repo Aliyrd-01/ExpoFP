@@ -48,23 +48,7 @@ export default function Floors() {
     };
 
     return useObserver(() => {
-        data = store.layerStore.layers
-            .filter((l) => !l.frozen && !l.rootParent)
-            .concat(
-                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible),
-            )
-            .filter((value, index, array) => array.indexOf(value) === index)
-            .reverse()
-            .map((l) => {
-                return {
-                    layer: l,
-                    shortName: l.shortName,
-                    description: l.description,
-                    active: l.visible,
-                    disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
-                };
-            });
-
+        data = store.layerStore.floors;
         return (
             (store.layerStore.mode === LayersMode.Radio || store.layerStore.mode === LayersMode.CheckBox) && (
                 <div className={s.className} style={s.style}>

@@ -32,7 +32,7 @@ export default class FloorPlanLoader implements FloorPlan {
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
 
-    readonly icons: FloorPlanIcons = { direction: null };
+    public readonly icons = new Map<FloorPlanIcon, HTMLImageElement>();
 
     get ready() {
         return this._ready;
@@ -344,8 +344,23 @@ export default class FloorPlanLoader implements FloorPlan {
             }
 
             try {
-                const url = "icons/bluedot-arrow.svg";
-                self.icons.direction = await loadImage(baseUrl ? new URL(url, baseUrl).href : url);
+                const iconEntries = await Promise.allSettled(
+                    Object.entries({
+                        "departure": "icons/departure.svg",
+                        "destination": "icons/destination.svg",
+                        "direction": "icons/direction.svg",
+                        "transition": "icons/transition.svg",
+                        "waypoint": "icons/waypoint.svg",
+                    }).map(([key, path]) =>
+                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
+                    )
+                );
+
+                iconEntries
+                    .filter((entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> => entry.status === "fulfilled")
+                    .map(entry => entry.value)
+                    .forEach(([key, icon]) => self.icons.set(key, icon));
+
             } catch (e) {
                 console.warn(e);
             }

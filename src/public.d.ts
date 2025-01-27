@@ -210,4 +210,4 @@ const ExpoFP: {
     FloorPlan: FloorPlanOptions;
 };
 
-type FloorPlanIcons = Record<"direction", HTMLImageElement | null>;
+type FloorPlanIcon = "departure" | "destination" | "direction" | "transition" | "waypoint";
