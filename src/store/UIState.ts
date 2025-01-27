@@ -282,8 +282,18 @@ export default class UIState {
     @computed get canvasVisibleRectPx(): Rect {
         const s = this.screenSize;
         return Rect.fromX1y1x2y2(
-            0,
-            0,
+            uiState.kiosk || uiState.rtl ? 0 : this.mapVisibleStart,
+            this.mapVisibleTop,
+            uiState.rtl ? s.width - this.mapVisibleStart : s.width,
+            s.height - this.mapVisibleBottom
+        );
+    }
+
+    @computed get dimCanvasVisibleRectPx(): Rect {
+        const s = this.screenSize;
+        return Rect.fromX1y1x2y2(
+            uiState.kiosk || uiState.rtl ? 0 : this.mapVisibleStart,
+            this.mapVisibleTop,
             uiState.rtl ? s.width - this.mapVisibleStart : s.width,
             s.height - this.mapVisibleBottom
         );
