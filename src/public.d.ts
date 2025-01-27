@@ -209,3 +209,5 @@ interface ExpoData {
 const ExpoFP: {
     FloorPlan: FloorPlanOptions;
 };
+
+type FloorPlanIcons = Record<"direction", HTMLImageElement | null>;

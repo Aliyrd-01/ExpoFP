@@ -8,6 +8,7 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isWebview from "./utils/is-webview";
+import { loadImage } from "./utils/loadImage";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
 
@@ -30,6 +31,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
+
+    readonly icons: FloorPlanIcons = { direction: null };
 
     get ready() {
         return this._ready;
@@ -338,6 +341,13 @@ export default class FloorPlanLoader implements FloorPlan {
 
                 await loadCustomFonts(data.customCss);
                 // }
+            }
+
+            try {
+                const url = "icons/bluedot-arrow.svg";
+                self.icons.direction = await loadImage(baseUrl ? new URL(url, baseUrl).href : url);
+            } catch (e) {
+                console.warn(e);
             }
 
             logger.log("Data loaded");

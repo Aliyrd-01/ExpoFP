@@ -1,4 +1,4 @@
-import { loadImage } from "./imageloader";
+import { loadImage } from "./loadImage";
 import isMobile from "./is-mobile";
 import isWebview from "./is-webview";
 
