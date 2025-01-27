@@ -358,7 +358,6 @@ export function createArrowCurrentCanvas(
 
             ctx.beginPath();
             ctx.fillStyle = color;
-
             ctx.moveTo(75, 15);
             ctx.lineTo(95, 35);
             ctx.lineTo(75, 55);

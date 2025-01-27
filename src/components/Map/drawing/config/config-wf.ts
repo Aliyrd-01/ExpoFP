@@ -47,7 +47,7 @@ let isNewVersion = false;
 
 // let initialDate = null;
 
-const waypointsIds = new Set<string>();
+const waypointIds = new Set<string>();
 
 export function mapCurrentPosition(position: CurrentPosition): Point | null {
     var mapping = null;
@@ -736,7 +736,7 @@ function attachWaypoints(
             texPosition: "lefttop",
             visible: false,
         });
-        waypointsIds.add(id);
+        waypointIds.add(id);
 
         drawer.updateCenter(id, [point.x, point.y]);
         drawer.updateSkipdim(id, true);
@@ -746,6 +746,6 @@ function attachWaypoints(
 }
 
 function clearWaypoints(drawer: RectPainter) {
-    waypointsIds.forEach(id => drawer.removeObject(id));
-    waypointsIds.clear();
+    waypointIds.forEach(id => drawer.removeObject(id));
+    waypointIds.clear();
 }
