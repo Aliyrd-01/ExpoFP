@@ -70,10 +70,10 @@ export default class LayerStore {
     @computed get floors() {
         const uniqueLayers = new Set(
             this.layers
-                .filter((l) => !l.frozen && !l.rootParent)
+                .filter(l => l && !l.frozen && !l.rootParent)
                 .concat(
                     store.routeStore.layers.filter(
-                        (l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible,
+                        (l) => l && l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible,
                     ),
                 ),
         );
