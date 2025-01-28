@@ -453,7 +453,7 @@ export function createImageCanvas(
     height: number,
     pixelRatio: number
 ): CanvasDescriptor {
-    const aspectRatio = image.width / image.height;
+    const aspectRatio = image ? image.width / image.height : 1;
     let scaledWidth = width * pixelRatio;
     let scaledHeight = height * pixelRatio;
 
@@ -469,6 +469,7 @@ export function createImageCanvas(
         width: scaledWidth,
         height: scaledHeight,
         draw(ctx: CanvasRenderingContext2D) {
+            if (!image) return;
             ctx.drawImage(image, 0, 0, scaledWidth, scaledHeight);
         }
     };

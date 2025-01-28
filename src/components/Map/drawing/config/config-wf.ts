@@ -31,7 +31,7 @@ let routeLines: RouteLine[] = [];
 let pointSize: number = null;
 let scale: number = null;
 
-const totalPoints = 700;
+const totalPoints = 2000;
 const isDebug = false;
 
 const blinkCounter = 3;
@@ -344,14 +344,14 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const blinkCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
 
     let sourceLocationCanvas;
-    if (store.fp.icons.has("departure")) {
+    if (store.fp.icons.get("departure")) {
         sourceLocationCanvas = createImageCanvas(store.fp.icons.get("departure"), 34, 34, context.pixelRatio);
     } else {
         sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     }
 
     let destinationLocationCanvas;
-    if (store.fp.icons.has("destination")) {
+    if (store.fp.icons.get("destination")) {
         destinationLocationCanvas = createImageCanvas(store.fp.icons.get("destination"), 34, 34, context.pixelRatio);
     } else {
         destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
@@ -360,7 +360,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
 
     let arrowCurrentCanvas;
-    if (store.fp.icons.has("direction")) {
+    if (store.fp.icons.get("direction")) {
         arrowCurrentCanvas = createImageCanvas(store.fp.icons.get("direction"), 34, 34, context.pixelRatio);
     } else {
         arrowCurrentCanvas = createArrowCurrentCanvas(context.pixelRatio, fromColor.hex());
@@ -532,8 +532,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
                 wfDrawer.updateVisible("currentLocation_2", false);
 
-                wfDrawer.updateVisible("currentLocation", store.fp.icons.has("direction") ? false : visible);
-                wfDrawer.updateSkipdim("currentLocation", store.fp.icons.has("direction") ? false : visible);
+                wfDrawer.updateVisible("currentLocation", store.fp.icons.get("direction") ? false : visible);
+                wfDrawer.updateSkipdim("currentLocation", store.fp.icons.get("direction") ? false : visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
                 const rotateRadians = position?.angle ? toRadians(position.angle) : null;
@@ -716,7 +716,7 @@ function attachWaypoints(
         const id = `waypoint_${currentLayerName}_${i}`;
 
         const waypointCanvas = (
-            store.fp.icons.has("waypoint")
+            store.fp.icons.get("waypoint")
                 ? createImageCanvas(store.fp.icons.get("waypoint"), 34, 34, pixelRatio)
                 : createCurrentCanvas(pixelRatio, fromColor.hex())
         );
@@ -774,7 +774,7 @@ function attachTransitions(
         }
     }).forEach((point, i) => {
         let trasitionCanvas;
-        if (store.fp.icons.has("transition")) {
+        if (store.fp.icons.get("transition")) {
             trasitionCanvas = (
                 toLayerName && !strEqual(point.layer, toLayerName)
                 ? createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio)
