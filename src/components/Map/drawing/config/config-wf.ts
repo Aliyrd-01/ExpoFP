@@ -195,26 +195,15 @@ function drawLines(
     });
 
     if (routePoints.length) {
+        const lastPoint = routePoints[routePoints.length - 1];
+        const firstPoint = routePoints[0];
+        wfDrawer.updateVisible("sourceLocation", true);
+        wfDrawer.updateCenter("sourceLocation", [lastPoint.x, lastPoint.y]);
+        wfDrawer.updateVisible("destinationLocation", true);
+        wfDrawer.updateCenter("destinationLocation", [firstPoint.x, firstPoint.y]);
+
         const { from, to, waypoints } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
-
-        routeLines.filter(rl => strEqual(rl.p0.layer, currentLayerName)).forEach(({ p0, p1 }) => {
-            const { from, to } = uiState.selectedRoute || {};
-
-            const fn = (rect, id, point) => {
-                if (rect?.containsPoint(point.x, point.y)) {
-                    wfDrawer.updateCenter(id, [point.x, point.y]);
-                    wfDrawer.updateVisible(id, true);
-                    return true;
-                }
-                return false;
-            };
-
-            fn(from?.rect, "sourceLocation", p0)
-                || fn(from?.rect, "sourceLocation", p1)
-                || fn(to?.rect, "destinationLocation", p0)
-                || fn(to?.rect, "destinationLocation", p1);
-        });
 
         attachWaypoints(
             waypoints,
@@ -225,7 +214,7 @@ function drawLines(
             pixelRatio,
         );
 
-        attachTransitions(
+        const transitionPoints = attachTransitions(
             transitionDrawer,
             transitionsCollector,
             routeLines,
@@ -235,6 +224,16 @@ function drawLines(
             to?.layer?.name,
             pixelRatio,
         );
+
+        transitionPoints.forEach(point => {
+            if (point.x === lastPoint.x || point.y === lastPoint.y) {
+                wfDrawer.updateVisible("sourceLocation", false);
+            }
+
+            if (point.x === firstPoint.x || point.y === firstPoint.y) {
+                wfDrawer.updateVisible("destinationLocation", false);
+            }
+        });
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
@@ -750,7 +749,7 @@ function attachTransitions(
     fromLayerName: string,
     toLayerName: string,
     pixelRatio: number,
-) {
+): Point[] {
     idCollector.clear();
 
     const findIndex = (names, target) => names.findIndex(name => strEqual(name, target));
@@ -764,6 +763,7 @@ function attachTransitions(
         angleRad = toRadians(45);
     }
 
+    const points = [];
     lines.filter(l => l.virtual).flatMap(l => {
         if (currentLayerName && strEqual(l.p0.layer, currentLayerName)) {
             return [l.p0];
@@ -802,8 +802,11 @@ function attachTransitions(
         });
         idCollector.add(id);
         drawer.updateSkipdim(id, true);
+        points.push(point);
     });
     drawer.reinitializeBuffers();
+
+    return points;
 }
 
 interface IDynamicObjects {
