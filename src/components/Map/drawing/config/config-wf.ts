@@ -196,14 +196,15 @@ function drawLines(
 
     if (routePoints.length) {
         const { from, to, waypoints } = uiState.selectedRoute || {};
+        const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        routeLines.forEach(({ p0, p1 }) => {
+        routeLines.filter(rl => strEqual(rl.p0.layer, currentLayerName)).forEach(({ p0, p1 }) => {
             const { from, to } = uiState.selectedRoute || {};
 
-            const fn = (rect, type, point) => {
+            const fn = (rect, id, point) => {
                 if (rect?.containsPoint(point.x, point.y)) {
-                    wfDrawer.updateCenter(type, [point.x, point.y]);
-                    wfDrawer.updateVisible(type, true);
+                    wfDrawer.updateCenter(id, [point.x, point.y]);
+                    wfDrawer.updateVisible(id, true);
                     return true;
                 }
                 return false;
@@ -220,7 +221,7 @@ function drawLines(
             waypointDrawer,
             waypointsCollector,
             routeLines,
-            store.routeStore.currentRouteLayer?.name,
+            currentLayerName,
             pixelRatio,
         );
 
@@ -229,7 +230,7 @@ function drawLines(
             transitionsCollector,
             routeLines,
             store.layerStore.floors.map(f => f.name),
-            store.routeStore.currentRouteLayer?.name,
+            currentLayerName,
             from?.layer?.name,
             to?.layer?.name,
             pixelRatio,
@@ -482,6 +483,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         var layers = store.layerStore.visible.map((l) => l.name);
 
         for (let i = 0; i < routePoints.length; i++) pointDrawer.updateVisible(`Dot_${i}`, false);
+        waypointsCollector.clear();
+        transitionsCollector.clear();
+        wfDrawer.updateVisible("sourceLocation", false);
+        wfDrawer.updateVisible("destinationLocation", false);
 
         routePoints = [];
 
