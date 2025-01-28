@@ -156,6 +156,8 @@ function drawLines(
     pixelRatio: number,
 ): Rectangle {
     routePoints.forEach((rp, i) => pointDrawer.updateVisible(`Dot_${i}`, false));
+    waypointsCollector.clear();
+    transitionsCollector.clear();
 
     routePoints = [];
 
@@ -234,7 +236,6 @@ function drawLines(
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
-        waypointsCollector.clear();
     }
 
     var x1 = 1000000;
