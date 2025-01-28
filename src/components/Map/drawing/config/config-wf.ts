@@ -47,8 +47,6 @@ let isNewVersion = false;
 
 // let initialDate = null;
 
-const waypointIds = new Set<string>();
-
 export function mapCurrentPosition(position: CurrentPosition): Point | null {
     var mapping = null;
     var fpConfig: GpsConfig = null;
@@ -147,7 +145,16 @@ function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: n
     };
 }
 
-function drawLines(wfDrawer: RectPainter, pointDrawer: RectPainter, waypointDrawer: RectPainter, ptscale: number, pixelRatio: number): Rectangle {
+function drawLines(
+    wfDrawer: RectPainter,
+    pointDrawer: RectPainter,
+    waypointDrawer: RectPainter,
+    waypointsCollector: IDynamicObjects,
+    transitionDrawer: RectPainter,
+    transitionsCollector: IDynamicObjects,
+    ptscale: number,
+    pixelRatio: number,
+): Rectangle {
     routePoints.forEach((rp, i) => pointDrawer.updateVisible(`Dot_${i}`, false));
 
     routePoints = [];
@@ -198,15 +205,15 @@ function drawLines(wfDrawer: RectPainter, pointDrawer: RectPainter, waypointDraw
         if (areLayersEnabled() && !strEqual(fromLayerName, toLayerName)) {
             if (strEqual(currentLayerName, fromLayerName)) {
                 wfDrawer.updateVisible("destinationLocation", false);
-                wfDrawer.updateCenter("trasitionLocation", [routePoints[0].x, routePoints[0].y]);
-
-                wfDrawer.updateRotation(
-                    "trasitionLocation",
-                    calcTransitionAngle(store.layerStore.floors.map(f => f.name), fromLayerName, toLayerName),
+                attachTransitions(
+                    transitionDrawer,
+                    transitionsCollector,
+                    fromLayerName,
+                    toLayerName,
+                    pixelRatio,
                 );
-                wfDrawer.updateVisible("trasitionLocation", true);
             } else {
-                wfDrawer.updateVisible("trasitionLocation", false);
+                transitionsCollector.clear();
                 wfDrawer.updateCenter("destinationLocation", [routePoints[0].x, routePoints[0].y]);
                 wfDrawer.updateVisible("destinationLocation", true);
             }
@@ -215,6 +222,7 @@ function drawLines(wfDrawer: RectPainter, pointDrawer: RectPainter, waypointDraw
                 attachWaypoints(
                     uiState.selectedRoute.waypoints,
                     waypointDrawer,
+                    waypointsCollector,
                     routeLines,
                     pixelRatio,
                     currentLayerName,
@@ -226,8 +234,7 @@ function drawLines(wfDrawer: RectPainter, pointDrawer: RectPainter, waypointDraw
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
-        wfDrawer.updateVisible("trasitionLocation", false);
-        clearWaypoints(waypointDrawer);
+        waypointsCollector.clear();
     }
 
     var x1 = 1000000;
@@ -325,6 +332,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const blinkDrawer = context.requirePainter("BLINK", RectPainter, painterOrderPriority + 1, visible);
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority + 2, visible);
     const waypointDrawer = context.requirePainter("WAYPOINT", RectPainter, painterOrderPriority + 2, visible);
+    const transitionDrawer = context.requirePainter("TRANSITION", RectPainter, painterOrderPriority + 2, visible);
+
+    const waypointsCollector = new DynamicObjects(waypointDrawer);
+    const transitionsCollector = new DynamicObjects(transitionDrawer);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, Color("#A4CCE3").hex());
 
@@ -465,29 +476,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     wfDrawer.updateSkipdim("currentLocation_arrow", false);
     wfDrawer.updateSkipdim("currentLocation_2", false);
 
-    let trasitionCanvas;
-    if (store.fp.icons.has("transition")) {
-        trasitionCanvas = createImageCanvas(store.fp.icons.get("transition"), 34, 34, context.pixelRatio);
-    } else {
-        trasitionCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
-    }
-
-    wfDrawer.addObject({
-        id: "trasitionLocation",
-        center: [0, 0],
-        deltas: [0, 0, 0, 0],
-        deltaPts: [
-            -trasitionCanvas.width / 2,
-            -trasitionCanvas.height / 2,
-            trasitionCanvas.width,
-            trasitionCanvas.height,
-        ],
-        canvasTmp: trasitionCanvas,
-        texPosition: "lefttop",
-        visible: false,
-    });
-    wfDrawer.updateSkipdim("trasitionLocation", true);
-
     function updateRoute(currentRouteLayer: Layer = null) {
         var layers = store.layerStore.visible.map((l) => l.name);
 
@@ -509,13 +497,21 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 return;
             }
 
-            var rect = drawLines(wfDrawer, pointDrawer, waypointDrawer, scale || 3, context.pixelRatio);
+            var rect = drawLines(
+                wfDrawer,
+                pointDrawer,
+                waypointDrawer,
+                waypointsCollector,
+                transitionDrawer,
+                transitionsCollector,
+                scale || 3,
+                context.pixelRatio,
+            );
             if (rect) uiState.moveToRect = rect;
         } else {
             wfDrawer.updateVisible("sourceLocation", false);
             wfDrawer.updateVisible("destinationLocation", false);
-            wfDrawer.updateVisible("trasitionLocation", false);
-            clearWaypoints(waypointDrawer);
+            waypointsCollector.clear();
         }
 
         store.routeStore.updateRoutePoints(routeLines.filter((gl) => !gl.virtual));
@@ -626,7 +622,16 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 );
                 if (s === scale) return;
                 scale = s;
-                drawLines(wfDrawer, pointDrawer, waypointDrawer, s, context.pixelRatio);
+                drawLines(
+                    wfDrawer,
+                    pointDrawer,
+                    waypointDrawer,
+                    waypointsCollector,
+                    transitionDrawer,
+                    transitionsCollector,
+                    s,
+                    context.pixelRatio,
+                );
                 blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
@@ -689,11 +694,12 @@ function calcTransitionAngle(floorOrder: string[], fromLayerName: string, toLaye
 function attachWaypoints(
     waypoints: Booth[],
     drawer: RectPainter,
+    idCollector: IDynamicObjects,
     lines: RouteLine[],
     pixelRatio: number,
     currentLayerName: string,
 ) {
-    clearWaypoints(drawer);
+    idCollector.clear();
 
     if (!waypoints?.length) {
         return;
@@ -736,7 +742,7 @@ function attachWaypoints(
             texPosition: "lefttop",
             visible: false,
         });
-        waypointIds.add(id);
+        idCollector.add(id);
 
         drawer.updateCenter(id, [point.x, point.y]);
         drawer.updateSkipdim(id, true);
@@ -745,7 +751,66 @@ function attachWaypoints(
     });
 }
 
-function clearWaypoints(drawer: RectPainter) {
-    waypointIds.forEach(id => drawer.removeObject(id));
-    waypointIds.clear();
+function attachTransitions(
+    drawer: RectPainter,
+    idCollector: IDynamicObjects,
+    fromLayerName: string,
+    toLayerName: string,
+    pixelRatio: number,
+) {
+    // TODO: multiple transitions
+
+    idCollector.clear();
+
+    let trasitionCanvas;
+    if (store.fp.icons.has("transition")) {
+        trasitionCanvas = createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio);
+    } else {
+        trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
+    }
+
+    const id = "trasitionLocation";
+    drawer.addObject({
+        id,
+        center: [0, 0],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -trasitionCanvas.width / 2,
+            -trasitionCanvas.height / 2,
+            trasitionCanvas.width,
+            trasitionCanvas.height,
+        ],
+        canvasTmp: trasitionCanvas,
+        texPosition: "lefttop",
+        visible: false,
+    });
+    idCollector.add(id);
+
+    drawer.updateCenter("trasitionLocation", [routePoints[0].x, routePoints[0].y]);
+    drawer.updateRotation(
+        "trasitionLocation",
+        calcTransitionAngle(store.layerStore.floors.map(f => f.name), fromLayerName, toLayerName),
+    );
+    drawer.updateSkipdim("trasitionLocation", true);
+    drawer.updateVisible("trasitionLocation", true);
+    drawer.reinitializeBuffers();
+}
+
+interface IDynamicObjects {
+    add: (id: string) => void;
+    clear: () => void;
+}
+class DynamicObjects<T extends { removeObject: (id: string) => void }> implements IDynamicObjects {
+    private ids = new Set<string>();
+
+    constructor(private drawer: T) { }
+
+    public add = (id: string) => {
+        this.ids.add(id);
+    }
+
+    public clear = () => {
+        this.ids.forEach(id => this.drawer.removeObject(id));
+        this.ids.clear();
+    }
 }

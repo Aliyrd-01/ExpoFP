@@ -151,6 +151,7 @@ export default class RectPainter implements Painter {
 
     updateVisible(id: string, visible: boolean) {
         const obj = this.objectsById.get(id);
+        if (!obj) return;
         if (obj.visible !== visible) {
             obj.visible = visible;
             this.groupsDirty = true;
@@ -159,6 +160,7 @@ export default class RectPainter implements Painter {
 
     updateSkipdim(id: string, skipdim: boolean) {
         const obj = this.objectsById.get(id);
+        if (!obj) return;
         if (obj.skipdim !== skipdim) {
             obj.skipdim = skipdim;
             this.skipdimDirty = true;
