@@ -195,21 +195,28 @@ function drawLines(
     });
 
     if (routePoints.length) {
-        routePoints.forEach(point => {
-            // TODO: Why the first point is not on the from booth
-            if (uiState.selectedRoute?.from?.rect?.containsPoint(point.x, point.y)) {
-                wfDrawer.updateCenter("sourceLocation", [point.x, point.y]);
-                wfDrawer.updateVisible("sourceLocation", true);
-            }
+        const { from, to, waypoints } = uiState.selectedRoute || {};
 
-            if (uiState?.selectedRoute?.to?.rect?.containsPoint(point.x, point.y)) {
-                wfDrawer.updateCenter("destinationLocation", [point.x, point.y]);
-                wfDrawer.updateVisible("destinationLocation", true);
-            }
+        routeLines.forEach(({ p0, p1 }) => {
+            const { from, to } = uiState.selectedRoute || {};
+
+            const fn = (rect, type, point) => {
+                if (rect?.containsPoint(point.x, point.y)) {
+                    wfDrawer.updateCenter(type, [point.x, point.y]);
+                    wfDrawer.updateVisible(type, true);
+                    return true;
+                }
+                return false;
+            };
+
+            fn(from?.rect, "sourceLocation", p0)
+                || fn(from?.rect, "sourceLocation", p1)
+                || fn(to?.rect, "destinationLocation", p0)
+                || fn(to?.rect, "destinationLocation", p1);
         });
 
         attachWaypoints(
-            uiState.selectedRoute.waypoints,
+            waypoints,
             waypointDrawer,
             waypointsCollector,
             routeLines,
@@ -223,8 +230,8 @@ function drawLines(
             routeLines,
             store.layerStore.floors.map(f => f.name),
             store.routeStore.currentRouteLayer?.name,
-            uiState.selectedRoute.from?.layer?.name,
-            uiState.selectedRoute.to?.layer?.name,
+            from?.layer?.name,
+            to?.layer?.name,
             pixelRatio,
         );
     } else {
