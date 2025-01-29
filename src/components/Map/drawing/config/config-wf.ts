@@ -706,7 +706,7 @@ function attachWaypoints(
             return !rl.virtual && strEqual(rl.p0.layer, currentLayerName);
         }
         return !rl.virtual;
-    }).flatMap(rl => [rl.p0, rl.p1]);
+    }).flatMap(rl => [rl.p0/*, rl.p1*/]);
 
     waypoints.forEach(wp => {
         const rect = wp.rect;
@@ -722,7 +722,7 @@ function attachWaypoints(
 
         const waypointCanvas = (
             store.fp.icons.get("waypoint")
-                ? createImageCanvas(store.fp.icons.get("waypoint"), 24, 24, pixelRatio)
+                ? createImageCanvas(store.fp.icons.get("waypoint"), 34, 34, pixelRatio)
                 : createCurrentCanvas(pixelRatio, fromColor.hex())
         );
 
@@ -769,7 +769,7 @@ function attachTransitions(
     }
 
     const points = [];
-    lines.filter(l => l.virtual).flatMap(l => {
+    lines.filter(l => l.virtual && strEqual(l.p1.layer, currentLayerName)).flatMap(l => {
         if (currentLayerName && strEqual(l.p0.layer, currentLayerName)) {
             return [l.p0];
         } else if (currentLayerName && strEqual(l.p1.layer, currentLayerName)) {
