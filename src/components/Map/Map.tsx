@@ -31,6 +31,7 @@ import configInertia from "./zoom-inertia";
 import ImagePainter from "./drawing/painters/ImagePainter";
 import isMobile from "../../utils/is-mobile";
 import isWebview from "../../utils/is-webview";
+import { requestPersistentStorage } from "../../utils/requestPersistentStorage";
 
 //console.log('isIframe', isIframe)
 
@@ -413,6 +414,8 @@ export default function Map() {
         const b = getBoothIdFromClientXy(x, y, s.drawer);
         logger.log("click", b);
         store.clickBooth(b);
+
+        requestPersistentStorage();
     }
 
     function zoomTo(transform: ZoomTransform, animate: boolean = true) {

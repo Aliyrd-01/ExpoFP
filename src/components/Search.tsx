@@ -75,7 +75,10 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             const newURL = `${currentURL}?${match[0]}`;
             window.location.replace(newURL);
         }
+    } else if (text.startsWith("__sw")) {
+        return true;
     }
+
     return false;
 }
 
