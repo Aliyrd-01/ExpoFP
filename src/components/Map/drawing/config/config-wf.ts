@@ -769,7 +769,12 @@ function attachTransitions(
     }
 
     const points = [];
-    lines.filter(l => l.virtual && strEqual(l.p1.layer, currentLayerName)).flatMap(l => {
+    lines.filter(l => {
+        if (currentLayerName) {
+            return l.virtual && strEqual(l.p1.layer, currentLayerName);
+        }
+        return l.virtual;
+    }).flatMap(l => {
         if (currentLayerName && strEqual(l.p0.layer, currentLayerName)) {
             return [l.p0];
         } else if (currentLayerName && strEqual(l.p1.layer, currentLayerName)) {
