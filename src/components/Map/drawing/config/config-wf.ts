@@ -11,7 +11,7 @@ import { getGraphLines } from "../../../../utils/wayfinding";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { CurrentPosition, Route } from "./../../../../store/RouteStore";
+import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import {
     createArrowCurrentCanvas,
@@ -225,14 +225,19 @@ function drawLines(
             pixelRatio,
         );
 
-        transitionPoints.forEach(point => {
-            if (point.x === lastPoint.x || point.y === lastPoint.y) {
-                wfDrawer.updateVisible("sourceLocation", false);
-            }
+        const shouldHideLocation = (p0: Point, p1: Point, radius = 100): boolean => {
+            const epsilon = 0.0001;
+            return !(
+                Math.abs(p0.x - p1.x) < epsilon
+                || Math.abs(p0.y - p1.y) < epsilon
+                || Math.abs(lineLength(p0, p1)) < radius
+            );
+        };
 
-            if (point.x === firstPoint.x || point.y === firstPoint.y) {
-                wfDrawer.updateVisible("destinationLocation", false);
-            }
+        transitionPoints.forEach(point => {
+            // Hide source and destination locations if the transition point is close to them
+            wfDrawer.updateVisible("sourceLocation", shouldHideLocation(point, lastPoint));
+            wfDrawer.updateVisible("destinationLocation", shouldHideLocation(point, firstPoint));
         });
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
@@ -717,7 +722,7 @@ function attachWaypoints(
 
         const waypointCanvas = (
             store.fp.icons.get("waypoint")
-                ? createImageCanvas(store.fp.icons.get("waypoint"), 34, 34, pixelRatio)
+                ? createImageCanvas(store.fp.icons.get("waypoint"), 24, 24, pixelRatio)
                 : createCurrentCanvas(pixelRatio, fromColor.hex())
         );
 
@@ -775,11 +780,15 @@ function attachTransitions(
     }).forEach((point, i) => {
         let trasitionCanvas;
         if (store.fp.icons.get("transition")) {
-            trasitionCanvas = (
-                toLayerName && !strEqual(point.layer, toLayerName)
-                ? createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio)
-                    : trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex())
-            )
+            if (toLayerName && !strEqual(point.layer, toLayerName)) {
+                trasitionCanvas = createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio);
+            } else {
+                if (store.fp.icons.get("departure")) {
+                    trasitionCanvas = createImageCanvas(store.fp.icons.get("departure"), 34, 34, pixelRatio);
+                } else {
+                    trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
+                }
+            }
         } else {
             trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
         }
