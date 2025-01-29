@@ -1,3 +1,5 @@
+type RectSide = "left" | "right" | "top" | "bottom";
+
 export default class Rect {
     x1: number;
     x2: number;
@@ -147,6 +149,27 @@ export default class Rect {
 
     containsPoint(x: number, y: number) {
         return x >= this.x1 && x <= this.x2 && y >= this.y1 && y <= this.y2;
+    }
+
+    getClosestSide = (point: Point): RectSide => {
+        const left = Math.min(this.x1, this.x2);
+        const right = Math.max(this.x1, this.x2);
+        const top = Math.min(this.y1, this.y2);
+        const bottom = Math.max(this.y1, this.y2);
+
+        const distances = {
+            left: Math.abs(point.x - left),
+            right: Math.abs(point.x - right),
+            top: Math.abs(point.y - top),
+            bottom: Math.abs(point.y - bottom)
+        };
+
+        const closest = Object.entries(distances).reduce((acc, [side, dist]) =>
+            dist < acc.dist ? { side: side as RectSide, dist } : acc,
+            { side: "left" as RectSide, dist: Infinity }
+        );
+
+        return closest.side;
     }
 
     // rotate(radians): Polygon4 {

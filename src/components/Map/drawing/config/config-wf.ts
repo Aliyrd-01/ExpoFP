@@ -202,17 +202,18 @@ function drawLines(
         wfDrawer.updateVisible("destinationLocation", true);
         wfDrawer.updateCenter("destinationLocation", [firstPoint.x, firstPoint.y]);
 
-        const { from, to, waypoints } = uiState.selectedRoute || {};
+        const { from, to/*, waypoints*/ } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        attachWaypoints(
-            waypoints,
-            waypointDrawer,
-            waypointsCollector,
-            routeLines,
-            currentLayerName,
-            pixelRatio,
-        );
+        // TODO: Uncomment when waypoint locations are approved
+        // attachWaypoints(
+        //     waypoints,
+        //     waypointDrawer,
+        //     waypointsCollector,
+        //     routeLines,
+        //     currentLayerName,
+        //     pixelRatio,
+        // );
 
         const transitionPoints = attachTransitions(
             transitionDrawer,
@@ -225,7 +226,7 @@ function drawLines(
             pixelRatio,
         );
 
-        const shouldHideLocation = (p0: Point, p1: Point, radius = 100): boolean => {
+        const shouldHideLocation = (p0: Point, p1: Point, radius = 150): boolean => {
             const epsilon = 0.0001;
             return !(
                 Math.abs(p0.x - p1.x) < epsilon
@@ -421,7 +422,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         deltas: [0, 0, 0, 0],
         deltaPts: [
             -destinationLocationCanvas.width / 2,
-            -destinationLocationCanvas.height,
+            -destinationLocationCanvas.height / 2,
             destinationLocationCanvas.width,
             destinationLocationCanvas.height,
         ],
@@ -703,16 +704,16 @@ function attachWaypoints(
     const points = [];
     const levelLinePoints = lines.filter(rl => {
         if (currentLayerName) {
-            return !rl.virtual && strEqual(rl.p0.layer, currentLayerName);
+            return !rl.virtual && (strEqual(rl.p0.layer, currentLayerName) || strEqual(rl.p1.layer, currentLayerName));
         }
         return !rl.virtual;
-    }).flatMap(rl => [rl.p0/*, rl.p1*/]);
+    }).flatMap(rl => [rl.p1]);
 
     waypoints.forEach(wp => {
         const rect = wp.rect;
         levelLinePoints.forEach(point => {
             if (rect.containsPoint(point.x, point.y)) {
-                points.push(point);
+                points.push({ ...point, side: rect.getClosestSide(point) });
             }
         });
     });
@@ -726,15 +727,30 @@ function attachWaypoints(
                 : createCurrentCanvas(pixelRatio, fromColor.hex())
         );
 
+
+        let deltaX = -waypointCanvas.width / 2;
+        let deltaY = -waypointCanvas.height / 2;
+
+        if (point.side === "left") {
+            deltaX = -waypointCanvas.width;
+        }
+
+        if (point.side === "right") {
+            deltaX = 0;
+        }
+
+        if (point.side === "top") {
+            deltaY = -waypointCanvas.height;
+        }
+
+        if (point.side === "bottom") {
+            deltaY = 0;
+        }
+
         drawer.addObject({
             id,
             center: [point.x, point.y],
-            deltaPts: [
-                -waypointCanvas.width / 2,
-                -waypointCanvas.height / 2,
-                waypointCanvas.width,
-                waypointCanvas.height,
-            ],
+            deltaPts: [deltaX, deltaY, waypointCanvas.width, waypointCanvas.height],
             canvasTmp: waypointCanvas,
             texPosition: "lefttop",
             visible: true,
@@ -761,17 +777,10 @@ function attachTransitions(
     const fromIndex = findIndex(floorOrder, fromLayerName);
     const toIndex = findIndex(floorOrder, toLayerName);
 
-    let angleRad = 0;
-    if (toIndex > fromIndex) {
-        angleRad = toRadians(315);
-    } else if (toIndex < fromIndex) {
-        angleRad = toRadians(45);
-    }
-
     const points = [];
     lines.filter(l => {
         if (currentLayerName) {
-            return l.virtual && strEqual(l.p1.layer, currentLayerName);
+            return l.virtual && (strEqual(l.p0.layer, currentLayerName) || strEqual(l.p1.layer, currentLayerName));
         }
         return l.virtual;
     }).flatMap(l => {
@@ -783,19 +792,18 @@ function attachTransitions(
             return [l.p0, l.p1];
         }
     }).forEach((point, i) => {
-        let trasitionCanvas;
+        let trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
+
         if (store.fp.icons.get("transition")) {
-            if (toLayerName && !strEqual(point.layer, toLayerName)) {
-                trasitionCanvas = createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio);
-            } else {
-                if (store.fp.icons.get("departure")) {
-                    trasitionCanvas = createImageCanvas(store.fp.icons.get("departure"), 34, 34, pixelRatio);
-                } else {
-                    trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
-                }
+            trasitionCanvas = createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio);
+        }
+
+        if (toLayerName && !strEqual(point.layer, toLayerName)) {
+            if (toIndex > fromIndex && store.fp.icons.get("transition_up")) {
+                trasitionCanvas = createImageCanvas(store.fp.icons.get("transition_down"), 56, 34, pixelRatio)
+            } else if (toIndex < fromIndex && store.fp.icons.get("transition_down")) {
+                trasitionCanvas = createImageCanvas(store.fp.icons.get("transition_up"), 56, 34, pixelRatio)
             }
-        } else {
-            trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
         }
 
         const id = `trasition_${i}`;
@@ -812,7 +820,6 @@ function attachTransitions(
             canvasTmp: trasitionCanvas,
             texPosition: "lefttop",
             visible: true,
-            rotateRadians: angleRad,
         });
         idCollector.add(id);
         drawer.updateSkipdim(id, true);
