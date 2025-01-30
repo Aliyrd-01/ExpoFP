@@ -4,7 +4,7 @@ import { BoothBase } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { getColorFromGradient } from "../tools/Color";
 import { ScheduleItem } from "./ScheduleStore";
-import { computed } from "mobx";
+import { action, computed, observable } from "mobx";
 import type { ListItem } from "./types";
 import type { GaEventActions } from "../tools/gtag";
 export default class HeatmapStore {
@@ -18,8 +18,11 @@ export default class HeatmapStore {
         this.rootStore = rootStore;
     }
 
-    // don't observe this
-    forceTrack: { action: GaEventActions; label: string } | null = null;
+    @observable forceTrack: { action: GaEventActions; label: string } | null = null;
+
+    @action clearForceTrack = () => {
+        this.forceTrack = null;
+    }
 
     @computed({ keepAlive: true }) get minAndMaxClicks() {
         if (!this.heatmapData || !this.heatmapData.booths || !this.heatmapData.exhibitors) {

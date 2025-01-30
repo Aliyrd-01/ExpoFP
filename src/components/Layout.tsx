@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { layersStore, uiState, heatmapStore } from "../store";
+import store, { layersStore, uiState } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported, remsToPixels } from "../utils";
 import isDebug from "../utils/is-debug";
@@ -24,7 +24,7 @@ import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
 import { checkUserIsGDPR, GaEventActions, hasUserConsent, sendEventToGa, setConsentSettings, setCookieConsent } from "../tools/gtag";
 import HeatmapLegend from "./HeatmapLegend";
-import { useAutorun } from "../utils/mobx";
+import { useReaction } from "../utils/mobx";
 import trackEvent from "../tools/track-event";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
@@ -83,23 +83,37 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     const minMaxClicks = store.heatmapStore.minAndMaxClicks;
 
-    useAutorun(() => {
-        if (store.heatmapStore.forceTrack) {
-            sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
-            store.heatmapStore.forceTrack = null;
-        } else if (uiState.selectedExhibitor) {
-            trackEvent("exview", uiState.selectedExhibitor.id);
-            sendEventToGa(GaEventActions.ViewExhibitor, uiState.selectedExhibitor.name);
-        }
+    useReaction(
+        () => ({
+            forceTrack: store.heatmapStore.forceTrack,
+            exhibitor: uiState.selectedExhibitor,
+        }),
+        ({
+            forceTrack,
+            exhibitor,
+        }) => {
+            if (forceTrack) {
+                sendEventToGa(forceTrack.action, forceTrack.label);
+                store.heatmapStore.clearForceTrack();
+                return;
+            }
 
-        if (uiState.selectedBooth) {
-            sendEventToGa(GaEventActions.ViewBooth, uiState.selectedBooth.name);
-        }
+            if (exhibitor) {
+                trackEvent("exview", exhibitor.id);
+                sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
+            }
+        },
+    );
 
-        if (uiState.selectedCategory && uiState.selectedCategory.name) {
-            sendEventToGa(GaEventActions.ViewCategory, uiState.selectedCategory.name);
-        }
-    });
+    useReaction(
+        () => uiState.selectedBooth,
+        (booth) => booth && sendEventToGa(GaEventActions.ViewBooth, booth.name),
+    );
+
+    useReaction(
+        () => uiState.selectedCategory,
+        (category) => category && sendEventToGa(GaEventActions.ViewCategory, category.name),
+    );
 
     return (
         <div
