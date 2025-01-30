@@ -90,8 +90,10 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
                 store.heatmapStore.forceTrack = null;
             } else {
-                trackEvent("exview", exhibitor.id);
-                sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
+                if (exhibitor) {
+                    trackEvent("exview", exhibitor.id);
+                    sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
+                }
             }
         },
     );
