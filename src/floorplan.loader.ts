@@ -162,10 +162,6 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    get defaultDataUrl() {
-        return `https://${this.eventId}.expofp.com/data/`;
-    }
-
     // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {
@@ -255,7 +251,7 @@ export default class FloorPlanLoader implements FloorPlan {
         }
         this.renderTarget = fpContainer;
 
-        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || this.defaultDataUrl;
+        const dataUrlBase = options.dataUrl || element.getAttribute("data-data-url") || `https://${eventId}.expofp.com/data/`;
         window["__dataUrlBase"] = dataUrlBase;
 
         this.dataUrl = dataUrlBase;

@@ -3,6 +3,7 @@
 import { MESSAGE_CACHE, MESSAGE_REFRESH } from "./constants";
 
 const CACHE_NAME = "expofp-cache";
+const FILE_NAME = "bundle.json";
 
 export { };
 
@@ -13,32 +14,22 @@ self.addEventListener("install", (event) => {
             const cache = await caches.open(CACHE_NAME);
 
             try {
-                const file = "bundle.json";
-
-                const response = await fetch(new URL(file, self.location.href).href);
+                const response = await fetch(new URL(FILE_NAME, self.location.href).href);
                 if (response.status >= 400) {
-                    throw new Error(`Failed to fetch ${file}: ${response.statusText}`);
+                    throw new Error(`Failed to fetch ${FILE_NAME}: ${response.statusText}`);
                 }
 
                 const json = await response.json();
                 if (!Array.isArray(json)) {
-                    throw new Error(`${file} must contain an array of URLs.`);
+                    throw new Error(`${FILE_NAME} must contain an array of URLs.`);
                 }
 
-                const urls = [
+                await cache.addAll([
                     "/",
-                    "/data/wf.data.js",
-                    "/data/data.js",
-                    "/data/fp.svg.js",
-                    "/data/data-internal.js",
                     ...json.map(url => new URL(url, self.location.href).href),
-                ];
-
-                console.warn("Caching resources from bundle.json:", urls);
-
-                await cache.addAll(urls);
+                ]);
             } catch (error) {
-                console.error("Error caching resources from bundle.json:", error);
+                console.error(`Error caching resources from ${FILE_NAME}:`, error);
             }
         })()
     );

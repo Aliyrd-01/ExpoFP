@@ -5,7 +5,6 @@ class FloorPlan {
     readonly element: HTMLDivElement;
     readonly eventId: string;
     readonly dataUrl: string;
-    readonly defaultDataUrl: string;
     readonly noOverlay: boolean;
     readonly offHistory: boolean;
     readonly allowConsent: boolean;
