@@ -195,15 +195,23 @@ function drawLines(
     });
 
     if (routePoints.length) {
-        const lastPoint = routePoints[routePoints.length - 1];
-        const firstPoint = routePoints[0];
-        wfDrawer.updateVisible("sourceLocation", true);
-        wfDrawer.updateCenter("sourceLocation", [lastPoint.x, lastPoint.y]);
-        wfDrawer.updateVisible("destinationLocation", true);
-        wfDrawer.updateCenter("destinationLocation", [firstPoint.x, firstPoint.y]);
-
         const { from, to/*, waypoints*/ } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
+
+        const locations = [
+            { key: "sourceLocation", rect: from?.rect },
+            { key: "destinationLocation", rect: to?.rect }
+        ];
+
+        routePoints.forEach(({ x, y }) => {
+            for (const { key, rect } of locations) {
+                if (rect?.containsPoint(x, y)) {
+                    wfDrawer.updateCenter(key, [x, y]);
+                    wfDrawer.updateVisible(key, true);
+                    break;
+                }
+            }
+        });
 
         // TODO: Uncomment when waypoint locations are approved
         // attachWaypoints(
@@ -215,7 +223,7 @@ function drawLines(
         //     pixelRatio,
         // );
 
-        const transitionPoints = attachTransitions(
+        attachTransitions(
             transitionDrawer,
             transitionsCollector,
             routeLines,
@@ -225,21 +233,6 @@ function drawLines(
             to?.layer?.name,
             pixelRatio,
         );
-
-        const shouldHideLocation = (p0: Point, p1: Point, radius = 150): boolean => {
-            const epsilon = 0.0001;
-            return !(
-                Math.abs(p0.x - p1.x) < epsilon
-                || Math.abs(p0.y - p1.y) < epsilon
-                || Math.abs(lineLength(p0, p1)) < radius
-            );
-        };
-
-        transitionPoints.forEach(point => {
-            // Hide source and destination locations if the transition point is close to them
-            wfDrawer.updateVisible("sourceLocation", shouldHideLocation(point, lastPoint));
-            wfDrawer.updateVisible("destinationLocation", shouldHideLocation(point, firstPoint));
-        });
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
@@ -291,17 +284,13 @@ export function splitPolyLine(lines: Line[], interval: number): Point[] {
 
         // Calculate the remaining length after the last point
         let remainingLength = lineLengthValue - ((steps - 1) * interval + delta);
-
-        // Ensure remainingLength is not negative
-        if (remainingLength < 0) {
-            remainingLength = 0;
-        }
+        remainingLength = Math.max(remainingLength, 0);
 
         if (i < lines.length - 1) {
             // Calculate the angle between the current and next segments
             const nextAngle = lineAngle(lines[i + 1].p0, lines[i + 1].p1);
             let angleBetween = Math.abs(lineAngleValue - nextAngle);
-            if (angleBetween > 180) angleBetween = 360 - angleBetween;
+            angleBetween = angleBetween > 180 ? 360 - angleBetween : angleBetween;
 
             const alpha = 180 - angleBetween;
             const sinAlpha = sin(alpha);
@@ -315,19 +304,23 @@ export function splitPolyLine(lines: Line[], interval: number): Point[] {
                 const adjustedAsin = asin(sinComponent);
                 delta = (interval * sin(180 - alpha - adjustedAsin)) / sinAlpha;
 
-                if (isNaN(delta) || delta < 0) {
-                    delta = interval;
-                }
+                if (isNaN(delta) || delta < 0) delta = interval;
             }
         } else {
             // Final segment: calculate the delta based on the remaining length
             delta = interval - remainingLength;
         }
 
-        // Ensure delta is not negative
-        if (delta < 0) {
-            delta = 0;
-        }
+        delta = Math.max(delta, 0);
+    }
+
+    // Add the last point of the last line if it is not already in the list
+    const lastLine = lines[lines.length - 1];
+    const lastPoint = lastLine.p1;
+    if (points.length === 0 ||
+        points[points.length - 1].x !== lastPoint.x ||
+        points[points.length - 1].y !== lastPoint.y) {
+        points.push(lastPoint);
     }
 
     return points;
