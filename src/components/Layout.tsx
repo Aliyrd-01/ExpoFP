@@ -85,20 +85,20 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     useReaction(
         () => ({
-            forceTrack: store.heatmapStore.forceTrack,
-            exhibitor: uiState.selectedExhibitor,
+            forceTrack: uiState.menu ? null : store.heatmapStore.forceTrack,
+            exhibitor: uiState.menu ? null : uiState.selectedExhibitor,
         }),
         ({
             forceTrack,
             exhibitor,
         }) => {
-            if (forceTrack) {
+            if (forceTrack?.action && forceTrack?.label) {
                 sendEventToGa(forceTrack.action, forceTrack.label);
                 store.heatmapStore.clearForceTrack();
                 return;
             }
 
-            if (exhibitor) {
+            if (exhibitor?.id && exhibitor?.name) {
                 trackEvent("exview", exhibitor.id);
                 sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
             }
@@ -106,13 +106,13 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
     );
 
     useReaction(
-        () => uiState.selectedBooth,
-        (booth) => booth && sendEventToGa(GaEventActions.ViewBooth, booth.name),
+        () => uiState.menu ? null : uiState.selectedBooth,
+        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name),
     );
 
     useReaction(
-        () => uiState.selectedCategory,
-        (category) => category && sendEventToGa(GaEventActions.ViewCategory, category.name),
+        () => (uiState.menu ? null : uiState.selectedCategory),
+        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name),
     );
 
     return (
