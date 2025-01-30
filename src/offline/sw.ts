@@ -7,8 +7,7 @@ const CACHE_NAME = "expofp-cache";
 export { };
 
 self.addEventListener("install", (event) => {
-    // (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
-
+    (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
     event.waitUntil(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
@@ -21,12 +20,19 @@ self.addEventListener("install", (event) => {
                     throw new Error(`Failed to fetch ${file}: ${response.statusText}`);
                 }
 
-                const urls = await response.json();
-                if (!Array.isArray(urls)) {
+                const json = await response.json();
+                if (!Array.isArray(json)) {
                     throw new Error(`${file} must contain an array of URLs.`);
                 }
 
-                await cache.addAll([...urls, "/"]);
+                const urls = [
+                    ...json.map(url => new URL(url, self.location.href).href),
+                    "/",
+                ];
+
+                console.warn("Caching resources from bundle.json:", urls);
+
+                await cache.addAll(urls);
             } catch (error) {
                 console.error("Error caching resources from bundle.json:", error);
             }
@@ -43,7 +49,7 @@ self.addEventListener("activate", event => {
                     .filter((cacheName) => cacheName !== CACHE_NAME)
                     .map((cacheName) => caches.delete(cacheName))
             );
-            // await (self as unknown as ServiceWorkerGlobalScope).clients.claim();
+            await (self as unknown as ServiceWorkerGlobalScope).clients.claim();
         })()
     );
 });
@@ -137,8 +143,6 @@ async function writeToCache(cacheName, eventRequest, networkResponseClone) {
 let cachingPromise: Promise<void> | null = null;
 
 async function onCacheResources(resources: string[]) {
-    console.warn("Caching resources:", resources);
-
     if (!Array.isArray(resources) || !resources.length) {
         console.warn("No resources to cache or invalid input.");
         return;
@@ -151,6 +155,8 @@ async function onCacheResources(resources: string[]) {
 
     cachingPromise = (async () => {
         try {
+            console.warn("Caching resources:", resources);
+
             const cache = await caches.open(CACHE_NAME);
 
             for (const resource of resources) {
@@ -186,6 +192,8 @@ async function onRefreshCacheResources() {
 
     refreshingPromise = (async () => {
         try {
+            console.warn("Refreshing cache.");
+
             const cache = await caches.open(CACHE_NAME);
             const keys = await cache.keys();
 

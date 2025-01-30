@@ -14,10 +14,11 @@ const command = new URLSearchParams(window.location.search).get("__sw");
 const offlineManager = new OfflineManager();
 
 ready(async () => {
+    const scope = "/";
     if (command === "1") {
-        await offlineManager.register(swUrl, "/");
+        await offlineManager.register(swUrl, scope);
     } else if (command === "0") {
-        await offlineManager.unregister(swUrl);
+        await offlineManager.unregister(scope);
     }
 
     const floorplanDivs = document.querySelectorAll(".expofp-floorplan") as NodeListOf<HTMLDivElement>;
@@ -25,14 +26,14 @@ ready(async () => {
         window["___fp"] = new FloorPlanLoader({
             element,
             onInit: fp => {
-                // offlineManager.cache(
-                //     [
-                //         "data.js",
-                //         "data-internal.js",
-                //         "wf.data.js",
-                //         "fp.svg.js"
-                //     ].map(path => fp.dataUrl ? new URL(path, fp.dataUrl).href : path),
-                // );
+                offlineManager.cache(
+                    [
+                        "data.js",
+                        "data-internal.js",
+                        "wf.data.js",
+                        "fp.svg.js"
+                    ].map(path => fp.dataUrl ? new URL(path, fp.dataUrl).href : path),
+                );
             }
         });
     }
