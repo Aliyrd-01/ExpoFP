@@ -50,10 +50,10 @@ a {
     --icon-size-lg: calc(#{rem(28px)} * var(--k-scale));
     --icon-size-xl: calc(#{rem(30px)} * var(--k-scale));
     --icon-size-xxl: calc(#{rem(32px)} * var(--k-scale));
-    --k-app-gap: calc(20px * var(--k-scale));
-    --k-border-radius-1: clamp(20px, 1.2vmax, 40px);
+    --k-app-gap: 16px;
+    --k-border-radius-1: clamp(26px, 1.2vmax, 40px);
     --k-border-radius-2: 100%;
-    --k-border-radius-3: 80px;
+    --k-border-radius-3: 24px;
     --k-box-shadow-1: 0px 6px 12px rgb(0 0 0 / 40%);
     --k-box-shadow-1-active: 0px 10px 16px rgb(61 145 247 / 40%);
     --k-box-shadow-2: 0px 6px 10px rgb(0 0 0 / 20%);
@@ -61,7 +61,7 @@ a {
     --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
     --k-spacing-lg: calc(max(18px, 1.8vh) * var(--k-scale));
     --k-searchbox-width: clamp(calc(200px * var(--k-scale)), calc(64vw * var(--k-scale)), calc(560px * var(--k-scale)));
-    --k-searchbox-height: clamp(60px, 8vmin, 90px);
+    --k-searchbox-height: clamp(60px, 8vmin, 86px);
     --k-mapcontrols-gap: clamp(14px * var(--k-scale), 1.4vmin * var(--k-scale), 18px * var(--k-scale));
     --k-mapcontrol-size: clamp(calc(54px * var(--k-scale)), calc(4.2vmax * var(--k-scale)), calc(70px * var(--k-scale)));
     --k-mapcontrol-padding: 18%;

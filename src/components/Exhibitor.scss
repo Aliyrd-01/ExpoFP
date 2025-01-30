@@ -40,7 +40,7 @@
         font-size: var(--font-size-sm);
         font-weight: normal;
         line-height: rem(16px);
-        color: var(--color-gray-400);
+        color: var(--color-gray-600);
         text-overflow: ellipsis;
         white-space: nowrap;
         transition: opacity 200ms;
@@ -79,7 +79,7 @@
         display: flex;
         flex-flow: column wrap;
         gap: rem(16px);
-        padding: rem(0 16px 24px);
+        padding: rem(0 16px 18px);
     }
 
     @include rtl {
@@ -222,8 +222,8 @@
     }
 
     @include kiosk {
-        padding: var(--k-spacing-sm) 0;
         gap: rem(8px);
+        padding: var(--k-spacing-sm) 0;
 
         &__booth,
         &__cat,
@@ -253,7 +253,7 @@
         width: rem(74px);
         height: rem(74px);
         margin-inline-end: rem(12px);
-        margin-top: rem(6px);
+        margin-top: rem(2px);
         margin-bottom: rem(6px);
         overflow: hidden;
         background: var(--color-white);
@@ -374,7 +374,7 @@
 .exhibitor-meta {
     width: 100%;
     margin-top: rem(10px);
-    padding: rem(0 12px);
+    padding: rem(0 10px);
     border: 1px solid var(--color-gray-300);
     border-radius: var(--border-radius-lg);
 
@@ -382,7 +382,7 @@
         display: flex;
         gap: rem(12px);
         align-items: center;
-        padding: rem(12px 0);
+        padding: rem(10px 0);
         border-bottom: 1px solid var(--color-gray-300);
 
         &:last-child {

@@ -46,7 +46,7 @@
 
         &.active {
             background: var(--color-primary-ultra-light);
-            border: 1px solid var(--color-primary);
+            border: rem(2px) solid var(--color-primary);
             color: var(--color-primary-dark);
 
             &:hover {

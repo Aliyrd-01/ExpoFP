@@ -1,25 +1,27 @@
 import classNames from "classnames";
-import React, { MouseEvent, ReactNode } from "react";
+import React, { forwardRef, MouseEvent, ReactNode } from "react";
 import "./OverlayBar.scss";
 import OverlayBarBack from "./OverlayBarBack";
 
-const OverlayBar: React.FC<{
-    scrolled: boolean;
-    backMode: "back" | "menu" | "none";
-    hideClose: boolean;
-    overlayBarStyle?: React.CSSProperties;
-    overlayBarEndContent?: ReactNode;
-    onBack: () => void;
-    onClose: () => void;
-}> = ({ scrolled, backMode, hideClose, onBack, onClose, children, overlayBarEndContent, overlayBarStyle }) => {
+const OverlayBar = forwardRef<
+    HTMLDivElement,
+    {
+        scrolled: boolean;
+        backMode: "back" | "menu" | "none";
+        hideClose: boolean;
+        overlayBarStyle?: React.CSSProperties;
+        overlayBarEndContent?: ReactNode;
+        onBack: () => void;
+        onClose: () => void;
+        children?: ReactNode;
+    }
+>(({ scrolled, backMode, hideClose, onBack, onClose, children, overlayBarEndContent, overlayBarStyle }, ref) => {
     function handleClose(e: MouseEvent) {
         onClose();
     }
 
-    // console.log('OverlayBar', { scrolled, backMode, hideClose, onBack, onClose, children })
-
     return (
-        <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`}>
+        <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`} ref={ref}>
             <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
             {hideClose ? (
@@ -36,6 +38,8 @@ const OverlayBar: React.FC<{
             {overlayBarEndContent}
         </div>
     );
-};
+});
+
+OverlayBar.displayName = "OverlayBar";
 
 export default OverlayBar;

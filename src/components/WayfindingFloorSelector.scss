@@ -50,7 +50,7 @@
             &.isCurrent {
                 z-index: 2;
                 background: var(--color-primary-ultra-light);
-                border: 1px solid var(--color-primary);
+                border: 2px solid var(--color-primary);
                 font-weight: var(--font-weight-bold);
                 color: var(--color-primary);
             }
@@ -107,14 +107,13 @@
     justify-content: center;
     width: rem(16px);
     height: rem(16px);
-    background: var(--color-white);
-    border: 1px solid var(--color-primary);
+    background: var(--color-primary);
     border-radius: var(--border-radius-full);
 
     & > svg {
         width: rem(7px);
         height: rem(11px);
-        fill: var(--color-primary);
+        fill: var(--color-white);
     }
 
     @include kiosk {
@@ -124,31 +123,6 @@
         & > svg {
             width: 50%;
             height: auto;
-        }
-    }
-}
-
-.line-arrows {
-    position: absolute;
-    top: 50%;
-    right: rem(-10px);
-    margin-top: rem(-12px);
-    animation: arrows-fade-in-out 8s ease-in-out infinite;
-
-    & > svg {
-        width: rem(18px);
-        height: rem(10px);
-        fill: var(--color-primary);
-
-        & > path {
-            animation: arrow-wave 1s infinite;
-            animation-direction: alternate;
-
-            @for $i from 1 through 10 {
-                &:nth-child(#{$i}) {
-                    animation-delay: #{0.5 * ($i - 1)}s;
-                }
-            }
         }
     }
 }
@@ -180,44 +154,8 @@
     25%,
     75% {
         background: var(--color-primary-ultra-light);
-        border: 1px solid var(--color-primary);
+        border: 2px solid var(--color-primary);
         box-shadow: 0 0 10px 2px rgb(65 182 231 / 30%);
         color: var(--color-primary);
-    }
-}
-
-@keyframes arrows-fade-in-out {
-    0% {
-        opacity: 0;
-    }
-
-    5% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    55% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-@keyframes arrow-wave {
-    0% {
-        opacity: 0;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-
-    100% {
-        opacity: 1;
     }
 }
