@@ -5,17 +5,9 @@ import "./Category.scss";
 import List from "./List";
 import OverlayContent from "./OverlayContent";
 import { t } from "../utils/i18n";
-import { useAutorun } from "../utils/mobx";
-import { GaEventActions, sendEventToGa } from "../tools/gtag";
 
 function Category() {
     const scrollableRef = useRef<HTMLDivElement>();
-
-    useAutorun(() => {
-        if (uiState.selectedCategory && uiState.selectedCategory.name) {
-            sendEventToGa(GaEventActions.ViewCategory, uiState.selectedCategory.name);
-        }
-    });
 
     return useObserver(() => {
         const bar = (

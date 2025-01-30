@@ -22,8 +22,10 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { checkUserIsGDPR, hasUserConsent, setConsentSettings, setCookieConsent } from "../tools/gtag";
+import { checkUserIsGDPR, GaEventActions, hasUserConsent, sendEventToGa, setConsentSettings, setCookieConsent } from "../tools/gtag";
 import HeatmapLegend from "./HeatmapLegend";
+import { useAutorun } from "../utils/mobx";
+import trackEvent from "../tools/track-event";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -80,6 +82,24 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
     }, []);
 
     const minMaxClicks = store.heatmapStore.minAndMaxClicks;
+
+    useAutorun(() => {
+        if (store.heatmapStore.forceTrack) {
+            sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
+            store.heatmapStore.forceTrack = null;
+        } else if (uiState.selectedExhibitor) {
+            trackEvent("exview", uiState.selectedExhibitor.id);
+            sendEventToGa(GaEventActions.ViewExhibitor, uiState.selectedExhibitor.name);
+        }
+
+        if (uiState.selectedBooth) {
+            sendEventToGa(GaEventActions.ViewBooth, uiState.selectedBooth.name);
+        }
+
+        if (uiState.selectedCategory && uiState.selectedCategory.name) {
+            sendEventToGa(GaEventActions.ViewCategory, uiState.selectedCategory.name);
+        }
+    });
 
     return (
         <div
