@@ -29,7 +29,7 @@ self.addEventListener("install", (event) => {
                     ...json.map(url => new URL(url, self.location.href).href),
                 ];
 
-                console.error(`Caching resources from ${FILE_NAME}:`, urls);
+                console.warn(`Caching resources from ${FILE_NAME}:`, urls);
 
                 await cache.addAll(urls);
             } catch (error) {
