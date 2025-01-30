@@ -321,7 +321,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
             padding,
             draw(c) {
                 c.translate(padding, padding);
-                c.fillStyle = "#e64839";
+                c.fillStyle = "#fdbf2b";
                 c.strokeStyle = color;
                 c.lineWidth = lineWidth;
 
