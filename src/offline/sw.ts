@@ -24,10 +24,14 @@ self.addEventListener("install", (event) => {
                     throw new Error(`${FILE_NAME} must contain an array of URLs.`);
                 }
 
-                await cache.addAll([
+                const urls = [
                     "/",
                     ...json.map(url => new URL(url, self.location.href).href),
-                ]);
+                ];
+
+                console.error(`Caching resources from ${FILE_NAME}:`, urls);
+
+                await cache.addAll(urls);
             } catch (error) {
                 console.error(`Error caching resources from ${FILE_NAME}:`, error);
             }
