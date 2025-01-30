@@ -90,7 +90,7 @@ function createConfig(env) {
             }),
             new BundleJsonPlugin({
                 filename: "bundle.json",
-                exclude: ["sw.js", ".DS_Store"],
+                exclude: ["sw.js"],
                 publicPath: "public",
             }),
         ],
