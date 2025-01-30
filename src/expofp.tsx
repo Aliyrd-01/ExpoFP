@@ -8,13 +8,17 @@ import { OfflineManager } from "./offline/OfflineManager";
 window.addEventListener("error", reportError);
 window["__efpStyleElements"] = [];
 
+const currentScriptSrc = (document.currentScript as HTMLScriptElement)?.src;
+const swUrl = currentScriptSrc ? new URL("sw.js", currentScriptSrc).href : "sw.js";
+const command = new URLSearchParams(window.location.search).get("__sw");
+const offlineManager = new OfflineManager();
+
 ready(async () => {
-    const offlineManager = new OfflineManager();
-    const currentScriptSrc = (document.currentScript as HTMLScriptElement)?.src;
-    await offlineManager.init({
-        swUrl: currentScriptSrc ? new URL("sw.js", currentScriptSrc).href : "sw.js",
-        scope: "/",
-    });
+    if (command === "1") {
+        await offlineManager.register(swUrl, "/");
+    } else if (command === "0") {
+        await offlineManager.unregister(swUrl);
+    }
 
     const floorplanDivs = document.querySelectorAll(".expofp-floorplan") as NodeListOf<HTMLDivElement>;
     for (const element of Array.from(floorplanDivs)) {

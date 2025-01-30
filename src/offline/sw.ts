@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
 
+import { MESSAGE_CACHE, MESSAGE_REFRESH } from "./constants";
+
 const CACHE_NAME = "expofp-cache";
-const MESSAGE_CACHE = "CACHE";
-const MESSAGE_REFRESH = "REFRESH";
 
 export { };
 
