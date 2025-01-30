@@ -89,10 +89,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
             if (store.heatmapStore.forceTrack) {
                 sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
                 store.heatmapStore.forceTrack = null;
-                return;
-            }
-
-            if (exhibitor?.id && exhibitor?.name) {
+            } else {
                 trackEvent("exview", exhibitor.id);
                 sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
             }
@@ -101,35 +98,13 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     useReaction(
         () => uiState.selectedBooth,
-        (booth) => {
-            console.error("booth", booth);
-
-            return booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name)
-        },
+        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name),
     );
 
     useReaction(
         () => uiState.selectedCategory,
         (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name),
     );
-
-    // useAutorun(() => {
-    //     if (store.heatmapStore.forceTrack) {
-    //         sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
-    //         store.heatmapStore.forceTrack = null;
-    //     } else if (uiState.selectedExhibitor) {
-    //         trackEvent("exview", uiState.selectedExhibitor.id);
-    //         sendEventToGa(GaEventActions.ViewExhibitor, uiState.selectedExhibitor.name);
-    //     }
-
-    //     if (uiState.selectedBooth) {
-    //         sendEventToGa(GaEventActions.ViewBooth, uiState.selectedBooth.name);
-    //     }
-
-    //     if (uiState.selectedCategory && uiState.selectedCategory.name) {
-    //         sendEventToGa(GaEventActions.ViewCategory, uiState.selectedCategory.name);
-    //     }
-    // });
 
     return (
         <div
