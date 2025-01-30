@@ -24,6 +24,7 @@ import {
 import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
 import { Booth } from "../../../../store/BoothStore";
+import Rect from "../../../../core/Rect";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -198,20 +199,7 @@ function drawLines(
         const { from, to/*, waypoints*/ } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        const locations = [
-            { key: "sourceLocation", rect: from?.rect },
-            { key: "destinationLocation", rect: to?.rect }
-        ];
-
-        routePoints.forEach(({ x, y }) => {
-            for (const { key, rect } of locations) {
-                if (rect?.containsPoint(x, y)) {
-                    wfDrawer.updateCenter(key, [x, y]);
-                    wfDrawer.updateVisible(key, true);
-                    break;
-                }
-            }
-        });
+        attachEndpoints(wfDrawer, routePoints, from?.rect, to?.rect);
 
         // TODO: Uncomment when waypoint locations are approved
         // attachWaypoints(
@@ -312,6 +300,16 @@ export function splitPolyLine(lines: Line[], interval: number): Point[] {
         }
 
         delta = Math.max(delta, 0);
+    }
+
+    // Add the first point of the first line if it is not already in the list
+    if (lines.length === 0) return;
+    const firstLine = lines[0];
+    const firstPoint = firstLine.p0;
+    if (points.length === 0 ||
+        points[0].x !== firstPoint.x ||
+        points[0].y !== firstPoint.y) {
+        points.unshift(firstPoint);
     }
 
     // Add the last point of the last line if it is not already in the list
@@ -839,5 +837,44 @@ class DynamicObjects<T extends { removeObject: (id: string) => void }> implement
     public clear = () => {
         this.ids.forEach(id => this.drawer.removeObject(id));
         this.ids.clear();
+    }
+}
+
+function attachEndpoints(
+    drawer: RectPainter,
+    points: Point[],
+    fromRect: Rect,
+    toRect: Rect,
+) {
+    if (!points.length) return;
+
+    const locations = [
+        { key: "sourceLocation", rect: fromRect },
+        { key: "destinationLocation", rect: toRect }
+    ];
+
+    let sourceLocationAdded = false;
+    let destinationLocationAdded = false;
+
+    points.forEach(({ x, y }) => {
+        for (const { key, rect } of locations) {
+            if (rect?.containsPoint(x, y)) {
+                drawer.updateCenter(key, [x, y]);
+                drawer.updateVisible(key, true);
+                if (key === "sourceLocation") sourceLocationAdded = true;
+                if (key === "destinationLocation") destinationLocationAdded = true;
+                break;
+            }
+        }
+    });
+
+    if (!sourceLocationAdded) {
+        drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
+        drawer.updateVisible("sourceLocation", true);
+    }
+
+    if (!destinationLocationAdded) {
+        drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
+        drawer.updateVisible("destinationLocation", true);
     }
 }
