@@ -26,14 +26,16 @@ ready(async () => {
         window["___fp"] = new FloorPlanLoader({
             element,
             onInit: fp => {
-                offlineManager.cache(
-                    [
-                        "data.js",
-                        "data-internal.js",
-                        "wf.data.js",
-                        "fp.svg.js"
-                    ].map(path => fp.dataUrl ? new URL(path, fp.dataUrl).href : path),
-                );
+                if (fp.dataUrl !== fp.defaultDataUrl) {
+                    offlineManager.cache(
+                        [
+                            "data.js",
+                            "data-internal.js",
+                            "wf.data.js",
+                            "fp.svg.js"
+                        ].map(path => fp.dataUrl ? new URL(path, fp.dataUrl).href : path),
+                    );
+                }
             }
         });
     }

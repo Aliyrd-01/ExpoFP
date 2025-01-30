@@ -26,8 +26,12 @@ self.addEventListener("install", (event) => {
                 }
 
                 const urls = [
-                    ...json.map(url => new URL(url, self.location.href).href),
                     "/",
+                    "/data/wf.data.js",
+                    "/data/data.js",
+                    "/data/fp.svg.js",
+                    "/data/data-internal.js",
+                    ...json.map(url => new URL(url, self.location.href).href),
                 ];
 
                 console.warn("Caching resources from bundle.json:", urls);
