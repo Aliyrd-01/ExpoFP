@@ -1,5 +1,6 @@
 import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
+import { OfflineManager } from "./offline/OfflineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
@@ -19,6 +20,7 @@ export default class FloorPlanLoader implements FloorPlan {
     protected readonly options: FloorPlanOptions;
     protected readonly renderTarget: HTMLDivElement;
     private readonly _ready: Promise<void>;
+    protected readonly offlineManager = new OfflineManager();
     // exposed vals
     readonly element: HTMLDivElement;
     readonly eventId: string;
@@ -266,6 +268,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
+            this.offlineManager.init(baseUrl),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
@@ -348,6 +351,8 @@ export default class FloorPlanLoader implements FloorPlan {
             while (element.firstChild && element.firstChild !== shadowContainer) {
                 element.removeChild(element.firstChild);
             }
+
+            self.offlineManager.cache([wfDataUrl, dataInternalUrl, wfDataUrl, fpUrl]);
 
             //const fp = new FloorPlanReady.default(options);
             const fpReady = Object.setPrototypeOf(self, FloorPlanReady.prototype);

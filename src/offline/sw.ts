@@ -8,7 +8,7 @@ const FILE_NAME = "bundle.json";
 export { };
 
 self.addEventListener("install", (event) => {
-    (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
+    // (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
     event.waitUntil(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
@@ -48,7 +48,7 @@ self.addEventListener("activate", event => {
                     .filter((cacheName) => cacheName !== CACHE_NAME)
                     .map((cacheName) => caches.delete(cacheName))
             );
-            await (self as unknown as ServiceWorkerGlobalScope).clients.claim();
+            // await (self as unknown as ServiceWorkerGlobalScope).clients.claim();
         })()
     );
 });
@@ -84,22 +84,6 @@ self.addEventListener("fetch", event => {
             return networkResponse;
         })()
     );
-});
-
-self.addEventListener("message", async (event) => {
-    console.warn("Message received:", event.data);
-
-    if (!event.data) {
-        return;
-    }
-
-    if (event.data.type === MESSAGE_CACHE) {
-        onCacheResources(event.data.payload);
-    }
-
-    if (event.data.type === MESSAGE_REFRESH) {
-        onRefreshCacheResources();
-    }
 });
 
 async function writeToCache(cacheName, eventRequest, networkResponseClone) {
@@ -139,6 +123,30 @@ async function writeToCache(cacheName, eventRequest, networkResponseClone) {
     }
 }
 
+self.addEventListener("message", (e) => {
+    const event = e as unknown as ExtendableMessageEvent;
+
+    if (!event.data) {
+        return;
+    }
+
+    if (event.data.type === MESSAGE_CACHE) {
+        if (typeof event.waitUntil === "function") {
+            event.waitUntil(onCacheResources(event.data.payload));
+        } else {
+            onCacheResources(event.data.payload);
+        }
+    } 
+
+    if (event.data.type === MESSAGE_REFRESH) {
+        if (typeof event.waitUntil === "function") {
+            event.waitUntil(onRefreshCacheResources());
+        } else {
+            onRefreshCacheResources();
+        }
+    }
+});
+
 let cachingPromise: Promise<void> | null = null;
 
 async function onCacheResources(resources: string[]) {
@@ -148,6 +156,7 @@ async function onCacheResources(resources: string[]) {
     }
 
     if (cachingPromise) {
+        console.warn("Caching in progress. Request ignored.");
         await cachingPromise;
         return;
     }
@@ -185,6 +194,7 @@ let refreshingPromise: Promise<void> | null = null;
 
 async function onRefreshCacheResources() {
     if (refreshingPromise) {
+        console.error("Refreshing in progress. Request ignored.");
         await refreshingPromise;
         return;
     }

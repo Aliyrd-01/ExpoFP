@@ -3,39 +3,14 @@ import ready from "document-ready";
 import FloorPlanLoader from "./floorplan.loader";
 import "./public-path.js";
 import reportError from "./tools/report-error";
-import { OfflineManager } from "./offline/OfflineManager";
 
 window.addEventListener("error", reportError);
 window["__efpStyleElements"] = [];
 
-const currentScriptSrc = (document.currentScript as HTMLScriptElement)?.src;
-const swUrl = currentScriptSrc ? new URL("sw.js", currentScriptSrc).href : "sw.js";
-const command = new URLSearchParams(window.location.search).get("__sw");
-const offlineManager = new OfflineManager();
-
 ready(async () => {
-    const scope = "/";
-    if (command === "1") {
-        await offlineManager.register(swUrl, scope);
-    } else if (command === "0") {
-        await offlineManager.unregister(scope);
-    }
-
     const floorplanDivs = document.querySelectorAll(".expofp-floorplan") as NodeListOf<HTMLDivElement>;
     for (const element of Array.from(floorplanDivs)) {
-        window["___fp"] = new FloorPlanLoader({
-            element,
-            onInit: fp => {
-                offlineManager.cache(
-                    [
-                        "data.js",
-                        "data-internal.js",
-                        "wf.data.js",
-                        "fp.svg.js"
-                    ].map(path => fp.dataUrl ? new URL(path, fp.dataUrl).href : path),
-                );
-            }
-        });
+        window["___fp"] = new FloorPlanLoader({ element });
     }
 });
 
