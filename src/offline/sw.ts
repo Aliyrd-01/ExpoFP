@@ -8,7 +8,7 @@ const FILE_NAME = "bundle.json";
 export { };
 
 self.addEventListener("install", (event) => {
-    // (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
+    (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
     event.waitUntil(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
@@ -48,7 +48,7 @@ self.addEventListener("activate", event => {
                     .filter((cacheName) => cacheName !== CACHE_NAME)
                     .map((cacheName) => caches.delete(cacheName))
             );
-            // await (self as unknown as ServiceWorkerGlobalScope).clients.claim();
+            await (self as unknown as ServiceWorkerGlobalScope).clients.claim();
         })()
     );
 });
