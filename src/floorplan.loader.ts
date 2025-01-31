@@ -20,7 +20,6 @@ export default class FloorPlanLoader implements FloorPlan {
     protected readonly options: FloorPlanOptions;
     protected readonly renderTarget: HTMLDivElement;
     private readonly _ready: Promise<void>;
-    protected readonly offlineManager = new OfflineManager();
     // exposed vals
     readonly element: HTMLDivElement;
     readonly eventId: string;
@@ -32,6 +31,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
+
+    readonly offlineManager = new OfflineManager();
 
     get ready() {
         return this._ready;

@@ -56,7 +56,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
                 if (!store.initialized) {
                     // store.fp._addCustomCss();
-                    store.fp.offlineManager.refreshCache();
                     store.fp.onInit?.(this);
                 }
                 store.initialized = true;
