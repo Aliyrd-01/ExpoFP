@@ -8,10 +8,9 @@ import { Category } from "../store/CategoryStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
-import trackEvent from "../tools/track-event";
 import { t, getLocale } from "../utils/i18n";
 import isMobile from "../utils/is-mobile";
-import { useAutorun, useReaction } from "../utils/mobx";
+import { useReaction } from "../utils/mobx";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
@@ -80,16 +79,6 @@ function ExhibitorComponent() {
 
         checkHeight();
     }, []);
-
-    useAutorun(() => {
-        if (store.heatmapStore.forceTrack) {
-            sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
-            store.heatmapStore.forceTrack = null;
-        } else if (s.exhibitor) {
-            trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
-        }
-    });
 
     useReaction(
         () => s.exhibitor,

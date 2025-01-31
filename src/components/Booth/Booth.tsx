@@ -3,11 +3,9 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import data from "../../data";
 import store, { uiState } from "../../store";
 import { RegularBooth, SpecialBooth } from "../../store/BoothStore";
-import { GaEventActions, sendEventToGa } from "../../tools/gtag";
 import settings from "../../tools/settings";
 import { remsToPixels } from "../../utils";
 import { t } from "../../utils/i18n";
-import { useAutorun } from "../../utils/mobx";
 import ExhibitorRow from "../ExhibitorRow";
 import OverlayContent from "../OverlayContent";
 import Schedule from "../Schedule";
@@ -50,12 +48,6 @@ function Booth() {
         },
     }));
     const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth);
-
-    useAutorun(() => {
-        if (s.booth) {
-            sendEventToGa(GaEventActions.ViewBooth, s.booth.name);
-        }
-    });
 
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
