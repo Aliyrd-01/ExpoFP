@@ -16,12 +16,12 @@ self.addEventListener("install", (event) => {
             try {
                 const response = await fetch(new URL(FILE_NAME, self.location.href).href);
                 if (response.status >= 400) {
-                    throw new Error(`Failed to fetch ${FILE_NAME}: ${response.statusText}`);
+                    throw new Error(`SW: Failed to fetch ${FILE_NAME}: ${response.statusText}`);
                 }
 
                 const json = await response.json();
                 if (!Array.isArray(json)) {
-                    throw new Error(`${FILE_NAME} must contain an array of URLs.`);
+                    throw new Error(`SW: ${FILE_NAME} must contain an array of URLs.`);
                 }
 
                 const urls = [
@@ -84,7 +84,7 @@ self.addEventListener("fetch", (event) => {
 
             const networkResponse = await fetch(event.request);
             if (networkResponse.status >= 400) {
-                throw new Error(`Network response failed: ${networkResponse.status}`);
+                throw new Error(`SW: Network response failed: ${networkResponse.status}`);
             }
 
             await cache.put(event.request, networkResponse.clone());
