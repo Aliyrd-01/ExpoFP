@@ -4,7 +4,6 @@ import { MESSAGE_CACHE, MESSAGE_REFRESH } from "./constants";
 
 const CACHE_NAME = "expofp-cache";
 const FILE_NAME = "bundle.json";
-const ALLOWED_DOMAIN = "expofp.com";
 
 self.addEventListener("install", (event) => {
     (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
@@ -68,8 +67,8 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
-    const requestUrl = new URL(event.request.url);
-    if (requestUrl.hostname !== ALLOWED_DOMAIN) {
+    const url = event.request.url;
+    if (url.indexOf("expofp.com") === -1 && url.indexOf("localhost") === -1) {
         return;
     }
 
