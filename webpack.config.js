@@ -149,6 +149,8 @@ function createConfig(env) {
             s3UploadOptions: {
                 Bucket: "efp-data/" + forlderName,
             },
+            include: /bundle\.json$/,
+            log: true,
         });
         if (process.env.CLOUDFRONT_DISTRIBUTION_ID) {
             plugin.cloudfrontInvalidateOptions = {

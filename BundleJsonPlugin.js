@@ -46,7 +46,7 @@ class BundleJsonPlugin {
                         "utf-8"
                     );
 
-                    console.log("[Production] Final result:", filteredFiles);
+                    console.log("[BundleJsonPlugin Production] Final result:", filteredFiles);
                     callback();
                 } catch (err) {
                     callback(err);
@@ -81,7 +81,7 @@ class BundleJsonPlugin {
                             !this.exclude.some(pattern => file.includes(pattern))
                         );
 
-                        console.log("[Development] Final file list:", filteredFiles);
+                        console.log("[BundleJsonPlugin Development] Final file list:", filteredFiles);
 
                         compilation.emitAsset(
                             this.filename,
