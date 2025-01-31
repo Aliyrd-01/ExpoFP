@@ -65,7 +65,7 @@ class BundleJsonPlugin {
                     compilation.emitAsset(
                         this.filename,
                         new compiler.webpack.sources.RawSource(
-                            JSON.stringify(combinedFiles, null, 2)
+                            JSON.stringify(combinedFiles)
                         )
                     );
                 }
