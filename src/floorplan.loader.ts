@@ -353,7 +353,13 @@ export default class FloorPlanLoader implements FloorPlan {
                 element.removeChild(element.firstChild);
             }
 
-            self.offlineManager.cache([wfDataUrl, dataUrl, fpUrl, dataInternalUrl]);
+            try {
+                const resp = await fetch(baseUrl ? new URL("bundle.json", baseUrl).href : "bundle.json");
+                const bundleJSON = await resp.json();
+                self.offlineManager.cache([...bundleJSON, wfDataUrl, dataUrl, fpUrl, dataInternalUrl]);
+            } catch (e) {
+                console.error(e);
+            }
 
             //const fp = new FloorPlanReady.default(options);
             const fpReady = Object.setPrototypeOf(self, FloorPlanReady.prototype);

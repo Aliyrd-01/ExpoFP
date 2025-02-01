@@ -3,7 +3,6 @@
 import { MESSAGE_CACHE, MESSAGE_REFRESH } from "./constants";
 
 const CACHE_NAME = "expofp-cache";
-const FILE_NAME = "bundle.json";
 
 self.addEventListener("install", (event) => {
     (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
@@ -11,31 +10,7 @@ self.addEventListener("install", (event) => {
     event.waitUntil(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
-
-            try {
-                const response = await fetch(new URL(FILE_NAME, self.location.href).href);
-                if (response.status >= 400) {
-                    throw new Error(`SW: Failed to fetch ${FILE_NAME}: ${response.statusText}`);
-                }
-
-                const json = await response.json();
-                if (!Array.isArray(json)) {
-                    throw new Error(`SW: ${FILE_NAME} must contain an array of URLs.`);
-                }
-
-                const urls = [
-                    "/",
-                    ...json.map((url) => new URL(url, self.location.href).href),
-                ];
-
-                console.warn("SW", `Caching resources from ${FILE_NAME}:`, urls);
-
-                await cache.addAll(urls);
-
-                console.warn("SW", `Resources from ${FILE_NAME} cached successfully.`);
-            } catch (error) {
-                console.error("SW", `Error caching resources from ${FILE_NAME}:`, error);
-            }
+            await cache.addAll(["/"]);
         })()
     );
 });
