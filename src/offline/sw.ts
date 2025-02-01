@@ -47,6 +47,10 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
+    if (url.indexOf("bundle.json") !== -1) {
+        return;
+    }
+
     event.respondWith(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
