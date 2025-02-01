@@ -52,7 +52,7 @@ export default function configAll(context: DrawerContext = _context): void {
             const key = "expofp_cache_refresh_ready";
 
             if (localStorage.getItem(key) === "1") {
-                store.fp.offlineManager.refreshCache()
+                store.fp.offlineManager.refreshCache();
             } else {
                 localStorage.setItem(key, "1");
             }
