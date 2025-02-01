@@ -155,8 +155,8 @@ async function onRefreshCacheResources() {
             const keys = await cache.keys();
 
             // Transform Request objects to URL strings
-            const urls = keys.map((request) => request.url);
-            await cache.addAll(urls);
+            const urls = new Set(keys.map((request) => request.url));
+            await cache.addAll(Array.from(urls));
 
             console.warn("SW", "Cache refreshed successfully.");
         } catch (error) {
