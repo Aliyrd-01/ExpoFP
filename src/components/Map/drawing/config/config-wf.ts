@@ -1,6 +1,6 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
+import { Line, lineLength, Point, pointIsOnLine } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import { getLayerSvg } from "../../../../data/svg";
 import store, { layersStore, uiState } from "../../../../store";

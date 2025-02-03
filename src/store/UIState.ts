@@ -194,8 +194,6 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get getRouteNextFloor() {
-        console.error("this.selectedRouteFloors", this.selectedRouteFloors);
-
         const index = this.selectedRouteFloors.indexOf(this.rootStore.routeStore.currentRouteLayer?.name);
         return index !== -1 && index + 1 < this.selectedRouteFloors.length ? this.selectedRouteFloors[index + 1] : null;
     }
