@@ -234,8 +234,7 @@ function drawLines(
             routeLines,
             store.layerStore.floors.map(f => f.name),
             currentLayerName,
-            from?.layer?.name,
-            to?.layer?.name,
+            uiState.getRouteNextFloor,
             pixelRatio,
         );
     } else {
@@ -786,15 +785,14 @@ function attachTransitions(
     lines: RouteLine[],
     floorOrder: string[],
     currentLayerName: string,
-    fromLayerName: string,
-    toLayerName: string,
+    routeNextFloor: string,
     pixelRatio: number,
 ): Point[] {
     idCollector.clear();
 
     const findIndex = (names, target) => names.findIndex(name => strEqual(name, target));
-    const fromIndex = findIndex(floorOrder, fromLayerName);
-    const toIndex = findIndex(floorOrder, toLayerName);
+    const currentIndex = findIndex(floorOrder, currentLayerName);
+    const nextIndex = findIndex(floorOrder, routeNextFloor);
 
     const points = [];
     lines.filter(l => {
@@ -817,10 +815,10 @@ function attachTransitions(
             trasitionCanvas = createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio);
         }
 
-        if (toLayerName && !strEqual(point.layer, toLayerName)) {
-            if (toIndex > fromIndex && store.fp.icons.get("transition_up")) {
+        if (routeNextFloor && !strEqual(point.layer, routeNextFloor)) {
+            if (nextIndex > currentIndex && store.fp.icons.get("transition_up")) {
                 trasitionCanvas = createImageCanvas(store.fp.icons.get("transition_down"), 56, 34, pixelRatio)
-            } else if (toIndex < fromIndex && store.fp.icons.get("transition_down")) {
+            } else if (nextIndex < currentIndex && store.fp.icons.get("transition_down")) {
                 trasitionCanvas = createImageCanvas(store.fp.icons.get("transition_up"), 56, 34, pixelRatio)
             }
         }
