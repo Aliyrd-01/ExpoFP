@@ -148,15 +148,15 @@ function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: n
 function drawLines(
     wfDrawer: RectPainter,
     pointDrawer: RectPainter,
-    waypointDrawer: RectPainter,
-    waypointsCollector: IDynamicObjects,
+    // waypointDrawer: RectPainter,
+    // waypointsCollector: IDynamicObjects,
     transitionDrawer: RectPainter,
     transitionsCollector: IDynamicObjects,
     ptscale: number,
     pixelRatio: number,
 ): Rectangle {
     routePoints.forEach((rp, i) => pointDrawer.updateVisible(`Dot_${i}`, false));
-    waypointsCollector.clear();
+    // waypointsCollector.clear();
     transitionsCollector.clear();
 
     routePoints = [];
@@ -330,10 +330,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const pointDrawer = context.requirePainter("POINT", RectPainter, painterOrderPriority, visible);
     const blinkDrawer = context.requirePainter("BLINK", RectPainter, painterOrderPriority + 1, visible);
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority + 2, visible);
-    const waypointDrawer = context.requirePainter("WAYPOINT", RectPainter, painterOrderPriority + 2, visible);
+    // const waypointDrawer = context.requirePainter("WAYPOINT", RectPainter, painterOrderPriority + 2, visible);
     const transitionDrawer = context.requirePainter("TRANSITION", RectPainter, painterOrderPriority + 2, visible);
 
-    const waypointsCollector = new DynamicObjects(waypointDrawer);
+    // const waypointsCollector = new DynamicObjects(waypointDrawer);
     const transitionsCollector = new DynamicObjects(transitionDrawer);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, Color("#A4CCE3").hex());
@@ -479,7 +479,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         var layers = store.layerStore.visible.map((l) => l.name);
 
         for (let i = 0; i < routePoints.length; i++) pointDrawer.updateVisible(`Dot_${i}`, false);
-        waypointsCollector.clear();
+        // waypointsCollector.clear();
         transitionsCollector.clear();
         wfDrawer.updateVisible("sourceLocation", false);
         wfDrawer.updateVisible("destinationLocation", false);
@@ -503,8 +503,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             var rect = drawLines(
                 wfDrawer,
                 pointDrawer,
-                waypointDrawer,
-                waypointsCollector,
+                // waypointDrawer,
+                // waypointsCollector,
                 transitionDrawer,
                 transitionsCollector,
                 scale || 3,
@@ -627,8 +627,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 drawLines(
                     wfDrawer,
                     pointDrawer,
-                    waypointDrawer,
-                    waypointsCollector,
+                    // waypointDrawer,
+                    // waypointsCollector,
                     transitionDrawer,
                     transitionsCollector,
                     s,
