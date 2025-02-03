@@ -187,7 +187,7 @@ export default class UIState {
         return [
             this.selectedRoute?.from?.layer?.name,
             ...(
-                this.selectedRoute?.waypoints?.map(w => w.layer.name) || []
+                this.selectedRoute?.waypoints?.map(w => w.layer?.name) || []
             ),
             this.selectedRoute?.to?.layer?.name,
         ].filter(Boolean);
