@@ -88,10 +88,14 @@ export function mapCurrentPosition(position: CurrentPosition): Point | null {
     return cp;
 }
 
-let blinkCancellation = null;
+let blinkCancellation: (() => void) | null = null;
 let blinkTimeout = null;
 let counter = 0;
+let isBlinking = false;
+
 function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {
+    if (isBlinking) return;
+
     if (blinkTimeout) clearTimeout(blinkTimeout);
     if (blinkCancellation) blinkCancellation();
     if (counter) {
@@ -99,15 +103,22 @@ function blink(context: DrawerContext, painter: RectPainter, startIndex: number 
         return;
     }
 
+    isBlinking = true;
     blinkTimeout = setTimeout(() => {
         blinkTimeout = null;
         if (routePoints.length) blinkCancellation = blinkCircle(context, painter, startIndex);
+        isBlinking = false;
     }, 1000);
 }
 
 let currentIndex: number;
 
 function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: number): () => void {
+    if (!routePoints.length) {
+        counter = 0;
+        return () => { };
+    }
+
     const updateBlink = (painter: RectPainter, visible: boolean) => {
         for (let i = 0; i < blinkCounter; i++) {
             painter.updateVisible(`Blink_${i.toString()}`, visible);
@@ -116,31 +127,37 @@ function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: n
     };
 
     const cIndex = () => startIndex || routePoints.length - 1;
-
-    const st = () => {
-        for (let i = 0; i < blinkCounter; i++) {
-            const point = routePoints[currentIndex - i];
-            if (point) painter.updateCenter(`Blink_${i.toString()}`, [point.x, point.y]);
-        }
-
-        if (currentIndex <= 0) {
-            currentIndex = cIndex();
-            counter++;
-        }
-
-        currentIndex--;
-    };
-
     currentIndex = cIndex();
 
-    const interval = 4000 / currentIndex;
-    let blinkStepInterval = null;
+    let lastTimestamp = performance.now();
+    const interval = Math.max(70, 4000 / Math.max(1, currentIndex));
+    let animationFrameId: number;
+
+    const animate = (timestamp: number) => {
+        if (timestamp - lastTimestamp >= interval) {
+            lastTimestamp = timestamp;
+            context.requireUpdate(() => {
+                for (let i = 0; i < blinkCounter; i++) {
+                    const point = routePoints[currentIndex - i];
+                    if (point) painter.updateCenter(`Blink_${i.toString()}`, [point.x, point.y]);
+                }
+
+                if (currentIndex <= 0) {
+                    currentIndex = cIndex();
+                    counter++;
+                } else {
+                    currentIndex--;
+                }
+            });
+        }
+        animationFrameId = requestAnimationFrame(animate);
+    };
 
     updateBlink(painter, true);
-    blinkStepInterval = setInterval(() => context.requireUpdate(st), Math.min(70, interval));
+    animationFrameId = requestAnimationFrame(animate);
 
     return () => {
-        clearInterval(blinkStepInterval);
+        cancelAnimationFrame(animationFrameId);
         context.requireUpdate(() => updateBlink(painter, false));
     };
 }
@@ -246,78 +263,77 @@ function drawLines(
 }
 
 export function splitPolyLine(lines: Line[], interval: number): Point[] {
-    const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
-    const asin = (value: number) => {
-        // Clamp the value to the range [-1, 1] to avoid invalid inputs for Math.asin
-        const clampedValue = Math.max(-1, Math.min(1, value));
-        return (Math.asin(clampedValue) * 180) / Math.PI;
-    };
-
-    const points: Point[] = [lines[0].p0]; // Initialize points with the starting point of the first line
-    let delta = 0; // Remaining offset to carry over to the next segment
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const lineLengthValue = lineLength(line.p0, line.p1); // Calculate the length of the current segment
-        const lineAngleValue = lineAngle(line.p0, line.p1); // Calculate the angle of the current segment
-
-        let steps = 0;
-
-        // Generate points along the current line segment
-        while (delta + steps * interval <= lineLengthValue) {
-            const point = shiftPoint(line.p0, delta + steps * interval, lineAngleValue);
-            points.push(point);
-            steps++;
-        }
-
-        // Calculate the remaining length after the last point
-        let remainingLength = lineLengthValue - ((steps - 1) * interval + delta);
-        remainingLength = Math.max(remainingLength, 0);
-
-        if (i < lines.length - 1) {
-            // Calculate the angle between the current and next segments
-            const nextAngle = lineAngle(lines[i + 1].p0, lines[i + 1].p1);
-            let angleBetween = Math.abs(lineAngleValue - nextAngle);
-            angleBetween = angleBetween > 180 ? 360 - angleBetween : angleBetween;
-
-            const alpha = 180 - angleBetween;
-            const sinAlpha = sin(alpha);
-
-            if (sinAlpha === 0) {
-                // If the segments are collinear, keep the interval
-                delta = interval;
-            } else {
-                // Calculate the offset delta for the next segment
-                const sinComponent = (remainingLength * sinAlpha) / interval;
-                const adjustedAsin = asin(sinComponent);
-                delta = (interval * sin(180 - alpha - adjustedAsin)) / sinAlpha;
-
-                if (isNaN(delta) || delta < 0) delta = interval;
-            }
-        } else {
-            // Final segment: calculate the delta based on the remaining length
-            delta = interval - remainingLength;
-        }
-
-        delta = Math.max(delta, 0);
+    if (lines.length === 0) {
+        return [];
     }
 
-    // Add the first point of the first line if it is not already in the list
-    if (lines.length === 0) return;
-    const firstLine = lines[0];
-    const firstPoint = firstLine.p0;
-    if (points.length === 0 ||
-        points[0].x !== firstPoint.x ||
-        points[0].y !== firstPoint.y) {
+    const points: Point[] = [];
+    let offset = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+        const currentLine = lines[i];
+        const p0 = currentLine.p0;
+        const p1 = currentLine.p1;
+
+        const dx = p1.x - p0.x;
+        const dy = p1.y - p0.y;
+        const segLength = Math.sqrt(dx * dx + dy * dy);
+
+        if (segLength === 0) {
+            // Skip zero-length segments
+            continue;
+        }
+
+        const dirX = dx / segLength;
+        const dirY = dy / segLength;
+
+        let step = 0;
+        while (offset + step * interval <= segLength) {
+            const distance = offset + step * interval;
+            const newX = p0.x + dirX * distance;
+            const newY = p0.y + dirY * distance;
+            points.push({ x: newX, y: newY });
+            step++;
+        }
+
+        const lastPlacedDistance = offset + (step - 1) * interval;
+        let remaining = segLength - lastPlacedDistance;
+        remaining = Math.max(remaining, 0);
+
+        if (i < lines.length - 1) {
+            const nextLine = lines[i + 1];
+            const nextP0 = nextLine.p0;
+            const nextP1 = nextLine.p1;
+            const nextDx = nextP1.x - nextP0.x;
+            const nextDy = nextP1.y - nextP0.y;
+            const nextSegLength = Math.sqrt(nextDx * nextDx + nextDy * nextDy);
+
+            if (nextSegLength === 0) {
+                offset = 0;
+            } else {
+                const nextDirX = nextDx / nextSegLength;
+                const nextDirY = nextDy / nextSegLength;
+                const cosTheta = dirX * nextDirX + dirY * nextDirY;
+                const effectiveRemaining = remaining * cosTheta;
+                offset = interval - effectiveRemaining;
+            }
+        } else {
+            offset = interval - remaining;
+        }
+
+        offset = Math.max(offset, 0);
+    }
+
+    // Ensure the first point is the start of the polyline
+    const firstPoint = lines[0].p0;
+    if (points.length === 0 || !points[0] || points[0].x !== firstPoint.x || points[0].y !== firstPoint.y) {
         points.unshift(firstPoint);
     }
 
-    // Add the last point of the last line if it is not already in the list
-    const lastLine = lines[lines.length - 1];
-    const lastPoint = lastLine.p1;
-    if (points.length === 0 ||
-        points[points.length - 1].x !== lastPoint.x ||
-        points[points.length - 1].y !== lastPoint.y) {
+    // Ensure the last point is the end of the polyline
+    const lastPoint = lines[lines.length - 1].p1;
+    const lastPointInArray = points[points.length - 1];
+    if (points.length === 0 || !lastPointInArray || lastPointInArray.x !== lastPoint.x || lastPointInArray.y !== lastPoint.y) {
         points.push(lastPoint);
     }
 
@@ -529,8 +545,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
                 wfDrawer.updateVisible("currentLocation_2", false);
 
-                wfDrawer.updateVisible("currentLocation", store.fp.icons.get("direction") ? false : visible);
-                wfDrawer.updateSkipdim("currentLocation", store.fp.icons.get("direction") ? false : visible);
+                wfDrawer.updateVisible("currentLocation", visible);
+                wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
                 const rotateRadians = position?.angle ? toRadians(position.angle) : null;
@@ -622,19 +638,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
                     isNewVersion ? 0.05 : 0.3
                 );
-                if (s === scale) return;
                 scale = s;
-                drawLines(
-                    wfDrawer,
-                    pointDrawer,
-                    // waypointDrawer,
-                    // waypointsCollector,
-                    transitionDrawer,
-                    transitionsCollector,
-                    s,
-                    context.pixelRatio,
-                );
-                blink(context, blinkDrawer, updateCurrentPosition());
+
+                requestAnimationFrame(() => {
+                    drawLines(
+                        wfDrawer,
+                        pointDrawer,
+                        // waypointDrawer,
+                        // waypointsCollector,
+                        transitionDrawer,
+                        transitionsCollector,
+                        s,
+                        context.pixelRatio,
+                    );
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
@@ -643,7 +662,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);
-                blink(context, blinkDrawer, updateCurrentPosition());
+                requestAnimationFrame(() => {
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
@@ -653,7 +675,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (!store.layerStore.layersLoaded) return;
                 counter = 0;
                 context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 200));
-                blink(context, blinkDrawer, updateCurrentPosition());
+                requestAnimationFrame(() => {
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
@@ -662,7 +687,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 context.requireUpdate(updateRoute);
                 counter = 0;
-                blink(context, blinkDrawer, updateCurrentPosition());
+                requestAnimationFrame(() => {
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
