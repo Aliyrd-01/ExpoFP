@@ -67,34 +67,6 @@ export class OfflineManager {
         return this.baseUrl ? new URL(path, this.baseUrl).href : path;
     }
 
-    public init = async (currentScriptSrc: string, resourceUrls: string[]) => {
-        this.baseUrl = currentScriptSrc;
-
-        const scope = "/"
-        const command = new URLSearchParams(window.location.search).get("__sw");
-
-        if (command === "0") {
-            await this.unregister(scope);
-            return;
-        }
-
-        if (command !== "1") {
-            return;
-        }
-
-        await this.register(this.buildUrl("sw.js"), scope);
-
-        this.requestPersistentStorage();
-
-        this.channel.removeEventListener("message", this.messageHandler);
-        this.channel.addEventListener("message", this.messageHandler);
-
-        window.addEventListener("load", () => {
-            this.message({ type: MESSAGE_CACHE_BUNDLE, payload: this.buildUrl("bundle.json") });
-            this.message({ type: MESSAGE_CACHE, payload: resourceUrls });
-        }, { once: true });
-    }
-
     public refreshCache = () => {
         if (navigator.serviceWorker.controller) {
             const key = "expofp_cache_refresh_ready";
@@ -106,4 +78,30 @@ export class OfflineManager {
             }
         }
     };
+
+    public init = async (currentScriptSrc: string, resourceUrls: string[]) => {
+        this.baseUrl = currentScriptSrc;
+
+        const command = new URLSearchParams(window.location.search).get("__sw");
+        const scope = "/";
+
+        if (command === "1") {
+            await this.register(this.buildUrl("sw.js"), scope);
+        } else if (command === "0") {
+            await this.unregister(scope);
+        }
+
+        this.requestPersistentStorage();
+
+        this.channel.removeEventListener("message", this.messageHandler);
+        this.channel.addEventListener("message", this.messageHandler);
+
+        requestAnimationFrame(() => {
+            this.message({ type: MESSAGE_CACHE, payload: resourceUrls });
+
+            requestAnimationFrame(() => {
+                this.message({ type: MESSAGE_CACHE_BUNDLE, payload: this.buildUrl("bundle.json") });
+            });
+        });
+    }
 }
