@@ -96,14 +96,14 @@ export class OfflineManager {
     }
 
     public refreshCache = () => {
-        this.message({ type: MESSAGE_REFRESH });
+        if (navigator.serviceWorker.controller) {
+            const key = "expofp_cache_refresh_ready";
 
-        const key = "expofp_cache_refresh_ready";
-
-        if (localStorage.getItem(key) === "1") {
-            this.message({ type: MESSAGE_REFRESH });
-        } else {
-            localStorage.setItem(key, "1");
+            if (localStorage.getItem(key) === "1") {
+                this.message({ type: MESSAGE_REFRESH });
+            } else {
+                localStorage.setItem(key, "1");
+            }
         }
     };
 }
