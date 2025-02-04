@@ -269,7 +269,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            this.offlineManager.init(baseUrl),
+            this.offlineManager.init(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
@@ -351,14 +351,6 @@ export default class FloorPlanLoader implements FloorPlan {
             // remove all kids (loaders)
             while (element.firstChild && element.firstChild !== shadowContainer) {
                 element.removeChild(element.firstChild);
-            }
-
-            try {
-                const resp = await fetch(baseUrl ? new URL("bundle.json", baseUrl).href : "bundle.json");
-                const bundleJSON = await resp.json();
-                self.offlineManager.cache([...bundleJSON, wfDataUrl, dataUrl, fpUrl, dataInternalUrl]);
-            } catch (e) {
-                console.error(e);
             }
 
             //const fp = new FloorPlanReady.default(options);

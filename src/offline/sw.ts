@@ -1,8 +1,9 @@
 /// <reference lib="webworker" />
 
-import { MESSAGE_CACHE, MESSAGE_REFRESH } from "./constants";
+import { BROADCAST_CHANNEL_NAME, MESSAGE_CACHE, MESSAGE_CACHE_BUNDLE, MESSAGE_REFRESH } from "./constants";
 
-const CACHE_NAME = "expofp-cache";
+const CACHE_NAME = "EXPOFP_CACHE_NAME";
+const PREFIX = "SW";
 
 self.addEventListener("install", (event) => {
     (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
@@ -18,7 +19,6 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
     event.waitUntil(
         (async () => {
-            // Remove old caches.
             const cacheNames = await caches.keys();
             await Promise.all(
                 cacheNames
@@ -31,10 +31,10 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("error", (event) =>
-    console.error("SW", event.error || event.message)
+    console.error(PREFIX, event.error || event.message)
 );
 self.addEventListener("unhandledrejection", (event) =>
-    console.error("SW", event.reason)
+    console.error(PREFIX, event.reason)
 );
 
 self.addEventListener("fetch", (event) => {
@@ -61,110 +61,91 @@ self.addEventListener("fetch", (event) => {
             }
 
             const networkResponse = await fetch(event.request);
-            if (networkResponse.status >= 400) {
-                throw new Error(`SW: Network response failed: ${networkResponse.status}`);
+            if (networkResponse.status < 400) {
+                await cache.put(event.request, networkResponse.clone());
             }
-
-            await cache.put(event.request, networkResponse.clone());
 
             return networkResponse;
         })()
     );
 });
 
-self.addEventListener("message", (e) => {
-    const event = e as unknown as ExtendableMessageEvent;
+const broadcast = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
 
-    if (!event.data) {
-        return;
-    }
-
-    if (event.data.type === MESSAGE_CACHE) {
-        if (typeof event.waitUntil === "function") {
-            event.waitUntil(onCacheResources(event.data.payload));
+broadcast.addEventListener("message", (event) => {
+    const waitUntil = (cb: () => Promise<void>) => {
+        if (event instanceof ExtendableMessageEvent && "waitUntil" in event) {
+            (event as ExtendableMessageEvent).waitUntil(cb());
         } else {
-            onCacheResources(event.data.payload);
+            cb();
         }
-    }
+    };
 
-    if (event.data.type === MESSAGE_REFRESH) {
-        if (typeof event.waitUntil === "function") {
-            event.waitUntil(onRefreshCacheResources());
-        } else {
-            onRefreshCacheResources();
-        }
+    switch (event.data?.type) {
+        case MESSAGE_CACHE_BUNDLE:
+            waitUntil(async () => {
+                try {
+                    const response = await fetch(event.data?.payload);
+                    if (response.status < 400) {
+                        const urls = await response.json();
+                        await cacheResources(MESSAGE_CACHE_BUNDLE, urls);
+                    }
+                } catch (error) {
+                    console.error(PREFIX, MESSAGE_CACHE_BUNDLE, error);
+                } finally {
+                    broadcast.postMessage({ type: MESSAGE_CACHE_BUNDLE, payload: true });
+                }
+            });
+            break;
+
+        case MESSAGE_CACHE:
+            waitUntil(async () => {
+                try {
+                    await cacheResources(MESSAGE_CACHE, event.data?.payload);
+                } catch (error) {
+                    console.error(PREFIX, MESSAGE_CACHE, error);
+                } finally {
+                    broadcast.postMessage({ type: MESSAGE_CACHE, payload: true });
+                }
+            });
+            break;
+
+        case MESSAGE_REFRESH:
+            waitUntil(async () => {
+                try {
+                    const cache = await caches.open(CACHE_NAME);
+                    const keys = await cache.keys();
+                    await cacheResources(MESSAGE_REFRESH, keys.map(request => request.url));
+                } catch (error) {
+                    console.error(PREFIX, MESSAGE_REFRESH, error);
+                } finally {
+                    broadcast.postMessage({ type: MESSAGE_REFRESH, payload: true });
+                }
+            });
+            break;
     }
 });
 
-let cachingPromise: Promise<void> | null = null;
-async function onCacheResources(resources: string[]) {
-    if (!Array.isArray(resources) || !resources.length) {
-        console.warn("SW", "No resources to cache or invalid input.");
-        return;
-    }
+async function cacheResources(type: string, resources: string[]) {
+    try {
+        const cache = await caches.open(CACHE_NAME);
 
-    if (cachingPromise) {
-        console.warn("SW", "Caching in progress. Request ignored.");
-        await cachingPromise;
-        return;
-    }
+        const objects = { type, successes: [], errors: [] };
 
-    cachingPromise = (async () => {
-        try {
-            console.warn("SW", "Caching resources:", resources);
-
-            const cache = await caches.open(CACHE_NAME);
-
-            for (const resource of resources) {
-                try {
-                    const response = await fetch(resource);
-                    if (response.status < 400) {
-                        await cache.put(resource, response.clone());
-                    } else {
-                        console.error("SW", `Failed to fetch resource: ${resource}`);
-                    }
-                } catch (error) {
-                    console.error("SW", `Error caching resource: ${resource}`, error);
+        for (const resource of resources) {
+            try {
+                const response = await fetch(resource);
+                if (response.status < 400) {
+                    await cache.put(resource, response.clone());
+                    objects.successes.push(resource);
                 }
+            } catch (error) {
+                objects.errors.push(resource);
             }
-
-            console.warn("SW", "Resources cached successfully.");
-        } catch (error) {
-            console.error("SW", "Failed to cache resources:", error);
-        } finally {
-            cachingPromise = null;
         }
-    })();
 
-    return cachingPromise;
-}
-
-let refreshingPromise: Promise<void> | null = null;
-async function onRefreshCacheResources() {
-    if (refreshingPromise) {
-        console.error("SW", "Refreshing in progress. Request ignored.");
-        await refreshingPromise;
-        return;
+        console.warn(PREFIX, "Cache resources:", objects);
+    } catch (error) {
+        console.error(PREFIX, "Cache error:", error);
     }
-
-    refreshingPromise = (async () => {
-        try {
-            console.warn("SW", "Refreshing cache.");
-
-            const cache = await caches.open(CACHE_NAME);
-            const keys = await cache.keys();
-
-            // Transform Request objects to URL strings
-            const urls = new Set(keys.map((request) => request.url));
-            await cache.addAll(Array.from(urls));
-
-            console.warn("SW", "Cache refreshed successfully.");
-        } catch (error) {
-            console.error("SW", "Failed to refresh cache:", error);
-        } finally {
-            refreshingPromise = null;
-        }
-    })();
-
-    return refreshingPromise;
 }
