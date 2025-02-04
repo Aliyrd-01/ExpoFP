@@ -9,7 +9,7 @@ export class OfflineManager {
         if (!("serviceWorker" in navigator)) return;
 
         const send = () => {
-            if (!navigator.serviceWorker.controller || this.locks.has(msg.type)) {
+            if (!navigator.serviceWorker.controller || this.locks.has(msg.type) || !navigator.onLine) {
                 return;
             }
 
