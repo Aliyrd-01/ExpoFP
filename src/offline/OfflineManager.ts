@@ -102,6 +102,10 @@ export class OfflineManager {
             requestAnimationFrame(() => {
                 this.message({ type: MESSAGE_CACHE_BUNDLE, payload: this.buildUrl("bundle.json") });
             });
+
+            requestAnimationFrame(() => {
+                this.refreshCache();
+            });
         });
     }
 }

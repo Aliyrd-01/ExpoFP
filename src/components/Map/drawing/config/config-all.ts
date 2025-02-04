@@ -47,10 +47,7 @@ export default function configAll(context: DrawerContext = _context): void {
 
     Promise.all(promises).then(() => {
         layersStore.layersLoaded = true;
-
-        loadBoothsImages(context).then(() => {
-            store.fp.offlineManager.refreshCache();
-        });
+        loadBoothsImages(context);
 
         const l =
             [...uiState.selectedBooths][0]?.layer ||

@@ -32,8 +32,6 @@ export default class FloorPlanLoader implements FloorPlan {
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
 
-    readonly offlineManager = new OfflineManager();
-
     get ready() {
         return this._ready;
     }
@@ -269,7 +267,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            this.offlineManager.init(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
+            new OfflineManager().init(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
