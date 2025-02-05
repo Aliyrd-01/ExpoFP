@@ -210,4 +210,4 @@ const ExpoFP: {
     FloorPlan: FloorPlanOptions;
 };
 
-type FloorPlanIcon = "departure" | "destination" | "direction" | "transition" | "transition_up" | "transition_down" | "waypoint";
+type FloorPlanIcon = "departure" | "destination" | "direction" | "transition" | "transition_up" | "transition_down";
