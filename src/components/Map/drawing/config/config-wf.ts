@@ -785,8 +785,8 @@ function attachEndpoints(
         { key: "destinationLocation", rect: to?.rect },
     ];
 
-    const isFromLayer = strEqual(currentLayerName, from?.layer?.name);
-    const isToLayer = strEqual(currentLayerName, to?.layer?.name);
+    const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
+    const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
 
     let sourceLocationAdded = false;
     let destinationLocationAdded = false;
