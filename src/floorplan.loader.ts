@@ -1,6 +1,6 @@
 import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
-import { OfflineManager } from "./offline/OfflineManager";
+import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
@@ -267,7 +267,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            new OfflineManager().init(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
