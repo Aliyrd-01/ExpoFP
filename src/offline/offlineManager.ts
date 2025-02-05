@@ -8,16 +8,24 @@ export async function initOfflineManager(currentScriptSrc: string, resourceUrls:
     const command = new URLSearchParams(window.location.search).get("__sw");
     const scope = "/";
 
+    let registered = false;
     if (command === "1") {
         await register(buildUrl("sw.js"), scope);
+        registered = true;
     } else if (command === "0") {
         await unregister(scope);
     }
 
-    requestPersistentStorage();
+    if (true) {
+        registered = true;
+    }
 
-    channel.removeEventListener("message", messageHandler);
-    channel.addEventListener("message", messageHandler);
+    if (registered) {
+        requestPersistentStorage();
+
+        channel.removeEventListener("message", messageHandler);
+        channel.addEventListener("message", messageHandler);
+    }
 
     requestAnimationFrame(() => {
         message({ type: MESSAGE_CACHE, payload: resourceUrls });
