@@ -2,9 +2,6 @@ import { BROADCAST_CHANNEL_NAME, MESSAGE_CACHE, MESSAGE_CACHE_BUNDLE, MESSAGE_RE
 
 export async function initOfflineManager(currentScriptSrc: string, resourceUrls: string[]): Promise<void> {
     const baseUrl = currentScriptSrc;
-    const channel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
-    const locks = new Set<string>();
-
     const command = new URLSearchParams(window.location.search).get("__sw");
     const scope = "/";
 
@@ -20,6 +17,10 @@ export async function initOfflineManager(currentScriptSrc: string, resourceUrls:
         registered = true;
     }
 
+    if (!registered) return;
+
+    const channel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+    const locks = new Set<string>();
     if (registered) {
         requestPersistentStorage();
 
@@ -27,16 +28,14 @@ export async function initOfflineManager(currentScriptSrc: string, resourceUrls:
         channel.addEventListener("message", messageHandler);
     }
 
-    requestAnimationFrame(() => {
+    setTimeout(() => {
         message({ type: MESSAGE_CACHE, payload: resourceUrls });
 
-        requestAnimationFrame(() => {
+        setTimeout(() => {
             message({ type: MESSAGE_CACHE_BUNDLE, payload: buildUrl("bundle.json") });
         });
 
-        requestAnimationFrame(() => {
-            refreshCache();
-        });
+        setTimeout(refreshCache);
     });
 
     // helper functions
