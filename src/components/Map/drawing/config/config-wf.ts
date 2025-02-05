@@ -639,17 +639,18 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 );
                 scale = s;
 
+                drawLines(
+                    wfDrawer,
+                    pointDrawer,
+                    // waypointDrawer,
+                    // waypointsCollector,
+                    transitionDrawer,
+                    transitionsCollector,
+                    s,
+                    context.pixelRatio,
+                );
+
                 requestAnimationFrame(() => {
-                    drawLines(
-                        wfDrawer,
-                        pointDrawer,
-                        // waypointDrawer,
-                        // waypointsCollector,
-                        transitionDrawer,
-                        transitionsCollector,
-                        s,
-                        context.pixelRatio,
-                    );
                     const position = updateCurrentPosition();
                     blink(context, blinkDrawer, position);
                 });
