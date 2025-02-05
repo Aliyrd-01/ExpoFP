@@ -184,13 +184,15 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get selectedRouteFloors() {
-        return [
-            this.selectedRoute?.from?.layer?.name,
-            ...(
-                this.selectedRoute?.waypoints?.map(w => w.layer?.name) || []
-            ),
-            this.selectedRoute?.to?.layer?.name,
-        ].filter(Boolean);
+        return [...new Set(
+            [
+                this.selectedRoute?.from?.layer?.name,
+                ...(
+                    this.selectedRoute?.waypoints?.map(w => w.layer?.name) || []
+                ),
+                this.selectedRoute?.to?.layer?.name,
+            ].filter(Boolean)
+        )];
     }
 
     @computed({ keepAlive: true }) get getRouteNextFloor() {

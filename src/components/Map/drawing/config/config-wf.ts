@@ -23,7 +23,7 @@ import {
 } from "./canvases";
 import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
-import Rect from "../../../../core/Rect";
+import { Booth } from "../../../../store/BoothStore";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -212,7 +212,7 @@ function drawLines(
         const { from, to } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        attachEndpoints(wfDrawer, routePoints, from?.rect, to?.rect);
+        attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
 
         attachTransitions(
             transitionDrawer,
@@ -774,15 +774,19 @@ class DynamicObjects<T extends { removeObject: (id: string) => void }> implement
 function attachEndpoints(
     drawer: RectPainter,
     points: Point[],
-    fromRect: Rect,
-    toRect: Rect,
+    from: Booth,
+    to: Booth,
+    currentLayerName: string,
 ) {
     if (!points.length) return;
 
     const locations = [
-        { key: "sourceLocation", rect: fromRect },
-        { key: "destinationLocation", rect: toRect }
+        { key: "sourceLocation", rect: from?.rect },
+        { key: "destinationLocation", rect: to?.rect },
     ];
+
+    const isFromLayer = strEqual(currentLayerName, from?.layer?.name);
+    const isToLayer = strEqual(currentLayerName, to?.layer?.name);
 
     let sourceLocationAdded = false;
     let destinationLocationAdded = false;
@@ -791,9 +795,18 @@ function attachEndpoints(
         for (const { key, rect } of locations) {
             if (rect?.containsPoint(x, y)) {
                 drawer.updateCenter(key, [x, y]);
-                drawer.updateVisible(key, true);
-                if (key === "sourceLocation") sourceLocationAdded = true;
-                if (key === "destinationLocation") destinationLocationAdded = true;
+
+                if (key === "sourceLocation") {
+                    drawer.updateVisible(key, isFromLayer);
+                    sourceLocationAdded = isFromLayer;
+
+                }
+
+                if (key === "destinationLocation") {
+                    drawer.updateVisible(key, isToLayer);
+                    destinationLocationAdded = isToLayer;
+                }
+
                 break;
             }
         }
@@ -801,11 +814,11 @@ function attachEndpoints(
 
     if (!sourceLocationAdded) {
         drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
-        drawer.updateVisible("sourceLocation", true);
+        drawer.updateVisible("sourceLocation", isFromLayer);
     }
 
     if (!destinationLocationAdded) {
         drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
-        drawer.updateVisible("destinationLocation", true);
+        drawer.updateVisible("destinationLocation", isToLayer);
     }
 }
