@@ -1,47 +1,44 @@
 import { BROADCAST_CHANNEL_NAME, MESSAGE_CACHE, MESSAGE_CACHE_BUNDLE, MESSAGE_REFRESH } from "./constants";
 
-export async function initOfflineManager(currentScriptSrc: string, resourceUrls: string[]): Promise<void> {
-    const baseUrl = currentScriptSrc;
+export async function initOfflineManager(baseUrl: string, resourceUrls: string[]): Promise<void> {
+    if (!("serviceWorker" in navigator)) {
+        return;
+    }
+
     const command = new URLSearchParams(window.location.search).get("__sw");
     const scope = "/";
 
-    let registered = false;
     if (command === "1") {
-        await register(buildUrl("sw.js"), scope);
-        registered = true;
+        await navigator.serviceWorker.register(buildUrl("sw.js"), { scope });
+        await navigator.serviceWorker.ready;
     } else if (command === "0") {
-        await unregister(scope);
+        const registration = await navigator.serviceWorker.getRegistration(scope);
+        await registration?.unregister();
     }
 
-    if (true) {
-        registered = true;
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) {
+        return;
     }
 
-    if (!registered) return;
+    if (!navigator.serviceWorker.controller) {
+        await navigator.serviceWorker.ready;
+    }
 
     const channel = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
     const locks = new Set<string>();
-    if (registered) {
-        requestPersistentStorage();
 
-        channel.removeEventListener("message", messageHandler);
-        channel.addEventListener("message", messageHandler);
-    }
+    requestPersistentStorage();
 
-    setTimeout(() => {
-        message({ type: MESSAGE_CACHE, payload: resourceUrls });
+    channel.removeEventListener("message", messageHandler);
+    channel.addEventListener("message", messageHandler);
 
-        setTimeout(() => {
-            message({ type: MESSAGE_CACHE_BUNDLE, payload: buildUrl("bundle.json") });
-        });
-
-        setTimeout(refreshCache);
-    });
+    message({ type: MESSAGE_CACHE, payload: resourceUrls });
+    message({ type: MESSAGE_CACHE_BUNDLE, payload: buildUrl("bundle.json") });
+    refreshCache();
 
     // helper functions
     async function message(msg: { type: string; payload?: string | string[] }) {
-        if (!("serviceWorker" in navigator)) return;
-
         const send = () => {
             if (!navigator.serviceWorker.controller || locks.has(msg.type) || !navigator.onLine) {
                 return;
@@ -79,20 +76,6 @@ export async function initOfflineManager(currentScriptSrc: string, resourceUrls:
             }
         }
     }
-}
-
-async function register(swUrl: string, scope: string) {
-    if (!("serviceWorker" in navigator)) return;
-
-    await navigator.serviceWorker.register(swUrl, { scope });
-    await navigator.serviceWorker.ready;
-}
-
-async function unregister(scope: string) {
-    if (!("serviceWorker" in navigator)) return;
-
-    const registration = await navigator.serviceWorker.getRegistration(scope);
-    await registration?.unregister();
 }
 
 function requestPersistentStorage() {
