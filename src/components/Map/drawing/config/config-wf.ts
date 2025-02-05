@@ -432,7 +432,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             currentLocationCanvas.width,
             currentLocationCanvas.height,
         ],
-        canvasTmp: sourceLocationCanvas,
+        canvasTmp: currentLocationCanvas,
         texPosition: "lefttop",
         visible: isDebug,
     });
@@ -614,22 +614,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                let s = Math.max(
-                    context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
-                    isNewVersion ? 0.05 : 0.3
-                );
-                scale = s;
-
-                drawLines(
-                    wfDrawer,
-                    pointDrawer,
-                    transitionDrawer,
-                    transitionsCollector,
-                    s,
-                    context.pixelRatio,
-                );
-
                 requestAnimationFrame(() => {
+                    let s = Math.max(
+                        context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
+                        isNewVersion ? 0.05 : 0.3
+                    );
+                    scale = s;
+
+                    drawLines(
+                        wfDrawer,
+                        pointDrawer,
+                        transitionDrawer,
+                        transitionsCollector,
+                        s,
+                        context.pixelRatio,
+                    );
+
                     const position = updateCurrentPosition();
                     blink(context, blinkDrawer, position);
                 });
