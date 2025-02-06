@@ -1,6 +1,6 @@
 import Color from "color";
 import { reaction } from "mobx";
-import { Line, lineAngle, lineLength, Point, pointIsOnLine, shiftPoint } from "simple-geometry";
+import { Line, lineLength, Point, pointIsOnLine } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import { getLayerSvg } from "../../../../data/svg";
 import store, { layersStore, uiState } from "../../../../store";
@@ -17,9 +17,13 @@ import {
     createArrowCurrentCanvas,
     createCircleCanvas,
     createCurrentCanvas,
+    createImageCanvas,
     createTargetCanvas,
     createYahCanvas,
 } from "./canvases";
+import { toRadians } from "../../../../utils/toRadians";
+import { strEqual } from "../../../../utils/strEqual";
+import { Booth } from "../../../../store/BoothStore";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -30,10 +34,10 @@ let scale: number = null;
 const totalPoints = 2000;
 const isDebug = false;
 
-const blinkCounter = 5;
+const blinkCounter = 3;
 
-let fromColor = Color("#30AFEB");
-let toColor = Color("#FF9E2C");
+let fromColor = Color("#00A2FF");
+let toColor = Color("#FF9F06");
 
 let isNewVersion = false;
 
@@ -83,10 +87,14 @@ export function mapCurrentPosition(position: CurrentPosition): Point | null {
     return cp;
 }
 
-let blinkCancellation = null;
+let blinkCancellation: (() => void) | null = null;
 let blinkTimeout = null;
 let counter = 0;
+let isBlinking = false;
+
 function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {
+    if (isBlinking) return;
+
     if (blinkTimeout) clearTimeout(blinkTimeout);
     if (blinkCancellation) blinkCancellation();
     if (counter) {
@@ -94,15 +102,22 @@ function blink(context: DrawerContext, painter: RectPainter, startIndex: number 
         return;
     }
 
+    isBlinking = true;
     blinkTimeout = setTimeout(() => {
         blinkTimeout = null;
         if (routePoints.length) blinkCancellation = blinkCircle(context, painter, startIndex);
+        isBlinking = false;
     }, 1000);
 }
 
 let currentIndex: number;
 
 function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: number): () => void {
+    if (!routePoints.length) {
+        counter = 0;
+        return () => { };
+    }
+
     const updateBlink = (painter: RectPainter, visible: boolean) => {
         for (let i = 0; i < blinkCounter; i++) {
             painter.updateVisible(`Blink_${i.toString()}`, visible);
@@ -111,42 +126,51 @@ function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: n
     };
 
     const cIndex = () => startIndex || routePoints.length - 1;
-
-    const st = () => {
-        for (let i = 0; i < blinkCounter; i++) {
-            const point = routePoints[currentIndex - i];
-            if (point) painter.updateCenter(`Blink_${i.toString()}`, [point.x, point.y]);
-        }
-
-        if (currentIndex <= 0) {
-            currentIndex = cIndex();
-            counter++;
-        }
-
-        if (counter > 1) {
-            clearInterval(blinkStepInterval);
-            updateBlink(painter, false);
-        }
-
-        currentIndex--;
-    };
-
     currentIndex = cIndex();
 
-    const interval = 4000 / currentIndex;
-    let blinkStepInterval = null;
+    let lastTimestamp = performance.now();
+    const interval = Math.max(70, 4000 / Math.max(1, currentIndex));
+    let animationFrameId: number;
+
+    const animate = (timestamp: number) => {
+        if (timestamp - lastTimestamp >= interval) {
+            lastTimestamp = timestamp;
+            context.requireUpdate(() => {
+                for (let i = 0; i < blinkCounter; i++) {
+                    const point = routePoints[currentIndex - i];
+                    if (point) painter.updateCenter(`Blink_${i.toString()}`, [point.x, point.y]);
+                }
+
+                if (currentIndex <= 0) {
+                    currentIndex = cIndex();
+                    counter++;
+                } else {
+                    currentIndex--;
+                }
+            });
+        }
+        animationFrameId = requestAnimationFrame(animate);
+    };
 
     updateBlink(painter, true);
-    blinkStepInterval = setInterval(() => context.requireUpdate(st), Math.min(40, interval));
+    animationFrameId = requestAnimationFrame(animate);
 
     return () => {
-        clearInterval(blinkStepInterval);
+        cancelAnimationFrame(animationFrameId);
         context.requireUpdate(() => updateBlink(painter, false));
     };
 }
 
-function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
-    routePoints.forEach((rp, i) => wfDrawer.updateVisible(`Dot_${i}`, false));
+function drawLines(
+    wfDrawer: RectPainter,
+    pointDrawer: RectPainter,
+    transitionDrawer: RectPainter,
+    transitionsCollector: IDynamicObjects,
+    ptscale: number,
+    pixelRatio: number,
+): Rectangle {
+    routePoints.forEach((rp, i) => pointDrawer.updateVisible(`Dot_${i}`, false));
+    transitionsCollector.clear();
 
     routePoints = [];
 
@@ -179,16 +203,26 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
     }
 
     routePoints.forEach((point, i) => {
-        wfDrawer.updateCenter(`Dot_${i}`, [point.x, point.y]);
-        wfDrawer.updateVisible(`Dot_${i}`, true);
-        wfDrawer.updateSkipdim(`Dot_${i}`, true);
+        pointDrawer.updateCenter(`Dot_${i}`, [point.x, point.y]);
+        pointDrawer.updateVisible(`Dot_${i}`, true);
+        pointDrawer.updateSkipdim(`Dot_${i}`, true);
     });
 
     if (routePoints.length) {
-        wfDrawer.updateVisible("sourceLocation", true);
-        wfDrawer.updateCenter("sourceLocation", [routePoints[routePoints.length - 1].x, routePoints[routePoints.length - 1].y]);
-        wfDrawer.updateVisible("destinationLocation", true);
-        wfDrawer.updateCenter("destinationLocation", [routePoints[0].x, routePoints[0].y]);
+        const { from, to } = uiState.selectedRoute || {};
+        const currentLayerName = store.routeStore.currentRouteLayer?.name;
+
+        attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
+
+        attachTransitions(
+            transitionDrawer,
+            transitionsCollector,
+            routeLines,
+            store.layerStore.floors.map(f => f.name),
+            currentLayerName,
+            uiState.getRouteNextFloor,
+            pixelRatio,
+        );
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
@@ -214,69 +248,78 @@ function drawLines(wfDrawer: RectPainter, ptscale: number): Rectangle {
 }
 
 export function splitPolyLine(lines: Line[], interval: number): Point[] {
-    const sin = (deg: number) => Math.sin((deg * Math.PI) / 180);
-    const asin = (value: number) => {
-        // Clamp the value to the range [-1, 1] to avoid invalid inputs for Math.asin
-        const clampedValue = Math.max(-1, Math.min(1, value));
-        return (Math.asin(clampedValue) * 180) / Math.PI;
-    };
+    if (lines.length === 0) {
+        return [];
+    }
 
-    const points: Point[] = [lines[0].p0]; // Initialize points with the starting point of the first line
-    let delta = 0; // Remaining offset to carry over to the next segment
+    const points: Point[] = [];
+    let offset = 0;
 
     for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const lineLengthValue = lineLength(line.p0, line.p1); // Calculate the length of the current segment
-        const lineAngleValue = lineAngle(line.p0, line.p1); // Calculate the angle of the current segment
+        const currentLine = lines[i];
+        const p0 = currentLine.p0;
+        const p1 = currentLine.p1;
 
-        let steps = 0;
+        const dx = p1.x - p0.x;
+        const dy = p1.y - p0.y;
+        const segLength = Math.sqrt(dx * dx + dy * dy);
 
-        // Generate points along the current line segment
-        while (delta + steps * interval <= lineLengthValue) {
-            const point = shiftPoint(line.p0, delta + steps * interval, lineAngleValue);
-            points.push(point);
-            steps++;
+        if (segLength === 0) {
+            // Skip zero-length segments
+            continue;
         }
 
-        // Calculate the remaining length after the last point
-        let remainingLength = lineLengthValue - ((steps - 1) * interval + delta);
+        const dirX = dx / segLength;
+        const dirY = dy / segLength;
 
-        // Ensure remainingLength is not negative
-        if (remainingLength < 0) {
-            remainingLength = 0;
+        let step = 0;
+        while (offset + step * interval <= segLength) {
+            const distance = offset + step * interval;
+            const newX = p0.x + dirX * distance;
+            const newY = p0.y + dirY * distance;
+            points.push({ x: newX, y: newY });
+            step++;
         }
+
+        const lastPlacedDistance = offset + (step - 1) * interval;
+        let remaining = segLength - lastPlacedDistance;
+        remaining = Math.max(remaining, 0);
 
         if (i < lines.length - 1) {
-            // Calculate the angle between the current and next segments
-            const nextAngle = lineAngle(lines[i + 1].p0, lines[i + 1].p1);
-            let angleBetween = Math.abs(lineAngleValue - nextAngle);
-            if (angleBetween > 180) angleBetween = 360 - angleBetween;
+            const nextLine = lines[i + 1];
+            const nextP0 = nextLine.p0;
+            const nextP1 = nextLine.p1;
+            const nextDx = nextP1.x - nextP0.x;
+            const nextDy = nextP1.y - nextP0.y;
+            const nextSegLength = Math.sqrt(nextDx * nextDx + nextDy * nextDy);
 
-            const alpha = 180 - angleBetween;
-            const sinAlpha = sin(alpha);
-
-            if (sinAlpha === 0) {
-                // If the segments are collinear, keep the interval
-                delta = interval;
+            if (nextSegLength === 0) {
+                offset = 0;
             } else {
-                // Calculate the offset delta for the next segment
-                const sinComponent = (remainingLength * sinAlpha) / interval;
-                const adjustedAsin = asin(sinComponent);
-                delta = (interval * sin(180 - alpha - adjustedAsin)) / sinAlpha;
-
-                if (isNaN(delta) || delta < 0) {
-                    delta = interval;
-                }
+                const nextDirX = nextDx / nextSegLength;
+                const nextDirY = nextDy / nextSegLength;
+                const cosTheta = dirX * nextDirX + dirY * nextDirY;
+                const effectiveRemaining = remaining * cosTheta;
+                offset = interval - effectiveRemaining;
             }
         } else {
-            // Final segment: calculate the delta based on the remaining length
-            delta = interval - remainingLength;
+            offset = interval - remaining;
         }
 
-        // Ensure delta is not negative
-        if (delta < 0) {
-            delta = 0;
-        }
+        offset = Math.max(offset, 0);
+    }
+
+    // Ensure the first point is the start of the polyline
+    const firstPoint = lines[0].p0;
+    if (points.length === 0 || !points[0] || points[0].x !== firstPoint.x || points[0].y !== firstPoint.y) {
+        points.unshift(firstPoint);
+    }
+
+    // Ensure the last point is the end of the polyline
+    const lastPoint = lines[lines.length - 1].p1;
+    const lastPointInArray = points[points.length - 1];
+    if (points.length === 0 || !lastPointInArray || lastPointInArray.x !== lastPoint.x || lastPointInArray.y !== lastPoint.y) {
+        points.push(lastPoint);
     }
 
     return points;
@@ -285,17 +328,39 @@ export function splitPolyLine(lines: Line[], interval: number): Point[] {
 export default function configWf(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
     //if (data.hideDirections) return;
 
-    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority, visible);
+    const pointDrawer = context.requirePainter("POINT", RectPainter, painterOrderPriority, visible);
     const blinkDrawer = context.requirePainter("BLINK", RectPainter, painterOrderPriority + 1, visible);
+    const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority + 2, visible);
+    const transitionDrawer = context.requirePainter("TRANSITION", RectPainter, painterOrderPriority + 2, visible);
+    const transitionsCollector = new DynamicObjects(transitionDrawer);
 
-    const pointCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
+    const pointCanvas = createCircleCanvas(6, context.pixelRatio, Color("#A4CCE3").hex());
 
-    const blinkCanvas = createCircleCanvas(6, context.pixelRatio, Color("#c1e4f5").hex());
+    const blinkCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
 
-    const sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
-    const destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
+    let sourceLocationCanvas;
+    if (store.fp.icons.get("departure")) {
+        sourceLocationCanvas = createImageCanvas(store.fp.icons.get("departure"), 34, 34, context.pixelRatio);
+    } else {
+        sourceLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
+    }
+
+    let destinationLocationCanvas;
+    if (store.fp.icons.get("destination")) {
+        destinationLocationCanvas = createImageCanvas(store.fp.icons.get("destination"), 34, 34, context.pixelRatio);
+    } else {
+        destinationLocationCanvas = createTargetCanvas(context.pixelRatio, toColor.hex());
+    }
+
     const currentLocationCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
-    const arrowCurrentCanvas = createArrowCurrentCanvas(context.pixelRatio, fromColor.hex());
+
+    let arrowCurrentCanvas;
+    if (store.fp.icons.get("direction")) {
+        arrowCurrentCanvas = createImageCanvas(store.fp.icons.get("direction"), 34, 34, context.pixelRatio);
+    } else {
+        arrowCurrentCanvas = createArrowCurrentCanvas(context.pixelRatio, fromColor.hex());
+    }
+
     const currentLocationCanvas_2 = createYahCanvas(context.pixelRatio);
 
     const l = getLayerSvg();
@@ -304,7 +369,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     pointSize = pointCanvas.width;
 
     for (let i = 0; i < totalPoints; i++) {
-        wfDrawer.addObject({
+        pointDrawer.addObject({
             id: `Dot_${i.toString()}`,
             center: [0, 0],
             deltaPts: [-pointCanvas.width / 2, -pointCanvas.width / 2, pointCanvas.width, pointCanvas.width],
@@ -346,7 +411,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         deltas: [0, 0, 0, 0],
         deltaPts: [
             -destinationLocationCanvas.width / 2,
-            -destinationLocationCanvas.height,
+            -destinationLocationCanvas.height / 2,
             destinationLocationCanvas.width,
             destinationLocationCanvas.height,
         ],
@@ -367,7 +432,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             currentLocationCanvas.width,
             currentLocationCanvas.height,
         ],
-        canvasTmp: sourceLocationCanvas,
+        canvasTmp: currentLocationCanvas,
         texPosition: "lefttop",
         visible: isDebug,
     });
@@ -411,7 +476,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     function updateRoute(currentRouteLayer: Layer = null) {
         var layers = store.layerStore.visible.map((l) => l.name);
 
-        for (let i = 0; i < routePoints.length; i++) wfDrawer.updateVisible(`Dot_${i}`, false);
+        for (let i = 0; i < routePoints.length; i++) pointDrawer.updateVisible(`Dot_${i}`, false);
+        transitionsCollector.clear();
+        wfDrawer.updateVisible("sourceLocation", false);
+        wfDrawer.updateVisible("destinationLocation", false);
 
         routePoints = [];
 
@@ -429,7 +497,14 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 return;
             }
 
-            var rect = drawLines(wfDrawer, scale || 3);
+            var rect = drawLines(
+                wfDrawer,
+                pointDrawer,
+                transitionDrawer,
+                transitionsCollector,
+                scale || 3,
+                context.pixelRatio,
+            );
             if (rect) uiState.moveToRect = rect;
         } else {
             wfDrawer.updateVisible("sourceLocation", false);
@@ -453,9 +528,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
-                const rotateRadians = (position?.angle * Math.PI) / 180 || null;
+                const rotateRadians = position?.angle ? toRadians(position.angle) : null;
 
                 if (rotateRadians !== undefined && rotateRadians !== null) {
+                    wfDrawer.updateVisible("currentLocation", false);
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
                     wfDrawer.updateSkipdim("currentLocation_arrow", visible);
                     wfDrawer.updateCenter("currentLocation_arrow", [position.x, position.y]);
@@ -513,7 +589,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         // Recalculate logic here
 
         for (let index = routePoints.length - 1; index > shortestrPerp.i - 1; index--)
-            wfDrawer.updateVisible(`Dot_${index}`, false);
+            pointDrawer.updateVisible(`Dot_${index}`, false);
 
         var lines = [];
         for (let index = 0; index < routeLines.length; index++) {
@@ -538,14 +614,25 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                let s = Math.max(
-                    context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
-                    isNewVersion ? 0.05 : 0.3
-                );
-                if (s === scale) return;
-                scale = s;
-                drawLines(wfDrawer, s);
-                blink(context, blinkDrawer, updateCurrentPosition());
+                requestAnimationFrame(() => {
+                    let s = Math.max(
+                        context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
+                        isNewVersion ? 0.05 : 0.3
+                    );
+                    scale = s;
+
+                    drawLines(
+                        wfDrawer,
+                        pointDrawer,
+                        transitionDrawer,
+                        transitionsCollector,
+                        s,
+                        context.pixelRatio,
+                    );
+
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
@@ -554,7 +641,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);
-                blink(context, blinkDrawer, updateCurrentPosition());
+                requestAnimationFrame(() => {
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
@@ -564,7 +654,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (!store.layerStore.layersLoaded) return;
                 counter = 0;
                 context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 200));
-                blink(context, blinkDrawer, updateCurrentPosition());
+                requestAnimationFrame(() => {
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
@@ -573,7 +666,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 context.requireUpdate(updateRoute);
                 counter = 0;
-                blink(context, blinkDrawer, updateCurrentPosition());
+                requestAnimationFrame(() => {
+                    const position = updateCurrentPosition();
+                    blink(context, blinkDrawer, position);
+                });
             }
         );
 
@@ -586,5 +682,144 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         updateRoute();
         updateCurrentPosition();
+    }
+}
+
+function attachTransitions(
+    drawer: RectPainter,
+    idCollector: IDynamicObjects,
+    lines: RouteLine[],
+    floorOrder: string[],
+    currentLayerName: string,
+    routeNextFloor: string,
+    pixelRatio: number,
+): Point[] {
+    idCollector.clear();
+
+    const findIndex = (names, target) => names.findIndex(name => strEqual(name, target));
+    const currentIndex = findIndex(floorOrder, currentLayerName);
+    const nextIndex = findIndex(floorOrder, routeNextFloor);
+
+    const points = [];
+    lines.filter(l => {
+        if (currentLayerName) {
+            return l.virtual && (strEqual(l.p0.layer, currentLayerName) || strEqual(l.p1.layer, currentLayerName));
+        }
+        return l.virtual;
+    }).flatMap(l => {
+        if (currentLayerName && strEqual(l.p0.layer, currentLayerName)) {
+            return [l.p0];
+        } else if (currentLayerName && strEqual(l.p1.layer, currentLayerName)) {
+            return [l.p1];
+        } else {
+            return [l.p0, l.p1];
+        }
+    }).forEach((point, i) => {
+        let trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
+
+        if (store.fp.icons.get("transition")) {
+            trasitionCanvas = createImageCanvas(store.fp.icons.get("transition"), 34, 34, pixelRatio);
+        }
+
+        if (routeNextFloor && !strEqual(point.layer, routeNextFloor)) {
+            if (nextIndex > currentIndex && store.fp.icons.get("transition_up")) {
+                trasitionCanvas = createImageCanvas(store.fp.icons.get("transition_down"), 56, 34, pixelRatio)
+            } else if (nextIndex < currentIndex && store.fp.icons.get("transition_down")) {
+                trasitionCanvas = createImageCanvas(store.fp.icons.get("transition_up"), 56, 34, pixelRatio)
+            }
+        }
+
+        const id = `trasition_${i}`;
+        drawer.addObject({
+            id,
+            center: [point.x, point.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [
+                -trasitionCanvas.width / 2,
+                -trasitionCanvas.height / 2,
+                trasitionCanvas.width,
+                trasitionCanvas.height,
+            ],
+            canvasTmp: trasitionCanvas,
+            texPosition: "lefttop",
+            visible: true,
+        });
+        idCollector.add(id);
+        drawer.updateSkipdim(id, true);
+        points.push(point);
+    });
+    drawer.reinitializeBuffers();
+
+    return points;
+}
+
+interface IDynamicObjects {
+    add: (id: string) => void;
+    clear: () => void;
+}
+class DynamicObjects<T extends { removeObject: (id: string) => void }> implements IDynamicObjects {
+    private ids = new Set<string>();
+
+    constructor(private drawer: T) { }
+
+    public add = (id: string) => {
+        this.ids.add(id);
+    }
+
+    public clear = () => {
+        this.ids.forEach(id => this.drawer.removeObject(id));
+        this.ids.clear();
+    }
+}
+
+function attachEndpoints(
+    drawer: RectPainter,
+    points: Point[],
+    from: Booth,
+    to: Booth,
+    currentLayerName: string,
+) {
+    if (!points.length) return;
+
+    const locations = [
+        { key: "sourceLocation", rect: from?.rect },
+        { key: "destinationLocation", rect: to?.rect },
+    ];
+
+    const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
+    const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
+
+    let sourceLocationAdded = false;
+    let destinationLocationAdded = false;
+
+    points.forEach(({ x, y }) => {
+        for (const { key, rect } of locations) {
+            if (rect?.containsPoint(x, y)) {
+                drawer.updateCenter(key, [x, y]);
+
+                if (key === "sourceLocation") {
+                    drawer.updateVisible(key, isFromLayer);
+                    sourceLocationAdded = isFromLayer;
+
+                }
+
+                if (key === "destinationLocation") {
+                    drawer.updateVisible(key, isToLayer);
+                    destinationLocationAdded = isToLayer;
+                }
+
+                break;
+            }
+        }
+    });
+
+    if (!sourceLocationAdded) {
+        drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
+        drawer.updateVisible("sourceLocation", isFromLayer);
+    }
+
+    if (!destinationLocationAdded) {
+        drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
+        drawer.updateVisible("destinationLocation", isToLayer);
     }
 }

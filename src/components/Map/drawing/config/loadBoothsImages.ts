@@ -11,6 +11,7 @@ import type { Layer } from "../../../../store/LayerStore";
 import isWebview from "../../../../utils/is-webview";
 import { getLogoUrl } from "../../../../utils/getLogoUrl";
 import { BOOTHS_PAINTER_MARKER, LAYER_ICONS_MARKER, LAYER_LOGOS_MARKER, SEPARATOR } from "../../../../constants";
+import { areLayersEnabled } from "../../../../utils/areLayersEnabled";
 
 const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
 const magicNum = 8;
@@ -125,10 +126,6 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
 
 function genImageLayerId(baseLayerName: string, suffix: string, i: number): string {
     return `${areLayersEnabled() ? baseLayerName : BOOTHS_PAINTER_MARKER}${SEPARATOR}${suffix}${SEPARATOR}${i}`;
-}
-
-function areLayersEnabled() {
-    return !!window["__fpLayers"];
 }
 
 function getIcons(layer: Layer): SVGImageElement[] {

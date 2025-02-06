@@ -209,3 +209,5 @@ interface ExpoData {
 const ExpoFP: {
     FloorPlan: FloorPlanOptions;
 };
+
+type FloorPlanIcon = "departure" | "destination" | "direction" | "transition" | "transition_up" | "transition_down";

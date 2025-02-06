@@ -183,6 +183,23 @@ export default class UIState {
         return this.details instanceof Route ? this.details : null;
     }
 
+    @computed({ keepAlive: true }) get selectedRouteFloors() {
+        return [...new Set(
+            [
+                this.selectedRoute?.from?.layer?.name,
+                ...(
+                    this.selectedRoute?.waypoints?.map(w => w.layer?.name) || []
+                ),
+                this.selectedRoute?.to?.layer?.name,
+            ].filter(Boolean)
+        )];
+    }
+
+    @computed({ keepAlive: true }) get getRouteNextFloor() {
+        const index = this.selectedRouteFloors.indexOf(this.rootStore.routeStore.currentRouteLayer?.name);
+        return index !== -1 && index + 1 < this.selectedRouteFloors.length ? this.selectedRouteFloors[index + 1] : null;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // positions
     @computed get headerHeightRem() {

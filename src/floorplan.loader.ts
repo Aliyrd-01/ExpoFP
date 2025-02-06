@@ -9,6 +9,7 @@ import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isWebview from "./utils/is-webview";
+import { loadImage } from "./utils/loadImage";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
 
@@ -31,6 +32,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
+
+    public readonly icons = new Map<FloorPlanIcon, HTMLImageElement>();
 
     get ready() {
         return this._ready;
@@ -340,6 +343,29 @@ export default class FloorPlanLoader implements FloorPlan {
 
                 await loadCustomFonts(data.customCss);
                 // }
+            }
+
+            try {
+                const iconEntries = await Promise.allSettled(
+                    Object.entries({
+                        "departure": "icons/departure.svg",
+                        "destination": "icons/destination.svg",
+                        "direction": "icons/direction.svg",
+                        "transition": "icons/transition.svg",
+                        "transition_up": "icons/transition_up.svg",
+                        "transition_down": "icons/transition_down.svg",
+                    }).map(([key, path]) =>
+                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
+                    )
+                );
+
+                iconEntries
+                    .filter((entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> => entry.status === "fulfilled")
+                    .map(entry => entry.value)
+                    .forEach(([key, icon]) => self.icons.set(key, icon));
+
+            } catch (e) {
+                console.warn(e);
             }
 
             logger.log("Data loaded");

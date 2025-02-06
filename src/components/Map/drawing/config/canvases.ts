@@ -321,7 +321,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
             padding,
             draw(c) {
                 c.translate(padding, padding);
-                c.fillStyle = "#e64839";
+                c.fillStyle = "#fdbf2b";
                 c.strokeStyle = color;
                 c.lineWidth = lineWidth;
 
@@ -347,7 +347,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
 export function createArrowCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
-    scale: number = pixelRatio * 0.4
+    scale: number = pixelRatio * 0.4,
 ): CanvasDescriptor {
     return {
         width: 95 * scale,
@@ -453,11 +453,24 @@ export function createImageCanvas(
     height: number,
     pixelRatio: number
 ): CanvasDescriptor {
+    const aspectRatio = image ? image.width / image.height : 1;
+    let scaledWidth = width * pixelRatio;
+    let scaledHeight = height * pixelRatio;
+
+    if (width / height > aspectRatio) {
+        // Width is too wide, adjust to match height
+        scaledWidth = scaledHeight * aspectRatio;
+    } else {
+        // Height is too tall, adjust to match width
+        scaledHeight = scaledWidth / aspectRatio;
+    }
+
     return {
-        width: width * pixelRatio,
-        height: height * pixelRatio,
+        width: scaledWidth,
+        height: scaledHeight,
         draw(ctx: CanvasRenderingContext2D) {
-            ctx.drawImage(image, 0, 0, width * pixelRatio, height * pixelRatio);
+            if (!image) return;
+            ctx.drawImage(image, 0, 0, scaledWidth, scaledHeight);
         }
     };
 }
