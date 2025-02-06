@@ -17,7 +17,9 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "stylelint": "stylelint \"./src/**/*.scss\"",
-    "stylelint:fix": "stylelint \"./src/**/*.scss\" --fix"
+    "stylelint:fix": "stylelint \"./src/**/*.scss\" --fix",
+    "build:sw": "cross-env NODE_ENV=production webpack --config webpack.sw.js",
+    "watch:sw": "yarn build:sw --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
