@@ -5,7 +5,7 @@ export async function initOfflineManager(baseUrl: string, resourceUrls: string[]
         return;
     }
 
-    const command = new URLSearchParams(window.location.search).get("__sw");
+    const command = new URLSearchParams(window.location.search).get("sw");
     const scope = "/";
 
     if (command === "1") {

@@ -54,7 +54,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
-            const cachedResponse = await cache.match(event.request);
+            const cachedResponse = await cache.match(event.request, { ignoreSearch: true });
 
             if (cachedResponse) {
                 return cachedResponse;
