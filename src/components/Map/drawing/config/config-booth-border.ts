@@ -1,13 +1,12 @@
 import Color from "color";
 import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
-import { boothStore } from "../../../../store";
+import { boothStore, uiState } from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
 import BoothDrawerBase from "./BoothDrawerBase";
-// import { boothStore } from '../../../../store';
 
 export default function configBoothBorder(
     context: DrawerContext,
@@ -70,11 +69,16 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
     update() {
         const skipDimm = this.booth.skipDim;
         this.painter.updateSkipdim(this.getId("border"), skipDimm);
-        this.painter.updateColor(
-            this.getId("border"),
-            Color(
-                this.booth.selected ? settings.colors.booths.selectedBorder : this.booth.borderColor
-            ).vec4(),
-        );
+
+        let selectedColor = this.booth.borderColor;
+        if (this.booth.selected) {
+            if (uiState.selectedRoute) {
+                selectedColor = settings.colors.booths.wayfinding.selectedBorder;
+            } else {
+                selectedColor = settings.colors.booths.selectedBorder;
+            }
+        }
+
+        this.painter.updateColor(this.getId("border"), Color(selectedColor).vec4());
     }
 }

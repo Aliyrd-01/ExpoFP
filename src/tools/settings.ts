@@ -20,8 +20,12 @@ class Settings extends FpSettings {
         booths: {
             default: "#41b6e7",
             seectedLight: null,
-            selected: "#0088D6",
-            selectedBorder: "#005EA1",
+            selected: "#fb3e59",
+            selectedBorder: "#fb3e59",
+            wayfinding: {
+                selected: "#0088D6",
+                selectedBorder: "#005EA1",
+            },
             empty: "rgba(0,0,0,0.205)", // this is #aaa for default BG #d6d6d6d
         },
     };
