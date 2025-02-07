@@ -102,7 +102,7 @@ function blink(context: DrawerContext, painter: RectPainter, startIndex = routeP
     });
 
     const cyclesPerSecond = 1 / 4;
-    const speed = 1000 / (routePoints.length * cyclesPerSecond);
+    const speed = Math.max(1000 / (routePoints.length * cyclesPerSecond), 100);
 
     let index = startIndex;
     let lastUpdate = performance.now();
