@@ -201,8 +201,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             (!Color(this.booth.labelColor || settings.boothLabelColor).isLight() ? "#fff" : "#000");
         const color1 = (
             uiState.selectedRoute
-                ? settings.colors.booths.wayfinding.selected
-                : settings.colors.booths.selected
+                ? settings?.colors?.booths?.wayfinding?.selected
+                : settings?.colors?.booths?.selected
         );
         return colorInterpolate([color0, color1]);
     }

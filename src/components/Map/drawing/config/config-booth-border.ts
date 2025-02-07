@@ -73,9 +73,9 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
         let selectedColor = this.booth.borderColor;
         if (this.booth.selected) {
             if (uiState.selectedRoute) {
-                selectedColor = settings.colors.booths.wayfinding.selectedBorder;
+                selectedColor = settings?.colors?.booths?.wayfinding?.selectedBorder;
             } else {
-                selectedColor = settings.colors.booths.selectedBorder;
+                selectedColor = settings?.colors?.booths?.selectedBorder;
             }
         }
 
