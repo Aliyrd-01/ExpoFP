@@ -614,33 +614,37 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                counter = 0;
+                context.requireUpdate(() => {
+                    counter = 0;
 
-                let s = Math.max(
-                    context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
-                    isNewVersion ? 0.05 : 0.3
-                );
-                scale = s;
+                    let s = Math.max(
+                        context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
+                        isNewVersion ? 0.05 : 0.3
+                    );
+                    scale = s;
 
-                drawLines(
-                    wfDrawer,
-                    pointDrawer,
-                    transitionDrawer,
-                    transitionsCollector,
-                    s,
-                    context.pixelRatio,
-                );
+                    drawLines(
+                        wfDrawer,
+                        pointDrawer,
+                        transitionDrawer,
+                        transitionsCollector,
+                        s,
+                        context.pixelRatio,
+                    );
 
-                blink(context, blinkDrawer, updateCurrentPosition());
+                    blink(context, blinkDrawer, updateCurrentPosition());
+                });
             }
         );
 
         reaction(
             () => [store.layerStore.layersLoaded],
             () => {
-                counter = 0;
-                context.requireUpdate(updateRoute);
-                blink(context, blinkDrawer, updateCurrentPosition());
+                context.requireUpdate(() => {
+                    counter = 0;
+                    updateRoute();
+                    blink(context, blinkDrawer, updateCurrentPosition());
+                });
             }
         );
 
@@ -648,18 +652,22 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => [store.routeStore.currentRouteLayer],
             () => {
                 if (!store.layerStore.layersLoaded) return;
-                counter = 0;
-                context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 200));
-                blink(context, blinkDrawer, updateCurrentPosition());
+                context.requireUpdate(() => setTimeout(() => {
+                    counter = 0;
+                    updateRoute(store.routeStore.currentRouteLayer);
+                    blink(context, blinkDrawer, updateCurrentPosition());
+                }, 200));   
             }
         );
 
         reaction(
             () => [uiState.selectedRoute, store.routeStore.onlyAccessible],
             () => {
-                context.requireUpdate(updateRoute);
-                counter = 0;
-                blink(context, blinkDrawer, updateCurrentPosition());
+                context.requireUpdate(() => {
+                    counter = 0;
+                    updateRoute();
+                    blink(context, blinkDrawer, updateCurrentPosition());
+                });
             }
         );
 
