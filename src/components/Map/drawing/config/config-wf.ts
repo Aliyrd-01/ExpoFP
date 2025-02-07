@@ -614,25 +614,24 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                requestAnimationFrame(() => {
-                    let s = Math.max(
-                        context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
-                        isNewVersion ? 0.05 : 0.3
-                    );
-                    scale = s;
+                counter = 0;
 
-                    drawLines(
-                        wfDrawer,
-                        pointDrawer,
-                        transitionDrawer,
-                        transitionsCollector,
-                        s,
-                        context.pixelRatio,
-                    );
+                let s = Math.max(
+                    context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
+                    isNewVersion ? 0.05 : 0.3
+                );
+                scale = s;
 
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
-                });
+                drawLines(
+                    wfDrawer,
+                    pointDrawer,
+                    transitionDrawer,
+                    transitionsCollector,
+                    s,
+                    context.pixelRatio,
+                );
+
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
@@ -641,10 +640,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 counter = 0;
                 context.requireUpdate(updateRoute);
-                requestAnimationFrame(() => {
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
-                });
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
@@ -654,10 +650,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 if (!store.layerStore.layersLoaded) return;
                 counter = 0;
                 context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 200));
-                requestAnimationFrame(() => {
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
-                });
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
@@ -666,10 +659,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => {
                 context.requireUpdate(updateRoute);
                 counter = 0;
-                requestAnimationFrame(() => {
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
-                });
+                blink(context, blinkDrawer, updateCurrentPosition());
             }
         );
 
