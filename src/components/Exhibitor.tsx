@@ -162,7 +162,7 @@ function ExhibitorComponent() {
         function renderButton(title: string, url: string, buttonNumber: number) {
             if (!title || !url || uiState.kiosk || uiState.previewMode) return null;
             return (
-                <div className="exhibitor-custom-button">
+                <div key={buttonNumber} className="exhibitor-custom-button">
                     <Button
                         link={url}
                         inline={true}
