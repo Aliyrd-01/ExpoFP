@@ -91,8 +91,6 @@ let blinkFrameId: number | null = null;
 function blink(context: DrawerContext, painter: RectPainter, startIndex = routePoints.length - 1) {
     if (blinkFrameId !== null) cancelAnimationFrame(blinkFrameId);
 
-    if (!routePoints.length) return;
-
     context.requireUpdate(() => {
         for (let i = 0; i < blinkCounter; i++) {
             const id = `Blink_${i}`;
@@ -100,6 +98,8 @@ function blink(context: DrawerContext, painter: RectPainter, startIndex = routeP
             painter.updateSkipdim(id, false);
         }
     });
+
+    if (!routePoints.length) return;
 
     const cyclesPerSecond = 1 / 4;
     const speed = Math.max(1000 / (routePoints.length * cyclesPerSecond), 100);
