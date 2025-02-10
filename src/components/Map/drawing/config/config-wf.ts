@@ -87,78 +87,52 @@ export function mapCurrentPosition(position: CurrentPosition): Point | null {
     return cp;
 }
 
-let blinkCancellation: (() => void) | null = null;
-let blinkTimeout = null;
-let counter = 0;
-let isBlinking = false;
+let blinkFrameId: number | null = null;
+function blink(context: DrawerContext, painter: RectPainter, startIndex = routePoints.length - 1) {
+    if (blinkFrameId !== null) cancelAnimationFrame(blinkFrameId);
 
-function blink(context: DrawerContext, painter: RectPainter, startIndex: number = null) {
-    if (isBlinking) return;
-
-    if (blinkTimeout) clearTimeout(blinkTimeout);
-    if (blinkCancellation) blinkCancellation();
-    if (counter) {
-        if (!routePoints.length) counter = 0;
-        return;
-    }
-
-    isBlinking = true;
-    blinkTimeout = setTimeout(() => {
-        blinkTimeout = null;
-        if (routePoints.length) blinkCancellation = blinkCircle(context, painter, startIndex);
-        isBlinking = false;
-    }, 1000);
-}
-
-let currentIndex: number;
-
-function blinkCircle(context: DrawerContext, painter: RectPainter, startIndex: number): () => void {
-    if (!routePoints.length) {
-        counter = 0;
-        return () => { };
-    }
-
-    const updateBlink = (painter: RectPainter, visible: boolean) => {
+    context.requireUpdate(() => {
         for (let i = 0; i < blinkCounter; i++) {
-            painter.updateVisible(`Blink_${i.toString()}`, visible);
-            painter.updateSkipdim(`Blink_${i.toString()}`, visible);
+            const id = `Blink_${i}`;
+            painter.updateVisible(id, false);
+            painter.updateSkipdim(id, false);
+        }
+    });
+
+    if (!routePoints.length) return;
+
+    const cyclesPerSecond = 1 / 4;
+    const speed = Math.max(1000 / (routePoints.length * cyclesPerSecond), 100);
+
+    let index = startIndex;
+    let lastUpdate = performance.now();
+
+    const updatePoints = () => {
+        for (let i = 0; i < blinkCounter; i++) {
+            const pointIndex = (index - i + routePoints.length) % routePoints.length;
+            const point = routePoints[pointIndex];
+            const id = `Blink_${i}`;
+            if (point) {
+                painter.updateCenter(id, [point.x, point.y]);
+                painter.updateVisible(id, true);
+                painter.updateSkipdim(id, true);
+            }
         }
     };
-
-    const cIndex = () => startIndex || routePoints.length - 1;
-    currentIndex = cIndex();
-
-    let lastTimestamp = performance.now();
-    const interval = Math.max(70, 4000 / Math.max(1, currentIndex));
-    let animationFrameId: number;
 
     const animate = (timestamp: number) => {
-        if (timestamp - lastTimestamp >= interval) {
-            lastTimestamp = timestamp;
-            context.requireUpdate(() => {
-                for (let i = 0; i < blinkCounter; i++) {
-                    const point = routePoints[currentIndex - i];
-                    if (point) painter.updateCenter(`Blink_${i.toString()}`, [point.x, point.y]);
-                }
+        const delta = timestamp - lastUpdate;
 
-                if (currentIndex <= 0) {
-                    currentIndex = cIndex();
-                    counter++;
-                } else {
-                    currentIndex--;
-                }
-            });
+        if (delta >= speed) {
+            lastUpdate = timestamp;
+            index = (index - 1 + routePoints.length) % routePoints.length;
+            context.requireUpdate(updatePoints);
         }
-        animationFrameId = requestAnimationFrame(animate);
+
+        blinkFrameId = requestAnimationFrame(animate);
     };
 
-    updateBlink(painter, true);
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => {
-        cancelAnimationFrame(animationFrameId);
-        context.requireUpdate(() => updateBlink(painter, false));
-    };
+    blinkFrameId = requestAnimationFrame(animate);
 }
 
 function drawLines(
@@ -614,7 +588,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => context.ptscale,
             () => {
-                requestAnimationFrame(() => {
+                context.requireUpdate(() => {
                     let s = Math.max(
                         context.ptscale < 1 ? Math.round(context.ptscale * 10) / 10 : Math.round(context.ptscale),
                         isNewVersion ? 0.05 : 0.3
@@ -630,8 +604,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                         context.pixelRatio,
                     );
 
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
+                    blink(context, blinkDrawer, updateCurrentPosition());
                 });
             }
         );
@@ -639,11 +612,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         reaction(
             () => [store.layerStore.layersLoaded],
             () => {
-                counter = 0;
-                context.requireUpdate(updateRoute);
-                requestAnimationFrame(() => {
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
+                context.requireUpdate(() => {
+                    updateRoute();
+                    blink(context, blinkDrawer, updateCurrentPosition());
                 });
             }
         );
@@ -652,23 +623,19 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             () => [store.routeStore.currentRouteLayer],
             () => {
                 if (!store.layerStore.layersLoaded) return;
-                counter = 0;
-                context.requireUpdate(() => setTimeout(() => updateRoute(store.routeStore.currentRouteLayer), 200));
-                requestAnimationFrame(() => {
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
-                });
+                context.requireUpdate(() => setTimeout(() => {
+                    updateRoute(store.routeStore.currentRouteLayer);
+                    blink(context, blinkDrawer, updateCurrentPosition());
+                }, 200));   
             }
         );
 
         reaction(
             () => [uiState.selectedRoute, store.routeStore.onlyAccessible],
             () => {
-                context.requireUpdate(updateRoute);
-                counter = 0;
-                requestAnimationFrame(() => {
-                    const position = updateCurrentPosition();
-                    blink(context, blinkDrawer, position);
+                context.requireUpdate(() => {
+                    updateRoute();
+                    blink(context, blinkDrawer, updateCurrentPosition());
                 });
             }
         );
