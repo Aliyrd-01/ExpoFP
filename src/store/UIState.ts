@@ -98,6 +98,13 @@ export default class UIState {
                 .forEach(b => booths.add(b.id.toString()));
         }
 
+        if (this.list?.type === "bookmarks") {
+            this.rootStore.exhibitorStore.exhibitors
+                .filter((e) => e.bookmarked)
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id.toString()));
+        }
+
         if (this.details instanceof Route) {
             booths.clear();
             booths.add(this.details.from?.id.toString());
