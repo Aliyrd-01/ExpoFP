@@ -5,6 +5,7 @@ import "./Category.scss";
 import List from "./List";
 import OverlayContent from "./OverlayContent";
 import { t } from "../utils/i18n";
+import { Category as CategoryModel } from "../store/CategoryStore";
 
 function Category() {
     const scrollableRef = useRef<HTMLDivElement>();
@@ -37,4 +38,9 @@ function Category() {
     }
 }
 
-export default () => useObserver(() => !uiState.menu && !!uiState.selectedCategory && <Category />);
+export default () => useObserver(() => (
+    !uiState.menu
+    && !!uiState.selectedCategory
+    && uiState.details instanceof CategoryModel
+    && <Category />
+));
