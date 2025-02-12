@@ -44,17 +44,10 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
             ])
     );
 
-    const highestPriority = calculateHighestPriority(
-        store.layerStore.layers,
-        (layer) => {
-            const highestChildPriority = calculateHighestPriority(
-                layer.childLayers || [],
-                (child) => child.basePriority,
-                layer.basePriority
-            );
-            return Math.max(layer.basePriority, highestChildPriority);
-        },
-        store.layerStore.layers[0]?.basePriority || 0
+    const highestPriority = Math.max(
+        ...Array.from(
+            boothsPaintersById.values(),
+        ).map(x => x?.orderPriority),
     );
 
     for (const [i, chunk] of chunks.entries()) {
