@@ -10,7 +10,7 @@ import { select } from "d3";
 import type { Layer } from "../../../../store/LayerStore";
 import isWebview from "../../../../utils/is-webview";
 import { getLogoUrl } from "../../../../utils/getLogoUrl";
-import { BOOTHS_PAINTER_MARKER, LAYER_ICONS_MARKER, LAYER_LOGOS_MARKER, SEPARATOR } from "../../../../constants";
+import { BOOKMARK_PAINTER_MARKER, BOOTHS_PAINTER_MARKER, LAYER_ICONS_MARKER, LAYER_LOGOS_MARKER, SEPARATOR } from "../../../../constants";
 import { areLayersEnabled } from "../../../../utils/areLayersEnabled";
 
 const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
@@ -37,7 +37,7 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
 
     const boothsPaintersById = new Map(
         context.allPainters
-            .filter(p => p.id.includes(BOOTHS_PAINTER_MARKER))
+            .filter(p => p.id.includes(BOOTHS_PAINTER_MARKER) && !p.id.includes(BOOKMARK_PAINTER_MARKER))
             .map(p => [
                 p.id.includes(SEPARATOR) ? p.id.split(SEPARATOR)[0] : p.id,
                 p,
