@@ -20,7 +20,7 @@ export function saveRebookingToken(token: string) {
 
 export function buildRebookingUrl(path: string, token: string) {
     const origin =  (
-        process.env.NODE_ENV === "development" 
+        (process.env.NODE_ENV === "development" || sessionStorage.getItem("debug") === "1")
             ? "https://esm-web-show-app.herokuapp.com/"
             : "https://app.expofp.com/"
     );
