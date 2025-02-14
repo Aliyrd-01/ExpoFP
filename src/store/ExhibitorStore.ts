@@ -7,6 +7,7 @@ import isDebug from "../utils/is-debug";
 import { Booth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import RootStore from "./RootStore";
+import { buildRebookingUrl, getRebookingToken } from "../tools/rebookingUrl";
 
 export default class ExhibitorStore {
     private readonly rootStore: RootStore;
@@ -47,7 +48,8 @@ export default class ExhibitorStore {
         exhibitor.rebookingState = state;
         exhibitor.rebookingNote = rebookingNote;
 
-        fetch("https://app-show.expofp.com/api/v1/set-rebooking-state", {
+        const url = buildRebookingUrl("api/v1/set-rebooking-state", getRebookingToken());
+        fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

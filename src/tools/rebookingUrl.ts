@@ -1,0 +1,28 @@
+const TOKEN_KEY = "rt";
+
+export function getRebookingToken() {
+    let token = new URLSearchParams(decodeURIComponent(window.location.search)).get(TOKEN_KEY);
+
+    if (!token) {
+        token = sessionStorage.getItem(TOKEN_KEY);
+    }
+
+    return token;
+}
+
+export function saveRebookingToken(token: string) {
+    sessionStorage.setItem(TOKEN_KEY, token);
+}
+
+export function buildRebookingUrl(path: string, token: string) {
+    const origin =  (
+        process.env.NODE_ENV === "development" 
+            ? "https://esm-web-show-app.herokuapp.com/"
+            : "https://app.expofp.com/"
+    );
+
+    const url = new URL(path, origin);
+    url.searchParams.set(TOKEN_KEY, token);
+
+    return url.href;
+}

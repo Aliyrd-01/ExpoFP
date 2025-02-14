@@ -4,6 +4,7 @@ import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
+import { buildRebookingUrl, getRebookingToken, saveRebookingToken } from "./tools/rebookingUrl";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
@@ -322,9 +323,18 @@ export default class FloorPlanLoader implements FloorPlan {
                 window["__heatmapData"] = { booths, exhibitors };
             }
 
-            if (data.isRebooking) {
-                await loadJs(dataInternalUrl);
-                mergeExhibitors(window["__data"] as Data, window["__internalData"] as Data);
+            try {
+                const token = getRebookingToken();
+                if (token) {
+                    saveRebookingToken(token);
+                    const url = buildRebookingUrl("api/rebooking-data", token);
+                    const resp = await fetch(url, { mode: "no-cors" });
+                    const rebookingData = await resp.json();
+                    mergeExhibitors(data as Data, rebookingData as Data);
+                    data.isRebooking = rebookingData.isRebooking;
+                }
+            } catch (error) {
+                console.error(error);
             }
 
             if (data.customCss) {
