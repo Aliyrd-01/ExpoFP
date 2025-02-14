@@ -1,7 +1,11 @@
 const TOKEN_KEY = "rt";
 
+export function getRebookingTokenFromQuery() {
+    return new URLSearchParams(decodeURIComponent(window.location.search)).get(TOKEN_KEY);
+}
+
 export function getRebookingToken() {
-    let token = new URLSearchParams(decodeURIComponent(window.location.search)).get(TOKEN_KEY);
+    let token = getRebookingTokenFromQuery();
 
     if (!token) {
         token = sessionStorage.getItem(TOKEN_KEY);
