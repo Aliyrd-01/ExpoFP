@@ -20,6 +20,7 @@ export function retainRebookingToken(token: string) {
 
 export function buildRebookingUrl(path: string, token: string) {
     const origin =  (
+        // FIXME: Remove `sessionStorage.getItem("debug") === "1"` when the app is ready for production
         (process.env.NODE_ENV === "development" || sessionStorage.getItem("debug") === "1")
             ? "https://esm-web-show-app.herokuapp.com/"
             : "https://app.expofp.com/"
