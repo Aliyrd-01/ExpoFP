@@ -265,13 +265,11 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
-        const dataInternalUrl = dataUrlBase + "data-internal.js";
-
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
