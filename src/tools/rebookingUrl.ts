@@ -14,7 +14,7 @@ export function getRebookingToken() {
     return token;
 }
 
-export function saveRebookingToken(token: string) {
+export function retainRebookingToken(token: string) {
     sessionStorage.setItem(TOKEN_KEY, token);
 }
 

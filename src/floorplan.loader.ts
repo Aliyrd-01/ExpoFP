@@ -4,7 +4,7 @@ import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
-import { buildRebookingUrl, getRebookingToken, saveRebookingToken } from "./tools/rebookingUrl";
+import { buildRebookingUrl, getRebookingToken, retainRebookingToken } from "./tools/rebookingUrl";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
@@ -326,7 +326,7 @@ export default class FloorPlanLoader implements FloorPlan {
             try {
                 const token = getRebookingToken();
                 if (token) {
-                    saveRebookingToken(token);
+                    retainRebookingToken(token);
                     const url = buildRebookingUrl("api/rebooking-data", token);
                     const resp = await fetch(url);
                     const rebookingData = await resp.json();
