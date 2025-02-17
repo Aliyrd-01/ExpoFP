@@ -36,7 +36,7 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
     }, []);
 
     const mapItem = ({ index }: { index: number }) => {
-        const item: ListItem | HeatmapYah = uiState.listItems[index];
+        const item: ListItem = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
         if (item instanceof Exhibitor) {
             return <ExhibitorRow key={index} exhibitor={item} className={cls} />;

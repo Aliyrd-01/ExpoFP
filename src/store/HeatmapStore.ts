@@ -42,7 +42,7 @@ export default class HeatmapStore {
         return { min, max };
     }
 
-    getClicksByType(item: ListItem | HeatmapYah) {
+    getClicksByType(item: ListItem) {
         if (item instanceof Category) {
             // -1 is returned for Categories to ensure they appear last in sorted methods
             return -1;
@@ -57,7 +57,7 @@ export default class HeatmapStore {
         return this.getClicksByItem(item);
     }
 
-    getClicksByItem(item: ListItem | BoothBase | HeatmapYah) {
+    getClicksByItem(item: ListItem | BoothBase) {
         if (item instanceof Exhibitor) {
             return this.heatmapData?.exhibitors?.find((a) => a.id === item.id)?.viewCount || 0;
         }
