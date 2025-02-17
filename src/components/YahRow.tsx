@@ -1,7 +1,6 @@
 import { useObserver } from "mobx-react-lite";
 import React from "react";
 import { layersStore, uiState } from "../store";
-import "./BoothRow.scss";
 import SimpleRow from "./SimpleRow";
 import useHeatmapData from "../utils/useHeatmapData";
 import { HeatmapYah } from "../store/HeatmapStore";
