@@ -11,8 +11,10 @@ import Rect from "../../core/Rect";
 import { svgArea } from "../../data/svg";
 import store, { uiState } from "../../store";
 import { Booth, BoothBase } from "../../store/BoothStore";
+import { Category } from "../../store/CategoryStore";
 import { Exhibitor } from "../../store/ExhibitorStore";
 import { LayerMode } from "../../store/LayerStore";
+import { Route } from "../../store/RouteStore";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { t } from "../../utils/i18n";
@@ -20,12 +22,15 @@ import isIframe from "../../utils/is-iframe";
 import isMac from "../../utils/is-mac";
 import { useReaction } from "../../utils/mobx";
 import getBoothIdFromClientXy from "./booth-by-xy";
-import createDrawer, { Drawer } from "./drawing/Drawer1";
+import createDrawer, { Drawer, DrawerImpl } from "./drawing/Drawer1";
 import "./Map.scss";
+import { getMarkerFromClientXy } from "./marker-by-xy";
 import { sizeCanvasToParentElement } from "./utils";
 import zoomBound from "./zoom-bound";
 import configInertia from "./zoom-inertia";
-import { getMarkerFromClientXy } from "./marker-by-xy";
+import ImagePainter from "./drawing/painters/ImagePainter";
+import isMobile from "../../utils/is-mobile";
+import isWebview from "../../utils/is-webview";
 
 //console.log('isIframe', isIframe)
 
@@ -48,7 +53,7 @@ export default function Map() {
         //     return  rect;//rect.withPadding(rect.w * 0.05, rect.h * 0.05);
         // }
     }));
-    
+
     // init
     useEffect(() => {
         init();
@@ -94,16 +99,17 @@ export default function Map() {
         () => {
             if (!uiState.centerMap || store.mapboxStore.showMapbox) return;
             uiState.centerMap = false;
-            var { rectangle } = store.layerStore;
-            if (rectangle)
-                zoomTo(
-                    getTramsformToCenterSvgRect(
-                        rectangle,
-                        uiState.canvasVisibleRectPx,
-                        Math.max(zoomTransform(s.$canvas.node()).k, 4)
-                    )
-                );
-            else zoomTo(zoomIdentity);
+            // var { rectangle } = store.layerStore;
+            // if (rectangle)
+            //     zoomTo(
+            //         getTramsformToCenterSvgRect(
+            //             rectangle,
+            //             uiState.canvasVisibleRectPx,
+            //             Math.max(zoomTransform(s.$canvas.node()).k, 4)
+            //         )
+            //     );
+            // else 
+            zoomTo(zoomIdentity);
         }
     );
 
@@ -136,26 +142,36 @@ export default function Map() {
             }
             //
 
+            let type = null;
+            let boothsNames = [];
+
+            if (details instanceof Exhibitor) {
+                type = "exhibitor";
+                boothsNames = details.booths
+                    .map((b) => b.name)
+                    .sort((b1, b2) =>
+                        b1 == store.routeStore.tempToBooth?.name ? -1 : b2 == store.routeStore.tempToBooth?.name ? 1 : 0
+                    );
+            } else if (details instanceof BoothBase) {
+                type = "booth";
+                boothsNames = [details.name];
+            } else if (details instanceof Route) {
+                type = "route";
+                boothsNames = [details.from?.name, details.to?.name].filter((name) => !!name);
+            } else if (details instanceof Category) {
+                type = "category";
+                boothsNames = details.exhibitors.map((e) => e.booths.map((b) => b.name)).flat();
+            }
+
             var data = {
-                type: details instanceof BoothBase ? "booth" : details instanceof Exhibitor ? "exhibitor" : ("route" as any),
+                type: type,
                 name: details?.name,
                 id: details?.id,
                 externalId: details?.externalId,
-                boothsNames:
-                    details instanceof Exhibitor
-                        ? details.booths
-                              .map((b) => b.name)
-                              .sort((b1, b2) =>
-                                  b1 == store.routeStore.tempToBooth?.name ? -1 : b2 == store.routeStore.tempToBooth?.name ? 1 : 0
-                              )
-                        : details instanceof BoothBase
-                        ? [details.name]
-                        : [store.uiState.selectedRoute?.from?.name, store.uiState.selectedRoute?.to?.name].filter(
-                              (name) => !!name
-                          ),
+                boothsNames: boothsNames,
             };
 
-            setTimeout(() => uiState.onDetails(data), 200);
+            setTimeout(() => uiState.onDetails(data), 400);
         }
     );
 
@@ -209,6 +225,25 @@ export default function Map() {
     //         uiState.moveToRect = store.layerStore.rectangle;
     //     }
     // );
+
+    useReaction(
+        () => ({
+            highlightedBooths: store.uiState.highlightedBooths,
+            hideLogo: store.uiState.hideLogoInBooth,
+            booths: store.boothStore.booths,
+        }),
+        ({ highlightedBooths, hideLogo, booths }) => {
+            // TODO: Remove this check after the issue is resolved.
+            // Mobile Safari freezes when trying to highlight booths.
+            if ((isMobile || isWebview) && !hideLogo && booths.filter((b) => b.noLabels).length > 500) return;
+
+            (s.drawer as DrawerImpl).allPainters
+                .filter(p => p instanceof ImagePainter)
+                .forEach(
+                    p => (p as ImagePainter)?.setDimmingForObjects?.(objectId => highlightedBooths.has(objectId)),
+            );
+        }
+    );
 
     return useObserver(() => (
         <canvas
@@ -288,6 +323,12 @@ export default function Map() {
         const resizeObserver = new ResizeObserver(() => {
             sizeCanvasToParentElement(el.current);
             s.drawer.resetCanvasSize();
+
+            if (settings.EXPO === "ess-expo") {
+                setTimeout(() => {
+                    if (uiState.selectedBooths) store.moveToList(Array.from(uiState.selectedBooths));
+                }, 100);
+            }
         });
 
         resizeObserverRef.current = resizeObserver;
@@ -309,7 +350,9 @@ export default function Map() {
     function getCenterCoordinates() {
         const { width, height } = s.$canvas.node().getBoundingClientRect();
 
-        const activeLayer = store.layerStore.visible.find(layer => layer.mode === LayerMode.TurnedOff || layer.mode === LayerMode.TurnedOn);
+        const activeLayer = store.layerStore.visible.find(
+            (layer) => layer.mode === LayerMode.TurnedOff || layer.mode === LayerMode.TurnedOn
+        );
         const z = activeLayer?.name || null;
 
         const centerX = width / 2;
@@ -322,6 +365,8 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
+        if (!uiState?.rootElement || !s?.drawer) return;
+
         const { left, top } = uiState.rootElement.getBoundingClientRect();
 
         const x = e.clientX - left;
@@ -337,6 +382,8 @@ export default function Map() {
     }
 
     function handleClick(e: React.MouseEvent) {
+        if (!uiState?.rootElement || !s?.drawer) return;
+
         if (window["__resett"]) window["__resett"]();
         if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "full") {
             store.showMap();

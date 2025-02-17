@@ -36,7 +36,7 @@ export default function ThreeComponent({ isMapbox, expo }: { isMapbox: boolean; 
 
         get style() {
             return {
-                left: uiState.overlayPosition !== "left" || uiState.kiosk ? 0 : uiState.mapVisibleLeft + "px",
+                left: 0,
             };
         },
     }));

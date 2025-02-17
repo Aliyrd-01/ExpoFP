@@ -44,13 +44,13 @@ const examples = [
 
 const Template: any = (args) => {
     return (
-        <div className="layout sb-layout">
+        <>
             <div className="sidebar">
                 <div>
                     <Gallery images={examples} />
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

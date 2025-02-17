@@ -1,6 +1,7 @@
 import React from "react";
 import data from "../data";
 import "./SimpleRow.scss";
+import HighlightText from "./HighlightText";
 
 const SimpleRow: React.FC<{
     line1: string;
@@ -18,20 +19,20 @@ const SimpleRow: React.FC<{
         <a
             href={"?" + encodeURIComponent(slug)}
             onClick={handleClick}
-            className={"simple-row" + (active ? " active" : "") + " " + className}
+            className={"efp-simple-row" + (active ? " active" : "") + " " + className}
             onMouseOver={handleMouseOver}
             onMouseOut={handleMouseOut}
             style={{ marginLeft: data.isRebooking ? `5px` : null, ...style }}
         >
-            <div className="simple-row__col">
-                <div className="simple-row__main" dir="auto">
-                    {line1}
+            <div className="efp-simple-row__col">
+                <div className="efp-simple-row__main" dir="auto">
+                    <HighlightText text={line1} />
                 </div>
-                <div className="simple-row__sub" dir="auto">
+                <div className="efp-simple-row__sub" dir="auto">
                     {line2}
                 </div>
             </div>
-            {lineEnd && <div className="simple-row__end">{lineEnd}</div>}
+            {lineEnd && <div className="efp-simple-row__end">{lineEnd}</div>}
         </a>
     );
 

@@ -59,13 +59,13 @@ export default function LogoOverlay() {
 
     var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
     var showWarning = isFromDesigner && dataSize >= 10;
-    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk;
-    
+    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk && !uiState.heatmap;
+
     let point = "";
     if (uiState.kiosk && store.routeStore.defaultFrom?.paths) {
-        let paths = store.routeStore.defaultFrom?.paths;
-        const p = (point = (paths[0] as any).triangles[0][0]);
-        point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
+        //   let paths = store.routeStore.defaultFrom?.paths;
+        // const p = (point = (paths[0] as any).triangles[0][0]);
+        // point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
     }
 
     return useObserver(() => (
@@ -79,7 +79,7 @@ export default function LogoOverlay() {
                 style={s.style}
                 rel="noopener noreferrer"
             >
-                <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} />
+                <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} crossOrigin="anonymous" />
             </a>
             {showWarning && (
                 <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
@@ -95,16 +95,14 @@ export default function LogoOverlay() {
                     </a>
                 </Alert>
             )}
-            {uiState.kiosk && (
+            {uiState.kiosk && !uiState.selectedRoute?.to && !uiState.selectedRoute?.from && (
                 <div
-                    className={classNames("qr", { "qr--right": settings.EXPO === "metstrade-superyacht2023" })}
+                    className={classNames("qr", { "qr--right": settings.EXPO === "metstrade-superyacht2023" || uiState.rtl })}
                     style={{
-                        textAlign: "center",
                         bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5),
-                        [uiState.rtl ? "right" : "left"]: remsToPixels(0.5),
                     }}
                 >
-                    <div style={{ position: "relative", top: -5, fontSize: 12 }}>View Map on Phone</div>
+                    <div>View Map on Phone</div>
                     <QRCode value={`https://${settings.EXPO}.expofp.com/${point}`} size={100} />
                 </div>
             )}

@@ -1,61 +1,126 @@
 import classNames from "classnames";
 import { IReactionDisposer, reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React from "react";
+import React, { useCallback } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import store, { exhibitorStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { remsToPixels, shuffle } from "../utils";
 import { useInit } from "../utils/mobx";
 import "./Ws.scss";
+import { ImageUrls, loadImagesInBatchesById } from "../utils/loadImagesInBatches";
 
-function Ws() {
+const DELAY = 8000;
+
+const Ws = React.memo(() => {
     const s = useLocalStore(() => ({
-        el: null as HTMLElement,
+        el: null as HTMLElement | null,
         all: [] as Exhibitor[],
         adv: [] as { key: number; e: Exhibitor }[],
         keySeq: 0,
         index: 0,
-        imgByExhbitorId: null as Map<number, HTMLImageElement>,
-        intervalId: 0,
-        get sectionStyle() {
-            const style = {
-                width: uiState.overlayPosition === "left" ? `${uiState.wsWidthPx}px` : "100%",
-                // todo: remove
-                opacity: uiState.wsStarted ? 1 : 0,
-                padding: `0 ${uiState.wsPaddingPx}px`,
-            } as any;
+        imgByExhibitorId: new Map<number, HTMLImageElement>(),
+        batchSize: 100,
+        loading: false,
+        leftToNextLoad: 0,
+        timeoutId: 0,
+        get sectionStyle(): Record<string, string | number> {
+            const { overlayPosition, wsWidthPx, wsStarted, wsPaddingPx, wsPosition, headerHeightPx } = uiState;
 
-            if (uiState.wsPosition === "top") style.top = uiState.headerHeightPx + "px";
-            else style.bottom = 0;
+            const isLeft = overlayPosition === "left";
+            const isTop = wsPosition === "top";
+
+            const style: Record<string, string | number> = {
+                right: isLeft ? "10px" : "0",
+                width: isLeft ? `${wsWidthPx - 30}px` : "100%",
+                opacity: wsStarted ? 1 : 0,
+                padding: `0 ${wsPaddingPx}px`,
+            };
+
+            if (isTop) {
+                style.top = isLeft ? `${headerHeightPx + 10}px` : 0;
+            } else {
+                style.bottom = isLeft ? "10px" : 0;
+            }
+
             return style;
         },
     }));
+
+    const setupNext = useCallback(() => {
+        const rectWidth = s.el?.getBoundingClientRect().width ?? 0;
+        const maxWidth = rectWidth - remsToPixels(0.3) * 2;
+        let filledWidth = 0;
+        const adv = [];
+
+        do {
+            const e = s.all[s.index % s.all.length];
+            const img = s.imgByExhibitorId.get(e.id);
+            if (!img) break;
+
+            const width = (img.width * uiState.wsImageHeightPx) / img.height + 20;
+            if (filledWidth + width > maxWidth && adv.length) break;
+
+            filledWidth += width;
+            adv.push({ key: s.keySeq++, e });
+            s.index = (s.index + 1) % s.all.length;
+        } while (true);
+
+        s.adv = adv;
+        s.leftToNextLoad = Math.max(0, s.leftToNextLoad - adv.length);
+    }, [s]);
+
+    const loadExhibitorImages = useCallback(async (): Promise<Map<number, HTMLImageElement>> => {
+        s.loading = true;
+
+        let batch = s.all.slice(s.index, s.index + s.batchSize);
+        if (batch.length < s.batchSize) {
+            batch = batch.concat(s.all.slice(0, s.batchSize - batch.length));
+        }
+
+        const result = await loadImagesInBatchesById(new Map<number, ImageUrls>(batch.map((x) => [x.id, { fallback: x.logo }])));
+        s.leftToNextLoad = result.size;
+        s.loading = false;
+        return result;
+    }, [s]);
+
+    const startTimer = useCallback(() => {
+        const fn = async () => {
+            if (s.loading) {
+                s.timeoutId = window.setTimeout(fn, DELAY);
+                return;
+            }
+
+            if (s.leftToNextLoad <= s.adv.length) {
+                s.imgByExhibitorId = await loadExhibitorImages();
+            }
+
+            setupNext();
+            s.timeoutId = window.setTimeout(fn, DELAY);
+        };
+
+        clearTimeout(s.timeoutId);
+        s.timeoutId = window.setTimeout(fn, DELAY);
+    }, [loadExhibitorImages, setupNext]);
 
     useInit(() => {
         let dispose: IReactionDisposer;
         let isMounted = true;
 
-        (async function () {
+        (async () => {
             s.all = shuffle(exhibitorStore.advertised);
-            s.imgByExhbitorId = await loadExhbibitorImages();
+            s.imgByExhibitorId = await loadExhibitorImages();
             if (!isMounted) return;
             setupNext();
-            mouseout();
+            startTimer();
             uiState.wsStarted = true;
-
             dispose = reaction(() => uiState.screenSize, setupNext);
         })();
 
         return () => {
             isMounted = false;
-            if (dispose) {
-                dispose();
-            }
-            if (s.intervalId) {
-                window.clearInterval(s.intervalId);
-                s.intervalId = 0;
-            }
+            dispose?.();
+            clearInterval(s.timeoutId);
         };
     });
 
@@ -63,8 +128,8 @@ function Ws() {
         <section
             className={classNames("ws")}
             ref={(n) => (s.el = n)}
-            onMouseOver={mouseover}
-            onMouseOut={mouseout}
+            onMouseOver={() => clearInterval(s.timeoutId)}
+            onMouseOut={startTimer}
             style={s.sectionStyle}
         >
             <TransitionGroup component={null}>
@@ -76,75 +141,16 @@ function Ws() {
                             style={{ height: `${uiState.wsImageHeightPx}px` }}
                             onClick={(x) => {
                                 x.preventDefault();
-                                select(e.e);
+                                store.clickExhibitor(e.e);
                             }}
                         >
-                            <img src={e.e.logo} alt={e.e.name} />
+                            <img src={e.e.logo} alt={e.e.name} crossOrigin="anonymous" />
                         </a>
                     </CSSTransition>
                 ))}
             </TransitionGroup>
         </section>
     ));
+});
 
-    function setupNext() {
-        const rectWidth = s.el.getBoundingClientRect().width;
-        const maxWidth = rectWidth - remsToPixels(0.3) * 2; // exclude padding
-        let filledWidth = 0;
-        const adv = [] as { key: number; e: Exhibitor }[];
-        // let key = 0;
-        do {
-            const e = s.all[s.index % s.all.length];
-            const img = s.imgByExhbitorId.get(e.id);
-            const width = img ? (img.width * uiState.wsImageHeightPx) / img.height + 20 : 50; //padding
-
-            if (filledWidth + width > maxWidth && adv.length) break;
-
-            filledWidth += width;
-            adv.push({ key: s.keySeq++, e });
-            s.index++;
-        } while (true);
-        s.adv = adv;
-        // if (!uiState.wsStarted) store.commit("setWsStarted", true);
-    }
-
-    function select(e: Exhibitor) {
-        store.clickExhibitor(e);
-        // this.$store.dispatch("clickExhibitor", e);
-    }
-
-    function mouseover() {
-        if (s.intervalId) {
-            window.clearInterval(s.intervalId);
-            s.intervalId = 0;
-        }
-    }
-
-    function mouseout() {
-        s.intervalId = window.setInterval(setupNext, 8000);
-    }
-
-    async function loadExhbibitorImages(): Promise<Map<number, HTMLImageElement>> {
-        const result = new Map<number, HTMLImageElement>();
-        let counter = 0;
-        return new Promise((resolve, reject) => {
-            s.all.forEach((x) => {
-                const img = new Image();
-                img.onload = () => {
-                    result.set(x.id, img);
-                    counter++;
-                    if (counter === s.all.length) resolve(result);
-                };
-
-                img.onerror = () => {
-                    counter++;
-                    if (counter === s.all.length) resolve(result);
-                };
-
-                img.src = x.logo;
-            });
-        });
-    }
-}
-
-export default () => useObserver(() => <>{uiState.wsShown ? <Ws /> : null}</>);
+export default () => useObserver(() => (uiState.wsShown ? <Ws /> : null));

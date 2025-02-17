@@ -17,9 +17,11 @@
     "Edit": "לערוך",
     "Error sending login instructions": "שגיאה בשליחת הוראות התחברות",
     "Event Home": "דף הבית של האירוע",
+    "Exhibitors": "תעריפים",
     "Find your location": "מצא את המיקום שלך",
     "Fit to screen": "להתאים למסך",
     "Get your free floor plan at": "קבל את תוכנית הקומה שלך בחינם ב",
+    "Language": "שפה",
     "Layers": "שכבות",
     "Link copied to clipboard": "הקישור הועתק ללוח",
     "Made with ExpoFP": "נעשה בעזרת ExpoFP",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "לשלוח הוראות כניסה ל{{email}} כדי לערוך את הפרופיל?",
     "Share bookmarks": "לשתף סימניות",
     "Size": "גודל",
+    "Show More": "הצג עוד",
     "This is a FREE floor plan": "זו תכנית קומה חינם",
     "Toggle bookmark": "החלף מצב סימנייה",
     "Use {{keyCode}} + scroll to zoom": "השתמש ב-{{keyCode}} + גלילה כדי להתמקד",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "סרוק כדי לראות את המסלול בטלפון שלך"
 }

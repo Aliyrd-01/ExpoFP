@@ -1,0 +1,48 @@
+@use "@styles/utils" as *;
+
+.route-qr {
+    padding: rem(0 15px 14px);
+
+    &__body {
+        display: flex;
+        flex-flow: row wrap;
+        gap: rem(16px);
+        align-items: center;
+        padding-top: rem(10px);
+        border-top: 1px solid var(--color-gray-400);
+    }
+
+    &__code {
+        display: inline-flex;
+        width: rem(80px);
+
+        & > svg {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    &__label {
+        flex: 1;
+        font-size: var(--font-size-xxl);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-black);
+    }
+
+    @include kiosk {
+        padding: 0 var(--k-spacing-lg) var(--k-spacing-lg);
+
+        &__body {
+            gap: rem(24px);
+            padding-top: var(--k-spacing-md);
+            border-color: var(--color-white);
+        }
+
+        &__code {
+            width: var(--k-route-qr-size);
+            padding: rem(8px);
+            background: var(--color-white);
+            border-radius: rem(10px);
+        }
+    }
+}

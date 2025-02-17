@@ -17,9 +17,11 @@
     "Edit": "Modifica",
     "Error sending login instructions": "Errore durate l'invio delle istruzioni di accesso",
     "Event Home": "Pagina iniziale evento",
+    "Exhibitors": "Espositore",
     "Find your location": "Trova la tua posizione",
     "Fit to screen": "Adatta allo schermo",
     "Get your free floor plan at": "Ricevi la tua planimetria gratuita per",
+    "Language": "Lingua",
     "Layers": "Livelli",
     "Link copied to clipboard": "Collegamento copiato negli appunti",
     "Made with ExpoFP": "Realizzato con ExpoFP",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "Inviare le istruzioni di accesso all'indirizzo {{email}} per modificare il profilo?",
     "Share bookmarks": "Condividi segnalibro",
     "Size": "Dimensione",
+    "Show More": "Mostra di più",
     "This is a FREE floor plan": "Questa è una planimetria GRATUITA",
     "Toggle bookmark": "Seleziona segnalibro",
     "Use {{keyCode}} + scroll to zoom": "Usa {{keyCode}} + scorr per ingrandire",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "Scansiona per vedere il percorso sul tuo telefono"
 }

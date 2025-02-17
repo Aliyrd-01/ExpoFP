@@ -4,12 +4,12 @@ import { ScheduleItem } from "./ScheduleStore";
 import { computed, observable } from "mobx";
 import Rect from "../core/Rect";
 import data from "../data";
-import { PathInfo, RawRegularBooth } from "../data/Data";
+import { PathInfo, RawPoiType, RawRegularBooth } from "../data/Data";
 import settings from "../tools/settings";
 import { Exhibitor } from "./ExhibitorStore";
+import { uiState } from "./index";
 import { Layer } from "./LayerStore";
 import RootStore from "./RootStore";
-import { uiState } from "./index";
 
 // interface BoothState {
 //     hover: boolean;
@@ -75,6 +75,10 @@ export default class BoothStore {
             return pointInsideRectangle(point, r);
         });
     }
+
+    findBooth(str: string) {
+        return this.booths.find((b) => b.name === str || b.slug === str || b.externalId === str);
+    }
 }
 
 export abstract class BoothBase {
@@ -97,7 +101,10 @@ export abstract class BoothBase {
     readonly exhibitors: Exhibitor[];
     readonly labelColor: string;
     readonly schedule: ScheduleItem[];
+    readonly poiTypeId: number;
+    readonly poiType: RawPoiType;
     readonly yah: boolean;
+    readonly meta: Record<string, string>;
     @observable layer: Layer;
 
     @computed({ keepAlive: true }) get bookmarked() {
@@ -109,18 +116,24 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) public get fullName() {
+        let result = `${this.yah ? this.title : this.name}`;
+
         if (this.layer?.mode > 1 && data.showLevelLabel) {
-            return (this.yah ? this.title : this.name) + ` ${data.levelTerm} ` + this.layer.description;
+            result = `${result} ${data.levelTerm} ${this.layer.description}`;
         }
-        return this.yah ? this.title : this.name;
+
+        const meta = this.meta
+            ? Object.entries(this.meta)
+                  .filter(([key]) => !key.startsWith("_"))
+                  .map(([key, value]) => `${key} ${value}`)
+                  .join(" ")
+            : "";
+
+        return `${result} ${meta}`.replace(/\s+/g, " ").trim();
     }
 
     @computed({ keepAlive: true }) get visible() {
         return this.layer?.visible ?? true;
-    }
-
-    @computed({ keepAlive: true }) private get inList() {
-        return this.uiState.listBooths.has(this as unknown as Booth);
     }
 
     @computed({ keepAlive: true }) get hover() {
@@ -132,30 +145,8 @@ export abstract class BoothBase {
     }
 
     @computed({ keepAlive: true }) get skipDim() {
-        const { selectedRoute } = this.uiState;
-
-        if (
-            selectedRoute &&
-            selectedRoute.from &&
-            selectedRoute.from.id !== this.id &&
-            selectedRoute.to &&
-            selectedRoute.to.id !== this.id
-        ) {
-            return false;
-        }
-
-        return (
-            this.inList ||
-            this.selected ||
-            this.store.rootStore.routeStore.defaultFrom?.id === this.id ||
-            (this.uiState.list.type === "search" && this.uiState.list.text.trim().length === 0)
-        );
+        return this.uiState.highlightedBooths.has(this.id.toString());
     }
-
-    // // skipDim: boolean;
-    // empty: boolean;
-    // //onhold: boolean;
-    // bookmarked: boolean;
 }
 
 export type Booth = RegularBooth | SpecialBooth;

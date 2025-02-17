@@ -1,12 +1,11 @@
-import { autorun, runInAction } from "mobx";
+import { autorun, reaction, runInAction } from "mobx";
 import Size from "../../core/Size";
 import { isWebGlSupported } from "../../utils";
 import previewExhibitor from "../../utils/preview-exhibitor";
 import RootStore from "../RootStore";
 import { ResizeObserver } from "resize-observer";
 import { isLocalStorageAvailable } from "../../utils/localStorage";
-
-export const kioskKey = "kiosk";
+import { KIOSK_KEY, VISIBILITY_STORAGE_KEY } from "../../constants";
 
 let resizeObserver;
 
@@ -53,7 +52,7 @@ export default function initUi(store: RootStore) {
 
     if (!uiState.wsShown) uiState.wsStarted = true;
 
-    uiState.kiosk = isLocalStorageAvailable && localStorage.getItem(kioskKey) === "1";
+    uiState.kiosk = isLocalStorageAvailable && localStorage.getItem(KIOSK_KEY) === "1";
 
     if (uiState.kiosk) {
         var time;
@@ -82,17 +81,34 @@ export default function initUi(store: RootStore) {
     }
 
     autorun(() => {
+        /** @deprecated use <KIOSK_KEY>=1 or <KIOSK_KEY>=2 instead */
+
         const l = uiState.list;
         if (l.type === "search") {
             if (l.text === "kkiosk") {
-                isLocalStorageAvailable && localStorage.setItem(kioskKey, "1");
                 uiState.kiosk = true;
             } else if (l.text === "nokkiosk") {
-                isLocalStorageAvailable && localStorage.removeItem(kioskKey);
                 uiState.kiosk = false;
             }
         }
     });
+
+    reaction(
+        () => uiState.kiosk,
+        (kiosk) => {
+            if (isLocalStorageAvailable) {
+                if (kiosk) {
+                    localStorage.setItem(KIOSK_KEY, "1");
+                } else {
+                    localStorage.removeItem(KIOSK_KEY);
+                }
+            }
+        },
+    );
+
+    if (isLocalStorageAvailable) {
+        uiState.setVisibility(JSON.parse(localStorage.getItem(VISIBILITY_STORAGE_KEY)) || {});
+    }
 
     function updateScreenSize(width, height) {
         runInAction("uiState.screenSize", () => {

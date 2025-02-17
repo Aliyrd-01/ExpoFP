@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import data from "../data";
 import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
@@ -13,13 +13,24 @@ import "./Wayfinding.scss";
 import WayfindingTemplate from "./WayfindingTemplate";
 
 function Wayfinding() {
-    const floors = store.routeStore.pathLayers.map(l => ({ id: l.id, name: l.layer?.shortName }));
-    const [currentFloor, setCurrentFloor] = useState<{ id: number, name: string }>();
+    const floors = useMemo(
+        () => store.routeStore.pathLayers.map((l) => ({ id: l.id, name: l.layer?.shortName, description: l.layer?.description })),
+        [store.routeStore.pathLayers]
+    );
+
+    const [currentFloor, setCurrentFloor] = useState<{ id: number; name: string }>();
 
     useEffect(() => {
         if (currentFloor) return;
         setCurrentFloor(floors[0]);
-    }, [store.routeStore.pathLayers]);
+    }, [store.routeStore.pathLayers, floors]);
+
+    useEffect(() => {
+        const floor = floors.find(
+            (f) => f.description?.toLowerCase() === store.routeStore.currentRouteLayer?.description?.toLowerCase()
+        );
+        floor && setCurrentFloor(floor);
+    }, [store.routeStore.currentRouteLayer, floors]);
 
     const routeSelected = () => {
         const { from, to } = uiState.selectedRoute;
@@ -35,7 +46,7 @@ function Wayfinding() {
     };
 
     return useObserver(() => {
-        const bar = <div className="wayfinding__bar bar">{t("Directions")}</div>;
+        const bar = <div className="wayfinding__bar efp-bar">{t("Directions")}</div>;
         const boothsIDs = [];
 
         const booths = () =>
@@ -51,7 +62,7 @@ function Wayfinding() {
                 boothsIDs.push(...e.booths.map((b) => b.id));
                 optionsList.push(
                     ...e.booths.map((booth) => ({
-                        value: booth.name,
+                        value: booth.id.toString(),
                         label: e.name + " - " + booth.fullName,
                     }))
                 );
@@ -61,7 +72,7 @@ function Wayfinding() {
                 .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
                 .forEach((booth) => {
                     optionsList.push({
-                        value: booth.name,
+                        value: booth.id.toString(),
                         label: booth.fullName,
                     });
                 });
@@ -72,7 +83,7 @@ function Wayfinding() {
                 .filter((booth) => boothsIDs.indexOf(booth.id) === -1)
                 .forEach((booth) => {
                     optionsList.push({
-                        value: booth.name,
+                        value: booth.id.toString(),
                         label: booth.fullName,
                     });
                 });
@@ -80,8 +91,8 @@ function Wayfinding() {
             return optionsList;
         };
 
-        const onSelectionClick = (name: string, isFrom: boolean = true) => {
-            const booth = booths().filter((b) => b.name === name)[0];
+        const onSelectionClick = (id: string, isFrom: boolean = true) => {
+            const booth = booths().filter((b) => b.id.toString() === id)[0];
             const { from, to } = uiState.selectedRoute;
 
             if (isFrom) store.routeStore.selectRoute(new Route(booth || null, to));
@@ -157,13 +168,11 @@ function Wayfinding() {
                     onClickFloor={(floor) => {
                         var layer = store.layerStore.layers.find((l) => l.shortName === floor.name);
                         store.layerStore.updateVisibility(layer, true);
-                        store.routeStore.currentRouteLayer = layer;
-                        setCurrentFloor(floor);
                     }}
                     routeFound={!routeNotFound}
                     options={options()}
-                    fromValue={uiState.selectedRoute?.from?.name || ""}
-                    toValue={uiState.selectedRoute?.to?.name || ""}
+                    fromValue={uiState.selectedRoute?.from?.id?.toString() || ""}
+                    toValue={uiState.selectedRoute?.to?.id?.toString() || ""}
                     onChangeFrom={(value) => onSelectionClick(value, true)}
                     onChangeTo={(value) => onSelectionClick(value, false)}
                     onSwitch={onSwitch}
@@ -172,6 +181,10 @@ function Wayfinding() {
                     showAccessible={store.routeStore.showAccessible}
                     onAccessibleCheck={(checked) => (store.routeStore.onlyAccessible = checked)}
                     onClickInfo={() => store.showOverlay()}
+                    routeUrl={`https://${settings.EXPO}.expofp.com/?route%3A${encodeURIComponent(
+                        uiState.selectedRoute?.to?.slug || ""
+                    )}%3A${encodeURIComponent(uiState.selectedRoute?.from?.slug || "")}`}
+                    isKiosk={uiState.kiosk}
                 />
             </OverlayContent>
         );

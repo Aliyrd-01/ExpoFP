@@ -1,14 +1,16 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
+import { KIOSK_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
-import logger from "../tools/logger";
 import { setConsentSettings } from "../tools/gtag";
+import logger from "../tools/logger";
+import { isLocalStorageAvailable } from "../utils/localStorage";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -50,9 +52,9 @@ function stateToUrl() {
     if (route) {
         const from = route.from ? `:${route.from.slug}` : "";
         const to = route.to ? `:${route.to.slug}` : "";
-        const accessible = store.routeStore.onlyAccessible ? ":true" : "";
-
-        queryRaw = `route${to}${from}${accessible}`;
+        const accessible = store.routeStore.onlyAccessible ? ":true" : ":false";
+        const waypoints = route.waypoints?.map((w) => `:${w.slug}`).join("");
+        queryRaw = `route${to}${from}${accessible}${waypoints || ""}`;
     } else if (exhibitor) {
         queryRaw = exhibitor.slug;
     } else if (booth) {
@@ -67,6 +69,12 @@ function stateToUrl() {
                 break;
             case "search":
                 queryRaw = uiState.list.text;
+                break;
+            case "language":
+                queryRaw = uiState.list.type;
+                break;
+            case "filter":
+                queryRaw = `${uiState.list.query.key}=${uiState.list.query.value}`;
                 break;
             default:
                 throw new Error("Unkown list.type");
@@ -117,26 +125,53 @@ function dispatchFromUrl() {
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find(
-        (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+        (x: Booth) => (
+            x.slug?.toLowerCase() === slug?.toLowerCase()
+            || x.externalId?.toLowerCase() === slug?.toLowerCase()
+            || x.externalId?.toLowerCase()?.replace(/\s+/g, "") === slug?.toLowerCase()
+        )
     );
 
+    const searchParams = new URLSearchParams(window.location.search);
+
     if (executeCustomCommand()) {
+    } else if (searchParams.has(KIOSK_KEY)) {
+        const command = searchParams.get(KIOSK_KEY);
+        if (command === "1") {
+            uiState.kiosk = true;
+        } else if (command === "0") {
+            uiState.kiosk = false;
+        }
     } else if (slug.startsWith("route")) {
         const parts = slug.split(":");
         store.routeStore.onlyAccessible = parts[3] === "true";
-        store.routeStore.selectRoute(extractRoute(parts[2], parts[1]));
+        store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
+    } else if (slug === "language") {
+        store.selectLanguage();
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
+    } else if (slug.startsWith("hide")) {
+        store.uiState.setVisibility(
+            new URLSearchParams(slug)
+                .get("hide")
+                .split(",")
+                .filter(Boolean)
+                .reduce((acc, curr) => ({ ...acc, [curr]: false }), {})
+        );
     } else if (booth) {
-        setTimeout(() => store.selectBooth(booth), 250);
+        store.selectBooth(booth);
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
                 x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
         );
-        if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
+
+        if (slug.startsWith("exhibitors")) {
+            const exhibitors = slug.split("=")[1].split(",");
+            store.fp.selectExhibitor(exhibitors);
+        } else if (exhibitor) store.clickExhibitor(exhibitor);
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);
@@ -362,6 +397,19 @@ function processURLParams() {
         locationSearch.startsWith("?_ga")
     ) {
         historyReplace("?");
+    }
+
+    if (locationSearch.includes(PREVIEW_MODE_QUERY)) {
+        const url = new URL(window.location.href);
+        const value = url.searchParams.get(PREVIEW_MODE_QUERY);
+        if (value === "true") {
+            isLocalStorageAvailable && localStorage.setItem(PREVIEW_MODE_STORAGE_KEY, "1");
+        } else if (value === "false") {
+            isLocalStorageAvailable && localStorage.removeItem(PREVIEW_MODE_STORAGE_KEY);
+        }
+
+        url.searchParams.delete(PREVIEW_MODE_QUERY);
+        historyReplace(url.search.replace(/=&/g, "&").replace(/=$/, ""));
     }
 
     if (uiState.previewExhibitor) {

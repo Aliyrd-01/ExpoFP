@@ -16,6 +16,8 @@ export default class ExhibitorStore {
         this.rootStore = rootStore;
     }
 
+    @observable highlightedByExternalIds = [];
+
     @computed({ keepAlive: true }) get exhibitorById() {
         return new Map<number, Exhibitor>(this.exhibitors.map((c) => [c.id, c]));
     }
@@ -66,6 +68,10 @@ export default class ExhibitorStore {
                 exhibitor.rebookingState = 0;
                 alert("Error sending rebooking state");
             });
+    }
+
+    findExhibitor(str: string) {
+        return this.exhibitors.find((e) => e.name === str || e.slug === str || e.externalId === str);
     }
 }
 

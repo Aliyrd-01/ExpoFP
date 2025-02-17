@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import _locales from "../../../public/locales/_locales";
+import locales from "../../locales";
 import i18next from "i18next";
 
 const StoryWrapper = ({ render }) => {
@@ -10,7 +10,7 @@ const StoryWrapper = ({ render }) => {
             let resources = {};
 
             const navLanguage = navigator.languages?.[0] || navigator.language;
-            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
+            const navLocale = Object.keys(locales).find((x) => navLanguage.startsWith(x));
             const locale = navLocale || "en";
 
             if (locale !== "en") {

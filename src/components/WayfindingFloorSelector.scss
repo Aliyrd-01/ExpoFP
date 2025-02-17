@@ -1,73 +1,223 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .efp-wayfinding-floor {
+    position: relative;
     display: flex;
     align-items: center;
-    padding: rem(0 15px);
+    width: 100%;
+    padding: rem(5px 15px 10px 15px);
+
+    &__body,
+    &__list {
+        position: relative;
+        width: 100%;
+    }
 
     &__title {
         padding-right: rem(12px);
-        font-size: var(--text-size-2);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-bold);
         color: var(--color-gray);
-        font-weight: var(--font-bold);
     }
 
     &__list {
+        --gap: 8px;
+
+        display: flex;
+        gap: var(--gap);
+
         & > button {
             position: relative;
-            z-index: 1;
-            width: rem(30px);
-            height: rem(30px);
+            z-index: 3;
+            min-width: rem(38px);
+            max-width: rem(100px);
+            height: rem(38px);
             margin-left: -1px;
+            padding: rem(0 6px);
             background: var(--color-white);
-            border: 1px solid var(--color-grayLight);
-            color: var(--color-black);
+            border: 1px solid var(--color-gray-400);
+            border-radius: var(--border-radius-full);
             outline: none;
+            font-weight: var(--font-weight-bold);
+            color: var(--color-black);
             cursor: pointer;
 
-            &:first-child {
-                border-top-left-radius: var(--border-radius-1);
-                border-bottom-left-radius: var(--border-radius-1);
-            }
-
-            &:last-child {
-                border-top-right-radius: var(--border-radius-1);
-                border-bottom-right-radius: var(--border-radius-1);
+            &:nth-child(2) {
+                animation: blink-blue 1.4s linear 3s forwards;
+                animation-delay: 4s;
             }
 
             &.isCurrent {
                 z-index: 2;
-                background: var(--color-grayLight);
-                border-color: var(--color-grayLight);
-                font-weight: var(--font-bold);
+                background: var(--color-primary-ultra-light);
+                border: 1px solid var(--color-primary);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-primary);
+            }
+
+            &.isCurrent:first-child {
+                &::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 2;
+                    width: 100%;
+                    height: 100%;
+                    background: var(--color-primary-ultra-light);
+                    border: 1px solid var(--color-primary);
+                    border-radius: var(--border-radius-full);
+                    opacity: 0;
+                    animation: move-copy 2s ease-in-out forwards;
+                    animation-delay: 3s;
+                }
+            }
+
+            & > span {
+                display: block;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+    }
+
+    @include kiosk {
+        padding-top: rem(14px);
+        padding-bottom: 0;
+
+        &__list {
+            & > button {
+                width: clamp(40px, 6vw, 52px);
+                height: clamp(40px, 6vw, 52px);
+                font-weight: var(--font-weight-bold);
+                color: var(--color-primary);
             }
         }
     }
 }
 
-.efp-kiosk {
-    .efp-wayfinding-floor {
-        &__list {
-            & > button {
-                width: clamp(40px, 4vw, 52px);
-                height: clamp(40px, 6vh, 46px);
-                color: var(--k-color-primary);
-                font-weight: var(--font-bold);
+.item-walk {
+    position: absolute;
+    right: rem(-4px);
+    bottom: rem(-6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: rem(16px);
+    height: rem(16px);
+    background: var(--color-white);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--border-radius-full);
 
-                &.isCurrent {
-                    color: var(--k-color-darkGray);
-                }
-                &:first-child {
-                    padding-left: 10px;
-                    border-top-left-radius: var(--k-border-radius-3);
-                    border-bottom-left-radius: var(--k-border-radius-3);
-                }
-                &:last-child {
-                    padding-right: 10px;
-                    border-top-right-radius: var(--k-border-radius-3);
-                    border-bottom-right-radius: var(--k-border-radius-3);
+    & > svg {
+        width: rem(7px);
+        height: rem(11px);
+        fill: var(--color-primary);
+    }
+
+    @include kiosk {
+        width: clamp(14px, 3vw, 20px);
+        height: clamp(14px, 3vw, 20px);
+
+        & > svg {
+            width: 50%;
+            height: auto;
+        }
+    }
+}
+
+.line-arrows {
+    position: absolute;
+    top: 50%;
+    right: rem(-10px);
+    margin-top: rem(-12px);
+    animation: arrows-fade-in-out 8s ease-in-out infinite;
+
+    & > svg {
+        width: rem(18px);
+        height: rem(10px);
+        fill: var(--color-primary);
+
+        & > path {
+            animation: arrow-wave 1s infinite;
+            animation-direction: alternate;
+
+            @for $i from 1 through 10 {
+                &:nth-child(#{$i}) {
+                    animation-delay: #{0.5 * ($i - 1)}s;
                 }
             }
         }
+    }
+}
+
+@keyframes move-copy {
+    0% {
+        opacity: 0;
+        transform: translateX(0);
+    }
+
+    60% {
+        opacity: 0.7;
+        transform: translateX(calc(100% + var(--gap)));
+    }
+
+    100% {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(calc(100% + var(--gap)));
+    }
+}
+
+@keyframes blink-blue {
+    0%,
+    100% {
+        box-shadow: none;
+    }
+
+    25%,
+    75% {
+        background: var(--color-primary-ultra-light);
+        border: 1px solid var(--color-primary);
+        box-shadow: 0 0 10px 2px rgb(65 182 231 / 30%);
+        color: var(--color-primary);
+    }
+}
+
+@keyframes arrows-fade-in-out {
+    0% {
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    55% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes arrow-wave {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
     }
 }

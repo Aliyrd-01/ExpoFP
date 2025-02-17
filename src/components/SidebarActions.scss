@@ -1,102 +1,104 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
-$sidebarActions: ".efp-sidebarActions";
-$actionButton: ".efp-actionButton";
+$sidebar-actions: ".efp-sidebarActions";
+$action-button: ".efp-actionButton";
 
-#{$sidebarActions} {
+#{$sidebar-actions} {
     display: flex;
     flex-flow: row wrap;
+    gap: rem(8px);
     align-items: center;
-    gap: 10px;
     width: 100%;
-    margin-bottom: 18px;
+    margin-bottom: rem(18px);
+
+    @include kiosk {
+        margin-bottom: var(--k-spacing-md);
+    }
 }
 
-#{$actionButton} {
+#{$action-button} {
     display: flex;
-    justify-content: center;
+    gap: rem(6px);
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    height: rem(40px);
+    padding: rem(0 12px 0 8px);
     overflow: hidden;
-    height: 38px;
-    padding: 0 12px 0 8px;
     background: var(--color-white);
     border: 1px solid var(--color-primary);
-    border-radius: 30px;
-    font-size: var(--text-size-2);
-    font-weight: var(--font-medium);
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
     color: var(--color-primary);
     cursor: pointer;
-    box-shadow: 0px 0px 0 rgba(61, 145, 247, 0);
     transition: background 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
 
     &:hover {
-        background: var(--color-primaryLight);
+        background: var(--color-primary-ultra-light);
     }
-    &:active {
-        background: var(--color-primaryLight);
-        box-shadow: 0px 0px 8px rgba(61, 145, 247, 0.3);
-    }
-    & > .icon {
-        width: 20px;
-        height: 20px;
-        fill: var(--color-primary);
-        transition: fill 0.1s ease;
-    }
-    &--bookmark {
-        flex-grow: 1;
-        flex-shrink: 0;
 
-        &.isActive {
-            .icon {
-                fill: #e54839;
-            }
-        }
+    &:active {
+        background: var(--color-primary-ultra-light);
+        box-shadow: 0 0 8px rgb(61 145 247 / 30%);
     }
+
+    [class^="icon-"] {
+        font-size: var(--icon-size-sm);
+    }
+
     &--directions {
-        flex-grow: 1;
+        flex-grow: 4;
         flex-shrink: 0.5;
         background: var(--color-primary);
         color: var(--color-white);
 
         &:hover {
-            background: var(--color-primaryDark);
+            background: var(--color-primary-dark);
         }
+
         & > .icon {
             fill: var(--color-white);
         }
     }
+
+    &--bookmark {
+        width: rem(40px);
+        padding: 0;
+
+        &.isActive {
+            border-color: var(--color-bookmarked);
+
+            &:hover {
+                background: var(--color-gray-100);
+            }
+
+            [class^="icon-"] {
+                color: var(--color-bookmarked);
+            }
+        }
+    }
+
     &--share {
-        flex-shrink: 0.2;
+        width: rem(40px);
+        padding: 0;
     }
-    &--directions ~ &--share {
-        flex-grow: 1;
-    }
-}
 
-.efp-kiosk {
-    #{$sidebarActions} {
-        margin-bottom: var(--k-spacing-md);
-    }
-    #{$actionButton} {
+    @include kiosk {
         height: clamp(52px, 6.2vh, 74px);
-        background: var(--k-color-primaryDark);
-        box-shadow: var(--k-box-shadow-1);
+        background: var(--color-primary-dark);
         border: 0;
-        border-radius: 60px;
-        font-size: 1.2em;
+        border-radius: var(--border-radius-full);
+        box-shadow: var(--k-box-shadow-1);
         color: var(--color-white);
-
-        & > .icon {
-            width: 30px;
-            height: 30px;
-            fill: var(--color-white);
-            margin-right: 10px;
-        }
     }
 }
 
-.layout[dir="rtl"] #{$actionButton} {
+.efp-visited-btn {
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.layout[dir="rtl"] #{$action-button} {
     &--directions .icon {
         transform: scaleX(-1);
     }

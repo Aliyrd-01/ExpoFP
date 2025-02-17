@@ -25,6 +25,7 @@ import TextureMerger from "./utils/textureMerger";
 
 import { actualBoothColor } from "../Mapbox/utils/data";
 
+import settings from "../../tools/settings";
 import fr from "./assets/from.png";
 import to from "./assets/to.png";
 import { default as cp, default as yah } from "./assets/yah.png";
@@ -37,7 +38,8 @@ let routeIndex = 0;
 
 const booths: BoothMesh[] = [];
 
-const pointSize = (data: ICommonData): number => (data.area.width + data.area.height) / 1200;
+const pointSize = (data: ICommonData): number =>
+    settings.EXPO == "glf24" ? 0.1 : (1 * (data.area.width + data.area.height)) / 1200;
 
 export default class UIManager {
     expo: string;
@@ -191,11 +193,13 @@ export default class UIManager {
             (l) => l.name === (layersStore.mode === LayersMode.Default ? "Default" : routeLines[0].p0.layer)
         );
 
+        const ps = pointSize(this.data);
+
         []
             .concat(points)
             .reverse()
             .forEach((point, index) => {
-                const geometry = new THREE.SphereGeometry(pointSize(this.data));
+                const geometry = new THREE.SphereGeometry(ps);
                 const cube = new THREE.Mesh(geometry, defaultMaterial);
                 cube.position.set(point.x, point.y, z + 0.02);
                 routeMeshes.push(cube);

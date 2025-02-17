@@ -1,4 +1,4 @@
-import { action } from "mobx";
+import { action, observable } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -6,12 +6,19 @@ import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 
-import MapboxStore from "./MapboxStore";
-import LayerStore, { LayersMode } from "./LayerStore";
-import RouteStore from "./RouteStore";
-import UIState, { ListItem } from "./UIState";
-import ScheduleStore from "./ScheduleStore";
+import { GaEventActions } from "../tools/gtag";
+import isMobile from "../utils/is-mobile";
+import isWebview from "../utils/is-webview";
 import HeatmapStore from "./HeatmapStore";
+import LanguageStore from "./LanguageStore";
+import LayerStore, { LayersMode } from "./LayerStore";
+import MapboxStore from "./MapboxStore";
+import RouteStore from "./RouteStore";
+import ScheduleStore from "./ScheduleStore";
+import UIState from "./UIState";
+import type { ListItem } from "./types";
+import { svgArea } from "../data/svg";
+import PoiTypeStore from "./PoiTypeStore";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -22,9 +29,13 @@ export default class RootStore {
     readonly mapboxStore: MapboxStore;
     readonly layerStore: LayerStore;
     readonly scheduleStore: ScheduleStore;
+    readonly poiTypeStore: PoiTypeStore;
     readonly heatmapStore: HeatmapStore;
+    readonly languageStore: LanguageStore;
 
     fp: FloorPlanReady;
+
+    @observable initialized = false;
 
     constructor() {
         // this.fp = fp;
@@ -37,6 +48,8 @@ export default class RootStore {
         this.layerStore = new LayerStore();
         this.scheduleStore = new ScheduleStore(this);
         this.heatmapStore = new HeatmapStore(this);
+        this.languageStore = new LanguageStore(this);
+        this.poiTypeStore = new PoiTypeStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
@@ -51,19 +64,17 @@ export default class RootStore {
         }
         if (!focus) return;
 
-        setTimeout(
-            () => this.moveToList(exhibitor.booths.filter((b) => b.visible)),
-            navigator.userAgent.toLowerCase().indexOf("android") > -1 ? 400 : 50
-        );
+        setTimeout(() => this.moveToList(exhibitor.booths.filter((b) => b.visible)), isWebview || isMobile ? 500 : 50);
     }
 
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
 
-        if (focus) this.moveToList(b);
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
             this.layerStore.updateVisibility(b[0].layer, true);
+
+        if (focus) setTimeout(() => this.moveToList(b), isWebview || isMobile ? 500 : 50);
     }
 
     @action reset() {
@@ -82,14 +93,14 @@ export default class RootStore {
             if (this.routeStore.defaultFrom && !this.routeStore.defaultFrom?.visible)
                 this.selectBooth(this.routeStore.defaultFrom);
 
-            this.uiState.centerMap = true;
+            this.uiState.moveToRect = svgArea;
             this.uiState.inIdle = true;
         }, 1000);
     }
 
     @action selectNone() {
         if (window["__resett"]) window["__resett"]();
-        this.uiState.details = null;
+        this.uiState.details = this.uiState.selectedCategory;
     }
 
     @action selectBookmarks() {
@@ -97,11 +108,25 @@ export default class RootStore {
         this.uiState.list = { type: "bookmarks" };
     }
 
+    @action selectLanguage() {
+        this.uiState.details = null;
+        this.uiState.list = { type: "language", id: this.languageStore.language?.id };
+    }
+
     @action selectCategory(category: Category) {
         if (window["__resett"]) window["__resett"]();
-        this.uiState.details = null;
+        this.uiState.details = category;
         this.uiState.list = { type: "category", category };
         this.uiState.desiredOverlaySize = "full";
+
+        const visible = category.exhibitors.find((e) => e.booths.find((b) => b.visible));
+        if (!visible) this.layerStore.updateVisibility(category.exhibitors[0]?.booths[0]?.layer, true, false);
+
+        setTimeout(() => {
+            this.uiState.moveToBooths = category.exhibitors
+                .filter((e) => e.booths.find((b) => b.visible))
+                .flatMap((e) => e.booths);
+        }, 200);
     }
 
     @action selectSearch(text?: string) {
@@ -123,12 +148,28 @@ export default class RootStore {
         // dispatch("showMap", id);
     }
 
+    @action clickLanguage() {
+        if (window["__resett"]) window["__resett"]();
+        this.uiState.menu = false;
+        this.selectLanguage();
+    }
+
     @action clickCategory(category: Category) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.menu = false;
         this.selectCategory(category);
-        this.moveToList();
-        this.showMap();
+
+        if (this.uiState.onCategoryClick)
+            this.uiState.onCategoryClick({
+                id: category.id,
+                name: category.name,
+                exhibitors: category.exhibitors.map((e) => e.id),
+            });
+
+        setTimeout(() => {
+            this.moveToList();
+            this.showMap();
+        }, 100);
         // commit("setMenu", false);
         // dispatch("selectCategory", id);
         // dispatch("moveToList");
@@ -178,15 +219,17 @@ export default class RootStore {
 
         if (!booth) {
             this.uiState.details = null;
+            if (this.uiState.noOverlay && this.uiState.list.type == "category")
+                this.uiState.list = { type: "search", text: "", focused: false };
             if (this.uiState.onBoothClick) this.uiState.onBoothClick({ target: null });
             return;
         } else this.routeStore.tempToBooth = booth;
 
         if (this.uiState.onBoothClick) {
-                const layer = {
-                    name: "",
-                    description: "",
-                }
+            const layer = {
+                name: "",
+                description: "",
+            };
             const e: FloorPlanBoothClickEvent = {
                 target: { ...booth, layer: booth.layer || layer },
             };
@@ -194,6 +237,8 @@ export default class RootStore {
         }
 
         if (booth.exhibitors.length === 1 && booth instanceof RegularBooth) {
+            // We need to select an exhibitor and track the booth click.
+            this.heatmapStore.forceTrack = { action: GaEventActions.ViewBooth, label: booth.name };
             this.selectExhibitor(booth.exhibitors[0], false);
         } else {
             this.selectBooth(booth, false);
@@ -243,6 +288,7 @@ export default class RootStore {
     @action moveToList(items?: ListItem[]) {
         // take only to booths and exhibitors, ignore categories
         items = items || this.uiState.listItems;
+
         const booths = [];
         items.forEach((item) => {
             if (item instanceof Exhibitor) {

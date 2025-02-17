@@ -92,13 +92,17 @@ export function actualBoothColor(b: Booth) {
 }
 
 export function getBoothlabel(booth: Booth) {
+    if (booth.noLabels) return null;
+
+    if (booth instanceof SpecialBooth) return booth.title || booth.name;
+
     let exh = data.hideExhibitors
         ? []
         : !data.onlyFeaturedExhibitors
         ? booth.exhibitors
         : booth.exhibitors.filter((e) => e.featured);
 
-    return booth.noLabels ? null : (exh || [])[0]?.name || booth.title || booth.name;
+    return (exh || [])[0]?.name || booth.title || booth.name;
 }
 
 function decimalToHex(input: string) {
@@ -247,7 +251,7 @@ export function setDataSource(booths: Booth[], logos: Img[]) {
         f.properties.height = props.extrusion[f.properties.type] || props.extrusion.booths;
 
         if (f.properties.type === featureTypes.booth) {
-            let booth = booths.filter((b) => b.name === f.properties.id)[0] as RegularBooth;
+            let booth = booths.filter((b) => b.name === f.properties.id)[0];
             if (booth) {
                 f.properties.color = actualBoothColor(booth);
                 f.properties.description = getBoothlabel(booth);

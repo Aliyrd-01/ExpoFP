@@ -17,9 +17,11 @@
     "Edit": "Chỉnh sửa",
     "Error sending login instructions": "Lỗi gửi hướng dẫn đăng nhập",
     "Event Home": "Trang chủ Sự kiện",
+    "Exhibitors": "Người trưng bày",
     "Find your location": "Tìm vị trí của bạn",
     "Fit to screen": "Phù hợp với màn hình",
     "Get your free floor plan at": "Tải sơ đồ mặt bằng miễn phí tại",
+    "Language": "Ngôn ngữ",
     "Layers": "Lớp",
     "Link copied to clipboard": "Liên kết đã được sao chép vào bộ nhớ tạm",
     "Made with ExpoFP": "Được làm với ExpoFP",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "Gửi hướng dẫn đăng nhập đến {{email}} để chỉnh sửa hồ sơ?",
     "Share bookmarks": "Chia sẻ dấu trang",
     "Size": "Kích cỡ",
+    "Show More": "Hiển thị thêm",
     "This is a FREE floor plan": "Đây là một sơ đồ mặt bằng MIỄN PHÍ",
     "Toggle bookmark": "Bật/tắt dấu trang",
     "Use {{keyCode}} + scroll to zoom": "Sử dụng {{keyCode}} + cuộn để thu phóng",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "Quét để xem lộ trình trên điện thoại của bạn"
 }

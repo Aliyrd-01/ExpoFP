@@ -1,12 +1,4 @@
-:host,
-:root {
-    --error-color: red;
-    --color: #34a1e6;
-    --color-light: #44aef1;
-    --color-dark: #337caa;
-    --link-color: #3a87ba;
-    --link-color-hover: #2f75a3;
-}
+@use "@styles/utils" as *;
 
 * {
     font-family: var(--app-font-family);
@@ -14,81 +6,83 @@
 }
 
 .layout {
-    box-sizing: border-box;
     position: relative;
-    height: 100%;
+    box-sizing: border-box;
     width: 100%;
+    height: 100%;
 
     &__fixed {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         overflow: hidden;
     }
 }
 
 a {
-    color: var(--link-color);
     text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-a:hover,
-a:visited {
-    color: var(--link-color-hover);
-    text-decoration: underline;
 }
 
 #fps {
     position: fixed;
     top: 10px;
     right: 10px;
-    font-size: 10px;
     z-index: 999;
-}
-
-.fa-phone {
-    transform: scaleX(-1);
+    font-size: 10px;
 }
 
 .efp-kiosk {
     font-size: calc(16px + 0.25vw);
 
-    --k-color-primary: #3d91f7;
-    --k-color-primaryDark: #165eb6;
-    --k-color-primaryLight: #e5f1ff;
-    --k-color-secondary: #fb3e59;
-    --k-color-secondaryDark: #ea2b46;
-    --k-color-secondaryLight: #ffd8de;
-    --k-color-darkGray: #727272;
     --k-scale: 1;
     --k-scale-font: 1;
+    --font-size-xs: #{rem(15px)};
+    --font-size-sm: #{rem(16px)};
+    --font-size-md: #{rem(17px)};
+    --font-size-lg: #{rem(18px)};
+    --font-size-xl: #{rem(20px)};
+    --font-size-xxl: #{rem(22px)};
+    --font-size-xxxl: #{rem(24px)};
+    --icon-size-xxxs: calc(#{rem(18px)} * var(--k-scale));
+    --icon-size-xxs: calc(#{rem(20px)} * var(--k-scale));
+    --icon-size-xs: calc(#{rem(22px)} * var(--k-scale));
+    --icon-size-sm: calc(#{rem(24px)} * var(--k-scale));
+    --icon-size-md: calc(#{rem(26px)} * var(--k-scale));
+    --icon-size-lg: calc(#{rem(28px)} * var(--k-scale));
+    --icon-size-xl: calc(#{rem(30px)} * var(--k-scale));
+    --icon-size-xxl: calc(#{rem(32px)} * var(--k-scale));
     --k-app-gap: calc(20px * var(--k-scale));
     --k-border-radius-1: clamp(20px, 1.2vmax, 40px);
     --k-border-radius-2: 100%;
     --k-border-radius-3: 80px;
-    --k-box-shadow-1: 0px 6px 12px rgba(0, 0, 0, 0.4);
-    --k-box-shadow-1-active: 0px 10px 16px rgba(61, 145, 247, 0.4);
-
-    // spacing defaults
-    --k-spacing-lg: calc(max(18px, 1.8vh) * var(--k-scale));
-    --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
+    --k-box-shadow-1: 0px 6px 12px rgb(0 0 0 / 40%);
+    --k-box-shadow-1-active: 0px 10px 16px rgb(61 145 247 / 40%);
+    --k-box-shadow-2: 0px 6px 10px rgb(0 0 0 / 20%);
     --k-spacing-sm: calc(max(10px, 1.4vh) * var(--k-scale));
-
-    --k-searchBox-width: clamp(calc(200px * var(--k-scale)), calc(64vw * var(--k-scale)), calc(560px * var(--k-scale)));
-    --k-searchBox-height: clamp(60px, 8vmin, 90px);
-    --k-mapControls-gap: clamp(14px * var(--k-scale), 1.4vmin * var(--k-scale), 18px * var(--k-scale));
-    --k-mapControl-size: clamp(calc(54px * var(--k-scale)), calc(4.2vmax * var(--k-scale)), calc(70px * var(--k-scale)));
-    --k-mapControl-padding: 18%;
+    --k-spacing-md: calc(max(14px, 1.6vh) * var(--k-scale));
+    --k-spacing-lg: calc(max(18px, 1.8vh) * var(--k-scale));
+    --k-searchbox-width: clamp(calc(200px * var(--k-scale)), calc(64vw * var(--k-scale)), calc(560px * var(--k-scale)));
+    --k-searchbox-height: clamp(60px, 8vmin, 90px);
+    --k-mapcontrols-gap: clamp(14px * var(--k-scale), 1.4vmin * var(--k-scale), 18px * var(--k-scale));
+    --k-mapcontrol-size: clamp(calc(54px * var(--k-scale)), calc(4.2vmax * var(--k-scale)), calc(70px * var(--k-scale)));
+    --k-mapcontrol-padding: 18%;
     --k-ws-height: 60px;
-    --k-sidebarPositionTop: calc(var(--k-searchBox-height) + calc(max(16px, 1vmin)));
-    --k-sidebarMaxHeight: calc(100vh - var(--k-sidebarPositionTop) - (var(--k-app-gap) * 2));
-    --k-sidebarMaxHeightWithWs: calc(100vh - var(--k-sidebarPositionTop) - (var(--k-app-gap) * 2) - var(--k-ws-height));
-    --k-sidebarMenuTopHeight: clamp(200px * var(--k-scale), 10vmax * var(--k-scale), 400px * var(--k-scale));
-    --k-itemsPadding-1: var(--k-spacing-lg) calc(max(26px, 1.4vw) * var(--k-scale));
-    --k-bottomPadding-2: clamp(4px, 1vh, 6px) clamp(12px, 1.6vw, 20px);
-    --k-inputHeight: clamp(48px, 10vh, 62px);
-    --k-imageHeight: clamp(120px, 12vh, 160px);
+    --k-sidebar-position-top: calc(var(--k-searchbox-height) + calc(max(16px, 1vmin)));
+    --k-sidebar-max-height: calc(100vh - var(--k-sidebar-position-top) - (var(--k-app-gap) * 2));
+    --k-sidebar-max-height-with-ws: calc(100vh - var(--k-sidebar-position-top) - (var(--k-app-gap) * 2) - var(--k-ws-height));
+    --k-sidebar-menu-top-height: clamp(200px * var(--k-scale), 10vmax * var(--k-scale), 400px * var(--k-scale));
+    --k-items-padding-1: var(--k-spacing-lg) calc(max(26px, 1.4vw) * var(--k-scale));
+    --k-bottom-padding-2: clamp(4px, 1vh, 6px) clamp(12px, 1.6vw, 20px);
+    --k-input-height: clamp(48px, 10vh, 62px);
+    --k-input-font-size: 1.2em;
+    --k-image-height: clamp(120px, 12vh, 160px);
+    --k-route-qr-size: clamp(80px, 12vh, 180px);
+}
+
+@include media-breakpoint-down(lg) {
+    .efp-kiosk {
+        --k-scale: 0.9;
+        --k-searchbox-width: clamp(calc(180px * var(--k-scale)), calc(46vw * var(--k-scale)), calc(560px * var(--k-scale)));
+        --k-items-padding-1: var(--k-spacing-sm) calc(max(26px, 1.4vw) * var(--k-scale));
+        --k-input-font-size: 1em;
+    }
 }

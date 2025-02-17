@@ -12,7 +12,7 @@ function Bookmarks() {
 
     return useObserver(() => {
         const bar = (
-            <div className="bar">
+            <div className="efp-bar">
                 {t("Bookmarks")}&nbsp;<span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
             </div>
         );

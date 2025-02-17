@@ -8,3 +8,5 @@ export default interface Painter {
     preparePaint();
     paint();
 }
+
+export type PainterConstructor<T, U> = new (gl: WebGLRenderingContext, options?: U) => T;

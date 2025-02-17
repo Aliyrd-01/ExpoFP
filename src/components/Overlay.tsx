@@ -4,10 +4,11 @@ import { autorun, reaction } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
 import React, { useLayoutEffect, useRef } from "react";
 import { uiState } from "../store";
-import { OverlaySize } from "../store/UIState";
+import type { OverlaySize } from "../store/types";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
 import Bookmarks from "./Bookmarks";
+import Language from "./Language";
 import Booth from "./Booth/Booth";
 import Category from "./Category";
 import Exhibitor from "./Exhibitor";
@@ -15,6 +16,7 @@ import Menu from "./Menu";
 import "./Overlay.scss";
 import Search from "./Search";
 import Wayfinding from "./Wayfinding";
+import Filter from "./Filter";
 
 interface OverlayProps {
     isGDPR: boolean;
@@ -131,7 +133,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     el.current.style.top = top + "px";
                 }
             }
-        )
+        );
 
         function handleTouchCancel() {
             s.startedTouch = undefined;
@@ -142,8 +144,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             switch (uiState.overlayPosition) {
                 case "left":
                     s.width = uiState.overlayWidthPx + "px";
-                    s.top = uiState.headerHeightPx + "px";
-                    s.left = "0";
+                    s.top = uiState.headerHeightPx + 10 + "px";
+                    s.left = "10px";
                     s.height = undefined;
                     setShowAll();
                     resetCurrentTop();
@@ -161,7 +163,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         }
 
         function setShowAll() {
-            const all = uiState.overlayPosition === "left" || getTopForBottomPosition("full", el.current) + "px" === el.current.style.top;
+            const all =
+                uiState.overlayPosition === "left" || getTopForBottomPosition("full", el.current) + "px" === el.current.style.top;
             uiState.overlayShowsAll = all;
         }
 
@@ -222,8 +225,10 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             <Exhibitor />
             <Booth />
             <Bookmarks />
+            <Language />
             <Category />
             <Wayfinding />
+            <Filter />
         </div>
     );
 });

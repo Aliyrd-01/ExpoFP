@@ -28,13 +28,13 @@ const Alert: React.FC<AlertProps> = ({
     const alertIcon = () => {
         switch (variant) {
             case "error":
-                return "icon-close-circle";
+                return "icon-close-solid";
             case "success":
-                return "icon-checked-circle";
+                return "icon-checkmark-solid";
             case "warning":
-                return "icon-warning-circle";
+                return "icon-warning-solid";
             default:
-                return "icon-info-circle";
+                return "icon-info-solid";
         }
     };
 
@@ -42,7 +42,7 @@ const Alert: React.FC<AlertProps> = ({
         <div className={cn("efp-alert", `efp-alert--${variant}`, { isInline: inline, [`efp-alert--${position}`]: position })}>
             {showIcon ? (
                 <div className="efp-alert__icon">
-                    <i className={cn(alertIcon(), "size-20")}></i>
+                    <i className={cn(alertIcon())}></i>
                 </div>
             ) : null}
             <div className="efp-alert__content">

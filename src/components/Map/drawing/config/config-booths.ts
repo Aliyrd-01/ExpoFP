@@ -61,8 +61,14 @@ export default function configBooths(
 
     const { defaultFrom } = store.routeStore;
 
-    if (defaultFrom?.layer === null || defaultFrom?.layer?.name === layerID || defaultFrom?.layer?.childLayers.find(l => l.name === layerID)) {
-        configScaledBoot(context, _layerID, defaultFrom, painterOrderPriority + 20, visible);
+    const lId = _layerID.split(":")[0];
+
+    if (
+        defaultFrom?.layer === null ||
+        defaultFrom?.layer?.name === lId ||
+        defaultFrom?.layer?.childLayers.find((l) => l.name === lId)
+    ) {
+        configScaledBoot(context, lId, defaultFrom, painterOrderPriority + 40, visible);
     }
 
     return function () {

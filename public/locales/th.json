@@ -17,9 +17,11 @@
     "Edit": "แก้ไข",
     "Error sending login instructions": "เกิดข้อผิดพลาดในการส่งคำแนะนำการเข้าสู่ระบบ",
     "Event Home": "หน้าหลักอีเวนต์",
+    "Exhibitors": "ผู้จัดแสดง",
     "Find your location": "ค้นหาตำแหน่งของคุณ",
     "Fit to screen": "ปรับให้พอดีกับหน้าจอ",
     "Get your free floor plan at": "รับแผนผังชั้นของคุณฟรีที่",
+    "Language": "ภาษา",
     "Layers": "ชั้น",
     "Link copied to clipboard": "คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว",
     "Made with ExpoFP": "ผลิตด้วย ExpoFP",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "ส่งคำแนะนำการเข้าสู่ระบบไปที่ {{email}} เพื่อแก้ไขโปรไฟล์?",
     "Share bookmarks": "แชร์บุ๊กมาร์ก",
     "Size": "ขนาด",
+    "Show More": "แสดงเพิ่มเติม",
     "This is a FREE floor plan": "นี่คือแผนผังชั้นฟรี",
     "Toggle bookmark": "สลับบุ๊กมาร์ก",
     "Use {{keyCode}} + scroll to zoom": "ใช้ {{keyCode}} + เลื่อนเพื่อซูม",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "สแกนเพื่อดูเส้นทางบนโทรศัพท์ของคุณ"
 }

@@ -4,14 +4,11 @@ import Rect from "../../../../core/Rect";
 import { getLayerSvg, gtePathByIndex } from "../../../../data/svg";
 import store, { uiState } from "../../../../store";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
-import { Img, loadIcons } from "../../../../utils/imageloader";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
-import configImg from "./config-img";
 
 export default async function configBg(
     context: DrawerContext,
-    images: Promise<Img[]>,
     layer: Layer,
     painterOrderPriority: number,
     visible: boolean
@@ -32,11 +29,6 @@ export default async function configBg(
         )
         .nodes() as SVGElement[];
 
-    const fpImages = (
-        window["__fpVersion"] > 5
-            ? selected.selectAll(":scope > image, :scope > g:not([data-layer]) image").nodes()
-            : selected.selectAll(":scope > g[data-is-editable='false'] image").nodes()
-    ) as SVGImageElement[];
 
     for (const el of bgElements) {
         if (el.tagName === "path") addPath(el as SVGPathElement);
@@ -111,7 +103,4 @@ export default async function configBg(
             while (!fgPainter || !fgPainter.tryAddObject(item))
                 fgPainter = context.requirePainter(`${layer.name}:${suffix}${drawerSeq++}`, TrianglePainter, priority, visible);
     }
-
-    const logos = (await images).filter((image) => !!image);
-    return configImg(context, layer.name, (await loadIcons(fpImages)).concat(logos), painterOrderPriority + 8, false);
 }

@@ -5,7 +5,8 @@ import { Category } from "./CategoryStore";
 import { getColorFromGradient } from "../tools/Color";
 import { ScheduleItem } from "./ScheduleStore";
 import { computed } from "mobx";
-
+import type { ListItem } from "./types";
+import type { GaEventActions } from "../tools/gtag";
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
     heatmapData: HeatmapData = {};
@@ -13,6 +14,9 @@ export default class HeatmapStore {
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
+
+    // don't observe this
+    forceTrack: { action: GaEventActions; label: string } | null = null;
 
     @computed({ keepAlive: true }) get minAndMaxClicks() {
         const { booths = [], exhibitors = [], yah = [] } = this.heatmapData;
@@ -38,7 +42,7 @@ export default class HeatmapStore {
         return { min, max };
     }
 
-    getClicksByType(item: Exhibitor | BoothBase | Category | ScheduleItem | HeatmapYah) {
+    getClicksByType(item: ListItem | HeatmapYah) {
         if (item instanceof Category) {
             // -1 is returned for Categories to ensure they appear last in sorted methods
             return -1;
@@ -53,7 +57,7 @@ export default class HeatmapStore {
         return this.getClicksByItem(item);
     }
 
-    getClicksByItem(item: Exhibitor | BoothBase | HeatmapYah) {
+    getClicksByItem(item: ListItem | BoothBase | HeatmapYah) {
         if (item instanceof Exhibitor) {
             return this.heatmapData?.exhibitors?.find((a) => a.id === item.id)?.viewCount || 0;
         }
@@ -65,6 +69,8 @@ export default class HeatmapStore {
         if (item instanceof HeatmapYah) {
             return this.heatmapData?.yah?.find((a) => a.id === item.id)?.viewCount || 0;
         }
+
+        return 0;
     }
 
     getTotalClicksByBooth(b: BoothBase) {

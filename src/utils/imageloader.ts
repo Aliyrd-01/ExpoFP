@@ -1,6 +1,6 @@
 import { Booth, RegularBooth } from "../store/BoothStore";
-import settings from "../tools/settings";
-import isDebug from "./is-debug";
+import { getLogoUrl } from "./getLogoUrl";
+import { loadImage } from "./loadImage";
 
 export type Img = {
     booth: Booth;
@@ -9,6 +9,7 @@ export type Img = {
     bounds: { x: number; y: number; width: number; height: number; angle: number };
 };
 
+/** @deprecated use loadBoothsImages instead */
 export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> {
     return Promise.all(
         booths.map(
@@ -19,7 +20,11 @@ export default function logosFromBooths(booths: RegularBooth[]): Promise<Img[]> 
                     if (!src) return resolve(null);
                     const rect = booth.rect;
 
-                    var img = await loadImage(src);
+                    let img = await loadImage(getLogoUrl(src));
+                    if (!img) {
+                        img = await loadImage(src);
+                    }
+
                     if (!img) return resolve(null);
 
                     const ratioBooth = rect.w / rect.h;
@@ -90,18 +95,4 @@ export function loadIcons(svgImages: SVGImageElement[]): Promise<Img[]> {
                 })
         )
     );
-}
-
-function loadImage(src: string): Promise<HTMLImageElement> {
-    return new Promise((resolve) => {
-        var img = new Image();
-        img.onerror = () => resolve(null);
-        img.onload = () => resolve(img);
-        img.crossOrigin = "anonymous";
-
-        img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-
-        // if (isDebug) img.src = src.replace(`${settings.EXPO}.expofp.com`, `efp-data.s3.amazonaws.com/expos/${settings.EXPO}`);
-        // else img.src = src.replace(`nweventshow2023.expofp.com`, `efp-data.s3.amazonaws.com/expos/nweventshow2023`);
-    });
 }

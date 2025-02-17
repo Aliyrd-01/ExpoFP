@@ -5,19 +5,22 @@ import Checkbox, { CheckboxProps } from "../Checkbox";
 export default {
     title: "Components/Checkbox",
     component: Checkbox,
+    parameters: {
+        usePadding: true,
+    },
 } as Meta;
 
 const Template: StoryFn<CheckboxProps> = (args) => {
     const [value, setValue] = useState<boolean>(true);
 
     return (
-        <div className="layout sb-layout">
+        <>
             <Checkbox {...args} onChange={setValue} value={value} />
             <div className="sb-data">
                 <strong>Current checked: </strong>
                 {value.toString()}
             </div>
-        </div>
+        </>
     );
 };
 

@@ -1,0 +1,45 @@
+@use "@styles/utils" as *;
+
+.radio {
+    display: inline-grid;
+    grid-auto-flow: column;
+    gap: rem(12px);
+    place-content: center start;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--color-gray-100);
+    }
+
+    &__input {
+        display: none;
+    }
+
+    &__control {
+        display: inline-grid;
+        width: rem(18px);
+        height: rem(18px);
+        border: 1px solid var(--color-gray-500);
+        border-radius: var(--border-radius-full);
+    }
+
+    &__label {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-normal);
+        line-height: 1;
+        color: var(--color-gray-800);
+        letter-spacing: 0.02em;
+    }
+
+    &--checked {
+        background: var(--color-gray-100);
+
+        & .radio__control {
+            border: rem(4px) solid var(--color-primary);
+        }
+
+        & .radio__label {
+            color: var(--color-black);
+        }
+    }
+}

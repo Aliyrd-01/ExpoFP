@@ -8,37 +8,49 @@ class FloorPlan {
     readonly noOverlay: boolean;
     readonly offHistory: boolean;
     readonly allowConsent: boolean;
+    readonly onInit;
 
-    onBoothClick: (e: FloorPlanBoothClickEvent) => void;
+    onBoothClick(e: FloorPlanBoothClickEvent): void;
 
-    onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+    onBookmarkClick(e: FloorPlanBookmarkClickEvent): void;
 
-    onFpConfigured: () => void;
+    onCategoryClick(e: FloorPlanCategoryClickEvent): void;
 
-    onDirection: (e: FloorPlanDirectionEvent) => void;
+    /**
+     * @deprecated 
+     * The onFpConfigured method is deprecated. Use onInit instead. 
+     */
+    onFpConfigured(): void;
 
-    onDetails: (e: FloorPlanDetailsEvent) => void;
+    onDirection(e: FloorPlanDirectionEvent): void;
 
-    onExhibitorCustomButtonClick: (e: FloorPlanCustomButtonEvent) => void;
+    onDetails(e: FloorPlanDetailsEvent): void;
 
-    onGetCoordsClick: (e: FloorPlanGetCoordsEvent) => void;
+    onExhibitorCustomButtonClick(e: FloorPlanCustomButtonEvent): void;
+
+    onGetCoordsClick(e: FloorPlanGetCoordsEvent): void;
+
+    onMarkerClick(e: FloorPlanMarkerEvent): void;
 
     selectBooth(nameOrExternalId: string): void;
 
     selectExhibitor(nameOrExternalId: string): void;
 
-    selectCurrentPosition(
-        //
-        point: { x: number; y: number; angle?: number; z?: string | number; lat?: number; lng?: number },
-        focus?: boolean,
-        icon?: number // 0- blue dot, 1- YAH icon
-    ): void;
+    selectRoute(from: RouteWaypoint, to: RouteWaypoint): void;
+    
+    selectRoute(waypoints: RouteWaypoint[]): void;
+
+    getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[];
+
+    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void
 
     setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void;
 
+    setMarkers(markersData: MarkersData): void;
+
     updateLayerVisibility(layer: string, visible: boolean): void;
 
-    selectRoute(from: string, to: string, onlyAccessible: boolean): void;
+    getCenterCoordinates(): FloorPlanGetCoordsEvent;
 
     applyParameters(queryRaw: string): void;
 
@@ -48,23 +60,52 @@ class FloorPlan {
 
     categoriesList(): FloorPlanCategory[];
 
+    selectCategory(nameOrSlug?: string): void;
+
+    getVisibility(): Visibility;
+
+    setVisibility(visibility: Visibility): void;
+
+    findLocation(): void;
+
+    zoomIn(): void;
+
+    zoomOut(): void;
+
+    switchView(): void;
+
+    fitBounds(): void;
+
+    getBoothRect(name: string): Rect;
+
+    convertToGeo(x: number, y: number): [number, number] | never;
+
     unstable_destroy(): void;
 }
 
 interface FloorPlanOptions {
     element?: HTMLDivElement;
     eventId?: string;
+    previewMode?: boolean;
     dataUrl?: string;
     noOverlay?: boolean;
     offHistory?: boolean;
     allowConsent?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
-    onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+    onBookmarkClick?: (e: FloorPlanBookmarkClickEvent) => void;
+    onCategoryClick?: (e: FloorPlanCategoryClickEvent) => void;
+    /**
+     * @deprecated 
+     * The onFpConfigured method is deprecated. Use onInit instead. 
+     */
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
     onDetails?: (e: FloorPlanDetailsEvent) => void;
     onExhibitorCustomButtonClick?: (e: FloorPlanCustomButtonEvent) => void;
+    onMarkerClick?: (e: FloorPlanMarkerEvent | undefined) => void;
     onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
+    onInit?: (fp: FloorPlan) => void;
+    onCurrentPositionChanged?: (point: CurrentPosition) => void;
 }
 
 interface Layer {
@@ -74,6 +115,7 @@ interface Layer {
 
 interface FloorPlanBoothBase {
     id: number;
+    externalId: string;
     name: string;
     layer: Layer;
 }
@@ -82,6 +124,8 @@ interface FloorPlanBooth extends FloorPlanBoothBase {
     externalId: string;
     isSpecial: boolean;
     exhibitors: number[];
+    meta: Record<string, string>;
+    description: string;
 }
 
 interface FloorPlanBoothClickEvent {
@@ -96,7 +140,10 @@ interface Point {
 interface FloorPlanBookmarkClickEvent {
     name: string;
     bookmarked: boolean;
+    externalId: string;
 }
+
+interface FloorPlanCategoryClickEvent extends FloorPlanCategory {}
 
 interface FloorPlanDirectionEvent {
     from: FloorPlanBoothBase;
@@ -107,7 +154,7 @@ interface FloorPlanDirectionEvent {
 }
 
 interface FloorPlanDetailsEvent {
-    type: "booth" | "exhibitor" | "route";
+    type: "booth" | "exhibitor" | "route" | "category";
     id: string;
     name: string;
     externalId: string;
@@ -129,6 +176,11 @@ interface FloorPlanGetCoordsEvent extends Point {
     z: string | null;
 }
 
+interface FloorPlanMarkerEvent extends Point {
+    id: string;
+    z?: number | string;
+}
+
 interface FloorPlanExhibitor {
     id: number;
     name: string;
@@ -140,6 +192,12 @@ interface FloorPlanCategory {
     id: number;
     name: string;
     exhibitors: number[];
+}
+
+type RouteWaypoint = string | CurrentPosition;
+
+interface RouteInfo {
+    waypoints: RouteWaypoint[];
 }
 
 interface ExpoData {

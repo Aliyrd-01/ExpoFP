@@ -3,7 +3,6 @@ import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth, SpecialBooth } from "../store/BoothStore";
-import "./BoothRow.scss";
 import SimpleRow from "./SimpleRow";
 import useHeatmapData from "../utils/useHeatmapData";
 

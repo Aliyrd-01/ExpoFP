@@ -4,7 +4,7 @@ import logger from "../../../tools/logger";
 import isDebug from "../../../utils/is-debug";
 import configAll from "./config/config-all";
 import Matrix from "./Matrix";
-import Painter from "./painters/Painter";
+import Painter, { PainterConstructor } from "./painters/Painter";
 
 export type Drawer = Pick<
     DrawerImpl,
@@ -142,15 +142,16 @@ export class DrawerImpl extends Matrix {
         this.requireRedraw();
     }
 
-    requirePainter<T extends Painter>(
+    requirePainter<T extends Painter, U>(
         id: string,
-        TypeClass: new (gl: WebGLRenderingContext) => T,
+        TypeClass: PainterConstructor<T, U>,
         painterOrderPriority: number,
-        visible: boolean
+        visible: boolean,
+        options?: U,
     ): T {
         let d = this.paintersByType.get(id) as T;
         if (!d && TypeClass) {
-            d = new TypeClass(this.gl);
+            d = new TypeClass(this.gl, options);
             d.id = id;
             d.orderPriority = painterOrderPriority;
             d.visible = visible;
@@ -195,7 +196,7 @@ function createGl(canvas: HTMLCanvasElement) {
     let gl = canvas.getContext("webgl2", options) as WebGLRenderingContext;
     if (!gl) {
         gl = canvas.getContext("webgl", options) || (canvas.getContext("experimental-webgl", options) as any);
-        if (!gl) return;
+        if (!gl) throw new Error("WebGL not supported");
         const ext = gl.getExtension("OES_element_index_uint");
         if (!ext) logger.warn("OES_element_index_uint not supported");
     }
@@ -205,11 +206,12 @@ function createGl(canvas: HTMLCanvasElement) {
     logger.log("GPU vendor:", vendor);
     logger.log("GPU renderer:", renderer);
     logger.log("GL version:", gl.getParameter(gl.VERSION));
-    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true as any);
+    logger.log("GL MAX_TEXTURE_SIZE", gl.getParameter(gl.MAX_TEXTURE_SIZE));
+    gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     // gl.enable(gl.DEPTH_TEST);
     // gl.depthFunc(gl.ALWAYS);
     gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // gl.colorMask(true, true, true, false);
     return gl;

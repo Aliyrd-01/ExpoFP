@@ -17,9 +17,11 @@
     "Edit": "수정",
     "Error sending login instructions": "로그인 안내 전송 오류",
     "Event Home": "이벤트 홈",
+    "Exhibitors": "출품사",
     "Find your location": "위치 찾기",
     "Fit to screen": "화면에 맞추기",
     "Get your free floor plan at": "무료 이벤트 배치도를 다음에서 확인하십시오.",
+    "Language": "언어",
     "Layers": "레이어",
     "Link copied to clipboard": "링크가 클립보드에 복사되었습니다",
     "Made with ExpoFP": "ExpoFP로 제작",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "프로필 수정을 위한 로그인 안내를 {{email}} 이메일로 전송해 드릴까요?",
     "Share bookmarks": "북마크 공유",
     "Size": "크기",
+    "Show More": "더 보기",
     "This is a FREE floor plan": "무료 이벤트 배치도입니다",
     "Toggle bookmark": "북마크 토글",
     "Use {{keyCode}} + scroll to zoom": "{{keyCode}} + 스크롤을 사용하여 확대",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "휴대전화에서 경로를 보려면 스캔하세요"
 }

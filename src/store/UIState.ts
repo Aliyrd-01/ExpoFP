@@ -1,8 +1,10 @@
 import { action, computed, observable } from "mobx";
 import { boothStore, exhibitorStore, uiState } from ".";
+import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import data from "../data";
+import { svgArea } from "../data/svg";
 import { hasUserConsent } from "../tools/gtag";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
@@ -16,24 +18,17 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
-import { HeatmapYah } from "./HeatmapStore";
+import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
+import { sanitizeStr } from "../utils/sanitizeText";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
-
-type ListType =
-    | { type: "search"; text: string; focused: boolean }
-    | { type: "bookmarks" }
-    | { type: "category"; category: Category };
-export type OverlaySize = "full" | "medium" | "small";
-// export type ScreenSize = { width: number; height: number };
-export type ListItem = Booth | Exhibitor | Category | ScheduleItem | HeatmapYah;
 
 export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
-    @observable.ref details: Booth | Exhibitor | Route = null;
+    @observable.ref details: Booth | Exhibitor | Route | Category = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
@@ -65,14 +60,75 @@ export default class UIState {
     @observable hideHeaderLogo = false;
     @observable hideLogoInBooth = false;
     @observable disableBookmarked = false;
+    @observable hideLanguage = false;
     @observable disableGps = false;
     @observable monochrome = false;
     // TODO Consider the use of one variable with different versions
     @observable heatmap = false;
     @observable heatmapYah = false;
-    rtl = getLanguage() === "ar" || getLanguage() === "he";
+    @observable rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
-    @observable debugCircles: { x: number, y: number, radius: number, color?: string }[] = [];
+    @observable debugCircles: { x: number; y: number; radius: number; color?: string }[] = [];
+    @observable mapControlsHidden = false;
+    @observable floorsControlHidden = false;
+    @observable hideFreeOrDemo = false;
+
+    @computed get highlightedBooths() {
+        const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
+
+        const booths = new Set<string>(
+            this.rootStore.exhibitorStore.exhibitors
+                .filter(e => externalIsSet.has(e.externalId))
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .map(b => b.id.toString())
+        );
+
+        const isSearch = this.list?.type === "search" && this.list?.text?.trim().length;
+        if (isSearch) {
+            this.listBooths.forEach(b => booths.add(b.id.toString()));
+        }
+
+        if (this.list?.type === "filter") {
+            (this.list.items as Exhibitor[])
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id.toString()));
+        }
+
+        if (this.list?.type === "category") {
+            this.list.category.exhibitors
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id.toString()));
+        }
+
+        if (this.list?.type === "bookmarks") {
+            this.rootStore.exhibitorStore.exhibitors
+                .filter((e) => e.bookmarked)
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id.toString()));
+        }
+
+        if (this.details instanceof Route) {
+            booths.clear();
+            booths.add(this.details.from?.id.toString());
+            booths.add(this.details.to?.id.toString());
+            this.details.waypoints?.forEach(w => booths.add(w.id.toString()));
+        }
+
+        const hasNoSearchResult = (isSearch && !this.listBooths.size);
+
+        if (this.details instanceof RegularBooth && (hasNoSearchResult || booths.size)) {
+            booths.add(this.details.id.toString());
+        }
+
+        if (this.details instanceof Exhibitor && (hasNoSearchResult || booths.size)) {
+            this.details.booths.filter(b => b instanceof RegularBooth).forEach(b => booths.add(b.id.toString()));
+        }
+
+        booths.delete(undefined);
+        booths.delete(null);
+
+        return booths as ReadonlySet<string>;
+    }
 
     overlayMediumHeightRems = 10;
 
@@ -85,7 +141,7 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get gpsEnabled() {
-        return data.autoTrackingGps && !this.disableGps;
+        return data.autoTrackingGps && !this.disableGps && !data.enableIPS;
     }
 
     get onBoothClick() {
@@ -98,6 +154,10 @@ export default class UIState {
 
     get onBookmarkClick() {
         return this.rootStore.fp.onBookmarkClick;
+    }
+
+    get onCategoryClick() {
+        return this.rootStore.fp.onCategoryClick;
     }
 
     get onDirection() {
@@ -132,6 +192,23 @@ export default class UIState {
         return this.details instanceof Route ? this.details : null;
     }
 
+    @computed({ keepAlive: true }) get selectedRouteFloors() {
+        return [...new Set(
+            [
+                this.selectedRoute?.from?.layer?.name,
+                ...(
+                    this.selectedRoute?.waypoints?.map(w => w.layer?.name) || []
+                ),
+                this.selectedRoute?.to?.layer?.name,
+            ].filter(Boolean)
+        )];
+    }
+
+    @computed({ keepAlive: true }) get getRouteNextFloor() {
+        const index = this.selectedRouteFloors.indexOf(this.rootStore.routeStore.currentRouteLayer?.name);
+        return index !== -1 && index + 1 < this.selectedRouteFloors.length ? this.selectedRouteFloors[index + 1] : null;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // positions
     @computed get headerHeightRem() {
@@ -158,7 +235,8 @@ export default class UIState {
             !this.selectedCategory &&
             !this.selectedExhibitor &&
             this.list.type !== "bookmarks" &&
-            !(this.list as any).text.length
+            this.list.type !== "language" &&
+            !(this.list as any).text?.length
         );
     }
 
@@ -214,7 +292,7 @@ export default class UIState {
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
     }
     @computed get mapVisibleBottom() {
-        if (this.overlayLeft) {
+        if (this.overlayLeft || this.noOverlay) {
             return this.wsPosition === "bottom" ? this.wsOccupiedHeightPx : 0;
         }
         return remsToPixels(this.overlayMediumHeightRems);
@@ -267,18 +345,9 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
-        const exhibitors = this.rootStore.exhibitorStore.exhibitors;
-        const specialBooths = this.rootStore.boothStore.booths.filter((b) => b instanceof SpecialBooth);
-        let text = (this.list as any)?.text?.trim().toLowerCase() as string;
-        const isCategory = this.list.type === "category";
-
-        if (uiState.noOverlay) return false;
-
         return (
-            (text || isCategory) &&
-            exhibitors.length &&
-            (this.listItems.length !== [...exhibitors, ...specialBooths].length ||
-                this.listItems.find((x) => !(x instanceof Exhibitor) && !(x instanceof SpecialBooth)))
+            this.highlightedBooths.size > 0
+            || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
         );
     }
 
@@ -290,7 +359,7 @@ export default class UIState {
         const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
-        const categoriesArray = categoryStore.categories;
+        const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
         const boothsArray = boothStore.booths;
         const eventsArray = scheduleStore.scheduleItems;
 
@@ -336,7 +405,8 @@ export default class UIState {
             }, 1000);
         }
 
-        const splittedTexts = text.split("&").filter((s) => s);
+        // a&b&foo=1&bar=2 => a&b
+        const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
 
         if (this.heatmapYah) {
             const result =  heatmapStore.heatmapData.yah.filter((c) => {
@@ -354,7 +424,8 @@ export default class UIState {
         const matchingEvents = new Set<ScheduleItem>();
 
         function selectLettersSpacesNumbers(input: string): string {
-            return input?.replace(/[!@#$%^&*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
+            // Without & because of names that contain & (e.g. "A&B")
+            return input?.replace(/[!@#$%^*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
         }
 
         function containsIgnoreCase(str: string, searchTerm: string) {
@@ -394,12 +465,16 @@ export default class UIState {
                 ? true
                 : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-            if (addBoothCondition && 
-                splittedTexts.some((text) => 
-                    containsIgnoreCase(b.title || "", text) ||
-                    containsIgnoreCase(b.name, text) ||
-                    containsLevelIgnoreCase(b.layer?.name ?? null, text))
-                ) {
+            if (
+                addBoothCondition &&
+                splittedTexts.some(
+                    (text) =>
+                        containsIgnoreCase(b.title || "", text) ||
+                        containsIgnoreCase(b.name, text) ||
+                        containsIgnoreCase(b.fullName, text) ||
+                        containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                )
+            ) {
                 matchingBooths.add(b);
             }
         });
@@ -423,11 +498,49 @@ export default class UIState {
             return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         }
 
-        return items;
+        const itemsMap = new Map(items.map(item => [item.id, item]));
+        return items
+            .map(item => {
+                if (!item.name) return null;
+
+                const lowerCaseName = sanitizeStr((
+                    item instanceof BoothBase
+                        ? (item.fullName.toLowerCase() || item.name.toLowerCase())
+                        : item.name.toLowerCase()
+                ));
+
+                // Find the position of the first occurrence
+                const position = lowerCaseName.indexOf(sanitizeStr(text));
+                if (position === -1) return null;
+
+                const result = { id: item.id, position, lowerCaseName, featured: false };
+                if (item instanceof Exhibitor) {
+                    result.featured = item.featured;
+                }
+                return result;
+            })
+            .filter(Boolean)
+            // Sort by featured status (featured first), 
+            // then by position, and finally lexicographically by name.
+            .sort((a, b) => {
+                if ((a.featured || b.featured) && (a.featured !== b.featured)) {
+                    return a.featured ? -1 : 1;
+                }
+
+                if (a.position !== b.position) {
+                    return a.position - b.position;
+                }
+
+                return (
+                    a.lowerCaseName.localeCompare(b.lowerCaseName) ||
+                    String(a.id).localeCompare(String(b.id)) // For stability
+                );
+            })
+            .map(({ id }) => itemsMap.get(id));
     }
 
     @computed get listItems(): ListItem[] {
-        if (this.details instanceof Route && this.details.from && this.details.to) return [this.details.from, this.details.to];
+        if (this.details instanceof Route) return [this.details.from, this.details.to].filter((x) => x);
 
         switch (this.list.type) {
             case "search":
@@ -436,6 +549,10 @@ export default class UIState {
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
                 return this.list.category.exhibitors;
+            case "language":
+                return this.rootStore.languageStore.languages;
+            case "filter":
+                return this.list.items;
         }
         throw new Error("Unknown list.type");
     }
@@ -466,6 +583,7 @@ export default class UIState {
 
         if (route?.from) arr.push(route.from);
         if (route?.to) arr.push(route.to);
+        if (route?.waypoints) route?.waypoints?.forEach(wp => arr.push(wp));
 
         return new Set(arr);
     }
@@ -479,6 +597,37 @@ export default class UIState {
         return new Set(arr);
     }
 
+    @computed get visibility(): Visibility {
+        return {
+            controls: !this.mapControlsHidden,
+            levels: !this.floorsControlHidden,
+            header: !this.hideHeaderLogo,
+            overlay: !this.hideOverlay,
+        };
+    }
+
+    @action setVisibility(visibility: Visibility) {
+        const flags: Visibility = {
+            ...Object.keys(this.visibility).reduce((acc, key) => ({ ...acc, [key]: true }), {}),
+
+            ...Object.keys(visibility)
+                .filter((k) => this.visibility.hasOwnProperty(k))
+                .reduce((acc, key) => ({ ...acc, [key]: visibility[key] }), {}),
+        };
+
+        if (Object.values(flags).every(Boolean)) {
+            isLocalStorageAvailable && localStorage.removeItem(VISIBILITY_STORAGE_KEY);
+        } else {
+            isLocalStorageAvailable && localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(flags));
+        }
+
+        this.mapControlsHidden = !flags.controls;
+        this.floorsControlHidden = !flags.levels;
+        this.hideHeaderLogo = !flags.header;
+        this.hideFreeOrDemo = !flags.header;
+        this.hideOverlay = !flags.overlay;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
@@ -486,6 +635,31 @@ export default class UIState {
     @action toggleMapOverlay() {
         if (this.overlayPosition === "bottom" && this.overlaySize === "full") this.desiredOverlaySize = "medium";
         else if (this.overlayPosition === "bottom" && this.overlaySize !== "full") this.desiredOverlaySize = "full";
+    }
+
+    @action resetRtl() {
+        this.rtl = getLanguage() === "ar" || getLanguage() === "he";
+    }
+
+    @action changeZoom(zoom: number) {
+        this.zoomBy = zoom;
+    }
+
+    @action zoomIn() {
+        this.changeZoom(1.5);
+    }
+
+    @action zoomOut() {
+        this.changeZoom(0.66);
+    }
+
+    @action fitBounds() {
+        this.moveToRect = this.rootStore.layerStore.rectangle || svgArea;
+    }
+
+    get previewMode() {
+        const previewMode = isLocalStorageAvailable && localStorage.getItem(PREVIEW_MODE_STORAGE_KEY) === "1";
+        return previewMode || this.rootStore.fp.previewMode;
     }
 
     ///////////////////////////////////////////////////////////////////////////

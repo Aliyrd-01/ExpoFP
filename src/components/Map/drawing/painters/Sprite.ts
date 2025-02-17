@@ -1,16 +1,24 @@
 import Rect from "../../../../core/Rect";
 import debugCanvases from "../../../../tools/debugCanvases";
 import isDebug from "../../../../utils/is-debug";
+import isMobile from "../../../../utils/is-mobile";
+import isWebview from "../../../../utils/is-webview";
 import { CanvasDescriptor } from "../config/canvases";
 
-const maxHeight = 2000;
-const maxWidth = 2000;
+const maxHeight = (isMobile || isWebview) ? 1024 : 2000;
+const maxWidth = (isMobile || isWebview) ? 1024 : 2000;
 
 type ContainerCanvasInfo = {
     width: number;
     height: number;
     items: SpriteItemEx[];
 };
+
+const canvas = document.createElement("canvas");
+canvas.width = maxWidth;
+canvas.height = maxHeight;
+const c = canvas.getContext("2d");
+
 
 export default class Sprite {
     private readonly canvasToSpriteItem = new Map<CanvasDescriptor, SpriteItemEx>();
@@ -90,22 +98,9 @@ export default class Sprite {
 
         if (isDebug) console.timeEnd("sprite.generateSpriteCanvases");
 
-        let canvas = document.createElement("canvas");
-        let c = canvas.getContext("2d");
-
         // we're reusing same canvas
         return containerCanvasInfos.map((ci, i) => () => {
-            if (isDebug) {
-                canvas = document.createElement("canvas");
-                c = canvas.getContext("2d");
-            }
-
             canvas.id = "cnvs_" + i;
-
-            if (canvas.width !== ci.width || canvas.height !== ci.height) {
-                canvas.width = ci.width;
-                canvas.height = ci.height;
-            }
 
             c.setTransform(1, 0, 0, 1, 0, 0);
             c.clearRect(0, 0, canvas.width, canvas.height);

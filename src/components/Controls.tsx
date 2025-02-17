@@ -1,12 +1,10 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as React from "react";
-import { svgArea } from "../data/svg";
 import store, { layersStore, uiState } from "../store";
 import { LayerMode, LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
-import "./Controls.scss";
 import MapControls from "./MapControls";
 
 export default function Controls() {
@@ -16,10 +14,13 @@ export default function Controls() {
         },
         get style() {
             return {
-                [uiState.rtl ? "right" : "left"]: uiState.overlayCollapsed
-                    ? remsToPixels(0.9)
-                    : (uiState.kiosk ? 10 : 0) + uiState.mapVisibleStart + remsToPixels(0.7) + "px",
-                top: uiState.overlayCollapsed ? remsToPixels(5) : uiState.mapVisibleTop + remsToPixels(0.7) + "px",
+                [uiState.rtl ? "right" : "left"]:
+                    uiState.overlayPosition == "left"
+                        ? uiState.overlayCollapsed
+                            ? remsToPixels(0.9)
+                            : (uiState.kiosk ? 10 : 0) + uiState.mapVisibleStart + remsToPixels(0.7) + 10 + "px"
+                        : "10px",
+                top: uiState.overlayCollapsed ? remsToPixels(5) : uiState.mapVisibleTop + remsToPixels(0.7) + 10 + "px",
             };
         },
 
@@ -43,13 +44,13 @@ export default function Controls() {
                 style={s.style}
                 titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("View switch"), t("Fit to screen"), t("Layers")]}
                 onClickFindLocation={() => store.routeStore.findLocation()}
-                onClickZoomIn={() => (uiState.zoomBy = 1.5)}
-                onClickZoomOut={() => (uiState.zoomBy = 0.66)}
-                onClickByWidth={() => (uiState.moveToRect = store.layerStore.rectangle || svgArea)}
+                onClickZoomIn={() => uiState.zoomIn()}
+                onClickZoomOut={() => uiState.zoomOut()}
+                onClickByWidth={() => uiState.fitBounds()}
                 onViewModeSwitch={() => store.mapboxStore.activateMapbox()}
                 viewModeSwitch={store.mapboxStore.mapBoxEnabled && !store.mapboxStore.hideModeSwitchButton}
                 viewMode={store.mapboxStore.showMapbox}
-                findLocation={!!store.routeStore.defaultFrom || !!store.routeStore.currentPosition}
+                findLocation={store.routeStore.canFindLocation}
                 layersActiveItems={s.visible}
                 layersList={layersStore.mode === LayersMode.CheckBox ? s.layers : null}
                 onChangeLayers={(layer) => {

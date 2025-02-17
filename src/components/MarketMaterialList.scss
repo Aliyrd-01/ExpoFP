@@ -1,13 +1,15 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .market-materials {
     $this: &;
+
     margin: 1rem;
-    font-size: var(--text-size-2);
+    font-size: var(--font-size-lg);
 
     &__title {
         padding-bottom: rem(12px);
     }
+
     &__list {
         display: flex;
         flex-direction: column;
@@ -16,59 +18,65 @@
 
     &__item {
         position: relative;
-        max-width: 100%;
-        width: 100%;
         display: grid;
-        grid-template-columns: 1fr rem(20px);
         grid-gap: rem(8px);
+        grid-template-columns: 1fr rem(20px);
         align-items: center;
-        cursor: pointer;
+        width: 100%;
+        max-width: 100%;
         color: var(--color-primary);
         text-decoration: none;
+        cursor: pointer;
 
         &:visited {
             color: var(--color-primary);
         }
+
         &:hover {
-            color: var(--color-primaryDark);
+            color: var(--color-primary-dark);
 
             #{$this}__item-file {
-                background-color: var(--color-primaryDark);
+                background-color: var(--color-primary-dark);
             }
             #{$this}__item-download {
-                color: var(--color-primaryDark);
+                color: var(--color-primary-dark);
             }
         }
     }
+
     &__item-name {
-        display: grid;
-        grid-template-columns: rem(22px) 1fr;
-        grid-gap: rem(8px);
+        display: flex;
+        gap: rem(6px);
+        align-items: center;
 
         & > span {
+            flex: 1;
+            width: 100%;
+            max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            width: 100%;
-            max-width: 100%;
         }
     }
-    &__item-download-button {
-        width: rem(20px);
-        height: rem(20px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+
+    &__item-download {
+        & > i {
+            font-size: var(--icon-size-md);
+        }
     }
 
     &__item-file {
-        background-color: var(--color-primary);
-        color: var(--color-white);
-        border-radius: 50%;
-        width: rem(22px);
-        height: rem(22px);
         display: flex;
         align-items: center;
         justify-content: center;
+        width: rem(24px);
+        height: rem(24px);
+        background-color: var(--color-primary);
+        border-radius: var(--border-radius-full);
+        color: var(--color-white);
+
+        & > i {
+            font-size: var(--icon-size-xs);
+        }
     }
 }

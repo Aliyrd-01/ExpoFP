@@ -17,9 +17,11 @@
     "Edit": "Bewerken",
     "Error sending login instructions": "Fout bij het verzenden van inloginstructies",
     "Event Home": "Startpagina van evenement",
+    "Exhibitors": "Standhouders",
     "Find your location": "Vind je locatie",
     "Fit to screen": "Aanpassen aan scherm",
     "Get your free floor plan at": "Ontvang een gratis plattegrond bij ",
+    "Language": "Taal",
     "Layers": "Lagen",
     "Link copied to clipboard": "Koppeling gekopieerd naar klembord",
     "Made with ExpoFP": "Maken met ExpoFP",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "Logininstructies naar {{email}} verzenden om het profiel te bewerken?",
     "Share bookmarks": "Bladwijzers delen",
     "Size": "Grootte",
+    "Show More": "Meer weergeven",
     "This is a FREE floor plan": "Dit is een GRATIS plattegrond",
     "Toggle bookmark": "Bladwijzer schakelen",
     "Use {{keyCode}} + scroll to zoom": "Gebruik {{keyCode}} + scrollen om te zoomen",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "Scan om de route op uw telefoon te bekijken"
 }

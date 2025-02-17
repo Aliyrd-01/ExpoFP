@@ -9,6 +9,7 @@ import BookmarkSvg from "./BookmarkSvg";
 import "./ExhibitorRow.scss";
 import { defaultRebookingOptions } from "./RebookingRadioGroup";
 import useHeatmapData from "../utils/useHeatmapData";
+import HighlightText from "./HighlightText";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     const { clicks, background } = useHeatmapData(exhibitor);
@@ -23,7 +24,8 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         e.stopPropagation();
         if (document.activeElement) (document.activeElement as HTMLDivElement).blur();
         exhibitor.bookmarked = !exhibitor.bookmarked;
-        if (uiState.onBookmarkClick) uiState.onBookmarkClick({ name: exhibitor.name, bookmarked: exhibitor.bookmarked });
+        if (uiState.onBookmarkClick)
+            uiState.onBookmarkClick({ name: exhibitor.name, bookmarked: exhibitor.bookmarked, externalId: exhibitor.externalId });
     }
 
     const div = useRef();
@@ -54,7 +56,7 @@ const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ e
         >
             <div className={classNames("exhibitor-row__lines")}>
                 <div dir="auto">
-                    {exhibitor.name} {exhibitor.featured ? <i className="fas fa-gem" /> : null}
+                    <HighlightText text={exhibitor.name} /> {exhibitor.featured ? <i className="icon-diamond" /> : null}
                 </div>
             </div>
             {uiState.disableBookmarked || data.hideBookmarks || data.isRebooking || uiState.kiosk ? null : (

@@ -12,7 +12,9 @@ import { t } from "../utils/i18n";
 import isIframe from "../utils/is-iframe";
 import { useAutorun } from "../utils/mobx";
 import "./Menu.scss";
+import "./Menu_custom.scss";
 import OverlayContent from "./OverlayContent";
+import Badge from "./Badge";
 
 const logoUrl = /^https?:\/\//i.test(data.logo) ? data.logo : baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -22,6 +24,7 @@ window.setTimeout(function () {
     img.onload = () => {
         logger.log("Logo image loaded");
     };
+    img.crossOrigin = "anonymous";
     img.src = logoUrl;
 
     // const link = document.createElement("link");
@@ -66,6 +69,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     onError={() => (s.logoVisibility = "hidden")}
                     style={{ visibility: s.logoVisibility }}
                     alt=""
+                    crossOrigin="anonymous"
                 />
             </a>
         </div>
@@ -114,23 +118,44 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
-                            <i className="fas fa-external-link" />
+                            <i className="icon-link-external" />
                         </a>
                     )}
                     {!data.hideRegisterToAttendLink && !uiState.kiosk && !isIframe && !!data.registerUrl && (
                         <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Register to Attend").replace(/ /g, "\u00A0")}&nbsp;
-                            <i className="fas fa-external-link" />
+                            <i className="icon-link-external" />
                         </a>
                     )}
-                    {!uiState.disableBookmarked && !data.hideBookmarks && !data.hideBookmarksLink && !uiState.kiosk && exhibitorStore.exhibitors.length > 0 && (
-                        <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
-                            <span>
-                                {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                    {!uiState.disableBookmarked &&
+                        !data.hideBookmarks &&
+                        !data.hideBookmarksLink &&
+                        !uiState.kiosk &&
+                        exhibitorStore.exhibitors.length > 0 && (
+                            <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
+                                <span>
+                                    {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                                </span>
+
+                                <span className="menu__icons">
+                                    {exhibitorStore.bookmarked.length ? (
+                                        <button onClick={shareBookmarks} title={t("Share bookmarks")}>
+                                            <i className="icon-link-external-solid"></i>
+                                        </button>
+                                    ) : null}
+                                    <i className="icon-chevron-right" />
+                                </span>
+                            </a>
+                        )}
+                    {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
+                        <a href="?language" onClick={handleLanguage} className="menu__item -language">
+                            <span>{t("Language")} </span>
+                            <span className="menu__icons">
+                                <Badge variant="gray" size="md" noMargins>
+                                    {store.languageStore.language?.name}
+                                </Badge>
+                                <i className="icon-chevron-right" />
                             </span>
-                            {exhibitorStore.bookmarked.length ? (
-                                <button onClick={shareBookmarks} className="fas fa-share-square" title={t("Share bookmarks")} />
-                            ) : null}
                         </a>
                     )}
                     {!data.hideDownloadPdfLink && !uiState.kiosk && (
@@ -143,11 +168,10 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             rel="noopener noreferrer"
                             href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
                                 ","
-                            )}&layers=${
-                                store.layerStore.layers.length >= store.layerStore.visible.length
-                                    ? store.layerStore.visible.map((l) => l.name).join(",")
-                                    : ""
-                            }`}
+                            )}&layers=${(store.layerStore.layers.length >= store.layerStore.visible.length
+                                ? store.layerStore.visible.map((l) => l.name).join(",")
+                                : ""
+                            ).replace(/&/g, "%26")}`}
                         >
                             {t("Download PDF")}
                         </a>
@@ -201,6 +225,11 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         e.preventDefault();
         store.clickBookmarks();
         store.moveToList();
+    }
+
+    function handleLanguage(e: MouseEvent) {
+        e.preventDefault();
+        store.clickLanguage();
     }
 
     // function handlePdf(e: MouseEvent) {

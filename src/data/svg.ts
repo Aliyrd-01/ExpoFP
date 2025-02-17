@@ -4,6 +4,8 @@ import Rect from "../core/Rect";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
 import { Layer } from "../store/LayerStore";
+import { STRING_META_DELIMITER } from "../constants";
+import { extractMetaFromString } from "../utils/extractMetaFromString";
 
 const _svg = new Map<string, SVGElement>();
 
@@ -35,6 +37,8 @@ function parseSvg(text: string, suffix: string = ""): SVGElement {
             const el = this as SVGGraphicsElement;
             el.style.fill = classFill.get(el.className.baseVal);
         });
+
+    processElementsWithMeta(element);
 
     _svg.set(suffix, element);
     return element;
@@ -78,7 +82,7 @@ let floors = window["__fpLayersMode"]
 
 export { svgArea, svgViewBox, floors };
 
-export function getTrianglesFromFpPaths(index: number, suffix: string) {
+export function getTrianglesFromFpPaths(index: number, suffix: string): number[][][] {
     const mesh = gtePathByIndex(index, suffix);
     // TODO: remove in future versions
     for (const p of mesh.positions) {
@@ -123,3 +127,27 @@ export let getLayerSvg = (layer: Layer | string = ""): SVGElement => {
 
     return _svg.get("");
 };
+
+function processElementsWithMeta(element: Element): void {
+    d3.select(element)
+        .selectAll("[id], [data-name]")
+        .each(function () {
+            const el = this as SVGGraphicsElement;
+
+            let combinedMeta: Record<string, string> = {};
+
+            const dataName = el.getAttribute("data-name");
+            if (dataName && dataName.includes(STRING_META_DELIMITER)) {
+                const { meta: nameMeta } = extractMetaFromString(dataName);
+                combinedMeta = { ...combinedMeta, ...nameMeta };
+            }
+
+            const id = el.getAttribute("id");
+            if (id && id.includes(STRING_META_DELIMITER)) {
+                const { meta: idMeta } = extractMetaFromString(id);
+                combinedMeta = { ...combinedMeta, ...idMeta };
+            }
+
+            el.setAttribute("data-meta", JSON.stringify(combinedMeta));
+        });
+}

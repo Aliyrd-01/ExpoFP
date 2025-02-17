@@ -67,7 +67,7 @@ export function injectFontFace(fontFamily: string, src: string, d) {
     const newStyle = document.createElement("style");
     newStyle.appendChild(
         document.createTextNode(
-            `@font-face { font-family: ${fontFamily}; font-weight: ${d.weight}; font-style: ${d.style}; src: ${src} format('woff2'); }`
+            `@font-face { font-family: ${fontFamily}; font-weight: ${d.weight}; font-style: ${d.style}; src: ${src} format('woff2'); font-display: swap; }`
         )
     );
     document.head.appendChild(newStyle);

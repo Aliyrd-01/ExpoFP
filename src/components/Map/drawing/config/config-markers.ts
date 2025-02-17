@@ -30,7 +30,7 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
             });
 
             promises.push(promise);
-            img.src = content.replace(/https?:\/\/([^.]+)\.expofp\.com/, 'https://efp-data.s3.amazonaws.com/expos/$1');
+            img.src = content;
             img.crossOrigin = "anonymous";
         });
 

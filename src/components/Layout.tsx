@@ -2,30 +2,30 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { layersStore, uiState, heatmapStore } from "../store";
+import store, { layersStore, uiState } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported, remsToPixels } from "../utils";
 import isDebug from "../utils/is-debug";
 import isIframe from "../utils/is-iframe";
 import Controls from "./Controls";
 import Floors from "./Floors";
-import Header from "./Header";
 import LargeMessage from "./LargeMessage";
-import "../styles/index.scss";
+import "../styles/main.scss";
 import "./Layout.scss";
 import LogoOverlay from "./LogoOverlay";
 import Map from "./Map/Map";
 import { MapLoader } from "./Mapbox/MapLoader";
 import Overlay from "./Overlay";
-import Pdf from "./Pdf";
 import Share from "./Share";
 import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { checkUserIsGDPR, hasUserConsent, setConsentSettings, setCookieConsent } from "../tools/gtag";
+import { checkUserIsGDPR, GaEventActions, hasUserConsent, sendEventToGa, setConsentSettings, setCookieConsent } from "../tools/gtag";
 import HeatmapLegend from "./HeatmapLegend";
+import { useReaction } from "../utils/mobx";
+import trackEvent from "../tools/track-event";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -81,6 +81,31 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         }
     }, []);
 
+    useReaction(
+        () => uiState.selectedExhibitor,
+        (exhibitor) => {
+            if (store.heatmapStore.forceTrack) {
+                sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
+                store.heatmapStore.forceTrack = null;
+            } else {
+                if (exhibitor) {
+                    trackEvent("exview", exhibitor.id);
+                    sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
+                }
+            }
+        },
+    );
+
+    useReaction(
+        () => uiState.selectedBooth,
+        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name),
+    );
+
+    useReaction(
+        () => uiState.selectedCategory,
+        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name),
+    );
+
     return (
         <div
             className={cn("layout", {
@@ -91,15 +116,11 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
             dir={uiState.rtl ? "rtl" : "ltr"}
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
-                <Header />
-                {/*{!data.hideLogoOverlay && <LogoOverlay />}*/}
                 <LogoOverlay />
-                {!uiState.hideHeaderLogo && <Ws />}
-                <Controls />
+                {!uiState.hideHeaderLogo && store.initialized && <Ws />}
+                {!uiState.mapControlsHidden && <Controls />}
                 {uiState.kiosk && uiState.inIdle && <TouchHand />}
-                {/* <Layers /> */}
-                {/*<Areas />*/}
-                {layersStore.mode == LayersMode.Radio && <Floors />}
+                {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
                 {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
@@ -111,7 +132,9 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                         )}
                     </Suspense>
                 )}
-                {freeOrDemo ? <Suspense fallback={null}>{freeOrDemo}</Suspense> : null}
+                {freeOrDemo && !uiState.hideFreeOrDemo && !uiState.heatmap ? (
+                    <Suspense fallback={null}>{freeOrDemo}</Suspense>
+                ) : null}
                 {!uiState.hideCookieConsent && !uiState.kiosk && isGDPR && allowConsent === undefined && (
                     <Suspense fallback={null}>
                         <CookieConsent
@@ -127,8 +150,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     </Suspense>
                 ) : null}
                 {isIframe && <LargeMessage />}
-                {/* {isIframe && <TouchHover />} */}
-                <Pdf />
                 {uiState.modalActive.share ? (
                     <Suspense fallback={null}>
                         <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
@@ -151,8 +172,8 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                             bottom: uiState.overlayPosition === "bottom" ? null : "30px",
                         }}
                         className={uiState.responsiveClass}
-                        max={heatmapStore.minAndMaxClicks.max}
-                        min={heatmapStore.minAndMaxClicks.min}
+                        max={store.heatmapStore.minAndMaxClicks.max}
+                        min={store.heatmapStore.minAndMaxClicks.min}
                         colors={settings.heatmapColors}
                     />
                 ) : null}

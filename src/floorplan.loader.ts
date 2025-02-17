@@ -1,16 +1,19 @@
-import _locales from "../public/locales/_locales";
+import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
-import { Marker, CurrentPosition, MarkersData } from "./store/RouteStore";
+import { initOfflineManager } from "./offline/offlineManager";
+import { CurrentPosition, MarkersData } from "./store/RouteStore";
+import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isWebview from "./utils/is-webview";
+import { loadImage } from "./utils/loadImage";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
 
-function nr() {
+function nr(): never {
     throw new Error("FloorPlan not ready");
 }
 
@@ -25,18 +28,27 @@ export default class FloorPlanLoader implements FloorPlan {
     readonly noOverlay: boolean;
     readonly offHistory: boolean;
     readonly allowConsent: boolean | undefined;
+    readonly onInit: (fp: FloorPlan) => void;
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
 
+    public readonly icons = new Map<FloorPlanIcon, HTMLImageElement>();
+
     get ready() {
         return this._ready;
+    }
+
+    get previewMode() {
+        return this.options.previewMode || this.element.hasAttribute(PREVIEW_MODE_ATTRIBUTE);
     }
 
     // options
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
     onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+
+    onCategoryClick: (e: FloorPlanCategoryClickEvent) => void;
 
     onFpConfigured: () => void;
 
@@ -58,7 +70,11 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectRoute(from: string, to: string, onlyAccessible: boolean): void {
+    selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {
+        nr();
+    }
+
+    getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[] {
         nr();
     }
 
@@ -66,7 +82,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void {
+    setBookmarks(bookmarks: { name?: string; externalId?: string; bookmarked: boolean }[]): void {
         nr();
     }
 
@@ -78,7 +94,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    getCenterCoordinates() {
+    getCenterCoordinates(): any {
         nr();
     }
 
@@ -98,13 +114,59 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    selectCategory(nameOrSlug: string): void {
+    selectCategory(nameOrSlug?: string): void {
+        nr();
+    }
+
+    getVisibility(): any {
+        nr();
+    }
+
+    setVisibility(visibility: Visibility): void {
+        nr();
+    }
+
+    findLocation(): void {
+        nr();
+    }
+
+    zoomIn(): void {
+        nr();
+    }
+
+    zoomOut(): void {
+        nr();
+    }
+
+    switchView(): void {
+        nr();
+    }
+
+    fitBounds(): void {
+        nr();
+    }
+
+    getBoothRect(name: string): any {
+        nr();
+    }
+
+    convertToGeo(x: number, y: number): any {
         nr();
     }
 
     unstable_destroy(): void {
         nr();
     }
+
+    highlightExhibitors(externalIs: string[]) {
+        nr();
+    }
+
+    onCurrentPositionChanged(point: CurrentPosition) {
+        nr();
+    }
+
+    // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {
         this.options = options;
@@ -114,12 +176,16 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onBookmarkClick = options.onBookmarkClick;
+        this.onCategoryClick = options.onCategoryClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
         this.onGetCoordsClick = options.onGetCoordsClick;
         this.onMarkerClick = options.onMarkerClick;
         this.onFpConfigured = options.onFpConfigured;
         this.onDirection = options.onDirection;
+        this.onInit = options.onInit;
+        this.onCurrentPositionChanged = options.onCurrentPositionChanged;
+
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;
         });
@@ -128,7 +194,8 @@ export default class FloorPlanLoader implements FloorPlan {
         this.element = element;
         if (element["__expofp"]) throw new Error("Element already in use");
         element["__expofp"] = this;
-        const eventId = options.eventId ||
+        const eventId =
+            options.eventId ||
             element.getAttribute("data-event-id") ||
             element.getAttribute("data-event") || // legacy remove 2020-12-12
             (document.location.hostname.endsWith(".expofp.com")
@@ -138,7 +205,6 @@ export default class FloorPlanLoader implements FloorPlan {
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
         window["__efpElement"] = element;
-
         window["__efpElement"] = element;
         const classes = [...element.classList];
         element.classList.remove(...classes);
@@ -156,7 +222,7 @@ export default class FloorPlanLoader implements FloorPlan {
         element.appendChild(shadowContainer);
         let container: HTMLDivElement | ShadowRoot;
 
-        if (eventId === "money2020usa23" && isWebview(navigator.userAgent)) {
+        if (eventId === "money2020usa23" && isWebview) {
             this.allowConsent = true;
         }
 
@@ -203,21 +269,20 @@ export default class FloorPlanLoader implements FloorPlan {
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
-        loadCss("vendor/fa/css/fontawesome-all.min.css", container);
-        loadCss("vendor/sanitize-css/sanitize.css", container);
-        loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container);
-        loadCss("vendor/mapbox/mapbox-gl.css", container);
-        // loadCss("fonts/fonts.css", container);
-
-        loadFont("Font Awesome 5 Brands", "vendor/fa/webfonts/fa-brands-400.woff2");
-
-        const fontPromises = [
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-light-300.woff2", { weight: 300 }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-regular-400.woff2", { weight: 400 }),
-            loadFont("Font Awesome 5 Pro", "vendor/fa/webfonts/fa-solid-900.woff2", { weight: 900 }),
+        const promises = [
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
+            loadCss("vendor/sanitize-css/sanitize.css", container),
+            loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
+            loadCss("vendor/mapbox/mapbox-gl.css", container),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
             loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
-            loadFont("efp", "fonts/efp.woff", { weight: 400 }),
+            loadFont("Inter", "fonts/inter-400.woff2", { weight: 400 }),
+            loadFont("Inter", "fonts/inter-500.woff2", { weight: 500 }),
+            loadFont("Inter", "fonts/inter-600.woff2", { weight: 600 }),
+            loadFont("efp-symbols", "fonts/efp-symbols.woff", { weight: 400 }),
+            loadJs(wfDataUrl),
+            loadJs(dataUrl),
+            loadJs(fpUrl),
         ];
 
         let handledStyleElements = 0;
@@ -235,7 +300,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await Promise.all([...fontPromises, loadJs(wfDataUrl), loadJs(dataUrl), loadJs(fpUrl)]);
+            await Promise.all(promises);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);
@@ -243,15 +308,17 @@ export default class FloorPlanLoader implements FloorPlan {
             }
             const data = window["__data"] as Data;
 
-            const navLanguage = navigator.languages?.[0] || navigator.language;
-            const navLocale = _locales.find((x) => navLanguage.startsWith(x));
-            await initI18n(navLocale || data.locale || "en");
+            await initI18n();
 
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
             if (isHeatmap) {
                 const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
-                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(res => res.json());
-                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(res => res.json());
+                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(
+                    (res) => res.json()
+                );
+                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(
+                    (res) => res.json()
+                );
                 window["__heatmapData"] = { booths, exhibitors };
             } else if (window.location.search.startsWith("?heatmapYah=true")) {
                 window["__heatmapDataYah"] = {
@@ -272,6 +339,9 @@ export default class FloorPlanLoader implements FloorPlan {
             }
 
             if (data.customCss) {
+                // TODO:
+                // Enable self._addCustomCss and rerender map after css load
+                // self._addCustomCss = async () => {
                 const style = document.createElement("style");
                 style.textContent = data.customCss;
                 document.head.append(style);
@@ -283,6 +353,30 @@ export default class FloorPlanLoader implements FloorPlan {
                 }
 
                 await loadCustomFonts(data.customCss);
+                // }
+            }
+
+            try {
+                const iconEntries = await Promise.allSettled(
+                    Object.entries({
+                        "departure": "icons/departure.svg",
+                        "destination": "icons/destination.svg",
+                        "direction": "icons/direction.svg",
+                        "transition": "icons/transition.svg",
+                        "transition_up": "icons/transition_up.svg",
+                        "transition_down": "icons/transition_down.svg",
+                    }).map(([key, path]) =>
+                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
+                    )
+                );
+
+                iconEntries
+                    .filter((entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> => entry.status === "fulfilled")
+                    .map(entry => entry.value)
+                    .forEach(([key, icon]) => self.icons.set(key, icon));
+
+            } catch (e) {
+                console.warn(e);
             }
 
             logger.log("Data loaded");

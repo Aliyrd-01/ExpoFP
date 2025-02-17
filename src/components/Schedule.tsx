@@ -45,6 +45,9 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
         event.preventDefault();
         setEventsFullDescription((prev) => {
             const newState = { ...prev };
+            if (!Array.isArray(newState[date])) {
+                newState[date] = [];
+            }
             newState[date][index].showFullDescription = !newState[date][index].showFullDescription;
             return newState;
         });
@@ -87,7 +90,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                                 {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
                                             </span>
                                             <strong>{event.name}</strong>
-                                            {event.description && eventsFullDescription[date][eventIndex] && (
+                                            {event.description && eventsFullDescription[date]?.[eventIndex] && (
                                                 <>
                                                     <div
                                                         className="schedule__event-desc"

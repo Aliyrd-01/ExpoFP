@@ -3,7 +3,7 @@ import { getTrianglesFromFpPaths } from "../../../../data/svg";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
 import { isRTLText, isHebrewText } from "../../../../utils/rtl";
-import { boothStore, heatmapStore, uiState } from "../../../../store";
+import { heatmapStore, uiState } from "../../../../store";
 import data from "../../../../data";
 
 const canvas = document.createElement("canvas");
@@ -89,13 +89,13 @@ export function createDetailsCanvas(
         } else if (b.reserved) {
             lines.push(t("Reserved"));
         } /*else if (b.exhibitors.length) {
-<<<<<<< HEAD
+
         lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } */ else if (!onlyId) {
             lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
         }
         if (b.size) lines.push(b.size.indexOf("/") > -1 ? b.size.substring(0, b.size.indexOf("/")).trim() : b.size);
-        if (b.price && b.price !== "0") lines.push(b.price);
+        if (b.price && b.price !== "0" && !uiState.previewMode) lines.push(b.price);
     } else {
         const clicks = heatmapStore.getTotalClicksByBooth(b);
         lines.push("Clicks: " + clicks);
@@ -168,7 +168,8 @@ export function createExhibitorsDetailsCanvas(
     fontSize: number,
     onlyMain: boolean,
     onlyFeaturedExhibitors: boolean,
-    textAlign: CanvasTextAlign = "start"
+    textAlign: CanvasTextAlign = "start",
+    linesLimit = 3,
 ): CanvasDescriptor {
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
@@ -197,10 +198,10 @@ export function createExhibitorsDetailsCanvas(
             mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
         }
     } else {
-        if (b.exhibitors.length > 5) {
+        if (b.exhibitors.length > linesLimit) {
             mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
         } else {
-            mainLines.push(...b.exhibitors.map((e) => e.name));
+            mainLines.push(...b.exhibitors.map(e => e.name));
         }
     }
 
@@ -331,7 +332,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
             padding,
             draw(c) {
                 c.translate(padding, padding);
-                c.fillStyle = "#e64839";
+                c.fillStyle = "#fdbf2b";
                 c.strokeStyle = color;
                 c.lineWidth = lineWidth;
 
@@ -357,7 +358,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
 export function createArrowCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
-    scale: number = pixelRatio * 0.4
+    scale: number = pixelRatio * 0.4,
 ): CanvasDescriptor {
     return {
         width: 95 * scale,
@@ -477,14 +478,26 @@ export function createImageCanvas(
     image: HTMLImageElement,
     width: number,
     height: number,
-    scale: number
+    pixelRatio: number
 ): CanvasDescriptor {
+    const aspectRatio = image ? image.width / image.height : 1;
+    let scaledWidth = width * pixelRatio;
+    let scaledHeight = height * pixelRatio;
+
+    if (width / height > aspectRatio) {
+        // Width is too wide, adjust to match height
+        scaledWidth = scaledHeight * aspectRatio;
+    } else {
+        // Height is too tall, adjust to match width
+        scaledHeight = scaledWidth / aspectRatio;
+    }
+
     return {
-        width: width * scale,
-        height: height * scale,
+        width: scaledWidth,
+        height: scaledHeight,
         draw(ctx: CanvasRenderingContext2D) {
-            ctx.scale(scale, scale);
-            ctx.drawImage(image, 0, 0, width, height);
+            if (!image) return;
+            ctx.drawImage(image, 0, 0, scaledWidth, scaledHeight);
         }
     };
 }
@@ -640,7 +653,7 @@ export function createMultilineTextCanvas(lines: string[], inputWidth: number, f
         draw(c) {
             c.textAlign = "center";
             c.textBaseline = "alphabetic";
-            const weight =  Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-special-weight"));
+            const weight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-booth-special-weight"));
             c.font = getFont(fontSize, weight || 500);
 
             const totalHeight = lines.length * lineHeight;

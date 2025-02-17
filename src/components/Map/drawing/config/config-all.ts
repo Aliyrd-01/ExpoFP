@@ -11,6 +11,7 @@ import loadLayer from "./config-load-layer";
 import { LayersMode } from "../../../../store/LayerStore";
 import { configMarkers } from "./config-markers";
 import { configDebugCircles } from "./config-debug-circles";
+import { loadBoothsImages } from "./loadBoothsImages";
 
 let _context: DrawerContext;
 export let getContext = () => _context;
@@ -46,6 +47,7 @@ export default function configAll(context: DrawerContext = _context): void {
 
     Promise.all(promises).then(() => {
         layersStore.layersLoaded = true;
+        loadBoothsImages(context);
 
         const l =
             [...uiState.selectedBooths][0]?.layer ||
@@ -57,8 +59,6 @@ export default function configAll(context: DrawerContext = _context): void {
 
         if (name) {
             store.layerStore.updateVisibility(l, true);
-            store.routeStore.currentRouteLayer = l;
-
             const booths =
                 store.uiState.selectedExhibitor?.booths.filter((b) => b.layer?.name === name) ||
                 [...store.uiState.selectedBooths].filter((b) => b.layer?.name === name);

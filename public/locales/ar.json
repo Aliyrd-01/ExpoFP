@@ -17,9 +17,11 @@
     "Edit": "تحرير",
     "Error sending login instructions": "حدث خطأ في إرسال تعليمات تسجيل الدخول",
     "Event Home": "الصفحة الرئيسية للفعالية",
+    "Exhibitors": "المعارض",
     "Find your location": "اعثر على موقعك",
     "Fit to screen": "يصلح للشاشة",
     "Get your free floor plan at": "احصل على نسختك المجانية من مخطط الطابق على",
+    "Language": "اللغة",
     "Layers": "طبقات",
     "Link copied to clipboard": "تم نسخ الرابط إلى الحافظة",
     "Made with ExpoFP": "مصنوع بواسطة ExpoFP",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "هل تريد إرسال تعليمات تسجيل الدخول إلى {{email}} لتحرير الملف التعريفي؟",
     "Share bookmarks": "مشاركة الإشارات المرجعية",
     "Size": "الحجم",
+    "Show More": "عرض المزيد",
     "This is a FREE floor plan": "هذه نسخة مجانية من مخطط الطابق",
     "Toggle bookmark": "إضافة إشارة مرجعية",
     "Use {{keyCode}} + scroll to zoom": "استخدم {{keyCode}} مع التمرير للتكبيرللتكبير",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "امسح لرؤية الطريق على هاتفك"
 }

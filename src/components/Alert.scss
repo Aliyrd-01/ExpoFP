@@ -1,4 +1,5 @@
-@import "../styles/helpers.scss";
+@use "@styles/vars";
+@use "@styles/utils" as *;
 
 $alert: ".efp-alert";
 
@@ -6,108 +7,133 @@ $alert: ".efp-alert";
     display: flex;
     align-items: center;
     padding: rem(12px 14px);
-    border-radius: var(--border-radius-1);
+    border-radius: var(--border-radius-lg);
 
     &.isInline {
         display: inline-flex;
     }
+
     &__icon {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         width: rem(30px);
         height: rem(30px);
         margin-right: rem(14px);
-        border-radius: 50%;
+        border-radius: var(--border-radius-full);
         color: var(--color-white);
+
+        & > i {
+            font-size: var(--icon-size-lg);
+        }
     }
+
     &__content {
         flex: 1;
-        font-size: var(--text-size-2);
+        font-size: var(--font-size-lg);
         color: var(--color-black);
 
         a {
             color: var(--color-primary);
-            text-decoration: none;
-            border-bottom: 1px solid var(--color-primary);
+            text-decoration: underline;
             transition: color var(--transition-duration) ease, border var(--transition-duration) ease;
 
             &:hover {
-                color: var(--color-primaryDark);
-                border-color: var(--color-primaryDark);
+                color: var(--color-black);
             }
         }
     }
+
     &__title {
-        font-weight: var(--font-bold);
+        font-weight: var(--font-weight-bold);
     }
+
     &__close {
         position: relative;
-        right: -4px;
+        right: rem(-4px);
         display: inline-flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         width: rem(26px);
         height: rem(26px);
         margin-left: rem(8px);
         padding: 0;
         background: transparent;
         border: 0;
-        border-radius: var(--border-radius-1);
+        border-radius: var(--border-radius-md);
         cursor: pointer;
         transition: background var(--transition-duration) ease;
 
-        &:before {
-            @include icon();
-            content: $icon-close;
-            font-size: 20px;
+        &::before {
+            @include icon;
+
+            content: vars.$icon-close;
+            font-size: var(--icon-size-md);
             color: var(--color-black);
         }
+
         &:hover {
-            background: rgba(51, 51, 51, 0.08);
+            background: rgb(51 51 51 / 8%);
         }
     }
-    // Position
+
     &--topRight,
     &--bottomRight {
         position: fixed;
-        box-shadow: var(--shadow-medium);
+        box-shadow: var(--shadow-md);
     }
+
     &--topRight {
         top: rem(10px);
         right: rem(10px);
     }
+
     &--bottomRight {
-        bottom: rem(10px);
         right: rem(10px);
+        bottom: rem(10px);
     }
-    // Variant
+
     &--info {
-        background: var(--color-infoLight);
+        background: var(--color-primary-ultra-light);
 
+        a {
+            color: var(--color-primary-dark);
+        }
         #{$alert}__icon {
-            background: var(--color-info);
+            background: var(--color-primary);
         }
     }
+
     &--success {
-        background: var(--color-successLight);
+        background: var(--color-green-ultra-light);
 
+        a {
+            color: var(--color-green-dark);
+        }
         #{$alert}__icon {
-            background: var(--color-success);
+            background: var(--color-green);
         }
     }
+
     &--warning {
-        background: var(--color-warningLight);
+        background: var(--color-orange-ultra-light);
 
+        a {
+            color: var(--color-orange-ultra-dark);
+        }
         #{$alert}__icon {
-            background: var(--color-warning);
+            background: var(--color-orange-dark);
         }
     }
-    &--error {
-        background: var(--color-errorLight);
 
+    &--error {
+        background: var(--color-red-ultra-light);
+
+        a {
+            color: var(--color-red-dark);
+        }
         #{$alert}__icon {
-            background: var(--color-error);
+            background: var(--color-red);
         }
     }
 }

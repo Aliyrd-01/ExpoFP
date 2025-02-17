@@ -1,9 +1,8 @@
+@use "@styles/utils" as *;
+
 .logo-overlay {
-    display: block;
     position: absolute;
-    /* bottom: 1rem; */
-    /* right: 0.5rem; */
-    /* opacity: 0; */
+    display: block;
     transition: opacity 0.5s;
 
     > img {
@@ -14,22 +13,42 @@
     &.invert {
         filter: invert(1);
     }
+
+    @include kiosk {
+        pointer-events: none;
+    }
 }
 
 .qr {
     position: absolute;
-    background-color: white;
-    padding: 10px;
+    left: var(--k-app-gap);
+    padding: var(--k-spacing-sm);
+    background: var(--color-white);
+    border-radius: var(--k-border-radius-1);
     box-shadow: var(--k-box-shadow-1);
+    text-align: center;
 
     &--right {
-        left: unset !important;
-        right: 10px;
+        right: var(--k-app-gap);
+        left: unset;
     }
-}
 
-.efp-kiosk {
-    .logo-overlay {
-        pointer-events: none;
+    & > div {
+        position: relative;
+        top: rem(-3px);
+        padding-bottom: rem(6px);
+        font-size: var(--font-size-xxl);
+        font-weight: var(--font-weight-medium);
+    }
+
+    & > svg {
+        width: clamp(150px, 10vw, 100px);
+        height: clamp(150px, 10vw, 100px);
+    }
+
+    @include kiosk {
+        & > div {
+            font-size: var(--font-size-lg);
+        }
     }
 }

@@ -1,20 +1,21 @@
+import Color from "color";
 import * as d3 from "d3-selection";
 import Rect from "../../core/Rect";
 import data from "../../data";
-import { getLayerSvg } from "../../data/svg";
+import { RawSpecialBooth } from "../../data/Data";
+import { getLayerSvg, getTrianglesFromFpPaths } from "../../data/svg";
 import { getNextId } from "../../tools/id";
 import logger from "../../tools/logger";
 import settings from "../../tools/settings";
 import { generateUniqueSlug } from "../../tools/slug";
 import { sortByName } from "../../utils";
-import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
-import RootStore from "../RootStore";
+import { extractMetaFromString } from "../../utils/extractMetaFromString";
 import { isYahBooth } from "../../utils/yah";
-import { RawSpecialBooth } from "../../data/Data";
+import BoothStore, { Booth, RegularBooth, SpecialBooth } from "../BoothStore";
 import { Exhibitor } from "../ExhibitorStore";
 import { Layer } from "../LayerStore";
+import RootStore from "../RootStore";
 import { uiState } from "../index";
-import Color from "color";
 
 const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
@@ -23,6 +24,9 @@ export function iniAllBooths(store: RootStore) {
     const copyExh = parseInt(getQueryParam("copy_exh"));
 
     for (const raw of data.booths || []) {
+        const { text, meta } = extractMetaFromString(raw.name);
+        raw.meta = meta;
+
         const b: MutableRequired<Booth> = (raw as RawSpecialBooth).special ? new SpecialBooth() : new RegularBooth();
         Object.assign(b, raw);
 
@@ -47,7 +51,9 @@ export function iniAllBooths(store: RootStore) {
         }
 
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
+        b.poiType = store.poiTypeStore.poiTypes.find((p) => p.id === raw.poiTypeId);
         b.yah = isYahBooth(b as Booth);
+        b.name = text;
         booths.push(b);
     }
 
@@ -80,12 +86,14 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
 
     const layersEnabled = !!window["__fpLayers"];
 
-    for (const el of d3
+    const d3Nodes = d3
         .select(getLayerSvg(layer))
         .selectAll(
-            `[data-layer='${layerID}'] > [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
+            `[data-layer='${layerID}'] [data-tagname='efp-booth'], [data-layer='${layerID}'] > g[id^=b], [data-layer='${layerID}'] > rect[id^=b]`
         )
-        .nodes() as (SVGRectElement | SVGPathElement)[]) {
+        .nodes() as (SVGRectElement | SVGPathElement)[];
+
+    for (const el of d3Nodes) {
         const layer = ((el as SVGGraphicsElement).closest("svg > [data-layer]") as SVGGraphicsElement).attributes["data-layer"]
             ?.value;
 
@@ -99,7 +107,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
             // find any rect
             rect = Array.from(el.children).find((x) => x.tagName === "rect") as SVGRectElement;
             pathsWithRect = rect === el.firstElementChild;
-            if (!rect) continue;
+            //if (!rect) continue;
             // // expect rect to be last child
             // rect = el.lastElementChild as SVGRectElement;
             // if (!rect || rect.tagName !== 'rect') continue;
@@ -124,20 +132,20 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
         } else layerBooths.push(booth);
 
         booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
-        booth.borderColor = rect.getAttribute("stroke") || rect.style.stroke || settings.boothBorderColor || "#FFFFFF";
-        booth.borderWidth = parseFloat(rect.getAttribute("stroke-width") || rect.style.strokeWidth);
+        booth.borderColor = rect?.getAttribute("stroke") || rect?.style.stroke || settings.boothBorderColor || "#FFFFFF";
+        booth.borderWidth = parseFloat(rect?.getAttribute("stroke-width") || rect?.style.strokeWidth || "0");
 
         if (!uiState.heatmap) {
-            booth.labelColor = rect.getAttribute("data-label-color");
+            booth.labelColor = rect?.getAttribute("data-label-color");
         } else {
             const totalClicks = store.heatmapStore.getTotalClicksByBooth(booth as Booth);
             const heatmapColor = Color(store.heatmapStore.getColorByClicks(totalClicks));
             booth.labelColor = heatmapColor.darken(0.3).isLight() ? "#555" : "#fff";
         }
 
-        booth.rect = Rect.fromSvgRectElement(rect);
-        booth.noLabels = !!rect.dataset.nolabel || rect.id.startsWith("no");
-       
+        booth.rect = rect ? Rect.fromSvgRectElement(rect) : null;
+        booth.noLabels = !!rect?.dataset.nolabel || rect?.id.startsWith("no");
+
         if (boothReg) {
             boothReg.availColor = el.getAttribute("data-avail-color") || boothReg.availColor;
             boothReg.soldColor = el.getAttribute("data-sold-color") || boothReg.soldColor;
@@ -157,7 +165,7 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
             boothSpec.color = el.getAttribute("data-color") || boothSpec.color;
         }
 
-        const transform = rect.getAttribute("transform");
+        const transform = rect?.getAttribute("transform");
         if (transform) {
             const mt = transform.match(/translate\(([-0-9.]+) ([-0-9.]+)\) rotate\(([-0-9.]+)\)/);
             if (mt) {
@@ -190,17 +198,41 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
             booth.paths = [];
             booth.pathsWithRect = pathsWithRect;
 
+            var triangles: number[][][] = [];
+
             for (const kid of d3.select(el).selectAll("path, rect").nodes() as (SVGPathElement | SVGRectElement)[]) {
                 if (kid.tagName === "path") {
                     const path = kid as SVGPathElement;
                     if (path.tagName !== "path") continue;
-                    const color = booth.yah ? el.style?.fill || path.style.fill : path.style.fill;
+                    const color = booth.yah ? el.style?.fill?.replace("none", "") || path.style.fill : path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
                     booth.paths.push({
                         index: d,
                         color,
                     });
+
+                    if (!rect) {
+                        triangles.push(...getTrianglesFromFpPaths(d, layerID));
+                    }
                 }
+            }
+
+            if (triangles.length) {
+                let minX = Number.MAX_VALUE;
+                let minY = Number.MAX_VALUE;
+                let maxX = Number.MIN_VALUE;
+                let maxY = Number.MIN_VALUE;
+                triangles.forEach((t) => {
+                    t.forEach((p) => {
+                        minX = Math.min(minX, p[0]);
+                        minY = Math.min(minY, p[1]);
+                        maxX = Math.max(maxX, p[0]);
+                        maxY = Math.max(maxY, p[1]);
+                    });
+                });
+
+                booth.rect = Rect.fromXywh(minX, minY, maxX - minX, maxY - minY);
+                booth.noLabels = true;
             }
         }
     }

@@ -1,29 +1,32 @@
-@import "../styles/helpers.scss";
+@use "@styles/utils" as *;
 
 .overlay {
     position: absolute;
-    bottom: 0;
-    z-index: 100;
+    top: 10px;
+    left: 10px;
+    z-index: 103;
+    height: calc(100vh - 20px);
+    overflow: hidden;
+    background: var(--color-white);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
+    transition: background-color 0.5s;
 
     &.collapsed {
         bottom: unset;
     }
 
-    // -webkit-backdrop-filter: saturate(180%) blur(20px);
-    background-color: #fff;
-    transition: background-color 0.5s;
-    // backdrop-filter: saturate(180%) blur(20px);
-
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
     &.medium.bottom,
     &.small.bottom {
         border-radius: 0.5rem 0.5rem 0 0;
     }
+
     &.-backdrop {
-        background-color: rgba(255, 255, 255, 0.6);
+        background-color: rgb(255 255 255 / 60%);
         -webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);
     }
+
     &.-no-transition {
         transition: none;
     }
@@ -31,26 +34,12 @@
     @media print {
         display: none;
     }
-}
 
-.layout[dir="rtl"] {
-    .overlay.start {
-        left: unset;
-        right: 0;
-    }
-
-    &.efp-kiosk {
-        .overlay {
-            right: var(--k-app-gap) !important;
-        }
-    }
-}
-
-.efp-kiosk {
-    .overlay {
+    @include kiosk {
         top: var(--k-app-gap) !important;
         left: var(--k-app-gap) !important;
-        width: var(--k-searchBox-width) !important;
+        width: var(--k-searchbox-width) !important;
+        overflow: unset;
         background: transparent;
         box-shadow: unset;
         pointer-events: none;
@@ -58,6 +47,19 @@
         &.-backdrop {
             background: transparent;
             backdrop-filter: unset;
+        }
+    }
+}
+
+.layout[dir="rtl"] {
+    .overlay.start {
+        right: 10px;
+        left: unset;
+    }
+
+    &.efp-kiosk {
+        .overlay {
+            right: var(--k-app-gap) !important;
         }
     }
 }

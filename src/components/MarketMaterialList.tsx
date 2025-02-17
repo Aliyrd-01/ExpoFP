@@ -1,6 +1,5 @@
 import React from "react";
 import { MarketMaterial } from "../data/Data";
-import { FileIconSvg, DownloadIconSvg } from "./Icons";
 import "./MarketMaterialList.scss";
 
 export type MarketMaterialListProps = {
@@ -12,12 +11,12 @@ const MarketMaterialListItem: React.FC<MarketMaterial> = ({ fileName, path }) =>
         <a className="market-materials__item" href={path} target="_blank" rel="noopener noreferrer">
             <div className="market-materials__item-name">
                 <div className="market-materials__item-file">
-                    <FileIconSvg />
+                    <i className="icon-file-solid"></i>
                 </div>
                 <span>{fileName}</span>
             </div>
-            <div className="market-materials__item-download-button">
-                <DownloadIconSvg />
+            <div className="market-materials__item-download">
+                <i className="icon-download"></i>
             </div>
         </a>
     );

@@ -4,8 +4,6 @@ import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
 import { loadJs } from "../../../../tools/loaders";
-import logosFromBooths from "../../../../utils/imageloader";
-import ImagePainter from "../painters/ImagePainter";
 import { DrawerContext } from "./../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
@@ -13,6 +11,7 @@ import configBooths from "./config-booths";
 import configSizes from "./config-sizes";
 import { getChildLayers } from "../../../../store/init/init-layers";
 import { chunkArray } from "../../../../utils";
+import { BOOTHS_PAINTER_MARKER, SEPARATOR } from "../../../../constants";
 
 function createChildLayers(layer: Layer) {
     if (layer.childLayers.length) return layer.childLayers;
@@ -38,8 +37,8 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
 
         if (booths.length) {
             boothChunks.forEach((chunk, i) => {
-                configBooths(context, l.name + `:chunk${i}`, chunk, l.basePriority + 3, l.visible)();
-                context.getLayersPainters([l.name + `:chunk${i}`]).forEach((p) => p.preparePaint());
+                configBooths(context, `${l.name}${SEPARATOR}${BOOTHS_PAINTER_MARKER}${SEPARATOR}${i}`, chunk, l.basePriority + 3, l.visible)();
+                context.getLayersPainters([`${l.name}${SEPARATOR}${BOOTHS_PAINTER_MARKER}${SEPARATOR}${i}`]).forEach((p) => p.preparePaint());
             })
         }
 
@@ -53,14 +52,10 @@ function configLayer(l: Layer, context: DrawerContext, withConfiguration: boolea
 
         l.configured = true;
 
-        configBg(context, logosFromBooths(logosBooths), l, l.basePriority, l.visible).then(() => {
-            context.requireUpdate(null);
-            var imagePainter = context.getLayersPainters([l.name]).find((p) => p instanceof ImagePainter) as ImagePainter;
-            if (imagePainter) {
-                imagePainter.visible = l.visible;
-            }
+        configBg(context, l, l.basePriority, l.visible).then(() => {
+            context.getLayersPainters([l.name]).forEach(p => (p.dim = Number(uiState.dimmed)));
+            resolve(true);
         });
-        resolve(true);
     });
 }
 

@@ -1,0 +1,174 @@
+@use "@styles/vars";
+@use "sass:math";
+
+@function rem-separator($list, $separator: false) {
+    @if $separator == "comma" or $separator == "space" {
+        @return append($list, null, $separator);
+    }
+
+    @if function-exists("list-separator") == true {
+        @return list-separator($list);
+    }
+
+    $test-list: ();
+
+    @each $item in $list {
+        $test-list: append($test-list, $item, space);
+    }
+
+    @return if($test-list == $list, space, comma);
+}
+
+@mixin rem-baseline($zoom: 100%) {
+    font-size: math.div($zoom, 16px) * vars.$rem-baseline-px;
+}
+
+@function rem-convert($to, $values...) {
+    $result: ();
+    $separator: rem-separator($values);
+
+    @each $value in $values {
+        @if type-of($value) == "number" and unit($value) == "rem" and $to == "px" {
+            $result: append($result, math.div($value, 1rem) * vars.$rem-baseline-px, $separator);
+        } @else if type-of($value) == "number" and unit($value) == "px" and $to == "rem" {
+            $result: append($result, math.div($value, vars.$rem-baseline-px) * 1rem, $separator);
+        } @else if type-of($value) == "list" {
+            $value-separator: rem-separator($value);
+            $value: rem-convert($to, $value...);
+            $value: rem-separator($value, $value-separator);
+            $result: append($result, $value, $separator);
+        } @else {
+            $result: append($result, $value, $separator);
+        }
+    }
+
+    @return if(length($result) == 1, nth($result, 1), $result);
+}
+
+@function rem($values...) {
+    @if vars.$rem-px-only {
+        @return rem-convert(px, $values...);
+    } @else {
+        @return rem-convert(rem, $values...);
+    }
+}
+
+@mixin rem($properties, $values...) {
+    @if type-of($properties) == "map" {
+        @each $property in map-keys($properties) {
+            @include rem($property, map-get($properties, $property));
+        }
+    } @else {
+        @each $property in $properties {
+            @if vars.$rem-fallback or vars.$rem-px-only {
+                #{$property}: rem-convert(px, $values...);
+            }
+
+            @if not vars.$rem-px-only {
+                #{$property}: rem-convert(rem, $values...);
+            }
+        }
+    }
+}
+
+@function breakpoint-next($name, $breakpoints: vars.$grid-breakpoints, $breakpoint-names: map-keys($breakpoints)) {
+    $n: index($breakpoint-names, $name);
+
+    @if not $n {
+        @error "breakpoint `#{$name}` not found in `#{$breakpoints}`";
+    }
+
+    @return if($n < length($breakpoint-names), nth($breakpoint-names, $n + 1), null);
+}
+
+@function breakpoint-min($name, $breakpoints: vars.$grid-breakpoints) {
+    $min: map-get($breakpoints, $name);
+
+    @return if($min != 0, $min, null);
+}
+
+@function breakpoint-max($name, $breakpoints: vars.$grid-breakpoints) {
+    $next: breakpoint-next($name, $breakpoints);
+
+    @return if($next, breakpoint-min($next, $breakpoints), null);
+}
+
+@mixin media-breakpoint-down($name, $breakpoints: vars.$grid-breakpoints) {
+    $max: breakpoint-max($name, $breakpoints);
+
+    @if $max {
+        @media (max-width: $max) {
+            @content;
+        }
+    } @else {
+        @content;
+    }
+}
+
+@mixin media-breakpoint-up($name, $breakpoints: vars.$grid-breakpoints) {
+    $min: breakpoint-min($name, $breakpoints);
+
+    @if $min {
+        @media (min-width: $min) {
+            @content;
+        }
+    } @else {
+        @content;
+    }
+}
+
+@mixin responsive-classes-down-to($class, $name, $breakpoints: vars.$grid-breakpoints) {
+    $max: breakpoint-max($name, $breakpoints);
+    $keys: map-keys($breakpoints);
+    $index: index($keys, $name);
+    $selectors: "";
+
+    @if $index {
+        @for $i from 1 through $index {
+            $key: nth($keys, $i);
+            $selectors: if($selectors == "", $class + "." + $key, $selectors + ", " + $class + "." + $key);
+        }
+        #{$selectors} {
+            @content;
+        }
+    } @else {
+        @content;
+    }
+}
+
+@mixin dark {
+    @media (prefers-color-scheme: dark) {
+        & {
+            @content;
+        }
+    }
+
+    :global(.dark) & {
+        @content;
+    }
+}
+
+@mixin kiosk {
+    .efp-kiosk & {
+        @content;
+    }
+}
+
+@mixin rtl {
+    .layout[dir="rtl"] & {
+        @content;
+    }
+}
+
+@mixin icon {
+    font-family: efp-symbols !important;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    line-height: 1;
+    text-transform: none;
+    speak: never;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

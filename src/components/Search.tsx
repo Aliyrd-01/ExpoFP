@@ -12,9 +12,9 @@ import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import "./Search.scss";
 // import logger from "../tools/logger";
 import * as YouAreHere from "../utils/yah";
-import { kioskKey } from "../store/init/init-ui";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import settings from "../tools/settings";
+import { KIOSK_KEY } from "../constants";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
@@ -29,12 +29,12 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             alert(`"You are here" coordinantes: ${yah[0]} ${yah[1]}, scale ${yah[2]}`);
         } else if (commandValue === "none") {
             YouAreHere.removeYah();
-            isLocalStorageAvailable && localStorage.removeItem(kioskKey);
+            isLocalStorageAvailable && localStorage.removeItem(KIOSK_KEY);
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
             YouAreHere.setYah(commandValue.split(",")[0]);
-             if (isLocalStorageAvailable) {
-                localStorage.setItem(kioskKey, "1");
+            if (isLocalStorageAvailable) {
+                localStorage.setItem(KIOSK_KEY, "1");
                 uiState.kiosk = true;
             }
             if (forseRefresh) window.location.replace(url);
@@ -47,7 +47,7 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             if (!!yahX && !!yahY) {
                 YouAreHere.setYah(`${yahX},${yahY},${scale}`);
                 if (isLocalStorageAvailable) {
-                    localStorage.setItem(kioskKey, "1");
+                    localStorage.setItem(KIOSK_KEY, "1");
                     uiState.kiosk = true;
                 }
                 if (forseRefresh) window.location.replace(url);
@@ -76,6 +76,7 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             window.location.replace(newURL);
         }
     }
+
     return false;
 }
 
@@ -102,7 +103,7 @@ function Search() {
         get backMode() {
             return this.text ? "back" : "menu";
         },
-        get placeHolder() {            
+        get placeHolder() {
             if (settings.EXPO.startsWith("jetlag")) return "Search location or artist";
             return exhibitorStore.exhibitors.length === 0
                 ? t("Search {{boothTerm}}", { boothTerm: data.boothTerm.toLowerCase() })
@@ -135,6 +136,7 @@ function Search() {
 
     useEffect(() => {
         const setTop = () => {
+            if (!el.current) return;
             s.elementTop = el.current.getBoundingClientRect().top;
         };
         setTop();
@@ -178,7 +180,7 @@ function Search() {
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
         ) : null;
         const bar = (
-            <div className="search__bar" ref={el}>
+            <div className="efp-search-bar" ref={el}>
                 <input
                     type="search"
                     className={classNames({ fixed: s.hideRealInput })}

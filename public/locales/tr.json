@@ -17,9 +17,11 @@
     "Edit": "Düzenle",
     "Error sending login instructions": "Giriş talimatları gönderilirken hata oluştu",
     "Event Home": "Etkinlik Ana Sayfası",
+    "Exhibitors": "Katılımcılar",
     "Find your location": "Konumunuzu bulun",
     "Fit to screen": "Ekrana sığdır",
     "Get your free floor plan at": "Şurada ücretsiz yerleşim planı alın: ",
+    "Language": "Dil",
     "Layers": "Katmanlar",
     "Link copied to clipboard": "Bağlantı panoya kopyalandı",
     "Made with ExpoFP": "ExpoFP ile yapılmıştır",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "Profili düzenlemek için giriş talimatları {{email}} adresine gönderilsin mi?",
     "Share bookmarks": "Yer işaretlerini paylaş",
     "Size": "Boyut",
+    "Show More": "Daha fazla göster",
     "This is a FREE floor plan": "Bu ÜCRETSİZ bir yerleşim planıdır",
     "Toggle bookmark": "Yer işaretini aç/kapat",
     "Use {{keyCode}} + scroll to zoom": "Yakınlaştırma/uzaklaştırma için {{keyCode}} + kaydırma tuşunu kullanın",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "Telefonunuzda rotayı görmek için tarayın"
 }

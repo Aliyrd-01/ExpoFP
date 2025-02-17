@@ -4,6 +4,13 @@ import { CanvasDescriptor } from "../config/canvases";
 import { dimColor } from "./common-glsl";
 import Painter from "./Painter";
 import Sprite, { SpriteItem } from "./Sprite";
+import { logBuffer } from "../../../../tools/webgl-logger";
+import data from "../../../../data";
+import isMobile from "../../../../utils/is-mobile";
+import isWebview from "../../../../utils/is-webview";
+
+const isMobileDevice = isMobile || isWebview;
+
 
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
@@ -49,6 +56,8 @@ export default class RectPainter implements Painter {
     private readonly indexBufferPool: WebGLBuffer[] = [];
     private readonly fallBackTexture: WebGLTexture;
     private indexBuffersAreUint: boolean;
+    private area: number;
+    private baseColor?: Vec4;
 
     // to be set externally
     public id: string;
@@ -59,9 +68,17 @@ export default class RectPainter implements Painter {
     public dim = 0;
     public alpha = 1;
 
-    constructor(gl: WebGLRenderingContext) {
+    constructor(gl: WebGLRenderingContext, options?: RectPainterOptions) {
         this.gl = gl;
-        this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
+
+        let fragmentShader = fragmentSharedSource;
+        if (data.viewOptimizationLevel && isMobileDevice && options?.color) {
+            const [r, g, b, a] = this.parseColor(options.color);
+            fragmentShader = `#define BASE_COLOR vec4(${r},${g},${b},${a})\n${fragmentSharedSource}`;
+            this.baseColor = [r, g, b, a];
+        }
+
+        this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentShader]);
         this.program = this.programInfo.program;
 
         this.centerLocation = gl.getAttribLocation(this.program, "a_center");
@@ -88,16 +105,23 @@ export default class RectPainter implements Painter {
         this.fixdeltaptBuffer = gl.createBuffer();
         this.fixdeltamaxptBuffer = gl.createBuffer();
         this.fallBackTexture = gl.createTexture();
+        this.area = 0;
     }
 
     addObject(obj: DrawerObject) {
         const item = obj as DrawerObjectEx;
+
+        if (this.objectsById.has(item.id)) {
+            return;
+        }
+
         if (typeof item.visible === "undefined") item.visible = true;
         item.skipdim = !!item.skipdim;
         item.stretch = !!item.stretch;
         this.objects.push(item);
         this.sortedObjects.push(item);
         if (item.id) this.objectsById.set(item.id, item);
+        this.area += this.calcArea(item.canvasTmp?.width, item.canvasTmp?.height);
     }
 
     removeObject(id: string) {
@@ -116,6 +140,8 @@ export default class RectPainter implements Painter {
             this.sortedObjects.splice(sortedIndex, 1);
         }
 
+        this.area -= this.calcArea(obj.canvasTmp?.width, obj.canvasTmp?.height);
+
         this.objectsById.delete(id);
     }
 
@@ -125,6 +151,7 @@ export default class RectPainter implements Painter {
 
     updateVisible(id: string, visible: boolean) {
         const obj = this.objectsById.get(id);
+        if (!obj) return;
         if (obj.visible !== visible) {
             obj.visible = visible;
             this.groupsDirty = true;
@@ -133,6 +160,7 @@ export default class RectPainter implements Painter {
 
     updateSkipdim(id: string, skipdim: boolean) {
         const obj = this.objectsById.get(id);
+        if (!obj) return;
         if (obj.skipdim !== skipdim) {
             obj.skipdim = skipdim;
             this.skipdimDirty = true;
@@ -265,7 +293,14 @@ export default class RectPainter implements Painter {
             //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             const canvas = c();
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, canvas);
+
+            if (this.baseColor) {
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, gl.ALPHA, gl.UNSIGNED_BYTE, canvas);
+            } else {
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, canvas);
+            }
+
+            logBuffer(canvas.width * canvas.height * 2, "rect-painter-canvas");
             canvasIdToTexture.set(canvas.id, texture);
         }
 
@@ -556,6 +591,7 @@ export default class RectPainter implements Painter {
     private bufferFloat32Array(buffer: WebGLBuffer, data: number[]) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
+        logBuffer(data.length * 4, "rect-painter-buffer");
     }
 
     private enableBuffer(buffer: WebGLBuffer, location: number, size: 1 | 2 | 3 | 4) {
@@ -621,6 +657,94 @@ export default class RectPainter implements Painter {
             gl.drawElements(gl.TRIANGLES, group.numElements, this.indexBuffersAreUint ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT, 0);
         }
     }
+
+    /**
+     * Parses the provided color value into a Vec4.
+     * Accepts color formats: HEX (#RRGGBB or #RRGGBBAA) and RGBA (rgba(r, g, b, a)).
+     * 
+     * @param color - The color value to parse.
+     * @returns A Vec4 representation of the color or `undefined` if parsing fails.
+     */
+    private parseColor(color: string): Vec4 {
+        const defaultColor: Vec4 = [1.0, 1.0, 1.0, 1.0];
+
+        if (!color.trim()) {
+            if (isDebug) console.warn(`Empty color value provided.`);
+            return defaultColor;
+        }
+
+        const normalizedColor = color.trim().toLowerCase();
+
+        // Match hex format: #RRGGBB or #RRGGBBAA
+        const hexMatch = normalizedColor.match(/^#([a-f0-9]{3}|[a-f0-9]{6})([a-f0-9]{2})?$/);
+        if (hexMatch) {
+            const hexValue = hexMatch[1];
+            const alphaValue = hexMatch[2];
+
+            // #fff → #ffffff
+            const fullHex = hexValue.length === 3
+                ? hexValue.split('').map(c => c + c).join('')
+                : hexValue;
+
+            return this.hexToVec4(fullHex, alphaValue);
+        }
+
+        // Match rgba or rgb format
+        const rgbaMatch = normalizedColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d*\.?\d+))?\)$/);
+        if (rgbaMatch) {
+            return this.rgbaToVec4(rgbaMatch);
+        }
+
+        if (isDebug) {
+            console.warn(`Unsupported color format: "${color}"`);
+        }
+
+        return defaultColor;
+    }
+
+    /**
+     * Converts a HEX color to Vec4.
+     * 
+     * @param hex - The HEX color value (e.g., "RRGGBB").
+     * @param alphaHex - The optional HEX alpha value (e.g., "AA").
+     * @returns A Vec4 representation of the color.
+     */
+    private hexToVec4(hex: string, alphaHex?: string): Vec4 {
+        const r = parseInt(hex.slice(0, 2), 16) / 255;
+        const g = parseInt(hex.slice(2, 4), 16) / 255;
+        const b = parseInt(hex.slice(4, 6), 16) / 255;
+        const a = alphaHex ? parseInt(alphaHex, 16) / 255 : 1.0;
+        return [r, g, b, a];
+    }
+
+    /**
+     * Converts an RGBA match array to Vec4.
+     * 
+     * @param match - The RGBA match array from the regex.
+     * @returns A Vec4 representation of the color.
+     */
+    private rgbaToVec4(match: RegExpMatchArray): Vec4 {
+        const r = parseInt(match[1], 10) / 255;
+        const g = parseInt(match[2], 10) / 255;
+        const b = parseInt(match[3], 10) / 255;
+        const a = match[4] !== undefined ? parseFloat(match[4]) : 1.0;
+        return [r, g, b, a];
+    }
+
+    private calcArea(width: number, height: number): number {
+        const magicNumber = 1000; // Just to reduce the number.
+        return Math.floor((Math.max(0, width) * Math.max(0, height)) / magicNumber);
+    }
+
+    get optimizationLevel(): number {
+        const limit = 5000;
+        const maxLevel = 3;
+
+        return Math.min(
+            data.viewOptimizationLevel ? data.viewOptimizationLevel : Math.floor(this.area / limit),
+            maxLevel
+        );
+    }
 }
 
 export type TexPosition =
@@ -665,6 +789,10 @@ interface DrawerGroup {
     indexBuffer: WebGLBuffer;
     numElements: number;
     rotated: boolean;
+}
+
+export interface RectPainterOptions {
+    color?: string;
 }
 
 const vertexShaderSource = `attribute vec2 a_center;
@@ -742,7 +870,11 @@ void main() {
     if (v_color.w != 0.0) {
         col = v_color; 
     } else {
+        #ifdef BASE_COLOR
+        col = vec4(BASE_COLOR.rgb, texture2D(u_texture, v_texcoord).a);
+        #else
         col = texture2D(u_texture, v_texcoord);
+        #endif
     }
     if (v_dim > 0.0) {
         col = dimColor(col, v_dim);

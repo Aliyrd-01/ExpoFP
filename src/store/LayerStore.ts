@@ -40,17 +40,11 @@ export class Layer {
     @observable visible: boolean;
 
     get shortName(): string {
-        const parts = this.description.replace(/"/g, "").split(" ");
-        if (parts.length === 1) return this.description.substring(0, 2).toUpperCase();
-
-        var name: string;
-        if (Number.isInteger(parseInt(parts[0]))) {
-            name = parts[0] + parts[1][0];
-        } else if (Number.isInteger(parseInt(parts[1]))) {
-            name = parts[0][0] + parts[1];
-        } else name = parts[0][0] + parts[1][0];
-
-        return name.toLocaleUpperCase();
+        return this.description
+            .split(" ")
+            .map((x) => x.replace(/[^A-Z0-9]/gi, ""))
+            .map((x) => x.substring(0, 1).toLocaleUpperCase())
+            .join("");
     }
 }
 
@@ -73,11 +67,39 @@ export default class LayerStore {
         return this.mode !== LayersMode.Radio || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
+    @computed get floors() {
+        const uniqueLayers = new Set(
+            this.layers
+                .filter(l => l && !l.frozen && !l.rootParent)
+                .concat(
+                    store.routeStore.layers.filter(
+                        (l) => l && l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible,
+                    ),
+                ),
+        );
+
+        return Array.from(uniqueLayers)
+            .reverse()
+            .map((l) => ({
+                layer: l,
+                name: l.name,
+                shortName: l.shortName,
+                description: l.description,
+                active: l.visible,
+                disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
+            }));
+    }
+
     @action updateVisibility(layerOrName: string | Layer, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 
         const layer = layerOrName instanceof Layer ? layerOrName : this.findLayer(layerOrName);
-        if (!layer || layer.visible === visible) return;
+        if (!layer || layer.visible === visible) {
+            if (layer && store.routeStore.currentRouteLayer !== layer) {
+                store.routeStore.currentRouteLayer = layer;
+            }
+            return;
+        }
 
         loadLayer(layer).then(() => {
             if (this.mode === LayersMode.Radio) {
@@ -92,7 +114,6 @@ export default class LayerStore {
                             an(l, false);
                         }
                     }
-                    //else if (l.rect) uiState.moveToRect = l.rect;
                 });
             }
 
@@ -102,8 +123,12 @@ export default class LayerStore {
                     layer.childLayers.forEach((child) => {
                         child.visible = visible;
                     });
+
+                    if (visible) store.routeStore.currentRouteLayer = layer;
                 } else {
-                    an(layer, visible);
+                    an(layer, visible, () => {
+                        if (visible) store.routeStore.currentRouteLayer = layer;
+                    });
                 }
             }
         });
@@ -145,7 +170,7 @@ export function setContext(context: DrawerContext) {
     _context = context;
 }
 
-function an(layer: Layer, toVisible: boolean): void {
+function an(layer: Layer, toVisible: boolean, callback: () => void = null): void {
     if (toVisible) store.layerStore.updateVisibility(layer, true);
 
     animate(
@@ -167,6 +192,8 @@ function an(layer: Layer, toVisible: boolean): void {
                 const layersPainters = _context.getLayersPainters([layer.name, ...layer.childLayers.map((l) => l.name)]);
                 layersPainters.forEach((p) => ((p as RectPainter).alpha = 1));
             }
+
+            callback?.();
         }
     );
 }

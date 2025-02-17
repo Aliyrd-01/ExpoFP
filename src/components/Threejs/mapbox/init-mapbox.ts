@@ -1,4 +1,5 @@
 import mapboxgl from "mapbox-gl";
+import settings from "../../../tools/settings";
 import { configureWebGLForMapbox } from "./configureWebGLForMapbox";
 
 export default function initMapbox(container: HTMLElement, style: string): Promise<mapboxgl.Map> {
@@ -15,7 +16,7 @@ export default function initMapbox(container: HTMLElement, style: string): Promi
             antialias: true,
             pitch: 30,
             maxPitch: 70,
-            minZoom: 17
+            minZoom: 14,
         });
 
         map.on("load", () => resolve(map));

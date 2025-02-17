@@ -17,9 +17,11 @@
     "Edit": "Редактировать",
     "Error sending login instructions": "При отправке письма произошла ошибка",
     "Event Home": "Сайт выставки",
+    "Exhibitors": "Экспоненты",
     "Find your location": "Найти ваше местоположение",
     "Fit to screen": "По ширине экрана",
     "Get your free floor plan at": "Создайте бесплатный план на",
+    "Language": "Язык",
     "Layers": "Слои",
     "Link copied to clipboard": "Ссылка скопирована в буфер обмена",
     "Made with ExpoFP": "Создано с помощью ExpoFP",
@@ -38,6 +40,7 @@
     "Send login instructions to {{email}} to edit profile?": "Отправить инструкции для входа и внесения изменений в профиль на {{email}}?",
     "Share bookmarks": "Поделиться",
     "Size": "Размер",
+    "Show More": "Показать больше",
     "This is a FREE floor plan": "Это БЕСПЛАТНЫЙ план",
     "Toggle bookmark": "Добавить закладку",
     "Use {{keyCode}} + scroll to zoom": "Используйте {{keyCode}} + колесо прокрутки для увеличения",
@@ -49,5 +52,6 @@
     "We use cookies for analytics only": "We use cookies for analytics only.",
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
-    "Reject": "Reject"
+    "Reject": "Reject",
+    "Scan to see route on your phone": "Отсканируйте, чтобы увидеть маршрут на вашем телефоне"
 }

@@ -20,13 +20,15 @@ const selectedMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, side: TH
 const dimmedMaterial = new THREE.MeshPhysicalMaterial({
     metalness: 0,
     roughness: 1,
-    envMapIntensity: 0.5,
+    //envMapIntensity: 0.5,
     clearcoat: 0.5,
     transparent: true,
-    transmission: 0.85,
-    opacity: 1,
-    reflectivity: 0.2,
+    //transmission: 0.85,
+    opacity: 0.5,
+    //reflectivity: 0.2,
     side: THREE.DoubleSide,
+    depthWrite: true,
+    depthTest: true,
 });
 
 const hoveredMaterial = new THREE.MeshPhongMaterial({ color: 0xff5733, side: THREE.DoubleSide, name: "hovered" });

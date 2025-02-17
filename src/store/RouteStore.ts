@@ -2,8 +2,10 @@ import { action, computed, observable } from "mobx";
 import { Point, lineLength } from "simple-geometry";
 import store, { layersStore } from ".";
 import { mapCurrentPosition } from "../components/Map/drawing/config/config-wf";
+import { fpGeo } from "../components/Mapbox/utils/fpGeo";
 import Rect from "../core/Rect";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import { GpsConfig, convertGpsToLocal } from "../utils/gps";
 import { getLayerSvg, svgArea } from "./../data/svg";
 import { RouteLine, getGraphLines, sublines } from "./../utils/wayfinding";
 import { Booth } from "./BoothStore";
@@ -41,7 +43,12 @@ export default class RouteStore {
         this.focusEnabled = !window.location.search;
     }
 
+    @computed get canFindLocation() {
+        return !!this.defaultFrom || !!this.currentPosition;
+    }
+
     @action selectRoute(route: Route) {
+        uiState.list = { type: "search", text: "", focused: false };
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
         if (route?.from && route?.to && route.from === route.to) route = null;
         let list = [];
@@ -62,16 +69,15 @@ export default class RouteStore {
 
         if (!route && store.fp.onDirection) store.fp.onDirection(null);
 
-
         setTimeout(() => {
             this.rootStore.moveToList(list);
             var id = uiState.selectedRoute?.from?.id;
             uiState.details = route;
             if (route && (!route.from || !route.to)) store.showOverlay();
-            if (route?.to && route?.from?.layer && !route?.from?.visible && id !== route?.from?.id)
+            if (route?.to && route?.from?.layer)
                 this.rootStore.layerStore.updateVisibility(route.from.layer, true);
 
-            if (route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
+            if (!this.currentRouteLayer && route?.from?.layer) this.currentRouteLayer = route?.from?.layer;
 
             if (route?.from && route?.to)
                 sendEventToGa(
@@ -82,27 +88,26 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get pathLayers() {
-        const layers: {id: number, name: string}[] = [];
-        store.routeStore.routeLines
-            ?.map((rl) => rl.p0.layer)
+        return store.routeStore.routeLines
+            ?.map((line) => line.p0.layer)
+            ?.filter((name, i, self) => self.indexOf(name) === i)
             .reverse()
-            .forEach((l, index, array) => {
-                if (index === 0 || l !== array[index - 1]) {
-                    layers.push({ id: index + 1, name: l });
-                }
-            });
-
-        return layers.map((l) => {
-            return {
-                id: l.id,
-                layer: store.layerStore.layers.find((layer) => layer.name === l.name)
-            }
-        } );
+            .map((name, i) => ({ id: i + 1, layer: store.layerStore.findLayer(name) }));
     }
 
     @computed({ keepAlive: true }) get nearestBooth() {
-        if (!this.currentPosition) return null;
-        let layerExists = this.rootStore.layerStore.findLayer(this.currentPosition.z);
+        return this.getNearestBooth(this.currentPosition);
+    }
+
+    getNearestBooth(position: CurrentPosition) {
+        if (!position) return null;
+
+        let layerExists = this.rootStore.layerStore.findLayer(position.z);
+
+        const localPoint =
+            position.lat && position.lng
+                ? convertGpsToLocal(position.lat, position.lng, fpGeo.properties.config as GpsConfig)
+                : position;
 
         return (
             this.rootStore.boothStore.booths
@@ -110,19 +115,19 @@ export default class RouteStore {
                     if (layersStore.mode === LayersMode.Default || !layerExists) {
                         return b.visible && b.rect;
                     } else {
-                        return b.rect && ((!this.currentPosition.z && b.visible) || layerExists.name === b.layer?.name);
+                        return b.rect && ((!position.z && b.visible) || layerExists.name === b.layer?.name);
                     }
                 })
                 .sort(
                     (b1, b2) =>
-                        lineLength(this.currentPosition, { x: b1.rect.cx, y: b1.rect.cy }) -
-                        lineLength(this.currentPosition, { x: b2.rect.cx, y: b2.rect.cy })
+                        lineLength(localPoint, { x: b1.rect.cx, y: b1.rect.cy }) -
+                        lineLength(localPoint, { x: b2.rect.cx, y: b2.rect.cy })
                 )[0] || null
         );
     }
 
     @action setMarkers(data: MarkersData) {
-        this.markersData.markers = data.markers.map(dot => {
+        this.markersData.markers = data.markers.map((dot) => {
             dot.x = replaceCommasWithDot(dot.x);
             dot.y = replaceCommasWithDot(dot.y);
             dot.lat = replaceCommasWithDot(dot.lat);
@@ -134,8 +139,8 @@ export default class RouteStore {
     }
 
     @action selectMarker(id: string, focus: boolean) {
-        const marker = this.markersData.markers.find(marker => marker.id === id);
-        this.markersData.markers.forEach(marker => marker.active = false);
+        const marker = this.markersData.markers.find((marker) => marker.id === id);
+        this.markersData.markers.forEach((marker) => (marker.active = false));
 
         if (marker) {
             marker.active = true;
@@ -150,7 +155,7 @@ export default class RouteStore {
     }
 
     @computed({ keepAlive: true }) get selectedMarkers() {
-        return this.markersData.markers.filter(marker => marker.active);
+        return this.markersData.markers.filter((marker) => marker.active);
     }
 
     @computed({ keepAlive: true }) get layers(): Layer[] {
@@ -202,6 +207,7 @@ export default class RouteStore {
 
         this.iconType = icon ? 1 : 0;
         const p = point ? mapCurrentPosition(point) : null;
+
         if (!p) {
             this.currentPosition = null;
             return;
@@ -210,7 +216,9 @@ export default class RouteStore {
         let layer = store.layerStore.findLayer(point.z);
 
         if (focus) {
-            if (layer && !layer?.visible) layersStore.updateVisibility(layer, true);
+            if (layer && !layer?.visible) {
+                layersStore.updateVisibility(layer, true);
+            }
             this.rootStore.uiState.moveToRect = Rect.fromCxcywh(p.x, p.y, 1000, 1000);
         }
 
@@ -222,6 +230,8 @@ export default class RouteStore {
     }
 
     @action findLocation() {
+        if (!this.canFindLocation) return;
+
         if (store.mapboxStore.showMapbox) {
             uiState.moveToLocation = true;
             return;
@@ -249,12 +259,14 @@ export default class RouteStore {
 
         const route = uiState.selectedRoute;
 
-        const units = getLayerSvg().getAttribute("units");
+        const l = getLayerSvg();
+        const units = l.getAttribute("units");
+        const isNewVersion = l.getAttribute("fp-ver")?.startsWith("5") ?? false;
         let distance = 0;
 
         routeLines.forEach((line) => (distance += lineLength(line.p0, line.p1)));
 
-        distance = Math.round(distance / 10.0);
+        distance = Math.round(distance / (isNewVersion ? 1 : 10.0));
 
         if (store.fp.onDirection)
             setTimeout(() => {
@@ -263,6 +275,7 @@ export default class RouteStore {
                         ? {
                               id: route.from.id,
                               name: route.from.name,
+                              externalId: route.from.externalId,
                               layer: { name: route.from?.layer?.name, description: route.from?.layer?.description },
                           }
                         : null,
@@ -270,6 +283,7 @@ export default class RouteStore {
                         ? {
                               id: route.to.id,
                               name: route.to.name,
+                              externalId: route.to.externalId,
                               layer: { name: route.to.layer?.name, description: route.to.layer?.description },
                           }
                         : null,
@@ -277,7 +291,7 @@ export default class RouteStore {
                     distance: `${distance}${units}`,
                     time: Math.round(distance / 1.4),
                 });
-            }, 100);
+            }, 200);
 
         this.routeDistance = distance;
     }
@@ -304,20 +318,22 @@ export default class RouteStore {
     }
 }
 
-export function extractRoute(from: string, to: string) {
-    let bFrom = store.boothStore.booths.find((b) => b.name === from || b.slug === from || b.externalId === from);
-    if (!bFrom)
-        bFrom = store.exhibitorStore.exhibitors.find((e) => e.name === from || e.slug === from || e.externalId === from)
-            ?.booths[0];
+export function findBooth(str: string) {
+    return store.boothStore.findBooth(str) || store.exhibitorStore.findExhibitor(str)?.booths[0];
+}
 
-    let bTo = store.boothStore.booths.find((b) => b.name === to || b.slug === to || b.externalId === to);
-    if (!bTo) bTo = store.exhibitorStore.exhibitors.find((e) => e.name === to || e.slug === to || e.externalId === to)?.booths[0];
-
-    return new Route(bFrom, bTo);
+export function extractRoute(from: string, to: string, waypoints: string[]) {
+    return new Route(findBooth(from) ?? store.routeStore.defaultFrom ?? null, findBooth(to), waypoints?.map((w) => findBooth(w)));
 }
 
 export class Route {
-    public constructor(public from: Booth, public to: Booth) {}
+    public constructor(
+        public from: Booth,
+        public to: Booth,
+        public waypoints?: Booth[],
+    ) {
+        this.waypoints = waypoints?.filter(wp => wp && (wp.id !== from?.id && wp.id !== to?.id));
+    }
 }
 
 export class CurrentPosition extends Point {
@@ -335,21 +351,21 @@ export class CurrentPosition extends Point {
 
 export interface Marker extends CurrentPosition {
     id: string;
-    icon: string,
-    selectedIcon: string,
-    position: "centertop" | "lefttop",
+    icon: string;
+    selectedIcon: string;
+    position: "centertop" | "lefttop";
     active?: boolean;
 }
 
 export interface MarkerIcon {
-    name: string,
-    content: string,
-    width: number,
-    height: number
-    scale?: number
+    name: string;
+    content: string;
+    width: number;
+    height: number;
+    scale?: number;
 }
 
 export interface MarkersData {
-    icons: MarkerIcon[],
-    markers: Marker[]
+    icons: MarkerIcon[];
+    markers: Marker[];
 }

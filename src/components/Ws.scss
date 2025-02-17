@@ -1,86 +1,84 @@
+@use "@styles/utils" as *;
+
 .ws {
     position: absolute;
-    /* top: 0;
-    &.-desktop-bottom {
-        top: unset;
-        bottom: 0;
-    } */
-    /* bottom: 0; */
-    right: 0;
-    /* height: 0; */
-    background: #fff;
+    right: rem(10px);
+    z-index: 102;
     display: flex;
     justify-content: space-around;
-    //padding: 0 0.3rem;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    background: var(--color-white);
     filter: brightness(97%);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
     transition: opacity 0.5s;
-    z-index: 100;
 
-    /* .overlay-bottom & {
-        bottom: unset;
-        top: 0;
-    } */
     &__exhibitor {
-        /* height: 100%; */
         display: flex;
         align-items: center;
-        background: #fff;
-        margin: 0.3rem 0;
+        margin: rem(5px 0);
+        background: var(--color-white);
 
         > img {
-            //max-width: 45vw;
             max-height: 100%;
         }
     }
+
     @media print {
         display: none;
     }
+
+    @include kiosk {
+        top: unset !important;
+        right: 0 !important;
+        bottom: 0;
+        align-items: center;
+        width: 100vw !important;
+        height: var(--k-ws-height);
+        max-height: var(--k-ws-height);
+        border-radius: 0;
+    }
 }
+
 .ws__list-item {
     display: inline-block;
-    margin-right: 10px;
+    margin-right: rem(10px);
 }
+
 .ws__exhibitor.exit {
     display: none;
 }
+
 .overlay-left .ws__exhibitor {
     &.enter {
         opacity: 0;
     }
+
     &.enter-active {
         opacity: 1;
         transition: opacity 0.5s;
     }
+
     &.exit {
         display: none;
     }
 }
-// // .overlay-left .ws
-
-// // .overlay-left .ws .ws__exhibitor.enter,
-// // .overlay-left .ws .ws__exhibitor.leave-to {
-// //     opacity: 0;
-// }
 
 .efp-kiosk {
     &.efp-ws-mode {
         .overlay-content__scrollable {
-            max-height: var(--k-sidebarMaxHeightWithWs);
+            max-height: var(--k-sidebar-max-height-with-ws);
         }
-    }
-    .ws {
-        top: unset !important;
-        bottom: 0;
-        right: 0 !important;
-        width: 100vw !important;
-        height: var(--k-ws-height);
-        max-height: var(--k-ws-height);
-        align-items: center;
     }
 }
 
 .layout[dir="rtl"] .ws {
-    right: unset;
-    left: 0;
+    right: unset !important;
+    left: 10px;
+}
+
+@media (width <= 550px) {
+    .ws {
+        border-radius: 0;
+    }
 }
