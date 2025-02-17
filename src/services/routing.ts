@@ -125,7 +125,11 @@ function dispatchFromUrl() {
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find(
-        (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+        (x: Booth) => (
+            x.slug?.toLowerCase() === slug?.toLowerCase()
+            || x.externalId?.toLowerCase() === slug?.toLowerCase()
+            || x.externalId?.toLowerCase()?.replace(/\s+/g, "") === slug?.toLowerCase()
+        )
     );
 
     const searchParams = new URLSearchParams(window.location.search);
