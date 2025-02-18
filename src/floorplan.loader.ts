@@ -311,8 +311,9 @@ export default class FloorPlanLoader implements FloorPlan {
             await initI18n();
 
             const isHeatmap = window.location.search.startsWith("?heatmap=true");
+            const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
+
             if (isHeatmap) {
-                const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
                 const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(
                     (res) => res.json()
                 );
@@ -321,17 +322,14 @@ export default class FloorPlanLoader implements FloorPlan {
                 );
                 window["__heatmapData"] = { booths, exhibitors };
             } else if (window.location.search.startsWith("?heatmapYah=true")) {
-                // TODO: request data from server
-                window["__heatmapDataYah"] = {
-                    yah: [
-                        { id: "yah_3", name: "QR CODE 3 (level 1)", x: 48000, y: 13500, z: "1", viewCount: 1358 },
-                        { id: "yah_1", name: "QR CODE 1 (level 2)", x: 44000, y: 13500, z: "2", viewCount: 430 },
-                        { id: "yah_2", name: "QR CODE 2 (level 3)", x: 46000, y: 13500, z: "3", viewCount: 901 },
-                        // { id: "yah_4", name: "QR CODE 4", x: 46000, y: 12500, viewCount: 330 },
-                        // { id: "yah_5", name: "QR CODE 5", x: 44000, y: 11500, viewCount: 867 },
-                        // { id: "yah_6", name: "QR CODE 6", x: 48000, y: 11500, viewCount: 114 }
-                    ]
-                };
+                try {
+                    const resp = await fetch(`https://app.expofp.com/api/fp-stats/get?expoId=${expoId}&type=yahview`);
+                    if (resp.ok) {
+                        window["__heatmapDataYah"] = { yah: await resp.json() };
+                    }
+                } catch (err) {
+                    console.warn(err);
+                }
             }
 
             if (data.isRebooking) {
