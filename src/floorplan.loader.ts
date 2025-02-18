@@ -269,6 +269,22 @@ export default class FloorPlanLoader implements FloorPlan {
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
+        const promises = [
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
+            loadCss("vendor/sanitize-css/sanitize.css", container),
+            loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
+            loadCss("vendor/mapbox/mapbox-gl.css", container),
+            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
+            loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
+            loadFont("Inter", "fonts/inter-400.woff2", { weight: 400 }),
+            loadFont("Inter", "fonts/inter-500.woff2", { weight: 500 }),
+            loadFont("Inter", "fonts/inter-600.woff2", { weight: 600 }),
+            loadFont("efp-symbols", "fonts/efp-symbols.woff", { weight: 400 }),
+            loadJs(addVersionToUrl(wfDataUrl)),
+            loadJs(addVersionToUrl(dataUrl)),
+            loadJs(addVersionToUrl(fpUrl)),
+        ];
+
         let handledStyleElements = 0;
 
         this.efpStyleLoadHandler = function (e: Event) {
@@ -284,23 +300,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         const self = this;
         (async function init() {
-            await loadJs(dataUrlBase + "version.js");
-            await Promise.all([
-                initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
-                loadCss("vendor/sanitize-css/sanitize.css", container),
-                loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
-                loadCss("vendor/mapbox/mapbox-gl.css", container),
-                loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-300.woff2", { weight: 300 }),
-                loadFont("Oswald", "fonts/oswald-v17-cyrillic_latin-500.woff2", { weight: 500 }),
-                loadFont("Inter", "fonts/inter-400.woff2", { weight: 400 }),
-                loadFont("Inter", "fonts/inter-500.woff2", { weight: 500 }),
-                loadFont("Inter", "fonts/inter-600.woff2", { weight: 600 }),
-                loadFont("efp-symbols", "fonts/efp-symbols.woff", { weight: 400 }),
-                loadJs(addVersionToUrl(wfDataUrl)),
-                loadJs(addVersionToUrl(dataUrl)),
-                loadJs(addVersionToUrl(fpUrl)),
-            ]);
-
+            await Promise.all(promises);
             let fpVersion = 0;
             while (window["__fpPending"] && !window["__fp"]) {
                 await sleep(2000);

@@ -23,6 +23,9 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
         store.boothStore.booths
             .map((b) => {
                 const exhibitor = b.rect && b.exhibitors.find((e) => e.logoInBooth && e.logo);
+
+                console.error("exhibitor.logo", exhibitor?.logo);
+
                 return exhibitor ? [b.id, { preferred: getLogoUrl(exhibitor.logo), fallback: exhibitor.logo }] : null;
             })
             .filter(Boolean) as [number, ImageUrls][],
