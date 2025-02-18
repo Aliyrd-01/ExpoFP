@@ -3,6 +3,8 @@ import isFromDesigner from "../utils/is-from-designer";
 import baseUrl from "./base-url";
 import FontFaceObserver from "fontfaceobserver";
 import logger from "./logger";
+import { v4 as uuidv4 } from 'uuid';
+
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
         return baseUrl + url;
@@ -27,7 +29,7 @@ export async function loadJs(url: string) {
 
     return new Promise(function (resolve, reject) {
         const scriptTag = document.createElement("script");
-        scriptTag.src = goodUrl(url);
+        scriptTag.src = addVersionToUrl(goodUrl(url));
         scriptTag.onload = resolve;
         scriptTag.onerror = resolve;
         logger.log("Injecting script:", scriptTag.src);
@@ -95,4 +97,26 @@ export async function loadCustomFonts(customCss: string) {
     const fontObservers = fontFaces.map((fontFace) => new FontFaceObserver(fontFace).load());
 
     return Promise.allSettled(fontObservers);
+}
+
+function addVersionToUrl(url: string): string {
+    try {
+        let version = window["__fpDataVersion"];
+        if (!version) {
+            version = uuidv4().replace(/\D/g, "");
+        }
+
+        const newUrl = new URL(url);
+        if (newUrl.searchParams.has("v")) {
+            return url;
+        }
+
+        newUrl.searchParams.set("v", version);
+
+        return newUrl.toString();
+    } catch (err) {
+        console.warn(err);
+    }
+
+    return url;
 }
