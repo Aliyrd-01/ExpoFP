@@ -271,12 +271,13 @@ export default class FloorPlanLoader implements FloorPlan {
 
         function addVersionToUrl(url) {
             try {
-                const newUrl = new URL(url);
                 const version = window["__fpDataVersion"];
                 if (version) {
+                    const newUrl = new URL(url);
                     newUrl.searchParams.set("v", version);
+                    return newUrl.toString();
                 }
-                return newUrl.toString();
+                return url;
             } catch (err) {
                 console.warn(err);
                 return url;
