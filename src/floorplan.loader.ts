@@ -269,7 +269,22 @@ export default class FloorPlanLoader implements FloorPlan {
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
+        function addVersionToUrl(url) {
+            try {
+                const newUrl = new URL(url);
+                const version = window["__fpDataVersion"];
+                if (version) {
+                    newUrl.searchParams.set("v", version);
+                }
+                return newUrl.toString();
+            } catch (err) {
+                console.warn(err);
+                return url;
+            }
+        }
+
         const promises = [
+            loadJs(dataUrlBase + "version.js"),
             initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
@@ -280,9 +295,9 @@ export default class FloorPlanLoader implements FloorPlan {
             loadFont("Inter", "fonts/inter-500.woff2", { weight: 500 }),
             loadFont("Inter", "fonts/inter-600.woff2", { weight: 600 }),
             loadFont("efp-symbols", "fonts/efp-symbols.woff", { weight: 400 }),
-            loadJs(wfDataUrl),
-            loadJs(dataUrl),
-            loadJs(fpUrl),
+            loadJs(addVersionToUrl(wfDataUrl)),
+            loadJs(addVersionToUrl(dataUrl)),
+            loadJs(addVersionToUrl(fpUrl)),
         ];
 
         let handledStyleElements = 0;
