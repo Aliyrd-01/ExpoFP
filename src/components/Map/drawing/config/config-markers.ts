@@ -46,8 +46,6 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
             const icon = iconMap.get(marker.icon);
             if (!icon) return;
 
-            console.error(icon.scale);
-
             const cacheKey = `${marker.icon}_${icon.scale}`;
             if (!canvasCache.has(cacheKey)) {
                 const imageCanvas = createImageCanvas(icon.img, icon.width, icon.height, icon.scale);

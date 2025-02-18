@@ -200,13 +200,11 @@ function processURLParams() {
 
             historyReplace(newSearch);
 
-            // TODO REVISE
             store.uiState.heatmapYah = true;
             store.uiState.monochrome = true;
             store.uiState.hideLogoInBooth = true;
             store.uiState.hideHeaderLogo = true;
             store.uiState.disableBookmarked = true;
-            // store.exhibitorStore.exhibitors.forEach(ex => ex.featured = false);
         }
     } else if (locationSearch.includes("heatmap")) {
         const url = new URL(window.location.href);
