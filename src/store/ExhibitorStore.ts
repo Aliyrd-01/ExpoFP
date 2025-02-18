@@ -13,11 +13,16 @@ export default class ExhibitorStore {
     private readonly rootStore: RootStore;
     readonly exhibitors: Exhibitor[] = [];
 
+    private timeout;
+
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
     }
 
     @observable highlightedByExternalIds = [];
+
+    @observable rebookingStateChangeRequested = false;
+    @observable rebookingStateSaved = false;
 
     @computed({ keepAlive: true }) get exhibitorById() {
         return new Map<number, Exhibitor>(this.exhibitors.map((c) => [c.id, c]));
@@ -45,6 +50,8 @@ export default class ExhibitorStore {
     }
 
     @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
+        clearTimeout(this.timeout);
+
         exhibitor.rebookingState = state;
         exhibitor.rebookingNote = rebookingNote;
 
@@ -63,12 +70,17 @@ export default class ExhibitorStore {
             }),
         })
             .then((r) => {
-                console.info("Rebooking state sent", r.ok);
+                if (r.ok) this.rebookingStateSaved = true;
                 if (!r.ok && !isDebug) exhibitor.rebookingState = 0;
             })
             .catch((e) => {
                 exhibitor.rebookingState = 0;
-                alert("Error sending rebooking state");
+                this.rebookingStateSaved = false;
+            }).finally(() => {
+                this.rebookingStateChangeRequested = true;
+                this.timeout = setTimeout(() => {
+                    this.rebookingStateChangeRequested = false;
+                }, 5000);
             });
     }
 
