@@ -96,3 +96,18 @@ export async function loadCustomFonts(customCss: string) {
 
     return Promise.allSettled(fontObservers);
 }
+
+export function addVersionToUrl(url: string): string {
+    try {
+        const version = window["__fpDataVersion"];
+        if (version) {
+            const newUrl = new URL(url);
+            newUrl.searchParams.set("v", version);
+            return newUrl.toString();
+        }
+        return url;
+    } catch (err) {
+        console.warn(err);
+        return url;
+    }
+}
