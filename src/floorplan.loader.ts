@@ -4,7 +4,7 @@ import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
-import { addVersionToUrl, loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
+import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
@@ -280,9 +280,9 @@ export default class FloorPlanLoader implements FloorPlan {
             loadFont("Inter", "fonts/inter-500.woff2", { weight: 500 }),
             loadFont("Inter", "fonts/inter-600.woff2", { weight: 600 }),
             loadFont("efp-symbols", "fonts/efp-symbols.woff", { weight: 400 }),
-            loadJs(addVersionToUrl(wfDataUrl)),
-            loadJs(addVersionToUrl(dataUrl)),
-            loadJs(addVersionToUrl(fpUrl)),
+            loadJs(wfDataUrl),
+            loadJs(dataUrl),
+            loadJs(fpUrl),
         ];
 
         let handledStyleElements = 0;

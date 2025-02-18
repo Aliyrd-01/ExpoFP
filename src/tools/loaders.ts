@@ -27,7 +27,7 @@ export async function loadJs(url: string) {
 
     return new Promise(function (resolve, reject) {
         const scriptTag = document.createElement("script");
-        scriptTag.src = goodUrl(url);
+        scriptTag.src = addVersionToUrl(goodUrl(url));
         scriptTag.onload = resolve;
         scriptTag.onerror = resolve;
         logger.log("Injecting script:", scriptTag.src);
@@ -97,7 +97,7 @@ export async function loadCustomFonts(customCss: string) {
     return Promise.allSettled(fontObservers);
 }
 
-export function addVersionToUrl(url: string): string {
+function addVersionToUrl(url: string): string {
     try {
         const version = window["__fpDataVersion"];
         if (version) {

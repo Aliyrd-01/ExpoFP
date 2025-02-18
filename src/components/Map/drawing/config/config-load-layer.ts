@@ -3,7 +3,7 @@ import store from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import initBooths from "../../../../store/init/init-booths";
 import { Layer, LayersMode } from "../../../../store/LayerStore";
-import { addVersionToUrl, loadJs } from "../../../../tools/loaders";
+import { loadJs } from "../../../../tools/loaders";
 import { DrawerContext } from "./../Drawer1";
 import { getContext } from "./config-all";
 import configBg from "./config-bg";
@@ -69,7 +69,7 @@ export default async function loadLayer(
     return new Promise(async (resolve, reject) => {
         if (store.layerStore.mode !== LayersMode.Default && !window[`__fpPaths${layer.name}`] && !layer.rootParent) {
             try {
-                await loadJs(addVersionToUrl(`${window["__dataUrlBase"]}fp.svg.${layer.name}.js`));
+                await loadJs(`${window["__dataUrlBase"]}fp.svg.${layer.name}.js`);
             } catch {
                 return reject();
             }
