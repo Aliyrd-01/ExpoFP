@@ -3,6 +3,8 @@ import isFromDesigner from "../utils/is-from-designer";
 import baseUrl from "./base-url";
 import FontFaceObserver from "fontfaceobserver";
 import logger from "./logger";
+import { v4 as uuidv4 } from 'uuid';
+
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
         return baseUrl + url;
@@ -99,9 +101,9 @@ export async function loadCustomFonts(customCss: string) {
 
 function addVersionToUrl(url: string): string {
     try {
-        const version = window["__fpDataVersion"];
+        let version = window["__fpDataVersion"];
         if (!version) {
-            return url;
+            version = uuidv4().replace(/\D/g, "");
         }
 
         const newUrl = new URL(url);
