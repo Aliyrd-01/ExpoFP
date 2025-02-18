@@ -100,14 +100,21 @@ export async function loadCustomFonts(customCss: string) {
 function addVersionToUrl(url: string): string {
     try {
         const version = window["__fpDataVersion"];
-        if (version) {
-            const newUrl = new URL(url);
-            newUrl.searchParams.set("v", version);
-            return newUrl.toString();
+        if (!version) {
+            return url;
         }
-        return url;
+
+        const newUrl = new URL(url);
+        if (newUrl.searchParams.has("v")) {
+            return url;
+        }
+
+        newUrl.searchParams.set("v", version);
+
+        return newUrl.toString();
     } catch (err) {
         console.warn(err);
-        return url;
     }
+
+    return url;
 }
