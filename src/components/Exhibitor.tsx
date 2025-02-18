@@ -124,7 +124,7 @@ function ExhibitorComponent() {
         exiting: { opacity: 0 },
         exited: { opacity: 0 },
     };
-    const transitionDelay = 250;
+    const transitionDelay = 150;
 
     return useObserver(() => {
         const exhibitor = s.exhibitor;
@@ -165,6 +165,10 @@ function ExhibitorComponent() {
                     in={store.exhibitorStore.rebookingStateChangeRequested}
                     nodeRef={transitionRef}
                     timeout={transitionDelay}
+                    appear
+                    enter
+                    exit
+                    mountOnEnter
                     unmountOnExit
                 >
                     {state => (

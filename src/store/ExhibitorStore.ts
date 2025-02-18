@@ -51,6 +51,7 @@ export default class ExhibitorStore {
 
     @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
         clearTimeout(this.timeout);
+        this.rebookingStateChangeRequested = false;
 
         exhibitor.rebookingState = state;
         exhibitor.rebookingNote = rebookingNote;
@@ -71,9 +72,12 @@ export default class ExhibitorStore {
         })
             .then((r) => {
                 if (r.ok) this.rebookingStateSaved = true;
-                if (!r.ok && !isDebug) exhibitor.rebookingState = 0;
+                if (!r.ok && !isDebug) {
+                    exhibitor.rebookingState = 0;
+                    this.rebookingStateSaved = false;
+                }
             })
-            .catch((e) => {
+            .catch(() => {
                 exhibitor.rebookingState = 0;
                 this.rebookingStateSaved = false;
             }).finally(() => {
