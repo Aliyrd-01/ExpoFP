@@ -173,6 +173,7 @@ function ExhibitorComponent() {
                                 position: "fixed",
                                 bottom: "1rem",
                                 left: "1rem",
+                                zIndex: 9999,
                                 transition: `opacity ${transitionDelay}ms ease-in-out`,
                                 opacity: 0,
                                 ...transitionStyles[state],
