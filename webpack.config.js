@@ -25,6 +25,7 @@ function createConfig(env) {
         output: {
             path: path.resolve(__dirname, "dist"),
             filename: "[name].js",
+            chunkFilename: "[name].[contenthash].js",
             library: "ExpoFP",
             crossOriginLoading: isProd ? "anonymous" : false,
         },
