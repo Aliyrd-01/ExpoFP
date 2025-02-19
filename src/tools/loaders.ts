@@ -3,7 +3,7 @@ import isFromDesigner from "../utils/is-from-designer";
 import baseUrl from "./base-url";
 import FontFaceObserver from "fontfaceobserver";
 import logger from "./logger";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 function goodUrl(url: string) {
     if (url.indexOf("://") === -1) {
