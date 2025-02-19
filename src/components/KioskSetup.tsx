@@ -85,6 +85,10 @@ const KioskSetup = observer(() => {
         store.uiState.kioskSetup = false;
         store.uiState.kioskSetupData = null;
         sessionStorage.removeItem(MODAL_SHOWN_KEY);
+
+        const params = new URLSearchParams(window.location.search);
+        params.delete("kiosk_setup");
+        window.history.pushState({}, "", `?${params.toString()}`);
     };
 
     return store.uiState.kioskSetup && (
