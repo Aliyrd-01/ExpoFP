@@ -15,6 +15,7 @@ import * as YouAreHere from "../utils/yah";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import settings from "../tools/settings";
 import { KIOSK_KEY } from "../constants";
+import { getRebookingTokenFromQuery } from "../tools/rebookingUrl";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
@@ -75,6 +76,8 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             const newURL = `${currentURL}?${match[0]}`;
             window.location.replace(newURL);
         }
+    } else if (getRebookingTokenFromQuery()) {
+        return true;
     }
 
     return false;
