@@ -200,7 +200,7 @@ export default class RouteStore {
         //this.showMap();
     }
 
-    @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number) {
+    @action selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number, autoclear = true) {
         clearTimeout(this.cpTimeout);
 
         if (point) {
@@ -235,9 +235,11 @@ export default class RouteStore {
 
         this.currentPosition = p;
 
-        this.cpTimeout = setTimeout(() => {
-            if (this.currentPosition) this.selectCurrentPosition(null, false);
-        }, 30 * 1000) as any;
+        if (autoclear) {
+            this.cpTimeout = setTimeout(() => {
+                if (this.currentPosition) this.selectCurrentPosition(null, false);
+            }, 30 * 1000) as any;
+        }
     }
 
     @action findLocation() {

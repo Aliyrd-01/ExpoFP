@@ -163,8 +163,11 @@ function dispatchFromUrl() {
     } else if (booth) {
         store.selectBooth(booth);
     } else if (searchParams.has("kiosk_setup")) {
+        disableHistoryManipulation = true;
         store.uiState.kioskSetup = true;
     } else if (searchParams.has("kiosk_id")) {
+        disableHistoryManipulation = true;
+
         const kioskId = searchParams.get("kiosk_id").split("_");
         store.uiState.kioskSetupData = {
             x: parseFloat(kioskId[0]),
@@ -423,10 +426,6 @@ function processURLParams() {
 
     if (locationSearch.includes("kiosk_setup")) {
         store.uiState.monochrome = true;
-    }
-
-    if (locationSearch.includes("kiosk_id")) {
-        disableHistoryManipulation = true;
     }
 }
 

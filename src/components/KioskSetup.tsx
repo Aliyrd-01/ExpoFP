@@ -27,6 +27,16 @@ const KioskSetup = observer(() => {
         },
     );
 
+    reaction(
+        () => store.uiState.kioskSetupData,
+        (kioskSetupData) => {
+            if (!kioskSetupData) {
+                return;
+            }
+            store.routeStore.selectCurrentPosition(kioskSetupData, false, 0, false);
+        },
+    );
+
     useEffect(() => {
         if (!store.uiState.kioskSetup) {
             return;
@@ -58,7 +68,11 @@ const KioskSetup = observer(() => {
             resolve(undefined);
         }).then(() => {
             const { x, y, z } = store.uiState.kioskSetupData;
-            window.history.pushState({}, "", `?${encodeURIComponent(`kiosk_id=${x}_${y}_${z}`)}`);
+
+            const params = new URLSearchParams(window.location.search);
+            params.delete("kiosk_setup");
+            params.set("kiosk_id", `${x}_${y}_${z}`);
+            window.history.pushState({}, "", `?${params.toString()}`);
 
             store.uiState.kioskSetup = false;
             store.uiState.kiosk = true;
