@@ -441,6 +441,47 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
+    let kioskIconCanvas;
+    if (store.fp.icons.get("kiosk")) {
+        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 48, 48, context.pixelRatio);
+    } else {
+        kioskIconCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
+    }
+    wfDrawer.addObject({
+        id: "kioskIcon",
+        center: [0, 0],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -kioskIconCanvas.width / 2,
+            -kioskIconCanvas.height / 2,
+            kioskIconCanvas.width,
+            kioskIconCanvas.height,
+        ],
+        canvasTmp: kioskIconCanvas,
+        texPosition: "lefttop",
+        visible: false,
+    });
+
+    reaction(
+        () => ({
+            kioskSetupData: store.uiState.kioskSetupData,
+            floors: store.layerStore.floors,
+        }),
+        ({ kioskSetupData, floors }) => {
+            const activeFloor = floors.find(f => f.active);
+
+            context.requireUpdate(() => {
+                if (kioskSetupData && kioskSetupData.z === activeFloor.name) {
+                    wfDrawer.updateSkipdim("kioskIcon", true);
+                    wfDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
+                    wfDrawer.updateVisible("kioskIcon", true);
+                } else {
+                    wfDrawer.updateVisible("kioskIcon", false);
+                }
+            });
+        }
+    );
+
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
     wfDrawer.updateSkipdim("currentLocation", false);

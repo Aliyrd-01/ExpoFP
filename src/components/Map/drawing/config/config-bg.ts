@@ -44,7 +44,8 @@ export default async function configBg(
         if (!svgPath.style.fill) return;
         const d = parseInt(svgPath.getAttribute("data-index"));
         if (svgPath.style.fill === "none") return;
-        const color = uiState.monochrome ? Color(svgPath.style.fill).grayscale().vec4() : Color(svgPath.style.fill).vec4();
+        const fill = svgPath.style.fill;
+        const color = uiState.monochrome ? Color(fill).grayscale().vec4() : Color(fill).vec4();
         const mesh = gtePathByIndex(d, store.layerStore.mode !== LayersMode.Default ? layer.rootParent?.name || layer.name : "");
 
         // TODO: remove in future versions
@@ -70,7 +71,8 @@ export default async function configBg(
     function addRect(svgRect: SVGRectElement, isFg: boolean = false) {
         if (!svgRect.style.fill) return;
         const r = Rect.fromSvgRectElement(svgRect);
-        const color = Color(svgRect.style.fill).vec4();
+        const fill = svgRect.style.fill;
+        const color = uiState.monochrome ? Color(fill).grayscale().vec4() : Color(fill).vec4();
 
         addObject(
             {

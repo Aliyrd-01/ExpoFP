@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import cn from "classnames";
 import "./Alert.scss";
 
-type AlertVariant = "info" | "warning" | "error" | "success";
+type AlertVariant = "info" | "warning" | "error" | "success" | "blank";
 type AlertPosition = "topRight" | "bottomRight";
 export interface AlertProps {
     children?: ReactNode;

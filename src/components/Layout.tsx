@@ -26,6 +26,7 @@ import { checkUserIsGDPR, GaEventActions, hasUserConsent, sendEventToGa, setCons
 import HeatmapLegend from "./HeatmapLegend";
 import { useReaction } from "../utils/mobx";
 import trackEvent from "../tools/track-event";
+import KioskSetup from "./KioskSetup";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -181,6 +182,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 ) : null}
                 <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
+                <KioskSetup />
             </div>
         </div>
     );

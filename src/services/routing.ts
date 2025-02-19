@@ -162,6 +162,8 @@ function dispatchFromUrl() {
         );
     } else if (booth) {
         store.selectBooth(booth);
+    } else if (searchParams.has("kiosk_setup")) {
+        store.uiState.kioskSetup = true;
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
@@ -410,6 +412,10 @@ function processURLParams() {
             .join("&");
 
         historyReplace("?" + newSearch);
+    }
+
+    if (locationSearch.includes("kiosk_setup")) {
+        store.uiState.monochrome = true;
     }
 }
 
