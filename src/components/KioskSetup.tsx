@@ -41,7 +41,7 @@ const KioskSetup = observer(() => {
             originalOnGetCoordsClick?.(coords);
 
             setShowError(false);
-            store.uiState.kioskSetupData = { ...coords, id: `${coords.x}${coords.y}${coords.z}` };
+            store.uiState.kioskSetupData = { ...coords };
         };
 
         return () => {
@@ -53,11 +53,13 @@ const KioskSetup = observer(() => {
     const save = () => {
         setShowError(false);
 
-        // TODO: Save to database kioskData
+        // TODO: Do we need to save the kiosk position to the database?
         new Promise((resolve) => {
-            setShowError(true);
             resolve(undefined);
         }).then(() => {
+            const { x, y, z } = store.uiState.kioskSetupData;
+            window.history.pushState({}, "", `?${encodeURIComponent(`kiosk_id=${x}_${y}_${z}`)}`);
+
             store.uiState.kioskSetup = false;
             store.uiState.kiosk = true;
         }).catch(() => {

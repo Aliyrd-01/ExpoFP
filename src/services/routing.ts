@@ -132,7 +132,7 @@ function dispatchFromUrl() {
         )
     );
 
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
 
     if (executeCustomCommand()) {
     } else if (searchParams.has(KIOSK_KEY)) {
@@ -164,6 +164,13 @@ function dispatchFromUrl() {
         store.selectBooth(booth);
     } else if (searchParams.has("kiosk_setup")) {
         store.uiState.kioskSetup = true;
+    } else if (searchParams.has("kiosk_id")) {
+        const kioskId = searchParams.get("kiosk_id").split("_");
+        store.uiState.kioskSetupData = {
+            x: parseFloat(kioskId[0]),
+            y: parseFloat(kioskId[1]),
+            z: kioskId[2],
+        };
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
@@ -416,6 +423,10 @@ function processURLParams() {
 
     if (locationSearch.includes("kiosk_setup")) {
         store.uiState.monochrome = true;
+    }
+
+    if (locationSearch.includes("kiosk_id")) {
+        disableHistoryManipulation = true;
     }
 }
 

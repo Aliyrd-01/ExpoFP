@@ -54,7 +54,7 @@ export default class UIState {
     @observable kiosk = false;
     @observable inIdle = false;
     @observable kioskSetup = false;
-    @observable kioskSetupData: { id: string, x: number, y: number, z: string } | null = null;
+    @observable kioskSetupData: { x: number, y: number, z: string } | null = null;
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
