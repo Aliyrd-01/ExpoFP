@@ -67,6 +67,7 @@ const KioskSetup = observer(() => {
 
     const exit = () => {
         store.uiState.kioskSetup = false;
+        store.uiState.kioskSetupData = null;
         sessionStorage.removeItem(MODAL_SHOWN_KEY);
     };
 
