@@ -16,6 +16,9 @@ ready(async () => {
 
 export const FloorPlan = FloorPlanLoader;
 
+// ET: temp
+window["__fpDataVersion"] = "";
+window["__tempFix"] = true;
 /*
 floorplan loader
     requires all resources
