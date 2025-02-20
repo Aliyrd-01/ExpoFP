@@ -21,6 +21,8 @@ import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGr
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
 import useHeatmapOverlay from "../utils/useHeatmapOverlay";
+import Alert from "./Alert";
+import { Transition } from "react-transition-group";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -78,6 +80,10 @@ function ExhibitorComponent() {
         };
 
         checkHeight();
+
+        return () => {
+            store.exhibitorStore.rebookingStateChangeRequested = false;
+        };
     }, []);
 
     useReaction(
@@ -110,6 +116,15 @@ function ExhibitorComponent() {
     function itemClick(action: GaEventActions) {
         sendEventToGa(action, s.exhibitor.name);
     }
+
+    const transitionRef = useRef<HTMLDivElement>();
+    const transitionStyles: Record<string, React.CSSProperties> = {
+        entering: { opacity: 1 },
+        entered: { opacity: 1 },
+        exiting: { opacity: 0 },
+        exited: { opacity: 0 },
+    };
+    const transitionDelay = 150;
 
     return useObserver(() => {
         const exhibitor = s.exhibitor;
@@ -145,6 +160,49 @@ function ExhibitorComponent() {
                         store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
                     }
                 />
+
+                <Transition
+                    in={store.exhibitorStore.rebookingStateChangeRequested}
+                    nodeRef={transitionRef}
+                    timeout={transitionDelay}
+                    appear
+                    enter
+                    exit
+                    mountOnEnter
+                    unmountOnExit
+                >
+                    {state => (
+                        <div ref={transitionRef} style={
+                            {
+                                position: "fixed",
+                                bottom: "1rem",
+                                left: "1rem",
+                                zIndex: 9999,
+                                transition: `opacity ${transitionDelay}ms ease-in-out`,
+                                opacity: 0,
+                                ...transitionStyles[state],
+                            }
+                        }>
+                            <Alert
+                                title={(
+                                    store.exhibitorStore.rebookingStateSaved
+                                        ? "Changes saved."
+                                        : "Oops! Something went wrong."
+                                )}
+                                variant={
+                                    store.exhibitorStore.rebookingStateSaved
+                                        ? "success"
+                                        : "error"
+                                }
+                                inline
+                                closable
+                                onClose={() => {
+                                    store.exhibitorStore.rebookingStateChangeRequested = false;
+                                }}
+                            />
+                        </div>
+                    )}
+                </Transition>
             </div>
         ) : null;
         const cls = classNames({
