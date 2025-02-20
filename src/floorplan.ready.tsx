@@ -130,7 +130,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
             const to = points.pop();
 
 
-            const limit = 100;
+            const limit = 98;
             if (points.length > limit) {
                 points = points.slice(0, limit);
                 console.warn(`The maximum number of waypoints is ${limit}. All waypoints beyond this limit have been ignored.`);
