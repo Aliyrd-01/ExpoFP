@@ -453,7 +453,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         deltas: [0, 0, 0, 0],
         deltaPts: [
             -kioskIconCanvas.width / 2,
-            -kioskIconCanvas.height + 8,
+            -kioskIconCanvas.height,
             kioskIconCanvas.width,
             kioskIconCanvas.height,
         ],
@@ -475,6 +475,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     wfDrawer.updateSkipdim("kioskIcon", true);
                     wfDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
                     wfDrawer.updateVisible("kioskIcon", true);
+
+                    wfDrawer.updateVisible("currentLocation", false);
+                    wfDrawer.updateVisible("currentLocation_arrow", false);
+                    wfDrawer.updateVisible("currentLocation_2", false);
                 } else {
                     wfDrawer.updateVisible("kioskIcon", false);
                 }
@@ -533,7 +537,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            const visible = layersStore.findLayer(position.z)?.visible ?? true;
+            let visible = layersStore.findLayer(position.z)?.visible ?? true;
+
+            if (uiState.kioskSetupData) {
+                visible = false;
+            }
+
             wfDrawer.updateVisible("sourceLocation", false);
 
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
