@@ -533,9 +533,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         let position = store.routeStore.currentPosition;
 
         if (position) {
-            let visible = layersStore.findLayer(position.z)?.visible ?? true;
-
-
+            const visible = layersStore.findLayer(position.z)?.visible ?? true;
             wfDrawer.updateVisible("sourceLocation", false);
 
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
