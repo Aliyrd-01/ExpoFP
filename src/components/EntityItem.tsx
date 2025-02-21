@@ -1,5 +1,5 @@
-import React from "react";
 import cn from "classnames";
+import React from "react";
 import "./EntityItem.scss";
 
 type AdditionalInfo =
@@ -7,7 +7,7 @@ type AdditionalInfo =
     | { type: "event"; text: string }
     | { type: "speaker"; text: string };
 
-type EntityItemType =
+export type EntityItemType =
     | "booth"
     | "exhibitor"
     | "event"
@@ -32,6 +32,7 @@ export interface EntityItemProps {
     additionalInfo?: AdditionalInfo[];
     bookmarked?: boolean;
     featured?: boolean;
+    onClick?: (type: EntityItemType, id: string) => void;
 }
 
 const TYPES_WITH_UNIQUE_COLORS: EntityItemType[] = ["booth", "exhibitor", "event", "speaker", "category"];
@@ -62,11 +63,13 @@ const EntityItem: React.FC<EntityItemProps> = ({
     additionalInfo = [],
     bookmarked = false,
     featured = false,
+    onClick,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
 
     return (
         <div
+            onClick={() => onClick(type, id)}
             className={cn("efp-entity-item", {
                 "is-featured": featured,
             })}

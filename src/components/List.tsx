@@ -2,18 +2,10 @@ import { useObserver } from "mobx-react-lite";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { uiState } from "../store";
-import { Booth, BoothBase } from "../store/BoothStore";
-import { Category } from "../store/CategoryStore";
-import { Exhibitor } from "../store/ExhibitorStore";
-import { ScheduleItem } from "../store/ScheduleStore";
-import BoothRow from "./BoothRow";
-import CategoryRow from "./CategoryRow";
-import ExhibitorRow from "./ExhibitorRow";
-import "./List.scss";
-import ScheduleItemRow from "./ScheduleRow";
 import { Language } from "../store/LanguageStore";
-import LanguageRow from "./LanguageRow";
 import type { ListItem } from "../store/types";
+import LanguageRow from "./LanguageRow";
+import "./List.scss";
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -36,16 +28,20 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
     const mapItem = ({ index }: { index: number }) => {
         const item: ListItem = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
-        if (item instanceof Exhibitor) {
-            return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
-        } else if (item instanceof BoothBase) {
-            return <BoothRow key={index} className={cls} booth={item} />;
-        } else if (item instanceof Category) {
-            return <CategoryRow key={index} className={cls} category={item} />;
-        } else if (item instanceof ScheduleItem) {
-            return <ScheduleItemRow key={index} className={cls} item={item} />;
-        } else if (item instanceof Language) {
+        // if (item instanceof Exhibitor) {
+        //     return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
+        // } else if (item instanceof BoothBase) {
+        //     return <BoothRow key={index} className={cls} booth={item} />;
+        // } else if (item instanceof Category) {
+        //     return <CategoryRow key={index} className={cls} category={item} />;
+        // } else if (item instanceof ScheduleItem) {
+        //     return <ScheduleItemRow key={index} className={cls} item={item} />;
+        //} else
+
+        if (item instanceof Language) {
             return <LanguageRow key={index} item={item} />;
+        } else {
+            throw new Error("Invalid item type");
         }
     };
 
