@@ -61,6 +61,12 @@ export default class RouteStore {
 
     @action selectRoute(route: Route) {
         uiState.list = { type: "search", text: "", focused: false };
+
+        const kioskSetupData = this.rootStore.uiState.kioskSetupData;
+        if (kioskSetupData) {
+            route.from = this.getNearestBooth(this.rootStore.uiState.kioskSetupData);
+        }
+
         if (!route?.from && route?.to && this.currentPosition) route.from = this.nearestBooth;
         if (route?.from && route?.to && route.from === route.to) route = null;
         let list = [];

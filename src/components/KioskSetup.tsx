@@ -16,8 +16,8 @@ const KioskSetup = observer(() => {
     reaction(
         () => store.uiState.kioskSetup,
         (kioskSetup) => {
-            if (store.uiState.kiosk && kioskSetup) {
-                store.uiState.kiosk = false;
+            if (kioskSetup) {
+                store.uiState.kiosk = true;
             }
 
             store.uiState.hideOverlay = kioskSetup;
@@ -27,15 +27,6 @@ const KioskSetup = observer(() => {
         },
     );
 
-    reaction(
-        () => store.uiState.kioskSetupData,
-        (kioskSetupData) => {
-            if (!kioskSetupData) {
-                return;
-            }
-            store.routeStore.selectCurrentPosition(kioskSetupData, false, 0, false);
-        },
-    );
 
     useEffect(() => {
         if (!store.uiState.kioskSetup) {

@@ -475,10 +475,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     wfDrawer.updateSkipdim("kioskIcon", true);
                     wfDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
                     wfDrawer.updateVisible("kioskIcon", true);
-
-                    wfDrawer.updateVisible("currentLocation", false);
-                    wfDrawer.updateVisible("currentLocation_arrow", false);
-                    wfDrawer.updateVisible("currentLocation_2", false);
                 } else {
                     wfDrawer.updateVisible("kioskIcon", false);
                 }
@@ -539,9 +535,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (position) {
             let visible = layersStore.findLayer(position.z)?.visible ?? true;
 
-            if (uiState.kioskSetupData) {
-                visible = false;
-            }
 
             wfDrawer.updateVisible("sourceLocation", false);
 
