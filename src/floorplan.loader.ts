@@ -324,7 +324,10 @@ export default class FloorPlanLoader implements FloorPlan {
                 try {
                     const resp = await fetch(`https://app.expofp.com/api/fp-stats/get?expoId=${expoId}&type=yahview`);
                     if (resp.ok) {
-                        window["__heatmapDataYah"] = { yah: await resp.json() };
+                        const json = await resp.json();
+                        window["__heatmapDataYah"] = {
+                            yah: json.map((item, i) => ({ ...item, name: `QR Code #${i + 1}` })),
+                        };
                     }
                 } catch (err) {
                     console.warn(err);
