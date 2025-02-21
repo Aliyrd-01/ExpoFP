@@ -24,8 +24,9 @@ const YahRow: React.FC<{
                 slug={yah.id.toString()}
                 onClick={handleClick}
                 line1={yah.name}
-                line2=""
+                line2={yah.z ? `Level ${yah.z}` : ""}
                 lineEnd={clicks.toString()}
+                highlight={false}
             />
         );
     });

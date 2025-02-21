@@ -410,7 +410,7 @@ export default class UIState {
 
         if (this.heatmapYah) {
             const result =  heatmapStore.heatmapData.yah.filter((c) => {
-                return splittedTexts.some((text) => containsIgnoreCase(c.id.toString(), text));
+                return splittedTexts.some((text) => containsIgnoreCase(c.viewCount.toString(), text));
             });
 
             return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
