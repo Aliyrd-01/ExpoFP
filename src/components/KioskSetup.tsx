@@ -54,22 +54,16 @@ const KioskSetup = observer(() => {
     const save = () => {
         setShowError(false);
 
-        // TODO: Do we need to save the kiosk position to the database?
-        new Promise((resolve) => {
-            resolve(undefined);
-        }).then(() => {
-            const { x, y, z } = store.uiState.kioskSetupData;
+        const params = new URLSearchParams(window.location.search);
+        params.delete("kiosk_setup");
 
-            const params = new URLSearchParams(window.location.search);
-            params.delete("kiosk_setup");
-            params.set("kiosk_id", `${x}_${y}_${z}`);
-            window.history.pushState({}, "", `?${params.toString()}`);
+        const { x, y, z } = store.uiState.kioskSetupData;
+        params.set("kiosk_id", `${x}_${y}_${z}`);
 
-            store.uiState.kioskSetup = false;
-            store.uiState.kiosk = true;
-        }).catch(() => {
-            setShowError(true);
-        });
+        window.history.pushState({}, "", `?${params.toString()}`);
+
+        store.uiState.kioskSetup = false;
+        store.uiState.kiosk = true;
     };
 
     const exit = () => {
