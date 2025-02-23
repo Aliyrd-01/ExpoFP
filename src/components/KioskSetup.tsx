@@ -66,12 +66,19 @@ const KioskSetup = observer(() => {
 
     const exit = () => {
         store.uiState.kioskSetup = false;
-        store.uiState.kioskSetupData = null;
         sessionStorage.removeItem(MODAL_SHOWN_KEY);
 
         const params = new URLSearchParams(window.location.search);
+
+        const kioskId = params.get("kiosk_setup");
+        if (kioskId) {
+            params.set("kiosk_id", kioskId);
+        } else {
+            store.uiState.kioskSetupData = null;
+        }
+
         params.delete("kiosk_setup");
-        window.history.pushState({}, "", `?${params.toString()}`);
+        window.history.replaceState({}, "", `?${params.toString()}`);
     };
 
     return store.uiState.kioskSetup && (
