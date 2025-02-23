@@ -57,9 +57,7 @@ const KioskSetup = observer(() => {
         const params = new URLSearchParams(window.location.search);
         params.delete("kiosk_setup");
 
-        const { x, y, z } = store.uiState.kioskSetupData;
-        params.set("kiosk_id", `${x}_${y}_${z}`);
-
+        params.set("kiosk_id", encodeKioskId(store.uiState.kioskSetupData));
         window.history.pushState({}, "", `?${params.toString()}`);
 
         store.uiState.kioskSetup = false;
@@ -161,3 +159,8 @@ const KioskSetup = observer(() => {
 });
 
 export default KioskSetup;
+
+function encodeKioskId(data: { x: number; y: number; z: string }): string {
+    const { x, y, z } = data || {};
+    return `${x}_${y}_${z}`;
+}

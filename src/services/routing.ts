@@ -165,15 +165,18 @@ function dispatchFromUrl() {
     } else if (searchParams.has("kiosk_setup")) {
         disableHistoryManipulation = true;
         store.uiState.kioskSetup = true;
+
+        const kioskId = searchParams.get("kiosk_setup");
+        if (kioskId) {
+            store.uiState.kioskSetupData = decodeKioskId(kioskId);
+        }
     } else if (searchParams.has("kiosk_id")) {
         disableHistoryManipulation = true;
 
-        const kioskId = searchParams.get("kiosk_id").split("_");
-        store.uiState.kioskSetupData = {
-            x: parseFloat(kioskId[0]),
-            y: parseFloat(kioskId[1]),
-            z: kioskId[2],
-        };
+        const kioskId = searchParams.get("kiosk_id");
+        if (kioskId) {
+            store.uiState.kioskSetupData = decodeKioskId(kioskId);
+        }
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
@@ -477,4 +480,13 @@ export function applyParameters(queryRaw: string = "") {
 
 export function destroyHistory() {
     unlisten();
+}
+
+function decodeKioskId(id: string): { x: number; y: number; z: string } {
+    const kioskId = id.split("_") || [];
+    return {
+        x: parseFloat(kioskId[0]),
+        y: parseFloat(kioskId[1]),
+        z: kioskId[2],
+    };
 }
