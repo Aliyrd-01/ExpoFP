@@ -10,6 +10,7 @@ import { ScheduleItem } from "../store/ScheduleStore";
 import type { ListItem } from "../store/types";
 import EntityItem, { EntityItemType } from "./EntityItem";
 import "./EntityList.scss";
+import data from "../data";
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -77,6 +78,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
         } else if (item instanceof BoothBase) {
             return (
                 <EntityItem
+                    locationTerm={data.boothTerm}
                     onClick={handleClick}
                     id={item.id.toString()}
                     type="booth"
@@ -86,7 +88,16 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                 />
             );
         } else if (item instanceof Category) {
-            return <EntityItem onClick={handleClick} id={item.id.toString()} type="category" title={item.name} url={null} />;
+            return (
+                <EntityItem
+                    onClick={handleClick}
+                    id={item.id.toString()}
+                    itemsCount={item.exhibitors.length}
+                    type="category"
+                    title={item.name}
+                    url={null}
+                />
+            );
         } else if (item instanceof ScheduleItem) {
             const booth = item.boothId ? boothStore.booths.find((b) => b.id === item.boothId) : null;
 

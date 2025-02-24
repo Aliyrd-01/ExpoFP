@@ -32,6 +32,7 @@ export interface EntityItemProps {
     additionalInfo?: AdditionalInfo[];
     bookmarked?: boolean;
     featured?: boolean;
+    locationTerm?: string;
     onClick?: (type: EntityItemType, id: string) => void;
 }
 
@@ -63,6 +64,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
     additionalInfo = [],
     bookmarked = false,
     featured = false,
+    locationTerm = "Booth",
     onClick,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
@@ -93,7 +95,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                             {title}
                             {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
                         </div>
-                        {type === "booth" && <span className="efp-entity-item__subtitle">Booth</span>}
+                        {type === "booth" && <span className="efp-entity-item__subtitle">{locationTerm}</span>}
                         {type === "category" && <span className="efp-entity-item__subtitle">Category</span>}
                         {subtitle && <div className="efp-entity-item__subtitle">{subtitle}</div>}
                     </div>
