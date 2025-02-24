@@ -21,12 +21,6 @@
         border-radius: 0.5rem 0.5rem 0 0;
     }
 
-    &.-backdrop {
-        background-color: rgb(255 255 255 / 60%);
-        -webkit-backdrop-filter: saturate(180%) blur(20px);
-        backdrop-filter: saturate(180%) blur(20px);
-    }
-
     &.-no-transition {
         transition: none;
     }
