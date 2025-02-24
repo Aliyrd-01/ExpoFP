@@ -332,6 +332,8 @@ export default class FloorPlanLoader implements FloorPlan {
                         mergeExhibitors(data as Data, rebookingData as Data);
                     }
                     data.isRebooking = resp.ok;
+                } else {
+                    data.isRebooking = false;
                 }
             } catch (error) {
                 console.error(error);
