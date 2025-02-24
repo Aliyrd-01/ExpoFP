@@ -5,6 +5,7 @@ import Rect from "../core/Rect";
 import store, { uiState } from "../store";
 import { Layer, LayerMode, LayersMode } from "../store/LayerStore";
 import settings from "../tools/settings";
+import { t } from "../utils/i18n";
 import { remsToPixels } from "../utils";
 import "./Floors.scss";
 import appData from "../data";
@@ -51,7 +52,7 @@ export default function Floors() {
         data = store.layerStore.layers
             .filter((l) => !l.frozen && !l.rootParent)
             .concat(
-                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible),
+                store.routeStore.layers.filter((l) => l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible)
             )
             .filter((value, index, array) => array.indexOf(value) === index)
             .reverse()
@@ -67,16 +68,30 @@ export default function Floors() {
 
         return (
             (store.layerStore.mode === LayersMode.Radio || store.layerStore.mode === LayersMode.CheckBox) && (
-                <div className={s.className} style={s.style}>
+                <div className={s.className} style={s.style} role="radiogroup" aria-label={t("Floor Selection")}>
                     {data.map((l) => (
                         <div
                             className={classNames("item", {
-                                active: l.active, disabled: l.disabled,
+                                active: l.active,
+                                disabled: l.disabled,
                                 "full-name": !appData.shortLevelName,
                             })}
                             key={l.layer.description}
-                            onClick={() => click(l.layer)}
-                            title={l.layer.description}
+                            role="radio"
+                            title={`${l.active ? t("Current Floor") : t("Floor")} ${l.layer.description}`}
+                            aria-label={`${l.active ? t("Current Floor") : t("Floor")} ${l.layer.description}`}
+                            aria-checked={l.active}
+                            aria-disabled={l.disabled ? "true" : "false"}
+                            tabIndex={l.disabled ? -1 : 0}
+                            onClick={() => {
+                                if (!l.disabled) click(l.layer);
+                            }}
+                            onKeyDown={(e) => {
+                                if (!l.disabled && (e.key === "Enter" || e.key === " ")) {
+                                    e.preventDefault();
+                                    click(l.layer);
+                                }
+                            }}
                             dir="auto"
                         >
                             <span>{appData.shortLevelName ? l.layer.shortName : l.layer.description}</span>

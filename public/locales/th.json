@@ -53,5 +53,16 @@
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
     "Reject": "Reject",
-    "Scan to see route on your phone": "สแกนเพื่อดูเส้นทางบนโทรศัพท์ของคุณ"
+    "Scan to see route on your phone": "สแกนเพื่อดูเส้นทางบนโทรศัพท์ของคุณ",
+    "Map controls": "ตัวควบคุมแผนที่",
+    "Main menu": "เมนูหลัก",
+    "Go back": "กลับไป",
+    "Floor Selection": "การเลือกชั้น",
+    "Floor": "ชั้น",
+    "Current Floor": "ชั้นปัจจุบัน",
+    "Share": "แชร์",
+    "Remove from Bookmarks": "ลบออกจากบุ๊กมาร์ก",
+    "Save to Bookmarks": "บันทึกลงในบุ๊กมาร์ก",
+    "Visited": "เยี่ยมชมแล้ว",
+    "Not visited": "ยังไม่เยี่ยมชม"
 }

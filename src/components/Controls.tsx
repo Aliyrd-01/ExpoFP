@@ -42,6 +42,7 @@ export default function Controls() {
             <MapControls
                 className={s.className}
                 style={s.style}
+                title={t("Map controls")}
                 titles={[t("Find your location"), t("Zoom In"), t("Zoom Out"), t("View switch"), t("Fit to screen"), t("Layers")]}
                 onClickFindLocation={() => store.routeStore.findLocation()}
                 onClickZoomIn={() => uiState.zoomIn()}

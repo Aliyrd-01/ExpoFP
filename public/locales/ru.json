@@ -53,5 +53,16 @@
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
     "Reject": "Reject",
-    "Scan to see route on your phone": "Отсканируйте, чтобы увидеть маршрут на вашем телефоне"
+    "Scan to see route on your phone": "Отсканируйте, чтобы увидеть маршрут на вашем телефоне",
+    "Map controls": "Управление картой",
+    "Main menu": "Главное меню",
+    "Go back": "Назад",
+    "Floor Selection": "Выбор этажа",
+    "Floor": "Этаж",
+    "Current Floor": "Текущий этаж",
+    "Share": "Поделиться",
+    "Remove from Bookmarks": "Удалить из закладок",
+    "Save to Bookmarks": "Сохранить в закладки",
+    "Visited": "Посещено",
+    "Not visited": "Не посещено"
 }

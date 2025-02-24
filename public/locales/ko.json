@@ -53,5 +53,16 @@
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
     "Reject": "Reject",
-    "Scan to see route on your phone": "휴대전화에서 경로를 보려면 스캔하세요"
+    "Scan to see route on your phone": "휴대전화에서 경로를 보려면 스캔하세요",
+    "Map controls": "지도 컨트롤",
+    "Main menu": "메인 메뉴",
+    "Go back": "돌아가기",
+    "Floor Selection": "층 선택",
+    "Floor": "층",
+    "Current Floor": "현재 층",
+    "Share": "공유",
+    "Remove from Bookmarks": "북마크에서 제거",
+    "Save to Bookmarks": "북마크에 저장",
+    "Visited": "방문함",
+    "Not visited": "방문하지 않음"
 }

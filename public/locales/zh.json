@@ -53,5 +53,16 @@
     "Read More": "Read More",
     "Accept cookies": "Accept cookies",
     "Reject": "Reject",
-    "Scan to see route on your phone": "扫描以在手机上查看路线"
+    "Scan to see route on your phone": "扫描以在手机上查看路线",
+    "Map controls": "地图控件",
+    "Main menu": "主菜单",
+    "Go back": "返回",
+    "Floor Selection": "楼层选择",
+    "Floor": "楼层",
+    "Current Floor": "当前楼层",
+    "Share": "分享",
+    "Remove from Bookmarks": "从书签中移除",
+    "Save to Bookmarks": "保存到书签",
+    "Visited": "已访问",
+    "Not visited": "未访问"
 }

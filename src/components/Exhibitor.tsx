@@ -237,6 +237,7 @@ function ExhibitorComponent() {
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
+                aria-label={t("Details")}
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
                 {!rebooking ? (
