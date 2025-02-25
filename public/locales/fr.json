@@ -1,6 +1,7 @@
 {
     "A link to edit profile was sent to {{email}}": "Un lien pour modifier le profil a été envoyé à {{email}}",
     "Accessible": "Accessible",
+    "and {{moreCount}} more": "et {{moreCount}} autres",
     "Bookmark": "Marque-page",
     "Bookmarks": "Signets",
     "Buy": "Acheter",

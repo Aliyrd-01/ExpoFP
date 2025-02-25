@@ -4,6 +4,7 @@ import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
+import { buildRebookingUrl, getRebookingToken, retainRebookingToken } from "./tools/rebookingUrl";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
@@ -264,13 +265,11 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
-        const dataInternalUrl = dataUrlBase + "data-internal.js";
-
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl, dataInternalUrl]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
@@ -322,9 +321,18 @@ export default class FloorPlanLoader implements FloorPlan {
                 window["__heatmapData"] = { booths, exhibitors };
             }
 
-            if (data.isRebooking) {
-                await loadJs(dataInternalUrl);
-                mergeExhibitors(window["__data"] as Data, window["__internalData"] as Data);
+            try {
+                const token = getRebookingToken();
+                if (token) {
+                    retainRebookingToken(token);
+                    const url = buildRebookingUrl("api/rebooking-data", token);
+                    const resp = await fetch(url);
+                    const rebookingData = await resp.json();
+                    mergeExhibitors(data as Data, rebookingData as Data);
+                }
+                data.isRebooking = Boolean(token);
+            } catch (error) {
+                console.error(error);
             }
 
             if (data.customCss) {
