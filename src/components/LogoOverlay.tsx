@@ -17,7 +17,7 @@ import { fpGeo } from "./Mapbox/utils/fpGeo";
 export default function LogoOverlay() {
     const s = useLocalStore(() => ({
         get style() {
-            const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
+            const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.3);
             let style: any;
             if (uiState.overlayPosition === "left")
                 style = {
@@ -26,7 +26,11 @@ export default function LogoOverlay() {
                     width: "5rem",
                 };
             else {
-                style = { top: uiState.mapVisibleTop + pad + "px", [uiState.rtl ? "left" : "right"]: pad + "px", width: "3rem" };
+                style = {
+                    top: uiState.mapVisibleTop + pad + "px",
+                    [uiState.rtl ? "left" : "right"]: pad + "px",
+                    width: "4.5rem",
+                };
                 if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
             }
             style.opacity = uiState.wsStarted ? 1 : 0;

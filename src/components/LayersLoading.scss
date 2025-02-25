@@ -23,7 +23,7 @@
 
         & > circle {
             fill: none;
-            stroke: rgb(65 182 231 / 100%);
+            stroke: var(--color-primary);
             stroke-dasharray: 1, 200;
             stroke-dashoffset: 0;
             stroke-linecap: round;
