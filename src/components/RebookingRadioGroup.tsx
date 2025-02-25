@@ -25,7 +25,7 @@ export const defaultRebookingOptions = [
         name: "offer",
         value: "0",
         label: "Unasked",
-        iconName: "icon-question",
+        iconName: "icon-question-mark",
         disabled: false,
         color: {
             primary: "#8E99AB",
