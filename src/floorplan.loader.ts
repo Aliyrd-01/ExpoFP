@@ -327,10 +327,14 @@ export default class FloorPlanLoader implements FloorPlan {
                     retainRebookingToken(token);
                     const url = buildRebookingUrl("api/rebooking-data", token);
                     const resp = await fetch(url);
-                    const rebookingData = await resp.json();
-                    mergeExhibitors(data as Data, rebookingData as Data);
+                    if (resp.ok) {
+                        const rebookingData = await resp.json();
+                        mergeExhibitors(data as Data, rebookingData as Data);
+                    }
+                    data.isRebooking = resp.ok;
+                } else {
+                    data.isRebooking = false;
                 }
-                data.isRebooking = Boolean(token);
             } catch (error) {
                 console.error(error);
             }
