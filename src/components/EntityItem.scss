@@ -5,6 +5,7 @@ $entity-item: ".efp-entity-item";
 
 #{$entity-item} {
     position: relative;
+    min-height: rem(80px);
     background: var(--color-white);
     border-bottom: 1px solid var(--color-gray-300);
 
@@ -18,6 +19,7 @@ $entity-item: ".efp-entity-item";
 
         &::before {
             content: vars.$icon-diamond;
+            @include icon;
             position: absolute;
             top: 50%;
             left: rem(20px);
@@ -26,8 +28,6 @@ $entity-item: ".efp-entity-item";
             font-size: rem(80px);
             color: var(--color-primary);
             transform: translateY(-50%);
-
-            @include icon;
         }
     }
 
@@ -49,13 +49,14 @@ $entity-item: ".efp-entity-item";
 
     &__icon {
         position: absolute;
-        top: rem(6px);
-        right: rem(6px);
+        z-index: 1;
+        top: rem(8px);
+        right: rem(8px);
         display: flex;
         align-items: center;
         justify-content: center;
-        width: rem(38px);
-        height: rem(38px);
+        width: rem(36px);
+        height: rem(36px);
         background: var(--item-type-color);
         border: 2px solid var(--color-white);
         border-radius: var(--border-radius-full);
@@ -63,6 +64,10 @@ $entity-item: ".efp-entity-item";
         & > i {
             font-size: var(--icon-size-md);
             color: var(--color-white);
+        }
+        & > img {
+            width: rem(20px);
+            height: rem(20px);
         }
     }
 
@@ -108,7 +113,6 @@ $entity-item: ".efp-entity-item";
     }
 
     &__subtitle {
-        margin-top: rem(2px);
         font-size: var(--font-size-md);
         color: var(--color-gray-600);
     }
@@ -125,7 +129,7 @@ $entity-item: ".efp-entity-item";
     &__details-item {
         display: flex;
         flex-flow: row wrap;
-        column-gap: rem(8px);
+        column-gap: rem(6px);
         align-items: center;
         font-size: var(--font-size-md);
         line-height: var(--font-size-md);
@@ -137,6 +141,8 @@ $entity-item: ".efp-entity-item";
         }
 
         strong {
+            display: inline-flex;
+            flex: 1;
             font-weight: var(--font-weight-medium);
             color: var(--color-gray-900);
         }
@@ -144,8 +150,8 @@ $entity-item: ".efp-entity-item";
 
     &__image {
         flex-shrink: 0;
-        width: rem(100px);
-        max-height: rem(100px);
+        width: rem(90px);
+        height: rem(80px);
         overflow: hidden;
         border-radius: var(--border-radius-xs);
 
@@ -154,6 +160,7 @@ $entity-item: ".efp-entity-item";
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center center;
         }
     }
 }

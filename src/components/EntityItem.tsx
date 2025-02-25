@@ -23,6 +23,7 @@ export interface EntityItemProps {
     id: string;
     type: EntityItemType;
     url: string;
+    icon?: string;
     title: string;
     subtitle?: string;
     date?: string;
@@ -56,6 +57,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
     type,
     url,
     title,
+    icon,
     subtitle,
     date,
     time,
@@ -71,7 +73,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
 
     return (
         <div
-            onClick={() => onClick(type, id)}
+            onClick={() => onClick && onClick(type, id)}
             className={cn("efp-entity-item", {
                 "is-featured": featured,
             })}
@@ -80,7 +82,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
             <a href={url} className="efp-entity-item__link" aria-label={title}></a>
             <div className="efp-entity-item__body">
                 <div className="efp-entity-item__icon">
-                    <i className={`icon-${type}-solid`}></i>
+                    {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
                 </div>
                 {bookmarked && <i className={cn("efp-entity-item__bookmarked", "icon-bookmark-solid")} />}
                 <div className="efp-entity-item__content">
