@@ -417,7 +417,7 @@ function processURLParams() {
         historyReplace("?" + newSearch);
     }
 
-    if (locationSearch.includes("kiosk_setup")) {
+    if (locationSearch.includes(KIOSK_SETUP_KEY)) {
         store.uiState.monochrome = true;
     }
 }
