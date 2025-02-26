@@ -1,7 +1,7 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { KIOSK_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -165,21 +165,8 @@ function dispatchFromUrl() {
         );
     } else if (booth) {
         store.selectBooth(booth);
-    } else if (searchParams.has("kiosk_setup")) {
+    } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
         disableHistoryManipulation = true;
-        store.uiState.kioskSetup = true;
-
-        const kioskId = searchParams.get("kiosk_setup");
-        if (kioskId) {
-            store.uiState.kioskSetupData = decodeKioskId(kioskId);
-        }
-    } else if (searchParams.has("kiosk_id")) {
-        disableHistoryManipulation = true;
-
-        const kioskId = searchParams.get("kiosk_id");
-        if (kioskId) {
-            store.uiState.kioskSetupData = decodeKioskId(kioskId);
-        }
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
@@ -483,13 +470,4 @@ export function applyParameters(queryRaw: string = "") {
 
 export function destroyHistory() {
     unlisten();
-}
-
-function decodeKioskId(id: string): { x: number; y: number; z: string } {
-    const kioskId = id.split("_") || [];
-    return {
-        x: parseFloat(kioskId[0]),
-        y: parseFloat(kioskId[1]),
-        z: kioskId[2],
-    };
 }
