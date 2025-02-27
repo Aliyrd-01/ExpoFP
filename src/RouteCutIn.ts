@@ -30,6 +30,7 @@ export class RouteCutIn extends SpecialBooth {
             this.rect = Rect.fromMultiple([
                 this.rect,
                 Rect.fromCxcywh(this.closestLineEnd.x, this.closestLineEnd.y, 1, 1),
+                Rect.fromCxcywh(this.closestRoutePoint.x, this.closestRoutePoint.y, 1, 1),
             ]);
         }
 
