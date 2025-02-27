@@ -6,6 +6,7 @@ import { RouteLine, sublines } from "./utils/wayfinding";
 
 export class RouteCutIn extends SpecialBooth {
     public readonly closestRoutePoint: CurrentPosition;
+    public readonly closestLineEnd: CurrentPosition;
 
     constructor(
         public readonly name: string,
@@ -23,10 +24,12 @@ export class RouteCutIn extends SpecialBooth {
             z: point.z,
         };
 
-        if (this.closestRoutePoint) {
+        this.closestLineEnd = this.findClosestLineEnd(point);
+
+        if (this.closestLineEnd) {
             this.rect = Rect.fromMultiple([
                 this.rect,
-                Rect.fromCxcywh(this.closestRoutePoint.x, this.closestRoutePoint.y, 1, 1),
+                Rect.fromCxcywh(this.closestLineEnd.x, this.closestLineEnd.y, 1, 1),
             ]);
         }
 
@@ -36,7 +39,7 @@ export class RouteCutIn extends SpecialBooth {
     private findNearestRouteLine(point: CurrentPosition): RouteLine {
         const lines = sublines()?.lines || [];
         const levelLines = lines.filter((l) => l.p0.layer === point.z || l.p1.layer === point.z);
-    
+
         let minDistance = Infinity;
         let closestLine: RouteLine = null;
     
@@ -122,5 +125,30 @@ export class RouteCutIn extends SpecialBooth {
         }
     
         return { x: xx, y: yy };
+    }
+
+    private findClosestLineEnd(target: CurrentPosition): CurrentPosition {
+        const levelLineEnds = (sublines()?.lineEnds || []).filter(le => le.layer === target.z);
+
+        let closestPoint = null;
+        let minDistance = Infinity;
+
+        function getDistance(x1, y1, x2, y2) {
+            return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+        }
+
+        levelLineEnds.forEach(point => {
+            const distance = getDistance(target.x, target.y, point.x, point.y);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = point;
+            }
+        });
+
+        return {
+            x: closestPoint.x,
+            y: closestPoint.y,
+            z: closestPoint.layer,
+        };
     }
 }
