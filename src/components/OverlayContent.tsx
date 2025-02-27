@@ -102,7 +102,13 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     return (
-        <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}>
+        <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}
+            onScroll={() => {
+                if (uiState.kiosk && typeof window["__resett"] === "function") {
+                    window["__resett"]();
+                }
+            }}
+        >
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
             <OverlayBar overlayBarStyle={overlayBarStyle} overlayBarEndContent={overlayBarEndContent} scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>
