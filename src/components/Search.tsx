@@ -177,6 +177,7 @@ function Search() {
     );
 
     const updateContent = useCallback(() => {
+        if (window["__resett"]) window["__resett"]();
         if (s.updateOverlayContent) s.updateOverlayContent();
     }, [s.updateOverlayContent]);
 
