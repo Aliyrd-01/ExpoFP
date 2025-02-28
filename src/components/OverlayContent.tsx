@@ -103,7 +103,9 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     const resetIdleTimer = useCallback(
-        debounce(() => window["__resett"]?.(), 250),
+        debounce(() => {
+            window["__resett"]?.();
+        }, 250),
         [uiState.kiosk],
     );
 
@@ -111,8 +113,8 @@ const OverlayContent: React.FC<{
         <div
             className={`overlay-content ${className || ""}`}
             id="overlay-content" ref={contentRef}
-            onScroll={resetIdleTimer} 
-            onClick={resetIdleTimer}
+            onScroll={() => resetIdleTimer()}
+            onClick={() => resetIdleTimer()}
         >
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
