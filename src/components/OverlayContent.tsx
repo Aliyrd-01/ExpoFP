@@ -113,7 +113,6 @@ const OverlayContent: React.FC<{
         <div
             className={`overlay-content ${className || ""}`}
             id="overlay-content" ref={contentRef}
-            onScroll={() => resetIdleTimer()}
             onClick={() => resetIdleTimer()}
         >
             {particles ? <OverlayParticles /> : null}
@@ -129,6 +128,7 @@ const OverlayContent: React.FC<{
                     display: uiState.overlayCollapsed ? "none" : undefined,
                 }}
                 ref={scrollable}
+                onScroll={() => resetIdleTimer()}
             >
                 {children}
                 {/* FIX PART - make chrome start handling click events and correctly draw content (not sure why) */}
