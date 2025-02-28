@@ -14,6 +14,7 @@ export class RouteCutIn extends SpecialBooth {
         public readonly id = Date.now(),
         public readonly rect: Rect = Rect.fromCxcywh(point.x, point.y, 1, 1),
         public readonly exhibitors = [],
+        public readonly paths = [],
     ) {
         super();
 

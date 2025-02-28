@@ -9,6 +9,7 @@ import Modal from "./Modal";
 import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
+import { CurrentPosition } from "../store/RouteStore";
 
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
 
@@ -44,7 +45,9 @@ const KioskSetup = observer(() => {
                 return;
             }
 
-            store.boothStore.booths.push(new RouteCutIn(name, kioskSetupData));
+            const booth = new RouteCutIn(name, kioskSetupData);
+            store.boothStore.booths.push(booth);
+            store.routeStore.defaultFrom = booth;
         },
     );
 
@@ -103,7 +106,7 @@ const KioskSetup = observer(() => {
         const params = new URLSearchParams(decodeURIComponent(window.location.search));
         params.delete(KIOSK_SETUP_KEY);
 
-        function encodeKioskId(data: { x: number; y: number; z: string }): string {
+        function encodeKioskId(data: CurrentPosition): string {
             const { x, y, z } = data || {};
             return `${x}_${y}_${z}`;
         }

@@ -443,7 +443,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     let kioskIconCanvas;
     if (store.fp.icons.get("kiosk")) {
-        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 19, 38, context.pixelRatio);
+        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 23, 42, context.pixelRatio);
     } else {
         kioskIconCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     }
@@ -459,7 +459,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         ],
         canvasTmp: kioskIconCanvas,
         texPosition: "lefttop",
-        visible: false,
+        visible: true,
     });
 
     reaction(
@@ -471,7 +471,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             const activeFloor = floors.find(f => f.active);
 
             context.requireUpdate(() => {
-                if (kioskSetupData && kioskSetupData.z === activeFloor.name) {
+                if (kioskSetupData && kioskSetupData.z === activeFloor?.name) {
                     wfDrawer.updateSkipdim("kioskIcon", true);
                     wfDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
                     wfDrawer.updateVisible("kioskIcon", true);
@@ -530,11 +530,15 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     }
 
     function updateCurrentPosition(): number {
-        let position = store.routeStore.currentPosition;
+        let position = store.routeStore.currentPosition || store.uiState.kioskSetupData;
 
         if (position) {
-            const visible = layersStore.findLayer(position.z)?.visible ?? true;
-            wfDrawer.updateVisible("sourceLocation", false);
+            let visible = layersStore.findLayer(position.z)?.visible ?? true;
+
+            if (store.uiState.kioskSetupData) {
+                visible = false;
+            }
+            wfDrawer.updateVisible("sourceLocation", Boolean(store.uiState.kioskSetupData));
 
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
                 wfDrawer.updateVisible("currentLocation_2", false);

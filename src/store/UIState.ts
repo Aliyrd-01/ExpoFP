@@ -16,7 +16,7 @@ import { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
-import { Route } from "./RouteStore";
+import { CurrentPosition, Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
@@ -54,7 +54,7 @@ export default class UIState {
     @observable kiosk = false;
     @observable inIdle = false;
     @observable kioskSetup = false;
-    @observable kioskSetupData: { x: number, y: number, z: string } | null = null;
+    @observable kioskSetupData: CurrentPosition | null = null;
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
