@@ -180,15 +180,6 @@ function Search() {
         if (s.updateOverlayContent) s.updateOverlayContent();
     }, [s.updateOverlayContent]);
 
-    const resetIdleTimer = useCallback(
-        debounce(() => {
-            if (uiState.kiosk && typeof window["__resett"] === "function") {
-                window["__resett"]();
-            }
-        }, 250),
-        [uiState.kiosk],
-    );
-
     return useObserver(() => {
         const fakeInput = s.hideRealInput ? (
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
@@ -226,9 +217,9 @@ function Search() {
     });
 
     function handleChange() {
+        window["__resett"]?.();
         setText();
         debouncedChange();
-        resetIdleTimer();
     }
 
     function setText() {
@@ -244,7 +235,6 @@ function Search() {
 
     function handleFocus() {
         uiState.searchFocused = true;
-        resetIdleTimer();
     }
 
     function handleBlur(e: FocusEvent) {
@@ -255,8 +245,6 @@ function Search() {
     }
 
     function handleKeydown(e: KeyboardEvent) {
-        resetIdleTimer();
-
         let delta = 0 as 0 | 1 | -1;
         switch (e.key) {
             case "Down":
@@ -288,7 +276,6 @@ function Search() {
     function handleReplicaFocus(e: FocusEvent) {
         e.preventDefault();
         getInput().focus();
-        resetIdleTimer();
     }
 
     function handleBack() {

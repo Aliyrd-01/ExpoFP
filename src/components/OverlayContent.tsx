@@ -103,11 +103,7 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     const resetIdleTimer = useCallback(
-        debounce(() => {
-            if (uiState.kiosk && typeof window["__resett"] === "function") {
-                window["__resett"]();
-            }
-        }, 250),
+        debounce(() => window["__resett"]?.(), 250),
         [uiState.kiosk],
     );
 

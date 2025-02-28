@@ -4,7 +4,7 @@ import { interpolate } from "d3-interpolate";
 import { select } from "d3-selection";
 import { zoom, zoomIdentity, zoomTransform, ZoomTransform } from "d3-zoom";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { ResizeObserver } from "resize-observer";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
@@ -31,7 +31,6 @@ import configInertia from "./zoom-inertia";
 import ImagePainter from "./drawing/painters/ImagePainter";
 import isMobile from "../../utils/is-mobile";
 import isWebview from "../../utils/is-webview";
-import debounce from "../../tools/debounce";
 
 //console.log('isIframe', isIframe)
 
@@ -246,15 +245,6 @@ export default function Map() {
         }
     );
 
-    const resetIdleTimer = useCallback(
-        debounce(() => {
-            if (uiState.kiosk && typeof window["__resett"] === "function") {
-                window["__resett"]();
-            }
-        }, 250),
-        [uiState.kiosk],
-    );
-
     return useObserver(() => (
         <canvas
             ref={el}
@@ -307,7 +297,7 @@ export default function Map() {
                 return !preventWheel;
             })
             .on("zoom", (currentEvent) => {
-                resetIdleTimer();
+                if (window["__resett"]) window["__resett"]();
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
