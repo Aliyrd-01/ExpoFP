@@ -1,12 +1,13 @@
 import { observer } from "mobx-react-lite";
 import PerfectScrollbar from "perfect-scrollbar";
-import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { uiState } from "../store";
 import isScrollUgly from "../utils/is-scroll-ugly";
 import OverlayBar from "./OverlayBar";
 import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
+import debounce from "../tools/debounce";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
@@ -101,13 +102,19 @@ const OverlayContent: React.FC<{
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [uiState.overlaySize]);
 
+    const resetIdleTimer = useCallback(
+        debounce(() => {
+            if (uiState.kiosk && typeof window["__resett"] === "function") {
+                window["__resett"]();
+            }
+        }, 250),
+        [uiState.kiosk],
+    );
+
     return (
         <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}
-            onScroll={() => {
-                if (uiState.kiosk && typeof window["__resett"] === "function") {
-                    window["__resett"]();
-                }
-            }}
+            onScroll={resetIdleTimer}
+            onClick={resetIdleTimer}
         >
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
