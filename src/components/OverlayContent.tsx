@@ -108,8 +108,10 @@ const OverlayContent: React.FC<{
     );
 
     return (
-        <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}
-            onScroll={resetIdleTimer}
+        <div
+            className={`overlay-content ${className || ""}`}
+            id="overlay-content" ref={contentRef}
+            onScroll={resetIdleTimer} 
             onClick={resetIdleTimer}
         >
             {particles ? <OverlayParticles /> : null}
