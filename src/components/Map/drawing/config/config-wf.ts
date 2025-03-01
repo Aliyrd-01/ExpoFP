@@ -24,6 +24,7 @@ import {
 import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
 import { Booth } from "../../../../store/BoothStore";
+import { RouteCutIn } from "../../../../RouteCutIn";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -530,7 +531,14 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     }
 
     function updateCurrentPosition(): number {
-        let position = store.routeStore.currentPosition || store.uiState.kioskSetupData;
+        let position = store.routeStore.currentPosition;
+
+        if (store.uiState.kioskSetupData) {
+            const booth = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
+            if (booth?.closestRoutePoint) {
+                position = booth.closestRoutePoint;
+            }
+        }
 
         if (position) {
             let visible = layersStore.findLayer(position.z)?.visible ?? true;
@@ -538,7 +546,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             if (store.uiState.kioskSetupData) {
                 visible = false;
             }
-            wfDrawer.updateVisible("sourceLocation", Boolean(store.uiState.kioskSetupData));
+
+            wfDrawer.updateVisible("sourceLocation", false);
 
             if (store.routeStore.iconType === 0 || (uiState.selectedRoute?.from && uiState.selectedRoute?.to)) {
                 wfDrawer.updateVisible("currentLocation_2", false);
