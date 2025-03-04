@@ -84,6 +84,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                     type="booth"
                     title={item.name}
                     url={null}
+                    icon={item.poiIcon}
                     additionalInfo={[{ type: "location", locationName: item.name, level: item.layer?.name }]}
                 />
             );
