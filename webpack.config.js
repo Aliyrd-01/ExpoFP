@@ -152,7 +152,7 @@ function createConfig(env) {
             },
             log: true,
         });
-        if (process.env.CLOUDFRONT_DISTRIBUTION_ID && process.env.CLOUD_FRONT_INVALIDATION_ENABLED === "true") {
+        if (process.env.CLOUDFRONT_DISTRIBUTION_ID && process.env.CLOUDFRONT_INVALIDATION_ENABLED === "true") {
             plugin.cloudfrontInvalidateOptions = {
                 DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
                 Items: [`/${folderName}/*`],
