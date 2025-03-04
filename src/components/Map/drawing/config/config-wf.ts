@@ -10,7 +10,7 @@ import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 import { DrawerContext } from "../Drawer1";
-import RectPainter from "../painters/RectPainter";
+import RectPainter, { DrawerObject } from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import {
@@ -23,8 +23,9 @@ import {
 } from "./canvases";
 import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
-import { Booth } from "../../../../store/BoothStore";
+import { Booth, SpecialBooth } from "../../../../store/BoothStore";
 import { RouteCutIn } from "../../../../RouteCutIn";
+import { KIOSK_ICON_HEIGHT, KIOSK_ICON_WIDTH } from "../../../../constants";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -191,7 +192,7 @@ function drawLines(
         const { from, to } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
+        const { sourceLocation } = attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
 
         attachTransitions(
             transitionDrawer,
@@ -206,7 +207,7 @@ function drawLines(
         if (store.uiState.kioskSetupData) {
             const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
 
-            if (routeCutIn) {
+            if (routeCutIn && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
                 attachTrailPoints(
                     trailDrawer,
                     pixelRatio,
@@ -214,7 +215,7 @@ function drawLines(
                     pointSize,
                     Color("#b5b7bc").hex(),
                     store.uiState.kioskSetupData,
-                    routeCutIn.closestRoutePoint,
+                    { x: sourceLocation.center[0], y: sourceLocation.center[1] },
                     trailPointsCollector,
                 );
             }
@@ -332,6 +333,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const trailDrawer = context.requirePainter("TRAIL", RectPainter, painterOrderPriority, visible);
     const trailPointsCollector = new DynamicObjects(trailDrawer);
+
+    const kioskIconDrawer = context.requirePainter("KIOSK_ICON", RectPainter, painterOrderPriority + 3, visible);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, pointColor);
 
@@ -468,11 +471,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     let kioskIconCanvas;
     if (store.fp.icons.get("kiosk")) {
-        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 23, 42, context.pixelRatio);
+        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), KIOSK_ICON_WIDTH, KIOSK_ICON_HEIGHT, context.pixelRatio);
     } else {
         kioskIconCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     }
-    wfDrawer.addObject({
+    kioskIconDrawer.addObject({
         id: "kioskIcon",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
@@ -497,11 +500,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
             context.requireUpdate(() => {
                 if (kioskSetupData && kioskSetupData.z === activeFloor?.name) {
-                    wfDrawer.updateSkipdim("kioskIcon", true);
-                    wfDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
-                    wfDrawer.updateVisible("kioskIcon", true);
+                    kioskIconDrawer.updateSkipdim("kioskIcon", true);
+                    kioskIconDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
+                    kioskIconDrawer.updateVisible("kioskIcon", true);
                 } else {
-                    wfDrawer.updateVisible("kioskIcon", false);
+                    kioskIconDrawer.updateVisible("kioskIcon", false);
                 }
             });
         }
@@ -529,6 +532,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         if (layers.length && uiState.selectedRoute?.from?.rect && uiState.selectedRoute?.to?.rect) {
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
+
+            if (from instanceof RouteCutIn) {
+                from = { ...from, rect: from.getRouteRect() } as unknown as SpecialBooth;
+            }
 
             if (!routeLines.length && !currentRouteLayer) routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, uiState.selectedRoute.waypoints);
 
@@ -558,21 +565,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     }
 
     function updateCurrentPosition(): number {
-        let position = store.routeStore.currentPosition;
-
-        if (store.uiState.kioskSetupData) {
-            const booth = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
-            if (booth?.closestRoutePoint) {
-                position = booth.closestRoutePoint;
-            }
-        }
+        const position = store.routeStore.currentPosition;
 
         if (position) {
-            let visible = layersStore.findLayer(position.z)?.visible ?? true;
-
-            if (store.uiState.kioskSetupData) {
-                visible = false;
-            }
+            const visible = layersStore.findLayer(position.z)?.visible ?? true;
 
             wfDrawer.updateVisible("sourceLocation", false);
 
@@ -828,7 +824,7 @@ function attachEndpoints(
     from: Booth,
     to: Booth,
     currentLayerName: string,
-) {
+): { sourceLocation: DrawerObject, destinationLocation: DrawerObject } {
     if (!points.length) return;
 
     const locations = [
@@ -871,6 +867,11 @@ function attachEndpoints(
     if (!destinationLocationAdded) {
         drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
         drawer.updateVisible("destinationLocation", isToLayer);
+    }
+
+    return {
+        sourceLocation: drawer.getObject("sourceLocation"),
+        destinationLocation: drawer.getObject("destinationLocation"),
     }
 }
 

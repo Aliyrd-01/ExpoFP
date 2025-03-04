@@ -9,14 +9,23 @@ export class RouteCutIn extends SpecialBooth {
     public readonly closestLineEnd: CurrentPosition;
 
     constructor(
+        private width: number,
+        private height: number,
         public readonly name: string,
         public readonly point: CurrentPosition,
         public readonly id = Date.now(),
-        public readonly rect: Rect = Rect.fromCxcywh(point.x, point.y, 1, 1),
+        public readonly rect: Rect = Rect.fromXywh(0, 0, 0, 0),
         public readonly exhibitors = [],
         public readonly paths = [],
     ) {
         super();
+
+        this.rect = Rect.fromXywhRect({
+            x: point.x - this.width / 2,
+            y: point.y - this.height,
+            w: this.width,
+            h: this.height,
+        });
 
         this.layer = store.layerStore.findLayer(point.z);
 
@@ -26,14 +35,6 @@ export class RouteCutIn extends SpecialBooth {
         };
 
         this.closestLineEnd = this.findClosestLineEnd(this.closestRoutePoint);
-
-        if (this.closestLineEnd) {
-            this.rect = Rect.fromMultiple([
-                this.rect,
-                Rect.fromCxcywh(this.closestRoutePoint.x, this.closestRoutePoint.y, 1, 1),
-                Rect.fromCxcywh(this.closestLineEnd.x, this.closestLineEnd.y, 1, 1),
-            ]);
-        }
 
         Object.freeze(this);
     }
@@ -152,5 +153,13 @@ export class RouteCutIn extends SpecialBooth {
             y: closestPoint.y,
             z: closestPoint.layer,
         };
+    }
+
+    public getRouteRect(): Rect {
+        return Rect.fromMultiple([
+            this.rect,
+            Rect.fromCxcywh(this.closestRoutePoint.x, this.closestRoutePoint.y, 1, 1),
+            Rect.fromCxcywh(this.closestLineEnd.x, this.closestLineEnd.y, 1, 1),
+        ]);
     }
 }

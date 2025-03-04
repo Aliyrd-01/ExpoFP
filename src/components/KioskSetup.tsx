@@ -7,7 +7,7 @@ import { t } from "../utils/i18n";
 import { reaction } from "mobx";
 import Modal from "./Modal";
 import { strEqual } from "../utils/strEqual";
-import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
+import { KIOSK_ICON_HEIGHT, KIOSK_ICON_WIDTH, KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
 import { CurrentPosition } from "../store/RouteStore";
 
@@ -32,8 +32,11 @@ const KioskSetup = observer(() => {
     );
 
     reaction(
-        () => store.uiState.kioskSetupData,
-        (kioskSetupData) => {
+        () => ({
+            kioskSetupData: store.uiState.kioskSetupData,
+            pixelRatio: store.uiState.devicePixelRatio,
+        }),
+        ({ kioskSetupData, pixelRatio }) => {
             const name = "Interactive Kiosk";
 
             const index = store.boothStore.booths.findIndex(b => strEqual(b.name, name));
@@ -45,7 +48,7 @@ const KioskSetup = observer(() => {
                 return;
             }
 
-            const booth = new RouteCutIn(name, kioskSetupData);
+            const booth = new RouteCutIn(KIOSK_ICON_WIDTH * pixelRatio, KIOSK_ICON_HEIGHT * pixelRatio, name, kioskSetupData);
             store.boothStore.booths.push(booth);
             store.routeStore.defaultFrom = booth;
         },

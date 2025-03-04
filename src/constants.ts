@@ -11,3 +11,5 @@ export const KIOSK_KEY = "kiosk";
 export const BOOKMARK_PAINTER_MARKER = "booth-bookmark";
 export const KIOSK_SETUP_KEY = "setk";
 export const KIOSK_ID_KEY = "k";
+export const KIOSK_ICON_WIDTH = 23;
+export const KIOSK_ICON_HEIGHT = 42;
