@@ -25,13 +25,13 @@ export class RouteCutIn extends SpecialBooth {
             z: point.z,
         };
 
-        this.closestLineEnd = this.findClosestLineEnd(point);
+        this.closestLineEnd = this.findClosestLineEnd(this.closestRoutePoint);
 
         if (this.closestLineEnd) {
             this.rect = Rect.fromMultiple([
                 this.rect,
-                Rect.fromCxcywh(this.closestLineEnd.x, this.closestLineEnd.y, 1, 1),
                 Rect.fromCxcywh(this.closestRoutePoint.x, this.closestRoutePoint.y, 1, 1),
+                Rect.fromCxcywh(this.closestLineEnd.x, this.closestLineEnd.y, 1, 1),
             ]);
         }
 

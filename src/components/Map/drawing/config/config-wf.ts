@@ -39,6 +39,7 @@ const blinkCounter = 3;
 
 let fromColor = Color("#00A2FF");
 let toColor = Color("#FF9F06");
+let pointColor = Color("#A4CCE3").hex();
 
 let isNewVersion = false;
 
@@ -140,12 +141,15 @@ function drawLines(
     wfDrawer: RectPainter,
     pointDrawer: RectPainter,
     transitionDrawer: RectPainter,
+    trailDrawer: RectPainter,
     transitionsCollector: IDynamicObjects,
+    trailPointsCollector: IDynamicObjects,
     ptscale: number,
     pixelRatio: number,
 ): Rectangle {
     routePoints.forEach((rp, i) => pointDrawer.updateVisible(`Dot_${i}`, false));
     transitionsCollector.clear();
+    trailPointsCollector.clear();
 
     routePoints = [];
 
@@ -198,6 +202,23 @@ function drawLines(
             uiState.getRouteNextFloor,
             pixelRatio,
         );
+
+        if (store.uiState.kioskSetupData) {
+            const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
+
+            if (routeCutIn) {
+                attachTrailPoints(
+                    trailDrawer,
+                    pixelRatio,
+                    ptscale,
+                    pointSize,
+                    Color("#b5b7bc").hex(),
+                    store.uiState.kioskSetupData,
+                    routeCutIn.closestRoutePoint,
+                    trailPointsCollector,
+                );
+            }
+        }
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
@@ -309,7 +330,10 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const transitionDrawer = context.requirePainter("TRANSITION", RectPainter, painterOrderPriority + 2, visible);
     const transitionsCollector = new DynamicObjects(transitionDrawer);
 
-    const pointCanvas = createCircleCanvas(6, context.pixelRatio, Color("#A4CCE3").hex());
+    const trailDrawer = context.requirePainter("TRAIL", RectPainter, painterOrderPriority, visible);
+    const trailPointsCollector = new DynamicObjects(trailDrawer);
+
+    const pointCanvas = createCircleCanvas(6, context.pixelRatio, pointColor);
 
     const blinkCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
 
@@ -494,6 +518,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         for (let i = 0; i < routePoints.length; i++) pointDrawer.updateVisible(`Dot_${i}`, false);
         transitionsCollector.clear();
+        trailPointsCollector.clear();
         wfDrawer.updateVisible("sourceLocation", false);
         wfDrawer.updateVisible("destinationLocation", false);
 
@@ -517,7 +542,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer,
                 pointDrawer,
                 transitionDrawer,
+                trailDrawer,
                 transitionsCollector,
+                trailPointsCollector,
                 scale || 3,
                 context.pixelRatio,
             );
@@ -653,7 +680,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                         wfDrawer,
                         pointDrawer,
                         transitionDrawer,
+                        trailDrawer,
                         transitionsCollector,
+                        trailPointsCollector,
                         s,
                         context.pixelRatio,
                     );
@@ -843,4 +872,68 @@ function attachEndpoints(
         drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
         drawer.updateVisible("destinationLocation", isToLayer);
     }
+}
+
+function attachTrailPoints(
+    drawer: RectPainter,
+    pixelRatio: number,
+    ptscale: number,
+    pointSize: number,
+    color: string,
+    fromPoint: Point,
+    toPoint: Point,
+    idCollector: IDynamicObjects,
+) {
+    const size = 4;
+    const points = splitPolyLine([{ p0: fromPoint, p1: toPoint }], pointSize * 1.2 * ptscale);
+
+    if (points.length < 2) return;
+
+    const dx = toPoint.x - fromPoint.x;
+    const dy = toPoint.y - fromPoint.y;
+    const distance = Math.hypot(dx, dy);
+
+    const midPoint = {
+        x: (fromPoint.x + toPoint.x) / 2,
+        y: (fromPoint.y + toPoint.y) / 2 - distance * 0.2,
+    };
+
+    const allPoints = [fromPoint, midPoint, toPoint];
+    const trailCanvas = createCircleCanvas(size, pixelRatio, color);
+
+    points.forEach((_, i, arr) => {
+        const t = (i + 1) / (arr.length + 1);
+        const p = bezierCurve(allPoints, t);
+
+        const id = `trail_${i}`;
+        drawer.addObject({
+            id,
+            center: [p.x, p.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [-trailCanvas.width / 2, -trailCanvas.height / 2, trailCanvas.width, trailCanvas.height],
+            canvasTmp: trailCanvas,
+            texPosition: "lefttop",
+            visible: true,
+        });
+
+        idCollector.add(id);
+        drawer.updateSkipdim(id, true);
+    });
+
+    drawer.reinitializeBuffers();
+}
+
+function bezierCurve(points: Point[], t: number): Point {
+    if (points.length === 1) {
+        return points[0];
+    }
+
+    const newPoints: Point[] = [];
+    for (let i = 0; i < points.length - 1; i++) {
+        const x = (1 - t) * points[i].x + t * points[i + 1].x;
+        const y = (1 - t) * points[i].y + t * points[i + 1].y;
+        newPoints.push({ x, y });
+    }
+
+    return bezierCurve(newPoints, t);
 }
