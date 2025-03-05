@@ -7,9 +7,9 @@ import { t } from "../utils/i18n";
 import { reaction } from "mobx";
 import Modal from "./Modal";
 import { strEqual } from "../utils/strEqual";
-import { KIOSK_ICON_HEIGHT, KIOSK_ICON_WIDTH, KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
-import { RouteCutIn } from "../RouteCutIn";
+import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
 import { CurrentPosition } from "../store/RouteStore";
+import { RouteCutIn } from "../RouteCutIn";
 
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
 
@@ -32,11 +32,8 @@ const KioskSetup = observer(() => {
     );
 
     reaction(
-        () => ({
-            kioskSetupData: store.uiState.kioskSetupData,
-            pixelRatio: store.uiState.devicePixelRatio,
-        }),
-        ({ kioskSetupData, pixelRatio }) => {
+        () => store.uiState.kioskSetupData,
+        (kioskSetupData) => {
             const name = "Interactive Kiosk";
 
             const index = store.boothStore.booths.findIndex(b => strEqual(b.name, name));
@@ -48,7 +45,15 @@ const KioskSetup = observer(() => {
                 return;
             }
 
-            const booth = new RouteCutIn(KIOSK_ICON_WIDTH * pixelRatio, KIOSK_ICON_HEIGHT * pixelRatio, name, kioskSetupData);
+            const booth = new RouteCutIn(
+                Date.now(),
+                "Interactive Kiosk",
+                {
+                    x: store.uiState.kioskSetupData.x,
+                    y: store.uiState.kioskSetupData.y,
+                    layer: store.uiState.kioskSetupData.z.toString(),
+                },
+            );
             store.boothStore.booths.push(booth);
             store.routeStore.defaultFrom = booth;
         },

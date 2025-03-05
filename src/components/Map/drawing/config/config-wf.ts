@@ -10,7 +10,7 @@ import { convertGpsToLocal, GpsConfig } from "../../../../utils/gps";
 import { getGraphLines } from "../../../../utils/wayfinding";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 import { DrawerContext } from "../Drawer1";
-import RectPainter, { DrawerObject } from "../painters/RectPainter";
+import RectPainter from "../painters/RectPainter";
 import { CurrentPosition } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import {
@@ -23,9 +23,9 @@ import {
 } from "./canvases";
 import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
-import { Booth, SpecialBooth } from "../../../../store/BoothStore";
-import { RouteCutIn } from "../../../../RouteCutIn";
+import { Booth } from "../../../../store/BoothStore";
 import { KIOSK_ICON_HEIGHT, KIOSK_ICON_WIDTH } from "../../../../constants";
+import { RouteCutIn } from "../../../../RouteCutIn";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -182,6 +182,14 @@ function drawLines(
         }
     }
 
+    if (store.uiState.kioskSetupData) {
+        const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
+        const cutInPoint = routeCutIn?.routePoint;
+        if (cutInPoint) {
+            routePoints = trimPointsToCutIn(cutInPoint, routePoints);
+        }
+    }
+
     routePoints.forEach((point, i) => {
         pointDrawer.updateCenter(`Dot_${i}`, [point.x, point.y]);
         pointDrawer.updateVisible(`Dot_${i}`, true);
@@ -192,7 +200,7 @@ function drawLines(
         const { from, to } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        const { sourceLocation } = attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
+        attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
 
         attachTransitions(
             transitionDrawer,
@@ -205,17 +213,17 @@ function drawLines(
         );
 
         if (store.uiState.kioskSetupData) {
-            // const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
-
-            if (/*routeCutIn &&*/ sourceLocation) {
+            const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
+            if (routeCutIn) {
+                const departurePoint = routePoints[routePoints.length - 1];
                 attachTrailPoints(
                     trailDrawer,
                     pixelRatio,
                     ptscale,
                     pointSize,
                     Color("#b5b7bc").hex(),
-                    store.uiState.kioskSetupData,
-                    { x: sourceLocation.center[0], y: sourceLocation.center[1] },
+                    departurePoint,
+                    routeCutIn.destination,
                     trailPointsCollector,
                 );
             }
@@ -533,9 +541,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-            if (from instanceof RouteCutIn) {
-                from = { ...from, rect: from.getRouteRect() } as unknown as SpecialBooth;
-            }
 
             if (!routeLines.length && !currentRouteLayer) routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, uiState.selectedRoute.waypoints);
 
@@ -568,11 +573,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         const position = store.routeStore.currentPosition;
 
         if (position) {
-            let visible = layersStore.findLayer(position.z)?.visible ?? true;
-
-            if (store.uiState.kioskSetupData) {
-                visible = Boolean(store.uiState.selectedRoute);
-            }
+            const visible = layersStore.findLayer(position.z)?.visible ?? true;
 
             wfDrawer.updateVisible("sourceLocation", false);
 
@@ -828,18 +829,18 @@ function attachEndpoints(
     from: Booth,
     to: Booth,
     currentLayerName: string,
-): { sourceLocation: DrawerObject | null, destinationLocation: DrawerObject | null } {
-    // TODO: Need to test this logic
+) {
+    if (!points.length) return;
 
-    if (!points.length) return { sourceLocation: null, destinationLocation: null };
+    const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
+    const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
+
+    // TODO: Need to test this logic
 
     // const locations = [
     //     { key: "sourceLocation", rect: from?.rect },
     //     { key: "destinationLocation", rect: to?.rect },
     // ];
-
-    const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
-    const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
 
     // let sourceLocationAdded = false;
     // let destinationLocationAdded = false;
@@ -874,11 +875,6 @@ function attachEndpoints(
         drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
         drawer.updateVisible("destinationLocation", isToLayer);
     // }
-
-    return {
-        sourceLocation: drawer.getObject("sourceLocation"),
-        destinationLocation: drawer.getObject("destinationLocation"),
-    }
 }
 
 function attachTrailPoints(
@@ -892,7 +888,7 @@ function attachTrailPoints(
     idCollector: IDynamicObjects,
 ) {
     const size = 4;
-    const points = splitPolyLine([{ p0: fromPoint, p1: toPoint }], pointSize * 1.2 * ptscale);
+    const points = splitPolyLine([{ p0: fromPoint, p1: toPoint }], Math.max(pointSize * 2 * ptscale, pointSize));
 
     if (points.length < 2) return;
 
@@ -943,4 +939,17 @@ function bezierCurve(points: Point[], t: number): Point {
     }
 
     return bezierCurve(newPoints, t);
+}
+
+function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
+    if (!cutInPoint || !points.length) {
+        return points;
+    }
+
+    const closestIndex = points.reduce(
+        (minIndex, p, i) => (lineLength(cutInPoint, p) < lineLength(cutInPoint, points[minIndex]) ? i : minIndex),
+        0
+    );
+
+    return points.slice(0, closestIndex);
 }

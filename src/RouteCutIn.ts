@@ -1,64 +1,62 @@
-import Rect from "./core/Rect";
-import rootStore from "./store";
 import { SpecialBooth } from "./store/BoothStore";
-import { CurrentPosition } from "./store/RouteStore";
 import { RouteLine, sublines } from "./utils/wayfinding";
+import rootStore from "./store";
+import Rect from "./core/Rect";
 
 export class RouteCutIn extends SpecialBooth {
-    public readonly closestRoutePoint: CurrentPosition;
-    public readonly closestLineEnd: CurrentPosition;
+    protected readonly store = rootStore.boothStore;
+    public readonly exhibitors = [];
+    public readonly paths = [];
+    public readonly routePoint: LayerPoint;
 
     constructor(
-        private width: number,
-        private height: number,
+        public readonly id: number,
         public readonly name: string,
-        public readonly point: CurrentPosition,
-        public readonly id = Date.now(),
-        public readonly rect: Rect = Rect.fromXywh(0, 0, 0, 0),
-        public readonly exhibitors = [],
-        public readonly paths = [],
-        public store = rootStore.boothStore,
+        public readonly destination: LayerPoint,
+        public readonly rect: Rect = Rect.fromCxcywh(0, 0, 0, 0),
     ) {
         super();
 
-        this.rect = Rect.fromXywhRect({
-            x: point.x - this.width / 2,
-            y: point.y - this.height,
-            w: this.width,
-            h: this.height,
-        });
+        this.layer = rootStore.layerStore.findLayer(destination.layer);
 
-        this.layer = rootStore.layerStore.findLayer(point.z);
+        this.routePoint = this.findClosestRoutePoint();
 
-        this.closestRoutePoint = {
-            ...this.findClosestPointOnLine(point, this.findNearestRouteLine(point)),
-            z: point.z,
-        };
-
-        this.closestLineEnd = this.findClosestLineEnd(this.closestRoutePoint);
+        const closestLineEnd = this.findClosestLineEnd(this.routePoint);
+        if (closestLineEnd) {
+            this.rect = Rect.fromCxcywh(closestLineEnd.x, closestLineEnd.y, 1, 1);
+        }
 
         Object.freeze(this);
     }
 
-    private findNearestRouteLine(point: CurrentPosition): RouteLine {
+    private findClosestRoutePoint(): LayerPoint {
         const lines = sublines()?.lines || [];
-        const levelLines = lines.filter((l) => l.p0.layer === point.z || l.p1.layer === point.z);
+        const levelLines = lines.filter(
+            (l) => l.p0.layer === this.destination.layer && l.p1.layer === this.destination.layer
+        );
+
+        if (!levelLines?.length) {
+            return null;
+        }
 
         let minDistance = Infinity;
         let closestLine: RouteLine = null;
     
         levelLines.forEach(line => {
-            const distance = this.distanceToLine(point, line.p0, line.p1);
+            const distance = this.distanceToLine(this.destination, line.p0, line.p1);
             if (distance < minDistance) {
                 minDistance = distance;
                 closestLine = line;
             }
         });
-    
-        return closestLine;
+
+        return {
+            ...this.findClosestPointOnLine(this.destination, closestLine),
+            layer: this.destination.layer,
+        };
     }
-    
-    private distanceToLine(point: CurrentPosition, p0: Point, p1: Point): number {
+
+    private distanceToLine(point: LayerPoint, p0: Point, p1: Point): number {
         const x = point.x;
         const y = point.y;
         const x1 = p0.x;
@@ -97,7 +95,7 @@ export class RouteCutIn extends SpecialBooth {
         return Math.sqrt(dx * dx + dy * dy);
     }
     
-    private findClosestPointOnLine(point: CurrentPosition, line: RouteLine): Point {
+    private findClosestPointOnLine(point: LayerPoint, line: RouteLine): Point {
         const { x: x1, y: y1 } = line.p0;
         const { x: x2, y: y2 } = line.p1;
         const { x, y } = point;
@@ -131,8 +129,8 @@ export class RouteCutIn extends SpecialBooth {
         return { x: xx, y: yy };
     }
 
-    private findClosestLineEnd(target: CurrentPosition): CurrentPosition {
-        const levelLineEnds = (sublines()?.lineEnds || []).filter(le => le.layer === target.z);
+    private findClosestLineEnd(target: LayerPoint): LayerPoint {
+        const levelLineEnds = (sublines()?.lineEnds || []).filter(le => le.layer === target.layer);
 
         let closestPoint = null;
         let minDistance = Infinity;
@@ -149,18 +147,6 @@ export class RouteCutIn extends SpecialBooth {
             }
         });
 
-        return {
-            x: closestPoint.x,
-            y: closestPoint.y,
-            z: closestPoint.layer,
-        };
-    }
-
-    public getRouteRect(): Rect {
-        return Rect.fromMultiple([
-            this.rect,
-            Rect.fromCxcywh(this.closestRoutePoint.x, this.closestRoutePoint.y, 1, 1),
-            Rect.fromCxcywh(this.closestLineEnd.x, this.closestLineEnd.y, 1, 1),
-        ]);
+        return closestPoint;
     }
 }
