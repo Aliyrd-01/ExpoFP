@@ -24,7 +24,6 @@ import {
 import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
 import { Booth } from "../../../../store/BoothStore";
-import { KIOSK_ICON_HEIGHT, KIOSK_ICON_WIDTH } from "../../../../constants";
 import { RouteCutIn } from "../../../../RouteCutIn";
 
 let routePoints: Point[] = [];
@@ -40,7 +39,6 @@ const blinkCounter = 3;
 
 let fromColor = Color("#00A2FF");
 let toColor = Color("#FF9F06");
-let pointColor = Color("#A4CCE3").hex();
 
 let isNewVersion = false;
 
@@ -344,7 +342,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     const kioskIconDrawer = context.requirePainter("KIOSK_ICON", RectPainter, painterOrderPriority + 3, visible);
 
-    const pointCanvas = createCircleCanvas(6, context.pixelRatio, pointColor);
+    const pointCanvas = createCircleCanvas(6, context.pixelRatio, Color("#A4CCE3").hex());
 
     const blinkCanvas = createCircleCanvas(6, context.pixelRatio, fromColor.hex());
 
@@ -479,7 +477,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     let kioskIconCanvas;
     if (store.fp.icons.get("kiosk")) {
-        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), KIOSK_ICON_WIDTH, KIOSK_ICON_HEIGHT, context.pixelRatio);
+        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 23, 42, context.pixelRatio);
     } else {
         kioskIconCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     }
@@ -541,7 +539,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             let from = uiState.selectedRoute.from;
             let to = uiState.selectedRoute.to;
 
-
             if (!routeLines.length && !currentRouteLayer) routeLines = getGraphLines(from, to, store.routeStore.onlyAccessible, uiState.selectedRoute.waypoints);
 
             if (!routeLines.length) {
@@ -570,7 +567,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     }
 
     function updateCurrentPosition(): number {
-        const position = store.routeStore.currentPosition;
+        let position = store.routeStore.currentPosition;
 
         if (position) {
             const visible = layersStore.findLayer(position.z)?.visible ?? true;
