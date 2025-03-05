@@ -1,5 +1,5 @@
 import Rect from "./core/Rect";
-import store from "./store";
+import rootStore from "./store";
 import { SpecialBooth } from "./store/BoothStore";
 import { CurrentPosition } from "./store/RouteStore";
 import { RouteLine, sublines } from "./utils/wayfinding";
@@ -17,6 +17,7 @@ export class RouteCutIn extends SpecialBooth {
         public readonly rect: Rect = Rect.fromXywh(0, 0, 0, 0),
         public readonly exhibitors = [],
         public readonly paths = [],
+        public store = rootStore.boothStore,
     ) {
         super();
 
@@ -27,7 +28,7 @@ export class RouteCutIn extends SpecialBooth {
             h: this.height,
         });
 
-        this.layer = store.layerStore.findLayer(point.z);
+        this.layer = rootStore.layerStore.findLayer(point.z);
 
         this.closestRoutePoint = {
             ...this.findClosestPointOnLine(point, this.findNearestRouteLine(point)),

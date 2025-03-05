@@ -49,6 +49,8 @@ let isNewVersion = false;
 
 // let initialDate = null;
 
+let currPos: Point;
+
 export function mapCurrentPosition(position: CurrentPosition): Point | null {
     var mapping = null;
     var fpConfig: GpsConfig = null;
@@ -207,7 +209,7 @@ function drawLines(
         if (store.uiState.kioskSetupData) {
             const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
 
-            if (routeCutIn && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
+            if (routeCutIn && store.uiState.selectedRoute?.from instanceof RouteCutIn && currPos) {
                 attachTrailPoints(
                     trailDrawer,
                     pixelRatio,
@@ -215,7 +217,7 @@ function drawLines(
                     pointSize,
                     Color("#b5b7bc").hex(),
                     store.uiState.kioskSetupData,
-                    { x: sourceLocation.center[0], y: sourceLocation.center[1] },
+                    currPos,
                     trailPointsCollector,
                 );
             }
@@ -568,7 +570,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         const position = store.routeStore.currentPosition;
 
         if (position) {
-            const visible = layersStore.findLayer(position.z)?.visible ?? true;
+            let visible = layersStore.findLayer(position.z)?.visible ?? true;
+
+            if (store.uiState.kioskSetupData) {
+                visible = Boolean(store.uiState.selectedRoute);
+            }
 
             wfDrawer.updateVisible("sourceLocation", false);
 
@@ -657,6 +663,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         }
 
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
+
+        currPos = shortestrPerp.p;
 
         return shortestrPerp.i;
     }

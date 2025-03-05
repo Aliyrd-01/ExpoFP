@@ -51,6 +51,7 @@ const KioskSetup = observer(() => {
             const booth = new RouteCutIn(KIOSK_ICON_WIDTH * pixelRatio, KIOSK_ICON_HEIGHT * pixelRatio, name, kioskSetupData);
             store.boothStore.booths.push(booth);
             store.routeStore.defaultFrom = booth;
+            store.routeStore.currentPosition = booth.closestRoutePoint;
         },
     );
 
@@ -115,7 +116,7 @@ const KioskSetup = observer(() => {
         }
 
         params.set(KIOSK_ID_KEY, encodeKioskId(store.uiState.kioskSetupData));
-        window.history.pushState({}, "", `?${params.toString()}`);
+        window.history.replaceState({}, "", `?${params.toString()}`);
 
         store.uiState.kioskSetup = false;
         store.uiState.kiosk = true;
