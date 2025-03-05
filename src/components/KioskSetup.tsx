@@ -51,7 +51,6 @@ const KioskSetup = observer(() => {
             const booth = new RouteCutIn(KIOSK_ICON_WIDTH * pixelRatio, KIOSK_ICON_HEIGHT * pixelRatio, name, kioskSetupData);
             store.boothStore.booths.push(booth);
             store.routeStore.defaultFrom = booth;
-            store.routeStore.currentPosition = booth.closestRoutePoint;
         },
     );
 

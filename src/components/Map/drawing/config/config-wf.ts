@@ -49,8 +49,6 @@ let isNewVersion = false;
 
 // let initialDate = null;
 
-let currPos: Point;
-
 export function mapCurrentPosition(position: CurrentPosition): Point | null {
     var mapping = null;
     var fpConfig: GpsConfig = null;
@@ -207,9 +205,9 @@ function drawLines(
         );
 
         if (store.uiState.kioskSetupData) {
-            const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
+            // const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
 
-            if (routeCutIn && store.uiState.selectedRoute?.from instanceof RouteCutIn && currPos) {
+            if (/*routeCutIn &&*/ sourceLocation) {
                 attachTrailPoints(
                     trailDrawer,
                     pixelRatio,
@@ -217,7 +215,7 @@ function drawLines(
                     pointSize,
                     Color("#b5b7bc").hex(),
                     store.uiState.kioskSetupData,
-                    currPos,
+                    { x: sourceLocation.center[0], y: sourceLocation.center[1] },
                     trailPointsCollector,
                 );
             }
@@ -664,8 +662,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         store.routeStore.updateRoutePoints(lines.filter((gl) => !gl.virtual));
 
-        currPos = shortestrPerp.p;
-
         return shortestrPerp.i;
     }
 
@@ -832,50 +828,52 @@ function attachEndpoints(
     from: Booth,
     to: Booth,
     currentLayerName: string,
-): { sourceLocation: DrawerObject, destinationLocation: DrawerObject } {
-    if (!points.length) return;
+): { sourceLocation: DrawerObject | null, destinationLocation: DrawerObject | null } {
+    // TODO: Need to test this logic
 
-    const locations = [
-        { key: "sourceLocation", rect: from?.rect },
-        { key: "destinationLocation", rect: to?.rect },
-    ];
+    if (!points.length) return { sourceLocation: null, destinationLocation: null };
+
+    // const locations = [
+    //     { key: "sourceLocation", rect: from?.rect },
+    //     { key: "destinationLocation", rect: to?.rect },
+    // ];
 
     const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
     const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
 
-    let sourceLocationAdded = false;
-    let destinationLocationAdded = false;
+    // let sourceLocationAdded = false;
+    // let destinationLocationAdded = false;
 
-    points.forEach(({ x, y }) => {
-        for (const { key, rect } of locations) {
-            if (rect?.containsPoint(x, y)) {
-                drawer.updateCenter(key, [x, y]);
+    // points.forEach(({ x, y }) => {
+    //     for (const { key, rect } of locations) {
+    //         if (rect?.containsPoint(x, y)) {
+    //             drawer.updateCenter(key, [x, y]);
 
-                if (key === "sourceLocation") {
-                    drawer.updateVisible(key, isFromLayer);
-                    sourceLocationAdded = isFromLayer;
+    //             if (key === "sourceLocation") {
+    //                 drawer.updateVisible(key, isFromLayer);
+    //                 sourceLocationAdded = isFromLayer;
 
-                }
+    //             }
 
-                if (key === "destinationLocation") {
-                    drawer.updateVisible(key, isToLayer);
-                    destinationLocationAdded = isToLayer;
-                }
+    //             if (key === "destinationLocation") {
+    //                 drawer.updateVisible(key, isToLayer);
+    //                 destinationLocationAdded = isToLayer;
+    //             }
 
-                break;
-            }
-        }
-    });
+    //             break;
+    //         }
+    //     }
+    // });
 
-    if (!sourceLocationAdded) {
+    // if (!sourceLocationAdded) {
         drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
         drawer.updateVisible("sourceLocation", isFromLayer);
-    }
+    // }
 
-    if (!destinationLocationAdded) {
+    // if (!destinationLocationAdded) {
         drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
         drawer.updateVisible("destinationLocation", isToLayer);
-    }
+    // }
 
     return {
         sourceLocation: drawer.getObject("sourceLocation"),
