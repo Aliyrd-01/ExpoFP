@@ -9,5 +9,5 @@ export const LAYER_ICONS_MARKER = "icons";
 export const STRING_META_DELIMITER = "$$";
 export const KIOSK_KEY = "kiosk";
 export const BOOKMARK_PAINTER_MARKER = "booth-bookmark";
-export const KIOSK_SETUP_KEY = "setk";
+export const KIOSK_SETUP_KEY = "set-kiosk";
 export const KIOSK_ID_KEY = "k";
