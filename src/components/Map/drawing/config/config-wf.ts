@@ -180,7 +180,7 @@ function drawLines(
         }
     }
 
-    if (store.uiState.kioskSetupData) {
+    if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
         const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
         const cutInPoint = routeCutIn?.routePoint;
         if (cutInPoint) {
@@ -198,7 +198,13 @@ function drawLines(
         const { from, to } = uiState.selectedRoute || {};
         const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
+        attachEndpoints(
+            wfDrawer,
+            routePoints,
+            from instanceof RouteCutIn ? null : from,
+            to,
+            currentLayerName,
+        );
 
         attachTransitions(
             transitionDrawer,
@@ -210,7 +216,7 @@ function drawLines(
             pixelRatio,
         );
 
-        if (store.uiState.kioskSetupData) {
+        if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
             const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
             if (routeCutIn) {
                 const departurePoint = routePoints[routePoints.length - 1];
