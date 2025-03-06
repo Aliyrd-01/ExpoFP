@@ -183,7 +183,7 @@ function drawLines(
     if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
         const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
         const cutInPoint = routeCutIn?.routePoint;
-        if (cutInPoint) {
+        if (cutInPoint && strEqual(store.routeStore.currentRouteLayer?.name, cutInPoint.layer)) {
             routePoints = trimPointsToCutIn(cutInPoint, routePoints);
         }
     }
@@ -218,7 +218,7 @@ function drawLines(
 
         if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
             const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
-            if (routeCutIn) {
+            if (routeCutIn && strEqual(currentLayerName, routeCutIn.destination.layer)) {
                 const departurePoint = routePoints[routePoints.length - 1];
                 attachTrailPoints(
                     trailDrawer,
@@ -839,44 +839,44 @@ function attachEndpoints(
 
     // TODO: Need to test this logic
 
-    // const locations = [
-    //     { key: "sourceLocation", rect: from?.rect },
-    //     { key: "destinationLocation", rect: to?.rect },
-    // ];
+    const locations = [
+        { key: "sourceLocation", rect: from?.rect },
+        { key: "destinationLocation", rect: to?.rect },
+    ];
 
-    // let sourceLocationAdded = false;
-    // let destinationLocationAdded = false;
+    let sourceLocationAdded = false;
+    let destinationLocationAdded = false;
 
-    // points.forEach(({ x, y }) => {
-    //     for (const { key, rect } of locations) {
-    //         if (rect?.containsPoint(x, y)) {
-    //             drawer.updateCenter(key, [x, y]);
+    points.forEach(({ x, y }) => {
+        for (const { key, rect } of locations) {
+            if (rect?.containsPoint(x, y)) {
+                drawer.updateCenter(key, [x, y]);
 
-    //             if (key === "sourceLocation") {
-    //                 drawer.updateVisible(key, isFromLayer);
-    //                 sourceLocationAdded = isFromLayer;
+                if (key === "sourceLocation") {
+                    drawer.updateVisible(key, isFromLayer);
+                    sourceLocationAdded = isFromLayer;
 
-    //             }
+                }
 
-    //             if (key === "destinationLocation") {
-    //                 drawer.updateVisible(key, isToLayer);
-    //                 destinationLocationAdded = isToLayer;
-    //             }
+                if (key === "destinationLocation") {
+                    drawer.updateVisible(key, isToLayer);
+                    destinationLocationAdded = isToLayer;
+                }
 
-    //             break;
-    //         }
-    //     }
-    // });
+                break;
+            }
+        }
+    });
 
-    // if (!sourceLocationAdded) {
+    if (!sourceLocationAdded) {
         drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
         drawer.updateVisible("sourceLocation", isFromLayer);
-    // }
+    }
 
-    // if (!destinationLocationAdded) {
+    if (!destinationLocationAdded) {
         drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
         drawer.updateVisible("destinationLocation", isToLayer);
-    // }
+    }
 }
 
 function attachTrailPoints(
