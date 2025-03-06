@@ -34,7 +34,7 @@ const KioskSetup = observer(() => {
     reaction(
         () => store.uiState.kioskSetupData,
         (kioskSetupData) => {
-            const name = "Interactive Kiosk";
+            const name = t("Interactive Kiosk");
 
             const index = store.boothStore.booths.findIndex(b => strEqual(b.name, name));
             if (index !== -1) {
@@ -47,7 +47,7 @@ const KioskSetup = observer(() => {
 
             const booth = new RouteCutIn(
                 Date.now(),
-                "Interactive Kiosk",
+                name,
                 {
                     x: store.uiState.kioskSetupData.x,
                     y: store.uiState.kioskSetupData.y,
