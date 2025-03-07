@@ -115,7 +115,7 @@ export default class RouteStore {
                     if (layersStore.mode === LayersMode.Default || !layerExists) {
                         return b.visible && b.rect;
                     } else {
-                        return b.rect && ((!position.z && b.visible) || layerExists.name === b.layer?.name);
+                        return b.rect && ((typeof position.z !== "number" && !position.z && b.visible) || layerExists.name === b.layer?.name);
                     }
                 })
                 .sort(

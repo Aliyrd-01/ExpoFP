@@ -135,6 +135,9 @@ function dispatchFromUrl() {
     const searchParams = new URLSearchParams(window.location.search);
 
     if (executeCustomCommand()) {
+    } else if (searchParams.has("yah")) {
+        const command = searchParams.get("yah");
+        handleCustomCommand(`__yah ${command}`, true);
     } else if (searchParams.has(KIOSK_KEY)) {
         const command = searchParams.get(KIOSK_KEY);
         if (command === "1") {

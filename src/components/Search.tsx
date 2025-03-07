@@ -29,10 +29,12 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             const yah = YouAreHere.getYah();
             alert(`"You are here" coordinantes: ${yah[0]} ${yah[1]}, scale ${yah[2]}`);
         } else if (commandValue === "none") {
+            /** @deprecated use yah=<COMMAND> */
             YouAreHere.removeYah();
             isLocalStorageAvailable && localStorage.removeItem(KIOSK_KEY);
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
+            /** @deprecated use yah=<COMMAND> */
             YouAreHere.setYah(commandValue.split(",")[0]);
             if (isLocalStorageAvailable) {
                 localStorage.setItem(KIOSK_KEY, "1");

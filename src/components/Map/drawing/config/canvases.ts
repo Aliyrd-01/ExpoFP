@@ -1,10 +1,10 @@
+import data from "../../../../data";
 import { PathInfo } from "../../../../data/Data";
 import { getTrianglesFromFpPaths } from "../../../../data/svg";
+import { heatmapStore, uiState } from "../../../../store";
 import { RegularBooth } from "../../../../store/BoothStore";
 import { t } from "../../../../utils/i18n";
-import { isRTLText, isHebrewText } from "../../../../utils/rtl";
-import { heatmapStore, uiState } from "../../../../store";
-import data from "../../../../data";
+import { isHebrewText, isRTLText } from "../../../../utils/rtl";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -169,7 +169,7 @@ export function createExhibitorsDetailsCanvas(
     onlyMain: boolean,
     onlyFeaturedExhibitors: boolean,
     textAlign: CanvasTextAlign = "start",
-    linesLimit = 3,
+    linesLimit = 3
 ): CanvasDescriptor {
     const mainLines: string[] = [];
     const detailsLines: string[] = [];
@@ -178,7 +178,9 @@ export function createExhibitorsDetailsCanvas(
     const detailFontSize = 0.9 * fontSize * pixelRatio;
 
     const mainExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-main-weight"));
-    const detailExhibitorDetailsWeight = Number(getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-details-weight"));
+    const detailExhibitorDetailsWeight = Number(
+        getComputedStyle(document.body).getPropertyValue("--expofp-exhibitor-details-weight")
+    );
 
     const mainFont = getFont(mainFontSize, mainExhibitorDetailsWeight || 500);
     const detailFont = getFont(detailFontSize, detailExhibitorDetailsWeight || 300);
@@ -195,13 +197,13 @@ export function createExhibitorsDetailsCanvas(
         mainLines.push(...exhibitorsWithOrder.map((e) => e.name));
         const exhibitorsWithoutOrder = b.exhibitors.filter((e) => e.order === undefined);
         if (exhibitorsWithoutOrder.length > 0) {
-            mainLines.push(`and ${exhibitorsWithoutOrder.length} more`);
+            mainLines.push(t("and {{moreCount}} more", { moreCount: exhibitorsWithoutOrder.length }));
         }
     } else {
         if (b.exhibitors.length > linesLimit) {
             mainLines.push(`${b.exhibitors.length} ${data.exhibitorTermPlural}`);
         } else {
-            mainLines.push(...b.exhibitors.map(e => e.name));
+            mainLines.push(...b.exhibitors.map((e) => e.name));
         }
     }
 
@@ -358,7 +360,7 @@ export function createBookmarkCanvas(widthPx: number, pixelRatio: number, color:
 export function createArrowCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
-    scale: number = pixelRatio * 0.4,
+    scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
     return {
         width: 95 * scale,
@@ -474,12 +476,7 @@ export function createTargetCanvas(
     };
 }
 
-export function createImageCanvas(
-    image: HTMLImageElement,
-    width: number,
-    height: number,
-    pixelRatio: number
-): CanvasDescriptor {
+export function createImageCanvas(image: HTMLImageElement, width: number, height: number, pixelRatio: number): CanvasDescriptor {
     const aspectRatio = image ? image.width / image.height : 1;
     let scaledWidth = width * pixelRatio;
     let scaledHeight = height * pixelRatio;
@@ -498,7 +495,7 @@ export function createImageCanvas(
         draw(ctx: CanvasRenderingContext2D) {
             if (!image) return;
             ctx.drawImage(image, 0, 0, scaledWidth, scaledHeight);
-        }
+        },
     };
 }
 
