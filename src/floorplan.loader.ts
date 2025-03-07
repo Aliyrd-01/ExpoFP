@@ -309,25 +309,56 @@ export default class FloorPlanLoader implements FloorPlan {
 
             await initI18n();
 
-            const isHeatmap = window.location.search.startsWith("?heatmap=true");
+            const searchParamas = new URLSearchParams(window.location.search);
             const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
 
-            if (isHeatmap) {
-                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(
-                    (res) => res.json()
-                );
-                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(
-                    (res) => res.json()
-                );
-                window["__heatmapData"] = { booths, exhibitors };
-            } else if (window.location.search.startsWith("?heatmapYah=true")) {
+            if (searchParamas.get("heatmap") === "true") {
                 try {
-                    const resp = await fetch(`https://app.expofp.com/api/fp-stats/get?expoId=${expoId}&type=yahview`);
-                    if (resp.ok) {
-                        const json = await resp.json();
-                        window["__heatmapDataYah"] = {
-                            yah: json.map((item, i) => ({ ...item, name: `QR Code #${i + 1}` })),
-                        };
+                    if (searchParamas.get("type") === "yah") {
+                        const url = new URL(
+                            "/api/v1/you-are-here/qr-code/list/viewer",
+                            // TODO: remove eventId === "test-svg" condition after testing
+                            eventId === "test-svg" ? "https://app-show.expofp.com" : "https://app.expofp.com",
+                        );
+
+                        const resp = await fetch(
+                            url.toString(),
+                            {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    expoId,
+                                    token: decodeURIComponent(searchParamas.get("t")),
+                                }),
+                            },
+                        );
+
+                        if (resp.ok) {
+                            const json = await resp.json();
+                            window["__heatmapDataYah"] = {
+                                yah: json.map((item, i) => ({ ...item, name: `QR Code #${i + 1}` })),
+                            };
+                        }
+                    } else {
+                        const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
+                        boothsUrl.searchParams.set("expoId", expoId);
+                        boothsUrl.searchParams.set("type", "booview");
+
+                        const exhibitorsUrl = new URL("api/fp-stats/get", "https://app.expofp.com");
+                        exhibitorsUrl.searchParams.set("expoId", expoId);
+                        exhibitorsUrl.searchParams.set("type", "exview");
+
+                        const [boothsResp, exhibitorsResp] = await Promise.all([
+                            fetch(boothsUrl.toString()),
+                            fetch(exhibitorsUrl.toString()),
+                        ]);
+
+                        const [booths, exhibitors] = await Promise.all([
+                            boothsResp.json(),
+                            exhibitorsResp.json(),
+                        ]);
+
+                        window["__heatmapData"] = { booths, exhibitors };
                     }
                 } catch (err) {
                     console.warn(err);

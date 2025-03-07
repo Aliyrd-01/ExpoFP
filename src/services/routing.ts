@@ -178,7 +178,7 @@ function dispatchFromUrl() {
         else {
             const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
             if (category) store.selectCategory(category);
-            else if (!slug.includes("heatmap=true") && !slug.includes("heatmapYah=true")) store.selectSearch(slug);
+            else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
         }
     }
 
@@ -190,38 +190,33 @@ function dispatchFromUrl() {
 function processURLParams() {
     const locationSearch = history.location.search;
 
-    if (locationSearch.includes("heatmapYah")) {
-        const url = new URL(window.location.href);
-        const heatmapParamValue = url.searchParams.get("heatmapYah");
-
-        if (heatmapParamValue === "true") {
-            url.searchParams.delete("heatmapYah");
-
-            let newSearch = url.search;
-            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-            disableHistoryManipulation = true;
-
-            historyReplace(newSearch);
-
-            store.uiState.heatmapYah = true;
-            store.uiState.monochrome = true;
-            store.uiState.hideLogoInBooth = true;
-            store.uiState.hideHeaderLogo = true;
-            store.uiState.disableBookmarked = true;
-        }
-    } else if (locationSearch.includes("heatmap")) {
+    if (locationSearch.includes("heatmap")) {
         const url = new URL(window.location.href);
         const heatmapParamValue = url.searchParams.get("heatmap");
 
         if (heatmapParamValue === "true") {
-            url.searchParams.delete("heatmap");
+            if (url.searchParams.get("type") === "yah") {
+                let newSearch = url.search;
+                newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+                disableHistoryManipulation = true;
 
-            let newSearch = url.search;
-            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-            disableHistoryManipulation = true;
+                historyReplace(newSearch);
 
-            historyReplace(newSearch);
-            store.uiState.heatmap = true;
+                store.uiState.heatmapYah = true;
+                store.uiState.monochrome = true;
+                store.uiState.hideLogoInBooth = true;
+                store.uiState.hideHeaderLogo = true;
+                store.uiState.disableBookmarked = true;
+            } else {
+                url.searchParams.delete("heatmap");
+
+                let newSearch = url.search;
+                newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+                disableHistoryManipulation = true;
+
+                historyReplace(newSearch);
+                store.uiState.heatmap = true;
+            }
         }
     }
 
