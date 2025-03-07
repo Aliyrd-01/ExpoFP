@@ -181,7 +181,7 @@ function drawLines(
     }
 
     if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
-        const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
+        const routeCutIn = getRouteCutIt();
         const cutInPoint = routeCutIn?.routePoint;
         if (cutInPoint && strEqual(store.routeStore.currentRouteLayer?.name, cutInPoint.layer)) {
             routePoints = trimPointsToCutIn(cutInPoint, routePoints);
@@ -217,7 +217,7 @@ function drawLines(
         );
 
         if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
-            const routeCutIn = store.boothStore.booths.find(b => b instanceof RouteCutIn) as RouteCutIn;
+            const routeCutIn = getRouteCutIt();
             if (routeCutIn && strEqual(currentLayerName, routeCutIn.destination.layer)) {
                 const departurePoint = routePoints[routePoints.length - 1];
                 attachTrailPoints(
@@ -954,4 +954,8 @@ function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
     );
 
     return points.slice(0, closestIndex);
+}
+
+function getRouteCutIt(): RouteCutIn {
+    return store.routeStore.defaultFrom as RouteCutIn;
 }

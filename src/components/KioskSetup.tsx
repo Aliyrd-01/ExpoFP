@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import Alert from "./Alert";
 import Button from "./Button";
-import React, { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
 import { reaction, toJS } from "mobx";
@@ -9,12 +9,15 @@ import Modal from "./Modal";
 import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
+import "./KioskSetup.scss";
 
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
 
+// TODO: Handle a click on the kiosk icon
 const KioskSetup = observer(() => {
     const [showGuide, setShowGuide] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [pending, setPending] = useState(false);
 
     reaction(
         () => store.uiState.kioskSetup,
@@ -30,36 +33,16 @@ const KioskSetup = observer(() => {
         },
     );
 
-    reaction(
-        () => store.uiState.kioskSetupData,
-        (kioskSetupData) => {
-            const name = t("Interactive Kiosk");
-
-            const index = store.boothStore.booths.findIndex(b => strEqual(b.name, name));
-            if (index !== -1) {
-                store.boothStore.booths.splice(index, 1);
-            }
-
-            if (!kioskSetupData) {
-                return;
-            }
-
-            const booth = new RouteCutIn(
-                Date.now(),
-                name,
-                {
-                    x: store.uiState.kioskSetupData.x,
-                    y: store.uiState.kioskSetupData.y,
-                    layer: store.uiState.kioskSetupData.z.toString(),
-                },
-            );
-            store.boothStore.booths.push(booth);
-            store.routeStore.defaultFrom = booth;
-        },
-    );
-
     const requestUrl = useMemo(() => {
-        const url = new URL("/api/kiosks", "https://app.expofp.com/");
+        const url = new URL(
+            "/api/kiosks",
+            (
+                // TODO: Remove this after testing
+                store.fp.eventId === "demo-staging2"
+                    ? "https://esm-web-dev-app.herokuapp.com/"
+                    : "https://app.expofp.com/"
+            ),
+        );
         url.searchParams.set("expoKey", store.fp.eventId);
         return url.toString();
     }, [store.fp]);
@@ -90,8 +73,8 @@ const KioskSetup = observer(() => {
                 }
 
                 const kiosks = await response.json();
-
                 const kiosk = kiosks.find(k => strEqual(k.key, kioskEncodedId));
+
                 if (!kiosk) {
                     return;
                 }
@@ -99,8 +82,20 @@ const KioskSetup = observer(() => {
                 store.uiState.kioskSetupData = {
                     x: kiosk.x,
                     y: kiosk.y,
-                    z: kiosk.layer,
+                    z: kiosk.z,
                 };
+
+                store.uiState.kiosk = true;
+
+                store.routeStore.defaultFrom = new RouteCutIn(
+                    Number.MAX_SAFE_INTEGER,
+                    t("Interactive Kiosk"),
+                    {
+                        x: kiosk.x,
+                        y: kiosk.y,
+                        layer: kiosk.z.toString(),
+                    },
+                );
             } catch (error) {
                 setShowError(true);
                 return;
@@ -135,6 +130,7 @@ const KioskSetup = observer(() => {
     async function save() {
         try {
             setShowError(false);
+            setPending(true);
 
             const params = new URLSearchParams(decodeURIComponent(window.location.search));
 
@@ -170,13 +166,16 @@ const KioskSetup = observer(() => {
 
             const kiosk = await response.json();
 
-            params.set(KIOSK_ID_KEY, kiosk.id);
+            params.delete(KIOSK_SETUP_KEY);
+            params.set(KIOSK_ID_KEY, kiosk.key);
             window.history.replaceState({}, "", `?${params.toString()}`);
 
             store.uiState.kioskSetup = false;
             store.uiState.kiosk = true;
         } catch (err) {
             setShowError(true);
+        } finally {
+            setPending(false);
         }
     }
 
@@ -221,13 +220,7 @@ const KioskSetup = observer(() => {
                     </Modal>
 
                     {!showGuide && (
-                        <div style={{
-                            position: "fixed",
-                            bottom: "1rem",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            zIndex: 9998,
-                        }}>
+                        <div className="efp-kiosk-setup">
                             <Alert
                                 variant="blank"
                                 title={t("Setting the position of this kiosk")}
@@ -246,7 +239,7 @@ const KioskSetup = observer(() => {
                                         inline
                                         size="sm"
                                         text={t("Save")}
-                                        disabled={!store.uiState.kioskSetupData}
+                                        disabled={!store.uiState.kioskSetupData || pending}
                                         onClick={save}
                                     />
 
@@ -265,13 +258,7 @@ const KioskSetup = observer(() => {
             )}
 
             {showError && (
-                <div style={{
-                    position: "fixed",
-                    top: "1rem",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    zIndex: 9999,
-                }}>
+                <div className="efp-kiosk-setup__error" >
                     <Alert
                         variant="error"
                         closable

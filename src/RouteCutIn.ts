@@ -8,12 +8,13 @@ export class RouteCutIn extends SpecialBooth {
     public readonly exhibitors = [];
     public readonly paths = [];
     public readonly routePoint: LayerPoint;
+    public readonly rect: Rect = Rect.fromCxcywh(0, 0, 0, 0);
 
     constructor(
         public readonly id: number,
         public readonly name: string,
         public readonly destination: LayerPoint,
-        public readonly rect: Rect = Rect.fromCxcywh(0, 0, 0, 0),
+        public readonly meta = {},
     ) {
         super();
 

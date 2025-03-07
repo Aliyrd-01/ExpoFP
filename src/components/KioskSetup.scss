@@ -1,0 +1,19 @@
+@use "@styles/vars";
+
+.efp-kiosk-setup {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    box-shadow: var(--shadow-md);
+
+    &__error {
+        position: fixed;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        box-shadow: var(--shadow-md);
+    }
+}
