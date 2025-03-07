@@ -93,7 +93,7 @@ const KioskSetup = observer(() => {
                     {
                         x: kiosk.x,
                         y: kiosk.y,
-                        layer: kiosk.z.toString(),
+                        layer: kiosk.z?.toString(),
                     },
                 );
             } catch (error) {
