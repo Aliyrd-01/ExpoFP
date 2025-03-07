@@ -144,18 +144,18 @@ function createConfig(env) {
                 credentials: new AWS.SharedIniFileCredentials({ profile: "efp-deploy-fp" }),
             };
         }
-        let forlderName = !process.env.AWS_FOLDER_NAME ? "packages/default" : "packages/" + process.env.AWS_FOLDER_NAME;
+        let folderName = !process.env.AWS_FOLDER_NAME ? "packages/default" : "packages/" + process.env.AWS_FOLDER_NAME;
         let plugin = new S3Plugin({
             s3Options: options,
             s3UploadOptions: {
-                Bucket: "efp-data/" + forlderName,
+                Bucket: "efp-data/" + folderName,
             },
             log: true,
         });
-        if (process.env.CLOUDFRONT_DISTRIBUTION_ID) {
+        if (process.env.CLOUDFRONT_DISTRIBUTION_ID && process.env.CLOUDFRONT_INVALIDATION_ENABLED === "true") {
             plugin.cloudfrontInvalidateOptions = {
                 DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID,
-                Items: [`/${forlderName}/*`],
+                Items: [`/${folderName}/*`],
             };
         }
 
