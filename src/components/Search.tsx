@@ -217,6 +217,7 @@ function Search() {
     });
 
     function handleChange() {
+        window["__resett"]?.();
         setText();
         debouncedChange();
     }
