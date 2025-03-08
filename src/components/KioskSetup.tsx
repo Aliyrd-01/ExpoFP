@@ -33,6 +33,21 @@ const KioskSetup = observer(() => {
         },
     );
 
+    reaction(
+        () => store.uiState.kioskSetupData,
+        (kioskSetupData) => {
+            store.routeStore.defaultFrom = new RouteCutIn(
+                Number.MAX_SAFE_INTEGER,
+                t("Interactive Kiosk"),
+                {
+                    x: kioskSetupData.x,
+                    y: kioskSetupData.y,
+                    layer: kioskSetupData.z?.toString(),
+                },
+            );
+        },
+    );
+
     const requestUrl = useMemo(() => {
         const url = new URL(
             "/api/kiosks",
@@ -86,16 +101,6 @@ const KioskSetup = observer(() => {
                 };
 
                 store.uiState.kiosk = true;
-
-                store.routeStore.defaultFrom = new RouteCutIn(
-                    Number.MAX_SAFE_INTEGER,
-                    t("Interactive Kiosk"),
-                    {
-                        x: kiosk.x,
-                        y: kiosk.y,
-                        layer: kiosk.z?.toString(),
-                    },
-                );
             } catch (error) {
                 setShowError(true);
                 return;
