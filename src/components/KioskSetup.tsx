@@ -170,6 +170,12 @@ const KioskSetup = observer(() => {
             params.set(KIOSK_ID_KEY, kiosk.key);
             window.history.replaceState({}, "", `?${params.toString()}`);
 
+            store.uiState.kioskSetupData = {
+                x: kiosk.x,
+                y: kiosk.y,
+                z: kiosk.z,
+            };
+
             store.uiState.kioskSetup = false;
             store.uiState.kiosk = true;
         } catch (err) {
