@@ -41,6 +41,7 @@ const KioskSetup = observer(() => {
         ({ kioskSetupData, currentPosition }) => {
             if (currentPosition && store.routeStore.defaultFrom instanceof RouteCutIn) {
                 store.routeStore.defaultFrom = null;
+                store.selectNone();
                 return;
             }
 
