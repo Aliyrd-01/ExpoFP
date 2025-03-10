@@ -65,6 +65,7 @@ $entity-item: ".efp-entity-item";
         & > img {
             width: rem(20px);
             height: rem(20px);
+            filter: brightness(100) contrast(100);
         }
     }
 
