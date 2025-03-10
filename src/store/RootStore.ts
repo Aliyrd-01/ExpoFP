@@ -19,6 +19,7 @@ import UIState from "./UIState";
 import type { ListItem } from "./types";
 import { svgArea } from "../data/svg";
 import PoiTypeStore from "./PoiTypeStore";
+import { removeUTMParams } from "../utils/removeUTMParams";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -132,7 +133,7 @@ export default class RootStore {
     @action selectSearch(text?: string) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
-        this.uiState.list = { type: "search", text: text || "", focused: false };
+        this.uiState.list = { type: "search", text: removeUTMParams(text), focused: false };
         this.uiState.activeListIndex = -1;
     }
 
