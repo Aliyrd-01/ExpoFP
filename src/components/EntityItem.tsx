@@ -34,6 +34,7 @@ export interface EntityItemProps {
     bookmarked?: boolean;
     featured?: boolean;
     locationTerm?: string;
+    visited?: boolean;
     onClick?: (type: EntityItemType, id: string) => void;
 }
 
@@ -67,6 +68,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
     bookmarked = false,
     featured = false,
     locationTerm = "Booth",
+    visited,
     onClick,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
@@ -96,6 +98,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                         <div className="efp-entity-item__title">
                             {title}
                             {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
+                            {featured && <i className="icon-diamond"></i>}
                         </div>
                         {type === "booth" && <span className="efp-entity-item__subtitle">{locationTerm}</span>}
                         {type === "category" && <span className="efp-entity-item__subtitle">Category</span>}
