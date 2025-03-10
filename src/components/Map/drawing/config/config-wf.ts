@@ -194,9 +194,10 @@ function drawLines(
         pointDrawer.updateSkipdim(`Dot_${i}`, true);
     });
 
+    const currentLayerName = store.routeStore.currentRouteLayer?.name;
+
     if (routePoints.length) {
         const { from, to } = uiState.selectedRoute || {};
-        const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
         attachEndpoints(
             wfDrawer,
@@ -218,7 +219,7 @@ function drawLines(
 
         if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
             const routeCutIn = getRouteCutIt();
-            if (routeCutIn && strEqual(currentLayerName, routeCutIn.destination.layer)) {
+            if (routeCutIn && strEqual(currentLayerName, routeCutIn.destination?.layer)) {
                 const departurePoint = routePoints[routePoints.length - 1];
                 attachTrailPoints(
                     trailDrawer,
@@ -237,11 +238,11 @@ function drawLines(
         wfDrawer.updateVisible("sourceLocation", false);
     }
 
-    var x1 = 1000000;
-    var y1 = 1000000;
+    let x1 = 1000000;
+    let y1 = 1000000;
 
-    var x2 = 0;
-    var y2 = 0;
+    let x2 = 0;
+    let y2 = 0;
 
     routePoints.forEach((l) => {
         if (l.x < x1) x1 = l.x;
@@ -251,7 +252,17 @@ function drawLines(
         if (l.y > y2) y2 = l.y;
     });
 
-    var rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
+    let rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
+
+    if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
+        const routeCutIn = getRouteCutIt();
+        if (routeCutIn && strEqual(currentLayerName, routeCutIn.destination?.layer)) {
+            rect = Rectangle.fromMultiple([
+                rect,
+                routeCutIn.getDestinationRect(),
+            ]);
+        }
+    }
 
     return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }

@@ -30,6 +30,10 @@ export class RouteCutIn extends SpecialBooth {
         Object.freeze(this);
     }
 
+    public getDestinationRect(): Rect {
+        return Rect.fromCxcywh(this.destination.x, this.destination.y, 1, 1);
+    }
+
     private findClosestRoutePoint(): LayerPoint {
         const lines = sublines()?.lines || [];
         const levelLines = lines.filter(
