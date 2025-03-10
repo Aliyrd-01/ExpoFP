@@ -14,11 +14,13 @@ class FloorPlan {
 
     onBookmarkClick(e: FloorPlanBookmarkClickEvent): void;
 
+    onVisitedClick(e: FloorPlanVisitedClickEvent): void;
+
     onCategoryClick(e: FloorPlanCategoryClickEvent): void;
 
     /**
-     * @deprecated 
-     * The onFpConfigured method is deprecated. Use onInit instead. 
+     * @deprecated
+     * The onFpConfigured method is deprecated. Use onInit instead.
      */
     onFpConfigured(): void;
 
@@ -37,12 +39,12 @@ class FloorPlan {
     selectExhibitor(nameOrExternalId: string): void;
 
     selectRoute(from: RouteWaypoint, to: RouteWaypoint): void;
-    
+
     selectRoute(waypoints: RouteWaypoint[]): void;
 
     getOptimizedRoutes(waypoints: RouteWaypoint[]): RouteInfo[];
 
-    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void
+    selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void;
 
     setBookmarks(bookmarks: { name: string; bookmarked: boolean }[]): void;
 
@@ -93,10 +95,11 @@ interface FloorPlanOptions {
     allowConsent?: boolean;
     onBoothClick?: (e: FloorPlanBoothClickEvent) => void;
     onBookmarkClick?: (e: FloorPlanBookmarkClickEvent) => void;
+    onVisitedClick?: (e: FloorPlanVisitedClickEvent) => void;
     onCategoryClick?: (e: FloorPlanCategoryClickEvent) => void;
     /**
-     * @deprecated 
-     * The onFpConfigured method is deprecated. Use onInit instead. 
+     * @deprecated
+     * The onFpConfigured method is deprecated. Use onInit instead.
      */
     onFpConfigured?: () => void;
     onDirection?: (e: FloorPlanDirectionEvent) => void;
@@ -140,6 +143,12 @@ interface Point {
 interface FloorPlanBookmarkClickEvent {
     name: string;
     bookmarked: boolean;
+    externalId: string;
+}
+
+interface FloorPlanVisitedClickEvent {
+    name: string;
+    visited: boolean;
     externalId: string;
 }
 

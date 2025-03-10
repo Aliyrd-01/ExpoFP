@@ -68,6 +68,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                     image={item.logo}
                     title={item.name}
                     bookmarked={item.bookmarked}
+                    visited={item.visited}
                     additionalInfo={item.booths.map((booth) => ({
                         type: "location",
                         locationName: booth.name,

@@ -171,9 +171,10 @@ function ExhibitorComponent() {
                     mountOnEnter
                     unmountOnExit
                 >
-                    {state => (
-                        <div ref={transitionRef} style={
-                            {
+                    {(state) => (
+                        <div
+                            ref={transitionRef}
+                            style={{
                                 position: "fixed",
                                 bottom: "1rem",
                                 left: "1rem",
@@ -181,19 +182,13 @@ function ExhibitorComponent() {
                                 transition: `opacity ${transitionDelay}ms ease-in-out`,
                                 opacity: 0,
                                 ...transitionStyles[state],
-                            }
-                        }>
+                            }}
+                        >
                             <Alert
-                                title={(
-                                    store.exhibitorStore.rebookingStateSaved
-                                        ? "Changes saved."
-                                        : "Oops! Something went wrong."
-                                )}
-                                variant={
-                                    store.exhibitorStore.rebookingStateSaved
-                                        ? "success"
-                                        : "error"
+                                title={
+                                    store.exhibitorStore.rebookingStateSaved ? "Changes saved." : "Oops! Something went wrong."
                                 }
+                                variant={store.exhibitorStore.rebookingStateSaved ? "success" : "error"}
                                 inline
                                 closable
                                 onClose={() => {
@@ -294,11 +289,14 @@ function ExhibitorComponent() {
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}
+                                showVisited={true}
+                                visited={s.exhibitor.visited}
                                 onClickBookmark={bookmark}
                                 onClickShare={handleShare}
                                 onClickDirections={() => {
                                     store.routeStore.clickRoute(null, store.routeStore.tempToBooth || exhibitor.booths[0]);
                                 }}
+                                onClickVisited={handleVisited}
                             />
                         </div>
 
@@ -642,6 +640,16 @@ function ExhibitorComponent() {
             uiState.onBookmarkClick({
                 name: s.exhibitor.name,
                 bookmarked: s.exhibitor.bookmarked,
+                externalId: s.exhibitor.externalId,
+            });
+    }
+
+    function handleVisited() {
+        s.exhibitor.visited = !s.exhibitor.visited;
+        if (uiState.onVisitedClick)
+            uiState.onVisitedClick({
+                name: s.exhibitor.name,
+                visited: s.exhibitor.visited,
                 externalId: s.exhibitor.externalId,
             });
     }

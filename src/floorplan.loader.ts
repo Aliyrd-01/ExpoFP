@@ -49,6 +49,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
 
+    onVisitedClick: (e: FloorPlanVisitedClickEvent) => void;
+
     onCategoryClick: (e: FloorPlanCategoryClickEvent) => void;
 
     onFpConfigured: () => void;
@@ -177,6 +179,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onBookmarkClick = options.onBookmarkClick;
+        this.onVisitedClick = options.onVisitedClick;
         this.onCategoryClick = options.onCategoryClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
@@ -356,22 +359,26 @@ export default class FloorPlanLoader implements FloorPlan {
             try {
                 const iconEntries = await Promise.allSettled(
                     Object.entries({
-                        "departure": "icons/departure.svg",
-                        "destination": "icons/destination.svg",
-                        "direction": "icons/direction.svg",
-                        "transition": "icons/transition.svg",
-                        "transition_up": "icons/transition_up.svg",
-                        "transition_down": "icons/transition_down.svg",
+                        departure: "icons/departure.svg",
+                        destination: "icons/destination.svg",
+                        direction: "icons/direction.svg",
+                        transition: "icons/transition.svg",
+                        transition_up: "icons/transition_up.svg",
+                        transition_down: "icons/transition_down.svg",
                     }).map(([key, path]) =>
-                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
+                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(
+                            (image) => [key, image] as [string, HTMLImageElement]
+                        )
                     )
                 );
 
                 iconEntries
-                    .filter((entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> => entry.status === "fulfilled")
-                    .map(entry => entry.value)
+                    .filter(
+                        (entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> =>
+                            entry.status === "fulfilled"
+                    )
+                    .map((entry) => entry.value)
                     .forEach(([key, icon]) => self.icons.set(key, icon));
-
             } catch (e) {
                 console.warn(e);
             }
