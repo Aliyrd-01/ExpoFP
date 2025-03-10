@@ -34,8 +34,16 @@ const KioskSetup = observer(() => {
     );
 
     reaction(
-        () => store.uiState.kioskSetupData,
-        (kioskSetupData) => {
+        () => ({
+            kioskSetupData: store.uiState.kioskSetupData,
+            currentPosition: store.routeStore.currentPosition,
+        }),
+        ({ kioskSetupData, currentPosition }) => {
+            if (currentPosition && store.routeStore.defaultFrom instanceof RouteCutIn) {
+                store.routeStore.defaultFrom = null;
+                return;
+            }
+
             store.routeStore.defaultFrom = new RouteCutIn(
                 Number.MAX_SAFE_INTEGER,
                 t("Interactive Kiosk"),
