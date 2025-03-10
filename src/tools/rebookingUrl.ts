@@ -18,8 +18,17 @@ export function retainRebookingToken(token: string) {
     sessionStorage.setItem(TOKEN_KEY, token);
 }
 
-export function buildRebookingUrl(path: string, token: string) {
+export interface RebookingParams {
+    [TOKEN_KEY]: string;
+    expoKey: string;
+}
+
+export function buildRebookingUrl(path: string, params: RebookingParams) {
     const url = new URL(path, "https://app.expofp.com/");
-    url.searchParams.set(TOKEN_KEY, token);
+
+    for (const [key, value] of Object.entries(params)) {
+        url.searchParams.set(key, value);
+    }
+
     return url.href;
 }
