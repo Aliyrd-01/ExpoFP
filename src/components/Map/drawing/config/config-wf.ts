@@ -759,15 +759,9 @@ function attachTransitions(
             return l.virtual && (strEqual(l.p0.layer, currentLayerName) || strEqual(l.p1.layer, currentLayerName));
         }
         return l.virtual;
-    }).flatMap(l => {
-        if (currentLayerName && strEqual(l.p0.layer, currentLayerName)) {
-            return [l.p0];
-        } else if (currentLayerName && strEqual(l.p1.layer, currentLayerName)) {
-            return [l.p1];
-        } else {
-            return [l.p0, l.p1];
-        }
-    }).forEach((point, i) => {
+    }).flatMap(
+        l => [l.p0, l.p1]
+    ).forEach((point, i) => {
         let trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
 
         if (store.fp.icons.get("transition")) {
@@ -795,7 +789,7 @@ function attachTransitions(
             ],
             canvasTmp: trasitionCanvas,
             texPosition: "lefttop",
-            visible: true,
+            visible: strEqual(currentLayerName, point.layer),
         });
         idCollector.add(id);
         drawer.updateSkipdim(id, true);
