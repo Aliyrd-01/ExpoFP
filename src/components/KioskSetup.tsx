@@ -181,7 +181,8 @@ const KioskSetup = observer(() => {
 
             params.delete(KIOSK_SETUP_KEY);
             params.set(KIOSK_ID_KEY, kiosk.key);
-            window.history.replaceState({}, "", `?${params.toString()}`);
+            window.history.replaceState(null, "", `?${params.toString()}`);
+
 
             store.uiState.kioskSetupData = {
                 x: kiosk.x,
@@ -212,7 +213,7 @@ const KioskSetup = observer(() => {
         }
 
         params.delete(KIOSK_SETUP_KEY);
-        window.history.replaceState({}, "", `?${params.toString()}`);
+        window.history.replaceState(null, "", params.toString() ? `?${params}` : window.location.pathname);
     };
 
     return (
