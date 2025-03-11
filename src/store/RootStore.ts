@@ -219,8 +219,7 @@ export default class RootStore {
 
         if (!booth) {
             this.uiState.details = null;
-            if (this.uiState.noOverlay && this.uiState.list.type == "category")
-                this.uiState.list = { type: "search", text: "", focused: false };
+            this.uiState.list = { type: "search", text: "", focused: false };
             if (this.uiState.onBoothClick) this.uiState.onBoothClick({ target: null });
             return;
         } else this.routeStore.tempToBooth = booth;
