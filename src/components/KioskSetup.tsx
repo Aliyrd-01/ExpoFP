@@ -58,15 +58,7 @@ const KioskSetup = observer(() => {
     );
 
     const requestUrl = useMemo(() => {
-        const url = new URL(
-            "/api/kiosks",
-            (
-                // TODO: Remove this after testing
-                store.fp.eventId === "demo-staging2"
-                    ? "https://esm-web-dev-app.herokuapp.com/"
-                    : "https://app.expofp.com/"
-            ),
-        );
+        const url = new URL("/api/kiosks", "https://app.expofp.com/");
         url.searchParams.set("expoKey", store.fp.eventId);
         return url.toString();
     }, [store.fp]);
