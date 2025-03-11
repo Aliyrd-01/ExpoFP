@@ -409,10 +409,6 @@ export default class UIState {
         const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
 
         if (this.heatmapYah) {
-            // const result =  heatmapStore.heatmapData.yah.filter((c) => {
-            //     return splittedTexts.some((text) => containsIgnoreCase(c.viewCount.toString(), text));
-            // });
-
             // Show all items with views greater than the entered number
             const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount > Number(text));
 
