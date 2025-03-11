@@ -5,3 +5,9 @@
  * @returns {string} - The sanitized string containing only alphanumeric characters.
  */
 export const sanitizeStr = (str) => str.trim().replace(/[^a-z0-9]/gi, "");
+
+export function sanitizeSearch(input: string) {
+    return (input || "")
+        .replace(/(^|\?|&)utm_[^&]*/g, "")
+        .replace(/(^|\?|&)ref=[^&]*/g, "");
+}
