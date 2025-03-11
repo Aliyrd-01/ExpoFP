@@ -377,7 +377,7 @@ export default class UIState {
                 const allItems = [...exhibitorsArray, ...boothsArray];
                 return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
             } else if (this.heatmapYah) {
-                return heatmapStore.heatmapData.yah.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+                return heatmapStore.heatmapData?.yah?.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)) || [];
             }
 
             return exhibitorsArray.length === 0

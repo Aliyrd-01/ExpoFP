@@ -333,12 +333,13 @@ export default class FloorPlanLoader implements FloorPlan {
                             },
                         );
 
+                        let yah = []
                         if (resp.ok) {
                             const json = await resp.json();
-                            window["__heatmapDataYah"] = {
-                                yah: json.map((item, i) => ({ ...item, name: `QR Code #${i + 1}` })),
-                            };
+                            yah = json.map((item, i) => ({ ...item, name: `QR Code #${i + 1}` }));
                         }
+
+                        window["__heatmapDataYah"] = { yah };
                     } else {
                         const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
                         boothsUrl.searchParams.set("expoId", expoId);
