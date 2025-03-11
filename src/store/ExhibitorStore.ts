@@ -56,7 +56,7 @@ export default class ExhibitorStore {
         exhibitor.rebookingState = state;
         exhibitor.rebookingNote = rebookingNote;
 
-        const url = buildRebookingUrl("api/v1/set-rebooking-state", getRebookingToken());
+        const url = buildRebookingUrl("api/v1/set-rebooking-state", { rt: getRebookingToken(), expoKey: this.rootStore.fp.eventId });
         fetch(url, {
             method: "POST",
             headers: {
