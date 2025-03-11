@@ -288,7 +288,7 @@ const KioskSetup = observer(() => {
             )}
 
             {showError && (
-                <div className="efp-kiosk-setup__error" >
+                <div className="efp-kiosk-setup-error" >
                     <Alert
                         variant="error"
                         closable

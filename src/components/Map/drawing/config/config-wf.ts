@@ -180,10 +180,16 @@ function drawLines(
         }
     }
 
-    if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
-        const routeCutIn = getRouteCutIt();
+    const currentLayerName = store.routeStore.currentRouteLayer?.name;
+    const routeCutIn = getRouteCutIt();
+    const isRouteCutInLayer = (
+        routeCutIn
+        && strEqual(currentLayerName, routeCutIn.destination?.layer)
+    );
+
+    if (routeCutIn) {
         const cutInPoint = routeCutIn?.routePoint;
-        if (cutInPoint && strEqual(store.routeStore.currentRouteLayer?.name, cutInPoint.layer)) {
+        if (cutInPoint && strEqual(currentLayerName, cutInPoint.layer)) {
             routePoints = trimPointsToCutIn(cutInPoint, routePoints);
         }
     }
@@ -193,8 +199,6 @@ function drawLines(
         pointDrawer.updateVisible(`Dot_${i}`, true);
         pointDrawer.updateSkipdim(`Dot_${i}`, true);
     });
-
-    const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
     if (routePoints.length) {
         const { from, to } = uiState.selectedRoute || {};
@@ -217,21 +221,18 @@ function drawLines(
             pixelRatio,
         );
 
-        if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
-            const routeCutIn = getRouteCutIt();
-            if (routeCutIn && strEqual(currentLayerName, routeCutIn.destination?.layer)) {
-                const departurePoint = routePoints[routePoints.length - 1];
-                attachTrailPoints(
-                    trailDrawer,
-                    pixelRatio,
-                    ptscale,
-                    pointSize,
-                    Color("#b5b7bc").hex(),
-                    departurePoint,
-                    routeCutIn.destination,
-                    trailPointsCollector,
-                );
-            }
+        if (isRouteCutInLayer) {
+            const departurePoint = routePoints[routePoints.length - 1];
+            attachTrailPoints(
+                trailDrawer,
+                pixelRatio,
+                ptscale,
+                pointSize,
+                Color("#b5b7bc").hex(),
+                departurePoint,
+                routeCutIn.destination,
+                trailPointsCollector,
+            );
         }
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
@@ -254,14 +255,11 @@ function drawLines(
 
     let rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
 
-    if (store.uiState.kioskSetupData && store.uiState.selectedRoute?.from instanceof RouteCutIn) {
-        const routeCutIn = getRouteCutIt();
-        if (routeCutIn && strEqual(currentLayerName, routeCutIn.destination?.layer)) {
-            rect = Rectangle.fromMultiple([
-                rect,
-                routeCutIn.getDestinationRect(),
-            ]);
-        }
+    if (isRouteCutInLayer) {
+        rect = Rectangle.fromMultiple([
+            rect,
+            routeCutIn.getDestinationRect(),
+        ]);
     }
 
     return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
@@ -962,5 +960,12 @@ function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
 }
 
 function getRouteCutIt(): RouteCutIn {
-    return store.routeStore.defaultFrom as RouteCutIn;
+    if (
+        store.uiState.kioskSetupData
+        && store.uiState.selectedRoute?.from instanceof RouteCutIn
+    ) {
+        return store.routeStore.defaultFrom as RouteCutIn;
+    }
+
+    return null;
 }
