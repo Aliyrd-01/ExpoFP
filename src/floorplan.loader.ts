@@ -317,8 +317,8 @@ export default class FloorPlanLoader implements FloorPlan {
                     if (searchParamas.get("type") === "yah") {
                         const url = new URL(
                             "/api/v1/you-are-here/qr-code/list/viewer",
-                            // TODO: remove eventId === "test-svg" condition after testing
-                            eventId === "test-svg" ? "https://app-show.expofp.com" : "https://app.expofp.com",
+                            // TODO: remove eventId === "demo-staging" condition after testing
+                            eventId === "demo-staging" ? "https://app-show.expofp.com" : "https://app.expofp.com",
                         );
 
                         const resp = await fetch(
