@@ -410,7 +410,7 @@ export default class UIState {
 
         if (this.heatmapYah) {
             // Show all items with views greater than the entered number
-            const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount > Number(text));
+            const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text));
 
             return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         }
