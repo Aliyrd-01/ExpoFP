@@ -492,7 +492,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     let kioskIconCanvas;
     if (store.fp.icons.get("kiosk")) {
-        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 34, 34, context.pixelRatio);
+        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 48, 48, context.pixelRatio);
     } else {
         kioskIconCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     }
