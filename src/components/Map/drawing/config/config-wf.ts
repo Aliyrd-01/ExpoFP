@@ -492,7 +492,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
     let kioskIconCanvas;
     if (store.fp.icons.get("kiosk")) {
-        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 23, 42, context.pixelRatio);
+        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 34, 34, context.pixelRatio);
     } else {
         kioskIconCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
     }
@@ -502,7 +502,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         deltas: [0, 0, 0, 0],
         deltaPts: [
             -kioskIconCanvas.width / 2,
-            -kioskIconCanvas.height,
+            -kioskIconCanvas.height / 2,
             kioskIconCanvas.width,
             kioskIconCanvas.height,
         ],
@@ -524,6 +524,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     kioskIconDrawer.updateSkipdim("kioskIcon", true);
                     kioskIconDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
                     kioskIconDrawer.updateVisible("kioskIcon", true);
+                    kioskIconDrawer.updateRotation("kioskIcon", toRadians(kioskSetupData.angle || 0)); 
                 } else {
                     kioskIconDrawer.updateVisible("kioskIcon", false);
                 }

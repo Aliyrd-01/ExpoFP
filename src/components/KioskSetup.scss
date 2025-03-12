@@ -1,4 +1,5 @@
 @use "@styles/vars";
+@use "@styles/utils";
 
 .efp-kiosk-setup {
     position: fixed;
@@ -11,12 +12,78 @@
     border-radius: var(--border-radius-lg);
 }
 
-.efp-kiosk-setup-error {
+.efp-kiosk-setup-message {
     position: fixed;
-    top: 1rem;
+    bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
     box-shadow: var(--shadow-md);
     border-radius: var(--border-radius-lg);
+}
+
+.efp-kiosk-setup-rotate {
+    display: grid;
+    grid-auto-flow: row;
+    gap: 0.5rem;
+    padding-top: 1rem;
+
+    & input[type="range"] {
+        appearance: none;
+        width: 100%;
+        height: #{utils.rem(6px)};
+        background: var(--color-gray-300);
+        border-radius: #{utils.rem(3px)};
+        outline: none;
+
+        &:disabled {
+            background: var(--color-gray-400);
+            cursor: not-allowed;
+        }
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: #{utils.rem(20px)};
+            height: #{utils.rem(20px)};
+            background: var(--color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+
+            &:hover {
+                background: var(--color-primary);
+            }
+        }
+
+        &:disabled::-webkit-slider-thumb {
+            background: var(--color-gray-500);
+            cursor: not-allowed;
+        }
+
+        &::-moz-range-thumb {
+            width: #{utils.rem(20px)};
+            height: #{utils.rem(20px)};
+            background: var(--color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 0;
+
+            &:hover {
+                background: var(--color-primary);
+            }
+        }
+
+        &:disabled::-moz-range-thumb {
+            background: var(--color-gray-500);
+            cursor: not-allowed;
+        }
+    }
+}
+
+.efp-kiosk-setup-actions {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.5rem;
+    padding-top: 1.4rem;
 }

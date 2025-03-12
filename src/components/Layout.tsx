@@ -122,7 +122,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 <LogoOverlay />
                 {!uiState.hideHeaderLogo && store.initialized && <Ws />}
                 {!uiState.mapControlsHidden && <Controls />}
-                {uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {uiState.kiosk && uiState.inIdle && !uiState.kioskSetup && <TouchHand />}
                 {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
                 {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
