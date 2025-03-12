@@ -292,6 +292,7 @@ const KioskSetup = observer(() => {
                                             type="range"
                                             min="0"
                                             max="360"
+                                            step="10"
                                             value={store.uiState.kioskSetupData?.angle || 0}
                                             disabled={!store.uiState.kioskSetupData || pending}
                                             onInput={e => rotate((e.target as HTMLInputElement).value)}
