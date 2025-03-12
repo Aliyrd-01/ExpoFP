@@ -64,16 +64,32 @@ $action-button: ".efp-actionButton";
     &--bookmark {
         width: rem(40px);
         padding: 0;
+        background: var(--color-gray-200);
+        border-color: var(--color-gray-400);
+        color: var(--color-gray-600);
+
+        &:hover {
+            background: var(--color-gray-300);
+        }
 
         &.isActive {
             border-color: var(--color-bookmarked);
-
-            &:hover {
-                background: var(--color-gray-100);
-            }
+            background: var(--color-bookmarked);
 
             [class^="icon-"] {
-                color: var(--color-bookmarked);
+                color: var(--color-white);
+            }
+        }
+
+        &:not(&.isActive) {
+            [class^="icon-"] {
+                animation: unset !important;
+            }
+        }
+
+        &.animate {
+            [class^="icon-"] {
+                animation: scale-bookmark-icon 0.3s ease-in-out;
             }
         }
     }
@@ -101,5 +117,19 @@ $action-button: ".efp-actionButton";
 .layout[dir="rtl"] #{$action-button} {
     &--directions .icon {
         transform: scaleX(-1);
+    }
+}
+
+@keyframes scale-bookmark-icon {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.4);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
     }
 }

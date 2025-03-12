@@ -12,7 +12,7 @@ $entity-item: ".efp-entity-item";
     border-bottom: 1px solid var(--color-gray-300);
 
     &:hover {
-        background: var(--color-gray-200);
+        background: var(--color-gray-300);
     }
 
     &.is-featured {
@@ -24,20 +24,31 @@ $entity-item: ".efp-entity-item";
         }
 
         &.is-visited {
-            background: linear-gradient(90deg, #eef8ff 0%, #f2f8ff 44.4%, #ecfdf6 100%);
+            background: linear-gradient(90deg, #eef8ff 0%, #f9fafb 55.6%, #f9fafb 100%);
 
             &:hover {
-                background: linear-gradient(90deg, #d9efff 0%, #d9efff 44.4%, #d2f9e7 100%);
+                background: var(--color-featured-dark);
             }
         }
     }
 
     &.is-visited {
-        background: linear-gradient(90deg, #fff 0%, #fff 44.4%, #ecfdf6 100%);
-        border-color: #a9f1d4;
+        background: var(--color-gray-100);
 
         &:hover {
-            background: #d2f9e7;
+            background: var(--color-gray-300);
+        }
+        #{$entity-item}__title {
+            font-weight: var(--font-weight-normal);
+
+            &:after {
+                @include icon;
+                content: vars.$icon-checkmark;
+                display: inline-flex;
+                margin-left: rem(6px);
+                font-size: var(--icon-size-xs);
+                color: #14b789;
+            }
         }
     }
 
@@ -161,7 +172,6 @@ $entity-item: ".efp-entity-item";
         display: flex;
         flex-flow: row wrap;
         align-items: center;
-        row-gap: rem(4px);
         font-size: var(--font-size-md);
         line-height: var(--font-size-md);
         color: var(--color-gray-700);
@@ -177,7 +187,7 @@ $entity-item: ".efp-entity-item";
             display: inline-flex;
             align-items: center;
 
-            &:not(:last-child):not(.booth-badge) {
+            &:not(:last-child) {
                 position: relative;
 
                 &::after {
@@ -195,17 +205,6 @@ $entity-item: ".efp-entity-item";
                 font-weight: var(--font-weight-medium);
             }
         }
-    }
-
-    .booth-badge {
-        display: inline-flex;
-        margin-right: rem(6px);
-        padding: rem(3px 5px);
-        background: var(--color-primary-ultra-light);
-        color: var(--color-primary-ultra-dark);
-        // background: var(--color-secondary-ultra-light);
-        // color: var(--color-secondary-ultra-dark);
-        border-radius: var(--border-radius-full);
     }
 
     &__image {

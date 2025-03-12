@@ -78,6 +78,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
             onClick={() => onClick && onClick(type, id)}
             className={cn("efp-entity-item", {
                 "is-featured": featured,
+                "is-visited": visited,
             })}
             style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
         >
@@ -103,7 +104,6 @@ const EntityItem: React.FC<EntityItemProps> = ({
                                     {time && <span>{time}</span>}
                                 </div>
                             )}
-                            {type === "booth" && <span>{locationTerm}</span>}
                             {type === "category" && <span>Category</span>}
                             {subtitle && <div>{subtitle}</div>}
                         </div>
@@ -111,9 +111,13 @@ const EntityItem: React.FC<EntityItemProps> = ({
                             <ul className="efp-entity-item__details">
                                 {additionalInfo.map((info, idx) => (
                                     <li key={idx} className="efp-entity-item__details-item">
+                                        <i className={cn(getAdditionalInfoIcon(info.type))} />
                                         {info.type === "location" && (
                                             <>
                                                 {type !== "category" && type !== "booth" && <span>{info.locationName}</span>}
+                                                {/* {type !== "category" && type !== "booth" && (
+                                                    <span className="booth-badge">{info.locationName}</span>
+                                                )} */}
                                                 {info.hall && (
                                                     <div>
                                                         Hall&nbsp;<span>{info.hall}</span>
@@ -131,11 +135,11 @@ const EntityItem: React.FC<EntityItemProps> = ({
                                 ))}
                             </ul>
                         )}
-                        {visited && (
+                        {/* {visited && (
                             <div className="efp-entity-item__visited">
                                 <span>Visited</span>
                             </div>
-                        )}
+                        )} */}
                     </div>
                     {image && (
                         <div className="efp-entity-item__image">
