@@ -11,13 +11,14 @@ import { getGraphLines } from "../../../../utils/wayfinding";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { CurrentPosition } from "./../../../../store/RouteStore";
+import { CurrentPosition, Kiosk } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import {
     createArrowCurrentCanvas,
     createCircleCanvas,
     createCurrentCanvas,
     createImageCanvas,
+    createLabelCanvas,
     createTargetCanvas,
     createYahCanvas,
 } from "./canvases";
@@ -356,6 +357,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const trailPointsCollector = new DynamicObjects(trailDrawer);
 
     const kioskIconDrawer = context.requirePainter("KIOSK_ICON", RectPainter, painterOrderPriority + 3, visible);
+    const kioskIconCollector = new DynamicObjects(kioskIconDrawer);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, Color("#A4CCE3").hex());
 
@@ -490,44 +492,53 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    let kioskIconCanvas;
-    if (store.fp.icons.get("kiosk")) {
-        kioskIconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 48, 48, context.pixelRatio);
-    } else {
-        kioskIconCanvas = createCurrentCanvas(context.pixelRatio, fromColor.hex());
-    }
-    kioskIconDrawer.addObject({
-        id: "kioskIcon",
-        center: [0, 0],
-        deltas: [0, 0, 0, 0],
-        deltaPts: [
-            -kioskIconCanvas.width / 2,
-            -kioskIconCanvas.height / 2,
-            kioskIconCanvas.width,
-            kioskIconCanvas.height,
-        ],
-        canvasTmp: kioskIconCanvas,
-        texPosition: "lefttop",
-        visible: true,
-    });
-
     reaction(
         () => ({
-            kioskSetupData: store.uiState.kioskSetupData,
             floors: store.layerStore.floors,
+            kioskSetup: store.uiState.kioskSetup,
+            kioskSetupData: store.uiState.kioskSetupData,
+            kioskList: store.uiState.kioskList,
         }),
-        ({ kioskSetupData, floors }) => {
+        ({ kioskSetupData, floors, kioskList, kioskSetup }) => {
             const activeFloor = floors.find(f => f.active);
 
             context.requireUpdate(() => {
-                if (kioskSetupData && kioskSetupData.z === activeFloor?.name) {
-                    kioskIconDrawer.updateSkipdim("kioskIcon", true);
-                    kioskIconDrawer.updateCenter("kioskIcon", [kioskSetupData.x, kioskSetupData.y]);
-                    kioskIconDrawer.updateVisible("kioskIcon", true);
-                    kioskIconDrawer.updateRotation("kioskIcon", toRadians(kioskSetupData.angle || 0)); 
-                } else {
-                    kioskIconDrawer.updateVisible("kioskIcon", false);
+                kioskIconCollector.clear();
+
+                kioskList
+                    .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
+                    .forEach(kiosk => {
+                        attachKioskIcon(
+                            kiosk,
+                            kioskIconDrawer,
+                            kioskIconCollector,
+                            {
+                                skipdim: false,
+                                visible: kioskSetup,
+                                pixelRatio: context.pixelRatio,
+                                label: `Kiosk ${kiosk.key}`,
+                            },
+                        );
+                    });
+
+                if (
+                    store.uiState.kioskSetupData
+                    && store.uiState.kioskSetupData?.z === activeFloor?.name
+                ) {
+                    attachKioskIcon(
+                        store.uiState.kioskSetupData,
+                        kioskIconDrawer,
+                        kioskIconCollector,
+                        {
+                            skipdim: true,
+                            visible: true,
+                            pixelRatio: context.pixelRatio,
+                            label: `Kiosk ${store.uiState.kioskSetupData.key || ""}`.trim(),
+                        },
+                    );
                 }
+
+                kioskIconDrawer.reinitializeBuffers();
             });
         }
     );
@@ -961,12 +972,70 @@ function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
 }
 
 function getRouteCutIt(): RouteCutIn {
-    if (
-        store.uiState.kioskSetupData
-        && store.uiState.selectedRoute?.from instanceof RouteCutIn
-    ) {
+    if (store.uiState.selectedRoute?.from instanceof RouteCutIn) {
         return store.routeStore.defaultFrom as RouteCutIn;
     }
-
     return null;
+}
+
+function attachKioskIcon(
+    kiosk: Kiosk,
+    drawer: RectPainter,
+    idCollector: IDynamicObjects,
+    options: {
+        skipdim: boolean;
+        visible: boolean;
+        pixelRatio: number;
+        label: string;
+    },
+) {
+    const id = `kiosk_${kiosk.key}`;
+    const iconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 48, 48, options.pixelRatio);
+    drawer.addObject({
+        id,
+        center: [kiosk.x, kiosk.y],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -iconCanvas.width / 2,
+            -iconCanvas.height / 2,
+            iconCanvas.width,
+            iconCanvas.height,
+        ],
+        canvasTmp: iconCanvas,
+        texPosition: "lefttop",
+        skipdim: options.skipdim,
+        rotateRadians: toRadians(kiosk.heading),
+        visible: options.visible,
+    });
+    idCollector.add(id);
+
+    const labelId = `${id}_label`;
+    const labelFontSize = 24;
+    const labelCanvas = createLabelCanvas(
+        options.label,
+        labelFontSize,
+        options.pixelRatio,
+        "white",
+        600,
+        "#16171a",
+        6,
+    );
+
+    drawer.addObject({
+        id: labelId,
+        center: [kiosk.x, kiosk.y],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -labelCanvas.width / 2,
+            labelFontSize,
+            labelCanvas.width,
+            labelCanvas.height + labelFontSize,
+        ],
+        canvasTmp: labelCanvas,
+        texPosition: "lefttop",
+        skipdim: options.skipdim,
+        rotateRadians: 0,
+        visible: options.visible,
+    });
+    idCollector.add(labelId);
 }

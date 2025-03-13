@@ -366,3 +366,8 @@ export interface Marker extends CurrentPosition {
     selectedIcon: string;
     active?: boolean;
 }
+
+export interface Kiosk extends Omit<CurrentPosition, "angle"> {
+    key: number;
+    heading: number;
+}

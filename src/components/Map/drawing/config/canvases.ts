@@ -28,7 +28,9 @@ export function createLabelCanvas(
     fontSize: number,
     pixelRatio: number,
     color: string = "#fff",
-    fontWeight: number
+    fontWeight: number,
+    strokeStyle?: string,
+    strokeWidth?: number,
 ): CanvasDescriptor {
     text = text.replace(/^_/, "");
     fontSize *= pixelRatio;
@@ -53,6 +55,14 @@ export function createLabelCanvas(
             // c.fillRect(0,0,canvas.width, canvas.height);
 
             c.fillStyle = color;
+
+            if (strokeWidth && strokeStyle) {
+                c.lineWidth = strokeWidth;
+                c.strokeStyle = strokeStyle;
+                c.strokeText(text, width / 2, height - (vPad / 2) * pixelRatio);
+                c.lineJoin = "round";
+            }
+
             c.fillText(text, width / 2, height - (vPad / 2) * pixelRatio);
         },
     };

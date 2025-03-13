@@ -4,12 +4,17 @@ import Button from "./Button";
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
-import { reaction, set, toJS } from "mobx";
+import { reaction, toJS } from "mobx";
 import Modal from "./Modal";
 import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
 import "./KioskSetup.scss";
+import { Kiosk } from "../store/RouteStore";
+import isMobile from "../utils/is-mobile";
+import isWebview from "../utils/is-webview";
+
+const isMobileDevice = isMobile || isWebview;
 
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
 
@@ -24,7 +29,7 @@ const KioskSetup = observer(() => {
         () => store.uiState.kioskSetup,
         (kioskSetup) => {
             if (kioskSetup) {
-                store.uiState.kiosk = true;
+                store.uiState.kiosk = !isMobileDevice;
             }
 
             store.uiState.hideOverlay = kioskSetup;
@@ -78,10 +83,6 @@ const KioskSetup = observer(() => {
                     kioskEncodedId = searchParams.get(KIOSK_ID_KEY);
                 }
 
-                if (!kioskEncodedId) {
-                    return;
-                }
-
                 const response = await fetch(requestUrl);
 
                 if (!response.ok) {
@@ -90,20 +91,37 @@ const KioskSetup = observer(() => {
                 }
 
                 const kiosks = await response.json();
+
+                store.uiState.kioskList = kiosks;
+
+                if (!kioskEncodedId) {
+                    return;
+                }
+
                 const kiosk = kiosks.find(k => strEqual(k.key, kioskEncodedId));
 
                 if (!kiosk) {
                     return;
                 }
 
+                let heading = 0;
+
+                // const rawAngle = searchParams.get("a");
+                // if (rawAngle) {
+                //     heading = parseInt(rawAngle, 10);
+                // }
+
                 store.uiState.kioskSetupData = {
+                    key: kiosk.key,
                     x: kiosk.x,
                     y: kiosk.y,
                     z: kiosk.z,
+                    heading: heading || kiosk.heading,
                 };
 
-                store.uiState.kiosk = true;
-            } catch (error) {
+                store.uiState.kiosk = !isMobileDevice;
+            } catch (err) {
+                console.error(err);
                 setShowError(true);
                 return;
             }
@@ -143,22 +161,14 @@ const KioskSetup = observer(() => {
 
             const params = new URLSearchParams(decodeURIComponent(window.location.search));
 
-            const kioskSetupData = toJS(store.uiState.kioskSetupData)
-            const requestBody: {
-                x: number,
-                y: number,
-                z: string,
-                angle: number,
-                key?: string,
-            } = {
-                x: kioskSetupData.x,
-                y: kioskSetupData.y,
-                z: kioskSetupData.z?.toString(),
-                angle: kioskSetupData.angle,
-            };
+            const kioskSetupData = toJS(store.uiState.kioskSetupData);
+
+            let heading = kioskSetupData?.heading || 0;
+
+            const requestBody: Kiosk = { ...kioskSetupData, heading };
 
             if (params.get(KIOSK_SETUP_KEY)) {
-                requestBody.key = params.get(KIOSK_SETUP_KEY);
+                requestBody.key = parseInt(params.get(KIOSK_SETUP_KEY), 10);
             }
 
             const response = await fetch(
@@ -175,27 +185,26 @@ const KioskSetup = observer(() => {
                 return;
             }
 
-            const kiosk = await response.json();
+            const kiosk = await response.json() as Kiosk;
 
             params.delete(KIOSK_SETUP_KEY);
-            params.set(KIOSK_ID_KEY, kiosk.key);
+            params.set(KIOSK_ID_KEY, kiosk.key?.toString());
 
-            window.history.replaceState(
-                window.history.state,
-                "",
-                `?${params.toString()}`
-            );
+            if (kiosk.heading) {
+                heading = kiosk.heading;
+            }
 
-            store.uiState.kioskSetupData = {
-                x: kiosk.x,
-                y: kiosk.y,
-                z: kiosk.z,
-            };
+            // params.set("a", heading.toString());
 
-            // store.uiState.kioskSetup = false;
+            // TODO: enable service worker
+            params.set("sw", "0");
+
+            window.history.replaceState(window.history.state, "", `?${params.toString()}`);
+            store.uiState.kioskSetupData = { ...kiosk, heading };
             setSaved(true);
-            store.uiState.kiosk = true;
+            store.uiState.kiosk = !isMobileDevice;
         } catch (err) {
+            console.error(err);
             setShowError(true);
         } finally {
             setPending(false);
@@ -220,6 +229,10 @@ const KioskSetup = observer(() => {
             "",
             params.toString() ? `?${params}` : window.location.pathname,
         );
+
+        if (params.has("sw")) {
+            window.location.reload();
+        }
     }
 
     function copy() {
@@ -233,7 +246,8 @@ const KioskSetup = observer(() => {
                 store.uiState.kioskSetup = false;
                 setTimeout(() => setShowSuccess(false), 3000);
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error(err);
                 setShowError(true);
             }).finally(() => {
                 setPending(false);
@@ -246,7 +260,7 @@ const KioskSetup = observer(() => {
         }
         store.uiState.kioskSetupData = {
             ...store.uiState.kioskSetupData,
-            angle: parseInt(angle, 10),
+            heading: parseInt(angle, 10),
         };
     }
 
@@ -287,15 +301,15 @@ const KioskSetup = observer(() => {
                             >
                                 {!saved && (
                                     <label className="efp-kiosk-setup-rotate">
-                                        <small>{t("Rotate by")}&nbsp;<strong>{`${store.uiState.kioskSetupData?.angle || 0}`}</strong>°</small>
+                                        <small>{t("Rotate by")}&nbsp;<strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</small>
                                         <input
                                             type="range"
                                             min="0"
                                             max="360"
                                             step="10"
-                                            value={store.uiState.kioskSetupData?.angle || 0}
+                                            value={store.uiState.kioskSetupData?.heading || 0}
                                             disabled={!store.uiState.kioskSetupData || pending}
-                                            onInput={e => rotate((e.target as HTMLInputElement).value)}
+                                            onChange={e => rotate((e.target as HTMLInputElement).value)}
                                         />
                                     </label>
                                 )}
