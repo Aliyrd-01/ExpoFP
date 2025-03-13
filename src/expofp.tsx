@@ -10,8 +10,8 @@ window["__efpStyleElements"] = [];
 // @FIXME: remove this
 window.addEventListener("error", function sendText(e) {
     try {
-        let token = "6724805252:AAHs5wRoEAWYEyZ0YvDAY-ie8_bjE5JjFTk";
-        let url = "https://api.telegram.org/bot" + token + "/sendMessage";
+        const token = "6724805252:AAHs5wRoEAWYEyZ0YvDAY-ie8_bjE5JjFTk";
+        const url = "https://api.telegram.org/bot" + token + "/sendMessage";
         const obj = {
             chat_id: 458129979,
             text: JSON.stringify(e),
