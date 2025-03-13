@@ -55,6 +55,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
                 // this.resolveReady();
                 setTimeout(() => {
                     this.resolveReady();
+                    this.fitBounds();
                 }, 500);
 
                 if (!store.initialized) {
