@@ -533,7 +533,11 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                             skipdim: true,
                             visible: true,
                             pixelRatio: context.pixelRatio,
-                            label: `Kiosk ${store.uiState.kioskSetupData.key || ""}`.trim(),
+                            label: (
+                                kioskSetup
+                                    ? `Kiosk ${store.uiState.kioskSetupData.key || ""}`.trim()
+                                    : `Kiosk`
+                            ),
                         },
                     );
                 }
@@ -989,7 +993,7 @@ function attachKioskIcon(
         label: string;
     },
 ) {
-    const id = `kiosk_${kiosk.key}`;
+    const id = `kiosk_${kiosk.key || ""}`;
     const iconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 48, 48, options.pixelRatio);
     drawer.addObject({
         id,
@@ -1003,23 +1007,25 @@ function attachKioskIcon(
         ],
         canvasTmp: iconCanvas,
         texPosition: "lefttop",
-        skipdim: options.skipdim,
         rotateRadians: toRadians(kiosk.heading),
         visible: options.visible,
     });
+    drawer.updateSkipdim(id, options.skipdim);
     idCollector.add(id);
 
     const labelId = `${id}_label`;
-    const labelFontSize = 24;
+    const labelFontSize = 20;
     const labelCanvas = createLabelCanvas(
         options.label,
         labelFontSize,
         options.pixelRatio,
         "white",
-        600,
+        400,
         "#16171a",
-        6,
+        5,
     );
+
+    const gap = 15;
 
     drawer.addObject({
         id: labelId,
@@ -1027,15 +1033,15 @@ function attachKioskIcon(
         deltas: [0, 0, 0, 0],
         deltaPts: [
             -labelCanvas.width / 2,
-            labelFontSize,
+            labelFontSize + gap,
             labelCanvas.width,
-            labelCanvas.height + labelFontSize,
+            labelCanvas.height + labelFontSize + gap,
         ],
         canvasTmp: labelCanvas,
         texPosition: "lefttop",
-        skipdim: options.skipdim,
         rotateRadians: 0,
         visible: options.visible,
     });
+    drawer.updateSkipdim(labelId, options.skipdim);
     idCollector.add(labelId);
 }

@@ -106,10 +106,11 @@ const KioskSetup = observer(() => {
 
                 let heading = 0;
 
-                // const rawAngle = searchParams.get("a");
-                // if (rawAngle) {
-                //     heading = parseInt(rawAngle, 10);
-                // }
+                // TODO: Remove this after server sends angle in response
+                const rawAngle = searchParams.get("a");
+                if (rawAngle) {
+                    heading = parseInt(rawAngle, 10);
+                }
 
                 store.uiState.kioskSetupData = {
                     key: kiosk.key,
@@ -194,7 +195,8 @@ const KioskSetup = observer(() => {
                 heading = kiosk.heading;
             }
 
-            // params.set("a", heading.toString());
+            // TODO: Remove this after server sends angle in response
+            params.set("a", heading.toString());
 
             // TODO: enable service worker
             params.set("sw", "0");
