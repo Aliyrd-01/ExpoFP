@@ -505,8 +505,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
             context.requireUpdate(() => {
                 kioskIconCollector.clear();
 
-                kioskList
-                    .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
+                if (kioskSetup) {
+                    kioskList
+                        .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
                     .forEach(kiosk => {
                         attachKioskIcon(
                             kiosk,
@@ -514,12 +515,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                             kioskIconCollector,
                             {
                                 skipdim: false,
-                                visible: kioskSetup,
+                                visible: true,
                                 pixelRatio: context.pixelRatio,
                                 label: `Kiosk ${kiosk.key}`,
                             },
                         );
                     });
+                }
 
                 if (
                     store.uiState.kioskSetupData

@@ -113,10 +113,7 @@ const KioskSetup = observer(() => {
                 }
 
                 store.uiState.kioskSetupData = {
-                    key: kiosk.key,
-                    x: kiosk.x,
-                    y: kiosk.y,
-                    z: kiosk.z,
+                    ...kiosk,
                     heading: heading || kiosk.heading,
                 };
 
@@ -168,16 +165,15 @@ const KioskSetup = observer(() => {
 
             const requestBody: Kiosk = { ...kioskSetupData, heading };
 
-            if (params.get(KIOSK_SETUP_KEY)) {
-                requestBody.key = parseInt(params.get(KIOSK_SETUP_KEY), 10);
-            }
-
             const response = await fetch(
                 requestUrl,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(requestBody),
+                    body: JSON.stringify({
+                        ...requestBody,
+                        key: requestBody.key?.toString() || "",
+                    }),
                 },
             );
 
@@ -275,13 +271,16 @@ const KioskSetup = observer(() => {
 
         if (kiosk) {
             store.uiState.kioskSetupData = kiosk;
-            return;
+        } else {
+            store.uiState.kioskSetupData = {
+                ...store.uiState.kioskSetupData,
+                key: parseInt(key, 10),
+            };
         }
 
-        store.uiState.kioskSetupData = {
-            ...store.uiState.kioskSetupData,
-            key: parseInt(key, 10),
-        };
+        const params = new URLSearchParams(decodeURIComponent(window.location.search));
+        params.set(KIOSK_SETUP_KEY, key);
+        window.history.replaceState(window.history.state, "", `?${params}`);
     }
 
     return (
