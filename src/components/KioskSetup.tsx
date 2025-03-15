@@ -25,51 +25,55 @@ const KioskSetup = observer(() => {
     const [saved, setSaved] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
-    reaction(
-        () => store.uiState.kioskSetup,
-        (kioskSetup) => {
-            if (kioskSetup) {
-                store.uiState.kiosk = !isMobileDevice;
-            }
-
-            store.uiState.hideOverlay = kioskSetup;
-            store.uiState.hideHeaderLogo = kioskSetup;
-            store.uiState.hideLogoInBooth = kioskSetup;
-            store.uiState.monochrome = kioskSetup;
-        },
-    );
-
-    reaction(
-        () => ({
-            kioskSetupData: store.uiState.kioskSetupData,
-            currentPosition: store.routeStore.currentPosition,
-        }),
-        ({ kioskSetupData, currentPosition }) => {
-            if (currentPosition && store.routeStore.defaultFrom instanceof RouteCutIn) {
-                store.routeStore.defaultFrom = null;
-                store.selectNone();
-                return;
-            }
-
-            store.routeStore.defaultFrom = new RouteCutIn(
-                Number.MAX_SAFE_INTEGER,
-                t("Interactive Kiosk"),
-                {
-                    x: kioskSetupData.x,
-                    y: kioskSetupData.y,
-                    layer: kioskSetupData.z?.toString(),
-                },
-            );
-        },
-    );
-
     const requestUrl = useMemo(() => {
         const url = new URL("/api/kiosks", "https://app.expofp.com/");
         url.searchParams.set("expoKey", store.fp.eventId);
         return url.toString();
-    }, [store.fp]);
+    }, [store.fp.eventId]);
 
     useEffect(() => {
+        const kioskSetupDisposer = reaction(
+            () => store.uiState.kioskSetup,
+            (kioskSetup) => {
+                if (kioskSetup) {
+                    store.uiState.kiosk = !isMobileDevice;
+                }
+
+                store.uiState.hideOverlay = kioskSetup;
+                store.uiState.hideHeaderLogo = kioskSetup;
+                store.uiState.hideLogoInBooth = kioskSetup;
+                store.uiState.monochrome = kioskSetup;
+            },
+        );
+
+        const kioskSetupDataDisposer = reaction(
+            () => ({
+                kioskSetupData: store.uiState.kioskSetupData,
+                currentPosition: store.routeStore.currentPosition,
+            }),
+            ({ kioskSetupData, currentPosition }) => {
+                const hasCurrentPosition = currentPosition && store.routeStore.defaultFrom instanceof RouteCutIn;
+
+                store.routeStore.defaultFrom = (
+                    hasCurrentPosition
+                        ? null
+                        : new RouteCutIn(
+                            Number.MAX_SAFE_INTEGER,
+                            t("Interactive Kiosk"),
+                            {
+                                x: kioskSetupData.x,
+                                y: kioskSetupData.y,
+                                layer: kioskSetupData.z?.toString(),
+                            },
+                        )
+                );
+
+                if (hasCurrentPosition) {
+                    store.selectNone();
+                }
+            },
+        );
+
         async function requestKioskData() {
             try {
                 let kioskEncodedId;
@@ -114,7 +118,8 @@ const KioskSetup = observer(() => {
 
                 store.uiState.kioskSetupData = {
                     ...kiosk,
-                    heading: heading || kiosk.heading,
+                    key: parseInt(kiosk.key, 10),
+                    heading: heading || kiosk.heading || 0,
                 };
 
                 store.uiState.kiosk = !isMobileDevice;
@@ -125,9 +130,7 @@ const KioskSetup = observer(() => {
             }
         }
         requestKioskData();
-    }, [requestUrl]);
 
-    useEffect(() => {
         if (!store.uiState.kioskSetup) {
             return;
         }
@@ -145,12 +148,19 @@ const KioskSetup = observer(() => {
         };
 
         return () => {
+            kioskSetupDisposer();
+            kioskSetupDataDisposer();
             store.fp.onGetCoordsClick = originalOnGetCoordsClick;
             setShowError(false);
             setPending(false);
             setSaved(false);
         }
-    }, [store.uiState.kioskSetup, store.fp.onGetCoordsClick]);
+    }, [
+        requestUrl,
+        store.fp,
+        store.routeStore,
+        store.uiState,
+    ]);
 
     async function save() {
         try {

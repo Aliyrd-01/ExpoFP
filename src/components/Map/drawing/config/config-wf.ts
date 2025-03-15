@@ -495,40 +495,37 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     reaction(
         () => ({
             floors: store.layerStore.floors,
+            kioskList: store.uiState.kioskList,
             kioskSetup: store.uiState.kioskSetup,
             kioskSetupData: store.uiState.kioskSetupData,
-            kioskList: store.uiState.kioskList,
         }),
-        ({ kioskSetupData, floors, kioskList, kioskSetup }) => {
-            const activeFloor = floors.find(f => f.active);
-
+        ({ floors, kioskList, kioskSetup, kioskSetupData }) => {
             context.requireUpdate(() => {
                 kioskIconCollector.clear();
+
+                const activeFloor = floors.find(f => f.active);
 
                 if (kioskSetup) {
                     kioskList
                         .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
-                    .forEach(kiosk => {
-                        attachKioskIcon(
-                            kiosk,
-                            kioskIconDrawer,
-                            kioskIconCollector,
-                            {
-                                skipdim: false,
-                                visible: true,
-                                pixelRatio: context.pixelRatio,
-                                label: `Kiosk ${kiosk.key}`,
-                            },
-                        );
-                    });
+                        .forEach(kiosk => {
+                            attachKioskIcon(
+                                kiosk,
+                                kioskIconDrawer,
+                                kioskIconCollector,
+                                {
+                                    skipdim: false,
+                                    visible: true,
+                                    pixelRatio: context.pixelRatio,
+                                    label: `Kiosk ${kiosk.key}`,
+                                },
+                            );
+                        });
                 }
 
-                if (
-                    store.uiState.kioskSetupData
-                    && store.uiState.kioskSetupData?.z === activeFloor?.name
-                ) {
+                if (kioskSetupData && kioskSetupData?.z === activeFloor?.name) {
                     attachKioskIcon(
-                        store.uiState.kioskSetupData,
+                        kioskSetupData,
                         kioskIconDrawer,
                         kioskIconCollector,
                         {
@@ -537,7 +534,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                             pixelRatio: context.pixelRatio,
                             label: (
                                 kioskSetup
-                                    ? `Kiosk ${store.uiState.kioskSetupData.key || ""}`.trim()
+                                    ? `Kiosk ${kioskSetupData.key || ""}`.trim()
                                     : `Kiosk`
                             ),
                         },
