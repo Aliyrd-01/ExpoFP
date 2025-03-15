@@ -282,9 +282,10 @@ const KioskSetup = observer(() => {
         if (kiosk) {
             store.uiState.kioskSetupData = kiosk;
         } else {
+            const k = parseInt(key, 10);
             store.uiState.kioskSetupData = {
                 ...store.uiState.kioskSetupData,
-                key: parseInt(key, 10),
+                key: Number.isNaN(k) ? undefined : k,
             };
         }
 
