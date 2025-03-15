@@ -92,7 +92,7 @@ const KioskSetup = observer(() => {
 
                 const kiosks = await response.json();
 
-                store.uiState.kioskList = kiosks;
+                store.uiState.kioskList = kiosks.map(k => ({ ...k, key: parseInt(k.key, 10) }));
 
                 if (!kioskEncodedId) {
                     return;
@@ -266,6 +266,24 @@ const KioskSetup = observer(() => {
         };
     }
 
+    function changeKey(key: string) {
+        if (!store.uiState.kioskSetupData) {
+            return;
+        }
+
+        const kiosk = store.uiState.kioskList.find(k => k.key.toString() === key);
+
+        if (kiosk) {
+            store.uiState.kioskSetupData = kiosk;
+            return;
+        }
+
+        store.uiState.kioskSetupData = {
+            ...store.uiState.kioskSetupData,
+            key: parseInt(key, 10),
+        };
+    }
+
     return (
         <Suspense fallback={null}>
             {store.uiState.kioskSetup && (
@@ -302,8 +320,23 @@ const KioskSetup = observer(() => {
                                 showIcon={false}
                             >
                                 {!saved && (
+                                    <label className="efp-kiosk-setup-key">
+                                        <span><strong>{t("ID")}</strong>:</span>
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            max={99}
+                                            placeholder={t("Enter a number from 1 to 99")}
+                                            disabled={!store.uiState.kioskSetupData || pending}
+                                            value={store.uiState.kioskSetupData?.key || ""}
+                                            onChange={e => changeKey((e.target as HTMLInputElement).value)}
+                                        />
+                                    </label>
+                                )}
+
+                                {!saved && (
                                     <label className="efp-kiosk-setup-rotate">
-                                        <small>{t("Rotate by")}&nbsp;<strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</small>
+                                        <span>{t("Rotate by")}&nbsp;<strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</span>
                                         <input
                                             type="range"
                                             min="0"
@@ -322,7 +355,7 @@ const KioskSetup = observer(() => {
                                             ? (
                                                 <Button
                                                     inline
-                                                    size="sm"
+                                                    size="md"
                                                     text={t("Copy URL")}
                                                     onClick={copy}
                                                 />
@@ -330,8 +363,8 @@ const KioskSetup = observer(() => {
                                             ) : (
                                                 <Button
                                                     inline
-                                                    size="sm"
-                                                    text={t("Set position")}
+                                                    size="md"
+                                                    text={t("Set")}
                                                     disabled={!store.uiState.kioskSetupData || pending}
                                                     onClick={save}
                                                 />
@@ -340,7 +373,7 @@ const KioskSetup = observer(() => {
 
                                     <Button
                                         variant={saved ? "secondary" : "gray"}
-                                        size="sm"
+                                        size="md"
                                         inline
                                         text={saved ? t("Skip") : t("Exit")}
                                         onClick={exit}
