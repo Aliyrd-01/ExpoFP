@@ -1,5 +1,5 @@
 import Color from "color";
-import { reaction } from "mobx";
+import { reaction, set } from "mobx";
 import { Line, lineLength, Point, pointIsOnLine } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import { getLayerSvg } from "../../../../data/svg";
@@ -540,7 +540,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                         },
                     );
                 }
-
+            });
+            context.requireUpdate(() => {
                 kioskIconDrawer.reinitializeBuffers();
             });
         }
