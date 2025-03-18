@@ -80,30 +80,25 @@ const KioskSetup = observer(() => {
                 const response = await fetch(apiUrl);
                 const kiosks = await response.json();
 
-                const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
-
-                runInAction(() => {
-                    store.uiState.kioskList = kiosks.map(k => {
-                        const key = Number(k.key);
-                        return { ...k, key: Number.isSafeInteger(key) ? key : k.key };
-                    });
-                    store.uiState.kioskSetup = searchParams.has(KIOSK_SETUP_KEY);
+                const list = kiosks.map(k => {
+                    const key = Number(k.key);
+                    return { ...k, key: Number.isSafeInteger(key) ? key : undefined };
                 });
 
-                const kioskId = searchParams.get(KIOSK_SETUP_KEY) || searchParams.get(KIOSK_ID_KEY);
-                const kiosk = kiosks.find(k => strEqual(k.key, kioskId));
+                const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+                const kioskId = searchParams.get(KIOSK_SETUP_KEY) || searchParams.get(KIOSK_ID_KEY) || "";
+                const kiosk = list.find(k => strEqual(k.key.toString(), kioskId));
 
-                if (kiosk) {
-                    runInAction(() => {
-                        const key = Number(kiosk.key);
-                        store.uiState.kioskSetupData = {
-                            ...kiosk,
-                            key: Number.isSafeInteger(key) ? key : undefined,
-                            heading: kiosk.heading || 0,
-                        };
-                        store.uiState.kiosk = !isMobileDevice;
-                    });
-                }
+                runInAction(() => {
+                    store.uiState.kioskList = list;
+                    store.uiState.kioskSetup = searchParams.has(KIOSK_SETUP_KEY);
+                    store.uiState.kiosk = kioskId && !isMobileDevice;
+
+                    if (kiosk) {
+                        store.uiState.kioskSetupData = kiosk;
+                    }
+                });
+
             } catch (err) {
                 console.error(err);
                 setShowError(true);
