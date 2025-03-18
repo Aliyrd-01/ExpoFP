@@ -99,9 +99,11 @@ const KioskSetup = observer(() => {
                         store.uiState.kioskSetupData = kiosk;
                     }
 
-                    store.uiState.moveToRect = Rect.fromMultiple(
-                        kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 1, 1)),
-                    );
+                    if ((searchParams.has(KIOSK_SETUP_KEY) && kiosks?.length)) {
+                        store.uiState.moveToRect = Rect.fromMultiple(
+                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 1000, 1000)),
+                        );
+                    }
                 });
 
             } catch (err) {

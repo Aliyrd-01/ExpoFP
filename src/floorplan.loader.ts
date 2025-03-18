@@ -272,7 +272,7 @@ export default class FloorPlanLoader implements FloorPlan {
             initOfflineManager(
                 baseUrl,
                 [wfDataUrl, dataUrl, fpUrl],
-                ["k"],
+                // ["k"],
             ),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
