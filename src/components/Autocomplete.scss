@@ -86,6 +86,7 @@ $input-height: 50px;
         #{$this}__options {
             opacity: 1;
             visibility: visible;
+            overflow-wrap: break-word;
         }
     }
 
