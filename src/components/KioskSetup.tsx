@@ -1,10 +1,10 @@
 import { observer } from "mobx-react-lite";
 import Alert from "./Alert";
 import Button from "./Button";
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
-import { reaction, toJS } from "mobx";
+import { reaction, runInAction, toJS } from "mobx";
 import Modal from "./Modal";
 import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
@@ -15,17 +15,18 @@ import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 
 const isMobileDevice = isMobile || isWebview;
-
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
 
+// TODO: refactor this component
+
 const KioskSetup = observer(() => {
-    const [showGuide, setShowGuide] = useState(false);
+    const [showGuide, setShowGuide] = useState(!sessionStorage.getItem(MODAL_SHOWN_KEY));
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [saved, setSaved] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
-    const requestUrl = useMemo(() => {
+    const apiUrl = useMemo(() => {
         const url = new URL("/api/kiosks", "https://app.expofp.com/");
         url.searchParams.set("expoKey", store.fp.eventId);
         return url.toString();
@@ -47,11 +48,11 @@ const KioskSetup = observer(() => {
         );
 
         const kioskSetupDataDisposer = reaction(
-            () => ({
-                kioskSetupData: store.uiState.kioskSetupData,
-                currentPosition: store.routeStore.currentPosition,
-            }),
-            ({ kioskSetupData, currentPosition }) => {
+            () => [
+                store.uiState.kioskSetupData,
+                store.routeStore.currentPosition,
+            ] as const,
+            ([kioskSetupData, currentPosition]) => {
                 const hasCurrentPosition = currentPosition && store.routeStore.defaultFrom instanceof RouteCutIn;
 
                 store.routeStore.defaultFrom = (
@@ -76,53 +77,33 @@ const KioskSetup = observer(() => {
 
         async function requestKioskData() {
             try {
-                let kioskEncodedId;
+                const response = await fetch(apiUrl);
+                const kiosks = await response.json();
 
                 const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
 
-                if (searchParams.has(KIOSK_SETUP_KEY)) {
-                    kioskEncodedId = searchParams.get(KIOSK_SETUP_KEY);
-                    store.uiState.kioskSetup = true;
-                } else if (searchParams.has(KIOSK_ID_KEY)) {
-                    kioskEncodedId = searchParams.get(KIOSK_ID_KEY);
+                runInAction(() => {
+                    store.uiState.kioskList = kiosks.map(k => {
+                        const key = Number(k.key);
+                        return { ...k, key: Number.isSafeInteger(key) ? key : k.key };
+                    });
+                    store.uiState.kioskSetup = searchParams.has(KIOSK_SETUP_KEY);
+                });
+
+                const kioskId = searchParams.get(KIOSK_SETUP_KEY) || searchParams.get(KIOSK_ID_KEY);
+                const kiosk = kiosks.find(k => strEqual(k.key, kioskId));
+
+                if (kiosk) {
+                    runInAction(() => {
+                        const key = Number(kiosk.key);
+                        store.uiState.kioskSetupData = {
+                            ...kiosk,
+                            key: Number.isSafeInteger(key) ? key : undefined,
+                            heading: kiosk.heading || 0,
+                        };
+                        store.uiState.kiosk = !isMobileDevice;
+                    });
                 }
-
-                const response = await fetch(requestUrl);
-
-                if (!response.ok) {
-                    setShowError(true);
-                    return;
-                }
-
-                const kiosks = await response.json();
-
-                store.uiState.kioskList = kiosks.map(k => ({ ...k, key: parseInt(k.key, 10) }));
-
-                if (!kioskEncodedId) {
-                    return;
-                }
-
-                const kiosk = kiosks.find(k => strEqual(k.key, kioskEncodedId));
-
-                if (!kiosk) {
-                    return;
-                }
-
-                let heading = 0;
-
-                // TODO: Remove this after server sends angle in response
-                const rawAngle = searchParams.get("a");
-                if (rawAngle) {
-                    heading = parseInt(rawAngle, 10);
-                }
-
-                store.uiState.kioskSetupData = {
-                    ...kiosk,
-                    key: parseInt(kiosk.key, 10),
-                    heading: heading || kiosk.heading || 0,
-                };
-
-                store.uiState.kiosk = !isMobileDevice;
             } catch (err) {
                 console.error(err);
                 setShowError(true);
@@ -131,36 +112,37 @@ const KioskSetup = observer(() => {
         }
         requestKioskData();
 
-        if (!store.uiState.kioskSetup) {
-            return;
-        }
-
-        if (!sessionStorage.getItem(MODAL_SHOWN_KEY)) {
-            setShowGuide(true);
-        }
-
-        const originalOnGetCoordsClick = store.fp.onGetCoordsClick;
-        store.fp.onGetCoordsClick = coords => {
-            originalOnGetCoordsClick?.(coords);
-
-            setShowError(false);
-            store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, ...coords };
-        };
-
         return () => {
             kioskSetupDisposer();
             kioskSetupDataDisposer();
-            store.fp.onGetCoordsClick = originalOnGetCoordsClick;
             setShowError(false);
             setPending(false);
             setSaved(false);
         }
     }, [
-        requestUrl,
+        apiUrl,
         store.fp,
         store.routeStore,
         store.uiState,
     ]);
+
+    const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
+
+    useEffect(() => {
+        if (!store.uiState.kioskSetup || saved) {
+            return;
+        }
+
+        store.fp.onGetCoordsClick = coords => {
+            originalOnGetCoordsClick?.(coords);
+            setShowError(false);
+            store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, ...coords };
+        };
+
+        return () => {
+            store.fp.onGetCoordsClick = originalOnGetCoordsClick;
+        };
+    }, [store.uiState.kioskSetup, saved]);
 
     async function save() {
         try {
@@ -168,49 +150,34 @@ const KioskSetup = observer(() => {
             setPending(true);
 
             const params = new URLSearchParams(decodeURIComponent(window.location.search));
-
-            const kioskSetupData = toJS(store.uiState.kioskSetupData);
-
-            let heading = kioskSetupData?.heading || 0;
-
-            const requestBody: Kiosk = { ...kioskSetupData, heading };
+            const requestBody: Kiosk = toJS(store.uiState.kioskSetupData);
 
             const response = await fetch(
-                requestUrl,
+                apiUrl,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         ...requestBody,
-                        key: requestBody.key?.toString() || "",
+                        key: requestBody.key?.toString() || undefined,
                     }),
                 },
             );
-
-            if (!response.ok) {
-                setShowError(true);
-                return;
-            }
-
             const kiosk = await response.json() as Kiosk;
+
+            kiosk.key = Number(kiosk.key);
+            kiosk.key = Number.isSafeInteger(kiosk.key) ? kiosk.key : undefined;
+
+            runInAction(() => {
+                store.uiState.kioskSetupData = kiosk;
+                store.uiState.kiosk = !isMobileDevice;
+            });
+
+            setSaved(true);
 
             params.delete(KIOSK_SETUP_KEY);
             params.set(KIOSK_ID_KEY, kiosk.key?.toString());
-
-            if (kiosk.heading) {
-                heading = kiosk.heading;
-            }
-
-            // TODO: Remove this after server sends angle in response
-            params.set("a", heading.toString());
-
-            // TODO: enable service worker
-            params.set("sw", "0");
-
             window.history.replaceState(window.history.state, "", `?${params.toString()}`);
-            store.uiState.kioskSetupData = { ...kiosk, heading };
-            setSaved(true);
-            store.uiState.kiosk = !isMobileDevice;
         } catch (err) {
             console.error(err);
             setShowError(true);
@@ -237,29 +204,28 @@ const KioskSetup = observer(() => {
             "",
             params.toString() ? `?${params}` : window.location.pathname,
         );
-
-        if (params.has("sw")) {
-            window.location.reload();
-        }
     }
 
-    function copy() {
+    async function copy() {
         setShowError(false);
         setShowSuccess(false);
         setPending(true);
 
-        navigator.clipboard.writeText(window.location.href)
-            .then(() => {
-                setShowSuccess(true);
+        try {
+            await navigator.clipboard.writeText(window.location.href);
+
+            runInAction(() => {
                 store.uiState.kioskSetup = false;
-                setTimeout(() => setShowSuccess(false), 3000);
-            })
-            .catch((err) => {
-                console.error(err);
-                setShowError(true);
-            }).finally(() => {
-                setPending(false);
             });
+
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 3000);
+        } catch (err) {
+            console.error(err);
+            setShowError(true);
+        } finally {
+            setPending(false);
+        }
     }
 
     function rotate(angle: string) {
@@ -282,10 +248,10 @@ const KioskSetup = observer(() => {
         if (kiosk) {
             store.uiState.kioskSetupData = kiosk;
         } else {
-            const k = parseInt(key, 10);
+            const k = Number(key);
             store.uiState.kioskSetupData = {
                 ...store.uiState.kioskSetupData,
-                key: Number.isNaN(k) ? undefined : k,
+                key: Number.isSafeInteger(k) ? k : undefined,
             };
         }
 
@@ -294,11 +260,16 @@ const KioskSetup = observer(() => {
         window.history.replaceState(window.history.state, "", `?${params}`);
     }
 
+    function closeGuide() {
+        sessionStorage.setItem(MODAL_SHOWN_KEY, "1");
+        setShowGuide(false);
+    }
+
     return (
         <Suspense fallback={null}>
             {store.uiState.kioskSetup && (
                 <>
-                    <Modal open={showGuide} onClickClose={() => setShowGuide(false)}>
+                    <Modal open={showGuide} onClickClose={closeGuide}>
                         <h2>{t("Setting up the kiosk")}</h2>
 
                         <p>{t("Click on the desired location on the map where the kiosk should be placed.")}</p>
@@ -309,10 +280,7 @@ const KioskSetup = observer(() => {
                             <Button
                                 inline
                                 text={t("Ok, got it")}
-                                onClick={() => {
-                                    sessionStorage.setItem(MODAL_SHOWN_KEY, "1");
-                                    setShowGuide(false);
-                                }}
+                                onClick={closeGuide}
                             />
                         </div>
                     </Modal>

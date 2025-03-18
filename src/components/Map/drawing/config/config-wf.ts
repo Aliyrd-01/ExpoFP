@@ -493,13 +493,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     });
 
     reaction(
-        () => ({
-            floors: store.layerStore.floors,
-            kioskList: store.uiState.kioskList,
-            kioskSetup: store.uiState.kioskSetup,
-            kioskSetupData: store.uiState.kioskSetupData,
-        }),
-        ({ floors, kioskList, kioskSetup, kioskSetupData }) => {
+        () => [
+            store.layerStore.floors,
+            store.uiState.kioskList,
+            store.uiState.kioskSetup,
+            store.uiState.kioskSetupData,
+        ] as const,
+        ([floors, kioskList, kioskSetup, kioskSetupData]) => {
             context.requireUpdate(() => {
                 kioskIconCollector.clear();
 
