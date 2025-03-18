@@ -85,17 +85,12 @@ const KioskSetup = observer(() => {
                 const response = await fetch(apiUrl);
                 const kiosks = await response.json();
 
-                const list = kiosks.map(k => {
-                    const key = Number(k.key);
-                    return { ...k, key: Number.isSafeInteger(key) ? key : undefined };
-                });
-
                 const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
                 const kioskId = searchParams.get(KIOSK_SETUP_KEY) || searchParams.get(KIOSK_ID_KEY) || "";
-                const kiosk = list.find(k => strEqual(k.key.toString(), kioskId));
+                const kiosk = kiosks.find(k => strEqual(k.key, kioskId));
 
                 runInAction(() => {
-                    store.uiState.kioskList = list;
+                    store.uiState.kioskList = kiosks;
                     store.uiState.kioskSetup = searchParams.has(KIOSK_SETUP_KEY);
                     store.uiState.kiosk = kioskId && !isMobileDevice;
 
@@ -171,9 +166,6 @@ const KioskSetup = observer(() => {
                 },
             );
             const kiosk = await response.json() as Kiosk;
-
-            kiosk.key = Number(kiosk.key);
-            kiosk.key = Number.isSafeInteger(kiosk.key) ? kiosk.key : undefined;
 
             runInAction(() => {
                 store.uiState.kioskSetupData = kiosk;
@@ -256,11 +248,7 @@ const KioskSetup = observer(() => {
         if (kiosk) {
             store.uiState.kioskSetupData = kiosk;
         } else {
-            const k = Number(key);
-            store.uiState.kioskSetupData = {
-                ...store.uiState.kioskSetupData,
-                key: Number.isSafeInteger(k) ? k : undefined,
-            };
+            store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, key };
         }
 
         const params = new URLSearchParams(decodeURIComponent(window.location.search));

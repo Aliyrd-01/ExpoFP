@@ -368,6 +368,6 @@ export interface Marker extends CurrentPosition {
 }
 
 export interface Kiosk extends Omit<CurrentPosition, "angle"> {
-    key: number;
+    key: string;
     heading: number;
 }
