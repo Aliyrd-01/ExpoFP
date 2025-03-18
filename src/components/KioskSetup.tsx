@@ -13,6 +13,7 @@ import "./KioskSetup.scss";
 import { Kiosk } from "../store/RouteStore";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
+import Rect from "../core/Rect";
 
 const isMobileDevice = isMobile || isWebview;
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
@@ -97,6 +98,10 @@ const KioskSetup = observer(() => {
                     if (kiosk) {
                         store.uiState.kioskSetupData = kiosk;
                     }
+
+                    store.uiState.moveToRect = Rect.fromMultiple(
+                        kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 1, 1)),
+                    );
                 });
 
             } catch (err) {

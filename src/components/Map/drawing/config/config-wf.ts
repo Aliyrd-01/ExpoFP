@@ -492,54 +492,60 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    autorun(() => {
-        const kioskList = uiState.kioskList;
-        const kioskSetup = uiState.kioskSetup;
-        const kioskSetupData = uiState.kioskSetupData;
-        const activeFloor = layersStore.floors.find(f => f.active);
+    reaction(
+        () => [
+            uiState.kioskList,
+            uiState.kioskSetup,
+            uiState.kioskSetupData,
+            layersStore.floors.find(f => f.active),
+            context.pixelRatio,
+            context.ptscale,
+        ] as const,
+        ([kioskList, kioskSetup, kioskSetupData, activeFloor, pixelRatio]) => {
+            context.requireUpdate(() => {
+                kioskIconCollector.clear();
 
-        context.requireUpdate(() => {
-            kioskIconCollector.clear();
+                if (kioskSetup) {
+                    kioskList
+                        .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
+                        .forEach(kiosk => {
+                            attachKioskIcon(
+                                kiosk,
+                                kioskIconDrawer,
+                                kioskIconCollector,
+                                {
+                                    skipdim: false,
+                                    visible: true,
+                                    pixelRatio,
+                                    label: `Kiosk ${kiosk.key}`,
+                                },
+                            );
+                        });
+                }
 
-            if (kioskSetup) {
-                kioskList
-                    .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
-                    .forEach(kiosk => {
-                        attachKioskIcon(
-                            kiosk,
-                            kioskIconDrawer,
-                            kioskIconCollector,
-                            {
-                                skipdim: false,
-                                visible: true,
-                                pixelRatio: context.pixelRatio,
-                                label: `Kiosk ${kiosk.key}`,
-                            },
-                        );
-                    });
-            }
+                if (kioskSetupData && kioskSetupData?.z === activeFloor?.name) {
+                    attachKioskIcon(
+                        kioskSetupData,
+                        kioskIconDrawer,
+                        kioskIconCollector,
+                        {
+                            skipdim: true,
+                            visible: true,
+                            pixelRatio,
+                            label: (
+                                kioskSetup
+                                    ? `Kiosk ${kioskSetupData.key || ""}`.trim()
+                                    : `Kiosk`
+                            ),
+                        },
+                    );
+                }
 
-            if (kioskSetupData && kioskSetupData?.z === activeFloor?.name) {
-                attachKioskIcon(
-                    kioskSetupData,
-                    kioskIconDrawer,
-                    kioskIconCollector,
-                    {
-                        skipdim: true,
-                        visible: true,
-                        pixelRatio: context.pixelRatio,
-                        label: (
-                            kioskSetup
-                                ? `Kiosk ${kioskSetupData.key || ""}`.trim()
-                                : `Kiosk`
-                        ),
-                    },
-                );
-            }
-
-            kioskIconDrawer.reinitializeBuffers();
-        });
-    });
+                kioskIconDrawer.reinitializeBuffers();
+            });
+        },
+        { delay: 50 },
+    );
 
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
