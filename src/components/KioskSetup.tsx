@@ -53,6 +53,10 @@ const KioskSetup = observer(() => {
                 store.routeStore.currentPosition,
             ] as const,
             ([kioskSetupData, currentPosition]) => {
+                if (!kioskSetupData) {
+                    return;
+                }
+
                 const hasCurrentPosition = currentPosition && store.routeStore.defaultFrom instanceof RouteCutIn;
 
                 store.routeStore.defaultFrom = (
@@ -199,6 +203,7 @@ const KioskSetup = observer(() => {
             "",
             params.toString() ? `?${params}` : window.location.pathname,
         );
+        window.location.reload();
     }
 
     async function copy() {
