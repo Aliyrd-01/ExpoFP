@@ -16,6 +16,7 @@ import isWebview from "../utils/is-webview";
 
 const isMobileDevice = isMobile || isWebview;
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
+const SUCCESS_SHOWN_KEY = "kiosk_setup_success_shown";
 
 // TODO: refactor this component
 
@@ -24,7 +25,7 @@ const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [saved, setSaved] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(!!sessionStorage.getItem(SUCCESS_SHOWN_KEY));
 
     const apiUrl = useMemo(() => {
         const url = new URL("/api/kiosks", "https://app.expofp.com/");
@@ -143,6 +144,13 @@ const KioskSetup = observer(() => {
         };
     }, [store.uiState.kioskSetup, saved]);
 
+    useEffect(() => {
+        setTimeout(() => {
+            sessionStorage.removeItem(SUCCESS_SHOWN_KEY);
+            setShowSuccess(false);
+        }, 3000);
+    }, [showSuccess]);
+
     async function save() {
         try {
             setShowError(false);
@@ -218,8 +226,8 @@ const KioskSetup = observer(() => {
                 store.uiState.kioskSetup = false;
             });
 
-            setShowSuccess(true);
-            setTimeout(() => setShowSuccess(false), 3000);
+            sessionStorage.setItem(SUCCESS_SHOWN_KEY, "1");
+            window.location.reload();
         } catch (err) {
             console.error(err);
             setShowError(true);
