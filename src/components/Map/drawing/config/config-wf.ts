@@ -1,5 +1,5 @@
 import Color from "color";
-import { reaction, set } from "mobx";
+import { autorun, reaction } from "mobx";
 import { Line, lineLength, Point, pointIsOnLine } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import { getLayerSvg } from "../../../../data/svg";
@@ -492,60 +492,54 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    reaction(
-        () => [
-            store.layerStore.floors,
-            store.uiState.kioskList,
-            store.uiState.kioskSetup,
-            store.uiState.kioskSetupData,
-        ] as const,
-        ([floors, kioskList, kioskSetup, kioskSetupData]) => {
-            context.requireUpdate(() => {
-                kioskIconCollector.clear();
+    autorun(() => {
+        const kioskList = uiState.kioskList;
+        const kioskSetup = uiState.kioskSetup;
+        const kioskSetupData = uiState.kioskSetupData;
+        const activeFloor = layersStore.floors.find(f => f.active);
 
-                const activeFloor = floors.find(f => f.active);
+        context.requireUpdate(() => {
+            kioskIconCollector.clear();
 
-                if (kioskSetup) {
-                    kioskList
-                        .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
-                        .forEach(kiosk => {
-                            attachKioskIcon(
-                                kiosk,
-                                kioskIconDrawer,
-                                kioskIconCollector,
-                                {
-                                    skipdim: false,
-                                    visible: true,
-                                    pixelRatio: context.pixelRatio,
-                                    label: `Kiosk ${kiosk.key}`,
-                                },
-                            );
-                        });
-                }
+            if (kioskSetup) {
+                kioskList
+                    .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
+                    .forEach(kiosk => {
+                        attachKioskIcon(
+                            kiosk,
+                            kioskIconDrawer,
+                            kioskIconCollector,
+                            {
+                                skipdim: false,
+                                visible: true,
+                                pixelRatio: context.pixelRatio,
+                                label: `Kiosk ${kiosk.key}`,
+                            },
+                        );
+                    });
+            }
 
-                if (kioskSetupData && kioskSetupData?.z === activeFloor?.name) {
-                    attachKioskIcon(
-                        kioskSetupData,
-                        kioskIconDrawer,
-                        kioskIconCollector,
-                        {
-                            skipdim: true,
-                            visible: true,
-                            pixelRatio: context.pixelRatio,
-                            label: (
-                                kioskSetup
-                                    ? `Kiosk ${kioskSetupData.key || ""}`.trim()
-                                    : `Kiosk`
-                            ),
-                        },
-                    );
-                }
-            });
-            context.requireUpdate(() => {
-                kioskIconDrawer.reinitializeBuffers();
-            });
-        }
-    );
+            if (kioskSetupData && kioskSetupData?.z === activeFloor?.name) {
+                attachKioskIcon(
+                    kioskSetupData,
+                    kioskIconDrawer,
+                    kioskIconCollector,
+                    {
+                        skipdim: true,
+                        visible: true,
+                        pixelRatio: context.pixelRatio,
+                        label: (
+                            kioskSetup
+                                ? `Kiosk ${kioskSetupData.key || ""}`.trim()
+                                : `Kiosk`
+                        ),
+                    },
+                );
+            }
+
+            kioskIconDrawer.reinitializeBuffers();
+        });
+    });
 
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
