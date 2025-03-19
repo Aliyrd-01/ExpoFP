@@ -753,32 +753,51 @@ function attachEndpoints(
         { key: "destinationLocation", rect: to?.rect },
     ];
 
+    const closestPoints = locations.reduce((result, { key, rect }) => {
+        if (!rect) {
+            result[key] = null;
+            return result;
+        }
+
+        const closestPoint = points
+            .filter(({ x, y }) => rect.containsPoint(x, y))
+            .reduce<{ point: Point | null; distance: number }>(
+                (nearest, point) => {
+                    const distance = Math.hypot(rect.cx - point.x, rect.cy - point.y);
+                    return distance < nearest.distance
+                        ? { point, distance }
+                        : nearest;
+                },
+                { point: null, distance: Infinity }
+            ).point;
+
+        result[key] = closestPoint;
+        return result;
+    }, { sourceLocation: null, destinationLocation: null });
+
     const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
     const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
 
     let sourceLocationAdded = false;
     let destinationLocationAdded = false;
 
-    points.forEach(({ x, y }) => {
-        for (const { key, rect } of locations) {
-            if (rect?.containsPoint(x, y)) {
-                drawer.updateCenter(key, [x, y]);
+    for (const key in closestPoints) {
+        const point = closestPoints[key];
 
-                if (key === "sourceLocation") {
-                    drawer.updateVisible(key, isFromLayer);
-                    sourceLocationAdded = isFromLayer;
+        if (!point) continue;
 
-                }
+        drawer.updateCenter(key, [point.x, point.y]);
 
-                if (key === "destinationLocation") {
-                    drawer.updateVisible(key, isToLayer);
-                    destinationLocationAdded = isToLayer;
-                }
-
-                break;
-            }
+        if (key === "sourceLocation") {
+            drawer.updateVisible(key, isFromLayer);
+            sourceLocationAdded = isFromLayer;
         }
-    });
+
+        if (key === "destinationLocation") {
+            drawer.updateVisible(key, isToLayer);
+            destinationLocationAdded = isToLayer;
+        }
+    }
 
     if (!sourceLocationAdded) {
         drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
