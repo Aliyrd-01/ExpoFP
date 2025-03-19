@@ -1,5 +1,5 @@
 import { Point, Rect } from "simple-geometry";
-import isDebug from "../../../utils/is-debug";
+import { addVersionToUrl } from "../../../tools/loaders";
 
 export interface IBooth {
     layer: string;
@@ -36,8 +36,8 @@ export interface ICommonData {
 
 export default async function dataLoader(expo: string): Promise<ICommonData> {
     return new Promise(async (resolve, reject) => {
-        const baseUrl =`https://${expo}.expofp.com/data/threejs`;
-        let response = await fetch(`${baseUrl}/model.json`);
+        const baseUrl = `https://${expo}.expofp.com/data/threejs`;
+        let response = await fetch(addVersionToUrl(`${baseUrl}/model.json`));
         let data = (await response.json()) as ICommonData;
         resolve(data);
     });

@@ -99,7 +99,7 @@ export async function loadCustomFonts(customCss: string) {
     return Promise.allSettled(fontObservers);
 }
 
-function addVersionToUrl(url: string): string {
+export function addVersionToUrl(url: string): string {
     try {
         let version = window["__fpDataVersion"];
         if (!version) {
