@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import dateFormat from "dateformat";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import sanitizeHTML from "../utils/sanitizeHtml";
 import Button from "./Button";
 import "./Schedule.scss";
@@ -25,21 +25,26 @@ function isCurrent(from: Date | string, to: Date | string) {
 }
 
 const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength = 200 }) => {
+    const [eventsFullDescription, setEventsFullDescription] = useState({});
+
     const sortByDate = events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
     const grouped = sortByDate.reduce((acc, curr) => {
         const date = new Date(curr.startDate).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
         acc[date] ? acc[date].push(curr) : (acc[date] = [curr]);
         return acc;
     }, {});
 
-    const [eventsFullDescription, setEventsFullDescription] = useState(
-        Object.keys(grouped).reduce((result, date) => {
-            result[date] = grouped[date].map((event) => ({
-                showFullDescription: false,
-            }));
-            return result;
-        }, {})
-    );
+    useEffect(() => {
+        setEventsFullDescription(
+            Object.keys(grouped).reduce((result, date) => {
+                result[date] = grouped[date].map((event) => ({
+                    showFullDescription: false,
+                }));
+                return result;
+            }, {})
+        );
+    }, [events]);
 
     const toggleDescription = (event: React.MouseEvent<HTMLButtonElement>, date: string, index: number) => {
         event.preventDefault();

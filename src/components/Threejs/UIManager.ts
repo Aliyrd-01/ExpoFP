@@ -17,7 +17,6 @@ import store, { boothStore, layersStore, uiState } from "../../store";
 import { getLayerSvg } from "../../data/svg";
 import { LayersMode } from "../../store/LayerStore";
 import logosFromBooths from "../../utils/imageloader";
-import isDebug from "../../utils/is-debug";
 import { splitPolyLine } from "../Map/drawing/config/config-wf";
 import { SpriteMesh } from "./common/SpriteMesh";
 import canvasFromText from "./utils/canvasFromText";
@@ -25,6 +24,7 @@ import TextureMerger from "./utils/textureMerger";
 
 import { actualBoothColor } from "../Mapbox/utils/data";
 
+import { addVersionToUrl } from "../../tools/loaders";
 import settings from "../../tools/settings";
 import fr from "./assets/from.png";
 import to from "./assets/to.png";
@@ -75,12 +75,10 @@ export default class UIManager {
         return new Promise(async (resolve, reject) => {
             this.data = await dataLoader(this.expo);
 
-            const baseUrl = isDebug
-                ? `https://efp-data.s3.amazonaws.com/expos/${this.expo}/data/threejs`
-                : `https://${this.expo}.expofp.com/data/threejs`;
+            const baseUrl = `https://${this.expo}.expofp.com/data/threejs`;
 
             const scene = await (this.isMapbox ? initMapbox(this.container, this.data) : init(this.container, this.data));
-            const model = await loadModel(`${baseUrl}/model.obj`, `${baseUrl}/model.mtl`);
+            const model = await loadModel(addVersionToUrl(`${baseUrl}/model.obj`), addVersionToUrl(`${baseUrl}/model.mtl`));
 
             this.isInit = true;
             this.scene = scene;
