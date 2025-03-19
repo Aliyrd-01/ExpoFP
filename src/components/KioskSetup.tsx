@@ -72,6 +72,7 @@ const KioskSetup = observer(() => {
                                 y: kioskSetupData.y,
                                 layer: kioskSetupData.z?.toString(),
                             },
+                            `k-${kioskSetupData.key}`,
                         )
                 );
 

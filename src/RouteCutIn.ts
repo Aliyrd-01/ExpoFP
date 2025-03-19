@@ -14,6 +14,7 @@ export class RouteCutIn extends SpecialBooth {
         public readonly id: number,
         public readonly name: string,
         public readonly destination: LayerPoint,
+        public readonly slug: string,
         public readonly meta = {},
     ) {
         super();

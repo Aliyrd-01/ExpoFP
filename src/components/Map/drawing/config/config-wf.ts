@@ -535,7 +535,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                             label: (
                                 kioskSetup
                                     ? `Kiosk ${kioskSetupData.key || ""}`.trim()
-                                    : `Kiosk`
+                                    : ""
                             ),
                         },
                     );
