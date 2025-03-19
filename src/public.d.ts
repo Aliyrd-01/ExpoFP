@@ -210,7 +210,7 @@ const ExpoFP: {
     FloorPlan: FloorPlanOptions;
 };
 
-type FloorPlanIcon = "departure" | "destination" | "direction" | "transition" | "transition_up" | "transition_down" | "kiosk";
+type FloorPlanIcon = "departure" | "destination" | "direction" | "transition" | "transition_up" | "transition_down" | "kiosk-base" | "kiosk-statue";
 
 interface LayerPoint extends Point {
     layer: string;

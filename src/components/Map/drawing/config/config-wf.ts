@@ -993,28 +993,63 @@ function attachKioskIcon(
         label: string;
     },
 ) {
-    const id = `kiosk_${kiosk.key || ""}`;
-    const iconCanvas = createImageCanvas(store.fp.icons.get("kiosk"), 48, 48, options.pixelRatio);
+    const key = kiosk.key || "";
+    const size = 64;
+    const iconStatueSize = decreaseByPercentage(size, 55);
+
+    const iconBaseCanvas = createImageCanvas(
+        store.fp.icons.get("kiosk-base"),
+        size,
+        size,
+        options.pixelRatio,
+    );
+    const baseIconID = `kiosk_base_${key}`;
     drawer.addObject({
-        id,
+        id: baseIconID,
         center: [kiosk.x, kiosk.y],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -iconCanvas.width / 2,
-            -iconCanvas.height / 2,
-            iconCanvas.width,
-            iconCanvas.height,
+            -iconBaseCanvas.width / 2,
+            -(iconBaseCanvas.height + 14) / 2,
+            iconBaseCanvas.width,
+            iconBaseCanvas.height,
         ],
-        canvasTmp: iconCanvas,
+        canvasTmp: iconBaseCanvas,
+        texPosition: "lefttop",
+        rotateRadians: 0,
+        visible: options.visible,
+    });
+    drawer.updateSkipdim(baseIconID, options.skipdim);
+    idCollector.add(baseIconID);
+
+    const statueIconID = `kiosk_statue_${key}`;
+    const iconStatueCanvas = createImageCanvas(
+        store.fp.icons.get("kiosk-statue"),
+        iconStatueSize,
+        iconStatueSize,
+        options.pixelRatio,
+    );
+
+    drawer.addObject({
+        id: statueIconID,
+        center: [kiosk.x, kiosk.y],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -iconStatueCanvas.width / 2,
+            -iconStatueCanvas.height / 2,
+            iconStatueCanvas.width,
+            iconStatueCanvas.height,
+        ],
+        canvasTmp: iconStatueCanvas,
         texPosition: "lefttop",
         rotateRadians: toRadians(kiosk.heading),
         visible: options.visible,
     });
-    drawer.updateSkipdim(id, options.skipdim);
-    idCollector.add(id);
+    drawer.updateSkipdim(statueIconID, options.skipdim);
+    idCollector.add(statueIconID);
 
-    const labelId = `${id}_label`;
-    const labelFontSize = 20;
+    const labelId = `kiosk_label_${key}`;
+    const labelFontSize = 22;
     const labelCanvas = createLabelCanvas(
         options.label,
         labelFontSize,
@@ -1022,11 +1057,10 @@ function attachKioskIcon(
         "white",
         400,
         "#16171a",
-        5,
+        6,
     );
 
-    const gap = 15;
-
+    const gap = 36;
     drawer.addObject({
         id: labelId,
         center: [kiosk.x, kiosk.y],
@@ -1045,3 +1079,7 @@ function attachKioskIcon(
     drawer.updateSkipdim(labelId, options.skipdim);
     idCollector.add(labelId);
 }
+
+function decreaseByPercentage(num: number, percentage: number) {
+    return num * (1 - percentage / 100);
+};

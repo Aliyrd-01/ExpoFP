@@ -4,7 +4,7 @@ import Button from "./Button";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
-import { reaction, runInAction, toJS } from "mobx";
+import { reaction, runInAction, set, toJS } from "mobx";
 import Modal from "./Modal";
 import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
@@ -17,7 +17,6 @@ import Rect from "../core/Rect";
 
 const isMobileDevice = isMobile || isWebview;
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
-const SUCCESS_SHOWN_KEY = "kiosk_setup_success_shown";
 
 // TODO: refactor this component
 
@@ -25,8 +24,9 @@ const KioskSetup = observer(() => {
     const [showGuide, setShowGuide] = useState(!sessionStorage.getItem(MODAL_SHOWN_KEY));
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
-    const [saved, setSaved] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(!!sessionStorage.getItem(SUCCESS_SHOWN_KEY));
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [step, setStep] = useState<"start" | "edit" | "copy">("start");
+    const [kioskUrl, setKioskUrl] = useState("");
 
     const apiUrl = useMemo(() => {
         const url = new URL("/api/kiosks", "https://app.expofp.com/");
@@ -120,7 +120,7 @@ const KioskSetup = observer(() => {
             kioskSetupDataDisposer();
             setShowError(false);
             setPending(false);
-            setSaved(false);
+            setStep("start");
         }
     }, [
         apiUrl,
@@ -132,7 +132,7 @@ const KioskSetup = observer(() => {
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
     useEffect(() => {
-        if (!store.uiState.kioskSetup || saved) {
+        if (step !== "edit") {
             return;
         }
 
@@ -145,11 +145,10 @@ const KioskSetup = observer(() => {
         return () => {
             store.fp.onGetCoordsClick = originalOnGetCoordsClick;
         };
-    }, [store.uiState.kioskSetup, saved]);
+    }, [store.uiState.kioskSetup, step]);
 
     useEffect(() => {
         setTimeout(() => {
-            sessionStorage.removeItem(SUCCESS_SHOWN_KEY);
             setShowSuccess(false);
         }, 3000);
     }, [showSuccess]);
@@ -159,7 +158,6 @@ const KioskSetup = observer(() => {
             setShowError(false);
             setPending(true);
 
-            const params = new URLSearchParams(decodeURIComponent(window.location.search));
             const requestBody: Kiosk = toJS(store.uiState.kioskSetupData);
 
             const response = await fetch(
@@ -180,11 +178,13 @@ const KioskSetup = observer(() => {
                 store.uiState.kiosk = !isMobileDevice;
             });
 
-            setSaved(true);
-
-            params.delete(KIOSK_SETUP_KEY);
-            params.set(KIOSK_ID_KEY, kiosk.key?.toString());
-            window.history.replaceState(window.history.state, "", `?${params.toString()}`);
+            setKioskUrl(
+                new URL(
+                    `?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`,
+                    window.location.href
+                ).toString(),
+            );
+            setStep("copy");
         } catch (err) {
             console.error(err);
             setShowError(true);
@@ -194,24 +194,8 @@ const KioskSetup = observer(() => {
     }
 
     function exit() {
-        store.uiState.kioskSetup = false;
-        sessionStorage.removeItem(MODAL_SHOWN_KEY);
-
-        const params = new URLSearchParams(decodeURIComponent(window.location.search));
-
-        const kioskId = params.get(KIOSK_SETUP_KEY);
-        if (kioskId) {
-            params.set(KIOSK_ID_KEY, kioskId);
-        }
-
-        params.delete(KIOSK_SETUP_KEY);
-
-        window.history.replaceState(
-            window.history.state,
-            "",
-            params.toString() ? `?${params}` : window.location.pathname,
-        );
-        window.location.reload();
+        setStep("start");
+        store.uiState.kioskSetupData = null;
     }
 
     async function copy() {
@@ -220,14 +204,9 @@ const KioskSetup = observer(() => {
         setPending(true);
 
         try {
-            await navigator.clipboard.writeText(window.location.href);
-
-            runInAction(() => {
-                store.uiState.kioskSetup = false;
-            });
-
-            sessionStorage.setItem(SUCCESS_SHOWN_KEY, "1");
-            window.location.reload();
+            await navigator.clipboard.writeText(kioskUrl);
+            setShowSuccess(true);
+            setStep("start");
         } catch (err) {
             console.error(err);
             setShowError(true);
@@ -247,10 +226,6 @@ const KioskSetup = observer(() => {
     }
 
     function changeKey(key: string) {
-        if (!store.uiState.kioskSetupData) {
-            return;
-        }
-
         const kiosk = store.uiState.kioskList.find(k => k.key.toString() === key);
 
         if (kiosk) {
@@ -258,10 +233,6 @@ const KioskSetup = observer(() => {
         } else {
             store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, key };
         }
-
-        const params = new URLSearchParams(decodeURIComponent(window.location.search));
-        params.set(KIOSK_SETUP_KEY, key);
-        window.history.replaceState(window.history.state, "", `?${params}`);
     }
 
     function closeGuide() {
@@ -269,14 +240,7 @@ const KioskSetup = observer(() => {
         setShowGuide(false);
     }
 
-    let title = "";
-    if (!store.uiState.kioskSetupData) {
-        title = t("Click on the map to start");
-    } else if (saved) {
-        title = t("Copy the kiosk URL");
-    } else {
-        title = t("Setting the position of a kiosk");
-    }
+    const disabled = !store.uiState.kioskSetupData || pending;
 
     return (
         <Suspense fallback={null}>
@@ -302,73 +266,94 @@ const KioskSetup = observer(() => {
                         <div className="efp-kiosk-setup">
                             <Alert
                                 variant="blank"
-                                title={title}
+                                title={(
+                                    step === "copy"
+                                        ? t("Copy the kiosk URL")
+                                        : t("Add or edit a kiosk")
+                                )}
                                 inline
                                 showIcon={false}
                             >
-                                {!saved && (
-                                    <label className="efp-kiosk-setup-key">
-                                        <span><strong>{t("ID")}</strong>:</span>
-                                        <input
-                                            type="number"
-                                            min={1}
-                                            max={99}
-                                            placeholder={t("Enter a number from 1 to 99")}
-                                            disabled={!store.uiState.kioskSetupData || pending}
-                                            value={store.uiState.kioskSetupData?.key || ""}
-                                            onInput={e => {
-                                                const input = e.target as HTMLInputElement;
-                                                input.value = input.value.replace(/\D/g, "");
-                                                changeKey(input.value);
-                                            }}
-                                        />
-                                    </label>
+                                {step === "edit" && (
+                                    <>
+                                        <label className="efp-kiosk-setup-key">
+                                            <input
+                                                type="number"
+                                                min={1}
+                                                max={99}
+                                                placeholder={t("Enter a number from 1 to 99")}
+                                                defaultValue={store.uiState.kioskSetupData?.key || ""}
+                                                onInput={e => {
+                                                    const input = e.target as HTMLInputElement;
+                                                    input.value = input.value.replace(/\D/g, "");
+                                                    changeKey(input.value);
+                                                }}
+                                            />
+                                        </label>
+
+                                        <label className="efp-kiosk-setup-rotate">
+                                            <span>{t("Rotate by")}&nbsp;<strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</span>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="360"
+                                                step="10"
+                                                value={store.uiState.kioskSetupData?.heading || 0}
+                                                disabled={disabled}
+                                                onChange={e => rotate((e.target as HTMLInputElement).value)}
+                                            />
+                                        </label>
+                                    </>
                                 )}
 
-                                {!saved && (
-                                    <label className="efp-kiosk-setup-rotate">
-                                        <span>{t("Rotate by")}&nbsp;<strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</span>
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="360"
-                                            step="10"
-                                            value={store.uiState.kioskSetupData?.heading || 0}
-                                            disabled={!store.uiState.kioskSetupData || pending}
-                                            onChange={e => rotate((e.target as HTMLInputElement).value)}
-                                        />
-                                    </label>
+                                {step === "copy" && (
+                                    <p>
+                                        <a href={kioskUrl} target="_blank" rel="noopener noreferrer">
+                                            {kioskUrl}
+                                        </a>
+                                    </p>
                                 )}
 
                                 <div className="efp-kiosk-setup-actions">
-                                    {
-                                        saved
-                                            ? (
-                                                <Button
-                                                    inline
-                                                    size="md"
-                                                    text={t("Copy URL")}
-                                                    onClick={copy}
-                                                />
+                                    {step === "start" && (
+                                        <>
+                                            <Button
+                                                inline
+                                                size="md"
+                                                text={t("Start")}
+                                                onClick={() => setStep("edit")}
+                                            />
+                                        </>
+                                    )}
 
-                                            ) : (
-                                                <Button
-                                                    inline
-                                                    size="md"
-                                                    text={t("Set")}
-                                                    disabled={!store.uiState.kioskSetupData || pending}
-                                                    onClick={save}
-                                                />
-                                            )
-                                    }
+                                    {step === "edit" && (
+                                        <Button
+                                            inline
+                                            size="md"
+                                            text={t("Save")}
+                                            disabled={disabled}
+                                            onClick={save}
+                                        />
+                                    )}
 
-                                    <Button
-                                        variant={saved ? "secondary" : "gray"}
-                                        size="md"
-                                        inline
-                                        text={saved ? t("Skip") : t("Exit")}
-                                        onClick={exit}
-                                    />
+                                    {step === "copy" && (
+                                        <Button
+                                            inline
+                                            size="md"
+                                            text={t("Copy URL")}
+                                            onClick={copy}
+                                        />
+                                    )}
+
+                                    {step !== "start" && (
+                                        <Button
+                                            variant="gray"
+                                            inline
+                                            size="md"
+                                            text={t("Cancel")}
+                                            onClick={exit}
+                                        />
+                                    )}
                                 </div>
                             </Alert>
                         </div>
