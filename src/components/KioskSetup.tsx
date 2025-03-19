@@ -17,14 +17,13 @@ import Rect from "../core/Rect";
 
 const isMobileDevice = isMobile || isWebview;
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
-
-// TODO: refactor this component
+const SUCCESS_SHOWN_KEY = "kiosk_setup_success_shown";
 
 const KioskSetup = observer(() => {
     const [showGuide, setShowGuide] = useState(!sessionStorage.getItem(MODAL_SHOWN_KEY));
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(!!sessionStorage.getItem(SUCCESS_SHOWN_KEY));
     const [step, setStep] = useState<"start" | "edit" | "copy">("start");
     const [kioskUrl, setKioskUrl] = useState("");
 
@@ -148,6 +147,7 @@ const KioskSetup = observer(() => {
     }, [store.uiState.kioskSetup, step]);
 
     useEffect(() => {
+        sessionStorage.removeItem(SUCCESS_SHOWN_KEY);
         setTimeout(() => {
             setShowSuccess(false);
         }, 3000);
@@ -205,8 +205,8 @@ const KioskSetup = observer(() => {
 
         try {
             await navigator.clipboard.writeText(kioskUrl);
-            setShowSuccess(true);
-            setStep("start");
+            sessionStorage.setItem(SUCCESS_SHOWN_KEY, "1");
+            window.location.reload();
         } catch (err) {
             console.error(err);
             setShowError(true);
