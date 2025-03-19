@@ -759,53 +759,36 @@ function attachEndpoints(
             return result;
         }
 
-        const closestPoint = points
-            .filter(({ x, y }) => rect.containsPoint(x, y))
-            .reduce<{ point: Point | null; distance: number }>(
-                (nearest, point) => {
-                    const distance = Math.hypot(rect.cx - point.x, rect.cy - point.y);
-                    return distance < nearest.distance
-                        ? { point, distance }
-                        : nearest;
-                },
-                { point: null, distance: Infinity }
-            ).point;
+        let closestPoint: Point | null = null;
+        let minDistance = Infinity;
+
+        for (const point of points) {
+            if (rect.containsPoint(point.x, point.y)) {
+                const distance = Math.hypot(rect.cx - point.x, rect.cy - point.y);
+                if (distance < minDistance) {
+                    closestPoint = point;
+                    minDistance = distance;
+                }
+            }
+        }
 
         result[key] = closestPoint;
         return result;
-    }, { sourceLocation: null, destinationLocation: null });
+    }, {} as Record<string, Point | null>);
 
-    const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
-    const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
+    const isFromLayer = !currentLayerName || strEqual(currentLayerName, from?.layer?.name);
+    const isToLayer = !currentLayerName || strEqual(currentLayerName, to?.layer?.name);
 
-    let sourceLocationAdded = false;
-    let destinationLocationAdded = false;
-
-    for (const key in closestPoints) {
-        const point = closestPoints[key];
-
-        if (!point) continue;
-
-        drawer.updateCenter(key, [point.x, point.y]);
-
-        if (key === "sourceLocation") {
-            drawer.updateVisible(key, isFromLayer);
-            sourceLocationAdded = isFromLayer;
+    const updateEndpoint = (key: string, point: Point | null, isVisible: boolean, fallbackPoint: Point) => {
+        if (point) {
+            drawer.updateCenter(key, [point.x, point.y]);
+            drawer.updateVisible(key, isVisible);
+        } else {
+            drawer.updateCenter(key, [fallbackPoint.x, fallbackPoint.y]);
+            drawer.updateVisible(key, isVisible);
         }
+    };
 
-        if (key === "destinationLocation") {
-            drawer.updateVisible(key, isToLayer);
-            destinationLocationAdded = isToLayer;
-        }
-    }
-
-    if (!sourceLocationAdded) {
-        drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
-        drawer.updateVisible("sourceLocation", isFromLayer);
-    }
-
-    if (!destinationLocationAdded) {
-        drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
-        drawer.updateVisible("destinationLocation", isToLayer);
-    }
+    updateEndpoint("sourceLocation", closestPoints.sourceLocation, isFromLayer, points[points.length - 1]);
+    updateEndpoint("destinationLocation", closestPoints.destinationLocation, isToLayer, points[0]);
 }
