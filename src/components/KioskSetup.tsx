@@ -268,6 +268,15 @@ const KioskSetup = observer(() => {
         setShowGuide(false);
     }
 
+    let title = "";
+    if (!store.uiState.kioskSetupData) {
+        title = t("Click on the map to start");
+    } else if (saved) {
+        title = t("Copy the kiosk URL");
+    } else {
+        title = t("Setting the position of a kiosk");
+    }
+
     return (
         <Suspense fallback={null}>
             {store.uiState.kioskSetup && (
@@ -292,11 +301,7 @@ const KioskSetup = observer(() => {
                         <div className="efp-kiosk-setup">
                             <Alert
                                 variant="blank"
-                                title={
-                                    saved
-                                        ? t("Copy the kiosk URL")
-                                        : t("Setting the position of a kiosk")
-                                }
+                                title={title}
                                 inline
                                 showIcon={false}
                             >
@@ -310,7 +315,11 @@ const KioskSetup = observer(() => {
                                             placeholder={t("Enter a number from 1 to 99")}
                                             disabled={!store.uiState.kioskSetupData || pending}
                                             value={store.uiState.kioskSetupData?.key || ""}
-                                            onChange={e => changeKey((e.target as HTMLInputElement).value)}
+                                            onInput={e => {
+                                                const input = e.target as HTMLInputElement;
+                                                input.value = input.value.replace(/\D/g, "");
+                                                changeKey(input.value);
+                                            }}
                                         />
                                     </label>
                                 )}
