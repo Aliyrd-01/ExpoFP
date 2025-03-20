@@ -17,13 +17,12 @@ import Rect from "../core/Rect";
 
 const isMobileDevice = isMobile || isWebview;
 const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
-const SUCCESS_SHOWN_KEY = "kiosk_setup_success_shown";
 
 const KioskSetup = observer(() => {
     const [showGuide, setShowGuide] = useState(!sessionStorage.getItem(MODAL_SHOWN_KEY));
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(!!sessionStorage.getItem(SUCCESS_SHOWN_KEY));
+    const [showSuccess, setShowSuccess] = useState(false);
     const [step, setStep] = useState<"start" | "edit" | "copy">("start");
     const [kioskUrl, setKioskUrl] = useState("");
 
@@ -34,6 +33,10 @@ const KioskSetup = observer(() => {
     }, [store.fp.eventId]);
 
     useEffect(() => {
+        if (step !== "start") {
+            return;
+        }
+
         const kioskSetupDisposer = reaction(
             () => store.uiState.kioskSetup,
             (kioskSetup) => {
@@ -93,7 +96,6 @@ const KioskSetup = observer(() => {
                 runInAction(() => {
                     store.uiState.kioskList = kiosks;
                     store.uiState.kioskSetup = searchParams.has(KIOSK_SETUP_KEY);
-                    store.uiState.kiosk = kioskId && !isMobileDevice;
 
                     if (kiosk) {
                         store.uiState.kioskSetupData = kiosk;
@@ -119,13 +121,13 @@ const KioskSetup = observer(() => {
             kioskSetupDataDisposer();
             setShowError(false);
             setPending(false);
-            setStep("start");
         }
     }, [
         apiUrl,
         store.fp,
         store.routeStore,
         store.uiState,
+        step,
     ]);
 
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
@@ -147,7 +149,6 @@ const KioskSetup = observer(() => {
     }, [store.uiState.kioskSetup, step]);
 
     useEffect(() => {
-        sessionStorage.removeItem(SUCCESS_SHOWN_KEY);
         setTimeout(() => {
             setShowSuccess(false);
         }, 3000);
@@ -184,6 +185,7 @@ const KioskSetup = observer(() => {
                     window.location.href
                 ).toString(),
             );
+
             setStep("copy");
         } catch (err) {
             console.error(err);
@@ -205,8 +207,9 @@ const KioskSetup = observer(() => {
 
         try {
             await navigator.clipboard.writeText(kioskUrl);
-            sessionStorage.setItem(SUCCESS_SHOWN_KEY, "1");
-            window.location.reload();
+            setShowSuccess(true);
+            store.uiState.kioskSetupData = null;
+            setStep("start");
         } catch (err) {
             console.error(err);
             setShowError(true);
@@ -232,6 +235,16 @@ const KioskSetup = observer(() => {
             store.uiState.kioskSetupData = kiosk;
         } else if (store.uiState.kioskSetupData) {
             store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, key };
+        } else {
+            const newKiosk = {
+                key,
+                x: store.layerStore.rectangle.cx || 0,
+                y: store.layerStore.rectangle.cy || 0,
+                z: store.layerStore.floors.find(f => f.active)?.name,
+                heading: 0,
+            };
+            store.uiState.kioskSetupData = newKiosk;
+            store.uiState.moveToRect = Rect.fromCxcywh(newKiosk.x, newKiosk.y, 1000, 1000);
         }
     }
 
@@ -283,7 +296,6 @@ const KioskSetup = observer(() => {
                                                 max={99}
                                                 placeholder={t("Enter a number from 1 to 99")}
                                                 defaultValue={store.uiState.kioskSetupData?.key || ""}
-                                                disabled={!store.uiState.kioskSetupData}
                                                 onInput={e => {
                                                     const input = e.target as HTMLInputElement;
                                                     input.value = input.value.replace(/\D/g, "");
