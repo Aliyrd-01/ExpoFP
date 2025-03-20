@@ -85,18 +85,20 @@ const KioskSetup = observer(() => {
                 const kiosks = await response.json();
 
                 const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
-                const kioskId = searchParams.get(KIOSK_SETUP_KEY) || searchParams.get(KIOSK_ID_KEY) || "";
+                const kioskId = searchParams.get(KIOSK_ID_KEY) || "";
                 const kiosk = kiosks.find(k => strEqual(k.key, kioskId));
 
                 runInAction(() => {
+                    const isSetup = searchParams.has(KIOSK_SETUP_KEY);
+
                     store.uiState.kioskList = kiosks;
-                    store.uiState.kioskSetup = searchParams.has(KIOSK_SETUP_KEY);
+                    store.uiState.kioskSetup = isSetup;
 
                     if (kiosk) {
                         store.uiState.kioskSetupData = kiosk;
                     }
 
-                    if ((searchParams.has(KIOSK_SETUP_KEY) && kiosks?.length)) {
+                    if (isSetup && kiosks?.length) {
                         store.uiState.moveToRect = store.layerStore.rectangle;
                     }
                 });
