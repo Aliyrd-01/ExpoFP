@@ -20,6 +20,22 @@ interface ListProps {
 export default function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
     const [scrollableRef, setScrollableRef] = useState<RefObject<HTMLElement>>(null);
     const listRef = useRef(null);
+    const [uiVariant, setUiVariant] = useState<number>(1);
+
+    useEffect(() => {
+        const storedVariant = localStorage.getItem("uiVariant");
+        let variant = storedVariant ? parseInt(storedVariant, 10) : 1;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlVariant = urlParams.get("uivariant");
+
+        if (urlVariant) {
+            variant = parseInt(urlVariant, 10) || 1;
+            localStorage.setItem("uiVariant", variant.toString());
+        }
+
+        setUiVariant(variant);
+    }, []);
 
     useEffect(() => {
         setScrollableRef(updatedScrollableRef);
@@ -74,6 +90,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                         locationName: booth.name,
                         level: booth.layer?.name,
                     }))}
+                    variant={uiVariant}
                 />
             );
         } else if (item instanceof BoothBase) {
@@ -87,6 +104,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                     url={null}
                     icon={item.poiIcon}
                     additionalInfo={[{ type: "location", locationName: item.name, level: item.layer?.name }]}
+                    variant={uiVariant}
                 />
             );
         } else if (item instanceof Category) {
@@ -98,6 +116,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                     type="category"
                     title={item.name}
                     url={null}
+                    variant={uiVariant}
                 />
             );
         } else if (item instanceof ScheduleItem) {
@@ -113,6 +132,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                     date={dateFormat(item.startDate, "dd mmm ddd")}
                     time={`${dateFormat(item.startDate, "h:MM")} - ${dateFormat(item.endDate, "h:MM")}`}
                     additionalInfo={booth ? [{ type: "location", locationName: booth.name, level: booth.layer?.name }] : []}
+                    variant={uiVariant}
                 />
             );
         }

@@ -4,6 +4,7 @@
 .layout {
     --font-family: "Inter", -apple-system, system-ui, sans-serif;
     --app-font-family: var(--expofp-font-face, var(--font-family));
+    --font-size-xxs: #{utils.rem(10px)};
     --font-size-xs: #{utils.rem(11px)};
     --font-size-sm: #{utils.rem(12px)};
     --font-size-md: #{utils.rem(13px)};
@@ -63,9 +64,12 @@
     --color-sponsorship: #e87f00;
     --color-sponsorship-dark: #ff8c00;
 
-    --color-featured: #eef8ff;
-    --color-featured-dark: #d9efff;
+    --color-featured: #f3f9ff;
+    --color-featured-dark: #e8f3ff;
     --color-featured-border: #bce4ff;
+
+    --color-visited: #15af6f;
+    --color-visited-gray: #f9f9f9;
 
     --shadow-xs: 0px 1px 3px 0px rgb(16 24 40 / 30%);
     --shadow-sm: 0px 2px 8px -2px rgb(16 24 40 / 40%);

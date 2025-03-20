@@ -8,25 +8,21 @@
     justify-content: center;
     max-width: rem(400px);
     min-height: rem(42px);
-    padding: rem(0 14px);
-    background: var(--color-gray-200);
-    border: 1px solid var(--color-gray-400);
+    padding: rem(0 14px 0 10px);
+    background: var(--color-white);
+    border: 1px solid var(--color-primary);
     border-radius: var(--border-radius-full);
     outline: none;
     font-family: var(--app-font-family);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-medium);
-    color: var(--color-gray-600);
+    color: var(--color-primary);
     text-decoration: none;
     cursor: pointer;
     transition: background 0.1s ease-in-out;
 
     &:hover {
-        background: var(--color-gray-300);
-
-        .efp-checkbox-button__inner {
-            border-color: var(--color-gray-600);
-        }
+        background: var(--color-primary-ultra-light);
     }
 
     &__inner {
@@ -35,15 +31,19 @@
         align-items: center;
         width: rem(20px);
         height: rem(20px);
+        border: 1px solid var(--color-primary);
+        border-radius: var(--border-radius-full);
+        transition: background 0.1s ease-in-out;
     }
 
     &.checked {
-        --color-visited: #00b195;
         background: var(--color-visited);
         border-color: var(--color-visited);
         color: var(--color-white);
 
         .efp-checkbox-button__inner {
+            border-color: var(--color-visited);
+
             &:after {
                 @include icon;
                 content: vars.$icon-checkmark;

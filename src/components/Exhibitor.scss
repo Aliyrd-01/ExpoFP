@@ -172,6 +172,21 @@
     }
 
     &__booth {
+        background: var(--color-primary-ultra-light);
+        color: var(--color-primary-ultra-dark);
+
+        &:visited {
+            color: var(--color-primary-ultra-dark);
+        }
+
+        &:hover,
+        &:visited:hover {
+            background: var(--color-primary-light);
+            color: var(--color-black);
+        }
+    }
+
+    &__cat {
         background: var(--color-secondary-ultra-light);
         color: var(--color-secondary-ultra-dark);
 
@@ -183,21 +198,6 @@
         &:hover,
         &:visited:hover {
             background: var(--color-secondary-light);
-            color: var(--color-black);
-        }
-    }
-
-    &__cat {
-        background: var(--color-primary-ultra-light);
-        color: var(--color-primary-ultra-dark);
-
-        &:visited {
-            color: var(--color-primary-ultra-dark);
-        }
-
-        &:hover,
-        &:visited:hover {
-            background: var(--color-primary-light);
             color: var(--color-black);
         }
     }

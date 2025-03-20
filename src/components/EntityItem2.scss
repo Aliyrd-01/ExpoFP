@@ -52,6 +52,15 @@ $entity-item: ".efp-entity-item";
         }
     }
 
+    .booth-badge {
+        display: inline-flex;
+        margin-right: rem(6px);
+        padding: rem(3px 5px);
+        background: var(--color-primary-ultra-light);
+        color: var(--color-primary-ultra-dark);
+        border-radius: var(--border-radius-full);
+    }
+
     &__link {
         position: absolute;
         top: 0;
@@ -187,7 +196,7 @@ $entity-item: ".efp-entity-item";
             display: inline-flex;
             align-items: center;
 
-            &:not(:last-child) {
+            &:not(:last-child):not(.booth-badge) {
                 position: relative;
 
                 &::after {
