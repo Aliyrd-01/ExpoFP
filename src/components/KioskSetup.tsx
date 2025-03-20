@@ -6,7 +6,7 @@ import store from "../store";
 import { t } from "../utils/i18n";
 import { reaction, runInAction, toJS } from "mobx";
 import { strEqual } from "../utils/strEqual";
-import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, SEPARATOR } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
 import "./KioskSetup.scss";
 import { Kiosk } from "../store/RouteStore";
@@ -15,6 +15,7 @@ import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 
 const isMobileDevice = isMobile || isWebview;
+const KIOSK_SLUG_PREFIX = "interactive-kiosk";
 
 const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
@@ -72,7 +73,7 @@ const KioskSetup = observer(() => {
                                 y: kioskSetupData.y,
                                 layer: kioskSetupData.z?.toString(),
                             },
-                            `interactive-kiosk-${kioskSetupData.key}`,
+                            `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`,
                         )
                 );
 
@@ -88,7 +89,16 @@ const KioskSetup = observer(() => {
                 const kiosks = await response.json();
 
                 const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
-                const kioskId = searchParams.get(KIOSK_ID_KEY) || "";
+                let kioskId = searchParams.get(KIOSK_ID_KEY) || "";
+
+                const routeFromKioskMatch = [...searchParams.keys()]
+                    .map(key => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`)))
+                    .find(match => match);
+
+                if (!kioskId && routeFromKioskMatch?.[1]) {
+                    kioskId = routeFromKioskMatch[1];
+                }
+
                 const kiosk = kiosks.find(k => strEqual(k.key, kioskId));
 
                 runInAction(() => {
@@ -103,6 +113,11 @@ const KioskSetup = observer(() => {
 
                     if (isSetup && kiosks?.length) {
                         store.uiState.moveToRect = store.layerStore.rectangle;
+                    }
+
+                    if (routeFromKioskMatch) {
+                        const parts = routeFromKioskMatch.input.split(SEPARATOR);
+                        store.fp.selectRoute(parts[2], parts[1]);
                     }
                 });
 

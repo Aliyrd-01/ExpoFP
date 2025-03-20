@@ -1,7 +1,7 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY, SEPARATOR } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -146,7 +146,7 @@ function dispatchFromUrl() {
             uiState.kiosk = false;
         }
     } else if (slug.startsWith("route")) {
-        const parts = slug.split(":");
+        const parts = slug.split(SEPARATOR);
         store.routeStore.onlyAccessible = parts[3] === "true";
         store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
     } else if (slug === "bookmarks") {
