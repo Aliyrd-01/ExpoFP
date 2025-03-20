@@ -9,6 +9,7 @@ export class RouteCutIn extends SpecialBooth {
     public readonly paths = [];
     public readonly routePoint: LayerPoint;
     public readonly rect: Rect = Rect.fromCxcywh(0, 0, 0, 0);
+    public readonly type = "route-cut-in";
 
     constructor(
         public readonly id: number,

@@ -207,7 +207,7 @@ function drawLines(
         attachEndpoints(
             wfDrawer,
             routePoints,
-            from instanceof RouteCutIn ? null : from,
+            (from as RouteCutIn)?.type === "route-cut-in" ? null : from,
             to,
             currentLayerName,
         );
@@ -976,7 +976,7 @@ function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
 }
 
 function getRouteCutIt(): RouteCutIn {
-    if (store.uiState.selectedRoute?.from instanceof RouteCutIn) {
+    if ((store.uiState.selectedRoute?.from as RouteCutIn)?.type === "route-cut-in") {
         return store.routeStore.defaultFrom as RouteCutIn;
     }
     return null;

@@ -56,7 +56,10 @@ const KioskSetup = observer(() => {
                     return;
                 }
 
-                const hasCurrentPosition = currentPosition && store.routeStore.defaultFrom instanceof RouteCutIn;
+                const hasCurrentPosition = (
+                    currentPosition
+                    && (store.routeStore.defaultFrom as RouteCutIn)?.type === "route-cut-in"
+                );
 
                 store.routeStore.defaultFrom = (
                     hasCurrentPosition
@@ -69,7 +72,7 @@ const KioskSetup = observer(() => {
                                 y: kioskSetupData.y,
                                 layer: kioskSetupData.z?.toString(),
                             },
-                            `k-${kioskSetupData.key}`,
+                            `interactive-kiosk-${kioskSetupData.key}`,
                         )
                 );
 
@@ -128,7 +131,7 @@ const KioskSetup = observer(() => {
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
     useEffect(() => {
-        if (step !== "edit") {
+        if (!store.uiState.kioskSetup || step !== "edit") {
             return;
         }
 
