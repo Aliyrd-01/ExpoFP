@@ -10,23 +10,64 @@
     z-index: 9998;
     box-shadow: var(--shadow-md);
     border-radius: var(--border-radius-lg);
+    max-width: #{utils.rem(360px)};
 }
 
-.efp-kiosk-setup-message {
-    position: fixed;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    box-shadow: var(--shadow-md);
-    border-radius: var(--border-radius-lg);
+.efp-kiosk-setup-info {
+    color: var(--color-gray-900);
+    font-size: var(--font-size-sm);
+}
+
+.efp-kiosk-setup-key {
+    display: grid;
+    gap: 0.6rem;
+    place-items: center;
+    place-content: flex-start;
+    grid-template-columns: auto 1fr;
+    grid-auto-flow: column;
+    width: 100%;
+
+    span {
+        width: 100%;
+    }
+
+    & input {
+        background: var(--color-gray-100);
+        border: #{utils.rem(1px)} solid var(--color-gray-300);
+        margin: 0;
+        padding: 0.6rem;
+        border-radius: var(--border-radius-md);
+        width: 100%;
+        outline: none;
+        appearance: none;
+        -moz-appearance: textfield;
+
+        &:disabled {
+            background: var(--color-gray-300);
+            cursor: not-allowed;
+        }
+
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
 }
 
 .efp-kiosk-setup-rotate {
     display: grid;
-    grid-auto-flow: row;
+    place-items: center;
+    place-content: flex-start;
+    grid-template-columns: #{utils.rem(50px)} 1fr;
+    grid-auto-flow: column;
     gap: 0.4rem;
-    margin: 1.4rem 0;
+    margin: 1.2rem 0;
+    width: 100%;
+
+    span {
+        width: 100%;
+    }
 
     & input[type="range"] {
         appearance: none;
@@ -35,7 +76,6 @@
         background: var(--color-gray-300);
         border-radius: #{utils.rem(3px)};
         outline: none;
-        margin-top: 0.4rem;
 
         &:disabled {
             background: var(--color-gray-400);
@@ -87,37 +127,14 @@
     grid-auto-flow: column;
     gap: 0.4rem;
     place-items: center;
-    margin-top: 1rem;
 }
 
-.efp-kiosk-setup-key {
-    display: grid;
-    gap: 0.4rem;
-    margin-top: 1rem;
-    place-items: center;
-    place-content: flex-start;
-    grid-template-columns: 1fr;
-
-    & input {
-        background: var(--color-gray-100);
-        border: #{utils.rem(1px)} solid var(--color-gray-300);
-        margin: 0;
-        padding: 0.8rem;
-        border-radius: var(--border-radius-md);
-        width: 100%;
-        outline: none;
-        appearance: none;
-        -moz-appearance: textfield;
-
-        &:disabled {
-            background: var(--color-gray-300);
-            cursor: not-allowed;
-        }
-
-        &::-webkit-inner-spin-button,
-        &::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-    }
+.efp-kiosk-setup-message {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius-lg);
 }

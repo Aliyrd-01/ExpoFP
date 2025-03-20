@@ -4,8 +4,7 @@ import Button from "./Button";
 import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
-import { reaction, runInAction, set, toJS } from "mobx";
-import Modal from "./Modal";
+import { reaction, runInAction, toJS } from "mobx";
 import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
@@ -16,15 +15,15 @@ import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 
 const isMobileDevice = isMobile || isWebview;
-const MODAL_SHOWN_KEY = "kiosk_setup_modal_shown";
 
 const KioskSetup = observer(() => {
-    const [showGuide, setShowGuide] = useState(!sessionStorage.getItem(MODAL_SHOWN_KEY));
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [step, setStep] = useState<"start" | "edit" | "copy">("start");
+    const [step, setStep] = useState<"edit" | "copy">("edit");
     const [kioskUrl, setKioskUrl] = useState("");
+
+    const kioskSetupRef = useRef<HTMLDivElement>(null);
 
     const apiUrl = useMemo(() => {
         const url = new URL("/api/kiosks", "https://app.expofp.com/");
@@ -33,10 +32,6 @@ const KioskSetup = observer(() => {
     }, [store.fp.eventId]);
 
     useEffect(() => {
-        if (step !== "start") {
-            return;
-        }
-
         const kioskSetupDisposer = reaction(
             () => store.uiState.kioskSetup,
             (kioskSetup) => {
@@ -102,9 +97,7 @@ const KioskSetup = observer(() => {
                     }
 
                     if ((searchParams.has(KIOSK_SETUP_KEY) && kiosks?.length)) {
-                        store.uiState.moveToRect = Rect.fromMultiple(
-                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 1000, 1000)),
-                        );
+                        store.uiState.moveToRect = store.layerStore.rectangle;
                     }
                 });
 
@@ -154,6 +147,12 @@ const KioskSetup = observer(() => {
         }, 3000);
     }, [showSuccess]);
 
+    useEffect(() => {
+        if (kioskSetupRef.current) {
+            store.uiState.kioskSetupDOMRect = kioskSetupRef.current.getBoundingClientRect();
+        }
+    }, [store.uiState.kioskSetup, step]);
+
     async function save() {
         try {
             setShowError(false);
@@ -196,7 +195,7 @@ const KioskSetup = observer(() => {
     }
 
     function exit() {
-        setStep("start");
+        setStep("edit");
         store.uiState.kioskSetupData = null;
     }
 
@@ -209,7 +208,7 @@ const KioskSetup = observer(() => {
             await navigator.clipboard.writeText(kioskUrl);
             setShowSuccess(true);
             store.uiState.kioskSetupData = null;
-            setStep("start");
+            setStep("edit");
         } catch (err) {
             console.error(err);
             setShowError(true);
@@ -229,6 +228,11 @@ const KioskSetup = observer(() => {
     }
 
     function changeKey(key: string) {
+        if (!key) {
+            clear();
+            return;
+        }
+
         const kiosk = store.uiState.kioskList.find(k => k.key.toString() === key);
 
         if (kiosk) {
@@ -248,9 +252,8 @@ const KioskSetup = observer(() => {
         }
     }
 
-    function closeGuide() {
-        sessionStorage.setItem(MODAL_SHOWN_KEY, "1");
-        setShowGuide(false);
+    function clear() {
+        store.uiState.kioskSetupData = null;
     }
 
     const disabled = !store.uiState.kioskSetupData || pending;
@@ -258,120 +261,104 @@ const KioskSetup = observer(() => {
     return (
         <Suspense fallback={null}>
             {store.uiState.kioskSetup && (
-                <>
-                    <Modal open={showGuide} onClickClose={closeGuide}>
-                        <h2>{t("Setting up the kiosk")}</h2>
+                <div ref={kioskSetupRef} className="efp-kiosk-setup">
+                    <Alert
+                        variant="blank"
+                        title={(
+                            step === "copy"
+                                ? t("Copy the kiosk URL")
+                                : t("Add or edit a kiosk")
+                        )}
+                        inline
+                        showIcon={false}
+                    >
+                        {step === "edit" && (
+                            <>
+                                <p className="efp-kiosk-setup-info">
+                                    {t("Click on the screen to add or type the kiosk number to edit.")}
+                                </p>
 
-                        <p>{t("Click on the desired location on the map where the kiosk should be placed.")}</p>
-                        <p>{t("The coordinates will be set automatically, and the kiosk will appear at the selected point.")}</p>
-                        <p>{t("If needed, adjust the position by clicking on a different location on the map.")}</p>
+                                <label className="efp-kiosk-setup-key">
+                                    <span><strong>#</strong></span>
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        max={99}
+                                        placeholder={t("Enter a number from 1 to 99")}
+                                        value={store.uiState.kioskSetupData?.key || ""}
+                                        onChange={e => {
+                                            const input = e.target as HTMLInputElement;
+                                            input.value = input.value.replace(/\D/g, "");
+                                            changeKey(input.value);
+                                        }}
+                                    />
+                                </label>
 
-                        <div style={{ textAlign: "right" }}>
-                            <Button
-                                inline
-                                text={t("Ok, got it")}
-                                onClick={closeGuide}
-                            />
+                                <p className="efp-kiosk-setup-info">
+                                    {t("Move the range slider to rotate the icon.")}
+                                </p>
+
+                                <label className="efp-kiosk-setup-rotate">
+                                    <span><strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</span>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="360"
+                                        step="10"
+                                        value={store.uiState.kioskSetupData?.heading || 0}
+                                        disabled={disabled}
+                                        onChange={e => rotate((e.target as HTMLInputElement).value)}
+                                    />
+                                </label>
+                            </>
+                        )}
+
+                        {step === "copy" && (
+                            <p>
+                                <a href={kioskUrl} target="_blank" rel="noopener noreferrer">
+                                    {kioskUrl}
+                                </a>
+                            </p>
+                        )}
+
+                        <div className="efp-kiosk-setup-actions">
+                            {step === "edit" && (
+                                <Button
+                                    size="md"
+                                    text={t("Save")}
+                                    disabled={disabled}
+                                    onClick={save}
+                                />
+                            )}
+
+                            {step === "copy" && (
+                                <Button
+                                    size="md"
+                                    text={t("Copy URL")}
+                                    onClick={copy}
+                                />
+                            )}
+
+                            {step === "edit" && (
+                                <Button
+                                    variant="gray-border"
+                                    size="md"
+                                    text={t("Clear")}
+                                    onClick={clear}
+                                />
+                            )}
+
+                            {step === "copy" && (
+                                <Button
+                                    variant="gray"
+                                    size="md"
+                                    text={t("Cancel")}
+                                    onClick={exit}
+                                />
+                            )}
                         </div>
-                    </Modal>
-
-                    {!showGuide && (
-                        <div className="efp-kiosk-setup">
-                            <Alert
-                                variant="blank"
-                                title={(
-                                    step === "copy"
-                                        ? t("Copy the kiosk URL")
-                                        : t("Add or edit a kiosk")
-                                )}
-                                inline
-                                showIcon={false}
-                            >
-                                {step === "edit" && (
-                                    <>
-                                        <label className="efp-kiosk-setup-key">
-                                            <input
-                                                type="number"
-                                                min={1}
-                                                max={99}
-                                                placeholder={t("Enter a number from 1 to 99")}
-                                                defaultValue={store.uiState.kioskSetupData?.key || ""}
-                                                onInput={e => {
-                                                    const input = e.target as HTMLInputElement;
-                                                    input.value = input.value.replace(/\D/g, "");
-                                                    changeKey(input.value);
-                                                }}
-                                            />
-                                        </label>
-
-                                        <label className="efp-kiosk-setup-rotate">
-                                            <span>{t("Rotate by")}&nbsp;<strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</span>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="360"
-                                                step="10"
-                                                value={store.uiState.kioskSetupData?.heading || 0}
-                                                disabled={disabled}
-                                                onChange={e => rotate((e.target as HTMLInputElement).value)}
-                                            />
-                                        </label>
-                                    </>
-                                )}
-
-                                {step === "copy" && (
-                                    <p>
-                                        <a href={kioskUrl} target="_blank" rel="noopener noreferrer">
-                                            {kioskUrl}
-                                        </a>
-                                    </p>
-                                )}
-
-                                <div className="efp-kiosk-setup-actions">
-                                    {step === "start" && (
-                                        <>
-                                            <Button
-                                                inline
-                                                size="md"
-                                                text={t("Start")}
-                                                onClick={() => setStep("edit")}
-                                            />
-                                        </>
-                                    )}
-
-                                    {step === "edit" && (
-                                        <Button
-                                            inline
-                                            size="md"
-                                            text={t("Save")}
-                                            disabled={disabled}
-                                            onClick={save}
-                                        />
-                                    )}
-
-                                    {step === "copy" && (
-                                        <Button
-                                            inline
-                                            size="md"
-                                            text={t("Copy URL")}
-                                            onClick={copy}
-                                        />
-                                    )}
-
-                                    {step !== "start" && (
-                                        <Button
-                                            variant="gray"
-                                            inline
-                                            size="md"
-                                            text={t("Cancel")}
-                                            onClick={exit}
-                                        />
-                                    )}
-                                </div>
-                            </Alert>
-                        </div>
-                    )}
-                </>
+                    </Alert>
+                </div>
             )}
 
             {showError && (

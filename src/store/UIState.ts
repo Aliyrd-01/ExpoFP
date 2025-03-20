@@ -73,6 +73,7 @@ export default class UIState {
     @observable mapControlsHidden = false;
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
+    @observable kioskSetupDOMRect: DOMRect;
 
     @computed get highlightedBooths() {
         const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
@@ -293,6 +294,10 @@ export default class UIState {
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
     }
     @computed get mapVisibleBottom() {
+        if (this.kioskSetup) {
+            return this.kioskSetupDOMRect?.height || 0;
+        }
+
         if (this.overlayLeft || this.noOverlay) {
             return this.wsPosition === "bottom" ? this.wsOccupiedHeightPx : 0;
         }
