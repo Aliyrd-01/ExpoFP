@@ -318,7 +318,7 @@ const KioskSetup = observer(() => {
                         {step === "copy" && (
                             <p>
                                 <a href={kioskUrl} target="_blank" rel="noopener noreferrer">
-                                    {kioskUrl}
+                                    <small>{kioskUrl}</small>
                                 </a>
                             </p>
                         )}
