@@ -230,7 +230,7 @@ const KioskSetup = observer(() => {
 
         if (kiosk) {
             store.uiState.kioskSetupData = kiosk;
-        } else {
+        } else if (store.uiState.kioskSetupData) {
             store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, key };
         }
     }
@@ -283,6 +283,7 @@ const KioskSetup = observer(() => {
                                                 max={99}
                                                 placeholder={t("Enter a number from 1 to 99")}
                                                 defaultValue={store.uiState.kioskSetupData?.key || ""}
+                                                disabled={!store.uiState.kioskSetupData}
                                                 onInput={e => {
                                                     const input = e.target as HTMLInputElement;
                                                     input.value = input.value.replace(/\D/g, "");
