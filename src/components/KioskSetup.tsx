@@ -114,13 +114,7 @@ const KioskSetup = observer(() => {
                     if (isSetup && kiosks?.length) {
                         store.uiState.moveToRect = store.layerStore.rectangle;
                     }
-
-                    if (routeFromKioskMatch) {
-                        const parts = routeFromKioskMatch.input.split(SEPARATOR);
-                        store.fp.selectRoute(parts[2], parts[1]);
-                    }
                 });
-
             } catch (err) {
                 console.error(err);
                 setShowError(true);
