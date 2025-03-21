@@ -517,7 +517,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                                     skipdim: false,
                                     visible: true,
                                     pixelRatio,
-                                    label: `Kiosk ${kiosk.key}`,
+                                    label: kiosk.key,
                                 },
                             );
                         });
@@ -532,6 +532,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                             skipdim: true,
                             visible: true,
                             pixelRatio,
+                            label: kioskSetup ? kioskSetupData.key : "",
                         },
                     );
                 }
@@ -1017,6 +1018,32 @@ function attachKioskIcon(
     idCollector.add(arrowIconID);
 
     const height = arrowIconCanvas.height / 4;
+
+    const labelIconCanvas = createImageCanvas(
+        store.fp.icons.get("kiosk-label"),
+        decreaseByPercentage(148, percent),
+        decreaseByPercentage(114, percent),
+        options.pixelRatio,
+    );
+    const labelIconID = `kiosk_label_icon_${key}`;
+    drawer.addObject({
+        id: labelIconID,
+        center: [kiosk.x, kiosk.y],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -labelIconCanvas.width / 2,
+            height,
+            labelIconCanvas.width,
+            labelIconCanvas.height + height,
+        ],
+        canvasTmp: labelIconCanvas,
+        texPosition: "lefttop",
+        rotateRadians: 0,
+        visible: options.visible,
+    });
+    drawer.updateSkipdim(labelIconID, options.skipdim);
+    idCollector.add(labelIconID);
+
     if (options.label) {
         const labelTextId = `kiosk_label_text_${key}`;
         const labelFontSize = 18;
@@ -1029,7 +1056,7 @@ function attachKioskIcon(
             "#F53C29",
             8,
         );
-        const gap = 16;
+        const gap = 14;
         const textHeight = height + gap;
         drawer.addObject({
             id: labelTextId,
@@ -1037,7 +1064,7 @@ function attachKioskIcon(
             deltas: [0, 0, 0, 0],
             deltaPts: [
                 -labelTextCanvas.width / 2,
-                textHeight,
+                -(labelTextCanvas.height + textHeight),
                 labelTextCanvas.width,
                 labelTextCanvas.height + textHeight,
             ],
@@ -1048,31 +1075,6 @@ function attachKioskIcon(
         });
         drawer.updateSkipdim(labelTextId, options.skipdim);
         idCollector.add(labelTextId);
-    } else {
-        const labelIconCanvas = createImageCanvas(
-            store.fp.icons.get("kiosk-label"),
-            decreaseByPercentage(148, percent),
-            decreaseByPercentage(114, percent),
-            options.pixelRatio,
-        );
-        const labelIconID = `kiosk_label_icon_${key}`;
-        drawer.addObject({
-            id: labelIconID,
-            center: [kiosk.x, kiosk.y],
-            deltas: [0, 0, 0, 0],
-            deltaPts: [
-                -labelIconCanvas.width / 2,
-                height,
-                labelIconCanvas.width,
-                labelIconCanvas.height + height,
-            ],
-            canvasTmp: labelIconCanvas,
-            texPosition: "lefttop",
-            rotateRadians: 0,
-            visible: options.visible,
-        });
-        drawer.updateSkipdim(labelIconID, options.skipdim);
-        idCollector.add(labelIconID);
     }
 }
 

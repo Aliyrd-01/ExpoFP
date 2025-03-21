@@ -177,9 +177,11 @@ const KioskSetup = observer(() => {
             return;
         }
 
-        store.routeStore.selectRoute(
-            extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)),
-        );
+        setTimeout(() => {
+            store.routeStore.selectRoute(
+                extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)),
+            );
+        }, 500);
     }, [routeFromKioskMatch]);
 
     async function save() {
