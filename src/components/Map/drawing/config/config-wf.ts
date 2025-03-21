@@ -532,11 +532,6 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                             skipdim: true,
                             visible: true,
                             pixelRatio,
-                            label: (
-                                kioskSetup
-                                    ? `Kiosk ${kioskSetupData.key || ""}`.trim()
-                                    : ""
-                            ),
                         },
                     );
                 }
@@ -990,94 +985,95 @@ function attachKioskIcon(
         skipdim: boolean;
         visible: boolean;
         pixelRatio: number;
-        label: string;
+        label?: string;
     },
 ) {
     const key = kiosk.key || "";
-    const size = 64;
-    const iconStatueSize = decreaseByPercentage(size, 55);
+    const percent = 50;
 
-    const iconBaseCanvas = createImageCanvas(
-        store.fp.icons.get("kiosk-base"),
-        size,
-        size,
+    const arrowIconCanvas = createImageCanvas(
+        store.fp.icons.get("kiosk-arrow"),
+        decreaseByPercentage(125, percent),
+        decreaseByPercentage(131, percent),
         options.pixelRatio,
     );
-    const baseIconID = `kiosk_base_${key}`;
+    const arrowIconID = `kiosk_arrow_${key}`;
     drawer.addObject({
-        id: baseIconID,
+        id: arrowIconID,
         center: [kiosk.x, kiosk.y],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -iconBaseCanvas.width / 2,
-            -(iconBaseCanvas.height + 14) / 2,
-            iconBaseCanvas.width,
-            iconBaseCanvas.height,
+            -arrowIconCanvas.width / 2,
+            -arrowIconCanvas.height / 2,
+            arrowIconCanvas.width,
+            arrowIconCanvas.height,
         ],
-        canvasTmp: iconBaseCanvas,
-        texPosition: "lefttop",
-        rotateRadians: 0,
-        visible: options.visible,
-    });
-    drawer.updateSkipdim(baseIconID, options.skipdim);
-    idCollector.add(baseIconID);
-
-    const statueIconID = `kiosk_statue_${key}`;
-    const iconStatueCanvas = createImageCanvas(
-        store.fp.icons.get("kiosk-statue"),
-        iconStatueSize,
-        iconStatueSize,
-        options.pixelRatio,
-    );
-
-    drawer.addObject({
-        id: statueIconID,
-        center: [kiosk.x, kiosk.y],
-        deltas: [0, 0, 0, 0],
-        deltaPts: [
-            -iconStatueCanvas.width / 2,
-            -iconStatueCanvas.height / 2,
-            iconStatueCanvas.width,
-            iconStatueCanvas.height,
-        ],
-        canvasTmp: iconStatueCanvas,
+        canvasTmp: arrowIconCanvas,
         texPosition: "lefttop",
         rotateRadians: toRadians(kiosk.heading),
         visible: options.visible,
     });
-    drawer.updateSkipdim(statueIconID, options.skipdim);
-    idCollector.add(statueIconID);
+    drawer.updateSkipdim(arrowIconID, options.skipdim);
+    idCollector.add(arrowIconID);
 
-    const labelId = `kiosk_label_${key}`;
-    const labelFontSize = 22;
-    const labelCanvas = createLabelCanvas(
-        options.label,
-        labelFontSize,
-        options.pixelRatio,
-        "white",
-        400,
-        "#16171a",
-        6,
-    );
-
-    const gap = 36;
-    drawer.addObject({
-        id: labelId,
-        center: [kiosk.x, kiosk.y],
-        deltas: [0, 0, 0, 0],
-        deltaPts: [
-            -labelCanvas.width / 2,
-            labelFontSize + gap,
-            labelCanvas.width,
-            labelCanvas.height + labelFontSize + gap,
-        ],
-        canvasTmp: labelCanvas,
-        texPosition: "lefttop",
-        rotateRadians: 0,
-        visible: options.visible,
-    });
-    drawer.updateSkipdim(labelId, options.skipdim);
-    idCollector.add(labelId);
+    const height = arrowIconCanvas.height / 4;
+    if (options.label) {
+        const labelTextId = `kiosk_label_text_${key}`;
+        const labelFontSize = 18;
+        const labelTextCanvas = createLabelCanvas(
+            options.label.toLocaleUpperCase(),
+            labelFontSize,
+            options.pixelRatio,
+            "white",
+            400,
+            "#F53C29",
+            8,
+        );
+        const gap = 16;
+        const textHeight = height + gap;
+        drawer.addObject({
+            id: labelTextId,
+            center: [kiosk.x, kiosk.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [
+                -labelTextCanvas.width / 2,
+                textHeight,
+                labelTextCanvas.width,
+                labelTextCanvas.height + textHeight,
+            ],
+            canvasTmp: labelTextCanvas,
+            texPosition: "lefttop",
+            rotateRadians: 0,
+            visible: options.visible,
+        });
+        drawer.updateSkipdim(labelTextId, options.skipdim);
+        idCollector.add(labelTextId);
+    } else {
+        const labelIconCanvas = createImageCanvas(
+            store.fp.icons.get("kiosk-label"),
+            decreaseByPercentage(148, percent),
+            decreaseByPercentage(114, percent),
+            options.pixelRatio,
+        );
+        const labelIconID = `kiosk_label_icon_${key}`;
+        drawer.addObject({
+            id: labelIconID,
+            center: [kiosk.x, kiosk.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [
+                -labelIconCanvas.width / 2,
+                height,
+                labelIconCanvas.width,
+                labelIconCanvas.height + height,
+            ],
+            canvasTmp: labelIconCanvas,
+            texPosition: "lefttop",
+            rotateRadians: 0,
+            visible: options.visible,
+        });
+        drawer.updateSkipdim(labelIconID, options.skipdim);
+        idCollector.add(labelIconID);
+    }
 }
 
 function decreaseByPercentage(num: number, percentage: number) {

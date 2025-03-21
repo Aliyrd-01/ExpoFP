@@ -370,8 +370,8 @@ export default class FloorPlanLoader implements FloorPlan {
                         "transition": "icons/transition.svg",
                         "transition_up": "icons/transition_up.svg",
                         "transition_down": "icons/transition_down.svg",
-                        "kiosk-base": "icons/kiosk-base.svg",
-                        "kiosk-statue": "icons/kiosk-statue.svg",
+                        "kiosk-arrow": "icons/kiosk-arrow.svg",
+                        "kiosk-label": "icons/kiosk-label.svg",
                     }).map(([key, path]) =>
                         loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
                     )
