@@ -9,7 +9,7 @@ import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, SEPARATOR } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
 import "./KioskSetup.scss";
-import { Kiosk } from "../store/RouteStore";
+import { extractRoute, Kiosk } from "../store/RouteStore";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
@@ -24,13 +24,20 @@ const KioskSetup = observer(() => {
     const [step, setStep] = useState<"edit" | "copy">("edit");
     const [kioskUrl, setKioskUrl] = useState("");
 
-    const kioskSetupRef = useRef<HTMLDivElement>(null);
+    const kioskSetupDivRef = useRef<HTMLDivElement>(null);
 
     const apiUrl = useMemo(() => {
         const url = new URL("/api/kiosks", "https://app.expofp.com/");
         url.searchParams.set("expoKey", store.fp.eventId);
         return url.toString();
     }, [store.fp.eventId]);
+
+    const routeFromKioskMatch = useMemo(() => {
+        const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+        return [...searchParams.keys()]
+            .map(key => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`)))
+            .find(match => match);
+    }, []);
 
     useEffect(() => {
         const kioskSetupDisposer = reaction(
@@ -91,10 +98,6 @@ const KioskSetup = observer(() => {
                 const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
                 let kioskId = searchParams.get(KIOSK_ID_KEY) || "";
 
-                const routeFromKioskMatch = [...searchParams.keys()]
-                    .map(key => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`)))
-                    .find(match => match);
-
                 if (!kioskId && routeFromKioskMatch?.[1]) {
                     kioskId = routeFromKioskMatch[1];
                 }
@@ -135,6 +138,7 @@ const KioskSetup = observer(() => {
         store.routeStore,
         store.uiState,
         step,
+        routeFromKioskMatch,
     ]);
 
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
@@ -162,10 +166,21 @@ const KioskSetup = observer(() => {
     }, [showSuccess]);
 
     useEffect(() => {
-        if (kioskSetupRef.current) {
-            store.uiState.kioskSetupDOMRect = kioskSetupRef.current.getBoundingClientRect();
+        if (kioskSetupDivRef.current) {
+            store.uiState.kioskSetupDOMRect = kioskSetupDivRef.current.getBoundingClientRect();
         }
     }, [store.uiState.kioskSetup, step]);
+
+    useEffect(() => {
+        const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
+        if (!routeParts) {
+            return;
+        }
+
+        store.routeStore.selectRoute(
+            extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)),
+        );
+    }, [routeFromKioskMatch]);
 
     async function save() {
         try {
@@ -275,7 +290,7 @@ const KioskSetup = observer(() => {
     return (
         <Suspense fallback={null}>
             {store.uiState.kioskSetup && (
-                <div ref={kioskSetupRef} className="efp-kiosk-setup">
+                <div ref={kioskSetupDivRef} className="efp-kiosk-setup">
                     <Alert
                         variant="blank"
                         title={(
