@@ -849,49 +849,49 @@ function attachEndpoints(
 ) {
     if (!points.length) return;
 
-    const isFromLayer = !currentLayerName ? true : strEqual(currentLayerName, from?.layer?.name);
-    const isToLayer = !currentLayerName ? true : strEqual(currentLayerName, to?.layer?.name);
-
-    // TODO: Need to test this logic
-
     const locations = [
         { key: "sourceLocation", rect: from?.rect },
         { key: "destinationLocation", rect: to?.rect },
     ];
 
-    let sourceLocationAdded = false;
-    let destinationLocationAdded = false;
+    const closestPoints = locations.reduce((result, { key, rect }) => {
+        if (!rect) {
+            result[key] = null;
+            return result;
+        }
 
-    points.forEach(({ x, y }) => {
-        for (const { key, rect } of locations) {
-            if (rect?.containsPoint(x, y)) {
-                drawer.updateCenter(key, [x, y]);
+        let closestPoint: Point | null = null;
+        let minDistance = Infinity;
 
-                if (key === "sourceLocation") {
-                    drawer.updateVisible(key, isFromLayer);
-                    sourceLocationAdded = isFromLayer;
-
+        for (const point of points) {
+            if (rect.containsPoint(point.x, point.y)) {
+                const distance = Math.hypot(rect.cx - point.x, rect.cy - point.y);
+                if (distance < minDistance) {
+                    closestPoint = point;
+                    minDistance = distance;
                 }
-
-                if (key === "destinationLocation") {
-                    drawer.updateVisible(key, isToLayer);
-                    destinationLocationAdded = isToLayer;
-                }
-
-                break;
             }
         }
-    });
 
-    if (!sourceLocationAdded) {
-        drawer.updateCenter("sourceLocation", [points[points.length - 1].x, points[points.length - 1].y]);
-        drawer.updateVisible("sourceLocation", isFromLayer);
-    }
+        result[key] = closestPoint;
+        return result;
+    }, {} as Record<string, Point | null>);
 
-    if (!destinationLocationAdded) {
-        drawer.updateCenter("destinationLocation", [points[0].x, points[0].y]);
-        drawer.updateVisible("destinationLocation", isToLayer);
-    }
+    const isFromLayer = !currentLayerName || strEqual(currentLayerName, from?.layer?.name);
+    const isToLayer = !currentLayerName || strEqual(currentLayerName, to?.layer?.name);
+
+    const updateEndpoint = (key: string, point: Point | null, isVisible: boolean, fallbackPoint: Point) => {
+        if (point) {
+            drawer.updateCenter(key, [point.x, point.y]);
+            drawer.updateVisible(key, isVisible);
+        } else {
+            drawer.updateCenter(key, [fallbackPoint.x, fallbackPoint.y]);
+            drawer.updateVisible(key, isVisible);
+        }
+    };
+
+    updateEndpoint("sourceLocation", closestPoints.sourceLocation, isFromLayer, points[points.length - 1]);
+    updateEndpoint("destinationLocation", closestPoints.destinationLocation, isToLayer, points[0]);
 }
 
 function attachTrailPoints(
