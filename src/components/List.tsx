@@ -45,20 +45,25 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
         }
     };
 
-    return useObserver(() => (
-        <div style={{ height: "100%" }}>
-            {scrollableRef && (
-                <Virtuoso
-                    className="list-virtual"
-                    style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
-                    ref={listRef}
-                    itemContent={(index) => mapItem({ index })}
-                    itemsRendered={() => updateScroll && setTimeout(updateScroll)}
-                    totalListHeightChanged={() => updateScroll && updateScroll()}
-                    customScrollParent={scrollableRef.current}
-                    totalCount={uiState.listItems.length}
-                />
-            )}
-        </div>
-    ));
+    return useObserver(() => {
+        const selectedIndex = uiState.listItems.findIndex(i => (i as Language).selected);
+
+        return (
+            <div style={{ height: "100%" }}>
+                {scrollableRef && (
+                    <Virtuoso
+                        className="list-virtual"
+                        style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
+                        ref={listRef}
+                        itemContent={(index) => mapItem({ index })}
+                        itemsRendered={() => updateScroll && setTimeout(updateScroll)}
+                        totalListHeightChanged={() => updateScroll && updateScroll()}
+                        customScrollParent={scrollableRef.current}
+                        totalCount={uiState.listItems.length}
+                        initialTopMostItemIndex={selectedIndex !== -1 ? selectedIndex : 0}
+                    />
+                )}
+            </div>
+        );
+    });
 }
