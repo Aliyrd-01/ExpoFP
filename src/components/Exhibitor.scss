@@ -5,7 +5,7 @@
         position: relative;
         flex-grow: 1;
         min-height: rem(40px);
-        margin-inline-start: rem(16px);
+        padding-inline-start: rem(16px);
         padding-top: rem(16px);
         font-size: var(--font-size-xxl);
         font-weight: var(--font-weight-medium);
@@ -33,17 +33,18 @@
     }
 
     &__bar-booth {
-        display: block;
+        display: flex;
         height: rem(16px);
-        margin-inline-start: rem(16px);
+        gap: rem(4px);
+        padding-inline-start: rem(16px);
         overflow: hidden;
         opacity: 0;
         font-size: var(--font-size-sm);
         font-weight: normal;
         line-height: rem(16px);
-        color: var(--color-gray-400);
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        color: var(--color-gray-600);
+        // text-overflow: ellipsis;
+        // white-space: nowrap;
         transition: opacity 200ms;
 
         .overlay-bar.scrolled & {

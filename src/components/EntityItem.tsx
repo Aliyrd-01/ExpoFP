@@ -128,9 +128,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                                         {info.type === "location" && (
                                             <>
                                                 {type !== "category" && type !== "booth" && (
-                                                    <span className="booth-badge">
-                                                        <i className={cn(getAdditionalInfoIcon(info.type))} /> {info.locationName}
-                                                    </span>
+                                                    <span className="booth-badge">{info.locationName}</span>
                                                 )}
                                                 {info.hall && (
                                                     <div>

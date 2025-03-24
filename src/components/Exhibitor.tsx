@@ -138,7 +138,8 @@ function ExhibitorComponent() {
                     </span>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm} {exhibitor.booths.map((b) => b.fullName).join(", ")}
+                    {data.boothTerm}
+                    {exhibitor.booths.map((b) => b.fullName).join(", ")}
                 </div>
             </>
         );
@@ -346,7 +347,6 @@ function ExhibitorComponent() {
                                         }}
                                         className="exhibitor-categories__booth"
                                     >
-                                        <i className="icon-marker-pin-solid"></i>
                                         {booth instanceof SpecialBooth ? "" : data.boothTerm} {booth.fullName}
                                     </a>
                                 ))}
