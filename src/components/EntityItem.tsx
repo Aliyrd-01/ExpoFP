@@ -153,7 +153,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                     </div>
                     {image && (
                         <div className="efp-entity-item__image">
-                            <img src={image} alt={title} />
+                            <img loading="lazy" src={image} alt={title} />
                         </div>
                     )}
                 </div>

@@ -1,5 +1,5 @@
 import dateFormat from "dateformat";
-import { useObserver } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import store, { boothStore, uiState } from "../store";
@@ -17,18 +17,18 @@ interface ListProps {
     updateScroll?: () => void;
 }
 
-export default function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
+function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
     const [scrollableRef, setScrollableRef] = useState<RefObject<HTMLElement>>(null);
     const listRef = useRef(null);
 
     useEffect(() => {
         setScrollableRef(updatedScrollableRef);
-    }, [updatedScrollableRef]);
+    }, [updatedScrollableRef, store.layerStore.layersLoaded]);
 
     useEffect(() => {
         const el = document.querySelector(".list-row.active");
         if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
-    }, []);
+    }, [store.layerStore.layersLoaded]);
 
     function handleClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
@@ -118,7 +118,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
         }
     };
 
-    return useObserver(() => (
+    return (
         <div style={{ height: "100%", cursor: "pointer" }}>
             {scrollableRef && (
                 <Virtuoso
@@ -133,5 +133,7 @@ export default function EntityList({ updatedScrollableRef, updateScroll }: ListP
                 />
             )}
         </div>
-    ));
+    );
 }
+
+export default observer(EntityList);
