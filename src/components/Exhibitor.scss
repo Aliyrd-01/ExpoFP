@@ -7,10 +7,11 @@
         min-height: rem(40px);
         margin-inline-start: rem(16px);
         padding-top: rem(16px);
-        font-size: var(--font-size-xxxl);
+        font-size: var(--font-size-xxl);
         font-weight: var(--font-weight-medium);
-        line-height: rem(24px);
+        line-height: rem(22px);
         color: var(--color-black);
+        letter-spacing: 0.01em;
 
         .icon-diamond {
             margin-inline-start: rem(4px);
@@ -165,7 +166,9 @@
     &__sponsorship {
         display: inline-flex;
         align-items: center;
-        padding: rem(6px 10px 7px);
+        gap: rem(2px);
+        min-height: rem(20px);
+        padding: rem(6px 8px 7px);
         border-radius: var(--border-radius-full);
         font-size: var(--font-size-md);
         word-break: break-all;
@@ -174,6 +177,13 @@
     &__booth {
         background: var(--color-primary-ultra-light);
         color: var(--color-primary-ultra-dark);
+
+        & > i {
+            align-self: flex-start;
+            vertical-align: middle;
+            font-size: var(--icon-size-xss);
+            color: var(--color-primary);
+        }
 
         &:visited {
             color: var(--color-primary-ultra-dark);
@@ -253,7 +263,6 @@
         width: rem(74px);
         height: rem(74px);
         margin-inline-end: rem(12px);
-        margin-top: rem(6px);
         margin-bottom: rem(6px);
         overflow: hidden;
         background: var(--color-white);

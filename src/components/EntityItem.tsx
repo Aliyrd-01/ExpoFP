@@ -20,7 +20,6 @@ export type EntityItemType =
     | "other";
 
 export interface EntityItemProps {
-    variant?: number;
     id: string;
     type: EntityItemType;
     url: string;
@@ -60,7 +59,6 @@ const shouldShowPrefix = (input: string): boolean => {
 };
 
 const EntityItem: React.FC<EntityItemProps> = ({
-    variant = 1,
     id,
     type,
     url,
@@ -81,341 +79,86 @@ const EntityItem: React.FC<EntityItemProps> = ({
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
 
     return (
-        <>
-            {variant === 1 && (
-                <div
-                    onClick={() => onClick && onClick(type, id)}
-                    className={cn("efp-entity-item", {
-                        "is-featured": featured,
-                        "is-visited": visited,
-                    })}
-                    style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
-                >
-                    <a href={url} className="efp-entity-item__link" aria-label={title}></a>
-                    <div className="efp-entity-item__body">
-                        <div className="efp-entity-item__left">
-                            <div className="efp-entity-item__icon">
-                                {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
-                            </div>
-                            {visited && (
-                                <div className="efp-entity-item__visited">
-                                    <i className="icon-checkmark"></i>
-                                </div>
-                            )}
-                            {bookmarked && <i className={cn("efp-entity-item__bookmarked", "icon-bookmark-solid")} />}
+        <div
+            onClick={() => onClick && onClick(type, id)}
+            className={cn("efp-entity-item", {
+                "is-featured": featured,
+                "is-visited": visited,
+            })}
+            style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
+        >
+            <a href={url} className="efp-entity-item__link" aria-label={title}></a>
+            <div className="efp-entity-item__body">
+                <div className="efp-entity-item__left">
+                    <div className="efp-entity-item__icon">
+                        {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
+                    </div>
+                    {visited && (
+                        <div className="efp-entity-item__visited">
+                            <i className="icon-checkmark"></i>
                         </div>
-                        <div className="efp-entity-item__right">
-                            <div className="efp-entity-item__content">
-                                <div className="efp-entity-item__header">
-                                    <div className="efp-entity-item__title">
-                                        {title}
-                                        {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
+                    )}
+                    {bookmarked && <i className={cn("efp-entity-item__bookmarked", "icon-bookmark-solid")} />}
+                </div>
+                <div className="efp-entity-item__right">
+                    <div className="efp-entity-item__content">
+                        <div className="efp-entity-item__header">
+                            <div className="efp-entity-item__title">
+                                {title}
+                                {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
+                            </div>
+                            {featured && <div className="efp-entity-item__featured">Featured</div>}
+                        </div>
+                        {type === "event" || type === "category" || subtitle ? (
+                            <div className="efp-entity-item__subtitle">
+                                {type === "event" && (date || time) && (
+                                    <div className="efp-entity-item__datetime">
+                                        {date && <strong>{date}</strong>}
+                                        {time && <span>{time}</span>}
                                     </div>
-                                    {featured && <div className="efp-entity-item__featured">Featured</div>}
-                                </div>
-                                {type === "event" || type === "category" || subtitle ? (
-                                    <div className="efp-entity-item__subtitle">
-                                        {type === "event" && (date || time) && (
-                                            <div className="efp-entity-item__datetime">
-                                                {date && <strong>{date}</strong>}
-                                                {time && <span>{time}</span>}
-                                            </div>
-                                        )}
-                                        {type === "category" && <span>Category</span>}
-                                        {subtitle && <div>{subtitle}</div>}
-                                    </div>
-                                ) : null}
-                                {!!additionalInfo.length && (
-                                    <ul className="efp-entity-item__details">
-                                        {additionalInfo.map((info, idx) => (
-                                            <li key={idx} className="efp-entity-item__details-item">
-                                                {info.type === "location" && (
-                                                    <>
-                                                        {type !== "category" && type !== "booth" && (
-                                                            <span className="booth-badge">
-                                                                <i className={cn(getAdditionalInfoIcon(info.type))} />{" "}
-                                                                {info.locationName}
-                                                            </span>
-                                                        )}
-                                                        {info.hall && (
-                                                            <div>
-                                                                Hall&nbsp;<span>{info.hall}</span>
-                                                            </div>
-                                                        )}
-                                                        {info.level && (
-                                                            <div>
-                                                                {shouldShowPrefix(info.level) && "Level "}
-                                                                <span>{info.level}</span>
-                                                            </div>
-                                                        )}
-                                                    </>
+                                )}
+                                {type === "category" && <span>Category</span>}
+                                {subtitle && <div>{subtitle}</div>}
+                            </div>
+                        ) : null}
+                        {!!additionalInfo.length && (
+                            <ul className="efp-entity-item__details">
+                                {additionalInfo.map((info, idx) => (
+                                    <li key={idx} className="efp-entity-item__details-item">
+                                        {info.type === "location" && (
+                                            <>
+                                                {type !== "category" && type !== "booth" && (
+                                                    <span className="booth-badge">
+                                                        <i className={cn(getAdditionalInfoIcon(info.type))} /> {info.locationName}
+                                                    </span>
                                                 )}
-                                                {(info.type === "event" || info.type === "speaker") && <span>{info.text}</span>}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                            {image && (
-                                <div className="efp-entity-item__image">
-                                    <img src={image} alt={title} />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {variant === 2 && (
-                <div
-                    onClick={() => onClick && onClick(type, id)}
-                    className={cn("efp-entity-item2", {
-                        "is-featured": featured,
-                        "is-visited": visited,
-                    })}
-                    style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
-                >
-                    {/* <a href={url} className="efp-entity-item2__link" aria-label={title}></a> */}
-                    <div className="efp-entity-item2__body">
-                        <div className="efp-entity-item2__box">
-                            <div className="efp-entity-item2__right">
-                                <div className="efp-entity-item2__content">
-                                    <div className="efp-entity-item2__title">
-                                        {title}
-                                        {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
-                                    </div>
-                                    <div className="efp-entity-item2__subtitle">
-                                        {type === "event" && (date || time) && (
-                                            <div className="efp-entity-item2__datetime">
-                                                {date && <strong>{date}</strong>}
-                                                {time && <span>{time}</span>}
-                                            </div>
-                                        )}
-                                        {type === "category" && <span>Category</span>}
-                                        {subtitle && <div>{subtitle}</div>}
-                                    </div>
-                                    {!!additionalInfo.length && (
-                                        <ul className="efp-entity-item2__details">
-                                            {additionalInfo.map((info, idx) => (
-                                                <li key={idx} className="efp-entity-item2__details-item">
-                                                    {/* <i className={cn(getAdditionalInfoIcon(info.type))} /> */}
-                                                    {info.type === "location" && (
-                                                        <>
-                                                            {/* {type !== "category" && type !== "booth" && <span>{info.locationName}</span>} */}
-                                                            {type !== "category" && type !== "booth" && (
-                                                                <span className="booth-badge">{info.locationName}</span>
-                                                            )}
-                                                            {info.hall && (
-                                                                <div>
-                                                                    Hall&nbsp;<span>{info.hall}</span>
-                                                                </div>
-                                                            )}
-                                                            {info.level && (
-                                                                <div>
-                                                                    {shouldShowPrefix(info.level) && "Level "}
-                                                                    <span>{info.level}</span>
-                                                                </div>
-                                                            )}
-                                                        </>
-                                                    )}
-                                                    {(info.type === "event" || info.type === "speaker") && (
-                                                        <span>{info.text}</span>
-                                                    )}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                    <div className="efp-entity-item2__badges">
-                                        {featured && <span className="entity-badge-featured">Featured</span>}
-                                        {visited && (
-                                            <span className="entity-badge-visited">
-                                                <i className="icon-checkmark"></i>
-                                            </span>
-                                        )}
-                                        {bookmarked && <i className="icon-bookmark-solid"></i>}
-                                        <div className="efp-entity-item2__icon">
-                                            {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
-                                        </div>
-                                    </div>
-                                </div>
-                                {image && (
-                                    <div className="efp-entity-item2__image">
-                                        <img src={image} alt={title} />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-            {variant === 3 && (
-                <div
-                    onClick={() => onClick && onClick(type, id)}
-                    className={cn("efp-entity-item3", {
-                        "is-featured": featured,
-                        "is-visited": visited,
-                    })}
-                    style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
-                >
-                    {/* <a href={url} className="efp-entity-item3__link" aria-label={title}></a> */}
-                    <div className="efp-entity-item3__body">
-                        <div className="efp-entity-item3__box">
-                            <div className="efp-entity-item3__right">
-                                <div className="efp-entity-item3__content">
-                                    <div className="efp-entity-item3__badges">
-                                        <div className="efp-entity-item3__icon">
-                                            {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
-                                        </div>
-                                        {bookmarked && <i className="icon-bookmark-solid"></i>}
-                                        {featured && <span className="entity-badge-featured">Featured</span>}
-                                        {visited && (
-                                            <span className="entity-badge-visited">
-                                                <i className="icon-checkmark"></i>
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="efp-entity-item3__title">
-                                        {title}
-                                        {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
-                                    </div>
-                                    <div className="efp-entity-item3__subtitle">
-                                        {type === "event" && (date || time) && (
-                                            <div className="efp-entity-item3__datetime">
-                                                {date && <strong>{date}</strong>}
-                                                {time && <span>{time}</span>}
-                                            </div>
-                                        )}
-                                        {type === "category" && <span>Category</span>}
-                                        {subtitle && <div>{subtitle}</div>}
-                                    </div>
-                                    {!!additionalInfo.length && (
-                                        <ul className="efp-entity-item3__details">
-                                            {additionalInfo.map((info, idx) => (
-                                                <li key={idx} className="efp-entity-item3__details-item">
-                                                    {/* <i className={cn(getAdditionalInfoIcon(info.type))} /> */}
-                                                    {info.type === "location" && (
-                                                        <>
-                                                            {/* {type !== "category" && type !== "booth" && <span>{info.locationName}</span>} */}
-                                                            {type !== "category" && type !== "booth" && (
-                                                                <span className="booth-badge">{info.locationName}</span>
-                                                            )}
-                                                            {info.hall && (
-                                                                <div>
-                                                                    Hall&nbsp;<span>{info.hall}</span>
-                                                                </div>
-                                                            )}
-                                                            {info.level && (
-                                                                <div>
-                                                                    {shouldShowPrefix(info.level) && "Level "}
-                                                                    <span>{info.level}</span>
-                                                                </div>
-                                                            )}
-                                                        </>
-                                                    )}
-                                                    {(info.type === "event" || info.type === "speaker") && (
-                                                        <span>{info.text}</span>
-                                                    )}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </div>
-                                {image && (
-                                    <div className="efp-entity-item3__image">
-                                        <img src={image} alt={title} />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {variant === 4 && (
-                <div
-                    onClick={() => onClick && onClick(type, id)}
-                    className={cn("efp-entity-item4", {
-                        "is-featured": featured,
-                        "is-visited": visited,
-                    })}
-                    style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
-                >
-                    {/* <a href={url} className="efp-entity-item4__link" aria-label={title}></a> */}
-                    <div className="efp-entity-item4__body">
-                        <div className="efp-entity-item4__left">
-                            <div className="efp-entity-item4__icon">
-                                {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
-                            </div>
-                            {visited && (
-                                <div className="efp-entity-item4__visited">
-                                    <i className="icon-checkmark"></i>
-                                </div>
-                            )}
-                            {bookmarked && <i className={cn("efp-entity-item4__bookmarked", "icon-bookmark-solid")} />}
-                        </div>
-                        <div className="efp-entity-item4__right">
-                            <div className="efp-entity-item4__content">
-                                <div className="efp-entity-item4__title">
-                                    <div>{title}</div>
-
-                                    {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
-                                </div>
-                                <div className="efp-entity-item4__subtitle">
-                                    {type === "event" && (date || time) && (
-                                        <div className="efp-entity-item4__datetime">
-                                            {date && <strong>{date}</strong>}
-                                            {time && <span>{time}</span>}
-                                        </div>
-                                    )}
-                                    {type === "category" && <span>Category</span>}
-                                    {subtitle && <div>{subtitle}</div>}
-                                </div>
-                                {!!additionalInfo.length && (
-                                    <ul className="efp-entity-item4__details">
-                                        {additionalInfo.map((info, idx) => (
-                                            <li key={idx} className="efp-entity-item4__details-item">
-                                                {/* <i className={cn(getAdditionalInfoIcon(info.type))} /> */}
-                                                {info.type === "location" && (
-                                                    <>
-                                                        {/* {type !== "category" && type !== "booth" && <span>{info.locationName}</span>} */}
-                                                        {type !== "category" && type !== "booth" && (
-                                                            <span className="booth-badge">{info.locationName}</span>
-                                                        )}
-                                                        {info.hall && (
-                                                            <div>
-                                                                Hall&nbsp;<span>{info.hall}</span>
-                                                            </div>
-                                                        )}
-                                                        {info.level && (
-                                                            <div>
-                                                                {shouldShowPrefix(info.level) && "Level "}
-                                                                <span>{info.level}</span>
-                                                            </div>
-                                                        )}
-                                                    </>
+                                                {info.hall && (
+                                                    <div>
+                                                        Hall&nbsp;<span>{info.hall}</span>
+                                                    </div>
                                                 )}
-                                                {(info.type === "event" || info.type === "speaker") && <span>{info.text}</span>}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                                {/* {visited && (
-                    <div className="efp-entity-item4__visited">
-                        <span>Visited</span>
+                                                {info.level && (
+                                                    <div>
+                                                        {shouldShowPrefix(info.level) && "Level "}
+                                                        <span>{info.level}</span>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                        {(info.type === "event" || info.type === "speaker") && <span>{info.text}</span>}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
-                )} */}
-                            </div>
-                            {image && (
-                                <div className="efp-entity-item4__image">
-                                    {featured && <div className="efp-entity-item4__featured">Featured</div>}
-                                    <img src={image} alt={title} />
-                                </div>
-                            )}
+                    {image && (
+                        <div className="efp-entity-item__image">
+                            <img src={image} alt={title} />
                         </div>
-                    </div>
+                    )}
                 </div>
-            )}
-        </>
+            </div>
+        </div>
     );
 };
 

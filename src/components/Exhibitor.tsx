@@ -346,6 +346,7 @@ function ExhibitorComponent() {
                                         }}
                                         className="exhibitor-categories__booth"
                                     >
+                                        <i className="icon-marker-pin-solid"></i>
                                         {booth instanceof SpecialBooth ? "" : data.boothTerm} {booth.fullName}
                                     </a>
                                 ))}

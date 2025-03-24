@@ -10,19 +10,19 @@
     min-height: rem(42px);
     padding: rem(0 14px 0 10px);
     background: var(--color-white);
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--color-gray-500);
     border-radius: var(--border-radius-full);
     outline: none;
     font-family: var(--app-font-family);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-medium);
-    color: var(--color-primary);
+    color: var(--color-gray-600);
     text-decoration: none;
     cursor: pointer;
     transition: background 0.1s ease-in-out;
 
     &:hover {
-        background: var(--color-primary-ultra-light);
+        background: var(--color-gray-200);
     }
 
     &__inner {
@@ -31,7 +31,7 @@
         align-items: center;
         width: rem(20px);
         height: rem(20px);
-        border: 1px solid var(--color-primary);
+        border: 1px solid var(--color-gray-600);
         border-radius: var(--border-radius-full);
         transition: background 0.1s ease-in-out;
     }
