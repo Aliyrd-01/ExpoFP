@@ -131,7 +131,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     customScrollParent={scrollableRef.current}
                     totalCount={uiState.listItems.length}
                     initialTopMostItemIndex={uiState.listScrollIndices.search}
-                    rangeChanged={(range) => uiState.setListScrollIndices("search", range.startIndex)}  
+                    rangeChanged={(range) => uiState.setListScrollIndices("search", range.startIndex)}
                 />
             )}
         </div>

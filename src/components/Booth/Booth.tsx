@@ -15,6 +15,7 @@ import { BoothOnHold } from "./BoothOnHold";
 import { BoothReserved } from "./BoothReserved";
 import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
 import useHeatmapOverlay from "../../utils/useHeatmapOverlay";
+import EntityItem, { EntityItemType } from "../EntityItem";
 
 function Booth() {
     const s = useLocalStore(() => ({
@@ -49,11 +50,34 @@ function Booth() {
     }));
     const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth);
 
+    function handleExhibitorClick(type: EntityItemType, data: string) {
+        const id = parseInt(data);
+        store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
+    }
+
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
 
-        const exhibitors = s.booth.exhibitors.map((x) => <ExhibitorRow key={x.id} exhibitor={x} className="list-row" />);
+        const exhibitors = s.booth.exhibitors.map((item) => (
+            <EntityItem
+                onClick={handleExhibitorClick}
+                id={item.id.toString()}
+                featured={item.featured}
+                url={null}
+                type="exhibitor"
+                image={item.logo}
+                title={item.name}
+                bookmarked={item.bookmarked}
+                visited={item.visited}
+                additionalInfo={item.booths.map((booth) => ({
+                    type: "location",
+                    locationName: booth.name,
+                    level: booth.layer?.name,
+                }))}
+                key={item.id.toString()}
+            />
+        ));
 
         if (data.isRebooking) {
             content = <>{exhibitors}</>;
