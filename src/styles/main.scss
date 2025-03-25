@@ -4,6 +4,7 @@
 .layout {
     --font-family: "Inter", -apple-system, system-ui, sans-serif;
     --app-font-family: var(--expofp-font-face, var(--font-family));
+    --font-size-xxs: #{utils.rem(10px)};
     --font-size-xs: #{utils.rem(11px)};
     --font-size-sm: #{utils.rem(12px)};
     --font-size-md: #{utils.rem(13px)};
@@ -52,16 +53,27 @@
     --color-red-dark: #a51c12;
     --color-red-ultra-dark: #912a23;
     --color-exhibitor: #2ca6ff;
-    --color-booth: #516eff;
+    --color-booth: #3758ff;
     --color-event: #9044f6;
     --color-speaker: #f28a0f;
     --color-category: #707172;
     --color-other: #16b095;
-    --color-bookmarked: #fdbf2b;
+    --color-bookmarked: #ffac37;
     --color-bookmarked-bg: #fcfaf3;
     --color-sponsorship-light: #fee8ce;
     --color-sponsorship: #e87f00;
     --color-sponsorship-dark: #ff8c00;
+
+    --color-featured: #eaf5ff;
+    --color-featured-hover: #dcecfc;
+    --color-featured-border: #cfe3ef;
+
+    --color-featured-badge-bg: #dbd4ff;
+    --color-featured-badge-text: #461491;
+
+    --color-visited: #15af6f;
+    --color-visited-gray: #f9f9f9;
+
     --shadow-xs: 0px 1px 3px 0px rgb(16 24 40 / 30%);
     --shadow-sm: 0px 2px 8px -2px rgb(16 24 40 / 40%);
     --shadow-md: 0px 6px 16px -2px rgb(16 24 40 / 20%), 0px 0px 1px 0px rgb(16 24 40 / 40%);

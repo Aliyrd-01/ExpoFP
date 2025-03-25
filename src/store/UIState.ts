@@ -76,50 +76,50 @@ export default class UIState {
 
         const booths = new Set<string>(
             this.rootStore.exhibitorStore.exhibitors
-                .filter(e => externalIsSet.has(e.externalId))
-                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .map(b => b.id.toString())
+                .filter((e) => externalIsSet.has(e.externalId))
+                .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
+                .map((b) => b.id.toString())
         );
 
         const isSearch = this.list?.type === "search" && this.list?.text?.trim().length;
         if (isSearch) {
-            this.listBooths.forEach(b => booths.add(b.id.toString()));
+            this.listBooths.forEach((b) => booths.add(b.id.toString()));
         }
 
         if (this.list?.type === "filter") {
             (this.list.items as Exhibitor[])
-                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .forEach(b => booths.add(b.id.toString()));
+                .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
+                .forEach((b) => booths.add(b.id.toString()));
         }
 
         if (this.list?.type === "category") {
             this.list.category.exhibitors
-                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .forEach(b => booths.add(b.id.toString()));
+                .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
+                .forEach((b) => booths.add(b.id.toString()));
         }
 
         if (this.list?.type === "bookmarks") {
             this.rootStore.exhibitorStore.exhibitors
                 .filter((e) => e.bookmarked)
-                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
-                .forEach(b => booths.add(b.id.toString()));
+                .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
+                .forEach((b) => booths.add(b.id.toString()));
         }
 
         if (this.details instanceof Route) {
             booths.clear();
             booths.add(this.details.from?.id.toString());
             booths.add(this.details.to?.id.toString());
-            this.details.waypoints?.forEach(w => booths.add(w.id.toString()));
+            this.details.waypoints?.forEach((w) => booths.add(w.id.toString()));
         }
 
-        const hasNoSearchResult = (isSearch && !this.listBooths.size);
+        const hasNoSearchResult = isSearch && !this.listBooths.size;
 
         if (this.details instanceof RegularBooth && (hasNoSearchResult || booths.size)) {
             booths.add(this.details.id.toString());
         }
 
         if (this.details instanceof Exhibitor && (hasNoSearchResult || booths.size)) {
-            this.details.booths.filter(b => b instanceof RegularBooth).forEach(b => booths.add(b.id.toString()));
+            this.details.booths.filter((b) => b instanceof RegularBooth).forEach((b) => booths.add(b.id.toString()));
         }
 
         booths.delete(undefined);
@@ -152,6 +152,10 @@ export default class UIState {
 
     get onBookmarkClick() {
         return this.rootStore.fp.onBookmarkClick;
+    }
+
+    get onVisitedClick() {
+        return this.rootStore.fp.onVisitedClick;
     }
 
     get onCategoryClick() {
@@ -191,15 +195,15 @@ export default class UIState {
     }
 
     @computed({ keepAlive: true }) get selectedRouteFloors() {
-        return [...new Set(
-            [
-                this.selectedRoute?.from?.layer?.name,
-                ...(
-                    this.selectedRoute?.waypoints?.map(w => w.layer?.name) || []
-                ),
-                this.selectedRoute?.to?.layer?.name,
-            ].filter(Boolean)
-        )];
+        return [
+            ...new Set(
+                [
+                    this.selectedRoute?.from?.layer?.name,
+                    ...(this.selectedRoute?.waypoints?.map((w) => w.layer?.name) || []),
+                    this.selectedRoute?.to?.layer?.name,
+                ].filter(Boolean)
+            ),
+        ];
     }
 
     @computed({ keepAlive: true }) get getRouteNextFloor() {
@@ -343,10 +347,7 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
-        return (
-            this.highlightedBooths.size > 0
-            || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
-        );
+        return this.highlightedBooths.size > 0 || (this.list?.type === "search" && this.list?.text?.trim().length > 0);
     }
 
     @computed get searchItems(): ListItem[] {
@@ -486,45 +487,46 @@ export default class UIState {
             return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         }
 
-        const itemsMap = new Map(items.map(item => [item.id, item]));
-        return items
-            .map(item => {
-                if (!item.name) return null;
+        const itemsMap = new Map(items.map((item) => [item.id, item]));
+        return (
+            items
+                .map((item) => {
+                    if (!item.name) return null;
 
-                const lowerCaseName = sanitizeStr((
-                    item instanceof BoothBase
-                        ? (item.fullName.toLowerCase() || item.name.toLowerCase())
-                        : item.name.toLowerCase()
-                ));
+                    const lowerCaseName = sanitizeStr(
+                        item instanceof BoothBase
+                            ? item.fullName.toLowerCase() || item.name.toLowerCase()
+                            : item.name.toLowerCase()
+                    );
 
-                // Find the position of the first occurrence
-                const position = lowerCaseName.indexOf(sanitizeStr(text));
-                if (position === -1) return null;
+                    // Find the position of the first occurrence
+                    const position = lowerCaseName.indexOf(sanitizeStr(text));
+                    if (position === -1) return null;
 
-                const result = { id: item.id, position, lowerCaseName, featured: false };
-                if (item instanceof Exhibitor) {
-                    result.featured = item.featured;
-                }
-                return result;
-            })
-            .filter(Boolean)
-            // Sort by featured status (featured first), 
-            // then by position, and finally lexicographically by name.
-            .sort((a, b) => {
-                if ((a.featured || b.featured) && (a.featured !== b.featured)) {
-                    return a.featured ? -1 : 1;
-                }
+                    const result = { id: item.id, position, lowerCaseName, featured: false };
+                    if (item instanceof Exhibitor) {
+                        result.featured = item.featured;
+                    }
+                    return result;
+                })
+                .filter(Boolean)
+                // Sort by featured status (featured first),
+                // then by position, and finally lexicographically by name.
+                .sort((a, b) => {
+                    if ((a.featured || b.featured) && a.featured !== b.featured) {
+                        return a.featured ? -1 : 1;
+                    }
 
-                if (a.position !== b.position) {
-                    return a.position - b.position;
-                }
+                    if (a.position !== b.position) {
+                        return a.position - b.position;
+                    }
 
-                return (
-                    a.lowerCaseName.localeCompare(b.lowerCaseName) ||
-                    String(a.id).localeCompare(String(b.id)) // For stability
-                );
-            })
-            .map(({ id }) => itemsMap.get(id));
+                    return (
+                        a.lowerCaseName.localeCompare(b.lowerCaseName) || String(a.id).localeCompare(String(b.id)) // For stability
+                    );
+                })
+                .map(({ id }) => itemsMap.get(id))
+        );
     }
 
     @computed get listItems(): ListItem[] {
@@ -571,7 +573,7 @@ export default class UIState {
 
         if (route?.from) arr.push(route.from);
         if (route?.to) arr.push(route.to);
-        if (route?.waypoints) route?.waypoints?.forEach(wp => arr.push(wp));
+        if (route?.waypoints) route?.waypoints?.forEach((wp) => arr.push(wp));
 
         return new Set(arr);
     }
@@ -648,6 +650,17 @@ export default class UIState {
     get previewMode() {
         const previewMode = isLocalStorageAvailable && localStorage.getItem(PREVIEW_MODE_STORAGE_KEY) === "1";
         return previewMode || this.rootStore.fp.previewMode;
+    }
+
+    @observable listScrollIndices: Record<"search", number> = {
+        search: 0,
+    };
+
+    @action setListScrollIndices(listID: "search", index: number) {
+        this.listScrollIndices[listID] = Math.min(
+            Math.max(index, 0),
+            this.listItems.length - 1,
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////

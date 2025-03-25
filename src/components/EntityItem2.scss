@@ -7,9 +7,59 @@ $entity-item: ".efp-entity-item";
     position: relative;
     display: flex;
     align-items: center;
-    min-height: rem(72px);
+    min-height: rem(70px);
     background: var(--color-white);
     border-bottom: 1px solid var(--color-gray-300);
+
+    &:hover {
+        background: var(--color-gray-300);
+    }
+
+    &.is-featured {
+        background: linear-gradient(90deg, #eef8ff 0%, #fff 55.6%, #fff 100%);
+        border-bottom: 1px solid var(--color-featured-border);
+
+        &:hover {
+            background: var(--color-featured-dark);
+        }
+
+        &.is-visited {
+            background: linear-gradient(90deg, #eef8ff 0%, #f9fafb 55.6%, #f9fafb 100%);
+
+            &:hover {
+                background: var(--color-featured-dark);
+            }
+        }
+    }
+
+    &.is-visited {
+        background: var(--color-gray-100);
+
+        &:hover {
+            background: var(--color-gray-300);
+        }
+        #{$entity-item}__title {
+            font-weight: var(--font-weight-normal);
+
+            &:after {
+                @include icon;
+                content: vars.$icon-checkmark;
+                display: inline-flex;
+                margin-left: rem(6px);
+                font-size: var(--icon-size-xs);
+                color: #14b789;
+            }
+        }
+    }
+
+    .booth-badge {
+        display: inline-flex;
+        margin-right: rem(6px);
+        padding: rem(3px 5px);
+        background: var(--color-primary-ultra-light);
+        color: var(--color-primary-ultra-dark);
+        border-radius: var(--border-radius-full);
+    }
 
     &__link {
         position: absolute;
@@ -17,7 +67,6 @@ $entity-item: ".efp-entity-item";
         z-index: 20;
         width: 100%;
         height: 100%;
-        cursor: pointer;
     }
 
     &__body {
@@ -27,7 +76,7 @@ $entity-item: ".efp-entity-item";
         align-items: flex-start;
         gap: rem(14px);
         width: 100%;
-        padding: rem(16px 14px);
+        padding: rem(16px 16px 16px 14px);
     }
 
     &__left {
@@ -68,25 +117,8 @@ $entity-item: ".efp-entity-item";
         }
     }
 
-    &__visited {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: rem(20px);
-        height: rem(20px);
-        margin-top: rem(1px);
-        padding-top: rem(1px);
-        background: var(--color-visited);
-        border-radius: var(--border-radius-full);
-
-        & > i {
-            font-size: var(--icon-size-xxs);
-            color: var(--color-white);
-        }
-    }
-
     &__bookmarked {
-        font-size: var(--icon-size-md) !important;
+        font-size: var(--icon-size-sm) !important;
         color: var(--color-bookmarked);
     }
 
@@ -107,18 +139,12 @@ $entity-item: ".efp-entity-item";
         }
     }
 
-    &__header {
-        display: flex;
-        flex-flow: column wrap;
-        align-items: flex-start;
-    }
-
     &__title {
         align-items: center;
-        font-size: var(--font-size-xxl);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
         color: var(--color-black);
-        letter-spacing: 0.01em;
+        letter-spacing: 0.02em;
 
         & > span {
             margin-left: rem(6px);
@@ -136,7 +162,7 @@ $entity-item: ".efp-entity-item";
     }
 
     &__subtitle {
-        margin-top: rem(2px);
+        margin-top: rem(4px);
         font-size: var(--font-size-md);
         color: var(--color-gray-600);
         letter-spacing: 0.01em;
@@ -146,7 +172,7 @@ $entity-item: ".efp-entity-item";
         display: flex;
         flex-flow: column wrap;
         row-gap: rem(6px);
-        margin: rem(8px 0 0);
+        margin: rem(6px 0 0);
         padding: 0;
         list-style: none;
     }
@@ -155,7 +181,6 @@ $entity-item: ".efp-entity-item";
         display: flex;
         flex-flow: row wrap;
         align-items: center;
-        row-gap: rem(3px);
         font-size: var(--font-size-md);
         line-height: var(--font-size-md);
         color: var(--color-gray-700);
@@ -191,83 +216,33 @@ $entity-item: ".efp-entity-item";
         }
     }
 
-    .booth-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: rem(2px);
-        min-height: rem(20px);
-        margin: (0 6px 0 -1px);
-        padding: rem(3px 5px);
-        background: var(--color-primary-ultra-light);
-        color: var(--color-primary-ultra-dark);
-        border-radius: var(--border-radius-full);
-
-        & > i {
-            align-self: flex-start;
-            font-size: var(--icon-size-xss);
-            color: var(--color-primary);
-        }
-    }
-
     &__image {
         flex-shrink: 0;
-        width: rem(68px);
-        height: rem(56px);
+        width: rem(46px);
+        height: rem(46px);
         margin-top: rem(-1px);
         overflow: hidden;
-        background: var(--color-white);
         border-radius: var(--border-radius-xs);
-        border: 1px solid var(--color-gray-300);
-        display: flex;
-        align-items: center;
-        justify-content: center;
 
         & > img {
             display: block;
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
         }
     }
 
-    &__featured {
-        display: inline-flex;
-        align-items: center;
-        min-height: rem(20px);
-        margin: rem(6px 0 0 -1px);
-        padding: rem(3px 6px);
-        text-align: center;
-        background: var(--color-featured-badge-bg);
-        border-radius: var(--border-radius-full);
-        font-size: var(--font-size-xs);
-        font-weight: var(--font-weight-normal);
-        color: var(--color-featured-badge-text);
-        letter-spacing: 0.03em;
-    }
+    &__visited {
+        padding-top: rem(8px);
 
-    &:hover {
-        background: var(--color-gray-200);
-
-        .booth-badge {
-            background: #d5e5fb;
-        }
-    }
-
-    &.is-featured {
-        background: var(--color-featured);
-        border-bottom: 1px solid var(--color-featured-border);
-
-        .booth-badge {
-            background: #d5e5fb;
-        }
-
-        &:hover {
-            background: var(--color-featured-hover);
-
-            .booth-badge {
-                background: #c5dbfe;
-            }
+        & > span {
+            display: inline-flex;
+            padding: rem(2px 6px);
+            background: var(--color-primary);
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-xs);
+            color: var(--color-white);
         }
     }
 }
