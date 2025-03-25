@@ -1,0 +1,23 @@
+name-template: 'Release v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: 'Added'
+    labels: [ 'major', 'feat' ]
+  - title: 'Fixed'
+    labels: [ 'fix' ]
+  - title: 'Changed'
+    labels: [ 'chore' ]
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'feat'
+  patch:
+    labels:
+      - 'fix'
+      - 'chore'
+  default: patch
+template: |
+  $CHANGES
