@@ -81,8 +81,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         }
     }, []);
 
-    const minMaxClicks = store.heatmapStore.minAndMaxClicks;
-
     useReaction(
         () => uiState.selectedExhibitor,
         (exhibitor) => {
@@ -166,7 +164,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                         </Modal>
                     </Suspense>
                 ) : null}
-                {uiState.heatmap ? (
+                {uiState.heatmap || uiState.heatmapYah ? (
                     <HeatmapLegend
                         style={{
                             left: `calc(50% + ${store.uiState.mapVisibleStart / 2}px)`,
@@ -174,8 +172,8 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                             bottom: uiState.overlayPosition === "bottom" ? null : "30px",
                         }}
                         className={uiState.responsiveClass}
-                        max={minMaxClicks.max}
-                        min={minMaxClicks.min}
+                        max={store.heatmapStore.minAndMaxClicks.max}
+                        min={store.heatmapStore.minAndMaxClicks.min}
                         colors={settings.heatmapColors}
                     />
                 ) : null}

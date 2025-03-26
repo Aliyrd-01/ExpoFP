@@ -14,7 +14,8 @@ const SimpleRow: React.FC<{
     onClick: () => void;
     onMouseOver?: () => void;
     onMouseOut?: () => void;
-}> = ({ line1, line2, lineEnd, slug, style, className, active = false, onClick, onMouseOver, onMouseOut }) => {
+    highlight?: boolean;
+}> = ({ line1, line2, lineEnd, slug, style, className, active = false, onClick, onMouseOver, onMouseOut, highlight = true }) => {
     return (
         <a
             href={"?" + encodeURIComponent(slug)}
@@ -26,7 +27,7 @@ const SimpleRow: React.FC<{
         >
             <div className="efp-simple-row__col">
                 <div className="efp-simple-row__main" dir="auto">
-                    <HighlightText text={line1} />
+                    {highlight ? <HighlightText text={line1} /> : line1}
                 </div>
                 <div className="efp-simple-row__sub" dir="auto">
                     {line2}
