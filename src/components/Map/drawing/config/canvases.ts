@@ -115,7 +115,7 @@ export function createDetailsCanvas(
     const detailFont = getFont(detailFontSize, detailWeight || 300);
     const boothPadding = 1 * pixelRatio;
 
-    let mainLine = b.name;
+    let mainLine = b.title || b.name;
     // if (b.special === false || fixBooth) {
     //     mainLine = b.name;
     // } else if (b.special === true) {
@@ -219,7 +219,7 @@ export function createExhibitorsDetailsCanvas(
         }
     });
 
-    if (!onlyMain) detailsLines.push(b.name);
+    if (!onlyMain) detailsLines.push(b.title || b.name);
 
     if (uiState.heatmap) {
         const clicks = heatmapStore.getTotalClicksByBooth(b);
