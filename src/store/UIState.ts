@@ -652,15 +652,23 @@ export default class UIState {
         return previewMode || this.rootStore.fp.previewMode;
     }
 
-    @observable listScrollIndices: Record<"search", number> = {
-        search: 0,
-    };
+    @observable _listScrollItemIds: Record<string, number> = {};
 
-    @action setListScrollIndices(listID: "search", index: number) {
-        this.listScrollIndices[listID] = Math.min(
-            Math.max(index, 0),
-            this.listItems.length - 1,
-        );
+    @action setListScrollItemId(type: string, id: number) {
+        this._listScrollItemIds = { ...this._listScrollItemIds, [type]: id };
+    }
+
+    @computed get listScrollItemId() {
+        return this._listScrollItemIds[this.list.type];
+    }
+
+    @computed get listScrollIndex() {
+        const index = this.listItems.findIndex(item => item.id === this.listScrollItemId);
+        return index === -1 ? 0 : index;
+    }
+
+    @action clearListScrollItemId() {
+        this._listScrollItemIds = {};
     }
 
     ///////////////////////////////////////////////////////////////////////////

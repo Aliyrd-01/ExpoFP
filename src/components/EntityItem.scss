@@ -246,7 +246,8 @@ $entity-item: ".efp-entity-item";
         letter-spacing: 0.03em;
     }
 
-    &:hover {
+    &:hover,
+    &.is-highlighted {
         background: var(--color-gray-200);
 
         .booth-badge {

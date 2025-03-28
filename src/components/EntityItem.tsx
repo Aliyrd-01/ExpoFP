@@ -36,6 +36,7 @@ export interface EntityItemProps {
     locationTerm?: string;
     visited?: boolean;
     onClick?: (type: EntityItemType, id: string) => void;
+    highlighted?: boolean;
 }
 
 const TYPES_WITH_UNIQUE_COLORS: EntityItemType[] = ["booth", "exhibitor", "event", "speaker", "category"];
@@ -75,6 +76,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
     locationTerm = "Booth",
     visited,
     onClick,
+    highlighted = false,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
 
@@ -84,6 +86,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
             className={cn("efp-entity-item", {
                 "is-featured": featured,
                 "is-visited": visited,
+                "is-highlighted": highlighted,
             })}
             style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
         >
