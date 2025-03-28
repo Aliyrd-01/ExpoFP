@@ -1,0 +1,25 @@
+name: Check PR labels
+
+on:
+  pull_request:
+    types: [opened, edited, labeled, unlabeled, synchronize]
+  workflow_dispatch:
+
+jobs:
+  check-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for required labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const requiredLabels = ['fix', 'chore', 'feat', 'major'];
+            const labels = context.payload.pull_request.labels.map(label => label.name);
+            const hasRequiredLabel = labels.some(label => requiredLabels.includes(label));
+
+            if (!hasRequiredLabel) {
+              // TODO: Replace with core.setFailed
+              core.warning(`PR must have at least one of the following labels: ${requiredLabels.join(', ')}`);
+            } else {
+              core.info(`✅ Found required label: ${labels.filter(label => requiredLabels.includes(label)).join(', ')}`);
+            }
