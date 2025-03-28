@@ -4,7 +4,7 @@ import { BROADCAST_CHANNEL_NAME, MESSAGE_CACHE, MESSAGE_CACHE_BUNDLE, MESSAGE_RE
 export async function initOfflineManager(
     baseUrl: string,
     resourceUrls: string[],
-    activationKeys = [],
+    activationKeys: string[] = [],
 ): Promise<void> {
     try {
         if (!("serviceWorker" in navigator) || isWebview) {
