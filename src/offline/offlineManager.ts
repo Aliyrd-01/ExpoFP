@@ -4,7 +4,7 @@ import { BROADCAST_CHANNEL_NAME, MESSAGE_CACHE, MESSAGE_CACHE_BUNDLE, MESSAGE_RE
 export async function initOfflineManager(
     baseUrl: string,
     resourceUrls: string[],
-    activationKeys = [],
+    activationKeys: string[] = [],
 ): Promise<void> {
     try {
         if (!("serviceWorker" in navigator) || isWebview) {
@@ -15,7 +15,12 @@ export async function initOfflineManager(
         const command = searchParams.get("sw");
         const scope = "/";
 
-        if (command === "1" || activationKeys.some(k => searchParams.get(k))) {
+        const hasActivationKey = activationKeys.some(k => {
+            const value = searchParams.get(k);
+            return value && value !== "0";
+        });
+
+        if (command === "1" || hasActivationKey) {
             await navigator.serviceWorker.register(buildUrl("sw.js"), { scope });
             await navigator.serviceWorker.ready;
         } else if (command === "0") {
