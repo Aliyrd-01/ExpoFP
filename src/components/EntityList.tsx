@@ -30,16 +30,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
         if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
     }, [store.layerStore.layersLoaded]);
 
-    const clearHighlightingTimer = useRef(null);
-    function clearHighlighting() {
-        clearTimeout(clearHighlightingTimer.current);
-        clearHighlightingTimer.current = setTimeout(() => {
-            if (!uiState.details) {
-                uiState.clearListScrollItemId();
-            }
-        }, 2500);
-    }
-
     function handleClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
 
@@ -160,7 +150,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     customScrollParent={scrollableRef.current}
                     totalCount={uiState.listItems.length}
                     initialTopMostItemIndex={uiState.listScrollIndex}
-                    isScrolling={() => clearHighlighting()}
                 />
             )}
         </div>
