@@ -24,14 +24,18 @@ function round(value: number) {
 };
 
 const HeatmapLegend: React.FC<HeatmapLegendProps> = ({ colors, min, max, className, style }) => {
-    const numValues = 5;
+    const numValues = useMemo(() => {
+        const range = max - min;
+        // Always show at least two values
+        if (range <= 0) return 2;
+        return Math.min(range + 1, 5);
+    }, [min, max]);
 
     const values = useMemo(() => {
         return Array.from({ length: numValues }, (_, index) => {
             const normalizedValue = index / (numValues - 1);
-            const scaledValue = Math.pow(normalizedValue, 2);
-            const value = min + (max - min) * scaledValue;
-            return round(value);
+            const value = Math.round(min + (max - min) * normalizedValue);
+            return value;
         });
     }, [min, max, numValues]);
 

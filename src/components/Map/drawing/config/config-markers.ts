@@ -6,7 +6,7 @@ import { reaction } from "mobx";
 import { MarkerIcon } from "../../../../store/RouteStore";
 
 export function configMarkers(context: DrawerContext, painterOrderPriority: number, visible: boolean) {
-    const iconMap = new Map<string, { width: number, height: number, img: HTMLImageElement }>();
+    const iconMap = new Map<string, { width: number, height: number, img: HTMLImageElement, scale: number }>();
     const canvasCache = new Map<string, CanvasDescriptor>();
 
     const markersDrawer = context.requirePainter("MARKERS", RectPainter, painterOrderPriority, visible);
@@ -15,13 +15,13 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
         const promises: Promise<void>[] = [];
 
         icons.forEach(icon => {
-            const { name, content, width, height } = icon;
+            const { name, content, width, height, scale } = icon;
             if (iconMap.has(name)) return;
 
             const img = new Image();
             const promise = new Promise<void>((resolve, reject) => {
                 img.onload = () => {
-                    iconMap.set(name, { img, width, height });
+                    iconMap.set(name, { img, width, height, scale: scale ?? context.pixelRatio });
                     resolve();
                 };
                 img.onerror = (error) => {
@@ -46,50 +46,84 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
             const icon = iconMap.get(marker.icon);
             if (!icon) return;
 
-            const cacheKey = `${marker.icon}_${context.pixelRatio}`;
+            const cacheKey = `${marker.icon}_${icon.scale}`;
             if (!canvasCache.has(cacheKey)) {
-                const imageCanvas = createImageCanvas(icon.img, icon.width, icon.height, context.pixelRatio);
+                const imageCanvas = createImageCanvas(icon.img, icon.width, icon.height, icon.scale);
                 canvasCache.set(cacheKey, imageCanvas);
             }
             const imageCanvas = canvasCache.get(cacheKey);
 
-            markersDrawer.addObject({
-                id: id,
-                center: [0, 0],
-                deltas: [0, 0, 0, 0],
-                deltaPts: [
-                    -imageCanvas.width / 2,
-                    -imageCanvas.height,
-                    imageCanvas.width / 2,
-                    0,
-                ],
-                texPosition: "centertop",
-                canvasTmp: imageCanvas,
-                visible: false,
-            });
+            if (marker.position === "centertop") {
+                markersDrawer.addObject({
+                    id,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -imageCanvas.width / 2,
+                        -imageCanvas.height,
+                        imageCanvas.width / 2,
+                        0,
+                    ],
+                    texPosition: "centertop",
+                    canvasTmp: imageCanvas,
+                    visible: false,
+                });
+            } else if (marker.position === "lefttop") {
+                markersDrawer.addObject({
+                    id,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -imageCanvas.width / 2,
+                        -imageCanvas.height / 2,
+                        imageCanvas.width,
+                        imageCanvas.height,
+                    ],
+                    canvasTmp: imageCanvas,
+                    texPosition: "lefttop",
+                    visible: false,
+                });
+            }
 
             const selectedIcon = iconMap.get(marker.selectedIcon);
-            const selectedCacheKey = `${marker.selectedIcon}_${context.pixelRatio}`;
+            const selectedCacheKey = `${marker.selectedIcon}_${icon.scale}`;
             if (!canvasCache.has(selectedCacheKey)) {
-                const selectedImageCanvas = createImageCanvas(selectedIcon.img, selectedIcon.width, selectedIcon.height, context.pixelRatio);
+                const selectedImageCanvas = createImageCanvas(selectedIcon.img, selectedIcon.width, selectedIcon.height, selectedIcon.scale);
                 canvasCache.set(selectedCacheKey, selectedImageCanvas);
             }
             const selectedImageCanvas = canvasCache.get(selectedCacheKey);
 
-            markersDrawer.addObject({
-                id: `${id}_selected`,
-                center: [0, 0],
-                deltas: [0, 0, 0, 0],
-                deltaPts: [
-                    -selectedImageCanvas.width / 2,
-                    -selectedImageCanvas.height,
-                    selectedImageCanvas.width / 2,
-                    0,
-                ],
-                canvasTmp: selectedImageCanvas,
-                texPosition: "centertop",
-                visible: false,
-            });
+            if (marker.position === "centertop") {
+                markersDrawer.addObject({
+                    id: `${id}_selected`,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -selectedImageCanvas.width / 2,
+                        -selectedImageCanvas.height,
+                        selectedImageCanvas.width / 2,
+                        0,
+                    ],
+                    canvasTmp: selectedImageCanvas,
+                    texPosition: "centertop",
+                    visible: false,
+                });
+            } else if (marker.position === "lefttop") {
+                markersDrawer.addObject({
+                    id: `${id}_selected`,
+                    center: [0, 0],
+                    deltas: [0, 0, 0, 0],
+                    deltaPts: [
+                        -selectedImageCanvas.width / 2,
+                        -selectedImageCanvas.height / 2,
+                        selectedImageCanvas.width,
+                        selectedImageCanvas.height,
+                    ],
+                    canvasTmp: selectedImageCanvas,
+                    texPosition: "lefttop",
+                    visible: false,
+                });
+            }
         });
     }
 

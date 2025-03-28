@@ -3,8 +3,9 @@ import { uiState } from "../store";
 import useHeatmapData from "./useHeatmapData";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { BoothBase } from "../store/BoothStore";
+import { HeatmapYah } from "../store/HeatmapStore";
 
-const useHeatmapOverlay = (entity: Exhibitor | BoothBase, color: string = "#555") => {
+const useHeatmapOverlay = (entity: Exhibitor | BoothBase | HeatmapYah, color: string = "#555") => {
     const { clicks, background } = useHeatmapData(entity);
 
     const heatmapBar = useMemo(() => {

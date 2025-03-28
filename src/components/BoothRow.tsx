@@ -1,5 +1,5 @@
 import { useObserver } from "mobx-react-lite";
-import React, { useMemo } from "react";
+import React from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth, SpecialBooth } from "../store/BoothStore";
