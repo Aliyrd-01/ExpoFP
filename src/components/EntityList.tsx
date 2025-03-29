@@ -152,8 +152,9 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     totalCount={uiState.listItems.length}
                     initialTopMostItemIndex={uiState.listScrollIndex}
                     isScrolling={() => {
-                        clearTimeout(timer.current);
-                        timer.current = setTimeout(() => uiState.clearListScrollItemId(), 5000);
+                        // TODO: 
+                        // clearTimeout(timer.current);
+                        // timer.current = setTimeout(() => uiState.clearListScrollItemId(), 5000);
                     }}
                 />
             )}
