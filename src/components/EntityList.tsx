@@ -33,6 +33,8 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
     function handleClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
 
+        uiState.setListScrollItemId(uiState.list?.type, id);
+
         switch (type) {
             case "exhibitor":
                 store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
@@ -55,8 +57,14 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
         }
     }
 
-    const mapItem = ({ index }: { index: number }) => {
-        const item: ListItem = uiState.listItems[index];
+    const mapItem = ({ index, listItems, listScrollItemId }: {
+        index: number,
+        listItems: ListItem[],
+        listScrollItemId: number,
+    }) => {
+        const item: ListItem = listItems[index];
+        const highlighted = listScrollItemId?.toString() === item.id?.toString();
+
         if (item instanceof Exhibitor) {
             return (
                 <EntityItem
@@ -74,6 +82,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                         locationName: booth.name,
                         level: data.shortLevelName ? booth.layer?.shortName : booth.layer?.description,
                     }))}
+                    highlighted={highlighted}
                 />
             );
         } else if (item instanceof BoothBase) {
@@ -87,6 +96,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     url={null}
                     icon={item.poiIcon}
                     additionalInfo={[{ type: "location", locationName: item.name, level: item.layer?.name }]}
+                    highlighted={highlighted}
                 />
             );
         } else if (item instanceof Category) {
@@ -98,6 +108,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     type="category"
                     title={item.name}
                     url={null}
+                    highlighted={highlighted}
                 />
             );
         } else if (item instanceof ScheduleItem) {
@@ -113,10 +124,15 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     date={dateFormat(item.startDate, "dd mmm ddd")}
                     time={`${dateFormat(item.startDate, "h:MM")} - ${dateFormat(item.endDate, "h:MM")}`}
                     additionalInfo={booth ? [{ type: "location", locationName: booth.name, level: booth.layer?.name }] : []}
+                    highlighted={highlighted}
                 />
             );
         }
     };
+
+    const listScrollItemId = uiState.listScrollItemId;
+    const listItems = uiState.listItems;
+    const timer = useRef(null);
 
     return (
         <div style={{ height: "100%", cursor: "pointer" }}>
@@ -125,13 +141,21 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     className="list-virtual"
                     style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
                     ref={listRef}
-                    itemContent={(index) => mapItem({ index })}
+                    itemContent={(index) => mapItem({
+                        index,
+                        listItems,
+                        listScrollItemId,
+                    })}
                     itemsRendered={() => updateScroll && setTimeout(updateScroll)}
                     totalListHeightChanged={() => updateScroll && updateScroll()}
                     customScrollParent={scrollableRef.current}
                     totalCount={uiState.listItems.length}
-                    initialTopMostItemIndex={uiState.listScrollIndices.search}
-                    rangeChanged={(range) => uiState.setListScrollIndices("search", range.startIndex)}
+                    initialTopMostItemIndex={uiState.listScrollIndex}
+                    isScrolling={() => {
+                        // TODO: 
+                        // clearTimeout(timer.current);
+                        // timer.current = setTimeout(() => uiState.clearListScrollItemId(), 5000);
+                    }}
                 />
             )}
         </div>
