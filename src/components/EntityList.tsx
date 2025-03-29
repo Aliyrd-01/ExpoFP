@@ -72,7 +72,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     additionalInfo={item.booths.map((booth) => ({
                         type: "location",
                         locationName: booth.name,
-                        level: booth.layer?.name,
+                        level: data.shortLevelName ? booth.layer?.shortName : booth.layer?.description,
                     }))}
                 />
             );

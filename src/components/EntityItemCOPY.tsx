@@ -54,7 +54,8 @@ const getAdditionalInfoIcon = (type: AdditionalInfo["type"]): string => {
 };
 
 const shouldShowPrefix = (input: string): boolean => {
-    return /^\d+$/.test(input);
+    if (!input) return false;
+    return !/(level|floor)/i.test(input);
 };
 
 const EntityItem: React.FC<EntityItemProps> = ({
@@ -86,7 +87,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
             })}
             style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
         >
-            {/* <a href={url} className="efp-entity-item__link" aria-label={title}></a> */}
+            <a href={url} className="efp-entity-item__link" aria-label={title}></a>
             <div className="efp-entity-item__body">
                 <div className="efp-entity-item__left">
                     <div className="efp-entity-item__icon">
@@ -127,7 +128,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                                         {info.type === "location" && (
                                             <>
                                                 {type !== "category" && type !== "booth" && (
-                                                    <div className="efp-entity-item__details-item-booth">{info.locationName}</div>
+                                                    <span className="booth-badge">{info.locationName}</span>
                                                 )}
                                                 {info.hall && (
                                                     <div>
@@ -136,7 +137,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                                                 )}
                                                 {info.level && (
                                                     <div>
-                                                        {shouldShowPrefix(info.level) && <span>Level&nbsp;</span>}
+                                                        {/* {shouldShowPrefix(info.level) && "Level "} */}
                                                         <span>{info.level}</span>
                                                     </div>
                                                 )}
