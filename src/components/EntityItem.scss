@@ -263,7 +263,8 @@ $entity-item: ".efp-entity-item";
             background: #d5e5fb;
         }
 
-        &:hover {
+        &:hover,
+        &.is-highlighted {
             background: var(--color-featured-hover);
 
             .booth-badge {

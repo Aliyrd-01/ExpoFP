@@ -668,7 +668,10 @@ export default class UIState {
     }
 
     @action clearListScrollItemId() {
-        this._listScrollItemIds = {};
+        this._listScrollItemIds = {
+            ...this._listScrollItemIds,
+            [this.list.type]: null,
+        };
     }
 
     ///////////////////////////////////////////////////////////////////////////
