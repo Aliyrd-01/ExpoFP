@@ -147,35 +147,50 @@ $entity-item: ".efp-entity-item";
     &__details {
         display: flex;
         flex-flow: column wrap;
-        row-gap: rem(4px);
-        align-items: flex-start;
+        row-gap: rem(6px);
         margin: rem(8px 0 0);
         padding: 0;
         list-style: none;
     }
 
     &__details-item {
-        display: inline-flex;
-        gap: 1px;
+        display: flex;
+        flex-flow: row wrap;
+        row-gap: rem(3px);
         align-items: center;
-        overflow: hidden;
-        border-radius: var(--border-radius-full);
-        font-size: var(--font-size-sm);
+        font-size: var(--font-size-md);
         line-height: var(--font-size-md);
-        color: var(--color-primary-ultra-dark);
+        color: var(--color-gray-700);
         letter-spacing: 0.01em;
 
-        &-booth {
-            font-weight: var(--font-weight-medium);
+        & > i {
+            margin-right: rem(6px);
+            font-size: var(--icon-size-xss);
+            color: var(--color-gray-500);
         }
 
-        & > div {
-            position: relative;
+        & > span {
             display: inline-flex;
             align-items: center;
-            min-height: 100%;
-            padding: rem(4px 7px);
-            background: var(--color-primary-ultra-light);
+
+            &:not(:last-child, .booth-badge) {
+                position: relative;
+
+                &::after {
+                    content: "";
+                    display: inline-block;
+                    width: rem(4px);
+                    height: rem(4px);
+                    margin: rem(0 8px);
+                    background-color: var(--color-gray-500);
+                    border-radius: var(--border-radius-full);
+                    vertical-align: middle;
+                }
+            }
+
+            span {
+                font-weight: var(--font-weight-medium);
+            }
         }
     }
 
@@ -234,11 +249,10 @@ $entity-item: ".efp-entity-item";
         letter-spacing: 0.03em;
     }
 
-    &:hover,
-    &.is-highlighted {
+    &:hover {
         background: var(--color-gray-200);
 
-        .efp-entity-item__details-item > div {
+        .booth-badge {
             background: #d5e5fb;
         }
     }
@@ -247,15 +261,14 @@ $entity-item: ".efp-entity-item";
         background: var(--color-featured);
         border-bottom: 1px solid var(--color-featured-border);
 
-        .efp-entity-item__details-item > div {
+        .booth-badge {
             background: #d5e5fb;
         }
 
-        &:hover,
-        &.is-highlighted {
+        &:hover {
             background: var(--color-featured-hover);
 
-            .efp-entity-item__details-item > div {
+            .booth-badge {
                 background: #c5dbfe;
             }
         }

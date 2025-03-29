@@ -41,8 +41,9 @@ $entity-item: ".efp-entity-item";
         #{$entity-item}__title {
             font-weight: var(--font-weight-normal);
 
-            &:after {
+            &::after {
                 @include icon;
+
                 content: vars.$icon-checkmark;
                 display: inline-flex;
                 margin-left: rem(6px);
@@ -57,8 +58,8 @@ $entity-item: ".efp-entity-item";
         margin-right: rem(6px);
         padding: rem(3px 5px);
         background: var(--color-primary-ultra-light);
-        color: var(--color-primary-ultra-dark);
         border-radius: var(--border-radius-full);
+        color: var(--color-primary-ultra-dark);
     }
 
     &__link {
@@ -73,8 +74,8 @@ $entity-item: ".efp-entity-item";
         position: relative;
         z-index: 10;
         display: flex;
-        align-items: flex-start;
         gap: rem(14px);
+        align-items: flex-start;
         width: 100%;
         padding: rem(16px 16px 16px 14px);
     }
@@ -82,13 +83,13 @@ $entity-item: ".efp-entity-item";
     &__left {
         display: flex;
         flex-flow: column wrap;
-        align-items: center;
         gap: rem(6px);
+        align-items: center;
     }
 
     &__right {
-        flex: 1;
         display: flex;
+        flex: 1;
         gap: rem(6px);
     }
 
@@ -110,6 +111,7 @@ $entity-item: ".efp-entity-item";
             font-size: var(--icon-size-xxxs);
             color: var(--color-white);
         }
+
         & > img {
             width: rem(12px);
             height: rem(12px);
@@ -152,6 +154,7 @@ $entity-item: ".efp-entity-item";
             font-weight: var(--font-weight-normal);
             color: var(--color-gray-600);
         }
+
         & > i {
             position: relative;
             top: rem(1px);
@@ -196,7 +199,7 @@ $entity-item: ".efp-entity-item";
             display: inline-flex;
             align-items: center;
 
-            &:not(:last-child):not(.booth-badge) {
+            &:not(:last-child, .booth-badge) {
                 position: relative;
 
                 &::after {
@@ -204,12 +207,13 @@ $entity-item: ".efp-entity-item";
                     display: inline-block;
                     width: rem(4px);
                     height: rem(4px);
-                    border-radius: var(--border-radius-full);
-                    background-color: var(--color-gray-500);
                     margin: rem(0 8px);
+                    background-color: var(--color-gray-500);
+                    border-radius: var(--border-radius-full);
                     vertical-align: middle;
                 }
             }
+
             span {
                 font-weight: var(--font-weight-medium);
             }

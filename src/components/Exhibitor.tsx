@@ -271,6 +271,12 @@ function ExhibitorComponent() {
             s.updateOverlayContent();
         }
 
+        const shouldShowPrefix = (input: string): boolean => {
+            return /^\d+$/.test(input);
+        };
+
+        const getBoothLevel = (booth) => (data.shortLevelName ? booth.layer?.shortName : booth.layer?.description);
+
         return (
             <OverlayContent
                 className={cls}
@@ -336,20 +342,33 @@ function ExhibitorComponent() {
                             ref={detailsRef}
                         >
                             <div className="exhibitor-categories">
-                                {exhibitor.booths.map((booth) => (
-                                    <a
-                                        href={`?${booth.slug}`}
-                                        key={booth.id}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            store.toggleMapOverlay();
-                                            store.selectBooth(booth);
-                                        }}
-                                        className="exhibitor-categories__booth"
-                                    >
-                                        {booth instanceof SpecialBooth ? "" : data.boothTerm} {booth.fullName}
-                                    </a>
-                                ))}
+                                {exhibitor.booths.map((booth) => {
+                                    const boothLevel = getBoothLevel(booth);
+
+                                    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                                        e.preventDefault();
+                                        store.toggleMapOverlay();
+                                        store.selectBooth(booth);
+                                    };
+
+                                    return (
+                                        <a
+                                            href={`?${booth.slug}`}
+                                            key={booth.id}
+                                            onClick={handleClick}
+                                            className="exhibitor-categories__booth"
+                                        >
+                                            <div className="exhibitor-categories__booth-name">{booth.name}</div>
+                                            {boothLevel && (
+                                                <div className="exhibitor-categories__booth-level">
+                                                    {shouldShowPrefix(boothLevel) ? "Level " : ""}
+                                                    {boothLevel}
+                                                </div>
+                                            )}
+                                        </a>
+                                    );
+                                })}
+
                                 {exhibitor.categories.map((c) => (
                                     <a
                                         href={"?" + encodeURIComponent(c.slug)}

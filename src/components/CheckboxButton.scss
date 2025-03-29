@@ -27,8 +27,8 @@
 
     &__inner {
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
         width: rem(20px);
         height: rem(20px);
         border: 1px solid var(--color-gray-600);
@@ -44,8 +44,9 @@
         .efp-checkbox-button__inner {
             border-color: var(--color-visited);
 
-            &:after {
+            &::after {
                 @include icon;
+
                 content: vars.$icon-checkmark;
                 font-size: var(--icon-size-md);
                 color: var(--color-white);
@@ -54,7 +55,7 @@
     }
 
     &__inner.animate {
-        &:after {
+        &::after {
             animation: scale-icon 0.3s ease-in-out;
         }
     }
@@ -62,13 +63,15 @@
 
 @keyframes scale-icon {
     0% {
-        transform: scale(0);
         opacity: 0;
+        transform: scale(0);
     }
+
     50% {
-        transform: scale(1.8);
         opacity: 1;
+        transform: scale(1.8);
     }
+
     100% {
         transform: scale(1);
     }

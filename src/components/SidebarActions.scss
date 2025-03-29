@@ -38,7 +38,7 @@ $action-button: ".efp-actionButton";
     }
 
     &:active {
-        box-shadow: 0px 0px 0px 2px rgba(61, 145, 247, 0.3);
+        box-shadow: 0 0 0 2px rgb(61 145 247 / 30%);
     }
 
     [class^="icon-"] {
@@ -52,8 +52,8 @@ $action-button: ".efp-actionButton";
         color: var(--color-white);
 
         &:hover {
-            border-color: var(--color-primary-dark);
             background: var(--color-primary-dark);
+            border-color: var(--color-primary-dark);
         }
 
         & > .icon {
@@ -117,13 +117,15 @@ $action-button: ".efp-actionButton";
 
 @keyframes scale-bookmark-icon {
     0% {
-        transform: scale(0);
         opacity: 0;
+        transform: scale(0);
     }
+
     50% {
-        transform: scale(1.4);
         opacity: 1;
+        transform: scale(1.4);
     }
+
     100% {
         transform: scale(1);
     }

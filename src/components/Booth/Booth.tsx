@@ -48,7 +48,6 @@ function Booth() {
             return this.booth.description || data.reserveInstructions || "";
         },
     }));
-    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth);
 
     function handleExhibitorClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
@@ -58,6 +57,8 @@ function Booth() {
     return useObserver(() => {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
+
+        const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth);
 
         const exhibitors = s.booth.exhibitors.map((item) => (
             <EntityItem
