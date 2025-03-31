@@ -502,13 +502,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer.updateSkipdim("currentLocation", visible);
                 wfDrawer.updateCenter("currentLocation", [position.x, position.y]);
 
-                const rotateRadians = position?.angle ? toRadians(position.angle) : null;
+                const rotateRadians = position?.angle != null ? toRadians(position.angle) : null;
 
                 if (rotateRadians !== undefined && rotateRadians !== null) {
                     wfDrawer.updateVisible("currentLocation", false);
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
                     wfDrawer.updateSkipdim("currentLocation_arrow", visible);
-                    wfDrawer.updateCenter("currentLocation_arrow", [position.x, position.y]);
+                    wfDrawer.updateCenter("currentLocation_arrow", [position.x + 15, position.y - 15]);
                     wfDrawer.updateRotation("currentLocation_arrow", rotateRadians);
                 } else {
                     wfDrawer.updateVisible("currentLocation_arrow", false);
