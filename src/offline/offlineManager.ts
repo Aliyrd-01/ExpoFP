@@ -15,10 +15,9 @@ export async function initOfflineManager(
         const command = searchParams.get("sw");
         const scope = "/";
 
-        const hasActivationKey = activationKeys.some(k => {
-            const value = searchParams.get(k);
-            return value && value !== "0";
-        });
+        const hasActivationKey = activationKeys.some(
+            key => searchParams.has(key) && searchParams.get(key) !== "0",
+        );
 
         if (command === "1" || hasActivationKey) {
             await navigator.serviceWorker.register(buildUrl("sw.js"), { scope });
