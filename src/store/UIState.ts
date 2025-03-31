@@ -96,7 +96,7 @@ export default class UIState {
 
         if (this.list?.type === "category") {
             this.list.category.exhibitors
-                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .flatMap(e => e.booths/*.filter(b => b instanceof RegularBooth)*/)
                 .forEach(b => booths.add(b.id.toString()));
         }
 
