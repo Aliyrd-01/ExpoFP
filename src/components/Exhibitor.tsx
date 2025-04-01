@@ -133,8 +133,12 @@ function ExhibitorComponent() {
             <>
                 <div className="exhibitor__bar">
                     <span onClick={() => store.toggleMapOverlay()}>
-                        <span dir="auto">{exhibitor.name}</span>
-                        {exhibitor.featured ? <i className="icon-diamond" /> : null}
+                        <div className="exhibitor__bar-name">
+                            <div className="exhibitor__bar-icon">
+                                <i className="icon-exhibitor-solid"></i>
+                            </div>
+                            <span dir="auto">{exhibitor.name}</span>
+                        </div>
                     </span>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
@@ -342,6 +346,7 @@ function ExhibitorComponent() {
                             ref={detailsRef}
                         >
                             <div className="exhibitor-categories">
+                                {exhibitor.featured && <div className="exhibitor-featured">Featured</div>}
                                 {exhibitor.booths.map((booth) => {
                                     const boothLevel = getBoothLevel(booth);
 

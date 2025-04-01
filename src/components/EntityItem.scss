@@ -9,7 +9,7 @@ $entity-item: ".efp-entity-item";
     align-items: center;
     min-height: rem(72px);
     background: var(--color-white);
-    border-bottom: 1px solid var(--color-gray-300);
+    border-bottom: 1px solid var(--color-gray-200);
 
     &__link {
         position: absolute;
@@ -156,26 +156,25 @@ $entity-item: ".efp-entity-item";
 
     &__details-item {
         display: inline-flex;
-        gap: 1px;
+        padding: rem(4px 7px);
+        gap: rem(7px);
         align-items: center;
         overflow: hidden;
+        background: var(--color-primary-ultra-light);
         border-radius: var(--border-radius-full);
         font-size: var(--font-size-sm);
         line-height: var(--font-size-md);
         color: var(--color-primary-ultra-dark);
         letter-spacing: 0.01em;
 
-        &-booth {
-            font-weight: var(--font-weight-medium);
-        }
-
         & > div {
             position: relative;
             display: inline-flex;
             align-items: center;
             min-height: 100%;
-            padding: rem(4px 7px);
-            background: var(--color-primary-ultra-light);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
     }
 
@@ -236,9 +235,9 @@ $entity-item: ".efp-entity-item";
 
     &:hover,
     &.is-highlighted {
-        background: var(--color-gray-200);
+        background: var(--color-gray-100);
 
-        .efp-entity-item__details-item > div {
+        .efp-entity-item__details-item {
             background: #d5e5fb;
         }
     }
@@ -247,7 +246,7 @@ $entity-item: ".efp-entity-item";
         background: var(--color-featured);
         border-bottom: 1px solid var(--color-featured-border);
 
-        .efp-entity-item__details-item > div {
+        .efp-entity-item__details-item {
             background: #d5e5fb;
         }
 
@@ -255,7 +254,7 @@ $entity-item: ".efp-entity-item";
         &.is-highlighted {
             background: var(--color-featured-hover);
 
-            .efp-entity-item__details-item > div {
+            .efp-entity-item__details-item {
                 background: #c5dbfe;
             }
         }
