@@ -201,9 +201,6 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     });
             } else {
                 el.current.style.top = newTop + "px";
-                if (uiState.overlaySize === "full") {
-                    el.current.style.height = `${window.innerHeight - newTop}px`;
-                }
             }
             setShowAll();
 
