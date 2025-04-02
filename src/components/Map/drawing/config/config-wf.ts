@@ -394,15 +394,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
-    const currentLocationPad = 5 * context.pixelRatio;
-
     wfDrawer.addObject({
         id: "currentLocation",
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -currentLocationCanvas.width / 2 + currentLocationPad,
-            -currentLocationCanvas.height / 2 + currentLocationPad,
+            -currentLocationCanvas.width / 2,
+            -currentLocationCanvas.height / 2,
             currentLocationCanvas.width,
             currentLocationCanvas.height,
         ],
@@ -416,8 +414,8 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         center: [0, 0],
         deltas: [0, 0, 0, 0],
         deltaPts: [
-            -arrowCurrentCanvas.width / 2 + currentLocationPad,
-            -arrowCurrentCanvas.height / 2 + currentLocationPad,
+            -arrowCurrentCanvas.width / 2 ,
+            -arrowCurrentCanvas.height / 2 ,
             arrowCurrentCanvas.width,
             arrowCurrentCanvas.height,
         ],
@@ -508,7 +506,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                     wfDrawer.updateVisible("currentLocation", false);
                     wfDrawer.updateVisible("currentLocation_arrow", visible);
                     wfDrawer.updateSkipdim("currentLocation_arrow", visible);
-                    wfDrawer.updateCenter("currentLocation_arrow", [position.x + 15, position.y - 15]);
+                    wfDrawer.updateCenter("currentLocation_arrow", [position.x, position.y]);
                     wfDrawer.updateRotation("currentLocation_arrow", rotateRadians);
                 } else {
                     wfDrawer.updateVisible("currentLocation_arrow", false);
