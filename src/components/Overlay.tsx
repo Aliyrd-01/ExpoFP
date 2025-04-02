@@ -195,14 +195,14 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     .style("top", newTop + "px")
                     .on("end", () => {
                         if (uiState.overlaySize === "full") {
-                            el.current.style.height = window.innerHeight - newTop + "px";
+                            el.current.style.height = `${window.innerHeight - newTop}px`;
                         }
                         setShowAll();
                     });
             } else {
                 el.current.style.top = newTop + "px";
                 if (uiState.overlaySize === "full") {
-                    el.current.style.height = window.innerHeight - newTop + "px";
+                    el.current.style.height = `${window.innerHeight - newTop}px`;
                 }
             }
             setShowAll();
