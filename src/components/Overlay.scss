@@ -16,6 +16,7 @@
         bottom: unset;
     }
 
+    &.full.bottom,
     &.medium.bottom,
     &.small.bottom {
         border-radius: 0.5rem 0.5rem 0 0;
