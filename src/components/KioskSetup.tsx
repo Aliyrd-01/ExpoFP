@@ -323,7 +323,7 @@ const KioskSetup = observer(() => {
 
     let title = "";
     if (step === "auth") {
-        title = t("Enter passcode");
+        title = t("Passcode required");
     } else if (step === "copy") {
         title = t("Copy the kiosk URL");
     } else {
