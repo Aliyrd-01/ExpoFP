@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import Alert from "./Alert";
 import Button from "./Button";
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
 import { reaction, runInAction, toJS } from "mobx";
@@ -13,15 +13,19 @@ import { extractRoute, Kiosk } from "../store/RouteStore";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
+import debounce from "../tools/debounce";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
+const KIOSK_SETUP_ALLOWED = "expofp-kiosk-setup-allowed";
 
 const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [step, setStep] = useState<"edit" | "copy">("edit");
+    const [step, setStep] = useState<"auth" | "edit" | "copy">(
+        sessionStorage.getItem(KIOSK_SETUP_ALLOWED) ? "edit" : "auth"
+    );
     const [kioskUrl, setKioskUrl] = useState("");
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
@@ -92,10 +96,16 @@ const KioskSetup = observer(() => {
 
         async function requestKioskData() {
             try {
-                const response = await fetch(apiUrl);
-                const kiosks = await response.json();
-
                 const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+                const isSetup = searchParams.has(KIOSK_SETUP_KEY);
+
+                let kiosks = [];
+
+                if (!isSetup || step !== "auth") {
+                    const response = await fetch(apiUrl);
+                    kiosks = await response.json();
+                }
+
                 let kioskId = searchParams.get(KIOSK_ID_KEY) || "";
 
                 if (!kioskId && routeFromKioskMatch?.[1]) {
@@ -105,8 +115,6 @@ const KioskSetup = observer(() => {
                 const kiosk = kiosks.find(k => strEqual(k.key, kioskId));
 
                 runInAction(() => {
-                    const isSetup = searchParams.has(KIOSK_SETUP_KEY);
-
                     store.uiState.kioskList = kiosks;
                     store.uiState.kioskSetup = isSetup;
 
@@ -186,6 +194,10 @@ const KioskSetup = observer(() => {
 
     async function save() {
         try {
+            if (step === "auth") {
+                return;
+            }
+
             setShowError(false);
             setPending(true);
 
@@ -226,11 +238,19 @@ const KioskSetup = observer(() => {
     }
 
     function exit() {
+        if (step === "auth") {
+            return;
+        }
+
         setStep("edit");
         store.uiState.kioskSetupData = null;
     }
 
     async function copy() {
+        if (step === "auth") {
+            return;
+        }
+
         setShowError(false);
         setShowSuccess(false);
         setPending(true);
@@ -249,6 +269,10 @@ const KioskSetup = observer(() => {
     }
 
     function rotate(angle: string) {
+        if (step === "auth") {
+            return;
+        }
+
         if (!store.uiState.kioskSetupData) {
             return;
         }
@@ -259,6 +283,10 @@ const KioskSetup = observer(() => {
     }
 
     function changeKey(key: string) {
+        if (step === "auth") {
+            return;
+        }
+
         if (!key) {
             clear();
             return;
@@ -284,10 +312,57 @@ const KioskSetup = observer(() => {
     }
 
     function clear() {
+        if (step === "auth") {
+            return;
+        }
+
         store.uiState.kioskSetupData = null;
     }
 
     const disabled = !store.uiState.kioskSetupData || pending;
+
+    let title = "";
+    if (step === "auth") {
+        title = t("Enter passcode");
+    } else if (step === "copy") {
+        title = t("Copy the kiosk URL");
+    } else {
+        title = t("Add or edit a kiosk");
+    }
+
+    const auth = useCallback(debounce((passcode: string) => {
+        const fn = async () => {
+            try {
+                setPending(true);
+                const response = await fetch(
+                    "https://app.expofp.com/api/v1/you-are-here/token",
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            expoKey: store.fp.eventId,
+                            passcode,
+                        }),
+                    },
+                );
+
+                const respJson = await response.json();
+                if (!respJson?.token) {
+                    setShowError(true);
+                    return;
+                }
+
+                sessionStorage.setItem(KIOSK_SETUP_ALLOWED, "1");
+                setStep("edit");
+            } catch (err) {
+                console.error(err);
+                setShowError(true);
+            } finally {
+                setPending(false);
+            }
+        };
+        fn();
+    }, 250), [store.fp.eventId]);
 
     return (
         <Suspense fallback={null}>
@@ -295,14 +370,23 @@ const KioskSetup = observer(() => {
                 <div ref={kioskSetupDivRef} className="efp-kiosk-setup">
                     <Alert
                         variant="blank"
-                        title={(
-                            step === "copy"
-                                ? t("Copy the kiosk URL")
-                                : t("Add or edit a kiosk")
-                        )}
+                        title={title}
                         inline
                         showIcon={false}
                     >
+                        {step === "auth" && (
+                            <p className="efp-kiosk-setup-info">
+                                <label className="efp-kiosk-setup-key">
+                                    <input
+                                        placeholder={t("Enter passcode")}
+                                        defaultValue=""
+                                        disabled={pending}
+                                        onInput={e => auth((e.target as HTMLInputElement).value)}
+                                    />
+                                </label>
+                            </p>
+                        )}
+
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
