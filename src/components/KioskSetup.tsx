@@ -167,11 +167,19 @@ const KioskSetup = observer(() => {
         };
     }, [store.uiState.kioskSetup, step]);
 
+    const clearMessageTimer = useRef(null);
     useEffect(() => {
-        setTimeout(() => {
+        clearTimeout(clearMessageTimer.current);
+
+        if (!showSuccess && !showError) {
+            return;
+        }
+
+        clearMessageTimer.current = setTimeout(() => {
             setShowSuccess(false);
+            setShowError(false);
         }, 3000);
-    }, [showSuccess]);
+    }, [showSuccess, showError]);
 
     useEffect(() => {
         if (kioskSetupDivRef.current) {
@@ -179,13 +187,16 @@ const KioskSetup = observer(() => {
         }
     }, [store.uiState.kioskSetup, step]);
 
+    const selectRouteTimer = useRef(null);
     useEffect(() => {
+        clearTimeout(selectRouteTimer.current);
+
         const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
         if (!routeParts) {
             return;
         }
 
-        setTimeout(() => {
+        selectRouteTimer.current = setTimeout(() => {
             store.routeStore.selectRoute(
                 extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)),
             );
@@ -333,6 +344,13 @@ const KioskSetup = observer(() => {
     const auth = useCallback(debounce((passcode: string) => {
         const fn = async () => {
             try {
+                setShowError(false);
+                setShowSuccess(false);
+
+                if (!passcode) {
+                    return;
+                }
+
                 setPending(true);
                 const response = await fetch(
                     "https://app.expofp.com/api/v1/you-are-here/token",

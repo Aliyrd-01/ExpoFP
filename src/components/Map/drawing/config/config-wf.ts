@@ -990,7 +990,7 @@ function attachKioskIcon(
     },
 ) {
     const key = kiosk.key || "";
-    const percent = 50;
+    const percent = 55;
 
     const arrowIconCanvas = createImageCanvas(
         store.fp.icons.get("kiosk-arrow"),
