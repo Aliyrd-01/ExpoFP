@@ -1,5 +1,5 @@
 import Color from "color";
-import { autorun, reaction } from "mobx";
+import { reaction } from "mobx";
 import { Line, lineLength, Point, pointIsOnLine } from "simple-geometry";
 import Rectangle from "../../../../core/Rect";
 import { getLayerSvg } from "../../../../data/svg";
