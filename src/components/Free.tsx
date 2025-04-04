@@ -8,11 +8,7 @@ import "./Free.scss";
 
 const key = "free-dismissed5";
 
-export type FreeProps = {
-    trial?: boolean;
-};
-
-export default function Free(props: FreeProps) {
+export default function Free() {
     const s = useLocalStore(() => ({
         hidden: true,
         get top() {
@@ -40,7 +36,7 @@ export default function Free(props: FreeProps) {
             <section>
                 <div className="free__message">
                     <span>
-                        {props.trial ? t("Create a trial floor plan at") : t("Create a free floor plan at")}&nbsp;
+                        {t("Create a free floor plan at")}&nbsp;
                         <a href="https://expofp.com/" target="_blank" rel="noopener noreferrer">
                             ExpoFP.com
                         </a>

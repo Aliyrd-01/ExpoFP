@@ -57,7 +57,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
-    else if (data.expoFpAd || data.isTrial) freeOrDemo = <Free trial={data.isTrial} />;
+    else if (data.expoFpAd || data.isTrial) freeOrDemo = <Free />;
 
     const acceptConsent = () => {
         setCookieConsent(true);
