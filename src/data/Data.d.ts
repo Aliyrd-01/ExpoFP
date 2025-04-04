@@ -2,6 +2,7 @@ import { PoiType } from "../store/PoiTypeStore";
 import { ScheduleItem } from "./../store/ScheduleStore";
 interface Data {
     noFeatured: boolean;
+    isTrial: boolean;
     expoFpAd: boolean;
     title: string;
     subtitle: string;
