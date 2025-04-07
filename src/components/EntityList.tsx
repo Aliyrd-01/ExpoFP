@@ -132,7 +132,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
 
     const listScrollItemId = uiState.listScrollItemId;
     const listItems = uiState.listItems;
-    const timer = useRef(null);
 
     return (
         <div style={{ height: "100%", cursor: "pointer" }}>
@@ -151,11 +150,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     customScrollParent={scrollableRef.current}
                     totalCount={uiState.listItems.length}
                     initialTopMostItemIndex={uiState.listScrollIndex}
-                    isScrolling={() => {
-                        // TODO: 
-                        // clearTimeout(timer.current);
-                        // timer.current = setTimeout(() => uiState.clearListScrollItemId(), 5000);
-                    }}
+                    overscan={400}
                 />
             )}
         </div>
