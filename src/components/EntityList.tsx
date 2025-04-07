@@ -1,6 +1,6 @@
 import dateFormat from "dateformat";
 import { observer } from "mobx-react-lite";
-import React, { RefObject, useRef } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 import { Virtuoso } from "react-virtuoso";
 import store, { boothStore, uiState } from "../store";
 import { BoothBase } from "../store/BoothStore";
@@ -23,8 +23,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
     function handleClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
 
-        uiState.setListScrollItemId(uiState.list?.type, id);
-
         switch (type) {
             case "exhibitor":
                 store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
@@ -45,6 +43,10 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                 break;
             }
         }
+
+        setTimeout(() => {
+            uiState.setListScrollItemId(uiState.list?.type, id);
+        }, 100);
     }
 
     function mapItem(item: ListItem, highlighted: boolean) {
@@ -114,6 +116,13 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
 
     const listScrollItemId = uiState.listScrollItemId;
 
+    useEffect(() => {
+        if (!listRef.current || !uiState.listScrollIndex) {
+            return;
+        }
+        listRef.current.scrollToIndex(uiState.listScrollIndex);
+    }, [uiState.listScrollIndex]);
+
     return (
         <div style={{ height: "100%", cursor: "pointer" }}>
             {updatedScrollableRef && (
@@ -130,7 +139,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     totalListHeightChanged={() => updateScroll && updateScroll()}
                     customScrollParent={updatedScrollableRef.current}
                     totalCount={uiState.listItems.length}
-                    initialTopMostItemIndex={uiState.listScrollIndex}
                     overscan={400}
                     increaseViewportBy={400}
                 />
