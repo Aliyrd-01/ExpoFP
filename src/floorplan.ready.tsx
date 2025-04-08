@@ -52,11 +52,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         reaction(
             () => store.layerStore.layersLoaded,
             () => {
-                // this.resolveReady();
-                setTimeout(() => {
-                    this.resolveReady();
-                    this.fitBounds();
-                }, 500);
+                this.resolveReady();
 
                 if (!store.initialized) {
                     // this._addCustomCss();
