@@ -46,7 +46,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
 
         setTimeout(() => {
             uiState.setListScrollItemId(uiState.list?.type, id);
-        }, 100);
+        }, 50);
     }
 
     function mapItem(item: ListItem, highlighted: boolean) {
@@ -117,10 +117,9 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
     const listScrollItemId = uiState.listScrollItemId;
 
     useEffect(() => {
-        if (!listRef.current || !uiState.listScrollIndex) {
-            return;
+        if (listRef.current) {
+            listRef.current.scrollToIndex(uiState.listScrollIndex)
         }
-        listRef.current.scrollToIndex(uiState.listScrollIndex);
     }, [uiState.listScrollIndex]);
 
     return (
@@ -141,6 +140,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     totalCount={uiState.listItems.length}
                     overscan={400}
                     increaseViewportBy={400}
+                    initialItemCount={Math.min(uiState.listScrollIndex + 1, uiState.listItems.length)}
                 />
             )}
         </div>
