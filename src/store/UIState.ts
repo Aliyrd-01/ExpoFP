@@ -63,7 +63,9 @@ export default class UIState {
     @observable hideLanguage = false;
     @observable disableGps = false;
     @observable monochrome = false;
+    // TODO Consider the use of one variable with different versions
     @observable heatmap = false;
+    @observable heatmapYah = false;
     @observable rtl = getLanguage() === "ar" || getLanguage() === "he";
     rootElement: HTMLDivElement;
     @observable debugCircles: { x: number; y: number; radius: number; color?: string }[] = [];
@@ -94,7 +96,7 @@ export default class UIState {
 
         if (this.list?.type === "category") {
             this.list.category.exhibitors
-                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .flatMap(e => e.booths/*.filter(b => b instanceof RegularBooth)*/)
                 .forEach(b => booths.add(b.id.toString()));
         }
 
@@ -374,6 +376,8 @@ export default class UIState {
             if (this.heatmap) {
                 const allItems = [...exhibitorsArray, ...boothsArray];
                 return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+            } else if (this.heatmapYah) {
+                return heatmapStore.heatmapData?.yah?.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)) || [];
             }
 
             return exhibitorsArray.length === 0
@@ -401,15 +405,22 @@ export default class UIState {
             }, 1000);
         }
 
+        // a&b&foo=1&bar=2 => a&b
+        const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
+
+        if (this.heatmapYah) {
+            // Show all items with views greater than the entered number
+            const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text));
+
+            return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        }
+
         const items: ListItem[] = [];
 
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
         const matchingCategories = new Set<Category>();
         const matchingEvents = new Set<ScheduleItem>();
-
-        // a&b&foo=1&bar=2 => a&b
-        const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
 
         function selectLettersSpacesNumbers(input: string): string {
             // Without & because of names that contain & (e.g. "A&B")

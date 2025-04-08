@@ -11,6 +11,8 @@ import CategoryRow from "./CategoryRow";
 import ExhibitorRow from "./ExhibitorRow";
 import "./List.scss";
 import ScheduleItemRow from "./ScheduleRow";
+import { HeatmapYah } from "../store/HeatmapStore";
+import YahRow from "./YahRow";
 import { Language } from "../store/LanguageStore";
 import LanguageRow from "./LanguageRow";
 import type { ListItem } from "../store/types";
@@ -46,6 +48,8 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
             return <ScheduleItemRow key={index} className={cls} item={item} />;
         } else if (item instanceof Language) {
             return <LanguageRow key={index} item={item} />;
+        } else if (item instanceof HeatmapYah) {
+            return <YahRow key={index} yah={item} className={cls} />
         }
     };
 

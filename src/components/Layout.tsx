@@ -22,7 +22,14 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { checkUserIsGDPR, GaEventActions, hasUserConsent, sendEventToGa, setConsentSettings, setCookieConsent } from "../tools/gtag";
+import {
+    checkUserIsGDPR,
+    GaEventActions,
+    hasUserConsent,
+    sendEventToGa,
+    setConsentSettings,
+    setCookieConsent,
+} from "../tools/gtag";
 import HeatmapLegend from "./HeatmapLegend";
 import { useReaction } from "../utils/mobx";
 import trackEvent from "../tools/track-event";
@@ -50,7 +57,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
-    else if (data.expoFpAd) freeOrDemo = <Free />;
+    else if (data.expoFpAd || data.isTrial) freeOrDemo = <Free />;
 
     const acceptConsent = () => {
         setCookieConsent(true);
@@ -81,8 +88,6 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         }
     }, []);
 
-    const minMaxClicks = store.heatmapStore.minAndMaxClicks;
-
     useReaction(
         () => uiState.selectedExhibitor,
         (exhibitor) => {
@@ -95,17 +100,17 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
                 }
             }
-        },
+        }
     );
 
     useReaction(
         () => uiState.selectedBooth,
-        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name),
+        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name)
     );
 
     useReaction(
         () => uiState.selectedCategory,
-        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name),
+        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name)
     );
 
     return (
@@ -166,7 +171,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                         </Modal>
                     </Suspense>
                 ) : null}
-                {uiState.heatmap ? (
+                {uiState.heatmap || uiState.heatmapYah ? (
                     <HeatmapLegend
                         style={{
                             left: `calc(50% + ${store.uiState.mapVisibleStart / 2}px)`,
@@ -174,8 +179,8 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                             bottom: uiState.overlayPosition === "bottom" ? null : "30px",
                         }}
                         className={uiState.responsiveClass}
-                        max={minMaxClicks.max}
-                        min={minMaxClicks.min}
+                        max={store.heatmapStore.minAndMaxClicks.max}
+                        min={store.heatmapStore.minAndMaxClicks.min}
                         colors={settings.heatmapColors}
                     />
                 ) : null}

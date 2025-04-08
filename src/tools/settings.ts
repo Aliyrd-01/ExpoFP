@@ -26,7 +26,7 @@ class Settings extends FpSettings {
                 selected: "#0088D6",
                 selectedBorder: null,
             },
-            empty: "rgba(0,0,0,0.205)", // this is #aaa for default BG #d6d6d6d
+            empty: "#aaaaaa", // this is #aaa for default BG #d6d6d6d
         },
     };
 }

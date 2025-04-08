@@ -1,15 +1,25 @@
+import isWebview from "../utils/is-webview";
 import { BROADCAST_CHANNEL_NAME, MESSAGE_CACHE, MESSAGE_CACHE_BUNDLE, MESSAGE_REFRESH } from "./constants";
 
-export async function initOfflineManager(baseUrl: string, resourceUrls: string[]): Promise<void> {
+export async function initOfflineManager(
+    baseUrl: string,
+    resourceUrls: string[],
+    activationKeys: string[] = [],
+): Promise<void> {
     try {
-        if (!("serviceWorker" in navigator)) {
+        if (!("serviceWorker" in navigator) || isWebview) {
             return;
         }
 
-        const command = new URLSearchParams(window.location.search).get("sw");
+        const searchParams = new URLSearchParams(window.location.search);
+        const command = searchParams.get("sw");
         const scope = "/";
 
-        if (command === "1") {
+        const hasActivationKey = activationKeys.some(
+            key => searchParams.has(key) && searchParams.get(key) !== "0",
+        );
+
+        if (command === "1" || hasActivationKey) {
             await navigator.serviceWorker.register(buildUrl("sw.js"), { scope });
             await navigator.serviceWorker.ready;
         } else if (command === "0") {

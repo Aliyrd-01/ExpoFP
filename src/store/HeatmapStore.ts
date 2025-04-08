@@ -9,10 +9,7 @@ import type { ListItem } from "./types";
 import type { GaEventActions } from "../tools/gtag";
 export default class HeatmapStore {
     private readonly rootStore: RootStore;
-    heatmapData: HeatmapData = {
-        booths: [],
-        exhibitors: [],
-    };
+    heatmapData: HeatmapData = {};
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
@@ -22,24 +19,27 @@ export default class HeatmapStore {
     forceTrack: { action: GaEventActions; label: string } | null = null;
 
     @computed({ keepAlive: true }) get minAndMaxClicks() {
-        if (!this.heatmapData || !this.heatmapData.booths || !this.heatmapData.exhibitors) {
+        const { booths = [], exhibitors = [], yah = [] } = this.heatmapData;
+
+        const allItems = [...booths, ...exhibitors, ...yah];
+        if (allItems.length === 0) {
             return { min: 0, max: 0 };
         }
-        const getMinMax = (data: HeatmapItem[], field: string) => {
-            return data.reduce((acc, obj) => {
-                if (obj[field] > acc.max) acc.max = obj[field];
-                if (obj[field] < acc.min) acc.min = obj[field];
-                return acc;
-            }, { min: data[0][field], max: data[0][field] });
+
+        const getMinMax = (data: HeatmapItem[]): { min: number, max: number } => {
+            return data.reduce(
+                (acc, item) => {
+                    if (item.viewCount > acc.max) acc.max = item.viewCount;
+                    if (item.viewCount < acc.min) acc.min = item.viewCount;
+                    return acc;
+                },
+                { min: data[0].viewCount, max: data[0].viewCount }
+            );
         };
 
-        const { min: minClicksBooth, max: maxClicksBooth } = getMinMax(this.heatmapData.booths, 'viewCount');
-        const { min: minClicksExhibitor, max: maxClicksExhibitor } = getMinMax(this.heatmapData.exhibitors, 'viewCount');
+        const { min, max } = getMinMax(allItems);
 
-        return {
-            min: Math.min(minClicksBooth, minClicksExhibitor),
-            max: Math.max(maxClicksBooth, maxClicksExhibitor)
-        };
+        return { min, max };
     }
 
     getClicksByType(item: ListItem) {
@@ -48,19 +48,26 @@ export default class HeatmapStore {
             return -1;
         } else if (item instanceof Exhibitor) {
             return this.getClicksByItem(item);
+        } else if (item instanceof HeatmapYah) {
+            return this.getClicksByItem(item);
         } else if (item instanceof ScheduleItem) {
             return 0;
         }
+
         return this.getClicksByItem(item);
     }
 
     getClicksByItem(item: ListItem | BoothBase) {
         if (item instanceof Exhibitor) {
-            return this.heatmapData?.exhibitors.find((a) => a.id === item.id)?.viewCount || 0;
+            return this.heatmapData?.exhibitors?.find((a) => a.id === item.id)?.viewCount || 0;
         }
 
         if (item instanceof BoothBase) {
-            return this.heatmapData?.booths.find((a) => a.id === item.id)?.viewCount || 0;
+            return this.heatmapData?.booths?.find((a) => a.id === item.id)?.viewCount || 0;
+        }
+
+        if (item instanceof HeatmapYah) {
+            return this.heatmapData?.yah?.find((a) => a.id === item.id)?.viewCount || 0;
         }
 
         return 0;
@@ -83,11 +90,21 @@ export default class HeatmapStore {
 }
 
 export interface HeatmapData {
-    booths: HeatmapItem[];
-    exhibitors: HeatmapItem[];
+    booths?: HeatmapItem[];
+    exhibitors?: HeatmapItem[];
+    yah?: HeatmapYah[];
+}
+
+export class HeatmapYah {
+    readonly id: number | string;
+    readonly name: string;
+    readonly viewCount: number;
+    readonly x: number;
+    readonly y: number;
+    readonly z?: number | string;
 }
 
 export interface HeatmapItem {
-    id: number;
+    id: number | string;
     viewCount: number;
 }
