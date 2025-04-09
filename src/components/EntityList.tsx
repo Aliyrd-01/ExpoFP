@@ -1,6 +1,6 @@
 import dateFormat from "dateformat";
 import { observer } from "mobx-react-lite";
-import React, { RefObject, useEffect, useRef, useState } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 import { Virtuoso } from "react-virtuoso";
 import store, { boothStore, uiState } from "../store";
 import { BoothBase } from "../store/BoothStore";
@@ -18,22 +18,10 @@ interface ListProps {
 }
 
 function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
-    const [scrollableRef, setScrollableRef] = useState<RefObject<HTMLElement>>(null);
     const listRef = useRef(null);
-
-    useEffect(() => {
-        setScrollableRef(updatedScrollableRef);
-    }, [updatedScrollableRef, store.layerStore.layersLoaded]);
-
-    useEffect(() => {
-        const el = document.querySelector(".list-row.active");
-        if (el) el.scrollIntoView({ block: "nearest", inline: "nearest" });
-    }, [store.layerStore.layersLoaded]);
 
     function handleClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
-
-        uiState.setListScrollItemId(uiState.list?.type, id);
 
         switch (type) {
             case "exhibitor":
@@ -55,16 +43,13 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                 break;
             }
         }
+
+        setTimeout(() => {
+            uiState.setListScrollItemId(uiState.list?.type, id);
+        }, 50);
     }
 
-    const mapItem = ({ index, listItems, listScrollItemId }: {
-        index: number,
-        listItems: ListItem[],
-        listScrollItemId: number,
-    }) => {
-        const item: ListItem = listItems[index];
-        const highlighted = listScrollItemId?.toString() === item.id?.toString();
-
+    function mapItem(item: ListItem, highlighted: boolean) {
         if (item instanceof Exhibitor) {
             return (
                 <EntityItem
@@ -113,7 +98,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
             );
         } else if (item instanceof ScheduleItem) {
             const booth = item.boothId ? boothStore.booths.find((b) => b.id === item.boothId) : null;
-
             return (
                 <EntityItem
                     onClick={handleClick}
@@ -131,31 +115,32 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
     };
 
     const listScrollItemId = uiState.listScrollItemId;
-    const listItems = uiState.listItems;
-    const timer = useRef(null);
+
+    useEffect(() => {
+        if (listRef.current) {
+            listRef.current.scrollToIndex(uiState.listScrollIndex)
+        }
+    }, [uiState.listScrollIndex]);
 
     return (
         <div style={{ height: "100%", cursor: "pointer" }}>
-            {scrollableRef && (
+            {updatedScrollableRef && (
                 <Virtuoso
                     className="list-virtual"
                     style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
                     ref={listRef}
-                    itemContent={(index) => mapItem({
-                        index,
-                        listItems,
-                        listScrollItemId,
-                    })}
+                    data={uiState.listItems}
+                    itemContent={(_, item) => {
+                        const highlighted = listScrollItemId?.toString() === item.id?.toString();
+                        return mapItem(item, highlighted);
+                    }}
                     itemsRendered={() => updateScroll && setTimeout(updateScroll)}
                     totalListHeightChanged={() => updateScroll && updateScroll()}
-                    customScrollParent={scrollableRef.current}
+                    customScrollParent={updatedScrollableRef.current}
                     totalCount={uiState.listItems.length}
-                    initialTopMostItemIndex={uiState.listScrollIndex}
-                    isScrolling={() => {
-                        // TODO: 
-                        // clearTimeout(timer.current);
-                        // timer.current = setTimeout(() => uiState.clearListScrollItemId(), 5000);
-                    }}
+                    overscan={400}
+                    increaseViewportBy={400}
+                    initialItemCount={Math.min(uiState.listScrollIndex + 1, uiState.listItems.length)}
                 />
             )}
         </div>
