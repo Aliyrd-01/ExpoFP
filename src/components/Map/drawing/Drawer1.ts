@@ -201,10 +201,10 @@ function createGl(canvas: HTMLCanvasElement) {
         if (!ext) logger.warn("OES_element_index_uint not supported");
     }
     const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
-    const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-    const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-    logger.log("GPU vendor:", vendor);
-    logger.log("GPU renderer:", renderer);
+    if (debugInfo) {
+        logger.log("GPU vendor:", gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL));
+        logger.log("GPU renderer:", gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL));
+    }
     logger.log("GL version:", gl.getParameter(gl.VERSION));
     logger.log("GL MAX_TEXTURE_SIZE", gl.getParameter(gl.MAX_TEXTURE_SIZE));
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
