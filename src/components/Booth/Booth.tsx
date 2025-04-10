@@ -6,7 +6,6 @@ import { RegularBooth, SpecialBooth } from "../../store/BoothStore";
 import settings from "../../tools/settings";
 import { remsToPixels } from "../../utils";
 import { t } from "../../utils/i18n";
-import ExhibitorRow from "../ExhibitorRow";
 import OverlayContent from "../OverlayContent";
 import Schedule from "../Schedule";
 import SidebarActions from "../SidebarActions";

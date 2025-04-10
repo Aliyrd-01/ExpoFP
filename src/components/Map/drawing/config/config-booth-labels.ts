@@ -287,7 +287,7 @@ class BoothLabelDrawer extends BoothDrawerBase<RectPainter, RectPainterOptions> 
         const r = b.rect;
 
         const { pRatio, fSize } = this.adjustRatioAndFontSize(fontSize);
-        const canvas = createLabelCanvas(b.name, fSize, pRatio, color, 500);
+        const canvas = createLabelCanvas(b.title || b.name, fSize, pRatio, color, 500);
         const w = canvas.width / 2;
         const h = canvas.height / 2;
 

@@ -110,6 +110,9 @@ function Search() {
         },
         get placeHolder() {
             if (settings.EXPO.startsWith("jetlag")) return "Search location or artist";
+            if (uiState.heatmapYah) {
+                return t("Find scans above");
+            }
             return exhibitorStore.exhibitors.length === 0
                 ? t("Search {{boothTerm}}", { boothTerm: data.boothTerm.toLowerCase() })
                 : t("Search company, {{boothTerm}} or category", { boothTerm: data.boothTerm.toLowerCase() });

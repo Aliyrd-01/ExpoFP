@@ -23,6 +23,17 @@ function measureText(font: string, text: string) {
     return ctx.measureText(text).width;
 }
 
+export function getBase64CanvasImage(canvasDescriptor: CanvasDescriptor) {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasDescriptor.width;
+    canvas.height = canvasDescriptor.height;
+
+    const ctx = canvas.getContext('2d');
+    canvasDescriptor.draw(ctx);
+
+    return canvas.toDataURL();
+}
+
 export function createLabelCanvas(
     text: string,
     fontSize: number,
@@ -78,7 +89,7 @@ export function createDetailsCanvas(
         } else if (b.reserved) {
             lines.push(t("Reserved"));
         } /*else if (b.exhibitors.length) {
-<<<<<<< HEAD
+
         lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
     } */ else if (!onlyId) {
             lines.push(...b.exhibitors.map((e) => e.name).sort((a, b) => (a > b ? 1 : -1)));
@@ -104,7 +115,7 @@ export function createDetailsCanvas(
     const detailFont = getFont(detailFontSize, detailWeight || 300);
     const boothPadding = 1 * pixelRatio;
 
-    let mainLine = b.name;
+    let mainLine = b.title || b.name;
     // if (b.special === false || fixBooth) {
     //     mainLine = b.name;
     // } else if (b.special === true) {
@@ -208,7 +219,7 @@ export function createExhibitorsDetailsCanvas(
         }
     });
 
-    if (!onlyMain) detailsLines.push(b.name);
+    if (!onlyMain) detailsLines.push(b.title || b.name);
 
     if (uiState.heatmap) {
         const clicks = heatmapStore.getTotalClicksByBooth(b);
@@ -373,11 +384,17 @@ export function createArrowCurrentCanvas(
 export function createCurrentCanvas(
     pixelRatio: number,
     color: string = "#c8248b",
+    width: number = 95,
+    height: number = 95,
+    text?: string,
+    textColor: string = "#000",
     scale: number = pixelRatio * 0.4
 ): CanvasDescriptor {
+    const w = width * scale;
+    const h = height * scale;
     return {
-        width: 95 * scale,
-        height: 95 * scale,
+        width: w,
+        height: h,
         draw(ctx) {
             ctx.scale(scale, scale);
 
@@ -402,6 +419,16 @@ export function createCurrentCanvas(
             ctx.bezierCurveTo(60.0, 21.192881, 48.807119, 10.0, 35.0, 10.0);
             ctx.bezierCurveTo(21.192881, 10.0, 10.0, 21.192881, 10.0, 35.0);
             ctx.fill();
+
+            if (text) {
+                ctx.textAlign = "center";
+                ctx.textBaseline = "alphabetic";
+
+                ctx.font = getFont(38);
+                ctx.fillStyle = textColor;
+
+                ctx.fillText(text, 35, height, width);
+            }
         },
     };
 }

@@ -1,0 +1,43 @@
+name: Publish Release
+
+on:
+  # Trigger the workflow on a schedule (daily at 00:00 UTC)
+  schedule:
+    - cron: '0 0 * * *'
+  # Allow manual triggering of the workflow
+  workflow_dispatch:
+
+jobs:
+  publish_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Find and publish draft release using GitHub API
+        id: publish_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          API_URL: https://api.github.com
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Retrieving list of releases..."
+          # Get the list of releases for the repository
+          RELEASES=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" "${API_URL}/repos/${REPO}/releases")
+          
+          # Find the first release with draft == true
+          DRAFT_RELEASE_ID=$(echo "$RELEASES" | jq -r '.[] | select(.draft==true) | .id' | head -n1)
+          
+          if [ -n "$DRAFT_RELEASE_ID" ] && [ "$DRAFT_RELEASE_ID" != "null" ]; then
+            echo "Found draft release with ID: $DRAFT_RELEASE_ID. Publishing..."
+            # Publish the draft release by updating its draft property to false
+            curl -s -X PATCH \
+              -H "Authorization: token ${GITHUB_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d '{"draft": false}' \
+              "${API_URL}/repos/${REPO}/releases/${DRAFT_RELEASE_ID}"
+            echo "released=true" >> $GITHUB_OUTPUT
+          else
+            echo "No draft releases found."
+            echo "released=false" >> $GITHUB_OUTPUT
+          fi

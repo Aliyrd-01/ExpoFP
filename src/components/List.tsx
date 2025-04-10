@@ -2,6 +2,9 @@ import { useObserver } from "mobx-react-lite";
 import React, { RefObject, useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import { uiState } from "../store";
+import "./List.scss";
+import { HeatmapYah } from "../store/HeatmapStore";
+import YahRow from "./YahRow";
 import { Language } from "../store/LanguageStore";
 import type { ListItem } from "../store/types";
 import LanguageRow from "./LanguageRow";
@@ -28,18 +31,11 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
     const mapItem = ({ index }: { index: number }) => {
         const item: ListItem = uiState.listItems[index];
         const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
-        // if (item instanceof Exhibitor) {
-        //     return <ExhibitorRow key={index} exhibitor={item} className={cls} />;
-        // } else if (item instanceof BoothBase) {
-        //     return <BoothRow key={index} className={cls} booth={item} />;
-        // } else if (item instanceof Category) {
-        //     return <CategoryRow key={index} className={cls} category={item} />;
-        // } else if (item instanceof ScheduleItem) {
-        //     return <ScheduleItemRow key={index} className={cls} item={item} />;
-        //} else
 
         if (item instanceof Language) {
             return <LanguageRow key={index} item={item} />;
+        } else if (item instanceof HeatmapYah) {
+            return <YahRow key={index} yah={item} className={cls} />
         } else {
             throw new Error("Invalid item type");
         }

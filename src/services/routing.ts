@@ -195,14 +195,28 @@ function processURLParams() {
         const heatmapParamValue = url.searchParams.get("heatmap");
 
         if (heatmapParamValue === "true") {
-            url.searchParams.delete("heatmap");
+            if (url.searchParams.get("type") === "yah") {
+                let newSearch = url.search;
+                newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+                disableHistoryManipulation = true;
 
-            let newSearch = url.search;
-            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-            disableHistoryManipulation = true;
+                historyReplace(newSearch);
 
-            historyReplace(newSearch);
-            store.uiState.heatmap = true;
+                store.uiState.heatmapYah = true;
+                store.uiState.monochrome = true;
+                store.uiState.hideLogoInBooth = true;
+                store.uiState.hideHeaderLogo = true;
+                store.uiState.disableBookmarked = true;
+            } else {
+                url.searchParams.delete("heatmap");
+
+                let newSearch = url.search;
+                newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+                disableHistoryManipulation = true;
+
+                historyReplace(newSearch);
+                store.uiState.heatmap = true;
+            }
         }
     }
 
@@ -425,7 +439,6 @@ export function initRouting(offHistory = false) {
 
     unlisten = history.listen((location, action) => {
         if (disableHistoryManipulation) return;
-
         routeHistory.push(getHistoryUrl(location.search));
 
         logger.log("history", action, location);
