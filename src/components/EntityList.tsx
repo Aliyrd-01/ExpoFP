@@ -11,6 +11,8 @@ import type { ListItem } from "../store/types";
 import EntityItem, { EntityItemType } from "./EntityItem";
 import "./EntityList.scss";
 import data from "../data";
+import { HeatmapYah } from "../store/HeatmapStore";
+import YahRow from "./YahRow";
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -49,7 +51,7 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
         }, 50);
     }
 
-    function mapItem(item: ListItem, highlighted: boolean) {
+    function mapItem(item: ListItem, highlighted: boolean, index: number) {
         if (item instanceof Exhibitor) {
             return (
                 <EntityItem
@@ -111,6 +113,9 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     highlighted={highlighted}
                 />
             );
+        } else if (item instanceof HeatmapYah) {
+            const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
+            return <YahRow key={item.id.toString()} yah={item} className={cls} />;
         }
     };
 
@@ -130,9 +135,9 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
                     ref={listRef}
                     data={uiState.listItems}
-                    itemContent={(_, item) => {
+                    itemContent={(index, item) => {
                         const highlighted = listScrollItemId?.toString() === item.id?.toString();
-                        return mapItem(item, highlighted);
+                        return mapItem(item, highlighted, index);
                     }}
                     itemsRendered={() => updateScroll && setTimeout(updateScroll)}
                     totalListHeightChanged={() => updateScroll && updateScroll()}
