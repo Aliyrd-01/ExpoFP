@@ -16,7 +16,10 @@ export async function initOfflineManager(
         const scope = "/";
 
         const hasActivationKey = activationKeys.some(
-            key => searchParams.has(key) && searchParams.get(key) !== "0",
+            key => (
+                searchParams.has(key)
+                && (searchParams.get(key) !== "0" || searchParams.get(key) !== "none")
+            ),
         );
 
         if (command === "1" || hasActivationKey) {

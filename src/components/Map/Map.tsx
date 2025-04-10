@@ -365,7 +365,7 @@ export default function Map() {
     }
 
     function handleMouseMoveAndOver(e) {
-        if (!uiState?.rootElement || !s?.drawer) return;
+        if (!uiState?.rootElement || !s?.drawer || uiState.kioskSetup) return;
 
         const { left, top } = uiState.rootElement.getBoundingClientRect();
 
@@ -402,6 +402,10 @@ export default function Map() {
             );
 
             uiState.onGetCoordsClick({ x: xys[0], y: xys[1], z: currentFloor?.name || null });
+        }
+
+        if (uiState.kioskSetup) {
+            return;
         }
 
         if (uiState.onMarkerClick) {

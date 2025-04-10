@@ -16,7 +16,7 @@ import { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
-import { Route } from "./RouteStore";
+import { Kiosk, Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
@@ -53,6 +53,9 @@ export default class UIState {
     @observable canvasStarted = false;
     @observable kiosk = false;
     @observable inIdle = false;
+    @observable kioskSetup = false;
+    @observable kioskSetupData: Kiosk | null = null;
+    @observable kioskList: Kiosk[] = [];
     @observable modalActive = { share: false };
     @observable galleryActive = false;
     @observable hideOverlay = false;
@@ -72,6 +75,7 @@ export default class UIState {
     @observable mapControlsHidden = false;
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
+    @observable kioskSetupDOMRect: DOMRect;
 
     @computed get highlightedBooths() {
         const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
@@ -296,6 +300,10 @@ export default class UIState {
         return (this.wsPosition === "top" ? this.wsOccupiedHeightPx : 0) + this.headerHeightPx;
     }
     @computed get mapVisibleBottom() {
+        if (this.kioskSetup) {
+            return this.kioskSetupDOMRect?.height || 0;
+        }
+
         if (this.overlayLeft || this.noOverlay) {
             return this.wsPosition === "bottom" ? this.wsOccupiedHeightPx : 0;
         }
@@ -349,7 +357,14 @@ export default class UIState {
     ///////////////////////////////////////////////////////////////////////////
     // filtering
     @computed get dimmed() {
-        return this.highlightedBooths.size > 0 || (this.list?.type === "search" && this.list?.text?.trim().length > 0);
+        if (this.kioskSetup) {
+            return true;
+        }
+
+        return (
+            this.highlightedBooths.size > 0
+            || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
+        );
     }
 
     @computed get searchItems(): ListItem[] {

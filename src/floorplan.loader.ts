@@ -272,7 +272,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], ["kkiosk", "kiosk", "k"]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], ["kkiosk", "yah", "kiosk", "k"]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
@@ -408,12 +408,14 @@ export default class FloorPlanLoader implements FloorPlan {
             try {
                 const iconEntries = await Promise.allSettled(
                     Object.entries({
-                        departure: "icons/departure.svg",
-                        destination: "icons/destination.svg",
-                        direction: "icons/direction.svg",
-                        transition: "icons/transition.svg",
-                        transition_up: "icons/transition_up.svg",
-                        transition_down: "icons/transition_down.svg",
+                        "departure": "icons/departure.svg",
+                        "destination": "icons/destination.svg",
+                        "direction": "icons/direction.svg",
+                        "transition": "icons/transition.svg",
+                        "transition_up": "icons/transition_up.svg",
+                        "transition_down": "icons/transition_down.svg",
+                        "kiosk-arrow": "icons/kiosk-arrow.svg",
+                        "kiosk-label": "icons/kiosk-label.svg",
                     }).map(([key, path]) =>
                         loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(
                             (image) => [key, image] as [string, HTMLImageElement]

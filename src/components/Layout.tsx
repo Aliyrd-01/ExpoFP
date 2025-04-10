@@ -33,6 +33,7 @@ import {
 import HeatmapLegend from "./HeatmapLegend";
 import { useReaction } from "../utils/mobx";
 import trackEvent from "../tools/track-event";
+import KioskSetup from "./KioskSetup";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -126,7 +127,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 <LogoOverlay />
                 {!uiState.hideHeaderLogo && store.initialized && <Ws />}
                 {!uiState.mapControlsHidden && <Controls />}
-                {uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {uiState.kiosk && uiState.inIdle && !uiState.kioskSetup && <TouchHand />}
                 {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
                 {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
@@ -186,6 +187,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 ) : null}
                 <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
+                <KioskSetup />
             </div>
         </div>
     );

@@ -11,19 +11,21 @@ import { getGraphLines } from "../../../../utils/wayfinding";
 import { fpGeo } from "../../../Mapbox/utils/fpGeo";
 import { DrawerContext } from "../Drawer1";
 import RectPainter from "../painters/RectPainter";
-import { CurrentPosition } from "./../../../../store/RouteStore";
+import { CurrentPosition, Kiosk } from "./../../../../store/RouteStore";
 import { RouteLine } from "./../../../../utils/wayfinding";
 import {
     createArrowCurrentCanvas,
     createCircleCanvas,
     createCurrentCanvas,
     createImageCanvas,
+    createLabelCanvas,
     createTargetCanvas,
     createYahCanvas,
 } from "./canvases";
 import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
 import { Booth } from "../../../../store/BoothStore";
+import { RouteCutIn } from "../../../../RouteCutIn";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -139,12 +141,15 @@ function drawLines(
     wfDrawer: RectPainter,
     pointDrawer: RectPainter,
     transitionDrawer: RectPainter,
+    trailDrawer: RectPainter,
     transitionsCollector: IDynamicObjects,
+    trailPointsCollector: IDynamicObjects,
     ptscale: number,
     pixelRatio: number,
 ): Rectangle {
     routePoints.forEach((rp, i) => pointDrawer.updateVisible(`Dot_${i}`, false));
     transitionsCollector.clear();
+    trailPointsCollector.clear();
 
     routePoints = [];
 
@@ -176,6 +181,20 @@ function drawLines(
         }
     }
 
+    const currentLayerName = store.routeStore.currentRouteLayer?.name;
+    const routeCutIn = getRouteCutIt();
+    const isRouteCutInLayer = (
+        routeCutIn
+        && strEqual(currentLayerName, routeCutIn.destination?.layer)
+    );
+
+    if (routeCutIn) {
+        const cutInPoint = routeCutIn?.routePoint;
+        if (cutInPoint && strEqual(currentLayerName, cutInPoint.layer)) {
+            routePoints = trimPointsToCutIn(cutInPoint, routePoints);
+        }
+    }
+
     routePoints.forEach((point, i) => {
         pointDrawer.updateCenter(`Dot_${i}`, [point.x, point.y]);
         pointDrawer.updateVisible(`Dot_${i}`, true);
@@ -184,9 +203,14 @@ function drawLines(
 
     if (routePoints.length) {
         const { from, to } = uiState.selectedRoute || {};
-        const currentLayerName = store.routeStore.currentRouteLayer?.name;
 
-        attachEndpoints(wfDrawer, routePoints, from, to, currentLayerName);
+        attachEndpoints(
+            wfDrawer,
+            routePoints,
+            (from as RouteCutIn)?.type === "route-cut-in" ? null : from,
+            to,
+            currentLayerName,
+        );
 
         attachTransitions(
             transitionDrawer,
@@ -197,16 +221,30 @@ function drawLines(
             uiState.getRouteNextFloor,
             pixelRatio,
         );
+
+        if (isRouteCutInLayer) {
+            const departurePoint = routePoints[routePoints.length - 1];
+            attachTrailPoints(
+                trailDrawer,
+                pixelRatio,
+                ptscale,
+                pointSize,
+                Color("#b5b7bc").hex(),
+                departurePoint,
+                routeCutIn.destination,
+                trailPointsCollector,
+            );
+        }
     } else {
         wfDrawer.updateVisible("destinationLocation", false);
         wfDrawer.updateVisible("sourceLocation", false);
     }
 
-    var x1 = 1000000;
-    var y1 = 1000000;
+    let x1 = 1000000;
+    let y1 = 1000000;
 
-    var x2 = 0;
-    var y2 = 0;
+    let x2 = 0;
+    let y2 = 0;
 
     routePoints.forEach((l) => {
         if (l.x < x1) x1 = l.x;
@@ -216,7 +254,14 @@ function drawLines(
         if (l.y > y2) y2 = l.y;
     });
 
-    var rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
+    let rect = Rectangle.fromX1y1x2y2(x1, y1, x2, y2);
+
+    if (isRouteCutInLayer) {
+        rect = Rectangle.fromMultiple([
+            rect,
+            routeCutIn.getDestinationRect(),
+        ]);
+    }
 
     return routePoints.length && (rect.w || rect.h) ? rect.withPadding(rect.w, rect.h) : null;
 }
@@ -307,6 +352,12 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
     const wfDrawer = context.requirePainter("WF", RectPainter, painterOrderPriority + 2, visible);
     const transitionDrawer = context.requirePainter("TRANSITION", RectPainter, painterOrderPriority + 2, visible);
     const transitionsCollector = new DynamicObjects(transitionDrawer);
+
+    const trailDrawer = context.requirePainter("TRAIL", RectPainter, painterOrderPriority, visible);
+    const trailPointsCollector = new DynamicObjects(trailDrawer);
+
+    const kioskIconDrawer = context.requirePainter("KIOSK_ICON", RectPainter, painterOrderPriority + 3, visible);
+    const kioskIconCollector = new DynamicObjects(kioskIconDrawer);
 
     const pointCanvas = createCircleCanvas(6, context.pixelRatio, Color("#A4CCE3").hex());
 
@@ -441,6 +492,57 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
         visible: isDebug,
     });
 
+    reaction(
+        () => [
+            uiState.kioskList,
+            uiState.kioskSetup,
+            uiState.kioskSetupData,
+            layersStore.floors.find(f => f.active),
+            context.pixelRatio,
+            context.ptscale,
+        ] as const,
+        ([kioskList, kioskSetup, kioskSetupData, activeFloor, pixelRatio]) => {
+            context.requireUpdate(() => {
+                kioskIconCollector.clear();
+
+                if (kioskSetup) {
+                    kioskList
+                        .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
+                        .forEach(kiosk => {
+                            attachKioskIcon(
+                                kiosk,
+                                kioskIconDrawer,
+                                kioskIconCollector,
+                                {
+                                    skipdim: false,
+                                    visible: true,
+                                    pixelRatio,
+                                    label: kiosk.key,
+                                },
+                            );
+                        });
+                }
+
+                if (kioskSetupData && kioskSetupData?.z === activeFloor?.name) {
+                    attachKioskIcon(
+                        kioskSetupData,
+                        kioskIconDrawer,
+                        kioskIconCollector,
+                        {
+                            skipdim: true,
+                            visible: true,
+                            pixelRatio,
+                            label: kioskSetup ? kioskSetupData.key : "",
+                        },
+                    );
+                }
+
+                kioskIconDrawer.reinitializeBuffers();
+            });
+        },
+        { delay: 50 },
+    );
+
     wfDrawer.updateSkipdim("sourceLocation", true);
     wfDrawer.updateSkipdim("destinationLocation", true);
     wfDrawer.updateSkipdim("currentLocation", false);
@@ -452,6 +554,7 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
         for (let i = 0; i < routePoints.length; i++) pointDrawer.updateVisible(`Dot_${i}`, false);
         transitionsCollector.clear();
+        trailPointsCollector.clear();
         wfDrawer.updateVisible("sourceLocation", false);
         wfDrawer.updateVisible("destinationLocation", false);
 
@@ -475,7 +578,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                 wfDrawer,
                 pointDrawer,
                 transitionDrawer,
+                trailDrawer,
                 transitionsCollector,
+                trailPointsCollector,
                 scale || 3,
                 context.pixelRatio,
             );
@@ -599,7 +704,9 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                         wfDrawer,
                         pointDrawer,
                         transitionDrawer,
+                        trailDrawer,
                         transitionsCollector,
+                        trailPointsCollector,
                         s,
                         context.pixelRatio,
                     );
@@ -673,15 +780,9 @@ function attachTransitions(
             return l.virtual && (strEqual(l.p0.layer, currentLayerName) || strEqual(l.p1.layer, currentLayerName));
         }
         return l.virtual;
-    }).flatMap(l => {
-        if (currentLayerName && strEqual(l.p0.layer, currentLayerName)) {
-            return [l.p0];
-        } else if (currentLayerName && strEqual(l.p1.layer, currentLayerName)) {
-            return [l.p1];
-        } else {
-            return [l.p0, l.p1];
-        }
-    }).forEach((point, i) => {
+    }).flatMap(
+        l => [l.p0, l.p1]
+    ).forEach((point, i) => {
         let trasitionCanvas = createCurrentCanvas(pixelRatio, fromColor.hex());
 
         if (store.fp.icons.get("transition")) {
@@ -709,7 +810,7 @@ function attachTransitions(
             ],
             canvasTmp: trasitionCanvas,
             texPosition: "lefttop",
-            visible: true,
+            visible: strEqual(currentLayerName, point.layer),
         });
         idCollector.add(id);
         drawer.updateSkipdim(id, true);
@@ -792,3 +893,191 @@ function attachEndpoints(
     updateEndpoint("sourceLocation", closestPoints.sourceLocation, isFromLayer, points[points.length - 1]);
     updateEndpoint("destinationLocation", closestPoints.destinationLocation, isToLayer, points[0]);
 }
+
+function attachTrailPoints(
+    drawer: RectPainter,
+    pixelRatio: number,
+    ptscale: number,
+    pointSize: number,
+    color: string,
+    fromPoint: Point,
+    toPoint: Point,
+    idCollector: IDynamicObjects,
+) {
+    const size = 4;
+    const points = splitPolyLine([{ p0: fromPoint, p1: toPoint }], Math.max(pointSize * 2 * ptscale, pointSize));
+
+    if (points.length < 2) return;
+
+    const dx = toPoint.x - fromPoint.x;
+    const dy = toPoint.y - fromPoint.y;
+    const distance = Math.hypot(dx, dy);
+
+    const midPoint = {
+        x: (fromPoint.x + toPoint.x) / 2,
+        y: (fromPoint.y + toPoint.y) / 2 - distance * 0.2,
+    };
+
+    const allPoints = [fromPoint, midPoint, toPoint];
+    const trailCanvas = createCircleCanvas(size, pixelRatio, color);
+
+    points.forEach((_, i, arr) => {
+        const t = (i + 1) / (arr.length + 1);
+        const p = bezierCurve(allPoints, t);
+
+        const id = `trail_${i}`;
+        drawer.addObject({
+            id,
+            center: [p.x, p.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [-trailCanvas.width / 2, -trailCanvas.height / 2, trailCanvas.width, trailCanvas.height],
+            canvasTmp: trailCanvas,
+            texPosition: "lefttop",
+            visible: true,
+        });
+
+        idCollector.add(id);
+        drawer.updateSkipdim(id, true);
+    });
+
+    drawer.reinitializeBuffers();
+}
+
+function bezierCurve(points: Point[], t: number): Point {
+    if (points.length === 1) {
+        return points[0];
+    }
+
+    const newPoints: Point[] = [];
+    for (let i = 0; i < points.length - 1; i++) {
+        const x = (1 - t) * points[i].x + t * points[i + 1].x;
+        const y = (1 - t) * points[i].y + t * points[i + 1].y;
+        newPoints.push({ x, y });
+    }
+
+    return bezierCurve(newPoints, t);
+}
+
+function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
+    if (!cutInPoint || !points.length) {
+        return points;
+    }
+
+    const closestIndex = points.reduce(
+        (minIndex, p, i) => (lineLength(cutInPoint, p) < lineLength(cutInPoint, points[minIndex]) ? i : minIndex),
+        0
+    );
+
+    return points.slice(0, closestIndex);
+}
+
+function getRouteCutIt(): RouteCutIn {
+    if ((store.uiState.selectedRoute?.from as RouteCutIn)?.type === "route-cut-in") {
+        return store.routeStore.defaultFrom as RouteCutIn;
+    }
+    return null;
+}
+
+function attachKioskIcon(
+    kiosk: Kiosk,
+    drawer: RectPainter,
+    idCollector: IDynamicObjects,
+    options: {
+        skipdim: boolean;
+        visible: boolean;
+        pixelRatio: number;
+        label?: string;
+    },
+) {
+    const key = kiosk.key || "";
+    const percent = 55;
+
+    const arrowIconCanvas = createImageCanvas(
+        store.fp.icons.get("kiosk-arrow"),
+        decreaseByPercentage(125, percent),
+        decreaseByPercentage(131, percent),
+        options.pixelRatio,
+    );
+    const arrowIconID = `kiosk_arrow_${key}`;
+    drawer.addObject({
+        id: arrowIconID,
+        center: [kiosk.x, kiosk.y],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -arrowIconCanvas.width / 2,
+            -arrowIconCanvas.height / 2,
+            arrowIconCanvas.width,
+            arrowIconCanvas.height,
+        ],
+        canvasTmp: arrowIconCanvas,
+        texPosition: "lefttop",
+        rotateRadians: toRadians(kiosk.heading),
+        visible: options.visible,
+    });
+    drawer.updateSkipdim(arrowIconID, options.skipdim);
+    idCollector.add(arrowIconID);
+
+    const height = arrowIconCanvas.height / 4;
+
+    const labelIconCanvas = createImageCanvas(
+        store.fp.icons.get("kiosk-label"),
+        decreaseByPercentage(148, percent),
+        decreaseByPercentage(114, percent),
+        options.pixelRatio,
+    );
+    const labelIconID = `kiosk_label_icon_${key}`;
+    drawer.addObject({
+        id: labelIconID,
+        center: [kiosk.x, kiosk.y],
+        deltas: [0, 0, 0, 0],
+        deltaPts: [
+            -labelIconCanvas.width / 2,
+            height,
+            labelIconCanvas.width,
+            labelIconCanvas.height + height,
+        ],
+        canvasTmp: labelIconCanvas,
+        texPosition: "lefttop",
+        rotateRadians: 0,
+        visible: options.visible,
+    });
+    drawer.updateSkipdim(labelIconID, options.skipdim);
+    idCollector.add(labelIconID);
+
+    if (options.label) {
+        const labelTextId = `kiosk_label_text_${key}`;
+        const labelFontSize = 18;
+        const labelTextCanvas = createLabelCanvas(
+            options.label.toLocaleUpperCase(),
+            labelFontSize,
+            options.pixelRatio,
+            "white",
+            400,
+            "#F53C29",
+            8,
+        );
+        const gap = 14;
+        const textHeight = height + gap;
+        drawer.addObject({
+            id: labelTextId,
+            center: [kiosk.x, kiosk.y],
+            deltas: [0, 0, 0, 0],
+            deltaPts: [
+                -labelTextCanvas.width / 2,
+                -(labelTextCanvas.height + textHeight),
+                labelTextCanvas.width,
+                labelTextCanvas.height + textHeight,
+            ],
+            canvasTmp: labelTextCanvas,
+            texPosition: "lefttop",
+            rotateRadians: 0,
+            visible: options.visible,
+        });
+        drawer.updateSkipdim(labelTextId, options.skipdim);
+        idCollector.add(labelTextId);
+    }
+}
+
+function decreaseByPercentage(num: number, percentage: number) {
+    return num * (1 - percentage / 100);
+};
