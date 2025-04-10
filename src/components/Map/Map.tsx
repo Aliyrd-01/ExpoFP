@@ -202,6 +202,12 @@ export default function Map() {
             // // ask map to move to this exhibitor
             const rects = uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect) as Rect[];
             if (rects.length === 0) return;
+
+            // TODO: add only when kiosk is at current level
+            if (uiState.kioskSetupData) {
+                rects.push(Rect.fromXywh(uiState.kioskSetupData.x, uiState.kioskSetupData.y, 1, 1));
+            }
+
             moveToRect(Rect.fromMultiple(rects));
             uiState.moveToBooths = null;
 
@@ -263,7 +269,19 @@ export default function Map() {
 
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
-        const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
+
+        let visibleRect = uiState.canvasVisibleRectPx;
+        if (uiState.kioskSetupData) {
+            visibleRect = Rect.fromX1y1x2y2(
+                uiState.mapVisibleStart,
+                visibleRect.y1,
+                visibleRect.x2,
+                visibleRect.y2,
+            );
+        }
+
+        // TODO: s.zoom.scaleExtent()[0]
+        const z = getTramsformToCenterSvgRect(rect, visibleRect, Math.max(zoomScale, maxZoomScale));
         zoomTo(z, animate);
     }
 
