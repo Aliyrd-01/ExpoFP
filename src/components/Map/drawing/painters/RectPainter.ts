@@ -79,7 +79,6 @@ export default class RectPainter implements Painter {
 
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentShader]);
         // https://expofp.atlassian.net/browse/EFP-4685
-        // https://twgljs.org/docs/module-twgl.html#.createProgramInfo
         if (!this.programInfo) throw new Error("Failed to link or compile WebGL program (RectPainter)");
         this.program = this.programInfo.program;
 

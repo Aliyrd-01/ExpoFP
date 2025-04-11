@@ -39,7 +39,6 @@ export default class TrianglePainter implements Painter {
         this.gl = gl;
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
         // https://expofp.atlassian.net/browse/EFP-4685
-        // https://twgljs.org/docs/module-twgl.html#.createProgramInfo
         if (!this.programInfo) throw new Error("Failed to link or compile WebGL program (TrianglePainter)");
         this.program = this.programInfo.program;
         this.posLocation = gl.getAttribLocation(this.program, "a_pos");

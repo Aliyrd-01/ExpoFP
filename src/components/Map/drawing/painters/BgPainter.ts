@@ -29,8 +29,7 @@ export default class BgPainter implements Painter {
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
-        // https://expofp.atlassian.net/browse/EFP-4685
-        // https://twgljs.org/docs/module-twgl.html#.createProgramInfo
+		// https://expofp.atlassian.net/browse/EFP-4685
         if (!this.programInfo) throw new Error("Failed to link or compile WebGL program (BgPainter)");
         this.program = this.programInfo.program;
 
