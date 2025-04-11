@@ -31,6 +31,7 @@ import configInertia from "./zoom-inertia";
 import ImagePainter from "./drawing/painters/ImagePainter";
 import isMobile from "../../utils/is-mobile";
 import isWebview from "../../utils/is-webview";
+import { areLayersEnabled } from "../../utils/areLayersEnabled";
 
 //console.log('isIframe', isIframe)
 
@@ -203,8 +204,13 @@ export default function Map() {
             const rects = uiState.moveToBooths.filter((b) => b.rect).map((b) => b.rect) as Rect[];
             if (rects.length === 0) return;
 
-            // TODO: add only when kiosk is at current level
-            if (uiState.kioskSetupData) {
+            if (
+                uiState.kioskSetupData
+                && (
+                    areLayersEnabled()
+                    && store.routeStore.defaultFrom?.layer?.name === store.routeStore.currentRouteLayer?.name
+                )
+            ) {
                 rects.push(Rect.fromXywh(uiState.kioskSetupData.x, uiState.kioskSetupData.y, 1, 1));
             }
 
@@ -280,7 +286,6 @@ export default function Map() {
             );
         }
 
-        // TODO: s.zoom.scaleExtent()[0]
         const z = getTramsformToCenterSvgRect(rect, visibleRect, Math.max(zoomScale, maxZoomScale));
         zoomTo(z, animate);
     }
