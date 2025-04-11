@@ -11,7 +11,6 @@ import isWebview from "../../../../utils/is-webview";
 
 const isMobileDevice = isMobile || isWebview;
 
-
 export default class RectPainter implements Painter {
     readonly gl: WebGLRenderingContext;
     private buffersInitialized = true;
@@ -79,6 +78,9 @@ export default class RectPainter implements Painter {
         }
 
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentShader]);
+        // https://expofp.atlassian.net/browse/EFP-4685
+        // https://twgljs.org/docs/module-twgl.html#.createProgramInfo
+        if (!this.programInfo) throw new Error("Failed to link or compile WebGL program (RectPainter)");
         this.program = this.programInfo.program;
 
         this.centerLocation = gl.getAttribLocation(this.program, "a_center");
@@ -661,7 +663,7 @@ export default class RectPainter implements Painter {
     /**
      * Parses the provided color value into a Vec4.
      * Accepts color formats: HEX (#RRGGBB or #RRGGBBAA) and RGBA (rgba(r, g, b, a)).
-     * 
+     *
      * @param color - The color value to parse.
      * @returns A Vec4 representation of the color or `undefined` if parsing fails.
      */
@@ -682,9 +684,13 @@ export default class RectPainter implements Painter {
             const alphaValue = hexMatch[2];
 
             // #fff → #ffffff
-            const fullHex = hexValue.length === 3
-                ? hexValue.split('').map(c => c + c).join('')
-                : hexValue;
+            const fullHex =
+                hexValue.length === 3
+                    ? hexValue
+                          .split("")
+                          .map((c) => c + c)
+                          .join("")
+                    : hexValue;
 
             return this.hexToVec4(fullHex, alphaValue);
         }
@@ -704,7 +710,7 @@ export default class RectPainter implements Painter {
 
     /**
      * Converts a HEX color to Vec4.
-     * 
+     *
      * @param hex - The HEX color value (e.g., "RRGGBB").
      * @param alphaHex - The optional HEX alpha value (e.g., "AA").
      * @returns A Vec4 representation of the color.
@@ -719,7 +725,7 @@ export default class RectPainter implements Painter {
 
     /**
      * Converts an RGBA match array to Vec4.
-     * 
+     *
      * @param match - The RGBA match array from the regex.
      * @returns A Vec4 representation of the color.
      */
@@ -740,10 +746,7 @@ export default class RectPainter implements Painter {
         const limit = 5000;
         const maxLevel = 3;
 
-        return Math.min(
-            data.viewOptimizationLevel ? data.viewOptimizationLevel : Math.floor(this.area / limit),
-            maxLevel
-        );
+        return Math.min(data.viewOptimizationLevel ? data.viewOptimizationLevel : Math.floor(this.area / limit), maxLevel);
     }
 }
 

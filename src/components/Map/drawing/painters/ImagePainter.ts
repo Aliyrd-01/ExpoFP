@@ -10,7 +10,7 @@ import isMobile from "../../../../utils/is-mobile";
 import isWebview from "../../../../utils/is-webview";
 import data from "../../../../data";
 
-const maxImagesSize = (isMobile || isWebview) ? 1024 : 2048;
+const maxImagesSize = isMobile || isWebview ? 1024 : 2048;
 const limitImageSizeCanvas = document.createElement("canvas");
 limitImageSizeCanvas.width = maxImagesSize;
 limitImageSizeCanvas.height = maxImagesSize;
@@ -72,6 +72,9 @@ export default class ImagePainter implements Painter {
     constructor(gl: WebGLRenderingContext) {
         this.gl = gl;
         this.programInfo = twgl.createProgramInfo(gl, [vertexShaderSource, fragmentSharedSource]);
+        // https://expofp.atlassian.net/browse/EFP-4685
+        // https://twgljs.org/docs/module-twgl.html#.createProgramInfo
+        if (!this.programInfo) throw new Error("Failed to link or compile WebGL program (ImagePainter)");
         this.program = this.programInfo.program;
 
         this.centerLocation = gl.getAttribLocation(this.program, "a_center");
@@ -132,7 +135,7 @@ export default class ImagePainter implements Painter {
 
     setDimmingForObjects(cb: (objectId: string) => boolean) {
         if (!cb) return;
-        this.objects.forEach(o => this.updateSkipdim(o.id, cb(o.id)));
+        this.objects.forEach((o) => this.updateSkipdim(o.id, cb(o.id)));
     }
 
     updateStretch(id: string, stretch: boolean) {
@@ -218,10 +221,7 @@ export default class ImagePainter implements Painter {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-        if (
-            data.viewOptimizationLevel > 3
-            && (source.width > maxImagesSize || source.height > maxImagesSize)
-        ) {
+        if (data.viewOptimizationLevel > 3 && (source.width > maxImagesSize || source.height > maxImagesSize)) {
             limitImageSizeCanvasCtx.drawImage(source, 0, 0, limitImageSizeCanvas.width, limitImageSizeCanvas.height);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, limitImageSizeCanvas);
             limitImageSizeCanvasCtx.clearRect(0, 0, limitImageSizeCanvas.width, limitImageSizeCanvas.height);
