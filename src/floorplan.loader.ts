@@ -1,4 +1,4 @@
-import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
+import { KIOSK_ID_KEY, PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
 import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
@@ -272,7 +272,10 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], ["kkiosk", "yah", "kiosk", "k"]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], [
+                // TODO
+                // "kkiosk", "yah", "kiosk", KIOSK_ID_KEY
+            ]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
