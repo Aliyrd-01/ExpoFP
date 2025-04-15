@@ -9,5 +9,6 @@ export const sanitizeStr = (str) => str.trim().replace(/[^a-z0-9]/gi, "");
 export function sanitizeSearch(input: string) {
     return (input || "")
         .replace(/(^|\?|&)utm_[^&]*/g, "")
-        .replace(/(^|\?|&)ref=[^&]*/g, "");
+        .replace(/(^|\?|&)ref=[^&]*/g, "")
+        .replace(/(^|\?|&)fbclid=[^&]*/g, "");
 }
