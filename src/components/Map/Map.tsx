@@ -31,6 +31,7 @@ import configInertia from "./zoom-inertia";
 import ImagePainter from "./drawing/painters/ImagePainter";
 import isMobile from "../../utils/is-mobile";
 import isWebview from "../../utils/is-webview";
+import { areLayersEnabled } from "../../utils/areLayersEnabled";
 
 //console.log('isIframe', isIframe)
 
@@ -259,11 +260,32 @@ export default function Map() {
     ));
 
     function moveToRect(rect: Rect, maxZoomScale: number = 10, animate: boolean = true) {
-        rect = Rect.fromX1y1x2y2(rect.x1 - uiState.kioskRectPadding * rect.w, rect.y1, rect.x2, rect.y2);
+        let newRect = Rect.fromX1y1x2y2(rect.x1 - uiState.kioskRectPadding * rect.w, rect.y1, rect.x2, rect.y2);
 
         if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
-        const z = getTramsformToCenterSvgRect(rect, uiState.canvasVisibleRectPx, Math.max(zoomScale, maxZoomScale));
+
+        let visibleRect = uiState.canvasVisibleRectPx;
+        if (
+            uiState.kioskSetupData
+            && (
+                areLayersEnabled()
+                && store.routeStore.defaultFrom?.layer?.name === store.routeStore.currentRouteLayer?.name
+            )
+        ) {
+            visibleRect = Rect.fromX1y1x2y2(
+                uiState.mapVisibleStart,
+                visibleRect.y1,
+                visibleRect.x2,
+                visibleRect.y2,
+            );
+            newRect = Rect.fromMultiple([
+                newRect,
+                Rect.fromXywh(uiState.kioskSetupData.x, uiState.kioskSetupData.y, 1, 1)
+            ]);
+        }
+
+        const z = getTramsformToCenterSvgRect(newRect, visibleRect, Math.max(zoomScale, maxZoomScale));
         zoomTo(z, animate);
     }
 
