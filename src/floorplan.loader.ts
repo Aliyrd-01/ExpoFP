@@ -272,10 +272,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], [
-                // TODO
-                // "kkiosk", "yah", "kiosk", KIOSK_ID_KEY
-            ]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], ["kkiosk", "yah", "kiosk", KIOSK_ID_KEY]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
