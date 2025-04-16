@@ -10,5 +10,6 @@ export function sanitizeSearch(input: string) {
     return (input || "")
         .replace(/(^|\?|&)utm_[^&]*/g, "")
         .replace(/(^|\?|&)ref=[^&]*/g, "")
-        .replace(/(^|\?|&)fbclid=[^&]*/g, "");
+        .replace(/(^|\?|&)fbclid=[^&]*/g, "")
+        .replace(/(^|[?&])([^=&#]+)=(?=&|$)/g, (_match, sep, key) => `${sep}${key}`);
 }
