@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { IReactionDisposer, reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { useCallback } from "react";
+import React, { createRef, RefObject, useCallback } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import store, { exhibitorStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
@@ -16,7 +16,7 @@ const Ws = React.memo(() => {
     const s = useLocalStore(() => ({
         el: null as HTMLElement | null,
         all: [] as Exhibitor[],
-        adv: [] as { key: number; e: Exhibitor }[],
+        adv: [] as { key: number; e: Exhibitor, nodeRef: RefObject<HTMLAnchorElement> }[],
         keySeq: 0,
         index: 0,
         imgByExhibitorId: new Map<number, HTMLImageElement>(),
@@ -66,7 +66,7 @@ const Ws = React.memo(() => {
             s.index = (s.index + 1) % s.all.length;
         } while (true);
 
-        s.adv = adv;
+        s.adv = adv.map((x) => ({ ...x, nodeRef: createRef() }));
         s.leftToNextLoad = Math.max(0, s.leftToNextLoad - adv.length);
     }, [s]);
 
@@ -134,8 +134,9 @@ const Ws = React.memo(() => {
         >
             <TransitionGroup component={null}>
                 {s.adv.map((e) => (
-                    <CSSTransition key={e.key} timeout={500}>
+                    <CSSTransition key={e.key} timeout={500} nodeRef={e.nodeRef}>
                         <a
+                            ref={e.nodeRef}
                             href={`?${e.e.slug}`}
                             className="ws__exhibitor"
                             style={{ height: `${uiState.wsImageHeightPx}px` }}
