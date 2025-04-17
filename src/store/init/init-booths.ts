@@ -23,11 +23,18 @@ const booths: MutableRequired<Booth>[] = [];
 export function iniAllBooths(store: RootStore) {
     let baseUrl = "https://expofp.github.io/expofp-assets/icons";
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", baseUrl + "/icons.json", false); // `false` делает запрос синхронным
-    xhr.send();
+    let poiIcons: { id: string; name: string }[] = [];
 
-    const poiIcons = JSON.parse(xhr.responseText).icons as { id: string; name: string }[];
+    try {
+        let xhr = new XMLHttpRequest();
+        // TODO: Do we really need a synchronous request?
+        xhr.open("GET", baseUrl + "/icons.json", false); // `false` делает запрос синхронным
+        xhr.send();
+
+        poiIcons = JSON.parse(xhr.responseText).icons as { id: string; name: string }[];
+    } catch (err) {
+        logger.error(err);
+    }
 
     const poiTypes = store.poiTypeStore.poiTypes;
 
