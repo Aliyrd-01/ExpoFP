@@ -27,6 +27,7 @@ const KioskSetup = observer(() => {
         sessionStorage.getItem(KIOSK_SETUP_ALLOWED) ? "edit" : "auth"
     );
     const [kioskUrl, setKioskUrl] = useState("");
+    const [token, setToken] = useState<string | null>(null);
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
 
@@ -222,6 +223,7 @@ const KioskSetup = observer(() => {
                     body: JSON.stringify({
                         ...requestBody,
                         key: requestBody.key?.toString() || undefined,
+                        token,
                     }),
                 },
             );
@@ -371,6 +373,7 @@ const KioskSetup = observer(() => {
                 }
 
                 sessionStorage.setItem(KIOSK_SETUP_ALLOWED, "1");
+                setToken(respJson.token);
                 setStep("edit");
             } catch (err) {
                 console.error(err);
