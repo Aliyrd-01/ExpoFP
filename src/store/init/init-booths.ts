@@ -21,22 +21,14 @@ const boothsByName = new Map<string, Booth>();
 const booths: MutableRequired<Booth>[] = [];
 
 export function iniAllBooths(store: RootStore) {
-    let baseUrl = "https://expofp.github.io/expofp-assets/icons";
+    // let baseUrl = "https://expofp.github.io/expofp-assets/icons";
+    // let xhr = new XMLHttpRequest();
+    // xhr.open("GET", baseUrl + "/icons.json", false); // `false` делает запрос синхронным
+    // xhr.send();
 
-    let poiIcons: { id: string; name: string }[] = [];
+    // const poiIcons = JSON.parse(xhr.responseText).icons as { id: string; name: string }[];
 
-    try {
-        let xhr = new XMLHttpRequest();
-        // TODO: Do we really need a synchronous request?
-        xhr.open("GET", baseUrl + "/icons.json", false); // `false` делает запрос синхронным
-        xhr.send();
-
-        poiIcons = JSON.parse(xhr.responseText).icons as { id: string; name: string }[];
-    } catch (err) {
-        logger.error(err);
-    }
-
-    const poiTypes = store.poiTypeStore.poiTypes;
+    // const poiTypes = store.poiTypeStore.poiTypes;
 
     const copyExh = parseInt(getQueryParam("copy_exh"));
 
@@ -68,17 +60,17 @@ export function iniAllBooths(store: RootStore) {
         }
 
         b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
-        b.poiType = store.poiTypeStore.poiTypes.find((p) => p.id === raw.poiTypeId);
+        // b.poiType = store.poiTypeStore.poiTypes.find((p) => p.id === raw.poiTypeId);
 
-        if (b.poiType) {
-            b.poiIcon =
-                baseUrl +
-                "/" +
-                poiIcons.find((p) => p.name == poiTypes.find((pt) => pt.name === b.poiType.name)?.name)?.id +
-                ".svg";
+        // if (b.poiType) {
+        //     b.poiIcon =
+        //         baseUrl +
+        //         "/" +
+        //         poiIcons.find((p) => p.name == poiTypes.find((pt) => pt.name === b.poiType.name)?.name)?.id +
+        //         ".svg";
 
-            console.info("poiIcon", b.poiIcon);
-        }
+        //     console.info("poiIcon", b.poiIcon);
+        // }
 
         b.yah = isYahBooth(b as Booth);
         b.name = text;
