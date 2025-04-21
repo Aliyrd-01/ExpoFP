@@ -223,7 +223,7 @@ const KioskSetup = observer(() => {
                     body: JSON.stringify({
                         ...requestBody,
                         key: requestBody.key?.toString() || undefined,
-                        token,
+                        ...(token ? { token } : {}),
                     }),
                 },
             );
