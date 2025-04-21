@@ -21,7 +21,7 @@ export default function trackEvent(type: "load" | "exview" | "search" | "route" 
         const prevLocation = history[history.length - 2];
         const Xref = prevLocation ? window.location.origin + prevLocation : null;
 
-        const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+        const searchParams = new URLSearchParams(window.location.search);
         const kioskId = searchParams.get(KIOSK_ID_KEY);
 
         const headers = {
