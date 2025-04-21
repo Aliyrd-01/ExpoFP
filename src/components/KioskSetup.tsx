@@ -17,17 +17,16 @@ import debounce from "../tools/debounce";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
-const KIOSK_SETUP_ALLOWED = "expofp-kiosk-setup-allowed";
+const KIOSK_SETUP_TOKEN = "expofp-kiosk-setup-token";
 
 const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [step, setStep] = useState<"auth" | "edit" | "copy">(
-        sessionStorage.getItem(KIOSK_SETUP_ALLOWED) ? "edit" : "auth"
+        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
     );
     const [kioskUrl, setKioskUrl] = useState("");
-    const [token, setToken] = useState<string | null>(null);
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
 
@@ -215,6 +214,7 @@ const KioskSetup = observer(() => {
 
             const requestBody: Kiosk = toJS(store.uiState.kioskSetupData);
 
+            const token = sessionStorage.getItem(KIOSK_SETUP_TOKEN);
             const response = await fetch(
                 apiUrl,
                 {
@@ -372,8 +372,7 @@ const KioskSetup = observer(() => {
                     return;
                 }
 
-                sessionStorage.setItem(KIOSK_SETUP_ALLOWED, "1");
-                setToken(respJson.token);
+                sessionStorage.setItem(KIOSK_SETUP_TOKEN, respJson.token);
                 setStep("edit");
             } catch (err) {
                 console.error(err);
