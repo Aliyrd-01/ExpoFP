@@ -140,7 +140,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                         )}
                     </Suspense>
                 )}
-                {freeOrDemo && !uiState.hideFreeOrDemo && !uiState.heatmap ? (
+                {freeOrDemo && !uiState.hideFreeOrDemo && !uiState.heatmap && !uiState.kioskSetup ? (
                     <Suspense fallback={null}>{freeOrDemo}</Suspense>
                 ) : null}
                 {!uiState.hideCookieConsent && !uiState.kiosk && isGDPR && allowConsent === undefined && (
