@@ -14,6 +14,7 @@ import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
+import { svgArea } from "../data/svg";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -123,7 +124,7 @@ const KioskSetup = observer(() => {
                     }
 
                     if (isSetup && kiosks?.length) {
-                        store.uiState.moveToRect = store.layerStore.rectangle;
+                        store.uiState.moveToRect = store.layerStore.rectangle || svgArea;
                     }
                 });
             } catch (err) {
