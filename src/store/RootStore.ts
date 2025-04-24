@@ -88,6 +88,10 @@ export default class RootStore {
         )
             (el.querySelector("input[type=search]") as any).blur();
         window.setTimeout(() => {
+            if (this.uiState.kioskSetup) {
+                return;
+            }
+
             this.selectSearch("");
             this.uiState.details = null;
 

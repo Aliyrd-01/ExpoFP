@@ -1,7 +1,7 @@
 import { useObserver } from "mobx-react-lite";
 import React, { useRef } from "react";
 import store, { uiState } from "../store";
-import List from "./List";
+import EntityList from "./EntityList";
 import OverlayContent from "./OverlayContent";
 import { FilterType } from "../store/types";
 import { t } from "../utils/i18n";
@@ -28,7 +28,7 @@ function Filter() {
                 backMode="menu"
                 bar={bar}
             >
-                <List updatedScrollableRef={scrollableRef} />
+                <EntityList updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });

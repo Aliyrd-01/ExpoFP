@@ -1,7 +1,7 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { KIOSK_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY, SEPARATOR } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -132,7 +132,7 @@ function dispatchFromUrl() {
         )
     );
 
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
 
     if (executeCustomCommand()) {
     } else if (searchParams.has("yah")) {
@@ -146,7 +146,7 @@ function dispatchFromUrl() {
             uiState.kiosk = false;
         }
     } else if (slug.startsWith("route")) {
-        const parts = slug.split(":");
+        const parts = slug.split(SEPARATOR);
         store.routeStore.onlyAccessible = parts[3] === "true";
         store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
     } else if (slug === "bookmarks") {
@@ -165,6 +165,9 @@ function dispatchFromUrl() {
         );
     } else if (booth) {
         store.selectBooth(booth);
+    } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
+        disableHistoryManipulation = true;
+        store.uiState.kiosk = true;
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
@@ -427,6 +430,10 @@ function processURLParams() {
             .join("&");
 
         historyReplace("?" + newSearch);
+    }
+
+    if (locationSearch.includes(KIOSK_SETUP_KEY)) {
+        store.uiState.monochrome = true;
     }
 }
 

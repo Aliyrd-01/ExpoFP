@@ -5,7 +5,7 @@ import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
 import { useAutorun } from "../utils/mobx";
-import List from "./List";
+import EntityList from "./EntityList";
 import OverlayContent from "./OverlayContent";
 import debounce from "../tools/debounce";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
@@ -214,7 +214,7 @@ function Search() {
                 passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
                 passScrollableRef={(ref) => (scrollableRef.current = ref.current)}
             >
-                <List updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
+                <EntityList updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });
