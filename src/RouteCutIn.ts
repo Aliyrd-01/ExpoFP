@@ -2,6 +2,7 @@ import { SpecialBooth } from "./store/BoothStore";
 import { RouteLine, sublines } from "./utils/wayfinding";
 import rootStore from "./store";
 import Rect from "./core/Rect";
+import { areLayersEnabled } from "./utils/areLayersEnabled";
 
 export class RouteCutIn extends SpecialBooth {
     protected readonly store = rootStore.boothStore;
@@ -38,8 +39,12 @@ export class RouteCutIn extends SpecialBooth {
 
     private findClosestRoutePoint(): LayerPoint {
         const lines = sublines()?.lines || [];
-        const levelLines = lines.filter(
-            (l) => l.p0.layer === this.destination.layer && l.p1.layer === this.destination.layer
+        const levelLines = (
+            areLayersEnabled()
+                ? lines.filter(
+                    (l) => l.p0.layer === this.destination.layer && l.p1.layer === this.destination.layer
+                )
+                : lines
         );
 
         if (!levelLines?.length) {
@@ -137,7 +142,12 @@ export class RouteCutIn extends SpecialBooth {
     }
 
     private findClosestLineEnd(target: LayerPoint): LayerPoint {
-        const levelLineEnds = (sublines()?.lineEnds || []).filter(le => le.layer === target.layer);
+        const lineEnds = (sublines()?.lineEnds || []);
+        const levelLineEnds = (
+            areLayersEnabled()
+                ? lineEnds.filter(le => le.layer === target.layer)
+                : lineEnds
+        );
 
         let closestPoint = null;
         let minDistance = Infinity;

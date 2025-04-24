@@ -270,7 +270,8 @@ export default function Map() {
             uiState.kioskSetupData
             && (
                 areLayersEnabled()
-                && store.routeStore.defaultFrom?.layer?.name === store.routeStore.currentRouteLayer?.name
+                    ? store.routeStore.defaultFrom?.layer?.name === store.routeStore.currentRouteLayer?.name
+                    : true
             )
         ) {
             visibleRect = Rect.fromX1y1x2y2(
