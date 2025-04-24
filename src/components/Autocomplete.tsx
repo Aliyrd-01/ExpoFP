@@ -43,7 +43,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     const changeValue = (value = "") => {
         if (objectsMode && value) {
             const activeOption = options[getActiveOptionIndexByValue(value, true)];
-            setInput(activeOption.label);
+            setInput(activeOption?.label || "");
         } else setInput(value);
         setSearchValue("");
         setFilteredOptions([]);
@@ -56,7 +56,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             const activeIndex = options.findIndex((option) => option.value === value);
             setActiveOptionIndex(activeIndex);
             setFocusOptionIndex(activeIndex);
-            setInput(activeOption.label);
+            setInput(activeOption?.label || "");
         } else {
             const activeIndex = options.findIndex((option) => option === value);
             setActiveOptionIndex(activeIndex);

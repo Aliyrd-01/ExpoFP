@@ -22,10 +22,18 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { checkUserIsGDPR, GaEventActions, hasUserConsent, sendEventToGa, setConsentSettings, setCookieConsent } from "../tools/gtag";
+import {
+    checkUserIsGDPR,
+    GaEventActions,
+    hasUserConsent,
+    sendEventToGa,
+    setConsentSettings,
+    setCookieConsent,
+} from "../tools/gtag";
 import HeatmapLegend from "./HeatmapLegend";
 import { useReaction } from "../utils/mobx";
 import trackEvent from "../tools/track-event";
+import KioskSetup from "./KioskSetup";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -50,7 +58,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     let freeOrDemo: JSX.Element = null;
     if (settings.EXPO === "expo") freeOrDemo = <Demo />;
-    else if (data.expoFpAd) freeOrDemo = <Free />;
+    else if (data.expoFpAd || data.isTrial) freeOrDemo = <Free />;
 
     const acceptConsent = () => {
         setCookieConsent(true);
@@ -93,17 +101,17 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
                 }
             }
-        },
+        }
     );
 
     useReaction(
         () => uiState.selectedBooth,
-        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name),
+        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name)
     );
 
     useReaction(
         () => uiState.selectedCategory,
-        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name),
+        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name)
     );
 
     return (
@@ -119,7 +127,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 <LogoOverlay />
                 {!uiState.hideHeaderLogo && store.initialized && <Ws />}
                 {!uiState.mapControlsHidden && <Controls />}
-                {uiState.kiosk && uiState.inIdle && <TouchHand />}
+                {uiState.kiosk && uiState.inIdle && !uiState.kioskSetup && <TouchHand />}
                 {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
                 {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 {isWebGlSupported && <Map />}
@@ -179,6 +187,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 ) : null}
                 <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
+                <KioskSetup />
             </div>
         </div>
     );

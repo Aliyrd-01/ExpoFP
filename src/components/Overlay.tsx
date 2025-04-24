@@ -62,6 +62,10 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
     // use useLayoutEffect for this thing to not jump
     useLayoutEffect(() => {
+        if (!el.current) {
+            return;
+        }
+
         logger.log("Overlay.useEffect");
 
         el.current.ontouchstart = handleTouchStart;
@@ -128,7 +132,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         reaction(
             () => uiState.screenSize,
             () => {
-                if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "medium") {
+                if (uiState.overlayPosition === "bottom" && uiState.overlaySize === "medium" && el.current) {
                     const top = getTopForBottomPosition("medium", el.current);
                     el.current.style.top = top + "px";
                 }
@@ -140,6 +144,10 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         }
 
         function position() {
+            if (!el.current) {
+                return;
+            }
+
             const s = el.current.style;
             switch (uiState.overlayPosition) {
                 case "left":
@@ -163,12 +171,20 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         }
 
         function setShowAll() {
+            if (!el.current) {
+                return;
+            }
+
             const all =
                 uiState.overlayPosition === "left" || getTopForBottomPosition("full", el.current) + "px" === el.current.style.top;
             uiState.overlayShowsAll = all;
         }
 
         function setHeight() {
+            if (!el.current) {
+                return;
+            }
+
             // height depends on size and ongoing touch
             // let's animate when no touch in progress
             if (uiState.overlayPosition === "left") return;
@@ -193,7 +209,12 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     .ease(easePolyOut)
                     .duration(500)
                     .style("top", newTop + "px")
-                    .on("end", setShowAll);
+                    .on("end", () => {
+                        if (uiState.overlaySize === "full") {
+                            el.current.style.height = `${window.innerHeight - newTop}px`;
+                        }
+                        setShowAll();
+                    });
             } else {
                 el.current.style.top = newTop + "px";
             }
@@ -236,7 +257,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 const miniSizeRems = 3.5;
 const paddingRems = 2;
 function getTopForBottomPosition(size: OverlaySize, el: HTMLDivElement): number {
-    const containerHeight = el.parentElement.getBoundingClientRect().height;
+    const containerHeight = el?.parentElement?.getBoundingClientRect?.()?.height || 0;
     switch (size) {
         case "full":
             return remsToPixels(paddingRems);

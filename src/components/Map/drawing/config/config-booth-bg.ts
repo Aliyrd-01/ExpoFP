@@ -19,7 +19,7 @@ export default function configBoothBg(
     layerID: string,
     booth: Booth,
     painterOrderPriority: number,
-    visible: boolean,
+    visible: boolean
 ) {
     // picked++;
     // if (picked > 1) return null;
@@ -63,7 +63,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                         // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                     },
                     painterOrderPriority,
-                    visible,
+                    visible
                 );
             }
         }
@@ -76,7 +76,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                 if (colored) pathsColors.add(p.color);
                 for (const t of getTrianglesFromFpPaths(
                     p.index,
-                    store.layerStore.mode !== LayersMode.Default ? booth.layer.name : "",
+                    store.layerStore.mode !== LayersMode.Default ? booth.layer.name : ""
                 )) {
                     this.addObject(
                         layerID,
@@ -88,7 +88,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                             p2: t[2] as Vec2,
                         },
                         painterOrderPriority,
-                        visible,
+                        visible
                     );
                 }
             }
@@ -112,7 +112,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                         // color: Color.rgb(Math.random() * 255, Math.random() * 255, Math.random() * 255).vec4()
                     },
                     painterOrderPriority,
-                    visible,
+                    visible
                 );
             }
         }
@@ -146,8 +146,8 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         // for white always return white
         const s = this.booth; //store.getBoothState(this.booth);
         let colorInfo = Color(defaultColor).hsl();
-        let lightness = colorInfo.lightness();
-        if (lightness > 90 || lightness < 16) return colorInfo;
+        //let lightness = colorInfo.lightness();
+        //if (lightness > 90 || lightness < 16) return colorInfo;
 
         if (s.selected) {
             const selColor = Color(settings.colors.booths.selected).hsl();
@@ -199,11 +199,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         const color0 =
             settings.colors.booths.seectedLight ||
             (!Color(this.booth.labelColor || settings.boothLabelColor).isLight() ? "#fff" : "#000");
-        const color1 = (
-            uiState.selectedRoute
-                ? settings?.colors?.booths?.wayfinding?.selected
-                : settings?.colors?.booths?.selected
-        );
+        const color1 = uiState.selectedRoute
+            ? settings?.colors?.booths?.wayfinding?.selected
+            : settings?.colors?.booths?.selected;
         return colorInterpolate([color0, color1]);
     }
 
@@ -243,7 +241,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             colorInfo = colorInfo.darken(0.2).alpha(colorInfo.alpha() * 1.5);
         }
 
-        if (uiState.heatmapYah) {
+        if (uiState.monochrome || uiState.heatmapYah) {
             colorInfo = colorInfo.grayscale();
         }
 

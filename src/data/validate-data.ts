@@ -26,6 +26,16 @@ export default function validateData(data: Data) {
         data.expoFpAd = true;
     }
 
+    ((trialExpiresAt: string) => {
+        if (trialExpiresAt) {
+            const now = new Date().getTime();
+            const trialExpiresAtTime = new Date(trialExpiresAt).getTime();
+            if (now < trialExpiresAtTime) {
+                data.isTrial = true;
+            }
+        }
+    })(data["trialExpiresAt"]);
+
     const validationEnabled = isDebug || (isLocalStorageAvailable && localStorage.getItem("validate") === "1");
 
     // if (validationEnabled) {

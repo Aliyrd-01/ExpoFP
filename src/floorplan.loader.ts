@@ -1,4 +1,4 @@
-import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
+import { KIOSK_ID_KEY, PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
 import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
@@ -48,6 +48,8 @@ export default class FloorPlanLoader implements FloorPlan {
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
     onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+
+    onVisitedClick: (e: FloorPlanVisitedClickEvent) => void;
 
     onCategoryClick: (e: FloorPlanCategoryClickEvent) => void;
 
@@ -177,6 +179,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onBookmarkClick = options.onBookmarkClick;
+        this.onVisitedClick = options.onVisitedClick;
         this.onCategoryClick = options.onCategoryClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
@@ -269,7 +272,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], ["kkiosk", "yah", "kiosk", KIOSK_ID_KEY]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
@@ -315,11 +318,7 @@ export default class FloorPlanLoader implements FloorPlan {
             if (searchParamas.get("heatmap") === "true") {
                 try {
                     if (searchParamas.get("type") === "yah") {
-                        const url = new URL(
-                            "/api/v1/you-are-here/qr-code/list/viewer",
-                            // TODO: remove eventId === "demo-staging" condition after testing
-                            eventId === "demo-staging" ? "https://app-show.expofp.com" : "https://app.expofp.com",
-                        );
+                        const url = new URL("/api/v1/you-are-here/qr-code/list/viewer", "https://app.expofp.com");
 
                         const resp = await fetch(
                             url.toString(),
@@ -411,16 +410,22 @@ export default class FloorPlanLoader implements FloorPlan {
                         "transition": "icons/transition.svg",
                         "transition_up": "icons/transition_up.svg",
                         "transition_down": "icons/transition_down.svg",
+                        "kiosk-arrow": "icons/kiosk-arrow.svg",
+                        "kiosk-label": "icons/kiosk-label.svg",
                     }).map(([key, path]) =>
-                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
+                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(
+                            (image) => [key, image] as [string, HTMLImageElement]
+                        )
                     )
                 );
 
                 iconEntries
-                    .filter((entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> => entry.status === "fulfilled")
-                    .map(entry => entry.value)
+                    .filter(
+                        (entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> =>
+                            entry.status === "fulfilled"
+                    )
+                    .map((entry) => entry.value)
                     .forEach(([key, icon]) => self.icons.set(key, icon));
-
             } catch (e) {
                 console.warn(e);
             }

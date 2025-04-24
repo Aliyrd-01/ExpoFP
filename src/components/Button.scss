@@ -75,8 +75,8 @@ a.efp-button {
 
         &:hover,
         &:active {
-            background: var(--color-gray-200);
-            border-color: var(--color-gray);
+            background: var(--color-gray-300);
+            border-color: var(--color-gray-500);
             color: var(--color-black);
         }
     }
@@ -99,6 +99,6 @@ a.efp-button {
         min-width: rem(100px);
         min-height: rem(30px);
         padding: rem(4px 16px);
-        font-size: var(--font-size-xl);
+        font-size: var(--font-size-md);
     }
 }

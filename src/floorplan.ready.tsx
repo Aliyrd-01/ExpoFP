@@ -1,10 +1,9 @@
 import { reaction } from "mobx";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from 'react-dom/client';
 import { install } from "resize-observer";
 import Layout from "./components/Layout";
 import FloorPlanLoader from "./floorplan.loader";
-// import initStore from "./store/init";
 import { applyParameters, destroyHistory, initRouting } from "./services/routing";
 import store from "./store";
 import { Booth, SpecialBooth } from "./store/BoothStore";
@@ -23,29 +22,18 @@ import { DistanceOptimizedRoute } from "./utils/wayfinding";
 
 install();
 
-// initStore(store);
-
-// export default function renderFloorPlan(el: Element) {
-//     ReactDOM.render(<Layout />, el);
-// }
-
-// const FpContext = React.createContext<FloorPlanReady>(null);
-
 export default class FloorPlanReady extends FloorPlanLoader {
-    // constructor(options: FloorPlanOptions) {
-    //     super(options);
-    // }
+    root: ReturnType<typeof createRoot>;
+
     protected init(): void {
         initRouting(this.offHistory);
         trackEvent("load");
         store.fp = this;
         setConsentSettings(this.allowConsent);
         sendEventToGa(GaEventActions.Load, ``);
-        ReactDOM.render(
-            // <FpContext.Provider value={this}>
+        this.root = createRoot(this.renderTarget);
+        this.root.render(
             <Layout offHistory={this.offHistory} allowConsent={this.allowConsent} />,
-            // </FpContext.Provider>,
-            this.renderTarget,
         );
         sendEventToGa(GaEventActions.Rendered, ``);
 
@@ -337,7 +325,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         );
         scripts.forEach((sc) => sc.remove());
 
-        ReactDOM.unmountComponentAtNode(this.renderTarget);
+        this.root.unmount();
         efpElement.remove();
     }
 }

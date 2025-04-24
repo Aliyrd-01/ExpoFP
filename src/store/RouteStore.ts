@@ -369,3 +369,8 @@ export interface MarkersData {
     icons: MarkerIcon[];
     markers: Marker[];
 }
+
+export interface Kiosk extends Omit<CurrentPosition, "angle"> {
+    key: string;
+    heading: number;
+}
