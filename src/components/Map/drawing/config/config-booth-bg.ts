@@ -241,7 +241,7 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
             colorInfo = colorInfo.darken(0.2).alpha(colorInfo.alpha() * 1.5);
         }
 
-        if (uiState.heatmapYah) {
+        if (uiState.monochrome || uiState.heatmapYah) {
             colorInfo = colorInfo.grayscale();
         }
 

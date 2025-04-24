@@ -8,6 +8,7 @@
 
     .overlay-bar {
         display: flex;
+        z-index: 2;
     }
 
     .overlay.bottom {
@@ -22,6 +23,8 @@
 
         .overlay.full & {
             overflow-y: scroll;
+            z-index: 1;
+            overscroll-behavior: none;
         }
     }
 

@@ -108,7 +108,7 @@
     "react-dom": "^18.3.1",
     "react-qr-code": "^2.0.9",
     "react-transition-group": "^4.4.5",
-    "react-virtuoso": "^4.6.2",
+    "react-virtuoso": "^4.12.6",
     "react-zoom-pan-pinch-sr": "^0.2.0",
     "resize-observer": "^1.0.4",
     "sass": "^1.77.8",

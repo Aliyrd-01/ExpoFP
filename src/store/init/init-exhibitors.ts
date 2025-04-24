@@ -55,6 +55,7 @@ export default function initExhibitors(store: RootStore) {
     logger.log("initExhibitors", exhibitorStore.exhibitors.length);
 
     initBookmarked(exhibitorStore);
+    initVisited(exhibitorStore);
 }
 
 function initBookmarked(exhibitorStore: ExhibitorStore) {
@@ -84,11 +85,28 @@ function initBookmarked(exhibitorStore: ExhibitorStore) {
     });
 }
 
+function initVisited(exhibitorStore: ExhibitorStore) {
+    const visitedAr: number[] = getVisitedFromLocalStorage();
+    exhibitorStore.replaceVisited(visitedAr);
+
+    autorun(() => {
+        saveVisitedToLocalStorage(exhibitorStore.visited.map((x) => x.id));
+    });
+}
+
 function getFromLocalStorage() {
     if (!isLocalStorageAvailable) return [];
 
     let ls = localStorage.getItem(`${settings.EXPO}-bookmarked`);
     if (!ls) ls = localStorage.getItem("bookmarked");
+    return ls ? (JSON.parse(ls) as number[]) : [];
+}
+
+function getVisitedFromLocalStorage() {
+    if (!isLocalStorageAvailable) return [];
+
+    let ls = localStorage.getItem(`${settings.EXPO}-visited`);
+    if (!ls) ls = localStorage.getItem("visited");
     return ls ? (JSON.parse(ls) as number[]) : [];
 }
 
@@ -100,6 +118,13 @@ function saveToLocalStorage(ar: number[]) {
     // const unique = Array.from(new Set(dest));
     // debugger
     localStorage.setItem(`${settings.EXPO}-bookmarked`, JSON.stringify(ar));
+}
+
+function saveVisitedToLocalStorage(ar: number[]) {
+    if (!isLocalStorageAvailable) return;
+
+    logger.log("saveVisitedToLocalStorage", ar.length);
+    localStorage.setItem(`${settings.EXPO}-visited`, JSON.stringify(ar));
 }
 
 function addBaseUrl(url: string) {

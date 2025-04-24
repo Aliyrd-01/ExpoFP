@@ -136,4 +136,15 @@ $alert: ".efp-alert";
             background: var(--color-red);
         }
     }
+&--blank {
+    background: var(--color-white);
+
+    a {
+        color: var(--color-primary-dark);
+    }
+
+    #{$alert}__icon {
+        background: var(--color-primary);
+    }
+}
 }

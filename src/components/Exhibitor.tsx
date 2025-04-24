@@ -133,12 +133,17 @@ function ExhibitorComponent() {
             <>
                 <div className="exhibitor__bar">
                     <span onClick={() => store.toggleMapOverlay()}>
-                        <span dir="auto">{exhibitor.name}</span>
-                        {exhibitor.featured ? <i className="icon-diamond" /> : null}
+                        <div className="exhibitor__bar-name">
+                            <div className="exhibitor__bar-icon">
+                                <i className="icon-exhibitor-solid"></i>
+                            </div>
+                            <span dir="auto">{exhibitor.name}</span>
+                        </div>
                     </span>
                 </div>
                 <div className="exhibitor__bar-booth" onClick={() => store.toggleMapOverlay()}>
-                    {data.boothTerm} {exhibitor.booths.map((b) => b.fullName).join(", ")}
+                    {data.boothTerm}
+                    {exhibitor.booths.map((b) => b.fullName).join(", ")}
                 </div>
             </>
         );
@@ -171,9 +176,10 @@ function ExhibitorComponent() {
                     mountOnEnter
                     unmountOnExit
                 >
-                    {state => (
-                        <div ref={transitionRef} style={
-                            {
+                    {(state) => (
+                        <div
+                            ref={transitionRef}
+                            style={{
                                 position: "fixed",
                                 bottom: "1rem",
                                 left: "1rem",
@@ -181,19 +187,13 @@ function ExhibitorComponent() {
                                 transition: `opacity ${transitionDelay}ms ease-in-out`,
                                 opacity: 0,
                                 ...transitionStyles[state],
-                            }
-                        }>
+                            }}
+                        >
                             <Alert
-                                title={(
-                                    store.exhibitorStore.rebookingStateSaved
-                                        ? "Changes saved."
-                                        : "Oops! Something went wrong."
-                                )}
-                                variant={
-                                    store.exhibitorStore.rebookingStateSaved
-                                        ? "success"
-                                        : "error"
+                                title={
+                                    store.exhibitorStore.rebookingStateSaved ? "Changes saved." : "Oops! Something went wrong."
                                 }
+                                variant={store.exhibitorStore.rebookingStateSaved ? "success" : "error"}
                                 inline
                                 closable
                                 onClose={() => {
@@ -275,6 +275,12 @@ function ExhibitorComponent() {
             s.updateOverlayContent();
         }
 
+        const shouldShowPrefix = (input: string): boolean => {
+            return /^\d+$/.test(input);
+        };
+
+        const getBoothLevel = (booth) => (data.shortLevelName ? booth.layer?.shortName : booth.layer?.description);
+
         return (
             <OverlayContent
                 className={cls}
@@ -294,11 +300,14 @@ function ExhibitorComponent() {
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}
+                                showVisited={true}
+                                visited={s.exhibitor.visited}
                                 onClickBookmark={bookmark}
                                 onClickShare={handleShare}
                                 onClickDirections={() => {
                                     store.routeStore.clickRoute(null, store.routeStore.tempToBooth || exhibitor.booths[0]);
                                 }}
+                                onClickVisited={handleVisited}
                             />
                         </div>
 
@@ -337,20 +346,34 @@ function ExhibitorComponent() {
                             ref={detailsRef}
                         >
                             <div className="exhibitor-categories">
-                                {exhibitor.booths.map((booth) => (
-                                    <a
-                                        href={`?${booth.slug}`}
-                                        key={booth.id}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            store.toggleMapOverlay();
-                                            store.selectBooth(booth);
-                                        }}
-                                        className="exhibitor-categories__booth"
-                                    >
-                                        {booth instanceof SpecialBooth ? "" : data.boothTerm} {booth.fullName}
-                                    </a>
-                                ))}
+                                {exhibitor.featured && <div className="exhibitor-featured">Featured</div>}
+                                {exhibitor.booths.map((booth) => {
+                                    const boothLevel = getBoothLevel(booth);
+
+                                    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                                        e.preventDefault();
+                                        store.toggleMapOverlay();
+                                        store.selectBooth(booth);
+                                    };
+
+                                    return (
+                                        <a
+                                            href={`?${booth.slug}`}
+                                            key={booth.id}
+                                            onClick={handleClick}
+                                            className="exhibitor-categories__booth"
+                                        >
+                                            <div className="exhibitor-categories__booth-name">{booth.name}</div>
+                                            {boothLevel && (
+                                                <div className="exhibitor-categories__booth-level">
+                                                    {shouldShowPrefix(boothLevel) ? "Level " : ""}
+                                                    {boothLevel}
+                                                </div>
+                                            )}
+                                        </a>
+                                    );
+                                })}
+
                                 {exhibitor.categories.map((c) => (
                                     <a
                                         href={"?" + encodeURIComponent(c.slug)}
@@ -642,6 +665,16 @@ function ExhibitorComponent() {
             uiState.onBookmarkClick({
                 name: s.exhibitor.name,
                 bookmarked: s.exhibitor.bookmarked,
+                externalId: s.exhibitor.externalId,
+            });
+    }
+
+    function handleVisited() {
+        s.exhibitor.visited = !s.exhibitor.visited;
+        if (uiState.onVisitedClick)
+            uiState.onVisitedClick({
+                name: s.exhibitor.name,
+                visited: s.exhibitor.visited,
                 externalId: s.exhibitor.externalId,
             });
     }
