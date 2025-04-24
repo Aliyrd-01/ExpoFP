@@ -26,6 +26,7 @@ import { toRadians } from "../../../../utils/toRadians";
 import { strEqual } from "../../../../utils/strEqual";
 import { Booth } from "../../../../store/BoothStore";
 import { RouteCutIn } from "../../../../RouteCutIn";
+import { areLayersEnabled } from "../../../../utils/areLayersEnabled";
 
 let routePoints: Point[] = [];
 let routeLines: RouteLine[] = [];
@@ -185,7 +186,11 @@ function drawLines(
     const routeCutIn = getRouteCutIt();
     const isRouteCutInLayer = (
         routeCutIn
-        && strEqual(currentLayerName, routeCutIn.destination?.layer)
+        && (
+            areLayersEnabled()
+                ? strEqual(currentLayerName, routeCutIn.destination?.layer)
+                : true
+        )
     );
 
     if (routeCutIn) {
@@ -505,7 +510,14 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
 
                 if (kioskSetup) {
                     kioskList
-                        .filter(k => k.z === activeFloor?.name && k.key !== kioskSetupData?.key)
+                        .filter(k => {
+                            const isSameLayer = (
+                                areLayersEnabled()
+                                    ? k.z === activeFloor?.name
+                                    : true
+                            );
+                            return isSameLayer && k.key !== kioskSetupData?.key;
+                        })
                         .forEach(kiosk => {
                             attachKioskIcon(
                                 kiosk,
@@ -521,7 +533,13 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                         });
                 }
 
-                if (kioskSetupData && kioskSetupData?.z === activeFloor?.name) {
+                const isSameLayer = (
+                    areLayersEnabled()
+                        ? kioskSetupData?.z === activeFloor?.name
+                        : true
+                );
+
+                if (kioskSetupData && isSameLayer) {
                     attachKioskIcon(
                         kioskSetupData,
                         kioskIconDrawer,
@@ -875,8 +893,8 @@ function attachEndpoints(
         return result;
     }, {} as Record<string, Point | null>);
 
-    const isFromLayer = !currentLayerName || strEqual(currentLayerName, from?.layer?.name);
-    const isToLayer = !currentLayerName || strEqual(currentLayerName, to?.layer?.name);
+    const isFromLayer = !!from && (!currentLayerName || strEqual(currentLayerName, from?.layer?.name));
+    const isToLayer = !!to && (!currentLayerName || strEqual(currentLayerName, to?.layer?.name));
 
     const updateEndpoint = (key: string, point: Point | null, isVisible: boolean, fallbackPoint: Point) => {
         if (point) {
