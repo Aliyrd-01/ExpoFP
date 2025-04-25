@@ -5,17 +5,10 @@ import "./Category.scss";
 import List from "./List";
 import OverlayContent from "./OverlayContent";
 import { t } from "../utils/i18n";
-import { useAutorun } from "../utils/mobx";
-import { GaEventActions, sendEventToGa } from "../tools/gtag";
+import { Category as CategoryModel } from "../store/CategoryStore";
 
 function Category() {
     const scrollableRef = useRef<HTMLDivElement>();
-
-    useAutorun(() => {
-        if (uiState.selectedCategory && uiState.selectedCategory.name) {
-            sendEventToGa(GaEventActions.ViewCategory, uiState.selectedCategory.name);
-        }
-    });
 
     return useObserver(() => {
         const bar = (
@@ -45,4 +38,9 @@ function Category() {
     }
 }
 
-export default () => useObserver(() => !uiState.menu && !!uiState.selectedCategory && <Category />);
+export default () => useObserver(() => (
+    !uiState.menu
+    && !!uiState.selectedCategory
+    && uiState.details instanceof CategoryModel
+    && <Category />
+));

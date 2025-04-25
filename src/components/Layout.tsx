@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
 import data from "../data";
-import store, { layersStore, uiState, heatmapStore } from "../store";
+import store, { layersStore, uiState } from "../store";
 import settings from "../tools/settings";
 import { isWebGlSupported, remsToPixels } from "../utils";
 import isDebug from "../utils/is-debug";
@@ -22,8 +22,10 @@ import { LayersMode } from "../store/LayerStore";
 import TouchHand from "./TouchHand";
 import LayersLoading from "./LayersLoading";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
-import { checkUserIsGDPR, hasUserConsent, setConsentSettings, setCookieConsent } from "../tools/gtag";
+import { checkUserIsGDPR, GaEventActions, hasUserConsent, sendEventToGa, setConsentSettings, setCookieConsent } from "../tools/gtag";
 import HeatmapLegend from "./HeatmapLegend";
+import { useReaction } from "../utils/mobx";
+import trackEvent from "../tools/track-event";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -80,6 +82,31 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
     }, []);
 
     const minMaxClicks = store.heatmapStore.minAndMaxClicks;
+
+    useReaction(
+        () => uiState.selectedExhibitor,
+        (exhibitor) => {
+            if (store.heatmapStore.forceTrack) {
+                sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
+                store.heatmapStore.forceTrack = null;
+            } else {
+                if (exhibitor) {
+                    trackEvent("exview", exhibitor.id);
+                    sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
+                }
+            }
+        },
+    );
+
+    useReaction(
+        () => uiState.selectedBooth,
+        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name),
+    );
+
+    useReaction(
+        () => uiState.selectedCategory,
+        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name),
+    );
 
     return (
         <div

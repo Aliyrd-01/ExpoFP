@@ -1,13 +1,16 @@
 import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
+import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
 import { Visibility } from "./store/types";
 import baseUrl from "./tools/base-url";
+import { buildRebookingUrl, getRebookingToken, retainRebookingToken } from "./tools/rebookingUrl";
 import { loadCss, loadCustomFonts, loadFont, loadJs } from "./tools/loaders";
 import logger from "./tools/logger";
 import { sleep } from "./utils";
 import { initI18n } from "./utils/i18n";
 import isWebview from "./utils/is-webview";
+import { loadImage } from "./utils/loadImage";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
 
@@ -30,6 +33,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
     protected efpStyleLoadHandler: (e: Event) => void;
     protected resolveReady: () => void;
+
+    public readonly icons = new Map<FloorPlanIcon, HTMLImageElement>();
 
     get ready() {
         return this._ready;
@@ -260,12 +265,11 @@ export default class FloorPlanLoader implements FloorPlan {
         logger.log("Instantiating ExpoFP floorplan", options.element, eventId);
 
         const dataUrl = dataUrlBase + "data.js";
-        const dataInternalUrl = dataUrlBase + "data-internal.js";
-
         const wfDataUrl = dataUrlBase + "wf.data.js";
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
@@ -317,9 +321,18 @@ export default class FloorPlanLoader implements FloorPlan {
                 window["__heatmapData"] = { booths, exhibitors };
             }
 
-            if (data.isRebooking) {
-                await loadJs(dataInternalUrl);
-                mergeExhibitors(window["__data"] as Data, window["__internalData"] as Data);
+            try {
+                const token = getRebookingToken();
+                if (token) {
+                    retainRebookingToken(token);
+                    const url = buildRebookingUrl("api/rebooking-data", token);
+                    const resp = await fetch(url);
+                    const rebookingData = await resp.json();
+                    mergeExhibitors(data as Data, rebookingData as Data);
+                }
+                data.isRebooking = Boolean(token);
+            } catch (error) {
+                console.error(error);
             }
 
             if (data.customCss) {
@@ -338,6 +351,29 @@ export default class FloorPlanLoader implements FloorPlan {
 
                 await loadCustomFonts(data.customCss);
                 // }
+            }
+
+            try {
+                const iconEntries = await Promise.allSettled(
+                    Object.entries({
+                        "departure": "icons/departure.svg",
+                        "destination": "icons/destination.svg",
+                        "direction": "icons/direction.svg",
+                        "transition": "icons/transition.svg",
+                        "transition_up": "icons/transition_up.svg",
+                        "transition_down": "icons/transition_down.svg",
+                    }).map(([key, path]) =>
+                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
+                    )
+                );
+
+                iconEntries
+                    .filter((entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> => entry.status === "fulfilled")
+                    .map(entry => entry.value)
+                    .forEach(([key, icon]) => self.icons.set(key, icon));
+
+            } catch (e) {
+                console.warn(e);
             }
 
             logger.log("Data loaded");

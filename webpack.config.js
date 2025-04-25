@@ -9,6 +9,7 @@ const TerserWebpackPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const ESLintPlugin = require("eslint-webpack-plugin");
+const BundleJsonPlugin = require("./BundleJsonPlugin");
 
 function createConfig(env) {
     const isProd = process.env.NODE_ENV === "production";
@@ -24,6 +25,7 @@ function createConfig(env) {
         output: {
             path: path.resolve(__dirname, "dist"),
             filename: "[name].js",
+            chunkFilename: "[name].[contenthash].js",
             library: "ExpoFP",
             crossOriginLoading: isProd ? "anonymous" : false,
         },
@@ -87,6 +89,11 @@ function createConfig(env) {
             new webpack.DefinePlugin({
                 "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo),
             }),
+            new BundleJsonPlugin({
+                filename: "bundle.json",
+                exclude: ["sw.js", ".DS_Store"],
+                publicPath: "public",
+            }),
         ],
     };
 
@@ -143,6 +150,7 @@ function createConfig(env) {
             s3UploadOptions: {
                 Bucket: "efp-data/" + forlderName,
             },
+            log: true,
         });
         if (process.env.CLOUDFRONT_DISTRIBUTION_ID) {
             plugin.cloudfrontInvalidateOptions = {

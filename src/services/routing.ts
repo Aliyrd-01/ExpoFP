@@ -1,7 +1,7 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import { KIOSK_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -125,10 +125,23 @@ function dispatchFromUrl() {
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find(
-        (x: Booth) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+        (x: Booth) => (
+            x.slug?.toLowerCase() === slug?.toLowerCase()
+            || x.externalId?.toLowerCase() === slug?.toLowerCase()
+            || x.externalId?.toLowerCase()?.replace(/\s+/g, "") === slug?.toLowerCase()
+        )
     );
 
+    const searchParams = new URLSearchParams(window.location.search);
+
     if (executeCustomCommand()) {
+    } else if (searchParams.has(KIOSK_KEY)) {
+        const command = searchParams.get(KIOSK_KEY);
+        if (command === "1") {
+            uiState.kiosk = true;
+        } else if (command === "0") {
+            uiState.kiosk = false;
+        }
     } else if (slug.startsWith("route")) {
         const parts = slug.split(":");
         store.routeStore.onlyAccessible = parts[3] === "true";

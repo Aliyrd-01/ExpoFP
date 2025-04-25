@@ -10,7 +10,8 @@ import { select } from "d3";
 import type { Layer } from "../../../../store/LayerStore";
 import isWebview from "../../../../utils/is-webview";
 import { getLogoUrl } from "../../../../utils/getLogoUrl";
-import { BOOTHS_PAINTER_MARKER, LAYER_ICONS_MARKER, LAYER_LOGOS_MARKER, SEPARATOR } from "../../../../constants";
+import { BOOKMARK_PAINTER_MARKER, BOOTHS_PAINTER_MARKER, LAYER_ICONS_MARKER, LAYER_LOGOS_MARKER, SEPARATOR } from "../../../../constants";
+import { areLayersEnabled } from "../../../../utils/areLayersEnabled";
 
 const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
 const magicNum = 8;
@@ -36,24 +37,17 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
 
     const boothsPaintersById = new Map(
         context.allPainters
-            .filter(p => p.id.includes(BOOTHS_PAINTER_MARKER))
+            .filter(p => p.id.includes(BOOTHS_PAINTER_MARKER) && !p.id.includes(BOOKMARK_PAINTER_MARKER))
             .map(p => [
                 p.id.includes(SEPARATOR) ? p.id.split(SEPARATOR)[0] : p.id,
                 p,
             ])
     );
 
-    const highestPriority = calculateHighestPriority(
-        store.layerStore.layers,
-        (layer) => {
-            const highestChildPriority = calculateHighestPriority(
-                layer.childLayers || [],
-                (child) => child.basePriority,
-                layer.basePriority
-            );
-            return Math.max(layer.basePriority, highestChildPriority);
-        },
-        store.layerStore.layers[0]?.basePriority || 0
+    const highestPriority = Math.max(
+        ...Array.from(
+            boothsPaintersById.values(),
+        ).map(x => x?.orderPriority),
     );
 
     for (const [i, chunk] of chunks.entries()) {
@@ -125,10 +119,6 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
 
 function genImageLayerId(baseLayerName: string, suffix: string, i: number): string {
     return `${areLayersEnabled() ? baseLayerName : BOOTHS_PAINTER_MARKER}${SEPARATOR}${suffix}${SEPARATOR}${i}`;
-}
-
-function areLayersEnabled() {
-    return !!window["__fpLayers"];
 }
 
 function getIcons(layer: Layer): SVGImageElement[] {

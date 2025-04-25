@@ -125,9 +125,16 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {
         if (Array.isArray(startOrWaypoints)) {
-            const points = [...startOrWaypoints];
+            let points = [...startOrWaypoints];
             const from = points.shift();
             const to = points.pop();
+
+
+            const limit = 98;
+            if (points.length > limit) {
+                points = points.slice(0, limit);
+                console.warn(`The maximum number of waypoints is ${limit}. All waypoints beyond this limit have been ignored.`);
+            }
 
             if (!from || !to) {
                 throw new Error(

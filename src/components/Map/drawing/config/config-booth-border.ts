@@ -1,13 +1,12 @@
 import Color from "color";
 import Polygon4 from "../../../../core/Polygon";
 import Rect from "../../../../core/Rect";
-import { boothStore } from "../../../../store";
+import { boothStore, uiState } from "../../../../store";
 import { Booth } from "../../../../store/BoothStore";
 import settings from "../../../../tools/settings";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter from "../painters/TrianglePainter";
 import BoothDrawerBase from "./BoothDrawerBase";
-// import { boothStore } from '../../../../store';
 
 export default function configBoothBorder(
     context: DrawerContext,
@@ -32,7 +31,9 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
     constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
         super(context, booth, layerID + "booth-border", TrianglePainter, painterOrderPriority, visible);
 
-        const borderColor = Color(booth.borderColor).vec4();
+        const borderColor = Color(
+            booth.selected ? settings.colors.booths.selectedBorder : booth.borderColor
+        ).vec4(); 
         const r = this.booth.rect;
         const width = booth.borderWidth || boothStore.borderWidth;
 
@@ -68,5 +69,16 @@ class BoothBorderDrawer extends BoothDrawerBase<TrianglePainter> {
     update() {
         const skipDimm = this.booth.skipDim;
         this.painter.updateSkipdim(this.getId("border"), skipDimm);
+
+        let selectedColor = this.booth.borderColor;
+        if (this.booth.selected) {
+            if (uiState.selectedRoute) {
+                selectedColor = settings?.colors?.booths?.wayfinding?.selectedBorder || this.booth.borderColor;
+            } else {
+                selectedColor = settings?.colors?.booths?.selectedBorder || this.booth.borderColor;
+            }
+        }
+
+        this.painter.updateColor(this.getId("border"), Color(selectedColor).vec4());
     }
 }

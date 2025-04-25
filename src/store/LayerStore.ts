@@ -67,6 +67,29 @@ export default class LayerStore {
         return this.mode !== LayersMode.Radio || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
+    @computed get floors() {
+        const uniqueLayers = new Set(
+            this.layers
+                .filter(l => l && !l.frozen && !l.rootParent)
+                .concat(
+                    store.routeStore.layers.filter(
+                        (l) => l && l.mode !== LayerMode.AlwaysHidden && l.mode !== LayerMode.AlwaysVisible,
+                    ),
+                ),
+        );
+
+        return Array.from(uniqueLayers)
+            .reverse()
+            .map((l) => ({
+                layer: l,
+                name: l.name,
+                shortName: l.shortName,
+                description: l.description,
+                active: l.visible,
+                disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
+            }));
+    }
+
     @action updateVisibility(layerOrName: string | Layer, visible: boolean, animated: boolean = false): void {
         if (this.mode === LayersMode.Radio && !visible) return;
 

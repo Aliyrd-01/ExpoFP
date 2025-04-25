@@ -98,6 +98,13 @@ export default class UIState {
                 .forEach(b => booths.add(b.id.toString()));
         }
 
+        if (this.list?.type === "bookmarks") {
+            this.rootStore.exhibitorStore.exhibitors
+                .filter((e) => e.bookmarked)
+                .flatMap(e => e.booths.filter(b => b instanceof RegularBooth))
+                .forEach(b => booths.add(b.id.toString()));
+        }
+
         if (this.details instanceof Route) {
             booths.clear();
             booths.add(this.details.from?.id.toString());
@@ -181,6 +188,23 @@ export default class UIState {
 
     @computed({ keepAlive: true }) get selectedRoute() {
         return this.details instanceof Route ? this.details : null;
+    }
+
+    @computed({ keepAlive: true }) get selectedRouteFloors() {
+        return [...new Set(
+            [
+                this.selectedRoute?.from?.layer?.name,
+                ...(
+                    this.selectedRoute?.waypoints?.map(w => w.layer?.name) || []
+                ),
+                this.selectedRoute?.to?.layer?.name,
+            ].filter(Boolean)
+        )];
+    }
+
+    @computed({ keepAlive: true }) get getRouteNextFloor() {
+        const index = this.selectedRouteFloors.indexOf(this.rootStore.routeStore.currentRouteLayer?.name);
+        return index !== -1 && index + 1 < this.selectedRouteFloors.length ? this.selectedRouteFloors[index + 1] : null;
     }
 
     ///////////////////////////////////////////////////////////////////////////

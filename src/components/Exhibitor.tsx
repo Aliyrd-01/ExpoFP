@@ -8,10 +8,9 @@ import { Category } from "../store/CategoryStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
-import trackEvent from "../tools/track-event";
 import { t, getLocale } from "../utils/i18n";
 import isMobile from "../utils/is-mobile";
-import { useAutorun, useReaction } from "../utils/mobx";
+import { useReaction } from "../utils/mobx";
 import Button from "./Button";
 import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
@@ -22,6 +21,8 @@ import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGr
 import Schedule from "./Schedule";
 import SibebarActions from "./SidebarActions";
 import useHeatmapOverlay from "../utils/useHeatmapOverlay";
+import Alert from "./Alert";
+import { Transition } from "react-transition-group";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -79,17 +80,11 @@ function ExhibitorComponent() {
         };
 
         checkHeight();
-    }, []);
 
-    useAutorun(() => {
-        if (store.heatmapStore.forceTrack) {
-            sendEventToGa(store.heatmapStore.forceTrack.action, store.heatmapStore.forceTrack.label);
-            store.heatmapStore.forceTrack = null;
-        } else if (s.exhibitor) {
-            trackEvent("exview", s.exhibitor.id);
-            sendEventToGa(GaEventActions.ViewExhibitor, s.exhibitor.name);
-        }
-    });
+        return () => {
+            store.exhibitorStore.rebookingStateChangeRequested = false;
+        };
+    }, []);
 
     useReaction(
         () => s.exhibitor,
@@ -121,6 +116,15 @@ function ExhibitorComponent() {
     function itemClick(action: GaEventActions) {
         sendEventToGa(action, s.exhibitor.name);
     }
+
+    const transitionRef = useRef<HTMLDivElement>();
+    const transitionStyles: Record<string, React.CSSProperties> = {
+        entering: { opacity: 1 },
+        entered: { opacity: 1 },
+        exiting: { opacity: 0 },
+        exited: { opacity: 0 },
+    };
+    const transitionDelay = 150;
 
     return useObserver(() => {
         const exhibitor = s.exhibitor;
@@ -156,6 +160,49 @@ function ExhibitorComponent() {
                         store.exhibitorStore.setRebookingState(exhibitor, exhibitor.rebookingState, val)
                     }
                 />
+
+                <Transition
+                    in={store.exhibitorStore.rebookingStateChangeRequested}
+                    nodeRef={transitionRef}
+                    timeout={transitionDelay}
+                    appear
+                    enter
+                    exit
+                    mountOnEnter
+                    unmountOnExit
+                >
+                    {state => (
+                        <div ref={transitionRef} style={
+                            {
+                                position: "fixed",
+                                bottom: "1rem",
+                                left: "1rem",
+                                zIndex: 9999,
+                                transition: `opacity ${transitionDelay}ms ease-in-out`,
+                                opacity: 0,
+                                ...transitionStyles[state],
+                            }
+                        }>
+                            <Alert
+                                title={(
+                                    store.exhibitorStore.rebookingStateSaved
+                                        ? "Changes saved."
+                                        : "Oops! Something went wrong."
+                                )}
+                                variant={
+                                    store.exhibitorStore.rebookingStateSaved
+                                        ? "success"
+                                        : "error"
+                                }
+                                inline
+                                closable
+                                onClose={() => {
+                                    store.exhibitorStore.rebookingStateChangeRequested = false;
+                                }}
+                            />
+                        </div>
+                    )}
+                </Transition>
             </div>
         ) : null;
         const cls = classNames({
@@ -173,7 +220,7 @@ function ExhibitorComponent() {
         function renderButton(title: string, url: string, buttonNumber: number) {
             if (!title || !url || uiState.kiosk || uiState.previewMode) return null;
             return (
-                <div className="exhibitor-custom-button">
+                <div key={buttonNumber} className="exhibitor-custom-button">
                     <Button
                         link={url}
                         inline={true}
