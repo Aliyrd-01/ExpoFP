@@ -8,7 +8,7 @@ import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
 import debounce from "lodash.debounce";
-import custeomDebounce from "../tools/debounce";
+import customDebounce from "../tools/debounce";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
@@ -127,7 +127,7 @@ const OverlayContent: React.FC<{
     }, [children]);
 
     const resetIdleTimer = useCallback(
-        custeomDebounce(() => {
+        customDebounce(() => {
             window["__resett"]?.();
         }, 250),
         [uiState.kiosk]
