@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import PerfectScrollbar from "perfect-scrollbar";
-import React, { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { uiState } from "../store";
 import isScrollUgly from "../utils/is-scroll-ugly";
 import OverlayBar from "./OverlayBar";
@@ -8,6 +8,7 @@ import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
 import debounce from "lodash.debounce";
+import custeomDebounce from "../tools/debounce";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
@@ -125,8 +126,20 @@ const OverlayContent: React.FC<{
         };
     }, [children]);
 
+    const resetIdleTimer = useCallback(
+        custeomDebounce(() => {
+            window["__resett"]?.();
+        }, 250),
+        [uiState.kiosk]
+    );
+
     return (
-        <div className={`overlay-content ${className || ""}`} id="overlay-content" ref={contentRef}>
+        <div
+            className={`overlay-content ${className || ""}`}
+            id="overlay-content"
+            ref={contentRef}
+            onClick={() => resetIdleTimer()}
+        >
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
             <OverlayBar
@@ -149,6 +162,7 @@ const OverlayContent: React.FC<{
                     display: uiState.overlayCollapsed ? "none" : undefined,
                 }}
                 ref={scrollable}
+                onScroll={() => resetIdleTimer()}
             >
                 {children}
                 {/* FIX PART - make chrome start handling click events and correctly draw content (not sure why) */}

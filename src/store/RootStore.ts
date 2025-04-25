@@ -19,6 +19,7 @@ import UIState from "./UIState";
 import type { ListItem } from "./types";
 import { svgArea } from "../data/svg";
 import PoiTypeStore from "./PoiTypeStore";
+import { sanitizeSearch } from "../utils/sanitizeText";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -87,6 +88,10 @@ export default class RootStore {
         )
             (el.querySelector("input[type=search]") as any).blur();
         window.setTimeout(() => {
+            if (this.uiState.kioskSetup) {
+                return;
+            }
+
             this.selectSearch("");
             this.uiState.details = null;
 
@@ -132,7 +137,7 @@ export default class RootStore {
     @action selectSearch(text?: string) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
-        this.uiState.list = { type: "search", text: text || "", focused: false };
+        this.uiState.list = { type: "search", text: sanitizeSearch(text), focused: false };
         this.uiState.activeListIndex = -1;
     }
 
@@ -219,8 +224,7 @@ export default class RootStore {
 
         if (!booth) {
             this.uiState.details = null;
-            if (this.uiState.noOverlay && this.uiState.list.type == "category")
-                this.uiState.list = { type: "search", text: "", focused: false };
+            this.uiState.list = { type: "search", text: "", focused: false };
             if (this.uiState.onBoothClick) this.uiState.onBoothClick({ target: null });
             return;
         } else this.routeStore.tempToBooth = booth;

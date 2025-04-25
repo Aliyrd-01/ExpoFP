@@ -21,6 +21,11 @@
             height: 100%;
         }
     }
+    &.full.bottom,
+    &.medium.bottom,
+    &.small.bottom {
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
 
     &.-no-transition {
         transition: none;

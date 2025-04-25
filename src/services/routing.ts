@@ -1,7 +1,7 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { KIOSK_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY, SEPARATOR } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -132,9 +132,12 @@ function dispatchFromUrl() {
         )
     );
 
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
 
     if (executeCustomCommand()) {
+    } else if (searchParams.has("yah")) {
+        const command = searchParams.get("yah");
+        handleCustomCommand(`__yah ${command}`, true);
     } else if (searchParams.has(KIOSK_KEY)) {
         const command = searchParams.get(KIOSK_KEY);
         if (command === "1") {
@@ -143,7 +146,7 @@ function dispatchFromUrl() {
             uiState.kiosk = false;
         }
     } else if (slug.startsWith("route")) {
-        const parts = slug.split(":");
+        const parts = slug.split(SEPARATOR);
         store.routeStore.onlyAccessible = parts[3] === "true";
         store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
     } else if (slug === "bookmarks") {
@@ -162,6 +165,9 @@ function dispatchFromUrl() {
         );
     } else if (booth) {
         store.selectBooth(booth);
+    } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
+        disableHistoryManipulation = true;
+        store.uiState.kiosk = true;
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
@@ -192,14 +198,28 @@ function processURLParams() {
         const heatmapParamValue = url.searchParams.get("heatmap");
 
         if (heatmapParamValue === "true") {
-            url.searchParams.delete("heatmap");
+            if (url.searchParams.get("type") === "yah") {
+                let newSearch = url.search;
+                newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+                disableHistoryManipulation = true;
 
-            let newSearch = url.search;
-            newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
-            disableHistoryManipulation = true;
+                historyReplace(newSearch);
 
-            historyReplace(newSearch);
-            store.uiState.heatmap = true;
+                store.uiState.heatmapYah = true;
+                store.uiState.monochrome = true;
+                store.uiState.hideLogoInBooth = true;
+                store.uiState.hideHeaderLogo = true;
+                store.uiState.disableBookmarked = true;
+            } else {
+                url.searchParams.delete("heatmap");
+
+                let newSearch = url.search;
+                newSearch = newSearch.replace(/=&/g, "&").replace(/=$/, "");
+                disableHistoryManipulation = true;
+
+                historyReplace(newSearch);
+                store.uiState.heatmap = true;
+            }
         }
     }
 
@@ -411,6 +431,10 @@ function processURLParams() {
 
         historyReplace("?" + newSearch);
     }
+
+    if (locationSearch.includes(KIOSK_SETUP_KEY)) {
+        store.uiState.monochrome = true;
+    }
 }
 
 export function initRouting(offHistory = false) {
@@ -422,7 +446,6 @@ export function initRouting(offHistory = false) {
 
     unlisten = history.listen((location, action) => {
         if (disableHistoryManipulation) return;
-
         routeHistory.push(getHistoryUrl(location.search));
 
         logger.log("history", action, location);

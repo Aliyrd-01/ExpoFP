@@ -20,18 +20,6 @@ const replaceCommasWithDot = (value: string | number | undefined) => {
     return value;
 };
 
-export interface MarkerIcon {
-    name: string;
-    content: string;
-    width: number;
-    height: number;
-}
-
-export interface MarkersData {
-    icons: MarkerIcon[];
-    markers: Marker[];
-}
-
 export default class RouteStore {
     rootStore: RootStore;
     cpTimeout: number;
@@ -127,7 +115,7 @@ export default class RouteStore {
                     if (layersStore.mode === LayersMode.Default || !layerExists) {
                         return b.visible && b.rect;
                     } else {
-                        return b.rect && ((!position.z && b.visible) || layerExists.name === b.layer?.name);
+                        return b.rect && ((typeof position.z !== "number" && !position.z && b.visible) || layerExists.name === b.layer?.name);
                     }
                 })
                 .sort(
@@ -144,6 +132,7 @@ export default class RouteStore {
             dot.y = replaceCommasWithDot(dot.y);
             dot.lat = replaceCommasWithDot(dot.lat);
             dot.lng = replaceCommasWithDot(dot.lng);
+            dot.position = dot.position || "centertop";
             return dot;
         });
         this.markersData.icons = data.icons;
@@ -364,5 +353,24 @@ export interface Marker extends CurrentPosition {
     id: string;
     icon: string;
     selectedIcon: string;
+    position: "centertop" | "lefttop";
     active?: boolean;
+}
+
+export interface MarkerIcon {
+    name: string;
+    content: string;
+    width: number;
+    height: number;
+    scale?: number;
+}
+
+export interface MarkersData {
+    icons: MarkerIcon[];
+    markers: Marker[];
+}
+
+export interface Kiosk extends Omit<CurrentPosition, "angle"> {
+    key: string;
+    heading: number;
 }

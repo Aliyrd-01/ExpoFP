@@ -33,13 +33,12 @@ $action-button: ".efp-actionButton";
     cursor: pointer;
     transition: background 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
 
-    &:hover {
+    &:not(.isActive):not(#{$action-button}--directions):hover {
         background: var(--color-primary-ultra-light);
     }
 
     &:active {
-        background: var(--color-primary-ultra-light);
-        box-shadow: 0 0 8px rgb(61 145 247 / 30%);
+        box-shadow: 0 0 0 2px rgb(61 145 247 / 30%);
     }
 
     [class^="icon-"] {
@@ -54,6 +53,7 @@ $action-button: ".efp-actionButton";
 
         &:hover {
             background: var(--color-primary-dark);
+            border-color: var(--color-primary-dark);
         }
 
         & > .icon {
@@ -64,16 +64,27 @@ $action-button: ".efp-actionButton";
     &--bookmark {
         width: rem(40px);
         padding: 0;
+        background: var(--color-white);
+        border-color: var(--color-primary);
+        color: var(--color-primary);
 
         &.isActive {
             border-color: var(--color-bookmarked);
 
-            &:hover {
-                background: var(--color-gray-100);
-            }
-
             [class^="icon-"] {
                 color: var(--color-bookmarked);
+            }
+        }
+
+        &:not(.isActive) {
+            [class^="icon-"] {
+                animation: unset !important;
+            }
+        }
+
+        &.animate {
+            [class^="icon-"] {
+                animation: scale-bookmark-icon 0.3s ease-in-out;
             }
         }
     }
@@ -101,5 +112,21 @@ $action-button: ".efp-actionButton";
 .layout[dir="rtl"] #{$action-button} {
     &--directions .icon {
         transform: scaleX(-1);
+    }
+}
+
+@keyframes scale-bookmark-icon {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1);
     }
 }

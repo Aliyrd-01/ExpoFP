@@ -2,7 +2,7 @@ import { useObserver } from "mobx-react-lite";
 import React, { useRef } from "react";
 import store, { uiState } from "../store";
 import "./Category.scss";
-import List from "./List";
+import EntityList from "./EntityList";
 import OverlayContent from "./OverlayContent";
 import { t } from "../utils/i18n";
 import { Category as CategoryModel } from "../store/CategoryStore";
@@ -28,7 +28,7 @@ function Category() {
                 backMode="menu"
                 bar={bar}
             >
-                <List updatedScrollableRef={scrollableRef} />
+                <EntityList updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });

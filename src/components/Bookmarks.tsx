@@ -4,7 +4,7 @@ import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
 import "./Bookmarks.scss";
-import List from "./List";
+import EntityList from "./EntityList";
 import OverlayContent from "./OverlayContent";
 
 function Bookmarks() {
@@ -27,7 +27,7 @@ function Bookmarks() {
                 backMode="menu"
                 bar={bar}
             >
-                <List updatedScrollableRef={scrollableRef} />
+                <EntityList updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });

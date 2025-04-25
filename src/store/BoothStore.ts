@@ -103,6 +103,7 @@ export abstract class BoothBase {
     readonly schedule: ScheduleItem[];
     readonly poiTypeId: number;
     readonly poiType: RawPoiType;
+    readonly poiIcon: string;
     readonly yah: boolean;
     readonly meta: Record<string, string>;
     @observable layer: Layer;

@@ -32,6 +32,10 @@ export default class ExhibitorStore {
         return this.exhibitors.filter((x) => x.bookmarked);
     }
 
+    @computed get visited() {
+        return this.exhibitors.filter((x) => x.visited);
+    }
+
     @computed({ keepAlive: true }) get advertised() {
         return this.exhibitors.filter((x) => x.advertise && x.logo);
     }
@@ -49,6 +53,18 @@ export default class ExhibitorStore {
         }
     }
 
+    @action replaceVisited(ids: number[]) {
+        const ar = ids.map((x) => this.exhibitorById.get(x)).filter((x) => x);
+        const set = new Set(ar);
+        const toRemove = this.visited.filter((e) => !set.has(e));
+        for (const e of toRemove) {
+            e.visited = false;
+        }
+        for (const e of ar) {
+            e.visited = true;
+        }
+    }
+
     @action setRebookingState(exhibitor: Exhibitor, state: number, rebookingNote: string) {
         clearTimeout(this.timeout);
         this.rebookingStateChangeRequested = false;
@@ -56,7 +72,7 @@ export default class ExhibitorStore {
         exhibitor.rebookingState = state;
         exhibitor.rebookingNote = rebookingNote;
 
-        const url = buildRebookingUrl("api/v1/set-rebooking-state", getRebookingToken());
+        const url = buildRebookingUrl("api/v1/set-rebooking-state", { rt: getRebookingToken(), expoKey: this.rootStore.fp.eventId });
         fetch(url, {
             method: "POST",
             headers: {
@@ -80,7 +96,8 @@ export default class ExhibitorStore {
             .catch(() => {
                 exhibitor.rebookingState = 0;
                 this.rebookingStateSaved = false;
-            }).finally(() => {
+            })
+            .finally(() => {
                 this.rebookingStateChangeRequested = true;
                 this.timeout = setTimeout(() => {
                     this.rebookingStateChangeRequested = false;
@@ -136,6 +153,7 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly marketMaterials: MarketMaterial[];
     readonly slug: string;
     @observable bookmarked: boolean;
+    @observable visited: boolean;
     @observable rebookingState: number;
     @observable rebookingNote: string;
 

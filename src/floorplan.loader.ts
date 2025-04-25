@@ -1,4 +1,4 @@
-import { PREVIEW_MODE_ATTRIBUTE } from "./constants";
+import { KIOSK_ID_KEY, PREVIEW_MODE_ATTRIBUTE } from "./constants";
 import { Data } from "./data/Data";
 import { initOfflineManager } from "./offline/offlineManager";
 import { CurrentPosition, MarkersData } from "./store/RouteStore";
@@ -48,6 +48,8 @@ export default class FloorPlanLoader implements FloorPlan {
     onBoothClick: (e: FloorPlanBoothClickEvent) => void;
 
     onBookmarkClick: (e: FloorPlanBookmarkClickEvent) => void;
+
+    onVisitedClick: (e: FloorPlanVisitedClickEvent) => void;
 
     onCategoryClick: (e: FloorPlanCategoryClickEvent) => void;
 
@@ -177,6 +179,7 @@ export default class FloorPlanLoader implements FloorPlan {
 
         this.onBoothClick = options.onBoothClick;
         this.onBookmarkClick = options.onBookmarkClick;
+        this.onVisitedClick = options.onVisitedClick;
         this.onCategoryClick = options.onCategoryClick;
         this.onDetails = options.onDetails;
         this.onExhibitorCustomButtonClick = options.onExhibitorCustomButtonClick;
@@ -269,7 +272,7 @@ export default class FloorPlanLoader implements FloorPlan {
         const fpUrl = dataUrlBase + "fp.svg.js";
 
         const promises = [
-            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl]),
+            initOfflineManager(baseUrl, [wfDataUrl, dataUrl, fpUrl], ["kkiosk", "yah", "kiosk", KIOSK_ID_KEY]),
             loadCss("vendor/sanitize-css/sanitize.css", container),
             loadCss("vendor/perfect-scrollbar/css/perfect-scrollbar.css", container),
             loadCss("vendor/mapbox/mapbox-gl.css", container),
@@ -309,28 +312,73 @@ export default class FloorPlanLoader implements FloorPlan {
 
             await initI18n();
 
-            const isHeatmap = window.location.search.startsWith("?heatmap=true");
-            if (isHeatmap) {
-                const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
-                const booths = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=booview`).then(
-                    (res) => res.json()
-                );
-                const exhibitors = await fetch(`https://app-show.expofp.com/api/fp-stats/get?expoId=${expoId}&type=exview`).then(
-                    (res) => res.json()
-                );
-                window["__heatmapData"] = { booths, exhibitors };
+            const searchParamas = new URLSearchParams(window.location.search);
+            const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
+
+            if (searchParamas.get("heatmap") === "true") {
+                try {
+                    if (searchParamas.get("type") === "yah") {
+                        const url = new URL("/api/v1/you-are-here/qr-code/list/viewer", "https://app.expofp.com");
+
+                        const resp = await fetch(
+                            url.toString(),
+                            {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    expoId,
+                                    token: decodeURIComponent(searchParamas.get("t")),
+                                }),
+                            },
+                        );
+
+                        let yah = []
+                        if (resp.ok) {
+                            const json = await resp.json();
+                            yah = json.map((item, i) => ({ ...item, name: `QR Code #${i + 1}` }));
+                        }
+
+                        window["__heatmapDataYah"] = { yah };
+                    } else {
+                        const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
+                        boothsUrl.searchParams.set("expoId", expoId);
+                        boothsUrl.searchParams.set("type", "booview");
+
+                        const exhibitorsUrl = new URL("api/fp-stats/get", "https://app.expofp.com");
+                        exhibitorsUrl.searchParams.set("expoId", expoId);
+                        exhibitorsUrl.searchParams.set("type", "exview");
+
+                        const [boothsResp, exhibitorsResp] = await Promise.all([
+                            fetch(boothsUrl.toString()),
+                            fetch(exhibitorsUrl.toString()),
+                        ]);
+
+                        const [booths, exhibitors] = await Promise.all([
+                            boothsResp.json(),
+                            exhibitorsResp.json(),
+                        ]);
+
+                        window["__heatmapData"] = { booths, exhibitors };
+                    }
+                } catch (err) {
+                    console.warn(err);
+                }
             }
 
             try {
                 const token = getRebookingToken();
                 if (token) {
                     retainRebookingToken(token);
-                    const url = buildRebookingUrl("api/rebooking-data", token);
+                    const url = buildRebookingUrl("api/rebooking-data", { rt: token, expoKey: eventId });
                     const resp = await fetch(url);
-                    const rebookingData = await resp.json();
-                    mergeExhibitors(data as Data, rebookingData as Data);
+                    if (resp.ok) {
+                        const rebookingData = await resp.json();
+                        mergeExhibitors(data as Data, rebookingData as Data);
+                    }
+                    data.isRebooking = resp.ok;
+                } else {
+                    data.isRebooking = false;
                 }
-                data.isRebooking = Boolean(token);
             } catch (error) {
                 console.error(error);
             }
@@ -362,16 +410,22 @@ export default class FloorPlanLoader implements FloorPlan {
                         "transition": "icons/transition.svg",
                         "transition_up": "icons/transition_up.svg",
                         "transition_down": "icons/transition_down.svg",
+                        "kiosk-arrow": "icons/kiosk-arrow.svg",
+                        "kiosk-label": "icons/kiosk-label.svg",
                     }).map(([key, path]) =>
-                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(image => [key, image] as [string, HTMLImageElement])
+                        loadImage(baseUrl ? new URL(path, baseUrl).href : path).then(
+                            (image) => [key, image] as [string, HTMLImageElement]
+                        )
                     )
                 );
 
                 iconEntries
-                    .filter((entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> => entry.status === "fulfilled")
-                    .map(entry => entry.value)
+                    .filter(
+                        (entry): entry is PromiseFulfilledResult<[FloorPlanIcon, HTMLImageElement]> =>
+                            entry.status === "fulfilled"
+                    )
+                    .map((entry) => entry.value)
                     .forEach(([key, icon]) => self.icons.set(key, icon));
-
             } catch (e) {
                 console.warn(e);
             }

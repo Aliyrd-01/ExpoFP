@@ -35,7 +35,7 @@ export default function Floors() {
 
             if (store.mapboxStore.showMapbox) return;
 
-            if (settings.EXPO.indexOf("money2020usa") > -1 || settings.EXPO === "rodion2") {
+            if (settings.EXPO.indexOf("money2020usa") > -1 || settings.EXPO === "rodion2" || settings.EXPO === "possible2025") {
                 uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);
             } else {
                 var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);

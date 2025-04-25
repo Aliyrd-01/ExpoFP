@@ -5,7 +5,7 @@ import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
 import { useAutorun } from "../utils/mobx";
-import List from "./List";
+import EntityList from "./EntityList";
 import OverlayContent from "./OverlayContent";
 import debounce from "../tools/debounce";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
@@ -29,10 +29,12 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             const yah = YouAreHere.getYah();
             alert(`"You are here" coordinantes: ${yah[0]} ${yah[1]}, scale ${yah[2]}`);
         } else if (commandValue === "none") {
+            /** @deprecated use yah=<COMMAND> */
             YouAreHere.removeYah();
             isLocalStorageAvailable && localStorage.removeItem(KIOSK_KEY);
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 1) {
+            /** @deprecated use yah=<COMMAND> */
             YouAreHere.setYah(commandValue.split(",")[0]);
             if (isLocalStorageAvailable) {
                 localStorage.setItem(KIOSK_KEY, "1");
@@ -108,6 +110,9 @@ function Search() {
         },
         get placeHolder() {
             if (settings.EXPO.startsWith("jetlag")) return "Search location or artist";
+            if (uiState.heatmapYah) {
+                return t("Find scans above");
+            }
             return exhibitorStore.exhibitors.length === 0
                 ? t("Search {{boothTerm}}", { boothTerm: data.boothTerm.toLowerCase() })
                 : t("Search company, {{boothTerm}} or category", { boothTerm: data.boothTerm.toLowerCase() });
@@ -209,12 +214,13 @@ function Search() {
                 passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
                 passScrollableRef={(ref) => (scrollableRef.current = ref.current)}
             >
-                <List updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
+                <EntityList updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
             </OverlayContent>
         );
     });
 
     function handleChange() {
+        window["__resett"]?.();
         setText();
         debouncedChange();
     }
