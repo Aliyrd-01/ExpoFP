@@ -25,6 +25,8 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
     function handleClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
 
+        uiState.setListScrollItemId(uiState.list?.type, id);
+
         switch (type) {
             case "exhibitor":
                 store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
@@ -45,10 +47,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                 break;
             }
         }
-
-        setTimeout(() => {
-            uiState.setListScrollItemId(uiState.list?.type, id);
-        }, 50);
     }
 
     function mapItem(item: ListItem, highlighted: boolean, index: number) {
