@@ -108,7 +108,7 @@ export function createDetailsCanvas(
         if (b.price && b.price !== "0" && !uiState.previewMode) lines.push(b.price);
     } else {
         const clicks = heatmapStore.getTotalClicksByBooth(b);
-        lines.push("Clicks: " + clicks);
+        lines.push("Views: " + clicks);
     }
 
     // }
@@ -233,7 +233,7 @@ export function createExhibitorsDetailsCanvas(
 
     if (uiState.heatmap) {
         const clicks = heatmapStore.getTotalClicksByBooth(b);
-        detailsLines.push("Clicks: " + clicks);
+        detailsLines.push("Views: " + clicks);
     }
 
     const maxTextWidth = Math.max(
