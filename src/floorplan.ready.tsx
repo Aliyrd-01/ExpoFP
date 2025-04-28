@@ -169,8 +169,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }    
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
-        if (settings.EXPO === "cloudnext25" && point?.angle != null) {
-            point.angle = 270.0 - (point.angle % 360.0);
+        if (point?.angle != null && __fpGeo?.properties?.bearing != null) {
+            point.angle = 90.0 + __fpGeo.properties.bearing - (point.angle % 360.0);
             point.angle = point.angle < 0 ? point.angle + 360.0 : point.angle;
             point.angle = point.angle > 360 ? point.angle - 360.0 : point.angle;
         }
