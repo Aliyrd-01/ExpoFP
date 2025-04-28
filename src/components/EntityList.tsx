@@ -20,12 +20,13 @@ interface ListProps {
 }
 
 function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
-    const listRef = useRef(null);
+    const scrollerRef = useRef(null);
 
     function handleClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
 
         uiState.setListScrollItemId(uiState.list?.type, id);
+        uiState.setListScrollTop(uiState.list?.type, scrollerRef.current?.scrollTop || 0);
 
         switch (type) {
             case "exhibitor":
@@ -117,13 +118,15 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
         }
     };
 
-    const listScrollItemId = uiState.listScrollItemId;
-
     useEffect(() => {
-        if (listRef.current) {
-            listRef.current.scrollToIndex(uiState.listScrollIndex)
-        }
-    }, [uiState.listScrollIndex]);
+        setTimeout(() => {
+            if (scrollerRef.current) {
+                scrollerRef.current.scrollTop = uiState.listScrollTop;
+            }
+        }, 25);
+    }, [uiState.listScrollTop]);
+
+    const listScrollItemId = uiState.listScrollItemId;
 
     return (
         <div style={{ height: "100%", cursor: "pointer" }}>
@@ -131,7 +134,6 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                 <Virtuoso
                     className="list-virtual"
                     style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
-                    ref={listRef}
                     data={uiState.listItems}
                     itemContent={(index, item) => {
                         const highlighted = listScrollItemId?.toString() === item.id?.toString();
@@ -144,6 +146,9 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     overscan={400}
                     increaseViewportBy={400}
                     initialItemCount={Math.min(uiState.listScrollIndex + 1, uiState.listItems.length)}
+                    scrollerRef={ref => {
+                        scrollerRef.current = ref;
+                    }}
                 />
             )}
         </div>
