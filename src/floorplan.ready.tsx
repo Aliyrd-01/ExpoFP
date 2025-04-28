@@ -169,11 +169,14 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }    
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
-        store.routeStore.selectCurrentPosition(point, focus, icon);
-
-        if (settings.EXPO === "demo") {
-            this.onCurrentPositionChanged?.(point);
+        if (point?.angle != null && fpGeo?.properties?.bearing != null) {
+            point.angle = 90.0 + fpGeo.properties.bearing - (point.angle % 360.0);
+            point.angle = point.angle < 0 ? point.angle + 360.0 : point.angle;
+            point.angle = point.angle > 360 ? point.angle - 360.0 : point.angle;
         }
+
+        store.routeStore.selectCurrentPosition(point, focus, icon);
+        this.onCurrentPositionChanged?.(point);
     }
 
     setBookmarks(bookmarks: { name?: string; externalId?: string; bookmarked: boolean }[]): void {
