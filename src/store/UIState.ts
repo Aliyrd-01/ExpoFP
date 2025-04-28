@@ -697,11 +697,14 @@ export default class UIState {
         return index === -1 ? 0 : index;
     }
 
-    @action clearListScrollItemId() {
-        this._listScrollItemIds = {
-            ...this._listScrollItemIds,
-            [this.list.type]: null,
-        };
+    @observable _listScrollTop: Record<string, number> = {};
+
+    @action setListScrollTop(type: string, top: number) {
+        this._listScrollTop = { ...this._listScrollTop, [type]: top };
+    }
+
+    @computed get listScrollTop() {
+        return this._listScrollTop[this.list.type] || 0;
     }
 
     ///////////////////////////////////////////////////////////////////////////
