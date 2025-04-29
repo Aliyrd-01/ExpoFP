@@ -12,12 +12,11 @@ import { destroyUiHandlers } from "./store/init/init-ui";
 import { GaEventActions, destroyGtag, sendEventToGa, setConsentSettings } from "./tools/gtag";
 import reportError from "./tools/report-error";
 import { resetGlobalVariables } from "./tools/reset";
-import trackEvent from "./tools/track-event";
+import trackEvent, { ensureTracking } from "./tools/track-event";
 import { Visibility } from "./store/types";
 import { fpGeo } from "./components/Mapbox/utils/fpGeo";
 import { convertLocalToGps } from "./utils/gps";
 import Rect from "./core/Rect";
-import settings from "./tools/settings";
 import { DistanceOptimizedRoute } from "./utils/wayfinding";
 
 install();
@@ -47,6 +46,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
                     this.onInit?.(this);
                 }
                 store.initialized = true;
+                ensureTracking();
             },
         );
     }

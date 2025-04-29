@@ -47,7 +47,7 @@ export default function trackEvent(type: "load" | "exview" | "search" | "route" 
 }
 
 function isTrackingEnabled(): boolean {
-    return !!data?.trackerUrl && process.env.NODE_ENV === "production" && !uiState?.heatmap;
+    return !!data?.trackerUrl && process.env.NODE_ENV === "production" && !uiState.heatmap;
 }
 
 function saveTrackEvent(url: string, headers: Record<string, string>) {
@@ -92,7 +92,7 @@ async function sendSavedTrackEvents() {
 }
 
 let onlineListenerRegistered = false;
-function ensureTracking() {
+export function ensureTracking() {
     if (onlineListenerRegistered) return;
     onlineListenerRegistered = true;
 
@@ -102,4 +102,3 @@ function ensureTracking() {
 
     window.addEventListener("online", () => sendSavedTrackEvents());
 }
-ensureTracking();
