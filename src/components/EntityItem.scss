@@ -259,4 +259,17 @@ $entity-item: ".efp-entity-item";
             }
         }
     }
+
+    &.has-heatmap {
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: rem(8px);
+            background-color: var(--heatmap-color);
+            pointer-events: none;
+        }
+    }
 }

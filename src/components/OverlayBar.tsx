@@ -8,10 +8,21 @@ const OverlayBar: React.FC<{
     backMode: "back" | "menu" | "none";
     hideClose: boolean;
     overlayBarStyle?: React.CSSProperties;
+    overlayBarCenterContent?: ReactNode;
     overlayBarEndContent?: ReactNode;
     onBack: () => void;
     onClose: () => void;
-}> = ({ scrolled, backMode, hideClose, onBack, onClose, children, overlayBarEndContent, overlayBarStyle }) => {
+}> = ({
+    scrolled,
+    backMode,
+    hideClose,
+    onBack,
+    onClose,
+    children,
+    overlayBarCenterContent,
+    overlayBarEndContent,
+    overlayBarStyle,
+}) => {
     function handleClose(e: MouseEvent) {
         onClose();
     }
@@ -22,6 +33,7 @@ const OverlayBar: React.FC<{
         <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`}>
             <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
+            {overlayBarCenterContent}
             {hideClose ? (
                 <div className="overlay-bar__search-icon">
                     <i className="icon-search"></i>

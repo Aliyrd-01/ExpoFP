@@ -66,7 +66,7 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
-    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, s.exhibitor.featured ? "#999" : "#555");
+    const { heatmapBar } = useHeatmapOverlay(s.exhibitor);
     const [isContentOverflowing, setIsContentOverflowing] = useState(false);
     const [showKioskDetails, setShowKioskDetails] = useState<boolean>(false);
     const detailsRef = useRef<HTMLDivElement>(null);
@@ -285,8 +285,7 @@ function ExhibitorComponent() {
             <OverlayContent
                 className={cls}
                 backMode="none"
-                overlayBarEndContent={heatmapBar}
-                overlayBarStyle={overlayBarStyle}
+                overlayBarCenterContent={heatmapBar}
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}

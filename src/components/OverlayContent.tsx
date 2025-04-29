@@ -14,8 +14,9 @@ const OverlayContent: React.FC<{
     className?: string;
     particles?: boolean;
     backMode: "back" | "menu" | "none";
+    overlayBarCenterContent?: ReactNode;
     overlayBarEndContent?: ReactNode;
-    overlayBarStyle?: React.CSSProperties
+    overlayBarStyle?: React.CSSProperties;
     hideClose?: boolean;
     onBack?: () => void;
     onClose: () => void;
@@ -33,6 +34,7 @@ const OverlayContent: React.FC<{
     onClose,
     children,
     overlayBarStyle,
+    overlayBarCenterContent,
     overlayBarEndContent,
     onUpdateFuncSet,
     passScrollableRef,
@@ -106,18 +108,28 @@ const OverlayContent: React.FC<{
         debounce(() => {
             window["__resett"]?.();
         }, 250),
-        [uiState.kiosk],
+        [uiState.kiosk]
     );
 
     return (
         <div
             className={`overlay-content ${className || ""}`}
-            id="overlay-content" ref={contentRef}
+            id="overlay-content"
+            ref={contentRef}
             onClick={() => resetIdleTimer()}
         >
             {particles ? <OverlayParticles /> : null}
             {uiState.overlayPosition === "bottom" ? <OverlayGrip /> : null}
-            <OverlayBar overlayBarStyle={overlayBarStyle} overlayBarEndContent={overlayBarEndContent} scrolled={scrolled} onClose={onClose} hideClose={hideClose} backMode={backMode} onBack={onBack}>
+            <OverlayBar
+                overlayBarStyle={overlayBarStyle}
+                overlayBarCenterContent={overlayBarCenterContent}
+                overlayBarEndContent={overlayBarEndContent}
+                scrolled={scrolled}
+                onClose={onClose}
+                hideClose={hideClose}
+                backMode={backMode}
+                onBack={onBack}
+            >
                 {bar}
             </OverlayBar>
 

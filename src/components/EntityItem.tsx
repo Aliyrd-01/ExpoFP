@@ -37,6 +37,9 @@ export interface EntityItemProps {
     visited?: boolean;
     onClick?: (type: EntityItemType, id: string) => void;
     highlighted?: boolean;
+    heatmapColor?: string;
+    heatmapClicks?: number;
+    rebookingColor?: string;
 }
 
 const TYPES_WITH_UNIQUE_COLORS: EntityItemType[] = ["booth", "exhibitor", "event", "speaker", "category"];
@@ -76,6 +79,9 @@ const EntityItem: React.FC<EntityItemProps> = ({
     visited,
     onClick,
     highlighted = false,
+    heatmapColor,
+    heatmapClicks,
+    rebookingColor,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
 
@@ -86,8 +92,13 @@ const EntityItem: React.FC<EntityItemProps> = ({
                 "is-featured": featured,
                 "is-visited": visited,
                 "is-highlighted": highlighted,
+                "has-heatmap": !!heatmapColor,
             })}
-            style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
+            style={{
+                [`--item-type-color` as string]: `var(--color-${colorType})`,
+                ...(heatmapColor && ({ "--heatmap-color": heatmapColor } as React.CSSProperties)),
+                ...(rebookingColor ? { borderLeft: `5px solid ${rebookingColor}` } : {}),
+            }}
         >
             {/* <a href={url} className="efp-entity-item__link" aria-label={title}></a> */}
             <div className="efp-entity-item__body">

@@ -57,7 +57,7 @@ function Booth() {
         const bar = <div className="booth__bar">{s.title}</div>;
         let content: JSX.Element = null;
 
-        const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.booth);
+        const { heatmapBar } = useHeatmapOverlay(s.booth);
 
         const exhibitors = s.booth.exhibitors.map((item) => (
             <EntityItem
@@ -111,13 +111,7 @@ function Booth() {
         }
 
         return (
-            <OverlayContent
-                overlayBarEndContent={heatmapBar}
-                overlayBarStyle={overlayBarStyle}
-                bar={bar}
-                backMode="none"
-                onClose={() => store.selectNone()}
-            >
+            <OverlayContent overlayBarCenterContent={heatmapBar} bar={bar} backMode="none" onClose={() => store.selectNone()}>
                 {!data.isRebooking && settings.wayfinding && (
                     <div
                         className="exhibitor__directions"
