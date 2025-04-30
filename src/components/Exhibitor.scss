@@ -407,6 +407,7 @@
 .exhibitor-slider {
     position: relative;
     font-size: var(--font-size-lg);
+    max-width: 100%;
 
     &::after {
         content: "";
