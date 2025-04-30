@@ -50,6 +50,7 @@ export default function EntityListRow({ item, index, highlighted, onClick }: Pro
                 heatmapColor={heatmap.background}
                 heatmapClicks={heatmap.clicks}
                 rebookingColor={data.isRebooking ? defaultRebookingOptions[item.rebookingState]?.color.primary : undefined}
+                kioskMode={uiState.kiosk}
             />
         );
     }
@@ -115,6 +116,7 @@ export default function EntityListRow({ item, index, highlighted, onClick }: Pro
                         : []
                 }
                 highlighted={highlighted}
+                kioskMode={uiState.kiosk}
             />
         );
     }

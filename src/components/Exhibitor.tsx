@@ -299,7 +299,7 @@ function ExhibitorComponent() {
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}
-                                showVisited={true}
+                                showVisited={!uiState.kiosk}
                                 visited={s.exhibitor.visited}
                                 onClickBookmark={bookmark}
                                 onClickShare={handleShare}

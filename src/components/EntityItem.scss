@@ -272,4 +272,15 @@ $entity-item: ".efp-entity-item";
             pointer-events: none;
         }
     }
+
+    @include kiosk {
+        &__body {
+            padding: rem(20px 18px);
+        }
+
+        &__icon {
+            width: rem(30px);
+            height: rem(30px);
+        }
+    }
 }
