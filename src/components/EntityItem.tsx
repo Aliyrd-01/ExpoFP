@@ -40,6 +40,7 @@ export interface EntityItemProps {
     heatmapColor?: string;
     heatmapClicks?: number;
     rebookingColor?: string;
+    kioskMode?: boolean;
 }
 
 const TYPES_WITH_UNIQUE_COLORS: EntityItemType[] = ["booth", "exhibitor", "event", "speaker", "category"];
@@ -82,6 +83,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
     heatmapColor,
     heatmapClicks,
     rebookingColor,
+    kioskMode = false,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
 
@@ -106,12 +108,16 @@ const EntityItem: React.FC<EntityItemProps> = ({
                     <div className="efp-entity-item__icon">
                         {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
                     </div>
-                    {visited && (
-                        <div className="efp-entity-item__visited">
-                            <i className="icon-checkmark"></i>
-                        </div>
+                    {!kioskMode && (
+                        <>
+                            {visited && (
+                                <div className="efp-entity-item__visited">
+                                    <i className="icon-checkmark" />
+                                </div>
+                            )}
+                            {bookmarked && <i className={cn("efp-entity-item__bookmarked", "icon-bookmark-solid")} />}
+                        </>
                     )}
-                    {bookmarked && <i className={cn("efp-entity-item__bookmarked", "icon-bookmark-solid")} />}
                 </div>
                 <div className="efp-entity-item__right">
                     <div className="efp-entity-item__content">
