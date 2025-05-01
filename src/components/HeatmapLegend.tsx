@@ -21,7 +21,7 @@ function round(value: number) {
     } else {
         return Math.round(value / 100) * 100;
     }
-};
+}
 
 const HeatmapLegend: React.FC<HeatmapLegendProps> = ({ colors, min, max, className, style }) => {
     const numValues = useMemo(() => {
@@ -40,17 +40,23 @@ const HeatmapLegend: React.FC<HeatmapLegendProps> = ({ colors, min, max, classNa
     }, [min, max, numValues]);
 
     const interpolatedColors = useMemo(() => {
-        return values.map(value => getColorFromGradient(value, min, max));
+        return values.map((value) => getColorFromGradient(value, min, max));
     }, [values, min, max]);
 
     return (
-        <div className={classNames("heatmap-legend", className)} style={style}>
-            <div className="heatmap-legend__colors" style={{
-                background: `linear-gradient(to right, ${interpolatedColors.join(", ")})`
-            }} />
+        <div className={classNames("heatmap-legend", className)} style={style} role="img" aria-label="Heatmap intensity scale">
+            <div
+                className="heatmap-legend__colors"
+                style={{
+                    background: `linear-gradient(to right, ${interpolatedColors.join(", ")})`,
+                }}
+                aria-hidden="true"
+            />
             <div className="heatmap-legend__values">
                 {values.map((value, index) => (
-                    <div key={index} className="heatmap-legend__value">{value}</div>
+                    <span key={index} className="heatmap-legend__value" aria-hidden="true">
+                        {value}
+                    </span>
                 ))}
             </div>
         </div>

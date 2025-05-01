@@ -14,7 +14,7 @@ const WayfindingFloorSelector: React.FC<WayfindingFloorSelectorProps> = ({ floor
     return (
         <div className="efp-wayfinding-floor">
             <div className="efp-wayfinding-floor__body">
-                <div className="efp-wayfinding-floor__list">
+                <div className="efp-wayfinding-floor__list" role="radiogroup" aria-label="Floor selection">
                     {floors.map((floor, index) => {
                         const isCurrent = floor?.id === current?.id;
                         const isNext = current && index === currentIndex + 1;
@@ -29,14 +29,17 @@ const WayfindingFloorSelector: React.FC<WayfindingFloorSelectorProps> = ({ floor
                             >
                                 <button
                                     type="button"
-                                    onClick={() => onClickFloor({ id: floor.id, name: floor.name })}
+                                    role="radio"
                                     title={floor.description}
+                                    aria-checked={isCurrent}
+                                    aria-label={floor.description || `Floor ${floor.name}`}
+                                    onClick={() => onClickFloor({ id: floor.id, name: floor.name })}
                                 >
                                     <span>{floor.name}</span>
                                 </button>
                                 {isCurrent && (
-                                    <div className="item-walk">
-                                        <i className="icon-man-walking-solid"></i>
+                                    <div className="item-walk" aria-hidden="true">
+                                        <i className="icon-man-walking-solid" aria-hidden="true"></i>
                                     </div>
                                 )}
                             </div>

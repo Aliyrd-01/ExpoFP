@@ -24,9 +24,7 @@ const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [step, setStep] = useState<"auth" | "edit" | "copy">(
-        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
-    );
+    const [step, setStep] = useState<"auth" | "edit" | "copy">(sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth");
     const [kioskUrl, setKioskUrl] = useState("");
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
@@ -39,9 +37,7 @@ const KioskSetup = observer(() => {
 
     const routeFromKioskMatch = useMemo(() => {
         const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
-        return [...searchParams.keys()]
-            .map(key => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`)))
-            .find(match => match);
+        return [...searchParams.keys()].map((key) => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`))).find((match) => match);
     }, []);
 
     useEffect(() => {
@@ -56,43 +52,36 @@ const KioskSetup = observer(() => {
                 store.uiState.hideHeaderLogo = kioskSetup;
                 store.uiState.hideLogoInBooth = kioskSetup;
                 store.uiState.monochrome = kioskSetup;
-            },
+            }
         );
 
         const kioskSetupDataDisposer = reaction(
-            () => [
-                store.uiState.kioskSetupData,
-                store.routeStore.currentPosition,
-            ] as const,
+            () => [store.uiState.kioskSetupData, store.routeStore.currentPosition] as const,
             ([kioskSetupData, currentPosition]) => {
                 if (!kioskSetupData) {
                     return;
                 }
 
-                const hasCurrentPosition = (
-                    currentPosition
-                    && (store.routeStore.defaultFrom as RouteCutIn)?.type === "route-cut-in"
-                );
+                const hasCurrentPosition =
+                    currentPosition && (store.routeStore.defaultFrom as RouteCutIn)?.type === "route-cut-in";
 
-                store.routeStore.defaultFrom = (
-                    hasCurrentPosition
-                        ? null
-                        : new RouteCutIn(
-                            Number.MAX_SAFE_INTEGER,
-                            t("Interactive Kiosk"),
-                            {
-                                x: kioskSetupData.x,
-                                y: kioskSetupData.y,
-                                layer: kioskSetupData.z?.toString(),
-                            },
-                            `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`,
-                        )
-                );
+                store.routeStore.defaultFrom = hasCurrentPosition
+                    ? null
+                    : new RouteCutIn(
+                          Number.MAX_SAFE_INTEGER,
+                          t("Interactive Kiosk"),
+                          {
+                              x: kioskSetupData.x,
+                              y: kioskSetupData.y,
+                              layer: kioskSetupData.z?.toString(),
+                          },
+                          `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`
+                      );
 
                 if (hasCurrentPosition) {
                     store.selectNone();
                 }
-            },
+            }
         );
 
         async function requestKioskData() {
@@ -113,7 +102,7 @@ const KioskSetup = observer(() => {
                     kioskId = routeFromKioskMatch[1];
                 }
 
-                const kiosk = kiosks.find(k => strEqual(k.key, kioskId));
+                const kiosk = kiosks.find((k) => strEqual(k.key, kioskId));
 
                 runInAction(() => {
                     store.uiState.kioskList = kiosks;
@@ -140,15 +129,8 @@ const KioskSetup = observer(() => {
             kioskSetupDataDisposer();
             setShowError(false);
             setPending(false);
-        }
-    }, [
-        apiUrl,
-        store.fp,
-        store.routeStore,
-        store.uiState,
-        step,
-        routeFromKioskMatch,
-    ]);
+        };
+    }, [apiUrl, store.fp, store.routeStore, store.uiState, step, routeFromKioskMatch]);
 
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
@@ -157,7 +139,7 @@ const KioskSetup = observer(() => {
             return;
         }
 
-        store.fp.onGetCoordsClick = coords => {
+        store.fp.onGetCoordsClick = (coords) => {
             originalOnGetCoordsClick?.(coords);
             setShowError(false);
             store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, ...coords };
@@ -198,9 +180,7 @@ const KioskSetup = observer(() => {
         }
 
         selectRouteTimer.current = setTimeout(() => {
-            store.routeStore.selectRoute(
-                extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)),
-            );
+            store.routeStore.selectRoute(extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)));
         }, 500);
     }, [routeFromKioskMatch]);
 
@@ -216,31 +196,23 @@ const KioskSetup = observer(() => {
             const requestBody: Kiosk = toJS(store.uiState.kioskSetupData);
 
             const token = sessionStorage.getItem(KIOSK_SETUP_TOKEN);
-            const response = await fetch(
-                apiUrl,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        ...requestBody,
-                        key: requestBody.key?.toString() || undefined,
-                        ...(token ? { token } : {}),
-                    }),
-                },
-            );
-            const kiosk = await response.json() as Kiosk;
+            const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...requestBody,
+                    key: requestBody.key?.toString() || undefined,
+                    ...(token ? { token } : {}),
+                }),
+            });
+            const kiosk = (await response.json()) as Kiosk;
 
             runInAction(() => {
                 store.uiState.kioskSetupData = kiosk;
                 store.uiState.kiosk = !isMobileDevice;
             });
 
-            setKioskUrl(
-                new URL(
-                    `?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`,
-                    window.location.href
-                ).toString(),
-            );
+            setKioskUrl(new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href).toString());
 
             setStep("copy");
         } catch (err) {
@@ -306,7 +278,7 @@ const KioskSetup = observer(() => {
             return;
         }
 
-        const kiosk = store.uiState.kioskList.find(k => k.key.toString() === key);
+        const kiosk = store.uiState.kioskList.find((k) => k.key.toString() === key);
 
         if (kiosk) {
             store.uiState.kioskSetupData = kiosk;
@@ -317,7 +289,7 @@ const KioskSetup = observer(() => {
                 key,
                 x: store.layerStore.rectangle.cx || 0,
                 y: store.layerStore.rectangle.cy || 0,
-                z: store.layerStore.floors.find(f => f.active)?.name,
+                z: store.layerStore.floors.find((f) => f.active)?.name,
                 heading: 0,
             };
             store.uiState.kioskSetupData = newKiosk;
@@ -344,65 +316,68 @@ const KioskSetup = observer(() => {
         title = t("Add or edit a kiosk");
     }
 
-    const auth = useCallback(debounce((passcode: string) => {
-        const fn = async () => {
-            try {
-                setShowError(false);
-                setShowSuccess(false);
+    const auth = useCallback(
+        debounce((passcode: string) => {
+            const fn = async () => {
+                try {
+                    setShowError(false);
+                    setShowSuccess(false);
 
-                if (!passcode) {
-                    return;
-                }
+                    if (!passcode) {
+                        return;
+                    }
 
-                setPending(true);
-                const response = await fetch(
-                    "https://app.expofp.com/api/v1/you-are-here/token",
-                    {
+                    setPending(true);
+                    const response = await fetch("https://app.expofp.com/api/v1/you-are-here/token", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             expoKey: store.fp.eventId,
                             passcode,
                         }),
-                    },
-                );
+                    });
 
-                const respJson = await response.json();
-                if (!respJson?.token) {
+                    const respJson = await response.json();
+                    if (!respJson?.token) {
+                        setShowError(true);
+                        return;
+                    }
+
+                    sessionStorage.setItem(KIOSK_SETUP_TOKEN, respJson.token);
+                    setStep("edit");
+                } catch (err) {
+                    console.error(err);
                     setShowError(true);
-                    return;
+                } finally {
+                    setPending(false);
                 }
-
-                sessionStorage.setItem(KIOSK_SETUP_TOKEN, respJson.token);
-                setStep("edit");
-            } catch (err) {
-                console.error(err);
-                setShowError(true);
-            } finally {
-                setPending(false);
-            }
-        };
-        fn();
-    }, 250), [store.fp.eventId]);
+            };
+            fn();
+        }, 250),
+        [store.fp.eventId]
+    );
 
     return (
         <Suspense fallback={null}>
             {store.uiState.kioskSetup && (
-                <div ref={kioskSetupDivRef} className="efp-kiosk-setup">
-                    <Alert
-                        variant="blank"
-                        title={title}
-                        inline
-                        showIcon={false}
-                    >
+                <div
+                    ref={kioskSetupDivRef}
+                    className="efp-kiosk-setup"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="kiosk-setup-title"
+                    aria-describedby="kiosk-setup-instructions"
+                >
+                    <Alert variant="blank" title={title} inline showIcon={false}>
                         {step === "auth" && (
-                            <p className="efp-kiosk-setup-info">
+                            <p id="kiosk-setup-instructions" className="efp-kiosk-setup-info">
                                 <label className="efp-kiosk-setup-key">
                                     <input
                                         placeholder={t("Enter passcode")}
                                         defaultValue=""
                                         disabled={pending}
-                                        onInput={e => auth((e.target as HTMLInputElement).value)}
+                                        onInput={(e) => auth((e.target as HTMLInputElement).value)}
+                                        aria-label={t("Enter passcode")}
                                     />
                                 </label>
                             </p>
@@ -415,14 +390,16 @@ const KioskSetup = observer(() => {
                                 </p>
 
                                 <label className="efp-kiosk-setup-key">
-                                    <span><strong>#</strong></span>
+                                    <span>
+                                        <strong>#</strong>
+                                    </span>
                                     <input
                                         type="number"
                                         min={1}
                                         max={99}
                                         placeholder={t("Enter a number from 1 to 99")}
                                         value={store.uiState.kioskSetupData?.key || ""}
-                                        onChange={e => {
+                                        onChange={(e) => {
                                             const input = e.target as HTMLInputElement;
                                             input.value = input.value.replace(/\D/g, "");
                                             changeKey(input.value);
@@ -430,12 +407,12 @@ const KioskSetup = observer(() => {
                                     />
                                 </label>
 
-                                <p className="efp-kiosk-setup-info">
-                                    {t("Move the range slider to rotate the icon.")}
-                                </p>
+                                <p className="efp-kiosk-setup-info">{t("Move the range slider to rotate the icon.")}</p>
 
                                 <label className="efp-kiosk-setup-rotate">
-                                    <span><strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°</span>
+                                    <span>
+                                        <strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°
+                                    </span>
                                     <input
                                         type="range"
                                         min="0"
@@ -443,7 +420,7 @@ const KioskSetup = observer(() => {
                                         step="10"
                                         value={store.uiState.kioskSetupData?.heading || 0}
                                         disabled={disabled}
-                                        onChange={e => rotate((e.target as HTMLInputElement).value)}
+                                        onChange={(e) => rotate((e.target as HTMLInputElement).value)}
                                     />
                                 </label>
                             </>
@@ -458,40 +435,13 @@ const KioskSetup = observer(() => {
                         )}
 
                         <div className="efp-kiosk-setup-actions">
-                            {step === "edit" && (
-                                <Button
-                                    size="md"
-                                    text={t("Save")}
-                                    disabled={disabled}
-                                    onClick={save}
-                                />
-                            )}
+                            {step === "edit" && <Button size="md" text={t("Save")} disabled={disabled} onClick={save} />}
 
-                            {step === "copy" && (
-                                <Button
-                                    size="md"
-                                    text={t("Copy URL")}
-                                    onClick={copy}
-                                />
-                            )}
+                            {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
 
-                            {step === "edit" && (
-                                <Button
-                                    variant="gray-border"
-                                    size="md"
-                                    text={t("Clear")}
-                                    onClick={clear}
-                                />
-                            )}
+                            {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
 
-                            {step === "copy" && (
-                                <Button
-                                    variant="gray"
-                                    size="md"
-                                    text={t("Cancel")}
-                                    onClick={exit}
-                                />
-                            )}
+                            {step === "copy" && <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />}
                         </div>
                     </Alert>
                 </div>
@@ -499,13 +449,7 @@ const KioskSetup = observer(() => {
 
             {showError && (
                 <div className="efp-kiosk-setup-message">
-                    <Alert
-                        variant="error"
-                        closable
-                        title={t("Error")}
-                        inline
-                        onClose={() => setShowError(false)}
-                    >
+                    <Alert variant="error" closable title={t("Error")} inline onClose={() => setShowError(false)}>
                         {t("An error occurred.\nPlease try again.")}
                     </Alert>
                 </div>
@@ -513,13 +457,7 @@ const KioskSetup = observer(() => {
 
             {showSuccess && (
                 <div className="efp-kiosk-setup-message">
-                    <Alert
-                        variant="success"
-                        closable
-                        title={t("Success")}
-                        inline
-                        onClose={() => setShowSuccess(false)}
-                    />
+                    <Alert variant="success" closable title={t("Success")} inline onClose={() => setShowSuccess(false)} />
                 </div>
             )}
         </Suspense>

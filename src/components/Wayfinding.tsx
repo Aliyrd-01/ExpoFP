@@ -114,15 +114,15 @@ function Wayfinding() {
 
             info.push(
                 {
-                    title: "Travel time",
+                    title: t("Travel time"),
                     text: seconds < 60 ? "< 1 min" : `~ ${Math.round(seconds / 60)} min`,
                 },
                 {
-                    title: "Distance",
+                    title: t("Distance"),
                     text: Math.round(distance) + ` ${units}`,
                 },
                 {
-                    title: "Est arrival",
+                    title: t("Est arrival"),
                     text: estTotal,
                 }
             );

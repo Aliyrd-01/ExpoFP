@@ -39,17 +39,32 @@ const Alert: React.FC<AlertProps> = ({
     };
 
     return (
-        <div className={cn("efp-alert", `efp-alert--${variant}`, { isInline: inline, [`efp-alert--${position}`]: position })}>
-            {showIcon ? (
+        <div
+            className={cn("efp-alert", `efp-alert--${variant}`, {
+                isInline: inline,
+                [`efp-alert--${position}`]: position,
+            })}
+            role={variant === "error" || variant === "warning" ? "alert" : "status"}
+            aria-live={variant === "error" || variant === "warning" ? "assertive" : "polite"}
+        >
+            {showIcon && (
                 <div className="efp-alert__icon">
-                    <i className={cn(alertIcon())}></i>
+                    <i className={cn(alertIcon())} aria-hidden="true"></i>
                 </div>
-            ) : null}
+            )}
             <div className="efp-alert__content">
-                {title ? <div className="efp-alert__title">{title}</div> : null}
-                {children ? children : null}
+                {title && <div className="efp-alert__title">{title}</div>}
+                {children}
             </div>
-            {closable && <button type="button" className="efp-alert__close" onClick={onClose}></button>}
+            {closable && (
+                <button
+                    type="button"
+                    className="efp-alert__close"
+                    onClick={onClose}
+                    aria-label="Close alert"
+                    title="Close"
+                ></button>
+            )}
         </div>
     );
 };

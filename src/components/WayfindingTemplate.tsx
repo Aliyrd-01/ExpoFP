@@ -134,7 +134,7 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                             {isKiosk && <RouteQR url={routeUrl} />}
                         </>
                     ) : (
-                        <div className="efp-wayfindingError">Route not found</div>
+                        <div className="efp-wayfindingError">{t("Route not found")}</div>
                     )}
                 </div>
             )}

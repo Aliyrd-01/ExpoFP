@@ -1,4 +1,5 @@
 import React from "react";
+import { t } from "../utils/i18n";
 import "./RebookingRadioGroup.scss";
 
 export interface RebookingOption {
@@ -24,7 +25,7 @@ export const defaultRebookingOptions = [
     {
         name: "offer",
         value: "0",
-        label: "Unasked",
+        label: t("Unasked"),
         iconName: "icon-question-mark",
         disabled: false,
         color: {
@@ -35,7 +36,7 @@ export const defaultRebookingOptions = [
     {
         name: "offer",
         value: "1",
-        label: "Accepted",
+        label: t("Accepted"),
         iconName: "icon-checkmark",
         disabled: false,
         color: {
@@ -46,7 +47,7 @@ export const defaultRebookingOptions = [
     {
         name: "offer",
         value: "2",
-        label: "Rejected",
+        label: t("Rejected"),
         iconName: "icon-close",
         disabled: false,
         color: {
@@ -57,7 +58,7 @@ export const defaultRebookingOptions = [
     {
         name: "offer",
         value: "3",
-        label: "Undecided",
+        label: t("Undecided"),
         iconName: "icon-switch-horizontal",
         disabled: false,
         color: {
@@ -93,7 +94,7 @@ const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, chec
                     <label htmlFor={option.value}>
                         <div className="rebooking-radio__label">{option.label}</div>
                         <div className="rebooking-radio__icon">
-                            <i className={option.iconName}></i>
+                            <i className={option.iconName} aria-hidden="true"></i>
                         </div>
                     </label>
                 </div>
@@ -103,7 +104,7 @@ const RebookingRadioGroup: React.FC<RebookingRadioGroupProps> = ({ options, chec
 
     return (
         <div className="rebooking-radio-group">
-            {showTitle && <div className="rebooking-radio-group__title">Choose Rebooking offer</div>}
+            {showTitle && <div className="rebooking-radio-group__title">{t("Choose Rebooking offer")}</div>}
             <div className="rebooking-radio-group__options">{renderGroup()}</div>
         </div>
     );
