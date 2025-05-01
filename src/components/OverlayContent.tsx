@@ -153,6 +153,7 @@ const OverlayContent: React.FC<{
                 hideClose={hideClose}
                 backMode={backMode}
                 onBack={onBack}
+                ref={overlayBarRef}
             >
                 {bar}
             </OverlayBar>
