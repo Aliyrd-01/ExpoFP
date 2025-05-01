@@ -29,7 +29,7 @@ const OverlayBar: React.FC<{
     }
 
     return (
-        <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`} ref={ref}>
+        <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`}>
             <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
             {overlayBarCenterContent}
@@ -47,7 +47,7 @@ const OverlayBar: React.FC<{
             {overlayBarEndContent}
         </div>
     );
-});
+};
 
 OverlayBar.displayName = "OverlayBar";
 
