@@ -4,19 +4,26 @@ import "./OverlayBar.scss";
 import OverlayBarBack from "./OverlayBarBack";
 import { t } from "../utils/i18n";
 
-const OverlayBar = forwardRef<
-    HTMLDivElement,
-    {
-        scrolled: boolean;
-        backMode: "back" | "menu" | "none";
-        hideClose: boolean;
-        overlayBarStyle?: React.CSSProperties;
-        overlayBarEndContent?: ReactNode;
-        onBack: () => void;
-        onClose: () => void;
-        children?: ReactNode;
-    }
->(({ scrolled, backMode, hideClose, onBack, onClose, children, overlayBarEndContent, overlayBarStyle }, ref) => {
+const OverlayBar: React.FC<{
+    scrolled: boolean;
+    backMode: "back" | "menu" | "none";
+    hideClose: boolean;
+    overlayBarStyle?: React.CSSProperties;
+    overlayBarCenterContent?: ReactNode;
+    overlayBarEndContent?: ReactNode;
+    onBack: () => void;
+    onClose: () => void;
+}> = ({
+    scrolled,
+    backMode,
+    hideClose,
+    onBack,
+    onClose,
+    children,
+    overlayBarCenterContent,
+    overlayBarEndContent,
+    overlayBarStyle,
+}) => {
     function handleClose(e: MouseEvent) {
         onClose();
     }
@@ -25,6 +32,7 @@ const OverlayBar = forwardRef<
         <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`} ref={ref}>
             <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
             <div className="overlay-bar__slot">{children}</div>
+            {overlayBarCenterContent}
             {hideClose ? (
                 <div className="overlay-bar__search-icon" aria-label={t("Search")}>
                     <i className="icon-search" aria-hidden="true"></i>

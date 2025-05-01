@@ -22,6 +22,9 @@ const MarketMaterialListItem: React.FC<MarketMaterial> = ({ fileName, path }) =>
                 </div>
                 <span>{fileName}</span>
             </div>
+
+            <div className="market-materials__item-name">{fileName}</div>
+
             <div className="market-materials__item-download">
                 <i className="icon-download"></i>
             </div>

@@ -37,6 +37,10 @@ export interface EntityItemProps {
     visited?: boolean;
     onClick?: (type: EntityItemType, id: string) => void;
     highlighted?: boolean;
+    heatmapColor?: string;
+    heatmapClicks?: number;
+    rebookingColor?: string;
+    kioskMode?: boolean;
 }
 
 const TYPES_WITH_UNIQUE_COLORS: EntityItemType[] = ["booth", "exhibitor", "event", "speaker", "category"];
@@ -76,6 +80,10 @@ const EntityItem: React.FC<EntityItemProps> = ({
     visited,
     onClick,
     highlighted = false,
+    heatmapColor,
+    heatmapClicks,
+    rebookingColor,
+    kioskMode = false,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
 
@@ -86,8 +94,8 @@ const EntityItem: React.FC<EntityItemProps> = ({
                 "is-featured": featured,
                 "is-visited": visited,
                 "is-highlighted": highlighted,
+                "has-heatmap": !!heatmapColor,
             })}
-            style={{ [`--item-type-color` as string]: `var(--color-${colorType})` }}
             aria-label={title}
             tabIndex={0}
             aria-pressed={highlighted || undefined}
@@ -98,18 +106,27 @@ const EntityItem: React.FC<EntityItemProps> = ({
                     onClick?.(type, id);
                 }
             }}
+            style={{
+                [`--item-type-color` as string]: `var(--color-${colorType})`,
+                ...(heatmapColor && ({ "--heatmap-color": heatmapColor } as React.CSSProperties)),
+                ...(rebookingColor ? { borderLeft: `5px solid ${rebookingColor}` } : {}),
+            }}
         >
             <div className="efp-entity-item__body">
                 <div className="efp-entity-item__left">
                     <div className="efp-entity-item__icon">
                         {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`} aria-hidden="true"></i>}
                     </div>
-                    {visited && (
-                        <div className="efp-entity-item__visited">
-                            <i className="icon-checkmark" aria-hidden="true"></i>
-                        </div>
+                    {!kioskMode && (
+                        <>
+                            {visited && (
+                                <div className="efp-entity-item__visited">
+                                    <i className="icon-checkmark" />
+                                </div>
+                            )}
+                            {bookmarked && <i className={cn("efp-entity-item__bookmarked", "icon-bookmark-solid")} />}
+                        </>
                     )}
-                    {bookmarked && <i className={cn("efp-entity-item__bookmarked", "icon-bookmark-solid")} aria-hidden="true" />}
                 </div>
                 <div className="efp-entity-item__right">
                     <div className="efp-entity-item__content">
