@@ -23,7 +23,7 @@ interface Props {
 
 type SupportedHeatmapItem = Exhibitor | BoothBase | HeatmapYah;
 
-function EntityListRow({ item, index, highlighted, onClick }: Props) {
+const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
     let heatmap = { background: undefined, clicks: undefined };
 
     if (uiState.heatmap && (item instanceof Exhibitor || item instanceof BoothBase || item instanceof HeatmapYah)) {
