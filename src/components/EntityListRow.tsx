@@ -12,6 +12,7 @@ import YahRow from "./YahRow";
 import data from "../data";
 import dateFormat from "dateformat";
 import { defaultRebookingOptions } from "./RebookingRadioGroup";
+import { observer } from "mobx-react-lite";
 
 interface Props {
     item: ListItem;
@@ -22,7 +23,7 @@ interface Props {
 
 type SupportedHeatmapItem = Exhibitor | BoothBase | HeatmapYah;
 
-export default function EntityListRow({ item, index, highlighted, onClick }: Props) {
+const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
     let heatmap = { background: undefined, clicks: undefined };
 
     if (uiState.heatmap && (item instanceof Exhibitor || item instanceof BoothBase || item instanceof HeatmapYah)) {
@@ -128,3 +129,5 @@ export default function EntityListRow({ item, index, highlighted, onClick }: Pro
 
     return null;
 }
+
+export default observer(EntityListRow);
