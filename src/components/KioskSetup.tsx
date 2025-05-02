@@ -129,7 +129,6 @@ const KioskSetup = observer(() => {
                 });
             } catch (err) {
                 console.error(err);
-                setShowError(true);
                 return;
             }
         }
