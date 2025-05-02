@@ -3,6 +3,7 @@ import React, { RefObject, useEffect, useRef, useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
 import store, { boothStore, uiState } from "../store";
 import EntityListRow from "./EntityListRow";
+import "./EntityList.scss";
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -77,6 +78,13 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                     overscan={400}
                     increaseViewportBy={400}
                     initialItemCount={Math.min(uiState.listScrollIndex + 1, uiState.listItems.length)}
+                    components={{
+                        EmptyPlaceholder: () => (
+                            <div className="list-empty">
+                                {uiState.list.type === "search" ? "Oops, nothing found" : "No items to show"}
+                            </div>
+                        ),
+                    }}
                     scrollerRef={(ref) => {
                         scrollerRef.current = ref;
                     }}

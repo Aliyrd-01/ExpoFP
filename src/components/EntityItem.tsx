@@ -1,5 +1,6 @@
 import cn from "classnames";
 import React from "react";
+import HighlightText from "./HighlightText";
 import "./EntityItem.scss";
 
 type AdditionalInfo =
@@ -123,7 +124,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                     <div className="efp-entity-item__content">
                         <div className="efp-entity-item__header">
                             <div className="efp-entity-item__title">
-                                {title}
+                                <HighlightText text={title} />
                                 {type === "category" && <span>{itemsCount !== undefined && itemsCount}</span>}
                             </div>
                             {featured && <div className="efp-entity-item__featured">Featured</div>}
