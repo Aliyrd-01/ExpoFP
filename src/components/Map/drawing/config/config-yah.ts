@@ -5,12 +5,23 @@ import { getYah } from "../../../../utils/yah";
 import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
+import { reaction } from "mobx";
 
 export default function configYah(context: DrawerContext) {
     let drawer: TrianglePainter = null;
     let drawerSeq = 0;
 
     let yah = getYah();
+
+    reaction(
+        () => store.layerStore.layersLoaded,
+        () => {
+            setTimeout(() => {
+                if (!yah) return;
+                store.uiState.fitBounds();
+            });
+        },
+    );
 
     //hotfix for yah in url in kiosks
     const slug = window.location.search.length > 1 ? decodeURIComponent(window.location.search.substring(1)) : "";
