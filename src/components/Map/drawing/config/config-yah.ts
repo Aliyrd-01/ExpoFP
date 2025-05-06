@@ -5,7 +5,6 @@ import { getYah } from "../../../../utils/yah";
 import { yahIcon, yahIconColor } from "../../../../utils/yah_icon";
 import { DrawerContext } from "../Drawer1";
 import TrianglePainter, { TrianglePainterObject } from "../painters/TrianglePainter";
-import { reaction } from "mobx";
 
 export default function configYah(context: DrawerContext) {
     let drawer: TrianglePainter = null;
