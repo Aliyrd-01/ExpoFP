@@ -13,16 +13,6 @@ export default function configYah(context: DrawerContext) {
 
     let yah = getYah();
 
-    reaction(
-        () => store.layerStore.layersLoaded,
-        () => {
-            setTimeout(() => {
-                if (!yah) return;
-                store.uiState.fitBounds();
-            });
-        },
-    );
-
     //hotfix for yah in url in kiosks
     const slug = window.location.search.length > 1 ? decodeURIComponent(window.location.search.substring(1)) : "";
     if (!yah && slug.startsWith("route")) {
