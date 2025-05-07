@@ -9,6 +9,7 @@ import loadLayer from "../components/Map/drawing/config/config-load-layer";
 import RectPainter from "../components/Map/drawing/painters/RectPainter";
 
 import Rect from "../core/Rect";
+import { shortenName } from "../utils/shortenName";
 
 export enum LayersMode {
     Default,
@@ -40,11 +41,7 @@ export class Layer {
     @observable visible: boolean;
 
     get shortName(): string {
-        return this.description
-            .split(" ")
-            .map((x) => x.replace(/[^A-Z0-9]/gi, ""))
-            .map((x) => x.substring(0, 1).toLocaleUpperCase())
-            .join("");
+        return shortenName(this.description);
     }
 }
 

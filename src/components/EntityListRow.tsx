@@ -13,6 +13,7 @@ import data from "../data";
 import dateFormat from "dateformat";
 import { defaultRebookingOptions } from "./RebookingRadioGroup";
 import { observer } from "mobx-react-lite";
+import { shortenName } from "../utils/shortenName";
 
 interface Props {
     item: ListItem;
@@ -70,7 +71,7 @@ const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
                     {
                         type: "location",
                         locationName: item.name,
-                        level: item.layer?.name,
+                        level: data.shortLevelName ? shortenName(item.layer?.description) : item.layer?.description,
                     },
                 ]}
                 highlighted={highlighted}
@@ -109,9 +110,9 @@ const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
                     booth
                         ? [
                               {
-                                  type: "location",
-                                  locationName: booth.name,
-                                  level: booth.layer?.name,
+                                type: "location",
+                                locationName: booth.name,
+                                level: data.shortLevelName ? booth.layer?.shortName : booth.layer?.description,
                               },
                           ]
                         : []
