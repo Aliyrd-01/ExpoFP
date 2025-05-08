@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import PerfectScrollbar from "perfect-scrollbar";
+import { ResizeObserver } from "resize-observer";
 import React, { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { uiState } from "../store";
 import isScrollUgly from "../utils/is-scroll-ugly";
@@ -107,13 +108,22 @@ const OverlayContent: React.FC<{
     }, [uiState.overlaySize]);
 
     const updateScrollableHeight = () => {
-        if (overlayBarRef.current && scrollable.current) {
-            const overlayBarHeight = overlayBarRef.current.offsetHeight;
-            const offset = uiState.overlayPosition === "bottom" ? 30 : 20;
-            const kioskOffset = uiState.kiosk && uiState.wsShown ? " - var(--k-ws-height)" : "";
+        const bar = overlayBarRef.current;
+        const scrollableEl = scrollable.current;
 
-            scrollable.current.style.maxHeight = `calc(100vh - ${overlayBarHeight}px - ${offset}px${kioskOffset})`;
-        }
+        if (!bar || !scrollableEl) return;
+
+        const overlayBarHeight = bar.offsetHeight;
+
+        const offset = uiState.overlayPosition === "bottom" ? 30 : 20;
+        const kioskOffsetPx =
+            uiState.kiosk && uiState.wsShown
+                ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--k-ws-height")) || 0
+                : 0;
+
+        const maxHeight = window.innerHeight - overlayBarHeight - offset - kioskOffsetPx;
+
+        scrollableEl.style.maxHeight = `${maxHeight}px`;
     };
 
     const debouncedUpdateScrollableHeight = debounce(updateScrollableHeight, 100);
@@ -122,9 +132,14 @@ const OverlayContent: React.FC<{
         updateScrollableHeight();
         window.addEventListener("resize", debouncedUpdateScrollableHeight);
 
+        const resizeObserver = new ResizeObserver(debouncedUpdateScrollableHeight);
+        if (scrollable.current) resizeObserver.observe(scrollable.current);
+        if (overlayBarRef.current) resizeObserver.observe(overlayBarRef.current);
+
         return () => {
             window.removeEventListener("resize", debouncedUpdateScrollableHeight);
             debouncedUpdateScrollableHeight.cancel();
+            resizeObserver.disconnect();
         };
     }, [children]);
 
