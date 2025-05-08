@@ -2,6 +2,7 @@ import classNames from "classnames";
 import dateFormat from "dateformat";
 import React, { useEffect, useState } from "react";
 import sanitizeHTML from "../utils/sanitizeHtml";
+import { t } from "../utils/i18n";
 import Button from "./Button";
 import "./Schedule.scss";
 
@@ -76,15 +77,15 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
             <div className="schedule">
                 {Object.entries(grouped).map(([date, events]) => (
                     <div className="schedule__item" key={date}>
-                        <div className="schedule__date">
+                        <div className="schedule__date" aria-label={`Date: ${dateFormat(date, "dddd, mmmm d")}`}>
                             <div>{dateFormat(date, "dd")}</div>
                             <div>{dateFormat(date, "mmm")}</div>
                             <div>{dateFormat(date, "ddd")}</div>
                         </div>
-                        <div className="schedule__events">
+                        <div className="schedule__events" role="list">
                             {Array.isArray(events) &&
                                 events.map((event: EventI, eventIndex: number) => (
-                                    <div key={event.id}>
+                                    <div key={event.id} role="listitem">
                                         <EventWrapper
                                             link={event.link ? event.link : ""}
                                             ended={event.isEnded}
@@ -114,10 +115,14 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                                             size="sm"
                                                             inline={true}
                                                             onClick={(event) => toggleDescription(event, date, eventIndex)}
+                                                            aria-expanded={
+                                                                eventsFullDescription[date][eventIndex].showFullDescription
+                                                            }
+                                                            aria-controls={`event-desc-${date}-${eventIndex}`}
                                                         >
                                                             {eventsFullDescription[date][eventIndex].showFullDescription
-                                                                ? "Show less"
-                                                                : "Show more"}
+                                                                ? t("Show Less")
+                                                                : t("Show More")}
                                                         </Button>
                                                     )}
                                                 </>

@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import React, { MouseEvent, useEffect, useState } from "react";
 import store from "../store";
+import { t } from "../utils/i18n";
 import "./OverlayBarBack.scss";
 
 type BackMode = "back" | "menu" | "none";
@@ -23,8 +24,13 @@ const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ 
 
     return (
         <div className="overlay-bar-back">
-            <button className="overlay-bar-back__button" onClick={handleClick}>
-                <i className={showBack ? "icon-chevron-left" : "icon-menu"}></i>
+            <button
+                className="overlay-bar-back__button"
+                onClick={handleClick}
+                title={showBack ? t("Go back") : t("Main menu")}
+                aria-label={showBack ? t("Go back") : t("Main menu")}
+            >
+                <i className={showBack ? "icon-chevron-left" : "icon-menu"} aria-hidden="true"></i>
             </button>
         </div>
     );

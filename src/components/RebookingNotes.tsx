@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
+import { t } from "../utils/i18n";
 import "./RebookingNotes.scss";
 
 export type RebookingNotesMode = "default" | "add" | "edit";
@@ -40,17 +41,22 @@ const RebookingNotes: React.FC<RebookingNotesProps> = ({ state = "default", valu
     return (
         <div className="rebooking-notes">
             <div className="rebooking-notes__view-header">
-                <strong>Note</strong>
-                {/* <span>{date && currentState !== "edit" && <span>{date}</span>}</span> */}
+                <strong id="note-label">{t("Note")}</strong>
             </div>
 
             <div className="rebooking-notes__edit">
                 <div className="rebooking-notes__val">
-                    <textarea value={internalValue} name="rebooking-notes" id="rebooking-notes" onChange={handleChange} />
+                    <textarea
+                        id="rebooking-notes"
+                        name="rebooking-notes"
+                        value={internalValue}
+                        onChange={handleChange}
+                        aria-labelledby="note-label"
+                    />
                 </div>
                 <div className="rebooking-notes__buttons">
-                    <Button inline={true} onClick={handleSave} disabled={value === internalValue}>
-                        Save note
+                    <Button inline onClick={handleSave} disabled={value === internalValue} aria-label={t("Save rebooking note")}>
+                        {t("Save note")}
                     </Button>
                 </div>
             </div>

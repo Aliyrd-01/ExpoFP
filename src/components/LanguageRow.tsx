@@ -12,6 +12,7 @@ const LanguageRow = observer(({ item }: { item: Language }) => {
             value={item.id}
             checked={item.selected}
             className="language-row"
+            aria-label={`Change language to ${item.name}`}
             onChange={() => store.languageStore.changeLanguage(item.id)}
         />
     );

@@ -81,20 +81,18 @@ export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
             {!isRebooking && description && (
                 <span dangerouslySetInnerHTML={{ __html: description }} className="booth__reserve-instructions" />
             )}
-            {!isRebooking && showBuy && (
-                <div className="booth__buy">
+            <div className="booth__buy">
+                {!isRebooking && showBuy && (
                     <Button link={buyUrl?.href} target={isIframe ? "_blank" : "_self"}>
                         {t("Buy")}
                     </Button>
-                </div>
-            )}
-            {!isRebooking && showReserve && (
-                <div className="booth__buy">
+                )}
+                {!isRebooking && showReserve && (
                     <Button link={reserveUrl?.href || buyUrl?.href} target={isIframe ? "_blank" : "_self"}>
                         {t("Reserve")}
                     </Button>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

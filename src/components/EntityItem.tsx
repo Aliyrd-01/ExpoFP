@@ -90,24 +90,33 @@ const EntityItem: React.FC<EntityItemProps> = ({
 
     return (
         <div
-            onClick={() => onClick && onClick(type, id)}
+            role="button"
             className={cn("efp-entity-item", {
                 "is-featured": featured,
                 "is-visited": visited,
                 "is-highlighted": highlighted,
                 "has-heatmap": !!heatmapColor,
             })}
+            aria-label={title}
+            tabIndex={0}
+            aria-pressed={highlighted || undefined}
+            onClick={() => onClick && onClick(type, id)}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onClick?.(type, id);
+                }
+            }}
             style={{
                 [`--item-type-color` as string]: `var(--color-${colorType})`,
                 ...(heatmapColor && ({ "--heatmap-color": heatmapColor } as React.CSSProperties)),
                 ...(rebookingColor ? { borderLeft: `5px solid ${rebookingColor}` } : {}),
             }}
         >
-            {/* <a href={url} className="efp-entity-item__link" aria-label={title}></a> */}
             <div className="efp-entity-item__body">
                 <div className="efp-entity-item__left">
                     <div className="efp-entity-item__icon">
-                        {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`}></i>}
+                        {icon ? <img src={icon} alt={title} /> : <i className={`icon-${type}-solid`} aria-hidden="true"></i>}
                     </div>
                     {!kioskMode && (
                         <>
@@ -129,7 +138,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                             </div>
                             {featured && <div className="efp-entity-item__featured">Featured</div>}
                         </div>
-                        {type === "event" || type === "category" || subtitle ? (
+                        {(type === "event" || type === "category" || subtitle) && (
                             <div className="efp-entity-item__subtitle">
                                 {type === "event" && (date || time) && (
                                     <div className="efp-entity-item__datetime">
@@ -140,7 +149,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                                 {type === "category" && <span>Category</span>}
                                 {subtitle && <div>{subtitle}</div>}
                             </div>
-                        ) : null}
+                        )}
                         {!!additionalInfo.length && (
                             <ul className="efp-entity-item__details">
                                 {additionalInfo.map((info, idx) => (

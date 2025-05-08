@@ -42,16 +42,24 @@ const SidebarActions: React.FC<SidebarActionsProps> = ({
     };
 
     return (
-        <div className="efp-sidebarActions">
+        <div className="efp-sidebarActions" role="toolbar" aria-label="Sidebar Actions">
             {showDirections && (
-                <button type="button" className="efp-actionButton efp-actionButton--directions" onClick={onClickDirections}>
-                    <i className="icon-directions"></i>
+                <button
+                    type="button"
+                    className="efp-actionButton efp-actionButton--directions"
+                    onClick={onClickDirections}
+                    title={t("Directions")}
+                    aria-label={t("Directions")}
+                >
+                    <i className="icon-directions" aria-hidden="true"></i>
                     {t("Directions")}
                 </button>
             )}
             {showVisited && (
                 <CheckboxButton
                     className="efp-visited-btn"
+                    aria-label={visited ? i18next.t("Visited") : i18next.t("Not visited")}
+                    aria-pressed={visited}
                     checked={visited}
                     label={i18next.t("Visited")}
                     onClick={onClickVisited ?? (() => {})}
@@ -64,14 +72,23 @@ const SidebarActions: React.FC<SidebarActionsProps> = ({
                         isActive: inBookmark,
                         animate: animateIcon,
                     })}
+                    title={inBookmark ? t("Remove from Bookmarks") : t("Save to Bookmarks")}
+                    aria-label={inBookmark ? t("Remove from Bookmarks") : t("Save to Bookmarks")}
+                    aria-pressed={inBookmark}
                     onClick={handleBookmarkClick}
                 >
-                    <i className={inBookmark ? "icon-bookmark-solid" : "icon-bookmark"}></i>
+                    <i className={inBookmark ? "icon-bookmark-solid" : "icon-bookmark"} aria-hidden="true"></i>
                 </button>
             )}
             {showShare && (
-                <button type="button" className="efp-actionButton efp-actionButton--share" onClick={onClickShare}>
-                    <i className="icon-share"></i>
+                <button
+                    type="button"
+                    className="efp-actionButton efp-actionButton--share"
+                    title={t("Share")}
+                    aria-label={t("Share")}
+                    onClick={onClickShare}
+                >
+                    <i className="icon-share" aria-hidden="true"></i>
                 </button>
             )}
         </div>

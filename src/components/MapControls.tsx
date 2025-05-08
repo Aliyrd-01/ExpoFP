@@ -10,6 +10,7 @@ export interface layersListItem {
 export interface MapControlsProps {
     className?: string;
     style?: React.CSSProperties;
+    title: string;
     titles: string[];
     viewModeSwitch: boolean;
     findLocation: boolean;
@@ -29,6 +30,7 @@ export interface MapControlsProps {
 const MapControls: React.FC<MapControlsProps> = ({
     className,
     style,
+    title,
     titles,
     viewMode,
     viewModeSwitch,
@@ -69,25 +71,35 @@ const MapControls: React.FC<MapControlsProps> = ({
     };
 
     return (
-        <div className={classNames("map-controls", className)} style={style}>
+        <div className={classNames("map-controls", className)} style={style} role="toolbar" aria-label={title}>
             {findLocation && (
-                <button type="button" className="map-control" title={titles[0]} onClick={onClickFindLocation}>
-                    <i className="icon-navigation"></i>
+                <button
+                    type="button"
+                    className="map-control"
+                    title={titles[0]}
+                    aria-label={titles[0]}
+                    onClick={onClickFindLocation}
+                >
+                    <i className="icon-navigation" aria-hidden="true"></i>
                 </button>
             )}
-            <button type="button" className="map-control" title={titles[1]} onClick={onClickZoomIn}>
-                <i className="icon-plus"></i>
+            <button type="button" className="map-control" title={titles[1]} aria-label={titles[1]} onClick={onClickZoomIn}>
+                <i className="icon-plus" aria-hidden="true"></i>
             </button>
-            <button type="button" className="map-control" title={titles[2]} onClick={onClickZoomOut}>
-                <i className="icon-minus"></i>
+            <button type="button" className="map-control" title={titles[2]} aria-label={titles[2]} onClick={onClickZoomOut}>
+                <i className="icon-minus" aria-hidden="true"></i>
             </button>
             {viewModeSwitch && (
-                <button type="button" className="map-control" title={titles[3]} onClick={onViewModeSwitch}>
-                    {viewMode ? <i className="icon-two-dim"></i> : <i className="icon-three-dim"></i>}
+                <button type="button" className="map-control" title={titles[3]} aria-label={titles[3]} onClick={onViewModeSwitch}>
+                    {viewMode ? (
+                        <i className="icon-two-dim" aria-hidden="true"></i>
+                    ) : (
+                        <i className="icon-three-dim" aria-hidden="true"></i>
+                    )}
                 </button>
             )}
-            <button type="button" className="map-control" title={titles[4]} onClick={onClickByWidth}>
-                <i className="icon-maximize"></i>
+            <button type="button" className="map-control" title={titles[4]} aria-label={titles[4]} onClick={onClickByWidth}>
+                <i className="icon-maximize" aria-hidden="true"></i>
             </button>
 
             {layersList ? (
@@ -98,9 +110,13 @@ const MapControls: React.FC<MapControlsProps> = ({
                             isActive: layersIsOpen,
                         })}
                         title={titles[5]}
+                        aria-label={titles[5]}
+                        aria-haspopup="true"
+                        aria-expanded={layersIsOpen}
+                        aria-controls="layers-menu"
                         onClick={() => setLayersOpen(!layersIsOpen)}
                     >
-                        <i className="icon-layers"></i>
+                        <i className="icon-layers" aria-hidden="true"></i>
                     </button>
                     {layersIsOpen ? (
                         <div className="checked-panel" style={{ minWidth: layersWidth }}>

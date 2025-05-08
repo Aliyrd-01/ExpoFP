@@ -57,11 +57,8 @@
     }
 
     @include kiosk {
-        position: absolute;
         width: var(--k-searchbox-width);
         background: var(--color-white);
-        border-radius: var(--k-border-radius-3);
-        box-shadow: var(--k-box-shadow-1);
 
         &__search-icon {
             position: absolute;

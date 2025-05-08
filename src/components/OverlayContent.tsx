@@ -7,7 +7,8 @@ import OverlayBar from "./OverlayBar";
 import "./OverlayContent.scss";
 import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
-import debounce from "../tools/debounce";
+import debounce from "lodash.debounce";
+import customDebounce from "../tools/debounce";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
@@ -43,6 +44,7 @@ const OverlayContent: React.FC<{
 }) => {
     const [scrolled, setScrolled1] = useState(false);
     const scrollable = useRef<HTMLDivElement>();
+    const overlayBarRef = useRef<HTMLDivElement>();
     const [psInstance, setPsInstance] = useState<PerfectScrollbar>(null);
     const contentRef = useRef<HTMLDivElement>();
 
@@ -104,8 +106,30 @@ const OverlayContent: React.FC<{
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [uiState.overlaySize]);
 
+    const updateScrollableHeight = () => {
+        if (overlayBarRef.current && scrollable.current) {
+            const overlayBarHeight = overlayBarRef.current.offsetHeight;
+            const offset = uiState.overlayPosition === "bottom" ? 30 : 20;
+            const kioskOffset = uiState.kiosk && uiState.wsShown ? " - var(--k-ws-height)" : "";
+
+            scrollable.current.style.maxHeight = `calc(100vh - ${overlayBarHeight}px - ${offset}px${kioskOffset})`;
+        }
+    };
+
+    const debouncedUpdateScrollableHeight = debounce(updateScrollableHeight, 100);
+
+    useEffect(() => {
+        updateScrollableHeight();
+        window.addEventListener("resize", debouncedUpdateScrollableHeight);
+
+        return () => {
+            window.removeEventListener("resize", debouncedUpdateScrollableHeight);
+            debouncedUpdateScrollableHeight.cancel();
+        };
+    }, [children]);
+
     const resetIdleTimer = useCallback(
-        debounce(() => {
+        customDebounce(() => {
             window["__resett"]?.();
         }, 250),
         [uiState.kiosk]
@@ -129,6 +153,7 @@ const OverlayContent: React.FC<{
                 hideClose={hideClose}
                 backMode={backMode}
                 onBack={onBack}
+                ref={overlayBarRef}
             >
                 {bar}
             </OverlayBar>
@@ -136,7 +161,7 @@ const OverlayContent: React.FC<{
             <div
                 className={`overlay-content__scrollable`}
                 style={{
-                    height: uiState.kiosk ? "auto" : undefined,
+                    height: "auto",
                     display: uiState.overlayCollapsed ? "none" : undefined,
                 }}
                 ref={scrollable}

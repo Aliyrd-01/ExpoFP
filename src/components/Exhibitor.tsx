@@ -191,7 +191,9 @@ function ExhibitorComponent() {
                         >
                             <Alert
                                 title={
-                                    store.exhibitorStore.rebookingStateSaved ? "Changes saved." : "Oops! Something went wrong."
+                                    store.exhibitorStore.rebookingStateSaved
+                                        ? t("Changes saved.")
+                                        : t("Oops! Something went wrong.")
                                 }
                                 variant={store.exhibitorStore.rebookingStateSaved ? "success" : "error"}
                                 inline
@@ -289,6 +291,7 @@ function ExhibitorComponent() {
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
+                aria-label={t("Details")}
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
                 {!rebooking ? (
@@ -418,7 +421,7 @@ function ExhibitorComponent() {
                                     <iframe
                                         src={exhibitor.videoUrl}
                                         data-allow="encrypted-media; autoplay; fullscreen"
-                                        title="Exhibitor Video"
+                                        title={t("Exhibitor Video")}
                                         allowFullScreen
                                     ></iframe>
                                 </div>

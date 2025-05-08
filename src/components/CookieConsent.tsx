@@ -11,22 +11,35 @@ export interface CookieConsentProps {
 
 const CookieConsent: React.FC<CookieConsentProps> = ({ link, onClickAccept, onClickReject }) => {
     return (
-        <div className="cookie-consent">
-            <div className="cookie-consent__title">{ t("Cookie Consent") }</div>
-            <div className="cookie-consent__text">
-                { t("We use cookies for analytics only") }&nbsp;
-                {link ? (
-                    <a href={link} target="_blank" rel="noopener noreferrer">
-                        { t("Read More") }
+        <div
+            className="cookie-consent"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cookie-consent-title"
+            aria-describedby="cookie-consent-description"
+        >
+            <div className="cookie-consent__title" id="cookie-consent-title">
+                {t("Cookie Consent")}
+            </div>
+            <div className="cookie-consent__text" id="cookie-consent-description">
+                {t("We use cookies for analytics only")}&nbsp;
+                {link && (
+                    <a
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={t("Read more about cookie usage in a new tab")}
+                    >
+                        {t("Read More")}
                     </a>
-                ) : null}
+                )}
             </div>
             <div className="cookie-consent__bottom">
                 <Button size="md" onClick={onClickAccept}>
-                    { t("Accept cookies") }
+                    {t("Accept cookies")}
                 </Button>
                 <Button size="md" variant="gray" onClick={onClickReject}>
-                    { t("Reject") }
+                    {t("Reject")}
                 </Button>
             </div>
         </div>

@@ -188,11 +188,12 @@ function Search() {
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
         ) : null;
         const bar = (
-            <div className="efp-search-bar" ref={el}>
+            <div className="efp-search-bar" ref={el} role="search">
                 <input
                     type="search"
                     className={classNames({ fixed: s.hideRealInput })}
                     placeholder={s.placeHolder}
+                    aria-label="Search"
                     value={s.text}
                     onChange={handleChange}
                     onKeyDown={handleKeydown}

@@ -31,9 +31,9 @@
         align-items: center;
         align-self: center;
         justify-content: center;
-        width: rem(70px);
+        width: rem(64px);
         height: calc(var(--k-searchbox-height) - 10px);
-        padding-inline-start: 10px;
+        padding-inline-start: rem(4px);
 
         &__button {
             color: var(--color-primary) !important;
