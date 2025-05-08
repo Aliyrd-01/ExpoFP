@@ -32,7 +32,7 @@ export default function configBoothLabelsSpecial(
 ) {
     if (!(booth instanceof SpecialBooth) || booth.noLabels) return;
     const color = booth.labelColor || settings.boothLabelColor;
-    const id = `${layerID}-booth-label-special-${color}`
+    const id = `${layerID}-booth-label-special-${color}`;
     return new BoothLabelSpecialDrawer(context, id, booth, painterOrderPriority, visible, { color });
 }
 
@@ -43,7 +43,14 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter, RectPainterOp
     private previousSkipDim: boolean;
     public locked: boolean;
 
-    constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean, options: RectPainterOptions) {
+    constructor(
+        context: DrawerContext,
+        layerID: string,
+        booth: Booth,
+        painterOrderPriority: number,
+        visible: boolean,
+        options: RectPainterOptions
+    ) {
         super(context, booth, layerID, RectPainter, painterOrderPriority, visible, options);
         this.locked = context.updatable;
         // initDrawer(this.drawer);
@@ -57,7 +64,7 @@ class BoothLabelSpecialDrawer extends BoothDrawerBase<RectPainter, RectPainterOp
         let text = this.booth.title || this.booth.name;
 
         const clicks = heatmapStore.getTotalClicksByBooth(this.booth);
-        const clickText = `Clicks: ${clicks}`;
+        const clickText = `Views: ${clicks}`;
         text = uiState.heatmap ? `${text} - ${clickText}` : text;
 
         this.steps = createTextFitter(context.pixelRatio).getStepsForRect(text, r.w, r.h);
