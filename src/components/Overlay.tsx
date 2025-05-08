@@ -68,10 +68,10 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
         logger.log("Overlay.useEffect");
 
-        el.current.ontouchstart = handleTouchStart;
-        el.current.ontouchmove = handleTouchMove;
-        el.current.ontouchend = handleTouchEnd;
-        el.current.ontouchcancel = handleTouchCancel;
+        el.current.addEventListener("touchstart", handleTouchStart, { passive: false });
+        el.current.addEventListener("touchmove", handleTouchMove, { passive: false });
+        el.current.addEventListener("touchend", handleTouchEnd, { passive: true });
+        el.current.addEventListener("touchcancel", handleTouchCancel, { passive: true });
 
         const disposer = autorun(position);
 
@@ -229,7 +229,14 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         //     s.backdropStarted = true;
         // }, 3000);
 
-        return () => disposer();
+        return () => {
+            disposer();
+
+            el.current?.removeEventListener("touchstart", handleTouchStart);
+            el.current?.removeEventListener("touchmove", handleTouchMove);
+            el.current?.removeEventListener("touchend", handleTouchEnd);
+            el.current?.removeEventListener("touchcancel", handleTouchCancel);
+        };
     }, [s]);
 
     return (
