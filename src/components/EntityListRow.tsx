@@ -19,12 +19,13 @@ interface Props {
     item: ListItem;
     index: number;
     highlighted: boolean;
+    compactDetails?: boolean;
     onClick: (type: string, id: string) => void;
 }
 
 type SupportedHeatmapItem = Exhibitor | BoothBase | HeatmapYah;
 
-const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
+const EntityListRow = ({ item, index, highlighted, compactDetails, onClick }: Props) => {
     let heatmap = { background: undefined, clicks: undefined };
 
     if (uiState.heatmap && (item instanceof Exhibitor || item instanceof BoothBase || item instanceof HeatmapYah)) {
@@ -49,6 +50,7 @@ const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
                     level: data.shortLevelName ? booth.layer?.shortName : booth.layer?.description,
                 }))}
                 highlighted={highlighted}
+                compactDetails={compactDetails}
                 heatmapColor={heatmap.background}
                 heatmapClicks={heatmap.clicks}
                 rebookingColor={data.isRebooking ? defaultRebookingOptions[item.rebookingState]?.color.primary : undefined}
@@ -110,9 +112,9 @@ const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
                     booth
                         ? [
                               {
-                                type: "location",
-                                locationName: booth.name,
-                                level: data.shortLevelName ? booth.layer?.shortName : booth.layer?.description,
+                                  type: "location",
+                                  locationName: booth.name,
+                                  level: data.shortLevelName ? booth.layer?.shortName : booth.layer?.description,
                               },
                           ]
                         : []
@@ -129,6 +131,6 @@ const EntityListRow = ({ item, index, highlighted, onClick }: Props) => {
     }
 
     return null;
-}
+};
 
 export default observer(EntityListRow);

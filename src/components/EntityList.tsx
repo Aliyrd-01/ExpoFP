@@ -2,8 +2,11 @@ import { observer } from "mobx-react-lite";
 import React, { RefObject, useEffect, useRef, useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
 import store, { boothStore, uiState } from "../store";
+import settings from "../tools/settings";
 import EntityListRow from "./EntityListRow";
 import "./EntityList.scss";
+
+const EXPOS_WITH_COMPACT_DETAILS = ["ipia2025"];
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
@@ -13,6 +16,7 @@ interface ListProps {
 const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
     const scrollerRef = useRef<HTMLElement | Window | null>(null);
     const listScrollItemId = uiState.listScrollItemId;
+    const useCompactDetails = EXPOS_WITH_COMPACT_DETAILS.includes(settings.EXPO);
 
     useEffect(() => {
         setTimeout(() => {
@@ -67,6 +71,7 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                                 item={item}
                                 index={index}
                                 highlighted={highlighted}
+                                compactDetails={useCompactDetails}
                                 onClick={handleClick}
                             />
                         );
