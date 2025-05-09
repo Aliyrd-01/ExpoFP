@@ -312,33 +312,43 @@ export default class FloorPlanLoader implements FloorPlan {
 
             await initI18n();
 
-            const searchParamas = new URLSearchParams(window.location.search);
+            const searchParams = new URLSearchParams(window.location.search);
             const expoId = window["__data"].trackerUrl.match(/expoId=(\d+)/)?.[1];
 
-            if (searchParamas.get("heatmap") === "true") {
+            const initHeatmap = async <T = any>(o: { dataUrl: string; dataMapper: (item: T, i?: number) => T }): Promise<T[]> => {
+                const url = new URL(o.dataUrl, "https://app.expofp.com");
+
+                const resp = await fetch(url.toString(), {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        expoId,
+                        token: decodeURIComponent(searchParams.get("t")),
+                    }),
+                });
+
+                let yah = [];
+                if (resp.ok) {
+                    const json = await resp.json();
+                    yah = json.map(o.dataMapper);
+                }
+                window["__heatmapDataYah"] = { yah };
+                return yah;
+            };
+
+            if (searchParams.get("heatmap") === "true") {
                 try {
-                    if (searchParamas.get("type") === "yah") {
-                        const url = new URL("/api/v1/you-are-here/qr-code/list/viewer", "https://app.expofp.com");
-
-                        const resp = await fetch(
-                            url.toString(),
-                            {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({
-                                    expoId,
-                                    token: decodeURIComponent(searchParamas.get("t")),
-                                }),
-                            },
-                        );
-
-                        let yah = []
-                        if (resp.ok) {
-                            const json = await resp.json();
-                            yah = json.map((item, i) => ({ ...item, name: `QR Code #${i + 1}` }));
-                        }
-
-                        window["__heatmapDataYah"] = { yah };
+                    const heatmapType = searchParams.get("type");
+                    if (heatmapType === "yah") {
+                        await initHeatmap({
+                            dataUrl: "/api/v1/you-are-here/qr-code/list/viewer",
+                            dataMapper: (item, i) => ({ ...item, name: `QR Code #${i + 1}` }),
+                        });
+                    } else if (heatmapType === "kiosk") {
+                        await initHeatmap({
+                            dataUrl: "/api/kiosks/list/viewer",
+                            dataMapper: (item) => ({ ...item, name: `Kiosk ${item.key}` }),
+                        });
                     } else {
                         const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
                         boothsUrl.searchParams.set("expoId", expoId);
@@ -353,10 +363,7 @@ export default class FloorPlanLoader implements FloorPlan {
                             fetch(exhibitorsUrl.toString()),
                         ]);
 
-                        const [booths, exhibitors] = await Promise.all([
-                            boothsResp.json(),
-                            exhibitorsResp.json(),
-                        ]);
+                        const [booths, exhibitors] = await Promise.all([boothsResp.json(), exhibitorsResp.json()]);
 
                         window["__heatmapData"] = { booths, exhibitors };
                     }
@@ -404,12 +411,12 @@ export default class FloorPlanLoader implements FloorPlan {
             try {
                 const iconEntries = await Promise.allSettled(
                     Object.entries({
-                        "departure": "icons/departure.svg",
-                        "destination": "icons/destination.svg",
-                        "direction": "icons/direction.svg",
-                        "transition": "icons/transition.svg",
-                        "transition_up": "icons/transition_up.svg",
-                        "transition_down": "icons/transition_down.svg",
+                        departure: "icons/departure.svg",
+                        destination: "icons/destination.svg",
+                        direction: "icons/direction.svg",
+                        transition: "icons/transition.svg",
+                        transition_up: "icons/transition_up.svg",
+                        transition_down: "icons/transition_down.svg",
                         "kiosk-arrow": "icons/kiosk-arrow.svg",
                         "kiosk-label": "icons/kiosk-label.svg",
                     }).map(([key, path]) =>
