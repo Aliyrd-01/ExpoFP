@@ -313,11 +313,14 @@ export default class FloorPlanLoader implements FloorPlan {
             await initI18n();
 
             const searchParams = new URLSearchParams(window.location.search);
-            const trackerUrl = window["__data"].trackerUrl + "";
-            const tUrl = new URL(trackerUrl);
-            const expoId = tUrl.searchParams.get("expoId");
-            const initHeatmap = async <T = any>(o: { dataUrl: string; dataMapper: (item: T, i?: number) => T }): Promise<T[]> => {
-                const url = new URL(o.dataUrl, tUrl.origin);
+            const trackerUrl = new URL(window["__data"].trackerUrl);
+            const expoId = trackerUrl.searchParams.get("expoId");
+
+            const initHeatmap = async <T = any>(o: {
+                dataUrl: string;
+                dataMapper: (item: T, i?: number) => T;
+            }): Promise<void> => {
+                const url = new URL(o.dataUrl, trackerUrl.origin);
 
                 const resp = await fetch(url.toString(), {
                     method: "POST",
@@ -334,22 +337,22 @@ export default class FloorPlanLoader implements FloorPlan {
                     yah = json.map(o.dataMapper);
                 }
                 window["__heatmapDataYah"] = { yah };
-                return yah;
             };
 
             if (searchParams.get("heatmap") === "true") {
                 try {
-                    const heatmapType = searchParams.get("type");
-                    if (heatmapType === "yah") {
-                        await initHeatmap({
-                            dataUrl: "/api/v1/you-are-here/qr-code/list/viewer",
-                            dataMapper: (item, i) => ({ ...item, name: `QR Code #${i + 1}` }),
-                        });
-                    } else if (heatmapType === "kiosk") {
-                        await initHeatmap({
-                            dataUrl: "/api/kiosks/list/viewer",
-                            dataMapper: (item) => ({ ...item, id: item.key, name: `Kiosk ${item.key}` }),
-                        });
+                    if (searchParams.get("type") === "yah") {
+                        if (searchParams.get("subtype") === "kiosk") {
+                            await initHeatmap({
+                                dataUrl: "/api/kiosks/list/viewer",
+                                dataMapper: (item) => ({ ...item, id: item.key, name: `Kiosk ${item.key}` }),
+                            });
+                        } else {
+                            await initHeatmap({
+                                dataUrl: "/api/v1/you-are-here/qr-code/list/viewer",
+                                dataMapper: (item, i) => ({ ...item, name: `QR Code #${i + 1}` }),
+                            });
+                        }
                     } else {
                         const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
                         boothsUrl.searchParams.set("expoId", expoId);
