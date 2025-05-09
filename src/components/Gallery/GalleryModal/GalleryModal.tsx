@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { Swiper as SwiperInstance } from "swiper";
 import { Navigation } from "swiper";
 import { Swiper as SwiperComponent, SwiperSlide } from "swiper/react";
@@ -6,6 +7,7 @@ import { TransformWrapper, ReactZoomPanPinchRef } from "react-zoom-pan-pinch-sr"
 import GalleryControls from "../GalleryControls/GalleryControls";
 import TransformImg from "../TransformImg/TransformImg";
 import { t } from "../../../utils/i18n";
+import { useRenderTarget } from "../../../utils/useRenderTarget";
 import "./GalleryModal.scss";
 import classNames from "classnames";
 
@@ -19,6 +21,8 @@ interface GalleryModalProps {
 
 const GalleryModal: React.FC<GalleryModalProps> = (props) => {
     const { images, leading, initialSlideIndex, onClose, className } = props;
+
+    const container = useRenderTarget();
 
     const [currentSlideIndex, setCurrentSlideIndex] = useState(initialSlideIndex);
     const [zoomUtils, setZoomUtils] = useState<ReactZoomPanPinchRef[]>([]);
@@ -40,7 +44,7 @@ const GalleryModal: React.FC<GalleryModalProps> = (props) => {
         grabCursor: true,
     };
 
-    return (
+    const modalContent = (
         <div className={classNames("gallery-modal", className)}>
             <SwiperComponent
                 onSwiper={(swiper) => (swiperRef.current = swiper)}
@@ -84,6 +88,8 @@ const GalleryModal: React.FC<GalleryModalProps> = (props) => {
             </SwiperComponent>
         </div>
     );
+
+    return container ? createPortal(modalContent, container) : null;
 };
 
 export default GalleryModal;
