@@ -42,6 +42,7 @@ export interface EntityItemProps {
     heatmapClicks?: number;
     rebookingColor?: string;
     kioskMode?: boolean;
+    compactDetails?: boolean;
 }
 
 const TYPES_WITH_UNIQUE_COLORS: EntityItemType[] = ["booth", "exhibitor", "event", "speaker", "category"];
@@ -85,6 +86,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
     heatmapClicks,
     rebookingColor,
     kioskMode = false,
+    compactDetails,
 }) => {
     const colorType = TYPES_WITH_UNIQUE_COLORS.includes(type) ? type : "other";
 
@@ -151,7 +153,11 @@ const EntityItem: React.FC<EntityItemProps> = ({
                             </div>
                         )}
                         {!!additionalInfo.length && (
-                            <ul className="efp-entity-item__details">
+                            <ul
+                                className={cn("efp-entity-item__details", {
+                                    "compact-details": compactDetails,
+                                })}
+                            >
                                 {additionalInfo.map((info, idx) => (
                                     <li key={idx} className="efp-entity-item__details-item">
                                         {info.type === "location" && (
