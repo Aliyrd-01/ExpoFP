@@ -314,8 +314,8 @@ export default class FloorPlanLoader implements FloorPlan {
 
             const searchParams = new URLSearchParams(window.location.search);
             const trackerUrl = window["__data"].trackerUrl + "";
-            const expoId = trackerUrl.match(/expoId=(\d+)/)?.[1];
             const tUrl = new URL(trackerUrl);
+            const expoId = tUrl.searchParams.get("expoId");
             const initHeatmap = async <T = any>(o: { dataUrl: string; dataMapper: (item: T, i?: number) => T }): Promise<T[]> => {
                 const url = new URL(o.dataUrl, tUrl.origin);
 
@@ -348,7 +348,7 @@ export default class FloorPlanLoader implements FloorPlan {
                     } else if (heatmapType === "kiosk") {
                         await initHeatmap({
                             dataUrl: "/api/kiosks/list/viewer",
-                            dataMapper: (item) => ({ ...item, name: `Kiosk ${item.key}` }),
+                            dataMapper: (item) => ({ ...item, id: item.key, name: `Kiosk ${item.key}` }),
                         });
                     } else {
                         const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
