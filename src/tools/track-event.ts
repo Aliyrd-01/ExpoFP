@@ -35,23 +35,21 @@ export default function trackEvent(type: "load" | "exview" | "search" | "route" 
             headers["X-ref"] = Xref;
         }
 
-        if (!navigator.onLine) {
-            saveTrackEvent(url, headers);
-        }
-
         fetch(url, {
             cache: "no-store",
             headers,
-        }).catch();
+        }).catch(() => saveTrackEvent(url, headers));
     } catch (e) { }
 }
 
 function isTrackingEnabled(): boolean {
-    return !!data?.trackerUrl && process.env.NODE_ENV === "production" && !uiState.heatmap;
+    return !!data?.trackerUrl /*&& process.env.NODE_ENV === "production"*/ && !uiState.heatmap;
 }
 
 function saveTrackEvent(url: string, headers: Record<string, string>) {
     try {
+        logger.log("saveTrackEvent", url, headers);
+
         const saved = localStorage.getItem(EFP_TRACK_EVENTS);
         const events = saved ? JSON.parse(saved) : [];
 
@@ -75,6 +73,8 @@ async function sendSavedTrackEvents() {
 
         const saved = localStorage.getItem(EFP_TRACK_EVENTS);
         if (!saved) return;
+
+        logger.log("sendSavedTrackEvents", saved);
 
         await fetch(
             new URL("/api/fp-stats/trackBulk", data.trackerUrl).href,
