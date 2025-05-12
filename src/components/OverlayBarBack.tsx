@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { MouseEvent, useEffect, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
 import "./OverlayBarBack.scss";
@@ -9,7 +9,12 @@ type BackMode = "back" | "menu" | "none";
 const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ backMode, onBack }) => {
     const showBack = backMode === "back";
     const [nextShowBack, setNextShowBack] = useState<boolean>(showBack);
+    const backButtonRef = useRef(null);
     const animationEnded = nextShowBack === showBack;
+
+    useEffect(() => {
+        backButtonRef.current?.focus();
+    }, []);
 
     useEffect(() => {
         // set nextShowBack after initial render
@@ -23,7 +28,7 @@ const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ 
     if (backMode === "none") return null;
 
     return (
-        <div className="overlay-bar-back">
+        <div className="overlay-bar-back" tabIndex={-1} ref={backButtonRef}>
             <button
                 className="overlay-bar-back__button"
                 onClick={handleClick}

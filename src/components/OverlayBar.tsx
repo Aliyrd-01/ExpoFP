@@ -37,7 +37,7 @@ const OverlayBar = forwardRef<
         }
 
         return (
-            <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`} ref={ref}>
+            <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`} ref={ref} tabIndex={-1}>
                 <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
                 <div className="overlay-bar__slot">{children}</div>
                 {overlayBarCenterContent}

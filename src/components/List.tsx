@@ -37,10 +37,10 @@ export default function List({ updatedScrollableRef, updateScroll }: ListProps) 
     };
 
     return useObserver(() => {
-        const selectedIndex = uiState.listItems.findIndex(i => (i as Language).selected);
+        const selectedIndex = uiState.listItems.findIndex((i) => (i as Language).selected);
 
         return (
-            <div style={{ height: "100%" }}>
+            <div style={{ height: "100vh", resize: "both" }}>
                 {scrollableRef && (
                     <Virtuoso
                         className="list-virtual"
