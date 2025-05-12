@@ -43,7 +43,7 @@ export default function trackEvent(type: "load" | "exview" | "search" | "route" 
 }
 
 function isTrackingEnabled(): boolean {
-    return !!data?.trackerUrl /*&& process.env.NODE_ENV === "production"*/ && !uiState.heatmap;
+    return !!data?.trackerUrl && process.env.NODE_ENV === "production" && !uiState.heatmap;
 }
 
 function saveTrackEvent(url: string, headers: Record<string, string>) {
