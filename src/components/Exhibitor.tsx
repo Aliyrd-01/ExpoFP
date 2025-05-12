@@ -399,7 +399,11 @@ function ExhibitorComponent() {
                                     })}
                                 >
                                     {exhibitor.logo ? (
-                                        <div className="exhibitor-description__logo" v-if="exhibitor.logo">
+                                        <div
+                                            className={classNames("exhibitor-description__logo", {
+                                                "exhibitor-description__logo--left": !exhibitor.description,
+                                            })}
+                                        >
                                             <img src={exhibitor.logo} alt={exhibitor.name} crossOrigin="anonymous" />
                                         </div>
                                     ) : null}

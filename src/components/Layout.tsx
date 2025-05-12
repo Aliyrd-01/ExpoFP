@@ -124,11 +124,11 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
             dir={uiState.rtl ? "rtl" : "ltr"}
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
-                {!uiState.mapControlsHidden && <Controls />}
                 {uiState.kiosk && uiState.inIdle && !uiState.kioskSetup && <TouchHand />}
                 {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
                 {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
                 <LogoOverlay />
+                {!uiState.mapControlsHidden && <Controls />}
                 {!uiState.hideHeaderLogo && store.initialized && <Ws />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
