@@ -4,21 +4,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto;
+    overflow: hidden;
+    border-radius: var(--border-radius-xl);
 
     .overlay-bar {
         display: flex;
         z-index: 2;
     }
 
-    .overlay.bottom {
-        border-radius: 0.5rem 0.5rem 0 0;
-    }
-
     &__scrollable {
         position: relative;
         flex-grow: 1;
-        height: 1px;
+        max-height: 0;
         overflow-y: hidden;
 
         .overlay.full & {
@@ -36,21 +34,25 @@
         }
     }
 
+    &.main-wayfinding {
+        overflow: unset;
+
+        .overlay-content__scrollable {
+            overflow: unset !important;
+        }
+    }
+
     @include kiosk {
         height: auto;
         pointer-events: auto;
+        border-radius: var(--k-border-radius-1);
 
         &.exhibitor {
             height: auto;
         }
 
         &__scrollable {
-            top: var(--k-sidebar-position-top);
-            flex-grow: 0;
-            max-height: var(--k-sidebar-max-height);
             background: var(--color-white);
-            border-radius: var(--k-border-radius-1);
-            box-shadow: var(--k-box-shadow-1);
         }
 
         &.-exhibitor-featured {

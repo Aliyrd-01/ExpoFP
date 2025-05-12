@@ -88,14 +88,14 @@ export default function LogoOverlay() {
             {showWarning && (
                 <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
                     <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/huge-fp-warning">
-                        Read how to optimize it
+                        {t("Read how to optimize it")}
                     </a>
                 </Alert>
             )}
             {showMapboxWarning && (
                 <Alert title="3D view is hidden" variant="warning" showIcon={true} position="bottomRight">
                     <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/expofp-mapbox-integration">
-                        Setup mapbox first
+                        {t("Setup mapbox first")}
                     </a>
                 </Alert>
             )}
@@ -106,7 +106,7 @@ export default function LogoOverlay() {
                         bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5),
                     }}
                 >
-                    <div>View Map on Phone</div>
+                    <div>{t("View Map on Phone")}</div>
                     <QRCode value={`https://${settings.EXPO}.expofp.com/${point}`} size={100} />
                 </div>
             )}

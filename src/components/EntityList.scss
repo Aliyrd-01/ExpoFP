@@ -7,3 +7,11 @@
 .list-virtual > [data-viewport-type="element"] {
     position: relative !important;
 }
+
+.list-empty {
+    padding: rem(24px 14px);
+    font-size: var(--font-size-xl);
+    color: var(--color-gray-700);
+    text-align: center;
+    cursor: default;
+}

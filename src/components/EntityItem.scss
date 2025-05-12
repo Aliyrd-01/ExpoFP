@@ -152,6 +152,12 @@ $entity-item: ".efp-entity-item";
         margin: rem(8px 0 0);
         padding: 0;
         list-style: none;
+
+        &.compact-details {
+            flex-flow: row wrap;
+            gap: rem(4px);
+            align-items: flex-start;
+        }
     }
 
     &__details-item {
@@ -235,7 +241,7 @@ $entity-item: ".efp-entity-item";
 
     &:hover,
     &.is-highlighted {
-        background: var(--color-gray-100);
+        background: var(--color-gray-200);
 
         .efp-entity-item__details-item {
             background: #d5e5fb;
@@ -257,6 +263,30 @@ $entity-item: ".efp-entity-item";
             .efp-entity-item__details-item {
                 background: #c5dbfe;
             }
+        }
+    }
+
+    &.has-heatmap {
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: rem(8px);
+            background-color: var(--heatmap-color);
+            pointer-events: none;
+        }
+    }
+
+    @include kiosk {
+        &__body {
+            padding: rem(20px 18px);
+        }
+
+        &__icon {
+            width: rem(30px);
+            height: rem(30px);
         }
     }
 }

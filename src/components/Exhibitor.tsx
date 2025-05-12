@@ -66,7 +66,7 @@ function ExhibitorComponent() {
             return this.exhibitor.privateEmail || this.exhibitor.email;
         },
     }));
-    const { heatmapBar, overlayBarStyle } = useHeatmapOverlay(s.exhibitor, s.exhibitor.featured ? "#999" : "#555");
+    const { heatmapBar } = useHeatmapOverlay(s.exhibitor);
     const [isContentOverflowing, setIsContentOverflowing] = useState(false);
     const [showKioskDetails, setShowKioskDetails] = useState<boolean>(false);
     const detailsRef = useRef<HTMLDivElement>(null);
@@ -191,7 +191,9 @@ function ExhibitorComponent() {
                         >
                             <Alert
                                 title={
-                                    store.exhibitorStore.rebookingStateSaved ? "Changes saved." : "Oops! Something went wrong."
+                                    store.exhibitorStore.rebookingStateSaved
+                                        ? t("Changes saved.")
+                                        : t("Oops! Something went wrong.")
                                 }
                                 variant={store.exhibitorStore.rebookingStateSaved ? "success" : "error"}
                                 inline
@@ -285,11 +287,11 @@ function ExhibitorComponent() {
             <OverlayContent
                 className={cls}
                 backMode="none"
-                overlayBarEndContent={heatmapBar}
-                overlayBarStyle={overlayBarStyle}
+                overlayBarCenterContent={heatmapBar}
                 onClose={() => store.selectNone()}
                 particles={exhibitor.featured}
                 bar={bar}
+                aria-label={t("Details")}
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
                 {!rebooking ? (
@@ -300,7 +302,7 @@ function ExhibitorComponent() {
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
                                 showShare={shareButtonVisible()}
-                                showVisited={true}
+                                showVisited={!uiState.kiosk}
                                 visited={s.exhibitor.visited}
                                 onClickBookmark={bookmark}
                                 onClickShare={handleShare}
@@ -397,7 +399,11 @@ function ExhibitorComponent() {
                                     })}
                                 >
                                     {exhibitor.logo ? (
-                                        <div className="exhibitor-description__logo" v-if="exhibitor.logo">
+                                        <div
+                                            className={classNames("exhibitor-description__logo", {
+                                                "exhibitor-description__logo--left": !exhibitor.description,
+                                            })}
+                                        >
                                             <img src={exhibitor.logo} alt={exhibitor.name} crossOrigin="anonymous" />
                                         </div>
                                     ) : null}
@@ -419,7 +425,7 @@ function ExhibitorComponent() {
                                     <iframe
                                         src={exhibitor.videoUrl}
                                         data-allow="encrypted-media; autoplay; fullscreen"
-                                        title="Exhibitor Video"
+                                        title={t("Exhibitor Video")}
                                         allowFullScreen
                                     ></iframe>
                                 </div>

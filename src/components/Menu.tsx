@@ -185,7 +185,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                                 uiState.hideCookieConsent = false;
                             }}
                         >
-                            Review Cookie Consent
+                            {t("Review Cookie Consent")}
                         </a>
                     )}
                     {!data.hideCategoriesLink && categories}

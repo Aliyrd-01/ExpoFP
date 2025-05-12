@@ -2,6 +2,7 @@
 
 .list-row {
     min-height: rem(56px);
+    padding: rem(6px 0);
     border-top: 1px solid var(--color-gray-300);
 
     @media (hover: hover) {

@@ -1,32 +1,38 @@
-import dateFormat from "dateformat";
 import { observer } from "mobx-react-lite";
-import React, { RefObject, useEffect, useRef } from "react";
+import React, { RefObject, useEffect, useRef, useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
 import store, { boothStore, uiState } from "../store";
-import { BoothBase } from "../store/BoothStore";
-import { Category } from "../store/CategoryStore";
-import { Exhibitor } from "../store/ExhibitorStore";
-import { ScheduleItem } from "../store/ScheduleStore";
-import type { ListItem } from "../store/types";
-import EntityItem, { EntityItemType } from "./EntityItem";
+import settings from "../tools/settings";
+import EntityListRow from "./EntityListRow";
 import "./EntityList.scss";
-import data from "../data";
-import { HeatmapYah } from "../store/HeatmapStore";
-import YahRow from "./YahRow";
+
+const EXPOS_WITH_COMPACT_DETAILS = ["ipia2025"];
 
 interface ListProps {
     updatedScrollableRef: RefObject<HTMLElement>;
     updateScroll?: () => void;
 }
 
-function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
-    const scrollerRef = useRef(null);
+const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
+    const scrollerRef = useRef<HTMLElement | Window | null>(null);
+    const listScrollItemId = uiState.listScrollItemId;
+    const useCompactDetails = EXPOS_WITH_COMPACT_DETAILS.includes(settings.EXPO);
 
-    function handleClick(type: EntityItemType, data: string) {
-        const id = parseInt(data);
+    useEffect(() => {
+        setTimeout(() => {
+            if (scrollerRef.current instanceof HTMLElement) {
+                scrollerRef.current.scrollTop = uiState.listScrollTop;
+            }
+        }, 25);
+    }, [uiState.listScrollTop]);
 
+    const handleClick = useCallback((type: string, data: string) => {
+        const id = parseInt(data, 10);
         uiState.setListScrollItemId(uiState.list?.type, id);
-        uiState.setListScrollTop(uiState.list?.type, scrollerRef.current?.scrollTop || 0);
+        uiState.setListScrollTop(
+            uiState.list?.type,
+            scrollerRef.current instanceof HTMLElement ? scrollerRef.current.scrollTop : 0
+        );
 
         switch (type) {
             case "exhibitor":
@@ -40,96 +46,18 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                 break;
             case "event": {
                 const event = store.scheduleStore.scheduleItems.find((e) => e.id === id);
-
-                if (event.boothId) store.selectBooth(boothStore.booths.find((b) => b.id === event.boothId));
-                else if (event.exhibitorId)
+                if (event?.boothId) {
+                    store.selectBooth(boothStore.booths.find((b) => b.id === event.boothId));
+                } else if (event?.exhibitorId) {
                     store.selectExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === event.exhibitorId));
-
+                }
                 break;
             }
         }
-    }
-
-    function mapItem(item: ListItem, highlighted: boolean, index: number) {
-        if (item instanceof Exhibitor) {
-            return (
-                <EntityItem
-                    onClick={handleClick}
-                    id={item.id.toString()}
-                    featured={item.featured}
-                    url={null}
-                    type="exhibitor"
-                    image={item.logo}
-                    title={item.name}
-                    bookmarked={item.bookmarked}
-                    visited={item.visited}
-                    additionalInfo={item.booths.map((booth) => ({
-                        type: "location",
-                        locationName: booth.name,
-                        level: data.shortLevelName ? booth.layer?.shortName : booth.layer?.description,
-                    }))}
-                    highlighted={highlighted}
-                />
-            );
-        } else if (item instanceof BoothBase) {
-            return (
-                <EntityItem
-                    locationTerm={data.boothTerm}
-                    onClick={handleClick}
-                    id={item.id.toString()}
-                    type="booth"
-                    title={item.name}
-                    url={null}
-                    icon={item.poiIcon}
-                    additionalInfo={[{ type: "location", locationName: item.name, level: item.layer?.name }]}
-                    highlighted={highlighted}
-                />
-            );
-        } else if (item instanceof Category) {
-            return (
-                <EntityItem
-                    onClick={handleClick}
-                    id={item.id.toString()}
-                    itemsCount={item.exhibitors.length}
-                    type="category"
-                    title={item.name}
-                    url={null}
-                    highlighted={highlighted}
-                />
-            );
-        } else if (item instanceof ScheduleItem) {
-            const booth = item.boothId ? boothStore.booths.find((b) => b.id === item.boothId) : null;
-            return (
-                <EntityItem
-                    onClick={handleClick}
-                    id={item.id.toString()}
-                    type="event"
-                    title={item.name}
-                    url={item.link}
-                    date={dateFormat(item.startDate, "dd mmm ddd")}
-                    time={`${dateFormat(item.startDate, "h:MM")} - ${dateFormat(item.endDate, "h:MM")}`}
-                    additionalInfo={booth ? [{ type: "location", locationName: booth.name, level: booth.layer?.name }] : []}
-                    highlighted={highlighted}
-                />
-            );
-        } else if (item instanceof HeatmapYah) {
-            const cls = `list-row ${index === uiState.activeListIndex ? "active" : ""}`;
-            return <YahRow key={item.id.toString()} yah={item} className={cls} />;
-        }
-    };
-
-    useEffect(() => {
-        setTimeout(() => {
-            if (scrollerRef.current) {
-                scrollerRef.current.scrollTop = uiState.listScrollTop;
-            }
-        }, 25);
-    }, [uiState.listScrollTop]);
-
-    const listScrollItemId = uiState.listScrollItemId;
+    }, []);
 
     return (
-        <div style={{ height: "100%", cursor: "pointer" }}>
+        <div style={{ height: "100%", cursor: "pointer", resize: "both" }}>
             {updatedScrollableRef && (
                 <Virtuoso
                     className="list-virtual"
@@ -137,7 +65,16 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     data={uiState.listItems}
                     itemContent={(index, item) => {
                         const highlighted = listScrollItemId?.toString() === item.id?.toString();
-                        return mapItem(item, highlighted, index);
+                        return (
+                            <EntityListRow
+                                key={item.id}
+                                item={item}
+                                index={index}
+                                highlighted={highlighted}
+                                compactDetails={useCompactDetails}
+                                onClick={handleClick}
+                            />
+                        );
                     }}
                     itemsRendered={() => updateScroll && setTimeout(updateScroll)}
                     totalListHeightChanged={() => updateScroll && updateScroll()}
@@ -146,13 +83,20 @@ function EntityList({ updatedScrollableRef, updateScroll }: ListProps) {
                     overscan={400}
                     increaseViewportBy={400}
                     initialItemCount={Math.min(uiState.listScrollIndex + 1, uiState.listItems.length)}
-                    scrollerRef={ref => {
+                    components={{
+                        EmptyPlaceholder: () => (
+                            <div className="list-empty">
+                                {uiState.list.type === "search" ? "Oops, nothing found" : "No items to show"}
+                            </div>
+                        ),
+                    }}
+                    scrollerRef={(ref) => {
                         scrollerRef.current = ref;
                     }}
                 />
             )}
         </div>
     );
-}
+};
 
 export default observer(EntityList);
