@@ -38,6 +38,12 @@
         padding: rem(6px 8px);
         border-radius: var(--border-radius-md);
         font-size: var(--font-size-lg);
+
+        @include kiosk {
+            gap: rem(8px);
+            padding: rem(10px 12px);
+            font-size: var(--font-size-xl);
+        }
     }
 
     &--no-margins {

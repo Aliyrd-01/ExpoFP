@@ -17,6 +17,7 @@ import "./Overlay.scss";
 import Search from "./Search";
 import Wayfinding from "./Wayfinding";
 import Filter from "./Filter";
+import classNames from "classnames";
 
 interface OverlayProps {
     isGDPR: boolean;
@@ -241,9 +242,12 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
     return (
         <div
-            className={`overlay ${s.backdropClass} ${uiState.overlaySize} ${
-                uiState.overlayPosition === "left" ? "start" : "bottom"
-            } ${s.collapsed}`}
+            className={classNames("overlay", s.backdropClass, uiState.overlaySize, {
+                start: uiState.overlayPosition === "left",
+                bottom: uiState.overlayPosition !== "left",
+                [s.collapsed]: true,
+                "overlay-pulse": uiState.kiosk && uiState.inIdle && !uiState.kioskSetup,
+            })}
             id="overlay"
             ref={el}
         >

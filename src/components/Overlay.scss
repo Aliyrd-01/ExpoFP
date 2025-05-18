@@ -55,6 +55,20 @@
                 border-radius: var(--k-border-radius-full);
             }
         }
+
+        &.overlay-pulse {
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 100px;
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+                animation: pulse-shadow 4s infinite;
+            }
+        }
     }
 }
 
@@ -68,5 +82,20 @@
         .overlay {
             right: var(--k-app-gap) !important;
         }
+    }
+}
+
+@keyframes pulse-shadow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(35, 130, 244, 0.5);
+    }
+    30% {
+        box-shadow: 0 0 0 20px rgba(35, 130, 244, 0);
+    }
+    50% {
+        box-shadow: 0 0 0 0 rgba(35, 130, 244, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(35, 130, 244, 0);
     }
 }
