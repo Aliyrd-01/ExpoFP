@@ -1,19 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import classNames from "classnames";
+import { useRenderTarget } from "../utils/useRenderTarget";
 import "./Modal.scss";
 
-type modalType = "default" | "share";
+type ModalType = "default" | "share";
 
 export interface ModalProps {
     open: boolean;
     className?: string;
-    type?: modalType;
+    type?: ModalType;
     onClickClose: () => void;
+    children?: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClickClose, className }) => {
-    const [isOpen, setIsOpen] = useState(open);
+const Modal: React.FC<ModalProps> = ({ open, className, type = "default", onClickClose, children }) => {
+    const container = useRenderTarget();
     const modalRef = useRef<HTMLDivElement>(null);
+    const [isOpen, setIsOpen] = useState(open);
 
     useEffect(() => {
         setIsOpen(open);
@@ -38,7 +42,9 @@ const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClick
         };
     }, [open, onClickClose]);
 
-    return open ? (
+    if (!open || !container) return null;
+
+    const modalContent = (
         <div
             className={classNames("modal", `modal--${type}`, { isOpen }, className)}
             role="dialog"
@@ -49,12 +55,14 @@ const Modal: React.FC<ModalProps> = ({ children, open, type = "default", onClick
         >
             <div className="modal__content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal__close" onClick={onClickClose}>
-                    <i className="icon-close" aria-hidden="true"></i>
+                    <i className="icon-close" aria-hidden="true" />
                 </div>
                 {children}
             </div>
         </div>
-    ) : null;
+    );
+
+    return createPortal(modalContent, container);
 };
 
 export default Modal;
