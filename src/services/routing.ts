@@ -168,6 +168,7 @@ function dispatchFromUrl() {
     } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
         disableHistoryManipulation = true;
         store.uiState.kiosk = true;
+        localStorage.removeItem("__yah");
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
