@@ -46,7 +46,9 @@ export default function configAll(context: DrawerContext = _context): void {
     });
 
     Promise.all(promises).then(() => {
-        layersStore.layersLoaded = true;
+        setTimeout(() => {
+            layersStore.layersLoaded = true;
+        }, 250);
         loadBoothsImages(context);
 
         const l =
