@@ -2,7 +2,7 @@
 
 import { BROADCAST_CHANNEL_NAME, MESSAGE_CACHE, MESSAGE_CACHE_BUNDLE, MESSAGE_REFRESH } from "./constants";
 
-const CACHE_NAME = "EXPOFP_CACHE_V1";
+const CACHE_NAME = "EXPOFP_CACHE_V2";
 const PREFIX = "SW";
 
 self.addEventListener("install", (event) => {
