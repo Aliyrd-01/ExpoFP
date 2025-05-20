@@ -46,7 +46,10 @@ export default function configAll(context: DrawerContext = _context): void {
     });
 
     Promise.all(promises).then(() => {
-        layersStore.layersLoaded = true;
+        // Delay needed for QR code wayfinding workaround.
+        setTimeout(() => {
+            layersStore.layersLoaded = true;
+        }, 250);
         loadBoothsImages(context);
 
         const l =
