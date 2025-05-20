@@ -18,14 +18,14 @@ export async function initOfflineManager(
         const hasActivationKey = activationKeys.some(
             key => (
                 searchParams.has(key)
-                && (searchParams.get(key) !== "0" || searchParams.get(key) !== "none")
+                && (searchParams.get(key) !== "0" && searchParams.get(key) !== "none")
             ),
         );
 
         if (command === "1" || hasActivationKey) {
             await navigator.serviceWorker.register(buildUrl("sw.js"), { scope });
             await navigator.serviceWorker.ready;
-        } else if (command === "0") {
+        } else {
             const registration = await navigator.serviceWorker.getRegistration(scope);
             await registration?.unregister();
         }
