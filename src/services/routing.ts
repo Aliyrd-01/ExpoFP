@@ -169,6 +169,7 @@ function dispatchFromUrl() {
         disableHistoryManipulation = true;
         store.uiState.kiosk = true;
 
+        // Removing YAH key and hide YAH icon
         const yahKey = "__yah";
         if (localStorage.getItem(yahKey)) {
             localStorage.removeItem(yahKey);
