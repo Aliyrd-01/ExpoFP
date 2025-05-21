@@ -155,7 +155,13 @@ export function configMarkers(context: DrawerContext, painterOrderPriority: numb
 
     if (context.updatable) {
         reaction(
-            () => [store.routeStore.markersData, store.routeStore.selectedMarkers, store.layerStore.loaded, store.layerStore.visible],
+            () => [
+                store.routeStore.markersData,
+                store.routeStore.selectedMarkers,
+                store.layerStore.loaded,
+                store.layerStore.visible,
+                store.layerStore.layersLoaded,
+            ],
             () => {
                 loadIcons(store.routeStore.markersData.icons).then(() => {
                     store.routeStore.prevMarkers.forEach(dot => {
