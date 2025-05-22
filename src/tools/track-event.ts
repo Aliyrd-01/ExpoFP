@@ -35,10 +35,9 @@ export default function trackEvent(type: "load" | "exview" | "search" | "route" 
             headers["X-ref"] = Xref;
         }
 
-        fetch(url, {
-            cache: "no-store",
-            headers,
-        }).catch(() => saveTrackEvent(url, headers));
+        fetch(url, { cache: "no-store", headers })
+            .then(() => sendSavedTrackEvents())
+            .catch(() => saveTrackEvent(url, headers));
     } catch (e) { }
 }
 
@@ -89,16 +88,4 @@ async function sendSavedTrackEvents() {
     } catch (e) {
         logger.error("sendSavedTrackEvents", String(e));
     }
-}
-
-let onlineListenerRegistered = false;
-export function ensureTracking() {
-    if (onlineListenerRegistered) return;
-    onlineListenerRegistered = true;
-
-    if (navigator.onLine) {
-        sendSavedTrackEvents();
-    }
-
-    window.addEventListener("online", () => sendSavedTrackEvents());
 }
