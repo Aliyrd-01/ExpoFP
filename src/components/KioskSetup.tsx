@@ -92,7 +92,7 @@ const KioskSetup = observer(() => {
                 let kiosks = [];
 
                 if (!isSetup || step !== "auth") {
-                    const response = await fetch(apiUrl);
+                    const response = await fetch(apiUrl, { priority: "high" } as RequestInit);
                     kiosks = await response.json();
                 }
 

@@ -168,6 +168,13 @@ function dispatchFromUrl() {
     } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
         disableHistoryManipulation = true;
         store.uiState.kiosk = true;
+
+        // Removing YAH key and hide YAH icon
+        const yahKey = "__yah";
+        if (localStorage.getItem(yahKey)) {
+            localStorage.removeItem(yahKey);
+            window.location.reload();
+        }        
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>
