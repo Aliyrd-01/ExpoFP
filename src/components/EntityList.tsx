@@ -57,7 +57,7 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
     }, []);
 
     return (
-        <div style={{ height: "100%", cursor: "pointer", resize: "both" }}>
+        <div style={{ height: "100%", cursor: "pointer", resize: "both", minHeight: 100 }}>
             {updatedScrollableRef && (
                 <Virtuoso
                     className="list-virtual"

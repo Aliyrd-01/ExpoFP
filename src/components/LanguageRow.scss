@@ -5,4 +5,8 @@
     align-items: center;
     padding: rem(19px 15px);
     border-top: 1px solid var(--color-gray-300);
+
+    @include kiosk {
+        padding: rem(22px 18px);
+    }
 }

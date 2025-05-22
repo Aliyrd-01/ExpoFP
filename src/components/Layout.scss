@@ -52,8 +52,9 @@ a {
     --icon-size-xxl: calc(#{rem(32px)} * var(--k-scale));
     --k-app-gap: 16px;
     --k-border-radius-1: clamp(26px, 1.2vmax, 40px);
-    --k-border-radius-2: 100%;
     --k-border-radius-3: 24px;
+    --k-border-radius-4: 14px;
+    --k-border-radius-full: 100px;
     --k-box-shadow-1: 0px 6px 12px rgb(0 0 0 / 40%);
     --k-box-shadow-1-active: 0px 10px 16px rgb(61 145 247 / 40%);
     --k-box-shadow-2: 0px 6px 10px rgb(0 0 0 / 20%);
@@ -71,7 +72,7 @@ a {
     --k-sidebar-max-height-with-ws: calc(100vh - var(--k-sidebar-position-top) - (var(--k-app-gap) * 2) - var(--k-ws-height));
     --k-sidebar-menu-top-height: clamp(200px * var(--k-scale), 10vmax * var(--k-scale), 400px * var(--k-scale));
     --k-items-padding-1: var(--k-spacing-lg) calc(max(26px, 1.4vw) * var(--k-scale));
-    --k-bottom-padding-2: clamp(4px, 1vh, 6px) clamp(12px, 1.6vw, 20px);
+    --k-bottom-padding-2: clamp(6px, 1vh, 8px) clamp(10px, 1.6vw, 14px);
     --k-input-height: clamp(48px, 10vh, 62px);
     --k-input-font-size: 1.2em;
     --k-image-height: clamp(120px, 12vh, 160px);

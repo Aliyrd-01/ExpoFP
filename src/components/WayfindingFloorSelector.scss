@@ -90,10 +90,10 @@
         padding-top: rem(14px);
         padding-bottom: 0;
 
-        &__list {
+        &__item {
             & > button {
-                width: clamp(40px, 6vw, 52px);
-                height: clamp(40px, 6vw, 52px);
+                width: clamp(38px, 6vw, 46px);
+                height: clamp(38px, 6vw, 46px);
                 font-weight: var(--font-weight-bold);
                 color: var(--color-primary);
             }
@@ -103,7 +103,7 @@
 
 .item-walk {
     position: absolute;
-    z-index: 999;
+    z-index: 10;
     right: rem(-4px);
     bottom: rem(-6px);
     display: flex;

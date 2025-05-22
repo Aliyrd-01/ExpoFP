@@ -25,7 +25,7 @@ export async function initOfflineManager(
         if (command === "1" || hasActivationKey) {
             await navigator.serviceWorker.register(buildUrl("sw.js"), { scope });
             await navigator.serviceWorker.ready;
-        } else if (command === "0") {
+        } else {
             const registration = await navigator.serviceWorker.getRegistration(scope);
             await registration?.unregister();
         }

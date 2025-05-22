@@ -70,13 +70,13 @@ $checked-panel: ".checked-panel";
         width: var(--k-mapcontrol-size);
         height: var(--k-mapcontrol-size);
         padding: 0;
-        border-radius: var(--k-border-radius-2);
+        border-radius: var(--k-border-radius-full);
         box-shadow: var(--k-box-shadow-1);
         transition: all 0.1s ease;
 
         & > i {
             opacity: 1;
-            font-size: var(--icon-size-lg);
+            font-size: var(--icon-size-xl);
             color: var(--color-primary);
         }
 

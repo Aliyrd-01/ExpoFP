@@ -114,12 +114,17 @@ const OverlayContent: React.FC<{
         if (!bar || !scrollableEl) return;
 
         const overlayBarHeight = bar.offsetHeight;
-
         const offset = uiState.overlayPosition === "bottom" ? 30 : 20;
-        const kioskOffsetPx =
-            uiState.kiosk && uiState.wsShown
-                ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--k-ws-height")) || 0
-                : 0;
+
+        let kioskOffsetPx = 0;
+
+        if (uiState.kiosk) {
+            kioskOffsetPx += 16;
+
+            if (uiState.wsShown) {
+                kioskOffsetPx += 50;
+            }
+        }
 
         const maxHeight = window.innerHeight - overlayBarHeight - offset - kioskOffsetPx;
 
