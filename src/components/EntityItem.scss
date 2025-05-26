@@ -40,11 +40,19 @@ $entity-item: ".efp-entity-item";
     &__right {
         display: flex;
         flex: 1;
-        gap: rem(6px);
+        gap: rem(10px);
+        min-width: 0;
     }
 
     &__content {
+        display: flex;
         flex: 1;
+        flex-direction: column;
+        max-width: 100%;
+
+        &.with-image {
+            max-width: calc(100% - #{rem(78px)});
+        }
     }
 
     &__icon {
@@ -89,14 +97,6 @@ $entity-item: ".efp-entity-item";
     &__bookmarked {
         font-size: var(--icon-size-md) !important;
         color: var(--color-bookmarked);
-    }
-
-    &__content {
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        max-width: calc(100% - 20px);
-        padding-right: rem(14px);
     }
 
     &__datetime {
@@ -162,7 +162,9 @@ $entity-item: ".efp-entity-item";
 
     &__details-item {
         display: inline-flex;
-        padding: rem(4px 7px);
+        min-width: 0;
+        max-width: 100%;
+        padding: rem(2px 7px);
         gap: rem(7px);
         align-items: center;
         overflow: hidden;
@@ -175,12 +177,17 @@ $entity-item: ".efp-entity-item";
 
         & > div {
             position: relative;
-            display: inline-flex;
+            display: block;
             align-items: center;
             min-height: 100%;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
+            padding: rem(2px 0);
+
+            &:first-child {
+                flex: 1;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }
         }
     }
 
