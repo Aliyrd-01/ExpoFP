@@ -21,6 +21,7 @@ export function loadCss(url: string, appendTo: Element | ShadowRoot) {
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = goodUrl(url);
+    link.setAttribute("fetchpriority", "high");
     appendTo.appendChild(link);
 }
 
@@ -30,6 +31,7 @@ export async function loadJs(url: string) {
     return new Promise(function (resolve, reject) {
         const scriptTag = document.createElement("script");
         scriptTag.src = addVersionToUrl(goodUrl(url));
+        scriptTag.setAttribute("fetchpriority", "high"); 
         scriptTag.onload = resolve;
         scriptTag.onerror = resolve;
         logger.log("Injecting script:", scriptTag.src);
