@@ -1,0 +1,50 @@
+@use "@styles/utils" as *;
+
+.multi-select-groups {
+    &__list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: rem(30px);
+        row-gap: rem(24px);
+
+        &--single-group {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__group-title {
+        margin-bottom: rem(10px);
+        font-weight: var(--font-weight-medium);
+        font-size: var(--font-size-md);
+        color: var(--color-gray-800);
+    }
+
+    &__group-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: rem(5px);
+    }
+
+    &__item {
+        background: var(--color-gray-200);
+        border: 1px solid var(--color-gray-200);
+        border-radius: var(--border-radius-full);
+        padding: rem(6px 12px);
+        font-size: var(--font-size-lg);
+        color: var(--color-gray-900);
+        cursor: pointer;
+        transition: all 0.1s;
+        outline: none;
+
+        &:hover {
+            background: var(--color-gray-300);
+            color: var(--color-black);
+        }
+
+        &.is-selected {
+            background: var(--color-primary-ultra-light);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+    }
+}

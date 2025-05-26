@@ -434,13 +434,29 @@ const KioskSetup = observer(() => {
                         )}
 
                         <div className="efp-kiosk-setup-actions">
-                            {step === "edit" && <Button size="md" text={t("Save")} disabled={disabled} onClick={save} />}
+                            {step === "edit" && (
+                                <Button size="md" disabled={disabled} onClick={save}>
+                                    {t("Save")}
+                                </Button>
+                            )}
 
-                            {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
+                            {step === "copy" && (
+                                <Button size="md" onClick={copy}>
+                                    {t("Copy URL")}
+                                </Button>
+                            )}
 
-                            {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
+                            {step === "edit" && (
+                                <Button variant="gray-border" size="md" onClick={clear}>
+                                    {t("Clear")}
+                                </Button>
+                            )}
 
-                            {step === "copy" && <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />}
+                            {step === "copy" && (
+                                <Button variant="gray" size="md" onClick={exit}>
+                                    {t("Cancel")}
+                                </Button>
+                            )}
                         </div>
                     </Alert>
                 </div>

@@ -2,9 +2,11 @@ import React, { ReactNode } from "react";
 import cn from "classnames";
 import "./Badge.scss";
 
+export type BadgeVariant = "lightgray" | "gray" | "ghost" | "orange";
+
 export interface BadgeProps {
     children?: ReactNode;
-    variant?: "lightgray" | "gray" | "ghost" | "orange";
+    variant?: BadgeVariant;
     size?: "md" | "lg";
     noMargins?: boolean;
 }

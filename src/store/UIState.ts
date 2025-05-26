@@ -76,6 +76,8 @@ export default class UIState {
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
     @observable kioskSetupDOMRect: DOMRect;
+    @observable categoryFilterOpen = false;
+    @observable selectedCategoryFilters: Category[] = [];
 
     @computed get highlightedBooths() {
         const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
@@ -99,9 +101,7 @@ export default class UIState {
         }
 
         if (this.list?.type === "category") {
-            this.list.category.exhibitors
-                .flatMap(e => e.booths)
-                .forEach(b => booths.add(b.id.toString()));
+            this.list.category.exhibitors.flatMap((e) => e.booths).forEach((b) => booths.add(b.id.toString()));
         }
 
         if (this.list?.type === "bookmarks") {
@@ -365,23 +365,29 @@ export default class UIState {
             return true;
         }
 
-        return (
-            this.highlightedBooths.size > 0
-            || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
-        );
+        return this.highlightedBooths.size > 0 || (this.list?.type === "search" && this.list?.text?.trim().length > 0);
     }
 
     @computed get searchItems(): ListItem[] {
         if (this.list.type !== "search") return [];
         let text = this.list.text.trim().toLowerCase() as string;
-        // let words = text.split(/\s+/).filter(x => x);
 
         const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
-        const exhibitorsArray = exhibitorStore.exhibitors;
+        let exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
         const boothsArray = boothStore.booths;
         const eventsArray = scheduleStore.scheduleItems;
+
+        if (this.selectedCategoryFilters.length > 0) {
+            exhibitorsArray = exhibitorsArray.filter((exhibitor) =>
+                this.selectedCategoryFilters.some((category) => exhibitor.categories.some((c) => c.id === category.id))
+            );
+
+            if (!text) {
+                return exhibitorsArray;
+            }
+        }
 
         if (!text) {
             let combinedArray = [];
@@ -397,7 +403,11 @@ export default class UIState {
                 const allItems = [...exhibitorsArray, ...boothsArray];
                 return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
             } else if (this.heatmapYah) {
-                return heatmapStore.heatmapData?.yah?.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)) || [];
+                return (
+                    heatmapStore.heatmapData?.yah?.sort(
+                        (a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)
+                    ) || []
+                );
             }
 
             return exhibitorsArray.length === 0
@@ -430,7 +440,9 @@ export default class UIState {
 
         if (this.heatmapYah) {
             // Show all items with views greater than the entered number
-            const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text));
+            const result = heatmapStore.heatmapData.yah.filter((c) =>
+                Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text)
+            );
 
             return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         }
@@ -693,7 +705,7 @@ export default class UIState {
     }
 
     @computed get listScrollIndex() {
-        const index = this.listItems.findIndex(item => item.id === this.listScrollItemId);
+        const index = this.listItems.findIndex((item) => item.id === this.listScrollItemId);
         return index === -1 ? 0 : index;
     }
 

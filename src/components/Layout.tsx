@@ -116,6 +116,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
 
     return (
         <div
+            id="efp-layout"
             className={cn("layout", {
                 "efp-kiosk": uiState.kiosk,
                 "efp-layers-mode": store.layerStore.mode,

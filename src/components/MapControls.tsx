@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import "./MapControls.scss";
 
-export interface layersListItem {
+export interface MapControlLayersItem {
     id: string;
     name: string;
 }
@@ -16,7 +16,7 @@ export interface MapControlsProps {
     findLocation: boolean;
     viewMode: boolean;
     layersOpen?: boolean;
-    layersList?: layersListItem[];
+    layersList?: MapControlLayersItem[];
     layersActiveItems?: string[];
     layersWidth?: number;
     onViewModeSwitch: () => void;
@@ -51,10 +51,10 @@ const MapControls: React.FC<MapControlsProps> = ({
     useOnClickOutside(refLayers, () => setLayersOpen(false));
     const handleLayersCheck = (id: string) => onChangeLayers(id);
 
-    const listItems = (items: layersListItem[]) => {
+    const listItems = (items: MapControlLayersItem[]) => {
         return (
             <ul>
-                {items.map((item: layersListItem, index: number) => (
+                {items.map((item: MapControlLayersItem, index: number) => (
                     <li key={index}>
                         <input
                             type="checkbox"

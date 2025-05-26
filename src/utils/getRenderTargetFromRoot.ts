@@ -1,20 +1,22 @@
 export function getRenderTargetFromRoot(rootElement: HTMLElement | null): HTMLElement | null {
-    if (typeof window === "undefined") return null;
-
     if (!rootElement) {
-        if (process.env.NODE_ENV === "development") {
-            console.warn("[getRenderTargetFromRoot] rootElement is null");
-        }
+        console.error("[getRenderTargetFromRoot] rootElement is null");
         return null;
     }
 
-    const instance = (rootElement as any)["__expofp"];
-    if (!instance || !instance.renderTarget) {
-        if (process.env.NODE_ENV === "development") {
-            console.warn("[getRenderTargetFromRoot] Missing __expofp.renderTarget");
+    const firstChild = rootElement.firstElementChild as HTMLElement;
+    if (firstChild && firstChild.shadowRoot) {
+        const layout = firstChild.shadowRoot.querySelector("#efp-layout");
+        if (layout) {
+            return layout as HTMLElement;
         }
-        return null;
     }
 
-    return instance.renderTarget;
+    const layout = rootElement.querySelector?.("#efp-layout");
+    if (layout) {
+        return layout as HTMLElement;
+    }
+
+    console.error("[getRenderTargetFromRoot] rootElement is null");
+    return null;
 }

@@ -1,6 +1,11 @@
 @use "@styles/utils" as *;
 
 .efp-search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
     & > input {
         width: 100%;
         height: rem(56px);
@@ -31,6 +36,28 @@
         @include kiosk {
             height: var(--k-searchbox-height);
             padding-inline-end: rem(60px);
+        }
+    }
+
+    .category-filter-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: rem(40px);
+        height: rem(40px);
+        margin-right: rem(4px);
+        padding: 0;
+        border: none;
+        color: var(--color-gray-700);
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            color: var(--color-black);
+        }
+
+        i {
+            font-size: var(--icon-size-sm);
         }
     }
 }

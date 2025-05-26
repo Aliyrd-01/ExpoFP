@@ -2,17 +2,19 @@ import React, { ReactNode, MouseEvent } from "react";
 import cn from "classnames";
 import "./Button.scss";
 
-type Targets = "_self" | "_blank" | "_parent";
+export type ButtonVariant = "primary" | "secondary" | "gray" | "gray-border" | "ghost";
+export type ButtonSize = "sm" | "md" | "lg";
+export type ButtonTarget = "_self" | "_blank" | "_parent";
 
 export interface ButtonProps {
     children?: ReactNode;
     inline?: boolean;
     text?: string;
     link?: string;
-    target?: Targets;
+    target?: ButtonTarget;
     disabled?: boolean;
-    variant?: "primary" | "secondary" | "gray" | "gray-border";
-    size?: "sm" | "md" | "lg";
+    variant?: ButtonVariant;
+    size?: ButtonSize;
     ariaLabel?: string;
     title?: string;
     onClick?: (event) => void;

@@ -188,7 +188,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             {t("Review Cookie Consent")}
                         </a>
                     )}
-                    {!data.hideCategoriesLink && categories}
+                    {/* {!data.hideCategoriesLink && categories} */}
                 </div>
             </OverlayContent>
         );

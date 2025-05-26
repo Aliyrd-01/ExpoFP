@@ -16,6 +16,9 @@ import { isLocalStorageAvailable } from "../utils/localStorage";
 import settings from "../tools/settings";
 import { KIOSK_KEY } from "../constants";
 import { getRebookingTokenFromQuery } from "../tools/rebookingUrl";
+import Modal from "./Modal";
+import MultiSelectGroups, { MultiSelectGroup } from "./MultiSelectGroups";
+import { useRenderTarget } from "../utils/useRenderTarget";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
@@ -89,6 +92,12 @@ function Search() {
     const el = useRef<HTMLDivElement>();
     const overlayContentRef = useRef<HTMLDivElement>();
     const scrollableRef = useRef<HTMLDivElement>();
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<(number | string)[]>(
+        uiState.selectedCategoryFilters.map((c) => c.id)
+    );
+    const [pendingSelectedIds, setPendingSelectedIds] = React.useState<(number | string)[]>(selectedCategoryIds);
+    const modalTarget = useRenderTarget();
 
     const s = useLocalStore(() => ({
         elementTop: 0,
@@ -183,6 +192,43 @@ function Search() {
         if (s.updateOverlayContent) s.updateOverlayContent();
     }, [s.updateOverlayContent]);
 
+    const groups: MultiSelectGroup[] = React.useMemo(() => {
+        const cats = store.categoryStore.categories;
+        const grouped: Record<string, MultiSelectGroup> = {};
+
+        cats.forEach((cat) => {
+            const parts = cat.name.split("/").map((p) => p.trim());
+            const groupName = parts.length > 1 ? parts[0] : "Categories";
+            const itemName = parts.length > 1 ? parts[1] : cat.name;
+
+            if (!grouped[groupName]) {
+                grouped[groupName] = { groupName, items: [] };
+            }
+
+            grouped[groupName].items.push({ id: cat.id, name: itemName });
+        });
+
+        return Object.values(grouped);
+    }, [store.categoryStore.categories]);
+
+    const handleFilterClick = () => {
+        setPendingSelectedIds(selectedCategoryIds);
+        setModalOpen(true);
+    };
+    const handleModalClose = () => setModalOpen(false);
+    const handleApply = () => {
+        setSelectedCategoryIds(pendingSelectedIds);
+        const selected = store.categoryStore.categories.filter((c) => pendingSelectedIds.includes(c.id));
+        store.applyCategoryFilters(selected);
+        setModalOpen(false);
+    };
+    const handleReset = () => {
+        setPendingSelectedIds([]);
+        setSelectedCategoryIds([]);
+        store.applyCategoryFilters([]);
+    };
+    const handleCancel = () => setModalOpen(false);
+
     return useObserver(() => {
         const fakeInput = s.hideRealInput ? (
             <input type="search" placeholder={s.placeHolder} value={s.text} onFocus={handleReplicaFocus} readOnly />
@@ -201,22 +247,53 @@ function Search() {
                     onBlur={handleBlur}
                 />
                 {fakeInput}
+                <button
+                    className="category-filter-button"
+                    onClick={handleFilterClick}
+                    title={t("Filter by categories")}
+                    disabled={!modalTarget}
+                >
+                    <i className="icon-categories" aria-hidden="true"></i>
+                </button>
             </div>
         );
         // console.log("Search", s.hideRealInput, s.text);
         return (
-            <OverlayContent
-                onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
-                onClose={handleClose}
-                onBack={handleBack}
-                backMode={s.backMode}
-                hideClose={!s.showClose}
-                bar={bar}
-                passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
-                passScrollableRef={(ref) => (scrollableRef.current = ref.current)}
-            >
-                <EntityList updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
-            </OverlayContent>
+            <>
+                <OverlayContent
+                    onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
+                    onClose={handleClose}
+                    onBack={handleBack}
+                    backMode={s.backMode}
+                    hideClose={!s.showClose}
+                    bar={bar}
+                    passRefToParent={(ref) => (overlayContentRef.current = ref.current)}
+                    passScrollableRef={(ref) => (scrollableRef.current = ref.current)}
+                >
+                    <EntityList updateScroll={updateContent} updatedScrollableRef={scrollableRef} />
+                </OverlayContent>
+                {modalOpen &&
+                    (modalTarget ? (
+                        <Modal
+                            open={modalOpen}
+                            title={t("Select Categories")}
+                            onClickClose={handleModalClose}
+                            footerLeft={[{ label: t("Reset"), onClick: handleReset, variant: "gray" }]}
+                            footerRight={[
+                                { label: t("Cancel"), onClick: handleCancel, variant: "gray-border" },
+                                { label: t("Filter Exhibitors"), onClick: handleApply, variant: "primary" },
+                            ]}
+                        >
+                            <MultiSelectGroups
+                                groups={groups}
+                                selectedIds={pendingSelectedIds}
+                                onChange={setPendingSelectedIds}
+                            />
+                        </Modal>
+                    ) : (
+                        <div style={{ textAlign: "center", padding: "2em" }}>{t("Loading...")}</div>
+                    ))}
+            </>
         );
     });
 

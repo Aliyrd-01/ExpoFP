@@ -1,4 +1,4 @@
-import { action, observable } from "mobx";
+import { action, observable, computed } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -347,5 +347,26 @@ export default class RootStore {
         //         dispatch("clickBoothInList", item.obj.id);
         //         break;
         // }
+    }
+
+    @action toggleCategoryFilter() {
+        this.uiState.categoryFilterOpen = !this.uiState.categoryFilterOpen;
+    }
+
+    @action applyCategoryFilters(categories: Category[]) {
+        this.uiState.selectedCategoryFilters = categories;
+        this.uiState.categoryFilterOpen = false;
+    }
+
+    @computed get filteredExhibitors() {
+        if (this.uiState.selectedCategoryFilters.length === 0) {
+            return this.exhibitorStore.exhibitors;
+        }
+
+        return this.exhibitorStore.exhibitors.filter(exhibitor =>
+            this.uiState.selectedCategoryFilters.some(category =>
+                exhibitor.categories.some(c => c.id === category.id)
+            )
+        );
     }
 }

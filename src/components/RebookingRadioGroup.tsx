@@ -14,6 +14,7 @@ export interface RebookingOption {
         secondary: string;
     };
 }
+
 export interface RebookingRadioGroupProps {
     options: RebookingOption[];
     checked: string;
