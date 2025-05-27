@@ -1,6 +1,7 @@
 export { default as Alert } from "./Alert";
 export { default as Autocomplete } from "./Autocomplete";
 export { default as Button } from "./Button";
+export { default as Badge } from "./Badge";
 export { default as Checkbox } from "./Checkbox";
 export { default as CookieConsent } from "./CookieConsent";
 export { default as EntityItem } from "./EntityItem";
@@ -24,6 +25,7 @@ export { default as WayfindingTemplate } from "./WayfindingTemplate";
 export type { AlertProps, AlertVariant, AlertPosition } from "./Alert";
 export type { AutocompleteProps, AutocompleteOptionObject } from "./Autocomplete";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./Button";
+export type { BadgeProps, BadgeVariant } from "./Badge";
 export type { CheckboxProps } from "./Checkbox";
 export type { CookieConsentProps } from "./CookieConsent";
 export type { EntityItemProps, EntityItemType, EntityItemAdditionalInfo } from "./EntityItem";

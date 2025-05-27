@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import cn from "classnames";
+import store from "../store";
 import "./MultiSelectGroups.scss";
 
 export interface MultiSelectGroupItem {
@@ -29,6 +30,25 @@ const MultiSelectGroups: React.FC<MultiSelectGroupsProps> = ({ groups, selectedI
         setLocalSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
     };
 
+    const toggleGroup = (group: MultiSelectGroup) => {
+        const groupIds = group.items.map((item) => item.id);
+        const allSelected = groupIds.every((id) => localSelected.includes(id));
+
+        if (allSelected) {
+            setLocalSelected((prev) => prev.filter((id) => !groupIds.includes(id)));
+        } else {
+            setLocalSelected((prev) => {
+                const newSelected = [...prev];
+                groupIds.forEach((id) => {
+                    if (!newSelected.includes(id)) {
+                        newSelected.push(id);
+                    }
+                });
+                return newSelected;
+            });
+        }
+    };
+
     useEffect(() => {
         if (arraysEqual(localSelected, selectedIds)) return;
         onChange(localSelected);
@@ -37,23 +57,31 @@ const MultiSelectGroups: React.FC<MultiSelectGroupsProps> = ({ groups, selectedI
     const arraysEqual = (a: (string | number)[], b: (string | number)[]) =>
         a.length === b.length && a.every((v) => b.includes(v));
 
-    const shouldShowGroupTitle = (groupName: string) => {
-        return !(groups.length === 1 && groupName === "Categories");
+    const isGroupFullySelected = (group: MultiSelectGroup) => {
+        return group.items.every((item) => localSelected.includes(item.id));
     };
-
-    const isSingleGroup = groups.length === 1;
 
     return (
         <div className="multi-select-groups">
-            <div
-                className={cn("multi-select-groups__list", {
-                    "multi-select-groups__list--single-group": isSingleGroup,
-                })}
-            >
+            <div className="multi-select-groups__list">
                 {groups.map((group) => (
-                    <div key={group.groupName} className="multi-select-groups__group">
-                        {shouldShowGroupTitle(group.groupName) && (
-                            <div className="multi-select-groups__group-title">{group.groupName}</div>
+                    <div
+                        key={group.groupName}
+                        className={cn("multi-select-groups__group", {
+                            "multi-select-groups__group--all-categories": group.groupName === "General",
+                        })}
+                    >
+                        {group.groupName !== "General" && (
+                            <div className="multi-select-groups__group-header">
+                                <div className="multi-select-groups__group-title">{group.groupName}</div>
+                                <button
+                                    className="multi-select-groups__select-all"
+                                    onClick={() => toggleGroup(group)}
+                                    type="button"
+                                >
+                                    {isGroupFullySelected(group) ? "clear selection" : "select all"}
+                                </button>
+                            </div>
                         )}
                         <div className="multi-select-groups__group-items">
                             {group.items.map((item) => (
@@ -66,6 +94,9 @@ const MultiSelectGroups: React.FC<MultiSelectGroupsProps> = ({ groups, selectedI
                                     type="button"
                                 >
                                     {item.name}
+                                    <span className="multi-select-groups__item-count">
+                                        {store.categoryStore.categoryById.get(Number(item.id))?.exhibitors.length || 0}
+                                    </span>
                                 </button>
                             ))}
                         </div>

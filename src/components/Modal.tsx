@@ -2,16 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 import { useRenderTarget } from "../utils/useRenderTarget";
-import { Button, ButtonVariant } from "./";
+import { Button, ButtonVariant, Badge } from "./";
 import "./Modal.scss";
 
-type ModalType = "default" | "share";
+type ModalType = "default" | "share" | "fullscreen";
 
 export interface ModalButton {
     label: string;
     variant?: ButtonVariant;
     disabled?: boolean;
     onClick: () => void;
+    badge?: number;
 }
 
 export interface ModalProps {
@@ -19,6 +20,7 @@ export interface ModalProps {
     className?: string;
     type?: ModalType;
     title?: string;
+    badge?: number;
     children?: React.ReactNode;
     footerLeft?: ModalButton[];
     footerRight?: ModalButton[];
@@ -30,6 +32,7 @@ const Modal: React.FC<ModalProps> = ({
     className,
     type = "default",
     title,
+    badge,
     children,
     footerLeft,
     footerRight,
@@ -60,8 +63,8 @@ const Modal: React.FC<ModalProps> = ({
     if (!open || !container) return null;
 
     const renderButtons = (buttons?: ModalButton[]) =>
-        buttons?.map(({ label, onClick, variant = "primary", disabled }, idx) => (
-            <Button key={idx} onClick={onClick} variant={variant} size="md" inline={true} disabled={disabled}>
+        buttons?.map(({ label, onClick, variant = "primary", disabled, badge }, idx) => (
+            <Button key={idx} onClick={onClick} variant={variant} size="md" inline={true} disabled={disabled} badge={badge}>
                 {label}
             </Button>
         ));
@@ -77,7 +80,16 @@ const Modal: React.FC<ModalProps> = ({
         >
             <div className="modal__box" onClick={(e) => e.stopPropagation()}>
                 <div className="modal__header">
-                    {title && <div className="modal__title">{title}</div>}
+                    {title && (
+                        <div className="modal__title">
+                            {title}
+                            {badge !== undefined && badge > 0 && (
+                                <Badge variant="primary" size="md" noMargins rounded>
+                                    {badge}
+                                </Badge>
+                            )}
+                        </div>
+                    )}
                     <button type="button" className="modal__close" onClick={onClickClose}>
                         <i className="icon-close" aria-hidden="true" />
                     </button>

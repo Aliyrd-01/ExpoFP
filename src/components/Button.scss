@@ -5,15 +5,14 @@ a.efp-button {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: rem(6px);
     width: 100%;
     max-width: rem(400px);
-    background: var(--color-primary);
     border: 0;
     border-radius: var(--border-radius-full);
     outline: none;
     font-family: var(--app-font-family);
     font-weight: var(--font-weight-medium);
-    color: var(--color-white);
     text-decoration: none;
     cursor: pointer;
     transition: background 0.1s ease-in-out;
@@ -24,9 +23,7 @@ a.efp-button {
     }
 
     &:active {
-        background: var(--color-primary);
         box-shadow: 0 0 8px rgb(61 145 247 / 30%);
-        color: var(--color-white);
     }
 
     &:disabled,
@@ -41,20 +38,54 @@ a.efp-button {
         }
     }
 
+    &--primary {
+        background: var(--color-primary);
+        color: var(--color-white);
+
+        .efp-button-badge {
+            background: var(--color-primary-dark);
+            color: var(--color-white);
+        }
+
+        &:hover,
+        &:active {
+            background: var(--color-primary-dark);
+            color: var(--color-white);
+
+            .efp-button-badge {
+                background: var(--color-primary-ultra-dark);
+            }
+        }
+    }
+
     &--secondary {
         background: var(--color-primary-ultra-light);
         color: var(--color-primary);
+
+        .efp-button-badge {
+            background: var(--color-white);
+            color: var(--color-primary);
+        }
 
         &:hover,
         &:active {
             background: var(--color-primary-ultra-light);
             color: var(--color-primary-dark);
+
+            .efp-button-badge {
+                color: var(--color-primary-dark);
+            }
         }
     }
 
     &--gray {
         background: var(--color-gray-200);
         color: var(--color-black);
+
+        .efp-button-badge {
+            background: var(--color-gray-300);
+            color: var(--color-black);
+        }
 
         &:hover,
         &:active {
@@ -68,10 +99,19 @@ a.efp-button {
         border: 1px solid var(--color-gray-300);
         color: var(--color-black);
 
+        .efp-button-badge {
+            background: var(--color-gray-200);
+            color: var(--color-black);
+        }
+
         &:hover,
         &:active {
             background: var(--color-gray-300);
             color: var(--color-black);
+
+            .efp-button-badge {
+                background: var(--color-gray-400);
+            }
         }
     }
 
@@ -80,25 +120,54 @@ a.efp-button {
         border: 0;
         color: var(--color-gray-900);
 
+        .efp-button-badge {
+            background: var(--color-gray-200);
+            color: var(--color-black);
+        }
+
         &:hover,
         &:active {
             background: var(--color-gray-200);
             color: var(--color-black);
+
+            .efp-button-badge {
+                background: var(--color-gray-300);
+            }
         }
     }
 
     &--lg {
         min-width: rem(160px);
         min-height: rem(42px);
-        padding: rem(10px 20px);
+        padding: rem(8px 20px);
         font-size: var(--font-size-xl);
+
+        .efp-button-badge {
+            min-width: rem(30px);
+            height: rem(30px);
+            font-size: var(--font-size-md);
+        }
+
+        &.with-badge {
+            padding-right: rem(10px);
+        }
     }
 
     &--md {
         min-width: rem(140px);
         min-height: rem(38px);
-        padding: rem(8px 18px);
+        padding: rem(6px 18px);
         font-size: var(--font-size-lg);
+
+        .efp-button-badge {
+            min-width: rem(26px);
+            height: rem(26px);
+            font-size: var(--font-size-md);
+        }
+
+        &.with-badge {
+            padding-right: rem(8px);
+        }
     }
 
     &--sm {
@@ -106,6 +175,16 @@ a.efp-button {
         min-height: rem(30px);
         padding: rem(4px 16px);
         font-size: var(--font-size-md);
+
+        .efp-button-badge {
+            min-width: rem(22px);
+            height: rem(22px);
+            font-size: var(--font-size-xs);
+        }
+
+        &.with-badge {
+            padding-right: rem(6px);
+        }
     }
 
     &--inline {
@@ -113,4 +192,13 @@ a.efp-button {
         width: auto;
         min-width: auto;
     }
+}
+
+.efp-button-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: rem(0 5px);
+    border-radius: var(--border-radius-full);
+    transition: background 0.1s ease-in-out;
 }

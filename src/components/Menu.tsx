@@ -15,6 +15,8 @@ import "./Menu.scss";
 import "./Menu_custom.scss";
 import OverlayContent from "./OverlayContent";
 import Badge from "./Badge";
+import Modal from "./Modal";
+import MultiSelectGroups, { MultiSelectGroup, MultiSelectGroupItem } from "./MultiSelectGroups";
 
 const logoUrl = /^https?:\/\//i.test(data.logo) ? data.logo : baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -44,6 +46,9 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         logoVisibility: "visible" as CSS.Property.Visibility,
         shown: false,
         shownTimeout: undefined as number,
+        modalOpen: false,
+        selectedCategoryIds: uiState.selectedCategoryFilters.map((c) => Number(c.id)),
+        pendingSelectedIds: uiState.selectedCategoryFilters.map((c) => Number(c.id)),
     }));
 
     useAutorun(() => {
@@ -97,7 +102,90 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         </>
     ) : null;
 
-    // TODO: replace a href="/#" with buttons everywhere
+    const groups: MultiSelectGroup[] = React.useMemo(() => {
+        const cats = store.categoryStore.categories;
+        const grouped: Record<string, MultiSelectGroup> = {};
+        const ungroupedItems: MultiSelectGroupItem[] = [];
+
+        cats.forEach((cat) => {
+            if (cat.exhibitors.length === 0) return;
+
+            const parts = cat.name.split("/").map((p) => p.trim());
+
+            if (parts.length > 1) {
+                const groupName = parts[0];
+                const itemName = parts[1];
+
+                if (!grouped[groupName]) {
+                    grouped[groupName] = { groupName, items: [] };
+                }
+
+                grouped[groupName].items.push({ id: cat.id, name: itemName });
+            } else {
+                ungroupedItems.push({ id: cat.id, name: cat.name });
+            }
+        });
+
+        const result: MultiSelectGroup[] = [];
+
+        if (ungroupedItems.length > 0) {
+            result.push({
+                groupName: "General",
+                items: ungroupedItems,
+            });
+        }
+
+        Object.values(grouped).forEach((group) => {
+            if (group.items.length > 0) {
+                result.push(group);
+            }
+        });
+
+        return result;
+    }, [store.categoryStore.categories]);
+
+    const handleFilterClick = (e: MouseEvent) => {
+        e.preventDefault();
+        s.pendingSelectedIds = s.selectedCategoryIds;
+        s.modalOpen = true;
+    };
+
+    const handleModalClose = () => {
+        s.modalOpen = false;
+    };
+
+    const handleReset = () => {
+        s.pendingSelectedIds = [];
+    };
+
+    const handleApply = () => {
+        s.selectedCategoryIds = s.pendingSelectedIds;
+        const selected = store.categoryStore.categories.filter((c) => s.pendingSelectedIds.includes(Number(c.id)));
+        store.applyCategoryFilters(selected);
+        s.modalOpen = false;
+        close();
+    };
+
+    const handleCancel = () => {
+        s.pendingSelectedIds = s.selectedCategoryIds;
+        s.modalOpen = false;
+    };
+
+    const isShowResultsEnabled = () => {
+        return s.modalOpen;
+    };
+
+    const getTotalExhibitorsCount = () => {
+        const selectedCategories = store.categoryStore.categories.filter((c) => s.pendingSelectedIds.includes(Number(c.id)));
+        const exhibitorIds = new Set();
+        selectedCategories.forEach((category) => {
+            category.exhibitors.forEach((exhibitor) => {
+                exhibitorIds.add(exhibitor.id);
+            });
+        });
+        return exhibitorIds.size;
+    };
+
     return useObserver(() => {
         if (!uiState.menu) return null;
 
@@ -114,6 +202,17 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                 <div className="menu__content">
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         {t("Search")}
+                    </a>
+                    <a className="menu__item -categories" href="/#" onClick={handleFilterClick}>
+                        <span>{t("Categories")}</span>
+                        <span className="menu__icons">
+                            {s.selectedCategoryIds.length > 0 && (
+                                <Badge variant="primary" size="md" noMargins rounded>
+                                    {s.selectedCategoryIds.length}
+                                </Badge>
+                            )}
+                            <i className="icon-chevron-right" />
+                        </span>
                     </a>
                     {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
@@ -188,8 +287,34 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             {t("Review Cookie Consent")}
                         </a>
                     )}
-                    {/* {!data.hideCategoriesLink && categories} */}
                 </div>
+                {s.modalOpen && (
+                    <Modal
+                        open={s.modalOpen}
+                        title={t("Categories")}
+                        onClickClose={handleModalClose}
+                        footerLeft={
+                            s.pendingSelectedIds.length > 0
+                                ? [{ label: t("Clear all"), onClick: handleReset, variant: "gray" }]
+                                : []
+                        }
+                        footerRight={[
+                            {
+                                label: t("Show results"),
+                                onClick: handleApply,
+                                variant: "primary",
+                                disabled: !isShowResultsEnabled(),
+                                badge: s.pendingSelectedIds.length > 0 ? getTotalExhibitorsCount() : undefined,
+                            },
+                        ]}
+                    >
+                        <MultiSelectGroups
+                            groups={groups}
+                            selectedIds={s.pendingSelectedIds}
+                            onChange={(ids) => (s.pendingSelectedIds = ids.map(Number))}
+                        />
+                    </Modal>
+                )}
             </OverlayContent>
         );
     });
@@ -231,11 +356,6 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         e.preventDefault();
         store.clickLanguage();
     }
-
-    // function handlePdf(e: MouseEvent) {
-    //     e.preventDefault();
-    //     uiState.printingPdf = true;
-    // }
 
     function handleCategoryClick(c: Category, e: MouseEvent) {
         e.preventDefault();

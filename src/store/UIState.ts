@@ -79,6 +79,10 @@ export default class UIState {
     @observable categoryFilterOpen = false;
     @observable selectedCategoryFilters: Category[] = [];
 
+    @action setSelectedCategoryFilters(categories: Category[]) {
+        this.selectedCategoryFilters = categories;
+    }
+
     @computed get highlightedBooths() {
         const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
 
@@ -383,10 +387,6 @@ export default class UIState {
             exhibitorsArray = exhibitorsArray.filter((exhibitor) =>
                 this.selectedCategoryFilters.some((category) => exhibitor.categories.some((c) => c.id === category.id))
             );
-
-            if (!text) {
-                return exhibitorsArray;
-            }
         }
 
         if (!text) {
@@ -396,7 +396,8 @@ export default class UIState {
             const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
 
             if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
-            if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+            if (data.showOtherSpaces && this.selectedCategoryFilters.length === 0)
+                combinedArray = combinedArray.concat(otherSpacesArray);
             if (uiState.kiosk && settings.EXPO == "imexamerica23") combinedArray = combinedArray.slice(0, 300);
 
             if (this.heatmap) {
@@ -410,23 +411,36 @@ export default class UIState {
                 );
             }
 
+            if (this.selectedCategoryFilters.length > 0) {
+                return exhibitorsArray.sort((a, b) => {
+                    const aFeatured = a.featured !== undefined;
+                    const bFeatured = b.featured !== undefined;
+
+                    if (aFeatured !== bFeatured) {
+                        return aFeatured ? -1 : 1;
+                    }
+
+                    return a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true });
+                });
+            }
+
             return exhibitorsArray.length === 0
                 ? boothsArray
                 : cats.concat(
-                      combinedArray.sort((a, b) => {
-                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+                    combinedArray.sort((a, b) => {
+                        const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                        const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                          if (aFeatured !== bFeatured) {
-                              return aFeatured ? -1 : 1;
-                          }
+                        if (aFeatured !== bFeatured) {
+                            return aFeatured ? -1 : 1;
+                        }
 
-                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                        const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                        const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
-                      })
-                  );
+                        return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
+                    })
+                );
         }
         if (text === "testerror") throw new Error("Test error");
         if (text === "2testerror") {
@@ -436,7 +450,7 @@ export default class UIState {
         }
 
         // a&b&foo=1&bar=2 => a&b
-        const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")]; // text.split("&").filter((s) => s);
+        const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")];
 
         if (this.heatmapYah) {
             // Show all items with views greater than the entered number
@@ -451,7 +465,6 @@ export default class UIState {
 
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
-        const matchingCategories = new Set<Category>();
         const matchingEvents = new Set<ScheduleItem>();
 
         function selectLettersSpacesNumbers(input: string): string {
@@ -469,7 +482,9 @@ export default class UIState {
                 : containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
         }
 
-        exhibitorsArray.forEach((e) => {
+        const searchExhibitors = this.selectedCategoryFilters.length > 0 ? exhibitorsArray : exhibitorStore.exhibitors;
+
+        searchExhibitors.forEach((e) => {
             if (
                 splittedTexts.some(
                     (text) =>
@@ -485,32 +500,33 @@ export default class UIState {
             }
         });
 
-        categoriesArray.forEach((c) => {
-            if (splittedTexts.some((text) => containsIgnoreCase(c.name, text))) {
-                matchingCategories.add(c);
-            }
-        });
+        if (this.selectedCategoryFilters.length === 0) {
+            boothsArray.forEach((b) => {
+                const addBoothCondition = this.heatmap
+                    ? true
+                    : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-        boothsArray.forEach((b) => {
-            const addBoothCondition = this.heatmap
-                ? true
-                : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
+                if (
+                    addBoothCondition &&
+                    splittedTexts.some(
+                        (text) =>
+                            containsIgnoreCase(b.title || "", text) ||
+                            containsIgnoreCase(b.name, text) ||
+                            containsIgnoreCase(b.fullName, text) ||
+                            containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                    )
+                ) {
+                    matchingBooths.add(b);
+                }
+            });
+        }
 
-            if (
-                addBoothCondition &&
-                splittedTexts.some(
-                    (text) =>
-                        containsIgnoreCase(b.title || "", text) ||
-                        containsIgnoreCase(b.name, text) ||
-                        containsIgnoreCase(b.fullName, text) ||
-                        containsLevelIgnoreCase(b.layer?.name ?? null, text)
-                )
-            ) {
-                matchingBooths.add(b);
-            }
-        });
+        const searchEvents =
+            this.selectedCategoryFilters.length > 0
+                ? eventsArray.filter((e) => e.exhibitorId && exhibitorsArray.some((ex) => ex.id === e.exhibitorId))
+                : eventsArray;
 
-        eventsArray.forEach((e) => {
+        searchEvents.forEach((e) => {
             if (
                 splittedTexts.some(
                     (text) => containsIgnoreCase(e.name || "", text) || containsIgnoreCase(e.description || "", text)
@@ -521,9 +537,11 @@ export default class UIState {
         });
 
         items.push(...matchingEvents);
-        items.push(...matchingCategories);
         items.push(...matchingExhibitors);
-        items.push(...matchingBooths);
+
+        if (this.selectedCategoryFilters.length === 0) {
+            items.push(...matchingBooths);
+        }
 
         if (this.heatmap) {
             return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));

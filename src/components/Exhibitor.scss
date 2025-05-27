@@ -225,17 +225,16 @@
     }
 
     &__cat {
-        background: #ffe7c5;
-        color: #1a1207;
+        background: var(--color-category-ultra-light);
+        color: var(--color-category-ultra-dark);
 
         &:visited {
-            background: #ffe9cb;
-            color: #554024;
+            color: var(--color-category-dark);
         }
 
         &:hover,
         &:visited:hover {
-            background: #f9d49f;
+            background: var(--color-category-light);
         }
     }
 

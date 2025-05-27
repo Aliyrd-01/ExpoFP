@@ -7,6 +7,16 @@
     margin-bottom: rem(10px);
     font-weight: var(--font-weight-medium);
 
+    &--primary {
+        background: var(--color-primary);
+        color: var(--color-white);
+    }
+
+    &--primary-light {
+        background: var(--color-primary-ultra-light);
+        color: var(--color-primary);
+    }
+
     &--ghost {
         color: var(--color-black);
     }
@@ -31,13 +41,23 @@
         padding: rem(10px);
         border-radius: var(--border-radius-md);
         font-size: var(--font-size-xl);
+
+        &.is-rounded {
+            min-width: rem(28px);
+            height: rem(28px);
+        }
     }
 
     &--md {
         gap: rem(6px);
         padding: rem(6px 8px);
         border-radius: var(--border-radius-md);
-        font-size: var(--font-size-lg);
+        font-size: var(--font-size-md);
+
+        &.is-rounded {
+            min-width: rem(24px);
+            height: rem(24px);
+        }
 
         @include kiosk {
             gap: rem(8px);
@@ -46,7 +66,11 @@
         }
     }
 
-    &--no-margins {
+    &.is-no-margin {
         margin: 0;
+    }
+
+    &.is-rounded {
+        border-radius: var(--border-radius-full);
     }
 }

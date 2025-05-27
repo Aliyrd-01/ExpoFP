@@ -17,6 +17,7 @@ export interface ButtonProps {
     size?: ButtonSize;
     ariaLabel?: string;
     title?: string;
+    badge?: string | number;
     onClick?: (event) => void;
 }
 
@@ -29,14 +30,16 @@ const Button: React.FC<ButtonProps> = ({
     disabled = false,
     variant = "primary",
     size = "lg",
-    onClick,
     ariaLabel,
     title,
+    badge,
+    onClick,
 }) => {
     const content = children ?? text;
 
     const commonClassNames = cn("efp-button", `efp-button--${variant}`, `efp-button--${size}`, {
         "efp-button--inline": inline,
+        "with-badge": badge,
         "is-disabled": disabled,
     });
 
@@ -69,6 +72,7 @@ const Button: React.FC<ButtonProps> = ({
             title={title || ariaLabel || (typeof content === "string" ? content : undefined)}
         >
             {content}
+            {badge && <div className="efp-button-badge">{badge}</div>}
         </button>
     );
 };

@@ -16,7 +16,10 @@ $modal: ".modal";
 
     &__box {
         position: relative;
+        display: flex;
+        flex-direction: column;
         width: 100%;
+        max-height: 94vh;
         background: var(--color-white);
         border-radius: var(--border-radius-xl);
         box-shadow: var(--shadow-md);
@@ -25,14 +28,31 @@ $modal: ".modal";
     &__header {
         display: flex;
         align-items: center;
+        width: 100%;
         min-height: rem(60px);
         padding: rem(10px 24px);
         border-bottom: 1px solid var(--color-gray-300);
     }
 
     &__title {
+        display: flex;
+        align-items: center;
+        gap: rem(10px);
         font-size: var(--font-size-xxl);
+        font-weight: var(--font-weight-bold);
+    }
+
+    &__badge {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-width: rem(26px);
+        height: rem(26px);
+        background: var(--color-primary-ultra-light);
+        border-radius: var(--border-radius-full);
+        font-size: var(--font-size-sm);
         font-weight: var(--font-weight-medium);
+        color: var(--color-primary);
     }
 
     &__close {
@@ -57,7 +77,9 @@ $modal: ".modal";
     }
 
     &__body {
+        flex: 1;
         padding: rem(24px 20px);
+        overflow: auto;
     }
 
     &__footer {
@@ -96,10 +118,10 @@ $modal: ".modal";
             animation: 0.3s ease forwards transform-modal, 0.2s ease forwards opacity-modal;
         }
     }
-}
 
-@include responsive-classes-down-to($modal, sm) {
-    padding: rem(10px);
+    @include media-breakpoint-down(sm) {
+        padding: rem(10px);
+    }
 }
 
 .layout[dir="rtl"] #{$modal} {

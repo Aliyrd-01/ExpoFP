@@ -19,6 +19,7 @@ export const Base = Template.bind({});
 Base.args = {
     children: "Button",
     variant: "primary",
+    badge: 15,
     size: "lg",
     disabled: false,
     inline: false,
