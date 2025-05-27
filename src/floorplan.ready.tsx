@@ -107,7 +107,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     highlightExhibitors(externalIs: string[]) {
+        store.boothStore.highlightedByExternalIds = [];
         store.exhibitorStore.highlightedByExternalIds = [...externalIs];
+    }
+
+    highlightBooths(externalIs: string[]) {
+        store.exhibitorStore.highlightedByExternalIds = [];
+        store.boothStore.highlightedByExternalIds = [...externalIs];
     }
 
     selectRoute(startOrWaypoints: RouteWaypoint | RouteWaypoint[], to?: RouteWaypoint): void {

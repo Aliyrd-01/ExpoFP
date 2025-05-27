@@ -165,6 +165,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    highlightBooths(externalIs: string[]) {
+        nr();
+    }
+
     onCurrentPositionChanged(point: CurrentPosition) {
         nr();
     }
