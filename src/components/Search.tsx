@@ -158,6 +158,10 @@ function Search() {
         }
     }, [el]);
 
+    useEffect(() => {
+        store.fuzzySearchEngineStore.loadEngine();
+    }, []);
+
     // useEffect(() => {
     //     const setPosition = () => {
     //         // if (!el.current.tagName) return;

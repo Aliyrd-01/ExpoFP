@@ -20,6 +20,8 @@ import type { ListItem } from "./types";
 import { svgArea } from "../data/svg";
 import PoiTypeStore from "./PoiTypeStore";
 import { sanitizeSearch } from "../utils/sanitizeText";
+import FuzzySearchEngineStore from "./FuzzySearchEngineStore";
+
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -33,6 +35,7 @@ export default class RootStore {
     readonly poiTypeStore: PoiTypeStore;
     readonly heatmapStore: HeatmapStore;
     readonly languageStore: LanguageStore;
+    readonly fuzzySearchEngineStore: FuzzySearchEngineStore;
 
     fp: FloorPlanReady;
 
@@ -51,6 +54,7 @@ export default class RootStore {
         this.heatmapStore = new HeatmapStore(this);
         this.languageStore = new LanguageStore(this);
         this.poiTypeStore = new PoiTypeStore(this);
+        this.fuzzySearchEngineStore = new FuzzySearchEngineStore();
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {

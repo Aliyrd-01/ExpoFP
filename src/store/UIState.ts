@@ -20,7 +20,6 @@ import { Kiosk, Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
-import { fuzzySearch } from "../utils/fuzzySearch";
 
 // logger.log("Browser", browser.getBrowser());
 //const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
@@ -413,154 +412,154 @@ export default class UIState {
             );
     }
 
-    // @computed get searchItems(): ListItem[] {
-    //     if (this.list.type !== "search") return [];
-    //     let text = this.list.text.trim().toLowerCase() as string;
+    @computed get searchItems(): ListItem[] {
+        if (this.list.type !== "search") return [];
+        let text = this.list.text.trim().toLowerCase() as string;
 
-    //     const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
-    //     const exhibitorsArray = exhibitorStore.exhibitors;
-    //     const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
-    //     const boothsArray = boothStore.booths;
-    //     const eventsArray = scheduleStore.scheduleItems;
+        const exhibitorsArray = exhibitorStore.exhibitors;
+        const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
+        const boothsArray = boothStore.booths;
+        const eventsArray = scheduleStore.scheduleItems;
 
-    //     if (!text) {
-    //         return this.defaultSearchItems;
-    //     }
+        if (!text) {
+            return this.defaultSearchItems;
+        }
 
-    //     // a&b&foo=1&bar=2 => a&b
-    //     const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")];
+        // a&b&foo=1&bar=2 => a&b
+        const splittedTexts = [text.replace(/&[^&=]+=[^&]+/g, "")];
 
-    //     if (this.heatmapYah) {
-    //         // Show all items with views greater than the entered number
-    //         const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text));
+        if (this.heatmapYah) {
+            // Show all items with views greater than the entered number
+            const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text));
 
-    //         return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
-    //     }
+            return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        }
 
-    //     const items: ListItem[] = [];
+        const items: ListItem[] = [];
 
-    //     const matchingExhibitors = new Set<Exhibitor>();
-    //     const matchingBooths = new Set<Booth>();
-    //     const matchingCategories = new Set<Category>();
-    //     const matchingEvents = new Set<ScheduleItem>();
+        const matchingExhibitors = new Set<Exhibitor>();
+        const matchingBooths = new Set<Booth>();
+        const matchingCategories = new Set<Category>();
+        const matchingEvents = new Set<ScheduleItem>();
 
-    //     function selectLettersSpacesNumbers(input: string): string {
-    //         // Without & because of names that contain & (e.g. "A&B")
-    //         return input?.replace(/[!@#$%^*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
-    //     }
+        function selectLettersSpacesNumbers(input: string): string {
+            // Without & because of names that contain & (e.g. "A&B")
+            return input?.replace(/[!@#$%^*-\.,\(\)\^#$%:?_+'"\/]/g, " ")?.replace(/\s\s+/g, " ") ?? input;
+        }
 
-    //     function containsIgnoreCase(str: string, searchTerm: string) {
-    //         return selectLettersSpacesNumbers(str).toLowerCase().includes(selectLettersSpacesNumbers(searchTerm).toLowerCase());
-    //     }
+        function containsIgnoreCase(str: string, searchTerm: string) {
+            return selectLettersSpacesNumbers(str).toLowerCase().includes(selectLettersSpacesNumbers(searchTerm).toLowerCase());
+        }
 
-    //     function containsLevelIgnoreCase(str: string, searchTerm: string) {
-    //         return !str
-    //             ? false
-    //             : containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
-    //     }
+        function containsLevelIgnoreCase(str: string, searchTerm: string) {
+            return !str
+                ? false
+                : containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
+        }
 
-    //     exhibitorsArray.forEach((e) => {
-    //         if (
-    //             splittedTexts.some(
-    //                 (text) =>
-    //                     containsIgnoreCase(e.name, text) ||
-    //                     e.booths.some(
-    //                         (b) =>
-    //                             (!text && containsIgnoreCase(b.name, text)) ||
-    //                             containsLevelIgnoreCase(b.layer?.name ?? null, text)
-    //                     )
-    //             )
-    //         ) {
-    //             matchingExhibitors.add(e);
-    //         }
-    //     });
+        exhibitorsArray.forEach((e) => {
+            if (
+                splittedTexts.some(
+                    (text) =>
+                        containsIgnoreCase(e.name, text) ||
+                        e.booths.some(
+                            (b) =>
+                                (!text && containsIgnoreCase(b.name, text)) ||
+                                containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                        )
+                )
+            ) {
+                matchingExhibitors.add(e);
+            }
+        });
 
-    //     categoriesArray.forEach((c) => {
-    //         if (splittedTexts.some((text) => containsIgnoreCase(c.name, text))) {
-    //             matchingCategories.add(c);
-    //         }
-    //     });
+        categoriesArray.forEach((c) => {
+            if (splittedTexts.some((text) => containsIgnoreCase(c.name, text))) {
+                matchingCategories.add(c);
+            }
+        });
 
-    //     boothsArray.forEach((b) => {
-    //         const addBoothCondition = this.heatmap
-    //             ? true
-    //             : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
+        boothsArray.forEach((b) => {
+            const addBoothCondition = this.heatmap
+                ? true
+                : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-    //         if (
-    //             addBoothCondition &&
-    //             splittedTexts.some(
-    //                 (text) =>
-    //                     containsIgnoreCase(b.title || "", text) ||
-    //                     containsIgnoreCase(b.name, text) ||
-    //                     containsIgnoreCase(b.fullName, text) ||
-    //                     containsLevelIgnoreCase(b.layer?.name ?? null, text)
-    //             )
-    //         ) {
-    //             matchingBooths.add(b);
-    //         }
-    //     });
+            if (
+                addBoothCondition &&
+                splittedTexts.some(
+                    (text) =>
+                        containsIgnoreCase(b.title || "", text) ||
+                        containsIgnoreCase(b.name, text) ||
+                        containsIgnoreCase(b.fullName, text) ||
+                        containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                )
+            ) {
+                matchingBooths.add(b);
+            }
+        });
 
-    //     eventsArray.forEach((e) => {
-    //         if (
-    //             splittedTexts.some(
-    //                 (text) => containsIgnoreCase(e.name || "", text) || containsIgnoreCase(e.description || "", text)
-    //             )
-    //         ) {
-    //             matchingEvents.add(e);
-    //         }
-    //     });
+        eventsArray.forEach((e) => {
+            if (
+                splittedTexts.some(
+                    (text) => containsIgnoreCase(e.name || "", text) || containsIgnoreCase(e.description || "", text)
+                )
+            ) {
+                matchingEvents.add(e);
+            }
+        });
 
-    //     items.push(...matchingEvents);
-    //     items.push(...matchingCategories);
-    //     items.push(...matchingExhibitors);
-    //     items.push(...matchingBooths);
+        items.push(...matchingEvents);
+        items.push(...matchingCategories);
+        items.push(...matchingExhibitors);
+        items.push(...matchingBooths);
 
-    //     if (this.heatmap) {
-    //         return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
-    //     }
+        if (this.heatmap) {
+            return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        }
 
-    //     const itemsMap = new Map(items.map((item) => [item.id, item]));
-    //     return (
-    //         items
-    //             .map((item) => {
-    //                 if (!item.name) return null;
+        const itemsMap = new Map(items.map((item) => [item.id, item]));
+        return (
+            items
+                .map((item) => {
+                    if (!item.name) return null;
 
-    //                 const lowerCaseName = sanitizeStr(
-    //                     item instanceof BoothBase
-    //                         ? item.fullName.toLowerCase() || item.name.toLowerCase()
-    //                         : item.name.toLowerCase()
-    //                 );
+                    const lowerCaseName = sanitizeStr(
+                        item instanceof BoothBase
+                            ? item.fullName.toLowerCase() || item.name.toLowerCase()
+                            : item.name.toLowerCase()
+                    );
 
-    //                 // Find the position of the first occurrence
-    //                 const position = lowerCaseName.indexOf(sanitizeStr(text));
-    //                 if (position === -1) return null;
+                    // Find the position of the first occurrence
+                    const position = lowerCaseName.indexOf(sanitizeStr(text));
+                    if (position === -1) return null;
 
-    //                 const result = { id: item.id, position, lowerCaseName, featured: false };
-    //                 if (item instanceof Exhibitor) {
-    //                     result.featured = item.featured;
-    //                 }
-    //                 return result;
-    //             })
-    //             .filter(Boolean)
-    //             // Sort by featured status (featured first),
-    //             // then by position, and finally lexicographically by name.
-    //             .sort((a, b) => {
-    //                 if ((a.featured || b.featured) && a.featured !== b.featured) {
-    //                     return a.featured ? -1 : 1;
-    //                 }
+                    const result = { id: item.id, position, lowerCaseName, featured: false };
+                    if (item instanceof Exhibitor) {
+                        result.featured = item.featured;
+                    }
+                    return result;
+                })
+                .filter(Boolean)
+                // Sort by featured status (featured first),
+                // then by position, and finally lexicographically by name.
+                .sort((a, b) => {
+                    if ((a.featured || b.featured) && a.featured !== b.featured) {
+                        return a.featured ? -1 : 1;
+                    }
 
-    //                 if (a.position !== b.position) {
-    //                     return a.position - b.position;
-    //                 }
+                    if (a.position !== b.position) {
+                        return a.position - b.position;
+                    }
 
-    //                 return (
-    //                     a.lowerCaseName.localeCompare(b.lowerCaseName) || String(a.id).localeCompare(String(b.id)) // For stability
-    //                 );
-    //             })
-    //             .map(({ id }) => itemsMap.get(id))
-    //     );
-    // }
+                    return (
+                        a.lowerCaseName.localeCompare(b.lowerCaseName) || String(a.id).localeCompare(String(b.id)) // For stability
+                    );
+                })
+                .map(({ id }) => itemsMap.get(id))
+        );
+    }
 
     @computed get fuzzySearchItems(): ListItem[] {
         if (this.list.type !== "search") {
@@ -568,7 +567,6 @@ export default class UIState {
         }
 
         const text = this.list.text.trim().toLowerCase();
-
         if (!text) {
             return this.defaultSearchItems;
         }
@@ -580,14 +578,13 @@ export default class UIState {
             ...this.rootStore.boothStore.booths,
         ];
 
-        const result = fuzzySearch(text, list, "name");
+        const engine = this.rootStore.fuzzySearchEngineStore.engine;
+        if (!engine) {
+            return list;
+        }
 
-        return result.sort((a, b) => {
-            if ((a.featured || b.featured) && a.featured !== b.featured) {
-                return a.featured ? -1 : 1;
-            }
-            return 0;
-        });
+        engine.setCollection(list);
+        return engine.search(text).map(result => result.item);
     }
 
     @computed get listItems(): ListItem[] {
@@ -595,8 +592,11 @@ export default class UIState {
 
         switch (this.list.type) {
             case "search":
-                // return this.searchItems;
-                return this.fuzzySearchItems;
+                return (
+                    this.rootStore.fuzzySearchEngineStore.engine
+                        ? this.fuzzySearchItems
+                        : this.searchItems
+                );
             case "bookmarks":
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
