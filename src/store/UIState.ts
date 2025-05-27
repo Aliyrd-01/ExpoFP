@@ -579,12 +579,8 @@ export default class UIState {
         ];
 
         const engine = this.rootStore.fuzzySearchEngineStore.engine;
-        if (!engine) {
-            return list;
-        }
-
-        engine.setCollection(list);
-        return engine.search(text).map(result => result.item);
+        engine?.setCollection(list);
+        return engine?.search(text).map(result => result.item);
     }
 
     @computed get listItems(): ListItem[] {
