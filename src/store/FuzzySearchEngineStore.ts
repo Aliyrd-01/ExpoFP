@@ -10,7 +10,8 @@ export default class FuzzySearchEngineStore {
 
             this.engine = new Fuse([], {
                 keys: ["name", "layer.name", "description", "title", "fullName"],
-                threshold: 0.4,
+                threshold: 0.45,
+                ignoreLocation: true,
             });
         } catch (err) {
             console.error(err);
