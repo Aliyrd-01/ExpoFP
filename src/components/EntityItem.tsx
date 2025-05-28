@@ -132,7 +132,7 @@ const EntityItem: React.FC<EntityItemProps> = ({
                     )}
                 </div>
                 <div className="efp-entity-item__right">
-                    <div className="efp-entity-item__content">
+                    <div className={cn("efp-entity-item__content", { "with-image": image })}>
                         <div className="efp-entity-item__header">
                             <div className="efp-entity-item__title">
                                 <HighlightText text={title} />

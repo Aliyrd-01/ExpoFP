@@ -5,11 +5,13 @@ import { getLocationHistory } from "../services/routing";
 import { uiState } from "../store";
 import { KIOSK_ID_KEY } from "../constants";
 
+const EFP_TRACK_EVENTS = "efp-track-events"
+
 export default function trackEvent(type: "load" | "exview" | "search" | "route" | "share" | "booview" | "catview", value?: any) {
     logger.log("trackEvent", type, value);
-    if (!data.trackerUrl) return;
-    if (process.env.NODE_ENV !== "production") return;
-    if (uiState.heatmap) return;
+
+    if (!isTrackingEnabled()) return;
+
     try {
         let url = data.trackerUrl;
         const yah = localStorage.getItem(yahKey)
@@ -33,9 +35,57 @@ export default function trackEvent(type: "load" | "exview" | "search" | "route" 
             headers["X-ref"] = Xref;
         }
 
-        fetch(url, {
-            cache: "no-store",
-            headers,
-        }).catch();
+        fetch(url, { cache: "no-store", headers })
+            .then(() => sendSavedTrackEvents())
+            .catch(() => saveTrackEvent(url, headers));
     } catch (e) { }
+}
+
+function isTrackingEnabled(): boolean {
+    return !!data?.trackerUrl && process.env.NODE_ENV === "production" && !uiState.heatmap;
+}
+
+function saveTrackEvent(url: string, headers: Record<string, string>) {
+    try {
+        logger.log("saveTrackEvent", url, headers);
+
+        const saved = localStorage.getItem(EFP_TRACK_EVENTS);
+        const events = saved ? JSON.parse(saved) : [];
+
+        const urlObj = new URL(url);
+        const params = Object.fromEntries(urlObj.searchParams.entries());
+
+        events.push({
+            ...params,
+            timeStamp: new Date().toISOString(),
+            headers,
+        });
+        localStorage.setItem(EFP_TRACK_EVENTS, JSON.stringify(events));
+    } catch (e) {
+        logger.error("saveTrackEvent", String(e));
+    }
+}
+
+async function sendSavedTrackEvents() {
+    try {
+        if (!isTrackingEnabled()) return;
+
+        const saved = localStorage.getItem(EFP_TRACK_EVENTS);
+        if (!saved) return;
+
+        logger.log("sendSavedTrackEvents", saved);
+
+        await fetch(
+            new URL("/api/fp-stats/trackBulk", data.trackerUrl).href,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: saved,
+            },
+        );
+
+        localStorage.removeItem(EFP_TRACK_EVENTS);
+    } catch (e) {
+        logger.error("sendSavedTrackEvents", String(e));
+    }
 }

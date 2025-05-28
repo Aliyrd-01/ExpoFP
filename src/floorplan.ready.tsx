@@ -17,7 +17,6 @@ import { Visibility } from "./store/types";
 import { fpGeo } from "./components/Mapbox/utils/fpGeo";
 import { convertLocalToGps } from "./utils/gps";
 import Rect from "./core/Rect";
-import settings from "./tools/settings";
 import { DistanceOptimizedRoute } from "./utils/wayfinding";
 
 install();
