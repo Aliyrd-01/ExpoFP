@@ -78,13 +78,20 @@ export default class UIState {
     @observable kioskSetupDOMRect: DOMRect;
 
     @computed get highlightedBooths() {
-        const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
+        const exhibitorExternalISet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
+        const boothExternalISet = new Set(this.rootStore.boothStore.highlightedByExternalIds);
 
         const booths = new Set<string>(
-            this.rootStore.exhibitorStore.exhibitors
-                .filter((e) => externalIsSet.has(e.externalId))
-                .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
-                .map((b) => b.id.toString())
+            [
+                this.rootStore.exhibitorStore.exhibitors
+                    .filter((e) => exhibitorExternalISet.has(e.externalId))
+                    .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
+                    .map((b) => b.id.toString()),
+
+                this.rootStore.boothStore.booths
+                    .filter(b => boothExternalISet.has(b.externalId))
+                    .map((b) => b.id.toString()),
+            ].flat()
         );
 
         const isSearch = this.list?.type === "search" && this.list?.text?.trim().length;

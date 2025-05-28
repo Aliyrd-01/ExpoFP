@@ -24,6 +24,7 @@ import RootStore from "./RootStore";
 export default class BoothStore {
     readonly rootStore: RootStore;
     @observable booths: Booth[] = [];
+    @observable highlightedByExternalIds = [];
 
     @computed({ keepAlive: true }) get boothById() {
         return new Map<number, Booth>(this.booths.map((c) => [c.id, c]));
