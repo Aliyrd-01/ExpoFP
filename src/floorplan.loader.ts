@@ -161,11 +161,11 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    highlightExhibitors(externalIs: string[]) {
+    highlightExhibitors(externalIds: string[]) {
         nr();
     }
 
-    highlightBooths(externalIs: string[]) {
+    highlightBooths(externalIds: string[]) {
         nr();
     }
 
