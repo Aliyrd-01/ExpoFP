@@ -114,7 +114,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
 
             if (parts.length > 1) {
                 const groupName = parts[0];
-                const itemName = parts[1];
+                const itemName = parts.slice(1).join(" / ");
 
                 if (!grouped[groupName]) {
                     grouped[groupName] = { groupName, items: [] };
