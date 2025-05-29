@@ -361,10 +361,12 @@ export default class FloorPlanLoader implements FloorPlan {
                         const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
                         boothsUrl.searchParams.set("expoId", expoId);
                         boothsUrl.searchParams.set("type", "booview");
+                        boothsUrl.searchParams.set("t", decodeURIComponent(searchParams.get("t")));
 
                         const exhibitorsUrl = new URL("api/fp-stats/get", "https://app.expofp.com");
                         exhibitorsUrl.searchParams.set("expoId", expoId);
                         exhibitorsUrl.searchParams.set("type", "exview");
+                        exhibitorsUrl.searchParams.set("t", decodeURIComponent(searchParams.get("t")));
 
                         const [boothsResp, exhibitorsResp] = await Promise.all([
                             fetch(boothsUrl.toString()),
