@@ -82,7 +82,7 @@ const MultiSelectGroups: React.FC<MultiSelectGroupsProps> = ({ groups, selectedI
                                     onClick={() => toggle(item.id)}
                                     type="button"
                                 >
-                                    {item.name}
+                                    <div>{item.name}</div>
                                     <span className="multi-select-groups__item-count">
                                         {store.categoryStore.categoryById.get(Number(item.id))?.exhibitors.length || 0}
                                     </span>

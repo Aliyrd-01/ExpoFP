@@ -84,7 +84,7 @@ const Modal: React.FC<ModalProps> = ({
                         <div className="modal__title">
                             {title}
                             {badge !== undefined && badge > 0 && (
-                                <Badge variant="primary" size="md" noMargins rounded>
+                                <Badge variant="lightgray" size="md" noMargins rounded>
                                     {badge}
                                 </Badge>
                             )}

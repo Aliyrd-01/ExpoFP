@@ -293,6 +293,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     <Modal
                         open={s.modalOpen}
                         title={t("Categories")}
+                        badge={s.pendingSelectedIds.length > 0 ? s.pendingSelectedIds.length : undefined}
                         onClickClose={handleModalClose}
                         footerLeft={
                             s.pendingSelectedIds.length > 0
