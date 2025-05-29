@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import store from "../store";
 import "./MultiSelectGroups.scss";
+import { uiState } from "../store";
 
 export interface MultiSelectGroupItem {
     id: number | string;
@@ -26,36 +27,24 @@ const MultiSelectGroups: React.FC<MultiSelectGroupsProps> = ({ groups, selectedI
         setLocalSelected(selectedIds);
     }, [selectedIds]);
 
-    const toggle = (id: number | string) => {
-        setLocalSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    const toggle = (id: string | number) => {
+        const newSelected = localSelected.includes(id) ? localSelected.filter((i) => i !== id) : [...localSelected, id];
+
+        setLocalSelected(newSelected);
+        onChange(newSelected);
     };
 
     const toggleGroup = (group: MultiSelectGroup) => {
         const groupIds = group.items.map((item) => item.id);
-        const allSelected = groupIds.every((id) => localSelected.includes(id));
+        const isGroupFullySelected = groupIds.every((id) => localSelected.includes(id));
 
-        if (allSelected) {
-            setLocalSelected((prev) => prev.filter((id) => !groupIds.includes(id)));
-        } else {
-            setLocalSelected((prev) => {
-                const newSelected = [...prev];
-                groupIds.forEach((id) => {
-                    if (!newSelected.includes(id)) {
-                        newSelected.push(id);
-                    }
-                });
-                return newSelected;
-            });
-        }
+        const newSelected = isGroupFullySelected
+            ? localSelected.filter((id) => !groupIds.includes(id))
+            : [...new Set([...localSelected, ...groupIds])];
+
+        setLocalSelected(newSelected);
+        onChange(newSelected);
     };
-
-    useEffect(() => {
-        if (arraysEqual(localSelected, selectedIds)) return;
-        onChange(localSelected);
-    }, [localSelected]);
-
-    const arraysEqual = (a: (string | number)[], b: (string | number)[]) =>
-        a.length === b.length && a.every((v) => b.includes(v));
 
     const isGroupFullySelected = (group: MultiSelectGroup) => {
         return group.items.every((item) => localSelected.includes(item.id));

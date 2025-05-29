@@ -161,7 +161,8 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
     const handleApply = () => {
         s.selectedCategoryIds = s.pendingSelectedIds;
         const selected = store.categoryStore.categories.filter((c) => s.pendingSelectedIds.includes(Number(c.id)));
-        store.applyCategoryFilters(selected);
+        uiState.setSelectedCategoryFilters(selected);
+        uiState.categoryFilterOpen = true;
         s.modalOpen = false;
         close();
     };
