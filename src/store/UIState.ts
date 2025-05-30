@@ -592,7 +592,7 @@ export default class UIState {
             matches?.some(({ key, value }) => key === k && value.toLowerCase().includes(query))
         );
 
-        const getExactMatchPriority = (text: string, item: ListItem, matches: { key: string; value: string }[]) => {
+        const getExactMatchPriority = (text: string, item: ListItem, matches: { key: string; value: string }[]): number => {
             const query = text.toLowerCase();
 
             if (testMatch(query, matches, "name")) {
