@@ -588,11 +588,11 @@ export default class UIState {
         const engine = this.rootStore.fuzzySearchEngineStore.engine;
         engine?.setCollection(list);
 
-        const testMatch = (query, matches, k) => (
+        const testMatch = (query: string, matches: { key: string; value: string }[], k: string): boolean => (
             matches?.some(({ key, value }) => key === k && value.toLowerCase().includes(query))
         );
 
-        const getExactMatchPriority = (text, item, matches) => {
+        const getExactMatchPriority = (text: string, item: ListItem, matches: { key: string; value: string }[]) => {
             const query = text.toLowerCase();
 
             if (testMatch(query, matches, "name")) {
