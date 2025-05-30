@@ -604,8 +604,7 @@ export default class UIState {
             return 1;
         };
 
-        return engine
-            ?.search(text)
+        return (engine?.search(text) || [])
             .sort((a, b) => {
                 const aPriority = getExactMatchPriority(text, a.item, a.matches);
                 const bPriority = getExactMatchPriority(text, b.item, b.matches);
