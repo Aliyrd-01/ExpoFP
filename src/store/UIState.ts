@@ -596,8 +596,7 @@ export default class UIState {
             const query = text.toLowerCase();
 
             if (testMatch(query, matches, "name")) {
-                if (item instanceof BoothBase || item instanceof Exhibitor) return 4;
-                if (item instanceof Category) return 3;
+                return item instanceof Category ? 3 : 4;
             }
 
             if (testMatch(query, matches, "description")) return 2;
