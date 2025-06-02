@@ -17,6 +17,15 @@ $im: 0.4rem;
         font-weight: var(--font-weight-medium);
     }
 
+    &__content {
+        margin: rem(0 16px);
+
+        .efp-entity-item__body {
+            width: calc(100% + #{rem(32px)});
+            margin-left: rem(-16px);
+        }
+    }
+
     &__info {
         display: flex;
         gap: rem(12px);

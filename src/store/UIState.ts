@@ -89,13 +89,18 @@ export default class UIState {
     }
 
     @computed get highlightedBooths() {
-        const externalIsSet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
+        const exhibitorExternalISet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
+        const boothExternalISet = new Set(this.rootStore.boothStore.highlightedByExternalIds);
 
         const booths = new Set<string>(
-            this.rootStore.exhibitorStore.exhibitors
-                .filter((e) => externalIsSet.has(e.externalId))
-                .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
-                .map((b) => b.id.toString())
+            [
+                this.rootStore.exhibitorStore.exhibitors
+                    .filter((e) => exhibitorExternalISet.has(e.externalId))
+                    .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
+                    .map((b) => b.id.toString()),
+
+                this.rootStore.boothStore.booths.filter((b) => boothExternalISet.has(b.externalId)).map((b) => b.id.toString()),
+            ].flat()
         );
 
         const isSearch = this.list?.type === "search" && this.list?.text?.trim().length;
@@ -370,6 +375,51 @@ export default class UIState {
         return this.highlightedBooths.size > 0 || (this.list?.type === "search" && this.list?.text?.trim().length > 0);
     }
 
+    @computed get defaultSearchItems(): ListItem[] {
+        const { exhibitorStore, categoryStore, boothStore, heatmapStore } = this.rootStore;
+
+        const exhibitorsArray = exhibitorStore.exhibitors;
+        const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
+        const boothsArray = boothStore.booths;
+
+        let combinedArray = [];
+        const cats = data.showCategories ? categoriesArray : [];
+
+        const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
+
+        if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
+        if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+
+        if (this.heatmap) {
+            const allItems = [...exhibitorsArray, ...boothsArray];
+            return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
+        } else if (this.heatmapYah) {
+            return (
+                heatmapStore.heatmapData?.yah?.sort(
+                    (a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)
+                ) || []
+            );
+        }
+
+        return exhibitorsArray.length === 0
+            ? boothsArray
+            : cats.concat(
+                  combinedArray.sort((a, b) => {
+                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+
+                      if (aFeatured !== bFeatured) {
+                          return aFeatured ? -1 : 1;
+                      }
+
+                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+
+                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
+                  })
+              );
+    }
+
     @computed get searchItems(): ListItem[] {
         if (this.list.type !== "search") return [];
         let text = this.list.text.trim().toLowerCase() as string;
@@ -388,63 +438,7 @@ export default class UIState {
         }
 
         if (!text) {
-            let combinedArray = [];
-            const cats = data.showCategories ? categoriesArray : [];
-
-            const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
-
-            if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
-            if (data.showOtherSpaces && this.selectedCategoryFilters.length === 0)
-                combinedArray = combinedArray.concat(otherSpacesArray);
-            if (uiState.kiosk && settings.EXPO == "imexamerica23") combinedArray = combinedArray.slice(0, 300);
-
-            if (this.heatmap) {
-                const allItems = [...exhibitorsArray, ...boothsArray];
-                return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
-            } else if (this.heatmapYah) {
-                return (
-                    heatmapStore.heatmapData?.yah?.sort(
-                        (a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)
-                    ) || []
-                );
-            }
-
-            if (this.selectedCategoryFilters.length > 0) {
-                return exhibitorsArray.sort((a, b) => {
-                    const aFeatured = a.featured !== undefined;
-                    const bFeatured = b.featured !== undefined;
-
-                    if (aFeatured !== bFeatured) {
-                        return aFeatured ? -1 : 1;
-                    }
-
-                    return a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true });
-                });
-            }
-
-            return exhibitorsArray.length === 0
-                ? boothsArray
-                : cats.concat(
-                      combinedArray.sort((a, b) => {
-                          const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                          const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
-
-                          if (aFeatured !== bFeatured) {
-                              return aFeatured ? -1 : 1;
-                          }
-
-                          const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                          const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
-
-                          return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
-                      })
-                  );
-        }
-        if (text === "testerror") throw new Error("Test error");
-        if (text === "2testerror") {
-            window.setTimeout(() => {
-                throw new Error("Test error");
-            }, 1000);
+            return this.defaultSearchItems;
         }
 
         // a&b&foo=1&bar=2 => a&b
@@ -587,12 +581,34 @@ export default class UIState {
         );
     }
 
+    @computed get fuzzySearchItems(): ListItem[] {
+        if (this.list.type !== "search") {
+            return [];
+        }
+
+        const text = this.list.text.trim().toLowerCase();
+        if (!text) {
+            return this.defaultSearchItems;
+        }
+
+        const list = [
+            ...this.rootStore.scheduleStore.scheduleItems,
+            ...this.rootStore.categoryStore.categories.filter((c) => c.exhibitors.length),
+            ...this.rootStore.exhibitorStore.exhibitors,
+            ...this.rootStore.boothStore.booths,
+        ];
+
+        const engine = this.rootStore.fuzzySearchEngineStore.engine;
+        engine?.setCollection(list);
+        return engine?.search(text).map((result) => result.item);
+    }
+
     @computed get listItems(): ListItem[] {
         if (this.details instanceof Route) return [this.details.from, this.details.to].filter((x) => x);
 
         switch (this.list.type) {
             case "search":
-                return this.searchItems;
+                return this.rootStore.fuzzySearchEngineStore.engine ? this.fuzzySearchItems : this.searchItems;
             case "bookmarks":
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":

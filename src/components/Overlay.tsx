@@ -212,7 +212,9 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     .style("top", newTop + "px")
                     .on("end", () => {
                         if (uiState.overlaySize === "full") {
-                            el.current.style.height = `${window.innerHeight - newTop}px`;
+                            const containerHeight =
+                                el.current?.parentElement?.getBoundingClientRect?.()?.height || window.innerHeight;
+                            el.current.style.height = `${containerHeight - newTop}px`;
                         }
                         setShowAll();
                     });
@@ -268,7 +270,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 const miniSizeRems = 3.5;
 const paddingRems = 2;
 function getTopForBottomPosition(size: OverlaySize, el: HTMLDivElement): number {
-    const containerHeight = el?.parentElement?.getBoundingClientRect?.()?.height || 0;
+    const containerHeight = el?.parentElement?.getBoundingClientRect?.()?.height || window.innerHeight;
     switch (size) {
         case "full":
             return remsToPixels(paddingRems);

@@ -327,7 +327,9 @@
         line-height: var(--line-height-lg);
         color: var(--color-gray-900);
         text-align: left;
-        overflow-wrap: break-word;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        white-space: normal;
 
         > *:first-child {
             margin-top: 0;
