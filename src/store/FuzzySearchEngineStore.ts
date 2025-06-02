@@ -9,11 +9,7 @@ export default class FuzzySearchEngineStore {
             const Fuse = FuseModule.default;
 
             this.engine = new Fuse([], {
-                keys: [
-                    { name: "name", weight: 1 },
-                    { name: "description", weight: 0.5 },
-                    { name: "layer.name", weight: 0.1 },
-                ],
+                keys: ["name", "description", "layer.name", "title", "fullName"],
                 ignoreDiacritics: true,
                 ignoreFieldNorm: true,
                 includeScore: true,
