@@ -591,12 +591,27 @@ export default class UIState {
             return this.defaultSearchItems;
         }
 
-        const list = [
+        let list = [
             ...this.rootStore.scheduleStore.scheduleItems,
-            ...this.rootStore.categoryStore.categories.filter((c) => c.exhibitors.length),
             ...this.rootStore.exhibitorStore.exhibitors,
             ...this.rootStore.boothStore.booths,
         ];
+
+        if (this.selectedCategoryFilters.length > 0) {
+            list = list.filter((item) => {
+                if (item instanceof Exhibitor) {
+                    return this.selectedCategoryFilters.some((category) => item.categories.some((c) => c.id === category.id));
+                }
+                if (item instanceof ScheduleItem && item.exhibitorId) {
+                    return (
+                        this.rootStore.exhibitorStore.exhibitors
+                            .find((e) => e.id === item.exhibitorId)
+                            ?.categories.some((c) => this.selectedCategoryFilters.some((cf) => cf.id === c.id)) ?? false
+                    );
+                }
+                return false;
+            });
+        }
 
         const engine = this.rootStore.fuzzySearchEngineStore.engine;
         engine?.setCollection(list);
@@ -608,6 +623,24 @@ export default class UIState {
 
         switch (this.list.type) {
             case "search":
+                if (this.selectedCategoryFilters.length > 0) {
+                    const items = this.rootStore.fuzzySearchEngineStore.engine ? this.fuzzySearchItems : this.searchItems;
+                    return items.filter((item) => {
+                        if (item instanceof Exhibitor) {
+                            return this.selectedCategoryFilters.some((category) =>
+                                item.categories.some((c) => c.id === category.id)
+                            );
+                        }
+                        if (item instanceof ScheduleItem && item.exhibitorId) {
+                            return (
+                                this.rootStore.exhibitorStore.exhibitors
+                                    .find((e) => e.id === item.exhibitorId)
+                                    ?.categories.some((c) => this.selectedCategoryFilters.some((cf) => cf.id === c.id)) ?? false
+                            );
+                        }
+                        return false;
+                    });
+                }
                 return this.rootStore.fuzzySearchEngineStore.engine ? this.fuzzySearchItems : this.searchItems;
             case "bookmarks":
                 return this.rootStore.exhibitorStore.bookmarked;

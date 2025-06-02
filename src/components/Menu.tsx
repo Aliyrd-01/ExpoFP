@@ -292,12 +292,12 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                 {s.modalOpen && (
                     <Modal
                         open={s.modalOpen}
-                        title={t("Categories")}
+                        title={t("Filter Exhibitors by Categories")}
                         badge={s.pendingSelectedIds.length > 0 ? s.pendingSelectedIds.length : undefined}
                         onClickClose={handleModalClose}
                         footerLeft={
                             s.pendingSelectedIds.length > 0
-                                ? [{ label: t("Clear all"), onClick: handleReset, variant: "gray" }]
+                                ? [{ label: t("Clear All Selections"), onClick: handleReset, variant: "gray" }]
                                 : []
                         }
                         footerRight={[
