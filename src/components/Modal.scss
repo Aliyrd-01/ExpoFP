@@ -30,7 +30,7 @@ $modal: ".modal";
         align-items: center;
         width: 100%;
         min-height: rem(60px);
-        padding: rem(10px 24px);
+        padding: rem(10px 50px 10px 24px);
         border-bottom: 1px solid var(--color-gray-300);
     }
 
@@ -84,9 +84,20 @@ $modal: ".modal";
 
     &__footer {
         display: flex;
+        flex-flow: row wrap;
         justify-content: space-between;
+        gap: rem(10px);
         padding: rem(20px);
         border-top: 1px solid var(--color-gray-300);
+
+        @include media-breakpoint-down(xs) {
+            padding: rem(10px);
+
+            .efp-button {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
     }
 
     &__footer-left,
@@ -94,6 +105,10 @@ $modal: ".modal";
         display: flex;
         align-items: center;
         gap: rem(10px);
+
+        @include media-breakpoint-down(xs) {
+            width: 100%;
+        }
     }
 
     &__footer-right {

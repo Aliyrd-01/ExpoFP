@@ -64,7 +64,7 @@ const Modal: React.FC<ModalProps> = ({
 
     const renderButtons = (buttons?: ModalButton[]) =>
         buttons?.map(({ label, onClick, variant = "primary", disabled, badge }, idx) => (
-            <Button key={idx} onClick={onClick} variant={variant} size="md" inline={true} disabled={disabled} badge={badge}>
+            <Button key={idx} onClick={onClick} variant={variant} size="md" inline={true} disabled={disabled}>
                 {label}
             </Button>
         ));

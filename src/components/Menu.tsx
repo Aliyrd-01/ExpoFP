@@ -82,26 +82,6 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
 
     const cats = categoryStore.categories.filter((c) => c.exhibitors.length);
 
-    const categories = cats.length ? (
-        <>
-            <div className="menu__item">{t("Categories")}</div>
-            {cats.map((c) => (
-                <a
-                    className="menu__cat"
-                    href={`?${encodeURIComponent(c.slug)}`}
-                    key={c.id}
-                    onClick={handleCategoryClick.bind(window, c)}
-                >
-                    <div className="menu__cat-bullet">&bull;</div>
-                    <div className="menu__cat-title" dir="auto">
-                        {c.name}
-                    </div>
-                    <div className="menu__cat-count">{numOfExhibitors(c.id)}</div>
-                </a>
-            ))}
-        </>
-    ) : null;
-
     const groups: MultiSelectGroup[] = React.useMemo(() => {
         const cats = store.categoryStore.categories;
         const grouped: Record<string, MultiSelectGroup> = {};
@@ -204,17 +184,19 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         {t("Search")}
                     </a>
-                    <a className="menu__item -categories" href="/#" onClick={handleFilterClick}>
-                        <span>{t("Categories")}</span>
-                        <span className="menu__icons">
-                            {s.selectedCategoryIds.length > 0 && (
-                                <Badge variant="primary" size="md" noMargins rounded>
-                                    {s.selectedCategoryIds.length}
-                                </Badge>
-                            )}
-                            <i className="icon-chevron-right" />
-                        </span>
-                    </a>
+                    {cats.length && (
+                        <a className="menu__item -categories" href="/#" onClick={handleFilterClick}>
+                            <span>{t("Categories")}</span>
+                            <span className="menu__icons">
+                                {s.selectedCategoryIds.length > 0 && (
+                                    <Badge variant="gray" size="md" noMargins rounded>
+                                        {s.selectedCategoryIds.length}
+                                    </Badge>
+                                )}
+                                <i className="icon-chevron-right" />
+                            </span>
+                        </a>
+                    )}
                     {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
@@ -302,11 +284,13 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                         }
                         footerRight={[
                             {
-                                label: t("Show results"),
+                                label:
+                                    s.pendingSelectedIds.length > 0
+                                        ? `Show #${getTotalExhibitorsCount()}# Matching Exhibitors`
+                                        : t("Show All Exhibitors"),
                                 onClick: handleApply,
                                 variant: "primary",
                                 disabled: !isShowResultsEnabled(),
-                                badge: s.pendingSelectedIds.length > 0 ? getTotalExhibitorsCount() : undefined,
                             },
                         ]}
                     >

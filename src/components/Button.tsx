@@ -17,9 +17,28 @@ export interface ButtonProps {
     size?: ButtonSize;
     ariaLabel?: string;
     title?: string;
-    badge?: string | number;
     onClick?: (event) => void;
 }
+
+const processLabel = (label: string) => {
+    const parts = label.split(/(#\d+#)/);
+    const badgeMatch = label.match(/#(\d+)#/);
+    const badgeValue = badgeMatch ? badgeMatch[1] : null;
+
+    return {
+        content: parts.map((part, index) => {
+            if (part.match(/#\d+#/)) {
+                return (
+                    <div key={index} className="efp-button-badge">
+                        {badgeValue}
+                    </div>
+                );
+            }
+            return <span key={index}>{part}</span>;
+        }),
+        hasBadge: !!badgeValue,
+    };
+};
 
 const Button: React.FC<ButtonProps> = ({
     children,
@@ -32,14 +51,13 @@ const Button: React.FC<ButtonProps> = ({
     size = "lg",
     ariaLabel,
     title,
-    badge,
     onClick,
 }) => {
     const content = children ?? text;
+    const { content: processedContent } = typeof content === "string" ? processLabel(content) : { content };
 
     const commonClassNames = cn("efp-button", `efp-button--${variant}`, `efp-button--${size}`, {
         "efp-button--inline": inline,
-        "with-badge": badge,
         "is-disabled": disabled,
     });
 
@@ -57,7 +75,7 @@ const Button: React.FC<ButtonProps> = ({
                 aria-disabled={disabled}
                 tabIndex={disabled ? -1 : 0}
             >
-                {content}
+                {processedContent}
             </a>
         );
     }
@@ -71,8 +89,7 @@ const Button: React.FC<ButtonProps> = ({
             aria-label={ariaLabel || undefined}
             title={title || ariaLabel || (typeof content === "string" ? content : undefined)}
         >
-            {content}
-            {badge && <div className="efp-button-badge">{badge}</div>}
+            {processedContent}
         </button>
     );
 };
