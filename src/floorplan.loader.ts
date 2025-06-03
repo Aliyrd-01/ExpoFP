@@ -173,6 +173,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    search(term: string): Promise<unknown> {
+        nr();
+    }
+
     // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {
