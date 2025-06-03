@@ -173,7 +173,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    search(term: string): Promise<unknown[]> {
+    search(term: string): Promise<unknown> {
         nr();
     }
 

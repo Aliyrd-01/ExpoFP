@@ -334,7 +334,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
         efpElement.remove();
     }
 
-    search(term: string): Promise<unknown[]> {
+    search(term: string): Promise<unknown> {
         store.selectSearch(term);
         return Promise.resolve(store.uiState.searchItems);
     }
