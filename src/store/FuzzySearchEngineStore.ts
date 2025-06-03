@@ -1,7 +1,7 @@
 import { action, observable, runInAction } from "mobx";
 
 export default class FuzzySearchEngineStore {
-    loaded = false;
+    @observable loaded = false;
     pendingPromise = null;
     @observable engine;
 
