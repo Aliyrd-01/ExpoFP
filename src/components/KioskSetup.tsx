@@ -113,7 +113,7 @@ const KioskSetup = observer(() => {
 
                     if (isSetup && kiosks?.length) {
                         store.uiState.moveToRect = Rect.fromMultiple(
-                            kiosk.map(k => Rect.fromCxcywh(k.x, k.y, 1, 1)),
+                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 100, 100)),
                         );
                     }
                 });
@@ -293,7 +293,7 @@ const KioskSetup = observer(() => {
                 heading: 0,
             };
             store.uiState.kioskSetupData = newKiosk;
-            store.uiState.moveToRect = Rect.fromCxcywh(newKiosk.x, newKiosk.y, 1, 1);
+            store.uiState.moveToRect = Rect.fromCxcywh(newKiosk.x, newKiosk.y, 100, 100);
         }
     }
 
