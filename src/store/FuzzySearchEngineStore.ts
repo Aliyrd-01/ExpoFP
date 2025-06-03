@@ -9,9 +9,13 @@ export default class FuzzySearchEngineStore {
             const Fuse = FuseModule.default;
 
             this.engine = new Fuse([], {
-                keys: ["name", "layer.name"],
-                threshold: 0.45,
-                ignoreLocation: true,
+                keys: ["name", "description", "layer.name", "title", "fullName"],
+                ignoreDiacritics: true,
+                ignoreFieldNorm: true,
+                includeScore: true,
+                includeMatches: true,
+                findAllMatches: true,
+                shouldSort: false,
             });
         } catch (err) {
             console.error(err);

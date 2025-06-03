@@ -587,7 +587,30 @@ export default class UIState {
 
         const engine = this.rootStore.fuzzySearchEngineStore.engine;
         engine?.setCollection(list);
-        return engine?.search(text).map(result => result.item);
+
+        const testMatch = (query: string, matches: { key: string; value: string }[], k: string): boolean => (
+            matches?.some(({ key, value }) => key === k && value.toLowerCase().includes(query))
+        );
+
+        const getExactMatchPriority = (text: string, item: ListItem, matches: { key: string; value: string }[]): number => {
+            const query = text.toLowerCase();
+
+            if (testMatch(query, matches, "name")) {
+                return item instanceof Category ? 3 : 4;
+            }
+
+            if (testMatch(query, matches, "description")) return 2;
+
+            return 1;
+        };
+
+        return (engine?.search(text) || [])
+            .sort((a, b) => {
+                const aPriority = getExactMatchPriority(text, a.item, a.matches);
+                const bPriority = getExactMatchPriority(text, b.item, b.matches);
+                return aPriority !== bPriority ? bPriority - aPriority : a.score - b.score;
+            })
+            .map(result => result.item);
     }
 
     @computed get listItems(): ListItem[] {
