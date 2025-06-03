@@ -568,14 +568,14 @@ export default class UIState {
         );
     }
 
-    @computed get fuzzySearchItems(): ListItem[] {
+    @computed get fuzzySearchItems(): { item: ListItem, score: number }[] {
         if (this.list.type !== "search") {
             return [];
         }
 
         const text = this.list.text.trim().toLowerCase();
         if (!text) {
-            return this.defaultSearchItems;
+            return this.defaultSearchItems.map(item => ({ item, score: 0 }));
         }
 
         const list = [
@@ -610,7 +610,7 @@ export default class UIState {
                 const bPriority = getExactMatchPriority(text, b.item, b.matches);
                 return aPriority !== bPriority ? bPriority - aPriority : a.score - b.score;
             })
-            .map(result => result.item);
+            .map(({ item, score }) => ({ item, score }));
     }
 
     @computed get listItems(): ListItem[] {
@@ -620,7 +620,7 @@ export default class UIState {
             case "search":
                 return (
                     this.rootStore.fuzzySearchEngineStore.engine
-                        ? this.fuzzySearchItems
+                        ? this.fuzzySearchItems.map(result => result.item)
                         : this.searchItems
                 );
             case "bookmarks":
