@@ -335,10 +335,8 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     search(term: string): Promise<unknown[]> {
-        return new Promise(resolve => {
-            store.selectSearch(term);
-            resolve(store.uiState.searchItems);
-        });
+        store.selectSearch(term);
+        return Promise.resolve(store.uiState.searchItems);
     }
 
     fuzzySearch(term: string): Promise<{ item: unknown, score: number }[]> {
