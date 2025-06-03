@@ -290,6 +290,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                                         : t("Show All Exhibitors"),
                                 onClick: handleApply,
                                 variant: "primary",
+                                withBadge: true,
                                 disabled: !isShowResultsEnabled(),
                             },
                         ]}

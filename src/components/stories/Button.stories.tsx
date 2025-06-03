@@ -22,4 +22,5 @@ Base.args = {
     size: "lg",
     disabled: false,
     inline: false,
+    withBadge: false,
 };

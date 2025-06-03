@@ -147,10 +147,6 @@ a.efp-button {
             height: rem(30px);
             font-size: var(--font-size-md);
         }
-
-        &.with-badge {
-            padding-right: rem(10px);
-        }
     }
 
     &--md {
@@ -164,10 +160,6 @@ a.efp-button {
             height: rem(26px);
             font-size: var(--font-size-md);
         }
-
-        &.with-badge {
-            padding-right: rem(8px);
-        }
     }
 
     &--sm {
@@ -180,10 +172,6 @@ a.efp-button {
             min-width: rem(22px);
             height: rem(22px);
             font-size: var(--font-size-xs);
-        }
-
-        &.with-badge {
-            padding-right: rem(6px);
         }
     }
 

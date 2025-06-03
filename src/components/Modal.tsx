@@ -11,8 +11,8 @@ export interface ModalButton {
     label: string;
     variant?: ButtonVariant;
     disabled?: boolean;
+    withBadge?: boolean;
     onClick: () => void;
-    badge?: number;
 }
 
 export interface ModalProps {
@@ -63,8 +63,16 @@ const Modal: React.FC<ModalProps> = ({
     if (!open || !container) return null;
 
     const renderButtons = (buttons?: ModalButton[]) =>
-        buttons?.map(({ label, onClick, variant = "primary", disabled, badge }, idx) => (
-            <Button key={idx} onClick={onClick} variant={variant} size="md" inline={true} disabled={disabled}>
+        buttons?.map(({ label, onClick, variant = "primary", disabled, withBadge }, idx) => (
+            <Button
+                key={idx}
+                onClick={onClick}
+                variant={variant}
+                size="md"
+                inline={true}
+                disabled={disabled}
+                withBadge={withBadge}
+            >
                 {label}
             </Button>
         ));
