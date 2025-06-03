@@ -112,7 +112,7 @@ function createConfig(env) {
         );
     } else {
         config.devServer = {
-            port: 8081,
+            port: 8080,
             open: true,
             hot: true,
             compress: true,
