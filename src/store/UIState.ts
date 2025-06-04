@@ -620,7 +620,7 @@ export default class UIState {
             case "search":
                 return (
                     this.rootStore.fuzzySearchEngineStore.engine
-                        ? this.fuzzySearchItems.map(result => result.item)
+                        ? this.fuzzySearchItems.map(({ item }) => item)
                         : this.searchItems
                 );
             case "bookmarks":
