@@ -14,24 +14,21 @@ interface ListProps {
 }
 
 const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
-    const scrollerRef = useRef<HTMLElement | Window | null>(null);
     const listScrollItemId = uiState.listScrollItemId;
     const useCompactDetails = EXPOS_WITH_COMPACT_DETAILS.includes(settings.EXPO);
 
     useEffect(() => {
-        setTimeout(() => {
-            if (scrollerRef.current instanceof HTMLElement) {
-                scrollerRef.current.scrollTop = uiState.listScrollTop;
-            }
-        }, 25);
-    }, [uiState.listScrollTop]);
+        if (updatedScrollableRef.current instanceof HTMLElement) {
+            updatedScrollableRef.current.scrollTop = uiState.listScrollTop;
+        }
+    }, [updatedScrollableRef, uiState.listScrollTop]);
 
     const handleClick = useCallback((type: string, data: string) => {
         const id = parseInt(data, 10);
         uiState.setListScrollItemId(uiState.list?.type, id);
         uiState.setListScrollTop(
             uiState.list?.type,
-            scrollerRef.current instanceof HTMLElement ? scrollerRef.current.scrollTop : 0
+            updatedScrollableRef.current instanceof HTMLElement ? updatedScrollableRef.current.scrollTop : 0
         );
 
         switch (type) {
@@ -89,9 +86,6 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                                 {uiState.list.type === "search" ? "Oops, nothing found" : "No items to show"}
                             </div>
                         ),
-                    }}
-                    scrollerRef={(ref) => {
-                        scrollerRef.current = ref;
                     }}
                 />
             )}
