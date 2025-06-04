@@ -184,7 +184,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                     <a href="/#" onClick={handleSearch} className="menu__item">
                         {t("Search")}
                     </a>
-                    {cats.length && (
+                    {cats.length ? (
                         <a className="menu__item -categories" href="/#" onClick={handleFilterClick}>
                             <span>{t("Categories")}</span>
                             <span className="menu__icons">
@@ -196,7 +196,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                                 <i className="icon-chevron-right" />
                             </span>
                         </a>
-                    )}
+                    ) : null}
                     {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
                         <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                             {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
