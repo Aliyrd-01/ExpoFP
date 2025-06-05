@@ -47,8 +47,8 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         shown: false,
         shownTimeout: undefined as number,
         modalOpen: false,
-        selectedCategoryIds: uiState.selectedCategoryFilters.map((c) => Number(c.id)),
-        pendingSelectedIds: uiState.selectedCategoryFilters.map((c) => Number(c.id)),
+        selectedCategoryIds: (uiState.selectedCategoryFilters || []).map((c) => Number(c.id)),
+        pendingSelectedIds: (uiState.selectedCategoryFilters || []).map((c) => Number(c.id)),
     }));
 
     useAutorun(() => {
@@ -83,14 +83,14 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
     const cats = categoryStore.categories.filter((c) => c.exhibitors.length);
 
     const groups: MultiSelectGroup[] = React.useMemo(() => {
-        const cats = store.categoryStore.categories;
+        const cats = store.categoryStore.categories || [];
         const grouped: Record<string, MultiSelectGroup> = {};
         const ungroupedItems: MultiSelectGroupItem[] = [];
 
         cats.forEach((cat) => {
-            if (cat.exhibitors.length === 0) return;
+            if (!cat || !cat.exhibitors || cat.exhibitors.length === 0) return;
 
-            const parts = cat.name.split("/").map((p) => p.trim());
+            const parts = (cat.name || "").split("/").map((p) => p.trim());
 
             if (parts.length > 1) {
                 const groupName = parts[0];
@@ -116,7 +116,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         }
 
         Object.values(grouped).forEach((group) => {
-            if (group.items.length > 0) {
+            if (group.items && group.items.length > 0) {
                 result.push(group);
             }
         });
@@ -141,14 +141,14 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
     const handleApply = () => {
         s.selectedCategoryIds = s.pendingSelectedIds;
         const selected = store.categoryStore.categories.filter((c) => s.pendingSelectedIds.includes(Number(c.id)));
-        uiState.setSelectedCategoryFilters(selected);
+        uiState.setSelectedCategoryFilters(selected || []);
         uiState.categoryFilterOpen = true;
         s.modalOpen = false;
         close();
     };
 
     const handleCancel = () => {
-        s.pendingSelectedIds = s.selectedCategoryIds;
+        s.pendingSelectedIds = [...s.selectedCategoryIds];
         s.modalOpen = false;
     };
 
