@@ -23,16 +23,21 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
             if (scrollerRef.current instanceof HTMLElement) {
                 scrollerRef.current.scrollTop = uiState.listScrollTop;
             }
-        }, 25);
-    }, [uiState.listScrollTop]);
+            // Hotfix
+            // scrollerRef and updatedScrollableRef are sometimes not equal
+            // and on desktop this will break scrolling to the previously selected item.
+            updatedScrollableRef.current.scrollTop = uiState.listScrollTop;
+        }, 100);
+    }, [uiState.listScrollTop, updatedScrollableRef]);
 
     const handleClick = useCallback((type: string, data: string) => {
         const id = parseInt(data, 10);
         uiState.setListScrollItemId(uiState.list?.type, id);
-        uiState.setListScrollTop(
-            uiState.list?.type,
-            scrollerRef.current instanceof HTMLElement ? scrollerRef.current.scrollTop : 0
-        );
+        uiState.setListScrollTop(uiState.list?.type, (
+            updatedScrollableRef.current.scrollTop
+            || (scrollerRef.current as HTMLElement)?.scrollTop
+            || 0
+        ));
 
         switch (type) {
             case "exhibitor":
@@ -80,9 +85,9 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                     totalListHeightChanged={() => updateScroll && updateScroll()}
                     customScrollParent={updatedScrollableRef.current}
                     totalCount={uiState.listItems.length}
-                    overscan={400}
-                    increaseViewportBy={400}
-                    initialItemCount={Math.min(uiState.listScrollIndex + 1, uiState.listItems.length)}
+                    overscan={1000}
+                    increaseViewportBy={1000}
+                    initialItemCount={Math.min(uiState.listScrollIndex + 100, uiState.listItems.length)}
                     components={{
                         EmptyPlaceholder: () => (
                             <div className="list-empty">

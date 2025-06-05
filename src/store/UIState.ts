@@ -568,14 +568,14 @@ export default class UIState {
         );
     }
 
-    @computed get fuzzySearchItems(): ListItem[] {
+    @computed get fuzzySearchItems(): { item: ListItem, score: number }[] {
         if (this.list.type !== "search") {
             return [];
         }
 
         const text = this.list.text.trim().toLowerCase();
         if (!text) {
-            return this.defaultSearchItems;
+            return this.defaultSearchItems.map(item => ({ item, score: 0 }));
         }
 
         const list = [
@@ -587,7 +587,38 @@ export default class UIState {
 
         const engine = this.rootStore.fuzzySearchEngineStore.engine;
         engine?.setCollection(list);
-        return engine?.search(text).map(result => result.item);
+
+        const testMatch = (query: string, matches: { key: string; value: string }[], k: string): boolean => (
+            matches?.some(({ key, value }) => key === k && value.toLowerCase().includes(query))
+        );
+
+        const getExactMatchPriority = (text: string, item: ListItem, matches: { key: string; value: string }[]): number => {
+            const query = text.toLowerCase();
+
+            if (testMatch(query, matches, "name")) {
+                return item instanceof Category ? 3 : 4;
+            }
+
+            if (testMatch(query, matches, "description")) return 2;
+
+            return 1;
+        };
+
+        const result = (engine?.search(text) || [])
+            .sort((a, b) => {
+                const aPriority = getExactMatchPriority(text, a.item, a.matches);
+                const bPriority = getExactMatchPriority(text, b.item, b.matches);
+                return aPriority !== bPriority ? bPriority - aPriority : a.score - b.score;
+            })
+            .map(({ item, score }) => ({ item, score }));
+
+
+        const bestMatch = result.filter(x => x.score <= 0.1);
+        if (bestMatch.length) {
+            return bestMatch;
+        }
+
+        return result;
     }
 
     @computed get listItems(): ListItem[] {
@@ -597,7 +628,7 @@ export default class UIState {
             case "search":
                 return (
                     this.rootStore.fuzzySearchEngineStore.engine
-                        ? this.fuzzySearchItems
+                        ? this.fuzzySearchItems.map(({ item }) => item)
                         : this.searchItems
                 );
             case "bookmarks":
