@@ -14,26 +14,28 @@ interface ListProps {
 }
 
 const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
+    const scrollerRef = useRef<HTMLElement | Window | null>(null);
     const listScrollItemId = uiState.listScrollItemId;
     const useCompactDetails = EXPOS_WITH_COMPACT_DETAILS.includes(settings.EXPO);
 
     const timeout = useRef(0);
     useEffect(() => {
         timeout.current = window.setTimeout(() => {
-            if (updatedScrollableRef.current instanceof HTMLElement) {
-                updatedScrollableRef.current.scrollTop = uiState.listScrollTop;
+            if (scrollerRef.current instanceof HTMLElement) {
+                scrollerRef.current.scrollTop = uiState.listScrollTop;
             }
-        }, 100);
+            updatedScrollableRef.current.scrollTop = uiState.listScrollTop;
+        }, 25);
 
         return () => clearTimeout(timeout.current);
-    }, [updatedScrollableRef, uiState.listScrollTop]);
+    }, [uiState.listScrollTop]);
 
     const handleClick = useCallback((type: string, data: string) => {
         const id = parseInt(data, 10);
         uiState.setListScrollItemId(uiState.list?.type, id);
         uiState.setListScrollTop(
             uiState.list?.type,
-            updatedScrollableRef.current instanceof HTMLElement ? updatedScrollableRef.current.scrollTop : 0
+            scrollerRef.current instanceof HTMLElement ? scrollerRef.current.scrollTop : 0
         );
 
         switch (type) {
@@ -91,6 +93,9 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                                 {uiState.list.type === "search" ? "Oops, nothing found" : "No items to show"}
                             </div>
                         ),
+                    }}
+                    scrollerRef={(ref) => {
+                        scrollerRef.current = ref;
                     }}
                 />
             )}
