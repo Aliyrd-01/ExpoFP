@@ -5,6 +5,7 @@ import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
+import CategoryFilterStore from "./CategoryFilterStore";
 
 import { GaEventActions } from "../tools/gtag";
 import isMobile from "../utils/is-mobile";
@@ -36,6 +37,7 @@ export default class RootStore {
     readonly heatmapStore: HeatmapStore;
     readonly languageStore: LanguageStore;
     readonly fuzzySearchEngineStore: FuzzySearchEngineStore;
+    readonly categoryFilterStore: CategoryFilterStore;
 
     fp: FloorPlanReady;
 
@@ -55,6 +57,7 @@ export default class RootStore {
         this.languageStore = new LanguageStore(this);
         this.poiTypeStore = new PoiTypeStore(this);
         this.fuzzySearchEngineStore = new FuzzySearchEngineStore();
+        this.categoryFilterStore = new CategoryFilterStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
