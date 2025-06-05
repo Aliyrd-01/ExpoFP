@@ -333,6 +333,13 @@ export default class FloorPlanReady extends FloorPlanLoader {
         this.root.unmount();
         efpElement.remove();
     }
+
+    search(term: string): Promise<{ item: unknown, score: number }[]> {
+        return store.fuzzySearchEngineStore.loadEngine().then(() => {
+            store.selectSearch(term);
+            return store.uiState.fuzzySearchItems;
+        });
+    }
 }
 
 function getBooth(x: RouteWaypoint) {
