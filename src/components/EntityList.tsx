@@ -33,10 +33,11 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
     const handleClick = useCallback((type: string, data: string) => {
         const id = parseInt(data, 10);
         uiState.setListScrollItemId(uiState.list?.type, id);
-        uiState.setListScrollTop(
-            uiState.list?.type,
-            updatedScrollableRef.current instanceof HTMLElement ? updatedScrollableRef.current.scrollTop : 0
-        );
+        uiState.setListScrollTop(uiState.list?.type, (
+            updatedScrollableRef.current.scrollTop
+            || (scrollerRef.current as HTMLElement)?.scrollTop
+            || 0
+        ));
 
         switch (type) {
             case "exhibitor":
