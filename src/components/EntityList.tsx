@@ -23,8 +23,12 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
             if (scrollerRef.current instanceof HTMLElement) {
                 scrollerRef.current.scrollTop = uiState.listScrollTop;
             }
+            // Hotfix
+            // scrollerRef and updatedScrollableRef are sometimes not equal
+            // and on desktop this will break scrolling to the previously selected item.
+            updatedScrollableRef.current.scrollTop = uiState.listScrollTop;
         }, 25);
-    }, [uiState.listScrollTop]);
+    }, [uiState.listScrollTop, updatedScrollableRef]);
 
     const handleClick = useCallback((type: string, data: string) => {
         const id = parseInt(data, 10);
