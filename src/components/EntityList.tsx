@@ -18,17 +18,14 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
     const listScrollItemId = uiState.listScrollItemId;
     const useCompactDetails = EXPOS_WITH_COMPACT_DETAILS.includes(settings.EXPO);
 
-    const timeout = useRef(0);
     useEffect(() => {
-        timeout.current = window.setTimeout(() => {
+        setTimeout(() => {
             if (scrollerRef.current instanceof HTMLElement) {
                 scrollerRef.current.scrollTop = uiState.listScrollTop;
             }
             updatedScrollableRef.current.scrollTop = uiState.listScrollTop;
         }, 25);
-
-        return () => clearTimeout(timeout.current);
-    }, [uiState.listScrollTop]);
+    }, [uiState.listScrollTop, updatedScrollableRef]);
 
     const handleClick = useCallback((type: string, data: string) => {
         const id = parseInt(data, 10);
