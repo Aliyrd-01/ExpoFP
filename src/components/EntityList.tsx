@@ -35,7 +35,7 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
         uiState.setListScrollItemId(uiState.list?.type, id);
         uiState.setListScrollTop(
             uiState.list?.type,
-            scrollerRef.current instanceof HTMLElement ? scrollerRef.current.scrollTop : 0
+            updatedScrollableRef.current instanceof HTMLElement ? updatedScrollableRef.current.scrollTop : 0
         );
 
         switch (type) {
@@ -84,9 +84,9 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                     totalListHeightChanged={() => updateScroll && updateScroll()}
                     customScrollParent={updatedScrollableRef.current}
                     totalCount={uiState.listItems.length}
-                    overscan={400}
-                    increaseViewportBy={400}
-                    initialItemCount={Math.min(uiState.listScrollIndex + 1, uiState.listItems.length)}
+                    overscan={1000}
+                    increaseViewportBy={1000}
+                    initialItemCount={Math.min(uiState.listScrollIndex + 100, uiState.listItems.length)}
                     components={{
                         EmptyPlaceholder: () => (
                             <div className="list-empty">
