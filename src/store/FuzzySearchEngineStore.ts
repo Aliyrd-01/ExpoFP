@@ -28,6 +28,7 @@ export default class FuzzySearchEngineStore {
                     includeMatches: true,
                     findAllMatches: true,
                     shouldSort: false,
+                    threshold: 0.4,
                 });
 
                 runInAction(() => {
