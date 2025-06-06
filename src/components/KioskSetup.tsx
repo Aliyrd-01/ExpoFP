@@ -115,7 +115,7 @@ const KioskSetup = observer(() => {
 
                     if (isSetup && kiosks?.length) {
                         store.uiState.moveToRect = Rect.fromMultiple(
-                            kiosks.map(k => Rect.fromCxcywh(k.cx, k.cy, 100, 100)),
+                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 100, 100)),
                         );
                     }
                 });
