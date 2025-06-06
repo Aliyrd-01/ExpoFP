@@ -27,6 +27,10 @@
     grid-auto-flow: column;
     width: 100%;
 
+    &__auth {
+       grid-template-columns: 1fr; 
+    }
+
     span {
         width: 100%;
     }
@@ -129,6 +133,10 @@
     place-items: center;
     margin-top: 1rem;
 
+    &__auth {
+       grid-template-columns: 1fr; 
+    }
+
     & a:nth-child(3n),
     & button:nth-child(3n) {
         grid-column: 1 / -1;
@@ -143,4 +151,15 @@
     z-index: 9999;
     box-shadow: var(--shadow-md);
     border-radius: var(--border-radius-lg);
+}
+
+.efp-kiosk-setup-link {
+    display: grid;
+
+    &_text {
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }

@@ -14,6 +14,7 @@ import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
+import cn from "classnames";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -25,6 +26,7 @@ const KioskSetup = observer(() => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth");
     const [kioskUrl, setKioskUrl] = useState("");
+    const [passcode, setPasscode] = useState("");
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
 
@@ -113,7 +115,7 @@ const KioskSetup = observer(() => {
 
                     if (isSetup && kiosks?.length) {
                         store.uiState.moveToRect = Rect.fromMultiple(
-                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 100, 100)),
+                            kiosks.map(k => Rect.fromCxcywh(k.cx, k.cy, 100, 100)),
                         );
                     }
                 });
@@ -245,7 +247,6 @@ const KioskSetup = observer(() => {
             await navigator.clipboard.writeText(kioskUrl);
             setShowSuccess(true);
             store.uiState.kioskSetupData = null;
-            setStep("edit");
         } catch (err) {
             console.error(err);
             setShowError(true);
@@ -293,8 +294,14 @@ const KioskSetup = observer(() => {
                 heading: 0,
             };
             store.uiState.kioskSetupData = newKiosk;
-            store.uiState.moveToRect = Rect.fromCxcywh(newKiosk.x, newKiosk.y, 100, 100);
         }
+
+        store.uiState.moveToRect = Rect.fromCxcywh(
+            store.uiState.kioskSetupData.x,
+            store.uiState.kioskSetupData.y,
+            100,
+            100,
+        );
     }
 
     function clear() {
@@ -399,12 +406,16 @@ const KioskSetup = observer(() => {
                     <Alert variant="blank" title={title} inline showIcon={false}>
                         {step === "auth" && (
                             <p id="kiosk-setup-instructions" className="efp-kiosk-setup-info">
-                                <label className="efp-kiosk-setup-key">
+                                <label className={cn({
+                                    "efp-kiosk-setup-key": true,
+                                    "efp-kiosk-setup-key__auth": step === "auth",
+                                })}> 
                                     <input
+                                        name="passcode"
                                         placeholder={t("Enter passcode")}
                                         defaultValue=""
                                         disabled={pending}
-                                        onInput={(e) => auth((e.target as HTMLInputElement).value)}
+                                        onInput={(e) => setPasscode((e.target as HTMLInputElement).value)}
                                         aria-label={t("Enter passcode")}
                                     />
                                 </label>
@@ -422,6 +433,7 @@ const KioskSetup = observer(() => {
                                         <strong>#</strong>
                                     </span>
                                     <input
+                                        name="key"
                                         type="number"
                                         min={1}
                                         max={99}
@@ -442,6 +454,7 @@ const KioskSetup = observer(() => {
                                         <strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°
                                     </span>
                                     <input
+                                        name="heading"
                                         type="range"
                                         min="0"
                                         max="360"
@@ -456,20 +469,25 @@ const KioskSetup = observer(() => {
 
                         {step === "copy" && (
                             <p>
-                                <a href={kioskUrl} target="_blank" rel="noopener noreferrer">
-                                    <small>{kioskUrl}</small>
+                                <a href={kioskUrl} className="efp-kiosk-setup-link" target="_blank" rel="noopener noreferrer">
+                                    <small className="efp-kiosk-setup-link_text">{kioskUrl}</small>
                                 </a>
                             </p>
                         )}
 
-                        <div className="efp-kiosk-setup-actions">
+                        <div className={cn({
+                            "efp-kiosk-setup-actions": true,
+                            "efp-kiosk-setup-actions__auth": step === "auth",
+                        })}>
+                            {step === "auth" && <Button size="md" text={t("Log in")} disabled={!passcode || pending} onClick={() => auth(passcode)} />}
+
                             {step === "edit" && <Button size="md" text={t("Save")} disabled={disabled} onClick={save} />}
 
                             {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
 
                             {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
 
-                            {step === "copy" && <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />}
+                            {step === "copy" && <Button variant="gray" size="md" text={t("Exit")} onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
                                 <Button

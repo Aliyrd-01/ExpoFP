@@ -533,13 +533,17 @@ export default function configWf(context: DrawerContext, painterOrderPriority: n
                         });
                 }
 
-                const isSameLayer = (
-                    areLayersEnabled()
-                        ? kioskSetupData?.z === activeFloor?.name
-                        : true
-                );
+                if (kioskSetupData) {
+                    const isSameLayer = (
+                        areLayersEnabled()
+                            ? kioskSetupData?.z === activeFloor?.name
+                            : true
+                    );
 
-                if (kioskSetupData && isSameLayer) {
+                    if (!isSameLayer) {
+                        layersStore.updateVisibility(`${kioskSetupData.z}`, true);
+                    }
+
                     attachKioskIcon(
                         kioskSetupData,
                         kioskIconDrawer,
