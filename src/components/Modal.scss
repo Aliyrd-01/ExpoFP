@@ -3,7 +3,7 @@
 $modal: ".modal";
 
 #{$modal} {
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: 999;
     display: flex;
@@ -13,6 +13,9 @@ $modal: ".modal";
     height: 100%;
     padding: rem(20px);
     background: rgba(163, 168, 175, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
 
     &__box {
         position: relative;
@@ -23,6 +26,9 @@ $modal: ".modal";
         background: var(--color-white);
         border-radius: var(--border-radius-xl);
         box-shadow: var(--shadow-md);
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
     &__header {
@@ -129,8 +135,12 @@ $modal: ".modal";
     }
 
     &.isOpen {
+        opacity: 1;
+        visibility: visible;
+
         #{$modal}__box {
-            animation: 0.3s ease forwards transform-modal, 0.2s ease forwards opacity-modal;
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 
@@ -143,25 +153,5 @@ $modal: ".modal";
     &__close {
         right: unset;
         left: 0;
-    }
-}
-
-@keyframes opacity-modal {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes transform-modal {
-    from {
-        top: -40px;
-    }
-
-    to {
-        top: 0;
     }
 }

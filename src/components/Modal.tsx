@@ -41,26 +41,38 @@ const Modal: React.FC<ModalProps> = ({
     const container = useRenderTarget();
     const modalRef = useRef<HTMLDivElement>(null);
     const [isOpen, setIsOpen] = useState(open);
+    const [isVisible, setIsVisible] = useState(open);
 
     useEffect(() => {
-        setIsOpen(open);
         if (open) {
+            setIsVisible(true);
+            setTimeout(() => {
+                setIsOpen(true);
+            }, 10);
             document.body.style.overflow = "hidden";
             setTimeout(() => modalRef.current?.focus(), 0);
         } else {
-            document.body.style.overflow = "";
+            setIsOpen(false);
+            const timer = setTimeout(() => {
+                setIsVisible(false);
+            }, 200);
+
+            return () => clearTimeout(timer);
         }
+
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClickClose();
         };
+
         document.addEventListener("keydown", handleEsc);
+
         return () => {
             document.removeEventListener("keydown", handleEsc);
             document.body.style.overflow = "";
         };
     }, [open, onClickClose]);
 
-    if (!open || !container) return null;
+    if (!isVisible || !container) return null;
 
     const renderButtons = (buttons?: ModalButton[]) =>
         buttons?.map(({ label, onClick, variant = "primary", disabled, withBadge }, idx) => (
@@ -105,7 +117,7 @@ const Modal: React.FC<ModalProps> = ({
                 <div className="modal__body">{children}</div>
                 {(footerLeft?.length || footerRight?.length) && (
                     <div className="modal__footer">
-                        <div className="modal__footer-left">{renderButtons(footerLeft)}</div>
+                        {footerLeft?.length > 0 && <div className="modal__footer-left">{renderButtons(footerLeft)}</div>}
                         <div className="modal__footer-right">{renderButtons(footerRight)}</div>
                     </div>
                 )}
