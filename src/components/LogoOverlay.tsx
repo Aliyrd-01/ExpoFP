@@ -14,100 +14,92 @@ import "./Alert.scss";
 import "./LogoOverlay.scss";
 import { fpGeo } from "./Mapbox/utils/fpGeo";
 
+const isExpoRightAligned = ["info-techlive2025", "metstrade-superyacht2023"].includes(settings.EXPO);
+const isDarkMode = Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.includes("dark");
+
 export default function LogoOverlay() {
-    const s = useLocalStore(() => ({
-        get style() {
-            const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.3);
-            let style: any;
-            if (uiState.overlayPosition === "left")
-                style = {
-                    bottom: (uiState.kiosk && uiState.wsStarted ? remsToPixels(3.5) : 0) + uiState.mapVisibleBottom + pad + "px",
-                    [uiState.rtl ? "left" : "right"]: pad + "px",
-                    width: "5rem",
-                };
-            else {
-                style = {
-                    top: uiState.mapVisibleTop + pad + "px",
-                    [uiState.rtl ? "left" : "right"]: pad + "px",
-                    width: "4.5rem",
-                };
-                if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
-            }
-            style.opacity = uiState.wsStarted ? 1 : 0;
-            return style;
-        },
+    const s = useLocalStore(() => {
+        const getPositionStyle = (topBottom: "top" | "bottom", side: "left" | "right", offset: number, width: string) => ({
+            [topBottom]: offset + "px",
+            [side]: remsToPixels(1) + "px",
+            width,
+            opacity: uiState.wsStarted ? 1 : 0,
+        });
 
-        get warningStyle() {
-            const pad = uiState.overlayPosition === "left" ? remsToPixels(1) : remsToPixels(0.5);
-            let style: any;
-            if (uiState.overlayPosition === "left")
-                style = {
-                    bottom: uiState.mapVisibleBottom + 2 * pad + "px",
-                    [uiState.rtl ? "left" : "right"]: pad + "px",
-                    width: "3rem",
-                };
-            else {
-                style = {
-                    top: uiState.mapVisibleTop + 2 * pad + "px",
-                    [uiState.rtl ? "left" : "right"]: pad + "px",
-                    width: "2rem",
-                };
-                if (store.mapboxStore.showMapbox) style.top = remsToPixels(0.5) + "px";
-            }
-            style.opacity = uiState.wsStarted ? 1 : 0;
-            return style;
-        },
-    }));
+        const side = isExpoRightAligned || uiState.rtl ? "left" : "right";
 
-    const bu = window["__efpBaseUrl"];
+        return {
+            get style() {
+                const pad = remsToPixels(uiState.overlayPosition === "left" ? 1 : 0.3);
 
-    var dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
-    var showWarning = isFromDesigner && dataSize >= 10;
-    var showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk && !uiState.heatmap;
+                if (uiState.overlayPosition === "left") {
+                    const bottom = (uiState.kiosk && uiState.wsShown ? remsToPixels(3.5) : 0) + uiState.mapVisibleBottom + pad;
+                    return getPositionStyle("bottom", side, bottom, "5rem");
+                } else {
+                    let top = uiState.mapVisibleTop + pad;
+                    if (store.mapboxStore.showMapbox) top = remsToPixels(0.5);
+                    return getPositionStyle("top", side, top, "4.5rem");
+                }
+            },
 
-    let point = "";
-    if (uiState.kiosk && store.routeStore.defaultFrom?.paths) {
-        //   let paths = store.routeStore.defaultFrom?.paths;
-        // const p = (point = (paths[0] as any).triangles[0][0]);
-        // point = "?blue-dot=" + p[0] + "," + p[1] + "," + (store.routeStore.defaultFrom?.layer?.name ?? "") + ",1";
-    }
+            get warningStyle() {
+                const pad = remsToPixels(uiState.overlayPosition === "left" ? 1 : 0.5);
+
+                if (uiState.overlayPosition === "left") {
+                    const bottom = uiState.mapVisibleBottom + 2 * pad;
+                    return getPositionStyle("bottom", side, bottom, "3rem");
+                } else {
+                    let top = uiState.mapVisibleTop + 2 * pad;
+                    if (store.mapboxStore.showMapbox) top = remsToPixels(0.5);
+                    return getPositionStyle("top", side, top, "2rem");
+                }
+            },
+        };
+    });
+
+    const baseUrl = window["__efpBaseUrl"];
+    const dataSize = Math.round(window["__fpStat"]?.dataSize / 1024 / 1024 || 0);
+    const showWarning = isFromDesigner && dataSize >= 10;
+    const showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk && !uiState.heatmap;
+
+    const showQR = uiState.kiosk && !uiState.selectedRoute?.to && !uiState.selectedRoute?.from && !uiState.kioskSetup;
+
+    const qrClassName = classNames("qr", {
+        "qr--right": isExpoRightAligned || uiState.rtl,
+    });
 
     return useObserver(() => (
         <div>
             <a
                 href="https://expofp.com/"
                 target="_blank"
-                className={classNames("logo-overlay", {
-                    invert: Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.indexOf("dark") > -1,
-                })}
-                style={s.style}
                 rel="noopener noreferrer"
+                className={classNames("logo-overlay", { invert: isDarkMode })}
+                style={s.style}
             >
-                <img src={bu + "expofp-overlay.png"} alt={t("Made with ExpoFP")} crossOrigin="anonymous" />
+                <img src={`${baseUrl}expofp-overlay.png`} alt={t("Made with ExpoFP")} crossOrigin="anonymous" />
             </a>
+
             {showWarning && (
-                <Alert title="This floor plan is too big" variant="warning" showIcon={true} position="bottomRight">
+                <Alert title="This floor plan is too big" variant="warning" showIcon position="bottomRight">
                     <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/huge-fp-warning">
                         {t("Read how to optimize it")}
                     </a>
                 </Alert>
             )}
+
             {showMapboxWarning && (
-                <Alert title="3D view is hidden" variant="warning" showIcon={true} position="bottomRight">
+                <Alert title="3D view is hidden" variant="warning" showIcon position="bottomRight">
                     <a rel="noopener noreferrer" target="_blank" href="https://expofp.com/pages/expofp-mapbox-integration">
                         {t("Setup mapbox first")}
                     </a>
                 </Alert>
             )}
-            {uiState.kiosk && !uiState.selectedRoute?.to && !uiState.selectedRoute?.from && !uiState.kioskSetup && (
-                <div
-                    className={classNames("qr", { "qr--right": settings.EXPO === "metstrade-superyacht2023" || uiState.rtl })}
-                    style={{
-                        bottom: remsToPixels(uiState.wsStarted ? 4.5 : 0.5),
-                    }}
-                >
+
+            {showQR && (
+                <div className={qrClassName} style={{ bottom: remsToPixels(uiState.wsShown ? 4.5 : 1) }}>
                     <div>{t("View Map on Phone")}</div>
-                    <QRCode value={`https://${settings.EXPO}.expofp.com/${point}`} size={100} />
+                    <QRCode value={`https://${settings.EXPO}.expofp.com/`} size={100} />
                 </div>
             )}
         </div>
