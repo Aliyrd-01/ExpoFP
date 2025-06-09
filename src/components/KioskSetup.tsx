@@ -14,7 +14,6 @@ import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
-import { svgArea } from "../data/svg";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -24,7 +23,7 @@ const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [step, setStep] = useState<"auth" | "edit" | "copy">(sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth");
+    const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth");
     const [kioskUrl, setKioskUrl] = useState("");
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
@@ -113,7 +112,9 @@ const KioskSetup = observer(() => {
                     }
 
                     if (isSetup && kiosks?.length) {
-                        store.uiState.moveToRect = store.layerStore.rectangle || svgArea;
+                        store.uiState.moveToRect = Rect.fromMultiple(
+                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 100, 100)),
+                        );
                     }
                 });
             } catch (err) {
@@ -292,7 +293,7 @@ const KioskSetup = observer(() => {
                 heading: 0,
             };
             store.uiState.kioskSetupData = newKiosk;
-            store.uiState.moveToRect = Rect.fromCxcywh(newKiosk.x, newKiosk.y, 1000, 1000);
+            store.uiState.moveToRect = Rect.fromCxcywh(newKiosk.x, newKiosk.y, 100, 100);
         }
     }
 
@@ -311,6 +312,8 @@ const KioskSetup = observer(() => {
         title = t("Passcode required");
     } else if (step === "copy") {
         title = t("Copy the kiosk URL");
+    } else if (step === "confirmDeletion") {
+        title = `${t("Delete kiosk")} ${store.uiState.kioskSetupData?.key}?`;
     } else {
         title = t("Add or edit a kiosk");
     }
@@ -355,6 +358,32 @@ const KioskSetup = observer(() => {
         }, 250),
         [store.fp.eventId]
     );
+
+    const isKioskExist = store.uiState.kioskList.find(
+        k => `${k.key}` === `${store.uiState.kioskSetupData?.key}`,
+    );
+
+    async function deleteKiosk() {
+        try {
+            setPending(true);
+
+            const url = new URL(apiUrl);
+            url.searchParams.set("kioskKey", store.uiState.kioskSetupData.key);
+
+            const token = sessionStorage.getItem(KIOSK_SETUP_TOKEN);
+            await fetch(url.href, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...(token ? { token } : {}) }),
+            });
+
+            exit();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setPending(false);
+        }
+    }
 
     return (
         <Suspense fallback={null}>
@@ -441,6 +470,23 @@ const KioskSetup = observer(() => {
                             {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
 
                             {step === "copy" && <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />}
+
+                            {step === "edit" && isKioskExist && (
+                                <Button
+                                    variant="gray"
+                                    size="md"
+                                    text={t("Delete")}
+                                    disabled={pending}
+                                    onClick={() => setStep("confirmDeletion")}
+                                />
+                            )}
+
+                            {step === "confirmDeletion" && (
+                                <>
+                                    <Button size="md" text={t("Delete")} onClick={deleteKiosk} />
+                                    <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />
+                                </>
+                            )}
                         </div>
                     </Alert>
                 </div>
