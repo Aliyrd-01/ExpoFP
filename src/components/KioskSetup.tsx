@@ -24,7 +24,9 @@ const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth");
+    const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(
+        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
+    );
     const [kioskUrl, setKioskUrl] = useState("");
     const [passcode, setPasscode] = useState("");
 
@@ -114,9 +116,7 @@ const KioskSetup = observer(() => {
                     }
 
                     if (isSetup && kiosks?.length) {
-                        store.uiState.moveToRect = Rect.fromMultiple(
-                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 100, 100)),
-                        );
+                        store.uiState.moveToRect = Rect.fromMultiple(kiosks.map((k) => Rect.fromCxcywh(k.x, k.y, 100, 100)));
                     }
                 });
             } catch (err) {
@@ -295,14 +295,10 @@ const KioskSetup = observer(() => {
             store.uiState.kioskSetupData = newKiosk;
         }
 
-        store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+        const { x, y, z } = store.uiState.kioskSetupData;
 
-        store.uiState.moveToRect = Rect.fromCxcywh(
-            store.uiState.kioskSetupData.x,
-            store.uiState.kioskSetupData.y,
-            100,
-            100,
-        );
+        store.layerStore.updateVisibility(`${z}`, true);
+        store.uiState.moveToRect = Rect.fromCxcywh(x, y, 100, 100);
     }
 
     function clear() {
@@ -367,9 +363,7 @@ const KioskSetup = observer(() => {
         [store.fp.eventId]
     );
 
-    const isKioskExist = store.uiState.kioskList.find(
-        k => `${k.key}` === `${store.uiState.kioskSetupData?.key}`,
-    );
+    const isKioskExist = store.uiState.kioskList.find((k) => `${k.key}` === `${store.uiState.kioskSetupData?.key}`);
 
     async function deleteKiosk() {
         try {
