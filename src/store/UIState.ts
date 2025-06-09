@@ -633,13 +633,21 @@ export default class UIState {
             return 1;
         };
 
-        return (engine?.search(text) || [])
+        const result = (engine?.search(text) || [])
             .sort((a, b) => {
                 const aPriority = getExactMatchPriority(text, a.item, a.matches);
                 const bPriority = getExactMatchPriority(text, b.item, b.matches);
                 return aPriority !== bPriority ? bPriority - aPriority : a.score - b.score;
             })
             .map(({ item, score }) => ({ item, score }));
+
+
+        const bestMatch = result.filter(x => x.score <= 0.1);
+        if (bestMatch.length) {
+            return bestMatch;
+        }
+
+        return result;
     }
 
     @computed get listItems(): ListItem[] {
