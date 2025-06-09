@@ -246,7 +246,6 @@ const KioskSetup = observer(() => {
         try {
             await navigator.clipboard.writeText(kioskUrl);
             setShowSuccess(true);
-            store.uiState.kioskSetupData = null;
         } catch (err) {
             console.error(err);
             setShowError(true);
