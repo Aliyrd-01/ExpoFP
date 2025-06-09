@@ -216,6 +216,8 @@ const KioskSetup = observer(() => {
 
             setKioskUrl(new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href).toString());
 
+            store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+
             setStep("copy");
         } catch (err) {
             console.error(err);
@@ -266,6 +268,7 @@ const KioskSetup = observer(() => {
             ...store.uiState.kioskSetupData,
             heading: parseInt(angle, 10),
         };
+        store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
     }
 
     function changeKey(key: string) {
