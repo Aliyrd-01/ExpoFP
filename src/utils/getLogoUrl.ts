@@ -9,6 +9,8 @@ export function getLogoUrl(url): string {
 
 function getSmallLogoUrlSuffix(): "tiny" | "small" | undefined {
     if (isMobile || isWebview) {
+        // EFP-4851: If viewOptimizationLevel = 0 then return logos with original quality
+        if (!data.viewOptimizationLevel) return;
         return data.viewOptimizationLevel >= 5 ? "tiny" : "small";
     }
     return;
