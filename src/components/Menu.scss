@@ -34,9 +34,9 @@
             text-decoration: none;
         }
 
-        &:visited {
-            color: var(--color-gray-800);
-        }
+        // &:visited {
+        //     color: var(--color-gray-800);
+        // }
 
         > i {
             min-width: rem(28px);
@@ -65,6 +65,12 @@
         }
 
         &.-language {
+            display: grid;
+            grid-auto-flow: column;
+            place-content: center space-between;
+        }
+
+        &.-categories {
             display: grid;
             grid-auto-flow: column;
             place-content: center space-between;
@@ -151,6 +157,10 @@
                 opacity: 1;
             }
         }
+    }
+
+    .overlay-bar__slot {
+        max-width: 100%;
     }
 
     @include kiosk {

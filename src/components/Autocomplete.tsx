@@ -3,13 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import "./Autocomplete.scss";
 
-export interface OptionObject {
+export interface AutocompleteOptionObject {
     value: string; // must be unique
     label: string;
 }
 export interface AutocompleteProps {
     placeholder: string;
-    options: string[] | (OptionObject | any)[];
+    options: string[] | (AutocompleteOptionObject | any)[];
     value?: string;
     showClear?: boolean;
     onChange?: (value: string) => void;

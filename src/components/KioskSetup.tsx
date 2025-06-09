@@ -23,7 +23,9 @@ const KioskSetup = observer(() => {
     const [showError, setShowError] = useState(false);
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth");
+    const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(
+        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
+    );
     const [kioskUrl, setKioskUrl] = useState("");
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
@@ -112,9 +114,7 @@ const KioskSetup = observer(() => {
                     }
 
                     if (isSetup && kiosks?.length) {
-                        store.uiState.moveToRect = Rect.fromMultiple(
-                            kiosks.map(k => Rect.fromCxcywh(k.x, k.y, 100, 100)),
-                        );
+                        store.uiState.moveToRect = Rect.fromMultiple(kiosks.map((k) => Rect.fromCxcywh(k.x, k.y, 100, 100)));
                     }
                 });
             } catch (err) {
@@ -359,9 +359,7 @@ const KioskSetup = observer(() => {
         [store.fp.eventId]
     );
 
-    const isKioskExist = store.uiState.kioskList.find(
-        k => `${k.key}` === `${store.uiState.kioskSetupData?.key}`,
-    );
+    const isKioskExist = store.uiState.kioskList.find((k) => `${k.key}` === `${store.uiState.kioskSetupData?.key}`);
 
     async function deleteKiosk() {
         try {
@@ -463,11 +461,23 @@ const KioskSetup = observer(() => {
                         )}
 
                         <div className="efp-kiosk-setup-actions">
-                            {step === "edit" && <Button size="md" text={t("Save")} disabled={disabled} onClick={save} />}
+                            {step === "edit" && (
+                                <Button size="md" disabled={disabled} onClick={save}>
+                                    {t("Save")}
+                                </Button>
+                            )}
 
-                            {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
+                            {step === "copy" && (
+                                <Button size="md" onClick={copy}>
+                                    {t("Copy URL")}
+                                </Button>
+                            )}
 
-                            {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
+                            {step === "edit" && (
+                                <Button variant="gray-border" size="md" onClick={clear}>
+                                    {t("Clear")}
+                                </Button>
+                            )}
 
                             {step === "copy" && <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />}
 

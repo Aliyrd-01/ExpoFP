@@ -76,6 +76,17 @@ export default class UIState {
     @observable floorsControlHidden = false;
     @observable hideFreeOrDemo = false;
     @observable kioskSetupDOMRect: DOMRect;
+    @observable categoryFilterOpen = false;
+    @observable selectedCategoryFilters: Category[] = [];
+
+    @action setSelectedCategoryFilters(categories: Category[]) {
+        this.selectedCategoryFilters = categories;
+    }
+
+    @action resetCategoryFilter() {
+        this.selectedCategoryFilters = [];
+        this.categoryFilterOpen = false;
+    }
 
     @computed get highlightedBooths() {
         const exhibitorExternalISet = new Set(this.rootStore.exhibitorStore.highlightedByExternalIds);
@@ -88,9 +99,7 @@ export default class UIState {
                     .flatMap((e) => e.booths.filter((b) => b instanceof RegularBooth))
                     .map((b) => b.id.toString()),
 
-                this.rootStore.boothStore.booths
-                    .filter(b => boothExternalISet.has(b.externalId))
-                    .map((b) => b.id.toString()),
+                this.rootStore.boothStore.booths.filter((b) => boothExternalISet.has(b.externalId)).map((b) => b.id.toString()),
             ].flat()
         );
 
@@ -105,10 +114,12 @@ export default class UIState {
                 .forEach((b) => booths.add(b.id.toString()));
         }
 
-        if (this.list?.type === "category") {
-            this.list.category.exhibitors
-                .flatMap(e => e.booths)
-                .forEach(b => booths.add(b.id.toString()));
+        if (this.categoryFilterOpen && this.selectedCategoryFilters.length > 0) {
+            this.selectedCategoryFilters.forEach((category) => {
+                category.exhibitors.flatMap((e) => e.booths).forEach((b) => booths.add(b.id.toString()));
+            });
+        } else if (this.list?.type === "category") {
+            this.list.category.exhibitors.flatMap((e) => e.booths).forEach((b) => booths.add(b.id.toString()));
         }
 
         if (this.list?.type === "bookmarks") {
@@ -131,18 +142,7 @@ export default class UIState {
             booths.add(this.details.id.toString());
         }
 
-        if (this.details instanceof Exhibitor && (hasNoSearchResult || booths.size)) {
-            this.details.booths.filter((b) => b instanceof RegularBooth).forEach((b) => booths.add(b.id.toString()));
-        }
-
-        if (booths.size && this.kioskSetupData && this.rootStore.routeStore.defaultFrom) {
-            booths.add(this.rootStore.routeStore.defaultFrom.id.toString());
-        }
-
-        booths.delete(undefined);
-        booths.delete(null);
-
-        return booths as ReadonlySet<string>;
+        return booths;
     }
 
     overlayMediumHeightRems = 10;
@@ -372,10 +372,7 @@ export default class UIState {
             return true;
         }
 
-        return (
-            this.highlightedBooths.size > 0
-            || (this.list?.type === "search" && this.list?.text?.trim().length > 0)
-        );
+        return this.highlightedBooths.size > 0 || (this.list?.type === "search" && this.list?.text?.trim().length > 0);
     }
 
     @computed get defaultSearchItems(): ListItem[] {
@@ -386,18 +383,26 @@ export default class UIState {
         const boothsArray = boothStore.booths;
 
         let combinedArray = [];
-        const cats = data.showCategories ? categoriesArray : [];
+        const cats = (!this.selectedCategoryFilters.length && data.showCategories) ? categoriesArray : [];
 
         const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
 
-        if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
-        if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+        if (this.selectedCategoryFilters.length > 0) {
+            combinedArray = [...exhibitorsArray, ...otherSpacesArray];
+        } else {
+            if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
+            if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+        }
 
         if (this.heatmap) {
             const allItems = [...exhibitorsArray, ...boothsArray];
             return allItems.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         } else if (this.heatmapYah) {
-            return heatmapStore.heatmapData?.yah?.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)) || [];
+            return (
+                heatmapStore.heatmapData?.yah?.sort(
+                    (a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a)
+                ) || []
+            );
         }
 
         return exhibitorsArray.length === 0
@@ -425,10 +430,16 @@ export default class UIState {
 
         const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
 
-        const exhibitorsArray = exhibitorStore.exhibitors;
+        let exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
         const boothsArray = boothStore.booths;
         const eventsArray = scheduleStore.scheduleItems;
+
+        if (this.selectedCategoryFilters.length > 0) {
+            exhibitorsArray = exhibitorsArray.filter((exhibitor) =>
+                this.selectedCategoryFilters.some((category) => exhibitor.categories.some((c) => c.id === category.id))
+            );
+        }
 
         if (!text) {
             return this.defaultSearchItems;
@@ -439,7 +450,9 @@ export default class UIState {
 
         if (this.heatmapYah) {
             // Show all items with views greater than the entered number
-            const result = heatmapStore.heatmapData.yah.filter((c) => Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text));
+            const result = heatmapStore.heatmapData.yah.filter((c) =>
+                Number.isNaN(Number(text)) ? c : c.viewCount >= Number(text)
+            );
 
             return result.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
         }
@@ -448,7 +461,6 @@ export default class UIState {
 
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
-        const matchingCategories = new Set<Category>();
         const matchingEvents = new Set<ScheduleItem>();
 
         function selectLettersSpacesNumbers(input: string): string {
@@ -482,32 +494,33 @@ export default class UIState {
             }
         });
 
-        categoriesArray.forEach((c) => {
-            if (splittedTexts.some((text) => containsIgnoreCase(c.name, text))) {
-                matchingCategories.add(c);
-            }
-        });
+        if (this.selectedCategoryFilters.length > 0) {
+            boothsArray.forEach((b) => {
+                const addBoothCondition = this.heatmap
+                    ? true
+                    : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
 
-        boothsArray.forEach((b) => {
-            const addBoothCondition = this.heatmap
-                ? true
-                : !(b instanceof RegularBooth) || !Array.from(matchingExhibitors).find((x) => x.booths.includes(b));
+                if (
+                    addBoothCondition &&
+                    splittedTexts.some(
+                        (text) =>
+                            containsIgnoreCase(b.title || "", text) ||
+                            containsIgnoreCase(b.name, text) ||
+                            containsIgnoreCase(b.fullName, text) ||
+                            containsLevelIgnoreCase(b.layer?.name ?? null, text)
+                    )
+                ) {
+                    matchingBooths.add(b);
+                }
+            });
+        }
 
-            if (
-                addBoothCondition &&
-                splittedTexts.some(
-                    (text) =>
-                        containsIgnoreCase(b.title || "", text) ||
-                        containsIgnoreCase(b.name, text) ||
-                        containsIgnoreCase(b.fullName, text) ||
-                        containsLevelIgnoreCase(b.layer?.name ?? null, text)
-                )
-            ) {
-                matchingBooths.add(b);
-            }
-        });
+        const searchEvents =
+            this.selectedCategoryFilters.length > 0
+                ? eventsArray.filter((e) => e.exhibitorId && exhibitorsArray.some((ex) => ex.id === e.exhibitorId))
+                : eventsArray;
 
-        eventsArray.forEach((e) => {
+        searchEvents.forEach((e) => {
             if (
                 splittedTexts.some(
                     (text) => containsIgnoreCase(e.name || "", text) || containsIgnoreCase(e.description || "", text)
@@ -518,9 +531,11 @@ export default class UIState {
         });
 
         items.push(...matchingEvents);
-        items.push(...matchingCategories);
         items.push(...matchingExhibitors);
-        items.push(...matchingBooths);
+
+        if (this.selectedCategoryFilters.length > 0) {
+            items.push(...matchingBooths);
+        }
 
         if (this.heatmap) {
             return items.sort((a, b) => heatmapStore.getClicksByType(b) - heatmapStore.getClicksByType(a));
@@ -568,29 +583,43 @@ export default class UIState {
         );
     }
 
-    @computed get fuzzySearchItems(): { item: ListItem, score: number }[] {
+    @computed get fuzzySearchItems(): { item: ListItem; score: number }[] {
         if (this.list.type !== "search") {
             return [];
         }
 
         const text = this.list.text.trim().toLowerCase();
         if (!text) {
-            return this.defaultSearchItems.map(item => ({ item, score: 0 }));
+            return this.defaultSearchItems.map((item) => ({ item, score: 0 }));
         }
 
-        const list = [
+        let list = [
             ...this.rootStore.scheduleStore.scheduleItems,
-            ...this.rootStore.categoryStore.categories.filter((c) => c.exhibitors.length),
             ...this.rootStore.exhibitorStore.exhibitors,
             ...this.rootStore.boothStore.booths,
         ];
 
+        if (this.selectedCategoryFilters.length > 0) {
+            list = list.filter((item) => {
+                if (item instanceof Exhibitor) {
+                    return this.selectedCategoryFilters.some((category) => item.categories.some((c) => c.id === category.id));
+                }
+                if (item instanceof ScheduleItem && item.exhibitorId) {
+                    return (
+                        this.rootStore.exhibitorStore.exhibitors
+                            .find((e) => e.id === item.exhibitorId)
+                            ?.categories.some((c) => this.selectedCategoryFilters.some((cf) => cf.id === c.id)) ?? false
+                    );
+                }
+                return false;
+            });
+        }
+
         const engine = this.rootStore.fuzzySearchEngineStore.engine;
         engine?.setCollection(list);
 
-        const testMatch = (query: string, matches: { key: string; value: string }[], k: string): boolean => (
-            matches?.some(({ key, value }) => key === k && value.toLowerCase().includes(query))
-        );
+        const testMatch = (query: string, matches: { key: string; value: string }[], k: string): boolean =>
+            matches?.some(({ key, value }) => key === k && value.toLowerCase().includes(query));
 
         const getExactMatchPriority = (text: string, item: ListItem, matches: { key: string; value: string }[]): number => {
             const query = text.toLowerCase();
@@ -626,11 +655,28 @@ export default class UIState {
 
         switch (this.list.type) {
             case "search":
-                return (
-                    this.rootStore.fuzzySearchEngineStore.engine
-                        ? this.fuzzySearchItems.map(({ item }) => item)
-                        : this.searchItems
-                );
+                if (this.selectedCategoryFilters.length > 0) {
+                    const items = this.rootStore.fuzzySearchEngineStore.engine ? this.fuzzySearchItems.map(({ item }) => item) : this.searchItems;
+                    return items.filter((item) => {
+                        if (item instanceof Exhibitor) {
+                            return this.selectedCategoryFilters.some((category) =>
+                                item.categories.some((c) => c.id === category.id)
+                            );
+                        }
+                        if (item instanceof ScheduleItem && item.exhibitorId) {
+                            return (
+                                this.rootStore.exhibitorStore.exhibitors
+                                    .find((e) => e.id === item.exhibitorId)
+                                    ?.categories.some((c) => this.selectedCategoryFilters.some((cf) => cf.id === c.id)) ?? false
+                            );
+                        }
+                        return false;
+                    });
+                }
+
+                return this.rootStore.fuzzySearchEngineStore.engine
+                    ? this.fuzzySearchItems.map(({ item }) => item)
+                    : this.searchItems;
             case "bookmarks":
                 return this.rootStore.exhibitorStore.bookmarked;
             case "category":
@@ -651,8 +697,8 @@ export default class UIState {
             } else if (item instanceof BoothBase) {
                 arr.push(item as Booth);
             } else if (item instanceof ScheduleItem) {
-                if (item.boothId) arr.push(boothStore.booths.find((b) => b.id === item.boothId));
-                if (item.exhibitorId) arr.push(...exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId).booths);
+                if (item.boothId) arr.push(this.rootStore.boothStore.booths.find((b) => b.id === item.boothId));
+                if (item.exhibitorId) arr.push(...this.rootStore.exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId).booths);
             }
         });
         return new Set(arr);
@@ -759,7 +805,7 @@ export default class UIState {
     }
 
     @computed get listScrollIndex() {
-        const index = this.listItems.findIndex(item => item.id === this.listScrollItemId);
+        const index = this.listItems.findIndex((item) => item.id === this.listScrollItemId);
         return index === -1 ? 0 : index;
     }
 

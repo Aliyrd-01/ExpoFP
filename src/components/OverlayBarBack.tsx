@@ -6,7 +6,13 @@ import "./OverlayBarBack.scss";
 
 type BackMode = "back" | "menu" | "none";
 
-const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ backMode, onBack }) => {
+export interface OverlayBarBackProps {
+    backMode: BackMode;
+    hasSelectedCategories: boolean;
+    onBack: () => void;
+}
+
+const OverlayBarBack: React.FC<OverlayBarBackProps> = ({ backMode, hasSelectedCategories, onBack }) => {
     const showBack = backMode === "back";
     const [nextShowBack, setNextShowBack] = useState<boolean>(showBack);
     const backButtonRef = useRef(null);
@@ -30,7 +36,9 @@ const OverlayBarBack: React.FC<{ backMode: BackMode; onBack: () => void }> = ({ 
     return (
         <div className="overlay-bar-back" tabIndex={-1} ref={backButtonRef}>
             <button
-                className="overlay-bar-back__button"
+                className={classNames("overlay-bar-back__button", {
+                    "has-categories": hasSelectedCategories,
+                })}
                 onClick={handleClick}
                 title={showBack ? t("Go back") : t("Main menu")}
                 aria-label={showBack ? t("Go back") : t("Main menu")}

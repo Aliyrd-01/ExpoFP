@@ -6,7 +6,7 @@ import { t } from "../utils/i18n";
 import Button from "./Button";
 import "./Schedule.scss";
 
-export interface EventI {
+export interface ScheduleEvent {
     id: string | number;
     name: string;
     description?: string;
@@ -15,8 +15,9 @@ export interface EventI {
     link?: string;
     isEnded?: boolean;
 }
+
 export interface ScheduleProps {
-    events: EventI[];
+    events: ScheduleEvent[];
     descriptionMaxLength?: number;
 }
 
@@ -84,7 +85,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                         </div>
                         <div className="schedule__events" role="list">
                             {Array.isArray(events) &&
-                                events.map((event: EventI, eventIndex: number) => (
+                                events.map((event: ScheduleEvent, eventIndex: number) => (
                                     <div key={event.id} role="listitem">
                                         <EventWrapper
                                             link={event.link ? event.link : ""}

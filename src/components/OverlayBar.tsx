@@ -1,8 +1,9 @@
 import classNames from "classnames";
-import React, { forwardRef, MouseEvent, ReactNode } from "react";
+import React, { forwardRef, MouseEvent, ReactNode, useImperativeHandle, useRef } from "react";
 import "./OverlayBar.scss";
 import OverlayBarBack from "./OverlayBarBack";
 import { t } from "../utils/i18n";
+import store from "../store";
 
 const OverlayBar = forwardRef<
     HTMLDivElement,
@@ -38,7 +39,11 @@ const OverlayBar = forwardRef<
 
         return (
             <div style={overlayBarStyle} className={`overlay-bar ${classNames({ scrolled })}`} ref={ref} tabIndex={-1}>
-                <OverlayBarBack backMode={backMode || "menu"} onBack={onBack} />
+                <OverlayBarBack
+                    backMode={backMode || "menu"}
+                    onBack={onBack}
+                    hasSelectedCategories={store.uiState.selectedCategoryFilters.length > 0}
+                />
                 <div className="overlay-bar__slot">{children}</div>
                 {overlayBarCenterContent}
                 {hideClose ? (
