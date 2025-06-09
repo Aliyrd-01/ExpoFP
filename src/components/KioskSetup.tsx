@@ -152,18 +152,17 @@ const KioskSetup = observer(() => {
         };
     }, [store.uiState.kioskSetup, step]);
 
-    const clearMessageTimer = useRef(null);
     useEffect(() => {
-        clearTimeout(clearMessageTimer.current);
-
         if (!showSuccess && !showError) {
             return;
         }
 
-        clearMessageTimer.current = setTimeout(() => {
+        const timer = setTimeout(() => {
             setShowSuccess(false);
             setShowError(false);
         }, 3000);
+
+        return () => clearTimeout(timer);
     }, [showSuccess, showError]);
 
     useEffect(() => {
@@ -172,18 +171,18 @@ const KioskSetup = observer(() => {
         }
     }, [store.uiState.kioskSetup, step]);
 
-    const selectRouteTimer = useRef(null);
-    useEffect(() => {
-        clearTimeout(selectRouteTimer.current);
 
+    useEffect(() => {
         const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
         if (!routeParts) {
             return;
         }
 
-        selectRouteTimer.current = setTimeout(() => {
+        const timer = setTimeout(() => {
             store.routeStore.selectRoute(extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)));
         }, 500);
+
+        return () => clearTimeout(timer);
     }, [routeFromKioskMatch]);
 
     async function save() {
@@ -268,7 +267,8 @@ const KioskSetup = observer(() => {
             ...store.uiState.kioskSetupData,
             heading: parseInt(angle, 10),
         };
-        store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+
+        moveToKiosk(store.uiState.kioskSetupData);
     }
 
     function changeKey(key: string) {
@@ -298,10 +298,19 @@ const KioskSetup = observer(() => {
             store.uiState.kioskSetupData = newKiosk;
         }
 
-        const { x, y, z } = store.uiState.kioskSetupData;
+        moveToKiosk(store.uiState.kioskSetupData);
+    }
 
-        store.layerStore.updateVisibility(`${z}`, true);
-        store.uiState.moveToRect = Rect.fromCxcywh(x, y, 100, 100);
+    function moveToKiosk(kiosk: Kiosk) {
+        const { x, y, z } = kiosk || {};
+
+        if (z) {
+            store.layerStore.updateVisibility(`${z}`, true);
+        }
+
+        if (x && y) {
+            store.uiState.moveToRect = Rect.fromCxcywh(x, y, 100, 100);
+        }   
     }
 
     function clear() {
