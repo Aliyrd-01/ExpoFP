@@ -1,4 +1,4 @@
-import { computed } from "mobx";
+import { computed, action } from "mobx";
 import { Exhibitor } from "./ExhibitorStore";
 import BaseFilterStore from "./BaseFilterStore";
 import { FilterItem } from "./types";
@@ -48,5 +48,13 @@ export default class CategoryFilterStore extends BaseFilterStore {
         return this.rootStore.exhibitorStore.exhibitors.filter((exhibitor) =>
             exhibitor.categories.some((category) => this.state.pendingItems.some((pendingItem) => pendingItem.id === category.id))
         ).length;
+    }
+
+    @action resetFilter() {
+        this.state.pendingItems = [];
+        this.state.selectedItems = [];
+        this.rootStore.uiState.selectedCategoryFilters = [];
+        this.rootStore.uiState.categoryFilterOpen = false;
+        this.rootStore.uiState.list = { type: "search", text: "", focused: false };
     }
 }

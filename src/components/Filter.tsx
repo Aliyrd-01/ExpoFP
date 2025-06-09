@@ -34,6 +34,7 @@ function Filter() {
     });
 
     function handleCloseBack() {
+        store.categoryFilterStore.resetFilter();
         store.selectSearch();
     }
 }

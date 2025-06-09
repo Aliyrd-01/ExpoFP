@@ -159,6 +159,10 @@
         }
     }
 
+    .overlay-bar__slot {
+        max-width: 100%;
+    }
+
     @include kiosk {
         height: calc(100% - (var(--k-app-gap)));
         background: transparent;

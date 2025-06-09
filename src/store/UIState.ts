@@ -383,12 +383,16 @@ export default class UIState {
         const boothsArray = boothStore.booths;
 
         let combinedArray = [];
-        const cats = data.showCategories ? categoriesArray : [];
+        const cats = (!this.selectedCategoryFilters.length && data.showCategories) ? categoriesArray : [];
 
         const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
 
-        if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
-        if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+        if (this.selectedCategoryFilters.length > 0) {
+            combinedArray = [...exhibitorsArray, ...otherSpacesArray];
+        } else {
+            if (data.showCompaniesAndBooths) combinedArray = combinedArray.concat(exhibitorsArray);
+            if (data.showOtherSpaces) combinedArray = combinedArray.concat(otherSpacesArray);
+        }
 
         if (this.heatmap) {
             const allItems = [...exhibitorsArray, ...boothsArray];
@@ -474,9 +478,7 @@ export default class UIState {
                 : containsIgnoreCase(str, searchTerm) || containsIgnoreCase(data.levelTerm + " " + str, searchTerm);
         }
 
-        const searchExhibitors = this.selectedCategoryFilters.length > 0 ? exhibitorsArray : exhibitorStore.exhibitors;
-
-        searchExhibitors.forEach((e) => {
+        exhibitorsArray.forEach((e) => {
             if (
                 splittedTexts.some(
                     (text) =>
@@ -492,7 +494,7 @@ export default class UIState {
             }
         });
 
-        if (this.selectedCategoryFilters.length === 0) {
+        if (this.selectedCategoryFilters.length > 0) {
             boothsArray.forEach((b) => {
                 const addBoothCondition = this.heatmap
                     ? true
@@ -531,7 +533,7 @@ export default class UIState {
         items.push(...matchingEvents);
         items.push(...matchingExhibitors);
 
-        if (this.selectedCategoryFilters.length === 0) {
+        if (this.selectedCategoryFilters.length > 0) {
             items.push(...matchingBooths);
         }
 
