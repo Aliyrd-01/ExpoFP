@@ -111,6 +111,7 @@ $im: 0.4rem;
     &__desc {
         p,
         span {
+            font-size: var(--font-size-lg);
             background: transparent !important;
             overflow-wrap: break-word;
         }

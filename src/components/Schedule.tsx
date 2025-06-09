@@ -14,11 +14,14 @@ export interface ScheduleEvent {
     endDate?: string;
     link?: string;
     isEnded?: boolean;
+    boothId?: string | number;
 }
 
 export interface ScheduleProps {
     events: ScheduleEvent[];
     descriptionMaxLength?: number;
+    showMoreButton?: boolean;
+    onEventClick?: (event: ScheduleEvent) => void;
 }
 
 function isCurrent(from: Date | string, to: Date | string) {
@@ -26,12 +29,10 @@ function isCurrent(from: Date | string, to: Date | string) {
     return from <= now && now <= to;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength = 200 }) => {
+const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength = 200, showMoreButton, onEventClick }) => {
     const [eventsFullDescription, setEventsFullDescription] = useState({});
 
-    const sortByDate = events.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-
-    const grouped = sortByDate.reduce((acc, curr) => {
+    const grouped = events.reduce((acc, curr) => {
         const date = new Date(curr.startDate).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
         acc[date] ? acc[date].push(curr) : (acc[date] = [curr]);
         return acc;
@@ -63,13 +64,28 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
     const transformDescription = (desc: string, show: boolean) =>
         desc.length > descriptionMaxLength && show === false ? desc.slice(0, descriptionMaxLength) + "..." : desc;
 
-    const EventWrapper = ({ children, link, current, ended }) => {
-        return link.length !== 0 ? (
-            <a href={link} className={classNames("schedule__event", current, ended)} target="_blank" rel="noopener noreferrer">
+    const EventWrapper = ({ children, link, current, ended, event }) => {
+        const handleClick = (e: React.MouseEvent) => {
+            if (event.boothId && onEventClick) {
+                e.preventDefault();
+                onEventClick(event);
+            }
+        };
+
+        return link ? (
+            <a
+                href={link}
+                className={classNames("schedule__event", current, ended)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleClick}
+            >
                 {children}
             </a>
         ) : (
-            <div className={classNames("schedule__event", { ended })}>{children}</div>
+            <div className={classNames("schedule__event", { ended })} onClick={handleClick}>
+                {children}
+            </div>
         );
     };
 
@@ -91,6 +107,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                             link={event.link ? event.link : ""}
                                             ended={event.isEnded}
                                             current={isCurrent(event.startDate, event.endDate)}
+                                            event={event}
                                         >
                                             <span>
                                                 {dateFormat(event.startDate, "shortTime")}
@@ -110,7 +127,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                                             ),
                                                         }}
                                                     ></div>
-                                                    {event.description.length > descriptionMaxLength && (
+                                                    {event.description.length > descriptionMaxLength && showMoreButton ? (
                                                         <Button
                                                             variant="gray-border"
                                                             size="sm"
@@ -125,7 +142,7 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                                                                 ? t("Show Less")
                                                                 : t("Show More")}
                                                         </Button>
-                                                    )}
+                                                    ) : null}
                                                 </>
                                             )}
                                         </EventWrapper>

@@ -1,0 +1,22 @@
+@use "@styles/utils" as *;
+
+.efp-agenda-header {
+    display: flex;
+    gap: rem(8px);
+
+    & > span {
+        margin-top: rem(3px);
+    }
+}
+
+.efp-agenda-content {
+    position: relative;
+}
+
+.efp-agenda-empty {
+    padding: rem(30px 14px 30px);
+    font-size: var(--font-size-xl);
+    color: var(--color-gray-700);
+    text-align: center;
+    cursor: default;
+}

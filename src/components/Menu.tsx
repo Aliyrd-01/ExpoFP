@@ -91,6 +91,11 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         store.clickLanguage();
     }
 
+    const handleAgendaClick = (e: MouseEvent) => {
+        e.preventDefault();
+        store.selectAgenda();
+    };
+
     const barContent = isIframe ? (
         <div className="menu__bar -empty"></div>
     ) : (
@@ -118,6 +123,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         if (!uiState.menu) return null;
 
         const bookmarks = (store.boothStore.booths as any).filter((b: any) => b.bookmarked).map((b: any) => b.name) as string[];
+        const hasEvents = store.scheduleStore.scheduleItems.length > 0;
 
         return (
             <>
@@ -145,6 +151,14 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                                 </span>
                             </a>
                         ) : null}
+                        {hasEvents && (
+                            <a className="menu__item -agenda" href="/#" onClick={handleAgendaClick}>
+                                <span>{t("Agenda")}</span>
+                                <span className="menu__icons">
+                                    <i className="icon-chevron-right" />
+                                </span>
+                            </a>
+                        )}
                         {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
                             <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
                                 {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
