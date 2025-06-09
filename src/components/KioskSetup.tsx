@@ -295,6 +295,8 @@ const KioskSetup = observer(() => {
             store.uiState.kioskSetupData = newKiosk;
         }
 
+        store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+
         store.uiState.moveToRect = Rect.fromCxcywh(
             store.uiState.kioskSetupData.x,
             store.uiState.kioskSetupData.y,
