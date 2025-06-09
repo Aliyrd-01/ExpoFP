@@ -1,10 +1,11 @@
-import { action, observable } from "mobx";
+import { action, observable, computed } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
 import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
+import CategoryFilterStore from "./CategoryFilterStore";
 
 import { GaEventActions } from "../tools/gtag";
 import isMobile from "../utils/is-mobile";
@@ -36,6 +37,7 @@ export default class RootStore {
     readonly heatmapStore: HeatmapStore;
     readonly languageStore: LanguageStore;
     readonly fuzzySearchEngineStore: FuzzySearchEngineStore;
+    readonly categoryFilterStore: CategoryFilterStore;
 
     fp: FloorPlanReady;
 
@@ -55,6 +57,7 @@ export default class RootStore {
         this.languageStore = new LanguageStore(this);
         this.poiTypeStore = new PoiTypeStore(this);
         this.fuzzySearchEngineStore = new FuzzySearchEngineStore();
+        this.categoryFilterStore = new CategoryFilterStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
@@ -351,5 +354,26 @@ export default class RootStore {
         //         dispatch("clickBoothInList", item.obj.id);
         //         break;
         // }
+    }
+
+    @action toggleCategoryFilter() {
+        this.uiState.categoryFilterOpen = !this.uiState.categoryFilterOpen;
+    }
+
+    @action applyCategoryFilters(categories: Category[]) {
+        this.uiState.selectedCategoryFilters = categories;
+        this.uiState.categoryFilterOpen = false;
+    }
+
+    @computed get filteredExhibitors() {
+        if (this.uiState.selectedCategoryFilters.length === 0) {
+            return this.exhibitorStore.exhibitors;
+        }
+
+        return this.exhibitorStore.exhibitors.filter(exhibitor =>
+            this.uiState.selectedCategoryFilters.some(category =>
+                exhibitor.categories.some(c => c.id === category.id)
+            )
+        );
     }
 }

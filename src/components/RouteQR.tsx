@@ -3,7 +3,7 @@ import QRCode from "react-qr-code";
 import { t } from "../utils/i18n";
 import "./RouteQR.scss";
 
-interface RouteQRProps {
+export interface RouteQRProps {
     url?: string;
 }
 

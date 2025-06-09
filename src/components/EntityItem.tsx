@@ -3,7 +3,7 @@ import React from "react";
 import HighlightText from "./HighlightText";
 import "./EntityItem.scss";
 
-type AdditionalInfo =
+export type EntityItemAdditionalInfo =
     | { type: "location"; locationName: string; hall?: string; level?: string }
     | { type: "event"; text: string }
     | { type: "speaker"; text: string };
@@ -31,7 +31,7 @@ export interface EntityItemProps {
     time?: string;
     itemsCount?: number;
     image?: string;
-    additionalInfo?: AdditionalInfo[];
+    additionalInfo?: EntityItemAdditionalInfo[];
     bookmarked?: boolean;
     featured?: boolean;
     locationTerm?: string;
@@ -47,7 +47,7 @@ export interface EntityItemProps {
 
 const TYPES_WITH_UNIQUE_COLORS: EntityItemType[] = ["booth", "exhibitor", "event", "speaker", "category"];
 
-const getAdditionalInfoIcon = (type: AdditionalInfo["type"]): string => {
+const getAdditionalInfoIcon = (type: EntityItemAdditionalInfo["type"]): string => {
     switch (type) {
         case "location":
             return "icon-marker-pin-solid";

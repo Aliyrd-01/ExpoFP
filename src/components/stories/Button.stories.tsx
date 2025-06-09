@@ -17,9 +17,10 @@ const Template: StoryFn<ButtonProps> = (args) => {
 
 export const Base = Template.bind({});
 Base.args = {
+    children: "Button",
     variant: "primary",
     size: "lg",
-    text: "Text",
     disabled: false,
     inline: false,
+    withBadge: false,
 };

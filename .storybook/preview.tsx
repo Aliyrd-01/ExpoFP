@@ -12,7 +12,7 @@ const preview: Preview = {
             const className = `layout sb-layout${usePadding ? " with-padding" : ""}`;
 
             return (
-                <div className={className}>
+                <div id="efp-layout" className={className}>
                     <ToastProvider>
                         <StoryWrapper render={(init: boolean) => (init ? <Story /> : "Loading")} />
                     </ToastProvider>

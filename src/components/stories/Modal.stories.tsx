@@ -24,7 +24,7 @@ const Template: StoryFn<ModalProps> = (args) => {
 
     return (
         <>
-            <Button text="Open modal" onClick={() => setIsOpen(true)} />
+            <Button onClick={() => setIsOpen(true)}>Open modal</Button>
             <Modal {...args} className={responsiveClass} open={isOpen} onClickClose={clickClose}>
                 While Earth is only the fifth largest planet in the solar system, it is the only world in our solar system with
                 liquid water on the surface. Just slightly larger than nearby Venus, Earth is the biggest of the four planets

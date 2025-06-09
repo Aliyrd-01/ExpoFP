@@ -50,6 +50,9 @@ const config: StorybookConfig = {
                 ...(config.resolve?.alias || {}),
                 "@": path.resolve(__dirname, "../src/"),
                 "@styles": path.resolve(__dirname, "../src/styles/"),
+                "../store": path.resolve(__dirname, "../src/storybook/store/index.stub.ts"),
+                "../../store": path.resolve(__dirname, "../src/storybook/store/index.stub.ts"),
+                "@store": path.resolve(__dirname, "../src/storybook/store/index.stub.ts"),
             },
         };
 
