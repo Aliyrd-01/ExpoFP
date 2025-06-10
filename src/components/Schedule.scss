@@ -85,6 +85,38 @@
             font-size: var(--font-size-xxl);
             font-weight: var(--font-weight-bold);
         }
+
+        &-booth {
+            display: inline-flex;
+            min-width: 0;
+            max-width: 100%;
+            padding: rem(2px 7px);
+            margin: rem(4px 0);
+            gap: rem(7px);
+            align-items: center;
+            overflow: hidden;
+            background: var(--color-primary-ultra-light);
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-sm);
+            line-height: var(--font-size-md);
+            color: var(--color-primary-ultra-dark);
+            letter-spacing: 0.01em;
+
+            & > div {
+                position: relative;
+                display: block;
+                align-items: center;
+                min-height: 100%;
+                padding: rem(2px 0);
+
+                &:first-child {
+                    flex: 1;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                }
+            }
+        }
     }
 
     &__event[href] {

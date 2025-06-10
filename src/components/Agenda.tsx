@@ -124,7 +124,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
                 )}
 
                 {sortedEvents.length > 0 ? (
-                    <Schedule events={sortedEvents} onEventClick={handleEventClick} showMoreButton={false} />
+                    <Schedule events={sortedEvents} showMoreButton={false} showBooths={true} onEventClick={handleEventClick} />
                 ) : (
                     <div className="efp-agenda-empty">{t("No events found. Try adjusting your filters.")}</div>
                 )}

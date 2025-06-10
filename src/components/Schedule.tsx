@@ -5,6 +5,7 @@ import sanitizeHTML from "../utils/sanitizeHtml";
 import { t } from "../utils/i18n";
 import Button from "./Button";
 import "./Schedule.scss";
+import store from "../store";
 
 export interface ScheduleEvent {
     id: string | number;
@@ -21,6 +22,7 @@ export interface ScheduleProps {
     events: ScheduleEvent[];
     descriptionMaxLength?: number;
     showMoreButton?: boolean;
+    showBooths?: boolean;
     onEventClick?: (event: ScheduleEvent) => void;
 }
 
@@ -29,7 +31,13 @@ function isCurrent(from: Date | string, to: Date | string) {
     return from <= now && now <= to;
 }
 
-const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength = 200, showMoreButton, onEventClick }) => {
+const Schedule: React.FC<ScheduleProps> = ({
+    events = [],
+    descriptionMaxLength = 200,
+    showMoreButton,
+    showBooths = false,
+    onEventClick,
+}) => {
     const [eventsFullDescription, setEventsFullDescription] = useState({});
 
     const grouped = events.reduce((acc, curr) => {
@@ -101,53 +109,62 @@ const Schedule: React.FC<ScheduleProps> = ({ events = [], descriptionMaxLength =
                         </div>
                         <div className="schedule__events" role="list">
                             {Array.isArray(events) &&
-                                events.map((event: ScheduleEvent, eventIndex: number) => (
-                                    <div key={event.id} role="listitem">
-                                        <EventWrapper
-                                            link={event.link ? event.link : ""}
-                                            ended={event.isEnded}
-                                            current={isCurrent(event.startDate, event.endDate)}
-                                            event={event}
-                                        >
-                                            <span>
-                                                {dateFormat(event.startDate, "shortTime")}
-                                                {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
-                                            </span>
-                                            <strong>{event.name}</strong>
-                                            {event.description && eventsFullDescription[date]?.[eventIndex] && (
-                                                <>
-                                                    <div
-                                                        className="schedule__event-desc"
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: sanitizeHTML(
-                                                                transformDescription(
-                                                                    event.description,
+                                events.map((event: ScheduleEvent, eventIndex: number) => {
+                                    const booth = event.boothId ? store.boothStore.boothById.get(Number(event.boothId)) : null;
+                                    return (
+                                        <div key={event.id} role="listitem">
+                                            <EventWrapper
+                                                link={event.link ? event.link : ""}
+                                                ended={event.isEnded}
+                                                current={isCurrent(event.startDate, event.endDate)}
+                                                event={event}
+                                            >
+                                                <span>
+                                                    {dateFormat(event.startDate, "shortTime")}
+                                                    {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
+                                                </span>
+                                                <strong>{event.name}</strong>
+                                                {booth && showBooths ? (
+                                                    <div className="schedule__event-booth">
+                                                        <div>{booth.name}</div>
+                                                    </div>
+                                                ) : null}
+                                                {event.description && eventsFullDescription[date]?.[eventIndex] && (
+                                                    <>
+                                                        <div
+                                                            className="schedule__event-desc"
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: sanitizeHTML(
+                                                                    transformDescription(
+                                                                        event.description,
+                                                                        eventsFullDescription[date][eventIndex]
+                                                                            .showFullDescription
+                                                                    )
+                                                                ),
+                                                            }}
+                                                        ></div>
+                                                        {event.description.length > descriptionMaxLength && showMoreButton ? (
+                                                            <Button
+                                                                variant="gray-border"
+                                                                size="sm"
+                                                                inline={true}
+                                                                onClick={(event) => toggleDescription(event, date, eventIndex)}
+                                                                aria-expanded={
                                                                     eventsFullDescription[date][eventIndex].showFullDescription
-                                                                )
-                                                            ),
-                                                        }}
-                                                    ></div>
-                                                    {event.description.length > descriptionMaxLength && showMoreButton ? (
-                                                        <Button
-                                                            variant="gray-border"
-                                                            size="sm"
-                                                            inline={true}
-                                                            onClick={(event) => toggleDescription(event, date, eventIndex)}
-                                                            aria-expanded={
-                                                                eventsFullDescription[date][eventIndex].showFullDescription
-                                                            }
-                                                            aria-controls={`event-desc-${date}-${eventIndex}`}
-                                                        >
-                                                            {eventsFullDescription[date][eventIndex].showFullDescription
-                                                                ? t("Show Less")
-                                                                : t("Show More")}
-                                                        </Button>
-                                                    ) : null}
-                                                </>
-                                            )}
-                                        </EventWrapper>
-                                    </div>
-                                ))}
+                                                                }
+                                                                aria-controls={`event-desc-${date}-${eventIndex}`}
+                                                            >
+                                                                {eventsFullDescription[date][eventIndex].showFullDescription
+                                                                    ? t("Show Less")
+                                                                    : t("Show More")}
+                                                            </Button>
+                                                        ) : null}
+                                                    </>
+                                                )}
+                                            </EventWrapper>
+                                        </div>
+                                    );
+                                })}
                         </div>
                     </div>
                 ))}
