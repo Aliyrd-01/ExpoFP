@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from "react";
 import { useObserver, useLocalStore } from "mobx-react-lite";
 import { action } from "mobx";
+import { observer } from "mobx-react-lite";
 import store, { uiState } from "../store";
 import OverlayContent from "./OverlayContent";
 import Schedule from "./Schedule";
@@ -8,13 +9,12 @@ import { t } from "../utils/i18n";
 import "./Agenda.scss";
 import Badge from "./Badge";
 import AgendaFiltersModal from "./AgendaFiltersModal";
-import { Button } from ".";
 
 export interface AgendaProps {
     showFilters?: boolean;
 }
 
-const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
+const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
     const scrollableRef = useRef<HTMLDivElement>();
     const localStore = useLocalStore(() => ({
         searchValue: "",
@@ -27,7 +27,10 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
     const { dateFilter, sortOrder } = store.agendaFilterStore.state;
 
     const filteredEvents = useMemo(() => {
+        console.log("Recalculating filtered events with dateFilter:", dateFilter);
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
@@ -36,18 +39,19 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
             if (!nameMatch) return false;
 
             const eventDate = new Date(event.startDate);
+            eventDate.setHours(0, 0, 0, 0);
 
             if (dateFilter === "today") {
-                return eventDate.toDateString() === today.toDateString();
+                return eventDate.getTime() === today.getTime();
             }
 
             if (dateFilter === "tomorrow") {
-                return eventDate.toDateString() === tomorrow.toDateString();
+                return eventDate.getTime() === tomorrow.getTime();
             }
 
             return true;
         });
-    }, [events, localStore.searchValue, dateFilter]);
+    }, [events, localStore.searchValue, dateFilter, store.agendaFilterStore.state]);
 
     const sortedEvents = useMemo(() => {
         return [...filteredEvents].sort((a, b) => {
@@ -129,7 +133,7 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
             </div>
         </OverlayContent>
     ));
-};
+});
 
 const AgendaWrapper: React.FC<AgendaProps> = (props) =>
     useObserver(() => uiState.list.type === "agenda" && <Agenda {...props} />);

@@ -15,7 +15,7 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
     return (
         <Modal
             open={store.state.isOpen}
-            title={t("Filters")}
+            title={t("Agenda Filters")}
             badge={store.activeFiltersCount > 0 ? store.activeFiltersCount : undefined}
             maxWidth={400}
             footerLeft={hasActiveFilters ? [{ label: t("Clear All"), onClick: () => store.resetFilter(), variant: "gray" }] : []}

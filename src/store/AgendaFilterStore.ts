@@ -58,7 +58,7 @@ export default class AgendaFilterStore extends BaseFilterStore {
         this.state.selectedItems = [...this.state.pendingItems];
         this.state.dateFilter = this.state.pendingDateFilter;
         this.state.sortOrder = this.state.pendingSortOrder;
-        this.closeFilter();
+        this.state.isOpen = false;
         this.updateUIState();
     }
 
@@ -68,6 +68,14 @@ export default class AgendaFilterStore extends BaseFilterStore {
         this.state.pendingItems = [...this.state.selectedItems];
         this.state.pendingDateFilter = this.state.dateFilter;
         this.state.pendingSortOrder = this.state.sortOrder;
+    }
+
+    @action
+    closeFilter() {
+        this.state.isOpen = false;
+        this.state.pendingDateFilter = this.state.dateFilter;
+        this.state.pendingSortOrder = this.state.sortOrder;
+        this.state.pendingItems = [...this.state.selectedItems];
     }
 
     protected updateUIState(): void {

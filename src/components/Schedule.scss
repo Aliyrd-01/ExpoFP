@@ -75,13 +75,14 @@
 
         & > span {
             display: block;
-            font-size: var(--font-size-lg);
-            color: var(--color-gray-600);
+            font-size: var(--font-size-md);
+            color: var(--color-gray-700);
         }
 
         & > strong {
             display: block;
             padding-top: rem(2px);
+            font-size: var(--font-size-xxl);
             font-weight: var(--font-weight-bold);
         }
     }

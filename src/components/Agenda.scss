@@ -62,8 +62,8 @@
         height: rem(38px);
         border: 0;
         border-radius: var(--border-radius-full);
-        background: var(--color-gray-300);
-        color: var(--color-gray-800);
+        background: var(--color-primary);
+        color: var(--color-white);
         cursor: pointer;
         transition: background 0.1s ease-in-out;
 
@@ -78,9 +78,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            width: rem(16px);
-            height: rem(16px);
-            background: var(--color-primary);
+            width: rem(18px);
+            height: rem(18px);
+            background: var(--color-secondary);
+            border: 2px solid var(--color-white);
             border-radius: var(--border-radius-full);
             color: var(--color-white);
             font-size: var(--font-size-xs);
@@ -89,8 +90,7 @@
         }
 
         &:hover {
-            background: var(--color-gray-400);
-            color: var(--color-black);
+            background: var(--color-primary-dark);
         }
     }
 }
