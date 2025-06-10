@@ -69,6 +69,10 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                     style={{ minHeight: uiState.listItems.length ? "1px" : 0 }}
                     data={uiState.listItems}
                     itemContent={(index, item) => {
+                        if (!item) {
+                            return null;
+                        }
+
                         const highlighted = listScrollItemId?.toString() === item.id?.toString();
                         return (
                             <EntityListRow
