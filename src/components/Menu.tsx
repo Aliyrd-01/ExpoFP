@@ -1,20 +1,20 @@
-import copyToClipboard from "copy-to-clipboard";
-import * as CSS from "csstype";
-import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent } from "react";
-import data from "../data";
-import store, { categoryStore, exhibitorStore, uiState } from "../store";
-import { Category } from "../store/CategoryStore";
-import baseUrl from "../tools/base-data-url";
-import logger from "../tools/logger";
-import settings from "../tools/settings";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+import { autorun } from "mobx";
 import { t } from "../utils/i18n";
+import data from "../data";
+import baseUrl from "../tools/base-data-url";
 import isIframe from "../utils/is-iframe";
-import { useAutorun } from "../utils/mobx";
-import "./Menu.scss";
-import "./Menu_custom.scss";
+import copyToClipboard from "copy-to-clipboard";
+import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import OverlayContent from "./OverlayContent";
 import Badge from "./Badge";
+import { CategoryFilterModal } from "./CategoryFilterModal";
+import * as CSS from "csstype";
+import logger from "../tools/logger";
+import settings from "../tools/settings";
+import "./Menu.scss";
+import "./Menu_custom.scss";
 
 const logoUrl = /^https?:\/\//i.test(data.logo) ? data.logo : baseUrl + data.logo;
 logger.log("Logo url: ", logoUrl);
@@ -44,9 +44,12 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         logoVisibility: "visible" as CSS.Property.Visibility,
         shown: false,
         shownTimeout: undefined as number,
+        modalOpen: false,
+        selectedCategoryIds: (uiState.selectedCategoryFilters || []).map((c) => Number(c.id)),
+        pendingSelectedIds: (uiState.selectedCategoryFilters || []).map((c) => Number(c.id)),
     }));
 
-    useAutorun(() => {
+    autorun(() => {
         if (!uiState.menu) {
             s.shown = false;
             if (s.shownTimeout) window.clearTimeout(s.shownTimeout);
@@ -57,6 +60,35 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
 
     function handleClick(e) {
         if (uiState.kiosk) return e.preventDefault();
+    }
+
+    function handleSearch(e: MouseEvent) {
+        e.preventDefault();
+        close();
+        store.selectSearch();
+        window.setTimeout(() => {
+            uiState.searchFocused = true;
+        }, 1);
+    }
+
+    function handleBookmarks(e: MouseEvent) {
+        e.preventDefault();
+        store.clickBookmarks();
+        store.moveToList();
+    }
+
+    function shareBookmarks(e: MouseEvent) {
+        e.preventDefault();
+        close();
+        const loc = window.location;
+        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map((x) => x.id).join("|");
+        copyToClipboard(url);
+        alert(t("Link copied to clipboard") + ".\n" + t("Open it on another device to import bookmarks") + ".");
+    }
+
+    function handleLanguage(e: MouseEvent) {
+        e.preventDefault();
+        store.clickLanguage();
     }
 
     const barContent = isIframe ? (
@@ -77,169 +109,125 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
 
     const cats = categoryStore.categories.filter((c) => c.exhibitors.length);
 
-    const categories = cats.length ? (
-        <>
-            <div className="menu__item">{t("Categories")}</div>
-            {cats.map((c) => (
-                <a
-                    className="menu__cat"
-                    href={`?${encodeURIComponent(c.slug)}`}
-                    key={c.id}
-                    onClick={handleCategoryClick.bind(window, c)}
-                >
-                    <div className="menu__cat-bullet">&bull;</div>
-                    <div className="menu__cat-title" dir="auto">
-                        {c.name}
-                    </div>
-                    <div className="menu__cat-count">{numOfExhibitors(c.id)}</div>
-                </a>
-            ))}
-        </>
-    ) : null;
+    const handleFilterClick = (e: MouseEvent) => {
+        e.preventDefault();
+        store.categoryFilterStore.openFilter();
+    };
 
-    // TODO: replace a href="/#" with buttons everywhere
     return useObserver(() => {
         if (!uiState.menu) return null;
 
         const bookmarks = (store.boothStore.booths as any).filter((b: any) => b.bookmarked).map((b: any) => b.name) as string[];
 
         return (
-            <OverlayContent
-                className={`menu ${s.shown ? "shown" : ""}`}
-                bar={barContent}
-                onClose={close}
-                onBack={close}
-                backMode="none"
-            >
-                <div className="menu__content">
-                    <a href="/#" onClick={handleSearch} className="menu__item">
-                        {t("Search")}
-                    </a>
-                    {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
-                        <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                            {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
-                            <i className="icon-link-external" />
+            <>
+                <OverlayContent
+                    className={`menu ${s.shown ? "shown" : ""}`}
+                    bar={barContent}
+                    onClose={close}
+                    onBack={close}
+                    backMode="none"
+                >
+                    <div className="menu__content">
+                        <a href="/#" onClick={handleSearch} className="menu__item">
+                            {t("Search")}
                         </a>
-                    )}
-                    {!data.hideRegisterToAttendLink && !uiState.kiosk && !isIframe && !!data.registerUrl && (
-                        <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
-                            {t("Register to Attend").replace(/ /g, "\u00A0")}&nbsp;
-                            <i className="icon-link-external" />
-                        </a>
-                    )}
-                    {!uiState.disableBookmarked &&
-                        !data.hideBookmarks &&
-                        !data.hideBookmarksLink &&
-                        !uiState.kiosk &&
-                        exhibitorStore.exhibitors.length > 0 && (
-                            <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
-                                <span>
-                                    {t("Bookmarks")} <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
-                                </span>
-
+                        {cats.length ? (
+                            <a className="menu__item -categories" href="/#" onClick={handleFilterClick}>
+                                <span>{t("Categories")}</span>
                                 <span className="menu__icons">
-                                    {exhibitorStore.bookmarked.length ? (
-                                        <button onClick={shareBookmarks} title={t("Share bookmarks")}>
-                                            <i className="icon-link-external-solid"></i>
-                                        </button>
-                                    ) : null}
+                                    {store.categoryFilterStore.state.selectedItems.length > 0 && (
+                                        <Badge variant="gray" size="md" noMargins rounded>
+                                            {store.categoryFilterStore.state.selectedItems.length}
+                                        </Badge>
+                                    )}
+                                    <i className="icon-chevron-right" />
+                                </span>
+                            </a>
+                        ) : null}
+                        {!data.hideEventHomeLink && !uiState.kiosk && !isIframe && !!data.homeUrl && (
+                            <a href={data.homeUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
+                                {t("Event Home").replace(/ /g, "\u00A0")}&nbsp;
+                                <i className="icon-link-external" />
+                            </a>
+                        )}
+                        {!data.hideRegisterToAttendLink && !uiState.kiosk && !isIframe && !!data.registerUrl && (
+                            <a href={data.registerUrl} target="_blank" className="menu__item" rel="noopener noreferrer">
+                                {t("Register to Attend").replace(/ /g, "\u00A0")}&nbsp;
+                                <i className="icon-link-external" />
+                            </a>
+                        )}
+                        {!uiState.disableBookmarked &&
+                            !data.hideBookmarks &&
+                            !data.hideBookmarksLink &&
+                            !uiState.kiosk &&
+                            exhibitorStore.exhibitors.length > 0 && (
+                                <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
+                                    <span>
+                                        {t("Bookmarks")}{" "}
+                                        <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                                    </span>
+
+                                    <span className="menu__icons">
+                                        {exhibitorStore.bookmarked.length ? (
+                                            <button onClick={shareBookmarks} title={t("Share bookmarks")}>
+                                                <i className="icon-link-external-solid"></i>
+                                            </button>
+                                        ) : null}
+                                        <i className="icon-chevron-right" />
+                                    </span>
+                                </a>
+                            )}
+                        {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
+                            <a href="?language" onClick={handleLanguage} className="menu__item -language">
+                                <span>{t("Language")} </span>
+                                <span className="menu__icons">
+                                    <Badge variant="gray" size="md" noMargins>
+                                        {store.languageStore.language?.name}
+                                    </Badge>
                                     <i className="icon-chevron-right" />
                                 </span>
                             </a>
                         )}
-                    {!uiState.hideLanguage && !data.hideLanguage && !data.hideLanguageLink && (
-                        <a href="?language" onClick={handleLanguage} className="menu__item -language">
-                            <span>{t("Language")} </span>
-                            <span className="menu__icons">
-                                <Badge variant="gray" size="md" noMargins>
-                                    {store.languageStore.language?.name}
-                                </Badge>
-                                <i className="icon-chevron-right" />
-                            </span>
-                        </a>
-                    )}
-                    {!data.hideDownloadPdfLink && !uiState.kiosk && (
-                        // <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
-                        //     {t("Download PDF")}
-                        // </a>
-                        <a
-                            className="menu__item -pdf"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
-                                ","
-                            )}&layers=${(store.layerStore.layers.length >= store.layerStore.visible.length
-                                ? store.layerStore.visible.map((l) => l.name).join(",")
-                                : ""
-                            ).replace(/&/g, "%26")}`}
-                        >
-                            {t("Download PDF")}
-                        </a>
-                    )}
-                    {allowConsent === undefined && isGDPR && (
-                        <a
-                            href="/#"
-                            className="menu__item -cookie-consent"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                uiState.hideCookieConsent = false;
-                            }}
-                        >
-                            {t("Review Cookie Consent")}
-                        </a>
-                    )}
-                    {!data.hideCategoriesLink && categories}
-                </div>
-            </OverlayContent>
+                        {!data.hideDownloadPdfLink && !uiState.kiosk && (
+                            // <a href="/?-pdf" className="menu__item -pdf" onClick={handlePdf}>
+                            //     {t("Download PDF")}
+                            // </a>
+                            <a
+                                className="menu__item -pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
+                                    ","
+                                )}&layers=${(store.layerStore.layers.length >= store.layerStore.visible.length
+                                    ? store.layerStore.visible.map((l) => l.name).join(",")
+                                    : ""
+                                ).replace(/&/g, "%26")}`}
+                            >
+                                {t("Download PDF")}
+                            </a>
+                        )}
+                        {allowConsent === undefined && isGDPR && (
+                            <a
+                                href="/#"
+                                className="menu__item -cookie-consent"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    uiState.hideCookieConsent = false;
+                                }}
+                            >
+                                {t("Review Cookie Consent")}
+                            </a>
+                        )}
+                    </div>
+                </OverlayContent>
+                <CategoryFilterModal />
+            </>
         );
     });
 
-    function shareBookmarks(e: MouseEvent) {
-        e.stopPropagation();
-        e.preventDefault();
-        (e.target as HTMLButtonElement).blur();
-        const loc = window.location;
-        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map((x) => x.id).join("|");
-        copyToClipboard(url);
-        alert(t("Link copied to clipboard") + ".\n" + t("Open it on another device to import bookmarks") + ".");
-    }
-
     function close() {
         uiState.menu = false;
-    }
-
-    function numOfExhibitors(id: number) {
-        return exhibitorStore.exhibitors.filter((e) => e.categories.find((c) => c.id === id)).length;
-    }
-
-    function handleSearch(e: MouseEvent) {
-        e.preventDefault();
-        close();
-        store.selectSearch();
-        window.setTimeout(() => {
-            uiState.searchFocused = true;
-        }, 1);
-    }
-
-    function handleBookmarks(e: MouseEvent) {
-        e.preventDefault();
-        store.clickBookmarks();
-        store.moveToList();
-    }
-
-    function handleLanguage(e: MouseEvent) {
-        e.preventDefault();
-        store.clickLanguage();
-    }
-
-    // function handlePdf(e: MouseEvent) {
-    //     e.preventDefault();
-    //     uiState.printingPdf = true;
-    // }
-
-    function handleCategoryClick(c: Category, e: MouseEvent) {
-        e.preventDefault();
-        store.clickCategory(c);
     }
 }
 

@@ -14,7 +14,7 @@ const Template: StoryFn<ShareProps> = (args) => {
 
     return (
         <div className="layout sb-layout">
-            <Button text="Share" onClick={() => setModalOpen(true)} />
+            <Button onClick={() => setModalOpen(true)}>Share</Button>
             <Modal type="share" open={modalOpen} onClickClose={() => setModalOpen(false)}>
                 <Share {...args} />
             </Modal>

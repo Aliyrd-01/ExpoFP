@@ -4,6 +4,7 @@ import { t } from "../utils/i18n";
 import "./RebookingNotes.scss";
 
 export type RebookingNotesMode = "default" | "add" | "edit";
+
 export interface RebookingNotesProps {
     state?: "default" | "edit";
     value?: string;

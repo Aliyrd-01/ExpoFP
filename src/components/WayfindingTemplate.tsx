@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { t } from "../utils/i18n";
-import Autocomplete, { OptionObject } from "./Autocomplete";
+import Autocomplete, { AutocompleteOptionObject } from "./Autocomplete";
 import ToggleSwitch from "./ToggleSwitch";
 import WayfindingFloorSelector from "./WayfindingFloorSelector";
 import "./WayfindingTemplate.scss";
@@ -9,7 +9,7 @@ import WayInformation, { WayInformationItem } from "./WayInformation";
 import RouteQR from "./RouteQR";
 
 export interface WayfindingTemplateProps {
-    options: string[] | (OptionObject | any)[];
+    options: string[] | (AutocompleteOptionObject | any)[];
     fromValue?: string;
     toValue?: string;
     showForm?: boolean;

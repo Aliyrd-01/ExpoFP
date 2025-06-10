@@ -124,9 +124,15 @@
 
 .efp-kiosk-setup-actions {
     display: grid;
-    grid-auto-flow: column;
-    gap: 0.4rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
     place-items: center;
+    margin-top: 1rem;
+
+    & a:nth-child(3n),
+    & button:nth-child(3n) {
+        grid-column: 1 / -1;
+    }
 }
 
 .efp-kiosk-setup-message {

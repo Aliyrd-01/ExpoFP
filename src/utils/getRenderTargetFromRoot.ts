@@ -4,11 +4,19 @@ export function getRenderTargetFromRoot(rootElement: HTMLElement | null): HTMLEl
         return null;
     }
 
-    const instance = rootElement["__expofp"];
-    if (!instance) {
-        console.error("[getRenderTargetFromRoot] No __expofp instance found on rootElement");
-        return null;
+    const firstChild = rootElement.firstElementChild as HTMLElement;
+    if (firstChild && firstChild.shadowRoot) {
+        const layout = firstChild.shadowRoot.querySelector("#efp-layout");
+        if (layout) {
+            return layout as HTMLElement;
+        }
     }
 
-    return instance.renderTarget || null;
+    const layout = rootElement.querySelector?.("#efp-layout");
+    if (layout) {
+        return layout as HTMLElement;
+    }
+
+    console.error("[getRenderTargetFromRoot] rootElement is null");
+    return null;
 }

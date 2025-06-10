@@ -8,7 +8,7 @@
 
     &__slot {
         flex: 1;
-        max-width: 100%;
+        max-width: calc(100% - rem(56px));
         height: 100%;
     }
 
