@@ -1,12 +1,14 @@
-import React, { useRef, useState, useMemo } from "react";
-import { useObserver } from "mobx-react-lite";
+import React, { useRef, useMemo } from "react";
+import { useObserver, useLocalStore } from "mobx-react-lite";
+import { action } from "mobx";
 import store, { uiState } from "../store";
 import OverlayContent from "./OverlayContent";
 import Schedule from "./Schedule";
 import { t } from "../utils/i18n";
 import "./Agenda.scss";
 import Badge from "./Badge";
-import AgendaFilters from "./AgendaFilters";
+import AgendaFiltersModal from "./AgendaFiltersModal";
+import { Button } from ".";
 
 export interface AgendaProps {
     showFilters?: boolean;
@@ -14,11 +16,15 @@ export interface AgendaProps {
 
 const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
     const scrollableRef = useRef<HTMLDivElement>();
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-    const [searchValue, setSearchValue] = useState("");
-    const [dateFilter, setDateFilter] = useState<"all" | "today" | "tomorrow">("all");
+    const localStore = useLocalStore(() => ({
+        searchValue: "",
+        setSearchValue: action((value: string) => {
+            localStore.searchValue = value;
+        }),
+    }));
 
     const events = store.scheduleStore.scheduleItems;
+    const { dateFilter, sortOrder } = store.agendaFilterStore.state;
 
     const filteredEvents = useMemo(() => {
         const today = new Date();
@@ -26,7 +32,7 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
         tomorrow.setDate(today.getDate() + 1);
 
         return events.filter((event) => {
-            const nameMatch = event.name.toLowerCase().includes(searchValue.toLowerCase());
+            const nameMatch = event.name.toLowerCase().includes(localStore.searchValue.toLowerCase());
             if (!nameMatch) return false;
 
             const eventDate = new Date(event.startDate);
@@ -41,7 +47,7 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
 
             return true;
         });
-    }, [events, searchValue, dateFilter]);
+    }, [events, localStore.searchValue, dateFilter]);
 
     const sortedEvents = useMemo(() => {
         return [...filteredEvents].sort((a, b) => {
@@ -62,6 +68,14 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
         store.selectSearch();
     };
 
+    const handleFiltersClick = action(() => {
+        store.agendaFilterStore.openFilter();
+    });
+
+    const handleSearchChange = action((e: React.ChangeEvent<HTMLInputElement>) => {
+        localStore.setSearchValue(e.target.value);
+    });
+
     const bar = (
         <div className="efp-bar">
             <div className="efp-agenda-header">
@@ -73,7 +87,7 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
         </div>
     );
 
-    return (
+    return useObserver(() => (
         <OverlayContent
             passScrollableRef={(ref) => {
                 scrollableRef.current = ref.current;
@@ -82,17 +96,27 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
             onBack={handleCloseBack}
             backMode="menu"
             bar={bar}
+            className="efp-agenda-overlay"
         >
             <div className="efp-agenda-content">
                 {showFilters && (
-                    <AgendaFilters
-                        searchValue={searchValue}
-                        onSearchChange={setSearchValue}
-                        dateFilter={dateFilter}
-                        onDateFilterChange={setDateFilter}
-                        sortOrder={sortOrder}
-                        onSortChange={setSortOrder}
-                    />
+                    <div className="efp-agenda-filters">
+                        <div className="efp-agenda-filters__search">
+                            <input
+                                type="text"
+                                placeholder={t("Search events")}
+                                value={localStore.searchValue}
+                                onChange={handleSearchChange}
+                            />
+                            <i className="icon-search"></i>
+                        </div>
+                        <button type="button" className="efp-agenda-filters__button" onClick={handleFiltersClick}>
+                            <i className="icon-filter-horizontal"></i>
+                            {store.agendaFilterStore.activeFiltersCount > 0 && (
+                                <span>{store.agendaFilterStore.activeFiltersCount}</span>
+                            )}
+                        </button>
+                    </div>
                 )}
 
                 {sortedEvents.length > 0 ? (
@@ -100,9 +124,11 @@ const Agenda: React.FC<AgendaProps> = ({ showFilters = true }) => {
                 ) : (
                     <div className="efp-agenda-empty">{t("No events found. Try adjusting your filters.")}</div>
                 )}
+
+                <AgendaFiltersModal store={store.agendaFilterStore} />
             </div>
         </OverlayContent>
-    );
+    ));
 };
 
 const AgendaWrapper: React.FC<AgendaProps> = (props) =>

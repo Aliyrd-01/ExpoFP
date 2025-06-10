@@ -1,5 +1,11 @@
 @use "@styles/utils" as *;
 
+.efp-agenda-overlay {
+    .overlay-bar.scrolled {
+        box-shadow: unset !important;
+    }
+}
+
 .efp-agenda-header {
     display: flex;
     gap: rem(8px);
@@ -9,8 +15,84 @@
     }
 }
 
-.efp-agenda-content {
-    position: relative;
+.efp-agenda-filters {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    gap: rem(8px);
+    padding: rem(4px 14px);
+    background: var(--color-white);
+
+    &__search {
+        flex: 1;
+        position: relative;
+
+        input {
+            width: 100%;
+            height: rem(38px);
+            padding: rem(0 14px 0 36px);
+            background: var(--color-gray-200);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius-full);
+            font-size: var(--font-size-lg);
+
+            &:focus {
+                outline: none;
+                border-color: var(--color-primary);
+            }
+        }
+
+        & > i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-54%);
+            left: rem(12px);
+            font-size: var(--icon-size-xs);
+            color: var(--color-gray-500);
+        }
+    }
+
+    &__button {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: rem(38px);
+        height: rem(38px);
+        border: 0;
+        border-radius: var(--border-radius-full);
+        background: var(--color-gray-300);
+        color: var(--color-gray-800);
+        cursor: pointer;
+        transition: background 0.1s ease-in-out;
+
+        & > i {
+            font-size: var(--icon-size-sm);
+        }
+
+        & > span {
+            position: absolute;
+            top: rem(-4px);
+            right: rem(-4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: rem(16px);
+            height: rem(16px);
+            background: var(--color-primary);
+            border-radius: var(--border-radius-full);
+            color: var(--color-white);
+            font-size: var(--font-size-xs);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        &:hover {
+            background: var(--color-gray-400);
+            color: var(--color-black);
+        }
+    }
 }
 
 .efp-agenda-empty {

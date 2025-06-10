@@ -1,4 +1,5 @@
 import { action, observable, computed } from "mobx";
+import { configure } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -22,7 +23,7 @@ import { svgArea } from "../data/svg";
 import PoiTypeStore from "./PoiTypeStore";
 import { sanitizeSearch } from "../utils/sanitizeText";
 import FuzzySearchEngineStore from "./FuzzySearchEngineStore";
-
+import AgendaFilterStore from "./AgendaFilterStore";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -38,6 +39,7 @@ export default class RootStore {
     readonly languageStore: LanguageStore;
     readonly fuzzySearchEngineStore: FuzzySearchEngineStore;
     readonly categoryFilterStore: CategoryFilterStore;
+    readonly agendaFilterStore: AgendaFilterStore;
 
     fp: FloorPlanReady;
 
@@ -58,6 +60,7 @@ export default class RootStore {
         this.poiTypeStore = new PoiTypeStore(this);
         this.fuzzySearchEngineStore = new FuzzySearchEngineStore();
         this.categoryFilterStore = new CategoryFilterStore(this);
+        this.agendaFilterStore = new AgendaFilterStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
@@ -370,10 +373,8 @@ export default class RootStore {
             return this.exhibitorStore.exhibitors;
         }
 
-        return this.exhibitorStore.exhibitors.filter(exhibitor =>
-            this.uiState.selectedCategoryFilters.some(category =>
-                exhibitor.categories.some(c => c.id === category.id)
-            )
+        return this.exhibitorStore.exhibitors.filter((exhibitor) =>
+            this.uiState.selectedCategoryFilters.some((category) => exhibitor.categories.some((c) => c.id === category.id))
         );
     }
 
