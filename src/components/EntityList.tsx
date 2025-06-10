@@ -85,8 +85,8 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                     totalListHeightChanged={() => updateScroll && updateScroll()}
                     customScrollParent={updatedScrollableRef.current}
                     totalCount={uiState.listItems.length}
-                    overscan={1000}
-                    increaseViewportBy={1000}
+                    overscan={Math.min(uiState.listItems.length, 1000)}
+                    increaseViewportBy={Math.min(uiState.listItems.length, 1000)}
                     initialItemCount={Math.min(uiState.listScrollIndex + 100, uiState.listItems.length)}
                     components={{
                         EmptyPlaceholder: () => (
