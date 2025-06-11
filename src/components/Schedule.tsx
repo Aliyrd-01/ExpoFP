@@ -31,6 +31,11 @@ function isCurrent(from: Date | string, to: Date | string) {
     return from <= now && now <= to;
 }
 
+function isPast(endDate: Date | string) {
+    const now = new Date();
+    return new Date(endDate) < now;
+}
+
 const Schedule: React.FC<ScheduleProps> = ({
     events = [],
     descriptionMaxLength = 200,
@@ -44,7 +49,7 @@ const Schedule: React.FC<ScheduleProps> = ({
         const date = new Date(curr.startDate).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
         acc[date] ? acc[date].push(curr) : (acc[date] = [curr]);
         return acc;
-    }, {});
+    }, {} as Record<string, ScheduleEvent[]>);
 
     useEffect(() => {
         setEventsFullDescription(
@@ -115,7 +120,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                                         <div key={event.id} role="listitem">
                                             <EventWrapper
                                                 link={event.link ? event.link : ""}
-                                                ended={event.isEnded}
+                                                ended={event.isEnded || isPast(event.endDate || event.startDate)}
                                                 current={isCurrent(event.startDate, event.endDate)}
                                                 event={event}
                                             >
