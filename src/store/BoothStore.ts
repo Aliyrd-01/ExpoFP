@@ -159,6 +159,7 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
     readonly type: string;
     readonly status: "onhold" | "reserved";
     readonly price: string;
+    readonly entity: Entity = { type: "booth", variant: "regular" } as const;
     // readonly onHold: boolean;
     // readonly reserved: boolean;
 
@@ -178,4 +179,5 @@ export class RegularBooth extends BoothBase implements Omit<RawRegularBooth, "ex
 export class SpecialBooth extends BoothBase {
     // readonly description: string;
     readonly color: string; // comes from svg or data.js
+    readonly entity: Entity = { type: "booth", variant: "special" } as const;
 }
