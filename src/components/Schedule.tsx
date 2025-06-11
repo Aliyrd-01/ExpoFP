@@ -36,6 +36,13 @@ function isPast(endDate: Date | string) {
     return new Date(endDate) < now;
 }
 
+function isLive(event: ScheduleEvent): boolean {
+    const now = new Date();
+    const startDate = new Date(event.startDate);
+    const endDate = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
+    return startDate <= now && now <= endDate;
+}
+
 const Schedule: React.FC<ScheduleProps> = ({
     events = [],
     descriptionMaxLength = 200,
@@ -128,7 +135,12 @@ const Schedule: React.FC<ScheduleProps> = ({
                                                     {dateFormat(event.startDate, "shortTime")}
                                                     {event.endDate ? ` - ${dateFormat(event.endDate, "shortTime")}` : null}
                                                 </span>
-                                                <strong>{event.name}</strong>
+                                                <strong>
+                                                    {event.name}
+                                                    {isLive(event) && (
+                                                        <span className="schedule__event-live-badge">LIVE</span>
+                                                    )}
+                                                </strong>
                                                 {booth && showBooths ? (
                                                     <div className="schedule__event-booth">
                                                         <div>{booth.name}</div>
