@@ -1,4 +1,4 @@
-export function mapEntity<T extends Record<string, any>>(item: T) {
+export function mapEntity<T extends Record<string, any>>(item: T): FloorPlanEntity | T {
     switch (item.entity.type) {
         case "booth":
             return {
@@ -14,7 +14,7 @@ export function mapEntity<T extends Record<string, any>>(item: T) {
                 meta: item.meta,
                 description: getSafeString(item.description),
                 entity: item.entity,
-            } as FloorPlanBooth;
+            };
 
         case "category":
             return {
@@ -23,7 +23,7 @@ export function mapEntity<T extends Record<string, any>>(item: T) {
                 exhibitors: extractIds(item.exhibitors),
                 entity: item.entity,
                 slug: getSafeString(item.slug),
-            } as FloorPlanCategory;
+            };
 
         case "exhibitor":
             return {
@@ -33,7 +33,7 @@ export function mapEntity<T extends Record<string, any>>(item: T) {
                 booths: extractIds(item.booths),
                 entity: item.entity,
                 slug: getSafeString(item.slug),
-            } as FloorPlanExhibitor;
+            };
 
         case "schedule":
             return {
@@ -48,7 +48,7 @@ export function mapEntity<T extends Record<string, any>>(item: T) {
                 link: getSafeString(item.link),
                 entity: item.entity,
                 isEnded: item.isEnded,
-            } as FloorPlanSchedule;
+            };
 
         case "language":
             return {
@@ -56,7 +56,7 @@ export function mapEntity<T extends Record<string, any>>(item: T) {
                 name: getSafeString(item.name),
                 entity: item.entity,
                 selected: item.selected || false,
-            } as FloorPlanLanguage;
+            };
 
         case "heatmap-yah":
             return {
@@ -67,7 +67,7 @@ export function mapEntity<T extends Record<string, any>>(item: T) {
                 y: item.y || 0,
                 z: item.z,
                 entity: item.entity,
-            } as FloorPlanHeatmapYah;
+            };
 
         default:
             return item;
