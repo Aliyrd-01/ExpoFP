@@ -37,10 +37,12 @@ function isPast(endDate: Date | string) {
 }
 
 function isLive(event: ScheduleEvent): boolean {
-    const now = new Date();
-    const startDate = new Date(event.startDate);
-    const endDate = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
-    return startDate <= now && now <= endDate;
+    const now = Date.now();
+    const start = Date.parse(event.startDate);
+    const end = event.endDate ? Date.parse(event.endDate) : Number.POSITIVE_INFINITY;
+
+    if (isNaN(start) || isNaN(end)) return false;
+    return now >= start && now <= end;
 }
 
 const Schedule: React.FC<ScheduleProps> = ({
@@ -137,9 +139,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                                                 </span>
                                                 <strong>
                                                     {event.name}
-                                                    {isLive(event) && (
-                                                        <span className="schedule__event-live-badge">LIVE</span>
-                                                    )}
+                                                    {isLive(event) && <span className="schedule__event-live-badge">LIVE</span>}
                                                 </strong>
                                                 {booth && showBooths ? (
                                                     <div className="schedule__event-booth">
