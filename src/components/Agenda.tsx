@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import { useObserver, useLocalStore } from "mobx-react-lite";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -27,7 +27,6 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
     const { dateFilter, sortOrder } = store.agendaFilterStore.state;
 
     const filteredEvents = useMemo(() => {
-        console.log("Recalculating filtered events with dateFilter:", dateFilter);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -60,6 +59,31 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
             return sortOrder === "asc" ? dateB - dateA : dateA - dateB;
         });
     }, [filteredEvents, sortOrder]);
+
+    const firstUpcomingEvent = useMemo(() => {
+        const now = new Date();
+        const upcoming = sortedEvents.find((event) => {
+            const endDate = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
+            return endDate > now;
+        });
+
+        return upcoming;
+    }, [sortedEvents]);
+
+    useEffect(() => {
+        if (firstUpcomingEvent && scrollableRef.current) {
+            const eventElement = scrollableRef.current.querySelector(`[data-event-id="${firstUpcomingEvent.id}"]`);
+
+            if (eventElement) {
+                setTimeout(() => {
+                    const containerRect = scrollableRef.current.getBoundingClientRect();
+                    const elementRect = eventElement.getBoundingClientRect();
+                    const scrollTop = elementRect.top - containerRect.top - 50;
+                    scrollableRef.current.scrollTop = scrollTop;
+                }, 100);
+            }
+        }
+    }, [firstUpcomingEvent, uiState.list.type === "agenda"]);
 
     const handleEventClick = (event) => {
         const booth = event.boothId && store.boothStore.booths.find((b) => b.id === event.boothId);

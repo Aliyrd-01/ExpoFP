@@ -20,6 +20,8 @@
     top: 0;
     z-index: 10;
     display: flex;
+    align-items: center;
+    height: rem(50px);
     gap: rem(8px);
     padding: rem(4px 14px);
     background: var(--color-white);

@@ -117,7 +117,7 @@ const Schedule: React.FC<ScheduleProps> = ({
                                 events.map((event: ScheduleEvent, eventIndex: number) => {
                                     const booth = event.boothId ? store.boothStore.boothById.get(Number(event.boothId)) : null;
                                     return (
-                                        <div key={event.id} role="listitem">
+                                        <div key={event.id} role="listitem" data-event-id={event.id}>
                                             <EventWrapper
                                                 link={event.link ? event.link : ""}
                                                 ended={event.isEnded || isPast(event.endDate || event.startDate)}
