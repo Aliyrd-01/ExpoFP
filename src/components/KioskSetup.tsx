@@ -338,7 +338,6 @@ const KioskSetup = observer(() => {
     }
 
     const disabled = !store.uiState.kioskSetupData || pending;
-    const kiosk = store.uiState.kioskList.find((k) => k.key === store.uiState.kioskSetupData?.key);
 
     let title = "";
     if (step === "auth") {
@@ -348,7 +347,7 @@ const KioskSetup = observer(() => {
     } else if (step === "confirmDeletion") {
         title = `${t("Delete kiosk")} ${store.uiState.kioskSetupData?.key}?`;
     } else {
-        title = kiosk ? t("Edit a kiosk") : t("Add a kiosk");
+        title = t("Add or Edit a kiosk");
     }
 
     const auth = useCallback(
@@ -449,23 +448,22 @@ const KioskSetup = observer(() => {
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
-                                    {
-                                        kiosk
-                                            ? t("Enter the kiosk number below.")
-                                            : t("Click anywhere on the map.")
-                                    }
+                                    <div>
+                                        <strong>{t("To Add")}:</strong>  {t("Click anywhere on the map.")}
+                                    </div>
+                                    <div>
+                                        <strong>{t("To Edit")}:</strong> {t("Enter the kiosk number below.")}
+                                    </div>
                                 </p>
 
                                 <label className="efp-kiosk-setup-key">
-                                    <span>
-                                        <strong>#</strong>
-                                    </span>
+                                    <strong>Kiosk number:</strong>
                                     <input
                                         name="key"
                                         type="number"
                                         min={1}
                                         max={99}
-                                        placeholder={t("Enter a number from 1 to 99")}
+                                        placeholder={t("From 1 to 99")}
                                         value={store.uiState.kioskSetupData?.key || ""}
                                         onChange={(e) => {
                                             const input = e.target as HTMLInputElement;
@@ -475,12 +473,8 @@ const KioskSetup = observer(() => {
                                     />
                                 </label>
 
-                                <p className="efp-kiosk-setup-info">{t("Use the slider to adjust the icon's angle.")}</p>
-
                                 <label className="efp-kiosk-setup-rotate">
-                                    <span>
-                                        <strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°
-                                    </span>
+                                    <strong>{t("Rotate Icon")}:</strong>
                                     <input
                                         name="heading"
                                         type="range"
@@ -492,6 +486,8 @@ const KioskSetup = observer(() => {
                                         onChange={(e) => rotate((e.target as HTMLInputElement).value)}
                                     />
                                 </label>
+
+                                <p className="efp-kiosk-setup-info">{t("Use the slider to adjust the icon's angle.")}</p>
                             </>
                         )}
 
