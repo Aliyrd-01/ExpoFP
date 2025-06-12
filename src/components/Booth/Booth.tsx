@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { useLocalStore, useObserver } from "mobx-react-lite";
+import { useLocalStore, observer } from "mobx-react-lite";
 import data from "../../data";
 import store, { uiState } from "../../store";
 import { RegularBooth, SpecialBooth } from "../../store/BoothStore";
@@ -16,7 +16,7 @@ import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
 import useHeatmapOverlay from "../../utils/useHeatmapOverlay";
 import EntityItem, { EntityItemType } from "../EntityItem";
 
-function Booth() {
+const Booth: React.FC = observer(() => {
     const scrollableRef = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         get booth() {
@@ -87,107 +87,102 @@ function Booth() {
         store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
     }
 
-    return useObserver(() => {
-        const bar = <div className="booth__bar">{s.title}</div>;
-        let content: JSX.Element = null;
+    const bar = <div className="booth__bar">{s.title}</div>;
+    let content: JSX.Element = null;
 
-        const { heatmapBar } = useHeatmapOverlay(s.booth);
+    const { heatmapBar } = useHeatmapOverlay(s.booth);
 
-        const exhibitors = s.booth.exhibitors.map((item) => (
-            <EntityItem
-                onClick={handleExhibitorClick}
-                id={item.id.toString()}
-                featured={item.featured}
-                url={null}
-                type="exhibitor"
-                image={item.logo}
-                title={item.name}
-                bookmarked={item.bookmarked}
-                visited={item.visited}
-                additionalInfo={item.booths.map((booth) => ({
-                    type: "location",
-                    locationName: booth.name,
-                    level: booth.layer?.name,
-                }))}
-                key={item.id.toString()}
-            />
-        ));
+    const exhibitors = s.booth.exhibitors.map((item) => (
+        <EntityItem
+            onClick={handleExhibitorClick}
+            id={item.id.toString()}
+            featured={item.featured}
+            url={null}
+            type="exhibitor"
+            image={item.logo}
+            title={item.name}
+            bookmarked={item.bookmarked}
+            visited={item.visited}
+            additionalInfo={item.booths.map((booth) => ({
+                type: "location",
+                locationName: booth.name,
+                level: booth.layer?.name,
+            }))}
+            key={item.id.toString()}
+        />
+    ));
 
-        if (data.isRebooking) {
-            content = <>{exhibitors}</>;
-        } else if (s.regular) {
-            const b = s.regular;
+    if (data.isRebooking) {
+        content = <>{exhibitors}</>;
+    } else if (s.regular) {
+        const b = s.regular;
 
-            if (b.onHold) {
-                content = <BoothOnHold booth={b} description={""} showBuy={false} showReserve={false} isRebooking={false} />;
-            } else if (b.reserved) {
-                content = <BoothReserved />;
-            } else if (b.exhibitors.length === 0) {
-                content = (
-                    <BoothWithoutExhibitor
-                        booth={b}
-                        description={s.descriptionCombined}
-                        showBuy={!uiState.previewMode && s.showBuy}
-                        showReserve={!uiState.previewMode && s.showReserve}
-                        isRebooking={false}
-                    />
-                );
-            } else {
-                content = <>{exhibitors}</>;
-            }
-        } else {
+        if (b.onHold) {
+            content = <BoothOnHold booth={b} description={""} showBuy={false} showReserve={false} isRebooking={false} />;
+        } else if (b.reserved) {
+            content = <BoothReserved />;
+        } else if (b.exhibitors.length === 0) {
             content = (
-                <div className="booth__content -spec">
-                    <div className="booth__desc" dangerouslySetInnerHTML={{ __html: s.special.description }} />
-                    <>{exhibitors}</>
-                </div>
+                <BoothWithoutExhibitor
+                    booth={b}
+                    description={s.descriptionCombined}
+                    showBuy={!uiState.previewMode && s.showBuy}
+                    showReserve={!uiState.previewMode && s.showReserve}
+                    isRebooking={false}
+                />
             );
+        } else {
+            content = <>{exhibitors}</>;
         }
-
-        return (
-            <OverlayContent
-                overlayBarCenterContent={heatmapBar}
-                bar={bar}
-                backMode="none"
-                onClose={() => store.selectNone()}
-                passScrollableRef={(ref) => {
-                    scrollableRef.current = ref.current;
-                }}
-            >
-                {!data.isRebooking && settings.wayfinding && (
-                    <div
-                        className="exhibitor__directions"
-                        style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(1) }}
-                    >
-                        <SidebarActions
-                            showBookmark={false}
-                            showShare={false}
-                            onClickDirections={() => {
-                                store.routeStore.clickRoute(null, s.booth);
-                            }}
-                        />
-                    </div>
-                )}
-                {content}
-                {data.isRebooking && s.regular && s.regular.exhibitors.length === 0 && (
-                    <BoothWithoutExhibitor
-                        showBuy={false}
-                        description={s.descriptionCombined}
-                        showReserve={false}
-                        booth={s.regular}
-                        isRebooking={data.isRebooking}
-                    />
-                )}
-                {!!s.booth.schedule?.length && (
-                    <Schedule
-                        events={[...s.booth.schedule].sort(
-                            (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-                        )}
-                    />
-                )}
-            </OverlayContent>
+    } else {
+        content = (
+            <div className="booth__content -spec">
+                <div className="booth__desc" dangerouslySetInnerHTML={{ __html: s.special.description }} />
+                <>{exhibitors}</>
+            </div>
         );
-    });
-}
+    }
 
-export default () => useObserver(() => (!uiState.menu && uiState.selectedBooth ? <Booth /> : null));
+    return (
+        <OverlayContent
+            overlayBarCenterContent={heatmapBar}
+            bar={bar}
+            backMode="none"
+            onClose={() => store.selectNone()}
+            passScrollableRef={(ref) => {
+                scrollableRef.current = ref.current;
+            }}
+        >
+            {!data.isRebooking && settings.wayfinding && (
+                <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(1) }}>
+                    <SidebarActions
+                        showBookmark={false}
+                        showShare={false}
+                        onClickDirections={() => {
+                            store.routeStore.clickRoute(null, s.booth);
+                        }}
+                    />
+                </div>
+            )}
+            {content}
+            {data.isRebooking && s.regular && s.regular.exhibitors.length === 0 && (
+                <BoothWithoutExhibitor
+                    showBuy={false}
+                    description={s.descriptionCombined}
+                    showReserve={false}
+                    booth={s.regular}
+                    isRebooking={data.isRebooking}
+                />
+            )}
+            {!!s.booth.schedule?.length && (
+                <Schedule
+                    events={[...s.booth.schedule].sort(
+                        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+                    )}
+                />
+            )}
+        </OverlayContent>
+    );
+});
+
+export default observer(() => (!uiState.menu && uiState.selectedBooth ? <Booth /> : null));
