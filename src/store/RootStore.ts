@@ -229,6 +229,9 @@ export default class RootStore {
 
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
+        if (this.uiState.list.type === "agenda") {
+            this.selectSearch();
+        }
 
         if (this.uiState.selectedRoute?.from && this.uiState.selectedRoute?.to) return;
 
