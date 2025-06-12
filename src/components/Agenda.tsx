@@ -78,7 +78,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
                 setTimeout(() => {
                     const containerRect = scrollableRef.current.getBoundingClientRect();
                     const elementRect = eventElement.getBoundingClientRect();
-                    const scrollTop = elementRect.top - containerRect.top - 70;
+                    const scrollTop = elementRect.top - containerRect.top - 80;
                     scrollableRef.current.scrollTop = scrollTop;
                 }, 100);
             }
@@ -160,6 +160,6 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
 });
 
 const AgendaWrapper: React.FC<AgendaProps> = (props) =>
-    useObserver(() => uiState.list.type === "agenda" && <Agenda {...props} />);
+    useObserver(() => uiState.list.type === "agenda" && !uiState.details && <Agenda {...props} />);
 
 export default AgendaWrapper;
