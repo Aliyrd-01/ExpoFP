@@ -53,7 +53,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     selectBooth(nameOrExternalId: string | string[]) {
         if (typeof nameOrExternalId !== "string" && !Array.isArray(nameOrExternalId)) {
-            throw new Error("invalid input. Must be a string or array of strings.");
+            throw new Error("Invalid input. Must be a string or array of strings.");
         }
 
         const booths = store.boothStore.booths.filter((b) => {
@@ -68,7 +68,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
 
     selectExhibitor(nameOrExternalId: string | string[]) {
         if (typeof nameOrExternalId !== "string" && !Array.isArray(nameOrExternalId)) {
-            throw new Error("invalid input. Must be a string or array of strings.");
+            throw new Error("Invalid input. Must be a string or array of strings.");
         }
 
         if (!nameOrExternalId?.length) {
