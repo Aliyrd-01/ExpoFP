@@ -55,6 +55,8 @@ interface Data {
 
     viewOptimizationLevel: number;
     shortLevelName: boolean;
+
+    searchText: string;
 }
 
 interface ScheduleItem {
