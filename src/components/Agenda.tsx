@@ -159,7 +159,9 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
     ));
 });
 
-const AgendaWrapper: React.FC<AgendaProps> = (props) =>
-    useObserver(() => uiState.list.type === "agenda" && !uiState.details && <Agenda {...props} />);
+const AgendaWrapper: React.FC<AgendaProps> = observer((props) => {
+    if (uiState.list.type !== "agenda" || uiState.details) return null;
+    return <Agenda {...props} />;
+});
 
 export default AgendaWrapper;
