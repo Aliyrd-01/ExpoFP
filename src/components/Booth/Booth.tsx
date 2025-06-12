@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { useLocalStore, useObserver } from "mobx-react-lite";
 import data from "../../data";
 import store, { uiState } from "../../store";
@@ -17,6 +17,7 @@ import useHeatmapOverlay from "../../utils/useHeatmapOverlay";
 import EntityItem, { EntityItemType } from "../EntityItem";
 
 function Booth() {
+    const scrollableRef = useRef<HTMLDivElement>();
     const s = useLocalStore(() => ({
         get booth() {
             return uiState.selectedBooth;
@@ -47,6 +48,30 @@ function Booth() {
             return this.booth.description || data.reserveInstructions || "";
         },
     }));
+
+    useEffect(() => {
+        if (s.booth.schedule?.length) {
+            const now = new Date();
+            const upcomingEvent = [...s.booth.schedule]
+                .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+                .find((event) => {
+                    const endDate = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
+                    return endDate > now;
+                });
+
+            if (upcomingEvent && scrollableRef.current) {
+                const eventElement = scrollableRef.current.querySelector(`[data-event-id="${upcomingEvent.id}"]`);
+                if (eventElement) {
+                    setTimeout(() => {
+                        const containerRect = scrollableRef.current.getBoundingClientRect();
+                        const elementRect = eventElement.getBoundingClientRect();
+                        const scrollTop = elementRect.top - containerRect.top - 20;
+                        scrollableRef.current.scrollTop = scrollTop;
+                    }, 100);
+                }
+            }
+        }
+    }, [s.booth.schedule]);
 
     function handleExhibitorClick(type: EntityItemType, data: string) {
         const id = parseInt(data);
@@ -111,7 +136,15 @@ function Booth() {
         }
 
         return (
-            <OverlayContent overlayBarCenterContent={heatmapBar} bar={bar} backMode="none" onClose={() => store.selectNone()}>
+            <OverlayContent
+                overlayBarCenterContent={heatmapBar}
+                bar={bar}
+                backMode="none"
+                onClose={() => store.selectNone()}
+                passScrollableRef={(ref) => {
+                    scrollableRef.current = ref.current;
+                }}
+            >
                 {!data.isRebooking && settings.wayfinding && (
                     <div
                         className="exhibitor__directions"
