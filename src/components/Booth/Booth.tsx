@@ -52,22 +52,31 @@ function Booth() {
     useEffect(() => {
         if (s.booth.schedule?.length) {
             const now = new Date();
-            const upcomingEvent = [...s.booth.schedule]
-                .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-                .find((event) => {
+            const sortedEvents = [...s.booth.schedule].sort(
+                (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+            );
+
+            const hasPastEvents = sortedEvents.some((event) => {
+                const endDate = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
+                return endDate < now;
+            });
+
+            if (hasPastEvents) {
+                const upcomingEvent = sortedEvents.find((event) => {
                     const endDate = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
                     return endDate > now;
                 });
 
-            if (upcomingEvent && scrollableRef.current) {
-                const eventElement = scrollableRef.current.querySelector(`[data-event-id="${upcomingEvent.id}"]`);
-                if (eventElement) {
-                    setTimeout(() => {
-                        const containerRect = scrollableRef.current.getBoundingClientRect();
-                        const elementRect = eventElement.getBoundingClientRect();
-                        const scrollTop = elementRect.top - containerRect.top - 20;
-                        scrollableRef.current.scrollTop = scrollTop;
-                    }, 100);
+                if (upcomingEvent && scrollableRef.current) {
+                    const eventElement = scrollableRef.current.querySelector(`[data-event-id="${upcomingEvent.id}"]`);
+                    if (eventElement) {
+                        setTimeout(() => {
+                            const containerRect = scrollableRef.current.getBoundingClientRect();
+                            const elementRect = eventElement.getBoundingClientRect();
+                            const scrollTop = elementRect.top - containerRect.top - 20;
+                            scrollableRef.current.scrollTop = scrollTop;
+                        }, 100);
+                    }
                 }
             }
         }
@@ -169,7 +178,13 @@ function Booth() {
                         isRebooking={data.isRebooking}
                     />
                 )}
-                {!!s.booth.schedule?.length && <Schedule events={[...s.booth.schedule].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())} />}
+                {!!s.booth.schedule?.length && (
+                    <Schedule
+                        events={[...s.booth.schedule].sort(
+                            (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+                        )}
+                    />
+                )}
             </OverlayContent>
         );
     });
