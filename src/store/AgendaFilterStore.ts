@@ -11,17 +11,21 @@ interface AgendaFilterState {
     pendingItems: FilterItem[];
     pendingDateFilter: "all" | "today" | "tomorrow";
     pendingSortOrder: "asc" | "desc";
+    use24hFormat: boolean;
+    pendingUse24hFormat: boolean;
 }
 
 export default class AgendaFilterStore extends BaseFilterStore {
     @observable state: AgendaFilterState = {
-        dateFilter: "all",
-        sortOrder: "desc",
         isOpen: false,
         selectedItems: [],
         pendingItems: [],
+        dateFilter: "all",
+        sortOrder: "desc",
         pendingDateFilter: "all",
         pendingSortOrder: "desc",
+        use24hFormat: false,
+        pendingUse24hFormat: false
     };
 
     constructor(rootStore: RootStore) {
@@ -38,19 +42,31 @@ export default class AgendaFilterStore extends BaseFilterStore {
         this.state.pendingSortOrder = order;
     }
 
+    @action
+    setUse24hFormat(value: boolean) {
+        this.state.pendingUse24hFormat = value;
+    }
+
     @computed
-    get activeFiltersCount(): number {
+    get activeFiltersCount() {
         let count = 0;
         if (this.state.dateFilter !== "all") count++;
         if (this.state.sortOrder !== "desc") count++;
+        if (this.state.use24hFormat) count++;
         return count;
     }
 
     @action
     resetFilter() {
+        this.state.pendingItems = [];
+        this.state.selectedItems = [];
         this.state.pendingDateFilter = "all";
         this.state.pendingSortOrder = "desc";
-        this.state.pendingItems = [];
+        this.state.pendingUse24hFormat = false;
+        this.state.dateFilter = "all";
+        this.state.sortOrder = "desc";
+        this.state.use24hFormat = false;
+        this.rootStore.uiState.list = { type: "agenda" };
     }
 
     @action
@@ -58,6 +74,7 @@ export default class AgendaFilterStore extends BaseFilterStore {
         this.state.selectedItems = [...this.state.pendingItems];
         this.state.dateFilter = this.state.pendingDateFilter;
         this.state.sortOrder = this.state.pendingSortOrder;
+        this.state.use24hFormat = this.state.pendingUse24hFormat;
         this.state.isOpen = false;
         this.updateUIState();
     }
@@ -68,6 +85,7 @@ export default class AgendaFilterStore extends BaseFilterStore {
         this.state.pendingItems = [...this.state.selectedItems];
         this.state.pendingDateFilter = this.state.dateFilter;
         this.state.pendingSortOrder = this.state.sortOrder;
+        this.state.pendingUse24hFormat = this.state.use24hFormat;
     }
 
     @action
@@ -75,6 +93,7 @@ export default class AgendaFilterStore extends BaseFilterStore {
         this.state.isOpen = false;
         this.state.pendingDateFilter = this.state.dateFilter;
         this.state.pendingSortOrder = this.state.sortOrder;
+        this.state.pendingUse24hFormat = this.state.use24hFormat;
         this.state.pendingItems = [...this.state.selectedItems];
     }
 

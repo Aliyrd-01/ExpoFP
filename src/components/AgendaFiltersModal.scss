@@ -46,4 +46,11 @@ $agenda-filters-modal: ".efp-agenda-filters-modal";
             color: var(--color-black);
         }
     }
+
+    &__toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: rem(8px 0);
+    }
 }

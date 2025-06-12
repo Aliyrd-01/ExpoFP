@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import cn from "classnames";
 import { t } from "../utils/i18n";
 import { Modal } from ".";
+import ToggleSwitch from "./ToggleSwitch";
 import "./AgendaFiltersModal.scss";
 
 export interface AgendaFiltersModalProps {
@@ -10,7 +11,8 @@ export interface AgendaFiltersModalProps {
 }
 
 const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store }) => {
-    const hasActiveFilters = store.state.pendingDateFilter !== "all" || store.state.pendingSortOrder !== "desc";
+    const hasActiveFilters =
+        store.state.pendingDateFilter !== "all" || store.state.pendingSortOrder !== "desc" || store.state.pendingUse24hFormat;
 
     return (
         <Modal
@@ -72,6 +74,18 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
                         >
                             {t("Latest First")}
                         </button>
+                    </div>
+                </div>
+
+                <div className="efp-agenda-filters-modal__section">
+                    <h3>{t("Additional Settings")}</h3>
+                    <div className="efp-agenda-filters-modal__toggle">
+                        <ToggleSwitch
+                            name="use24hFormat"
+                            label={t("Show time in 24h format")}
+                            value={store.state.pendingUse24hFormat}
+                            onChange={(value) => store.setUse24hFormat(value)}
+                        />
                     </div>
                 </div>
             </div>
