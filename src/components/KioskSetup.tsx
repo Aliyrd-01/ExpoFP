@@ -136,6 +136,18 @@ const KioskSetup = observer(() => {
 
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
+    const newKioskKey = useMemo(() => {
+        const key = store.uiState.kioskList.map(k => k.key).reverse()[0];
+        const s = key?.trim();
+
+        if (s && /^\d+$/.test(s)) {
+            const num = parseInt(s, 10) + 1;
+            return num.toString();
+        }
+
+        return "";
+    }, [store.uiState.kioskList]);
+
     useEffect(() => {
         if (!store.uiState.kioskSetup || step !== "edit") {
             return;
@@ -144,13 +156,17 @@ const KioskSetup = observer(() => {
         store.fp.onGetCoordsClick = (coords) => {
             originalOnGetCoordsClick?.(coords);
             setShowError(false);
-            store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, ...coords };
+            store.uiState.kioskSetupData = {
+                ...store.uiState.kioskSetupData,
+                ...coords,
+                key: store.uiState.kioskSetupData?.key ?? newKioskKey,
+            };
         };
 
         return () => {
             store.fp.onGetCoordsClick = originalOnGetCoordsClick;
         };
-    }, [store.uiState.kioskSetup, step]);
+    }, [store.uiState.kioskSetup, step, newKioskKey]);
 
     useEffect(() => {
         if (!showSuccess && !showError) {
@@ -322,6 +338,7 @@ const KioskSetup = observer(() => {
     }
 
     const disabled = !store.uiState.kioskSetupData || pending;
+    const kiosk = store.uiState.kioskList.find((k) => k.key === store.uiState.kioskSetupData?.key);
 
     let title = "";
     if (step === "auth") {
@@ -331,7 +348,7 @@ const KioskSetup = observer(() => {
     } else if (step === "confirmDeletion") {
         title = `${t("Delete kiosk")} ${store.uiState.kioskSetupData?.key}?`;
     } else {
-        title = t("Add or edit a kiosk");
+        title = kiosk ? t("Edit a kiosk") : t("Add a kiosk");
     }
 
     const auth = useCallback(
@@ -432,7 +449,11 @@ const KioskSetup = observer(() => {
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
-                                    {t("Click on the screen to add or type the kiosk number to edit.")}
+                                    {
+                                        kiosk
+                                            ? t("Enter the kiosk number below.")
+                                            : t("Click anywhere on the map.")
+                                    }
                                 </p>
 
                                 <label className="efp-kiosk-setup-key">
@@ -454,7 +475,7 @@ const KioskSetup = observer(() => {
                                     />
                                 </label>
 
-                                <p className="efp-kiosk-setup-info">{t("Move the range slider to rotate the icon.")}</p>
+                                <p className="efp-kiosk-setup-info">{t("Use the slider to adjust the icon's angle.")}</p>
 
                                 <label className="efp-kiosk-setup-rotate">
                                     <span>
@@ -488,13 +509,13 @@ const KioskSetup = observer(() => {
                         })}>
                             {step === "auth" && <Button size="md" text={t("Log in")} disabled={!passcode || pending} onClick={() => auth(passcode)} />}
 
-                            {step === "edit" && <Button size="md" text={t("Save")} disabled={disabled} onClick={save} />}
+                            {step === "edit" && <Button size="md" text={t("Save & copy URL")} disabled={disabled} onClick={save} />}
 
                             {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
 
                             {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
 
-                            {step === "copy" && <Button variant="gray" size="md" text={t("Exit")} onClick={exit} />}
+                            {step === "copy" && <Button variant="gray" size="md" text={t("Close")} onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
                                 <Button
