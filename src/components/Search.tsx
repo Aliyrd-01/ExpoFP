@@ -109,6 +109,7 @@ function Search() {
             return this.text ? "back" : "menu";
         },
         get placeHolder() {
+            if (settings.EXPO.startsWith("lenzerheidemotorclassics")) return "SUCHE";
             if (settings.EXPO.startsWith("jetlag")) return "Search location or artist";
             if (uiState.heatmapYah) {
                 return t("Find scans above");
