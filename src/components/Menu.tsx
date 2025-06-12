@@ -55,6 +55,10 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
             if (s.shownTimeout) window.clearTimeout(s.shownTimeout);
         } else {
             s.shownTimeout = window.setTimeout(() => (s.shown = true), 1);
+
+            if (uiState.list.type === "agenda") {
+                store.selectSearch();
+            }
         }
     });
 

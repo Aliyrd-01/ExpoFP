@@ -136,7 +136,7 @@ function Booth() {
                         isRebooking={data.isRebooking}
                     />
                 )}
-                {!!s.booth.schedule?.length && <Schedule events={s.booth.schedule} />}
+                {!!s.booth.schedule?.length && <Schedule events={[...s.booth.schedule].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())} />}
             </OverlayContent>
         );
     });
