@@ -105,9 +105,9 @@ const KioskSetup = observer(() => {
                     kioskId = routeFromKioskMatch[1];
                 }
 
-                const [x, y, z] = searchParams.get("p")?.split(",") || [];
+                const [x, y, z] = searchParams.get("point")?.split(",") || [];
                 const point = [Number(x), Number(y), z];
-                const angle = searchParams.has("a") ? parseInt(searchParams.get("a"), 10) : 0;
+                const angle = searchParams.has("angle") ? parseInt(searchParams.get("a"), 10) : 0;
                 const rect = searchParams.get("rect")?.split(",").map(Number);
 
                 const k = kiosks.find((k) => strEqual(k.key, kioskId));
