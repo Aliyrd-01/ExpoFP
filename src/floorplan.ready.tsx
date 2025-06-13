@@ -174,12 +174,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }    
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
-        if (point?.angle != null && fpGeo?.properties?.bearing != null) {
-            point.angle = 90.0 + fpGeo.properties.bearing - (point.angle % 360.0);
-            point.angle = point.angle < 0 ? point.angle + 360.0 : point.angle;
-            point.angle = point.angle > 360 ? point.angle - 360.0 : point.angle;
-        }
-
         store.routeStore.selectCurrentPosition(point, focus, icon);
         this.onCurrentPositionChanged?.(point);
     }
