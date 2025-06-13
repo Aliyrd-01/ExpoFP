@@ -47,7 +47,7 @@ function isLive(event: ScheduleEvent): boolean {
 }
 
 const Schedule: React.FC<ScheduleProps> = observer(
-    ({ events = [], descriptionMaxLength = 200, showMoreButton, showBooths = false, onEventClick }) => {
+    ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, onEventClick }) => {
         const [eventsFullDescription, setEventsFullDescription] = useState({});
 
         const grouped = events.reduce((acc, curr) => {
@@ -163,7 +163,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                                                         transformDescription(
                                                                             event.description,
                                                                             eventsFullDescription[date]?.[eventIndex]
-                                                                                ?.showFullDescription
+                                                                                ?.showFullDescription ?? false
                                                                         )
                                                                     ),
                                                                 }}
@@ -177,12 +177,13 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                                                         toggleDescription(event, date, eventIndex)
                                                                     }
                                                                     aria-expanded={
-                                                                        eventsFullDescription[date][eventIndex]
-                                                                            .showFullDescription
+                                                                        eventsFullDescription[date]?.[eventIndex]
+                                                                            ?.showFullDescription ?? false
                                                                     }
                                                                     aria-controls={`event-desc-${date}-${eventIndex}`}
                                                                 >
-                                                                    {eventsFullDescription[date][eventIndex].showFullDescription
+                                                                    {eventsFullDescription[date]?.[eventIndex]
+                                                                        ?.showFullDescription
                                                                         ? t("Show Less")
                                                                         : t("Show More")}
                                                                 </Button>
