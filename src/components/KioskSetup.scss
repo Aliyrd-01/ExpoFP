@@ -66,7 +66,7 @@
     place-items: center;
     place-content: flex-start;
     grid-template-columns: #{utils.rem(115px)} 1fr;
-        justify-items: start;
+    justify-items: start;
     gap: 0.6rem;
     margin: 1.2rem 0;
     width: 100%;
