@@ -137,15 +137,15 @@ const KioskSetup = observer(() => {
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
     const newKioskKey = useMemo(() => {
-        const key = store.uiState.kioskList.map(k => k.key).sort().reverse()[0];
-        const s = key?.trim();
+        const maxKey = store.uiState.kioskList.reduce((max, { key }) => {
+            if (/^\d+$/.test(key)) {
+                const num = Number(key);
+                return num > max ? num : max;
+            }
+            return max;
+        }, 0);
 
-        if (s && /^\d+$/.test(s)) {
-            const num = parseInt(s, 10) + 1;
-            return num.toString();
-        }
-
-        return "";
+        return String(maxKey + 1);
     }, [store.uiState.kioskList]);
 
     useEffect(() => {
