@@ -111,13 +111,17 @@ const KioskSetup = observer(() => {
                 const rect = searchParams.get("rect")?.split(",").map(Number);
 
                 const k = kiosks.find((k) => strEqual(k.key, kioskId));
-                const kiosk = {
-                    ...k,
-                    x: point[0] || k?.x || 0,
-                    y: point[1] || k?.y || 0,
-                    z: point[2] || k?.z || store.layerStore.floors.find((f) => f.active)?.name,
-                    heading: angle || k?.heading || 0,
-                };
+
+                let kiosk;
+                if (k) {
+                    kiosk = {
+                        ...k,
+                        x: point[0] || k?.x,
+                        y: point[1] || k?.y,
+                        z: point[2] || k?.z,
+                        heading: angle || k?.heading,
+                    };
+                }
 
                 runInAction(() => {
                     store.uiState.kioskList = kiosks;
