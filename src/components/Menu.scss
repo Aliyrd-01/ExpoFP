@@ -64,13 +64,9 @@
             }
         }
 
-        &.-language {
-            display: grid;
-            grid-auto-flow: column;
-            place-content: center space-between;
-        }
-
-        &.-categories {
+        &.-language,
+        &.-categories,
+        &.-agenda {
             display: grid;
             grid-auto-flow: column;
             place-content: center space-between;

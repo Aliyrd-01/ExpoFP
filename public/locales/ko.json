@@ -88,5 +88,22 @@
     "Distance": "거리",
     "Est arrival": "예상 도착 시간",
     "Route not found": "경로를 찾을 수 없음",
-    "Oops, nothing found": "이런, 아무것도 찾을 수 없습니다"
+    "Oops, nothing found": "이런, 아무것도 찾을 수 없습니다",
+    "Agenda": "일정",
+    "Search events": "이벤트 검색",
+    "No events found. Try adjusting your filters.": "이벤트가 없습니다. 필터를 조정해보세요.",
+    "No events found": "이벤트가 없습니다",
+    "Agenda Filters": "일정 필터",
+    "Apply": "적용",
+    "Clear all": "모두 지우기",
+    "Reset": "초기화",
+    "Date": "날짜",
+    "All dates": "모든 날짜",
+    "Today": "오늘",
+    "Tomorrow": "내일",
+    "Sort order": "정렬 순서",
+    "Earliest first": "오래된 순",
+    "Latest first": "최신 순",
+    "Additional settings": "추가 설정",
+    "Show time in 24h format": "24시간 형식으로 시간 표시"
 }
