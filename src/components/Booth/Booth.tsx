@@ -179,6 +179,7 @@ const Booth: React.FC = observer(() => {
                     events={[...s.booth.schedule].sort(
                         (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
                     )}
+                    showMoreButton={true}
                 />
             )}
         </OverlayContent>

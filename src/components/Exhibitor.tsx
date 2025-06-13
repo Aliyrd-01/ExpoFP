@@ -418,7 +418,12 @@ function ExhibitorComponent() {
                                 </div>
                             ) : null}
                             {(!!exhibitor.schedule?.length || !!exhibitor.booths[0]?.schedule.length) && (
-                                <Schedule events={exhibitor.schedule || exhibitor.booths[0]?.schedule} />
+                                <Schedule
+                                    events={[...(exhibitor.schedule || exhibitor.booths[0]?.schedule || [])].sort(
+                                        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+                                    )}
+                                    showMoreButton={true}
+                                />
                             )}
                             {!uiState.kiosk && exhibitor.videoUrl && (
                                 <div className="exhibitor-video">
