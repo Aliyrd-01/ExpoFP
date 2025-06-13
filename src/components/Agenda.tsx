@@ -4,11 +4,9 @@ import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import store, { uiState } from "../store";
 import OverlayContent from "./OverlayContent";
-import Schedule from "./Schedule";
+import { Badge, AgendaFiltersModal, Schedule } from "./";
 import { t } from "../utils/i18n";
 import "./Agenda.scss";
-import Badge from "./Badge";
-import AgendaFiltersModal from "./AgendaFiltersModal";
 
 export interface AgendaProps {
     showFilters?: boolean;
@@ -132,7 +130,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
             className="efp-agenda-overlay"
         >
             <div className="efp-agenda-content">
-                {showFilters && (
+                {showFilters && events.length > 0 && (
                     <div className="efp-agenda-filters">
                         <div className="efp-agenda-filters__search">
                             <input
@@ -155,7 +153,11 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
                 {sortedEvents.length > 0 ? (
                     <Schedule events={sortedEvents} showMoreButton={false} showBooths={true} onEventClick={handleEventClick} />
                 ) : (
-                    <div className="efp-agenda-empty">{t("No events found. Try adjusting your filters.")}</div>
+                    <div className="efp-agenda-empty">
+                        {store.agendaFilterStore.activeFiltersCount > 0 || localStore.searchValue
+                            ? t("No events found. Try adjusting your filters.")
+                            : t("No events found")}
+                    </div>
                 )}
 
                 <AgendaFiltersModal store={store.agendaFilterStore} />
