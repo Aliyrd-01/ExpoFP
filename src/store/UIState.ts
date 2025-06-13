@@ -642,7 +642,7 @@ export default class UIState {
             .map(({ item, score }) => ({ item, score }));
 
 
-        const bestMatch = result.filter(x => x.score <= 0.1);
+        const bestMatch = result.filter(x => x.score <= 0.2);
         if (bestMatch.length) {
             return bestMatch;
         }
