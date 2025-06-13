@@ -76,6 +76,9 @@ function stateToUrl() {
             case "filter":
                 queryRaw = `${uiState.list.query.key}=${uiState.list.query.value}`;
                 break;
+            case "agenda":
+                queryRaw = "agenda";
+                break;
             default:
                 throw new Error("Unkown list.type");
         }
@@ -153,6 +156,8 @@ function dispatchFromUrl() {
         store.selectBookmarks();
     } else if (slug === "language") {
         store.selectLanguage();
+    } else if (slug === "agenda") {
+        store.selectAgenda();
     } else if (slug === "-pdf") {
         store.uiState.printingPdf = true;
     } else if (slug.startsWith("hide")) {
@@ -174,7 +179,7 @@ function dispatchFromUrl() {
         if (localStorage.getItem(yahKey)) {
             localStorage.removeItem(yahKey);
             window.location.reload();
-        }        
+        }
     } else {
         const exhibitor = store.exhibitorStore.exhibitors.find(
             (x: Exhibitor) =>

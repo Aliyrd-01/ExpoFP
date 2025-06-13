@@ -5,6 +5,7 @@ $switch-height: 20px;
 
 .toggleSwitch {
     $this: &;
+    min-height: $switch-height;
 
     input[type="checkbox"] {
         display: none;
@@ -20,12 +21,11 @@ $switch-height: 20px;
             &::before {
                 content: "";
                 position: absolute;
-                top: 2px;
+                top: 0;
                 left: 0;
                 width: $switch-width;
                 height: $switch-height;
-                background: var(--color-white);
-                border: 1px solid var(--color-gray-300);
+                background: var(--color-gray-300);
                 border-radius: 30px;
                 cursor: pointer;
                 transition: background 0.3s ease-in-out;
@@ -34,11 +34,11 @@ $switch-height: 20px;
             &::after {
                 content: "";
                 position: absolute;
-                top: 5px;
+                top: 3px;
                 left: 3px;
                 width: 14px;
                 height: 14px;
-                background: #d0d0d0;
+                background: var(--color-white);
                 border-radius: 50%;
                 cursor: pointer;
                 transition: left 0.3s cubic-bezier(0.5, 1.5, 0.5, 1), right 0.3s cubic-bezier(0.5, 1.5, 0.5, 1);
@@ -46,8 +46,10 @@ $switch-height: 20px;
 
             span {
                 display: flex;
+                align-items: center;
+                min-height: inherit;
                 padding-inline-start: 45px;
-                font-size: var(--font-size-xl);
+                font-size: var(--font-size-lg);
                 color: var(--color-black);
                 cursor: pointer;
                 user-select: none;
@@ -57,12 +59,11 @@ $switch-height: 20px;
         &:checked {
             & + label {
                 &::before {
-                    border-color: var(--color-primary);
+                    background: var(--color-primary);
                 }
 
                 &::after {
                     left: 18px;
-                    background: var(--color-primary);
                 }
             }
         }
@@ -71,8 +72,6 @@ $switch-height: 20px;
 
 @include responsive-classes-down-to(".toggleSwitch", sm) {
     input[type="checkbox"] {
-        background: red;
-
         & + label {
             &::before {
                 top: 0;

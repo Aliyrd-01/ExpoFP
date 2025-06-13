@@ -21,6 +21,7 @@ export interface ModalProps {
     type?: ModalType;
     title?: string;
     badge?: number;
+    maxWidth?: number;
     children?: React.ReactNode;
     footerLeft?: ModalButton[];
     footerRight?: ModalButton[];
@@ -33,6 +34,7 @@ const Modal: React.FC<ModalProps> = ({
     type = "default",
     title,
     badge,
+    maxWidth,
     children,
     footerLeft,
     footerRight,
@@ -98,7 +100,11 @@ const Modal: React.FC<ModalProps> = ({
             tabIndex={-1}
             onClick={onClickClose}
         >
-            <div className="modal__box" onClick={(e) => e.stopPropagation()}>
+            <div
+                className="modal__box"
+                style={maxWidth ? { maxWidth: `${maxWidth}px` } : undefined}
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="modal__header">
                     {title && (
                         <div className="modal__title">

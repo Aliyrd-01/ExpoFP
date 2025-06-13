@@ -685,6 +685,8 @@ export default class UIState {
                 return this.rootStore.languageStore.languages;
             case "filter":
                 return this.list.items;
+            case "agenda":
+                return this.rootStore.scheduleStore.scheduleItems;
         }
         throw new Error("Unknown list.type");
     }
