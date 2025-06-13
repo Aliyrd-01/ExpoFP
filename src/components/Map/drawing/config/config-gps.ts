@@ -28,7 +28,7 @@ function trackGPS() {
                     localPoint.x,
                     localPoint.y,
                     null,
-                    0,
+                    undefined,
                     pos.coords.latitude,
                     pos.coords.longitude
                 );
