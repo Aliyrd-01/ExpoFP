@@ -88,5 +88,22 @@
     "Distance": "Khoảng cách",
     "Est arrival": "Dự kiến đến",
     "Route not found": "Không tìm thấy lộ trình",
-    "Oops, nothing found": "Rất tiếc, không tìm thấy gì"
+    "Oops, nothing found": "Rất tiếc, không tìm thấy gì",
+    "Agenda": "Lịch trình",
+    "Search events": "Tìm sự kiện",
+    "No events found. Try adjusting your filters.": "Không tìm thấy sự kiện. Hãy thử điều chỉnh bộ lọc.",
+    "No events found": "Không tìm thấy sự kiện",
+    "Agenda Filters": "Bộ lọc lịch trình",
+    "Apply": "Áp dụng",
+    "Clear all": "Xóa tất cả",
+    "Reset": "Đặt lại",
+    "Date": "Ngày",
+    "All dates": "Tất cả các ngày",
+    "Today": "Hôm nay",
+    "Tomorrow": "Ngày mai",
+    "Sort order": "Thứ tự sắp xếp",
+    "Earliest first": "Cũ nhất trước",
+    "Latest first": "Mới nhất trước",
+    "Additional settings": "Cài đặt bổ sung",
+    "Show time in 24h format": "Hiển thị thời gian theo định dạng 24h"
 }

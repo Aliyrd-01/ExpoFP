@@ -88,5 +88,22 @@
     "Distance": "ระยะทาง",
     "Est arrival": "เวลามาถึงโดยประมาณ",
     "Route not found": "ไม่พบเส้นทาง",
-    "Oops, nothing found": "อุ๊ย ไม่พบอะไรเลย"
+    "Oops, nothing found": "อุ๊ย ไม่พบอะไรเลย",
+    "Agenda": "กำหนดการ",
+    "Search events": "ค้นหากิจกรรม",
+    "No events found. Try adjusting your filters.": "ไม่พบกิจกรรม ลองปรับตัวกรอง",
+    "No events found": "ไม่พบกิจกรรม",
+    "Agenda Filters": "ตัวกรองกำหนดการ",
+    "Apply": "ใช้",
+    "Clear all": "ล้างทั้งหมด",
+    "Reset": "รีเซ็ต",
+    "Date": "วันที่",
+    "All dates": "ทุกวันที่",
+    "Today": "วันนี้",
+    "Tomorrow": "พรุ่งนี้",
+    "Sort order": "ลำดับการจัดเรียง",
+    "Earliest first": "เรียงจากเก่าที่สุด",
+    "Latest first": "เรียงจากใหม่ที่สุด",
+    "Additional settings": "การตั้งค่าเพิ่มเติม",
+    "Show time in 24h format": "แสดงเวลาในรูปแบบ 24 ชั่วโมง"
 }

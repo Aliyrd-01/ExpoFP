@@ -20,8 +20,8 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
             title={t("Agenda Filters")}
             badge={store.activeFiltersCount > 0 ? store.activeFiltersCount : undefined}
             maxWidth={400}
-            footerLeft={hasActiveFilters ? [{ label: t("Clear All"), onClick: () => store.resetFilters(), variant: "gray" }] : []}
-            footerRight={[{ label: t("Apply Filters"), onClick: () => store.applyFilters(), variant: "primary" }]}
+            footerLeft={hasActiveFilters ? [{ label: t("Clear all"), onClick: () => store.resetFilters(), variant: "gray" }] : []}
+            footerRight={[{ label: t("Apply"), onClick: () => store.applyFilters(), variant: "primary" }]}
             onClickClose={() => store.closeFilter()}
         >
             <div className="efp-agenda-filters-modal">
@@ -36,14 +36,14 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
                                 })}
                                 onClick={() => store.setPending("date", option)}
                             >
-                                {t(option === "all" ? "All Dates" : option.charAt(0).toUpperCase() + option.slice(1))}
+                                {t(option === "all" ? "All dates" : option.charAt(0).toUpperCase() + option.slice(1))}
                             </button>
                         ))}
                     </div>
                 </div>
 
                 <div className="efp-agenda-filters-modal__section">
-                    <h3>{t("Sort Order")}</h3>
+                    <h3>{t("Sort order")}</h3>
                     <div className="efp-agenda-filters-modal__buttons">
                         <button
                             className={cn("efp-agenda-filters-modal__btn", {
@@ -51,7 +51,7 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
                             })}
                             onClick={() => store.setPending("sortOrder", "desc")}
                         >
-                            {t("Earliest First")}
+                            {t("Earliest first")}
                         </button>
                         <button
                             className={cn("efp-agenda-filters-modal__btn", {
@@ -59,13 +59,13 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
                             })}
                             onClick={() => store.setPending("sortOrder", "asc")}
                         >
-                            {t("Latest First")}
+                            {t("Latest first")}
                         </button>
                     </div>
                 </div>
 
                 <div className="efp-agenda-filters-modal__section">
-                    <h3>{t("Additional Settings")}</h3>
+                    <h3>{t("Additional settings")}</h3>
                     <div className="efp-agenda-filters-modal__toggle">
                         <ToggleSwitch
                             name="use24hFormat"

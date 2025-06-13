@@ -88,5 +88,22 @@
     "Distance": "Avstånd",
     "Est arrival": "Beräknad ankomst",
     "Route not found": "Rutt hittades inte",
-    "Oops, nothing found": "Hoppsan, ingenting hittades"
+    "Oops, nothing found": "Hoppsan, ingenting hittades",
+    "Agenda": "Agenda",
+    "Search events": "Sök evenemang",
+    "No events found. Try adjusting your filters.": "Inga evenemang hittades. Prova att justera filtren.",
+    "No events found": "Inga evenemang hittades",
+    "Agenda Filters": "Agendafilter",
+    "Apply": "Använd",
+    "Clear all": "Rensa alla",
+    "Reset": "Återställ",
+    "Date": "Datum",
+    "All dates": "Alla datum",
+    "Today": "Idag",
+    "Tomorrow": "I morgon",
+    "Sort order": "Sorteringsordning",
+    "Earliest first": "Tidigast först",
+    "Latest first": "Senast först",
+    "Additional settings": "Ytterligare inställningar",
+    "Show time in 24h format": "Visa tid i 24h-format"
 }

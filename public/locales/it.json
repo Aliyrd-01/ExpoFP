@@ -88,5 +88,22 @@
     "Distance": "Distanza",
     "Est arrival": "Arrivo stimato",
     "Route not found": "Percorso non trovato",
-    "Oops, nothing found": "Ops, nessun risultato trovato"
+    "Oops, nothing found": "Ops, nessun risultato trovato",
+    "Agenda": "Agenda",
+    "Search events": "Cerca eventi",
+    "No events found. Try adjusting your filters.": "Nessun evento trovato. Prova a regolare i filtri.",
+    "No events found": "Nessun evento trovato",
+    "Agenda Filters": "Filtri agenda",
+    "Apply": "Applica",
+    "Clear all": "Cancella tutto",
+    "Reset": "Reimposta",
+    "Date": "Data",
+    "All dates": "Tutte le date",
+    "Today": "Oggi",
+    "Tomorrow": "Domani",
+    "Sort order": "Ordine di ordinamento",
+    "Earliest first": "Prima i più vecchi",
+    "Latest first": "Prima i più recenti",
+    "Additional settings": "Impostazioni aggiuntive",
+    "Show time in 24h format": "Mostra l’ora nel formato 24h"
 }

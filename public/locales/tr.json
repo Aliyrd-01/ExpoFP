@@ -88,5 +88,22 @@
     "Distance": "Mesafe",
     "Est arrival": "Tahmini varış",
     "Route not found": "Rota bulunamadı",
-    "Oops, nothing found": "Hata, hiçbir şey bulunamadı"
+    "Oops, nothing found": "Hata, hiçbir şey bulunamadı",
+    "Agenda": "Ajanda",
+    "Search events": "Etkinlik ara",
+    "No events found. Try adjusting your filters.": "Etkinlik bulunamadı. Filtreleri gözden geçirin.",
+    "No events found": "Etkinlik bulunamadı",
+    "Agenda Filters": "Ajanda Filtreleri",
+    "Apply": "Uygula",
+    "Clear all": "Hepsini temizle",
+    "Reset": "Sıfırla",
+    "Date": "Tarih",
+    "All dates": "Tüm tarihler",
+    "Today": "Bugün",
+    "Tomorrow": "Yarın",
+    "Sort order": "Sıralama düzeni",
+    "Earliest first": "Önce en eskiler",
+    "Latest first": "Önce en yeniler",
+    "Additional settings": "Ek ayarlar",
+    "Show time in 24h format": "24 saat biçiminde göster"
 }
