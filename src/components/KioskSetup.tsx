@@ -105,7 +105,19 @@ const KioskSetup = observer(() => {
                     kioskId = routeFromKioskMatch[1];
                 }
 
-                const kiosk = kiosks.find((k) => strEqual(k.key, kioskId));
+                const [x, y, z] = searchParams.get("p")?.split(",") || [];
+                const point = [Number(x), Number(y), z];
+                const angle = searchParams.has("a") ? parseInt(searchParams.get("a"), 10) : 0;
+                const rect = searchParams.get("rect")?.split(",").map(Number);
+
+                const k = kiosks.find((k) => strEqual(k.key, kioskId));
+                const kiosk = {
+                    ...k,
+                    x: point[0] || k?.x || 0,
+                    y: point[1] || k?.y || 0,
+                    z: point[2] || k?.z || store.layerStore.floors.find((f) => f.active)?.name,
+                    heading: angle || k?.heading || 0,
+                };
 
                 runInAction(() => {
                     store.uiState.kioskList = kiosks;
@@ -113,6 +125,10 @@ const KioskSetup = observer(() => {
 
                     if (kiosk) {
                         store.uiState.kioskSetupData = kiosk;
+
+                        if (rect) {
+                            store.uiState.moveToRect = Rect.fromCxcywh(rect[0], rect[1], rect[2], rect[3]);
+                        }
                     }
 
                     if (isSetup && kiosks?.length) {
