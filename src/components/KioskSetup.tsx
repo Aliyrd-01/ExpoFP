@@ -137,7 +137,7 @@ const KioskSetup = observer(() => {
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
     const newKioskKey = useMemo(() => {
-        const key = store.uiState.kioskList.map(k => k.key).reverse()[0];
+        const key = store.uiState.kioskList.map(k => k.key).sort().reverse()[0];
         const s = key?.trim();
 
         if (s && /^\d+$/.test(s)) {
@@ -448,12 +448,9 @@ const KioskSetup = observer(() => {
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
-                                    <div>
-                                        <strong>{t("To Add")}:</strong>  {t("Click anywhere on the map.")}
-                                    </div>
-                                    <div>
-                                        <strong>{t("To Edit")}:</strong> {t("Enter the kiosk number below.")}
-                                    </div>
+                                    <strong>{t("To Add")}:</strong>  {t("Click anywhere on the map.")}
+                                    <br />
+                                    <strong>{t("To Edit")}:</strong> {t("Enter the kiosk number below.")}
                                 </p>
 
                                 <label className="efp-kiosk-setup-key">
