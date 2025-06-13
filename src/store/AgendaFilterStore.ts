@@ -3,16 +3,23 @@ import RootStore from "./RootStore";
 import BaseFilterStore from "./BaseFilterStore";
 import { FilterItem } from "./types";
 
+type DateFilter = "all" | "today" | "tomorrow";
+type SortOrder = "asc" | "desc";
+
+interface Filter<T> {
+    value: T;
+    pending: T;
+}
+
 interface AgendaFilterState {
-    dateFilter: "all" | "today" | "tomorrow";
-    sortOrder: "asc" | "desc";
     isOpen: boolean;
     selectedItems: FilterItem[];
     pendingItems: FilterItem[];
-    pendingDateFilter: "all" | "today" | "tomorrow";
-    pendingSortOrder: "asc" | "desc";
-    use24hFormat: boolean;
-    pendingUse24hFormat: boolean;
+    filters: {
+        date: Filter<DateFilter>;
+        sortOrder: Filter<SortOrder>;
+        use24hFormat: Filter<boolean>;
+    };
 }
 
 export default class AgendaFilterStore extends BaseFilterStore {
@@ -20,12 +27,11 @@ export default class AgendaFilterStore extends BaseFilterStore {
         isOpen: false,
         selectedItems: [],
         pendingItems: [],
-        dateFilter: "all",
-        sortOrder: "desc",
-        pendingDateFilter: "all",
-        pendingSortOrder: "desc",
-        use24hFormat: false,
-        pendingUse24hFormat: false
+        filters: {
+            date: { value: "all", pending: "all" },
+            sortOrder: { value: "desc", pending: "desc" },
+            use24hFormat: { value: false, pending: false },
+        },
     };
 
     constructor(rootStore: RootStore) {
@@ -33,68 +39,74 @@ export default class AgendaFilterStore extends BaseFilterStore {
     }
 
     @action
-    setDateFilter(filter: "all" | "today" | "tomorrow") {
-        this.state.pendingDateFilter = filter;
+    setPending<K extends keyof AgendaFilterState["filters"]>(key: K, value: AgendaFilterState["filters"][K]["pending"]) {
+        this.state.filters[key].pending = value;
     }
 
     @action
-    setSortOrder(order: "asc" | "desc") {
-        this.state.pendingSortOrder = order;
-    }
+    applyFilters() {
+        const { filters } = this.state;
+        filters.date.value = filters.date.pending;
+        filters.sortOrder.value = filters.sortOrder.pending;
+        filters.use24hFormat.value = filters.use24hFormat.pending;
 
-    @action
-    setUse24hFormat(value: boolean) {
-        this.state.pendingUse24hFormat = value;
-    }
-
-    @computed
-    get activeFiltersCount() {
-        let count = 0;
-        if (this.state.dateFilter !== "all") count++;
-        if (this.state.sortOrder !== "desc") count++;
-        if (this.state.use24hFormat) count++;
-        return count;
-    }
-
-    @action
-    resetFilter() {
-        this.state.pendingItems = [];
-        this.state.selectedItems = [];
-        this.state.pendingDateFilter = "all";
-        this.state.pendingSortOrder = "desc";
-        this.state.pendingUse24hFormat = false;
-        this.state.dateFilter = "all";
-        this.state.sortOrder = "desc";
-        this.state.use24hFormat = false;
-        this.rootStore.uiState.list = { type: "agenda" };
-    }
-
-    @action
-    applyFilter() {
         this.state.selectedItems = [...this.state.pendingItems];
-        this.state.dateFilter = this.state.pendingDateFilter;
-        this.state.sortOrder = this.state.pendingSortOrder;
-        this.state.use24hFormat = this.state.pendingUse24hFormat;
         this.state.isOpen = false;
         this.updateUIState();
+    }
+
+    @action
+    resetFilters() {
+        const defaults = this.getDefaultValues();
+        const { filters } = this.state;
+
+        filters.date.value = defaults.date;
+        filters.date.pending = defaults.date;
+
+        filters.sortOrder.value = defaults.sortOrder;
+        filters.sortOrder.pending = defaults.sortOrder;
+
+        filters.use24hFormat.value = defaults.use24hFormat;
+        filters.use24hFormat.pending = defaults.use24hFormat;
+
+        this.state.selectedItems = [];
+        this.state.pendingItems = [];
+        this.rootStore.uiState.list = { type: "agenda" };
     }
 
     @action
     openFilter() {
         this.state.isOpen = true;
         this.state.pendingItems = [...this.state.selectedItems];
-        this.state.pendingDateFilter = this.state.dateFilter;
-        this.state.pendingSortOrder = this.state.sortOrder;
-        this.state.pendingUse24hFormat = this.state.use24hFormat;
+
+        const { filters } = this.state;
+        filters.date.pending = filters.date.value;
+        filters.sortOrder.pending = filters.sortOrder.value;
+        filters.use24hFormat.pending = filters.use24hFormat.value;
     }
 
     @action
     closeFilter() {
         this.state.isOpen = false;
-        this.state.pendingDateFilter = this.state.dateFilter;
-        this.state.pendingSortOrder = this.state.sortOrder;
-        this.state.pendingUse24hFormat = this.state.use24hFormat;
         this.state.pendingItems = [...this.state.selectedItems];
+
+        const { filters } = this.state;
+        filters.date.pending = filters.date.value;
+        filters.sortOrder.pending = filters.sortOrder.value;
+        filters.use24hFormat.pending = filters.use24hFormat.value;
+    }
+
+    @computed
+    get activeFiltersCount(): number {
+        const defaults = this.getDefaultValues();
+        const { filters } = this.state;
+        let count = 0;
+
+        if (filters.date.value !== defaults.date) count++;
+        if (filters.sortOrder.value !== defaults.sortOrder) count++;
+        if (filters.use24hFormat.value !== defaults.use24hFormat) count++;
+
+        return count;
     }
 
     protected updateUIState(): void {
@@ -103,5 +115,13 @@ export default class AgendaFilterStore extends BaseFilterStore {
 
     getFilteredItems(): FilterItem[] {
         return [];
+    }
+
+    private getDefaultValues() {
+        return {
+            date: "all" as DateFilter,
+            sortOrder: "desc" as SortOrder,
+            use24hFormat: false,
+        };
     }
 }

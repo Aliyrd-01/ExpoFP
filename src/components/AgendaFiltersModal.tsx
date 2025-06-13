@@ -10,8 +10,9 @@ export interface AgendaFiltersModalProps {
 }
 
 const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store }) => {
+    const pending = store.state.filters;
     const hasActiveFilters =
-        store.state.pendingDateFilter !== "all" || store.state.pendingSortOrder !== "desc" || store.state.pendingUse24hFormat;
+        pending.date.pending !== "all" || pending.sortOrder.pending !== "desc" || pending.use24hFormat.pending !== false;
 
     return (
         <Modal
@@ -19,38 +20,25 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
             title={t("Agenda Filters")}
             badge={store.activeFiltersCount > 0 ? store.activeFiltersCount : undefined}
             maxWidth={400}
-            footerLeft={hasActiveFilters ? [{ label: t("Clear All"), onClick: () => store.resetFilter(), variant: "gray" }] : []}
-            footerRight={[{ label: t("Apply Filters"), onClick: () => store.applyFilter(), variant: "primary" }]}
+            footerLeft={hasActiveFilters ? [{ label: t("Clear All"), onClick: () => store.resetFilters(), variant: "gray" }] : []}
+            footerRight={[{ label: t("Apply Filters"), onClick: () => store.applyFilters(), variant: "primary" }]}
             onClickClose={() => store.closeFilter()}
         >
             <div className="efp-agenda-filters-modal">
                 <div className="efp-agenda-filters-modal__section">
                     <h3>{t("Date")}</h3>
                     <div className="efp-agenda-filters-modal__buttons">
-                        <button
-                            className={cn("efp-agenda-filters-modal__btn", {
-                                "is-active": store.state.pendingDateFilter === "all",
-                            })}
-                            onClick={() => store.setDateFilter("all")}
-                        >
-                            {t("All Dates")}
-                        </button>
-                        <button
-                            className={cn("efp-agenda-filters-modal__btn", {
-                                "is-active": store.state.pendingDateFilter === "today",
-                            })}
-                            onClick={() => store.setDateFilter("today")}
-                        >
-                            {t("Today")}
-                        </button>
-                        <button
-                            className={cn("efp-agenda-filters-modal__btn", {
-                                "is-active": store.state.pendingDateFilter === "tomorrow",
-                            })}
-                            onClick={() => store.setDateFilter("tomorrow")}
-                        >
-                            {t("Tomorrow")}
-                        </button>
+                        {(["all", "today", "tomorrow"] as const).map((option) => (
+                            <button
+                                key={option}
+                                className={cn("efp-agenda-filters-modal__btn", {
+                                    "is-active": pending.date.pending === option,
+                                })}
+                                onClick={() => store.setPending("date", option)}
+                            >
+                                {t(option === "all" ? "All Dates" : option.charAt(0).toUpperCase() + option.slice(1))}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
@@ -59,17 +47,17 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
                     <div className="efp-agenda-filters-modal__buttons">
                         <button
                             className={cn("efp-agenda-filters-modal__btn", {
-                                "is-active": store.state.pendingSortOrder === "desc",
+                                "is-active": pending.sortOrder.pending === "desc",
                             })}
-                            onClick={() => store.setSortOrder("desc")}
+                            onClick={() => store.setPending("sortOrder", "desc")}
                         >
                             {t("Earliest First")}
                         </button>
                         <button
                             className={cn("efp-agenda-filters-modal__btn", {
-                                "is-active": store.state.pendingSortOrder === "asc",
+                                "is-active": pending.sortOrder.pending === "asc",
                             })}
-                            onClick={() => store.setSortOrder("asc")}
+                            onClick={() => store.setPending("sortOrder", "asc")}
                         >
                             {t("Latest First")}
                         </button>
@@ -82,8 +70,8 @@ const AgendaFiltersModal: React.FC<AgendaFiltersModalProps> = observer(({ store 
                         <ToggleSwitch
                             name="use24hFormat"
                             label={t("Show time in 24h format")}
-                            value={store.state.pendingUse24hFormat}
-                            onChange={(value) => store.setUse24hFormat(value)}
+                            value={pending.use24hFormat.pending}
+                            onChange={(value) => store.setPending("use24hFormat", value)}
                         />
                     </div>
                 </div>

@@ -87,7 +87,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
             desc.length > descriptionMaxLength && show === false ? desc.slice(0, descriptionMaxLength) + "..." : desc;
 
         const formatTime = (date: string) => {
-            const use24hFormat = store.agendaFilterStore.state.use24hFormat;
+            const use24hFormat = store.agendaFilterStore.state.filters.use24hFormat.value;
             return dateFormat(date, use24hFormat ? "HH:MM" : "h:MMtt");
         };
 

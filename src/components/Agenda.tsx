@@ -24,7 +24,12 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
     }));
 
     const events = store.scheduleStore.scheduleItems;
-    const { dateFilter, sortOrder } = store.agendaFilterStore.state;
+    const {
+        filters: {
+            date: { value: dateFilter },
+            sortOrder: { value: sortOrder },
+        },
+    } = store.agendaFilterStore.state;
 
     const filteredEvents = useMemo(() => {
         const today = new Date();
