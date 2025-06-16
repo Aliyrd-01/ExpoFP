@@ -40,6 +40,12 @@ $modal: ".modal";
         border-bottom: 1px solid var(--color-gray-300);
     }
 
+    &__title-container {
+        display: flex;
+        align-items: center;
+        gap: rem(20px);
+    }
+
     &__title {
         display: flex;
         align-items: center;
