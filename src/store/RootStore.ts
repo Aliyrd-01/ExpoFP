@@ -395,5 +395,9 @@ export default class RootStore {
     @action selectAgenda() {
         this.uiState.list = { type: "agenda" };
         this.uiState.menu = false;
+
+        if (isMobile) {
+            this.uiState.desiredOverlaySize = "full";
+        }
     }
 }
