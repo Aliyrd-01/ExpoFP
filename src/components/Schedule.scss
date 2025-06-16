@@ -1,6 +1,6 @@
 @use "@styles/utils" as *;
 
-.schedule {
+.efp-schedule {
     padding: rem(16px);
     font-size: var(--font-size-xl);
 
@@ -64,7 +64,6 @@
         border-radius: var(--border-radius-sm);
         text-decoration: none;
         transition: background var(--transition-duration) ease;
-        cursor: pointer;
 
         &.ended {
             opacity: 0.6;
@@ -73,10 +72,6 @@
 
         &.current {
             background: var(--color-gray-300);
-        }
-
-        &:hover {
-            background: var(--color-gray-200);
         }
 
         & > span {
@@ -165,16 +160,29 @@
             margin-top: rem(8px);
         }
     }
+
+    &.is-agenda {
+        .efp-schedule__event {
+            cursor: pointer;
+
+            &:hover {
+                background: var(--color-gray-200);
+            }
+        }
+        .efp-schedule__date-sticky {
+            top: rem(50px);
+        }
+    }
 }
 
 .-exhibitor-featured {
-    .schedule__event > span,
-    .schedule__event-desc,
-    .schedule__date > div {
+    .efp-schedule__event > span,
+    .efp-schedule__event-desc,
+    .efp-schedule__date > div {
         color: rgb(255 255 255 / 70%);
     }
 
-    .schedule__event:hover {
+    .efp-schedule__event:hover {
         background: rgb(255 255 255 / 10%);
     }
 }
