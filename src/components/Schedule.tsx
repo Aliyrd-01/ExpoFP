@@ -24,6 +24,7 @@ export interface ScheduleProps {
     descriptionMaxLength?: number;
     showMoreButton?: boolean;
     showBooths?: boolean;
+    isAgenda?: boolean;
     onEventClick?: (event: ScheduleEvent) => void;
 }
 
@@ -46,7 +47,7 @@ function isLive(event: ScheduleEvent): boolean {
 }
 
 const Schedule: React.FC<ScheduleProps> = observer(
-    ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, onEventClick }) => {
+    ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, isAgenda = false, onEventClick }) => {
         const [eventsFullDescription, setEventsFullDescription] = useState<Record<string, { showFullDescription: boolean }[]>>(
             {}
         );
@@ -94,7 +95,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
             return link ? (
                 <a
                     href={link}
-                    className={classNames("schedule__event", current, ended)}
+                    className={classNames("efp-schedule__event", current, ended)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleClick}
@@ -102,22 +103,24 @@ const Schedule: React.FC<ScheduleProps> = observer(
                     {children}
                 </a>
             ) : (
-                <div className={classNames("schedule__event", { ended })} onClick={handleClick}>
+                <div className={classNames("efp-schedule__event", { ended })} onClick={handleClick}>
                     {children}
                 </div>
             );
         };
 
         return (
-            <div className="schedule">
+            <div className={classNames("efp-schedule", { "is-agenda": isAgenda })}>
                 {Object.entries(grouped).map(([date, events]) => (
-                    <div className="schedule__item" key={date}>
-                        <div className="schedule__date" aria-label={`Date: ${dateFormat(date, "dddd, mmmm d")}`}>
-                            <div>{dateFormat(date, "dd")}</div>
-                            <div>{dateFormat(date, "mmm")}</div>
-                            <div>{dateFormat(date, "ddd")}</div>
+                    <div className="efp-schedule__item" key={date}>
+                        <div className="efp-schedule__date" aria-label={`Date: ${dateFormat(date, "dddd, mmmm d")}`}>
+                            <div className="efp-schedule__date-sticky">
+                                <div>{dateFormat(date, "dd")}</div>
+                                <div>{dateFormat(date, "mmm")}</div>
+                                <div>{dateFormat(date, "ddd")}</div>
+                            </div>
                         </div>
-                        <div className="schedule__events" role="list">
+                        <div className="efp-schedule__events" role="list">
                             {events.map((event, eventIndex) => {
                                 const booth = event.boothId ? store.boothStore.boothById.get(Number(event.boothId)) : null;
 
@@ -137,15 +140,15 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                             </span>
                                             <strong>
                                                 {event.name}
-                                                {isLive(event) && <span className="schedule__event-live-badge">LIVE</span>}
+                                                {isLive(event) && <span className="efp-schedule__event-live-badge">LIVE</span>}
                                             </strong>
                                             {booth && showBooths && (
-                                                <div className="schedule__event-booth">
+                                                <div className="efp-schedule__event-booth">
                                                     <div>{booth.name}</div>
                                                 </div>
                                             )}
                                             {event.description && (
-                                                <div className="schedule__event-desc">
+                                                <div className="efp-schedule__event-desc">
                                                     <div
                                                         dangerouslySetInnerHTML={{
                                                             __html: sanitizeHTML(

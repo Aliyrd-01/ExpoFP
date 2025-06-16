@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import store from "../store";
 import "./MultiSelectGroups.scss";
-import { uiState } from "../store";
+
+import { Checkbox } from "./";
 
 export interface MultiSelectGroupItem {
     id: number | string;
@@ -59,6 +60,12 @@ const MultiSelectGroups: React.FC<MultiSelectGroupsProps> = ({ groups = [], sele
         return group.items.every((item) => item.id && localSelected.includes(item.id));
     };
 
+    const isGroupPartiallySelected = (group: MultiSelectGroup) => {
+        if (!group?.items?.length) return false;
+        const selectedCount = group.items.filter((item) => item.id && localSelected.includes(item.id)).length;
+        return selectedCount > 0 && selectedCount < group.items.length;
+    };
+
     if (!Array.isArray(groups) || !groups.length) {
         return null;
     }
@@ -79,13 +86,14 @@ const MultiSelectGroups: React.FC<MultiSelectGroupsProps> = ({ groups = [], sele
                             {group.groupName !== "General" && (
                                 <div className="multi-select-groups__group-header">
                                     <div className="multi-select-groups__group-title">{group.groupName}</div>
-                                    <button
-                                        className="multi-select-groups__select-all"
-                                        onClick={() => toggleGroup(group)}
-                                        type="button"
-                                    >
-                                        {isGroupFullySelected(group) ? "clear selection" : "select all"}
-                                    </button>
+                                    <Checkbox
+                                        name={`select-all-${group.groupName}`}
+                                        value={isGroupFullySelected(group)}
+                                        indeterminate={isGroupPartiallySelected(group)}
+                                        label={`Select all (${group.items.length})`}
+                                        size="sm"
+                                        onChange={() => toggleGroup(group)}
+                                    />
                                 </div>
                             )}
                             <div className="multi-select-groups__group-items">

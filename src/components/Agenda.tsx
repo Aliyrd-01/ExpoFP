@@ -7,6 +7,7 @@ import OverlayContent from "./OverlayContent";
 import { Badge, AgendaFiltersModal, Schedule } from "./";
 import { t } from "../utils/i18n";
 import "./Agenda.scss";
+import Fuse from "fuse.js";
 
 export interface AgendaProps {
     showFilters?: boolean;
@@ -18,6 +19,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
         searchValue: "",
         setSearchValue: action((value: string) => {
             localStore.searchValue = value;
+            store.agendaFilterStore.setSearchText(value);
         }),
     }));
 
@@ -36,23 +38,39 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        return events.filter((event) => {
-            const nameMatch = event.name.toLowerCase().includes(localStore.searchValue.toLowerCase());
-            if (!nameMatch) return false;
+        let filtered = events;
 
-            const eventDate = new Date(event.startDate);
-            eventDate.setHours(0, 0, 0, 0);
+        if (dateFilter !== "all") {
+            filtered = filtered.filter((event) => {
+                const eventDate = new Date(event.startDate);
+                eventDate.setHours(0, 0, 0, 0);
 
-            if (dateFilter === "today") {
-                return eventDate.getTime() === today.getTime();
-            }
+                if (dateFilter === "today") {
+                    return eventDate.getTime() === today.getTime();
+                }
 
-            if (dateFilter === "tomorrow") {
-                return eventDate.getTime() === tomorrow.getTime();
-            }
+                if (dateFilter === "tomorrow") {
+                    return eventDate.getTime() === tomorrow.getTime();
+                }
 
-            return true;
-        });
+                return true;
+            });
+        }
+
+        if (localStore.searchValue) {
+            const fuseOptions = {
+                keys: ["name"],
+                threshold: 0.4,
+                ignoreLocation: true,
+                includeScore: true,
+            };
+
+            const fuse = new Fuse(filtered, fuseOptions);
+            const searchResults = fuse.search(localStore.searchValue);
+            filtered = searchResults.map((result) => result.item);
+        }
+
+        return filtered;
     }, [events, localStore.searchValue, dateFilter, store.agendaFilterStore.state]);
 
     const sortedEvents = useMemo(() => {
@@ -105,6 +123,10 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
 
     const handleSearchChange = action((e: React.ChangeEvent<HTMLInputElement>) => {
         localStore.setSearchValue(e.target.value);
+
+        if (scrollableRef.current) {
+            scrollableRef.current.scrollTop = 0;
+        }
     });
 
     const bar = (
@@ -151,7 +173,13 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
                 )}
 
                 {sortedEvents.length > 0 ? (
-                    <Schedule events={sortedEvents} showMoreButton={false} showBooths={true} onEventClick={handleEventClick} />
+                    <Schedule
+                        events={sortedEvents}
+                        showMoreButton={false}
+                        showBooths={true}
+                        isAgenda={true}
+                        onEventClick={handleEventClick}
+                    />
                 ) : (
                     <div className="efp-agenda-empty">
                         {store.agendaFilterStore.activeFiltersCount > 0 || localStore.searchValue
