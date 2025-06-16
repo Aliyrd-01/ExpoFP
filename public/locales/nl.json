@@ -88,5 +88,22 @@
     "Distance": "Afstand",
     "Est arrival": "Geschatte aankomst",
     "Route not found": "Route niet gevonden",
-    "Oops, nothing found": "Oeps, niets gevonden"
+    "Oops, nothing found": "Oeps, niets gevonden",
+    "Agenda": "Agenda",
+    "Search events": "Zoek evenementen",
+    "No events found. Try adjusting your filters.": "Geen evenementen gevonden. Pas uw filters aan.",
+    "No events found": "Geen evenementen gevonden",
+    "Agenda Filters": "Agendafilters",
+    "Apply": "Toepassen",
+    "Clear all": "Alles wissen",
+    "Reset": "Resetten",
+    "Date": "Datum",
+    "All dates": "Alle datums",
+    "Today": "Vandaag",
+    "Tomorrow": "Morgen",
+    "Sort order": "Sorteervolgorde",
+    "Earliest first": "Oudste eerst",
+    "Latest first": "Nieuwste eerst",
+    "Additional settings": "Aanvullende instellingen",
+    "Show time in 24h format": "Toon tijd in 24uursformaat"
 }

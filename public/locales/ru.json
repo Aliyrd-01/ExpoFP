@@ -89,5 +89,22 @@
     "Distance": "Расстояние",
     "Est arrival": "Ожидаемое прибытие",
     "Route not found": "Маршрут не найден",
-    "Oops, nothing found": "Упс, ничего не найдено"
+    "Oops, nothing found": "Упс, ничего не найдено",
+    "Agenda": "События",
+    "Search events": "Найти события",
+    "No events found. Try adjusting your filters.": "События не найдены. Попробуйте изменить фильтры.",
+    "No events found": "События не найдены",
+    "Agenda Filters": "Фильтры событий",
+    "Apply": "Применить",
+    "Clear all": "Очистить все",
+    "Reset": "Сбросить",
+    "Date": "Дата",
+    "All dates": "Все даты",
+    "Today": "Сегодня",
+    "Tomorrow": "Завтра",
+    "Sort order": "Порядок сортировки",
+    "Earliest first": "Сначала старые",
+    "Latest first": "Сначала новые",
+    "Additional settings": "Дополнительные настройки",
+    "Show time in 24h format": "Показать время в формате 24ч"
 }

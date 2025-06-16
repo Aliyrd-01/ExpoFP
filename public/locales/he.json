@@ -88,5 +88,22 @@
     "Distance": "מרחק",
     "Est arrival": "הגעה משוערת",
     "Route not found": "המסלול לא נמצא",
-    "Oops, nothing found": "אופס, לא נמצא דבר"
+    "Oops, nothing found": "אופס, לא נמצא דבר",
+    "Agenda": "סדר יום",
+    "Search events": "חפש אירועים",
+    "No events found. Try adjusting your filters.": "לא נמצאו אירועים. נסה לשנות את המסננים.",
+    "No events found": "לא נמצאו אירועים",
+    "Agenda Filters": "מסנני סדר יום",
+    "Apply": "החל",
+    "Clear all": "נקה הכל",
+    "Reset": "אפס",
+    "Date": "תאריך",
+    "All dates": "כל התאריכים",
+    "Today": "היום",
+    "Tomorrow": "מחר",
+    "Sort order": "סדר מיון",
+    "Earliest first": "קודם כל המוקדמים",
+    "Latest first": "קודם כל המאוחרים",
+    "Additional settings": "הגדרות נוספות",
+    "Show time in 24h format": "הצג שעה בפורמט 24 שעות"
 }

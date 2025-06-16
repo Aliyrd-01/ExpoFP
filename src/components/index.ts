@@ -1,3 +1,4 @@
+export { default as AgendaFiltersModal } from "./AgendaFiltersModal";
 export { default as Alert } from "./Alert";
 export { default as Autocomplete } from "./Autocomplete";
 export { default as Button } from "./Button";
@@ -22,6 +23,7 @@ export { default as TouchHand } from "./TouchHand";
 export { default as WayfindingFloorSelector } from "./WayfindingFloorSelector";
 export { default as WayfindingTemplate } from "./WayfindingTemplate";
 
+export type { AgendaFiltersModalProps } from "./AgendaFiltersModal";
 export type { AlertProps, AlertVariant, AlertPosition } from "./Alert";
 export type { AutocompleteProps, AutocompleteOptionObject } from "./Autocomplete";
 export type { ButtonProps, ButtonVariant, ButtonSize } from "./Button";
