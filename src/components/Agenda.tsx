@@ -99,7 +99,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
                 setTimeout(() => {
                     const containerRect = scrollableRef.current.getBoundingClientRect();
                     const elementRect = eventElement.getBoundingClientRect();
-                    const scrollTop = elementRect.top - containerRect.top - 80;
+                    const scrollTop = elementRect.top - containerRect.top - 60;
                     scrollableRef.current.scrollTop = scrollTop;
                 }, 100);
             }
