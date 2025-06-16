@@ -113,9 +113,11 @@ const Schedule: React.FC<ScheduleProps> = observer(
                 {Object.entries(grouped).map(([date, events]) => (
                     <div className="schedule__item" key={date}>
                         <div className="schedule__date" aria-label={`Date: ${dateFormat(date, "dddd, mmmm d")}`}>
-                            <div>{dateFormat(date, "dd")}</div>
-                            <div>{dateFormat(date, "mmm")}</div>
-                            <div>{dateFormat(date, "ddd")}</div>
+                            <div className="schedule__date-sticky">
+                                <div>{dateFormat(date, "dd")}</div>
+                                <div>{dateFormat(date, "mmm")}</div>
+                                <div>{dateFormat(date, "ddd")}</div>
+                            </div>
                         </div>
                         <div className="schedule__events" role="list">
                             {events.map((event, eventIndex) => {
