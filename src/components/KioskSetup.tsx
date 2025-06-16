@@ -66,7 +66,7 @@ const KioskSetup = observer(() => {
                 }
 
                 const hasCurrentPosition =
-                    currentPosition && (store.routeStore.defaultFrom as RouteCutIn)?.type === "route-cut-in";
+                    currentPosition && (store.routeStore.defaultFrom as RouteCutIn)?.entity.type === "route-cut-in";
 
                 store.routeStore.defaultFrom = hasCurrentPosition
                     ? null

@@ -21,7 +21,8 @@ export class ScheduleItem {
         public readonly description: string,
         public readonly startDate: string,
         public readonly endDate: string,
-        public readonly link?: string
+        public readonly link?: string,
+        public readonly entity = { type: "schedule" } as const
     ) {}
 
     public get isEnded(): boolean {
