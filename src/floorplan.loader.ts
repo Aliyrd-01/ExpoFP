@@ -396,7 +396,7 @@ export default class FloorPlanLoader implements FloorPlan {
                         window["__heatmapData"] = { booths, exhibitors };
                     }
                 } catch (err) {
-                    console.error("Heatmap: Initialization error", err);
+                    console.error("Heatmap: Initialization error", trackerUrl, expoId, err);
                 }
             }
 
