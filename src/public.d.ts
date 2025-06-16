@@ -124,11 +124,15 @@ interface FloorPlanBoothBase {
 }
 
 interface FloorPlanBooth extends FloorPlanBoothBase {
+    id: number;
+    name: string;
     externalId: string;
     isSpecial: boolean;
     exhibitors: number[];
+    layer: Layer;
     meta: Record<string, string>;
     description: string;
+    entity: Entity;
 }
 
 interface FloorPlanBoothClickEvent {
@@ -195,12 +199,16 @@ interface FloorPlanExhibitor {
     name: string;
     externalId: string;
     booths: number[];
+    entity: Entity;
+    slug: string;
 }
 
 interface FloorPlanCategory {
     id: number;
     name: string;
     exhibitors: number[];
+    entity: Entity;
+    slug: string;
 }
 
 type RouteWaypoint = string | CurrentPosition;
@@ -224,3 +232,47 @@ type FloorPlanIcon = "departure" | "destination" | "direction" | "transition" | 
 interface LayerPoint extends Point {
     layer: string;
 }
+
+interface Entity {
+    type: "booth" | "category" | "exhibitor" | "schedule" | "language" | "heatmap-yah" | "route-cut-in";
+    variant?: "regular" | "special";
+}
+
+interface FloorPlanSchedule {
+    id: number;
+    externalId: string;
+    boothId: number;
+    exhibitorId: number;
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    link: string;
+    entity: Entity;
+    isEnded: boolean;
+}
+
+interface FloorPlanLanguage {
+    id: number;
+    name: string;
+    entity: Entity;
+    selected: boolean;
+}
+
+interface FloorPlanHeatmapYah {
+    id: string;
+    name: string;
+    viewCount: number;
+    x: number;
+    y: number;
+    z: number | string;
+    entity: Entity;
+}
+
+type FloorPlanEntity =
+    | FloorPlanBooth
+    | FloorPlanCategory
+    | FloorPlanExhibitor
+    | FloorPlanSchedule
+    | FloorPlanLanguage
+    | FloorPlanHeatmapYah;
