@@ -184,7 +184,7 @@ export default class RootStore {
                 id: category.id,
                 name: category.name,
                 exhibitors: category.exhibitors.map((e) => e.id),
-            });
+            } as FloorPlanCategoryClickEvent);
 
         setTimeout(() => {
             this.moveToList();

@@ -29,6 +29,7 @@ export class Category {
     readonly sponsorship: boolean;
 
     readonly exhibitors: Exhibitor[];
+    readonly entity = { type: "category" } as const;
     // populated
     // readonly exhibitors: Exhibitor[];
 }
