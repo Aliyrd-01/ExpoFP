@@ -107,7 +107,7 @@ const KioskSetup = observer(() => {
 
                 const [x, y, z] = searchParams.get("point")?.split(",") || [];
                 const point = [Number(x), Number(y), z];
-                const angle = searchParams.has("angle") ? parseInt(searchParams.get("a"), 10) : 0;
+                const angle = parseInt(searchParams.get("angle") || "0", 10);
                 const rect = searchParams.get("rect")?.split(",").map(Number);
 
                 const k = kiosks.find((k) => strEqual(k.key, kioskId));
