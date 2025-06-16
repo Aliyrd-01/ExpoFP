@@ -14,6 +14,7 @@ import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
+import cn from "classnames";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -27,6 +28,7 @@ const KioskSetup = observer(() => {
         sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
     );
     const [kioskUrl, setKioskUrl] = useState("");
+    const [passcode, setPasscode] = useState("");
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
 
@@ -134,6 +136,18 @@ const KioskSetup = observer(() => {
 
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
+    const newKioskKey = useMemo(() => {
+        const maxKey = store.uiState.kioskList.reduce((max, { key }) => {
+            if (/^\d+$/.test(key)) {
+                const num = Number(key);
+                return num > max ? num : max;
+            }
+            return max;
+        }, 0);
+
+        return String(maxKey + 1);
+    }, [store.uiState.kioskList]);
+
     useEffect(() => {
         if (!store.uiState.kioskSetup || step !== "edit") {
             return;
@@ -142,26 +156,29 @@ const KioskSetup = observer(() => {
         store.fp.onGetCoordsClick = (coords) => {
             originalOnGetCoordsClick?.(coords);
             setShowError(false);
-            store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, ...coords };
+            store.uiState.kioskSetupData = {
+                ...store.uiState.kioskSetupData,
+                ...coords,
+                key: store.uiState.kioskSetupData?.key ?? newKioskKey,
+            };
         };
 
         return () => {
             store.fp.onGetCoordsClick = originalOnGetCoordsClick;
         };
-    }, [store.uiState.kioskSetup, step]);
+    }, [store.uiState.kioskSetup, step, newKioskKey]);
 
-    const clearMessageTimer = useRef(null);
     useEffect(() => {
-        clearTimeout(clearMessageTimer.current);
-
         if (!showSuccess && !showError) {
             return;
         }
 
-        clearMessageTimer.current = setTimeout(() => {
+        const timer = setTimeout(() => {
             setShowSuccess(false);
             setShowError(false);
         }, 3000);
+
+        return () => clearTimeout(timer);
     }, [showSuccess, showError]);
 
     useEffect(() => {
@@ -170,18 +187,18 @@ const KioskSetup = observer(() => {
         }
     }, [store.uiState.kioskSetup, step]);
 
-    const selectRouteTimer = useRef(null);
-    useEffect(() => {
-        clearTimeout(selectRouteTimer.current);
 
+    useEffect(() => {
         const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
         if (!routeParts) {
             return;
         }
 
-        selectRouteTimer.current = setTimeout(() => {
+        const timer = setTimeout(() => {
             store.routeStore.selectRoute(extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)));
         }, 500);
+
+        return () => clearTimeout(timer);
     }, [routeFromKioskMatch]);
 
     async function save() {
@@ -214,6 +231,8 @@ const KioskSetup = observer(() => {
 
             setKioskUrl(new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href).toString());
 
+            store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+
             setStep("copy");
         } catch (err) {
             console.error(err);
@@ -244,8 +263,6 @@ const KioskSetup = observer(() => {
         try {
             await navigator.clipboard.writeText(kioskUrl);
             setShowSuccess(true);
-            store.uiState.kioskSetupData = null;
-            setStep("edit");
         } catch (err) {
             console.error(err);
             setShowError(true);
@@ -266,6 +283,8 @@ const KioskSetup = observer(() => {
             ...store.uiState.kioskSetupData,
             heading: parseInt(angle, 10),
         };
+
+        moveToKiosk(store.uiState.kioskSetupData);
     }
 
     function changeKey(key: string) {
@@ -293,8 +312,21 @@ const KioskSetup = observer(() => {
                 heading: 0,
             };
             store.uiState.kioskSetupData = newKiosk;
-            store.uiState.moveToRect = Rect.fromCxcywh(newKiosk.x, newKiosk.y, 100, 100);
         }
+
+        moveToKiosk(store.uiState.kioskSetupData);
+    }
+
+    function moveToKiosk(kiosk: Kiosk) {
+        const { x, y, z } = kiosk || {};
+
+        if (z) {
+            store.layerStore.updateVisibility(`${z}`, true);
+        }
+
+        if (x && y) {
+            store.uiState.moveToRect = Rect.fromCxcywh(x, y, 100, 100);
+        }   
     }
 
     function clear() {
@@ -315,7 +347,7 @@ const KioskSetup = observer(() => {
     } else if (step === "confirmDeletion") {
         title = `${t("Delete kiosk")} ${store.uiState.kioskSetupData?.key}?`;
     } else {
-        title = t("Add or edit a kiosk");
+        title = t("Add or Edit a kiosk");
     }
 
     const auth = useCallback(
@@ -397,12 +429,16 @@ const KioskSetup = observer(() => {
                     <Alert variant="blank" title={title} inline showIcon={false}>
                         {step === "auth" && (
                             <p id="kiosk-setup-instructions" className="efp-kiosk-setup-info">
-                                <label className="efp-kiosk-setup-key">
+                                <label className={cn({
+                                    "efp-kiosk-setup-key": true,
+                                    "efp-kiosk-setup-key__auth": step === "auth",
+                                })}> 
                                     <input
+                                        name="passcode"
                                         placeholder={t("Enter passcode")}
                                         defaultValue=""
                                         disabled={pending}
-                                        onInput={(e) => auth((e.target as HTMLInputElement).value)}
+                                        onInput={(e) => setPasscode((e.target as HTMLInputElement).value)}
                                         aria-label={t("Enter passcode")}
                                     />
                                 </label>
@@ -412,18 +448,19 @@ const KioskSetup = observer(() => {
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
-                                    {t("Click on the screen to add or type the kiosk number to edit.")}
+                                    <strong>{t("To Add")}:</strong>  {t("Click anywhere on the map.")}
+                                    <br />
+                                    <strong>{t("To Edit")}:</strong> {t("Enter the kiosk number below.")}
                                 </p>
 
                                 <label className="efp-kiosk-setup-key">
-                                    <span>
-                                        <strong>#</strong>
-                                    </span>
+                                    <strong>Kiosk number:</strong>
                                     <input
+                                        name="key"
                                         type="number"
                                         min={1}
                                         max={99}
-                                        placeholder={t("Enter a number from 1 to 99")}
+                                        placeholder={t("From 1 to 99")}
                                         value={store.uiState.kioskSetupData?.key || ""}
                                         onChange={(e) => {
                                             const input = e.target as HTMLInputElement;
@@ -433,13 +470,10 @@ const KioskSetup = observer(() => {
                                     />
                                 </label>
 
-                                <p className="efp-kiosk-setup-info">{t("Move the range slider to rotate the icon.")}</p>
-
                                 <label className="efp-kiosk-setup-rotate">
-                                    <span>
-                                        <strong>{`${store.uiState.kioskSetupData?.heading || 0}`}</strong>°
-                                    </span>
+                                    <strong>{t("Rotate Icon")}:</strong>
                                     <input
+                                        name="heading"
                                         type="range"
                                         min="0"
                                         max="360"
@@ -449,37 +483,32 @@ const KioskSetup = observer(() => {
                                         onChange={(e) => rotate((e.target as HTMLInputElement).value)}
                                     />
                                 </label>
+
+                                <p className="efp-kiosk-setup-info">{t("Use the slider to adjust the icon's angle.")}</p>
                             </>
                         )}
 
                         {step === "copy" && (
                             <p>
-                                <a href={kioskUrl} target="_blank" rel="noopener noreferrer">
-                                    <small>{kioskUrl}</small>
+                                <a href={kioskUrl} className="efp-kiosk-setup-link" target="_blank" rel="noopener noreferrer">
+                                    <small className="efp-kiosk-setup-link_text">{kioskUrl}</small>
                                 </a>
                             </p>
                         )}
 
-                        <div className="efp-kiosk-setup-actions">
-                            {step === "edit" && (
-                                <Button size="md" disabled={disabled} onClick={save}>
-                                    {t("Save")}
-                                </Button>
-                            )}
+                        <div className={cn({
+                            "efp-kiosk-setup-actions": true,
+                            "efp-kiosk-setup-actions__auth": step === "auth",
+                        })}>
+                            {step === "auth" && <Button size="md" text={t("Log in")} disabled={!passcode || pending} onClick={() => auth(passcode)} />}
 
-                            {step === "copy" && (
-                                <Button size="md" onClick={copy}>
-                                    {t("Copy URL")}
-                                </Button>
-                            )}
+                            {step === "edit" && <Button size="md" text={t("Save & copy URL")} disabled={disabled} onClick={save} />}
 
-                            {step === "edit" && (
-                                <Button variant="gray-border" size="md" onClick={clear}>
-                                    {t("Clear")}
-                                </Button>
-                            )}
+                            {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
 
-                            {step === "copy" && <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />}
+                            {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
+
+                            {step === "copy" && <Button variant="gray" size="md" text={t("Close")} onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
                                 <Button
