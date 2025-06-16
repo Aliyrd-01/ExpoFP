@@ -339,7 +339,7 @@ export default class FloorPlanLoader implements FloorPlan {
                 dataMapper: (item: T, i?: number) => T;
             }): Promise<void> => {
                 if (!trackerUrl || !expoId) {
-                    return Promise.reject();
+                    return Promise.reject(new Error("trackerUrl or expoId is missing"));
                 }
 
                 const url = new URL(o.dataUrl, trackerUrl.origin);
@@ -396,7 +396,7 @@ export default class FloorPlanLoader implements FloorPlan {
                         window["__heatmapData"] = { booths, exhibitors };
                     }
                 } catch (err) {
-                    console.error("Heatmap: Initialization error", trackerUrl, expoId, err);
+                    console.error("Heatmap: Initialization error", err);
                 }
             }
 
