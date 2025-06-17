@@ -60,7 +60,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
         if (localStore.searchValue) {
             const fuseOptions = {
                 keys: ["name"],
-                threshold: 0.4,
+                threshold: 0.3,
                 ignoreLocation: true,
                 includeScore: true,
             };
