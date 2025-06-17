@@ -203,25 +203,25 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             } else if (s.currentTop === undefined) {
                 transition = false;
             }
-            if (s.currentTop === newTop) return;
+            // if (s.currentTop === newTop) return;
             const $el = select(el.current);
             $el.interrupt();
-            if (transition) {
-                $el.transition()
-                    .ease(easePolyOut)
-                    .duration(500)
-                    .style("top", newTop + "px")
-                    .on("end", () => {
-                        if (uiState.overlaySize === "full") {
-                            const containerHeight =
-                                el.current?.parentElement?.getBoundingClientRect?.()?.height || window.innerHeight;
-                            el.current.style.height = `${containerHeight - newTop}px`;
-                        }
-                        setShowAll();
-                    });
-            } else {
+            // if (transition) {
+            //     $el.transition()
+            //         .ease(easePolyOut)
+            //         .duration(500)
+            //         .style("top", newTop + "px")
+            //         .on("end", () => {
+            //             if (uiState.overlaySize === "full") {
+            //                 const containerHeight =
+            //                     el.current?.parentElement?.getBoundingClientRect?.()?.height || window.innerHeight;
+            //                 el.current.style.height = `${containerHeight - newTop}px`;
+            //             }
+            //             setShowAll();
+            //         });
+            // } else {
                 el.current.style.top = newTop + "px";
-            }
+            // }
             setShowAll();
 
             if (s.currentTop !== newTop && window.event) window.event.preventDefault();
