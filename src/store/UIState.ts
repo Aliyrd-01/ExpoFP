@@ -142,7 +142,18 @@ export default class UIState {
             booths.add(this.details.id.toString());
         }
 
-        return booths;
+        if (this.details instanceof Exhibitor && (hasNoSearchResult || booths.size)) {
+            this.details.booths.filter((b) => b instanceof RegularBooth).forEach((b) => booths.add(b.id.toString()));
+        }
+
+        if (booths.size && this.kioskSetupData && this.rootStore.routeStore.defaultFrom) {
+            booths.add(this.rootStore.routeStore.defaultFrom.id.toString());
+        }
+
+        booths.delete(undefined);
+        booths.delete(null);
+
+        return booths as ReadonlySet<string>;
     }
 
     overlayMediumHeightRems = 10;
