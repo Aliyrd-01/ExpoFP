@@ -127,7 +127,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         if (!uiState.menu) return null;
 
         const bookmarks = (store.boothStore.booths as any).filter((b: any) => b.bookmarked).map((b: any) => b.name) as string[];
-        const hasEvents = store.scheduleStore.scheduleItems.length > 0;
+        const hasEvents = store.eventStore.eventItems.length > 0;
 
         return (
             <>

@@ -23,7 +23,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
         }),
     }));
 
-    const events = store.scheduleStore.scheduleItems;
+    const events = store.eventStore.eventItems;
     const {
         filters: {
             date: { value: dateFilter },
@@ -107,10 +107,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
     }, [firstUpcomingEvent, uiState.list.type === "agenda"]);
 
     const handleEventClick = (event) => {
-        const booth = event.boothId && store.boothStore.booths.find((b) => b.id === event.boothId);
-        if (booth) {
-            store.selectBooth(booth, true);
-        }
+        store.selectEventItem(event, true);
     };
 
     const handleCloseBack = () => {

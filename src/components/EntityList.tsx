@@ -33,11 +33,10 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
     const handleClick = useCallback((type: string, data: string) => {
         const id = parseInt(data, 10);
         uiState.setListScrollItemId(uiState.list?.type, id);
-        uiState.setListScrollTop(uiState.list?.type, (
-            updatedScrollableRef.current.scrollTop
-            || (scrollerRef.current as HTMLElement)?.scrollTop
-            || 0
-        ));
+        uiState.setListScrollTop(
+            uiState.list?.type,
+            updatedScrollableRef.current.scrollTop || (scrollerRef.current as HTMLElement)?.scrollTop || 0
+        );
 
         switch (type) {
             case "exhibitor":
@@ -50,11 +49,9 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                 store.clickCategory(store.categoryStore.categories.find((c) => c.id === id));
                 break;
             case "event": {
-                const event = store.scheduleStore.scheduleItems.find((e) => e.id === id);
-                if (event?.boothId) {
-                    store.selectBooth(boothStore.booths.find((b) => b.id === event.boothId));
-                } else if (event?.exhibitorId) {
-                    store.selectExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === event.exhibitorId));
+                const event = store.eventStore.eventItems.find((e) => e.id === id);
+                if (event) {
+                    store.selectEventItem(event, true);
                 }
                 break;
             }

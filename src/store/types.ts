@@ -1,9 +1,9 @@
 import type { Booth } from "./BoothStore";
 import type { Category } from "./CategoryStore";
 import type { Exhibitor } from "./ExhibitorStore";
+import type { EventItem } from "./EventStore";
 import type { Language } from "./LanguageStore";
-import type { ScheduleItem } from "./ScheduleStore";
-import { HeatmapYah } from "./HeatmapStore";
+import type { HeatmapYah } from "./HeatmapStore";
 
 export type FilterType = { type: "filter"; items: ListItem[]; query: { key: string; value: string } };
 
@@ -17,7 +17,7 @@ export type ListType =
 
 export type OverlaySize = "full" | "medium" | "small";
 
-export type ListItem = Booth | Exhibitor | Category | ScheduleItem | Language | HeatmapYah;
+export type ListItem = Booth | Exhibitor | Category | EventItem | Language | HeatmapYah;
 
 export interface Visibility {
     controls?: boolean;

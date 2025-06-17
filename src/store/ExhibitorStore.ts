@@ -1,4 +1,4 @@
-import { ScheduleItem } from "./ScheduleStore";
+import { EventItem } from "./EventStore";
 // import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import { MarketMaterial, RawExhibitor } from "../data/Data";
@@ -72,7 +72,10 @@ export default class ExhibitorStore {
         exhibitor.rebookingState = state;
         exhibitor.rebookingNote = rebookingNote;
 
-        const url = buildRebookingUrl("api/v1/set-rebooking-state", { rt: getRebookingToken(), expoKey: this.rootStore.fp.eventId });
+        const url = buildRebookingUrl("api/v1/set-rebooking-state", {
+            rt: getRebookingToken(),
+            expoKey: this.rootStore.fp.eventId,
+        });
         fetch(url, {
             method: "POST",
             headers: {
@@ -159,6 +162,6 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
 
     readonly booths: Booth[];
     readonly categories: Category[];
-    readonly schedule: ScheduleItem[];
+    readonly schedule: EventItem[];
     readonly entity = { type: "exhibitor" } as const;
 }

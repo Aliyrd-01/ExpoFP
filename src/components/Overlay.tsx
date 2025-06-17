@@ -19,6 +19,7 @@ import Wayfinding from "./Wayfinding";
 import Filter from "./Filter";
 import classNames from "classnames";
 import Agenda from "./Agenda";
+import Event from "./Event";
 
 interface OverlayProps {
     isGDPR: boolean;
@@ -265,6 +266,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             <Wayfinding />
             <Filter />
             <Agenda showFilters={true} />
+            <Event />
         </div>
     );
 });

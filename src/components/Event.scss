@@ -1,0 +1,156 @@
+@use "@styles/utils" as *;
+
+.efp-event {
+    &__bar {
+        position: relative;
+        flex-grow: 1;
+        min-height: rem(40px);
+        padding-inline-start: rem(16px);
+        padding-top: rem(12px);
+        font-size: var(--font-size-xxl);
+        font-weight: var(--font-weight-medium);
+        line-height: rem(22px);
+        color: var(--color-black);
+        letter-spacing: 0.01em;
+
+        > span {
+            display: flex;
+
+            > span {
+                max-width: rem(256px);
+                overflow: hidden;
+                text-align: left;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+
+    &__bar-name {
+        display: flex;
+        align-items: center;
+        gap: rem(10px);
+
+        & > span {
+            margin-top: 2px;
+        }
+    }
+
+    &__bar-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: flex-start;
+        flex-shrink: 0;
+        width: rem(30px);
+        height: rem(30px);
+        border-radius: var(--border-radius-full);
+        background: var(--color-event);
+        color: var(--color-white);
+
+        & > i {
+            font-size: var(--icon-size-xxs);
+        }
+    }
+
+    &__bar-booth {
+        display: flex;
+        gap: rem(4px);
+        height: rem(16px);
+        padding-inline-start: rem(16px);
+        overflow: hidden;
+        opacity: 0;
+        font-size: var(--font-size-sm);
+        font-weight: normal;
+        line-height: rem(16px);
+        color: var(--color-gray-600);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: opacity 200ms;
+
+        .overlay-bar.scrolled & {
+            opacity: 1;
+        }
+    }
+
+    &__buttons {
+        margin: rem(0 16px 0 16px);
+    }
+
+    &__content {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    &__details {
+        padding: rem(0 16px 18px);
+        overflow-y: auto;
+        max-height: calc(100vh - 200px);
+
+        &.details-hidden {
+            max-height: 300px;
+            overflow: hidden;
+        }
+    }
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+
+        &--live {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+        }
+
+        &--past {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
+
+        &--upcoming {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+    }
+}
+
+.efp-event-description {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-lg);
+    color: var(--color-gray-900);
+    text-align: left;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+
+    > *:first-child {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    > *:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    a {
+        color: var(--color-primary);
+
+        &:hover {
+            color: var(--color-primary-dark);
+            text-decoration: underline;
+        }
+    }
+
+    ol,
+    ul {
+        display: grid;
+        padding-inline-start: rem(20px);
+    }
+}

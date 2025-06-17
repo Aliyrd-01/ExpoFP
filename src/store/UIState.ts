@@ -17,7 +17,7 @@ import { Category } from "./CategoryStore";
 import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Kiosk, Route } from "./RouteStore";
-import { ScheduleItem } from "./ScheduleStore";
+import { EventItem } from "./EventStore";
 import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
 
@@ -28,7 +28,7 @@ export default class UIState {
     private readonly rootStore: RootStore;
 
     @observable.struct list: ListType = { type: "search", text: "", focused: false };
-    @observable.ref details: Booth | Exhibitor | Route | Category = null;
+    @observable.ref details: Booth | Exhibitor | Route | Category | EventItem = null;
     @observable.ref hoveredExhibitor: Exhibitor = null;
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
@@ -387,14 +387,14 @@ export default class UIState {
     }
 
     @computed get defaultSearchItems(): ListItem[] {
-        const { exhibitorStore, categoryStore, boothStore, heatmapStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, eventStore, heatmapStore } = this.rootStore;
 
         const exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
         const boothsArray = boothStore.booths;
 
         let combinedArray = [];
-        const cats = (!this.selectedCategoryFilters.length && data.showCategories) ? categoriesArray : [];
+        const cats = !this.selectedCategoryFilters.length && data.showCategories ? categoriesArray : [];
 
         const otherSpacesArray = boothsArray.filter((b) => b instanceof SpecialBooth);
 
@@ -419,32 +419,32 @@ export default class UIState {
         return exhibitorsArray.length === 0
             ? boothsArray
             : cats.concat(
-                combinedArray.sort((a, b) => {
-                    const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
-                    const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
+                  combinedArray.sort((a, b) => {
+                      const aFeatured = a instanceof Exhibitor && a.featured !== undefined;
+                      const bFeatured = b instanceof Exhibitor && b.featured !== undefined;
 
-                    if (aFeatured !== bFeatured) {
-                        return aFeatured ? -1 : 1;
-                    }
+                      if (aFeatured !== bFeatured) {
+                          return aFeatured ? -1 : 1;
+                      }
 
-                    const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
-                    const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
+                      const aDisplayName = a instanceof SpecialBooth && a.title ? a.title : a.name;
+                      const bDisplayName = b instanceof SpecialBooth && b.title ? b.title : b.name;
 
-                    return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
-                })
-            );
+                      return aDisplayName.localeCompare(bDisplayName, undefined, { sensitivity: "base", numeric: true });
+                  })
+              );
     }
 
     @computed get searchItems(): ListItem[] {
         if (this.list.type !== "search") return [];
         let text = this.list.text.trim().toLowerCase() as string;
 
-        const { exhibitorStore, categoryStore, boothStore, scheduleStore, heatmapStore } = this.rootStore;
+        const { exhibitorStore, categoryStore, boothStore, eventStore, heatmapStore } = this.rootStore;
 
         let exhibitorsArray = exhibitorStore.exhibitors;
         const categoriesArray = categoryStore.categories.filter((c) => c.exhibitors.length);
         const boothsArray = boothStore.booths;
-        const eventsArray = scheduleStore.scheduleItems;
+        const eventsArray = eventStore.eventItems;
 
         if (this.selectedCategoryFilters.length > 0) {
             exhibitorsArray = exhibitorsArray.filter((exhibitor) =>
@@ -472,7 +472,7 @@ export default class UIState {
 
         const matchingExhibitors = new Set<Exhibitor>();
         const matchingBooths = new Set<Booth>();
-        const matchingEvents = new Set<ScheduleItem>();
+        const matchingEvents = new Set<EventItem>();
 
         function selectLettersSpacesNumbers(input: string): string {
             // Without & because of names that contain & (e.g. "A&B")
@@ -605,7 +605,7 @@ export default class UIState {
         }
 
         let list = [
-            ...this.rootStore.scheduleStore.scheduleItems,
+            ...this.rootStore.eventStore.eventItems,
             ...this.rootStore.exhibitorStore.exhibitors,
             ...this.rootStore.boothStore.booths,
         ];
@@ -615,7 +615,7 @@ export default class UIState {
                 if (item instanceof Exhibitor) {
                     return this.selectedCategoryFilters.some((category) => item.categories.some((c) => c.id === category.id));
                 }
-                if (item instanceof ScheduleItem && item.exhibitorId) {
+                if (item instanceof EventItem && item.exhibitorId) {
                     return (
                         this.rootStore.exhibitorStore.exhibitors
                             .find((e) => e.id === item.exhibitorId)
@@ -652,8 +652,7 @@ export default class UIState {
             })
             .map(({ item, score }) => ({ item, score }));
 
-
-        const bestMatch = result.filter(x => x.score <= 0.2);
+        const bestMatch = result.filter((x) => x.score <= 0.2);
         if (bestMatch.length) {
             return bestMatch;
         }
@@ -667,14 +666,16 @@ export default class UIState {
         switch (this.list.type) {
             case "search":
                 if (this.selectedCategoryFilters.length > 0) {
-                    const items = this.rootStore.fuzzySearchEngineStore.engine ? this.fuzzySearchItems.map(({ item }) => item) : this.searchItems;
+                    const items = this.rootStore.fuzzySearchEngineStore.engine
+                        ? this.fuzzySearchItems.map(({ item }) => item)
+                        : this.searchItems;
                     return items.filter((item) => {
                         if (item instanceof Exhibitor) {
                             return this.selectedCategoryFilters.some((category) =>
                                 item.categories.some((c) => c.id === category.id)
                             );
                         }
-                        if (item instanceof ScheduleItem && item.exhibitorId) {
+                        if (item instanceof EventItem && item.exhibitorId) {
                             return (
                                 this.rootStore.exhibitorStore.exhibitors
                                     .find((e) => e.id === item.exhibitorId)
@@ -697,7 +698,7 @@ export default class UIState {
             case "filter":
                 return this.list.items;
             case "agenda":
-                return this.rootStore.scheduleStore.scheduleItems;
+                return this.rootStore.eventStore.eventItems;
         }
         throw new Error("Unknown list.type");
     }
@@ -709,9 +710,10 @@ export default class UIState {
                 arr.push(...item.booths);
             } else if (item instanceof BoothBase) {
                 arr.push(item as Booth);
-            } else if (item instanceof ScheduleItem) {
+            } else if (item instanceof EventItem) {
                 if (item.boothId) arr.push(this.rootStore.boothStore.booths.find((b) => b.id === item.boothId));
-                if (item.exhibitorId) arr.push(...this.rootStore.exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId).booths);
+                if (item.exhibitorId)
+                    arr.push(...this.rootStore.exhibitorStore.exhibitors.find((e) => e.id === item.exhibitorId).booths);
             }
         });
         return new Set(arr);
@@ -830,6 +832,10 @@ export default class UIState {
 
     @computed get listScrollTop() {
         return this._listScrollTop[this.list.type] || 0;
+    }
+
+    @computed({ keepAlive: true }) get selectedEventItem() {
+        return this.details instanceof EventItem ? this.details : null;
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -7,16 +7,20 @@ import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
+import { EventItem } from "../store/EventStore";
+import { Language } from "../store/LanguageStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
+import { t } from "../utils/i18n";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
 let disableStateToUrl = false;
 let savedSelectedExhibitor: Exhibitor | null = null;
 let savedSelectedBooth: Booth | null = null;
+let savedSelectedEventItem: EventItem | null = null;
 let unlisten;
 
 const history = createBrowserHistory();
@@ -47,6 +51,7 @@ function stateToUrl() {
     let queryRaw = "";
     const exhibitor = uiState.selectedExhibitor;
     const booth = uiState.selectedBooth;
+    const eventItem = uiState.selectedEventItem;
     const route = uiState.selectedRoute;
 
     if (route) {
@@ -59,6 +64,8 @@ function stateToUrl() {
         queryRaw = exhibitor.slug;
     } else if (booth) {
         queryRaw = booth.slug;
+    } else if (eventItem) {
+        queryRaw = eventItem.slug;
     } else {
         switch (uiState.list.type) {
             case "bookmarks":
@@ -91,7 +98,7 @@ function stateToUrl() {
 
     if (history.location.search === newQuery) return;
 
-    if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
+    if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth || eventItem !== savedSelectedEventItem) {
         // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         historyPush(newQuery);
     } else {
@@ -102,12 +109,15 @@ function stateToUrl() {
 
     savedSelectedExhibitor = exhibitor;
     savedSelectedBooth = booth;
+    savedSelectedEventItem = eventItem;
 }
 
 function setTitle() {
     const exhibitor = uiState.selectedExhibitor;
+    const eventItem = uiState.selectedEventItem;
     let title = "";
     if (exhibitor) title = exhibitor.name;
+    else if (eventItem) title = eventItem.name;
     else if (uiState.list.type === "search" && uiState.list.text) title = "`" + uiState.list.text + "`";
 
     if (title.length) title += " – ";
@@ -128,11 +138,10 @@ function dispatchFromUrl() {
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find(
-        (x: Booth) => (
-            x.slug?.toLowerCase() === slug?.toLowerCase()
-            || x.externalId?.toLowerCase() === slug?.toLowerCase()
-            || x.externalId?.toLowerCase()?.replace(/\s+/g, "") === slug?.toLowerCase()
-        )
+        (x: Booth) =>
+            x.slug?.toLowerCase() === slug?.toLowerCase() ||
+            x.externalId?.toLowerCase() === slug?.toLowerCase() ||
+            x.externalId?.toLowerCase()?.replace(/\s+/g, "") === slug?.toLowerCase()
     );
 
     const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
@@ -181,19 +190,28 @@ function dispatchFromUrl() {
             window.location.reload();
         }
     } else {
-        const exhibitor = store.exhibitorStore.exhibitors.find(
-            (x: Exhibitor) =>
-                x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+        // Проверяем, является ли slug событием
+        const eventItem = store.eventStore.eventItems.find(
+            (x: EventItem) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
         );
 
-        if (slug.startsWith("exhibitors")) {
-            const exhibitors = slug.split("=")[1].split(",");
-            store.fp.selectExhibitor(exhibitors);
-        } else if (exhibitor) store.clickExhibitor(exhibitor);
-        else {
-            const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
-            if (category) store.selectCategory(category);
-            else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
+        if (eventItem) {
+            store.selectEventItem(eventItem, true);
+        } else {
+            const exhibitor = store.exhibitorStore.exhibitors.find(
+                (x: Exhibitor) =>
+                    x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+            );
+
+            if (slug.startsWith("exhibitors")) {
+                const exhibitors = slug.split("=")[1].split(",");
+                store.fp.selectExhibitor(exhibitors);
+            } else if (exhibitor) store.clickExhibitor(exhibitor);
+            else {
+                const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
+                if (category) store.selectCategory(category);
+                else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
+            }
         }
     }
 
@@ -357,7 +375,7 @@ function processURLParams() {
 
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
         if (value === "true") {
-            store.exhibitorStore.exhibitors.forEach(ex => ex.featured = false);
+            store.exhibitorStore.exhibitors.forEach((ex) => (ex.featured = false));
         }
 
         historyReplace(newSearch);
@@ -403,10 +421,7 @@ function processURLParams() {
     }
 
     // facebook and google  fix
-    if (
-        locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga")
-    ) {
+    if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga")) {
         historyReplace("?");
     }
 
@@ -468,7 +483,8 @@ export function initRouting(offHistory = false) {
 
     processURLParams();
     executeCustomCommand();
-    reaction(() => store.layerStore.layersLoaded,
+    reaction(
+        () => store.layerStore.layersLoaded,
         () => {
             dispatchFromUrl();
             autorun(setTitle);
@@ -482,7 +498,8 @@ export function applyParameters(queryRaw: string = "") {
 
     if (!store.layerStore.layersLoaded) {
         executeCustomCommand();
-        reaction(() => store.layerStore.layersLoaded,
+        reaction(
+            () => store.layerStore.layersLoaded,
             () => {
                 processURLParams();
                 dispatchFromUrl();
