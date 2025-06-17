@@ -88,5 +88,22 @@
     "Distance": "距离",
     "Est arrival": "预计到达",
     "Route not found": "未找到路线",
-    "Oops, nothing found": "哎呀，什么也没找到"
+    "Oops, nothing found": "哎呀，什么也没找到",
+    "Agenda": "日程",
+    "Search events": "搜索活动",
+    "No events found. Try adjusting your filters.": "未找到活动。尝试调整筛选条件。",
+    "No events found": "未找到活动",
+    "Agenda Filters": "日程筛选器",
+    "Apply": "应用",
+    "Clear all": "清除全部",
+    "Reset": "重置",
+    "Date": "日期",
+    "All dates": "所有日期",
+    "Today": "今天",
+    "Tomorrow": "明天",
+    "Sort order": "排序顺序",
+    "Earliest first": "最早优先",
+    "Latest first": "最新优先",
+    "Additional settings": "其他设置",
+    "Show time in 24h format": "以24小时格式显示时间"
 }

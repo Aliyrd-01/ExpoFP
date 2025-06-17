@@ -48,12 +48,5 @@ export const CategoryFilterModal: React.FC = observer(() => {
         return result;
     }, [store.categoryStore.categories]);
 
-    return (
-        <BaseFilterModal
-            store={store.categoryFilterStore}
-            rootStore={store}
-            title={t("Filter Exhibitors by Categories")}
-            groups={groups}
-        />
-    );
+    return <BaseFilterModal store={store.categoryFilterStore} rootStore={store} title={t("Categories")} groups={groups} />;
 });

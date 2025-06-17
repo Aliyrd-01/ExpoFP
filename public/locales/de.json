@@ -88,5 +88,22 @@
     "Distance": "Entfernung",
     "Est arrival": "Voraussichtliche Ankunft",
     "Route not found": "Route nicht gefunden",
-    "Oops, nothing found": "Hoppla, nichts gefunden"
+    "Oops, nothing found": "Hoppla, nichts gefunden",
+    "Agenda": "Veranstaltungsplan",
+    "Search events": "Veranstaltungen suchen",
+    "No events found. Try adjusting your filters.": "Keine Veranstaltungen gefunden. Passen Sie Ihre Filter an.",
+    "No events found": "Keine Veranstaltungen gefunden",
+    "Agenda Filters": "Agenda-Filter",
+    "Apply": "Anwenden",
+    "Clear all": "Alles löschen",
+    "Reset": "Zurücksetzen",
+    "Date": "Datum",
+    "All dates": "Alle Daten",
+    "Today": "Heute",
+    "Tomorrow": "Morgen",
+    "Sort order": "Sortierreihenfolge",
+    "Earliest first": "Früheste zuerst",
+    "Latest first": "Neueste zuerst",
+    "Additional settings": "Zusätzliche Einstellungen",
+    "Show time in 24h format": "Zeit im 24h-Format anzeigen"
 }

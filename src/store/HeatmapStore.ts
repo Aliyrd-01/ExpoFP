@@ -102,6 +102,7 @@ export class HeatmapYah {
     readonly x: number;
     readonly y: number;
     readonly z?: number | string;
+    readonly entity = { type: "heatmap-yah" } as const;
 }
 
 export interface HeatmapItem {

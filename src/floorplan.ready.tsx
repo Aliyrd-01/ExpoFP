@@ -18,6 +18,7 @@ import { fpGeo } from "./components/Mapbox/utils/fpGeo";
 import { convertLocalToGps } from "./utils/gps";
 import Rect from "./core/Rect";
 import { DistanceOptimizedRoute } from "./utils/wayfinding";
+import { mapEntity } from "./utils/mapEntity";
 
 install();
 
@@ -51,6 +52,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectBooth(nameOrExternalId: string | string[]) {
+        if (typeof nameOrExternalId !== "string" && !Array.isArray(nameOrExternalId)) {
+            throw new Error("Invalid input. Must be a string or array of strings.");
+        }
+
         const booths = store.boothStore.booths.filter((b) => {
             if (typeof nameOrExternalId === "string") {
                 return b.name === nameOrExternalId || b.externalId === nameOrExternalId;
@@ -62,6 +67,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }
 
     selectExhibitor(nameOrExternalId: string | string[]) {
+        if (typeof nameOrExternalId !== "string" && !Array.isArray(nameOrExternalId)) {
+            throw new Error("Invalid input. Must be a string or array of strings.");
+        }
+
         if (!nameOrExternalId?.length) {
             store.selectSearch();
             return;
@@ -174,12 +183,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
     }    
 
     selectCurrentPosition(point: CurrentPosition, focus: boolean, icon?: number): void {
-        if (point?.angle != null && fpGeo?.properties?.bearing != null) {
-            point.angle = 90.0 + fpGeo.properties.bearing - (point.angle % 360.0);
-            point.angle = point.angle < 0 ? point.angle + 360.0 : point.angle;
-            point.angle = point.angle > 360 ? point.angle - 360.0 : point.angle;
-        }
-
         store.routeStore.selectCurrentPosition(point, focus, icon);
         this.onCurrentPositionChanged?.(point);
     }
@@ -215,43 +218,16 @@ export default class FloorPlanReady extends FloorPlanLoader {
         return store.fp.getCenterCoordinates();
     }
 
-    exhibitorsList(): any {
-        return store.exhibitorStore.exhibitors.map((e) => {
-            return {
-                id: e.id,
-                name: e.name,
-                externalId: e.externalId,
-                booths: e.booths.map((b) => b.id),
-            };
-        });
+    exhibitorsList(): FloorPlanExhibitor[] {
+        return store.exhibitorStore.exhibitors.map(e => mapEntity(e) as FloorPlanExhibitor);
     }
 
     boothsList(): FloorPlanBooth[] {
-        return store.boothStore.booths.map((b) => {
-            return {
-                id: b.id,
-                name: b.name,
-                externalId: b.externalId,
-                isSpecial: b instanceof SpecialBooth,
-                exhibitors: b.exhibitors.map((e) => e.id),
-                layer: {
-                    name: b.layer?.name,
-                    description: b.layer?.description,
-                },
-                meta: b.meta,
-                description: b.description || "",
-            };
-        });
+        return store.boothStore.booths.map(b => mapEntity(b) as FloorPlanBooth);
     }
 
-    categoriesList(): any {
-        return store.categoryStore.categories.map((c) => {
-            return {
-                id: c.id,
-                name: c.name,
-                exhibitors: c.exhibitors.map((e) => e.id),
-            };
-        });
+    categoriesList(): FloorPlanCategory[] {
+        return store.categoryStore.categories.map(c => mapEntity(c) as FloorPlanCategory)
     }
 
     selectCategory(nameOrSlug?: string) {
@@ -337,7 +313,7 @@ export default class FloorPlanReady extends FloorPlanLoader {
     search(term: string): Promise<{ item: unknown, score: number }[]> {
         return store.fuzzySearchEngineStore.loadEngine().then(() => {
             store.selectSearch(term);
-            return store.uiState.fuzzySearchItems;
+            return store.uiState.fuzzySearchItems.map(x => ({ item: mapEntity(x.item), score: x.score }));
         });
     }
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 import { useRenderTarget } from "../utils/useRenderTarget";
-import { Button, ButtonVariant, Badge } from "./";
+import { Button, ButtonVariant, Checkbox } from "./";
 import "./Modal.scss";
 
 type ModalType = "default" | "share" | "fullscreen";
@@ -21,9 +21,15 @@ export interface ModalProps {
     type?: ModalType;
     title?: string;
     badge?: number;
+    maxWidth?: number;
     children?: React.ReactNode;
-    footerLeft?: ModalButton[];
-    footerRight?: ModalButton[];
+    showSelectAll?: boolean;
+    isAllSelected?: boolean;
+    isPartiallySelected?: boolean;
+    selectAllLabel?: string;
+    footerLeft?: { label: string; onClick: () => void; variant?: "primary" | "gray" }[];
+    footerRight?: { label: string; onClick: () => void; variant?: "primary" | "gray"; withBadge?: boolean; disabled?: boolean }[];
+    onSelectAllChange?: (value: boolean) => void;
     onClickClose: () => void;
 }
 
@@ -33,10 +39,16 @@ const Modal: React.FC<ModalProps> = ({
     type = "default",
     title,
     badge,
+    maxWidth,
     children,
-    footerLeft,
-    footerRight,
+    footerLeft = [],
+    footerRight = [],
     onClickClose,
+    showSelectAll = false,
+    isAllSelected = false,
+    isPartiallySelected = false,
+    onSelectAllChange,
+    selectAllLabel = "Select all",
 }) => {
     const container = useRenderTarget();
     const modalRef = useRef<HTMLDivElement>(null);
@@ -98,27 +110,34 @@ const Modal: React.FC<ModalProps> = ({
             tabIndex={-1}
             onClick={onClickClose}
         >
-            <div className="modal__box" onClick={(e) => e.stopPropagation()}>
+            <div
+                className="modal__box"
+                style={maxWidth ? { maxWidth: `${maxWidth}px` } : undefined}
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="modal__header">
-                    {title && (
-                        <div className="modal__title">
-                            {title}
-                            {badge !== undefined && badge > 0 && (
-                                <Badge variant="lightgray" size="md" noMargins rounded>
-                                    {badge}
-                                </Badge>
-                            )}
-                        </div>
-                    )}
+                    <div className="modal__title-container">
+                        <div className="modal__title">{title}</div>
+                        {showSelectAll && onSelectAllChange && (
+                            <Checkbox
+                                name="select-all-categories"
+                                value={isAllSelected}
+                                indeterminate={isPartiallySelected}
+                                label={selectAllLabel}
+                                size="sm"
+                                onChange={onSelectAllChange}
+                            />
+                        )}
+                    </div>
                     <button type="button" className="modal__close" onClick={onClickClose}>
                         <i className="icon-close" aria-hidden="true" />
                     </button>
                 </div>
                 <div className="modal__body">{children}</div>
-                {(footerLeft?.length || footerRight?.length) && (
+                {(footerLeft.length > 0 || footerRight.length > 0) && (
                     <div className="modal__footer">
-                        {footerLeft?.length > 0 && <div className="modal__footer-left">{renderButtons(footerLeft)}</div>}
-                        <div className="modal__footer-right">{renderButtons(footerRight)}</div>
+                        {footerLeft.length > 0 && <div className="modal__footer-left">{renderButtons(footerLeft)}</div>}
+                        {footerRight.length > 0 && <div className="modal__footer-right">{renderButtons(footerRight)}</div>}
                     </div>
                 )}
             </div>

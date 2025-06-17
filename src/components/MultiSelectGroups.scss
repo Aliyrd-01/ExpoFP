@@ -25,14 +25,14 @@
 
     &__group-header {
         display: flex;
-        gap: rem(14px);
+        gap: rem(18px);
         align-items: center;
         margin-bottom: rem(10px);
     }
 
     &__group-title {
         font-weight: var(--font-weight-bold);
-        font-size: var(--font-size-lg);
+        font-size: var(--font-size-xl);
         color: var(--color-gray-900);
     }
 

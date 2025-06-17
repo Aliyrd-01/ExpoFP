@@ -160,4 +160,5 @@ export class Exhibitor implements Omit<RawExhibitor, "categories" | "booths"> {
     readonly booths: Booth[];
     readonly categories: Category[];
     readonly schedule: ScheduleItem[];
+    readonly entity = { type: "exhibitor" } as const;
 }

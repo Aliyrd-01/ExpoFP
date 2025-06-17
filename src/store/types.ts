@@ -12,7 +12,8 @@ export type ListType =
     | { type: "bookmarks" }
     | { type: "category"; category: Category }
     | { type: "language"; id: string }
-    | FilterType;
+    | FilterType
+    | { type: "agenda" };
 
 export type OverlaySize = "full" | "medium" | "small";
 

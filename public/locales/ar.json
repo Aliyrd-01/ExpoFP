@@ -88,5 +88,22 @@
     "Distance": "المسافة",
     "Est arrival": "الوصول المُقدّر",
     "Route not found": "لم يتم العثور على المسار",
-    "Oops, nothing found": "عذرًا، لم يتم العثور على شيء"
+    "Oops, nothing found": "عذرًا، لم يتم العثور على شيء",
+    "Agenda": "جدول الفعاليات",
+    "Search events": "ابحث عن الفعاليات",
+    "No events found. Try adjusting your filters.": "لم يتم العثور على فعاليات. حاول تعديل عوامل التصفية.",
+    "No events found": "لم يتم العثور على فعاليات",
+    "Agenda Filters": "فلاتر الجدول",
+    "Apply": "تطبيق",
+    "Clear all": "مسح الكل",
+    "Reset": "إعادة تعيين",
+    "Date": "التاريخ",
+    "All dates": "جميع التواريخ",
+    "Today": "اليوم",
+    "Tomorrow": "غدًا",
+    "Sort order": "ترتيب الفرز",
+    "Earliest first": "الأقدم أولاً",
+    "Latest first": "الأحدث أولاً",
+    "Additional settings": "إعدادات إضافية",
+    "Show time in 24h format": "عرض الوقت بصيغة 24 ساعة"
 }

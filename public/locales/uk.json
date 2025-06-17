@@ -89,5 +89,22 @@
     "Distance": "Відстань",
     "Est arrival": "Очікуваний приїзд",
     "Route not found": "Маршрут не знайдено",
-    "Oops, nothing found": "Нічого не знайдено"
+    "Oops, nothing found": "Нічого не знайдено",
+    "Agenda": "Події",
+    "Search events": "Пошук подій",
+    "No events found. Try adjusting your filters.": "Подій не знайдено. Спробуйте змінити фільтри.",
+    "No events found": "Подій не знайдено",
+    "Agenda Filters": "Фільтри подій",
+    "Apply": "Застосувати",
+    "Clear all": "Очистити все",
+    "Reset": "Скинути",
+    "Date": "Дата",
+    "All dates": "Усі дати",
+    "Today": "Сьогодні",
+    "Tomorrow": "Завтра",
+    "Sort order": "Порядок сортування",
+    "Earliest first": "Спочатку найстаріші",
+    "Latest first": "Спочатку найновіші",
+    "Additional settings": "Додаткові налаштування",
+    "Show time in 24h format": "Показати час у 24-годинному форматі"
 }

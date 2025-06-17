@@ -88,5 +88,22 @@
     "Distance": "Қашықтық",
     "Est arrival": "Болжалды келу",
     "Route not found": "Маршрут табылмады",
-    "Oops, nothing found": "Қап, ештеңе табылмады"
+    "Oops, nothing found": "Қап, ештеңе табылмады",
+    "Agenda": "Күнтізбе",
+    "Search events": "Іс-шараларды іздеу",
+    "No events found. Try adjusting your filters.": "Іс-шаралар табылмады. Сүзгілерді өзгертіп көріңіз.",
+    "No events found": "Іс-шаралар табылмады",
+    "Agenda Filters": "Күнтізбе сүзгілері",
+    "Apply": "Қолдану",
+    "Clear all": "Барлығын тазарту",
+    "Reset": "Қалпына келтіру",
+    "Date": "Күні",
+    "All dates": "Барлық күндер",
+    "Today": "Бүгін",
+    "Tomorrow": "Ертең",
+    "Sort order": "Сұрыптау реті",
+    "Earliest first": "Алдымен ертерек",
+    "Latest first": "Алдымен жаңалары",
+    "Additional settings": "Қосымша параметрлер",
+    "Show time in 24h format": "Уақытты 24 сағаттық форматта көрсету"
 }

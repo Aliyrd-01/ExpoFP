@@ -1,4 +1,5 @@
 import { action, observable, computed } from "mobx";
+import { configure } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
@@ -22,7 +23,7 @@ import { svgArea } from "../data/svg";
 import PoiTypeStore from "./PoiTypeStore";
 import { sanitizeSearch } from "../utils/sanitizeText";
 import FuzzySearchEngineStore from "./FuzzySearchEngineStore";
-
+import AgendaFilterStore from "./AgendaFilterStore";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -38,6 +39,7 @@ export default class RootStore {
     readonly languageStore: LanguageStore;
     readonly fuzzySearchEngineStore: FuzzySearchEngineStore;
     readonly categoryFilterStore: CategoryFilterStore;
+    readonly agendaFilterStore: AgendaFilterStore;
 
     fp: FloorPlanReady;
 
@@ -58,6 +60,7 @@ export default class RootStore {
         this.poiTypeStore = new PoiTypeStore(this);
         this.fuzzySearchEngineStore = new FuzzySearchEngineStore();
         this.categoryFilterStore = new CategoryFilterStore(this);
+        this.agendaFilterStore = new AgendaFilterStore(this);
     }
 
     @action selectExhibitor(exhibitor: Exhibitor, focus: boolean = true) {
@@ -78,6 +81,11 @@ export default class RootStore {
     @action selectBooth(booth: Booth | Booth[], focus: boolean = true) {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
+
+        if (b.length === 1 && b[0].schedule?.length) {
+            this.uiState.desiredOverlaySize = "full";
+            console.log("desiredOverlaySize", this.uiState.desiredOverlaySize);
+        }
 
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
             this.layerStore.updateVisibility(b[0].layer, true);
@@ -176,7 +184,7 @@ export default class RootStore {
                 id: category.id,
                 name: category.name,
                 exhibitors: category.exhibitors.map((e) => e.id),
-            });
+            } as FloorPlanCategoryClickEvent);
 
         setTimeout(() => {
             this.moveToList();
@@ -226,6 +234,9 @@ export default class RootStore {
 
     @action clickBooth(booth: Booth) {
         this.uiState.menu = false;
+        if (this.uiState.list.type === "agenda") {
+            this.selectSearch();
+        }
 
         if (this.uiState.selectedRoute?.from && this.uiState.selectedRoute?.to) return;
 
@@ -281,8 +292,14 @@ export default class RootStore {
     }
 
     @action showMap() {
-        if (this.uiState.overlayPosition === "bottom" && isWebGlSupported) this.uiState.desiredOverlaySize = "medium";
-        // if (getters.overlayPosition === "bottom" && isWebGlSupported() commit("setOverlaySize", "medium");
+        const selectedBooth = this.uiState.details;
+        const hasEvents = selectedBooth && "schedule" in selectedBooth && selectedBooth.schedule?.length > 0;
+
+        if (hasEvents) {
+            this.uiState.desiredOverlaySize = "full";
+        } else if (this.uiState.overlayPosition === "bottom" && isWebGlSupported) {
+            this.uiState.desiredOverlaySize = "medium";
+        }
     }
     @action showOverlay() {
         if (this.uiState.overlayPosition === "bottom") this.uiState.desiredOverlaySize = "full";
@@ -370,10 +387,17 @@ export default class RootStore {
             return this.exhibitorStore.exhibitors;
         }
 
-        return this.exhibitorStore.exhibitors.filter(exhibitor =>
-            this.uiState.selectedCategoryFilters.some(category =>
-                exhibitor.categories.some(c => c.id === category.id)
-            )
+        return this.exhibitorStore.exhibitors.filter((exhibitor) =>
+            this.uiState.selectedCategoryFilters.some((category) => exhibitor.categories.some((c) => c.id === category.id))
         );
+    }
+
+    @action selectAgenda() {
+        this.uiState.list = { type: "agenda" };
+        this.uiState.menu = false;
+
+        if (isMobile) {
+            this.uiState.desiredOverlaySize = "full";
+        }
     }
 }

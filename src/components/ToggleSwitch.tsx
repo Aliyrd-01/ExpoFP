@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ToggleSwitch.scss";
 import classNames from "classnames";
 
@@ -12,6 +12,10 @@ export interface ToggleSwitchProps {
 
 const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ name, value, label, className, onChange }) => {
     const [checked, setChecked] = useState(value);
+
+    useEffect(() => {
+        setChecked(value);
+    }, [value]);
 
     const onCheckedChange = () => {
         setChecked(!checked);

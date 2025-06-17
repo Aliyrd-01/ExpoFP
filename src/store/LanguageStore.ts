@@ -34,6 +34,7 @@ export default class LanguageStore {
 export class Language {
     readonly id: string;
     readonly name: string;
+    readonly entity = { type: "language" } as const;
 
     @observable
     selected: boolean;
