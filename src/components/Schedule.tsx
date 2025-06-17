@@ -24,6 +24,7 @@ export interface ScheduleProps {
     descriptionMaxLength?: number;
     showMoreButton?: boolean;
     showBooths?: boolean;
+    isAgenda?: boolean;
     onEventClick?: (event: ScheduleEvent) => void;
 }
 
@@ -46,14 +47,14 @@ function isLive(event: ScheduleEvent): boolean {
 }
 
 const Schedule: React.FC<ScheduleProps> = observer(
-    ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, onEventClick }) => {
+    ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, isAgenda = false, onEventClick }) => {
         const [eventsFullDescription, setEventsFullDescription] = useState<Record<string, { showFullDescription: boolean }[]>>(
             {}
         );
 
         const grouped = events.reduce((acc, curr) => {
-            const date = new Date(curr.startDate).toISOString().split("T")[0];
-            acc[date] ? acc[date].push(curr) : (acc[date] = [curr]);
+            const [datePart] = curr.startDate.split("T");
+            acc[datePart] ? acc[datePart].push(curr) : (acc[datePart] = [curr]);
             return acc;
         }, {} as Record<string, ScheduleEvent[]>);
 
@@ -63,7 +64,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
                 initialState[date] = grouped[date].map(() => ({ showFullDescription: false }));
             }
             setEventsFullDescription(initialState);
-        }, [JSON.stringify(events)]);
+        }, [events.map((e) => e.id).join(",")]);
 
         const toggleDescription = (e: React.MouseEvent<HTMLButtonElement>, date: string, index: number) => {
             e.preventDefault();
@@ -81,7 +82,19 @@ const Schedule: React.FC<ScheduleProps> = observer(
 
         const formatTime = (date: string) => {
             const use24hFormat = store.agendaFilterStore.state.filters.use24hFormat.value;
-            return dateFormat(date, use24hFormat ? "HH:MM" : "h:MMtt");
+            const d = new Date(date);
+            return dateFormat(d, use24hFormat ? "HH:MM" : "h:MMtt");
+        };
+
+        const formatDateDisplay = (dateStr: string) => {
+            const [year, month, day] = dateStr.split("-");
+            const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            return {
+                day: day,
+                month: dateFormat(date, "mmm"),
+                weekday: dateFormat(date, "ddd"),
+                full: dateFormat(date, "dddd, mmmm d"),
+            };
         };
 
         const EventWrapper = ({ children, link, current, ended, event }) => {
@@ -94,7 +107,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
             return link ? (
                 <a
                     href={link}
-                    className={classNames("schedule__event", current, ended)}
+                    className={classNames("efp-schedule__event", current, ended)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleClick}
@@ -102,78 +115,85 @@ const Schedule: React.FC<ScheduleProps> = observer(
                     {children}
                 </a>
             ) : (
-                <div className={classNames("schedule__event", { ended })} onClick={handleClick}>
+                <div className={classNames("efp-schedule__event", { ended })} onClick={handleClick}>
                     {children}
                 </div>
             );
         };
 
         return (
-            <div className="schedule">
-                {Object.entries(grouped).map(([date, events]) => (
-                    <div className="schedule__item" key={date}>
-                        <div className="schedule__date" aria-label={`Date: ${dateFormat(date, "dddd, mmmm d")}`}>
-                            <div>{dateFormat(date, "dd")}</div>
-                            <div>{dateFormat(date, "mmm")}</div>
-                            <div>{dateFormat(date, "ddd")}</div>
-                        </div>
-                        <div className="schedule__events" role="list">
-                            {events.map((event, eventIndex) => {
-                                const booth = event.boothId ? store.boothStore.boothById.get(Number(event.boothId)) : null;
+            <div className={classNames("efp-schedule", { "is-agenda": isAgenda })}>
+                {Object.entries(grouped).map(([date, events]) => {
+                    const formattedDate = formatDateDisplay(date);
+                    return (
+                        <div className="efp-schedule__item" key={date}>
+                            <div className="efp-schedule__date" aria-label={`Date: ${formattedDate.full}`}>
+                                <div className="efp-schedule__date-sticky">
+                                    <div>{formattedDate.day}</div>
+                                    <div>{formattedDate.month}</div>
+                                    <div>{formattedDate.weekday}</div>
+                                </div>
+                            </div>
+                            <div className="efp-schedule__events" role="list">
+                                {events.map((event, eventIndex) => {
+                                    const booth = event.boothId ? store.boothStore.boothById.get(Number(event.boothId)) : null;
 
-                                const showFull = eventsFullDescription[date]?.[eventIndex]?.showFullDescription ?? false;
+                                    const showFull = eventsFullDescription[date]?.[eventIndex]?.showFullDescription ?? false;
 
-                                return (
-                                    <div key={event.id} role="listitem" data-event-id={event.id}>
-                                        <EventWrapper
-                                            link={event.link || ""}
-                                            ended={event.isEnded || isPast(event.endDate || event.startDate)}
-                                            current={isCurrent(event.startDate, event.endDate)}
-                                            event={event}
-                                        >
-                                            <span>
-                                                {formatTime(event.startDate)}
-                                                {event.endDate ? ` - ${formatTime(event.endDate)}` : null}
-                                            </span>
-                                            <strong>
-                                                {event.name}
-                                                {isLive(event) && <span className="schedule__event-live-badge">LIVE</span>}
-                                            </strong>
-                                            {booth && showBooths && (
-                                                <div className="schedule__event-booth">
-                                                    <div>{booth.name}</div>
-                                                </div>
-                                            )}
-                                            {event.description && (
-                                                <div className="schedule__event-desc">
-                                                    <div
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: sanitizeHTML(
-                                                                transformDescription(event.description, showFull)
-                                                            ),
-                                                        }}
-                                                    />
-                                                    {event.description.length > descriptionMaxLength && showMoreButton && (
-                                                        <Button
-                                                            variant="gray-border"
-                                                            size="sm"
-                                                            inline
-                                                            onClick={(e) => toggleDescription(e, date, eventIndex)}
-                                                            aria-expanded={showFull}
-                                                            aria-controls={`event-desc-${date}-${eventIndex}`}
-                                                        >
-                                                            {showFull ? t("Show Less") : t("Show More")}
-                                                        </Button>
+                                    return (
+                                        <div key={event.id} role="listitem" data-event-id={event.id}>
+                                            <EventWrapper
+                                                link={event.link || ""}
+                                                ended={event.isEnded || isPast(event.endDate || event.startDate)}
+                                                current={isCurrent(event.startDate, event.endDate)}
+                                                event={event}
+                                            >
+                                                <span>
+                                                    {formatTime(event.startDate)}
+                                                    {event.endDate ? ` - ${formatTime(event.endDate)}` : null}
+                                                </span>
+                                                <strong>
+                                                    {event.name}
+                                                    {isLive(event) && (
+                                                        <span className="efp-schedule__event-live-badge">LIVE</span>
                                                     )}
-                                                </div>
-                                            )}
-                                        </EventWrapper>
-                                    </div>
-                                );
-                            })}
+                                                </strong>
+                                                {booth && showBooths && (
+                                                    <div className="efp-schedule__event-booth">
+                                                        <div>{booth.name}</div>
+                                                    </div>
+                                                )}
+                                                {event.description && (
+                                                    <div className="efp-schedule__event-desc">
+                                                        <div
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: sanitizeHTML(
+                                                                    transformDescription(event.description, showFull)
+                                                                ),
+                                                            }}
+                                                        />
+                                                        {event.description.length > descriptionMaxLength && showMoreButton && (
+                                                            <Button
+                                                                variant="gray-border"
+                                                                size="sm"
+                                                                inline
+                                                                onClick={(e) => toggleDescription(e, date, eventIndex)}
+                                                                aria-expanded={showFull}
+                                                                aria-controls={`event-desc-${date}-${eventIndex}`}
+                                                            >
+                                                                {showFull ? t("Show Less") : t("Show More")}
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </EventWrapper>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         );
     }

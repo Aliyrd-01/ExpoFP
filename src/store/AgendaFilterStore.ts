@@ -15,6 +15,7 @@ interface AgendaFilterState {
     isOpen: boolean;
     selectedItems: FilterItem[];
     pendingItems: FilterItem[];
+    searchText: string;
     filters: {
         date: Filter<DateFilter>;
         sortOrder: Filter<SortOrder>;
@@ -27,6 +28,7 @@ export default class AgendaFilterStore extends BaseFilterStore {
         isOpen: false,
         selectedItems: [],
         pendingItems: [],
+        searchText: "",
         filters: {
             date: { value: "all", pending: "all" },
             sortOrder: { value: "desc", pending: "desc" },
@@ -39,7 +41,12 @@ export default class AgendaFilterStore extends BaseFilterStore {
     }
 
     @action
-    setPending<K extends keyof AgendaFilterState["filters"]>(key: K, value: AgendaFilterState["filters"][K]["pending"]) {
+    setSearchText(text: string) {
+        this.state.searchText = text;
+    }
+
+    @action
+    setPending<K extends keyof AgendaFilterState["filters"]>(key: K, value: AgendaFilterState["filters"][K]["value"]) {
         this.state.filters[key].pending = value;
     }
 
@@ -71,6 +78,7 @@ export default class AgendaFilterStore extends BaseFilterStore {
 
         this.state.selectedItems = [];
         this.state.pendingItems = [];
+        this.state.searchText = "";
         this.rootStore.uiState.list = { type: "agenda" };
     }
 
@@ -98,13 +106,12 @@ export default class AgendaFilterStore extends BaseFilterStore {
 
     @computed
     get activeFiltersCount(): number {
-        const defaults = this.getDefaultValues();
         const { filters } = this.state;
         let count = 0;
 
-        if (filters.date.value !== defaults.date) count++;
-        if (filters.sortOrder.value !== defaults.sortOrder) count++;
-        if (filters.use24hFormat.value !== defaults.use24hFormat) count++;
+        if (filters.date.value !== "all") count++;
+        if (filters.sortOrder.value !== "desc") count++;
+        if (filters.use24hFormat.value) count++;
 
         return count;
     }

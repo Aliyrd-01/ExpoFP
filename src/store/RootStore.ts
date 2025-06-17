@@ -82,6 +82,11 @@ export default class RootStore {
         let b = Array.isArray(booth) ? booth : [booth];
         this.uiState.details = b[0];
 
+        if (b.length === 1 && b[0].schedule?.length) {
+            this.uiState.desiredOverlaySize = "full";
+            console.log("desiredOverlaySize", this.uiState.desiredOverlaySize);
+        }
+
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
             this.layerStore.updateVisibility(b[0].layer, true);
 
@@ -287,8 +292,14 @@ export default class RootStore {
     }
 
     @action showMap() {
-        if (this.uiState.overlayPosition === "bottom" && isWebGlSupported) this.uiState.desiredOverlaySize = "medium";
-        // if (getters.overlayPosition === "bottom" && isWebGlSupported() commit("setOverlaySize", "medium");
+        const selectedBooth = this.uiState.details;
+        const hasEvents = selectedBooth && "schedule" in selectedBooth && selectedBooth.schedule?.length > 0;
+
+        if (hasEvents) {
+            this.uiState.desiredOverlaySize = "full";
+        } else if (this.uiState.overlayPosition === "bottom" && isWebGlSupported) {
+            this.uiState.desiredOverlaySize = "medium";
+        }
     }
     @action showOverlay() {
         if (this.uiState.overlayPosition === "bottom") this.uiState.desiredOverlaySize = "full";
@@ -384,5 +395,9 @@ export default class RootStore {
     @action selectAgenda() {
         this.uiState.list = { type: "agenda" };
         this.uiState.menu = false;
+
+        if (isMobile) {
+            this.uiState.desiredOverlaySize = "full";
+        }
     }
 }

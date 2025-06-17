@@ -27,6 +27,19 @@ export const BaseFilterModal: React.FC<BaseFilterModalProps> = observer(({ store
                 )
             ).length;
         },
+        get allCategories() {
+            return groups.flatMap((group) => group.items);
+        },
+        get isAllSelected() {
+            return this.allCategories.every((item) => this.pendingSelectedIds.includes(item.id));
+        },
+        get isPartiallySelected() {
+            const selectedCount = this.allCategories.filter((item) => this.pendingSelectedIds.includes(item.id)).length;
+            return selectedCount > 0 && selectedCount < this.allCategories.length;
+        },
+        get totalCategoriesCount() {
+            return this.allCategories.length;
+        },
     }));
 
     const handleChange = (selectedIds: (number | string)[]) => {
@@ -42,8 +55,9 @@ export const BaseFilterModal: React.FC<BaseFilterModalProps> = observer(({ store
         store.closeFilter();
     };
 
-    const handleReset = () => {
-        store.resetFilter();
+    const handleSelectAll = (checked: boolean) => {
+        const allItems = s.allCategories;
+        store.setPendingItems(checked ? allItems : []);
     };
 
     const isShowResultsEnabled = () => {
@@ -54,13 +68,12 @@ export const BaseFilterModal: React.FC<BaseFilterModalProps> = observer(({ store
         <Modal
             open={store.state.isOpen}
             title={title}
-            badge={s.pendingSelectedIds.length > 0 ? s.pendingSelectedIds.length : undefined}
             onClickClose={handleCancel}
-            footerLeft={
-                s.pendingSelectedIds.length > 0
-                    ? [{ label: t("Clear All Selections"), onClick: handleReset, variant: "gray" }]
-                    : []
-            }
+            showSelectAll={true}
+            isAllSelected={s.isAllSelected}
+            isPartiallySelected={s.isPartiallySelected}
+            onSelectAllChange={handleSelectAll}
+            selectAllLabel={`Select all (${s.totalCategoriesCount})`}
             footerRight={[
                 {
                     label:

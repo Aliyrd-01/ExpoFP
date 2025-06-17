@@ -296,7 +296,13 @@ function Search() {
         }
         getInput().value = "";
         setText();
-        uiState.desiredOverlaySize = "medium";
+
+        const selectedBooth = uiState.details;
+        const hasEvents = selectedBooth && "schedule" in selectedBooth && selectedBooth.schedule?.length > 0;
+
+        if (!hasEvents) {
+            uiState.desiredOverlaySize = "medium";
+        }
     }
 }
 
