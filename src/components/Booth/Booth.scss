@@ -20,9 +20,14 @@ $im: 0.4rem;
     &__content {
         margin: rem(0 16px);
 
-        .efp-entity-item__body {
+        .efp-entity-item {
             width: calc(100% + #{rem(32px)});
             margin-left: rem(-16px);
+            cursor: pointer;
+
+            &:last-child {
+                border: 0;
+            }
         }
     }
 

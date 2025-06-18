@@ -60,7 +60,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
         if (localStore.searchValue) {
             const fuseOptions = {
                 keys: ["name"],
-                threshold: 0.4,
+                threshold: 0.3,
                 ignoreLocation: true,
                 includeScore: true,
             };
@@ -173,13 +173,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
                 )}
 
                 {sortedEvents.length > 0 ? (
-                    <Schedule
-                        events={sortedEvents}
-                        showMoreButton={false}
-                        showBooths={true}
-                        isAgenda={true}
-                        onEventClick={handleEventClick}
-                    />
+                    <Schedule events={sortedEvents} showBooths={true} isAgenda={true} onEventClick={handleEventClick} />
                 ) : (
                     <div className="efp-agenda-empty">
                         {store.agendaFilterStore.activeFiltersCount > 0 || localStore.searchValue
