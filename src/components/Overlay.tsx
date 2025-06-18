@@ -189,7 +189,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
             // height depends on size and ongoing touch
             // let's animate when no touch in progress
-            if (uiState.overlayPosition === "left") return;
+            // if (uiState.overlayPosition === "left") return;
 
             let newTop = getTopForBottomPosition(uiState.overlaySize, el.current);
 
