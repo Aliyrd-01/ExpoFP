@@ -78,9 +78,9 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         const disposer = autorun(position);
 
         function handleTouchStart(e: TouchEvent) {
-            if (s.noMove) return;
+            // if (s.noMove) return;
             logger.log("TouchStart", e);
-            if (s.startedTouch) return;
+            // if (s.startedTouch) return;
 
             const scrollable = (e.target as any).closest(".overlay-content__scrollable");
             // if (scrollable && scrollable.scrollTop > 0) return;
@@ -88,22 +88,22 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         }
 
         function handleTouchMove(e: TouchEvent) {
-            if (s.noMove) return;
-            if (!s.startedTouch) return;
+            // if (s.noMove) return;
+            // if (!s.startedTouch) return;
             const rt = Array.from(e.changedTouches).filter((x) => x.identifier === s.startedTouch.identifier)[0];
-            if (!rt) return;
+            // if (!rt) return;
             s.touchDiff = s.startedTouch.clientY - rt.clientY;
             logger.log("TouchMove", s.touchDiff);
             setHeight();
             // doesn't allow to pass event further to HTML
-            if (uiState.desiredOverlaySize !== "full") e.preventDefault();
+            // if (uiState.desiredOverlaySize !== "full") e.preventDefault();
         }
 
         function handleTouchEnd(e: TouchEvent) {
-            if (s.noMove) return;
-            if (!s.startedTouch) return;
+            // if (s.noMove) return;
+            // if (!s.startedTouch) return;
             const rt = Array.from(e.changedTouches).filter((x) => x.identifier === s.startedTouch.identifier)[0];
-            if (!rt) return;
+            // if (!rt) return;
             let diff = s.startedTouch.clientY - rt.clientY;
             // if (this.negateMove) diff = -diff;
             const current = getTopForBottomPosition(uiState.overlaySize, el.current);
@@ -189,7 +189,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
             // height depends on size and ongoing touch
             // let's animate when no touch in progress
-            if (uiState.overlayPosition === "left") return;
+            // if (uiState.overlayPosition === "left") return;
 
             let newTop = getTopForBottomPosition(uiState.overlaySize, el.current);
 
@@ -203,7 +203,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             } else if (s.currentTop === undefined) {
                 transition = false;
             }
-            if (s.currentTop === newTop) return;
+            // if (s.currentTop === newTop) return;
             const $el = select(el.current);
             $el.interrupt();
             if (transition) {
@@ -214,7 +214,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     .on("end", () => {
                         if (uiState.overlaySize === "full") {
                             const containerHeight =
-                                el.current?.parentElement?.getBoundingClientRect?.()?.height || window.innerHeight;
+                                /*el.current?.parentElement?.getBoundingClientRect?.()?.height ||*/ window.innerHeight;
                             el.current.style.height = `${containerHeight - newTop}px`;
                         }
                         setShowAll();
@@ -224,7 +224,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             }
             setShowAll();
 
-            if (s.currentTop !== newTop && window.event) window.event.preventDefault();
+            // if (s.currentTop !== newTop && window.event) window.event.preventDefault();
             s.currentTop = newTop;
         }
 
@@ -272,7 +272,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 const miniSizeRems = 3.5;
 const paddingRems = 2;
 function getTopForBottomPosition(size: OverlaySize, el: HTMLDivElement): number {
-    const containerHeight = el?.parentElement?.getBoundingClientRect?.()?.height || window.innerHeight;
+    const containerHeight = /*el?.parentElement?.getBoundingClientRect?.()?.height ||*/ window.innerHeight;
     switch (size) {
         case "full":
             return remsToPixels(paddingRems);
