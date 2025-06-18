@@ -80,7 +80,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         function handleTouchStart(e: TouchEvent) {
             if (s.noMove) return;
             logger.log("TouchStart", e);
-            // if (s.startedTouch) return;
+            if (s.startedTouch) return;
 
             const scrollable = (e.target as any).closest(".overlay-content__scrollable");
             if (scrollable && scrollable.scrollTop > 0) return;
@@ -96,7 +96,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             logger.log("TouchMove", s.touchDiff);
             setHeight();
             // doesn't allow to pass event further to HTML
-            if (uiState.desiredOverlaySize !== "full") e.preventDefault();
+            // if (uiState.desiredOverlaySize !== "full") e.preventDefault();
         }
 
         function handleTouchEnd(e: TouchEvent) {
