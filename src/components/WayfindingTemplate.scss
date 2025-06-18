@@ -92,6 +92,11 @@
         }
     }
 
+    &__accessible {
+        margin-top: rem(12px);
+        margin-inline-start: rem(44px);
+    }
+
     @include kiosk {
         align-items: unset;
         padding-inline-end: var(--k-spacing-lg);
@@ -124,6 +129,11 @@
             align-self: center;
             width: clamp(30px, 4vw, 38px);
             height: rem(50px);
+        }
+
+        &__accessible {
+            margin-top: rem(16px);
+            margin-inline-start: rem(56px);
         }
     }
 }
