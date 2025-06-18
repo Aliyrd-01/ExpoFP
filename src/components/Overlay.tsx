@@ -224,7 +224,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             }
             setShowAll();
 
-            if (s.currentTop !== newTop && window.event) window.event.preventDefault();
+            // if (s.currentTop !== newTop && window.event) window.event.preventDefault();
             s.currentTop = newTop;
         }
 
