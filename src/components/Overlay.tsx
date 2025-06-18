@@ -88,15 +88,15 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         }
 
         function handleTouchMove(e: TouchEvent) {
-            if (s.noMove) return;
-            if (!s.startedTouch) return;
+            // if (s.noMove) return;
+            // if (!s.startedTouch) return;
             const rt = Array.from(e.changedTouches).filter((x) => x.identifier === s.startedTouch.identifier)[0];
-            if (!rt) return;
+            // if (!rt) return;
             s.touchDiff = s.startedTouch.clientY - rt.clientY;
             logger.log("TouchMove", s.touchDiff);
             setHeight();
             // doesn't allow to pass event further to HTML
-            if (uiState.desiredOverlaySize !== "full") e.preventDefault();
+            // if (uiState.desiredOverlaySize !== "full") e.preventDefault();
         }
 
         function handleTouchEnd(e: TouchEvent) {
