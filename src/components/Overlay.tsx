@@ -70,8 +70,8 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
         logger.log("Overlay.useEffect");
 
-        el.current.addEventListener("touchstart", handleTouchStart, { passive: false });
-        el.current.addEventListener("touchmove", handleTouchMove, { passive: false });
+        el.current.addEventListener("touchstart", handleTouchStart, { passive: true });
+        el.current.addEventListener("touchmove", handleTouchMove, { passive: true });
         el.current.addEventListener("touchend", handleTouchEnd, { passive: true });
         el.current.addEventListener("touchcancel", handleTouchCancel, { passive: true });
 
@@ -80,7 +80,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         function handleTouchStart(e: TouchEvent) {
             if (s.noMove) return;
             logger.log("TouchStart", e);
-            if (s.startedTouch) return;
+            // if (s.startedTouch) return;
 
             const scrollable = (e.target as any).closest(".overlay-content__scrollable");
             if (scrollable && scrollable.scrollTop > 0) return;
@@ -143,6 +143,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
 
         function handleTouchCancel() {
             s.startedTouch = undefined;
+            position(); 
         }
 
         function position() {
