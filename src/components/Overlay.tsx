@@ -80,9 +80,9 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
         function handleTouchStart(e: TouchEvent) {
             if (s.noMove) return;
             logger.log("TouchStart", e);
-            if (s.startedTouch) return;
+            // if (s.startedTouch) return;
 
-            const scrollable = (e.target as any).closest(".overlay-content__scrollable");
+            // const scrollable = (e.target as any).closest(".overlay-content__scrollable");
             // if (scrollable && scrollable.scrollTop > 0) return;
             s.startedTouch = e.touches[0];
         }
