@@ -170,13 +170,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
                 )}
 
                 {sortedEvents.length > 0 ? (
-                    <Schedule
-                        events={sortedEvents}
-                        showMoreButton={false}
-                        showBooths={true}
-                        isAgenda={true}
-                        onEventClick={handleEventClick}
-                    />
+                    <Schedule events={sortedEvents} showBooths={true} isAgenda={true} onEventClick={handleEventClick} />
                 ) : (
                     <div className="efp-agenda-empty">
                         {store.agendaFilterStore.activeFiltersCount > 0 || localStore.searchValue

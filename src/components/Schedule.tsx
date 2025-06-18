@@ -58,6 +58,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
 
         const toggleDescription = (e: React.MouseEvent<HTMLButtonElement>, date: string, index: number) => {
             e.preventDefault();
+            e.stopPropagation();
             setEventsFullDescription((prev) => {
                 const newState = { ...prev };
                 if (!Array.isArray(newState[date])) newState[date] = [];
