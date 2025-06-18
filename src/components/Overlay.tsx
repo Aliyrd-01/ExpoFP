@@ -83,7 +83,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
             if (s.startedTouch) return;
 
             const scrollable = (e.target as any).closest(".overlay-content__scrollable");
-            if (scrollable && scrollable.scrollTop > 0) return;
+            // if (scrollable && scrollable.scrollTop > 0) return;
             s.startedTouch = e.touches[0];
         }
 
