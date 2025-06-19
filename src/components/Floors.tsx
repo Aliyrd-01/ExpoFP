@@ -19,8 +19,13 @@ export default function Floors() {
             return classNames({ levels: true, "-ready": data.length });
         },
         get style() {
+            let mapControlsSpaceY = 0;
+            if (uiState.kiosk && uiState.mapControlsDOMRect) {
+                mapControlsSpaceY = uiState.mapControlsDOMRect.y + uiState.mapControlsDOMRect.height;
+            }
+
             return {
-                top: uiState.mapVisibleTop + remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) + "px",
+                top: uiState.mapVisibleTop + mapControlsSpaceY + remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) + "px",
             };
         },
     }));
