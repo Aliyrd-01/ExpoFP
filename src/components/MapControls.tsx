@@ -1,7 +1,8 @@
 import classNames from "classnames";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
 import "./MapControls.scss";
+import { uiState } from "../store";
 
 export interface MapControlLayersItem {
     id: string;
@@ -70,8 +71,15 @@ const MapControls: React.FC<MapControlsProps> = ({
         );
     };
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (containerRef.current) {
+            uiState.mapControlsDOMRect = containerRef.current.getBoundingClientRect();
+        }
+    }, []);
+
     return (
-        <div className={classNames("map-controls", className)} style={style} role="toolbar" aria-label={title}>
+        <div ref={containerRef} className={classNames("map-controls", className)} style={style} role="toolbar" aria-label={title}>
             {findLocation && (
                 <button
                     type="button"
