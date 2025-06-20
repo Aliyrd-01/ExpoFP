@@ -262,7 +262,7 @@ export default function Map() {
     function moveToRect(rect: Rect, maxZoomScale: number = 10, animate: boolean = true) {
         let newRect = Rect.fromX1y1x2y2(rect.x1 - uiState.kioskRectPadding * rect.w, rect.y1, rect.x2, rect.y2);
 
-        if (settings.EXPO === "springfair2022") maxZoomScale = 20;
+        // if (settings.EXPO === "springfair2022") maxZoomScale = 20;
         const zoomScale = zoomTransform(s.$canvas.node()).k; //m.getZoomTransform().k;
 
         let visibleRect = uiState.canvasVisibleRectPx;
@@ -325,8 +325,8 @@ export default function Map() {
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
                 if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
                 //s.drawer.setZoomTransform(t);
-                else if (t.animate) setZoomTransformAnimated(t, 500, easeExpOut);
-                else setZoomTransformAnimated(t, 0, null);
+                else if (t.animate) setZoomTransformAnimated(t, 2000, easeExpOut);
+                else setZoomTransformAnimated(t, 2000, null);
                 s.animatePlease = false;
                 s.moving = true;
                 uiState.zoomAfTransformK = Math.round(t.k * 100) / 100;
