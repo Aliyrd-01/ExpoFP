@@ -1,5 +1,5 @@
-import { action, computed, observable } from "mobx";
-import { boothStore, exhibitorStore, uiState } from ".";
+import { action, computed, observable, toJS } from "mobx";
+import { uiState } from ".";
 import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
@@ -18,11 +18,10 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Kiosk, Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
-import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
+import type { ListItem, ListType, MapSettings, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
 
-// logger.log("Browser", browser.getBrowser());
-//const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
+const MAP_SETTINGS_KEY = "expofp-map-settings";
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -831,6 +830,35 @@ export default class UIState {
 
     @computed get listScrollTop() {
         return this._listScrollTop[this.list.type] || 0;
+    }
+
+    @observable mapSettings: MapSettings = {
+        zoomTime: 2000,
+    };
+
+    @action setMapSettings(newSettings: MapSettings) {
+        try {
+            const result = { ...toJS(this.mapSettings) };
+            for (const prop in result) {
+                result[prop] = newSettings[prop];
+            }
+            this.mapSettings = result;
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(result));
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    @action restoreMapSettings() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(MAP_SETTINGS_KEY));
+            if (!saved) {
+                return;
+            }
+            this.setMapSettings(saved);
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -52,3 +52,7 @@ export interface FilterStore {
     getFilteredItems(): FilterItem[];
     publicRootStore: any;
 }
+
+export interface MapSettings {
+    zoomTime?: number;
+}

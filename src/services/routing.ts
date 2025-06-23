@@ -124,7 +124,10 @@ function executeCustomCommand() {
 }
 
 function dispatchFromUrl() {
-    const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
+    const slug = filterMapSettings(
+        history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : ""
+    );
+
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find(
@@ -496,4 +499,23 @@ export function applyParameters(queryRaw: string = "") {
 
 export function destroyHistory() {
     unlisten();
+}
+
+function filterMapSettings(historyLocationSearch: string): string {
+    try {
+        const params = new URLSearchParams(historyLocationSearch);
+
+        uiState.setMapSettings(Object.fromEntries(params));
+
+        for (const key of params.keys()) {
+            if (key in uiState.mapSettings) {
+                params.delete(key);
+            }
+        }
+
+        return params.toString();
+    } catch (err) {
+        console.error(err);
+        return historyLocationSearch;
+    }
 }
