@@ -860,5 +860,12 @@ export default class UIState {
         }
     }
 
+    @observable interruptAnimation = false;
+
+    @action setInterruptAnimation() {
+        // Every call should trigger an update no matter which values are set.
+        this.interruptAnimation = !this.interruptAnimation;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 }

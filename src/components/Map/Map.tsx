@@ -246,6 +246,11 @@ export default function Map() {
         }
     );
 
+    useReaction(
+        () => uiState.interruptAnimation,
+        () => stopAnimation(),
+    );
+
     return useObserver(() => (
         <canvas
             ref={el}
@@ -446,6 +451,7 @@ export default function Map() {
         const t = zoomTransform(s.$canvas.node());
         if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
         (transform as any).animate = animate;
+        stopAnimation();
         s.$canvas.call(s.zoom.transform as any, transform);
     }
 
@@ -462,7 +468,7 @@ export default function Map() {
         // animate from existing position to dest
         if (zoomAf) {
             // move to the last frame zoom transform
-            cancelAnimationFrame(zoomAf);
+            stopAnimation();
             // s.drawer.setZoomTransform(zoomAfTransform);
         }
         if (!duration) {
@@ -519,5 +525,15 @@ export default function Map() {
 
         const t = zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
         return zoomBound(s.drawer, t, true);
+    }
+
+    function stopAnimation() {
+        if (!zoomAf) {
+            return;
+        }
+        cancelAnimationFrame(zoomAf);
+        zoomAf = undefined;
+        zoomAfTransform = undefined;
+        s.$canvas.interrupt();
     }
 }
