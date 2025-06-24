@@ -1,4 +1,4 @@
-import { action, computed, observable, toJS } from "mobx";
+import { action, computed, observable } from "mobx";
 import { uiState } from ".";
 import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
@@ -20,8 +20,6 @@ import { Kiosk, Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListItem, ListType, MapSettings, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
-
-const MAP_SETTINGS_KEY = "expofp-map-settings";
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -832,32 +830,10 @@ export default class UIState {
         return this._listScrollTop[this.list.type] || 0;
     }
 
-    @observable mapSettings: MapSettings = {
-        zoomTime: 2000,
-    };
+    @observable mapSettings: MapSettings = {};
 
     @action setMapSettings(newSettings: MapSettings) {
-        try {
-            this.mapSettings = {
-                ...this.mapSettings,
-                ...newSettings,
-            };
-            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(toJS(this.mapSettings)));
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    @action restoreMapSettings() {
-        try {
-            const saved = JSON.parse(localStorage.getItem(MAP_SETTINGS_KEY));
-            if (!saved) {
-                return;
-            }
-            this.setMapSettings(saved);
-        } catch (err) {
-            console.error(err);
-        }
+        this.mapSettings = { ...this.mapSettings, ...newSettings };
     }
 
     @observable interruptAnimation = false;

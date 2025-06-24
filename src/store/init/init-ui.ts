@@ -115,8 +115,6 @@ export default function initUi(store: RootStore) {
             uiState.screenSize = new Size(width, height);
         });
     }
-
-    uiState.restoreMapSettings();
 }
 
 export function destroyUiHandlers() {

@@ -11,6 +11,8 @@ import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
+import { MapSettings } from "../store/types";
+import { svgArea } from "../data/svg";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -124,10 +126,7 @@ function executeCustomCommand() {
 }
 
 function dispatchFromUrl() {
-    const slug = filterMapSettings(
-        history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : ""
-    );
-
+    const slug = history.location.search.length > 1 ? decodeURIComponent(history.location.search.substring(1)) : "";
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find(
@@ -139,6 +138,8 @@ function dispatchFromUrl() {
     );
 
     const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+
+    setMapSettings(searchParams);
 
     if (executeCustomCommand()) {
     } else if (searchParams.has("yah")) {
@@ -501,21 +502,50 @@ export function destroyHistory() {
     unlisten();
 }
 
-function filterMapSettings(historyLocationSearch: string): string {
+function setMapSettings(searchParams: URLSearchParams) {
+    const MAP_SETTINGS_KEY = "expofp-map-settings";
+
+    let result: MapSettings = {
+        zoomtime: 2000,
+    };
+
     try {
-        const params = new URLSearchParams(historyLocationSearch);
-
-        uiState.setMapSettings(Object.fromEntries(params));
-
-        for (const key of params.keys()) {
-            if (key in uiState.mapSettings) {
-                params.delete(key);
-            }
+        const savedStr = localStorage?.getItem(MAP_SETTINGS_KEY);
+        if (savedStr) {
+            const saved = JSON.parse(savedStr);
+            result = { ...result, ...castMapSettings(saved) };
         }
-
-        return params.toString();
     } catch (err) {
         console.error(err);
-        return historyLocationSearch;
     }
+
+    try {
+        Object.keys(uiState.mapSettings)
+            .forEach(key => !searchParams.has(key) && searchParams.delete(key));
+
+        if (new Set(searchParams.keys()).size) {
+            const params = castMapSettings(
+                Object.fromEntries(searchParams.entries()),
+            );
+            result = { ...result, ...params };
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(params));
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+    uiState.setMapSettings(result);
+}
+
+function castMapSettings(obj: Record<string, string>): MapSettings {
+    const result = {};
+    for (const prop in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+            const value = obj[prop];
+            result[prop] = typeof value === "string" && /^-?\d+$/.test(value)
+                ? parseInt(value, 10)
+                : value;
+        }
+    }
+    return result;
 }
