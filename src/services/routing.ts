@@ -12,7 +12,6 @@ import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import { MapSettings } from "../store/types";
-import { svgArea } from "../data/svg";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
