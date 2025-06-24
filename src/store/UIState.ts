@@ -838,12 +838,11 @@ export default class UIState {
 
     @action setMapSettings(newSettings: MapSettings) {
         try {
-            const result = { ...toJS(this.mapSettings) };
-            for (const prop in result) {
-                result[prop] = newSettings[prop];
-            }
-            this.mapSettings = result;
-            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(result));
+            this.mapSettings = {
+                ...this.mapSettings,
+                ...newSettings,
+            };
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(toJS(this.mapSettings)));
         } catch (err) {
             console.error(err);
         }
