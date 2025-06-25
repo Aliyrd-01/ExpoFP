@@ -30,8 +30,18 @@ export default class UIState {
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
     @observable zoomBy = null as number;
+
+    @action setZoomBy(zoom: number) {
+        this.zoomBy = zoom;
+    }
+
     @observable moveToBooths: Booth[] = null;
     @observable moveToRect: Rect = null;
+
+    @action setMoveToRect(rect: Rect) {
+        this.moveToRect = rect;
+    }
+
     @observable moveToLocation = false;
     @observable menu = false;
     @observable searchFocused = false;
@@ -833,7 +843,11 @@ export default class UIState {
     @observable mapSettings: MapSettings = {};
 
     @action setMapSettings(newSettings: MapSettings) {
-        this.mapSettings = { ...this.mapSettings, ...newSettings };
+        const result = { ...this.mapSettings, ...newSettings };
+        this.mapSettings = {
+            ...result,
+            zoomtime: Math.max(Math.min(result.zoomtime, 5000), 500),
+        };
     }
 
     @observable interruptAnimation = false;

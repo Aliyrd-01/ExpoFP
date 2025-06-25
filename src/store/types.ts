@@ -54,7 +54,7 @@ export interface FilterStore {
 }
 
 export interface MapSettings {
-    zoomtime?: number; // Zoom animation duration (ms)
+    zoomtime?: number; // Zoom animation duration (ms) (500-5000)
     center?: string;   // Map center in WGS84 "lat,lng"
     centerxy?: string; // Map center in projected "x,y"
     z?: string;        // Floor/level name
