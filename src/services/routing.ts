@@ -11,6 +11,7 @@ import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
+import { MapSettings } from "../store/types";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -136,6 +137,8 @@ function dispatchFromUrl() {
     );
 
     const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+
+    setMapSettings(searchParams);
 
     if (executeCustomCommand()) {
     } else if (searchParams.has("yah")) {
@@ -496,4 +499,52 @@ export function applyParameters(queryRaw: string = "") {
 
 export function destroyHistory() {
     unlisten();
+}
+
+function setMapSettings(searchParams: URLSearchParams) {
+    const MAP_SETTINGS_KEY = "expofp-map-settings";
+
+    let result: MapSettings = {
+        zoomtime: 2000,
+    };
+
+    try {
+        const savedStr = localStorage?.getItem(MAP_SETTINGS_KEY);
+        if (savedStr) {
+            const saved = JSON.parse(savedStr);
+            result = { ...result, ...castMapSettings(saved) };
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+    try {
+        Object.keys(uiState.mapSettings)
+            .forEach(key => !searchParams.has(key) && searchParams.delete(key));
+
+        if (new Set(searchParams.keys()).size) {
+            const params = castMapSettings(
+                Object.fromEntries(searchParams.entries()),
+            );
+            result = { ...result, ...params };
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(params));
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+    uiState.setMapSettings(result);
+}
+
+function castMapSettings(obj: Record<string, string>): MapSettings {
+    const result = {};
+    for (const prop in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+            const value = obj[prop];
+            result[prop] = typeof value === "string" && /^-?\d+$/.test(value)
+                ? parseInt(value, 10)
+                : value;
+        }
+    }
+    return result;
 }

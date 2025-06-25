@@ -6,10 +6,10 @@
  */
 export const sanitizeStr = (str) => str.trim().replace(/[^a-z0-9]/gi, "");
 
-export function sanitizeSearch(input: string) {
-    return (input || "")
-        .replace(/(^|\?|&)utm_[^&]*/g, "")
-        .replace(/(^|\?|&)ref=[^&]*/g, "")
-        .replace(/(^|\?|&)fbclid=[^&]*/g, "")
+export function sanitizeSearch(input: string, patterns = []) {
+    const arr = ["utm_", "ref=", "fbclid="].concat(patterns);
+    const regex = new RegExp(`(^|\\?|&)(${arr.join("|")})[^&]*`, "g");
+    return input
+        .replace(regex, "")
         .replace(/(^|[?&])([^=&#]+)=(?=&|$)/g, (_match, sep, key) => `${sep}${key}`);
 }

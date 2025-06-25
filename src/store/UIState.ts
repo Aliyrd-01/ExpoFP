@@ -1,5 +1,5 @@
 import { action, computed, observable } from "mobx";
-import { boothStore, exhibitorStore, uiState } from ".";
+import { uiState } from ".";
 import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
@@ -18,11 +18,8 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Kiosk, Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
-import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
+import type { ListItem, ListType, MapSettings, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
-
-// logger.log("Browser", browser.getBrowser());
-//const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -831,6 +828,19 @@ export default class UIState {
 
     @computed get listScrollTop() {
         return this._listScrollTop[this.list.type] || 0;
+    }
+
+    @observable mapSettings: MapSettings = {};
+
+    @action setMapSettings(newSettings: MapSettings) {
+        this.mapSettings = { ...this.mapSettings, ...newSettings };
+    }
+
+    @observable interruptAnimation = false;
+
+    @action setInterruptAnimation() {
+        // Every call should trigger an update no matter which values are set.
+        this.interruptAnimation = !this.interruptAnimation;
     }
 
     ///////////////////////////////////////////////////////////////////////////
