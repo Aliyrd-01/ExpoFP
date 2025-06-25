@@ -12,10 +12,6 @@ import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import { MapSettings } from "../store/types";
-import { convertGpsToLocal } from "../utils/gps";
-import { fpGeo } from "../components/Mapbox/utils/fpGeo";
-import Rect from "../core/Rect";
-import { svgArea } from "../data/svg";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;

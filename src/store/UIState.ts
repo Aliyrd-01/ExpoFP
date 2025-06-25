@@ -30,18 +30,8 @@ export default class UIState {
     @observable.ref hoveredBooth: Booth = null;
     // @observable.ref hoveredBooth1 = {};
     @observable zoomBy = null as number;
-
-    @action setZoomBy(zoom: number) {
-        this.zoomBy = zoom;
-    }
-
     @observable moveToBooths: Booth[] = null;
     @observable moveToRect: Rect = null;
-
-    @action setMoveToRect(rect: Rect) {
-        this.moveToRect = rect;
-    }
-
     @observable moveToLocation = false;
     @observable menu = false;
     @observable searchFocused = false;
