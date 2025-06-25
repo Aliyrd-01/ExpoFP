@@ -545,28 +545,6 @@ function setMapSettings(searchParams: URLSearchParams) {
             store.layerStore.updateVisibility(layer, true);
         }
     }
-
-    if (result.center) {
-        try {
-            const coords = result.center.split(",").map(Number);
-            const point = convertGpsToLocal(coords[0], coords[1], fpGeo.properties.config);
-            uiState.setMoveToRect(Rect.fromCxcywh(point.x, point.y, svgArea.w, svgArea.h));
-        } catch (err) {
-            console.error(`Failed to convert coordinates ${result.center}`, err);
-        }
-    } else if (result.centerxy) {
-        try {
-            const coords = result.centerxy.split(",").map(Number);
-            uiState.setMoveToRect(Rect.fromCxcywh(coords[0], coords[1], svgArea.w, svgArea.h))
-        } catch (err) {
-            console.error(`Failed to parse coordinates ${result.centerxy}`, err);
-        }
-    }
-
-    // TODO
-    // if (result.zoom) {
-    //     uiState.setZoomBy(result.zoom);
-    // }
 }
 
 function castMapSettings(obj: Record<string, string>): MapSettings {
