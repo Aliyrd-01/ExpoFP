@@ -527,7 +527,7 @@ function setMapSettings(searchParams: URLSearchParams) {
                 Object.fromEntries(searchParams.entries()),
             );
             result = { ...result, ...params };
-            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(result));
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(params));
         }
     } catch (err) {
         console.error("Failed to process or save map settings.", err);
