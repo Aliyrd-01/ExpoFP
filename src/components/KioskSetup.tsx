@@ -181,13 +181,14 @@ const KioskSetup = observer(() => {
                 ...store.uiState.kioskSetupData,
                 ...coords,
                 key: store.uiState.kioskSetupData?.key ?? newKioskKey,
+                z: store.layerStore.floors.find((f) => f.active)?.name,
             };
         };
 
         return () => {
             store.fp.onGetCoordsClick = originalOnGetCoordsClick;
         };
-    }, [store.uiState.kioskSetup, step, newKioskKey]);
+    }, [store.uiState.kioskSetup, step, newKioskKey, store.layerStore.floors]);
 
     useEffect(() => {
         if (!showSuccess && !showError) {
@@ -460,7 +461,7 @@ const KioskSetup = observer(() => {
                                         placeholder={t("Enter passcode")}
                                         defaultValue=""
                                         disabled={pending}
-                                        onInput={(e) => setPasscode((e.target as HTMLInputElement).value)}
+                                        onInput={(e) => setPasscode((e.target as HTMLInputElement).value?.trim())}
                                         aria-label={t("Enter passcode")}
                                     />
                                 </label>

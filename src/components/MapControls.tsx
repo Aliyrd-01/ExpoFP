@@ -74,9 +74,9 @@ const MapControls: React.FC<MapControlsProps> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (containerRef.current) {
-            uiState.mapControlsDOMRect = containerRef.current.getBoundingClientRect();
+            uiState.mapControlsDOMRect = containerRef.current?.getBoundingClientRect?.();
         }
-    }, []);
+    });
 
     return (
         <div ref={containerRef} className={classNames("map-controls", className)} style={style} role="toolbar" aria-label={title}>
