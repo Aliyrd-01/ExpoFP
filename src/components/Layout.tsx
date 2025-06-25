@@ -131,10 +131,10 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         >
             <div className={`layout__fixed expo-${settings.EXPO} overlay-${store.uiState.overlayPosition}`}>
                 {uiState.kiosk && uiState.inIdle && !uiState.kioskSetup && <TouchHand />}
-                {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && <Floors />}
-                {!uiState.noOverlay && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
-                <LogoOverlay />
-                {!uiState.mapControlsHidden && <Controls />}
+                {layersStore.mode == LayersMode.Radio && !uiState.floorsControlHidden && store.initialized && <Floors />}
+                {!uiState.noOverlay && store.initialized && <Overlay isGDPR={isGDPR} allowConsent={allowConsent} />}
+                {store.initialized && <LogoOverlay />}
+                {!uiState.mapControlsHidden && store.initialized && <Controls />}
                 {!uiState.hideHeaderLogo && store.initialized && <Ws />}
                 {isWebGlSupported && <Map />}
                 {store.mapboxStore.mapBoxActivated && store.mapboxStore.mapBoxEnabled && (
@@ -195,7 +195,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 ) : null}
                 <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
-                <KioskSetup />
+                {store.initialized && <KioskSetup />}
             </div>
         </div>
     );

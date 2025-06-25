@@ -15,6 +15,7 @@ import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
 import cn from "classnames";
+import { svgArea } from "../data/svg";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -160,13 +161,14 @@ const KioskSetup = observer(() => {
                 ...store.uiState.kioskSetupData,
                 ...coords,
                 key: store.uiState.kioskSetupData?.key ?? newKioskKey,
+                z: store.layerStore.floors.find((f) => f.active)?.name,
             };
         };
 
         return () => {
             store.fp.onGetCoordsClick = originalOnGetCoordsClick;
         };
-    }, [store.uiState.kioskSetup, step, newKioskKey]);
+    }, [store.uiState.kioskSetup, step, newKioskKey, store.layerStore.floors]);
 
     useEffect(() => {
         if (!showSuccess && !showError) {
@@ -304,10 +306,11 @@ const KioskSetup = observer(() => {
         } else if (store.uiState.kioskSetupData) {
             store.uiState.kioskSetupData = { ...store.uiState.kioskSetupData, key };
         } else {
+            const rect = store.layerStore.rectangle || svgArea;
             const newKiosk = {
                 key,
-                x: store.layerStore.rectangle.cx || 0,
-                y: store.layerStore.rectangle.cy || 0,
+                x: rect?.cx || 0,
+                y: rect?.cy || 0,
                 z: store.layerStore.floors.find((f) => f.active)?.name,
                 heading: 0,
             };
@@ -438,7 +441,7 @@ const KioskSetup = observer(() => {
                                         placeholder={t("Enter passcode")}
                                         defaultValue=""
                                         disabled={pending}
-                                        onInput={(e) => setPasscode((e.target as HTMLInputElement).value)}
+                                        onInput={(e) => setPasscode((e.target as HTMLInputElement).value?.trim())}
                                         aria-label={t("Enter passcode")}
                                     />
                                 </label>

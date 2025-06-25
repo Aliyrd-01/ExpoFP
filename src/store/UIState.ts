@@ -78,6 +78,7 @@ export default class UIState {
     @observable kioskSetupDOMRect: DOMRect;
     @observable categoryFilterOpen = false;
     @observable selectedCategoryFilters: Category[] = [];
+    @observable mapControlsDOMRect: DOMRect;
 
     @action setSelectedCategoryFilters(categories: Category[]) {
         this.selectedCategoryFilters = categories;

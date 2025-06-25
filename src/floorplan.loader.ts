@@ -321,13 +321,27 @@ export default class FloorPlanLoader implements FloorPlan {
             await initI18n();
 
             const searchParams = new URLSearchParams(window.location.search);
-            const trackerUrl = new URL(window["__data"].trackerUrl);
-            const expoId = trackerUrl.searchParams.get("expoId");
+
+            let trackerUrl;
+            let expoId;
+
+            if (data?.trackerUrl) {
+                try {
+                    trackerUrl = new URL(data.trackerUrl);
+                    expoId = trackerUrl.searchParams.get("expoId");
+                } catch (err) {
+                    console.error(err);
+                }
+            }
 
             const initHeatmap = async <T = any>(o: {
                 dataUrl: string;
                 dataMapper: (item: T, i?: number) => T;
             }): Promise<void> => {
+                if (!trackerUrl || !expoId) {
+                    return Promise.reject(new Error("trackerUrl or expoId is missing"));
+                }
+
                 const url = new URL(o.dataUrl, trackerUrl.origin);
 
                 const resp = await fetch(url.toString(), {
@@ -362,12 +376,12 @@ export default class FloorPlanLoader implements FloorPlan {
                             });
                         }
                     } else {
-                        const boothsUrl = new URL("/api/fp-stats/get", "https://app.expofp.com");
+                        const boothsUrl = new URL("/api/fp-stats/get", trackerUrl.origin);
                         boothsUrl.searchParams.set("expoId", expoId);
                         boothsUrl.searchParams.set("type", "booview");
                         boothsUrl.searchParams.set("t", decodeURIComponent(searchParams.get("t")));
 
-                        const exhibitorsUrl = new URL("api/fp-stats/get", "https://app.expofp.com");
+                        const exhibitorsUrl = new URL("api/fp-stats/get", trackerUrl.origin);
                         exhibitorsUrl.searchParams.set("expoId", expoId);
                         exhibitorsUrl.searchParams.set("type", "exview");
                         exhibitorsUrl.searchParams.set("t", decodeURIComponent(searchParams.get("t")));
@@ -382,7 +396,7 @@ export default class FloorPlanLoader implements FloorPlan {
                         window["__heatmapData"] = { booths, exhibitors };
                     }
                 } catch (err) {
-                    console.warn(err);
+                    console.error("Heatmap: Initialization error", err);
                 }
             }
 

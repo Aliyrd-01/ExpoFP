@@ -83,8 +83,7 @@ export default class RootStore {
         this.uiState.details = b[0];
 
         if (b.length === 1 && b[0].schedule?.length) {
-            this.uiState.desiredOverlaySize = "full";
-            console.log("desiredOverlaySize", this.uiState.desiredOverlaySize);
+            this.uiState.desiredOverlaySize = "medium";
         }
 
         if (b.length === 1 && b[0].layer && !b[0].visible && this.layerStore.mode === LayersMode.Radio)
