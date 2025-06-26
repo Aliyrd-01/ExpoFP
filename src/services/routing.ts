@@ -1,7 +1,7 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY, SEPARATOR } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, MAP_SETTINGS_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY, SEPARATOR } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
@@ -502,8 +502,6 @@ export function destroyHistory() {
 }
 
 function setMapSettings(searchParams: URLSearchParams) {
-    const MAP_SETTINGS_KEY = "expofp-map-settings";
-
     let result: MapSettings = {
         zoomtime: 2000,
     };
@@ -527,7 +525,6 @@ function setMapSettings(searchParams: URLSearchParams) {
                 Object.fromEntries(searchParams.entries()),
             );
             result = { ...result, ...params };
-            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(params));
         }
     } catch (err) {
         console.error("Failed to process or save map settings.", err);
