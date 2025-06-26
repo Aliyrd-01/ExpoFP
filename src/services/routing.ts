@@ -138,7 +138,7 @@ function dispatchFromUrl() {
 
     const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
 
-    setMapSettings(searchParams);
+    setMapSettings();
 
     if (executeCustomCommand()) {
     } else if (searchParams.has("yah")) {
@@ -501,28 +501,30 @@ export function destroyHistory() {
     unlisten();
 }
 
-function setMapSettings(searchParams: URLSearchParams) {
+function setMapSettings() {
     let result: MapSettings = {};
 
     try {
-        const savedStr = localStorage?.getItem(MAP_SETTINGS_KEY);
-        if (savedStr) {
-            const saved = JSON.parse(savedStr);
-            result = { ...result, ...castMapSettings(saved) };
-        }
-    } catch (err) {
-        console.error("Failed to restore saved map settings.", err);
-    }
+        const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
 
-    try {
-        Object.keys(uiState.mapSettings)
-            .forEach(key => !searchParams.has(key) && searchParams.delete(key));
+        const allowedKeys = new Set(Object.keys(uiState.mapSettings));
+        for (const key of searchParams.keys()) {
+            if (!allowedKeys.has(key)) {
+                searchParams.delete(key);
+            }
+        }
 
         if (new Set(searchParams.keys()).size) {
-            const params = castMapSettings(
+            result = castMapSettings(
                 Object.fromEntries(searchParams.entries()),
             );
-            result = { ...result, ...params };
+        } else {
+            const savedStr = localStorage?.getItem(MAP_SETTINGS_KEY);
+            if (savedStr) {
+                result = castMapSettings(
+                    JSON.parse(savedStr),
+                );
+            }
         }
     } catch (err) {
         console.error("Failed to process or save map settings.", err);
