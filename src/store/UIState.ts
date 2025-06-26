@@ -691,7 +691,7 @@ export default class UIState {
                     ? this.fuzzySearchItems.map(({ item }) => item)
                     : this.searchItems;
             case "bookmarks":
-                return this.rootStore.exhibitorStore.bookmarked;
+                return [...this.rootStore.exhibitorStore.bookmarked, ...this.rootStore.eventStore.bookmarked];
             case "category":
                 return this.list.category.exhibitors;
             case "language":

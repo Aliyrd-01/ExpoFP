@@ -1,4 +1,5 @@
 // import { observable } from 'mobx';
+import { action, computed, observable } from "mobx";
 import RootStore from "./RootStore";
 
 export default class EventStore {
@@ -13,10 +14,27 @@ export default class EventStore {
     findByNameOrSlug(str: string): EventItem | undefined {
         return this.eventItems.find((e) => e.name === str || e.slug === str || e.externalId === str);
     }
+
+    @computed get bookmarked() {
+        return this.eventItems.filter((x) => x.bookmarked);
+    }
+
+    @action replaceBookmarked(ids: number[]) {
+        const ar = ids.map((x) => this.eventItems.find((e) => e.id === x)).filter((x) => x);
+        const set = new Set(ar);
+        const toRemove = this.bookmarked.filter((e) => !set.has(e));
+        for (const e of toRemove) {
+            e.bookmarked = false;
+        }
+        for (const e of ar) {
+            e.bookmarked = true;
+        }
+    }
 }
 
 export class EventItem {
     public readonly slug: string;
+    @observable bookmarked: boolean = false;
 
     public constructor(
         public readonly id: number,

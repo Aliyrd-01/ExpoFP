@@ -87,6 +87,10 @@ const Booth: React.FC = observer(() => {
         store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
     }
 
+    function handleEventClick(event) {
+        store.selectEventItem(event, true);
+    }
+
     const bar = <div className="booth__bar">{s.title}</div>;
     let content: JSX.Element = null;
 
@@ -176,9 +180,12 @@ const Booth: React.FC = observer(() => {
             )}
             {!!s.booth.schedule?.length && (
                 <Schedule
+                    isAgenda={true}
+                    showBooths={true}
                     events={[...s.booth.schedule].sort(
                         (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
                     )}
+                    onEventClick={handleEventClick}
                 />
             )}
         </OverlayContent>

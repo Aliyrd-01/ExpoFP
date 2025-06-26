@@ -85,7 +85,10 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         e.preventDefault();
         close();
         const loc = window.location;
-        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map((x) => x.id).join("|");
+        const exhibitorIds = exhibitorStore.bookmarked.map((x) => x.id);
+        const eventIds = store.eventStore.bookmarked.map((x) => x.id);
+        const allIds = [...exhibitorIds, ...eventIds];
+        const url = `${loc.protocol}//${loc.host}/?b=` + allIds.join("|");
         copyToClipboard(url);
         alert(t("Link copied to clipboard") + ".\n" + t("Open it on another device to import bookmarks") + ".");
     }
@@ -128,6 +131,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
 
         const bookmarks = (store.boothStore.booths as any).filter((b: any) => b.bookmarked).map((b: any) => b.name) as string[];
         const hasEvents = store.eventStore.eventItems.length > 0;
+        const totalBookmarks = exhibitorStore.exhibitors.filter((e) => e.bookmarked).length + store.eventStore.bookmarked.length;
 
         return (
             <>
@@ -179,15 +183,14 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             !data.hideBookmarks &&
                             !data.hideBookmarksLink &&
                             !uiState.kiosk &&
-                            exhibitorStore.exhibitors.length > 0 && (
+                            (exhibitorStore.exhibitors.length > 0 || store.eventStore.eventItems.length > 0) && (
                                 <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                                     <span>
-                                        {t("Bookmarks")}{" "}
-                                        <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                                        {t("Bookmarks")} <span>({totalBookmarks})</span>
                                     </span>
 
                                     <span className="menu__icons">
-                                        {exhibitorStore.bookmarked.length ? (
+                                        {totalBookmarks > 0 ? (
                                             <button onClick={shareBookmarks} title={t("Share bookmarks")}>
                                                 <i className="icon-link-external-solid"></i>
                                             </button>

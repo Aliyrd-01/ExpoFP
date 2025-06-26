@@ -226,9 +226,9 @@ function EventComponent() {
             >
                 <div className="efp-event__buttons">
                     <SibebarActions
-                        showBookmark={false}
+                        showBookmark={!uiState.disableBookmarked && !data.hideBookmarks && !uiState.kiosk}
                         showDirections={s.booth && settings.wayfinding}
-                        inBookmark={false}
+                        inBookmark={s.event?.bookmarked || false}
                         showShare={false}
                         showVisited={false}
                         visited={false}
@@ -317,6 +317,14 @@ function bookmark() {
     const event = uiState.selectedEventItem;
     if (!event) return;
 
+    event.bookmarked = !event.bookmarked;
+    if (uiState.onBookmarkClick) {
+        uiState.onBookmarkClick({
+            name: event.name,
+            bookmarked: event.bookmarked,
+            externalId: event.externalId,
+        });
+    }
     sendEventToGa(GaEventActions.ClickCustomButton, event.name);
 }
 
