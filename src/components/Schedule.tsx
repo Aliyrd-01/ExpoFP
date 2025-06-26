@@ -36,6 +36,15 @@ function isLive(event: EventItem): boolean {
     return now >= start && now <= end;
 }
 
+function isUpcoming(event: EventItem): boolean {
+    const now = Date.now();
+    const start = Date.parse(event.startDate);
+    if (isNaN(start)) return false;
+
+    const twentyFourHoursFromNow = now + 24 * 60 * 60 * 1000;
+    return start > now && start <= twentyFourHoursFromNow;
+}
+
 const Schedule: React.FC<ScheduleProps> = observer(
     ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, isAgenda = false, onEventClick }) => {
         const [eventsFullDescription, setEventsFullDescription] = useState<Record<string, { showFullDescription: boolean }[]>>(
@@ -147,6 +156,9 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                                     {event.name}
                                                     {isLive(event) && (
                                                         <span className="efp-schedule__event-live-badge">LIVE</span>
+                                                    )}
+                                                    {isUpcoming(event) && (
+                                                        <span className="efp-schedule__event-upcoming-badge">UPCOMING</span>
                                                     )}
                                                 </strong>
                                                 {booth && showBooths && (
