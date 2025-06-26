@@ -263,12 +263,13 @@ export default function Map() {
                         return;
                     }
 
-                    let coords;
+                    let coords: { x: number, y: number };
                     if (center) {
                         const point = center.split(",").map(Number);
                         coords = convertGpsToLocal(point[0], point[1], fpGeo.properties.config);
                     } else if (centerxy) {
-                        coords = centerxy.split(",").map(Number);
+                        const point = centerxy.split(",").map(Number);
+                        coords = { x: point[0], y: point[1] };
                     }
 
                     function panTo(targetX: number, targetY: number, zoomLevel?: number) {
@@ -296,7 +297,7 @@ export default function Map() {
                     if (coords) {
                         const pxToSvgMatrix = s.drawer.getPxSvgMatrix();
                         const svgToPxMatrix = m4.inverse(pxToSvgMatrix);
-                        const [x, y] = m4.transformPoint(svgToPxMatrix, [coords[0], coords[1], 1]);
+                        const [x, y] = m4.transformPoint(svgToPxMatrix, [coords.x, coords.y, 1]);
                         panTo(x, y, zoom);
                     } else if (zoom) {
                         applyZoom(zoom);
