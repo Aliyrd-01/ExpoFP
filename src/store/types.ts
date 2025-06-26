@@ -59,5 +59,5 @@ export interface MapSettings {
     centerxy?: string; // Map center in projected "x,y"
     z?: string;        // Floor/level name
     bearing?: number;  // Map rotation (0-360 degrees)
-    zoom?: number;     // Zoom level (0.1-100)
+    zoom?: number;     // Zoom level (1-100)
 }
