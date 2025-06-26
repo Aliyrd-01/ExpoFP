@@ -830,13 +830,20 @@ export default class UIState {
         return this._listScrollTop[this.list.type] || 0;
     }
 
-    @observable mapSettings: MapSettings = {};
+    @observable mapSettings: MapSettings = {
+        zoomtime: 2000,
+        center: undefined,
+        centerxy: undefined,
+        z: undefined,
+        bearing: 0,
+        zoom: 1,
+    };
 
     @action setMapSettings(newSettings: MapSettings) {
-        const result = { ...this.mapSettings, ...newSettings };
         this.mapSettings = {
-            ...result,
-            zoomtime: Math.max(Math.min(result.zoomtime, 5000), 500),
+            ...this.mapSettings,
+            ...newSettings,
+            zoomtime: Math.min(Math.max(newSettings.zoomtime ?? this.mapSettings.zoomtime, 500), 5000),
         };
         localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(toJS(this.mapSettings)));
     }
