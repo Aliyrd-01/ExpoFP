@@ -839,13 +839,13 @@ export default class UIState {
         zoom: 1,
     };
 
-    @action setMapSettings(newSettings: MapSettings) {
-        const zoomtime = Math.min(Math.max(newSettings.zoomtime ?? this.mapSettings.zoomtime, 500), 5000);
-
-        this.mapSettings = { ...this.mapSettings, ...newSettings, zoomtime };
+    @action setMapSettings(settings: MapSettings) {
+        const zoomtime = Math.min(Math.max(settings.zoomtime ?? this.mapSettings.zoomtime, 500), 5000);
+        const newSettings = { ...settings, zoomtime };
+        this.mapSettings = { ...this.mapSettings, ...newSettings };
 
         if (Object.keys(newSettings).length) {
-            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify({ ...newSettings, zoomtime }));
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(newSettings));
         }
     }
 
