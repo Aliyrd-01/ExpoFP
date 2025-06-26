@@ -1,4 +1,4 @@
-import { action, computed, observable, toJS } from "mobx";
+import { action, computed, observable } from "mobx";
 import { uiState } from ".";
 import { MAP_SETTINGS_KEY, PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
@@ -845,7 +845,10 @@ export default class UIState {
             ...newSettings,
             zoomtime: Math.min(Math.max(newSettings.zoomtime ?? this.mapSettings.zoomtime, 500), 5000),
         };
-        localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(toJS(this.mapSettings)));
+
+        if (Object.keys(newSettings).length) {
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(newSettings));
+        }
     }
 
     @observable interruptAnimation = false;

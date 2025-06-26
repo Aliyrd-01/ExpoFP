@@ -502,9 +502,7 @@ export function destroyHistory() {
 }
 
 function setMapSettings(searchParams: URLSearchParams) {
-    let result: MapSettings = {
-        zoomtime: 2000,
-    };
+    let result: MapSettings = {};
 
     try {
         const savedStr = localStorage?.getItem(MAP_SETTINGS_KEY);
