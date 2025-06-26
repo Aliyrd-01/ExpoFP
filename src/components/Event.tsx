@@ -9,7 +9,6 @@ import settings from "../tools/settings";
 import { t, getLocale } from "../utils/i18n";
 import { useReaction } from "../utils/mobx";
 import Button from "./Button";
-import ErrorBoundary from "./ErrorBoundary";
 import "./Event.scss";
 import OverlayContent from "./OverlayContent";
 import SibebarActions from "./SidebarActions";
@@ -28,14 +27,11 @@ function EventComponent() {
         get booth() {
             return this.event?.boothId ? store.boothStore.booths.find((b) => b.id === this.event.boothId) : null;
         },
-        get exhibitor() {
-            return this.event?.exhibitorId ? store.exhibitorStore.exhibitors.find((e) => e.id === this.event.exhibitorId) : null;
-        },
         get anyButtons() {
             return !!this.event?.link;
         },
         get disableCollapse() {
-            return !this.anyButtons || (uiState.overlayPosition === "left" && (this.event?.description || "").length < 800);
+            return (this.event?.description || "").length < 800;
         },
     }));
 
@@ -189,8 +185,8 @@ function EventComponent() {
             );
         }
 
-        function getDescription(description: string) {
-            if (!description) return null;
+        function getDescription(description: String) {
+            if (description === null) return "";
 
             const descriptions = description.split(RegExp("(?=!\\*\\/\\/\\|\\|\\^\\^[a-z]{2}\\^\\^\\/\\/\\|\\|\\*!)"));
             const lang = `!*//||^^${getLocale()}^^//||*!`;
@@ -253,46 +249,37 @@ function EventComponent() {
                     })}
                     ref={detailsRef}
                 >
-                    {/* {statusText && (
-                        <div className={classNames("event__status", statusClass)}>
-                            <span>{statusText}</span>
-                        </div>
-                    )}
+                    <div className="efp-event-booths">
+                        {s.booth && (
+                            <a
+                                href={`?${s.booth.slug}`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    store.toggleMapOverlay();
+                                    store.selectBooth(s.booth);
+                                }}
+                                className="efp-event-booths__booth"
+                            >
+                                <div className="efp-event-booths__booth-name">{s.booth.name}</div>
+                                {s.booth.layer && (
+                                    <div className="efp-event-categories__booth-level">
+                                        {data.shortLevelName ? s.booth.layer.shortName : s.booth.layer.description}
+                                    </div>
+                                )}
+                            </a>
+                        )}
+                    </div>
 
-                    <div className="event__time-info">
-                        <div className="event__time">
-                            <i className="icon-clock"></i>
-                            <span>
-                                {formatTime(event.startDate)}
-                                {event.endDate && ` - ${formatTime(event.endDate)}`}
-                            </span>
-                        </div>
-                        <div className="event__date">
-                            <i className="icon-calendar"></i>
-                            <span>{formatDate(event.startDate)}</span>
-                        </div>
-                    </div> */}
-
-                    {/* {s.booth && (
-                        <div className="event__booth-info">
-                            <div className="event__booth-item">
-                                <div className="event__booth-icon">
-                                    <i className="icon-marker-pin-solid"></i>
+                    <div className="efp-event-datetime">
+                        <div className="efp-event-datetime__row">
+                            <div className="efp-event-datetime__info">
+                                <div className="efp-event-datetime__date">{formatDate(event.startDate)}</div>
+                                <div className="efp-event-datetime__time">
+                                    {formatTime(event.startDate)} to {event.endDate ? formatTime(event.endDate) : "-"}
                                 </div>
-                                <div className="event__booth-content">
-                                    <div className="event__booth-name">{s.booth.name}</div>
-                                    {s.booth.layer && (
-                                        <div className="event__booth-level">
-                                            {data.shortLevelName ? s.booth.layer.shortName : s.booth.layer.description}
-                                        </div>
-                                    )}
-                                </div>
-                                <Button variant="gray-border" size="sm" onClick={() => store.selectBooth(s.booth, true)}>
-                                    {t("View on Map")}
-                                </Button>
                             </div>
                         </div>
-                    )} */}
+                    </div>
 
                     {event.description && (
                         <div
@@ -331,7 +318,6 @@ function bookmark() {
     if (!event) return;
 
     sendEventToGa(GaEventActions.ClickCustomButton, event.name);
-    // TODO: Implement bookmark functionality for events
 }
 
 function handleVisited() {
@@ -339,7 +325,6 @@ function handleVisited() {
     if (!event) return;
 
     sendEventToGa(GaEventActions.ClickCustomButton, event.name);
-    // TODO: Implement visited functionality for events
 }
 
 const EventWrapper: React.FC = observer(() => {

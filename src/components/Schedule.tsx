@@ -154,7 +154,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                                         <div>{booth.name}</div>
                                                     </div>
                                                 )}
-                                                {event.description && (
+                                                {event.description && !isAgenda && (
                                                     <div className="efp-schedule__event-desc">
                                                         <div
                                                             dangerouslySetInnerHTML={{

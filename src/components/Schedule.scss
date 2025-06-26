@@ -60,7 +60,7 @@
 
     &__event {
         display: block;
-        padding: rem(8px 12px);
+        padding: rem(10px 12px);
         border-radius: var(--border-radius-sm);
         text-decoration: none;
         transition: background var(--transition-duration) ease;
@@ -92,7 +92,7 @@
             min-width: 0;
             max-width: 100%;
             padding: rem(2px 7px);
-            margin: rem(4px 0);
+            margin: rem(6px 0);
             gap: rem(7px);
             align-items: center;
             overflow: hidden;

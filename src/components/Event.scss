@@ -153,4 +153,102 @@
         display: grid;
         padding-inline-start: rem(20px);
     }
+
+    &.collapsed {
+        .event-description__content {
+            display: block;
+            height: 8em;
+            overflow: hidden;
+            opacity: 0.8;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            -webkit-mask-image: linear-gradient(rgb(0 0 0 / 100%) 60%, transparent 100%);
+            mask-image: linear-gradient(rgb(0 0 0 / 100%) 60%, transparent 100%);
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.efp-event-datetime {
+    display: flex;
+    flex-flow: column wrap;
+    margin: rem(2px 0 18px);
+    padding: rem(12px 14px);
+    background: var(--color-gray-200);
+    border-radius: var(--border-radius-lg);
+
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: rem(12px);
+    }
+
+    &__info {
+        flex: 1;
+        display: flex;
+        flex-flow: column wrap;
+        gap: rem(4px);
+    }
+
+    &__date {
+        color: var(--color-black);
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-medium);
+    }
+
+    &__time {
+        font-size: var(--font-size-lg);
+        color: var(--color-gray-900);
+    }
+}
+
+.efp-event-booths {
+    display: flex;
+    flex-flow: row wrap;
+    gap: rem(4px);
+    font-size: var(--font-size-lg);
+    margin-bottom: rem(14px);
+
+    &__booth {
+        display: inline-flex;
+        gap: rem(5px);
+        align-items: center;
+        overflow: hidden;
+        padding: rem(4px 8px);
+        border-radius: var(--border-radius-full);
+        background: var(--color-primary-ultra-light);
+        min-height: rem(26px);
+        font-size: var(--font-size-md);
+        line-height: var(--font-size-md);
+        color: var(--color-primary-ultra-dark);
+        letter-spacing: 0.01em;
+
+        & > div {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        &:visited {
+            color: var(--color-primary-ultra-dark);
+        }
+
+        &:hover,
+        &:visited:hover {
+            background: #c5dbfe;
+            color: var(--color-black);
+        }
+    }
+
+    @include kiosk {
+        gap: rem(8px);
+        padding: var(--k-spacing-sm) 0;
+
+        &__booth {
+            padding: var(--k-bottom-padding-2);
+        }
+    }
 }
