@@ -35,6 +35,34 @@
         }
     }
 
+    &__bar-badge {
+        position: relative;
+        top: rem(-2px);
+        display: inline-flex;
+        align-items: center;
+        max-height: rem(18px);
+        margin-left: rem(8px);
+        padding: rem(0 4px);
+        border-radius: var(--border-radius-xs);
+        font-size: var(--font-size-xxs);
+        font-weight: var(--font-weight-medium);
+        text-transform: uppercase;
+        color: var(--color-white);
+
+        &.is-live {
+            background: #ff4444;
+            animation: pulse 2s infinite;
+        }
+
+        &.is-upcoming {
+            background: #0066cc;
+        }
+
+        &.is-past {
+            background: #6b7280;
+        }
+    }
+
     &__bar-icon {
         display: flex;
         justify-content: center;
@@ -250,5 +278,19 @@
         &__booth {
             padding: var(--k-bottom-padding-2);
         }
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
     }
 }

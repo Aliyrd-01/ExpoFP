@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useLocalStore, useObserver, observer } from "mobx-react-lite";
-import React, { MouseEvent, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { EventItem } from "../store/EventStore";
@@ -96,9 +96,12 @@ function EventComponent() {
     };
 
     const isUpcoming = (event: EventItem): boolean => {
-        const now = new Date();
-        const startDate = new Date(event.startDate);
-        return startDate > now;
+        const now = Date.now();
+        const start = Date.parse(event.startDate);
+        if (isNaN(start)) return false;
+
+        const twentyFourHoursFromNow = now + 24 * 60 * 60 * 1000;
+        return start > now && start <= twentyFourHoursFromNow;
     };
 
     const getEventStatus = (event: EventItem) => {
@@ -108,39 +111,11 @@ function EventComponent() {
         return "unknown";
     };
 
-    const getStatusText = (status: string) => {
-        switch (status) {
-            case "live":
-                return t("Live Now");
-            case "past":
-                return t("Ended");
-            case "upcoming":
-                return t("Upcoming");
-            default:
-                return "";
-        }
-    };
-
-    const getStatusClass = (status: string) => {
-        switch (status) {
-            case "live":
-                return "efp-event__status--live";
-            case "past":
-                return "efp-event__status--past";
-            case "upcoming":
-                return "efp-event__status--upcoming";
-            default:
-                return "";
-        }
-    };
-
     return useObserver(() => {
         const event = s.event;
         if (!event) return null;
 
         const status = getEventStatus(event);
-        const statusText = getStatusText(status);
-        const statusClass = getStatusClass(status);
 
         const bar = (
             <>
@@ -150,7 +125,12 @@ function EventComponent() {
                             <div className="efp-event__bar-icon">
                                 <i className="icon-event-solid"></i>
                             </div>
-                            <span dir="auto">{event.name}</span>
+                            <span dir="auto">
+                                {event.name}
+                                {isLive(event) && <span className="efp-event__bar-badge is-live">LIVE</span>}
+                                {isUpcoming(event) && <span className="efp-event__bar-badge is-upcoming">UPCOMING</span>}
+                                {isPast(event) && <span className="efp-event__bar-badge is-past">PAST</span>}
+                            </span>
                         </div>
                     </span>
                 </div>
