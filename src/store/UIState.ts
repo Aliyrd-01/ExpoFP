@@ -1,6 +1,6 @@
-import { action, computed, observable } from "mobx";
+import { action, computed, observable, toJS } from "mobx";
 import { uiState } from ".";
-import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
+import { MAP_SETTINGS_KEY, PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import data from "../data";
@@ -830,10 +830,22 @@ export default class UIState {
         return this._listScrollTop[this.list.type] || 0;
     }
 
-    @observable mapSettings: MapSettings = {};
+    @observable mapSettings: MapSettings = {
+        zoomtime: 2000,
+        center: undefined,
+        centerxy: undefined,
+        z: undefined,
+        bearing: 0,
+        zoom: 1,
+    };
 
     @action setMapSettings(newSettings: MapSettings) {
-        this.mapSettings = { ...this.mapSettings, ...newSettings };
+        this.mapSettings = {
+            ...this.mapSettings,
+            ...newSettings,
+            zoomtime: Math.min(Math.max(newSettings.zoomtime ?? this.mapSettings.zoomtime, 500), 5000),
+        };
+        localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(toJS(this.mapSettings)));
     }
 
     @observable interruptAnimation = false;
