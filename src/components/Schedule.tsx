@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import sanitizeHTML from "../utils/sanitizeHtml";
 import { t } from "../utils/i18n";
 import Button from "./Button";
+import EventBadge from "./EventBadge";
 import "./Schedule.scss";
 import store from "../store";
 import { EventItem } from "../store/EventStore";
@@ -26,23 +27,6 @@ function isCurrent(from: Date | string, to: Date | string) {
 function isPast(endDate: Date | string) {
     const now = new Date();
     return new Date(endDate) < now;
-}
-
-function isLive(event: EventItem): boolean {
-    const now = Date.now();
-    const start = Date.parse(event.startDate);
-    const end = event.endDate ? Date.parse(event.endDate) : Number.POSITIVE_INFINITY;
-    if (isNaN(start) || isNaN(end)) return false;
-    return now >= start && now <= end;
-}
-
-function isUpcoming(event: EventItem): boolean {
-    const now = Date.now();
-    const start = Date.parse(event.startDate);
-    if (isNaN(start)) return false;
-
-    const twentyFourHoursFromNow = now + 24 * 60 * 60 * 1000;
-    return start > now && start <= twentyFourHoursFromNow;
 }
 
 const Schedule: React.FC<ScheduleProps> = observer(
@@ -154,12 +138,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                                 </span>
                                                 <strong>
                                                     {event.name}
-                                                    {isLive(event) && (
-                                                        <span className="efp-schedule__event-live-badge">LIVE</span>
-                                                    )}
-                                                    {isUpcoming(event) && (
-                                                        <span className="efp-schedule__event-upcoming-badge">UPCOMING</span>
-                                                    )}
+                                                    <EventBadge event={event} />
                                                 </strong>
                                                 {booth && showBooths && (
                                                     <div className="efp-schedule__event-booth">

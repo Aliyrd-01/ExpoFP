@@ -9,6 +9,7 @@ import settings from "../tools/settings";
 import { t, getLocale } from "../utils/i18n";
 import { useReaction } from "../utils/mobx";
 import Button from "./Button";
+import EventBadge from "./EventBadge";
 import "./Event.scss";
 import OverlayContent from "./OverlayContent";
 import SibebarActions from "./SidebarActions";
@@ -81,41 +82,9 @@ function EventComponent() {
         return dateFormat(d, "dddd, mmmm d, yyyy");
     };
 
-    const isLive = (event: EventItem): boolean => {
-        const now = Date.now();
-        const start = Date.parse(event.startDate);
-        const end = event.endDate ? Date.parse(event.endDate) : Number.POSITIVE_INFINITY;
-        if (isNaN(start) || isNaN(end)) return false;
-        return now >= start && now <= end;
-    };
-
-    const isPast = (event: EventItem): boolean => {
-        const now = new Date();
-        const endDate = event.endDate ? new Date(event.endDate) : new Date(event.startDate);
-        return endDate < now;
-    };
-
-    const isUpcoming = (event: EventItem): boolean => {
-        const now = Date.now();
-        const start = Date.parse(event.startDate);
-        if (isNaN(start)) return false;
-
-        const twentyFourHoursFromNow = now + 24 * 60 * 60 * 1000;
-        return start > now && start <= twentyFourHoursFromNow;
-    };
-
-    const getEventStatus = (event: EventItem) => {
-        if (isLive(event)) return "live";
-        if (isPast(event)) return "past";
-        if (isUpcoming(event)) return "upcoming";
-        return "unknown";
-    };
-
     return useObserver(() => {
         const event = s.event;
         if (!event) return null;
-
-        const status = getEventStatus(event);
 
         const bar = (
             <>
@@ -127,9 +96,7 @@ function EventComponent() {
                             </div>
                             <span dir="auto">
                                 {event.name}
-                                {isLive(event) && <span className="efp-event__bar-badge is-live">LIVE</span>}
-                                {isUpcoming(event) && <span className="efp-event__bar-badge is-upcoming">UPCOMING</span>}
-                                {isPast(event) && <span className="efp-event__bar-badge is-past">PAST</span>}
+                                <EventBadge event={event} />
                             </span>
                         </div>
                     </span>

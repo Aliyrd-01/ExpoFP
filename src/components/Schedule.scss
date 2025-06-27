@@ -82,7 +82,7 @@
 
         & > strong {
             display: block;
-            padding-top: rem(2px);
+            padding-top: rem(4px);
             font-size: var(--font-size-xxl);
             font-weight: var(--font-weight-bold);
         }
@@ -140,7 +140,7 @@
             display: inline-block;
             margin-left: rem(6px);
             padding: rem(2px 4px);
-            background: #0066cc;
+            background: #f3b210;
             border-radius: var(--border-radius-xs);
             font-size: var(--font-size-xxs);
             font-weight: var(--font-weight-medium);
