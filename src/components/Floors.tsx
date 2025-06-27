@@ -25,7 +25,11 @@ export default function Floors() {
             }
 
             return {
-                top: uiState.mapVisibleTop + mapControlsSpaceY + remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) + "px",
+                top:
+                    uiState.mapVisibleTop +
+                    mapControlsSpaceY +
+                    remsToPixels(uiState.overlayPosition === "left" ? 1.5 : 1.5) +
+                    "px",
             };
         },
     }));
@@ -40,7 +44,13 @@ export default function Floors() {
 
             if (store.mapboxStore.showMapbox) return;
 
-            if (settings.EXPO.indexOf("money2020usa") > -1 || settings.EXPO === "rodion2" || settings.EXPO === "possible2025" || settings.EXPO === "2025virtuosotravelweek") {
+            if (
+                settings.EXPO.indexOf("money2020usa") > -1 ||
+                settings.EXPO === "rodion2" ||
+                settings.EXPO === "possible2025" ||
+                settings.EXPO === "2025virtuosotravelweek"  ||
+                settings.EXPO === "zscalerskofy26"
+            ) {
                 uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);
             } else {
                 var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);
