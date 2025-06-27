@@ -840,8 +840,19 @@ export default class UIState {
     };
 
     @action setMapSettings(settings: MapSettings) {
-        const zoomtime = Math.min(Math.max(settings.zoomtime ?? this.mapSettings.zoomtime, 500), 5000);
-        const newSettings = { ...settings, zoomtime };
+        const newSettings: MapSettings = {};
+
+        for (const prop in settings) {
+            if (!settings[prop]) {
+                continue;
+            }
+            newSettings[prop] = (
+                prop === "zoomtime"
+                    ? Math.min(Math.max(settings[prop] || this.mapSettings.zoomtime, 500), 5000)
+                    : settings[prop]
+            );
+        }
+
         this.mapSettings = { ...this.mapSettings, ...newSettings };
 
         if (Object.keys(newSettings).length) {
