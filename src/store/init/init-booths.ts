@@ -167,9 +167,12 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
         booth.noLabels = !!rect?.dataset.nolabel || rect?.id.startsWith("no");
 
         if (boothReg) {
-            boothReg.availColor = el.getAttribute("data-avail-color") || rect?.getAttribute("data-avail-color") || boothReg.availColor;
-            boothReg.soldColor = el.getAttribute("data-sold-color") || rect?.getAttribute("data-sold-color") || boothReg.soldColor;
-            boothReg.holdColor = el.getAttribute("data-hold-color") || rect?.getAttribute("data-hold-color") || boothReg.holdColor;
+            boothReg.availColor =
+                el.getAttribute("data-avail-color") || rect?.getAttribute("data-avail-color") || boothReg.availColor;
+            boothReg.soldColor =
+                el.getAttribute("data-sold-color") || rect?.getAttribute("data-sold-color") || boothReg.soldColor;
+            boothReg.holdColor =
+                el.getAttribute("data-hold-color") || rect?.getAttribute("data-hold-color") || boothReg.holdColor;
             // svg size is legacy, TODO: remove data-size attribute at 01-01-2022
             boothReg.size = data.dimensionless ? null : boothReg.size || el.getAttribute("data-size");
             boothReg.type = el.getAttribute("data-type") || boothReg.type; //|| el.getAttribute("data-booth-type")
@@ -182,7 +185,10 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
             }
             //if (boothReg.reserved && boothReg.onHold) boothReg.reserved = false;
         } else {
-            boothSpec.color = el.getAttribute("data-color") || rect.getAttribute("data-color") || rect.style?.fill || boothSpec.color;
+            boothSpec.color =
+                (parseInt(rect.getAttribute("data-poi-type")) > 0
+                    ? rect.style?.fill
+                    : el.getAttribute("data-color") || rect.getAttribute("data-color")) || boothSpec.color;
         }
 
         const transform = rect?.getAttribute("transform");
