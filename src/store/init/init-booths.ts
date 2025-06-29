@@ -185,7 +185,10 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
             }
             //if (boothReg.reserved && boothReg.onHold) boothReg.reserved = false;
         } else {
-            boothSpec.color = el.getAttribute("data-color") || rect.getAttribute("data-color") || boothSpec.color;
+            boothSpec.color =
+                (parseInt(rect.getAttribute("data-poi-type")) > 0
+                    ? rect.style?.fill
+                    : el.getAttribute("data-color") || rect.getAttribute("data-color")) || boothSpec.color;
         }
 
         const transform = rect?.getAttribute("transform");
