@@ -177,7 +177,11 @@ export default class RootStore {
     @action selectSearch(text?: string) {
         if (window["__resett"]) window["__resett"]();
         this.uiState.details = null;
-        this.uiState.list = { type: "search", text: sanitizeSearch(text), focused: false };
+        this.uiState.list = {
+            type: "search",
+            text: sanitizeSearch(text, Object.keys(this.uiState.mapSettings).map(k => `${k}=`)),
+            focused: false,
+        };
         this.uiState.activeListIndex = -1;
     }
 

@@ -171,7 +171,10 @@ const OverlayContent: React.FC<{
                 overlayBarCenterContent={overlayBarCenterContent}
                 overlayBarEndContent={overlayBarEndContent}
                 scrolled={scrolled}
-                onClose={onClose}
+                onClose={() => {
+                    uiState.setInterruptAnimation();
+                    onClose?.();
+                }}
                 hideClose={hideClose}
                 backMode={backMode}
                 onBack={onBack}

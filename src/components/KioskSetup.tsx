@@ -106,7 +106,16 @@ const KioskSetup = observer(() => {
                     kioskId = routeFromKioskMatch[1];
                 }
 
-                const kiosk = kiosks.find((k) => strEqual(k.key, kioskId));
+                let kiosk;
+                const k = kiosks.find((k) => strEqual(k.key, kioskId));
+                if (k) {
+                    kiosk = {
+                        ...k,
+                        // Warning!!!
+                        // Remove store.uiState.mapSettings.bearing when map can rotate.
+                        heading: store.uiState.mapSettings.bearing ?? k?.heading,
+                    };
+                }
 
                 runInAction(() => {
                     store.uiState.kioskList = kiosks;

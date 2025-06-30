@@ -1,6 +1,6 @@
 import { action, computed, observable } from "mobx";
-import { boothStore, exhibitorStore, uiState } from ".";
-import { PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
+import { uiState } from ".";
+import { MAP_SETTINGS_KEY, PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import data from "../data";
@@ -18,11 +18,8 @@ import { Exhibitor } from "./ExhibitorStore";
 import RootStore from "./RootStore";
 import { Kiosk, Route } from "./RouteStore";
 import { EventItem } from "./EventStore";
-import type { ListItem, ListType, OverlaySize, Visibility } from "./types";
+import type { ListItem, ListType, MapSettings, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
-
-// logger.log("Browser", browser.getBrowser());
-//const isGoodBackdropBrowser = browser.satisfies({ safari: ">=13", chrome: ">=77" });
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -596,11 +593,11 @@ export default class UIState {
     }
 
     @computed get fuzzySearchItems(): { item: ListItem; score: number }[] {
-        if (this.list.type !== "search") {
+        if (this.list?.type !== "search") {
             return [];
         }
 
-        const text = this.list.text.trim().toLowerCase();
+        const text = this.list?.text?.trim().toLowerCase();
         if (!text) {
             return this.defaultSearchItems.map((item) => ({ item, score: 0 }));
         }
@@ -837,6 +834,40 @@ export default class UIState {
 
     @computed({ keepAlive: true }) get selectedEventItem() {
         return this.details instanceof EventItem ? this.details : null;
+    }
+
+    @observable mapSettings: MapSettings = {
+        zoomtime: 2000,
+        center: undefined,
+        centerxy: undefined,
+        z: undefined,
+        bearing: 0,
+        zoom: 1,
+    };
+
+    @action setMapSettings(settings: MapSettings) {
+        const newSettings: MapSettings = {};
+
+        for (const prop in settings) {
+            if (!settings[prop]) {
+                continue;
+            }
+            newSettings[prop] =
+                prop === "zoomtime" ? Math.min(Math.max(settings[prop] || this.mapSettings.zoomtime, 500), 5000) : settings[prop];
+        }
+
+        this.mapSettings = { ...this.mapSettings, ...newSettings };
+
+        if (Object.keys(newSettings).length) {
+            localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(newSettings));
+        }
+    }
+
+    @observable interruptAnimation = false;
+
+    @action setInterruptAnimation() {
+        // Every call should trigger an update no matter which values are set.
+        this.interruptAnimation = !this.interruptAnimation;
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -1,20 +1,26 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY, SEPARATOR } from "../constants";
+import {
+    KIOSK_ID_KEY,
+    KIOSK_KEY,
+    KIOSK_SETUP_KEY,
+    MAP_SETTINGS_KEY,
+    PREVIEW_MODE_QUERY,
+    PREVIEW_MODE_STORAGE_KEY,
+    SEPARATOR,
+} from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { EventItem } from "../store/EventStore";
-import { Language } from "../store/LanguageStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
-import { t } from "../utils/i18n";
-// import settings from '@/settings';
+import { MapSettings } from "../store/types";
 
 let disableHistoryManipulation = false;
 let disableStateToUrl = false;
@@ -145,6 +151,8 @@ function dispatchFromUrl() {
     );
 
     const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+
+    setMapSettings();
 
     if (executeCustomCommand()) {
     } else if (searchParams.has("yah")) {
@@ -513,4 +521,55 @@ export function applyParameters(queryRaw: string = "") {
 
 export function destroyHistory() {
     unlisten();
+}
+
+function setMapSettings() {
+    let result: MapSettings = {};
+
+    try {
+        const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
+
+        const allowedKeys = new Set(Object.keys(uiState.mapSettings));
+        for (const key of searchParams.keys()) {
+            if (!allowedKeys.has(key)) {
+                searchParams.delete(key);
+            }
+        }
+
+        if (new Set(searchParams.keys()).size) {
+            result = castMapSettings(Object.fromEntries(searchParams.entries()));
+        } else {
+            const savedStr = localStorage?.getItem(MAP_SETTINGS_KEY);
+            if (savedStr) {
+                result = castMapSettings(JSON.parse(savedStr));
+            }
+        }
+    } catch (err) {
+        console.error("Failed to process or save map settings.", err);
+    }
+
+    uiState.setMapSettings(result);
+
+    if (result.z) {
+        const layer = store.layerStore.layers.find((l) => l.name === result.z);
+        if (layer) {
+            store.layerStore.updateVisibility(layer, true);
+        }
+    }
+}
+
+function castMapSettings(obj: Record<string, string>): MapSettings {
+    const result: MapSettings = {};
+    for (const prop in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+            const value = obj[prop];
+            result[prop] =
+                (prop === "zoomtime" || prop === "bearing" || prop === "zoom") &&
+                typeof value === "string" &&
+                /^-?\d+$/.test(value)
+                    ? parseInt(value, 10)
+                    : value;
+        }
+    }
+    return result;
 }
