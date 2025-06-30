@@ -182,7 +182,7 @@ function showFps() {
     const html = avgFps.toFixed(0);
 
     if (prevHtml !== html) {
-        const fpsElement = document.getElementById("fps");
+        const fpsElement = window["__efpElement"]?.children?.[0]?.shadowRoot?.getElementById?.("fps");
         if (fpsElement) {
             fpsElement.innerHTML = html;
             prevHtml = html;
