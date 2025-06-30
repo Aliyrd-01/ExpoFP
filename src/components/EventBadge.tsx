@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import { EventItem } from "../store/EventStore";
-import { calculateTimeUntilStart, formatTimeUntilStart, getEventStatus } from "../utils/timeUtils";
+import { calculateTimeUntilStart, formatTimeUntilStart, getEventStatus } from "../utils/eventTime";
 import "./EventBadge.scss";
 
 export interface EventBadgeProps {
