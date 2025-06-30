@@ -3,7 +3,6 @@ import { useLocalStore, useObserver, observer } from "mobx-react-lite";
 import React, { useRef, useState, useEffect } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
-import { EventItem } from "../store/EventStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
 import { t, getLocale } from "../utils/i18n";
@@ -176,7 +175,7 @@ function EventComponent() {
                         showBookmark={!uiState.disableBookmarked && !data.hideBookmarks && !uiState.kiosk}
                         showDirections={s.booth && settings.wayfinding}
                         inBookmark={s.event?.bookmarked || false}
-                        showShare={false}
+                        showShare={true}
                         showVisited={false}
                         visited={false}
                         onClickBookmark={bookmark}
