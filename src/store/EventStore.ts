@@ -1,6 +1,6 @@
-// import { observable } from 'mobx';
 import { action, computed, observable } from "mobx";
 import RootStore from "./RootStore";
+import { generateUniqueSlug } from "../tools/slug";
 
 export default class EventStore {
     private readonly rootStore: RootStore;
@@ -48,7 +48,7 @@ export class EventItem {
         public readonly link?: string,
         public readonly entity = { type: "event" } as const
     ) {
-        this.slug = externalId || `event-${id}`;
+        this.slug = generateUniqueSlug(name);
     }
 
     public get isEnded(): boolean {
