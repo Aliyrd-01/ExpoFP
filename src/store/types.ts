@@ -52,3 +52,12 @@ export interface FilterStore {
     getFilteredItems(): FilterItem[];
     publicRootStore: any;
 }
+
+export interface MapSettings {
+    zoomtime?: number; // Zoom animation duration (ms) (500-5000)
+    center?: string;   // Map center in WGS84 "lat,lng"
+    centerxy?: string; // Map center in projected "x,y"
+    z?: string;        // Floor/level name
+    bearing?: number;  // Map rotation (0-360 degrees)
+    zoom?: number;     // Zoom level (1-100)
+}
