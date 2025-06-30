@@ -593,11 +593,11 @@ export default class UIState {
     }
 
     @computed get fuzzySearchItems(): { item: ListItem; score: number }[] {
-        if (this.list.type !== "search") {
+        if (this.list?.type !== "search") {
             return [];
         }
 
-        const text = this.list.text.trim().toLowerCase();
+        const text = this.list?.text?.trim().toLowerCase();
         if (!text) {
             return this.defaultSearchItems.map((item) => ({ item, score: 0 }));
         }
