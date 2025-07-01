@@ -166,7 +166,7 @@ export class DrawerImpl extends Matrix {
     //////////////////
 }
 
-let then = performance.now() * 0.001;
+let then = 0;
 let prevFps = [];
 let prevHtml = "";
 function showFps() {
