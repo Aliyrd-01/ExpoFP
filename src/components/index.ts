@@ -22,6 +22,7 @@ export { default as ToggleSwitch } from "./ToggleSwitch";
 export { default as TouchHand } from "./TouchHand";
 export { default as WayfindingFloorSelector } from "./WayfindingFloorSelector";
 export { default as WayfindingTemplate } from "./WayfindingTemplate";
+export { default as LevelBadge } from "./LevelBadge";
 
 export type { AgendaFiltersModalProps } from "./AgendaFiltersModal";
 export type { AlertProps, AlertVariant, AlertPosition } from "./Alert";

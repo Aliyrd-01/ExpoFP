@@ -1,0 +1,29 @@
+@use "@styles/utils" as *;
+
+.efp-level-badge {
+    display: inline-flex;
+    min-width: 0;
+    max-width: 100%;
+    margin: rem(0 0 14px);
+    padding: rem(2px 7px);
+    gap: rem(7px);
+    align-items: center;
+    overflow: hidden;
+    background: var(--color-primary-ultra-light);
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-sm);
+    line-height: var(--font-size-md);
+    color: var(--color-primary-ultra-dark);
+    letter-spacing: 0.01em;
+
+    & > span {
+        position: relative;
+        display: block;
+        align-items: center;
+        min-height: 100%;
+        padding: rem(2px 0);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}

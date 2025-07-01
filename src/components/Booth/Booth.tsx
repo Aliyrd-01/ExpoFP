@@ -4,17 +4,16 @@ import data from "../../data";
 import store, { uiState } from "../../store";
 import { RegularBooth, SpecialBooth } from "../../store/BoothStore";
 import settings from "../../tools/settings";
-import { remsToPixels } from "../../utils";
 import { t } from "../../utils/i18n";
 import OverlayContent from "../OverlayContent";
 import Schedule from "../Schedule";
 import SidebarActions from "../SidebarActions";
-import "./Booth.scss";
 import { BoothOnHold } from "./BoothOnHold";
 import { BoothReserved } from "./BoothReserved";
 import { BoothWithoutExhibitor } from "./BoothWithoutExhibitor";
 import useHeatmapOverlay from "../../utils/useHeatmapOverlay";
-import EntityItem, { EntityItemType } from "../EntityItem";
+import { EntityItem, EntityItemType, LevelBadge } from "../";
+import "./Booth.scss";
 
 const Booth: React.FC = observer(() => {
     const scrollableRef = useRef<HTMLDivElement>();
@@ -90,6 +89,8 @@ const Booth: React.FC = observer(() => {
     const bar = <div className="booth__bar">{s.title}</div>;
     let content: JSX.Element = null;
 
+    const boothLevel = s.booth.layer?.description;
+
     const { heatmapBar } = useHeatmapOverlay(s.booth);
 
     const exhibitors = s.booth.exhibitors.map((item) => (
@@ -106,7 +107,7 @@ const Booth: React.FC = observer(() => {
             additionalInfo={item.booths.map((booth) => ({
                 type: "location",
                 locationName: booth.name,
-                level: booth.layer?.name,
+                level: boothLevel || booth.layer?.name,
             }))}
             key={item.id.toString()}
         />
@@ -118,7 +119,16 @@ const Booth: React.FC = observer(() => {
         const b = s.regular;
 
         if (b.onHold) {
-            content = <BoothOnHold booth={b} description={""} showBuy={false} showReserve={false} isRebooking={false} />;
+            content = (
+                <BoothOnHold
+                    booth={b}
+                    description={""}
+                    showBuy={false}
+                    showReserve={false}
+                    isRebooking={false}
+                    level={boothLevel}
+                />
+            );
         } else if (b.reserved) {
             content = <BoothReserved />;
         } else if (b.exhibitors.length === 0) {
@@ -129,6 +139,7 @@ const Booth: React.FC = observer(() => {
                     showBuy={!uiState.previewMode && s.showBuy}
                     showReserve={!uiState.previewMode && s.showReserve}
                     isRebooking={false}
+                    level={boothLevel}
                 />
             );
         } else {
@@ -137,6 +148,7 @@ const Booth: React.FC = observer(() => {
     } else {
         content = (
             <div className="booth__content -spec">
+                <LevelBadge level={boothLevel} />
                 <div className="booth__desc" dangerouslySetInnerHTML={{ __html: s.special.description }} />
                 <>{exhibitors}</>
             </div>
@@ -154,7 +166,7 @@ const Booth: React.FC = observer(() => {
             }}
         >
             {!data.isRebooking && settings.wayfinding && (
-                <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15, marginTop: remsToPixels(1) }}>
+                <div className="exhibitor__directions" style={{ paddingLeft: 15, paddingRight: 15 }}>
                     <SidebarActions
                         showBookmark={false}
                         showShare={false}
@@ -172,6 +184,7 @@ const Booth: React.FC = observer(() => {
                     showReserve={false}
                     booth={s.regular}
                     isRebooking={data.isRebooking}
+                    level={boothLevel}
                 />
             )}
             {!!s.booth.schedule?.length && (

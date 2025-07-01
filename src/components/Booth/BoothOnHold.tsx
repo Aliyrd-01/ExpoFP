@@ -2,7 +2,7 @@ import { t } from "../../utils/i18n";
 import React, { FC } from "react";
 import { RegularBooth } from "../../store/BoothStore";
 import data from "../../data";
-import Badge from "../Badge";
+import { Badge, LevelBadge } from "../";
 import { uiState } from "../../store";
 
 interface BoothWithoutExhibitorProps {
@@ -11,11 +11,13 @@ interface BoothWithoutExhibitorProps {
     showBuy: boolean;
     showReserve: boolean;
     isRebooking: boolean;
+    level?: string;
 }
 
-export const BoothOnHold: FC<BoothWithoutExhibitorProps> = ({ booth }) => {
+export const BoothOnHold: FC<BoothWithoutExhibitorProps> = ({ booth, level }) => {
     return (
         <div className="booth__content -reg">
+            <LevelBadge level={level} />
             <Badge variant="orange">
                 <i className="icon-hand-solid"></i>
                 {t("On Hold")}
