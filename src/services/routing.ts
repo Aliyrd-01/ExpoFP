@@ -262,7 +262,7 @@ function processURLParams() {
         url.searchParams.delete("blue-dot");
 
         if (blueDotParams.length > 1) {
-            const layerName = store.layerStore.findLayer(blueDotParams[2])?.shortName;
+            const layerName = store.layerStore.findLayer(blueDotParams[2])?.name;
 
             const currentPosition = new CurrentPosition(
                 Number(blueDotParams[0]) || undefined,
