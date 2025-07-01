@@ -451,11 +451,20 @@ function processURLParams() {
         store.uiState.monochrome = true;
     }
 
-    const debug = new URLSearchParams(locationSearch).get("debug");
-    if (debug === "1") {
-        localStorage.setItem("debug", "1");
-    } else if (debug === "0") {
-        localStorage.removeItem("debug");
+    const params = new URLSearchParams(locationSearch);
+    const DEBUG_KEY = "debug";
+    const debug = params.get(DEBUG_KEY);
+
+    if (debug) {
+        if (debug === "1") {
+            localStorage.setItem(DEBUG_KEY, "1");
+        } else if (debug === "0") {
+            localStorage.removeItem(DEBUG_KEY);
+        }
+
+        params.delete(DEBUG_KEY);
+        historyReplace("?" + params.toString());
+        window.location.reload();
     }
 }
 
