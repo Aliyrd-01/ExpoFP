@@ -450,6 +450,11 @@ function processURLParams() {
     if (locationSearch.includes(KIOSK_SETUP_KEY)) {
         store.uiState.monochrome = true;
     }
+
+    const params = new URLSearchParams(history.location.search);
+    if (params.has("debug")) {
+        localStorage.setItem("debug", params.get("debug") === "1" ? "1" : "0");
+    }
 }
 
 export function initRouting(offHistory = false) {
