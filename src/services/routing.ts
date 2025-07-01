@@ -451,9 +451,10 @@ function processURLParams() {
         store.uiState.monochrome = true;
     }
 
-    if (new URLSearchParams(locationSearch).get("debug") === "1") {
+    const debug = new URLSearchParams(locationSearch).get("debug");
+    if (debug === "1") {
         localStorage.setItem("debug", "1");
-    } else {
+    } else if (debug === "0") {
         localStorage.removeItem("debug");
     }
 }
