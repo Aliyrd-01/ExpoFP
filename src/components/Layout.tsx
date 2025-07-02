@@ -1,27 +1,11 @@
-import { observer } from "mobx-react-lite";
 import React, { Suspense, useEffect, useState } from "react";
 import cn from "classnames";
+import { observer } from "mobx-react-lite";
+
 import data from "../data";
 import store, { layersStore, uiState } from "../store";
-import settings from "../tools/settings";
-import { isWebGlSupported, remsToPixels } from "../utils";
-import isDebug from "../utils/is-debug";
-import isIframe from "../utils/is-iframe";
-import Controls from "./Controls";
-import Floors from "./Floors";
-import LargeMessage from "./LargeMessage";
-import "../styles/main.scss";
-import "./Layout.scss";
-import LogoOverlay from "./LogoOverlay";
-import Map from "./Map/Map";
-import { MapLoader } from "./Mapbox/MapLoader";
-import Overlay from "./Overlay";
-import Share from "./Share";
-import Ws from "./Ws";
 import { LayersMode } from "../store/LayerStore";
-import TouchHand from "./TouchHand";
-import LayersLoading from "./LayersLoading";
-import { fpGeo } from "./Mapbox/utils/fpGeo";
+import settings from "../tools/settings";
 import {
     checkUserIsGDPR,
     GaEventActions,
@@ -30,10 +14,29 @@ import {
     setConsentSettings,
     setCookieConsent,
 } from "../tools/gtag";
-import HeatmapLegend from "./HeatmapLegend";
-import { useReaction } from "../utils/mobx";
 import trackEvent from "../tools/track-event";
+import { isWebGlSupported, remsToPixels } from "../utils";
+import isDebug from "../utils/is-debug";
+import isIframe from "../utils/is-iframe";
+import { useReaction } from "../utils/mobx";
+
+import Controls from "./Controls";
+import Floors from "./Floors";
+import HeatmapLegend from "./HeatmapLegend";
 import KioskSetup from "./KioskSetup";
+import LargeMessage from "./LargeMessage";
+import LayersLoading from "./LayersLoading";
+import LogoOverlay from "./LogoOverlay";
+import Map from "./Map/Map";
+import { MapLoader } from "./Mapbox/MapLoader";
+import { fpGeo } from "./Mapbox/utils/fpGeo";
+import Overlay from "./Overlay";
+import Share from "./Share";
+import TouchHand from "./TouchHand";
+import Ws from "./Ws";
+
+import "../styles/main.scss";
+import "./Layout.scss";
 
 const Demo = React.lazy(() => import(/* webpackChunkName: "demo" */ "./Demo"));
 const Free = React.lazy(() => import(/* webpackChunkName: "free" */ "./Free"));
@@ -101,22 +104,22 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     sendEventToGa(GaEventActions.ViewExhibitor, exhibitor.name);
                 }
             }
-        }
+        },
     );
 
     useReaction(
         () => uiState.selectedBooth,
-        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name)
+        (booth) => booth?.name && sendEventToGa(GaEventActions.ViewBooth, booth.name),
     );
 
     useReaction(
         () => uiState.selectedCategory,
-        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name)
+        (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name),
     );
 
     useReaction(
         () => uiState.selectedEventItem,
-        (eventItem) => eventItem?.name && sendEventToGa(GaEventActions.ViewExhibitor, eventItem.name)
+        (eventItem) => eventItem?.name && sendEventToGa(GaEventActions.ViewExhibitor, eventItem.name),
     );
 
     return (
@@ -172,7 +175,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                                 url={
                                     offHistory
                                         ? `${window.location.origin}?${encodeURI(
-                                              uiState.selectedExhibitor?.slug || uiState.selectedEventItem?.slug
+                                              uiState.selectedExhibitor?.slug || uiState.selectedEventItem?.slug,
                                           )}`
                                         : window.location.href
                                 }

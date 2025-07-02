@@ -1,10 +1,12 @@
-import { useObserver } from "mobx-react-lite";
 import React from "react";
-import { layersStore, uiState } from "../store";
-import SimpleRow from "./SimpleRow";
-import useHeatmapData from "../utils/useHeatmapData";
-import { HeatmapYah } from "../store/HeatmapStore";
+import { useObserver } from "mobx-react-lite";
+
 import Rect from "../core/Rect";
+import { layersStore, uiState } from "../store";
+import { HeatmapYah } from "../store/HeatmapStore";
+import useHeatmapData from "../utils/useHeatmapData";
+
+import { SimpleRow } from "./";
 
 const YahRow: React.FC<{
     yah: HeatmapYah;

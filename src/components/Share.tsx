@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import classNames from "classnames";
+
 import { t } from "../utils/i18n";
+
 import "./Share.scss";
 
 export interface ShareProps {

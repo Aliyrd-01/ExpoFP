@@ -1,10 +1,11 @@
-import { useObserver } from "mobx-react-lite";
 import React, { useRef } from "react";
+import { useObserver } from "mobx-react-lite";
+
 import store, { uiState } from "../store";
-import EntityList from "./EntityList";
-import OverlayContent from "./OverlayContent";
 import { FilterType } from "../store/types";
 import { t } from "../utils/i18n";
+
+import { EntityList, OverlayContent } from "./";
 
 function Filter() {
     const scrollableRef = useRef<HTMLDivElement>();

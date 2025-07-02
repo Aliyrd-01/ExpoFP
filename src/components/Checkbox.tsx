@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./Checkbox.scss";
+import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
+
+import "./Checkbox.scss";
 
 export interface CheckboxProps {
     name: string;

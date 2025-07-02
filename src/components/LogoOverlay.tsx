@@ -1,18 +1,21 @@
+import React from "react";
 import classNames from "classnames";
 import Color from "color";
-import React from "react";
-import { useLocalStore, useObserver } from "mobx-react-lite";
 import QRCode from "react-qr-code";
+import { useLocalStore, useObserver } from "mobx-react-lite";
+
 import data from "../data";
 import store, { uiState } from "../store";
 import settings from "../tools/settings";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
 import isFromDesigner from "../utils/is-from-designer";
-import Alert from "./Alert";
+
+import { fpGeo } from "./Mapbox/utils/fpGeo";
+import { Alert } from "./";
+
 import "./Alert.scss";
 import "./LogoOverlay.scss";
-import { fpGeo } from "./Mapbox/utils/fpGeo";
 
 const isExpoRightAligned = ["info-techlive2025", "metstrade-superyacht2023"].includes(settings.EXPO);
 const isDarkMode = Color(settings.backgroundColor).isDark() || fpGeo?.properties?.style?.includes("dark");

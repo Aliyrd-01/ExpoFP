@@ -1,11 +1,13 @@
-import React, { useRef, useMemo, useEffect } from "react";
-import { useObserver, useLocalStore } from "mobx-react-lite";
-import { action } from "mobx";
-import { observer } from "mobx-react-lite";
-import store, { uiState } from "../store";
-import { Badge, AgendaFiltersModal, Schedule, OverlayContent } from "./";
-import { t } from "../utils/i18n";
+import React, { useEffect, useMemo, useRef } from "react";
 import Fuse from "fuse.js";
+import { action } from "mobx";
+import { observer, useLocalStore, useObserver } from "mobx-react-lite";
+
+import store, { uiState } from "../store";
+import { t } from "../utils/i18n";
+
+import { AgendaFiltersModal, Badge, OverlayContent, Schedule } from "./";
+
 import "./Agenda.scss";
 
 export interface AgendaProps {

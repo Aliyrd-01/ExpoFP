@@ -1,19 +1,19 @@
+import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { useLocalStore, useObserver, observer } from "mobx-react-lite";
-import React, { useRef, useState, useEffect } from "react";
+import dateFormat from "dateformat";
+import { observer, useLocalStore, useObserver } from "mobx-react-lite";
+
 import data from "../data";
 import store, { uiState } from "../store";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
-import { t, getLocale } from "../utils/i18n";
-import { useReaction } from "../utils/mobx";
-import Button from "./Button";
-import EventBadge from "./EventBadge";
-import "./Event.scss";
-import OverlayContent from "./OverlayContent";
-import SibebarActions from "./SidebarActions";
-import dateFormat from "dateformat";
 import sanitizeHTML from "../utils/sanitizeHtml";
+import { getLocale, t } from "../utils/i18n";
+import { useReaction } from "../utils/mobx";
+
+import { Button, EventBadge, OverlayContent, SidebarActions } from "./";
+
+import "./Event.scss";
 
 function EventComponent() {
     const el = useRef<HTMLDivElement>(null);
@@ -56,7 +56,7 @@ function EventComponent() {
                 el.current.parentElement.scrollTop = 0;
             }
             s.collapsed = true;
-        }
+        },
     );
 
     function handleClick(e: any, action: GaEventActions) {
@@ -171,7 +171,7 @@ function EventComponent() {
                 onUpdateFuncSet={(f) => (s.updateOverlayContent = f)}
             >
                 <div className="efp-event__buttons">
-                    <SibebarActions
+                    <SidebarActions
                         showBookmark={!uiState.disableBookmarked && !data.hideBookmarks && !uiState.kiosk}
                         showDirections={s.booth && settings.wayfinding}
                         inBookmark={s.event?.bookmarked || false}

@@ -1,28 +1,33 @@
+import React, { MouseEvent, Suspense, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { MouseEvent, Suspense, useRef, useState, useEffect } from "react";
+import { Transition } from "react-transition-group";
+
 import data from "../data";
 import store, { uiState } from "../store";
-import { SpecialBooth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
-import { t, getLocale } from "../utils/i18n";
+import { getLocale, t } from "../utils/i18n";
 import isMobile from "../utils/is-mobile";
 import { useReaction } from "../utils/mobx";
-import Button from "./Button";
-import ErrorBoundary from "./ErrorBoundary";
-import "./Exhibitor.scss";
-import MarketMaterialList from "./MarketMaterialList";
-import OverlayContent from "./OverlayContent";
-import RebookingNotes from "./RebookingNotes";
-import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
-import Schedule from "./Schedule";
-import SibebarActions from "./SidebarActions";
 import useHeatmapOverlay from "../utils/useHeatmapOverlay";
-import Alert from "./Alert";
-import { Transition } from "react-transition-group";
+
+import {
+    Alert,
+    Button,
+    ErrorBoundary,
+    MarketMaterialList,
+    OverlayContent,
+    RebookingNotes,
+    RebookingRadioGroup,
+    Schedule,
+    SidebarActions,
+} from "./";
+import { defaultRebookingOptions } from "./RebookingRadioGroup";
+
+import "./Exhibitor.scss";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -41,7 +46,7 @@ function ExhibitorComponent() {
         get anySocial() {
             if (uiState.kiosk) return false;
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
-                (s) => this.exhibitor[s]
+                (s) => this.exhibitor[s],
             );
         },
         get anyAddress() {
@@ -91,7 +96,7 @@ function ExhibitorComponent() {
         () => {
             if (el.current) el.current.parentElement.scrollTop = 0;
             s.collapsed = true;
-        }
+        },
     );
 
     function handleClick(e: any, action: GaEventActions) {
@@ -297,7 +302,7 @@ function ExhibitorComponent() {
                 {!rebooking ? (
                     <>
                         <div className="exhibitor__buttons">
-                            <SibebarActions
+                            <SidebarActions
                                 showBookmark={!uiState.disableBookmarked && !data.hideBookmarks && !uiState.kiosk}
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}
@@ -420,7 +425,7 @@ function ExhibitorComponent() {
                             {(!!exhibitor.schedule?.length || !!exhibitor.booths[0]?.schedule.length) && (
                                 <Schedule
                                     events={[...(exhibitor.schedule || exhibitor.booths[0]?.schedule || [])].sort(
-                                        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+                                        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
                                     )}
                                 />
                             )}

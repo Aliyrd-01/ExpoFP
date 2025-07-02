@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import classNames from "classnames";
-import "./SidebarActions.scss";
-import { t } from "../utils/i18n";
 import i18next from "i18next";
-import CheckboxButton from "./CheckboxButton";
+
+import { t } from "../utils/i18n";
+
+import { CheckboxButton } from "./";
+
+import "./SidebarActions.scss";
 
 export interface SidebarActionsProps {
     inBookmark?: boolean;

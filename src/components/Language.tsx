@@ -1,10 +1,11 @@
+import React, { useRef } from "react";
 import { observer } from "mobx-react-lite";
+
 import data from "../data";
 import store, { uiState } from "../store";
 import { t } from "../utils/i18n";
-import List from "./List";
-import OverlayContent from "./OverlayContent";
-import React, { useRef } from "react";
+
+import { List, OverlayContent } from "./";
 
 const Language = observer(() => {
     const scrollableRef = useRef<HTMLDivElement>();
