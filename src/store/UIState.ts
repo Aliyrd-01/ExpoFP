@@ -877,6 +877,14 @@ export default class UIState {
             url.searchParams.set("yah", yah);
         }
 
+        for (const key in this.mapSettings) {
+            const value = this.mapSettings[key];
+            if (value == null) {
+                continue;
+            }
+            url.searchParams.set(key, value);
+        }
+
         return url.toString();
     }
 
