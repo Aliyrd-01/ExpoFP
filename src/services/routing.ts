@@ -14,6 +14,7 @@ import { isLocalStorageAvailable } from "../utils/localStorage";
 import { MapSettings } from "../store/types";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
+import { getYah, removeYah, yahKey } from "../utils/yah";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -145,7 +146,7 @@ function dispatchFromUrl() {
     if (executeCustomCommand()) {
     } else if (searchParams.has("yah")) {
         const command = searchParams.get("yah");
-        handleCustomCommand(`__yah ${command}`, true);
+        handleCustomCommand(`${yahKey} ${command}`, true);
     } else if (searchParams.has(KIOSK_KEY)) {
         const command = searchParams.get(KIOSK_KEY);
         if (command === "1") {
@@ -180,9 +181,8 @@ function dispatchFromUrl() {
         store.uiState.kiosk = !isMobile && !isWebview;
 
         // Removing YAH key and hide YAH icon
-        const yahKey = "__yah";
-        if (localStorage.getItem(yahKey)) {
-            localStorage.removeItem(yahKey);
+        if (getYah()) {
+            removeYah();
             window.location.reload();
         }
     } else {
