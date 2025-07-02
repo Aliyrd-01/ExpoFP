@@ -3,9 +3,8 @@ import React, { useRef } from "react";
 import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
+import { OverlayContent, EntityList } from "./";
 import "./Bookmarks.scss";
-import EntityList from "./EntityList";
-import OverlayContent from "./OverlayContent";
 
 function Bookmarks() {
     const scrollableRef = useRef<HTMLDivElement>();

@@ -1,4 +1,4 @@
-import React, { ReactNode, MouseEvent } from "react";
+import React, { ReactNode } from "react";
 import cn from "classnames";
 import "./Button.scss";
 

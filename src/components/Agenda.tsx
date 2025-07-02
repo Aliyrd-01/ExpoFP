@@ -3,11 +3,10 @@ import { useObserver, useLocalStore } from "mobx-react-lite";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import store, { uiState } from "../store";
-import OverlayContent from "./OverlayContent";
-import { Badge, AgendaFiltersModal, Schedule } from "./";
+import { Badge, AgendaFiltersModal, Schedule, OverlayContent } from "./";
 import { t } from "../utils/i18n";
-import "./Agenda.scss";
 import Fuse from "fuse.js";
+import "./Agenda.scss";
 
 export interface AgendaProps {
     showFilters?: boolean;
