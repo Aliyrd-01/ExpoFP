@@ -99,7 +99,7 @@ export default function LogoOverlay() {
             {showQR && (
                 <div className={qrClassName} style={{ bottom: remsToPixels(uiState.wsShown ? 4.5 : 1) }}>
                     <div>{t("View Map on Phone")}</div>
-                    <QRCode value={`https://${settings.EXPO}.expofp.com/`} size={100} />
+                    <QRCode value={uiState.viewMapOnPhoneQRCodeUrl} size={100} />
                 </div>
             )}
         </div>

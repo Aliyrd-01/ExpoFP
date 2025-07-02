@@ -1,6 +1,6 @@
 import { action, computed, observable } from "mobx";
 import { uiState } from ".";
-import { MAP_SETTINGS_KEY, PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
+import { KIOSK_ID_KEY, MAP_SETTINGS_KEY, PREVIEW_MODE_STORAGE_KEY, VISIBILITY_STORAGE_KEY } from "../constants";
 import Rect from "../core/Rect";
 import Size from "../core/Size";
 import data from "../data";
@@ -20,6 +20,7 @@ import { Kiosk, Route } from "./RouteStore";
 import { ScheduleItem } from "./ScheduleStore";
 import type { ListItem, ListType, MapSettings, OverlaySize, Visibility } from "./types";
 import { sanitizeStr } from "../utils/sanitizeText";
+import { getRawYah } from "../utils/yah";
 
 export default class UIState {
     private readonly rootStore: RootStore;
@@ -865,6 +866,18 @@ export default class UIState {
     @action setInterruptAnimation() {
         // Every call should trigger an update no matter which values are set.
         this.interruptAnimation = !this.interruptAnimation;
+    }
+
+    @computed get viewMapOnPhoneQRCodeUrl() {
+        const { pathname, search } = window.location;
+        const url = new URL(pathname + search, `https://${settings.EXPO}.expofp.com/`);
+
+        const yah = getRawYah();
+        if (yah && !this.kioskSetupData?.key) {
+            url.searchParams.set("yah", yah);
+        }
+
+        return url.toString();
     }
 
     ///////////////////////////////////////////////////////////////////////////

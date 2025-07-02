@@ -12,6 +12,8 @@ import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import { MapSettings } from "../store/types";
+import isMobile from "../utils/is-mobile";
+import isWebview from "../utils/is-webview";
 // import settings from '@/settings';
 
 let disableHistoryManipulation = false;
@@ -175,7 +177,7 @@ function dispatchFromUrl() {
         store.selectBooth(booth);
     } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
         disableHistoryManipulation = true;
-        store.uiState.kiosk = true;
+        store.uiState.kiosk = !isMobile && !isWebview;
 
         // Removing YAH key and hide YAH icon
         const yahKey = "__yah";

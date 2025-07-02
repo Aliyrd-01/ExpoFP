@@ -22,3 +22,7 @@ export function getYah(): [number, number, number] | string {
         if (yahValues.length === 1) return yahValues[0];
     }
 }
+
+export function getRawYah(): string {
+    return localStorage.getItem(yahKey);
+}
