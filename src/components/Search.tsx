@@ -39,9 +39,9 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
         } else if (commandValue.split(",").length === 1) {
             /** @deprecated use yah=<COMMAND> */
             YouAreHere.setYah(commandValue.split(",")[0]);
-            if (isLocalStorageAvailable) {
+            if (isLocalStorageAvailable && !isMobileDevice) {
                 localStorage.setItem(KIOSK_KEY, "1");
-                uiState.kiosk = !isMobileDevice;
+                uiState.kiosk = true;
             }
             if (forseRefresh) window.location.replace(url);
         } else if (commandValue.split(",").length === 2 || commandValue.split(",").length === 3) {
@@ -52,9 +52,9 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             if (commandValue.split(",").length === 3) scale = parseFloat(yahValues[2].trim());
             if (!!yahX && !!yahY) {
                 YouAreHere.setYah(`${yahX},${yahY},${scale}`);
-                if (isLocalStorageAvailable) {
+                if (isLocalStorageAvailable && !isMobileDevice) {
                     localStorage.setItem(KIOSK_KEY, "1");
-                    uiState.kiosk = !isMobileDevice;
+                    uiState.kiosk = true;
                 }
                 if (forseRefresh) window.location.replace(url);
             }
