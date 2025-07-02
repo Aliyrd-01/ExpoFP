@@ -120,10 +120,6 @@ export abstract class BoothBase {
     @computed({ keepAlive: true }) public get fullName() {
         let result = `${this.yah ? this.title : this.name}`;
 
-        if (this.layer?.mode > 1 && data.showLevelLabel) {
-            result = `${result} ${data.levelTerm} ${this.layer.description}`;
-        }
-
         const meta = this.meta
             ? Object.entries(this.meta)
                   .filter(([key]) => !key.startsWith("_"))

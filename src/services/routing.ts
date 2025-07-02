@@ -285,7 +285,7 @@ function processURLParams() {
         url.searchParams.delete("blue-dot");
 
         if (blueDotParams.length > 1) {
-            const layerName = store.layerStore.findLayer(blueDotParams[2])?.shortName;
+            const layerName = store.layerStore.findLayer(blueDotParams[2])?.name;
 
             const currentPosition = new CurrentPosition(
                 Number(blueDotParams[0]) || undefined,
@@ -469,6 +469,22 @@ function processURLParams() {
 
     if (locationSearch.includes(KIOSK_SETUP_KEY)) {
         store.uiState.monochrome = true;
+    }
+
+    const params = new URLSearchParams(locationSearch);
+    const DEBUG_KEY = "debug";
+    const debug = params.get(DEBUG_KEY);
+
+    if (debug) {
+        if (debug === "1") {
+            localStorage.setItem(DEBUG_KEY, "1");
+        } else if (debug === "0") {
+            localStorage.removeItem(DEBUG_KEY);
+        }
+
+        params.delete(DEBUG_KEY);
+        historyReplace("?" + params.toString());
+        window.location.reload();
     }
 }
 

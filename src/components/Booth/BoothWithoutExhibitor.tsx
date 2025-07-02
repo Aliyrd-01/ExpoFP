@@ -1,9 +1,9 @@
 import { RegularBooth } from "../../store/BoothStore";
 import { t } from "../../utils/i18n";
 import data from "../../data";
-import Button from "../Button";
 import isIframe from "../../utils/is-iframe";
 import React, { FC } from "react";
+import { Button, LevelBadge } from "../";
 import { uiState } from "../../store";
 
 interface BoothWithoutExhibitorProps {
@@ -12,6 +12,7 @@ interface BoothWithoutExhibitorProps {
     showBuy: boolean;
     showReserve: boolean;
     isRebooking: boolean;
+    level?: string;
 }
 
 export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
@@ -20,6 +21,7 @@ export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
     showBuy,
     showReserve,
     isRebooking,
+    level,
 }) => {
     const makeUrl = (href) => {
         if (href) {
@@ -43,6 +45,7 @@ export const BoothWithoutExhibitor: FC<BoothWithoutExhibitorProps> = ({
 
     return (
         <div className="booth__content -reg">
+            <LevelBadge level={level} />
             <div className="booth__infos">
                 {booth.type && (
                     <div className="booth__info">
