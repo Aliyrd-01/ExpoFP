@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react-lite";
+
 import { uiState } from "../store";
 
 const HighlightText = observer(({ text }: { text: string }) => {

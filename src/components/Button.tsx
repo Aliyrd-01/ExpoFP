@@ -1,5 +1,6 @@
-import React, { ReactNode, MouseEvent } from "react";
+import React, { ReactNode } from "react";
 import cn from "classnames";
+
 import "./Button.scss";
 
 export type ButtonVariant = "primary" | "secondary" | "gray" | "gray-border" | "ghost";

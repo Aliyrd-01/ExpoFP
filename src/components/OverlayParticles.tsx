@@ -1,8 +1,10 @@
+import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
-import React, { useEffect, useState, useRef } from "react";
+
 import { uiState } from "../store";
 import browser from "../utils/browser";
 import { useAutorun } from "../utils/mobx";
+
 import "./OverlayParticles.scss";
 
 function OverlayParticles() {

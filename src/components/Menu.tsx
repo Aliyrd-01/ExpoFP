@@ -1,18 +1,19 @@
 import React, { MouseEvent } from "react";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import { autorun } from "mobx";
-import { t } from "../utils/i18n";
-import data from "../data";
-import baseUrl from "../tools/base-data-url";
-import isIframe from "../utils/is-iframe";
 import copyToClipboard from "copy-to-clipboard";
-import store, { categoryStore, exhibitorStore, uiState } from "../store";
-import OverlayContent from "./OverlayContent";
-import Badge from "./Badge";
-import { CategoryFilterModal } from "./CategoryFilterModal";
+import { autorun } from "mobx";
+import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as CSS from "csstype";
+
+import data from "../data";
+import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import baseUrl from "../tools/base-data-url";
+import { t } from "../utils/i18n";
+import isIframe from "../utils/is-iframe";
+
+import { Badge, CategoryFilterModal, OverlayContent } from "./";
+
 import "./Menu.scss";
 import "./Menu_custom.scss";
 
@@ -85,7 +86,10 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         e.preventDefault();
         close();
         const loc = window.location;
-        const url = `${loc.protocol}//${loc.host}/?b=` + exhibitorStore.bookmarked.map((x) => x.id).join("|");
+        const exhibitorIds = exhibitorStore.bookmarked.map((x) => x.id);
+        const eventIds = store.eventStore.bookmarked.map((x) => x.id);
+        const allIds = [...exhibitorIds, ...eventIds];
+        const url = `${loc.protocol}//${loc.host}/?b=` + allIds.join("|");
         copyToClipboard(url);
         alert(t("Link copied to clipboard") + ".\n" + t("Open it on another device to import bookmarks") + ".");
     }
@@ -127,7 +131,8 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
         if (!uiState.menu) return null;
 
         const bookmarks = (store.boothStore.booths as any).filter((b: any) => b.bookmarked).map((b: any) => b.name) as string[];
-        const hasEvents = store.scheduleStore.scheduleItems.length > 0;
+        const hasEvents = store.eventStore.eventItems.length > 0;
+        const totalBookmarks = exhibitorStore.exhibitors.filter((e) => e.bookmarked).length + store.eventStore.bookmarked.length;
 
         return (
             <>
@@ -179,15 +184,14 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                             !data.hideBookmarks &&
                             !data.hideBookmarksLink &&
                             !uiState.kiosk &&
-                            exhibitorStore.exhibitors.length > 0 && (
+                            (exhibitorStore.exhibitors.length > 0 || store.eventStore.eventItems.length > 0) && (
                                 <a href="?bookmarks" onClick={handleBookmarks} className="menu__item -bookmarks">
                                     <span>
-                                        {t("Bookmarks")}{" "}
-                                        <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                                        {t("Bookmarks")} <span>({totalBookmarks})</span>
                                     </span>
 
                                     <span className="menu__icons">
-                                        {exhibitorStore.bookmarked.length ? (
+                                        {totalBookmarks > 0 ? (
                                             <button onClick={shareBookmarks} title={t("Share bookmarks")}>
                                                 <i className="icon-link-external-solid"></i>
                                             </button>
@@ -216,7 +220,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
-                                    ","
+                                    ",",
                                 )}&layers=${(store.layerStore.layers.length >= store.layerStore.visible.length
                                     ? store.layerStore.visible.map((l) => l.name).join(",")
                                     : ""

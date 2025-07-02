@@ -1,9 +1,11 @@
+import React from "react";
 import { autorun, reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React from "react";
+
 import { uiState } from "../store";
 import logger from "../tools/logger";
 import { useInit } from "../utils/mobx";
+
 import "./LargeMessage.scss";
 
 const timeout = 1000;
@@ -13,7 +15,7 @@ export default function LargeMessage() {
     const s = useLocalStore(() => ({
         shouldShow: false,
         visible: false,
-        transitioning: false
+        transitioning: false,
     }));
 
     useInit(() => {
@@ -29,7 +31,7 @@ export default function LargeMessage() {
                     s.shouldShow = false;
                 }, timeout);
             },
-            { fireImmediately: true }
+            { fireImmediately: true },
         );
 
         let visibleTimeoutID: number;
@@ -54,6 +56,6 @@ export default function LargeMessage() {
             <div className={"large-message" + (s.visible ? " -visible" : "")}>
                 <div className="large-message__text">{uiState.largeMessage}</div>
             </div>
-        ) : null
+        ) : null,
     );
 }

@@ -67,6 +67,19 @@ export default class AgendaFilterStore extends BaseFilterStore {
         const defaults = this.getDefaultValues();
         const { filters } = this.state;
 
+        filters.date.pending = defaults.date;
+        filters.sortOrder.pending = defaults.sortOrder;
+        filters.use24hFormat.pending = defaults.use24hFormat;
+
+        this.state.pendingItems = [];
+        this.state.searchText = "";
+    }
+
+    @action
+    resetAndApplyFilters() {
+        const defaults = this.getDefaultValues();
+        const { filters } = this.state;
+
         filters.date.value = defaults.date;
         filters.date.pending = defaults.date;
 
@@ -79,6 +92,7 @@ export default class AgendaFilterStore extends BaseFilterStore {
         this.state.selectedItems = [];
         this.state.pendingItems = [];
         this.state.searchText = "";
+        this.state.isOpen = false;
         this.rootStore.uiState.list = { type: "agenda" };
     }
 

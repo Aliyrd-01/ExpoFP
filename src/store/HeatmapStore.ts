@@ -3,7 +3,7 @@ import { Exhibitor } from "./ExhibitorStore";
 import { BoothBase } from "./BoothStore";
 import { Category } from "./CategoryStore";
 import { getColorFromGradient } from "../tools/Color";
-import { ScheduleItem } from "./ScheduleStore";
+import { EventItem } from "./EventStore";
 import { computed } from "mobx";
 import type { ListItem } from "./types";
 import type { GaEventActions } from "../tools/gtag";
@@ -26,7 +26,7 @@ export default class HeatmapStore {
             return { min: 0, max: 0 };
         }
 
-        const getMinMax = (data: HeatmapItem[]): { min: number, max: number } => {
+        const getMinMax = (data: HeatmapItem[]): { min: number; max: number } => {
             return data.reduce(
                 (acc, item) => {
                     if (item.viewCount > acc.max) acc.max = item.viewCount;
@@ -50,7 +50,7 @@ export default class HeatmapStore {
             return this.getClicksByItem(item);
         } else if (item instanceof HeatmapYah) {
             return this.getClicksByItem(item);
-        } else if (item instanceof ScheduleItem) {
+        } else if (item instanceof EventItem) {
             return 0;
         }
 

@@ -1,14 +1,16 @@
+import React, { createRef, RefObject, useCallback } from "react";
 import classNames from "classnames";
 import { IReactionDisposer, reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { createRef, RefObject, useCallback } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+
 import store, { exhibitorStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { remsToPixels, shuffle } from "../utils";
 import { useInit } from "../utils/mobx";
-import "./Ws.scss";
 import { ImageUrls, loadImagesInBatchesById } from "../utils/loadImagesInBatches";
+
+import "./Ws.scss";
 
 const DELAY = 8000;
 
@@ -16,7 +18,7 @@ const Ws = React.memo(() => {
     const s = useLocalStore(() => ({
         el: null as HTMLElement | null,
         all: [] as Exhibitor[],
-        adv: [] as { key: number; e: Exhibitor, nodeRef: RefObject<HTMLAnchorElement> }[],
+        adv: [] as { key: number; e: Exhibitor; nodeRef: RefObject<HTMLAnchorElement> }[],
         keySeq: 0,
         index: 0,
         imgByExhibitorId: new Map<number, HTMLImageElement>(),

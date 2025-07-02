@@ -1,19 +1,20 @@
 import React from "react";
-import { ListItem } from "../store/types";
-import { Exhibitor } from "../store/ExhibitorStore";
+import { observer } from "mobx-react-lite";
+import dateFormat from "dateformat";
+
+import data from "../data";
+import { boothStore, uiState } from "../store";
 import { BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
-import { ScheduleItem } from "../store/ScheduleStore";
+import { EventItem } from "../store/EventStore";
+import { Exhibitor } from "../store/ExhibitorStore";
 import { HeatmapYah } from "../store/HeatmapStore";
-import useHeatmapData from "../utils/useHeatmapData";
-import { boothStore, uiState } from "../store";
-import EntityItem from "./EntityItem";
-import YahRow from "./YahRow";
-import data from "../data";
-import dateFormat from "dateformat";
-import { defaultRebookingOptions } from "./RebookingRadioGroup";
-import { observer } from "mobx-react-lite";
+import { ListItem } from "../store/types";
 import { shortenName } from "../utils/shortenName";
+import useHeatmapData from "../utils/useHeatmapData";
+
+import { EntityItem, YahRow } from "./";
+import { defaultRebookingOptions } from "./RebookingRadioGroup";
 
 interface Props {
     item: ListItem;
@@ -97,12 +98,12 @@ const EntityListRow = ({ item, index, highlighted, compactDetails, onClick }: Pr
         );
     }
 
-    if (item instanceof ScheduleItem) {
+    if (item instanceof EventItem) {
         const booth = item.boothId ? boothStore.booths.find((b) => b.id === item.boothId) : null;
         return (
             <EntityItem
-                onClick={onClick}
                 id={item.id.toString()}
+                onClick={onClick}
                 type="event"
                 title={item.name}
                 url={item.link}

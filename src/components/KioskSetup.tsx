@@ -1,21 +1,23 @@
-import { observer } from "mobx-react-lite";
-import Alert from "./Alert";
-import Button from "./Button";
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import store from "../store";
-import { t } from "../utils/i18n";
+import cn from "classnames";
 import { reaction, runInAction, toJS } from "mobx";
-import { strEqual } from "../utils/strEqual";
-import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, SEPARATOR } from "../constants";
-import { RouteCutIn } from "../RouteCutIn";
-import "./KioskSetup.scss";
+import { observer } from "mobx-react-lite";
+
+import Rect from "../core/Rect";
+import { svgArea } from "../data/svg";
+import store from "../store";
 import { extractRoute, Kiosk } from "../store/RouteStore";
+import { t } from "../utils/i18n";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
-import Rect from "../core/Rect";
+import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, SEPARATOR } from "../constants";
 import debounce from "../tools/debounce";
-import cn from "classnames";
-import { svgArea } from "../data/svg";
+import { strEqual } from "../utils/strEqual";
+import { RouteCutIn } from "../RouteCutIn";
+
+import { Alert, Button } from "./";
+
+import "./KioskSetup.scss";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -26,7 +28,7 @@ const KioskSetup = observer(() => {
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(
-        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
+        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth",
     );
     const [kioskUrl, setKioskUrl] = useState("");
     const [passcode, setPasscode] = useState("");
@@ -56,7 +58,7 @@ const KioskSetup = observer(() => {
                 store.uiState.hideHeaderLogo = kioskSetup;
                 store.uiState.hideLogoInBooth = kioskSetup;
                 store.uiState.monochrome = kioskSetup;
-            }
+            },
         );
 
         const kioskSetupDataDisposer = reaction(
@@ -79,13 +81,13 @@ const KioskSetup = observer(() => {
                               y: kioskSetupData.y,
                               layer: kioskSetupData.z?.toString(),
                           },
-                          `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`
+                          `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`,
                       );
 
                 if (hasCurrentPosition) {
                     store.selectNone();
                 }
-            }
+            },
         );
 
         async function requestKioskData() {
@@ -197,7 +199,6 @@ const KioskSetup = observer(() => {
             store.uiState.kioskSetupDOMRect = kioskSetupDivRef.current.getBoundingClientRect();
         }
     }, [store.uiState.kioskSetup, step]);
-
 
     useEffect(() => {
         const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
@@ -338,7 +339,7 @@ const KioskSetup = observer(() => {
 
         if (x && y) {
             store.uiState.moveToRect = Rect.fromCxcywh(x, y, 100, 100);
-        }   
+        }
     }
 
     function clear() {
@@ -400,7 +401,7 @@ const KioskSetup = observer(() => {
             };
             fn();
         }, 250),
-        [store.fp.eventId]
+        [store.fp.eventId],
     );
 
     const isKioskExist = store.uiState.kioskList.find((k) => `${k.key}` === `${store.uiState.kioskSetupData?.key}`);
@@ -441,10 +442,12 @@ const KioskSetup = observer(() => {
                     <Alert variant="blank" title={title} inline showIcon={false}>
                         {step === "auth" && (
                             <p id="kiosk-setup-instructions" className="efp-kiosk-setup-info">
-                                <label className={cn({
-                                    "efp-kiosk-setup-key": true,
-                                    "efp-kiosk-setup-key__auth": step === "auth",
-                                })}> 
+                                <label
+                                    className={cn({
+                                        "efp-kiosk-setup-key": true,
+                                        "efp-kiosk-setup-key__auth": step === "auth",
+                                    })}
+                                >
                                     <input
                                         name="passcode"
                                         placeholder={t("Enter passcode")}
@@ -460,7 +463,7 @@ const KioskSetup = observer(() => {
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
-                                    <strong>{t("To Add")}:</strong>  {t("Click anywhere on the map.")}
+                                    <strong>{t("To Add")}:</strong> {t("Click anywhere on the map.")}
                                     <br />
                                     <strong>{t("To Edit")}:</strong> {t("Enter the kiosk number below.")}
                                 </p>
@@ -508,13 +511,24 @@ const KioskSetup = observer(() => {
                             </p>
                         )}
 
-                        <div className={cn({
-                            "efp-kiosk-setup-actions": true,
-                            "efp-kiosk-setup-actions__auth": step === "auth",
-                        })}>
-                            {step === "auth" && <Button size="md" text={t("Log in")} disabled={!passcode || pending} onClick={() => auth(passcode)} />}
+                        <div
+                            className={cn({
+                                "efp-kiosk-setup-actions": true,
+                                "efp-kiosk-setup-actions__auth": step === "auth",
+                            })}
+                        >
+                            {step === "auth" && (
+                                <Button
+                                    size="md"
+                                    text={t("Log in")}
+                                    disabled={!passcode || pending}
+                                    onClick={() => auth(passcode)}
+                                />
+                            )}
 
-                            {step === "edit" && <Button size="md" text={t("Save & copy URL")} disabled={disabled} onClick={save} />}
+                            {step === "edit" && (
+                                <Button size="md" text={t("Save & copy URL")} disabled={disabled} onClick={save} />
+                            )}
 
                             {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
 

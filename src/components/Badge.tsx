@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import cn from "classnames";
+
 import "./Badge.scss";
 
 export type BadgeVariant = "primary" | "primary-light" | "lightgray" | "gray" | "ghost" | "orange";

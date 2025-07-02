@@ -1,15 +1,17 @@
+import React, { MouseEvent, useEffect, useRef } from "react";
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
-import React, { MouseEvent, useEffect, useRef } from "react";
+
 import data from "../data";
 import store, { uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { t } from "../utils/i18n";
-import BookmarkSvg from "./BookmarkSvg";
-import "./ExhibitorRow.scss";
-import { defaultRebookingOptions } from "./RebookingRadioGroup";
 import useHeatmapData from "../utils/useHeatmapData";
-import HighlightText from "./HighlightText";
+
+import { BookmarkSvg, HighlightText } from "./";
+import { defaultRebookingOptions } from "./RebookingRadioGroup";
+
+import "./ExhibitorRow.scss";
 
 const ExhibitorRow: React.FC<{ exhibitor: Exhibitor; className: string }> = ({ exhibitor, className }) => {
     const { clicks, background } = useHeatmapData(exhibitor);

@@ -59,7 +59,7 @@ export function iniAllBooths(store: RootStore) {
             dublicateExhibitorsInBooth(null, boothReg, copyExh);
         }
 
-        b.schedule = store.scheduleStore.scheduleItems.filter((s) => s.boothId === b.id);
+        b.schedule = store.eventStore.eventItems.filter((s) => s.boothId === b.id);
         // b.poiType = store.poiTypeStore.poiTypes.find((p) => p.id === raw.poiTypeId);
 
         // if (b.poiType) {
