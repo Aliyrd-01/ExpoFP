@@ -23,6 +23,6 @@ export function getYah(): [number, number, number] | string {
     }
 }
 
-export function getRawYah(): string {
+export function getRawYah(): string | null {
     return localStorage.getItem(yahKey);
 }
