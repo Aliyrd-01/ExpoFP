@@ -1,21 +1,22 @@
+import React, { FocusEvent, KeyboardEvent, useCallback, useEffect, useRef } from "react";
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React, { FocusEvent, KeyboardEvent, useEffect, useRef, useCallback } from "react";
+
 import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
-import { t } from "../utils/i18n";
-import { useAutorun } from "../utils/mobx";
-import EntityList from "./EntityList";
-import OverlayContent from "./OverlayContent";
+import { KIOSK_KEY } from "../constants";
 import debounce from "../tools/debounce";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
-import "./Search.scss";
-// import logger from "../tools/logger";
-import * as YouAreHere from "../utils/yah";
-import { isLocalStorageAvailable } from "../utils/localStorage";
 import settings from "../tools/settings";
-import { KIOSK_KEY } from "../constants";
 import { getRebookingTokenFromQuery } from "../tools/rebookingUrl";
+import { isLocalStorageAvailable } from "../utils/localStorage";
+import { t } from "../utils/i18n";
+import { useAutorun } from "../utils/mobx";
+import * as YouAreHere from "../utils/yah";
+
+import { EntityList, OverlayContent } from "./";
+
+import "./Search.scss";
 
 const DEBOUNCE_DELAY_MS = 1000;
 
@@ -184,7 +185,7 @@ function Search() {
                 sendEventToGa(GaEventActions.Search, s.text);
             }
         }, DEBOUNCE_DELAY_MS),
-        [s]
+        [s],
     );
 
     const updateContent = useCallback(() => {

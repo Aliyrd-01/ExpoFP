@@ -1,4 +1,5 @@
 import React from "react";
+
 import "./TouchHand.scss";
 
 const PinchToZoom = () => {

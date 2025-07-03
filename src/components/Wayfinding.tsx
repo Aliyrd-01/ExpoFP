@@ -1,6 +1,7 @@
+import React, { useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { useObserver } from "mobx-react-lite";
-import React, { useEffect, useMemo, useState } from "react";
+
 import data from "../data";
 import { getLayerSvg } from "../data/svg";
 import store, { boothStore, exhibitorStore, uiState } from "../store";
@@ -8,14 +9,15 @@ import { RegularBooth } from "../store/BoothStore";
 import { Route } from "../store/RouteStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
-import OverlayContent from "./OverlayContent";
+
+import { WayfindingTemplate, OverlayContent } from "./";
+
 import "./Wayfinding.scss";
-import WayfindingTemplate from "./WayfindingTemplate";
 
 function Wayfinding() {
     const floors = useMemo(
         () => store.routeStore.pathLayers.map((l) => ({ id: l.id, name: l.layer?.shortName, description: l.layer?.description })),
-        [store.routeStore.pathLayers]
+        [store.routeStore.pathLayers],
     );
 
     const [currentFloor, setCurrentFloor] = useState<{ id: number; name: string }>();
@@ -27,7 +29,7 @@ function Wayfinding() {
 
     useEffect(() => {
         const floor = floors.find(
-            (f) => f.description?.toLowerCase() === store.routeStore.currentRouteLayer?.description?.toLowerCase()
+            (f) => f.description?.toLowerCase() === store.routeStore.currentRouteLayer?.description?.toLowerCase(),
         );
         floor && setCurrentFloor(floor);
     }, [store.routeStore.currentRouteLayer, floors]);
@@ -64,7 +66,7 @@ function Wayfinding() {
                     ...e.booths.map((booth) => ({
                         value: booth.id.toString(),
                         label: e.name + " - " + booth.fullName,
-                    }))
+                    })),
                 );
             });
 
@@ -124,7 +126,7 @@ function Wayfinding() {
                 {
                     title: t("Est arrival"),
                     text: estTotal,
-                }
+                },
             );
 
             return info;
@@ -182,7 +184,7 @@ function Wayfinding() {
                     onAccessibleCheck={(checked) => (store.routeStore.onlyAccessible = checked)}
                     onClickInfo={() => store.showOverlay()}
                     routeUrl={`https://${settings.EXPO}.expofp.com/?route%3A${encodeURIComponent(
-                        uiState.selectedRoute?.to?.slug || ""
+                        uiState.selectedRoute?.to?.slug || "",
                     )}%3A${encodeURIComponent(uiState.selectedRoute?.from?.slug || "")}`}
                     isKiosk={uiState.kiosk}
                 />

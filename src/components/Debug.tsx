@@ -1,8 +1,10 @@
-import { useObserver } from "mobx-react-lite";
 import React from "react";
+import { useObserver } from "mobx-react-lite";
+
 import store, { uiState } from "../store";
 import debugCanvases from "../tools/debugCanvases";
 import { t } from "../utils/i18n";
+
 import "./Debug.scss";
 
 function Debug() {

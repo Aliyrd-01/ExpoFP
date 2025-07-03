@@ -1,10 +1,12 @@
-import { useObserver } from "mobx-react-lite";
 import React from "react";
+import { useObserver } from "mobx-react-lite";
+
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth, SpecialBooth } from "../store/BoothStore";
-import SimpleRow from "./SimpleRow";
 import useHeatmapData from "../utils/useHeatmapData";
+
+import { SimpleRow } from "./";
 
 const BoothRow: React.FC<{
     booth: Booth;

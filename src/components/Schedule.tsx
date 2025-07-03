@@ -1,14 +1,16 @@
+import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import dateFormat from "dateformat";
-import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import sanitizeHTML from "../utils/sanitizeHtml";
-import { t } from "../utils/i18n";
-import Button from "./Button";
-import EventBadge from "./EventBadge";
-import "./Schedule.scss";
+
 import store from "../store";
 import { EventItem } from "../store/EventStore";
+import sanitizeHTML from "../utils/sanitizeHtml";
+import { t } from "../utils/i18n";
+
+import { Button, EventBadge } from "./";
+
+import "./Schedule.scss";
 
 export interface ScheduleProps {
     events: EventItem[];
@@ -32,14 +34,17 @@ function isPast(endDate: Date | string) {
 const Schedule: React.FC<ScheduleProps> = observer(
     ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, isAgenda = false, onEventClick }) => {
         const [eventsFullDescription, setEventsFullDescription] = useState<Record<string, { showFullDescription: boolean }[]>>(
-            {}
+            {},
         );
 
-        const grouped = events.reduce((acc, curr) => {
-            const [datePart] = curr.startDate.split("T");
-            acc[datePart] ? acc[datePart].push(curr) : (acc[datePart] = [curr]);
-            return acc;
-        }, {} as Record<string, EventItem[]>);
+        const grouped = events.reduce(
+            (acc, curr) => {
+                const [datePart] = curr.startDate.split("T");
+                acc[datePart] ? acc[datePart].push(curr) : (acc[datePart] = [curr]);
+                return acc;
+            },
+            {} as Record<string, EventItem[]>,
+        );
 
         useEffect(() => {
             const initialState: Record<string, { showFullDescription: boolean }[]> = {};
@@ -150,7 +155,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                                         <div
                                                             dangerouslySetInnerHTML={{
                                                                 __html: sanitizeHTML(
-                                                                    transformDescription(event.description, showFull)
+                                                                    transformDescription(event.description, showFull),
                                                                 ),
                                                             }}
                                                         />
@@ -178,7 +183,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
                 })}
             </div>
         );
-    }
+    },
 );
 
 export default Schedule;

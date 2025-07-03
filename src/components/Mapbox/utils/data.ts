@@ -24,6 +24,7 @@ enum featureTypes {
 }
 
 function getBearing() {
+    if (!fpGeo) return 0;
     var parts = fpGeo?.properties?.mpViewbox;
     var bear = fpGeo?.properties?.bearing;
     let b = bear != null ? bear : -1 * bearing(parts[1], parts[0], parts[3], parts[2]) - 90;
@@ -39,6 +40,8 @@ function getViewbox(): Rect {
     var yMax = -1000;
 
     var data = fpGeo as Polygon;
+
+    if (!fpGeo) return Rect.fromXywh(0, 0, 100, 100);
 
     var features = data.features.filter((f) => f.properties.type === featureTypes.booth);
 

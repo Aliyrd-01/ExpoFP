@@ -1,7 +1,9 @@
-import classNames from "classnames";
 import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import classNames from "classnames";
+
 import store from "../store";
 import { t } from "../utils/i18n";
+
 import "./OverlayBarBack.scss";
 
 type BackMode = "back" | "menu" | "none";

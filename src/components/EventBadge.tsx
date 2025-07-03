@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames";
+
 import { EventItem } from "../store/EventStore";
 import { calculateTimeUntilStart, formatTimeUntilStart, getEventStatus } from "../utils/eventTime";
+
 import "./EventBadge.scss";
 
 export interface EventBadgeProps {
@@ -47,7 +49,7 @@ const EventBadge: React.FC<EventBadgeProps> = ({ event, className = "" }) => {
                 {
                     "is-urgent": eventStatus === "starting-soon" && timeUntil.isLessThan10Minutes,
                 },
-                className
+                className,
             )}
         >
             {getBadgeContent()}

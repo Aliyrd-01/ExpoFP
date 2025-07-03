@@ -1,8 +1,10 @@
 import React from "react";
 import dateFormat from "dateformat";
+
 import store, { boothStore, exhibitorStore } from "../store";
 import { EventItem } from "../store/EventStore";
-import SimpleRow from "./SimpleRow";
+
+import { SimpleRow } from "./";
 
 const EventItemRow: React.FC<{
     item: EventItem;
@@ -19,7 +21,7 @@ const EventItemRow: React.FC<{
             line1={item.name}
             line2={`${dateFormat(item.startDate, "dd mmm ddd")}. ${dateFormat(item.startDate, "h:MM")} - ${dateFormat(
                 item.endDate,
-                "h:MM"
+                "h:MM",
             )}`}
         />
     );

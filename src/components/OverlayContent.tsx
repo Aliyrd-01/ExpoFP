@@ -1,17 +1,16 @@
+import React, { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { observer } from "mobx-react-lite";
+import debounce from "lodash.debounce";
 import PerfectScrollbar from "perfect-scrollbar";
 import { ResizeObserver } from "resize-observer";
-import React, { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+
 import { uiState } from "../store";
-import cn from "classnames";
-import isScrollUgly from "../utils/is-scroll-ugly";
-import OverlayBar from "./OverlayBar";
-import "./OverlayContent.scss";
-import OverlayGrip from "./OverlayGrip";
-import OverlayParticles from "./OverlayParticles";
-import debounce from "lodash.debounce";
 import customDebounce from "../tools/debounce";
-import store from "../store";
+import isScrollUgly from "../utils/is-scroll-ugly";
+
+import { OverlayBar, OverlayGrip, OverlayParticles } from "./";
+
+import "./OverlayContent.scss";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;
@@ -154,7 +153,7 @@ const OverlayContent: React.FC<{
         customDebounce(() => {
             window["__resett"]?.();
         }, 250),
-        [uiState.kiosk]
+        [uiState.kiosk],
     );
 
     return (

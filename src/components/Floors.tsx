@@ -1,14 +1,16 @@
+import React from "react";
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import React from "react";
+
+import appData from "../data";
 import Rect from "../core/Rect";
 import store, { uiState } from "../store";
-import { Layer, LayerMode, LayersMode } from "../store/LayerStore";
+import { Layer, LayersMode } from "../store/LayerStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import { remsToPixels } from "../utils";
+
 import "./Floors.scss";
-import appData from "../data";
 
 var timeout = null;
 export default function Floors() {
@@ -48,7 +50,7 @@ export default function Floors() {
                 settings.EXPO.indexOf("money2020usa") > -1 ||
                 settings.EXPO === "rodion2" ||
                 settings.EXPO === "possible2025" ||
-                settings.EXPO === "2025virtuosotravelweek"  ||
+                settings.EXPO === "2025virtuosotravelweek" ||
                 settings.EXPO === "zscalerskofy26"
             ) {
                 uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);

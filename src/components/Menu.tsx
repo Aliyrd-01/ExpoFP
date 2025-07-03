@@ -1,18 +1,19 @@
 import React, { MouseEvent } from "react";
-import { useLocalStore, useObserver } from "mobx-react-lite";
-import { autorun } from "mobx";
-import { t } from "../utils/i18n";
-import data from "../data";
-import baseUrl from "../tools/base-data-url";
-import isIframe from "../utils/is-iframe";
 import copyToClipboard from "copy-to-clipboard";
-import store, { categoryStore, exhibitorStore, uiState } from "../store";
-import OverlayContent from "./OverlayContent";
-import Badge from "./Badge";
-import { CategoryFilterModal } from "./CategoryFilterModal";
+import { autorun } from "mobx";
+import { useLocalStore, useObserver } from "mobx-react-lite";
 import * as CSS from "csstype";
+
+import data from "../data";
+import store, { categoryStore, exhibitorStore, uiState } from "../store";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
+import baseUrl from "../tools/base-data-url";
+import { t } from "../utils/i18n";
+import isIframe from "../utils/is-iframe";
+
+import { Badge, CategoryFilterModal, OverlayContent } from "./";
+
 import "./Menu.scss";
 import "./Menu_custom.scss";
 
@@ -219,7 +220,7 @@ function Menu({ allowConsent, isGDPR }: MenuProps) {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href={`https://api.expofp.com/service/convert/${settings.EXPO}/pdf/?bookmarks=${bookmarks.join(
-                                    ","
+                                    ",",
                                 )}&layers=${(store.layerStore.layers.length >= store.layerStore.visible.length
                                     ? store.layerStore.visible.map((l) => l.name).join(",")
                                     : ""

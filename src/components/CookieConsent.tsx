@@ -1,7 +1,10 @@
 import React from "react";
-import Button from "./Button";
-import "./CookieConsent.scss";
+
 import { t } from "../utils/i18n";
+
+import { Button } from "./";
+
+import "./CookieConsent.scss";
 
 export interface CookieConsentProps {
     link?: string;
