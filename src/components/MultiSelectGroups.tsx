@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import cn from "classnames";
-
 import store from "../store";
-
 import { Checkbox } from "./";
-
 import "./MultiSelectGroups.scss";
 
 export interface MultiSelectGroupItem {

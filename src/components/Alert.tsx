@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import cn from "classnames";
-
 import "./Alert.scss";
 
 export type AlertVariant = "info" | "warning" | "error" | "success" | "blank";

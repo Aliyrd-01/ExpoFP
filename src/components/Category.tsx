@@ -1,13 +1,11 @@
-import React, { useRef } from "react";
 import { useObserver } from "mobx-react-lite";
-
+import React, { useRef } from "react";
 import store, { uiState } from "../store";
-import { Category as CategoryModel } from "../store/CategoryStore";
-import { t } from "../utils/i18n";
-
-import { EntityList, OverlayContent } from "./";
-
 import "./Category.scss";
+import EntityList from "./EntityList";
+import OverlayContent from "./OverlayContent";
+import { t } from "../utils/i18n";
+import { Category as CategoryModel } from "../store/CategoryStore";
 
 function Category() {
     const scrollableRef = useRef<HTMLDivElement>();

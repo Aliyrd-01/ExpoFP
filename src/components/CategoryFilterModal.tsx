@@ -1,11 +1,9 @@
 import React, { useMemo } from "react";
 import { observer } from "mobx-react-lite";
-
 import store from "../store";
 import { FilterGroup } from "../store/types";
 import { t } from "../utils/i18n";
-
-import { BaseFilterModal } from "./";
+import { BaseFilterModal } from "./BaseFilterModal";
 
 export const CategoryFilterModal: React.FC = observer(() => {
     const groups = useMemo(() => {

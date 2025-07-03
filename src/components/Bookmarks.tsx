@@ -1,12 +1,9 @@
-import React, { useRef } from "react";
 import { useObserver } from "mobx-react-lite";
-
+import React, { useRef } from "react";
 import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
-
-import { EntityList, OverlayContent } from "./";
-
+import { OverlayContent, EntityList } from "./";
 import "./Bookmarks.scss";
 
 function Bookmarks() {

@@ -1,12 +1,9 @@
-import React, { forwardRef, MouseEvent, ReactNode } from "react";
 import classNames from "classnames";
-
-import store from "../store";
-import { t } from "../utils/i18n";
-
-import { OverlayBarBack } from "./";
-
+import React, { forwardRef, MouseEvent, ReactNode, useImperativeHandle, useRef } from "react";
 import "./OverlayBar.scss";
+import OverlayBarBack from "./OverlayBarBack";
+import { t } from "../utils/i18n";
+import store from "../store";
 
 const OverlayBar = forwardRef<
     HTMLDivElement,
@@ -34,7 +31,7 @@ const OverlayBar = forwardRef<
             overlayBarEndContent,
             overlayBarStyle,
         },
-        ref,
+        ref
     ) => {
         function handleClose(e: MouseEvent) {
             onClose();
@@ -63,7 +60,7 @@ const OverlayBar = forwardRef<
                 {overlayBarEndContent}
             </div>
         );
-    },
+    }
 );
 
 OverlayBar.displayName = "OverlayBar";

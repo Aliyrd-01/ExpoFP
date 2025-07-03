@@ -1,16 +1,14 @@
-import React from "react";
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-
-import appData from "../data";
+import React from "react";
 import Rect from "../core/Rect";
 import store, { uiState } from "../store";
-import { Layer, LayersMode } from "../store/LayerStore";
+import { Layer, LayerMode, LayersMode } from "../store/LayerStore";
 import settings from "../tools/settings";
 import { t } from "../utils/i18n";
 import { remsToPixels } from "../utils";
-
 import "./Floors.scss";
+import appData from "../data";
 
 var timeout = null;
 export default function Floors() {

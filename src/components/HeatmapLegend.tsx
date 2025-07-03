@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
-import classNames from "classnames";
-
-import { getColorFromGradient } from "../tools/Color";
-
 import "./HeatmapLegend.scss";
+import { getColorFromGradient } from "../tools/Color";
+import classNames from "classnames";
 
 interface HeatmapLegendProps {
     colors: string[];

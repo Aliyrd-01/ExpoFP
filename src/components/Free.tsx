@@ -1,11 +1,9 @@
-import React from "react";
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-
+import React from "react";
 import { uiState } from "../store";
 import { t } from "../utils/i18n";
 import { useInit } from "../utils/mobx";
-
 import "./Free.scss";
 
 const key = "free-dismissed5";

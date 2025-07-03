@@ -1,11 +1,8 @@
-import React from "react";
-import { observer } from "mobx-react-lite";
-
-import store from "../store";
 import { Language } from "../store/LanguageStore";
-
-import { Radio } from "./";
-
+import React from "react";
+import store from "../store";
+import { observer } from "mobx-react-lite";
+import Radio from "./Radio";
 import "./LanguageRow.scss";
 
 const LanguageRow = observer(({ item }: { item: Language }) => {
