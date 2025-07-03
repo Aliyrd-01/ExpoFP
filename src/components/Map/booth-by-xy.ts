@@ -1,3 +1,4 @@
+import { reaction } from "mobx";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
 import { getTrianglesFromFpPaths } from "../../data/svg";
@@ -16,7 +17,7 @@ let segments: Rect[] = [];
 let segmentToRects = new Map<Rect, Rect[]>();
 let prevSegment: Rect;
 
-export function calculate() {
+function calculate() {
     const booths = boothStore.booths.filter((b) => b.visible && b.rect && b.rect.w > 0 && b.rect.h > 0);
 
     rectsToBooths = new Map<Rect, Booth>();
@@ -53,10 +54,10 @@ export function calculate() {
     logger.log("hover segmentToRects", segmentToRects);
 }
 
-// reaction(
-//     () => [boothStore.booths, layersStore.loaded, layersStore.visible],
-//     () => calculate()
-// );
+reaction(
+    () => [boothStore.booths, layersStore.loaded, layersStore.visible],
+    () => calculate()
+);
 
 function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {
     var pxSvgMatrix = drawer.getPxSvgMatrix();
