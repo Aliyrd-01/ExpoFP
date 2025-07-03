@@ -15,8 +15,11 @@ import { isLocalStorageAvailable } from "../utils/localStorage";
 import settings from "../tools/settings";
 import { KIOSK_KEY } from "../constants";
 import { getRebookingTokenFromQuery } from "../tools/rebookingUrl";
+import isMobile from "../utils/is-mobile";
+import isWebview from "../utils/is-webview";
 
 const DEBOUNCE_DELAY_MS = 1000;
+const isMobileDevice = isMobile || isWebview;
 
 export function handleCustomCommand(text: string, forseRefresh: boolean): boolean {
     text = text.trim();
@@ -35,7 +38,7 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
         } else if (commandValue.split(",").length === 1) {
             /** @deprecated use yah=<COMMAND> */
             YouAreHere.setYah(commandValue.split(",")[0]);
-            if (isLocalStorageAvailable) {
+            if (isLocalStorageAvailable && !isMobileDevice) {
                 localStorage.setItem(KIOSK_KEY, "1");
                 uiState.kiosk = true;
             }
@@ -48,7 +51,7 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
             if (commandValue.split(",").length === 3) scale = parseFloat(yahValues[2].trim());
             if (!!yahX && !!yahY) {
                 YouAreHere.setYah(`${yahX},${yahY},${scale}`);
-                if (isLocalStorageAvailable) {
+                if (isLocalStorageAvailable && !isMobileDevice) {
                     localStorage.setItem(KIOSK_KEY, "1");
                     uiState.kiosk = true;
                 }
