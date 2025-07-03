@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
-
 import { useRenderTarget } from "../utils/useRenderTarget";
-
 import { Button, ButtonVariant, Checkbox } from "./";
-
 import "./Modal.scss";
 
 type ModalType = "default" | "share" | "fullscreen";
@@ -145,7 +142,7 @@ const Modal: React.FC<ModalProps> = ({
                 )}
             </div>
         </div>,
-        container,
+        container
     );
 };
 

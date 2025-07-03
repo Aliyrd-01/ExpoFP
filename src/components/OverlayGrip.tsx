@@ -1,8 +1,8 @@
-import React, { MouseEvent } from "react";
 import classNames from "classnames";
 import { observer } from "mobx-react-lite";
-
+import React, { MouseEvent } from "react";
 import { uiState } from "../store";
+import "./OverlayGrip.scss";
 
 import "./OverlayGrip.scss";
 

@@ -1,20 +1,19 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
-import dateFormat from "dateformat";
-
-import data from "../data";
-import { boothStore, uiState } from "../store";
+import { ListItem } from "../store/types";
+import { Exhibitor } from "../store/ExhibitorStore";
 import { BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { EventItem } from "../store/EventStore";
-import { Exhibitor } from "../store/ExhibitorStore";
 import { HeatmapYah } from "../store/HeatmapStore";
-import { ListItem } from "../store/types";
-import { shortenName } from "../utils/shortenName";
 import useHeatmapData from "../utils/useHeatmapData";
-
-import { EntityItem, YahRow } from "./";
+import { boothStore, uiState } from "../store";
+import EntityItem from "./EntityItem";
+import YahRow from "./YahRow";
+import data from "../data";
+import dateFormat from "dateformat";
 import { defaultRebookingOptions } from "./RebookingRadioGroup";
+import { observer } from "mobx-react-lite";
+import { shortenName } from "../utils/shortenName";
 
 interface Props {
     item: ListItem;

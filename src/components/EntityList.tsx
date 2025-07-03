@@ -1,12 +1,9 @@
-import React, { RefObject, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react-lite";
+import React, { RefObject, useEffect, useRef, useCallback } from "react";
 import { Virtuoso } from "react-virtuoso";
-
 import store, { uiState } from "../store";
 import settings from "../tools/settings";
-
-import { EntityListRow } from "./";
-
+import EntityListRow from "./EntityListRow";
 import "./EntityList.scss";
 
 const EXPOS_WITH_COMPACT_DETAILS = ["ipia2025"];
@@ -38,7 +35,7 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
         uiState.setListScrollItemId(uiState.list?.type, id);
         uiState.setListScrollTop(
             uiState.list?.type,
-            updatedScrollableRef.current.scrollTop || (scrollerRef.current as HTMLElement)?.scrollTop || 0,
+            updatedScrollableRef.current.scrollTop || (scrollerRef.current as HTMLElement)?.scrollTop || 0
         );
 
         switch (type) {

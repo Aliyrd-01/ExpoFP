@@ -1,11 +1,8 @@
 import React from "react";
-import cn from "classnames";
 import { observer } from "mobx-react-lite";
-
+import cn from "classnames";
 import { t } from "../utils/i18n";
-
 import { Modal, ToggleSwitch } from "./";
-
 import "./AgendaFiltersModal.scss";
 
 export interface AgendaFiltersModalProps {

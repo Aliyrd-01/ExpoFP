@@ -1,9 +1,7 @@
 import React from "react";
 import { observer, useLocalStore } from "mobx-react-lite";
-
-import { FilterGroup, FilterStore } from "../store/types";
+import { FilterStore, FilterGroup } from "../store/types";
 import { t } from "../utils/i18n";
-
 import { Modal, MultiSelectGroups } from "./";
 
 interface BaseFilterModalProps {
@@ -25,8 +23,8 @@ export const BaseFilterModal: React.FC<BaseFilterModalProps> = observer(({ store
 
             return rootStore.exhibitorStore.exhibitors.filter((exhibitor) =>
                 exhibitor.categories.some((category) =>
-                    store.state.pendingItems.some((pendingItem) => pendingItem.id === category.id),
-                ),
+                    store.state.pendingItems.some((pendingItem) => pendingItem.id === category.id)
+                )
             ).length;
         },
         get allCategories() {

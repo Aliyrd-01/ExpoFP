@@ -1,13 +1,11 @@
-import * as React from "react";
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-
+import * as React from "react";
 import store, { layersStore, uiState } from "../store";
 import { LayerMode, LayersMode } from "../store/LayerStore";
 import { remsToPixels } from "../utils";
 import { t } from "../utils/i18n";
-
-import { MapControls } from "./";
+import MapControls from "./MapControls";
 
 export default function Controls() {
     const s = useLocalStore(() => ({

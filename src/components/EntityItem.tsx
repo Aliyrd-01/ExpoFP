@@ -1,8 +1,6 @@
-import React from "react";
 import cn from "classnames";
-
-import { HighlightText } from "./";
-
+import React from "react";
+import HighlightText from "./HighlightText";
 import "./EntityItem.scss";
 
 export type EntityItemAdditionalInfo =

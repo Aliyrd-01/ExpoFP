@@ -1,10 +1,7 @@
 import React from "react";
-
 import data from "../data";
-
-import { HighlightText } from "./";
-
 import "./SimpleRow.scss";
+import HighlightText from "./HighlightText";
 
 const SimpleRow: React.FC<{
     line1: string;

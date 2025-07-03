@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-
+import Button from "./Button";
 import { t } from "../utils/i18n";
-
-import { Button } from "./";
-
 import "./RebookingNotes.scss";
 
 export type RebookingNotesMode = "default" | "add" | "edit";

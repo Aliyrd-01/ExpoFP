@@ -1,18 +1,25 @@
-import React, { useLayoutEffect, useRef } from "react";
-import classNames from "classnames";
 import { easePolyOut } from "d3-ease";
 import { select } from "d3-selection";
 import { autorun, reaction } from "mobx";
 import { observer, useLocalStore } from "mobx-react-lite";
-
+import React, { useLayoutEffect, useRef } from "react";
 import { uiState } from "../store";
 import type { OverlaySize } from "../store/types";
 import logger from "../tools/logger";
 import { remsToPixels } from "../utils";
-
-import { Agenda, Bookmarks, Booth, Category, Event, Exhibitor, Filter, Language, Menu, Search, Wayfinding } from "./";
-
+import Bookmarks from "./Bookmarks";
+import Language from "./Language";
+import Booth from "./Booth/Booth";
+import Category from "./Category";
+import Exhibitor from "./Exhibitor";
+import Menu from "./Menu";
 import "./Overlay.scss";
+import Search from "./Search";
+import Wayfinding from "./Wayfinding";
+import Filter from "./Filter";
+import classNames from "classnames";
+import Agenda from "./Agenda";
+import Event from "./Event";
 
 interface OverlayProps {
     isGDPR: boolean;
@@ -132,7 +139,7 @@ export default observer(function Overlay({ isGDPR, allowConsent }: OverlayProps)
                     const top = getTopForBottomPosition("medium", el.current);
                     el.current.style.top = top + "px";
                 }
-            },
+            }
         );
 
         function handleTouchCancel() {

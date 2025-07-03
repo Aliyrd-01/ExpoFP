@@ -1,14 +1,12 @@
 import React from "react";
 import classNames from "classnames";
-
 import { t } from "../utils/i18n";
-
-import { Autocomplete, RouteQR, ToggleSwitch, WayInformation, WayfindingFloorSelector } from "./";
-
-import { WayInformationItem } from "./WayInformation";
-import { AutocompleteOptionObject } from "./Autocomplete";
-
+import Autocomplete, { AutocompleteOptionObject } from "./Autocomplete";
+import ToggleSwitch from "./ToggleSwitch";
+import WayfindingFloorSelector from "./WayfindingFloorSelector";
 import "./WayfindingTemplate.scss";
+import WayInformation, { WayInformationItem } from "./WayInformation";
+import RouteQR from "./RouteQR";
 
 export interface WayfindingTemplateProps {
     options: string[] | (AutocompleteOptionObject | any)[];

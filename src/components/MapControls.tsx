@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-
-import { uiState } from "../store";
+import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
-
+import { uiState } from "../store";
 import "./MapControls.scss";
 
 export interface MapControlLayersItem {

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import classNames from "classnames";
-
+import React, { useState, useEffect } from "react";
 import "./ToggleSwitch.scss";
+import classNames from "classnames";
 
 export interface ToggleSwitchProps {
     name: string;

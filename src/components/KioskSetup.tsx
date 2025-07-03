@@ -1,23 +1,21 @@
-import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import cn from "classnames";
-import { reaction, runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-
-import Rect from "../core/Rect";
-import { svgArea } from "../data/svg";
+import Alert from "./Alert";
+import Button from "./Button";
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import store from "../store";
-import { extractRoute, Kiosk } from "../store/RouteStore";
 import { t } from "../utils/i18n";
+import { reaction, runInAction, toJS } from "mobx";
+import { strEqual } from "../utils/strEqual";
+import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, SEPARATOR } from "../constants";
+import { RouteCutIn } from "../RouteCutIn";
+import "./KioskSetup.scss";
+import { extractRoute, Kiosk } from "../store/RouteStore";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
-import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, SEPARATOR } from "../constants";
+import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
-import { strEqual } from "../utils/strEqual";
-import { RouteCutIn } from "../RouteCutIn";
-
-import { Alert, Button } from "./";
-
-import "./KioskSetup.scss";
+import cn from "classnames";
+import { svgArea } from "../data/svg";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -28,7 +26,7 @@ const KioskSetup = observer(() => {
     const [pending, setPending] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(
-        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth",
+        sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
     );
     const [kioskUrl, setKioskUrl] = useState("");
     const [passcode, setPasscode] = useState("");
@@ -58,7 +56,7 @@ const KioskSetup = observer(() => {
                 store.uiState.hideHeaderLogo = kioskSetup;
                 store.uiState.hideLogoInBooth = kioskSetup;
                 store.uiState.monochrome = kioskSetup;
-            },
+            }
         );
 
         const kioskSetupDataDisposer = reaction(
@@ -81,13 +79,13 @@ const KioskSetup = observer(() => {
                               y: kioskSetupData.y,
                               layer: kioskSetupData.z?.toString(),
                           },
-                          `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`,
+                          `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`
                       );
 
                 if (hasCurrentPosition) {
                     store.selectNone();
                 }
-            },
+            }
         );
 
         async function requestKioskData() {
@@ -401,7 +399,7 @@ const KioskSetup = observer(() => {
             };
             fn();
         }, 250),
-        [store.fp.eventId],
+        [store.fp.eventId]
     );
 
     const isKioskExist = store.uiState.kioskList.find((k) => `${k.key}` === `${store.uiState.kioskSetupData?.key}`);

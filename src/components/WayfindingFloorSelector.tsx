@@ -1,6 +1,5 @@
 import React from "react";
 import cn from "classnames";
-
 import "./WayfindingFloorSelector.scss";
 
 export interface WayfindingFloorSelectorProps {

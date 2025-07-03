@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-
+import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
-
 import "./Autocomplete.scss";
 
 export interface AutocompleteOptionObject {
@@ -32,10 +30,10 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
     const [objectsMode] = useState(isArrayOfObjects(options));
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [input, setInput] = useState(
-        objectsMode && value ? options[getActiveOptionIndexByValue(value, true)]?.label : value || "",
+        objectsMode && value ? options[getActiveOptionIndexByValue(value, true)]?.label : value || ""
     );
     const [activeOptionIndex, setActiveOptionIndex] = useState(
-        objectsMode ? getActiveOptionIndexByValue(value, true) : getActiveOptionIndexByValue(value) || null,
+        objectsMode ? getActiveOptionIndexByValue(value, true) : getActiveOptionIndexByValue(value) || null
     );
     const [focusOptionIndex, setFocusOptionIndex] = useState(activeOptionIndex);
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
@@ -109,7 +107,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ placeholder, options, value
             if (filteredOptions.length) {
                 const nextActiveIndex = getActiveOptionIndexByValue(
                     objectsMode ? filteredOptions[focusOptionIndex]["value"] : filteredOptions[focusOptionIndex],
-                    objectsMode ? true : false,
+                    objectsMode ? true : false
                 );
                 if (objectsMode) changeValue(options[nextActiveIndex]["value"]);
                 else changeValue(options[nextActiveIndex]);

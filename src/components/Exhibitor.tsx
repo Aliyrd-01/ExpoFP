@@ -1,33 +1,27 @@
-import React, { MouseEvent, Suspense, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { useLocalStore, useObserver } from "mobx-react-lite";
-import { Transition } from "react-transition-group";
-
+import React, { MouseEvent, Suspense, useRef, useState, useEffect } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Category } from "../store/CategoryStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
 import settings from "../tools/settings";
-import { getLocale, t } from "../utils/i18n";
+import { t, getLocale } from "../utils/i18n";
 import isMobile from "../utils/is-mobile";
 import { useReaction } from "../utils/mobx";
-import useHeatmapOverlay from "../utils/useHeatmapOverlay";
-
-import {
-    Alert,
-    Button,
-    ErrorBoundary,
-    MarketMaterialList,
-    OverlayContent,
-    RebookingNotes,
-    RebookingRadioGroup,
-    Schedule,
-    SidebarActions,
-} from "./";
-import { defaultRebookingOptions } from "./RebookingRadioGroup";
-
+import Button from "./Button";
+import ErrorBoundary from "./ErrorBoundary";
 import "./Exhibitor.scss";
+import MarketMaterialList from "./MarketMaterialList";
+import OverlayContent from "./OverlayContent";
+import RebookingNotes from "./RebookingNotes";
+import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
+import Schedule from "./Schedule";
+import SidebarActions from "./SidebarActions";
+import useHeatmapOverlay from "../utils/useHeatmapOverlay";
+import Alert from "./Alert";
+import { Transition } from "react-transition-group";
 
 const Gallery = React.lazy(() => import(/* webpackChunkName: "gallery" */ "./Gallery/Gallery"));
 
@@ -46,7 +40,7 @@ function ExhibitorComponent() {
         get anySocial() {
             if (uiState.kiosk) return false;
             return !!["facebook", "instagram", "linkedin", "twitter", "googlePlus", "xing", "youtube"].find(
-                (s) => this.exhibitor[s],
+                (s) => this.exhibitor[s]
             );
         },
         get anyAddress() {
@@ -96,7 +90,7 @@ function ExhibitorComponent() {
         () => {
             if (el.current) el.current.parentElement.scrollTop = 0;
             s.collapsed = true;
-        },
+        }
     );
 
     function handleClick(e: any, action: GaEventActions) {
@@ -425,7 +419,7 @@ function ExhibitorComponent() {
                             {(!!exhibitor.schedule?.length || !!exhibitor.booths[0]?.schedule.length) && (
                                 <Schedule
                                     events={[...(exhibitor.schedule || exhibitor.booths[0]?.schedule || [])].sort(
-                                        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+                                        (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
                                     )}
                                 />
                             )}

@@ -1,8 +1,6 @@
 import React from "react";
-
 import { MarketMaterial } from "../data/Data";
 import { t } from "../utils/i18n";
-
 import "./MarketMaterialList.scss";
 
 export type MarketMaterialListProps = {

@@ -1,5 +1,4 @@
 import React from "react";
-
 import "./LevelBadge.scss";
 
 interface LevelBadgeProps {

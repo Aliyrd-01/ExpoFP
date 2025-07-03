@@ -1,16 +1,14 @@
-import React, { createRef, RefObject, useCallback } from "react";
 import classNames from "classnames";
 import { IReactionDisposer, reaction } from "mobx";
 import { useLocalStore, useObserver } from "mobx-react-lite";
+import React, { createRef, RefObject, useCallback } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-
 import store, { exhibitorStore, uiState } from "../store";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { remsToPixels, shuffle } from "../utils";
 import { useInit } from "../utils/mobx";
-import { ImageUrls, loadImagesInBatchesById } from "../utils/loadImagesInBatches";
-
 import "./Ws.scss";
+import { ImageUrls, loadImagesInBatchesById } from "../utils/loadImagesInBatches";
 
 const DELAY = 8000;
 

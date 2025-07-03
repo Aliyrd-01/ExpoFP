@@ -1,18 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import dateFormat from "dateformat";
-import { observer, useLocalStore, useObserver } from "mobx-react-lite";
-
+import { useLocalStore, useObserver, observer } from "mobx-react-lite";
+import React, { useRef, useState, useEffect } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import settings from "../tools/settings";
-import sanitizeHTML from "../utils/sanitizeHtml";
-import { getLocale, t } from "../utils/i18n";
+import { t, getLocale } from "../utils/i18n";
 import { useReaction } from "../utils/mobx";
-
-import { Button, EventBadge, OverlayContent, SidebarActions } from "./";
-
+import Button from "./Button";
+import EventBadge from "./EventBadge";
+import OverlayContent from "./OverlayContent";
+import SidebarActions from "./SidebarActions";
+import dateFormat from "dateformat";
+import sanitizeHTML from "../utils/sanitizeHtml";
 import "./Event.scss";
 
 function EventComponent() {
@@ -56,7 +56,7 @@ function EventComponent() {
                 el.current.parentElement.scrollTop = 0;
             }
             s.collapsed = true;
-        },
+        }
     );
 
     function handleClick(e: any, action: GaEventActions) {

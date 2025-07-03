@@ -1,13 +1,11 @@
-import React, { RefObject, useEffect, useRef, useState } from "react";
 import { useObserver } from "mobx-react-lite";
+import React, { RefObject, useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
-
 import { uiState } from "../store";
+import "./List.scss";
 import { Language } from "../store/LanguageStore";
 import type { ListItem } from "../store/types";
-
-import { LanguageRow } from "./";
-
+import LanguageRow from "./LanguageRow";
 import "./List.scss";
 
 interface ListProps {

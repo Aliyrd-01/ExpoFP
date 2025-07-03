@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import classNames from "classnames";
-
 import "./Radio.scss";
 
 export interface RadioProps {
