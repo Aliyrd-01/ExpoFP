@@ -3,7 +3,6 @@ import PerfectScrollbar from "perfect-scrollbar";
 import { ResizeObserver } from "resize-observer";
 import React, { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { uiState } from "../store";
-import cn from "classnames";
 import isScrollUgly from "../utils/is-scroll-ugly";
 import OverlayBar from "./OverlayBar";
 import "./OverlayContent.scss";
@@ -11,7 +10,6 @@ import OverlayGrip from "./OverlayGrip";
 import OverlayParticles from "./OverlayParticles";
 import debounce from "lodash.debounce";
 import customDebounce from "../tools/debounce";
-import store from "../store";
 
 const OverlayContent: React.FC<{
     bar: ReactNode;

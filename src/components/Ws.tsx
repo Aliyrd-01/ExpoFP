@@ -16,7 +16,7 @@ const Ws = React.memo(() => {
     const s = useLocalStore(() => ({
         el: null as HTMLElement | null,
         all: [] as Exhibitor[],
-        adv: [] as { key: number; e: Exhibitor, nodeRef: RefObject<HTMLAnchorElement> }[],
+        adv: [] as { key: number; e: Exhibitor; nodeRef: RefObject<HTMLAnchorElement> }[],
         keySeq: 0,
         index: 0,
         imgByExhibitorId: new Map<number, HTMLImageElement>(),

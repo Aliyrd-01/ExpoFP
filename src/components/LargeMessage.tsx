@@ -13,7 +13,7 @@ export default function LargeMessage() {
     const s = useLocalStore(() => ({
         shouldShow: false,
         visible: false,
-        transitioning: false
+        transitioning: false,
     }));
 
     useInit(() => {

@@ -1,12 +1,21 @@
 import { createBrowserHistory } from "history";
 import { autorun, reaction } from "mobx";
 import { handleCustomCommand } from "../components/Search";
-import { KIOSK_ID_KEY, KIOSK_KEY, KIOSK_SETUP_KEY, MAP_SETTINGS_KEY, PREVIEW_MODE_QUERY, PREVIEW_MODE_STORAGE_KEY, SEPARATOR } from "../constants";
+import {
+    KIOSK_ID_KEY,
+    KIOSK_KEY,
+    KIOSK_SETUP_KEY,
+    MAP_SETTINGS_KEY,
+    PREVIEW_MODE_QUERY,
+    PREVIEW_MODE_STORAGE_KEY,
+    SEPARATOR,
+} from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
 import { Booth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { Exhibitor } from "../store/ExhibitorStore";
+import { EventItem } from "../store/EventStore";
 import { CurrentPosition, extractRoute } from "../store/RouteStore";
 import { setConsentSettings } from "../tools/gtag";
 import logger from "../tools/logger";
@@ -15,12 +24,12 @@ import { MapSettings } from "../store/types";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import { getYah, removeYah, yahKey } from "../utils/yah";
-// import settings from '@/settings';
 
 let disableHistoryManipulation = false;
 let disableStateToUrl = false;
 let savedSelectedExhibitor: Exhibitor | null = null;
 let savedSelectedBooth: Booth | null = null;
+let savedSelectedEventItem: EventItem | null = null;
 let unlisten;
 
 const history = createBrowserHistory();
@@ -51,6 +60,7 @@ function stateToUrl() {
     let queryRaw = "";
     const exhibitor = uiState.selectedExhibitor;
     const booth = uiState.selectedBooth;
+    const eventItem = uiState.selectedEventItem;
     const route = uiState.selectedRoute;
 
     if (route) {
@@ -63,6 +73,8 @@ function stateToUrl() {
         queryRaw = exhibitor.slug;
     } else if (booth) {
         queryRaw = booth.slug;
+    } else if (eventItem) {
+        queryRaw = eventItem.slug;
     } else {
         switch (uiState.list.type) {
             case "bookmarks":
@@ -95,7 +107,7 @@ function stateToUrl() {
 
     if (history.location.search === newQuery) return;
 
-    if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth) {
+    if (exhibitor !== savedSelectedExhibitor || booth !== savedSelectedBooth || eventItem !== savedSelectedEventItem) {
         // logger.log('history push', newQuery, exhibitor !== savedSelectedExhibitor, booth !== savedSelectedBooth);
         historyPush(newQuery);
     } else {
@@ -106,12 +118,15 @@ function stateToUrl() {
 
     savedSelectedExhibitor = exhibitor;
     savedSelectedBooth = booth;
+    savedSelectedEventItem = eventItem;
 }
 
 function setTitle() {
     const exhibitor = uiState.selectedExhibitor;
+    const eventItem = uiState.selectedEventItem;
     let title = "";
     if (exhibitor) title = exhibitor.name;
+    else if (eventItem) title = eventItem.name;
     else if (uiState.list.type === "search" && uiState.list.text) title = "`" + uiState.list.text + "`";
 
     if (title.length) title += " – ";
@@ -132,11 +147,10 @@ function dispatchFromUrl() {
     disableStateToUrl = true;
 
     const booth = store.boothStore.booths.find(
-        (x: Booth) => (
-            x.slug?.toLowerCase() === slug?.toLowerCase()
-            || x.externalId?.toLowerCase() === slug?.toLowerCase()
-            || x.externalId?.toLowerCase()?.replace(/\s+/g, "") === slug?.toLowerCase()
-        )
+        (x: Booth) =>
+            x.slug?.toLowerCase() === slug?.toLowerCase() ||
+            x.externalId?.toLowerCase() === slug?.toLowerCase() ||
+            x.externalId?.toLowerCase()?.replace(/\s+/g, "") === slug?.toLowerCase()
     );
 
     const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
@@ -186,19 +200,28 @@ function dispatchFromUrl() {
             window.location.reload();
         }
     } else {
-        const exhibitor = store.exhibitorStore.exhibitors.find(
-            (x: Exhibitor) =>
-                x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+        // Проверяем, является ли slug событием
+        const eventItem = store.eventStore.eventItems.find(
+            (x: EventItem) => x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
         );
 
-        if (slug.startsWith("exhibitors")) {
-            const exhibitors = slug.split("=")[1].split(",");
-            store.fp.selectExhibitor(exhibitors);
-        } else if (exhibitor) store.clickExhibitor(exhibitor);
-        else {
-            const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
-            if (category) store.selectCategory(category);
-            else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
+        if (eventItem) {
+            store.selectEventItem(eventItem, true);
+        } else {
+            const exhibitor = store.exhibitorStore.exhibitors.find(
+                (x: Exhibitor) =>
+                    x.slug?.toLowerCase() === slug?.toLowerCase() || x.externalId?.toLowerCase() === slug?.toLowerCase()
+            );
+
+            if (slug.startsWith("exhibitors")) {
+                const exhibitors = slug.split("=")[1].split(",");
+                store.fp.selectExhibitor(exhibitors);
+            } else if (exhibitor) store.clickExhibitor(exhibitor);
+            else {
+                const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
+                if (category) store.selectCategory(category);
+                else if (!slug.includes("heatmap=true")) store.selectSearch(slug);
+            }
         }
     }
 
@@ -362,7 +385,7 @@ function processURLParams() {
 
         const newSearch = url.search.replace(/=&/g, "&").replace(/=$/, "");
         if (value === "true") {
-            store.exhibitorStore.exhibitors.forEach(ex => ex.featured = false);
+            store.exhibitorStore.exhibitors.forEach((ex) => (ex.featured = false));
         }
 
         historyReplace(newSearch);
@@ -408,10 +431,7 @@ function processURLParams() {
     }
 
     // facebook and google  fix
-    if (
-        locationSearch.startsWith("?fbclid") ||
-        locationSearch.startsWith("?_ga")
-    ) {
+    if (locationSearch.startsWith("?fbclid") || locationSearch.startsWith("?_ga")) {
         historyReplace("?");
     }
 
@@ -489,7 +509,8 @@ export function initRouting(offHistory = false) {
 
     processURLParams();
     executeCustomCommand();
-    reaction(() => store.layerStore.layersLoaded,
+    reaction(
+        () => store.layerStore.layersLoaded,
         () => {
             dispatchFromUrl();
             autorun(setTitle);
@@ -503,7 +524,8 @@ export function applyParameters(queryRaw: string = "") {
 
     if (!store.layerStore.layersLoaded) {
         executeCustomCommand();
-        reaction(() => store.layerStore.layersLoaded,
+        reaction(
+            () => store.layerStore.layersLoaded,
             () => {
                 processURLParams();
                 dispatchFromUrl();
@@ -533,15 +555,11 @@ function setMapSettings() {
         }
 
         if (new Set(searchParams.keys()).size) {
-            result = castMapSettings(
-                Object.fromEntries(searchParams.entries()),
-            );
+            result = castMapSettings(Object.fromEntries(searchParams.entries()));
         } else {
             const savedStr = localStorage?.getItem(MAP_SETTINGS_KEY);
             if (savedStr) {
-                result = castMapSettings(
-                    JSON.parse(savedStr),
-                );
+                result = castMapSettings(JSON.parse(savedStr));
             }
         }
     } catch (err) {
@@ -563,16 +581,12 @@ function castMapSettings(obj: Record<string, string>): MapSettings {
     for (const prop in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, prop)) {
             const value = obj[prop];
-            result[prop] = (
-                (
-                    (prop === "zoomtime" || prop === "bearing" || prop === "zoom")
-                    && typeof value === "string"
-                    && /^-?\d+$/.test(value)
-
-                )
+            result[prop] =
+                (prop === "zoomtime" || prop === "bearing" || prop === "zoom") &&
+                typeof value === "string" &&
+                /^-?\d+$/.test(value)
                     ? parseInt(value, 10)
-                    : value
-            );
+                    : value;
         }
     }
     return result;

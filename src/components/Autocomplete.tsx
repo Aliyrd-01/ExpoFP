@@ -7,6 +7,7 @@ export interface AutocompleteOptionObject {
     value: string; // must be unique
     label: string;
 }
+
 export interface AutocompleteProps {
     placeholder: string;
     options: string[] | (AutocompleteOptionObject | any)[];

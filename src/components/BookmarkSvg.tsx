@@ -1,4 +1,5 @@
 import React from "react";
+
 import "./BookmarkSvg.scss";
 
 export default function BookmarkSvg() {

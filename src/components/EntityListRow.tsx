@@ -3,7 +3,7 @@ import { ListItem } from "../store/types";
 import { Exhibitor } from "../store/ExhibitorStore";
 import { BoothBase } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
-import { ScheduleItem } from "../store/ScheduleStore";
+import { EventItem } from "../store/EventStore";
 import { HeatmapYah } from "../store/HeatmapStore";
 import useHeatmapData from "../utils/useHeatmapData";
 import { boothStore, uiState } from "../store";
@@ -97,12 +97,12 @@ const EntityListRow = ({ item, index, highlighted, compactDetails, onClick }: Pr
         );
     }
 
-    if (item instanceof ScheduleItem) {
+    if (item instanceof EventItem) {
         const booth = item.boothId ? boothStore.booths.find((b) => b.id === item.boothId) : null;
         return (
             <EntityItem
-                onClick={onClick}
                 id={item.id.toString()}
+                onClick={onClick}
                 type="event"
                 title={item.name}
                 url={item.link}

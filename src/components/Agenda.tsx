@@ -3,11 +3,10 @@ import { useObserver, useLocalStore } from "mobx-react-lite";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import store, { uiState } from "../store";
-import OverlayContent from "./OverlayContent";
-import { Badge, AgendaFiltersModal, Schedule } from "./";
+import { Badge, AgendaFiltersModal, Schedule, OverlayContent } from "./";
 import { t } from "../utils/i18n";
-import "./Agenda.scss";
 import Fuse from "fuse.js";
+import "./Agenda.scss";
 
 export interface AgendaProps {
     showFilters?: boolean;
@@ -23,7 +22,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
         }),
     }));
 
-    const events = store.scheduleStore.scheduleItems;
+    const events = store.eventStore.eventItems;
     const {
         filters: {
             date: { value: dateFilter },
@@ -107,10 +106,7 @@ const Agenda: React.FC<AgendaProps> = observer(({ showFilters = true }) => {
     }, [firstUpcomingEvent, uiState.list.type === "agenda"]);
 
     const handleEventClick = (event) => {
-        const booth = event.boothId && store.boothStore.booths.find((b) => b.id === event.boothId);
-        if (booth) {
-            store.selectBooth(booth, true);
-        }
+        store.selectEventItem(event, true);
     };
 
     const handleCloseBack = () => {

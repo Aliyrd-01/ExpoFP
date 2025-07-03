@@ -10,7 +10,6 @@ import OverlayContent from "./OverlayContent";
 import debounce from "../tools/debounce";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import "./Search.scss";
-// import logger from "../tools/logger";
 import * as YouAreHere from "../utils/yah";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import settings from "../tools/settings";

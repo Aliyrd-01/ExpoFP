@@ -3,10 +3,11 @@ import { configure } from "mobx";
 import FloorPlanReady from "../floorplan.ready";
 import logger from "../tools/logger";
 import { isWebGlSupported } from "../utils";
-import BoothStore, { Booth, BoothBase, RegularBooth } from "./BoothStore";
+import BoothStore, { Booth, BoothBase, RegularBooth, SpecialBooth } from "./BoothStore";
 import CategoryStore, { Category } from "./CategoryStore";
 import ExhibitorStore, { Exhibitor } from "./ExhibitorStore";
 import CategoryFilterStore from "./CategoryFilterStore";
+import EventStore, { EventItem } from "./EventStore";
 
 import { GaEventActions } from "../tools/gtag";
 import isMobile from "../utils/is-mobile";
@@ -16,7 +17,6 @@ import LanguageStore from "./LanguageStore";
 import LayerStore, { LayersMode } from "./LayerStore";
 import MapboxStore from "./MapboxStore";
 import RouteStore from "./RouteStore";
-import ScheduleStore from "./ScheduleStore";
 import UIState from "./UIState";
 import type { ListItem } from "./types";
 import { svgArea } from "../data/svg";
@@ -33,7 +33,7 @@ export default class RootStore {
     readonly routeStore: RouteStore;
     readonly mapboxStore: MapboxStore;
     readonly layerStore: LayerStore;
-    readonly scheduleStore: ScheduleStore;
+    readonly eventStore: EventStore;
     readonly poiTypeStore: PoiTypeStore;
     readonly heatmapStore: HeatmapStore;
     readonly languageStore: LanguageStore;
@@ -54,7 +54,7 @@ export default class RootStore {
         this.uiState = new UIState(this);
         this.mapboxStore = new MapboxStore(this);
         this.layerStore = new LayerStore();
-        this.scheduleStore = new ScheduleStore(this);
+        this.eventStore = new EventStore(this);
         this.heatmapStore = new HeatmapStore(this);
         this.languageStore = new LanguageStore(this);
         this.poiTypeStore = new PoiTypeStore(this);
@@ -146,6 +146,32 @@ export default class RootStore {
                 .filter((e) => e.booths.find((b) => b.visible))
                 .flatMap((e) => e.booths);
         }, 200);
+    }
+
+    @action selectEventItem(eventItem: EventItem, focus: boolean = true) {
+        this.uiState.hoveredExhibitor = null;
+        this.uiState.details = eventItem;
+
+        if (eventItem.boothId) {
+            const booth = this.boothStore.booths.find((b) => b.id === eventItem.boothId);
+            if (booth && booth.layer && !booth.visible && this.layerStore.mode === LayersMode.Radio) {
+                this.layerStore.updateVisibility(booth.layer, true);
+            }
+        }
+
+        if (focus) {
+            setTimeout(
+                () => {
+                    if (eventItem.boothId) {
+                        const booth = this.boothStore.booths.find((b) => b.id === eventItem.boothId);
+                        if (booth) {
+                            this.moveToList([booth]);
+                        }
+                    }
+                },
+                isWebview || isMobile ? 500 : 50
+            );
+        }
     }
 
     @action selectSearch(text?: string) {

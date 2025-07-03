@@ -1,0 +1,48 @@
+@use "@styles/utils" as *;
+
+.efp-event-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: rem(8px);
+    max-height: rem(18px);
+    margin-left: rem(4px);
+    padding: rem(4px 4px);
+    border-radius: var(--border-radius-xs);
+    font-size: var(--font-size-xxs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    color: var(--color-white);
+    white-space: nowrap;
+    position: relative;
+    top: rem(-2px);
+
+    &--live {
+        background: #ff4444;
+        animation: pulse 2s infinite;
+    }
+
+    &--upcoming,
+    &--starting-soon {
+        background: #ff8800;
+    }
+
+    &--past {
+        background: #6b7280;
+    }
+
+    &.is-urgent {
+        animation: pulse 2s infinite;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}

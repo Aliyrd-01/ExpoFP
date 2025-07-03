@@ -4,11 +4,13 @@ import React, { MouseEvent } from "react";
 import { uiState } from "../store";
 import "./OverlayGrip.scss";
 
+import "./OverlayGrip.scss";
+
 function OverlayGrip() {
     function classes() {
         return classNames({
             "overlay-grip": true,
-            arr: uiState.overlaySize === "full"
+            arr: uiState.overlaySize === "full",
         });
     }
 

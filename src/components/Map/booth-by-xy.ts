@@ -1,12 +1,12 @@
 import { reaction } from "mobx";
 import { m4 } from "twgl.js";
 import Rect from "../../core/Rect";
+import { getTrianglesFromFpPaths } from "../../data/svg";
 import { boothStore, layersStore } from "../../store";
 import { Booth } from "../../store/BoothStore";
+import { LayersMode } from "../../store/LayerStore";
 import logger from "../../tools/logger";
 import { Drawer } from "./drawing/Drawer1";
-import { getTrianglesFromFpPaths } from "../../data/svg";
-import { LayersMode } from "../../store/LayerStore";
 // import { getPxSvgMatrix } from "./matrix";
 
 let rectsToBooths = new Map<Rect, Booth>();
@@ -17,7 +17,9 @@ let segments: Rect[] = [];
 let segmentToRects = new Map<Rect, Rect[]>();
 let prevSegment: Rect;
 
-function calculate(booths: Booth[]) {
+function calculate() {
+    const booths = boothStore.booths.filter((b) => b.visible && b.rect && b.rect.w > 0 && b.rect.h > 0);
+
     rectsToBooths = new Map<Rect, Booth>();
     rects = [];
     segments = [];
@@ -54,7 +56,7 @@ function calculate(booths: Booth[]) {
 
 reaction(
     () => [boothStore.booths, layersStore.loaded, layersStore.visible],
-    () => calculate(boothStore.booths.filter((b) => b.visible && b.rect).filter((b) => b.rect))
+    () => calculate()
 );
 
 function getLastBoothsFromClientXy(x: number, y: number, drawer: Drawer): Booth {

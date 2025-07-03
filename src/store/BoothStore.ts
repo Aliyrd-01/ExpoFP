@@ -1,5 +1,5 @@
 import { lineLength, lineRectangleIntersections, pointInsideRectangle, Rect as Rectangle } from "simple-geometry";
-import { ScheduleItem } from "./ScheduleStore";
+import { EventItem } from "./EventStore";
 // import { observable } from 'mobx';
 import { computed, observable } from "mobx";
 import Rect from "../core/Rect";
@@ -101,7 +101,7 @@ export abstract class BoothBase {
     readonly description: string;
     readonly exhibitors: Exhibitor[];
     readonly labelColor: string;
-    readonly schedule: ScheduleItem[];
+    readonly schedule: EventItem[];
     readonly poiTypeId: number;
     readonly poiType: RawPoiType;
     readonly poiIcon: string;

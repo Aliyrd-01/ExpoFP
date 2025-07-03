@@ -198,7 +198,6 @@ const KioskSetup = observer(() => {
         }
     }, [store.uiState.kioskSetup, step]);
 
-
     useEffect(() => {
         const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
         if (!routeParts) {
@@ -338,7 +337,7 @@ const KioskSetup = observer(() => {
 
         if (x && y) {
             store.uiState.moveToRect = Rect.fromCxcywh(x, y, 100, 100);
-        }   
+        }
     }
 
     function clear() {
@@ -441,10 +440,12 @@ const KioskSetup = observer(() => {
                     <Alert variant="blank" title={title} inline showIcon={false}>
                         {step === "auth" && (
                             <p id="kiosk-setup-instructions" className="efp-kiosk-setup-info">
-                                <label className={cn({
-                                    "efp-kiosk-setup-key": true,
-                                    "efp-kiosk-setup-key__auth": step === "auth",
-                                })}> 
+                                <label
+                                    className={cn({
+                                        "efp-kiosk-setup-key": true,
+                                        "efp-kiosk-setup-key__auth": step === "auth",
+                                    })}
+                                >
                                     <input
                                         name="passcode"
                                         placeholder={t("Enter passcode")}
@@ -460,7 +461,7 @@ const KioskSetup = observer(() => {
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
-                                    <strong>{t("To Add")}:</strong>  {t("Click anywhere on the map.")}
+                                    <strong>{t("To Add")}:</strong> {t("Click anywhere on the map.")}
                                     <br />
                                     <strong>{t("To Edit")}:</strong> {t("Enter the kiosk number below.")}
                                 </p>
@@ -508,13 +509,24 @@ const KioskSetup = observer(() => {
                             </p>
                         )}
 
-                        <div className={cn({
-                            "efp-kiosk-setup-actions": true,
-                            "efp-kiosk-setup-actions__auth": step === "auth",
-                        })}>
-                            {step === "auth" && <Button size="md" text={t("Log in")} disabled={!passcode || pending} onClick={() => auth(passcode)} />}
+                        <div
+                            className={cn({
+                                "efp-kiosk-setup-actions": true,
+                                "efp-kiosk-setup-actions__auth": step === "auth",
+                            })}
+                        >
+                            {step === "auth" && (
+                                <Button
+                                    size="md"
+                                    text={t("Log in")}
+                                    disabled={!passcode || pending}
+                                    onClick={() => auth(passcode)}
+                                />
+                            )}
 
-                            {step === "edit" && <Button size="md" text={t("Save & copy URL")} disabled={disabled} onClick={save} />}
+                            {step === "edit" && (
+                                <Button size="md" text={t("Save & copy URL")} disabled={disabled} onClick={save} />
+                            )}
 
                             {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
 

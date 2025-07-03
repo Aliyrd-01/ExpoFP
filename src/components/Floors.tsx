@@ -48,7 +48,7 @@ export default function Floors() {
                 settings.EXPO.indexOf("money2020usa") > -1 ||
                 settings.EXPO === "rodion2" ||
                 settings.EXPO === "possible2025" ||
-                settings.EXPO === "2025virtuosotravelweek"  ||
+                settings.EXPO === "2025virtuosotravelweek" ||
                 settings.EXPO === "zscalerskofy26"
             ) {
                 uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);

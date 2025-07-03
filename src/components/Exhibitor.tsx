@@ -3,7 +3,6 @@ import { useLocalStore, useObserver } from "mobx-react-lite";
 import React, { MouseEvent, Suspense, useRef, useState, useEffect } from "react";
 import data from "../data";
 import store, { uiState } from "../store";
-import { SpecialBooth } from "../store/BoothStore";
 import { Category } from "../store/CategoryStore";
 import { GaEventActions, sendEventToGa } from "../tools/gtag";
 import logger from "../tools/logger";
@@ -19,7 +18,7 @@ import OverlayContent from "./OverlayContent";
 import RebookingNotes from "./RebookingNotes";
 import RebookingRadioGroup, { defaultRebookingOptions } from "./RebookingRadioGroup";
 import Schedule from "./Schedule";
-import SibebarActions from "./SidebarActions";
+import SidebarActions from "./SidebarActions";
 import useHeatmapOverlay from "../utils/useHeatmapOverlay";
 import Alert from "./Alert";
 import { Transition } from "react-transition-group";
@@ -297,7 +296,7 @@ function ExhibitorComponent() {
                 {!rebooking ? (
                     <>
                         <div className="exhibitor__buttons">
-                            <SibebarActions
+                            <SidebarActions
                                 showBookmark={!uiState.disableBookmarked && !data.hideBookmarks && !uiState.kiosk}
                                 showDirections={exhibitor.booths.length > 0 && settings.wayfinding}
                                 inBookmark={s.exhibitor.bookmarked}

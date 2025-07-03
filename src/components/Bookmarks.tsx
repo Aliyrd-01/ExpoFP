@@ -3,9 +3,8 @@ import React, { useRef } from "react";
 import data from "../data";
 import store, { exhibitorStore, uiState } from "../store";
 import { t } from "../utils/i18n";
+import { OverlayContent, EntityList } from "./";
 import "./Bookmarks.scss";
-import EntityList from "./EntityList";
-import OverlayContent from "./OverlayContent";
 
 function Bookmarks() {
     const scrollableRef = useRef<HTMLDivElement>();
@@ -13,7 +12,8 @@ function Bookmarks() {
     return useObserver(() => {
         const bar = (
             <div className="efp-bar">
-                {t("Bookmarks")}&nbsp;<span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length})</span>
+                {t("Bookmarks")}&nbsp;
+                <span>({exhibitorStore.exhibitors.filter((e) => e.bookmarked).length + store.eventStore.bookmarked.length})</span>
             </div>
         );
 

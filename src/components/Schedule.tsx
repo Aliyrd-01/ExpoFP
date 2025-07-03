@@ -5,27 +5,18 @@ import { observer } from "mobx-react-lite";
 import sanitizeHTML from "../utils/sanitizeHtml";
 import { t } from "../utils/i18n";
 import Button from "./Button";
+import EventBadge from "./EventBadge";
 import "./Schedule.scss";
 import store from "../store";
-
-export interface ScheduleEvent {
-    id: string | number;
-    name: string;
-    description?: string;
-    startDate: string;
-    endDate?: string;
-    link?: string;
-    isEnded?: boolean;
-    boothId?: string | number;
-}
+import { EventItem } from "../store/EventStore";
 
 export interface ScheduleProps {
-    events: ScheduleEvent[];
+    events: EventItem[];
     descriptionMaxLength?: number;
     showMoreButton?: boolean;
     showBooths?: boolean;
     isAgenda?: boolean;
-    onEventClick?: (event: ScheduleEvent) => void;
+    onEventClick?: (event: EventItem) => void;
 }
 
 function isCurrent(from: Date | string, to: Date | string) {
@@ -38,14 +29,6 @@ function isPast(endDate: Date | string) {
     return new Date(endDate) < now;
 }
 
-function isLive(event: ScheduleEvent): boolean {
-    const now = Date.now();
-    const start = Date.parse(event.startDate);
-    const end = event.endDate ? Date.parse(event.endDate) : Number.POSITIVE_INFINITY;
-    if (isNaN(start) || isNaN(end)) return false;
-    return now >= start && now <= end;
-}
-
 const Schedule: React.FC<ScheduleProps> = observer(
     ({ events = [], descriptionMaxLength = 200, showMoreButton = true, showBooths = false, isAgenda = false, onEventClick }) => {
         const [eventsFullDescription, setEventsFullDescription] = useState<Record<string, { showFullDescription: boolean }[]>>(
@@ -56,7 +39,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
             const [datePart] = curr.startDate.split("T");
             acc[datePart] ? acc[datePart].push(curr) : (acc[datePart] = [curr]);
             return acc;
-        }, {} as Record<string, ScheduleEvent[]>);
+        }, {} as Record<string, EventItem[]>);
 
         useEffect(() => {
             const initialState: Record<string, { showFullDescription: boolean }[]> = {};
@@ -100,7 +83,7 @@ const Schedule: React.FC<ScheduleProps> = observer(
 
         const EventWrapper = ({ children, link, current, ended, event }) => {
             const handleClick = (e: React.MouseEvent) => {
-                if (event.boothId && onEventClick) {
+                if (onEventClick) {
                     e.preventDefault();
                     onEventClick(event);
                 }
@@ -155,16 +138,14 @@ const Schedule: React.FC<ScheduleProps> = observer(
                                                 </span>
                                                 <strong>
                                                     {event.name}
-                                                    {isLive(event) && (
-                                                        <span className="efp-schedule__event-live-badge">LIVE</span>
-                                                    )}
+                                                    <EventBadge event={event} />
                                                 </strong>
                                                 {booth && showBooths && (
                                                     <div className="efp-schedule__event-booth">
                                                         <div>{booth.name}</div>
                                                     </div>
                                                 )}
-                                                {event.description && (
+                                                {event.description && !isAgenda && (
                                                     <div className="efp-schedule__event-desc">
                                                         <div
                                                             dangerouslySetInnerHTML={{

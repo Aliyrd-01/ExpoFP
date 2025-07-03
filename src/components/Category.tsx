@@ -38,9 +38,5 @@ function Category() {
     }
 }
 
-export default () => useObserver(() => (
-    !uiState.menu
-    && !!uiState.selectedCategory
-    && uiState.details instanceof CategoryModel
-    && <Category />
-));
+export default () =>
+    useObserver(() => !uiState.menu && !!uiState.selectedCategory && uiState.details instanceof CategoryModel && <Category />);

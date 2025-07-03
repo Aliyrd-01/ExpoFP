@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import React, { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "../utils/useOnClickOutside";
-import "./MapControls.scss";
 import { uiState } from "../store";
+import "./MapControls.scss";
 
 export interface MapControlLayersItem {
     id: string;

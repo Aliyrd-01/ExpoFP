@@ -114,6 +114,11 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
         (category) => category?.name && sendEventToGa(GaEventActions.ViewCategory, category?.name)
     );
 
+    useReaction(
+        () => uiState.selectedEventItem,
+        (eventItem) => eventItem?.name && sendEventToGa(GaEventActions.ViewExhibitor, eventItem.name)
+    );
+
     return (
         <div
             id="efp-layout"
@@ -163,10 +168,12 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                     <Suspense fallback={null}>
                         <Modal type="share" open={uiState.modalActive.share} onClickClose={() => store.toggleModal("share")}>
                             <Share
-                                title={uiState.selectedExhibitor?.name}
+                                title={uiState.selectedExhibitor?.name || uiState.selectedEventItem?.name}
                                 url={
                                     offHistory
-                                        ? `${window.location.origin}?${encodeURI(uiState.selectedExhibitor.slug)}`
+                                        ? `${window.location.origin}?${encodeURI(
+                                              uiState.selectedExhibitor?.slug || uiState.selectedEventItem?.slug
+                                          )}`
                                         : window.location.href
                                 }
                             />

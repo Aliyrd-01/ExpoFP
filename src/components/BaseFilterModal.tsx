@@ -2,7 +2,7 @@ import React from "react";
 import { observer, useLocalStore } from "mobx-react-lite";
 import { FilterStore, FilterGroup } from "../store/types";
 import { t } from "../utils/i18n";
-import { Modal, MultiSelectGroups } from ".";
+import { Modal, MultiSelectGroups } from "./";
 
 interface BaseFilterModalProps {
     store: FilterStore;
