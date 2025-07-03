@@ -171,16 +171,33 @@ let prevFps = [];
 let prevHtml = "";
 function showFps() {
     if (!isDebug) return;
+
     const now = performance.now() * 0.001;
-    const deltaTime = now - then;
-    then = now;
-    const roundTo = 2;
-    const fps = Math.round(1 / deltaTime / roundTo) * roundTo;
+    let deltaTime = now - then;
+
+    // Skip if too much time passed (tab was inactive)
+    if (deltaTime > 1) {
+        then = now;
+        return;
+    }
+
+    // Clamp deltaTime to prevent extreme FPS values
+    const MIN_DELTA_TIME = 0.001; // 1000 FPS cap
+    deltaTime = Math.max(deltaTime, MIN_DELTA_TIME);
+
+    // Calculate FPS (capped at a reasonable value)
+    const MAX_REASONABLE_FPS = 200;
+    const fps = Math.min(Math.round(1 / deltaTime), MAX_REASONABLE_FPS);
+
+    // Store FPS in rolling window
     prevFps.push(fps);
     if (prevFps.length > 20) prevFps.shift();
-    const avgFps = prevFps.reduce((sume, el) => sume + el, 0) / prevFps.length;
+
+    // Compute average FPS
+    const avgFps = prevFps.reduce((sum, el) => sum + el, 0) / prevFps.length;
     const html = avgFps.toFixed(0);
 
+    // Update DOM only if changed
     if (prevHtml !== html) {
         const fpsElement = window["__efpElement"]?.children?.[0]?.shadowRoot?.getElementById?.("fps");
         if (fpsElement) {
@@ -188,6 +205,8 @@ function showFps() {
             prevHtml = html;
         }
     }
+
+    then = now;
 }
 
 function createGl(canvas: HTMLCanvasElement) {
