@@ -21,7 +21,7 @@ import { t } from "../../utils/i18n";
 import isIframe from "../../utils/is-iframe";
 import isMac from "../../utils/is-mac";
 import { useReaction } from "../../utils/mobx";
-import getBoothIdFromClientXy from "./booth-by-xy";
+import getBoothIdFromClientXy, { calculate } from "./booth-by-xy";
 import createDrawer, { Drawer, DrawerImpl } from "./drawing/Drawer1";
 import "./Map.scss";
 import { getMarkerFromClientXy } from "./marker-by-xy";
@@ -502,6 +502,7 @@ export default function Map() {
         }
 
         // if (!this.props.onBoothClick) return;
+        calculate();
         const b = getBoothIdFromClientXy(x, y, s.drawer);
         logger.log("click", b);
         store.clickBooth(b);
