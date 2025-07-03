@@ -61,6 +61,7 @@ export { default as WayInformation } from "./WayInformation";
 export { default as Ws } from "./Ws";
 export { default as YahRow } from "./YahRow";
 export { default as Agenda } from "./Agenda";
+export { default as LevelBadge } from "./LevelBadge";
 
 export type { AgendaFiltersModalProps } from "./AgendaFiltersModal";
 export type { AlertProps, AlertVariant, AlertPosition } from "./Alert";
