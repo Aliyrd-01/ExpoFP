@@ -13,10 +13,11 @@ import "./Search.scss";
 import * as YouAreHere from "../utils/yah";
 import { isLocalStorageAvailable } from "../utils/localStorage";
 import settings from "../tools/settings";
-import { KIOSK_KEY } from "../constants";
+import { DEBUG_KEY, KIOSK_KEY } from "../constants";
 import { getRebookingTokenFromQuery } from "../tools/rebookingUrl";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
+import { handleDebugMode } from "../tools/handleDebugMode";
 
 const DEBOUNCE_DELAY_MS = 1000;
 const isMobileDevice = isMobile || isWebview;
@@ -82,6 +83,8 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
         }
     } else if (getRebookingTokenFromQuery()) {
         return true;
+    } else if (text.startsWith(DEBUG_KEY)) {
+        handleDebugMode();
     }
 
     return false;

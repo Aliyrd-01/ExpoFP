@@ -173,6 +173,11 @@ function showFps() {
     if (!isDebug) return;
     const now = performance.now() * 0.001;
     const deltaTime = now - then;
+
+    if (deltaTime < 0.001) {
+        return;
+    }
+
     then = now;
     const roundTo = 2;
     const fps = Math.round(1 / deltaTime / roundTo) * roundTo;
@@ -184,7 +189,7 @@ function showFps() {
     if (prevHtml !== html) {
         const fpsElement = window["__efpElement"]?.children?.[0]?.shadowRoot?.getElementById?.("fps");
         if (fpsElement) {
-            fpsElement.innerHTML = html;
+            fpsElement.textContent = html;
             prevHtml = html;
         }
     }
