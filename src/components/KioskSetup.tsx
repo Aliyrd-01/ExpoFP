@@ -16,6 +16,7 @@ import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
 import cn from "classnames";
 import { svgArea } from "../data/svg";
+import { areLayersEnabled } from "../utils/areLayersEnabled";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -170,7 +171,7 @@ const KioskSetup = observer(() => {
                 ...store.uiState.kioskSetupData,
                 ...coords,
                 key: store.uiState.kioskSetupData?.key ?? newKioskKey,
-                z: store.layerStore.floors.find((f) => f.active)?.name,
+                z: areLayersEnabled() ? store.layerStore.floors.find((f) => f.active)?.name : null,
             };
         };
 
@@ -319,7 +320,7 @@ const KioskSetup = observer(() => {
                 key,
                 x: rect?.cx || 0,
                 y: rect?.cy || 0,
-                z: store.layerStore.floors.find((f) => f.active)?.name,
+                z: areLayersEnabled() ? store.layerStore.floors.find((f) => f.active)?.name : null,
                 heading: 0,
             };
             store.uiState.kioskSetupData = newKiosk;
