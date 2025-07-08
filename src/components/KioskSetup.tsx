@@ -78,7 +78,7 @@ const KioskSetup = observer(() => {
                           {
                               x: kioskSetupData.x,
                               y: kioskSetupData.y,
-                              layer: kioskSetupData.z?.toString(),
+                              layer: areLayersEnabled() ? kioskSetupData.z?.toString() : null,
                           },
                           `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`
                       );
@@ -242,7 +242,9 @@ const KioskSetup = observer(() => {
 
             setKioskUrl(new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href).toString());
 
-            store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+            if (areLayersEnabled()) {
+                store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+            }
 
             setStep("copy");
         } catch (err) {
