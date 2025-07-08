@@ -16,6 +16,7 @@ import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
 import cn from "classnames";
 import { svgArea } from "../data/svg";
+import { areLayersEnabled } from "../utils/areLayersEnabled";
 
 const isMobileDevice = isMobile || isWebview;
 const KIOSK_SLUG_PREFIX = "interactive-kiosk";
@@ -77,7 +78,7 @@ const KioskSetup = observer(() => {
                           {
                               x: kioskSetupData.x,
                               y: kioskSetupData.y,
-                              layer: kioskSetupData.z?.toString(),
+                              layer: areLayersEnabled() ? kioskSetupData.z?.toString() : null,
                           },
                           `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`
                       );
@@ -170,7 +171,7 @@ const KioskSetup = observer(() => {
                 ...store.uiState.kioskSetupData,
                 ...coords,
                 key: store.uiState.kioskSetupData?.key ?? newKioskKey,
-                z: store.layerStore.floors.find((f) => f.active)?.name,
+                z: areLayersEnabled() ? store.layerStore.floors.find((f) => f.active)?.name : null,
             };
         };
 
@@ -241,7 +242,9 @@ const KioskSetup = observer(() => {
 
             setKioskUrl(new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href).toString());
 
-            store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+            if (areLayersEnabled()) {
+                store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
+            }
 
             setStep("copy");
         } catch (err) {
@@ -319,7 +322,7 @@ const KioskSetup = observer(() => {
                 key,
                 x: rect?.cx || 0,
                 y: rect?.cy || 0,
-                z: store.layerStore.floors.find((f) => f.active)?.name,
+                z: areLayersEnabled() ? store.layerStore.floors.find((f) => f.active)?.name : null,
                 heading: 0,
             };
             store.uiState.kioskSetupData = newKiosk;
