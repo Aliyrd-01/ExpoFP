@@ -195,7 +195,7 @@ export default observer(function Layout({ offHistory, allowConsent }: LayoutProp
                 ) : null}
                 <LayersLoading active={!layersStore.layersLoaded} />
                 <div id="fps" />
-                {store.initialized && <KioskSetup />}
+                <KioskSetup />
             </div>
         </div>
     );
