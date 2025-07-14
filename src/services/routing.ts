@@ -168,7 +168,7 @@ function dispatchFromUrl() {
             uiState.kiosk = true;
         } else if (command === "0") {
             uiState.kiosk = false;
-            localStorage.removeItem(KIOSK_SLUG_PREFIX);
+            clearKioskId();
         }
     } else if (slug.startsWith("route")) {
         const routeFromKioskMatch = [...searchParams.keys()]
@@ -210,7 +210,7 @@ function dispatchFromUrl() {
 
         if (searchParams.has(KIOSK_SETUP_KEY)) {
             disableHistoryManipulation = true;
-            localStorage.removeItem(KIOSK_SLUG_PREFIX);
+            clearKioskId();
         } else if (searchParams.has(KIOSK_ID_KEY)) {
             saveKioskId(searchParams.get(KIOSK_ID_KEY));
         }
@@ -599,4 +599,8 @@ function castMapSettings(obj: Record<string, string>): MapSettings {
 
 function saveKioskId(id: string) {
     localStorage.setItem(KIOSK_SLUG_PREFIX, id);
+}
+
+function clearKioskId() {
+    localStorage.removeItem(KIOSK_SLUG_PREFIX);
 }
