@@ -892,14 +892,21 @@ export default class UIState {
     }
 
     @computed get routeQRCodeUrl() {
-        const url = new URL(window.location.pathname, `https://${settings.EXPO}.expofp.com/`);
+        const baseUrl = "https://${settings.EXPO}.expofp.com";
+        const url = new URL(window.location.pathname, baseUrl);
 
         const route = this.selectedRoute;
         if (route) {
             url.searchParams.set("route", `${route.to?.slug || ""}:${route.from?.slug || ""}`);
         }
 
-        return url.toString();
+        let finalUrl = url.toString();
+
+        if (window.location.pathname.includes("/branch/")) {
+            finalUrl = finalUrl.replace(/\/\?/, "?");
+        }
+
+        return finalUrl;
     }
 
     ///////////////////////////////////////////////////////////////////////////
