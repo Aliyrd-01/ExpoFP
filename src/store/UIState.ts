@@ -891,5 +891,16 @@ export default class UIState {
         return url.toString();
     }
 
+    @computed get routeQRCodeUrl() {
+        const url = new URL(window.location.pathname, `https://${settings.EXPO}.expofp.com/`);
+
+        const route = this.selectedRoute;
+        if (route) {
+            url.searchParams.set("route", `${route.to?.slug || ""}:${route.from?.slug || ""}`);
+        }
+
+        return url.toString();
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 }
