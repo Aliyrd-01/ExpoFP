@@ -5,6 +5,7 @@ import {
     KIOSK_ID_KEY,
     KIOSK_KEY,
     KIOSK_SETUP_KEY,
+    KIOSK_SLUG_PREFIX,
     MAP_SETTINGS_KEY,
     PREVIEW_MODE_QUERY,
     PREVIEW_MODE_STORAGE_KEY,
@@ -167,11 +168,25 @@ function dispatchFromUrl() {
             uiState.kiosk = true;
         } else if (command === "0") {
             uiState.kiosk = false;
+            localStorage.removeItem(KIOSK_SLUG_PREFIX);
         }
     } else if (slug.startsWith("route")) {
-        const parts = slug.split(SEPARATOR);
-        store.routeStore.onlyAccessible = parts[3] === "true";
-        store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
+        const routeFromKioskMatch = [...searchParams.keys()]
+            .map((key) => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`)))
+            .find((match) => match);
+
+        if (routeFromKioskMatch) {
+            store.routeStore.setRouteFromKioskMatch(
+                routeFromKioskMatch[0],
+                routeFromKioskMatch[1],
+                routeFromKioskMatch?.input
+            );
+            saveKioskId(routeFromKioskMatch[1]);
+        } else {
+            const parts = slug.split(SEPARATOR);
+            store.routeStore.onlyAccessible = parts[3] === "true";
+            store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
+        }
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "language") {
@@ -191,8 +206,14 @@ function dispatchFromUrl() {
     } else if (booth) {
         store.selectBooth(booth);
     } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
-        disableHistoryManipulation = true;
         store.uiState.kiosk = !isMobile && !isWebview;
+
+        if (searchParams.has(KIOSK_SETUP_KEY)) {
+            disableHistoryManipulation = true;
+            localStorage.removeItem(KIOSK_SLUG_PREFIX);
+        } else if (searchParams.has(KIOSK_ID_KEY)) {
+            saveKioskId(searchParams.get(KIOSK_ID_KEY));
+        }
 
         // Removing YAH key and hide YAH icon
         if (getYah()) {
@@ -574,4 +595,8 @@ function castMapSettings(obj: Record<string, string>): MapSettings {
         }
     }
     return result;
+}
+
+function saveKioskId(id: string) {
+    localStorage.setItem(KIOSK_SLUG_PREFIX, id);
 }

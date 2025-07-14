@@ -4,22 +4,19 @@ import Button from "./Button";
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import store from "../store";
 import { t } from "../utils/i18n";
-import { reaction, runInAction, toJS } from "mobx";
+import { runInAction, toJS } from "mobx";
 import { strEqual } from "../utils/strEqual";
-import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, SEPARATOR } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, KIOSK_SLUG_PREFIX, SEPARATOR } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
 import "./KioskSetup.scss";
 import { extractRoute, Kiosk } from "../store/RouteStore";
-import isMobile from "../utils/is-mobile";
-import isWebview from "../utils/is-webview";
 import Rect from "../core/Rect";
 import debounce from "../tools/debounce";
 import cn from "classnames";
 import { svgArea } from "../data/svg";
 import { areLayersEnabled } from "../utils/areLayersEnabled";
+import { useReaction } from "../utils/mobx";
 
-const isMobileDevice = isMobile || isWebview;
-const KIOSK_SLUG_PREFIX = "interactive-kiosk";
 const KIOSK_SETUP_TOKEN = "expofp-kiosk-setup-token";
 
 const KioskSetup = observer(() => {
@@ -40,55 +37,57 @@ const KioskSetup = observer(() => {
         return url.toString();
     }, [store.fp.eventId]);
 
-    const routeFromKioskMatch = useMemo(() => {
-        const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
-        return [...searchParams.keys()].map((key) => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`))).find((match) => match);
-    }, []);
+    useReaction(
+        () => store.uiState.kioskSetup,
+        (kioskSetup) => {
+            store.uiState.hideOverlay = kioskSetup;
+            store.uiState.hideHeaderLogo = kioskSetup;
+            store.uiState.hideLogoInBooth = kioskSetup;
+            store.uiState.monochrome = kioskSetup;
+        }
+    );
+
+    useReaction(
+        () => [
+            store.uiState.kioskSetupData,
+            store.routeStore.currentPosition,
+            store.routeStore.routeFromKioskMatch,
+        ] as const,
+        ([kioskSetupData, currentPosition, routeFromKioskMatch]) => {
+            if (!kioskSetupData) {
+                return;
+            }
+
+            const hasCurrentPosition =
+                currentPosition && (store.routeStore.defaultFrom as RouteCutIn)?.entity.type === "route-cut-in";
+
+            store.routeStore.defaultFrom = hasCurrentPosition
+                ? null
+                : new RouteCutIn(
+                    Number.MAX_SAFE_INTEGER,
+                    t("Interactive Kiosk"),
+                    {
+                        x: kioskSetupData.x,
+                        y: kioskSetupData.y,
+                        layer: areLayersEnabled() ? kioskSetupData.z?.toString() : null,
+                    },
+                    `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`
+                );
+
+            if (hasCurrentPosition) {
+                store.selectNone();
+            } else {
+                const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
+                if (routeParts) {
+                    store.routeStore.selectRoute(
+                        extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)),
+                    );
+                }
+            }
+        }
+    );
 
     useEffect(() => {
-        const kioskSetupDisposer = reaction(
-            () => store.uiState.kioskSetup,
-            (kioskSetup) => {
-                if (kioskSetup) {
-                    store.uiState.kiosk = !isMobileDevice;
-                }
-
-                store.uiState.hideOverlay = kioskSetup;
-                store.uiState.hideHeaderLogo = kioskSetup;
-                store.uiState.hideLogoInBooth = kioskSetup;
-                store.uiState.monochrome = kioskSetup;
-            }
-        );
-
-        const kioskSetupDataDisposer = reaction(
-            () => [store.uiState.kioskSetupData, store.routeStore.currentPosition] as const,
-            ([kioskSetupData, currentPosition]) => {
-                if (!kioskSetupData) {
-                    return;
-                }
-
-                const hasCurrentPosition =
-                    currentPosition && (store.routeStore.defaultFrom as RouteCutIn)?.entity.type === "route-cut-in";
-
-                store.routeStore.defaultFrom = hasCurrentPosition
-                    ? null
-                    : new RouteCutIn(
-                          Number.MAX_SAFE_INTEGER,
-                          t("Interactive Kiosk"),
-                          {
-                              x: kioskSetupData.x,
-                              y: kioskSetupData.y,
-                              layer: areLayersEnabled() ? kioskSetupData.z?.toString() : null,
-                          },
-                          `${KIOSK_SLUG_PREFIX}-${kioskSetupData.key}`
-                      );
-
-                if (hasCurrentPosition) {
-                    store.selectNone();
-                }
-            }
-        );
-
         async function requestKioskData() {
             try {
                 const searchParams = new URLSearchParams(decodeURIComponent(window.location.search));
@@ -101,10 +100,10 @@ const KioskSetup = observer(() => {
                     kiosks = await response.json();
                 }
 
-                let kioskId = searchParams.get(KIOSK_ID_KEY) || "";
+                let kioskId = localStorage.getItem(KIOSK_SLUG_PREFIX) || "";
 
-                if (!kioskId && routeFromKioskMatch?.[1]) {
-                    kioskId = routeFromKioskMatch[1];
+                if (!kioskId && store.routeStore.routeFromKioskMatch?.kioskId) {
+                    kioskId = store.routeStore.routeFromKioskMatch.kioskId;
                 }
 
                 let kiosk;
@@ -136,14 +135,12 @@ const KioskSetup = observer(() => {
             }
         }
         requestKioskData();
-
-        return () => {
-            kioskSetupDisposer();
-            kioskSetupDataDisposer();
-            setShowError(false);
-            setPending(false);
-        };
-    }, [apiUrl, store.fp, store.routeStore, store.uiState, step, routeFromKioskMatch]);
+    }, [
+        apiUrl,
+        step,
+        store.uiState.mapSettings,
+        store.routeStore.routeFromKioskMatch,
+    ]);
 
     const originalOnGetCoordsClick = useRef(store.fp.onGetCoordsClick?.bind(store.fp)).current;
 
@@ -199,19 +196,6 @@ const KioskSetup = observer(() => {
         }
     }, [store.uiState.kioskSetup, step]);
 
-    useEffect(() => {
-        const routeParts = routeFromKioskMatch?.input?.split(SEPARATOR);
-        if (!routeParts) {
-            return;
-        }
-
-        const timer = setTimeout(() => {
-            store.routeStore.selectRoute(extractRoute(routeParts[2], routeParts[1], routeParts.slice(4)));
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [routeFromKioskMatch]);
-
     async function save() {
         try {
             if (step === "auth") {
@@ -237,7 +221,6 @@ const KioskSetup = observer(() => {
 
             runInAction(() => {
                 store.uiState.kioskSetupData = kiosk;
-                store.uiState.kiosk = !isMobileDevice;
             });
 
             setKioskUrl(new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href).toString());
