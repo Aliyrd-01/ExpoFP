@@ -114,7 +114,7 @@ const KioskSetup = observer(() => {
                         ...k,
                         // Warning!!!
                         // Remove store.uiState.mapSettings.bearing when map can rotate.
-                        heading: store.uiState.mapSettings.bearing ?? k?.heading,
+                        heading: store.uiState.mapSettings.bearing || k?.heading,
                     };
                 }
 
