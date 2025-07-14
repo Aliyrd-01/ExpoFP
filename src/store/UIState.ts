@@ -871,9 +871,13 @@ export default class UIState {
         this.interruptAnimation = !this.interruptAnimation;
     }
 
+    @computed get baseQRCodeUrl() {
+        return `https://${settings.EXPO}.expofp.com`;
+    }
+
     @computed get viewMapOnPhoneQRCodeUrl() {
         const { pathname, search } = window.location;
-        const url = new URL(pathname + search, `https://${settings.EXPO}.expofp.com/`);
+        const url = new URL(pathname + search, this.baseQRCodeUrl);
 
         const yah = getRawYah();
         if (yah && !this.kioskSetupData?.key) {
@@ -888,12 +892,17 @@ export default class UIState {
             url.searchParams.set(key, value);
         }
 
-        return url.toString();
+        let finalUrl = url.toString();
+
+        if (window.location.pathname.includes("/branch/")) {
+            finalUrl = finalUrl.replace(/\/\?/, "?");
+        }
+
+        return finalUrl;
     }
 
     @computed get routeQRCodeUrl() {
-        const baseUrl = "https://${settings.EXPO}.expofp.com";
-        const url = new URL(window.location.pathname, baseUrl);
+        const url = new URL(window.location.pathname, this.baseQRCodeUrl);
 
         const route = this.selectedRoute;
         if (route) {
