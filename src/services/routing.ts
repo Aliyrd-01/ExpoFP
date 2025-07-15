@@ -25,6 +25,7 @@ import { MapSettings } from "../store/types";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import { getYah, removeYah, yahKey } from "../utils/yah";
+import { clearKioskId, saveKioskId } from "../utils/handleKioskId";
 
 let disableHistoryManipulation = false;
 let disableStateToUrl = false;
@@ -595,12 +596,4 @@ function castMapSettings(obj: Record<string, string>): MapSettings {
         }
     }
     return result;
-}
-
-function saveKioskId(id: string) {
-    localStorage.setItem(KIOSK_SLUG_PREFIX, id);
-}
-
-function clearKioskId() {
-    localStorage.removeItem(KIOSK_SLUG_PREFIX);
 }
