@@ -904,14 +904,10 @@ export default class UIState {
     }
 
     @computed get routeQRCodeUrl() {
-        const url = new URL(window.location.pathname, this.baseQRCodeUrl);
+        const toSlug = this.selectedRoute?.to?.slug || "";
+        const fromSlug = this.selectedRoute?.from?.slug || "";
 
-        const route = this.selectedRoute;
-        if (route) {
-            url.searchParams.set("route", `${route.to?.slug || ""}:${route.from?.slug || ""}`);
-        }
-
-        let finalUrl = url.toString();
+        let finalUrl = `https://${settings.EXPO}.expofp.com/?route%3A${encodeURIComponent(toSlug)}%3A${encodeURIComponent(fromSlug)}`;
 
         if (window.location.pathname.includes("/branch/")) {
             finalUrl = finalUrl.replace(/\/\?/, "?");
