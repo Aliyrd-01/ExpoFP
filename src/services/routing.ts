@@ -183,6 +183,7 @@ function dispatchFromUrl() {
                 routeFromKioskMatch?.input
             );
             saveKioskId(routeFromKioskMatch[1]);
+            clearYAH();
         } else {
             const parts = slug.split(SEPARATOR);
             store.routeStore.onlyAccessible = parts[3] === "true";
@@ -216,11 +217,7 @@ function dispatchFromUrl() {
             saveKioskId(searchParams.get(KIOSK_ID_KEY));
         }
 
-        // Removing YAH key and hide YAH icon
-        if (getYah()) {
-            removeYah();
-            window.location.reload();
-        }
+        clearYAH();
     } else {
         // Проверяем, является ли slug событием
         const eventItem = store.eventStore.eventItems.find(
@@ -596,4 +593,12 @@ function castMapSettings(obj: Record<string, string>): MapSettings {
         }
     }
     return result;
+}
+
+function clearYAH() {
+    // Removing YAH key and hide YAH icon
+    if (getYah()) {
+        removeYah();
+        window.location.reload();
+    }
 }
