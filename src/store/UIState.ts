@@ -880,7 +880,9 @@ export default class UIState {
         const url = new URL(pathname + search, this.baseQRCodeUrl);
 
         const yah = getRawYah();
-        if (yah && !this.kioskSetupData?.key) {
+        if (this.kioskSetupData?.key) {
+            url.searchParams.set(KIOSK_ID_KEY, this.kioskSetupData.key);
+        } else if (yah) {
             url.searchParams.set("yah", yah);
         }
 
