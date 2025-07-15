@@ -877,7 +877,9 @@ export default class UIState {
 
     @computed get viewMapOnPhoneQRCodeUrl() {
         const { pathname, search } = window.location;
-        const url = new URL(pathname + search, this.baseQRCodeUrl);
+        const url = new URL(pathname, this.baseQRCodeUrl);
+
+        url.search = search;
 
         const yah = getRawYah();
         if (this.kioskSetupData?.key) {
@@ -904,10 +906,13 @@ export default class UIState {
     }
 
     @computed get routeQRCodeUrl() {
+        const url = new URL(window.location.pathname, this.baseQRCodeUrl);
+
         const toSlug = this.selectedRoute?.to?.slug || "";
         const fromSlug = this.selectedRoute?.from?.slug || "";
+        url.search = `?route%3A${encodeURIComponent(toSlug)}%3A${encodeURIComponent(fromSlug)}`;
 
-        let finalUrl = `https://${settings.EXPO}.expofp.com/?route%3A${encodeURIComponent(toSlug)}%3A${encodeURIComponent(fromSlug)}`;
+        let finalUrl = url.toString();
 
         if (window.location.pathname.includes("/branch/")) {
             finalUrl = finalUrl.replace(/\/\?/, "?");
