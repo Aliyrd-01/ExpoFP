@@ -123,6 +123,10 @@ const KioskSetup = observer(() => {
 
                     if (kiosk) {
                         store.uiState.kioskSetupData = kiosk;
+
+                        if (areLayersEnabled()) {
+                            store.layerStore.updateVisibility(`${kiosk.z}`, true);
+                        }
                     }
 
                     if (isSetup && kiosks?.length) {
