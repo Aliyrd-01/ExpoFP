@@ -316,6 +316,11 @@ export default class RouteStore {
 
         console.info("Route check done....");
     }
+
+    @observable routeFromKioskMatch: { slug: string, kioskId: string, input: string } | null = null;
+    @action setRouteFromKioskMatch(slug: string, kioskId: string, input: string) {
+        this.routeFromKioskMatch = { slug, kioskId, input };
+    }
 }
 
 export function findBooth(str: string) {

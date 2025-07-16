@@ -181,9 +181,7 @@ function Wayfinding() {
                     showAccessible={store.routeStore.showAccessible}
                     onAccessibleCheck={(checked) => (store.routeStore.onlyAccessible = checked)}
                     onClickInfo={() => store.showOverlay()}
-                    routeUrl={`https://${settings.EXPO}.expofp.com/?route%3A${encodeURIComponent(
-                        uiState.selectedRoute?.to?.slug || ""
-                    )}%3A${encodeURIComponent(uiState.selectedRoute?.from?.slug || "")}`}
+                    routeUrl={uiState.routeQRCodeUrl}
                     isKiosk={uiState.kiosk}
                 />
             </OverlayContent>

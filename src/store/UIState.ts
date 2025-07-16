@@ -871,12 +871,20 @@ export default class UIState {
         this.interruptAnimation = !this.interruptAnimation;
     }
 
+    @computed get baseQRCodeUrl() {
+        return `https://${settings.EXPO}.expofp.com`;
+    }
+
     @computed get viewMapOnPhoneQRCodeUrl() {
         const { pathname, search } = window.location;
-        const url = new URL(pathname + search, `https://${settings.EXPO}.expofp.com/`);
+        const url = new URL(pathname, this.baseQRCodeUrl);
+
+        url.search = search;
 
         const yah = getRawYah();
-        if (yah && !this.kioskSetupData?.key) {
+        if (this.kioskSetupData?.key) {
+            url.searchParams.set(KIOSK_ID_KEY, this.kioskSetupData.key);
+        } else if (yah) {
             url.searchParams.set("yah", yah);
         }
 
@@ -888,7 +896,29 @@ export default class UIState {
             url.searchParams.set(key, value);
         }
 
-        return url.toString();
+        let finalUrl = url.toString();
+
+        if (window.location.pathname.includes("/branch/")) {
+            finalUrl = finalUrl.replace(/\/\?/, "?");
+        }
+
+        return finalUrl;
+    }
+
+    @computed get routeQRCodeUrl() {
+        const url = new URL(window.location.pathname, this.baseQRCodeUrl);
+
+        const toSlug = this.selectedRoute?.to?.slug || "";
+        const fromSlug = this.selectedRoute?.from?.slug || "";
+        url.search = `?route%3A${encodeURIComponent(toSlug)}%3A${encodeURIComponent(fromSlug)}`;
+
+        let finalUrl = url.toString();
+
+        if (window.location.pathname.includes("/branch/")) {
+            finalUrl = finalUrl.replace(/\/\?/, "?");
+        }
+
+        return finalUrl;
     }
 
     ///////////////////////////////////////////////////////////////////////////

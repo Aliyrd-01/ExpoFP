@@ -5,6 +5,7 @@ import {
     KIOSK_ID_KEY,
     KIOSK_KEY,
     KIOSK_SETUP_KEY,
+    KIOSK_SLUG_PREFIX,
     MAP_SETTINGS_KEY,
     PREVIEW_MODE_QUERY,
     PREVIEW_MODE_STORAGE_KEY,
@@ -24,6 +25,7 @@ import { MapSettings } from "../store/types";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import { getYah, removeYah, yahKey } from "../utils/yah";
+import { clearKioskId, saveKioskId } from "../utils/handleKioskId";
 
 let disableHistoryManipulation = false;
 let disableStateToUrl = false;
@@ -167,11 +169,26 @@ function dispatchFromUrl() {
             uiState.kiosk = true;
         } else if (command === "0") {
             uiState.kiosk = false;
+            clearKioskId();
         }
     } else if (slug.startsWith("route")) {
-        const parts = slug.split(SEPARATOR);
-        store.routeStore.onlyAccessible = parts[3] === "true";
-        store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
+        const routeFromKioskMatch = [...searchParams.keys()]
+            .map((key) => key.match(new RegExp(`${KIOSK_SLUG_PREFIX}-(\\d+)`)))
+            .find((match) => match);
+
+        if (routeFromKioskMatch) {
+            store.routeStore.setRouteFromKioskMatch(
+                routeFromKioskMatch[0],
+                routeFromKioskMatch[1],
+                routeFromKioskMatch?.input
+            );
+            saveKioskId(routeFromKioskMatch[1]);
+            clearYAH();
+        } else {
+            const parts = slug.split(SEPARATOR);
+            store.routeStore.onlyAccessible = parts[3] === "true";
+            store.routeStore.selectRoute(extractRoute(parts[2], parts[1], parts.slice(4)));
+        }
     } else if (slug === "bookmarks") {
         store.selectBookmarks();
     } else if (slug === "language") {
@@ -191,14 +208,16 @@ function dispatchFromUrl() {
     } else if (booth) {
         store.selectBooth(booth);
     } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
-        disableHistoryManipulation = true;
         store.uiState.kiosk = !isMobile && !isWebview;
 
-        // Removing YAH key and hide YAH icon
-        if (getYah()) {
-            removeYah();
-            window.location.reload();
+        if (searchParams.has(KIOSK_SETUP_KEY)) {
+            disableHistoryManipulation = true;
+            clearKioskId();
+        } else if (searchParams.has(KIOSK_ID_KEY)) {
+            saveKioskId(searchParams.get(KIOSK_ID_KEY));
         }
+
+        clearYAH();
     } else {
         // Проверяем, является ли slug событием
         const eventItem = store.eventStore.eventItems.find(
@@ -574,4 +593,12 @@ function castMapSettings(obj: Record<string, string>): MapSettings {
         }
     }
     return result;
+}
+
+function clearYAH() {
+    // Removing YAH key and hide YAH icon
+    if (getYah()) {
+        removeYah();
+        window.location.reload();
+    }
 }

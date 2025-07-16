@@ -18,6 +18,7 @@ import { getRebookingTokenFromQuery } from "../tools/rebookingUrl";
 import isMobile from "../utils/is-mobile";
 import isWebview from "../utils/is-webview";
 import { handleDebugMode } from "../tools/handleDebugMode";
+import { clearKioskId } from "../utils/handleKioskId";
 
 const DEBOUNCE_DELAY_MS = 1000;
 const isMobileDevice = isMobile || isWebview;
@@ -26,6 +27,7 @@ export function handleCustomCommand(text: string, forseRefresh: boolean): boolea
     text = text.trim();
 
     if (text.startsWith(`${YouAreHere.yahKey}`)) {
+        clearKioskId();
         const commandValue = text.substr(YouAreHere.yahKey.length).trim();
         var url = window.location.origin + window.location.pathname;
         if (commandValue[1] === undefined) {

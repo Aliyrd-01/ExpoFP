@@ -13,3 +13,4 @@ export const KIOSK_SETUP_KEY = "set-kiosk";
 export const KIOSK_ID_KEY = "k";
 export const MAP_SETTINGS_KEY = "expofp-map-settings";
 export const DEBUG_KEY = "debug";
+export const KIOSK_SLUG_PREFIX = "interactive-kiosk";
