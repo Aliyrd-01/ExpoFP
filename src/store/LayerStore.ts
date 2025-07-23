@@ -163,7 +163,7 @@ export default class LayerStore {
 
     @computed get getVisibleLayer(): VisibleLayer | null {
         const index = this.floors.findIndex(floor => floor.active);
-        if (!index) {
+        if (index === -1) {
             return null;
         }
         const { name, shortName } = this.floors[index];
