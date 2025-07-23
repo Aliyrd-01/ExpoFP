@@ -15,10 +15,18 @@ export const getLocale = () => {
 }
 
 export const initI18n = async (): Promise<TFunction> => {
-    const locale = getLocale();
+    let locale = getLocale();
+    const fallbackLocale = "en";
 
     let resources = {};
-    if (locale !== "en") resources[locale] = { translation: await loadLocale(locale) };
+    if (locale !== "en") {
+        try {
+            resources[locale] = { translation: await loadLocale(locale) };
+        } catch (err) {
+            console.error(`Unable to load the "${locale}" localization. Falling back to "${fallbackLocale}".`, err);
+            locale = fallbackLocale;
+        }
+    }
 
     return await i18next.init({
         resources,
