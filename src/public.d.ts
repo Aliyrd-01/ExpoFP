@@ -83,6 +83,18 @@ class FloorPlan {
     convertToGeo(x: number, y: number): [number, number] | never;
 
     unstable_destroy(): void;
+
+    highlightExhibitors(externalIds: string[]): void;
+
+    highlightBooths(externalIds: string[]): void;
+
+    onCurrentPositionChanged(point: CurrentPosition): void;
+
+    search(term: string): Promise<{ item: unknown, score: number }[]>;
+
+    getVisibleLayer(): VisibleLayer | null;
+
+    onLayerVisibilityChanged(layer: VisibleLayer): void;
 }
 
 interface FloorPlanOptions {
@@ -109,6 +121,7 @@ interface FloorPlanOptions {
     onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
     onInit?: (fp: FloorPlan) => void;
     onCurrentPositionChanged?: (point: CurrentPosition) => void;
+    onLayerVisibilityChanged?: (layer: VisibleLayer) => void;
 }
 
 interface Layer {

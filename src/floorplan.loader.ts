@@ -181,6 +181,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    onLayerVisibilityChanged(layer: VisibleLayer) {
+        nr();
+    }
+
     // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {
@@ -201,6 +205,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.onDirection = options.onDirection;
         this.onInit = options.onInit;
         this.onCurrentPositionChanged = options.onCurrentPositionChanged;
+        this.onLayerVisibilityChanged = options.onLayerVisibilityChanged;
 
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;

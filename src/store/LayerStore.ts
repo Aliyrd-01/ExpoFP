@@ -127,6 +127,14 @@ export default class LayerStore {
                         if (visible) store.routeStore.currentRouteLayer = layer;
                     });
                 }
+
+                if (typeof store.fp.onLayerVisibilityChanged === "function") {
+                    store.fp.onLayerVisibilityChanged({
+                        name: layer.name,
+                        shortName: layer.shortName,
+                        index: this.floors.findIndex(floor => floor.name === layer.name),
+                    });
+                }
             }
         });
     }
