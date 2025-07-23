@@ -160,6 +160,15 @@ export default class LayerStore {
 
         return l;
     }
+
+    @computed get getVisibleLayer(): VisibleLayer | null {
+        const index = this.floors.findIndex(floor => floor.active);
+        if (!index) {
+            return null;
+        }
+        const { name, shortName } = this.floors[index];
+        return { name, shortName, index };
+    }
 }
 
 let _context: DrawerContext;

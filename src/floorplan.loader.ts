@@ -177,6 +177,10 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    getVisibleLayer(): VisibleLayer | null {
+        nr();
+    }
+
     // protected _addCustomCss = async () => { };
 
     constructor(options?: FloorPlanOptions) {

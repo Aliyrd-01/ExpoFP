@@ -276,3 +276,5 @@ type FloorPlanEntity =
     | FloorPlanSchedule
     | FloorPlanLanguage
     | FloorPlanHeatmapYah;
+
+type VisibleLayer = { name: string, shortName: string, index: number } | null;

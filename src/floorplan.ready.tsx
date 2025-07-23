@@ -316,6 +316,10 @@ export default class FloorPlanReady extends FloorPlanLoader {
             return store.uiState.fuzzySearchItems.map(x => ({ item: mapEntity(x.item), score: x.score }));
         });
     }
+
+    getVisibleLayer(): VisibleLayer | null {
+        return !!window["__fpLayers"] ? store.layerStore.getVisibleLayer : null;
+    }
 }
 
 function getBooth(x: RouteWaypoint) {
