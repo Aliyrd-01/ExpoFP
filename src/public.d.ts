@@ -280,5 +280,5 @@ type FloorPlanEntity =
 interface VisibleLayer {
     name: string;
     shortName: string;
-    index: numbe;
+    index: number;
 }
