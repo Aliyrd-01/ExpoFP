@@ -747,7 +747,7 @@ export default class UIState {
         return {
             controls: !this.mapControlsHidden,
             levels: !this.floorsControlHidden,
-            header: !this.hideHeaderLogo,
+            header: this.wsShown,
             overlay: !this.hideOverlay,
         };
     }
