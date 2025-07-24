@@ -17,6 +17,30 @@ const CHUNK_SIZE = isMobile || isWebview ? 8 : 512;
 const magicNum = 8;
 
 export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK_SIZE): Promise<void> {
+    await Promise.all(
+        store.layerStore.layers.map(async (layer, i) => {
+            const icons = getIcons(layer);
+            const loadedIcons = await loadIcons(icons);
+
+            const priority = calculateHighestPriority(
+                layer.childLayers || [],
+                (child) => child.basePriority,
+                layer.basePriority
+            ) + magicNum;
+
+            const painter = context.requirePainter(
+                genImageLayerId(layer.name, LAYER_ICONS_MARKER, i),
+                ImagePainter,
+                priority,
+                layer.visible,
+            );
+            painter.dim = Number(store.uiState.dimmed);
+            loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
+        })
+    );
+
+    context.requireUpdate(null);
+
     if (store.uiState.hideLogoInBooth) return;
 
     const boothsLogosUrlsById = new Map(
@@ -91,30 +115,6 @@ export async function loadBoothsImages(context: DrawerContext, chunkSize = CHUNK
 
         context.requireUpdate(null);
     }
-
-    await Promise.all(
-        store.layerStore.layers.map(async (layer, i) => {
-            const icons = getIcons(layer);
-            const loadedIcons = await loadIcons(icons);
-
-            const priority = calculateHighestPriority(
-                layer.childLayers || [],
-                (child) => child.basePriority,
-                layer.basePriority
-            ) + magicNum;
-
-            const painter = context.requirePainter(
-                genImageLayerId(layer.name, LAYER_ICONS_MARKER, i),
-                ImagePainter,
-                priority,
-                layer.visible,
-            );
-            painter.dim = Number(store.uiState.dimmed);
-            loadedIcons.filter(Boolean).forEach((img) => painter.addObject(createObject(img)));
-        })
-    );
-
-    context.requireUpdate(null);
 }
 
 function genImageLayerId(baseLayerName: string, suffix: string, i: number): string {
