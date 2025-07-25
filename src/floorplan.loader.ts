@@ -181,7 +181,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    onLayerVisibilityChanged(layer: VisibleLayer) {
+    onLayerVisibilityChanged(layer: { visible: boolean } & VisibleLayer) {
         nr();
     }
 

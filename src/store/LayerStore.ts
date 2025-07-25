@@ -133,6 +133,7 @@ export default class LayerStore {
                         name: layer.name,
                         shortName: layer.shortName,
                         index: this.floors.findIndex(floor => floor.name === layer.name),
+                        visible,
                     });
                 }
             }
