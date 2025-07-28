@@ -58,6 +58,8 @@ export default function Map() {
         // }
     }));
 
+    const isWheelRef = useRef<boolean>(false);
+
     // init
     useEffect(() => {
         init();
@@ -387,8 +389,8 @@ export default function Map() {
             .on("zoom", (currentEvent) => {
                 if (window["__resett"]) window["__resett"]();
                 const t = currentEvent.transform;
-                const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                if (isWheel || s.animatePlease) setZoomTransformAnimated(t, uiState.mapSettings.zoomtime ?? 500, easeExpOut);
+                isWheelRef.current = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
+                if (isWheelRef.current || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
                 //s.drawer.setZoomTransform(t);
                 else if (t.animate) setZoomTransformAnimated(t, uiState.mapSettings.zoomtime ?? 500, easeExpOut);
                 else setZoomTransformAnimated(t, 0, null);
@@ -398,6 +400,7 @@ export default function Map() {
             })
             .on("end", () => {
                 s.moving = false;
+                isWheelRef.current = false;
             });
 
         configInertia(s.zoom);
@@ -588,7 +591,7 @@ export default function Map() {
     }
 
     function stopAnimation() {
-        if (!zoomAf) {
+        if (!zoomAf || isWheelRef.current) {
             return;
         }
         cancelAnimationFrame(zoomAf);
