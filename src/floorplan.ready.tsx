@@ -316,6 +316,56 @@ export default class FloorPlanReady extends FloorPlanLoader {
             return store.uiState.fuzzySearchItems.map(x => ({ item: mapEntity(x.item), score: x.score }));
         });
     }
+
+    getFloors(): Floor[] {
+        return store.layerStore.floors.map(floor => ({
+            name: floor.name,
+            shortName: floor.shortName,
+            description: floor.description,
+            active: floor.active,
+            disabled: floor.disabled,
+            index: floor.index,
+        }));
+    }
+
+    activateFloor(floorId: { name?: string, index?: number }): void {
+        if (!floorId?.name && floorId?.index == null) {
+            throw new Error("Invalid floorId. It must contain either a name or an index.");
+        }
+
+        const floors = this.getFloors();
+
+        if (floorId.name) {
+            const floor = floors.find(floor => floor.name === floorId.name || floor.shortName === floorId.name);
+            if (!floor) {
+                throw new Error(`Floor with name "${floorId.name}" not found.`);
+            }
+
+            if (floor.active) {
+                console.warn(`Floor "${floor.name}" is already active.`);
+                return;
+            }
+
+            this.updateLayerVisibility(floor.name, true);
+            return;
+        }
+
+        if (floorId.index !== null) {
+            const layerName = floors[floorId.index]?.name;
+            if (!layerName) {
+                throw new Error(`Floor at index ${floorId.index} does not exist.`);
+            }
+
+            if (floors[floorId.index].active) {
+                console.warn(`Floor "${layerName}" is already active.`);
+                return;
+            }
+
+            this.updateLayerVisibility(layerName, true);
+            return;
+        }
+    }
+
 }
 
 function getBooth(x: RouteWaypoint) {
