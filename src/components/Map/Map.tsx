@@ -251,7 +251,10 @@ export default function Map() {
 
     useReaction(
         () => uiState.interruptAnimation,
-        () => stopAnimation(),
+        () => {
+            cancelAnimationFrame(zoomAf);
+            s.$canvas.interrupt();
+        },
     );
 
     useEffect(() => {
@@ -388,7 +391,7 @@ export default function Map() {
                 if (window["__resett"]) window["__resett"]();
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                if (isWheel || s.animatePlease) setZoomTransformAnimated(t, uiState.mapSettings.zoomtime ?? 500, easeExpOut);
+                if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
                 //s.drawer.setZoomTransform(t);
                 else if (t.animate) setZoomTransformAnimated(t, uiState.mapSettings.zoomtime ?? 500, easeExpOut);
                 else setZoomTransformAnimated(t, 0, null);
@@ -511,7 +514,6 @@ export default function Map() {
         const t = zoomTransform(s.$canvas.node());
         if (t.x === transform.x && t.y === transform.y && t.k === transform.k) return;
         (transform as any).animate = animate;
-        stopAnimation();
         s.$canvas.call(s.zoom.transform as any, transform);
     }
 
@@ -528,7 +530,7 @@ export default function Map() {
         // animate from existing position to dest
         if (zoomAf) {
             // move to the last frame zoom transform
-            stopAnimation();
+            cancelAnimationFrame(zoomAf);
             // s.drawer.setZoomTransform(zoomAfTransform);
         }
         if (!duration) {
@@ -585,15 +587,5 @@ export default function Map() {
 
         const t = zoomIdentity.translate(diffX, diffY).scale(zoom); // { x: diffX, y: diffY, k: zoom };
         return zoomBound(s.drawer, t, true);
-    }
-
-    function stopAnimation() {
-        if (!zoomAf) {
-            return;
-        }
-        cancelAnimationFrame(zoomAf);
-        zoomAf = undefined;
-        zoomAfTransform = undefined;
-        s.$canvas.interrupt();
     }
 }
