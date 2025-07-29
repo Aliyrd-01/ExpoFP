@@ -93,6 +93,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
+    /** @deprecated Use activateFloor instead */
     updateLayerVisibility(layer: string, visible: boolean): void {
         nr();
     }
@@ -177,11 +178,15 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    getVisibleLayer(): VisibleLayer | null {
+    getFloors(): Floor[] {
         nr();
     }
 
-    onLayerVisibilityChanged(layer: { visible: boolean } & VisibleLayer) {
+    onFloorActivated(floor: Floor): void {
+        nr();
+    }
+
+    activateFloor(nameOrIndex: string | number): void {
         nr();
     }
 
@@ -205,7 +210,7 @@ export default class FloorPlanLoader implements FloorPlan {
         this.onDirection = options.onDirection;
         this.onInit = options.onInit;
         this.onCurrentPositionChanged = options.onCurrentPositionChanged;
-        this.onLayerVisibilityChanged = options.onLayerVisibilityChanged;
+        this.onFloorActivated = options.onFloorActivated;
 
         this._ready = new Promise((resolve, reject) => {
             this.resolveReady = resolve;

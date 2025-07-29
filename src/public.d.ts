@@ -92,9 +92,13 @@ class FloorPlan {
 
     search(term: string): Promise<{ item: unknown, score: number }[]>;
 
-    getVisibleLayer(): VisibleLayer | null;
+    getFloors(): Floor[];
 
-    onLayerVisibilityChanged(layer: VisibleLayer): void;
+    onFloorActivated(floor: Floor): void;
+
+    activateFloor(name: string): void;
+
+    activateFloor(index: number): void;
 }
 
 interface FloorPlanOptions {
@@ -121,7 +125,7 @@ interface FloorPlanOptions {
     onGetCoordsClick?: (e: FloorPlanGetCoordsEvent) => void;
     onInit?: (fp: FloorPlan) => void;
     onCurrentPositionChanged?: (point: CurrentPosition) => void;
-    onLayerVisibilityChanged?: (layer: VisibleLayer) => void;
+    onFloorActivated?: (floor: Floor) => void;
 }
 
 interface Layer {
@@ -293,5 +297,14 @@ type FloorPlanEntity =
 interface VisibleLayer {
     name: string;
     shortName: string;
+    index: number;
+}
+
+interface Floor {
+    name: string;
+    shortName: string;
+    description: string;
+    active: boolean;
+    disabled: boolean;
     index: number;
 }

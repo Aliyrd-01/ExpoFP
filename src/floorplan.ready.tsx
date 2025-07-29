@@ -320,6 +320,53 @@ export default class FloorPlanReady extends FloorPlanLoader {
     getVisibleLayer(): VisibleLayer | null {
         return !!window["__fpLayers"] ? store.layerStore.getVisibleLayer : null;
     }
+
+    getFloors(): Floor[] {
+        return store.layerStore.floors.map(floor => ({
+            name: floor.name,
+            shortName: floor.shortName,
+            description: floor.description,
+            active: floor.active,
+            disabled: floor.disabled,
+            index: floor.index,
+        }));
+    }
+
+    activateFloor(nameOrIndex: string | number): void {
+        if (typeof nameOrIndex !== "string" && typeof nameOrIndex !== "number") {
+            throw new Error("Invalid parameter: must be a string (name) or a number (index).");
+        }
+
+        const floors = this.getFloors();
+
+        if (typeof nameOrIndex === "number") {
+            const layerName = floors[nameOrIndex]?.name;
+            if (!layerName) {
+                throw new Error(`Floor at index ${nameOrIndex} does not exist.`);
+            }
+
+            if (floors[nameOrIndex].active) {
+                console.warn(`Floor "${layerName}" is already active.`);
+                return;
+            }
+
+            this.updateLayerVisibility(layerName, true);
+            return;
+        }
+
+        const floor = floors.find(floor => floor.name === nameOrIndex || floor.shortName === nameOrIndex);
+        if (!floor) {
+            throw new Error(`Floor with name "${nameOrIndex}" not found.`);
+        }
+
+        if (floor.active) {
+            console.warn(`Floor "${floor.name}" is already active.`);
+            return;
+        }
+
+        this.updateLayerVisibility(floor.name, true);
+    }
+
 }
 
 function getBooth(x: RouteWaypoint) {

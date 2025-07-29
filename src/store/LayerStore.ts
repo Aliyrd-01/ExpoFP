@@ -51,6 +51,8 @@ export default class LayerStore {
     @observable mode: LayersMode;
     @observable layersLoaded: boolean = false;
 
+    private updateVisibilityTimeout = 0;
+
     @computed({ keepAlive: true }) get visible() {
         return this.layers.filter((l) => l.frozen || l.visible);
     }
@@ -64,7 +66,7 @@ export default class LayerStore {
         return this.mode !== LayersMode.Radio || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
-    @computed get floors() {
+    @computed get floors(): (Floor & { layer: Layer })[] {
         const uniqueLayers = new Set(
             this.layers
                 .filter(l => l && !l.frozen && !l.rootParent)
@@ -77,13 +79,14 @@ export default class LayerStore {
 
         return Array.from(uniqueLayers)
             .reverse()
-            .map((l) => ({
+            .map((l, index) => ({
                 layer: l,
                 name: l.name,
                 shortName: l.shortName,
                 description: l.description,
                 active: l.visible,
-                disabled: store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1,
+                disabled: Boolean(store.routeStore.layers.length && store.routeStore.layers.indexOf(l) === -1),
+                index,
             }));
     }
 
@@ -128,12 +131,13 @@ export default class LayerStore {
                     });
                 }
 
-                if (typeof store.fp.onLayerVisibilityChanged === "function") {
-                    store.fp.onLayerVisibilityChanged({
-                        name: layer.name,
-                        shortName: layer.shortName,
-                        index: this.floors.findIndex(floor => floor.name === layer.name),
-                        visible,
+                if (typeof store.fp.onFloorActivated === "function") {
+                    clearTimeout(this.updateVisibilityTimeout);
+                    this.updateVisibilityTimeout = setTimeout(() => {
+                        const floors = store.fp.getFloors();
+                        store.fp.onFloorActivated(
+                            floors.find(floor => floor.name === layer.name),
+                        );
                     });
                 }
             }
