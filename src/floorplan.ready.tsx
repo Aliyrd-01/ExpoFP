@@ -317,10 +317,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
         });
     }
 
-    getVisibleLayer(): VisibleLayer | null {
-        return !!window["__fpLayers"] ? store.layerStore.getVisibleLayer : null;
-    }
-
     getFloors(): Floor[] {
         return store.layerStore.floors.map(floor => ({
             name: floor.name,

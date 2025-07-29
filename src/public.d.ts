@@ -292,12 +292,6 @@ type FloorPlanEntity =
     | FloorPlanLanguage
     | FloorPlanHeatmapYah;
 
-interface VisibleLayer {
-    name: string;
-    shortName: string;
-    index: number;
-}
-
 interface Floor {
     name: string;
     shortName: string;
