@@ -96,9 +96,7 @@ class FloorPlan {
 
     onFloorActivated(floor: Floor): void;
 
-    activateFloor(name: string): void;
-
-    activateFloor(index: number): void;
+    activateFloor(floorId: { name?: string, index?: number }): void;
 }
 
 interface FloorPlanOptions {

@@ -332,20 +332,35 @@ export default class FloorPlanReady extends FloorPlanLoader {
         }));
     }
 
-    activateFloor(nameOrIndex: string | number): void {
-        if (typeof nameOrIndex !== "string" && typeof nameOrIndex !== "number") {
-            throw new Error("Invalid parameter: must be a string (name) or a number (index).");
+    activateFloor(floorId: { name?: string, index?: number }): void {
+        if (!floorId?.name && floorId?.index == null) {
+            throw new Error("Invalid floorId. It must contain either a name or an index.");
         }
 
         const floors = this.getFloors();
 
-        if (typeof nameOrIndex === "number") {
-            const layerName = floors[nameOrIndex]?.name;
-            if (!layerName) {
-                throw new Error(`Floor at index ${nameOrIndex} does not exist.`);
+        if (floorId.name) {
+            const floor = floors.find(floor => floor.name === floorId.name || floor.shortName === floorId.name);
+            if (!floor) {
+                throw new Error(`Floor with name "${floorId.name}" not found.`);
             }
 
-            if (floors[nameOrIndex].active) {
+            if (floor.active) {
+                console.warn(`Floor "${floor.name}" is already active.`);
+                return;
+            }
+
+            this.updateLayerVisibility(floor.name, true);
+            return;
+        }
+
+        if (floorId.index !== null) {
+            const layerName = floors[floorId.index]?.name;
+            if (!layerName) {
+                throw new Error(`Floor at index ${floorId.index} does not exist.`);
+            }
+
+            if (floors[floorId.index].active) {
                 console.warn(`Floor "${layerName}" is already active.`);
                 return;
             }
@@ -353,18 +368,6 @@ export default class FloorPlanReady extends FloorPlanLoader {
             this.updateLayerVisibility(layerName, true);
             return;
         }
-
-        const floor = floors.find(floor => floor.name === nameOrIndex || floor.shortName === nameOrIndex);
-        if (!floor) {
-            throw new Error(`Floor with name "${nameOrIndex}" not found.`);
-        }
-
-        if (floor.active) {
-            console.warn(`Floor "${floor.name}" is already active.`);
-            return;
-        }
-
-        this.updateLayerVisibility(floor.name, true);
     }
 
 }

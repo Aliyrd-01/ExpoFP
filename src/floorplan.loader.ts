@@ -186,7 +186,7 @@ export default class FloorPlanLoader implements FloorPlan {
         nr();
     }
 
-    activateFloor(nameOrIndex: string | number): void {
+    activateFloor(floorId: { name?: string, index?: number }): void {
         nr();
     }
 
