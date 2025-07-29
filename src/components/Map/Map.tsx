@@ -388,7 +388,7 @@ export default function Map() {
                 if (window["__resett"]) window["__resett"]();
                 const t = currentEvent.transform;
                 const isWheel = currentEvent.sourceEvent && currentEvent.sourceEvent.type === "wheel";
-                if (isWheel || s.animatePlease) setZoomTransformAnimated(t, 300, easeExpOut);
+                if (isWheel || s.animatePlease) setZoomTransformAnimated(t, uiState.mapSettings.zoomtime ?? 500, easeExpOut);
                 //s.drawer.setZoomTransform(t);
                 else if (t.animate) setZoomTransformAnimated(t, uiState.mapSettings.zoomtime ?? 500, easeExpOut);
                 else setZoomTransformAnimated(t, 0, null);

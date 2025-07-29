@@ -605,6 +605,7 @@ export default class UIState {
 
         let list = [
             ...this.rootStore.eventStore.eventItems,
+            ...this.rootStore.categoryStore.categories.filter((c) => c.exhibitors.length),
             ...this.rootStore.exhibitorStore.exhibitors,
             ...this.rootStore.boothStore.booths,
         ];
