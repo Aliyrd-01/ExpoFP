@@ -182,9 +182,9 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
 
             const settingsColors = settings.colors.booths;
             if (b.onHold) {
-                defColor = b.holdColor || b.soldColor || settingsColors.default;
+                defColor = b.holdColor || settingsColors.defaultHold;
             } else if (b.exhibitors.length || b.reserved) {
-                defColor = b.soldColor || settingsColors.default;
+                defColor = b.soldColor || settingsColors.defaultSold;
             } else {
                 defColor = b.availColor || settingsColors.empty;
             }

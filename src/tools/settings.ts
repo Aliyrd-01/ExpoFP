@@ -19,6 +19,8 @@ class Settings extends FpSettings {
         // base: "#ebebeb",
         booths: {
             default: "#41b6e7",
+            defaultHold: "#48484A",
+            defaultSold: "#41b6e7",
             seectedLight: null,
             selected: "#fb3e59",
             selectedBorder: null,
