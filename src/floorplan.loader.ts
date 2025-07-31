@@ -13,6 +13,8 @@ import isWebview from "./utils/is-webview";
 import { loadImage } from "./utils/loadImage";
 import mergeExhibitors from "./utils/mergeExhibitors";
 import useShadow from "./utils/use-shadow";
+import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
+import { TracingInstrumentation } from '@grafana/faro-web-tracing';
 
 function nr(): never {
     throw new Error("FloorPlan not ready");
@@ -228,6 +230,27 @@ export default class FloorPlanLoader implements FloorPlan {
                 ? document.location.hostname.replace(/\.expofp\.com$/, "")
                 : process.env.EFP_DEFAULT_EXPO);
         this.eventId = eventId;
+
+        initializeFaro({
+            url: "https://faro-collector-prod-us-central-0.grafana.net/collect/dc8f20431166062c2f7b2bc09e7c8f71",
+            app: {
+                name: "efp-app",
+                version: "1.0.0",
+                environment: "production"
+            },
+            instrumentations: [
+                // Mandatory, omits default instrumentations otherwise.
+                ...getWebInstrumentations(),
+                // Tracing package to get end-to-end visibility for HTTP requests.
+                new TracingInstrumentation(),
+            ],
+            sessionTracking: {
+                session: {
+                    attributes: { eventId },
+                },
+            }
+        });
+
         window["__efpEvent"] = eventId;
         window["__efpBaseUrl"] = baseUrl;
         window["__efpElement"] = element;
