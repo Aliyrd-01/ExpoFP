@@ -21,6 +21,7 @@ function createConfig(env) {
         mode: isProd ? "production" : "development",
         entry: {
             expofp: "./src/expofp.tsx",
+            "expofp-debug": "./src/expofp-debug.ts",
         },
         output: {
             path: path.resolve(__dirname, "dist"),
@@ -85,6 +86,7 @@ function createConfig(env) {
                 title: "ExpoFP",
                 template: "src/index.html",
                 inject: "body",
+                chunks: ["expofp"],
             }),
             new webpack.DefinePlugin({
                 "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo),
