@@ -10,6 +10,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const ESLintPlugin = require("eslint-webpack-plugin");
 const BundleJsonPlugin = require("./BundleJsonPlugin");
+const FaroSourceMapUploaderPlugin = require("@grafana/faro-webpack-plugin");
 
 function createConfig(env) {
     const isProd = process.env.NODE_ENV === "production";
@@ -95,6 +96,14 @@ function createConfig(env) {
                 filename: "bundle.json",
                 exclude: ["sw.js", ".DS_Store"],
                 publicPath: "public",
+            }),
+            new FaroSourceMapUploaderPlugin({
+                appName: process.env.FARO_APP_NAME,
+                endpoint: process.env.FARO_SOURCE_MAP_ENDPOINT,
+                appId: process.env.FARO_SOURCE_MAP_APP_ID,
+                stackId: process.env.FARO_SOURCE_MAP_STACK_ID,
+                apiKey: process.env.FARO_SOURCE_MAP_API_KEY,
+                gzipContents: true,
             }),
         ],
     };
