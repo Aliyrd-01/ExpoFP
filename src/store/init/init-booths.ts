@@ -232,9 +232,11 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
                     if (path.tagName !== "path") continue;
                     const color = booth.yah ? el.style?.fill?.replace("none", "") || path.style.fill : path.style.fill;
                     const d = parseInt(path.getAttribute("data-index"));
+                    const unblinking = !!path.getAttribute("data-unblinking");
                     booth.paths.push({
                         index: d,
                         color,
+                        unblinking,
                     });
 
                     if (!rect) {

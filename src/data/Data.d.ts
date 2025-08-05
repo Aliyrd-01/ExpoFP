@@ -166,6 +166,7 @@ interface RawExhibitor {
 interface PathInfo {
     index: number;
     color: string;
+    unblinking: boolean;
 }
 
 interface MarketMaterial {

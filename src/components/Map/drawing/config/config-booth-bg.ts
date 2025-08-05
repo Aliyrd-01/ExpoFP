@@ -38,7 +38,6 @@ function groupBy<T>(arr: T[]): T | null {
 let seq = 0;
 
 class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
-    private readonly pathsDefaultColors: string[];
     private readonly painters: TrianglePainter[] = [];
 
     constructor(context: DrawerContext, layerID: string, booth: Booth, painterOrderPriority: number, visible: boolean) {
@@ -92,7 +91,6 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
                     );
                 }
             }
-            this.pathsDefaultColors = Array.from(pathsColors);
         } else {
             let rect = this.booth.rect;
             //if (!settings.borderless)
@@ -136,10 +134,10 @@ class BoothBgDrawer extends BoothDrawerBaseWithoutPainter {
         this.painters.forEach((p) => p.updateColor(this.getId("bg-def"), c.vec4()));
         this.painters.forEach((p) => p.updateSkipdim(this.getId("bg"), s.skipDim));
 
-        for (const color of this.pathsDefaultColors || []) {
-            const newColor = this.getBoothPathColor(color);
-            this.painters.forEach((p) => p.updateColor(this.getId("bg-" + color), newColor.vec4()));
-        }
+        (this.booth.paths || []).forEach((path) => {
+            const newColor = path.unblinking ? Color(path.color || c.hex()).hsl() : this.getBoothPathColor(path.color || c.hex());
+            this.painters.forEach((p) => p.updateColor(this.getId("bg-" + path.color), newColor.vec4()));
+        });
     }
 
     getBoothPathColor(defaultColor: string) {
