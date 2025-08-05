@@ -10,11 +10,11 @@ window.addEventListener("error", reportError);
 window["__efpStyleElements"] = [];
 
 initializeFaro({
-    url: "https://faro-collector-prod-us-central-0.grafana.net/collect/dc8f20431166062c2f7b2bc09e7c8f71",
+    url: process.env.FARO_COLLECTOR_URL,
     app: {
-        name: "efp-app",
-        version: "1.0.0",
-        environment: "production"
+        name: process.env.FARO_APP_NAME,
+        version: process.env.FARO_APP_VERSION,
+        environment: process.env.FARO_APP_ENVIRONMENT,
     },
     instrumentations: [
         // Mandatory, omits default instrumentations otherwise.
