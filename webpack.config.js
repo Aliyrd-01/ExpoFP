@@ -91,6 +91,14 @@ function createConfig(env) {
             }),
             new webpack.DefinePlugin({
                 "process.env.EFP_DEFAULT_EXPO": JSON.stringify(defaultExpo),
+                "process.env.FARO_COLLECTOR_URL": JSON.stringify(process.env.FARO_COLLECTOR_URL),
+                "process.env.FARO_APP_NAME": JSON.stringify(process.env.FARO_APP_NAME),
+                "process.env.FARO_APP_VERSION": JSON.stringify(process.env.FARO_APP_VERSION),
+                "process.env.FARO_APP_ENVIRONMENT": JSON.stringify(process.env.FARO_APP_ENVIRONMENT),
+                "process.env.FARO_SOURCE_MAP_ENDPOINT": JSON.stringify(process.env.FARO_SOURCE_MAP_ENDPOINT),
+                "process.env.FARO_SOURCE_MAP_APP_ID": JSON.stringify(process.env.FARO_SOURCE_MAP_APP_ID),
+                "process.env.FARO_SOURCE_MAP_STACK_ID": JSON.stringify(process.env.FARO_SOURCE_MAP_STACK_ID),
+                "process.env.FARO_SOURCE_MAP_API_KEY": JSON.stringify(process.env.FARO_SOURCE_MAP_API_KEY),
             }),
             new BundleJsonPlugin({
                 filename: "bundle.json",
