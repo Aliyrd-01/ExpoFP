@@ -63,7 +63,7 @@ export default class LayerStore {
     }
 
     @computed({ keepAlive: true }) get rectangle() {
-        var l = this.visible.filter((l) => !l.frozen).map((l) => l.rect);
+        var l = this.visible.filter((l) => !l.frozen).map((l) => l.viewbox ?? l.rect);
         return this.mode !== LayersMode.Radio || !l.length ? null : Rect.fromMultiple(l) || null;
     }
 
