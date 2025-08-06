@@ -46,3 +46,5 @@ bundle-report.prev.html
 
 /storybook-static
 *storybook.log
+
+.env
