@@ -838,27 +838,44 @@ export default class UIState {
         return this.details instanceof EventItem ? this.details : null;
     }
 
-    @observable mapSettings: MapSettings = {
-        zoomtime: 2000,
-        center: undefined,
-        centerxy: undefined,
-        z: undefined,
-        bearing: 0,
-        zoom: 1,
-    };
+    get defaultMapSettings(): MapSettings {
+        return {
+            zoomtime: 2000,
+            center: undefined,
+            centerxy: undefined,
+            z: undefined,
+            bearing: 0,
+            zoom: 1,
+        };
+    }
+
+    @observable _mapSettings: MapSettings = { ...this.defaultMapSettings };
+
+    @computed get mapSettings(): MapSettings {
+        return (
+            this.kioskSetup
+                ? this.defaultMapSettings
+                : this._mapSettings
+        );
+    }
 
     @action setMapSettings(settings: MapSettings) {
         const newSettings: MapSettings = {};
+        const mapSettings = this._mapSettings;
 
         for (const prop in settings) {
             if (!settings[prop]) {
                 continue;
             }
-            newSettings[prop] =
-                prop === "zoomtime" ? Math.min(Math.max(settings[prop] || this.mapSettings.zoomtime, 500), 5000) : settings[prop];
+
+            newSettings[prop] = (
+                prop === "zoomtime"
+                    ? Math.min(Math.max(settings[prop] || mapSettings.zoomtime, 500), 5000)
+                    : settings[prop]
+            );
         }
 
-        this.mapSettings = { ...this.mapSettings, ...newSettings };
+        this._mapSettings = { ...mapSettings, ...newSettings };
 
         if (Object.keys(newSettings).length) {
             localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(newSettings));

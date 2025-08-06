@@ -227,7 +227,12 @@ const KioskSetup = observer(() => {
                 store.uiState.kioskSetupData = kiosk;
             });
 
-            setKioskUrl(new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href).toString());
+            const kioskUrl = new URL(`?${KIOSK_ID_KEY}=${store.uiState.kioskSetupData?.key}`, window.location.href);
+            kioskUrl.searchParams.set("centerxy", `${kiosk.x},${kiosk.y}`);
+            kioskUrl.searchParams.set("z", `${kiosk.z || ""}`);
+            kioskUrl.searchParams.set("bearing", `${kiosk.heading || ""}`);
+            kioskUrl.searchParams.set("zoom", `${store.uiState.zoomAfTransformK || ""}`);
+            setKioskUrl(kioskUrl.toString());
 
             if (areLayersEnabled()) {
                 store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
@@ -507,7 +512,7 @@ const KioskSetup = observer(() => {
                         >
                             {step === "auth" && (
                                 <Button
-                                    size="md"
+                                    size="sm"
                                     text={t("Log in")}
                                     disabled={!passcode || pending}
                                     onClick={() => auth(passcode)}
@@ -515,19 +520,19 @@ const KioskSetup = observer(() => {
                             )}
 
                             {step === "edit" && (
-                                <Button size="md" text={t("Save & copy URL")} disabled={disabled} onClick={save} />
+                                <Button size="sm" text={t("Save and see URL")} disabled={disabled} onClick={save} />
                             )}
 
-                            {step === "copy" && <Button size="md" text={t("Copy URL")} onClick={copy} />}
+                            {step === "copy" && <Button size="sm" text={t("Copy URL")} onClick={copy} />}
 
-                            {step === "edit" && <Button variant="gray-border" size="md" text={t("Clear")} onClick={clear} />}
+                            {step === "edit" && <Button variant="gray-border" size="sm" text={t("Clear")} onClick={clear} />}
 
-                            {step === "copy" && <Button variant="gray" size="md" text={t("Close")} onClick={exit} />}
+                            {step === "copy" && <Button variant="gray" size="sm" text={t("Close")} onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
                                 <Button
                                     variant="gray"
-                                    size="md"
+                                    size="sm"
                                     text={t("Delete")}
                                     disabled={pending}
                                     onClick={() => setStep("confirmDeletion")}
@@ -536,8 +541,8 @@ const KioskSetup = observer(() => {
 
                             {step === "confirmDeletion" && (
                                 <>
-                                    <Button size="md" text={t("Delete")} onClick={deleteKiosk} />
-                                    <Button variant="gray" size="md" text={t("Cancel")} onClick={exit} />
+                                    <Button size="sm" text={t("Delete")} onClick={deleteKiosk} />
+                                    <Button variant="gray" size="sm" text={t("Cancel")} onClick={exit} />
                                 </>
                             )}
                         </div>
@@ -555,7 +560,7 @@ const KioskSetup = observer(() => {
 
             {showSuccess && (
                 <div className="efp-kiosk-setup-message">
-                    <Alert variant="success" closable title={t("Success")} inline onClose={() => setShowSuccess(false)} />
+                    <Alert variant="success" closable title={t("Copied to clipboard")} inline onClose={() => setShowSuccess(false)} />
                 </div>
             )}
         </Suspense>
