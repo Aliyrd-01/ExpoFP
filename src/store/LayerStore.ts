@@ -32,6 +32,7 @@ export class Layer {
     description: string;
     frozen: boolean;
     rect: Rect = null;
+    viewbox: Rect = null;
     configured: boolean;
     childLayers: Layer[] = [];
     rootParent: Layer = null;

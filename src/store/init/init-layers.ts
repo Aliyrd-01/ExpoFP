@@ -24,6 +24,7 @@ export function getChildLayers(layer: Layer, currentPriority: number, prioritySt
         child.description = childLayer.getAttribute("data-layer-description") || layerID;
         child.frozen = childLayer.getAttribute("data-layer-isfrozen") === "true" ? true : false;
         child.rect = layer.rect;
+        child.viewbox = layer.viewbox;
         child.mode = LayerMode.Unset;
         child.rootParent = layer.rootParent ? layer.rootParent : layer;
 
@@ -67,6 +68,7 @@ export default function initLayers(store: RootStore) {
             l.frozen = layer.frozen;
             l.visible = isvisible(layer, l.shortName);
             l.rect = layer.rect;
+            l.viewbox = layer.viewbox;
             l.mode = layer.mode || LayerMode.Unset;
             l.basePriority = priority;
 

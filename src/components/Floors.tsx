@@ -45,6 +45,7 @@ export default function Floors() {
             if (store.mapboxStore.showMapbox) return;
 
             if (
+                window["__fpVersion"] > 5 ||
                 settings.EXPO.indexOf("money2020usa") > -1 ||
                 settings.EXPO === "rodion2" ||
                 settings.EXPO === "possible2025" ||
@@ -52,7 +53,8 @@ export default function Floors() {
                 settings.EXPO === "zscalerskofy26" ||
                 settings.EXPO === "gamescom2025"
             ) {
-                uiState.moveToRect = Rect.fromX1y1x2y2(layer.rect.x1, layer.rect.y1, layer.rect.x2, layer.rect.y2);
+                const r = layer.viewbox ?? layer.rect;
+                uiState.moveToRect = Rect.fromX1y1x2y2(r.x1, r.y1, r.x2, r.y2);
             } else {
                 var i1 = store.layerStore.layers.indexOf(store.layerStore.layers.filter((l) => !l.frozen && l.visible)[0]);
                 var i2 = store.layerStore.layers.indexOf(layer);
