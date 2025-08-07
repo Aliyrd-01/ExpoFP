@@ -45,7 +45,7 @@ export default function Floors() {
             if (store.mapboxStore.showMapbox) return;
 
             if (
-                window["__fpVersion"] > 5 ||
+                !!window["__fpSettings"]?.fpVer ||
                 settings.EXPO.indexOf("money2020usa") > -1 ||
                 settings.EXPO === "rodion2" ||
                 settings.EXPO === "possible2025" ||
