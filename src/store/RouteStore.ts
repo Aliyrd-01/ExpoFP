@@ -12,6 +12,8 @@ import { Booth } from "./BoothStore";
 import { Layer, LayersMode } from "./LayerStore";
 import RootStore from "./RootStore";
 import { uiState } from "./index";
+import { calcSpeed } from "../utils/calcSpeed";
+import { calcTravelTime } from "../utils/calcTravelTime";
 
 const replaceCommasWithDot = (value: string | number | undefined) => {
     if (typeof value === "string") {
@@ -290,7 +292,7 @@ export default class RouteStore {
                     lines: routeLines,
                     distance: `${distance}${units}`,
                     units,
-                    time: Math.round(distance / (units === "m" ? 1.4 : 4.2)),
+                    time: calcTravelTime(distance, calcSpeed(units)),
                 });
             }, 200);
 

@@ -11,6 +11,8 @@ import { t } from "../utils/i18n";
 import OverlayContent from "./OverlayContent";
 import "./Wayfinding.scss";
 import WayfindingTemplate from "./WayfindingTemplate";
+import { calcSpeed } from "../utils/calcSpeed";
+import { calcTravelTime } from "../utils/calcTravelTime";
 
 function Wayfinding() {
     const floors = useMemo(
@@ -107,7 +109,7 @@ function Wayfinding() {
         const getWayInformation = (distance) => {
             const info = [];
             const units = getLayerSvg().getAttribute("units");
-            const seconds = Math.round(distance / (units === "m" ? 1.4 : 4.2));
+            const seconds = calcTravelTime(distance, calcSpeed(units));
             let est = new Date();
             est.setMinutes(est.getMinutes() + seconds / 60);
             const estTotal = est.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
