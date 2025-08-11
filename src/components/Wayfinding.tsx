@@ -13,6 +13,7 @@ import "./Wayfinding.scss";
 import WayfindingTemplate from "./WayfindingTemplate";
 import { calcSpeed } from "../utils/calcSpeed";
 import { calcTravelTime } from "../utils/calcTravelTime";
+import { DEFAULT_UNITS } from "../constants";
 
 function Wayfinding() {
     const floors = useMemo(
@@ -108,7 +109,7 @@ function Wayfinding() {
 
         const getWayInformation = (distance) => {
             const info = [];
-            const units = getLayerSvg().getAttribute("units");
+            const units = getLayerSvg().getAttribute("units") || DEFAULT_UNITS;
             const seconds = calcTravelTime(distance, calcSpeed(units));
             let est = new Date();
             est.setMinutes(est.getMinutes() + seconds / 60);

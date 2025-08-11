@@ -14,6 +14,7 @@ import RootStore from "./RootStore";
 import { uiState } from "./index";
 import { calcSpeed } from "../utils/calcSpeed";
 import { calcTravelTime } from "../utils/calcTravelTime";
+import { DEFAULT_UNITS } from "../constants";
 
 const replaceCommasWithDot = (value: string | number | undefined) => {
     if (typeof value === "string") {
@@ -262,7 +263,7 @@ export default class RouteStore {
         const route = uiState.selectedRoute;
 
         const l = getLayerSvg();
-        const units = l.getAttribute("units");
+        const units = l.getAttribute("units") || DEFAULT_UNITS;
         const isNewVersion = l.getAttribute("fp-ver")?.startsWith("5") ?? false;
         let distance = 0;
 
