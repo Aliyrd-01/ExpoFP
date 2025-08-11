@@ -42,6 +42,15 @@ jobs:
             - run: yarn install
 
             - run: yarn run build+deploy
+              env: 
+                FARO_COLLECTOR_URL: ${{ vars.FARO_COLLECTOR_URL }}
+                FARO_APP_NAME: ${{ vars.FARO_APP_NAME }}
+                FARO_APP_VERSION: ${{ vars.FARO_APP_VERSION }}
+                FARO_APP_ENVIRONMENT: ${{ vars.FARO_APP_ENVIRONMENT }}
+                FARO_SOURCE_MAP_ENDPOINT: ${{ vars.FARO_SOURCE_MAP_ENDPOINT }}
+                FARO_SOURCE_MAP_APP_ID: ${{ vars.FARO_SOURCE_MAP_APP_ID }}
+                FARO_SOURCE_MAP_STACK_ID: ${{ vars.FARO_SOURCE_MAP_STACK_ID }}
+                FARO_SOURCE_MAP_API_KEY: ${{ vars.FARO_SOURCE_MAP_API_KEY }}
 
             - name: Send Slack message on push
               if: github.event_name == 'push'

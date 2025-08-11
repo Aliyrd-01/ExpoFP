@@ -30,6 +30,7 @@
         "@babel/preset-react": "^7.24.7",
         "@babel/preset-typescript": "^7.24.7",
         "@chromatic-com/storybook": "^3.2.4",
+        "@grafana/faro-webpack-plugin": "^0.5.1",
         "@storybook/addon-actions": "^8.5.0",
         "@storybook/addon-essentials": "^8.5.0",
         "@storybook/addon-interactions": "^8.5.0",
@@ -180,6 +181,8 @@
     },
     "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447",
     "dependencies": {
+        "@grafana/faro-web-sdk": "^1.19.0",
+        "@grafana/faro-web-tracing": "^1.19.0",
         "fuse.js": "^7.1.0"
     }
 }
