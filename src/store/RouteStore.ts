@@ -292,7 +292,7 @@ export default class RouteStore {
                         : null,
                     lines: routeLines,
                     distance: `${distance}${units}`,
-                    units,
+                    units: units?.toLowerCase?.().trim(),
                     time: calcTravelTime(distance, calcSpeed(units)),
                 });
             }, 200);

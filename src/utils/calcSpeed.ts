@@ -1,3 +1,3 @@
 export function calcSpeed(units: string): number {
-    return units === "m" ? 1.4 : 4.2;
+    return units?.toLowerCase?.().trim() === "m" ? 1.4 : 4.2;
 }
