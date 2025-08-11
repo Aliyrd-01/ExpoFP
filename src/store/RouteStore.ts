@@ -289,7 +289,8 @@ export default class RouteStore {
                         : null,
                     lines: routeLines,
                     distance: `${distance}${units}`,
-                    time: Math.round(distance / 1.4),
+                    units,
+                    time: Math.round(distance / (units === "m" ? 1.4 : 4.2)),
                 });
             }, 200);
 
