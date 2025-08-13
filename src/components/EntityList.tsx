@@ -19,14 +19,16 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
     const useCompactDetails = EXPOS_WITH_COMPACT_DETAILS.includes(settings.EXPO);
 
     useEffect(() => {
+        const listScrollTop = uiState.listScrollTop;
+
         setTimeout(() => {
             if (scrollerRef.current instanceof HTMLElement) {
-                scrollerRef.current.scrollTop = uiState.listScrollTop;
+                scrollerRef.current.scrollTop = listScrollTop;
             }
             // Hotfix
             // scrollerRef and updatedScrollableRef are sometimes not equal
             // and on desktop this will break scrolling to the previously selected item.
-            updatedScrollableRef.current.scrollTop = uiState.listScrollTop;
+            updatedScrollableRef.current.scrollTop = listScrollTop;
         }, 100);
     }, [uiState.listScrollTop, updatedScrollableRef]);
 
@@ -40,21 +42,38 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
 
         switch (type) {
             case "exhibitor":
-                store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
+                const exhibitor = store.exhibitorStore.exhibitors.find((e) => e.id === id);
+                if (store.uiState.kiosk) {
+                    store.routeStore.clickRoute(null, store.routeStore.tempToBooth || exhibitor.booths[0]);
+                } else {
+                    store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
+                }
                 break;
+
             case "booth":
-                store.clickBoothInList2(store.boothStore.booths.find((b) => b.id === id));
+                const booth = store.boothStore.booths.find((b) => b.id === id);
+                if (store.uiState.kiosk) {
+                    store.routeStore.clickRoute(null, booth);
+                } else {
+                    store.clickBoothInList2(booth);
+                }
                 break;
+
             case "category":
                 store.clickCategory(store.categoryStore.categories.find((c) => c.id === id));
                 break;
-            case "event": {
+
+            case "event": 
                 const event = store.eventStore.eventItems.find((e) => e.id === id);
                 if (event) {
-                    store.selectEventItem(event, true);
+                    const booth = store.boothStore.booths.find((b) => b.id === event.boothId);
+                    if (store.uiState.kiosk && booth) {
+                        store.routeStore.clickRoute(null, booth);
+                    } else {
+                        store.selectEventItem(event, true);
+                    }
                 }
                 break;
-            }
         }
     }, []);
 
