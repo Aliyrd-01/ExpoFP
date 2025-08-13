@@ -227,6 +227,7 @@ const KioskSetup = observer(() => {
                 store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
             }
 
+            copy();
             setStep("copy");
         } catch (err) {
             console.error(err);
@@ -338,7 +339,7 @@ const KioskSetup = observer(() => {
     if (step === "auth") {
         title = "Passcode required";
     } else if (step === "copy") {
-        title = "Copy the kiosk URL";
+        title = "Kiosk URL";
     } else if (step === "confirmDeletion") {
         title = `${"Delete kiosk"} ${store.uiState.kioskSetupData?.key}?`;
     } else {
@@ -427,7 +428,7 @@ const KioskSetup = observer(() => {
                                 <label
                                     className={cn({
                                         "efp-kiosk-setup-key": true,
-                                        "efp-kiosk-setup-key__auth": step === "auth",
+                                        "efp-kiosk-setup-key__one-column": step === "auth" || step === "copy",
                                     })}
                                 >
                                     <input
@@ -488,7 +489,7 @@ const KioskSetup = observer(() => {
                         {step === "copy" && (
                             <p>
                                 <a href={kioskUrl} className="efp-kiosk-setup-link" target="_blank" rel="noopener noreferrer">
-                                    <small className="efp-kiosk-setup-link_text">{kioskUrl}</small>
+                                    {kioskUrl}
                                 </a>
                             </p>
                         )}
@@ -496,12 +497,12 @@ const KioskSetup = observer(() => {
                         <div
                             className={cn({
                                 "efp-kiosk-setup-actions": true,
-                                "efp-kiosk-setup-actions__auth": step === "auth",
+                                "efp-kiosk-setup-actions__one-column": step === "auth" || step === "copy",
                             })}
                         >
                             {step === "auth" && (
                                 <Button
-                                    size="sm"
+                                    size="md"
                                     text="Log in"
                                     disabled={!passcode || pending}
                                     onClick={() => auth(passcode)}
@@ -509,19 +510,17 @@ const KioskSetup = observer(() => {
                             )}
 
                             {step === "edit" && (
-                                <Button size="sm" text="Save and see URL" disabled={disabled} onClick={save} />
+                                <Button size="md" text="Save & Copy URL" disabled={disabled} onClick={save} />
                             )}
 
-                            {step === "copy" && <Button size="sm" text="Copy URL" onClick={copy} />}
+                            {step === "edit" && <Button variant="gray-border" size="md" text="Clear" onClick={clear} />}
 
-                            {step === "edit" && <Button variant="gray-border" size="sm" text="Clear" onClick={clear} />}
-
-                            {step === "copy" && <Button variant="gray" size="sm" text="Close" onClick={exit} />}
+                            {step === "copy" && <Button variant="gray" size="md" text="Close" onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
                                 <Button
                                     variant="gray"
-                                    size="sm"
+                                    size="md"
                                     text="Delete"
                                     disabled={pending}
                                     onClick={() => setStep("confirmDeletion")}
@@ -530,8 +529,8 @@ const KioskSetup = observer(() => {
 
                             {step === "confirmDeletion" && (
                                 <>
-                                    <Button size="sm" text="Delete" onClick={deleteKiosk} />
-                                    <Button variant="gray" size="sm" text="Cancel" onClick={exit} />
+                                    <Button size="md" text="Delete" onClick={deleteKiosk} />
+                                    <Button variant="gray" size="md" text="Cancel" onClick={exit} />
                                 </>
                             )}
                         </div>
