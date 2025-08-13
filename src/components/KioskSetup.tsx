@@ -199,6 +199,8 @@ const KioskSetup = observer(() => {
             setErrorMsg("");
             setPending(true);
 
+            await copy();
+
             const requestBody: Kiosk = toJS(store.uiState.kioskSetupData);
 
             const token = sessionStorage.getItem(KIOSK_SETUP_TOKEN);
@@ -228,7 +230,8 @@ const KioskSetup = observer(() => {
                 store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
             }
 
-            copy().then(() => setStep("copy"));
+            setSuccessMsg("Saved");
+            setStep("copy");
         } catch (err) {
             console.error(err);
             setErrorMsg("Saving failed");
@@ -257,7 +260,7 @@ const KioskSetup = observer(() => {
 
         try {
             await navigator.clipboard.writeText(kioskUrl);
-            setSuccessMsg("Saved and copied to clipboard");
+            setSuccessMsg("Copied to clipboard");
         } catch (err) {
             console.error(err);
             setErrorMsg("Could not copy to clipboard");
@@ -517,7 +520,15 @@ const KioskSetup = observer(() => {
                             )}
 
                             {step === "edit" && (
-                                <Button size="md" text="Save & Copy URL" disabled={disabled} onClick={save} />
+                                <Button
+                                    size="md"
+                                    text="Save & Copy URL"
+                                    disabled={disabled}
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        save();
+                                    }}
+                                />
                             )}
 
                             {step === "edit" && <Button variant="gray-border" size="md" text="Clear" onClick={clear} />}
