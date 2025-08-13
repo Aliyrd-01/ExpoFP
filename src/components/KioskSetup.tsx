@@ -228,8 +228,7 @@ const KioskSetup = observer(() => {
                 store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
             }
 
-            copy();
-            setStep("copy");
+            copy().then(() => setStep("copy"));
         } catch (err) {
             console.error(err);
             setErrorMsg("Saving failed");
