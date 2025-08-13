@@ -27,6 +27,7 @@ const KioskSetup = observer(() => {
     );
     const [kioskUrl, setKioskUrl] = useState("");
     const [passcode, setPasscode] = useState("");
+    const [copied, setCopied] = useState(false);
 
     const kioskSetupDivRef = useRef<HTMLDivElement>(null);
 
@@ -230,7 +231,12 @@ const KioskSetup = observer(() => {
                 store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
             }
 
-            await copy(kioskUrlString);
+            try {
+                await copyToClipboard(kioskUrlString);
+                setCopied(true);
+            } catch (err) {
+                setCopied(false);
+            }
 
             setStep("copy");
         } catch (err) {
@@ -250,6 +256,10 @@ const KioskSetup = observer(() => {
         store.uiState.kioskSetupData = null;
     }
 
+    async function copyToClipboard(url: string) {
+        await navigator.clipboard.writeText(url);
+    }
+
     async function copy(url: string) {
         if (step === "auth") {
             return;
@@ -260,10 +270,9 @@ const KioskSetup = observer(() => {
         setPending(true);
 
         try {
-            await navigator.clipboard.writeText(url);
+            await copyToClipboard(url);
             setSuccessMsg("Copied to clipboard");
         } catch (err) {
-            console.error(err);
             setErrorMsg("Could not copy to clipboard");
         } finally {
             setPending(false);
@@ -439,7 +448,7 @@ const KioskSetup = observer(() => {
                                 <label
                                     className={cn({
                                         "efp-kiosk-setup-key": true,
-                                        "efp-kiosk-setup-key__one-column": step === "auth" || step === "copy",
+                                        "efp-kiosk-setup-key__one-column": step === "auth" || (copied && step === "copy"),
                                     })}
                                 >
                                     <input
@@ -508,7 +517,7 @@ const KioskSetup = observer(() => {
                         <div
                             className={cn({
                                 "efp-kiosk-setup-actions": true,
-                                "efp-kiosk-setup-actions__one-column": step === "auth" || step === "copy",
+                                "efp-kiosk-setup-actions__one-column": step === "auth" || (copied && step === "copy"),
                             })}
                         >
                             {step === "auth" && (
@@ -534,6 +543,7 @@ const KioskSetup = observer(() => {
 
                             {step === "edit" && <Button variant="gray-border" size="md" text="Clear" onClick={clear} />}
 
+                            {step === "copy" && <Button size="md" text="Copy" onClick={() => copy(kioskUrl)} />}
                             {step === "copy" && <Button variant="gray" size="md" text="Close" onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
