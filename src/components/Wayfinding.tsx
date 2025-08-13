@@ -186,6 +186,16 @@ function Wayfinding() {
                     onClickInfo={() => store.showOverlay()}
                     routeUrl={uiState.routeQRCodeUrl}
                     isKiosk={uiState.kiosk}
+                    onDetailsIconClick={() => {
+                        const defaultFromId = store.routeStore.defaultFrom?.id;
+                        const { from, to } = uiState.selectedRoute || {};
+
+                        const target = [to, from].find(item => item?.id !== defaultFromId);
+                        if (target) {
+                            const exhibitors = target.exhibitors;
+                            uiState.details = exhibitors.length === 1 ? target.exhibitors[0] : target;
+                        }
+                    }}
                 />
             </OverlayContent>
         );

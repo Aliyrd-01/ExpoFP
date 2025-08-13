@@ -68,6 +68,11 @@
         padding-inline-end: rem(10px);
     }
 
+    &__actions {
+        display: grid;
+        gap: 0.2rem;
+    }
+
     &__switch {
         width: rem(30px);
         height: rem(34px);
@@ -83,6 +88,30 @@
             @include icon;
 
             content: vars.$icon-switch-vertical;
+            font-size: var(--icon-size-md);
+        }
+
+        &:hover {
+            background: var(--color-gray-200);
+            color: var(--color-black);
+        }
+    }
+
+    &__details {
+        width: rem(30px);
+        height: rem(34px);
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: var(--border-radius-md);
+        color: var(--color-gray-700);
+        cursor: pointer;
+        transition: all var(--transition-duration) ease;
+
+        &::before {
+            @include icon;
+
+            content: vars.$icon-info-solid;
             font-size: var(--icon-size-md);
         }
 
@@ -126,6 +155,12 @@
         }
 
         &__switch {
+            align-self: center;
+            width: clamp(30px, 4vw, 38px);
+            height: rem(50px);
+        }
+
+        &__details {
             align-self: center;
             width: clamp(30px, 4vw, 38px);
             height: rem(50px);
