@@ -112,7 +112,9 @@ export default class RootStore {
             if (this.routeStore.defaultFrom && !this.routeStore.defaultFrom?.visible)
                 this.selectBooth(this.routeStore.defaultFrom);
 
-            this.uiState.moveToRect = svgArea;
+            if (!this.uiState.kioskSetupData) {
+                this.uiState.moveToRect = svgArea;
+            }
             this.uiState.inIdle = true;
         }, 1000);
     }
