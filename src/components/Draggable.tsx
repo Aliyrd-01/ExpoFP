@@ -91,7 +91,7 @@ export const Draggable = ({
         const isPartiallyOutY = hiddenTop > limitHeight || hiddenBottom > limitHeight;
 
         if (isPartiallyOutX || isPartiallyOutY) {
-            setPosition({ x: 0, y: 0 });
+            setPosition(initialPosition || { x: 0, y: 0 });
         }
 
         setIsDragging(false);

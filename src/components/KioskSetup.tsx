@@ -3,7 +3,6 @@ import Alert from "./Alert";
 import Button from "./Button";
 import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import store from "../store";
-import { t } from "../utils/i18n";
 import { runInAction, toJS } from "mobx";
 import { strEqual } from "../utils/strEqual";
 import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, KIOSK_SLUG_PREFIX, SEPARATOR } from "../constants";
@@ -38,16 +37,6 @@ const KioskSetup = observer(() => {
     }, [store.fp.eventId]);
 
     useReaction(
-        () => store.uiState.kioskSetup,
-        (kioskSetup) => {
-            store.uiState.hideOverlay = kioskSetup;
-            store.uiState.hideHeaderLogo = kioskSetup;
-            store.uiState.hideLogoInBooth = kioskSetup;
-            store.uiState.monochrome = kioskSetup;
-        }
-    );
-
-    useReaction(
         () => [
             store.uiState.kioskSetupData,
             store.routeStore.currentPosition,
@@ -65,7 +54,7 @@ const KioskSetup = observer(() => {
                 ? null
                 : new RouteCutIn(
                     Number.MAX_SAFE_INTEGER,
-                    t("Interactive Kiosk"),
+                    "Interactive Kiosk",
                     {
                         x: kioskSetupData.x,
                         y: kioskSetupData.y,
@@ -347,13 +336,13 @@ const KioskSetup = observer(() => {
 
     let title = "";
     if (step === "auth") {
-        title = t("Passcode required");
+        title = "Passcode required";
     } else if (step === "copy") {
-        title = t("Copy the kiosk URL");
+        title = "Copy the kiosk URL";
     } else if (step === "confirmDeletion") {
-        title = `${t("Delete kiosk")} ${store.uiState.kioskSetupData?.key}?`;
+        title = `${"Delete kiosk"} ${store.uiState.kioskSetupData?.key}?`;
     } else {
-        title = t("Add or Edit a kiosk");
+        title = "Add or Edit a kiosk";
     }
 
     const auth = useCallback(
@@ -443,11 +432,11 @@ const KioskSetup = observer(() => {
                                 >
                                     <input
                                         name="passcode"
-                                        placeholder={t("Enter passcode")}
+                                        placeholder="Enter passcode"
                                         defaultValue=""
                                         disabled={pending}
                                         onInput={(e) => setPasscode((e.target as HTMLInputElement).value?.trim())}
-                                        aria-label={t("Enter passcode")}
+                                        aria-label="Enter passcode"
                                     />
                                 </label>
                             </p>
@@ -456,9 +445,9 @@ const KioskSetup = observer(() => {
                         {step === "edit" && (
                             <>
                                 <p className="efp-kiosk-setup-info">
-                                    <strong>{t("To Add")}:</strong> {t("Click anywhere on the map.")}
+                                    Click to <strong>set/move</strong> kiosk, enter kiosk number to edit.
                                     <br />
-                                    <strong>{t("To Edit")}:</strong> {t("Enter the kiosk number below.")}
+                                    <strong>Zoom and center</strong> the map before saving.
                                 </p>
 
                                 <label className="efp-kiosk-setup-key">
@@ -468,7 +457,7 @@ const KioskSetup = observer(() => {
                                         type="number"
                                         min={1}
                                         max={99}
-                                        placeholder={t("From 1 to 99")}
+                                        placeholder="From 1 to 99"
                                         value={store.uiState.kioskSetupData?.key || ""}
                                         onChange={(e) => {
                                             const input = e.target as HTMLInputElement;
@@ -479,7 +468,7 @@ const KioskSetup = observer(() => {
                                 </label>
 
                                 <label className="efp-kiosk-setup-rotate">
-                                    <strong>{t("Rotate Icon")}:</strong>
+                                    <strong>Rotate Icon:</strong>
                                     <input
                                         name="heading"
                                         type="range"
@@ -492,7 +481,7 @@ const KioskSetup = observer(() => {
                                     />
                                 </label>
 
-                                <p className="efp-kiosk-setup-info">{t("Use the slider to adjust the icon's angle.")}</p>
+                                <p className="efp-kiosk-setup-info">Use the slider to adjust the icon's angle.</p>
                             </>
                         )}
 
@@ -513,27 +502,27 @@ const KioskSetup = observer(() => {
                             {step === "auth" && (
                                 <Button
                                     size="sm"
-                                    text={t("Log in")}
+                                    text="Log in"
                                     disabled={!passcode || pending}
                                     onClick={() => auth(passcode)}
                                 />
                             )}
 
                             {step === "edit" && (
-                                <Button size="sm" text={t("Save and see URL")} disabled={disabled} onClick={save} />
+                                <Button size="sm" text="Save and see URL" disabled={disabled} onClick={save} />
                             )}
 
-                            {step === "copy" && <Button size="sm" text={t("Copy URL")} onClick={copy} />}
+                            {step === "copy" && <Button size="sm" text="Copy URL" onClick={copy} />}
 
-                            {step === "edit" && <Button variant="gray-border" size="sm" text={t("Clear")} onClick={clear} />}
+                            {step === "edit" && <Button variant="gray-border" size="sm" text="Clear" onClick={clear} />}
 
-                            {step === "copy" && <Button variant="gray" size="sm" text={t("Close")} onClick={exit} />}
+                            {step === "copy" && <Button variant="gray" size="sm" text="Close" onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
                                 <Button
                                     variant="gray"
                                     size="sm"
-                                    text={t("Delete")}
+                                    text="Delete"
                                     disabled={pending}
                                     onClick={() => setStep("confirmDeletion")}
                                 />
@@ -541,8 +530,8 @@ const KioskSetup = observer(() => {
 
                             {step === "confirmDeletion" && (
                                 <>
-                                    <Button size="sm" text={t("Delete")} onClick={deleteKiosk} />
-                                    <Button variant="gray" size="sm" text={t("Cancel")} onClick={exit} />
+                                    <Button size="sm" text="Delete" onClick={deleteKiosk} />
+                                    <Button variant="gray" size="sm" text="Cancel" onClick={exit} />
                                 </>
                             )}
                         </div>
@@ -552,15 +541,15 @@ const KioskSetup = observer(() => {
 
             {showError && (
                 <div className="efp-kiosk-setup-message">
-                    <Alert variant="error" closable title={t("Error")} inline onClose={() => setShowError(false)}>
-                        {t("An error occurred.\nPlease try again.")}
+                    <Alert variant="error" closable title="Error" inline onClose={() => setShowError(false)}>
+                        An error occurred.\nPlease try again.
                     </Alert>
                 </div>
             )}
 
             {showSuccess && (
                 <div className="efp-kiosk-setup-message">
-                    <Alert variant="success" closable title={t("Copied to clipboard")} inline onClose={() => setShowSuccess(false)} />
+                    <Alert variant="success" closable title="Copied to clipboard" inline onClose={() => setShowSuccess(false)} />
                 </div>
             )}
         </Suspense>

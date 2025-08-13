@@ -62,7 +62,7 @@ export default function LogoOverlay() {
     const showWarning = isFromDesigner && dataSize >= 10;
     const showMapboxWarning = isFromDesigner && !fpGeo && data.allow3dView && !uiState.kiosk && !uiState.heatmap;
 
-    const showQR = uiState.kiosk && !uiState.selectedRoute?.to && !uiState.selectedRoute?.from && !uiState.kioskSetup;
+    const showQR = uiState.kiosk && !uiState.selectedRoute?.to && !uiState.selectedRoute?.from;
 
     const qrClassName = classNames("qr", {
         "qr--right": isExpoRightAligned || uiState.rtl,
