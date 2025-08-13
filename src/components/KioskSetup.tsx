@@ -199,8 +199,6 @@ const KioskSetup = observer(() => {
             setErrorMsg("");
             setPending(true);
 
-            await copy();
-
             const requestBody: Kiosk = toJS(store.uiState.kioskSetupData);
 
             const token = sessionStorage.getItem(KIOSK_SETUP_TOKEN);
@@ -224,13 +222,16 @@ const KioskSetup = observer(() => {
             kioskUrl.searchParams.set("z", `${kiosk.z || ""}`);
             kioskUrl.searchParams.set("bearing", `${kiosk.heading || ""}`);
             kioskUrl.searchParams.set("zoom", `${store.uiState.zoomAfTransformK || ""}`);
-            setKioskUrl(kioskUrl.toString());
+
+            const kioskUrlString = kioskUrl.toString();
+            setKioskUrl(kioskUrlString);
 
             if (areLayersEnabled()) {
                 store.layerStore.updateVisibility(`${store.uiState.kioskSetupData.z}`, true);
             }
 
-            setSuccessMsg("Saved");
+            await copy(kioskUrlString);
+
             setStep("copy");
         } catch (err) {
             console.error(err);
@@ -249,7 +250,7 @@ const KioskSetup = observer(() => {
         store.uiState.kioskSetupData = null;
     }
 
-    async function copy() {
+    async function copy(url: string) {
         if (step === "auth") {
             return;
         }
@@ -259,7 +260,7 @@ const KioskSetup = observer(() => {
         setPending(true);
 
         try {
-            await navigator.clipboard.writeText(kioskUrl);
+            await navigator.clipboard.writeText(url);
             setSuccessMsg("Copied to clipboard");
         } catch (err) {
             console.error(err);
