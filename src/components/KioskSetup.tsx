@@ -258,7 +258,7 @@ const KioskSetup = observer(() => {
 
         try {
             await navigator.clipboard.writeText(kioskUrl);
-            setSuccessMsg("Copied to clipboard");
+            setSuccessMsg("Saved and copied to clipboard");
         } catch (err) {
             console.error(err);
             setErrorMsg("Could not copy to clipboard");
@@ -336,16 +336,21 @@ const KioskSetup = observer(() => {
 
     const disabled = !store.uiState.kioskSetupData || pending;
 
-    let title = "";
-    if (step === "auth") {
-        title = "Passcode required";
-    } else if (step === "copy") {
-        title = "Kiosk URL";
-    } else if (step === "confirmDeletion") {
-        title = `${"Delete kiosk"} ${store.uiState.kioskSetupData?.key}?`;
-    } else {
-        title = "Add or Edit a kiosk";
-    }
+    const title = useMemo(() => {
+        switch (step) {
+            case "auth":
+                return "Passcode required";
+
+            case "copy":
+                return "Kiosk URL";
+
+            case "confirmDeletion":
+                return `${"Delete kiosk"} ${store.uiState.kioskSetupData?.key}?`;
+
+            default:
+                return "Add or Edit a kiosk";
+        }
+    }, [step, store.uiState.kioskSetupData]);
 
     const auth = useCallback(
         debounce((passcode: string) => {
@@ -404,6 +409,7 @@ const KioskSetup = observer(() => {
                 body: JSON.stringify({ ...(token ? { token } : {}) }),
             });
 
+            setSuccessMsg("Kiosk deleted");
             exit();
         } catch (err) {
             console.error(err);
