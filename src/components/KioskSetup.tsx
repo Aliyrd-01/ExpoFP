@@ -19,9 +19,9 @@ import { useReaction } from "../utils/mobx";
 const KIOSK_SETUP_TOKEN = "expofp-kiosk-setup-token";
 
 const KioskSetup = observer(() => {
-    const [showError, setShowError] = useState(false);
-    const [pending, setPending] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string>("");
+    const [successMsg, setSuccessMsg] = useState("");
+    const [pending, setPending] = useState<boolean>(false);
     const [step, setStep] = useState<"auth" | "edit" | "copy" | "confirmDeletion" | "delete">(
         sessionStorage.getItem(KIOSK_SETUP_TOKEN) ? "edit" : "auth"
     );
@@ -124,6 +124,7 @@ const KioskSetup = observer(() => {
                 });
             } catch (err) {
                 console.error(err);
+                setErrorMsg("Error loading data")
                 return;
             }
         }
@@ -156,7 +157,7 @@ const KioskSetup = observer(() => {
 
         store.fp.onGetCoordsClick = (coords) => {
             originalOnGetCoordsClick?.(coords);
-            setShowError(false);
+            setErrorMsg("");
             store.uiState.kioskSetupData = {
                 ...store.uiState.kioskSetupData,
                 ...coords,
@@ -171,17 +172,17 @@ const KioskSetup = observer(() => {
     }, [store.uiState.kioskSetup, step, newKioskKey, store.layerStore.floors]);
 
     useEffect(() => {
-        if (!showSuccess && !showError) {
+        if (!successMsg && !errorMsg) {
             return;
         }
 
         const timer = setTimeout(() => {
-            setShowSuccess(false);
-            setShowError(false);
+            setSuccessMsg("");
+            setErrorMsg("");
         }, 3000);
 
         return () => clearTimeout(timer);
-    }, [showSuccess, showError]);
+    }, [successMsg, errorMsg]);
 
     useEffect(() => {
         if (kioskSetupDivRef.current) {
@@ -195,7 +196,7 @@ const KioskSetup = observer(() => {
                 return;
             }
 
-            setShowError(false);
+            setErrorMsg("");
             setPending(true);
 
             const requestBody: Kiosk = toJS(store.uiState.kioskSetupData);
@@ -231,7 +232,7 @@ const KioskSetup = observer(() => {
             setStep("copy");
         } catch (err) {
             console.error(err);
-            setShowError(true);
+            setErrorMsg("Saving failed");
         } finally {
             setPending(false);
         }
@@ -251,16 +252,16 @@ const KioskSetup = observer(() => {
             return;
         }
 
-        setShowError(false);
-        setShowSuccess(false);
+        setErrorMsg("");
+        setSuccessMsg("");
         setPending(true);
 
         try {
             await navigator.clipboard.writeText(kioskUrl);
-            setShowSuccess(true);
+            setSuccessMsg("Copied to clipboard");
         } catch (err) {
             console.error(err);
-            setShowError(true);
+            setErrorMsg("Could not copy to clipboard");
         } finally {
             setPending(false);
         }
@@ -350,8 +351,8 @@ const KioskSetup = observer(() => {
         debounce((passcode: string) => {
             const fn = async () => {
                 try {
-                    setShowError(false);
-                    setShowSuccess(false);
+                    setErrorMsg("");
+                    setSuccessMsg("");
 
                     if (!passcode) {
                         return;
@@ -369,7 +370,7 @@ const KioskSetup = observer(() => {
 
                     const respJson = await response.json();
                     if (!respJson?.token) {
-                        setShowError(true);
+                        setErrorMsg("Login failed");
                         return;
                     }
 
@@ -377,7 +378,7 @@ const KioskSetup = observer(() => {
                     setStep("edit");
                 } catch (err) {
                     console.error(err);
-                    setShowError(true);
+                    setErrorMsg("Login failed");
                 } finally {
                     setPending(false);
                 }
@@ -406,6 +407,7 @@ const KioskSetup = observer(() => {
             exit();
         } catch (err) {
             console.error(err);
+            setErrorMsg("Deletion failed");
         } finally {
             setPending(false);
         }
@@ -538,17 +540,17 @@ const KioskSetup = observer(() => {
                 </div>
             )}
 
-            {showError && (
+            {errorMsg && (
                 <div className="efp-kiosk-setup-message">
-                    <Alert variant="error" closable title="Error" inline onClose={() => setShowError(false)}>
+                    <Alert variant="error" closable title={errorMsg} inline onClose={() => setErrorMsg("")}>
                         An error occurred.\nPlease try again.
                     </Alert>
                 </div>
             )}
 
-            {showSuccess && (
+            {successMsg && (
                 <div className="efp-kiosk-setup-message">
-                    <Alert variant="success" closable title="Copied to clipboard" inline onClose={() => setShowSuccess(false)} />
+                    <Alert variant="success" closable title={successMsg} inline onClose={() => setSuccessMsg("")} />
                 </div>
             )}
         </Suspense>
