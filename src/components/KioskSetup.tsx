@@ -543,7 +543,7 @@ const KioskSetup = observer(() => {
             {errorMsg && (
                 <div className="efp-kiosk-setup-message">
                     <Alert variant="error" closable title={errorMsg} inline onClose={() => setErrorMsg("")}>
-                        An error occurred.\nPlease try again.
+                        An error occurred. Please try again.
                     </Alert>
                 </div>
             )}
