@@ -543,7 +543,7 @@ const KioskSetup = observer(() => {
 
                             {step === "edit" && <Button variant="gray-border" size="md" text="Clear" onClick={clear} />}
 
-                            {step === "copy" && <Button size="md" text="Copy" onClick={() => copy(kioskUrl)} />}
+                            {!copied && step === "copy" && <Button size="md" text="Copy" onClick={() => copy(kioskUrl)} />}
                             {step === "copy" && <Button variant="gray" size="md" text="Close" onClick={exit} />}
 
                             {step === "edit" && isKioskExist && (
