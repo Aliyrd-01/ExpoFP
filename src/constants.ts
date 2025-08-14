@@ -15,3 +15,4 @@ export const MAP_SETTINGS_KEY = "expofp-map-settings";
 export const DEBUG_KEY = "debug";
 export const KIOSK_SLUG_PREFIX = "interactive-kiosk";
 export const DEFAULT_UNITS = "ft";
+export const FORCE_KIOSK_SHOW_DETAILS = "expofp-force-kiosk-show-details"

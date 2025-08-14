@@ -5,7 +5,7 @@ import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } fr
 import store from "../store";
 import { runInAction, toJS } from "mobx";
 import { strEqual } from "../utils/strEqual";
-import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, KIOSK_SLUG_PREFIX, SEPARATOR } from "../constants";
+import { KIOSK_ID_KEY, KIOSK_SETUP_KEY, KIOSK_SLUG_PREFIX, SEPARATOR, FORCE_KIOSK_SHOW_DETAILS } from "../constants";
 import { RouteCutIn } from "../RouteCutIn";
 import "./KioskSetup.scss";
 import { extractRoute, Kiosk } from "../store/RouteStore";
@@ -130,6 +130,10 @@ const KioskSetup = observer(() => {
             }
         }
         requestKioskData();
+
+        if (localStorage.getItem(FORCE_KIOSK_SHOW_DETAILS)) {
+            store.uiState.setForceShowDetails(true);
+        }
     }, [
         apiUrl,
         step,

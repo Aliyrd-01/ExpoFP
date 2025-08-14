@@ -10,6 +10,7 @@ import {
     PREVIEW_MODE_QUERY,
     PREVIEW_MODE_STORAGE_KEY,
     SEPARATOR,
+    FORCE_KIOSK_SHOW_DETAILS,
 } from "../constants";
 import data from "../data";
 import store, { uiState } from "../store";
@@ -217,10 +218,14 @@ function dispatchFromUrl() {
             saveKioskId(searchParams.get(KIOSK_ID_KEY));
         }
 
+        const forceKioskShowDetails = searchParams.get("forceKioskShowDetails");
+        if (forceKioskShowDetails === "1") {
+            localStorage.setItem(FORCE_KIOSK_SHOW_DETAILS, forceKioskShowDetails);
+        } else if (forceKioskShowDetails === "0") {
+            localStorage.removeItem(FORCE_KIOSK_SHOW_DETAILS);
+        }
+
         clearYAH();
-    } else if (searchParams.has("showRouteInstantly")) {
-        const showRouteInstantly = searchParams.get("showRouteInstantly");
-        uiState.setForceShowDetails(showRouteInstantly === "false");
     } else {
         // Проверяем, является ли slug событием
         const eventItem = store.eventStore.eventItems.find(
