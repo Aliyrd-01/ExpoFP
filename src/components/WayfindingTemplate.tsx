@@ -53,6 +53,7 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     onClickInfo,
     onClickFloor,
     onAccessibleCheck,
+    showDetailsIcon,
     onDetailsIconClick,
 }) => {
     return (
@@ -116,7 +117,7 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                         </div>
                         <div className="efp-wayfindingForm__actions">
                             <button type="button" className="efp-wayfindingForm__switch" onClick={onSwitch}></button>
-                            {isKiosk && <button type="button" className="efp-wayfindingForm__details" onClick={onDetailsIconClick}></button>}
+                            {showDetailsIcon && <button type="button" className="efp-wayfindingForm__details" onClick={onDetailsIconClick}></button>}
                         </div>
                     </div>
                     {showAccessible && (

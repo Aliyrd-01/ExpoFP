@@ -939,5 +939,14 @@ export default class UIState {
         return finalUrl;
     }
 
+    @observable forceShowDetails = false;
+    @action setForceShowDetails(flag: boolean) {
+        this.forceShowDetails = flag;
+    }
+
+    @computed get showRouteInstantly() {
+        return Boolean(this.kioskSetupData && !this.forceShowDetails);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 }

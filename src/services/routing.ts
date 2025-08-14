@@ -218,6 +218,9 @@ function dispatchFromUrl() {
         }
 
         clearYAH();
+    } else if (searchParams.has("showRouteInstantly")) {
+        const showRouteInstantly = searchParams.get("showRouteInstantly");
+        uiState.setForceShowDetails(showRouteInstantly === "false");
     } else {
         // Проверяем, является ли slug событием
         const eventItem = store.eventStore.eventItems.find(

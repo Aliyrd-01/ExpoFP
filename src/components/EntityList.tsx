@@ -43,7 +43,7 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
         switch (type) {
             case "exhibitor":
                 const exhibitor = store.exhibitorStore.exhibitors.find((e) => e.id === id);
-                if (store.uiState.kiosk) {
+                if (uiState.showRouteInstantly) {
                     store.routeStore.clickRoute(null, store.routeStore.tempToBooth || exhibitor.booths[0]);
                 } else {
                     store.clickExhibitor(store.exhibitorStore.exhibitors.find((e) => e.id === id));
@@ -52,7 +52,7 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
 
             case "booth":
                 const booth = store.boothStore.booths.find((b) => b.id === id);
-                if (store.uiState.kiosk) {
+                if (uiState.showRouteInstantly) {
                     store.routeStore.clickRoute(null, booth);
                 } else {
                     store.clickBoothInList2(booth);
@@ -67,7 +67,7 @@ const EntityList = ({ updatedScrollableRef, updateScroll }: ListProps) => {
                 const event = store.eventStore.eventItems.find((e) => e.id === id);
                 if (event) {
                     const booth = store.boothStore.booths.find((b) => b.id === event.boothId);
-                    if (store.uiState.kiosk && booth) {
+                    if (uiState.showRouteInstantly && booth) {
                         store.routeStore.clickRoute(null, booth);
                     } else {
                         store.selectEventItem(event, true);
