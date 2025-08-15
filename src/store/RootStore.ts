@@ -179,7 +179,7 @@ export default class RootStore {
         this.uiState.details = null;
         this.uiState.list = {
             type: "search",
-            text: sanitizeSearch(text, Object.keys(this.uiState.mapSettings).map(k => `${k}=`)),
+            text: sanitizeSearch(text, Object.keys(this.uiState.mapSettings).map(k => `${k}=`)) || "",
             focused: false,
         };
         this.uiState.activeListIndex = -1;

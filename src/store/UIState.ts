@@ -436,7 +436,7 @@ export default class UIState {
 
     @computed get searchItems(): ListItem[] {
         if (this.list.type !== "search") return [];
-        let text = this.list.text.trim().toLowerCase() as string;
+        let text = (this.list.text?.trim().toLowerCase() as string) || "";
 
         const { exhibitorStore, categoryStore, boothStore, eventStore, heatmapStore } = this.rootStore;
 
