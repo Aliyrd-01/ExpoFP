@@ -980,7 +980,9 @@ function bezierCurve(points: Point[], t: number): Point {
 }
 
 function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
-    if (!cutInPoint || !points.length) return points;
+    if (!cutInPoint || !points.length) {
+        return points;
+    }
 
     const closestIndex = points.reduce(
         (minIndex, p, i) => (lineLength(cutInPoint, p) < lineLength(cutInPoint, points[minIndex]) ? i : minIndex),
