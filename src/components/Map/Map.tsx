@@ -261,53 +261,55 @@ export default function Map() {
         const disposer = reaction(
             () => uiState.mapSettings,
             ({ center, centerxy, zoom }) => {
-                try {
-                    if (store.mapboxStore.showMapbox) {
-                        return;
+                setTimeout(() => {
+                    try {
+                        if (store.mapboxStore.showMapbox) {
+                            return;
+                        }
+
+                        let coords: { x: number, y: number };
+                        if (center) {
+                            const point = center.split(",").map(Number);
+                            coords = convertGpsToLocal(point[0], point[1], fpGeo.properties.config);
+                        } else if (centerxy) {
+                            const point = centerxy.split(",").map(Number);
+                            coords = { x: point[0], y: point[1] };
+                        }
+
+                        function panTo(targetX: number, targetY: number, zoomLevel?: number) {
+                            const canvas = s.$canvas.node();
+                            const currentTransform = zoomTransform(canvas);
+                            const k = zoomLevel != null ? zoomLevel : currentTransform.k;
+
+                            const newX = canvas.clientWidth / 2 - targetX * k;
+                            const newY = canvas.clientHeight / 2 - targetY * k;
+                            const newTransform = zoomIdentity.translate(newX, newY).scale(k);
+
+                            s.$canvas.call(s.zoom.transform as any, newTransform);
+                        }
+
+                        function applyZoom(newZoom: number) {
+                            const canvas = s.$canvas.node();
+                            const currentTransform = zoomTransform(canvas);
+
+                            const centerX = (canvas.clientWidth / 2 - currentTransform.x) / currentTransform.k;
+                            const centerY = (canvas.clientHeight / 2 - currentTransform.y) / currentTransform.k;
+
+                            panTo(centerX, centerY, newZoom);
+                        }
+
+                        if (coords) {
+                            const pxToSvgMatrix = s.drawer.getPxSvgMatrix();
+                            const svgToPxMatrix = m4.inverse(pxToSvgMatrix);
+                            const [x, y] = m4.transformPoint(svgToPxMatrix, [coords.x, coords.y, 1]);
+                            panTo(x, y, zoom);
+                        } else if (zoom) {
+                            applyZoom(zoom);
+                        }
+                    } catch (err) {
+                        console.error(err);
                     }
-
-                    let coords: { x: number, y: number };
-                    if (center) {
-                        const point = center.split(",").map(Number);
-                        coords = convertGpsToLocal(point[0], point[1], fpGeo.properties.config);
-                    } else if (centerxy) {
-                        const point = centerxy.split(",").map(Number);
-                        coords = { x: point[0], y: point[1] };
-                    }
-
-                    function panTo(targetX: number, targetY: number, zoomLevel?: number) {
-                        const canvas = s.$canvas.node();
-                        const currentTransform = zoomTransform(canvas);
-                        const k = zoomLevel != null ? zoomLevel : currentTransform.k;
-
-                        const newX = canvas.clientWidth / 2 - targetX * k;
-                        const newY = canvas.clientHeight / 2 - targetY * k;
-                        const newTransform = zoomIdentity.translate(newX, newY).scale(k);
-
-                        s.$canvas.call(s.zoom.transform as any, newTransform);
-                    }
-
-                    function applyZoom(newZoom: number) {
-                        const canvas = s.$canvas.node();
-                        const currentTransform = zoomTransform(canvas);
-
-                        const centerX = (canvas.clientWidth / 2 - currentTransform.x) / currentTransform.k;
-                        const centerY = (canvas.clientHeight / 2 - currentTransform.y) / currentTransform.k;
-
-                        panTo(centerX, centerY, newZoom);
-                    }
-
-                    if (coords) {
-                        const pxToSvgMatrix = s.drawer.getPxSvgMatrix();
-                        const svgToPxMatrix = m4.inverse(pxToSvgMatrix);
-                        const [x, y] = m4.transformPoint(svgToPxMatrix, [coords.x, coords.y, 1]);
-                        panTo(x, y, zoom);
-                    } else if (zoom) {
-                        applyZoom(zoom);
-                    }
-                } catch (err) {
-                    console.error(err);
-                }
+                }, 100);
             },
         );
 

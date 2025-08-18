@@ -24,6 +24,7 @@ import PoiTypeStore from "./PoiTypeStore";
 import { sanitizeSearch } from "../utils/sanitizeText";
 import FuzzySearchEngineStore from "./FuzzySearchEngineStore";
 import AgendaFilterStore from "./AgendaFilterStore";
+import Rect from "../core/Rect";
 
 export default class RootStore {
     readonly categoryStore: CategoryStore;
@@ -112,7 +113,14 @@ export default class RootStore {
             if (this.routeStore.defaultFrom && !this.routeStore.defaultFrom?.visible)
                 this.selectBooth(this.routeStore.defaultFrom);
 
-            if (!this.uiState.kioskSetupData) {
+            if (this.uiState.kioskSetupData) {
+                this.uiState.moveToRect = Rect.fromCxcywh(
+                    this.uiState.kioskSetupData.x,
+                    this.uiState.kioskSetupData.y,
+                    100,
+                    100
+                );
+            } else {
                 this.uiState.moveToRect = svgArea;
             }
             this.uiState.inIdle = true;

@@ -296,7 +296,7 @@ const KioskSetup = observer(() => {
             heading: parseInt(angle, 10),
         };
 
-        moveToKiosk(store.uiState.kioskSetupData);
+        // moveToKiosk(store.uiState.kioskSetupData);
     }
 
     function changeKey(key: string) {
