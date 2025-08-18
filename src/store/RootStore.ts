@@ -100,8 +100,10 @@ export default class RootStore {
             el.querySelector &&
             el.querySelector("input[type=search]") &&
             (el.querySelector("input[type=search]") as any).blur
-        )
+        ) {
             (el.querySelector("input[type=search]") as any).blur();
+        }
+
         window.setTimeout(() => {
             if (this.uiState.kioskSetup) {
                 return;
