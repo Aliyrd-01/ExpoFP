@@ -27,8 +27,10 @@ export interface WayfindingTemplateProps {
     onChangeTo?: (val: string) => void;
     onSwitch?: () => void;
     onClickInfo?: () => void;
-    onClickFloor?: ({ id: number, name: string }) => void;
+    onClickFloor?: (data: { id: number, name: string }) => void;
     onAccessibleCheck: (checked: boolean) => void;
+    showDetailsIcon?: boolean;
+    onDetailsIconClick?: () => void;
 }
 
 const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
@@ -51,6 +53,8 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
     onClickInfo,
     onClickFloor,
     onAccessibleCheck,
+    showDetailsIcon,
+    onDetailsIconClick,
 }) => {
     return (
         <div className={classNames("efp-wayfinding", { isCollapsed: !showForm })}>
@@ -111,7 +115,10 @@ const WayfindingTemplate: React.FC<WayfindingTemplateProps> = ({
                                 />
                             </div>
                         </div>
-                        <button type="button" className="efp-wayfindingForm__switch" onClick={onSwitch}></button>
+                        <div className="efp-wayfindingForm__actions">
+                            <button type="button" className="efp-wayfindingForm__switch" onClick={onSwitch}></button>
+                            {showDetailsIcon && <button type="button" className="efp-wayfindingForm__details" onClick={onDetailsIconClick}></button>}
+                        </div>
                     </div>
                     {showAccessible && (
                         <div className="efp-wayfindingForm__accessible">
