@@ -183,7 +183,7 @@ function drawLines(
     }
 
     const currentLayerName = store.routeStore.currentRouteLayer?.name;
-    const routeCutIn = getRouteCutIt();
+    const routeCutIn = getRouteCutIn();
     const isRouteCutInLayer = (
         routeCutIn
         && (
@@ -994,7 +994,7 @@ function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
         : points.slice(0, closestIndex);
 }
 
-function getRouteCutIt(): RouteCutIn {
+function getRouteCutIn(): RouteCutIn {
     const { from, to } = store.uiState.selectedRoute || {};
     const type = "route-cut-in";
 
