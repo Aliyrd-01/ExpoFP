@@ -213,7 +213,7 @@ function drawLines(
             wfDrawer,
             routePoints,
             (from as RouteCutIn)?.entity.type === "route-cut-in" ? null : from,
-            to,
+            (to as RouteCutIn)?.entity.type === "route-cut-in" ? null : to,
             currentLayerName,
         );
 
@@ -228,7 +228,12 @@ function drawLines(
         );
 
         if (isRouteCutInLayer) {
-            const departurePoint = routePoints[routePoints.length - 1];
+            let index = routePoints.length - 1;
+            if ((uiState.selectedRoute?.to as RouteCutIn)?.entity.type === "route-cut-in") {
+                index = 0;
+            }
+
+            const departurePoint = routePoints[index];
             attachTrailPoints(
                 trailDrawer,
                 pixelRatio,
@@ -975,20 +980,26 @@ function bezierCurve(points: Point[], t: number): Point {
 }
 
 function trimPointsToCutIn(cutInPoint: Point, points: Point[]) {
-    if (!cutInPoint || !points.length) {
-        return points;
-    }
+    if (!cutInPoint || !points.length) return points;
 
     const closestIndex = points.reduce(
         (minIndex, p, i) => (lineLength(cutInPoint, p) < lineLength(cutInPoint, points[minIndex]) ? i : minIndex),
         0
     );
 
-    return points.slice(0, closestIndex);
+    return closestIndex <= points.length / 2
+        ? points.slice(closestIndex)
+        : points.slice(0, closestIndex);
 }
 
 function getRouteCutIt(): RouteCutIn {
-    if ((store.uiState.selectedRoute?.from as RouteCutIn)?.entity.type === "route-cut-in") {
+    const { from, to } = store.uiState.selectedRoute || {};
+    const type = "route-cut-in";
+
+    if (
+        (from && (from as RouteCutIn)?.entity.type === type) ||
+        (to && (to as RouteCutIn)?.entity.type === type)
+    ) {
         return store.routeStore.defaultFrom as RouteCutIn;
     }
     return null;
