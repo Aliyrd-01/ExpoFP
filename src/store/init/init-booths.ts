@@ -153,7 +153,9 @@ export default function initBooths(store: RootStore, layer: Layer): Booth[] {
 
         booth.layer = layersEnabled ? layerStore.layers.find((l) => l.name === layer) : null;
         booth.borderColor = rect?.getAttribute("stroke") || rect?.style.stroke || settings.boothBorderColor || "#FFFFFF";
-        booth.borderWidth = parseFloat(rect?.getAttribute("stroke-width") || rect?.style.strokeWidth || "0");
+        booth.borderWidth = parseFloat(rect?.getAttribute("stroke-width") || rect?.style.strokeWidth);
+
+        if (isNaN(booth.borderWidth)) booth.borderWidth = boothStore.borderWidth;
 
         if (!uiState.heatmap) {
             booth.labelColor = rect?.getAttribute("data-label-color");
