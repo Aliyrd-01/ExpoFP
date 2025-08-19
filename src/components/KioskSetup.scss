@@ -3,20 +3,30 @@
 
 .efp-kiosk-setup {
     position: fixed;
-    overflow: hidden;
-    bottom: 1rem;
+    bottom: 0;
+    left: 0;
     left: 50%;
     transform: translateX(-50%);
+    width: 100vw;
+    display: grid;
+    overflow: hidden;
     z-index: 9998;
     box-shadow: var(--shadow-md);
     border-radius: var(--border-radius-lg);
-    max-width: #{utils.rem(360px)};
+
+    @include utils.media-breakpoint-up(sm) {
+        bottom: 1rem;
+        display: block;
+        width: auto;
+        max-width: #{utils.rem(420px)};
+    }
 }
 
 .efp-kiosk-setup-info {
     color: var(--color-gray-900);
     font-size: var(--font-size-sm);
     line-height: 1.5rem;
+    margin: 0.8rem 0;
 }
 
 .efp-kiosk-setup-key {
@@ -29,7 +39,7 @@
     width: 100%;
     font-size: var(--font-size-sm);
 
-    &__auth {
+    &__one-column {
        grid-template-columns: 1fr; 
     }
 
@@ -68,7 +78,7 @@
     grid-template-columns: #{utils.rem(115px)} 1fr;
     justify-items: start;
     gap: 0.6rem;
-    margin: 1.2rem 0;
+    margin: 0.8rem 0;
     width: 100%;
     font-size: var(--font-size-sm);
 
@@ -136,7 +146,7 @@
     place-items: center;
     margin-top: 1rem;
 
-    &__auth {
+    &__one-column {
        grid-template-columns: 1fr; 
     }
 
@@ -157,12 +167,5 @@
 }
 
 .efp-kiosk-setup-link {
-    display: grid;
-
-    &_text {
-        min-width: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+    word-break: break-all;
 }

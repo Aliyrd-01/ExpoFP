@@ -6,9 +6,9 @@
  */
 export const sanitizeStr = (str) => str.trim().replace(/[^a-z0-9]/gi, "");
 
-export function sanitizeSearch(input: string, patterns = []) {
+export function sanitizeSearch(input: string, patterns = []): string {
     if (!input) {
-        return input;
+        return "";
     }
     const arr = ["utm_", "ref=", "fbclid="].concat(patterns || []);
     const regex = new RegExp(`(^|\\?|&)(${arr.join("|")})[^&]*`, "g");
