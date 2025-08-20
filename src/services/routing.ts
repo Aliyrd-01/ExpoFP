@@ -207,7 +207,7 @@ function dispatchFromUrl() {
                 .reduce((acc, curr) => ({ ...acc, [curr]: false }), {})
         );
     } else if (booth) {
-        store.selectBooth(booth);
+        setTimeout(() => store.selectBooth(booth), 250);
     } else if (searchParams.has(KIOSK_SETUP_KEY) || searchParams.has(KIOSK_ID_KEY)) {
         store.uiState.kiosk = !isMobile && !isWebview;
 
@@ -242,8 +242,8 @@ function dispatchFromUrl() {
 
             if (slug.startsWith("exhibitors")) {
                 const exhibitors = slug.split("=")[1].split(",");
-                store.fp.selectExhibitor(exhibitors);
-            } else if (exhibitor) store.clickExhibitor(exhibitor);
+                setTimeout(() => store.fp.selectExhibitor(exhibitors), 250);
+            } else if (exhibitor) setTimeout(() => store.clickExhibitor(exhibitor), 250);
             else {
                 const category = store.categoryStore.categories.find((x: Category) => x.slug === slug);
                 if (category) store.selectCategory(category);
