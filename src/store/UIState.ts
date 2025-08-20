@@ -145,10 +145,6 @@ export default class UIState {
             this.details.booths.filter((b) => b instanceof RegularBooth).forEach((b) => booths.add(b.id.toString()));
         }
 
-        if (booths.size && this.kioskSetupData && this.rootStore.routeStore.defaultFrom) {
-            booths.add(this.rootStore.routeStore.defaultFrom.id.toString());
-        }
-
         booths.delete(undefined);
         booths.delete(null);
 
