@@ -15,6 +15,7 @@ import { uiState } from "./index";
 import { calcSpeed } from "../utils/calcSpeed";
 import { calcTravelTime } from "../utils/calcTravelTime";
 import { DEFAULT_UNITS } from "../constants";
+import settings from "../tools/settings";
 
 const replaceCommasWithDot = (value: string | number | undefined) => {
     if (typeof value === "string") {
@@ -202,7 +203,9 @@ export default class RouteStore {
             point.lng = replaceCommasWithDot(point.lng);
         }
 
-        focus = true; // Temp always "true" SDK compatility
+        const disableFocus = ["newtopianow25", "whxtech2025"].includes(settings.EXPO);
+
+        focus = !disableFocus; // Temp always "true" SDK compatility
 
         focus = focus && (this.focusEnabled || this.prevZ != point?.z);
         if (this.focusEnabled) this.focusEnabled = false;
@@ -218,7 +221,7 @@ export default class RouteStore {
 
         let layer = store.layerStore.findLayer(point.z);
 
-        if (focus) {
+        if (!disableFocus && focus) {
             if (layer && !layer?.visible) {
                 layersStore.updateVisibility(layer, true);
             }
