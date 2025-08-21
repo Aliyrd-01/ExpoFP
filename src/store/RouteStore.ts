@@ -203,7 +203,7 @@ export default class RouteStore {
             point.lng = replaceCommasWithDot(point.lng);
         }
 
-        const disableFocus = ["newtopianow25", "whxtech2025"].includes(settings.EXPO);
+        const disableFocus = ["newtopianow25", "whxtech2025"].includes(settings.EXPO) && this.rootStore.uiState.details;
 
         focus = !disableFocus; // Temp always "true" SDK compatility
 
