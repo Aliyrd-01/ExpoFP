@@ -4,7 +4,7 @@
     "version": "2.1.0",
     "main": "./dist/expofp.js",
     "scripts": {
-        "dev": "cross-env webpack serve --env",
+        "dev": "cross-env NODE_ENV=development webpack serve --env development",
         "demo": "cross-env webpack serve --env expo=demo",
         "build": "if-env BUILD_STORYBOOK=true && storybook build || cross-env NODE_ENV=production webpack",
         "build+deploy": "cross-env AWS_DEPLOY=true yarn build",
@@ -183,6 +183,8 @@
     "dependencies": {
         "@grafana/faro-web-sdk": "^1.19.0",
         "@grafana/faro-web-tracing": "^1.19.0",
+        "ajv": "^6.12.6",
+        "ajv-keywords": "^3.5.2",
         "fuse.js": "^7.1.0"
     }
 }

@@ -1,0 +1,13 @@
+# Данные для подключения к PostgreSQL
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=12qwerty12
+DB_NAME=postgres
+
+# Порт локального сервера
+PORT=3000
+
+# Прочие переменные (если проект их использует)
+# SECRET_KEY=your_secret_key
+# API_URL=https://api.example.com
